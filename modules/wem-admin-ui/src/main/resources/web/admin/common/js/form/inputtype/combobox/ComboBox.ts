@@ -1,5 +1,11 @@
 module api.form.inputtype.combobox {
 
+    import Property = api.data2.Property;
+    import PropertyArray = api.data2.PropertyArray;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
+
     export interface ComboBoxConfig {
         options: ComboBoxOption[]
     }
@@ -11,6 +17,8 @@ module api.form.inputtype.combobox {
         private comboBoxConfig: ComboBoxConfig;
 
         private input: api.form.Input;
+
+        private propertyArray: PropertyArray;
 
         private comboBox: api.ui.selector.combobox.ComboBox<string>;
 
@@ -29,17 +37,18 @@ module api.form.inputtype.combobox {
             console.log("ComboBox.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
         }
 
-        getValueType(): api.data.type.ValueType {
-            return api.data.type.ValueTypes.STRING;
+        getValueType(): ValueType {
+            return ValueTypes.STRING;
         }
 
-        newInitialValue(): string {
+        newInitialValue(): Value {
             return null;
         }
 
-        layout(input: api.form.Input, properties: api.data.Property[]) {
+        layout(input: api.form.Input, propertyArray: PropertyArray) {
 
             this.input = input;
+            this.propertyArray = propertyArray;
 
             this.selectedOptionsView = new api.ui.selector.combobox.BaseSelectedOptionsView<string>();
             this.comboBox = this.createComboBox(input);
@@ -49,7 +58,7 @@ module api.form.inputtype.combobox {
             });
 
             var valueArray: string[] = [];
-            properties.forEach((property: api.data.Property) => {
+            this.propertyArray.forEach((property: Property) => {
                 valueArray.push(property.getString());
             });
             this.comboBox.setValues(valueArray);
@@ -73,13 +82,13 @@ module api.form.inputtype.combobox {
             });
             comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<string>) => {
 
-                var value = new api.data.Value(event.getOption().value, api.data.type.ValueTypes.STRING);
+                var value = new Value(event.getOption().value, ValueTypes.STRING);
 
                 if (comboBox.countSelectedOptions() == 1) { // overwrite initial value
-                    this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(value, 0));
+                    this.propertyArray.set(0, value);
                 }
                 else {
-                    this.notifyValueAdded(value);
+                    this.propertyArray.add(value);
                 }
 
 
@@ -87,22 +96,13 @@ module api.form.inputtype.combobox {
             });
             comboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<string>) => {
 
-                this.notifyValueRemoved(removed.getIndex());
+                this.propertyArray.remove(removed.getIndex());
+                //this.notifyValueRemoved(removed.getIndex());
 
                 this.validate(false);
             });
 
             return comboBox;
-        }
-
-        getValues(): api.data.Value[] {
-
-            var values: api.data.Value[] = [];
-            this.comboBox.getSelectedOptions().forEach((option: api.ui.selector.Option<string>)  => {
-                var value = new api.data.Value(option.value, api.data.type.ValueTypes.STRING);
-                values.push(value);
-            });
-            return values;
         }
 
         giveFocus(): boolean {
@@ -112,8 +112,8 @@ module api.form.inputtype.combobox {
             return this.comboBox.giveFocus();
         }
 
-        valueBreaksRequiredContract(value: api.data.Value): boolean {
-            return value.isNull() || !value.getType().equals(api.data.type.ValueTypes.STRING) || !this.isExistingValue(value.asString());
+        valueBreaksRequiredContract(value: Value): boolean {
+            return value.isNull() || !value.getType().equals(ValueTypes.STRING) || !this.isExistingValue(value.getString());
         }
 
         private isExistingValue(value: string): boolean {

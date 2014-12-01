@@ -14,8 +14,9 @@ import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.Metadata;
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.data.DataJson;
+import com.enonic.wem.api.data2.PropertyArrayJson;
+import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data2.PropertyTreeJson;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -30,7 +31,7 @@ public class CreateContentJson
     CreateContentJson( @JsonProperty("draft") final String draft, @JsonProperty("name") final String name,
                        @JsonProperty("displayName") final String displayName, @JsonProperty("parent") final String parent,
                        @JsonProperty("contentType") final String contentType, @JsonProperty("form") final FormJson formJson,
-                       @JsonProperty("contentData") final List<DataJson> dataJsonList,
+                       @JsonProperty("contentData") final List<PropertyArrayJson> dataJsonList,
                        @JsonProperty("attachments") final List<AttachmentJson> attachmentJsonList,
                        @JsonProperty("metadata") final List<MetadataJson> metadataJsonList,
                        @JsonProperty("permissions") final List<AccessControlEntryJson> permissions,
@@ -45,11 +46,7 @@ public class CreateContentJson
         this.createContent.contentType( ContentTypeName.from( contentType ) );
         this.createContent.form( formJson.getForm() );
 
-        final ContentData contentData = new ContentData();
-        for ( DataJson dataJson : dataJsonList )
-        {
-            contentData.add( dataJson.getData() );
-        }
+        final PropertyTree contentData = PropertyTreeJson.fromJson( dataJsonList );
         this.createContent.contentData( contentData );
 
         final List<Metadata> metadataList = new ArrayList<>();

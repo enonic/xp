@@ -1,7 +1,7 @@
 package com.enonic.wem.api.form;
 
 
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.Property;
 import com.enonic.wem.api.form.inputtype.InputType;
 
 public class BreaksRequiredContractException
@@ -33,7 +33,7 @@ public class BreaksRequiredContractException
     private static String buildMessage( final Property property, final InputType inputType )
     {
         return "Required contract for Data [" + property.getPath() + "] is broken of type " + inputType + " , value was: " +
-            property.getObject();
+            property.getBoolean();
     }
 
     private static String buildMessage( final Input input )

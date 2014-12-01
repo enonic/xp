@@ -18,7 +18,7 @@ public class ContentTypeForms
             helpText( "Description of the site. Optional" ).
             build() ).
         addFormItem( Input.newInput().
-            name( "modules" ).
+            name( "moduleConfig" ).
             label( "Modules" ).
             helpText( "Configure modules needed for the Site" ).
             inputType( InputTypes.MODULE_CONFIGURATOR ).

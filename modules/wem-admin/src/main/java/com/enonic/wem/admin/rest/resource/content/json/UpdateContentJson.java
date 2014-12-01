@@ -15,8 +15,9 @@ import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.data.DataJson;
+import com.enonic.wem.api.data2.PropertyArrayJson;
+import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data2.PropertyTreeJson;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -33,7 +34,7 @@ public class UpdateContentJson
 
     @JsonCreator
     UpdateContentJson( @JsonProperty("contentId") final String contentId, @JsonProperty("contentName") final String contentName,
-                       @JsonProperty("contentData") final List<DataJson> contentDataJsonList,
+                       @JsonProperty("contentData") final List<PropertyArrayJson> contentDataJsonList,
                        @JsonProperty("metadata") final List<MetadataJson> metadataJsonList, @JsonProperty("form") final FormJson form,
                        @JsonProperty("displayName") final String displayName,
                        @JsonProperty("updateAttachments") final UpdateAttachmentsJson updateAttachments,
@@ -43,7 +44,7 @@ public class UpdateContentJson
     {
         this.contentName = ContentName.from( contentName );
 
-        final ContentData contentData = parseContentData( contentDataJsonList );
+        final PropertyTree contentData = PropertyTreeJson.fromJson( contentDataJsonList );
         final List<Metadata> metadataList = parseMetadata( metadataJsonList );
 
         this.updateContentParams = new UpdateContentParams().
@@ -91,16 +92,6 @@ public class UpdateContentJson
     public ContentName getContentName()
     {
         return contentName;
-    }
-
-    private ContentData parseContentData( final List<DataJson> dataJsonList )
-    {
-        final ContentData contentData = new ContentData();
-        for ( DataJson dataJson : dataJsonList )
-        {
-            contentData.add( dataJson.getData() );
-        }
-        return contentData;
     }
 
     private List<Metadata> parseMetadata( final List<MetadataJson> metadataJsonList )

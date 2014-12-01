@@ -1,6 +1,6 @@
 module api.content.page {
 
-    import RootDataSet = api.data.RootDataSet;
+    import PropertyTree = api.data2.PropertyTree;
 
     export class PageModel {
 
@@ -18,7 +18,7 @@ module api.content.page {
 
         private regions: PageRegions;
 
-        private config: RootDataSet;
+        private config: PropertyTree;
 
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
@@ -91,7 +91,7 @@ module api.content.page {
             if (!this.initialized) {
                 var content = this.liveEditModel.getContent();
                 this.regions = content.isPage() ? content.getPage().getRegions() : new PageRegionsBuilder().build();
-                this.config = content.isPage() ? content.getPage().getConfig() : new RootDataSet();
+                this.config = content.isPage() ? content.getPage().getConfig() : new PropertyTree(api.Client.get().getPropertyIdProvider());
                 this.initialized = true;
             }
             else {
@@ -115,7 +115,7 @@ module api.content.page {
 
             // Need to clone config objects from template, otherwise the template gets changed while editing, since DataSet's are mutable
             this.regions = this.defaultPageTemplate.getRegions().clone();
-            this.config = this.defaultPageTemplate.getConfig().clone();
+            this.config = this.defaultPageTemplate.getConfig().copy();
 
             if (!api.ObjectHelper.equals(oldTemplateKey, null)) {
                 this.notifyPropertyChanged("template", oldTemplateKey, null, eventSource);
@@ -154,12 +154,16 @@ module api.content.page {
                 else {
                     // Need to clone config objects from template, otherwise the template gets changed while editing, since DataSet's are mutable
                     this.regions = template.getRegions().clone();
-                    this.config = template.getConfig().clone();
+                    this.config = template.getConfig().copy();
                 }
             }
             else {
-
-
+                new GetPageDescriptorByKeyRequest(this.template.getController()).sendAndParse().
+                    then((pageDescriptor: PageDescriptor) => {
+                        this.regions.changeRegionsTo(pageDescriptor.getRegions());
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    }).done();
             }
             var newTemplateKey = this.template ? this.template.getKey() : null;
             if (!api.ObjectHelper.equals(oldTemplateKey, newTemplateKey)) {
@@ -169,7 +173,7 @@ module api.content.page {
             return this;
         }
 
-        setConfig(value: RootDataSet, eventOrigin?: any): PageModel {
+        setConfig(value: PropertyTree, eventOrigin?: any): PageModel {
             var oldValue = this.config;
             this.config = value;
             if (!api.ObjectHelper.equals(oldValue, value)) {
@@ -247,7 +251,7 @@ module api.content.page {
             return this.regions;
         }
 
-        getConfig(): RootDataSet {
+        getConfig(): PropertyTree {
             return this.config;
         }
 

@@ -10,8 +10,8 @@ import com.enonic.wem.admin.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.wem.admin.rest.resource.content.json.AccessControlEntryJson;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Metadata;
-import com.enonic.wem.api.data.DataJson;
-import com.enonic.wem.api.data.DataSetJson;
+import com.enonic.wem.api.data2.PropertyArrayJson;
+import com.enonic.wem.api.data2.PropertyTreeJson;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.security.Principals;
@@ -22,7 +22,7 @@ import com.enonic.wem.api.security.acl.AccessControlList;
 public final class ContentJson
     extends ContentSummaryJson
 {
-    private final DataSetJson data;
+    private final List<PropertyArrayJson> data;
 
     private final List<MetadataJson> metadata;
 
@@ -48,7 +48,7 @@ public final class ContentJson
                         final ContentPrincipalsResolver contentPrincipalsResolver )
     {
         super( content, iconUrlResolver );
-        this.data = new DataSetJson( content.getContentData() );
+        this.data = PropertyTreeJson.toJson( content.getData() );
 
         this.metadata = new ArrayList<>();
         final List<Metadata> metadataList = content.getAllMetadata();
@@ -86,9 +86,9 @@ public final class ContentJson
         return jsonList;
     }
 
-    public List<DataJson> getData()
+    public List<PropertyArrayJson> getData()
     {
-        return data.getValue();
+        return data;
     }
 
     public List<MetadataJson> getMetadata()

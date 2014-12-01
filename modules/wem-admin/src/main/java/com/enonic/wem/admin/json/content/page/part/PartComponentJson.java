@@ -9,8 +9,8 @@ import com.enonic.wem.admin.json.content.page.AbstractDescriptorBasedPageCompone
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
-import com.enonic.wem.api.data.DataJson;
-import com.enonic.wem.api.data.RootDataSetJson;
+import com.enonic.wem.api.data2.PropertyArrayJson;
+import com.enonic.wem.api.data2.PropertyTreeJson;
 
 import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
 
@@ -28,12 +28,12 @@ public class PartComponentJson
 
     @JsonCreator
     public PartComponentJson( @JsonProperty("name") final String name, @JsonProperty("descriptor") final String descriptor,
-                              @JsonProperty("config") final List<DataJson> config )
+                              @JsonProperty("config") final List<PropertyArrayJson> config )
     {
         super( newPartComponent().
             name( ComponentName.from( name ) ).
             descriptor( descriptor != null ? PartDescriptorKey.from( descriptor ) : null ).
-            config( config != null ? new RootDataSetJson( config ).getRootDataSet() : null ).
+            config( config != null ? PropertyTreeJson.fromJson( config ) : null ).
             build() );
 
         this.part = getComponent();

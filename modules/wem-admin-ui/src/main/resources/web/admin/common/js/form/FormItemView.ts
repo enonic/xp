@@ -1,5 +1,12 @@
 module api.form {
 
+    import PropertyPath = api.data2.PropertyPath;
+    import Property = api.data2.Property;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
+    import PropertyTree = api.data2.PropertyTree;
+
     export interface FormItemViewConfig {
 
         className: string;
@@ -43,13 +50,6 @@ module api.form {
 
         getParent(): FormItemSetOccurrenceView {
             return this.parent;
-        }
-
-        getParentDataPath(): api.data.DataPath {
-            if (this.parent) {
-                return this.parent.getDataPath();
-            }
-            return null;
         }
 
         /*

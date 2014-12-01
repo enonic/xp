@@ -4,7 +4,7 @@ module api.content.json {
 
         name: string;
 
-        data: api.data.json.DataTypeWrapperJson[];
+        data: api.data2.PropertyArrayJson[];
 
     }
 

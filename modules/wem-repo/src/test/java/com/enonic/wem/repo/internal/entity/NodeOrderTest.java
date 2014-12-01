@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data2.Value;
 import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -22,6 +22,7 @@ import com.enonic.wem.api.query.expr.FunctionExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;
+import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 
@@ -35,10 +36,10 @@ public class NodeOrderTest
     public void geo_distance_sorting()
         throws Exception
     {
-        final Node node1 = createNode( "node1", Value.newGeoPoint( "80,80" ) );
-        final Node node2 = createNode( "node2", Value.newGeoPoint( "81,80" ) );
-        final Node node3 = createNode( "node3", Value.newGeoPoint( "82,80" ) );
-        final Node node4 = createNode( "node4", Value.newGeoPoint( "83,80" ) );
+        final Node node1 = createNode( "node1", Value.newGeoPoint( GeoPoint.from( "80,80" ) ) );
+        final Node node2 = createNode( "node2", Value.newGeoPoint( GeoPoint.from( "81,80" ) ) );
+        final Node node3 = createNode( "node3", Value.newGeoPoint( GeoPoint.from( "82,80" ) ) );
+        final Node node4 = createNode( "node4", Value.newGeoPoint( GeoPoint.from( "83,80" ) ) );
 
         final NodeQuery distanceQuery = NodeQuery.create().
             query( QueryExpr.from( null, new DynamicOrderExpr(
@@ -89,7 +90,7 @@ public class NodeOrderTest
 
     private Node createNode( final String name, final Value value )
     {
-        final RootDataSet data = new RootDataSet();
+        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         data.setProperty( "my-value", value );
 
         return createNode( CreateNodeParams.create().

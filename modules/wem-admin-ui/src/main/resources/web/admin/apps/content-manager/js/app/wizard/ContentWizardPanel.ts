@@ -1,6 +1,6 @@
 module app.wizard {
 
-    import RootDataSet = api.data.RootDataSet;
+    import PropertyTree = api.data2.PropertyTree;
     import FormView = api.form.FormView;
     import ContentFormContext = api.content.form.ContentFormContext;
     import ContentFormContextBuilder = api.content.form.ContentFormContextBuilder;
@@ -394,8 +394,10 @@ module app.wizard {
                 this.formContext = formContextBuilder.build();
 
                 var contentData = content.getContentData();
-                contentData.onPropertyChanged((event: api.data.PropertyChangedEvent) => {
+                contentData.onPropertyChanged((event: api.data2.PropertyChangedEvent) => {
                     if (content.isSite()) {
+
+                        // TODO: Move this listening into SiteModel instead
 
                         if (event.getPath().toString().indexOf(".modules") == 0) {
 
@@ -416,7 +418,7 @@ module app.wizard {
                 schemas.forEach((schema: MetadataSchema, index: number) => {
                     var metadata = content.getMetadata(schema.getMetadataSchemaName());
                     if (!metadata) {
-                        metadata = new Metadata(schema.getMetadataSchemaName(), new RootDataSet());
+                        metadata = new Metadata(schema.getMetadataSchemaName(), new PropertyTree(api.Client.get().getPropertyIdProvider()));
                         content.getAllMetadata().push(metadata);
                     }
                     this.metadataStepFormByName[schema.getMetadataSchemaName().toString()].layout(this.formContext, metadata.getData(),
@@ -589,7 +591,7 @@ module app.wizard {
             viewedContentBuilder.setName(this.resolveContentNameForUpdateRequest());
             viewedContentBuilder.setDisplayName(this.contentWizardHeader.getDisplayName());
             if (this.contentWizardStepForm) {
-                viewedContentBuilder.setData(<api.content.ContentData>this.contentWizardStepForm.getRootDataSet());
+                viewedContentBuilder.setData(this.contentWizardStepForm.getData());
             }
             if (this.securityWizardStepForm) {
                 // TODO: set data
@@ -598,7 +600,7 @@ module app.wizard {
             var metadata: Metadata[] = [];
             for (var key in this.metadataStepFormByName) {
                 if (this.metadataStepFormByName.hasOwnProperty(key)) {
-                    metadata.push(new Metadata(new MetadataSchemaName(key), this.metadataStepFormByName[key].getRootDataSet()));
+                    metadata.push(new Metadata(new MetadataSchemaName(key), this.metadataStepFormByName[key].getData()));
                 }
             }
 

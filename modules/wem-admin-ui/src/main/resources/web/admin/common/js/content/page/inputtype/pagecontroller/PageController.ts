@@ -1,14 +1,15 @@
 module api.content.page.inputtype.pagecontroller {
 
     import support = api.form.inputtype.support;
-    import ValueTypes = api.data.type.ValueTypes;
-    import ValueType = api.data.type.ValueType;
+    import Property = api.data2.Property;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
     import PageDescriptorDropdown = api.content.page.PageDescriptorDropdown;
     import PageDescriptor = api.content.page.PageDescriptor;
     import PageDescriptorsJson = api.content.page.PageDescriptorsJson;
     import GetPageDescriptorsByModulesRequest = api.content.page.GetPageDescriptorsByModulesRequest;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
-    import Value = api.data.Value;
     import ValueChangedEvent = api.form.inputtype.support.ValueChangedEvent;
     import Element = api.dom.Element;
     import ContentInputTypeViewContext = api.content.form.inputtype.ContentInputTypeViewContext;
@@ -24,11 +25,11 @@ module api.content.page.inputtype.pagecontroller {
             return ValueTypes.STRING;
         }
 
-        newInitialValue(): string {
-            return null;
+        newInitialValue(): Value {
+            return ValueTypes.STRING.newNullValue();
         }
 
-        createInputOccurrenceElement(index: number, property: api.data.Property): Element {
+        createInputOccurrenceElement(index: number, property: Property): Element {
             var context = <ContentInputTypeViewContext<any>>this.getContext(),
                 moduleKeys = context.site.getModuleKeys(),
                 request = new GetPageDescriptorsByModulesRequest(moduleKeys),
@@ -42,21 +43,12 @@ module api.content.page.inputtype.pagecontroller {
                 dropdown.setValue(property.getString());
             });
 
-            return dropdown;
-        }
-
-        onOccurrenceValueChanged(element: Element, listener: (event: ValueChangedEvent) => void) {
-            var dropdown = <PageDescriptorDropdown>element;
             dropdown.onOptionSelected((event: OptionSelectedEvent<PageDescriptor>) => {
                 var newValue = new Value(event.getOption().value, ValueTypes.STRING);
-                listener(new ValueChangedEvent(newValue));
+                property.setValue(newValue);
             });
-        }
 
-        getValue(occurrence: Element): Value {
-            var dropdown = <PageDescriptorDropdown> occurrence,
-                selectedOption = dropdown.getSelectedOption();
-            return new Value(selectedOption ? selectedOption.value : null, ValueTypes.STRING);
+            return dropdown;
         }
 
         valueBreaksRequiredContract(value: Value): boolean {

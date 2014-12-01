@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import javax.ws.rs.core.MediaType;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -18,9 +19,8 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.UpdatePageParams;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyIdProviderAccessor;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -35,6 +35,12 @@ public class PageResourceTest
     extends AbstractResourceTest
 {
     private PageService pageService;
+
+    @Before
+    public void before()
+    {
+        PropertyIdProviderAccessor.instance().set( new PropertyTree.PredictivePropertyIdProvider() );
+    }
 
     @Override
     protected Object getResourceInstance()
@@ -103,10 +109,9 @@ public class PageResourceTest
 
     private Content createPage( final String id, final String name, final String contentTypeName )
     {
-        RootDataSet rootDataSet = new RootDataSet();
+        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
 
-        Property dataSet = new Property( "property1", Value.newString( "value1" ) );
-        rootDataSet.add( dataSet );
+        rootDataSet.addString( "property1", "value1" );
 
         Page page = Page.newPage().
             template( PageTemplateKey.from( "my-page" ) ).

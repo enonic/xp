@@ -1,11 +1,11 @@
 package com.enonic.wem.api.support.serializer;
 
-import com.enonic.wem.api.data.DataSet;
+import com.enonic.wem.api.data2.PropertySet;
 
 public abstract class AbstractDataSetSerializer<TO_DATA_INPUT, FROM_DATA_OUTPUT>
 {
-    public abstract DataSet toData( final TO_DATA_INPUT in );
+    public abstract void toData( final TO_DATA_INPUT in, final PropertySet parent );
 
-    public abstract FROM_DATA_OUTPUT fromData( final DataSet data );
+    public abstract FROM_DATA_OUTPUT fromData( final PropertySet data );
 
 }

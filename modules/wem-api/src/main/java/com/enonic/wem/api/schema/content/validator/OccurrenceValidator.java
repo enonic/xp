@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentType;
 
 public final class OccurrenceValidator
@@ -19,7 +19,7 @@ public final class OccurrenceValidator
         this.contentType = contentType;
     }
 
-    public DataValidationErrors validate( final ContentData contentData )
+    public DataValidationErrors validate( final PropertyTree contentData )
     {
         final List<DataValidationError> validationErrors = Lists.newArrayList();
 

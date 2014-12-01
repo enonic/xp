@@ -4,39 +4,43 @@
   "creator": "user:system:admin",
   "data": [
     {
-      "Property": {
-        "name": "myArray",
-        "type": "String",
-        "value": "arrayValue1"
-      }
+      "name": "myArray",
+      "type": "String",
+      "values": [
+        {
+          "id": "2",
+          "v": "arrayValue1"
+        },
+        {
+          "id": "3",
+          "v": "arrayValue2"
+        }
+      ]
     },
     {
-      "Property": {
-        "name": "myArray",
-        "type": "String",
-        "value": "arrayValue2"
-      }
-    },
-    {
-      "DataSet": {
-        "name": "mySetWithArray",
-        "set": [
-          {
-            "Property": {
+      "name": "mySetWithArray",
+      "type": "PropertySet",
+      "values": [
+        {
+          "id": "4",
+          "set": [
+            {
               "name": "myArray",
               "type": "Double",
-              "value": "3.14159"
+              "values": [
+                {
+                  "id": "5",
+                  "v": 3.14159
+                },
+                {
+                  "id": "6",
+                  "v": 1.333
+                }
+              ]
             }
-          },
-          {
-            "Property": {
-              "name": "myArray",
-              "type": "Double",
-              "value": "1.333"
-            }
-          }
-        ]
-      }
+          ]
+        }
+      ]
     }
   ],
   "deletable": true,
@@ -55,11 +59,14 @@
     {
       "data": [
         {
-          "Property": {
-            "name": "myProperty",
-            "type": "Long",
-            "value": 1
-          }
+          "name": "myProperty",
+          "type": "Long",
+          "values": [
+            {
+              "id": "1",
+              "v": 1
+            }
+          ]
         }
       ],
       "name": "myModule:myField"

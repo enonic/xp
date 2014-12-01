@@ -2,7 +2,10 @@ module api.content.form.inputtype.time {
 
     import support = api.form.inputtype.support;
 
-    import ValueTypes = api.data.type.ValueTypes;
+    import Property = api.data2.Property;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
 
     export class Date extends support.BaseInputTypeNotManagingAdd<any,Date> {
 
@@ -10,15 +13,15 @@ module api.content.form.inputtype.time {
             super(config);
         }
 
-        getValueType(): api.data.type.ValueType {
+        getValueType(): ValueType {
             return ValueTypes.LOCAL_DATE;
         }
 
-        newInitialValue(): Date {
-            return null;
+        newInitialValue(): Value {
+            return ValueTypes.LOCAL_DATE.newNullValue();
         }
 
-        createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
+        createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
             var datePickerBuilder = new api.ui.time.DatePickerBuilder();
 
@@ -29,34 +32,18 @@ module api.content.form.inputtype.time {
                     setYear(date.getUTCFullYear()).
                     setMonth(date.getUTCMonth());
             }
-            return datePickerBuilder.build();
+            var datePicker = datePickerBuilder.build();
+            datePicker.onSelectedDateChanged((event: api.ui.time.SelectedDateChangedEvent) => {
+                var changedValue = new Value(event.getDate(), ValueTypes.LOCAL_DATE);
+                property.setValue(changedValue);
+            });
+            return datePicker;
         }
 
         availableSizeChanged() {
         }
 
-
-        onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
-            var datePicker = <api.ui.time.DatePicker>element;
-            datePicker.onSelectedDateChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                var changedValue = new api.data.Value(event.getDate(), ValueTypes.LOCAL_DATE);
-                listener(new api.form.inputtype.support.ValueChangedEvent(changedValue));
-            });
-        }
-
-        getValue(occurrence: api.dom.Element): api.data.Value {
-
-            var datePicker: api.ui.time.DatePicker = < api.ui.time.DatePicker>occurrence;
-
-            if (datePicker.getSelectedDate()) {
-                return new api.data.Value(datePicker.getSelectedDate(), ValueTypes.LOCAL_DATE);
-            }
-            else {
-                return null;
-            }
-        }
-
-        valueBreaksRequiredContract(value: api.data.Value): boolean {
+        valueBreaksRequiredContract(value: Value): boolean {
             return value.isNull() || !value.getType().equals(ValueTypes.LOCAL_DATE);
         }
 

@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.entity.json;
 
 import java.net.URL;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -10,9 +10,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexPath;
@@ -46,13 +44,11 @@ public class NodeJsonSerializerTest
     public void serialize_deserialize()
         throws Exception
     {
-        final Instant dateTime = LocalDateTime.of( 2013, 1, 2, 3, 4, 5, 0 ).toInstant( ZoneOffset.UTC );
-
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( DataPath.from( "a.b.c" ), Value.newDouble( 2.0 ) );
-        rootDataSet.setProperty( DataPath.from( "b" ), Value.newLocalDate( dateTime ) );
-        rootDataSet.setProperty( DataPath.from( "c" ), Value.newString( "runar" ) );
-        rootDataSet.setProperty( DataPath.from( "d" ), Value.newInstant( dateTime ) );
+        PropertyTree nodeData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        nodeData.setDouble( "a.b.c", 2.0 );
+        nodeData.setLocalDate( "b", LocalDate.of( 2013, 1, 2 ) );
+        nodeData.setString( "c", "runar" );
+        nodeData.setLocalDateTime( "d", LocalDateTime.of( 2013, 1, 2, 3, 4, 5, 0 ) );
 
         final AccessControlEntry entry1 = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
@@ -71,16 +67,16 @@ public class NodeJsonSerializerTest
             id( NodeId.from( "myId" ) ).
             parent( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
-            createdTime( dateTime ).
+            createdTime( LocalDateTime.of( 2013, 1, 2, 3, 4, 5, 0 ).toInstant( ZoneOffset.UTC ) ).
             creator( PrincipalKey.from( "user:test:creator" ) ).
             modifier( PrincipalKey.from( "user:test:modifier" ) ).
-            modifiedTime( dateTime ).
+            modifiedTime( LocalDateTime.of( 2013, 1, 2, 3, 4, 5, 0 ).toInstant( ZoneOffset.UTC ) ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).
                 defaultConfig( IndexConfig.MINIMAL ).
                 add( "myPath", IndexConfig.FULLTEXT ).
                 build() ).
-            rootDataSet( rootDataSet ).
+            data( nodeData ).
             attachments( Attachments.from( Attachment.
                 newAttachment().
                 name( "attachment" ).
@@ -98,6 +94,7 @@ public class NodeJsonSerializerTest
         final String expectedStr = readJson( "serialized-node.json" );
 
         final String serializedNode = this.serializer.toString( node );
+        System.out.println( expectedStr );
         assertEquals( expectedStr, serializedNode );
 
         final Node deSerializedNode = this.serializer.toNode( expectedStr );

@@ -22,6 +22,14 @@ module api.form {
             return this.breaksMinimumOccurrencesArray.length == 0 && this.breaksMaximumOccurrencesArray.length == 0;
         }
 
+        isMinimumOccurrencesValid(): boolean {
+            return this.breaksMaximumOccurrencesArray.length == 0;
+        }
+
+        isMaximumOccurrencesValid(): boolean {
+            return this.breaksMaximumOccurrencesArray.length == 0;
+        }
+
         flatten(recording: ValidationRecording) {
 
             recording.breaksMinimumOccurrencesArray.forEach((path: ValidationRecordingPath)=> {

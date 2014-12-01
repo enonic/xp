@@ -2,7 +2,7 @@ package com.enonic.wem.api.node;
 
 import java.util.Objects;
 
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -13,7 +13,7 @@ public class CreateNodeParams
 
     private final String name;
 
-    private final RootDataSet data;
+    private final PropertyTree data;
 
     private final Attachments attachments;
 
@@ -67,7 +67,7 @@ public class CreateNodeParams
         return parent;
     }
 
-    public RootDataSet getData()
+    public PropertyTree getData()
     {
         return data;
     }
@@ -108,7 +108,7 @@ public class CreateNodeParams
 
         private String name;
 
-        private RootDataSet data;
+        private PropertyTree data;
 
         private Attachments attachments;
 
@@ -145,7 +145,7 @@ public class CreateNodeParams
             return this;
         }
 
-        public Builder data( final RootDataSet data )
+        public Builder data( final PropertyTree data )
         {
             this.data = data;
             return this;

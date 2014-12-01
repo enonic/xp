@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.data2.PropertyPath;
 import com.enonic.wem.api.index.PathIndexConfig;
 
 final class PatternConfigJson
@@ -16,7 +16,7 @@ final class PatternConfigJson
     public PathIndexConfig fromJson()
     {
         return PathIndexConfig.create().
-            path( DataPath.from( this.path ) ).
+            path( PropertyPath.from( this.path ) ).
             indexConfig( this.indexConfig.fromJson() ).
             build();
     }

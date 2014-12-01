@@ -1,6 +1,7 @@
 package com.enonic.wem.api.context;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -10,13 +11,24 @@ import com.enonic.wem.api.session.Session;
 final class LocalScopeImpl
     implements LocalScope
 {
+    private static AtomicLong nextId = new AtomicLong( 0 );
+
+    private final String id;
+
     private final Map<String, Object> attributes;
 
     private Session session;
 
-    public LocalScopeImpl()
+    LocalScopeImpl()
     {
+        this.id = "" + nextId.incrementAndGet();
         this.attributes = Maps.newHashMap();
+    }
+
+    @Override
+    public String id()
+    {
+        return id;
     }
 
     @Override

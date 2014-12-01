@@ -1,5 +1,9 @@
 module api.form.inputtype.support {
 
+    import Property = api.data2.Property;
+    import Value = api.data2.Value;
+    import PropertyChangedEvent = api.data2.PropertyChangedEvent;
+
     export class InputOccurrenceView extends api.form.FormItemOccurrenceView {
 
         private inputOccurrence: InputOccurrence;
@@ -12,21 +16,16 @@ module api.form.inputtype.support {
 
         private requiredContractBroken: boolean;
 
-        private valueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent) : void}[] = [];
-
-        constructor(inputOccurrence: InputOccurrence, baseInputTypeView: BaseInputTypeNotManagingAdd<any,any>,
-                    property: api.data.Property) {
+        constructor(inputOccurrence: InputOccurrence, baseInputTypeView: BaseInputTypeNotManagingAdd<any,any>, property: Property) {
             super("input-occurrence-view", inputOccurrence);
 
             var inputElement = baseInputTypeView.createInputOccurrenceElement(inputOccurrence.getIndex(), property);
 
             this.requiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(property != null ? property.getValue() : null);
 
-            baseInputTypeView.onOccurrenceValueChanged(inputElement, (event: api.form.inputtype.support.ValueChangedEvent) => {
+            property.onPropertyChanged((event: api.data2.PropertyChangedEvent) => {
 
-                this.notifyValueChanged(event.getNewValue(), this.getIndex());
-
-                var newStateOfRequiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(event.getNewValue());
+                var newStateOfRequiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(event.getValue());
 
                 if (this.requiredContractBroken != newStateOfRequiredContractBroken) {
                     this.requiredContractBroken = newStateOfRequiredContractBroken;
@@ -74,23 +73,6 @@ module api.form.inputtype.support {
 
         giveFocus(): boolean {
             return this.inputElement.giveFocus();
-        }
-
-        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            this.valueChangedListeners.push(listener);
-        }
-
-        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            this.valueChangedListeners.filter((currentListener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        private notifyValueChanged(newValue: api.data.Value, arrayIndex: number) {
-            var event = new api.form.inputtype.ValueChangedEvent(newValue, arrayIndex);
-            this.valueChangedListeners.forEach((listener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
-                listener(event);
-            });
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

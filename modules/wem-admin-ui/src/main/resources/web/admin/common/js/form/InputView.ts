@@ -1,8 +1,11 @@
 module api.form {
 
-    import Property = api.data.Property;
-    import DataId = api.data.DataId;
-    import DataSet = api.data.DataSet;
+    import Property = api.data2.Property;
+    import PropertyArray = api.data2.PropertyArray;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
+    import PropertySet = api.data2.PropertySet;
 
     export interface InputViewConfig {
 
@@ -12,16 +15,16 @@ module api.form {
 
         parent: FormItemSetOccurrenceView;
 
-        parentDataSet: DataSet;
+        parentDataSet: PropertySet;
     }
 
     export class InputView extends api.form.FormItemView {
 
-        private parentDataSet: api.data.DataSet;
-
         private input: Input;
 
-        private properties: Property[];
+        private parentPropertySet: PropertySet;
+
+        private propertyArray: PropertyArray;
 
         private inputTypeView: api.form.inputtype.InputTypeView<any>;
 
@@ -43,12 +46,11 @@ module api.form {
                 parent: config.parent
             });
 
-            api.util.assertNotNull(config.parentDataSet, "parentDataSet not exected to be null");
-            api.util.assertNotNull(config.input, "input not exected to be null");
+            api.util.assertNotNull(config.parentDataSet, "parentDataSet not expected to be null");
+            api.util.assertNotNull(config.input, "input not expected to be null");
 
             this.input = config.input;
-            this.parentDataSet = config.parentDataSet;
-            this.properties = config.parentDataSet.getPropertiesByName(config.input.getName());
+            this.parentPropertySet = config.parentDataSet;
 
             this.doLayout();
             this.refresh();
@@ -65,8 +67,8 @@ module api.form {
 
             var inputType: api.form.InputTypeName = this.input.getInputType();
             var inputTypeViewContext = this.getContext().createInputTypeViewContext(this.input.getInputTypeConfig(),
-                this.getParentDataPath(),
-                this.input);
+                this.parentPropertySet.getPropertyPath(), this.input);
+
             if (inputtype.InputTypeManager.isRegistered(inputType.getName())) {
 
                 this.inputTypeView = inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewContext);
@@ -80,46 +82,21 @@ module api.form {
                 this.notifyEditContentRequested(content);
             });
 
-            if (this.properties.length == 0) {
-
-                var initialRawValue: any = this.inputTypeView.newInitialValue();
-                if (api.ObjectHelper.iFrameSafeInstanceOf(initialRawValue, api.data.Value)) {
-                    throw new Error(api.ClassHelper.getClassName(this.inputTypeView) +
-                                    ".newInitialValue must not return a api.data.Value, but the raw value instead");
+            this.propertyArray = this.parentPropertySet.getPropertyArray(this.input.getName());
+            if (!this.propertyArray) {
+                this.propertyArray = PropertyArray.create().
+                    setType(this.inputTypeView.getValueType()).
+                    setName(this.input.getName()).
+                    setParent(this.parentPropertySet).
+                    build();
+                this.parentPropertySet.addPropertyArray(this.propertyArray);
+                var initialValue = this.inputTypeView.newInitialValue();
+                if (initialValue) {
+                    this.propertyArray.add(initialValue);
                 }
-                var initialValue = new api.data.Value(initialRawValue, this.inputTypeView.getValueType());
-                var initialProperty = new api.data.Property(this.input.getName(), initialValue);
-                this.properties.push(initialProperty);
-                this.parentDataSet.addData(initialProperty);
             }
 
-            this.inputTypeView.layout(this.input, this.properties);
-
-            this.inputTypeView.onValueAdded((event: inputtype.ValueAddedEvent) => {
-
-                var property = Property.fromNameValue(this.input.getName(), event.getValue());
-                this.parentDataSet.addData(property);
-            });
-
-            this.inputTypeView.onValueRemoved((event: inputtype.ValueRemovedEvent) => {
-
-                var dataRemoved = this.parentDataSet.removeData(new DataId(this.input.getName(), event.getArrayIndex()));
-            });
-
-            this.inputTypeView.onValueChanged((event: inputtype.ValueChangedEvent) => {
-
-                api.util.assertNotNull(event.getNewValue(), "sending ValueChangedEvent-s for null values is not allowed");
-
-                var dataId = new DataId(this.input.getName(), event.getArrayIndex());
-                var property: Property = this.parentDataSet.getPropertyById(dataId);
-                if (property != null) {
-                    property.setValue(event.getNewValue());
-                }
-                else {
-                    var property = Property.fromNameValue(this.input.getName(), event.getNewValue());
-                    this.parentDataSet.addData(property);
-                }
-            });
+            this.inputTypeView.layout(this.input, this.propertyArray);
 
             this.appendChild(this.inputTypeView.getElement());
 
@@ -171,17 +148,14 @@ module api.form {
             }
         }
 
-        getValue(index: number): api.data.Value {
-            return this.inputTypeView.getValues()[index];
-        }
-
         getAttachments(): api.content.attachment.Attachment[] {
             return this.inputTypeView.getAttachments();
         }
 
         private resolveValidationRecordingPath(): ValidationRecordingPath {
 
-            return new ValidationRecordingPath(this.getParentDataPath(), this.input.getName(), this.input.getOccurrences().getMinimum(),
+            return new ValidationRecordingPath(this.propertyArray.getParentPropertyPath(), this.input.getName(),
+                this.input.getOccurrences().getMinimum(),
                 this.input.getOccurrences().getMaximum());
         }
 

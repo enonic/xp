@@ -5,7 +5,7 @@ import java.util.SortedSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.data2.PropertyPath;
 
 public class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument
@@ -33,7 +33,7 @@ public class PatternIndexConfigDocument
 
 
     @Override
-    public IndexConfig getConfigForPath( final DataPath dataPath )
+    public IndexConfig getConfigForPath( final PropertyPath dataPath )
     {
         for ( final PathIndexConfig pathIndexConfig : pathIndexConfigs )
         {
@@ -60,14 +60,14 @@ public class PatternIndexConfigDocument
         public Builder add( final String path, final IndexConfig indexConfig )
         {
             this.pathIndexConfigs.add( PathIndexConfig.create().
-                path( DataPath.from( path ) ).
+                path( PropertyPath.from( path ) ).
                 indexConfig( indexConfig ).
                 build() );
 
             return this;
         }
 
-        public Builder add( final DataPath path, final IndexConfig indexConfig )
+        public Builder add( final PropertyPath path, final IndexConfig indexConfig )
         {
             this.pathIndexConfigs.add( PathIndexConfig.create().
                 path( path ).

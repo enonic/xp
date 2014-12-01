@@ -1,10 +1,15 @@
 module api.content.site {
 
+    import Property = api.data2.Property;
+    import PropertySet = api.data2.PropertySet;
+    import PropertyTree = api.data2.PropertyTree;
+    import ModuleKey = api.module.ModuleKey;
+
     export class ModuleConfig implements api.Equitable, api.Cloneable {
 
-        private moduleKey: api.module.ModuleKey;
+        private moduleKey: ModuleKey;
 
-        private config: api.data.RootDataSet;
+        private config: PropertySet;
 
         constructor(builder: ModuleConfigBuilder) {
             this.moduleKey = builder.moduleKey;
@@ -15,12 +20,8 @@ module api.content.site {
             return this.moduleKey;
         }
 
-        getConfig(): api.data.RootDataSet {
+        getConfig(): PropertySet {
             return this.config;
-        }
-
-        setConfig(config: api.data.RootDataSet) {
-            this.config = config;
         }
 
         toJson(): Object {
@@ -30,11 +31,11 @@ module api.content.site {
             }
         }
 
-        toData(): api.data.RootDataSet {
-            var data = new api.data.RootDataSet();
-            data.addProperty("moduleKey", new api.data.Value(this.moduleKey.getName(), api.data.type.ValueTypes.STRING));
-            data.addProperty("config", new api.data.Value(this.config, api.data.type.ValueTypes.DATA));
-            return data;
+        toPropertySet(parent: PropertySet): PropertySet {
+            var moduleConfigSet = parent.addSet("moduleConfig");
+            moduleConfigSet.addString("moduleKey", this.moduleKey.getName());
+            moduleConfigSet.addSet("config", this.config.copy(parent.getTree()));
+            return moduleConfigSet;
         }
 
         equals(o: api.Equitable): boolean {
@@ -64,21 +65,24 @@ module api.content.site {
 
     export class ModuleConfigBuilder {
 
-        moduleKey: api.module.ModuleKey;
+        moduleKey: ModuleKey;
 
-        config: api.data.RootDataSet;
+        config: PropertySet;
 
         constructor(source?: ModuleConfig) {
             if (source) {
                 this.moduleKey = source.getModuleKey();
-                this.config = source.getConfig() ? source.getConfig().clone() : null;
+                if (source.getConfig()) {
+                    var newTree = new PropertyTree(source.getConfig().getTree().getIdProvider(), source.getConfig());
+                    this.config = newTree.getRoot();
+                }
             }
         }
 
-        fromData(data: api.data.RootDataSet): ModuleConfigBuilder {
-            api.util.assertNotNull(data, "data cannot be null");
-            var moduleKey = api.module.ModuleKey.fromString(data.getProperty("moduleKey").getString());
-            var moduleConfig = data.getProperty("config").getData();
+        fromData(propertySet: PropertySet): ModuleConfigBuilder {
+            api.util.assertNotNull(propertySet, "data cannot be null");
+            var moduleKey = ModuleKey.fromString(propertySet.getString("moduleKey"));
+            var moduleConfig = propertySet.getSet("config");
             this.setModuleKey(moduleKey);
             this.setConfig(moduleConfig);
             return this;
@@ -89,7 +93,7 @@ module api.content.site {
             return this;
         }
 
-        setConfig(value: api.data.RootDataSet): ModuleConfigBuilder {
+        setConfig(value: PropertySet): ModuleConfigBuilder {
             this.config = value;
             return this;
         }

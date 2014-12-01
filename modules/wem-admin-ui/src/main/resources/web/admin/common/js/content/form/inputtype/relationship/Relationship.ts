@@ -1,5 +1,11 @@
 module api.content.form.inputtype.relationship {
 
+    import Property = api.data2.Property;
+    import PropertyArray = api.data2.PropertyArray;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
+
     export interface RelationshipConfig {
         relationshipType: string
     }
@@ -9,6 +15,8 @@ module api.content.form.inputtype.relationship {
         private config: api.content.form.inputtype.ContentInputTypeViewContext<RelationshipConfig>;
 
         private input: api.form.Input;
+
+        private propertyArray: PropertyArray;
 
         private relationshipTypeName: api.schema.relationshiptype.RelationshipTypeName;
 
@@ -31,19 +39,20 @@ module api.content.form.inputtype.relationship {
             console.log("Relationship.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
         }
 
-        getValueType(): api.data.type.ValueType {
-            return api.data.type.ValueTypes.CONTENT_ID;
+        getValueType(): ValueType {
+            return ValueTypes.CONTENT_ID;
         }
 
-        newInitialValue(): api.content.ContentId {
+        newInitialValue(): Value {
             return null;
         }
 
-        layout(input: api.form.Input, properties: api.data.Property[]) {
+        layout(input: api.form.Input, propertyArray: PropertyArray) {
 
             this.layoutInProgress = true;
 
             this.input = input;
+            this.propertyArray = propertyArray;
 
             var relationshipLoader = new RelationshipLoader();
 
@@ -56,12 +65,12 @@ module api.content.form.inputtype.relationship {
             this.contentComboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
 
                 if (!this.layoutInProgress) {
-                    var value = new api.data.Value(event.getOption().displayValue.getContentId(), api.data.type.ValueTypes.CONTENT_ID);
+                    var value = new Value(event.getOption().displayValue.getContentId(), ValueTypes.CONTENT_ID);
                     if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
-                        this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(value, 0));
+                        this.propertyArray.set(0, value);
                     }
                     else {
-                        this.notifyValueAdded(value);
+                        this.propertyArray.add(value);
                     }
 
                 }
@@ -70,7 +79,7 @@ module api.content.form.inputtype.relationship {
 
             this.contentComboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
 
-                this.notifyValueRemoved(removed.getIndex());
+                this.propertyArray.remove(removed.getIndex());
                 this.validate(false);
             });
 
@@ -85,7 +94,7 @@ module api.content.form.inputtype.relationship {
                     relationshipLoader.load();
                     this.appendChild(this.contentComboBox);
 
-                    this.doLoadContent(properties).
+                    this.doLoadContent(propertyArray).
                         then((contents: api.content.ContentSummary[]) => {
 
                             contents.forEach((content: api.content.ContentSummary) => {
@@ -104,10 +113,10 @@ module api.content.form.inputtype.relationship {
                 });
         }
 
-        private doLoadContent(properties: api.data.Property[]): wemQ.Promise<api.content.ContentSummary[]> {
+        private doLoadContent(propertyArray: PropertyArray): wemQ.Promise<api.content.ContentSummary[]> {
 
             var contentIds: ContentId[] = [];
-            properties.forEach((property: api.data.Property) => {
+            propertyArray.forEach((property: Property) => {
                 if (property.hasNonNullValue()) {
                     contentIds.push(property.getContentId());
                 }
@@ -117,15 +126,6 @@ module api.content.form.inputtype.relationship {
                     return result;
                 });
 
-        }
-
-        getValues(): api.data.Value[] {
-            var values: api.data.Value[] = [];
-            this.contentComboBox.getSelectedDisplayValues().forEach((content: api.content.ContentSummary) => {
-                var value = new api.data.Value(content.getContentId(), api.data.type.ValueTypes.CONTENT_ID);
-                values.push(value);
-            });
-            return values;
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {

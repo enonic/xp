@@ -1,8 +1,10 @@
 module api.form {
 
+    import PropertyPath = api.data2.PropertyPath;
+
     export class ValidationRecordingPath {
 
-        private parentDataSet: api.data.DataPath;
+        private parentDataSet: PropertyPath;
 
         private dataName: string;
 
@@ -12,8 +14,8 @@ module api.form {
 
         private max: number;
 
-        constructor(parentDataSet: api.data.DataPath, dataName: string, min?: number, max?: number) {
-            this.parentDataSet = parentDataSet != null ? parentDataSet.asRelative() : null;
+        constructor(parentPropertySet: PropertyPath, dataName: string, min?: number, max?: number) {
+            this.parentDataSet = parentPropertySet != null ? parentPropertySet.asRelative() : null;
             this.dataName = dataName;
             this.refString = this.resolveRefString();
             this.min = min;
@@ -37,7 +39,7 @@ module api.form {
             return s;
         }
 
-        getParentDataSet(): api.data.DataPath {
+        getParentDataSet(): PropertyPath {
             return this.parentDataSet;
         }
 

@@ -10,8 +10,8 @@ import com.enonic.wem.admin.json.content.page.region.RegionJson;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
-import com.enonic.wem.api.data.DataJson;
-import com.enonic.wem.api.data.RootDataSetJson;
+import com.enonic.wem.api.data2.PropertyArrayJson;
+import com.enonic.wem.api.data2.PropertyTreeJson;
 
 import static com.enonic.wem.api.content.page.layout.LayoutComponent.newLayoutComponent;
 
@@ -25,13 +25,13 @@ public class LayoutComponentJson
 
     @JsonCreator
     public LayoutComponentJson( @JsonProperty("name") final String name, @JsonProperty("descriptor") final String descriptor,
-                                @JsonProperty("config") final List<DataJson> config,
+                                @JsonProperty("config") final List<PropertyArrayJson> config,
                                 final @JsonProperty("regions") List<RegionJson> regions )
     {
         super( newLayoutComponent().
             name( ComponentName.from( name ) ).
             descriptor( descriptor != null ? LayoutDescriptorKey.from( descriptor ) : null ).
-            config( config != null ? new RootDataSetJson( config ).getRootDataSet() : null ).
+            config( config != null ? PropertyTreeJson.fromJson( config ) : null ).
             regions( regions != null ? new LayoutRegionsJson( regions ).getLayoutRegions() : null ).
             build() );
 

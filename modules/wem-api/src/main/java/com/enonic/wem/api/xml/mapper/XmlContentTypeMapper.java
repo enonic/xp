@@ -13,7 +13,7 @@ public final class XmlContentTypeMapper
         result.setDisplayName( object.getDisplayName() );
         result.setDescription( object.getDescription() );
         result.setContentDisplayNameScript( object.getContentDisplayNameScript() );
-        result.setSuperType( object.getSuperType().getContentTypeName() );
+        result.setSuperType( object.getSuperType().toString() );
         result.setIsAbstract( object.isAbstract() );
         result.setIsFinal( object.isFinal() );
         result.setIsBuiltIn( object.isBuiltIn() );

@@ -1,6 +1,6 @@
 module LiveEdit {
 
-    import RootDataSet = api.data.RootDataSet;
+    import PropertyTree = api.data2.PropertyTree;
     import PageComponent = api.content.page.PageComponent;
     import Page = api.content.page.Page;
     import PageRegions = api.content.page.PageRegions;
@@ -223,7 +223,7 @@ module LiveEdit {
             builder.setName(componentName);
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedPageComponentBuilder)) {
-                (<DescriptorBasedPageComponentBuilder<DescriptorBasedPageComponent>>builder).setConfig(new RootDataSet());
+                (<DescriptorBasedPageComponentBuilder<DescriptorBasedPageComponent>>builder).setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider()));
             }
             var precedingPageComponent: PageComponent = null;
             if (precedingComponentView) {

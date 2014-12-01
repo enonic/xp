@@ -10,31 +10,32 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
-import com.enonic.wem.api.data.DataJson;
-import com.enonic.wem.api.data.RootDataSetJson;
+import com.enonic.wem.api.data2.PropertyArrayJson;
+import com.enonic.wem.api.data2.PropertyTreeJson;
 import com.enonic.wem.api.module.ModuleKey;
 
 public class ModuleConfigJson
 {
     private final ModuleConfig moduleConfig;
 
-    private final RootDataSetJson configAsJson;
+    private final List<PropertyArrayJson> configAsJson;
 
     @JsonCreator
-    ModuleConfigJson( @JsonProperty("moduleKey") final String moduleKey, @JsonProperty("config") final List<DataJson> configAsDataJsonList )
+    ModuleConfigJson( @JsonProperty("moduleKey") final String moduleKey,
+                      @JsonProperty("config") final List<PropertyArrayJson> configAsDataJsonList )
     {
-        configAsJson = new RootDataSetJson( configAsDataJsonList );
+        configAsJson = configAsDataJsonList;
 
         this.moduleConfig = ModuleConfig.newModuleConfig().
             module( ModuleKey.from( moduleKey ) ).
-            config( configAsJson.getRootDataSet() ).
+            config( configAsJson != null ? PropertyTreeJson.fromJson( configAsJson ) : null ).
             build();
     }
 
     public ModuleConfigJson( final ModuleConfig moduleConfig )
     {
         this.moduleConfig = moduleConfig;
-        this.configAsJson = new RootDataSetJson( moduleConfig.getConfig() );
+        this.configAsJson = PropertyTreeJson.toJson( moduleConfig.getConfig() );
     }
 
     public static ModuleConfigs toModuleConfigs( final Collection<ModuleConfigJson> moduleConfigs )
@@ -54,9 +55,9 @@ public class ModuleConfigJson
         return moduleConfig.getModule().toString();
     }
 
-    public List<DataJson> getConfig()
+    public List<PropertyArrayJson> getConfig()
     {
-        return configAsJson.getSet();
+        return configAsJson;
     }
 
     @JsonIgnore

@@ -1,10 +1,13 @@
 module api.content {
 
     import AccessControlList = api.security.acl.AccessControlList;
+    import PropertyTree = api.data2.PropertyTree;
+    import PropertyPath = api.data2.PropertyPath;
+    import PropertyIdProvider = api.data2.PropertyIdProvider;
 
     export class Content extends ContentSummary implements api.Equitable, api.Cloneable {
 
-        private data: api.content.ContentData;
+        private data: PropertyTree;
 
         private metadata: Metadata[] = [];
 
@@ -20,6 +23,8 @@ module api.content {
 
         constructor(builder: ContentBuilder) {
             super(builder);
+
+            api.util.assertNotNull(builder.data, "data is required for Content");
             this.data = builder.data;
             this.form = builder.form;
 
@@ -30,7 +35,7 @@ module api.content {
             this.inheritPermissions = builder.inheritPermissions;
         }
 
-        getContentData(): ContentData {
+        getContentData(): PropertyTree {
             return this.data;
         }
 
@@ -109,23 +114,23 @@ module api.content {
             return new ContentBuilder(this);
         }
 
-        static fromJson(json: api.content.json.ContentJson): Content {
+        static fromJson(json: api.content.json.ContentJson, propertyIdProvider: PropertyIdProvider): Content {
 
             var type = new api.schema.content.ContentTypeName(json.type);
 
             if (type.isSite()) {
-                return new site.SiteBuilder().fromContentJson(json).build();
+                return new site.SiteBuilder().fromContentJson(json, propertyIdProvider).build();
             }
             else if (type.isPageTemplate()) {
-                return new page.PageTemplateBuilder().fromContentJson(json).build();
+                return new page.PageTemplateBuilder().fromContentJson(json, propertyIdProvider).build();
             }
-            return new ContentBuilder().fromContentJson(json).build();
+            return new ContentBuilder().fromContentJson(json, propertyIdProvider).build();
         }
     }
 
     export class ContentBuilder extends ContentSummaryBuilder {
 
-        data: api.content.ContentData;
+        data: PropertyTree;
 
         form: api.form.Form;
 
@@ -143,7 +148,7 @@ module api.content {
             super(source);
             if (source) {
 
-                this.data = source.getContentData() ? source.getContentData().clone() : null;
+                this.data = source.getContentData() ? source.getContentData().copy() : null;
                 this.form = source.getForm();
 
                 this.metadata = source.getAllMetadata().map((metadata: Metadata) => metadata.clone());
@@ -155,16 +160,19 @@ module api.content {
             }
         }
 
-        fromContentJson(json: api.content.json.ContentJson): ContentBuilder {
+        fromContentJson(json: api.content.json.ContentJson, propertyIdProvider: PropertyIdProvider): ContentBuilder {
 
             super.fromContentSummaryJson(json);
 
-            this.data = ContentDataFactory.createContentData(json.data);
-            this.metadata = (json.metadata || []).map(Metadata.fromJson);
+            this.data = PropertyTree.fromJson(json.data, propertyIdProvider);
+            this.metadata = [];
+            json.metadata.forEach((metadataJson: api.content.json.MetadataJson) => {
+                this.metadata.push(Metadata.fromJson(metadataJson, propertyIdProvider));
+            });
             this.form = json.form != null ? api.form.Form.fromJson(json.form) : null;
 
             if (this.page) {
-                this.pageObj = new api.content.page.PageBuilder().fromJson(json.page).build();
+                this.pageObj = new api.content.page.PageBuilder().fromJson(json.page, propertyIdProvider).build();
                 this.page = true;
             }
             if (json.permissions) {
@@ -180,7 +188,7 @@ module api.content {
             return this;
         }
 
-        setData(value: ContentData): ContentBuilder {
+        setData(value: PropertyTree): ContentBuilder {
             this.data = value;
             return this;
         }

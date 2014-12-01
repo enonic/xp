@@ -116,7 +116,7 @@ final class UpdateContentCommand
 
     private void validateContentData( final Content modifiedContent )
     {
-        final DataValidationErrors dataValidationErrors = validate( modifiedContent.getType(), modifiedContent.getContentData() );
+        final DataValidationErrors dataValidationErrors = validate( modifiedContent.getType(), modifiedContent.getData() );
 
         for ( DataValidationError error : dataValidationErrors )
         {

@@ -3,8 +3,7 @@ package com.enonic.wem.api.content.page;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -13,12 +12,11 @@ import static org.junit.Assert.*;
 
 public class PageTemplateTest
 {
-
     @Test
     public void pageTemplate()
     {
-        RootDataSet pageTemplateConfig = new RootDataSet();
-        pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
+        PropertyTree pageTemplateConfig = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        pageTemplateConfig.addLong( "pause", 10000L );
 
         final PageTemplate.Builder builder = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "abcdefg" ) ).

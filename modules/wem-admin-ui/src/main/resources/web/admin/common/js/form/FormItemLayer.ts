@@ -1,5 +1,7 @@
 module api.form {
 
+    import PropertySet = api.data2.PropertySet;
+
     export class FormItemLayer {
 
         private context: FormContext;
@@ -32,7 +34,7 @@ module api.form {
             return this;
         }
 
-        layout(dataSet: api.data.DataSet): FormItemView[] {
+        layout(dataSet: PropertySet): FormItemView[] {
             this.formItemViews = [];
 
             this.doLayoutDataSet(dataSet);
@@ -41,7 +43,7 @@ module api.form {
         }
 
 
-        private doLayoutDataSet(dataSet: api.data.DataSet) {
+        private doLayoutDataSet(propertySet: PropertySet) {
 
             this.formItems.forEach((formItem: FormItem) => {
                 if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FormItemSet)) {
@@ -51,7 +53,7 @@ module api.form {
                         context: this.context,
                         formItemSet: formItemSet,
                         parent: this.parent,
-                        parentDataSet: dataSet
+                        parentDataSet: propertySet
                     });
 
                     this.parentEl.appendChild(formItemSetView);
@@ -64,7 +66,7 @@ module api.form {
                         context: this.context,
                         fieldSet: fieldSet,
                         parent: this.parent,
-                        dataSet: dataSet
+                        dataSet: propertySet
                     });
 
                     this.parentEl.appendChild(fieldSetView);
@@ -78,7 +80,7 @@ module api.form {
                         context: this.context,
                         input: input,
                         parent: this.parent,
-                        parentDataSet: dataSet
+                        parentDataSet: propertySet
                     });
 
                     this.parentEl.appendChild(inputView);

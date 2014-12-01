@@ -1,9 +1,9 @@
 package com.enonic.wem.api.form.inputtype;
 
 
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data2.ValueTypes;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 
 public class Time
@@ -13,6 +13,7 @@ public class Time
     {
 
     }
+
     @Override
     public void checkBreaksRequiredContract( final Property property )
         throws BreaksRequiredContractException

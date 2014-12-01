@@ -21,6 +21,7 @@
 
 ///<reference path='ContentResourceRequest.ts' />
 ///<reference path='GetContentByIdRequest.ts' />
+///<reference path='GetContentSummaryByIdRequest' />
 ///<reference path='GetContentSummaryByIds' />
 ///<reference path='GetContentByPathRequest.ts' />
 ///<reference path='CreateContentRequest.ts' />

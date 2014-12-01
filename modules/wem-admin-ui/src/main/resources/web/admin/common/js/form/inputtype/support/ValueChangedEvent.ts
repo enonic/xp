@@ -1,15 +1,17 @@
 module api.form.inputtype.support {
 
+    import Value = api.data2.Value;
+
     export class ValueChangedEvent {
 
-        private newValue: api.data.Value;
+        private newValue: Value;
 
-        constructor(newValue: api.data.Value) {
+        constructor(newValue: Value) {
             api.util.assertNotNull(newValue, "sending ValueChangedEvent-s for null values is not allowed");
             this.newValue = newValue;
         }
 
-        getNewValue(): api.data.Value {
+        getNewValue(): Value {
             return this.newValue;
         }
     }

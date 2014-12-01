@@ -1,7 +1,6 @@
 package com.enonic.wem.core.form;
 
-import com.enonic.wem.api.data.Data;
-import com.enonic.wem.api.data.DataSet;
+import com.enonic.wem.api.data2.PropertySet;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
@@ -18,20 +17,16 @@ public class FormDataSerializer
         this.dataSetName = dataSetName;
     }
 
-    public DataSet toData( final Form form )
+    public void toData( final Form form, final PropertySet parent )
     {
-        final DataSet asData = new DataSet( dataSetName );
-        for ( Data data : formItemsDataSerializer.toData( form.getFormItems() ) )
-        {
-            asData.add( data );
-        }
-        return asData;
+        final PropertySet formAsSet = parent.addSet( dataSetName );
+        formItemsDataSerializer.toData( form.getFormItems(), formAsSet );
     }
 
-    public Form fromData( final DataSet dataSet )
+    public Form fromData( final PropertySet formAsPropertySet )
     {
         final Form.Builder form = Form.newForm();
-        final FormItems formItems = formItemsDataSerializer.fromData( dataSet.getData() );
+        final FormItems formItems = formItemsDataSerializer.fromData( formAsPropertySet.getProperties() );
         form.addFormItems( formItems );
         return form.build();
     }

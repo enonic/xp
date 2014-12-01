@@ -1,6 +1,8 @@
 package com.enonic.wem.api.content.page;
 
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.page.region.Region;
@@ -36,6 +38,29 @@ public abstract class AbstractPageComponent
     public void setParent( final Region region )
     {
         this.parent = region;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final AbstractPageComponent that = (AbstractPageComponent) o;
+
+        return Objects.equals( name, that.name );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( name );
     }
 
     public static class Builder

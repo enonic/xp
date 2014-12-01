@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.page;
 
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public class CreatePageTemplateParams
@@ -20,7 +20,7 @@ public class CreatePageTemplateParams
 
     private PageRegions pageRegions;
 
-    private RootDataSet pageConfig;
+    private PropertyTree pageConfig;
 
     public CreatePageTemplateParams site( final ContentPath site )
     {
@@ -64,7 +64,7 @@ public class CreatePageTemplateParams
         return this;
     }
 
-    public CreatePageTemplateParams pageConfig( final RootDataSet pageConfig )
+    public CreatePageTemplateParams pageConfig( final PropertyTree pageConfig )
     {
         this.pageConfig = pageConfig;
         return this;
@@ -100,7 +100,7 @@ public class CreatePageTemplateParams
         return pageRegions;
     }
 
-    public RootDataSet getPageConfig()
+    public PropertyTree getPageConfig()
     {
         return pageConfig;
     }

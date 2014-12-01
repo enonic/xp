@@ -8,10 +8,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data.DataId;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data2.Value;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
@@ -77,14 +77,13 @@ abstract class PrincipalNodeTranslator
 
     private static Principal doCreatePrincipalFromNode( final Node node )
     {
-        final Property typeProperty = node.data().getProperty( PRINCIPAL_TYPE_KEY );
-
-        if ( typeProperty == null )
+        final PropertySet nodeAsSet = node.data().getRoot();
+        if ( nodeAsSet.isNull( PRINCIPAL_TYPE_KEY ) )
         {
             throw new IllegalArgumentException( "Property " + PRINCIPAL_TYPE_KEY + " not found on node with id " + node.id() );
         }
 
-        final PrincipalType principalType = PrincipalType.valueOf( typeProperty.getValue().asString() );
+        final PrincipalType principalType = PrincipalType.valueOf( nodeAsSet.getString( PRINCIPAL_TYPE_KEY ) );
 
         switch ( principalType )
         {
@@ -99,21 +98,6 @@ abstract class PrincipalNodeTranslator
         }
     }
 
-    private static String getDisplayNameProperty( final RootDataSet rootDataSet )
-    {
-        return getStringValue( rootDataSet, DISPLAY_NAME_KEY );
-    }
-
-    private static String getStringValue( final RootDataSet rootDataSet, final String key )
-    {
-        if ( rootDataSet.getProperty( key ) == null )
-        {
-            throw new IllegalArgumentException( "Required property " + key + " not found on Node" );
-        }
-
-        return rootDataSet.getProperty( key ).getValue().asString();
-    }
-
     public static CreateNodeParams toCreateNodeParams( final Principal principal )
     {
         Preconditions.checkNotNull( principal );
@@ -124,18 +108,18 @@ abstract class PrincipalNodeTranslator
             setNodeId( NodeId.from( principal.getKey() ) ).
             indexConfigDocument( PrincipalIndexConfigFactory.create() );
 
-        final RootDataSet data = new RootDataSet();
-        data.setProperty( DISPLAY_NAME_KEY, Value.newString( principal.getDisplayName() ) );
-        data.setProperty( PRINCIPAL_TYPE_KEY, Value.newString( principal.getKey().getType() ) );
+        final PropertyTree data = new PropertyTree();
+        data.setString( DISPLAY_NAME_KEY, principal.getDisplayName() );
+        data.setString( PRINCIPAL_TYPE_KEY, principal.getKey().getType().toString() );
         if ( !principal.getKey().isRole() )
         {
-            data.setProperty( USER_STORE_KEY, Value.newString( principal.getKey().getUserStore().toString() ) );
+            data.setString( USER_STORE_KEY, principal.getKey().getUserStore().toString() );
         }
 
         switch ( principal.getKey().getType() )
         {
             case USER:
-                populateUserData( data, (User) principal );
+                populateUserData( data.getRoot(), (User) principal );
                 break;
         }
 
@@ -150,13 +134,13 @@ abstract class PrincipalNodeTranslator
 
         final UpdateNodeParams updateNodeParams = new UpdateNodeParams().id( NodeId.from( principal.getKey() ) ).
             editor( toBeEdited -> {
-                final RootDataSet data = toBeEdited.data().copy().toRootDataSet();
+                final PropertyTree data = toBeEdited.data().copy();
 
-                data.setProperty( DISPLAY_NAME_KEY, Value.newString( principal.getDisplayName() ) );
+                data.setString( DISPLAY_NAME_KEY, principal.getDisplayName() );
                 switch ( principal.getKey().getType() )
                 {
                     case USER:
-                        populateUserData( data, (User) principal );
+                        populateUserData( data.getRoot(), (User) principal );
                 }
 
                 return Node.editNode( toBeEdited ).rootDataSet( data );
@@ -171,18 +155,18 @@ abstract class PrincipalNodeTranslator
 
         final UpdateNodeParams updateNodeParams = new UpdateNodeParams().id( NodeId.from( relationship.getFrom() ) ).
             editor( toBeEdited -> {
-                final RootDataSet data = toBeEdited.data().copy().toRootDataSet();
+                final PropertyTree data = toBeEdited.data().copy();
 
                 final String relationshipToKey = relationship.getTo().toString();
 
-                final boolean relationshipInList = data.getPropertiesByName( MEMBER_KEY ).stream().
+                final boolean relationshipInList = data.getProperties( MEMBER_KEY ).stream().
                     map( Property::getValue ).
                     map( Value::asString ).
                     anyMatch( relationshipToKey::equals );
 
                 if ( !relationshipInList )
                 {
-                    data.add( Property.newString( MEMBER_KEY, relationshipToKey ) );
+                    data.addString( MEMBER_KEY, relationshipToKey );
                 }
 
                 return Node.editNode( toBeEdited ).rootDataSet( data );
@@ -197,18 +181,17 @@ abstract class PrincipalNodeTranslator
 
         final UpdateNodeParams updateNodeParams = new UpdateNodeParams().id( NodeId.from( relationship.getFrom() ) ).
             editor( toBeEdited -> {
-                final RootDataSet data = toBeEdited.data().copy().toRootDataSet();
+                final PropertyTree data = toBeEdited.data().copy();
 
                 final String relationshipToKey = relationship.getTo().toString();
 
-                final List<Value> updatedMembers = data.getPropertiesByName( MEMBER_KEY ).stream().
+                final List<Value> updatedMembers = data.getProperties( MEMBER_KEY ).stream().
                     map( Property::getValue ).
                     filter( ( val ) -> !relationshipToKey.equals( val.asString() ) ).
                     collect( Collectors.toList() );
-                final Value[] values = updatedMembers.toArray( new Value[updatedMembers.size()] );
 
-                data.remove( DataId.from( MEMBER_KEY ) );
-                data.setProperty( MEMBER_KEY, values );
+                data.removeProperty( MEMBER_KEY );
+                data.setValues( MEMBER_KEY, updatedMembers );
 
                 return Node.editNode( toBeEdited ).rootDataSet( data );
             } );
@@ -226,9 +209,9 @@ abstract class PrincipalNodeTranslator
                 {
                     return Node.editNode( Node.newNode().build() );
                 }
-                final RootDataSet data = toBeEdited.data().copy().toRootDataSet();
+                final PropertyTree data = toBeEdited.data().copy();
 
-                data.remove( DataId.from( MEMBER_KEY ) );
+                data.removeProperties( MEMBER_KEY );
 
                 return Node.editNode( toBeEdited ).rootDataSet( data );
             } );
@@ -238,8 +221,8 @@ abstract class PrincipalNodeTranslator
 
     static PrincipalRelationships relationshipsFromNode( final Node node )
     {
-        final RootDataSet rootDataSet = node.data();
-        final List<Property> members = rootDataSet.getPropertiesByName( MEMBER_KEY );
+        final PropertyTree rootDataSet = node.data();
+        final List<Property> members = rootDataSet.getProperties( MEMBER_KEY );
         if ( members == null || members.isEmpty() )
         {
             return PrincipalRelationships.empty();
@@ -257,23 +240,23 @@ abstract class PrincipalNodeTranslator
         return PrincipalRelationships.from( relationships.build() );
     }
 
-    private static void populateUserData( final RootDataSet data, final User user )
+    private static void populateUserData( final PropertySet data, final User user )
     {
-        data.setProperty( EMAIL_KEY, Value.newString( user.getEmail() ) );
-        data.setProperty( LOGIN_KEY, Value.newString( user.getLogin() ) );
+        data.setString( EMAIL_KEY, user.getEmail() );
+        data.setString( LOGIN_KEY, user.getLogin() );
     }
 
     private static User createUserFromNode( final Node node )
     {
         Preconditions.checkNotNull( node );
 
-        final RootDataSet rootDataSet = node.data();
+        final PropertyTree nodeAsTree = node.data();
 
         return User.create().
-            email( getStringValue( rootDataSet, EMAIL_KEY ) ).
-            login( getStringValue( rootDataSet, LOGIN_KEY ) ).
+            email( nodeAsTree.getString( EMAIL_KEY ) ).
+            login( nodeAsTree.getString( LOGIN_KEY ) ).
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
-            displayName( getDisplayNameProperty( node.data() ) ).
+            displayName( nodeAsTree.getString( DISPLAY_NAME_KEY ) ).
             modifiedTime( node.getModifiedTime() ).
             build();
     }
@@ -282,9 +265,11 @@ abstract class PrincipalNodeTranslator
     {
         Preconditions.checkNotNull( node );
 
+        final PropertyTree nodeAsTree = node.data();
+
         return Group.create().
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
-            displayName( getDisplayNameProperty( node.data() ) ).
+            displayName( nodeAsTree.getString( DISPLAY_NAME_KEY ) ).
             modifiedTime( node.getModifiedTime() ).
             build();
     }
@@ -293,9 +278,11 @@ abstract class PrincipalNodeTranslator
     {
         Preconditions.checkNotNull( node );
 
+        final PropertyTree nodeAsTree = node.data();
+
         return Role.create().
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
-            displayName( getDisplayNameProperty( node.data() ) ).
+            displayName( nodeAsTree.getString( DISPLAY_NAME_KEY ) ).
             modifiedTime( node.getModifiedTime() ).
             build();
     }

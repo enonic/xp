@@ -1,11 +1,11 @@
 package com.enonic.wem.api.index;
 
-import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.data2.PropertyPath;
 
 public class PathIndexConfig
     implements Comparable<PathIndexConfig>
 {
-    private final DataPath path;
+    private final PropertyPath path;
 
     private final IndexConfig indexConfig;
 
@@ -15,13 +15,13 @@ public class PathIndexConfig
         indexConfig = builder.indexConfig;
     }
 
-    public boolean matches( final DataPath dataPath )
+    public boolean matches( final PropertyPath dataPath )
     {
         return dataPath.startsWith( path );
 
     }
 
-    public DataPath getPath()
+    public PropertyPath getPath()
     {
         return path;
     }
@@ -38,7 +38,7 @@ public class PathIndexConfig
 
     public static final class Builder
     {
-        private DataPath path;
+        private PropertyPath path;
 
         private IndexConfig indexConfig;
 
@@ -46,7 +46,7 @@ public class PathIndexConfig
         {
         }
 
-        public Builder path( DataPath path )
+        public Builder path( PropertyPath path )
         {
             this.path = path;
             return this;

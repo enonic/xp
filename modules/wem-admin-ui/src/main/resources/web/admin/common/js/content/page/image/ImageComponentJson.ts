@@ -4,6 +4,6 @@ module api.content.page.image {
 
         image:string;
 
-        config: api.data.json.DataTypeWrapperJson[];
+        config: api.data2.PropertyArrayJson[];
     }
 }

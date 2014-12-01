@@ -15,6 +15,10 @@ module api {
                 return true;
             }
 
+            if (!(typeof obj === 'object')) {
+                return false;
+            }
+
             var prototype = Object.getPrototypeOf(obj);
             do {
                 prototype = Object.getPrototypeOf(prototype);
@@ -60,6 +64,48 @@ module api {
 
             for (var i = 0; i < arrayA.length; i++) {
                 if (!ObjectHelper.equals(arrayA[i], arrayB[i])) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        static mapEquals(mapA: {[s:string] : Equitable;}, mapB: {[s:string] : Equitable;}) {
+
+            if (!mapA && !mapB) {
+                return true;
+            }
+            else if (!mapA && mapB) {
+                return false;
+            }
+            else if (mapA && !mapB) {
+                return false;
+            }
+
+            // Gather keys for both maps
+            var keysA: string[] = [];
+            for (var keyA  in mapA) {
+                if (mapA.hasOwnProperty(keyA)) {
+                    keysA.push(keyA);
+                }
+            }
+            var keysB: string[] = [];
+            for (var keyB  in mapB) {
+                if (mapB.hasOwnProperty(keyB)) {
+                    keysB.push(keyB);
+                }
+            }
+
+            if (!ObjectHelper.stringArrayEquals(keysA, keysB)) {
+                return false;
+            }
+
+            for (var keyA  in keysA) {
+                var valueA: Equitable = mapA[keyA];
+                var valueB: Equitable = mapB[keyA];
+
+                if (!ObjectHelper.equals(valueA, valueB)) {
                     return false;
                 }
             }
@@ -185,10 +231,25 @@ module api {
              To avoid exception, when converting circular structure to JSON in Chrome the replacer
              function must be used to replace references to the same object with `undefined`.
              */
-            var aString = JSON.stringify(a, (key, value) => { return (!!key && a == value) ? undefined : value; });
-            var bString = JSON.stringify(b, (key, value) => { return (!!key && b == value) ? undefined : value; });
+            var aString = JSON.stringify(a, (key, value) => {
+                return (!!key && a == value) ? undefined : value;
+            });
+            var bString = JSON.stringify(b, (key, value) => {
+                return (!!key && b == value) ? undefined : value;
+            });
             return aString == bString;
 
+        }
+
+        static objectPropertyIterator(object: any, callback: {(name: string, property: any, index?: number): void;}) {
+
+            var index = 0;
+            for (var name  in object) {
+                if (object.hasOwnProperty(name)) {
+                    var property = object[name];
+                    callback(name, property, index++);
+                }
+            }
         }
     }
 }

@@ -260,12 +260,6 @@ public final class ContentTypeName
         return MEDIA_EXECUTABLE.equals( this );
     }
 
-    // TODO remove? -> toString
-    public String getContentTypeName()
-    {
-        return toString();
-    }
-
     @Override
     public int compareTo( final ContentTypeName that )
     {

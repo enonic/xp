@@ -1,12 +1,20 @@
 module api.form {
 
+    import PropertyPath = api.data2.PropertyPath;
+    import Property = api.data2.Property;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
+    import PropertyTree = api.data2.PropertyTree;
+    import PropertySet = api.data2.PropertySet;
+
     export class FormView extends api.dom.DivEl {
 
         private context: FormContext;
 
         private form: Form;
 
-        private rootDataSet: api.data.RootDataSet;
+        private rootDataSet: PropertySet;
 
         private formItemViews: FormItemView[] = [];
 
@@ -20,11 +28,11 @@ module api.form {
 
         private blurListeners: {(event: FocusEvent):void}[] = [];
 
-        constructor(context: FormContext, form: Form, rootDataSet?: api.data.RootDataSet) {
+        constructor(context: FormContext, form: Form, propertySet: PropertySet) {
             super("form-view");
             this.context = context;
             this.form = form;
-            this.rootDataSet = rootDataSet;
+            this.rootDataSet = propertySet;
             this.doLayout();
         }
 
@@ -124,92 +132,7 @@ module api.form {
             }
         }
 
-        public getValueAtPath(path: api.data.DataPath): api.data.Value {
-            if (path == null) {
-                throw new Error("To get a value, a path is required");
-            }
-            if (path.elementCount() == 0) {
-                throw new Error("Cannot get value from empty path: " + path.toString());
-            }
-
-            if (path.elementCount() == 1) {
-                return this.getValue(path.getFirstElement().toDataId());
-            }
-            else {
-                return this.forwardGetValueAtPath(path);
-            }
-        }
-
-        public getValue(dataId: api.data.DataId): api.data.Value {
-
-            var inputView = this.getInputView(dataId.getName());
-            if (inputView == null) {
-                return null;
-            }
-            return inputView.getValue(dataId.getArrayIndex());
-        }
-
-        private forwardGetValueAtPath(path: api.data.DataPath): api.data.Value {
-
-            var dataId: api.data.DataId = path.getFirstElement().toDataId();
-            var formItemSetView = this.getFormItemSetView(dataId.getName());
-            if (formItemSetView == null) {
-                return null;
-            }
-            var formItemSetOccurrenceView = formItemSetView.getFormItemSetOccurrenceView(dataId.getArrayIndex());
-            return formItemSetOccurrenceView.getValueAtPath(path.newWithoutFirstElement());
-        }
-
-        public getInputView(name: string): InputView {
-
-            var formItemView = this.getFormItemView(name);
-            if (formItemView == null) {
-                return null;
-            }
-            if (!(api.ObjectHelper.iFrameSafeInstanceOf(formItemView, InputView))) {
-                throw new Error("Found a FormItemView with name [" + name + "], but it was not an InputView");
-            }
-            return <InputView>formItemView;
-        }
-
-        public getFormItemSetView(name: string): FormItemSetView {
-
-            var formItemView = this.getFormItemView(name);
-            if (formItemView == null) {
-                return null;
-            }
-            if (!(api.ObjectHelper.iFrameSafeInstanceOf(formItemView, FormItemSetView))) {
-                throw new Error("Found a FormItemView with name [" + name + "], but it was not an FormItemSetView");
-            }
-            return <FormItemSetView>formItemView;
-        }
-
-        public getFormItemView(name: string): FormItemView {
-
-            // TODO: Performance could be improved if the views where accessible by name from a map
-
-            for (var i = 0; i < this.formItemViews.length; i++) {
-                var curr = this.formItemViews[i];
-                if (name == curr.getFormItem().getName()) {
-                    return curr;
-                }
-            }
-
-            // FormItemView not found - look inside FieldSet-s
-            for (var i = 0; i < this.formItemViews.length; i++) {
-                var curr = this.formItemViews[i];
-                if (api.ObjectHelper.iFrameSafeInstanceOf(curr, FieldSetView)) {
-                    var view = (<FieldSetView>curr).getFormItemView(name);
-                    if (view != null) {
-                        return view;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        getData(): api.data.RootDataSet {
+        getData(): PropertySet {
             return this.rootDataSet;
         }
 

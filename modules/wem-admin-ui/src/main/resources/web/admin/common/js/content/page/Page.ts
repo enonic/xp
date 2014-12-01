@@ -1,5 +1,8 @@
 module api.content.page {
 
+    import PropertyTree = api.data2.PropertyTree;
+    import PropertyIdProvider = api.data2.PropertyIdProvider;
+
     export class Page implements api.Equitable, api.Cloneable {
 
         private controller: DescriptorKey;
@@ -8,7 +11,7 @@ module api.content.page {
 
         private regions: PageRegions;
 
-        private config: api.data.RootDataSet;
+        private config: PropertyTree;
 
         constructor(builder: PageBuilder) {
             this.controller = builder.controller;
@@ -45,7 +48,7 @@ module api.content.page {
             return this.config != null;
         }
 
-        getConfig(): api.data.RootDataSet {
+        getConfig(): PropertyTree {
             return this.config;
         }
 
@@ -87,22 +90,24 @@ module api.content.page {
 
         regions: PageRegions;
 
-        config: api.data.RootDataSet;
+        config: PropertyTree;
 
         constructor(source?: Page) {
             if (source) {
                 this.controller = source.getController();
                 this.template = source.getTemplate();
                 this.regions = source.getRegions() ? source.getRegions().clone() : null;
-                this.config = source.getConfig() ? source.getConfig().clone() : null;
+                this.config = source.getConfig() ? source.getConfig().copy() : null;
             }
         }
 
-        public fromJson(json: api.content.page.PageJson): PageBuilder {
+        public fromJson(json: api.content.page.PageJson, propertyIdProvider: PropertyIdProvider): PageBuilder {
             this.setController(json.controller ? DescriptorKey.fromString(json.controller) : null);
             this.setTemplate(json.template ? PageTemplateKey.fromString(json.template) : null);
-            this.setRegions(json.regions != null ? new PageRegionsBuilder().fromJson(json.regions).build() : null);
-            this.setConfig(json.config != null ? api.data.DataFactory.createRootDataSet(json.config) : null);
+            this.setRegions(json.regions != null ? new PageRegionsBuilder().fromJson(json.regions, propertyIdProvider).build() : null);
+            this.setConfig(json.config != null
+                ? PropertyTree.fromJson(json.config, propertyIdProvider)
+                : new PropertyTree(propertyIdProvider));
             return this;
         }
 
@@ -121,7 +126,7 @@ module api.content.page {
             return this;
         }
 
-        public setConfig(value: api.data.RootDataSet): PageBuilder {
+        public setConfig(value: PropertyTree): PageBuilder {
             this.config = value;
             return this;
         }

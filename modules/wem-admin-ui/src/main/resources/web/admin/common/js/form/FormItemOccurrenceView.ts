@@ -21,7 +21,6 @@ module api.form {
             });
         }
 
-
         notifyRemoveButtonClicked() {
             this.removeButtonClickedListeners.forEach((listener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) => {
                 listener.call(this, new RemoveButtonClickedEvent(this, this.formItemOccurrence.getIndex()));
@@ -38,10 +37,6 @@ module api.form {
 
         giveFocus(): boolean {
             return false;
-        }
-
-        getOccurrence(): FormItemOccurrence<FormItemOccurrenceView> {
-            return this.formItemOccurrence;
         }
     }
 }

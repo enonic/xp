@@ -21,6 +21,12 @@ public class MixinReference
         this.mixinName = builder.mixinName;
     }
 
+    @Override
+    public FormItemType getType()
+    {
+        return FormItemType.MIXIN_REFERENCE;
+    }
+
     public MixinName getMixinName()
     {
         return mixinName;

@@ -1,8 +1,12 @@
 package com.enonic.wem.api.content.page;
 
 
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.rendering.Component;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.EditBuilder;
@@ -18,12 +22,13 @@ public final class Page
 
     private final PageRegions regions;
 
-    private final RootDataSet config;
+    private final PropertyTree config;
 
     private Page( final PageProperties properties )
     {
         this.controller = properties.controller;
         this.template = properties.template;
+        Preconditions.checkNotNull( properties.config, "config cannot be null" );
         this.config = properties.config;
         this.regions = properties.regions;
     }
@@ -69,7 +74,7 @@ public final class Page
         return config != null;
     }
 
-    public RootDataSet getConfig()
+    public PropertyTree getConfig()
     {
         return config;
     }
@@ -77,6 +82,46 @@ public final class Page
     public PageComponent getComponent( final ComponentPath path )
     {
         return regions.getComponent( path );
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final Page page = (Page) o;
+
+        if ( !config.equals( page.config ) )
+        {
+            return false;
+        }
+        if ( controller != null ? !controller.equals( page.controller ) : page.controller != null )
+        {
+            return false;
+        }
+        if ( !regions.equals( page.regions ) )
+        {
+            return false;
+        }
+        if ( template != null ? !template.equals( page.template ) : page.template != null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( controller, template, regions, config );
     }
 
     public static Builder newPage()
@@ -97,7 +142,7 @@ public final class Page
 
         PageRegions regions;
 
-        RootDataSet config;
+        PropertyTree config;
 
         PageProperties()
         {
@@ -106,7 +151,7 @@ public final class Page
 
         PageProperties( final Page source )
         {
-            this.config = source.config.copy().toRootDataSet();
+            this.config = source.config.copy();
             this.template = source.getTemplate();
             this.controller = source.getController();
             this.regions = source.getRegions();
@@ -166,7 +211,7 @@ public final class Page
             return this;
         }
 
-        public PageEditBuilder config( RootDataSet value )
+        public PageEditBuilder config( PropertyTree value )
         {
             changes.recordChange( newPossibleChange( "config" ).from( original.getConfig() ).to( value ).build() );
             config = value;
@@ -196,7 +241,7 @@ public final class Page
     {
         private Builder()
         {
-            this.config = RootDataSet.create().build().toRootDataSet();
+            this.config = new PropertyTree();
         }
 
         private Builder( final Page page )
@@ -222,7 +267,7 @@ public final class Page
             return this;
         }
 
-        public Builder config( final RootDataSet config )
+        public Builder config( final PropertyTree config )
         {
             this.config = config;
             return this;

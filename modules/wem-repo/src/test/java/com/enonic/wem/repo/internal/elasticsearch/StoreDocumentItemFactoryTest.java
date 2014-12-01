@@ -1,13 +1,16 @@
 package com.enonic.wem.repo.internal.elasticsearch;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.index.IndexConfig;
+import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
 
@@ -15,11 +18,13 @@ import static org.junit.Assert.*;
 
 public class StoreDocumentItemFactoryTest
 {
+    private PropertyTree propertyTree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+
     @Test
     public void double_property()
         throws Exception
     {
-        Property property = Property.newDouble( "myDoubleField", 123.0 );
+        Property property = propertyTree.setDouble( "myDoubleField", 123.0 );
 
         final Set<AbstractStoreDocumentItem> indexDocumentItems = StoreDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
 
@@ -31,7 +36,7 @@ public class StoreDocumentItemFactoryTest
     public void int_property()
         throws Exception
     {
-        Property property = Property.newLong( "myDoubleField", 123L );
+        Property property = propertyTree.setLong( "myLongField", 123L );
 
         final Set<AbstractStoreDocumentItem> indexDocumentItems = StoreDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
 
@@ -43,7 +48,20 @@ public class StoreDocumentItemFactoryTest
     public void date_property()
         throws Exception
     {
-        Property property = Property.newLocalDate( "myDateField", LocalDate.now() );
+        Property property = propertyTree.setLocalDate( "myDateField", LocalDate.now() );
+
+        final Set<AbstractStoreDocumentItem> indexDocumentItems = StoreDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
+
+        // Should yield date, string, orderby, all*2
+        assertEquals( 5, indexDocumentItems.size() );
+    }
+
+    @Test
+    @Ignore // TODO: Correct test & implementation
+    public void dateTime_property()
+        throws Exception
+    {
+        Property property = propertyTree.setLocalDateTime( "myDateTimeField", LocalDateTime.now() );
 
         final Set<AbstractStoreDocumentItem> indexDocumentItems = StoreDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
 
@@ -55,7 +73,7 @@ public class StoreDocumentItemFactoryTest
     public void geopoint_property()
         throws Exception
     {
-        Property property = new Property( "myGeoPoint", Value.newGeoPoint( "41.12,-71.34" ) );
+        Property property = propertyTree.setGeoPoint( "myGeoPoint", GeoPoint.from( "41.12,-71.34" ) );
 
         final Set<AbstractStoreDocumentItem> indexDocumentItems = StoreDocumentItemFactory.create( property, IndexConfig.BY_TYPE );
 
@@ -67,7 +85,7 @@ public class StoreDocumentItemFactoryTest
     public void string_by_type()
         throws Exception
     {
-        Property property = new Property( "myStringProp", Value.newString( "myStringValue" ) );
+        Property property = propertyTree.setString( "myStringProp", "myStringValue" );
 
         // When by type, should yield string, fulltext, tokenized, orderby, all analyzed, all tokenized
         assertEquals( 6, StoreDocumentItemFactory.create( property, IndexConfig.BY_TYPE ).size() );
@@ -77,7 +95,7 @@ public class StoreDocumentItemFactoryTest
     public void double_by_type()
         throws Exception
     {
-        Property property = new Property( "myStringProp", Value.newDouble( 1.0 ) );
+        Property property = propertyTree.setDouble( "myStringProp", 1.0 );
 
         // When by type, should yield string, number, orderby, all*2
         assertEquals( 5, StoreDocumentItemFactory.create( property, IndexConfig.BY_TYPE ).size() );
@@ -87,7 +105,7 @@ public class StoreDocumentItemFactoryTest
     public void fulltext_not_in_all()
         throws Exception
     {
-        Property property = new Property( "myStringProp", Value.newString( "myStringValue" ) );
+        Property property = propertyTree.setString( "myStringProp", "myStringValue" );
 
         // should yield string, fulltext, !tokenized, orderby, !all analyzed, !all tokenized
         assertEquals( 3, StoreDocumentItemFactory.create( property, IndexConfig.create().

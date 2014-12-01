@@ -6,8 +6,7 @@ import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 
 import static com.enonic.wem.api.content.page.Page.newPage;
 import static com.enonic.wem.api.content.page.layout.LayoutComponent.newLayoutComponent;
@@ -20,8 +19,8 @@ public class ComponentsTest
     @Test
     public void page()
     {
-        RootDataSet pageConfig = new RootDataSet();
-        pageConfig.addProperty( "pause", Value.newLong( 200 ) );
+        PropertyTree pageConfig = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        pageConfig.addLong( "pause", 200L );
 
         Page page = newPage().
             template( PageTemplateKey.from( "pageTemplateName" ) ).
@@ -35,8 +34,8 @@ public class ComponentsTest
     @Test
     public void part()
     {
-        RootDataSet partConfig = new RootDataSet();
-        partConfig.addProperty( "width", Value.newLong( 150 ) );
+        PropertyTree partConfig = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        partConfig.addLong( "width", 150L );
 
         PartComponent partComponent = newPartComponent().
             name( "my-part" ).
@@ -52,8 +51,8 @@ public class ComponentsTest
     @Test
     public void layout()
     {
-        RootDataSet layoutConfig = new RootDataSet();
-        layoutConfig.addProperty( "columns", Value.newLong( 2 ) );
+        PropertyTree layoutConfig = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        layoutConfig.addLong( "columns", 2L );
 
         LayoutComponent layoutComponent = newLayoutComponent().
             name( "my-template" ).

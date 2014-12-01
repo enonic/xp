@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Value;
 import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
@@ -66,11 +66,11 @@ public class OrderByValueResolverTest
         createSearchIndex( this.repository );
         refresh();
 
-        final String hundred = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 10000 ) ) );
-        final String thousand = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 100000 ) ) );
-        final String minusThousand = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( -1000 ) ) );
-        final String minusHundred = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( -100 ) ) );
-        final String zero = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 0 ) ) );
+        final String hundred = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 10000.0 ) ) );
+        final String thousand = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 100000.0 ) ) );
+        final String minusThousand = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( -1000.0 ) ) );
+        final String minusHundred = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( -100.0 ) ) );
+        final String zero = storeOrderbyDocument( OrderbyValueResolver.getOrderbyValue( Value.newDouble( 0.0 ) ) );
         refresh();
 
         final SearchResult result = elasticsearchDao.find( ElasticsearchQuery.create().

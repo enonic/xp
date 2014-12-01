@@ -1,7 +1,7 @@
 package com.enonic.wem.api.form;
 
 
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.Property;
 
 public class BreaksRegexValidationException
     extends Exception

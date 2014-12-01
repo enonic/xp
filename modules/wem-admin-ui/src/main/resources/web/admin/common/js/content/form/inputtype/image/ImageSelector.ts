@@ -1,7 +1,10 @@
 module api.content.form.inputtype.image {
 
-    import ValueTypes = api.data.type.ValueTypes;
-    import ValueType = api.data.type.ValueType;
+    import Property = api.data2.Property;
+    import PropertyArray = api.data2.PropertyArray;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
     import ContentId = api.content.ContentId;
     import ContentSummary = api.content.ContentSummary;
     import ContentTypeName = api.schema.content.ContentTypeName;
@@ -23,6 +26,8 @@ module api.content.form.inputtype.image {
         private config: api.content.form.inputtype.ContentInputTypeViewContext<ImageSelectorConfig>;
 
         private input: api.form.Input;
+
+        private propertyArray: PropertyArray;
 
         private comboBox: ComboBox<ImageSelectorDisplayValue>;
 
@@ -114,25 +119,26 @@ module api.content.form.inputtype.image {
             return ValueTypes.CONTENT_ID;
         }
 
-        newInitialValue(): ContentId {
+        newInitialValue(): Value {
             return null;
         }
 
-        layout(input: api.form.Input, properties: api.data.Property[]) {
+        layout(input: api.form.Input, propertyArray: PropertyArray) {
 
             this.layoutInProgress = true;
             this.input = input;
+            this.propertyArray = propertyArray;
 
             var comboboxWrapper = new api.dom.DivEl("combobox-wrapper");
 
             this.comboBox = this.createComboBox(input);
             comboboxWrapper.appendChild(this.comboBox);
             this.comboBox.onHidden((event: api.dom.ElementHiddenEvent) => {
-                // hidden on max occurences reached
+                // hidden on max occurrences reached
                 this.uploadButton.hide();
             });
             this.comboBox.onShown((event: api.dom.ElementShownEvent) => {
-                // shown on occurences between min and max
+                // shown on occurrences between min and max
                 this.uploadButton.show();
             });
 
@@ -156,9 +162,8 @@ module api.content.form.inputtype.image {
             this.appendChild(comboboxWrapper);
             this.appendChild(this.selectedOptionsView);
 
-            this.doLoadContent(properties).
-                then((contents: ContentSummary[]) => {
-
+            var loadContentPromise = this.doLoadContent(this.propertyArray);
+            loadContentPromise.then((contents: ContentSummary[]) => {
                     contents.forEach((content: ContentSummary) => {
                         this.comboBox.selectOption(<Option<ImageSelectorDisplayValue>>{
                             value: content.getId(),
@@ -173,19 +178,15 @@ module api.content.form.inputtype.image {
                 }).done();
         }
 
-        private doLoadContent(properties: api.data.Property[]): wemQ.Promise<ContentSummary[]> {
+        private doLoadContent(propertyArray: PropertyArray): wemQ.Promise<ContentSummary[]> {
 
             var contentIds: ContentId[] = [];
-            properties.forEach((property: api.data.Property) => {
+            propertyArray.forEach((property: Property) => {
                 if (property.hasNonNullValue()) {
                     contentIds.push(property.getContentId());
                 }
             });
             return new api.content.GetContentSummaryByIds(contentIds).get();
-        }
-
-        getValues(): api.data.Value[] {
-            return this.selectedOptionsView.getValues();
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
@@ -234,7 +235,7 @@ module api.content.form.inputtype.image {
             });
 
             this.selectedOptionsView.onValueChanged((event: api.form.inputtype.ValueChangedEvent) => {
-                this.notifyValueChanged(event);
+                this.propertyArray.set(event.getArrayIndex(), event.getNewValue());
             });
 
             var comboBoxConfig = <ComboBoxConfig<ImageSelectorDisplayValue>> {
@@ -250,7 +251,7 @@ module api.content.form.inputtype.image {
             this.loadOptions("");
 
             comboBox.onOptionDeselected((removed: SelectedOption<ImageSelectorDisplayValue>) => {
-                this.notifyValueRemoved(removed.getIndex());
+                this.propertyArray.remove(removed.getIndex());
                 this.validate(false);
             });
 
@@ -264,13 +265,13 @@ module api.content.form.inputtype.image {
                     if (!contentId) {
                         return;
                     }
-                    var value = new api.data.Value(contentId, ValueTypes.CONTENT_ID);
+                    var value = new Value(contentId, ValueTypes.CONTENT_ID);
 
                     if (comboBox.countSelectedOptions() == 1) { // overwrite initial value
-                        this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(value, 0));
+                        this.propertyArray.set(0, value);
                     }
                     else {
-                        this.notifyValueAdded(value);
+                        this.propertyArray.add(value);
                     }
                 }
                 this.validate(false);

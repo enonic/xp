@@ -1,10 +1,18 @@
 module api.content.form.inputtype.tag {
 
-    import DataPath = api.data.DataPath;
+    import PropertyPath = api.data2.PropertyPath;
+    import PropertyPathElement = api.data2.PropertyPathElement;
+    import Property = api.data2.Property;
+    import PropertyArray = api.data2.PropertyArray;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
 
     export class Tag extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
         private input: api.form.Input;
+
+        private propertyArray: PropertyArray;
 
         private tags: api.ui.tags.Tags;
 
@@ -28,12 +36,12 @@ module api.content.form.inputtype.tag {
             this.appendChild(this.tags);
         }
 
-        private resolveDataPath(config: api.content.form.inputtype.ContentInputTypeViewContext<any>): DataPath {
-            if (config.parentDataPath) {
-                return api.data.DataPath.fromParent(config.parentDataPath, api.data.DataPathElement.fromString(config.input.getName()));
+        private resolveDataPath(context: api.content.form.inputtype.ContentInputTypeViewContext<any>): PropertyPath {
+            if (context.parentDataPath) {
+                return PropertyPath.fromParent(context.parentDataPath, PropertyPathElement.fromString(context.input.getName()));
             }
             else {
-                return new api.data.DataPath([api.data.DataPathElement.fromString(config.input.getName())], false);
+                return new PropertyPath([PropertyPathElement.fromString(context.input.getName())], false);
             }
         }
 
@@ -41,38 +49,37 @@ module api.content.form.inputtype.tag {
 
         }
 
-        getValueType(): api.data.type.ValueType {
-            return api.data.type.ValueTypes.STRING;
+        getValueType(): ValueType {
+            return ValueTypes.STRING;
         }
 
-        newInitialValue(): string {
+        newInitialValue(): Value {
             return null;
         }
 
-        layout(input: api.form.Input, properties: api.data.Property[]) {
+        layout(input: api.form.Input, propertyArray: PropertyArray) {
 
+            this.propertyArray = propertyArray;
             this.tags.clearTags();
-            properties.forEach((property) => {
+            propertyArray.forEach((property) => {
                 if (property.hasNonNullValue()) {
                     this.tags.addTag(property.getString());
                 }
             });
 
             this.tags.onTagAdded((event) => {
-                this.notifyValueAdded(new api.data.Value(event.getValue(), api.data.type.ValueTypes.STRING));
+                var value = new Value(event.getValue(), ValueTypes.STRING);
+                if (this.tags.countTags() == 1) {
+                    this.propertyArray.set(0, value);
+                }
+                else {
+                    this.propertyArray.add(value);
+                }
             });
 
             this.tags.onTagRemoved((event) => {
-                this.notifyValueRemoved(event.getIndex());
+                this.propertyArray.remove(event.getIndex());
             });
-        }
-
-        getValues(): api.data.Value[] {
-            var values: api.data.Value[] = [];
-            this.tags.getTags().forEach((tag) => {
-                values.push(new api.data.Value(tag, api.data.type.ValueTypes.STRING));
-            });
-            return values;
         }
 
         getAttachments(): api.content.attachment.Attachment[] {

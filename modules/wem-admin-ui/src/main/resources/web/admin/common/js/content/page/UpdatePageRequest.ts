@@ -8,7 +8,7 @@ module api.content.page {
 
         private template: api.content.page.PageTemplateKey;
 
-        private config: api.data.RootDataSet;
+        private config: api.data2.PropertyTree;
 
         private regions: PageRegions;
 
@@ -28,7 +28,7 @@ module api.content.page {
             return this;
         }
 
-        setConfig(config: api.data.RootDataSet): UpdatePageRequest {
+        setConfig(config: api.data2.PropertyTree): UpdatePageRequest {
             this.config = config;
             return this;
         }
@@ -43,7 +43,7 @@ module api.content.page {
                 contentId: this.contentId.toString(),
                 controller: this.controller ? this.controller.toString() : null,
                 template: this.template ? this.template.toString() : null,
-                config: this.config != null ? this.config.toJson() : null,
+                config: this.config.toJson(),
                 regions: this.regions != null ? this.regions.toJson() : null
             };
         }

@@ -56,7 +56,7 @@ module api.content.page.region {
 
             var duplicateName = source.getName();
 
-            var duplicatedComponent = source.clone();
+            var duplicatedComponent = source.clone(true);
             duplicatedComponent.setName(duplicateName);
             this.addComponentAfter(duplicatedComponent, source);
 
@@ -168,8 +168,8 @@ module api.content.page.region {
             return true;
         }
 
-        clone(): Region {
-            return new RegionBuilder(this).build();
+        clone(generateNewPropertyIds: boolean = false): Region {
+            return new RegionBuilder(this, generateNewPropertyIds).build();
         }
     }
 
@@ -181,12 +181,12 @@ module api.content.page.region {
 
         parent: api.content.page.layout.LayoutComponent;
 
-        constructor(source?: Region) {
+        constructor(source?: Region, generateNewPropertyIds: boolean = false) {
             if (source) {
                 this.name = source.getName();
                 this.parent = source.getParent(); //TODO; Should clone have same parent at all times?
                 source.getComponents().forEach((component: api.content.page.PageComponent) => {
-                    this.pageComponents.push(component.clone());
+                    this.pageComponents.push(component.clone(generateNewPropertyIds));
                 });
             }
         }

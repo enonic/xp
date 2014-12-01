@@ -1,9 +1,9 @@
 module api.content.site.inputtype.moduleconfigurator {
 
     import AEl = api.dom.AEl;
-    import RootDataSet = api.data.RootDataSet;
+    import PropertyTree = api.data2.PropertyTree;
+    import PropertySet = api.data2.PropertySet;
     import Option = api.ui.selector.Option;
-    import Value = api.data.Value;
     import FormView = api.form.FormView;
     import FormContextBuilder = api.form.FormContextBuilder;
     import Module = api.module.Module;
@@ -16,13 +16,13 @@ module api.content.site.inputtype.moduleconfigurator {
 
         private formView: FormView;
 
-        private config: RootDataSet;
+        private config: PropertySet;
 
         private removeClickedListeners: {(event: MouseEvent): void;}[];
 
         private collapseClickedListeners: {(event: MouseEvent): void;}[];
 
-        constructor(mod: Module, config: RootDataSet) {
+        constructor(mod: Module, config: PropertySet) {
             super("module-view");
 
             this.removeClickedListeners = [];

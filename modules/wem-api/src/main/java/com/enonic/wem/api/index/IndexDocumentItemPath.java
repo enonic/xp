@@ -9,8 +9,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.BasePath;
-import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data2.PropertyPath;
 
 public class IndexDocumentItemPath
 {
@@ -54,7 +54,7 @@ public class IndexDocumentItemPath
     {
         Builder builder = newIndexDocumentItemPath();
 
-        for ( final DataPath.Element next : property.getPath() )
+        for ( final PropertyPath.Element next : property.getPath() )
         {
             builder.add( next.getName() );
         }

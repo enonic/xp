@@ -6,9 +6,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.Form;
@@ -26,14 +26,14 @@ final class MinimumOccurrencesValidator
         return Collections.unmodifiableList( validationErrors );
     }
 
-    final void validate( final Form form, final ContentData dataSet )
+    final void validate( final Form form, final PropertyTree dataSet )
     {
-        final List<DataSet> parentDataSets = Lists.newArrayList();
-        parentDataSets.add( dataSet );
+        final List<PropertySet> parentDataSets = Lists.newArrayList();
+        parentDataSets.add( dataSet.getRoot() );
         validate( form, parentDataSets );
     }
 
-    private void validate( final Iterable<FormItem> formItems, final List<DataSet> parentDataSets )
+    private void validate( final Iterable<FormItem> formItems, final List<PropertySet> parentDataSets )
     {
         for ( FormItem formItem : formItems )
         {
@@ -52,13 +52,13 @@ final class MinimumOccurrencesValidator
         }
     }
 
-    private void validateInput( final Input input, final List<DataSet> parentDataSets )
+    private void validateInput( final Input input, final List<PropertySet> parentDataSets )
     {
         if ( input.isRequired() )
         {
-            for ( DataSet parentDataSet : parentDataSets )
+            for ( PropertySet parentDataSet : parentDataSets )
             {
-                final int entryCount = parentDataSet.nameCount( input.getName() );
+                final int entryCount = parentDataSet.countProperties( input.getName() );
                 final int occurrencesToCheck = Math.min( entryCount, input.getOccurrences().getMinimum() );
                 for ( int i = 0; i < occurrencesToCheck; i++ )
                 {
@@ -81,13 +81,13 @@ final class MinimumOccurrencesValidator
         }
     }
 
-    private void validateFormItemSet( final FormItemSet formItemSet, final List<DataSet> parentDataSets )
+    private void validateFormItemSet( final FormItemSet formItemSet, final List<PropertySet> parentDataSets )
     {
         if ( formItemSet.isRequired() )
         {
-            for ( final DataSet parentDataSet : parentDataSets )
+            for ( final PropertySet parentDataSet : parentDataSets )
             {
-                final int entryCount = parentDataSet.nameCount( formItemSet.getName() );
+                final int entryCount = parentDataSet.countProperties( formItemSet.getName() );
                 if ( entryCount < formItemSet.getOccurrences().getMinimum() )
                 {
                     // TODO: include information about missing DataPath?
@@ -96,16 +96,19 @@ final class MinimumOccurrencesValidator
             }
         }
 
-        final List<DataSet> dataSets = getDataSets( formItemSet.getName(), parentDataSets );
+        final List<PropertySet> dataSets = getDataSets( formItemSet.getName(), parentDataSets );
         validate( formItemSet.getFormItems(), dataSets );
     }
 
-    private List<DataSet> getDataSets( final String name, final List<DataSet> parentDataSets )
+    private List<PropertySet> getDataSets( final String name, final List<PropertySet> parentDataSets )
     {
-        final List<DataSet> dataSets = new ArrayList<>();
-        for ( DataSet parentDataSet : parentDataSets )
+        final List<PropertySet> dataSets = new ArrayList<>();
+        for ( final PropertySet parentDataSet : parentDataSets )
         {
-            dataSets.addAll( parentDataSet.getDataSetsByName( name ) );
+            for ( final PropertySet set : parentDataSet.getSets( name ) )
+            {
+                dataSets.add( set );
+            }
         }
         return dataSets;
     }

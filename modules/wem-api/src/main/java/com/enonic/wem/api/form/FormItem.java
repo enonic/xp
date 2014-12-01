@@ -25,6 +25,8 @@ public abstract class FormItem
         this.name = name;
     }
 
+    public abstract FormItemType getType();
+
     void setParent( final FormItems parent )
     {
         this.parent = parent;

@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.Property;
 
 public class ValidationRegex
 {
@@ -22,7 +22,7 @@ public class ValidationRegex
     public void checkValidity( final Property property )
         throws BreaksRegexValidationException
     {
-        if ( !( property.getValueType().getJavaType().equals( java.lang.String.class ) ) )
+        if ( !( property.getValue().getType().getJavaType().equals( java.lang.String.class ) ) )
         {
             return;
         }

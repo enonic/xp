@@ -1,5 +1,12 @@
 module app.wizard {
 
+    import PropertyPath = api.data2.PropertyPath;
+    import Property = api.data2.Property;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
+    import PropertyTree = api.data2.PropertyTree;
+
     export class DisplayNameScriptExecutor implements api.app.wizard.DisplayNameGenerator {
 
         private formView: api.form.FormView;
@@ -34,12 +41,9 @@ module app.wizard {
                 var strValues: string [] = [];
                 paths.forEach((path: string) => {
 
-                    var value = formView.getValueAtPath(api.data.DataPath.fromString(path));
-                    if (value != null) {
-                        var strValue = value.asString();
-                        if (!api.util.StringHelper.isBlank(strValue)) {
-                            strValues.push(strValue);
-                        }
+                    var strValue = formView.getData().getString(path);
+                    if (!api.util.StringHelper.isBlank(strValue)) {
+                        strValues.push(strValue);
                     }
                 });
 

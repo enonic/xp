@@ -6,8 +6,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
@@ -33,13 +32,13 @@ public final class ContentIconUrlResolver
 
     private String getImageAttachmentName( final Content content )
     {
-        final ContentData contentData = content.getContentData();
-        final Property imageProperty = contentData.getProperty( "image" );
-        if ( imageProperty == null || imageProperty.hasNullValue() )
+        final PropertyTree contentData = content.getData();
+        final String image = contentData.getString( "image" );
+        if ( image == null )
         {
             return content.getName().toString();
         }
-        return imageProperty.getString();
+        return image;
     }
 
     public String resolve( final Content content )

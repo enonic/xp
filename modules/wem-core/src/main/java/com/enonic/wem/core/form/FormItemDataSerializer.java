@@ -2,14 +2,12 @@ package com.enonic.wem.core.form;
 
 import org.w3c.dom.Document;
 
-import com.enonic.wem.api.data.Data;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueType;
-import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data2.PropertySet;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.FormItemType;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.Layout;
 import com.enonic.wem.api.form.MixinReference;
@@ -27,34 +25,41 @@ import static com.enonic.wem.api.form.Input.newInput;
 public class FormItemDataSerializer
     extends AbstractDataSetSerializer<FormItem, FormItem>
 {
-    public DataSet toData( final FormItem formItem )
+    private final FormItemType type;
+
+    public FormItemDataSerializer( final FormItemType type )
     {
-        return serializeFormItem( formItem );
+        this.type = type;
     }
 
-    public FormItem fromData( final DataSet dataSet )
+    public void toData( final FormItem formItem, final PropertySet parent )
     {
-        return deserializeFormItem( dataSet );
+        serializeFormItem( formItem, parent );
     }
 
-    private DataSet serializeFormItem( FormItem formItem )
+    public FormItem fromData( final PropertySet formItemPropertySet )
     {
+        return deserializeFormItem( formItemPropertySet );
+    }
 
+    private void serializeFormItem( FormItem formItem, final PropertySet parent )
+    {
+        final PropertySet formItemAsSet = parent.addSet( formItem.getClass().getSimpleName() );
         if ( formItem instanceof Input )
         {
-            return serializeInput( (Input) formItem ).copy();
+            serializeInput( (Input) formItem, formItemAsSet );
         }
         else if ( formItem instanceof MixinReference )
         {
-            return serializeMixinReference( (MixinReference) formItem ).copy();
+            serializeMixinReference( (MixinReference) formItem, formItemAsSet );
         }
         else if ( formItem instanceof FormItemSet )
         {
-            return serializeFormItemSet( (FormItemSet) formItem ).copy();
+            serializeFormItemSet( (FormItemSet) formItem, formItemAsSet );
         }
         else if ( formItem instanceof Layout )
         {
-            return serializeLayout( (Layout) formItem );
+            serializeLayout( (Layout) formItem, formItemAsSet );
         }
         else
         {
@@ -62,29 +67,20 @@ public class FormItemDataSerializer
         }
     }
 
-    private DataSet serializeInput( final Input input )
+    private void serializeInput( final Input input, final PropertySet inputSet )
     {
-        final DataSet inputType = new DataSet( "inputType" );
-        inputType.setProperty( "name", Value.newString( input.getInputType().getName() ) );
-
-        final DataSet.Builder inputBuilder = DataSet.create().name( "Input" );
-        inputBuilder.set( "name", input.getName(), ValueTypes.STRING );
-        setNotNullData( inputBuilder, "label", input.getLabel(), ValueTypes.STRING );
-        setNotNullData( inputBuilder, "customText", input.getCustomText(), ValueTypes.STRING );
-        setNotNullData( inputBuilder, "helpText", input.getHelpText(), ValueTypes.STRING );
-        setNotNullData( inputBuilder, "immutable", input.isImmutable(), ValueTypes.STRING );
-        setNotNullData( inputBuilder, "indexed", input.isIndexed(), ValueTypes.STRING );
-        setNotNullData( inputBuilder, "inputTypeConfig", serializeInputTypeConfig( input ), ValueTypes.XML );
-        if ( input.getValidationRegexp() != null )
-        {
-            setNotNullData( inputBuilder, "validationRegexp", input.getValidationRegexp().toString(), ValueTypes.STRING );
-        }
-
-        final DataSet inputDataSet = inputBuilder.build();
-        inputDataSet.add( serializeOccurrences( input.getOccurrences() ) );
-        inputDataSet.add( inputType );
-
-        return inputDataSet;
+        final PropertySet inputTypeSet = inputSet.addSet( "inputType" );
+        inputTypeSet.setString( "name", input.getInputType().getName() );
+        inputSet.ifNotNull().setString( "name", input.getName() );
+        inputSet.ifNotNull().setString( "label", input.getLabel() );
+        inputSet.ifNotNull().setString( "customText", input.getCustomText() );
+        inputSet.ifNotNull().setString( "helpText", input.getHelpText() );
+        inputSet.ifNotNull().setBoolean( "immutable", input.isImmutable() );
+        inputSet.ifNotNull().setBoolean( "indexed", input.isIndexed() );
+        inputSet.ifNotNull().setXml( "inputTypeConfig", serializeInputTypeConfig( input ) );
+        inputSet.ifNotNull().setString( "validationRegexp",
+                                        input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
+        serializeOccurrences( input.getOccurrences(), inputSet );
     }
 
     @SuppressWarnings("unchecked")
@@ -99,242 +95,172 @@ public class FormItemDataSerializer
         return DomHelper.serialize( doc );
     }
 
-    private DataSet serializeMixinReference( final MixinReference mixinReference )
+    private void serializeMixinReference( final MixinReference mixinReference, final PropertySet mixinReferenceSet )
     {
-        DataSet.Builder builder = DataSet.create().name( "MixinReference" );
-
-        builder.set( "name", mixinReference.getName(), ValueTypes.STRING );
-        setNotNullData( builder, "mixinName", mixinReference.getMixinName().toString(), ValueTypes.STRING );
-
-        return builder.build();
+        mixinReferenceSet.setString( "name", mixinReference.getName() );
+        mixinReferenceSet.ifNotNull().setString( "mixinName",
+                                                 mixinReference.getMixinName() != null ? mixinReference.getMixinName().toString() : null );
     }
 
-    MixinReference deserializeMixinReference( final DataSet dataSet )
+    MixinReference deserializeMixinReference( final PropertySet mixinReferenceAsSet )
     {
         final MixinReference.Builder builder = MixinReference.newMixinReference();
-
-        if ( dataSet.hasData( "name" ) )
-        {
-            builder.name( dataSet.getProperty( "name" ).getString() );
-        }
-
-        if ( dataSet.hasData( "mixinName" ) )
-        {
-            builder.mixin( dataSet.getProperty( "mixinName" ).getString() );
-        }
-
+        builder.name( mixinReferenceAsSet.getString( "name" ) );
+        builder.mixin( mixinReferenceAsSet.getString( "mixinName" ) );
         return builder.build();
     }
 
-
-    private DataSet serializeFormItemSet( FormItemSet formItemSet )
+    private void serializeFormItemSet( FormItemSet formItemSet, final PropertySet formItemSetAsSet )
     {
-        DataSet.Builder formItemSetBuilder = DataSet.create().name( "FormItemSet" );
-        formItemSetBuilder.set( "name", formItemSet.getName(), ValueTypes.STRING );
-        setNotNullData( formItemSetBuilder, "label", formItemSet.getLabel(), ValueTypes.STRING );
-        setNotNullData( formItemSetBuilder, "customText", formItemSet.getCustomText(), ValueTypes.STRING );
-        setNotNullData( formItemSetBuilder, "helpText", formItemSet.getHelpText(), ValueTypes.STRING );
-        setNotNullData( formItemSetBuilder, "immutable", formItemSet.isImmutable(), ValueTypes.STRING );
+        formItemSetAsSet.setString( "name", formItemSet.getName() );
+        formItemSetAsSet.ifNotNull().setString( "label", formItemSet.getLabel() );
+        formItemSetAsSet.ifNotNull().setString( "customText", formItemSet.getCustomText() );
+        formItemSetAsSet.ifNotNull().setString( "helpText", formItemSet.getHelpText() );
+        formItemSetAsSet.ifNotNull().setBoolean( "immutable", formItemSet.isImmutable() );
 
-        DataSet formItemSetData = formItemSetBuilder.build();
-        formItemSetData.add( serializeOccurrences( formItemSet.getOccurrences() ) );
+        serializeOccurrences( formItemSet.getOccurrences(), formItemSetAsSet );
 
-        DataSet formItemsDataSet = new DataSet( "items" );
+        final PropertySet itemsAsSet = formItemSetAsSet.addSet( "items" );
         for ( FormItem formItem : formItemSet.getFormItems() )
         {
-            formItemsDataSet.add( serializeFormItem( formItem ) );
+            serializeFormItem( formItem, itemsAsSet );
         }
-        formItemSetData.add( formItemsDataSet );
-        return formItemSetData;
     }
 
-    private DataSet serializeLayout( Layout layout )
+    private void serializeLayout( final Layout layout, final PropertySet layoutAsSet )
     {
-        DataSet.Builder layoutBuilder = DataSet.create().name( "Layout" );
-        layoutBuilder.set( "name", layout.getName(), ValueTypes.STRING );
-
         if ( layout instanceof FieldSet )
         {
-            FieldSet fieldSet = (FieldSet) layout;
-            layoutBuilder.set( "label", fieldSet.getLabel(), ValueTypes.STRING );
-            DataSet fieldSetData = layoutBuilder.build();
+            final FieldSet fieldSet = (FieldSet) layout;
+            layoutAsSet.setString( "name", layout.getName() );
+            layoutAsSet.setString( "label", fieldSet.getLabel() );
 
-            DataSet formItemsDataSet = new DataSet( "items" );
+            final PropertySet itemsAsSet = layoutAsSet.addSet( "items" );
             for ( FormItem formItem : fieldSet.getFormItems() )
             {
-                formItemsDataSet.add( serializeFormItem( formItem ) );
+                new FormItemDataSerializer( formItem.getType() ).toData( formItem, itemsAsSet );
             }
-            fieldSetData.add( formItemsDataSet );
-
-            return fieldSetData;
-        }
-
-        return layoutBuilder.build();
-    }
-
-    private void setNotNullData( DataSet.Builder builder, String name, Object value, ValueType type )
-    {
-        if ( value != null )
-        {
-            builder.set( name, value, type );
-        }
-    }
-
-    private DataSet serializeOccurrences( Occurrences occurrences )
-    {
-        final DataSet dataSet = new DataSet( "occurrences" );
-        dataSet.setProperty( "minimum", Value.newLong( occurrences.getMinimum() ) );
-        dataSet.setProperty( "maximum", Value.newLong( occurrences.getMaximum() ) );
-        return dataSet;
-    }
-
-    private FormItem deserializeFormItem( final DataSet formItemAsData )
-    {
-        final DataSet formItemAsDataSet = formItemAsData.toDataSet();
-        final String formItemType = formItemAsDataSet.getName();
-
-        if ( "Input".equals( formItemType ) )
-        {
-            return deserializeInput( formItemAsDataSet );
-        }
-        else if ( "FormItemSet".equals( formItemType ) )
-        {
-            return deserializeFormItemSet( formItemAsDataSet );
-        }
-        else if ( "Layout".equals( formItemType ) )
-        {
-            return deserializeLayout( formItemAsDataSet );
-        }
-        else if ( "MixinReference".equals( formItemType ) )
-        {
-            return deserializeMixinReference( formItemAsDataSet );
         }
         else
         {
-            throw new UnsupportedOperationException( "FormItem not serializable: " + formItemType );
+            throw new UnsupportedOperationException( "Unsupported Layout: " + layout.getClass().getSimpleName() );
         }
     }
 
-    private Input deserializeInput( final DataSet inputAsDataSet )
+    private void serializeOccurrences( final Occurrences occurrences, final PropertySet parent )
+    {
+        final PropertySet occurrencesSet = parent.addSet( "occurrences" );
+        occurrencesSet.setLong( "minimum", (long) occurrences.getMinimum() );
+        occurrencesSet.setLong( "maximum", (long) occurrences.getMaximum() );
+    }
+
+    private FormItem deserializeFormItem( final PropertySet formItemPropertySet )
+    {
+        if ( type.equals( FormItemType.INPUT ) )
+        {
+            return deserializeInput( formItemPropertySet );
+        }
+        else if ( type.equals( FormItemType.FORM_ITEM_SET ) )
+        {
+            return deserializeFormItemSet( formItemPropertySet );
+        }
+        else if ( type.equals( FormItemType.LAYOUT ) )
+        {
+            return deserializeLayout( formItemPropertySet );
+        }
+        else if ( type.equals( FormItemType.MIXIN_REFERENCE ) )
+        {
+            return deserializeMixinReference( formItemPropertySet );
+        }
+        else
+        {
+            throw new UnsupportedOperationException( "FormItem not serializable: " + type );
+        }
+    }
+
+    private Input deserializeInput( final PropertySet inputAsSet )
     {
         final Input.Builder builder = newInput();
 
-        final DataSet inputTypeAsDataSet = inputAsDataSet.getDataSet( "inputType" );
-        final InputType inputType = InputTypeResolver.get().resolve( inputTypeAsDataSet.getProperty( "name" ).getString() );
+        final PropertySet inputTypeAsDataSet = inputAsSet.getSet( "inputType" );
+        final InputType inputType = InputTypeResolver.get().resolve( inputTypeAsDataSet.getString( "name" ) );
         builder.inputType( inputType );
 
-        if ( inputAsDataSet.hasData( "inputTypeConfig" ) )
+        if ( inputAsSet.hasProperty( "inputTypeConfig" ) )
         {
-            builder.inputTypeConfig( deserializeInputTypeConfig( inputAsDataSet, inputType ) );
+            builder.inputTypeConfig( deserializeInputTypeConfig( inputAsSet, inputType ) );
         }
 
-        if ( inputAsDataSet.hasData( "name" ) )
+        builder.name( inputAsSet.getString( "name" ) );
+        builder.label( inputAsSet.getString( "label" ) );
+        builder.customText( inputAsSet.getString( "customText" ) );
+        builder.helpText( inputAsSet.getString( "helpText" ) );
+        builder.immutable( inputAsSet.getBoolean( "immutable" ) );
+        builder.indexed( inputAsSet.getBoolean( "indexed" ) );
+
+        if ( inputAsSet.hasProperty( "occurrences" ) )
         {
-            builder.name( inputAsDataSet.getProperty( "name" ).getString() );
+            builder.occurrences( deserializeOccurrences( inputAsSet.getSet( "occurrences" ) ) );
         }
-        if ( inputAsDataSet.hasData( "label" ) )
+        if ( inputAsSet.hasProperty( "validationRegexp" ) )
         {
-            builder.label( inputAsDataSet.getProperty( "label" ).getString() );
-        }
-        if ( inputAsDataSet.hasData( "customText" ) )
-        {
-            builder.customText( inputAsDataSet.getProperty( "customText" ).getString() );
-        }
-        if ( inputAsDataSet.hasData( "helpText" ) )
-        {
-            builder.helpText( inputAsDataSet.getProperty( "helpText" ).getString() );
-        }
-        if ( inputAsDataSet.hasData( "immutable" ) )
-        {
-            builder.immutable( Boolean.valueOf( inputAsDataSet.getProperty( "immutable" ).getString() ) );
-        }
-        if ( inputAsDataSet.hasData( "indexed" ) )
-        {
-            builder.indexed( Boolean.valueOf( inputAsDataSet.getProperty( "indexed" ).getString() ) );
-        }
-        if ( inputAsDataSet.hasData( "occurrences" ) )
-        {
-            builder.occurrences( deserializeOccurrences( inputAsDataSet.getDataSet( "occurrences" ) ) );
-        }
-        if ( inputAsDataSet.hasData( "validationRegexp" ) )
-        {
-            builder.validationRegexp( inputAsDataSet.getProperty( "validationRegexp" ).getString() );
+            builder.validationRegexp( inputAsSet.getString( "validationRegexp" ) );
         }
 
         return builder.build();
     }
 
-    private InputTypeConfig deserializeInputTypeConfig( final DataSet inputAsDataSet, final InputType inputType )
+    private InputTypeConfig deserializeInputTypeConfig( final PropertySet inputAsDataSet, final InputType inputType )
     {
-        final String xmlAsString = inputAsDataSet.getProperty( "inputTypeConfig" ).getString();
+        final String xmlAsString = inputAsDataSet.getString( "inputTypeConfig" );
         final Document doc = DomHelper.parse( xmlAsString );
         return inputType.getInputTypeConfigXmlSerializer().parseConfig( doc );
     }
 
-    private Occurrences deserializeOccurrences( final DataSet occurrencesAsDataSet )
+    private Occurrences deserializeOccurrences( final PropertySet occurrencesAsSet )
     {
-        return new Occurrences( occurrencesAsDataSet.getProperty( "minimum" ).getLong().intValue(),
-                                occurrencesAsDataSet.getProperty( "maximum" ).getLong().intValue() );
+        return new Occurrences( occurrencesAsSet.getLong( "minimum" ).intValue(), occurrencesAsSet.getLong( "maximum" ).intValue() );
     }
 
-    private FormItemSet deserializeFormItemSet( final DataSet formItemAsDataSet )
+    private FormItemSet deserializeFormItemSet( final PropertySet formItemAsDataSet )
     {
         final FormItemSet.Builder builder = newFormItemSet();
-        if ( formItemAsDataSet.hasData( "name" ) )
+        builder.name( formItemAsDataSet.getString( "name" ) );
+        builder.label( formItemAsDataSet.getString( "label" ) );
+        builder.customText( formItemAsDataSet.getString( "customText" ) );
+        builder.helpText( formItemAsDataSet.getString( "helpText" ) );
+        builder.immutable( formItemAsDataSet.getBoolean( "immutable" ) );
+
+        if ( formItemAsDataSet.hasProperty( "occurrences" ) )
         {
-            builder.name( formItemAsDataSet.getProperty( "name" ).getString() );
-        }
-        if ( formItemAsDataSet.hasData( "label" ) )
-        {
-            builder.label( formItemAsDataSet.getProperty( "label" ).getString() );
-        }
-        if ( formItemAsDataSet.hasData( "customText" ) )
-        {
-            builder.customText( formItemAsDataSet.getProperty( "customText" ).getString() );
-        }
-        if ( formItemAsDataSet.hasData( "helpText" ) )
-        {
-            builder.helpText( formItemAsDataSet.getProperty( "helpText" ).getString() );
-        }
-        if ( formItemAsDataSet.hasData( "immutable" ) )
-        {
-            builder.immutable( Boolean.valueOf( formItemAsDataSet.getProperty( "immutable" ).getString() ) );
-        }
-        if ( formItemAsDataSet.hasData( "occurrences" ) )
-        {
-            builder.occurrences( deserializeOccurrences( formItemAsDataSet.getDataSet( "occurrences" ) ) );
+            builder.occurrences( deserializeOccurrences( formItemAsDataSet.getSet( "occurrences" ) ) );
         }
 
-        final DataSet itemsDataSet = formItemAsDataSet.getDataSet( "items" );
-        for ( final Data data : itemsDataSet )
+        final PropertySet itemsDataSet = formItemAsDataSet.getSet( "items" );
+        for ( final Property itemAsProperty : itemsDataSet.getProperties() )
         {
-            builder.addFormItem( deserializeFormItem( data.toDataSet() ) );
+            builder.addFormItem(
+                new FormItemDataSerializer( FormItemType.parse( itemAsProperty.getName() ) ).fromData( itemAsProperty.getSet() ) );
         }
 
         return builder.build();
     }
 
-    private Layout deserializeLayout( final DataSet layoutAsDataSet )
+    private Layout deserializeLayout( final PropertySet layoutAsDataSet )
     {
         return deserializeFieldSet( layoutAsDataSet );
     }
 
-    private FieldSet deserializeFieldSet( final DataSet fieldSetAsDataSet )
+    private FieldSet deserializeFieldSet( final PropertySet fieldSetAsDataSet )
     {
         final FieldSet.Builder builder = newFieldSet();
-        if ( fieldSetAsDataSet.hasData( "name" ) )
+        builder.name( fieldSetAsDataSet.getString( "name" ) );
+        builder.label( fieldSetAsDataSet.getString( "label" ) );
+        final PropertySet itemsAsSet = fieldSetAsDataSet.getSet( "items" );
+        for ( final Property itemAsProperty : itemsAsSet.getProperties() )
         {
-            builder.name( fieldSetAsDataSet.getProperty( "name" ).getString() );
-        }
-        if ( fieldSetAsDataSet.hasData( "label" ) )
-        {
-            builder.label( fieldSetAsDataSet.getProperty( "label" ).getString() );
-        }
-
-        final DataSet itemsDataSet = fieldSetAsDataSet.getDataSet( "items" );
-        for ( final Data data : itemsDataSet )
-        {
-            builder.addFormItem( deserializeFormItem( data.toDataSet() ) );
+            builder.addFormItem(
+                new FormItemDataSerializer( FormItemType.parse( itemAsProperty.getName() ) ).fromData( itemAsProperty.getSet() ) );
         }
 
         return builder.build();

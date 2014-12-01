@@ -1,6 +1,8 @@
 module api.content.page.part {
 
     import Region = api.content.page.region.Region;
+    import PropertyTree = api.data2.PropertyTree;
+    import PropertyIdProvider = api.data2.PropertyIdProvider;
 
     export class PartComponent extends api.content.page.DescriptorBasedPageComponent implements api.Equitable, api.Cloneable {
 
@@ -25,25 +27,25 @@ module api.content.page.part {
             return super.equals(o);
         }
 
-        clone(): PartComponent {
-            return new PartComponentBuilder(this).build();
+        clone(generateNewPropertyIds: boolean = false): PartComponent {
+            return new PartComponentBuilder(this, generateNewPropertyIds).build();
         }
     }
 
     export class PartComponentBuilder extends api.content.page.DescriptorBasedPageComponentBuilder<PartComponent> {
 
-        constructor(source?: PartComponent) {
+        constructor(source?: PartComponent, generateNewPropertyIds: boolean = false) {
 
-            super(source);
+            super(source, generateNewPropertyIds);
         }
 
-        public fromJson(json: PartComponentJson, region: Region): PartComponentBuilder {
+        public fromJson(json: PartComponentJson, region: Region, propertyIdProvider: PropertyIdProvider): PartComponentBuilder {
 
             if (json.descriptor) {
                 this.setDescriptor(api.content.page.DescriptorKey.fromString(json.descriptor));
             }
             this.setName(new api.content.page.ComponentName(json.name));
-            this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
+            this.setConfig(PropertyTree.fromJson(json.config, propertyIdProvider));
             this.setParent(region);
             return this;
         }

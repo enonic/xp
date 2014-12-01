@@ -1,12 +1,22 @@
 module api.content.page {
 
     import ContentTypeName = api.schema.content.ContentTypeName;
+    import Property = api.data2.Property;
+    import PropertyTree = api.data2.PropertyTree;
+    import PropertyIdProvider = api.data2.PropertyIdProvider;
 
     export class PageTemplate extends api.content.Content implements api.Equitable {
+
+        private canRender: ContentTypeName[];
 
         constructor(builder: PageTemplateBuilder) {
 
             super(builder);
+
+            this.canRender = [];
+            this.getContentData().forEachProperty("supports", (property: Property) => {
+                this.canRender.push(new ContentTypeName(property.getString()));
+            });
         }
 
         getKey(): PageTemplateKey {
@@ -27,11 +37,7 @@ module api.content.page {
 
         getCanRender(): ContentTypeName[] {
 
-            var contentTypeNames: api.schema.content.ContentTypeName[] = [];
-            this.getContentData().getPropertiesByName("supports").forEach((property: api.data.Property) => {
-                contentTypeNames.push(new ContentTypeName(property.getString()));
-            });
-            return contentTypeNames;
+            return this.canRender;
         }
 
         hasRegions(): boolean {
@@ -42,7 +48,7 @@ module api.content.page {
             return this.getPage().getRegions();
         }
 
-        getConfig(): api.data.RootDataSet {
+        getConfig(): PropertyTree {
             return this.getPage().getConfig();
         }
 
@@ -71,8 +77,8 @@ module api.content.page {
             super(source);
         }
 
-        fromContentJson(contentJson: api.content.json.ContentJson): PageTemplateBuilder {
-            super.fromContentJson(contentJson);
+        fromContentJson(contentJson: api.content.json.ContentJson, propertyIdProvider: PropertyIdProvider): PageTemplateBuilder {
+            super.fromContentJson(contentJson, propertyIdProvider);
             return this;
         }
 

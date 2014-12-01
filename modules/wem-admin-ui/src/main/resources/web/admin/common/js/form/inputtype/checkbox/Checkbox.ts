@@ -1,6 +1,9 @@
 module api.content.form.inputtype.checkbox {
 
-    import ValueTypes = api.data.type.ValueTypes;
+    import Property = api.data2.Property;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
     import BaseInputTypeSingleOccurrence = api.form.inputtype.support.BaseInputTypeSingleOccurrence;
 
     export class Checkbox extends BaseInputTypeSingleOccurrence<any,boolean> {
@@ -13,15 +16,15 @@ module api.content.form.inputtype.checkbox {
             this.checkbox = new api.ui.Checkbox();
         }
 
-        getValueType(): api.data.type.ValueType {
+        getValueType(): ValueType {
             return ValueTypes.BOOLEAN;
         }
 
-        newInitialValue(): boolean {
-            return false;
+        newInitialValue(): Value {
+            return ValueTypes.BOOLEAN.newFalse();
         }
 
-        layoutProperty(input: api.form.Input, property: api.data.Property) {
+        layoutProperty(input: api.form.Input, property: Property) {
 
             if (property.hasNonNullValue()) {
                 this.checkbox.setChecked(property.getBoolean());
@@ -34,7 +37,7 @@ module api.content.form.inputtype.checkbox {
             this.checkbox.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 var newValue = ValueTypes.BOOLEAN.newValue(event.getNewValue());
                 if (newValue) {
-                    this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(newValue, 0));
+                    property.setValue(newValue);
                 }
             });
         }

@@ -12,9 +12,7 @@ module api.content {
 
             var allPromises = (this.ids || []).map((contentId: ContentId) => {
 
-                return new api.content.GetContentByIdRequest(contentId)
-                    .setExpand(api.content.ContentResourceRequest.EXPAND_SUMMARY)
-                    .sendAndParse();
+                return new api.content.GetContentSummaryByIdRequest(contentId).sendAndParse();
             });
 
             return wemQ.all(allPromises);

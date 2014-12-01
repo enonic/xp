@@ -5,11 +5,7 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.data.Data;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
@@ -43,7 +39,7 @@ public final class Node
 
     private final Instant createdTime;
 
-    private final RootDataSet data;
+    private final PropertyTree data;
 
     private final Instant modifiedTime;
 
@@ -67,14 +63,7 @@ public final class Node
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
 
-        this.data = new RootDataSet();
-        if ( builder.data != null )
-        {
-            for ( final Data data : builder.data )
-            {
-                this.data.add( data.copy() );
-            }
-        }
+        this.data = builder.data != null ? builder.data : new PropertyTree();
 
         this.attachments = builder.attachments == null ? Attachments.empty() : builder.attachments;
 
@@ -157,7 +146,7 @@ public final class Node
         return modifiedTime;
     }
 
-    public RootDataSet data()
+    public PropertyTree data()
     {
         return this.data;
     }
@@ -165,16 +154,6 @@ public final class Node
     public Attachments attachments()
     {
         return this.attachments;
-    }
-
-    public DataSet dataSet( final String path )
-    {
-        return data.getDataSet( path );
-    }
-
-    public Property property( final String path )
-    {
-        return data.getProperty( path );
     }
 
     public IndexConfigDocument getIndexConfigDocument()
@@ -269,7 +248,7 @@ public final class Node
 
         Instant modifiedTime;
 
-        RootDataSet data = new RootDataSet();
+        PropertyTree data = new PropertyTree();
 
         Attachments attachments;
 
@@ -426,52 +405,7 @@ public final class Node
             return this;
         }
 
-        public Builder property( final String path, final String value )
-        {
-            if ( value != null )
-            {
-                this.data.setProperty( path, Value.newString( value ) );
-            }
-            return this;
-        }
-
-        public Builder property( final String path, final Long value )
-        {
-            if ( value != null )
-            {
-                this.data.setProperty( path, Value.newLong( value ) );
-            }
-            return this;
-        }
-
-        public Builder property( final String path, final Instant value )
-        {
-            if ( value != null )
-            {
-                this.data.setProperty( path, Value.newInstant( value ) );
-            }
-            return this;
-        }
-
-        public Builder property( final String path, final Value value )
-        {
-            if ( value != null )
-            {
-                this.data.setProperty( path, value );
-            }
-            return this;
-        }
-
-        public Builder addDataSet( final DataSet value )
-        {
-            if ( value != null )
-            {
-                this.data.add( value );
-            }
-            return this;
-        }
-
-        public Builder rootDataSet( final RootDataSet value )
+        public Builder data( final PropertyTree value )
         {
             this.data = value;
             return this;
@@ -564,57 +498,7 @@ public final class Node
             return this;
         }
 
-        public EditBuilder property( final String path, final String value )
-        {
-            if ( value != null )
-            {
-                this.data.setProperty( path, Value.newString( value ) );
-                changes.recordChange( newPossibleChange( "data" ).from( this.originalNode.data() ).to( this.data ).build() );
-            }
-            return this;
-        }
-
-        public EditBuilder property( final String path, final Long value )
-        {
-            if ( value != null )
-            {
-                this.data.setProperty( path, Value.newLong( value ) );
-                changes.recordChange( newPossibleChange( "data" ).from( this.originalNode.data() ).to( this.data ).build() );
-            }
-            return this;
-        }
-
-        public EditBuilder property( final String path, final Instant value )
-        {
-            if ( value != null )
-            {
-                this.data.setProperty( path, Value.newInstant( value ) );
-                changes.recordChange( newPossibleChange( "data" ).from( this.originalNode.data() ).to( this.data ).build() );
-            }
-            return this;
-        }
-
-        public EditBuilder property( final String path, final Value value )
-        {
-            if ( value != null )
-            {
-                this.data.setProperty( path, value );
-                changes.recordChange( newPossibleChange( "data" ).from( this.originalNode.data() ).to( this.data ).build() );
-            }
-            return this;
-        }
-
-        public EditBuilder addDataSet( final DataSet value )
-        {
-            if ( value != null )
-            {
-                this.data.add( value );
-                changes.recordChange( newPossibleChange( "data" ).from( this.originalNode.data() ).to( this.data ).build() );
-            }
-            return this;
-        }
-
-        public EditBuilder rootDataSet( final RootDataSet value )
+        public EditBuilder rootDataSet( final PropertyTree value )
         {
             this.data = value;
             changes.recordChange( newPossibleChange( "data" ).from( this.originalNode.data() ).to( this.data ).build() );

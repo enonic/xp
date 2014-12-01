@@ -20,6 +20,7 @@ import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -140,10 +141,8 @@ public class ComponentInstructionTest
 
     private Site createSite( final String id, final String name, final String contentTypeName )
     {
-        RootDataSet rootDataSet = new RootDataSet();
-
-        Property dataSet = new Property( "property1", Value.newString( "value1" ) );
-        rootDataSet.add( dataSet );
+        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        rootDataSet.addString( "property1", "value1" );
 
         Page page = Page.newPage().
             template( PageTemplateKey.from( "my-page" ) ).

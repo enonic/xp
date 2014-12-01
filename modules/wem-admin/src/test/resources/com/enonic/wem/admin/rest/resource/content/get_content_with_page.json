@@ -1,83 +1,95 @@
 {
-    "childOrder": null,
-    "createdTime": "2013-08-23T12:55:09.162Z",
-    "creator": "user:system:admin",
-    "data": [
+  "childOrder": null,
+  "createdTime": "2013-08-23T12:55:09.162Z",
+  "creator": "user:system:admin",
+  "data": [
+    {
+      "name": "myProperty",
+      "type": "String",
+      "values": [
         {
-            "Property": {
-                "name": "myProperty",
-                "type": "String",
-                "value": "myValue"
-            }
+          "id": "4",
+          "v": "myValue"
         }
-    ],
-    "deletable": true,
-    "displayName": "My Content",
-    "editable": true,
-    "form": null,
-    "hasChildren": false,
-    "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
-    "id": "aaa",
-    "inheritPermissions": true,
-    "inheritedPermissions": [],
-    "isDraft": false,
-    "isPage": true,
-    "isRoot": true,
-    "metadata": [
+      ]
+    }
+  ],
+  "deletable": true,
+  "displayName": "My Content",
+  "editable": true,
+  "form": null,
+  "hasChildren": false,
+  "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
+  "id": "aaa",
+  "inheritPermissions": true,
+  "inheritedPermissions": [],
+  "isDraft": false,
+  "isPage": true,
+  "isRoot": true,
+  "metadata": [
+    {
+      "data": [
         {
-            "data": [
+          "name": "myProperty",
+          "type": "Long",
+          "values": [
+            {
+              "id": "3",
+              "v": 1
+            }
+          ]
+        }
+      ],
+      "name": "myModule:myField"
+    }
+  ],
+  "modifiedTime": "2013-08-23T12:55:09.162Z",
+  "modifier": "user:system:admin",
+  "name": "my_a_content",
+  "owner": "user:myStore:me",
+  "page": {
+    "config": [
+      {
+        "name": "background-color",
+        "type": "String",
+        "values": [
+          {
+            "id": "2",
+            "v": "blue"
+          }
+        ]
+      }
+    ],
+    "controller": null,
+    "regions": [
+      {
+        "components": [
+          {
+            "PartComponent": {
+              "config": [
                 {
-                    "Property": {
-                        "name": "myProperty",
-                        "type": "Long",
-                        "value": 1
-                    }
-                }
-            ],
-            "name": "myModule:myField"
-        }
-    ],
-    "modifiedTime": "2013-08-23T12:55:09.162Z",
-    "modifier": "user:system:admin",
-    "name": "my_a_content",
-    "owner": "user:myStore:me",
-    "page": {
-        "config": [
-            {
-                "Property": {
-                    "name": "background-color",
-                    "type": "String",
-                    "value": "blue"
-                }
-            }
-        ],
-        "controller": null,
-        "regions": [
-            {
-                "components": [
+                  "name": "my-prop",
+                  "type": "String",
+                  "values": [
                     {
-                        "PartComponent": {
-                            "config": [
-                                {
-                                    "Property": {
-                                        "name": "my-prop",
-                                        "type": "String",
-                                        "value": "value"
-                                    }
-                                }
-                            ],
-                            "descriptor": "mainmodule:partTemplateName",
-                            "name": "my-component"
-                        }
+                      "id": "1",
+                      "v": "value"
                     }
-                ],
-                "name": "my-region"
+                  ]
+                }
+              ],
+              "descriptor": "mainmodule:partTemplateName",
+              "name": "my-component"
             }
+          }
         ],
-        "template": "mypagetemplate"
-    },
-    "path": "/my_a_content",
-    "permissions": [],
-    "thumbnail": null,
-    "type": "mymodule:my_type"
+        "name": "my-region"
+      }
+    ],
+    "template": "mypagetemplate"
+  },
+  "path": "/my_a_content",
+  "permissions": [],
+  "thumbnail": null,
+  "type": "mymodule:my_type"
 }

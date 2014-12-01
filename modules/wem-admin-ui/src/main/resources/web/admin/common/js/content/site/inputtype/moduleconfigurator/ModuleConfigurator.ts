@@ -1,19 +1,20 @@
 module api.content.site.inputtype.moduleconfigurator {
 
-    import Value = api.data.Value;
-    import Property = api.data.Property;
-    import ValueType = api.data.type.ValueType;
-    import ValueTypes = api.data.type.ValueTypes;
+    import PropertyTree = api.data2.PropertyTree;
+    import Property = api.data2.Property;
+    import PropertyArray = api.data2.PropertyArray;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
     import ValueChangedEvent = api.form.inputtype.support.ValueChangedEvent;
-    import RootDataSet = api.data.RootDataSet;
     import InputOccurrences = api.form.inputtype.support.InputOccurrences;
-    import InputOccurrencesConfig = api.form.inputtype.support.InputOccurrencesConfig;
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
     import ComboBox = api.ui.selector.combobox.ComboBox;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Module = api.module.Module;
     import ModuleKey = api.module.ModuleKey;
+    import ModuleConfigBuilder = api.content.site.ModuleConfigBuilder;
     import GetModuleRequest = api.module.GetModuleRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
@@ -22,6 +23,8 @@ module api.content.site.inputtype.moduleconfigurator {
         private context: api.form.inputtype.InputTypeViewContext<any>;
 
         private input: api.form.Input;
+
+        private propertyArray: PropertyArray;
 
         private comboBox: ModuleConfiguratorComboBox;
 
@@ -38,21 +41,22 @@ module api.content.site.inputtype.moduleconfigurator {
             return ValueTypes.DATA;
         }
 
-        newInitialValue(): ModuleView {
+        newInitialValue(): Value {
             return null;
         }
 
-        layout(input: api.form.Input, properties: api.data.Property[]) {
+        layout(input: api.form.Input, propertyArray: PropertyArray) {
 
             this.layoutInProgress = true;
             this.input = input;
+            this.propertyArray = propertyArray;
 
-            var moduleConfigProvider = new ModuleConfigProvider(properties);
+            var moduleConfigProvider = new ModuleConfigProvider(propertyArray);
             this.comboBox = this.createComboBox(input, moduleConfigProvider);
 
             this.appendChild(this.comboBox);
 
-            this.doLoadModules(properties).
+            this.doLoadModules(propertyArray).
                 catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(()=> {
@@ -60,12 +64,12 @@ module api.content.site.inputtype.moduleconfigurator {
                 }).done();
         }
 
-        private doLoadModules(properties: api.data.Property[]): wemQ.Promise<Module[]> {
+        private doLoadModules(propertyArray: PropertyArray): wemQ.Promise<Module[]> {
             var promises: wemQ.Promise<Module>[] = [];
-            properties.forEach((property: api.data.Property) => {
+            propertyArray.forEach((property: Property) => {
 
                 if (property.hasNonNullValue()) {
-                    var moduleConfig = new api.content.site.ModuleConfigBuilder().fromData(property.getData()).build();
+                    var moduleConfig = new ModuleConfigBuilder().fromData(property.getSet()).build();
                     var promise = new GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse();
                     promises.push(promise);
                     promise.then((requestedModule: Module) => {
@@ -82,7 +86,7 @@ module api.content.site.inputtype.moduleconfigurator {
             var comboBox = new ModuleConfiguratorComboBox(input.getOccurrences().getMaximum() || 0, moduleConfigProvider);
 
             comboBox.onOptionDeselected((removed: SelectedOption<Module>) => {
-                this.notifyValueRemoved(removed.getIndex());
+                this.propertyArray.remove(removed.getIndex());
                 this.validate(false);
             });
 
@@ -96,13 +100,20 @@ module api.content.site.inputtype.moduleconfigurator {
                     var selectedOption = comboBox.getSelectedOption(event.getOption());
                     var selectedOptionView: ModuleConfiguratorSelectedOptionView = <ModuleConfiguratorSelectedOptionView>selectedOption.getOptionView();
                     var configData = selectedOptionView.getFormView().getData();
-                    var newValue = this.createValue(key, configData);
+
+                    var moduleConfig = new ModuleConfigBuilder().
+                        setModuleKey(key).
+                        setConfig(configData).
+                        build();
+
+                    var moduleConfigAsData = moduleConfig.toPropertySet(this.propertyArray.newSet());
+                    var newValue = new Value(moduleConfigAsData, ValueTypes.DATA);
 
                     if (comboBox.countSelected() == 1) { // overwrite initial value
-                        this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(newValue, 0));
+                        this.propertyArray.set(0, newValue);
                     }
                     else {
-                        this.notifyValueAdded(newValue);
+                        this.propertyArray.add(newValue);
                     }
                 }
                 this.validate(false);
@@ -114,19 +125,6 @@ module api.content.site.inputtype.moduleconfigurator {
         availableSizeChanged() {
         }
 
-        private createValue(moduleKey: ModuleKey, config?: RootDataSet): Value {
-            var moduleConfig = new api.content.site.ModuleConfigBuilder().setModuleKey(moduleKey).setConfig(config).build();
-            var moduleConfigAsData = moduleConfig.toData();
-            return new Value(moduleConfigAsData, ValueTypes.DATA);
-        }
-
-        getValues(): api.data.Value[] {
-            var options: SelectedOption<Module>[] = this.comboBox.getSelectedOptions();
-            return options.map((selectedOption) => {
-                var optionView = <ModuleConfiguratorSelectedOptionView> selectedOption.getOptionView();
-                return this.createValue(optionView.getModule().getModuleKey(), optionView.getFormView().getData());
-            });
-        }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
@@ -142,7 +140,17 @@ module api.content.site.inputtype.moduleconfigurator {
             }
 
             // check
-
+            this.comboBox.getSelectedOptionViews().forEach((view: ModuleConfiguratorSelectedOptionView) => {
+                view.getFormView().displayValidationErrors(true);
+                var validationRecording = view.getFormView().validate(silent);
+                if (!validationRecording.isMinimumOccurrencesValid()) {
+                    recording.setBreaksMinimumOccurrences(true);
+                }
+                if (!validationRecording.isMaximumOccurrencesValid()) {
+                    recording.setBreaksMaximumOccurrences(true);
+                }
+                console.log(validationRecording);
+            });
 
             if (!silent) {
                 if (recording.validityChanged(this.previousValidationRecording)) {

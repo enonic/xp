@@ -20,8 +20,7 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -124,10 +123,10 @@ public final class ContentImageResource
 
     private String getImageAttachmentName( final Content content )
     {
-        final ContentData contentData = content.getContentData();
+        final PropertyTree contentData = content.getData();
 
-        final Property imageProperty = contentData.getProperty( "image" );
-        return imageProperty == null ? content.getName().toString() : imageProperty.getString();
+        final String image = contentData.getString( "image" );
+        return image == null ? content.getName().toString() : image;
     }
 
     private ContentType resolveSuperContentTypeWithIcon( final ContentTypeName contentTypeName )

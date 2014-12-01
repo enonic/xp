@@ -1,12 +1,10 @@
 package com.enonic.wem.api.index;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import com.google.common.collect.Collections2;
 
-import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.Property;
 
 public class IndexPath
 {
@@ -24,31 +22,12 @@ public class IndexPath
 
     public static IndexPath from( final Property property )
     {
-        // TODO: Replace with Property.getPath.resetAllIndexesTo(0).toString() when data2.Properties replaces data.Properties
-        return IndexPath.from( removeIndexElements( property.getPath() ) );
+        return IndexPath.from( property.getPath().resetAllIndexesTo( 0 ).toString() );
     }
 
     public String getPath()
     {
         return path;
-    }
-
-    private static String removeIndexElements( final DataPath dataPath )
-    {
-        StringBuilder builder = new StringBuilder();
-
-        final Iterator<DataPath.Element> iterator = dataPath.iterator();
-
-        while ( iterator.hasNext() )
-        {
-            builder.append( iterator.next().getName() );
-            if ( iterator.hasNext() )
-            {
-                builder.append( DataPath.ELEMENT_DIVIDER );
-            }
-        }
-
-        return builder.toString();
     }
 
     private static class IndexFieldNameNormalizer

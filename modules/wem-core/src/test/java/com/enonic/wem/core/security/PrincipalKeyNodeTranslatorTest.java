@@ -6,8 +6,7 @@ import java.time.ZoneId;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -27,9 +26,9 @@ public class PrincipalKeyNodeTranslatorTest
     public void toNodeName()
         throws Exception
     {
-        final PrincipalKey principalKey = PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "rmy" );
+        PrincipalKey principalKey = PrincipalKey.ofUser( new UserStoreKey( "myuserstore" ), "rmy" );
 
-        final User user = User.create().
+        User user = User.create().
             key( principalKey ).
             email( "rmy@enonic.com" ).
             login( "rmy" ).
@@ -37,7 +36,7 @@ public class PrincipalKeyNodeTranslatorTest
             modifiedTime( Instant.now( clock ) ).
             build();
 
-        final String nodeName = PrincipalKeyNodeTranslator.toNodeName( user.getKey() ).toString();
+        String nodeName = PrincipalKeyNodeTranslator.toNodeName( user.getKey() ).toString();
 
         assertEquals( "rmy", nodeName );
     }
@@ -46,15 +45,15 @@ public class PrincipalKeyNodeTranslatorTest
     public void userKeyFromNode()
         throws Exception
     {
-        final RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( PrincipalType.USER ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.USER_STORE_KEY, Value.newString( UserStoreKey.system() ) );
+        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        rootDataSet.setString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, PrincipalType.USER.toString() );
+        rootDataSet.setString( PrincipalNodeTranslator.USER_STORE_KEY, UserStoreKey.system().toString() );
 
-        final Node userNode = Node.newNode().rootDataSet( rootDataSet ).
+        Node userNode = Node.newNode().data( rootDataSet ).
             name( NodeName.from( "rmy" ) ).
             build();
 
-        final PrincipalKey principalKey = PrincipalKeyNodeTranslator.toKey( userNode );
+        PrincipalKey principalKey = PrincipalKeyNodeTranslator.toKey( userNode );
 
         assertTrue( principalKey.isUser() );
         assertEquals( PrincipalType.USER, principalKey.getType() );
@@ -65,11 +64,11 @@ public class PrincipalKeyNodeTranslatorTest
     public void unknown_type()
         throws Exception
     {
-        final RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( "fisk" ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.USER_STORE_KEY, Value.newString( UserStoreKey.system() ) );
+        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        rootDataSet.setString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, "fisk" );
+        rootDataSet.setString( PrincipalNodeTranslator.USER_STORE_KEY, UserStoreKey.system().toString() );
 
-        final Node userNode = Node.newNode().rootDataSet( rootDataSet ).
+        Node userNode = Node.newNode().data( rootDataSet ).
             name( NodeName.from( "rmy" ) ).
             build();
 

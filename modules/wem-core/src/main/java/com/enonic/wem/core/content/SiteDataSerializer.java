@@ -2,19 +2,15 @@ package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.data.DataId;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertySet;
 
 class SiteDataSerializer
 {
-    static final String SITE_MODULE_CONFIG = "moduleConfig";
+    private static final String MODULE_CONFIG = "moduleConfig";
 
-    static final String SITE_MODULE = "module";
+    private static final String MODULE = "module";
 
-    static final String SITE_CONFIG = "config";
-
-    static final String SITE_MODULE_CONFIGS = "moduleConfigs";
+    private static final String CONFIG = "config";
 
     private final String dataSetName;
 
@@ -23,25 +19,16 @@ class SiteDataSerializer
         this.dataSetName = dataSetName;
     }
 
-    DataSet toData( final Site site )
+    void toData( final Site site, final PropertySet parent )
     {
-        final DataSet siteDataSet = new DataSet( dataSetName );
-        siteDataSet.setProperty( DataId.from( "description", 0 ), Value.newString( site.getDescription() ) );
-
-        final DataSet moduleConfigs = new DataSet( SITE_MODULE_CONFIGS );
+        final PropertySet siteAsSet = parent.addSet( dataSetName );
+        siteAsSet.setString( "description", site.getDescription() );
 
         for ( ModuleConfig moduleConfig : site.getModuleConfigs() )
         {
-            final DataSet moduleConfigDataSet = new DataSet( SITE_MODULE_CONFIG );
-
-            moduleConfigDataSet.setProperty( SITE_MODULE, Value.newString( moduleConfig.getModule().toString() ) );
-            moduleConfigDataSet.add( moduleConfig.getConfig().toDataSet( SITE_CONFIG ) );
-
-            moduleConfigs.add( moduleConfigDataSet );
+            final PropertySet moduleConfigDataSet = siteAsSet.addSet( MODULE_CONFIG );
+            moduleConfigDataSet.setString( MODULE, moduleConfig.getModule().toString() );
+            moduleConfigDataSet.addSet( CONFIG, moduleConfig.getConfig().getRoot().copy( moduleConfigDataSet.getTree() ) );
         }
-
-        siteDataSet.add( moduleConfigs );
-
-        return siteDataSet;
     }
 }

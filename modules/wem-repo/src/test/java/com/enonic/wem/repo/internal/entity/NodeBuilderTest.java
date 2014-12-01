@@ -1,14 +1,10 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
@@ -42,74 +38,6 @@ public class NodeBuilderTest
         assertNotNull( myNode.getIndexConfigDocument() );
         assertEquals( "myAnalyzer", myNode.getIndexConfigDocument().getAnalyzer() );
 
-    }
-
-    @Test
-    public void build_property_given_String()
-        throws Exception
-    {
-
-        final Node myNode = Node.newNode().
-            name( NodeName.from( "my-node" ) ).
-            parent( NodePath.ROOT ).
-            property( "testPath", "testValue" ).
-            build();
-
-        final Property testProperty = myNode.property( "testPath" );
-
-        assertNotNull( testProperty );
-        assertTrue( testProperty.getValue().isString() );
-    }
-
-    @Test
-    public void build_property_given_Long()
-        throws Exception
-    {
-
-        final Node myNode = Node.newNode().
-            name( NodeName.from( "my-node" ) ).
-            parent( NodePath.ROOT ).
-            property( "testPath", 1L ).
-            build();
-
-        final Property testProperty = myNode.property( "testPath" );
-
-        assertNotNull( testProperty );
-        assertTrue( testProperty.getValue().getType() == ValueTypes.LONG );
-    }
-
-    @Test
-    public void build_property_given_DateTime()
-        throws Exception
-    {
-
-        final Node myNode = Node.newNode().
-            name( NodeName.from( "my-node" ) ).
-            parent( NodePath.ROOT ).
-            property( "testPath", Instant.now() ).
-            build();
-
-        final Property testProperty = myNode.property( "testPath" );
-
-        assertNotNull( testProperty );
-        assertTrue( testProperty.getValue().getType() == ValueTypes.DATE_TIME );
-    }
-
-    @Test
-    public void build_property_given_Value()
-        throws Exception
-    {
-
-        final Node myNode = Node.newNode().
-            name( NodeName.from( "my-node" ) ).
-            parent( NodePath.ROOT ).
-            property( "testPath", Value.newGeoPoint( "79,80" ) ).
-            build();
-
-        final Property testProperty = myNode.property( "testPath" );
-
-        assertNotNull( testProperty );
-        assertTrue( testProperty.getValue().getType() == ValueTypes.GEO_POINT );
     }
 
     @Test
@@ -183,25 +111,6 @@ public class NodeBuilderTest
             name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
             modifier( PrincipalKey.from( "user:test:modifier" ) ).
-            build();
-
-        myNode.checkIllegalEdit( myEditedNode );
-    }
-
-    @Test
-    public void checkIllegalEdit_given_changed_properties_allowed()
-        throws Exception
-    {
-
-        final Node myNode = Node.newNode( NodeId.from( "myid" ) ).
-            name( NodeName.from( "my-name" ) ).
-            parent( NodePath.ROOT ).
-            build();
-
-        final Node myEditedNode = Node.newNode( NodeId.from( "myid" ) ).
-            name( NodeName.from( "my-name" ) ).
-            parent( NodePath.ROOT ).
-            property( "data", "myData" ).
             build();
 
         myNode.checkIllegalEdit( myEditedNode );

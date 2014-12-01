@@ -3,11 +3,14 @@
     "template": "mymodule|my-page",
     "config": [
         {
-            "Property": {
-                "name": "property1",
-                "type": "String",
-                "value": "value3"
-            }
+            "name": "property1",
+            "type": "String",
+            "values": [
+                {
+                    "id": "1",
+                    "v": "value3"
+                }
+            ]
         }
     ],
     "regions": null

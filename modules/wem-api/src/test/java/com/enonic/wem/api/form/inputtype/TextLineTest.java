@@ -3,7 +3,7 @@ package com.enonic.wem.api.form.inputtype;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 
 import static org.junit.Assert.*;
@@ -14,13 +14,14 @@ public class TextLineTest
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
     {
-        new TextLine().checkBreaksRequiredContract( Property.newString( "myText", "" ) );
+        new TextLine().checkBreaksRequiredContract(
+            new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ).setString( "myText", "" ) );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_blank_throws_exception()
     {
-        new TextLine().checkBreaksRequiredContract( Property.newString( "myText", " " ) );
+        new TextLine().checkBreaksRequiredContract( new PropertyTree().setString( "myText", " " ) );
     }
 
     @Test
@@ -28,7 +29,7 @@ public class TextLineTest
     {
         try
         {
-            new TextLine().checkBreaksRequiredContract( Property.newString( "myText", "something" ) );
+            new TextLine().checkBreaksRequiredContract( new PropertyTree().setString( "myText", "something" ) );
         }
         catch ( Exception e )
         {

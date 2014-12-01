@@ -74,7 +74,7 @@ final class CreateContentCommand
 
     private void validateContentData( final CreateContentParams contentParams )
     {
-        final DataValidationErrors dataValidationErrors = validate( contentParams.getContentType(), contentParams.getContentData() );
+        final DataValidationErrors dataValidationErrors = validate( contentParams.getContentType(), contentParams.getData() );
 
         for ( DataValidationError error : dataValidationErrors )
         {

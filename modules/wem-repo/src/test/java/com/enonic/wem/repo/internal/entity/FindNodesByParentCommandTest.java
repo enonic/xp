@@ -4,8 +4,7 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
@@ -131,10 +130,10 @@ public class FindNodesByParentCommandTest
         assertEquals( childNode_b_3, iterator.next() );
     }
 
-    private RootDataSet createOrderProperty( final Double value )
+    private PropertyTree createOrderProperty( final Double value )
     {
-        final RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "order", Value.newDouble( value ) );
+        final PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        rootDataSet.setDouble( "order", value );
         return rootDataSet;
     }
 

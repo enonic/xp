@@ -1,5 +1,7 @@
 module api.content.page.layout {
 
+    import PropertyIdProvider = api.data2.PropertyIdProvider;
+
     export class LayoutRegions extends api.content.page.AbstractRegions implements api.Equitable, api.Cloneable {
 
         constructor(builder: LayoutRegionsBuilder) {
@@ -20,8 +22,8 @@ module api.content.page.layout {
             return super.equals(o);
         }
 
-        clone(): LayoutRegions {
-            return new LayoutRegionsBuilder(this).build();
+        clone(generateNewPropertyIds: boolean = false): LayoutRegions {
+            return new LayoutRegionsBuilder(this, generateNewPropertyIds).build();
         }
     }
 
@@ -29,15 +31,16 @@ module api.content.page.layout {
 
         regions: api.content.page.region.Region[] = [];
 
-        constructor(source?: LayoutRegions) {
+        constructor(source?: LayoutRegions, generateNewPropertyIds: boolean = false) {
             if (source) {
                 source.getRegions().forEach((region: api.content.page.region.Region) => {
-                    this.regions.push(region.clone());
+                    this.regions.push(region.clone(generateNewPropertyIds));
                 });
             }
         }
 
-        fromJson(regionsJson: api.content.page.region.RegionJson[], layoutComponent: LayoutComponent): LayoutRegionsBuilder {
+        fromJson(regionsJson: api.content.page.region.RegionJson[], layoutComponent: LayoutComponent,
+                 propertyIdProvider: PropertyIdProvider): LayoutRegionsBuilder {
 
             regionsJson.forEach((regionJson: api.content.page.region.RegionJson) => {
 
@@ -47,7 +50,7 @@ module api.content.page.layout {
                     build();
 
                 regionJson.components.forEach((componentJson: api.content.page.PageComponentTypeWrapperJson) => {
-                    var pageComponent = api.content.page.PageComponentFactory.createFromJson(componentJson, region);
+                    var pageComponent = api.content.page.PageComponentFactory.createFromJson(componentJson, region, propertyIdProvider);
                     region.addComponent(pageComponent);
                 });
 

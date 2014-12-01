@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.Property;
 import com.enonic.wem.api.form.InvalidValueException;
 
 public class ComboBoxConfig
@@ -15,7 +15,6 @@ public class ComboBoxConfig
     private final ImmutableList<Option> optionsAsList;
 
     private final ImmutableMap<String, Option> optionsAsMap;
-
 
 
     private ComboBoxConfig( Builder builder )
@@ -61,7 +60,8 @@ public class ComboBoxConfig
         return new Builder();
     }
 
-    public static class Builder implements OptionBuilder
+    public static class Builder
+        implements OptionBuilder
     {
         private ImmutableList.Builder<Option> listBuilder = new ImmutableList.Builder<>();
 

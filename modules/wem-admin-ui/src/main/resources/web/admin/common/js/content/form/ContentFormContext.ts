@@ -1,5 +1,8 @@
 module api.content.form {
 
+    import PropertyPath = api.data2.PropertyPath;
+    import PropertyArray = api.data2.PropertyArray;
+
     export class ContentFormContext extends api.form.FormContext {
 
         private site: api.content.site.Site;
@@ -43,12 +46,13 @@ module api.content.form {
             return this.attachments;
         }
 
-        createInputTypeViewContext(inputTypeConfig: any, parentDataPath: api.data.DataPath,
+        createInputTypeViewContext(inputTypeConfig: any, parentPropertyPath: PropertyPath,
                                    input: api.form.Input): api.form.inputtype.InputTypeViewContext<any> {
+
             return <api.content.form.inputtype.ContentInputTypeViewContext<any>> {
                 input: input,
                 inputConfig: inputTypeConfig,
-                parentDataPath: parentDataPath,
+                parentDataPath: parentPropertyPath,
                 site: this.getSite(),
                 contentId: this.getContentId(),
                 contentPath: this.getContentPath(),

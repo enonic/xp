@@ -2,8 +2,8 @@ package com.enonic.wem.repo.internal.elasticsearch;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data2.ValueTypes;
 
 public class OrderbyValueResolver
 {

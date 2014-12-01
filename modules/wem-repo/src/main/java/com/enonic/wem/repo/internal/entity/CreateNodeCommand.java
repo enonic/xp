@@ -57,7 +57,7 @@ public final class CreateNodeCommand
             modifier( creator ).
             parent( params.getParent() ).
             name( NodeName.from( params.getName() ) ).
-            rootDataSet( params.getData() ).
+            data( params.getData() ).
             attachments( params.getAttachments() != null ? params.getAttachments() : Attachments.empty() ).
             indexConfigDocument( params.getIndexConfigDocument() ).
             hasChildren( false ).

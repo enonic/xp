@@ -11,7 +11,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -22,7 +22,7 @@ public final class CreateContentParams
 {
     private Form form;
 
-    private ContentData contentData;
+    private PropertyTree data;
 
     private List<Metadata> metadata;
 
@@ -64,9 +64,9 @@ public final class CreateContentParams
         return this;
     }
 
-    public CreateContentParams contentData( final ContentData value )
+    public CreateContentParams contentData( final PropertyTree value )
     {
-        this.contentData = value;
+        this.data = value;
         return this;
     }
 
@@ -166,9 +166,9 @@ public final class CreateContentParams
         return form;
     }
 
-    public ContentData getContentData()
+    public PropertyTree getData()
     {
-        return contentData;
+        return data;
     }
 
     public List<Metadata> getMetadata()
@@ -223,7 +223,7 @@ public final class CreateContentParams
 
     public void validate()
     {
-        Preconditions.checkNotNull( this.contentData, "contentData cannot be null" );
+        Preconditions.checkNotNull( this.data, "data cannot be null" );
         Preconditions.checkArgument( draft || this.parentContentPath != null, "parentContentPath cannot be null" );
         Preconditions.checkNotNull( this.displayName, "displayName cannot be null" );
     }

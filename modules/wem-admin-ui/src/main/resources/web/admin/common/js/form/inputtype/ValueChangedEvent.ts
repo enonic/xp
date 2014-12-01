@@ -1,6 +1,6 @@
 module api.form.inputtype {
 
-    import Value = api.data.Value;
+    import Value = api.data2.Value;
 
     export class ValueChangedEvent {
 

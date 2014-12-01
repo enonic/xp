@@ -1,5 +1,12 @@
 module api.form {
 
+    import PropertySet = api.data2.PropertySet;
+    import Property = api.data2.Property;
+    import PropertyArray = api.data2.PropertyArray;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
+
     export interface FormItemSetOccurrencesConfig {
 
         context: FormContext;
@@ -10,7 +17,7 @@ module api.form {
 
         parent: FormItemSetOccurrenceView;
 
-        parentDataSet: api.data.DataSet;
+        propertyArray: PropertyArray;
     }
 
     /*
@@ -24,32 +31,28 @@ module api.form {
 
         private parent: FormItemSetOccurrenceView;
 
-        private parentDataSet: api.data.DataSet;
-
-        private occurrencesCollapsed: boolean = false;
+        private occurrencesCollapsed: boolean;
 
         constructor(config: FormItemSetOccurrencesConfig) {
+            this.occurrencesCollapsed = false;
+
             super(<FormItemOccurrencesConfig>{
                 formItem: config.formItemSet,
+                propertyArray: config.propertyArray,
                 occurrenceViewContainer: config.occurrenceViewContainer,
                 allowedOccurrences: config.formItemSet.getOccurrences()
             });
             this.context = config.context;
             this.formItemSet = config.formItemSet;
             this.parent = config.parent;
-            this.parentDataSet = config.parentDataSet;
 
-            var dataSetCount = this.parentDataSet.nameCount(this.formItemSet.getName());
+            var dataSetCount = this.propertyArray.getSize();
             if (dataSetCount > 0) {
                 this.constructOccurrencesForData();
             }
             else {
                 this.constructOccurrencesForNoData();
             }
-        }
-
-        private getDataSets(): api.data.DataSet[] {
-            return this.parentDataSet.getDataSetsByName(this.formItemSet.getName());
         }
 
         getFormItemSet(): FormItemSet {
@@ -77,13 +80,12 @@ module api.form {
         }
 
         private constructOccurrencesForData() {
-            this.getDataSets().forEach((dataSet: api.data.DataSet, index: number) => {
+            this.propertyArray.forEach((property: Property, index: number) => {
                 this.addOccurrence(new FormItemSetOccurrence(this, index));
             });
 
             if (this.countOccurrences() < this.formItemSet.getOccurrences().getMinimum()) {
-                for (var index: number = this.countOccurrences();
-                     index < this.formItemSet.getOccurrences().getMinimum(); index++) {
+                for (var index: number = this.countOccurrences(); index < this.formItemSet.getOccurrences().getMinimum(); index++) {
                     this.addOccurrence(new FormItemSetOccurrence(this, index));
                 }
             }
@@ -96,12 +98,9 @@ module api.form {
 
         createNewOccurrenceView(occurrence: FormItemSetOccurrence): FormItemSetOccurrenceView {
 
-            var dataSets = this.getDataSets();
-            var dataSet: api.data.DataSet = dataSets[occurrence.getIndex()];
+            var dataSet = this.propertyArray.getSet(occurrence.getIndex());
             if (!dataSet) {
-                dataSet = new api.data.DataSet(this.formItemSet.getName());
-                this.parentDataSet.addData(dataSet);
-
+                dataSet = this.propertyArray.addSet();
             }
             var newOccurrenceView = new FormItemSetOccurrenceView(<FormItemSetOccurrenceViewConfig>{
                 context: this.context,
@@ -141,7 +140,7 @@ module api.form {
 
         moveOccurrence(index: number, destinationIndex: number) {
             super.moveOccurrence(index, destinationIndex);
-            this.parentDataSet.moveDataByName(this.getFormItem().getName(), index, destinationIndex);
+            //this.propertyArray.move(index, destinationIndex);
         }
     }
 }

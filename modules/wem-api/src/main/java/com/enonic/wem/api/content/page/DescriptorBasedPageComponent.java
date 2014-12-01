@@ -1,11 +1,11 @@
 package com.enonic.wem.api.content.page;
 
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 
 public interface DescriptorBasedPageComponent
     extends PageComponent
 {
-    RootDataSet getConfig();
+    PropertyTree getConfig();
 
     DescriptorKey getDescriptor();
 }

@@ -1,10 +1,7 @@
 package com.enonic.wem.api.content.site;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.data.DataId;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.module.ModuleKey;
 
 public final class Site
@@ -17,10 +14,10 @@ public final class Site
 
     public String getDescription()
     {
-        return this.getContentData().getProperty( "description" ).getString();
+        return this.getData().getString( "description" );
     }
 
-    public RootDataSet getModuleConfig( final ModuleKey moduleKey )
+    public PropertyTree getModuleConfig( final ModuleKey moduleKey )
     {
         final ModuleConfig moduleConfig = this.getModuleConfigs().get( moduleKey );
         if ( moduleConfig == null )
@@ -32,7 +29,7 @@ public final class Site
 
     public ModuleConfigs getModuleConfigs()
     {
-        return new ModuleConfigsDataSerializer().fromData( this.getContentData() ).build();
+        return new ModuleConfigsDataSerializer().fromProperties( this.getData().getRoot() ).build();
     }
 
     @Override
@@ -78,32 +75,32 @@ public final class Site
         public Builder description( final String description )
         {
 
-            if ( contentData == null )
+            if ( data == null )
             {
-                contentData = new ContentData();
+                data = new PropertyTree();
             }
-            contentData.setProperty( DataId.from( "description", 0 ), Value.newString( description ) );
+            data.setString( "description", description );
             return this;
         }
 
-        public Builder addModuleConfig( ModuleConfig moduleConfig )
+        public Builder addModuleConfig( final ModuleConfig moduleConfig )
         {
-            if ( contentData == null )
+            if ( data == null )
             {
-                contentData = new ContentData();
+                data = new PropertyTree();
             }
-            MODULE_CONFIGS_DATA_SERIALIZER.addToData( moduleConfig, contentData );
+            MODULE_CONFIGS_DATA_SERIALIZER.toProperties( moduleConfig, data.getRoot() );
 
             return this;
         }
 
-        public Builder moduleConfigs( ModuleConfigs moduleConfigs )
+        public Builder moduleConfigs( final ModuleConfigs moduleConfigs )
         {
-            if ( contentData == null )
+            if ( data == null )
             {
-                contentData = new ContentData();
+                data = new PropertyTree();
             }
-            MODULE_CONFIGS_DATA_SERIALIZER.toData( moduleConfigs ).forEach( contentData::add );
+            MODULE_CONFIGS_DATA_SERIALIZER.toProperties( moduleConfigs, data.getRoot() );
             return this;
         }
 

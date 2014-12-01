@@ -2,6 +2,11 @@ declare var plupload;
 
 module api.content.form.inputtype.imageupload {
 
+    import Property = api.data2.Property;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
+
     export class Image extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any,string> {
 
         private imageUploader: api.ui.uploader.ImageUploader;
@@ -29,22 +34,6 @@ module api.content.form.inputtype.imageupload {
             };
             this.imageUploader = new api.ui.uploader.ImageUploader(input.getName(), uploadUrl, imageUploaderConfig);
 
-            this.imageUploader.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
-                if (this.attachmentName == null) {
-                    this.attachmentName = event.getUploadedItem().getName();
-                    this.attachment = this.uploadItemToAttachment(event.getUploadedItem());
-
-                    var value = new api.data.Value(this.attachmentName, api.data.type.ValueTypes.STRING);
-                    this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(value, 0));
-                }
-            });
-
-            this.imageUploader.onImageReset(() => {
-                this.attachment = null;
-                this.attachmentName = null;
-                var value = api.data.type.ValueTypes.STRING.newNullValue();
-                this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(value, 0));
-            });
 
             this.appendChild(this.imageUploader);
         }
@@ -53,15 +42,15 @@ module api.content.form.inputtype.imageupload {
             return <api.content.form.inputtype.ContentInputTypeViewContext<any>>super.getContext();
         }
 
-        getValueType(): api.data.type.ValueType {
-            return api.data.type.ValueTypes.STRING;
+        getValueType(): ValueType {
+            return ValueTypes.STRING;
         }
 
-        newInitialValue(): string {
+        newInitialValue(): Value {
             return null;
         }
 
-        layoutProperty(input: api.form.Input, property: api.data.Property) {
+        layoutProperty(input: api.form.Input, property: Property) {
 
             if (property.hasNonNullValue()) {
                 this.attachmentName = property.getString();
@@ -70,14 +59,23 @@ module api.content.form.inputtype.imageupload {
                     setSize(494).resolve();
                 this.imageUploader.setValue(imgUrl);
             }
-        }
 
+            this.imageUploader.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
+                if (this.attachmentName == null) {
+                    this.attachmentName = event.getUploadedItem().getName();
+                    this.attachment = this.uploadItemToAttachment(event.getUploadedItem());
 
-        getValue(occurrence: api.dom.Element): api.data.Value {
-            if (!this.attachmentName) {
-                return api.data.type.ValueTypes.STRING.newNullValue();
-            }
-            return new api.data.Value(this.attachmentName, api.data.type.ValueTypes.STRING);
+                    var value = new Value(this.attachmentName, ValueTypes.STRING);
+                    property.setValue(value);
+                }
+            });
+
+            this.imageUploader.onImageReset(() => {
+                this.attachment = null;
+                this.attachmentName = null;
+                var value = ValueTypes.STRING.newNullValue();
+                property.setValue(value);
+            });
         }
 
         getAttachments(): api.content.attachment.Attachment[] {

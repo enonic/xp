@@ -8,7 +8,7 @@ module api.content.page {
 
         regions: api.content.page.region.RegionJson[];
 
-        config: api.data.json.DataTypeWrapperJson[];
+        config: api.data2.PropertyArrayJson[];
 
     }
 }

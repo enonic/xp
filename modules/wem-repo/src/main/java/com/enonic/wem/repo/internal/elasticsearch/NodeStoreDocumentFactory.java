@@ -6,9 +6,9 @@ import java.util.Set;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.PropertyVisitor;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data2.PropertyVisitor;
+import com.enonic.wem.api.data2.Value;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.node.Node;
@@ -146,7 +146,7 @@ class NodeStoreDocumentFactory
             @Override
             public void visit( final Property property )
             {
-                if ( !property.hasNullValue() && !Strings.isNullOrEmpty( property.getValue().asString() ) )
+                if ( !Strings.isNullOrEmpty( property.getString() ) )
                 {
                     final IndexConfig configForData = node.getIndexConfigDocument().getConfigForPath( property.getPath() );
 

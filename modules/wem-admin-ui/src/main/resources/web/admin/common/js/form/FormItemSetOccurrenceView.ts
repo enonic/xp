@@ -1,8 +1,12 @@
 module api.form {
 
-    import DataPath = api.data.DataPath;
-    import DataPathElement = api.data.DataPathElement;
-    import DataSet = api.data.DataSet;
+    import PropertySet = api.data2.PropertySet;
+    import PropertyPath = api.data2.PropertyPath;
+    import Property = api.data2.Property;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
+    import PropertyTree = api.data2.PropertyTree;
 
     export interface FormItemSetOccurrenceViewConfig {
 
@@ -14,7 +18,7 @@ module api.form {
 
         parent: FormItemSetOccurrenceView;
 
-        dataSet: DataSet
+        dataSet: PropertySet
     }
 
     export class FormItemSetOccurrenceView extends FormItemOccurrenceView {
@@ -33,7 +37,7 @@ module api.form {
 
         private parent: FormItemSetOccurrenceView;
 
-        private dataSet: DataSet;
+        private propertySet: PropertySet;
 
         private formItemViews: FormItemView[] = [];
 
@@ -50,29 +54,14 @@ module api.form {
             this.formItemSet = config.formItemSet;
             this.parent = config.parent;
             this.constructedWithData = config.dataSet != null;
-            this.dataSet = config.dataSet;
+            this.propertySet = config.dataSet;
             this.doLayout();
             this.refresh();
         }
 
-        setDataSet(value: DataSet) {
-            this.dataSet = value;
-        }
+        getDataPath(): PropertyPath {
 
-        getDataPath(): DataPath {
-
-            // TODO: Replace with just getting DataPath from this.dataSet?
-            var parent: DataPath = this.parent != null ? this.parent.getDataPath() : null;
-            if (parent == null) {
-                return DataPath.fromPathElement(DataPathElement.fromDataId(this.formItemSetOccurrence.getDataId()));
-            }
-            else {
-                return DataPath.fromParent(parent, DataPathElement.fromDataId(this.formItemSetOccurrence.getDataId()));
-            }
-        }
-
-        getDataSet(): DataSet {
-            return this.dataSet;
+            return this.propertySet.getProperty().getPath();
         }
 
         private doLayout() {
@@ -94,7 +83,7 @@ module api.form {
                 setFormItems(this.formItemSet.getFormItems()).
                 setParentElement(this.formItemSetOccurrencesContainer).
                 setParent(this).
-                layout(this.dataSet);
+                layout(this.propertySet);
 
             this.validate(true);
 
@@ -142,91 +131,6 @@ module api.form {
             this.removeButton.setVisible(this.formItemSetOccurrence.showRemoveButton());
         }
 
-        public getValueAtPath(path: DataPath): api.data.Value {
-            if (path == null) {
-                throw new Error("To get a value, a path is required");
-            }
-            if (path.elementCount() == 0) {
-                throw new Error("Cannot get value from empty path: " + path.toString());
-            }
-
-            if (path.elementCount() == 1) {
-                return this.getValue(path.getFirstElement().toDataId());
-            }
-            else {
-                return this.forwardGetValueAtPath(path);
-            }
-        }
-
-        public getValue(dataId: api.data.DataId): api.data.Value {
-
-            var inputView = this.getInputView(dataId.getName());
-            if (inputView == null) {
-                return null;
-            }
-            return inputView.getValue(dataId.getArrayIndex());
-        }
-
-        private forwardGetValueAtPath(path: DataPath): api.data.Value {
-
-            var dataId: api.data.DataId = path.getFirstElement().toDataId();
-            var formItemSetView = this.getFormItemSetView(dataId.getName());
-            if (formItemSetView == null) {
-                return null;
-            }
-            var formItemSetOccurrenceView = formItemSetView.getFormItemSetOccurrenceView(dataId.getArrayIndex());
-            return formItemSetOccurrenceView.getValueAtPath(path.newWithoutFirstElement());
-        }
-
-        public getInputView(name: string): InputView {
-
-            var formItemView = this.getFormItemView(name);
-            if (formItemView == null) {
-                return null;
-            }
-            if (!(api.ObjectHelper.iFrameSafeInstanceOf(formItemView, InputView))) {
-                throw new Error("Found a FormItemView with name [" + name + "], but it was not an InputView");
-            }
-            return <InputView>formItemView;
-        }
-
-        public getFormItemSetView(name: string): FormItemSetView {
-
-            var formItemView = this.getFormItemView(name);
-            if (formItemView == null) {
-                return null;
-            }
-            if (!(api.ObjectHelper.iFrameSafeInstanceOf(formItemView, FormItemSetView))) {
-                throw new Error("Found a FormItemView with name [" + name + "], but it was not an FormItemSetView");
-            }
-            return <FormItemSetView>formItemView;
-        }
-
-        public getFormItemView(name: string): FormItemView {
-
-            // TODO: Performance could be improved if the views where accessible by name from a map
-
-            for (var i = 0; i < this.formItemViews.length; i++) {
-                var curr = this.formItemViews[i];
-                if (name == curr.getFormItem().getName()) {
-                    return curr;
-                }
-            }
-
-            // FormItemView not found - look inside FieldSet-s
-            for (var i = 0; i < this.formItemViews.length; i++) {
-                var curr = this.formItemViews[i];
-                if (api.ObjectHelper.iFrameSafeInstanceOf(curr, FieldSetView)) {
-                    var view = (<FieldSetView>curr).getFormItemView(name);
-                    if (view != null) {
-                        return view;
-                    }
-                }
-            }
-
-            return null;
-        }
-
         getAttachments(): api.content.attachment.Attachment[] {
             var attachments: api.content.attachment.Attachment[] = [];
             this.formItemViews.forEach((formItemView: FormItemView) => {
@@ -254,8 +158,6 @@ module api.form {
         }
 
         validate(silent: boolean = true): ValidationRecording {
-
-            //console.log("FormItemSetOccurrenceView[ " + this.resolveValidationRecordingPath() + " ].validate(" + silent + ")");
 
             var allRecordings = new ValidationRecording();
             this.formItemViews.forEach((formItemView: FormItemView) => {

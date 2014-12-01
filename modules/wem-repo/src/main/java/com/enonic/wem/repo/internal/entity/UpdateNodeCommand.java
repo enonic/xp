@@ -73,7 +73,7 @@ public final class UpdateNodeCommand
         final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
             modifiedTime( now ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
-            rootDataSet( editResult.data() ).
+            data( editResult.data() ).
             attachments( synchronizeAttachments( editResult.attachments(), persistedNode ) ).
             accessControlList( editResult.getAccessControlList() ).
             effectiveAcl( effectiveAcl ).

@@ -2,8 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
@@ -93,8 +92,8 @@ public class FindNodesByQueryCommandTest
     public void compare_gt()
         throws Exception
     {
-        final RootDataSet data = new RootDataSet();
-        data.setProperty( "my-value", Value.newDouble( 5 ) );
+        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        data.setDouble( "my-value", 5.5 );
 
         createNode( CreateNodeParams.create().
             name( "my-node-1" ).
@@ -102,8 +101,8 @@ public class FindNodesByQueryCommandTest
             data( data ).
             build() );
 
-        final RootDataSet data2 = new RootDataSet();
-        data2.setProperty( "my-value", Value.newDouble( 10 ) );
+        final PropertyTree data2 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        data2.setDouble( "my-value", 10.0 );
 
         final Node node2 = createNode( CreateNodeParams.create().
             name( "my-node-2" ).

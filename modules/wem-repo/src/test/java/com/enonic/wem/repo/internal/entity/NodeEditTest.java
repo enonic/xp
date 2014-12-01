@@ -5,9 +5,7 @@ import java.time.LocalDate;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
@@ -69,10 +67,10 @@ public class NodeEditTest
 
     private Node createNode()
     {
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( DataPath.from( "a.b.c" ), Value.newDouble( 2.0 ) );
-        rootDataSet.setProperty( DataPath.from( "b" ), Value.newLocalDate( LocalDate.now() ) );
-        rootDataSet.setProperty( DataPath.from( "c" ), Value.newString( "runar" ) );
+        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        rootDataSet.setDouble( "a.b.c", 2.0 );
+        rootDataSet.setLocalDate( "b", LocalDate.now() );
+        rootDataSet.setString( "c", "runar" );
 
         return Node.newNode().
             id( NodeId.from( "node" ) ).
@@ -80,7 +78,7 @@ public class NodeEditTest
             name( NodeName.from( "mynode" ) ).
             creator( PrincipalKey.from( "user:system:admin" ) ).
             createdTime( Instant.now() ).
-            rootDataSet( rootDataSet ).
+            data( rootDataSet ).
             childOrder( ChildOrder.from( "modifiedTime DESC" ) ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 defaultConfig( IndexConfig.MINIMAL ).

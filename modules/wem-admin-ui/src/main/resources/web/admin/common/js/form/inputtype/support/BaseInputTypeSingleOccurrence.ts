@@ -1,12 +1,15 @@
 module api.form.inputtype.support {
 
+    import Property = api.data2.Property;
+    import PropertyArray = api.data2.PropertyArray;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+
     export class BaseInputTypeSingleOccurrence<CONTEXT,RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
 
         private context: api.form.inputtype.InputTypeViewContext<CONTEXT>;
 
         private input: api.form.Input;
-
-        private valueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent) : void}[] = [];
 
         constructor(CONTEXT: api.form.inputtype.InputTypeViewContext<CONTEXT>, className?: string) {
             super("input-type-view" + ( className ? " " + className : ""));
@@ -30,25 +33,20 @@ module api.form.inputtype.support {
             return true;
         }
 
-        layout(input: api.form.Input, properties: api.data.Property[]) {
-            this.layoutProperty(input, properties[0])
+        layout(input: api.form.Input, propertyArray: PropertyArray) {
+            this.layoutProperty(input, propertyArray.get(0))
         }
 
-        layoutProperty(input: api.form.Input, property: api.data.Property) {
+        layoutProperty(input: api.form.Input, property: Property) {
 
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
-        getValueType(): api.data.type.ValueType {
+        getValueType(): ValueType {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
-        newInitialValue(): RAW_VALUE_TYPE {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
-        }
-
-        getValues(): api.data.Value[] {
-
+        newInitialValue(): Value {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
@@ -59,35 +57,6 @@ module api.form.inputtype.support {
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
-        }
-
-        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            this.valueChangedListeners.push(listener);
-        }
-
-        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            this.valueChangedListeners.filter((currentListener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        notifyValueChanged(event: api.form.inputtype.ValueChangedEvent) {
-            this.valueChangedListeners.forEach((listener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
-        onValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
-        }
-
-        unValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
-        }
-
-        onValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
-        }
-
-        unValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
-
         }
 
         onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {

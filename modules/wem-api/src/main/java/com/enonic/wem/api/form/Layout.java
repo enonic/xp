@@ -11,6 +11,12 @@ public abstract class Layout
 
 
     @Override
+    public FormItemType getType()
+    {
+        return FormItemType.LAYOUT;
+    }
+
+    @Override
     FormItemPath resolvePath()
     {
         return resolveParentPath();

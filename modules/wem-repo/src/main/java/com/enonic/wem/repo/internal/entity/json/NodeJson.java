@@ -6,19 +6,20 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.data.RootDataSetJson;
+import com.enonic.wem.api.data2.PropertyArrayJson;
+import com.enonic.wem.api.data2.PropertyTreeJson;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
-import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.node.Attachment;
 import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
 
 final class NodeJson
 {
@@ -29,7 +30,7 @@ final class NodeJson
     private Instant createdTime;
 
     @JsonProperty("data")
-    private RootDataSetJson data;
+    private List<PropertyArrayJson> data;
 
     @JsonProperty("modifiedTime")
     private Instant modifiedTime;
@@ -78,7 +79,7 @@ final class NodeJson
             modifiedTime( this.modifiedTime ).
             path( this.path ).
             parent( this.parent != null ? NodePath.newPath( this.parent ).build() : null ).
-            rootDataSet( this.data.getRootDataSet() ).
+            data( PropertyTreeJson.fromJson( this.data ) ).
             indexConfigDocument( this.indexConfigDocument.fromJson() ).
             attachments( fromAttachmentJsonList( this.attachments ) ).
             childOrder( ChildOrder.from( this.childOrder ) ).
@@ -116,7 +117,7 @@ final class NodeJson
         json.id = node.id().toString();
         json.createdTime = node.getCreatedTime();
         json.modifiedTime = node.getModifiedTime();
-        json.data = new RootDataSetJson( node.data() );
+        json.data = PropertyTreeJson.toJson( node.data() );
         json.indexConfigDocument = createEntityIndexConfig( node.getIndexConfigDocument() );
         json.attachments = toAttachmentJsonList( node.attachments() );
         json.name = node.name() != null ? node.name().toString() : null;

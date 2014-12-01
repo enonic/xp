@@ -1,6 +1,6 @@
 package com.enonic.wem.api.schema.content.validator;
 
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.Property;
 import com.enonic.wem.api.form.Input;
 
 public final class MissingRequiredValueValidationError

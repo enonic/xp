@@ -2,9 +2,12 @@ package com.enonic.wem.core.content.page;
 
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
+import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.content.page.region.Region;
+import com.enonic.wem.api.content.page.region.RegionDataSerializer;
+import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data2.PropertySet;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 
 public class PageDataSerializer
@@ -14,57 +17,57 @@ public class PageDataSerializer
 
     public static final String PAGE_TEMPLATE = "template";
 
-    public static final String PAGE_REGIONS = "regions";
-
     public static final String PAGE_CONFIG = "config";
 
-    private static PageRegionsDataSerializer regionsDataSerializer = new PageRegionsDataSerializer( PAGE_REGIONS );
+    private final RegionDataSerializer regionDataSerializer = new RegionDataSerializer();
 
-    private final String dataSetName;
+    private final String propertyName;
 
-    public PageDataSerializer( final String dataSetName )
+    public PageDataSerializer( final String propertyName )
     {
-        this.dataSetName = dataSetName;
+        this.propertyName = propertyName;
     }
 
-    public DataSet toData( final Page page )
+    public void toData( final Page page, final PropertySet parent )
     {
-        final DataSet asData = new DataSet( dataSetName );
+        final PropertySet asSet = parent.addSet( propertyName );
 
-        asData.addProperty( CONTROLLER, Value.newString( page.hasController() ? page.getController().toString() : null ) );
-        asData.addProperty( PAGE_TEMPLATE, Value.newString( page.hasTemplate() ? page.getTemplate().toString() : null ) );
+        asSet.addString( CONTROLLER, page.hasController() ? page.getController().toString() : null );
+        asSet.addString( PAGE_TEMPLATE, page.hasTemplate() ? page.getTemplate().toString() : null );
 
         if ( page.hasRegions() )
         {
-            asData.add( regionsDataSerializer.toData( page.getRegions() ) );
+            for ( Region region : page.getRegions() )
+            {
+                regionDataSerializer.toData( region, asSet );
+            }
         }
         if ( page.hasConfig() )
         {
-            asData.add( page.getConfig().toDataSet( PAGE_CONFIG ) );
+            asSet.addSet( PAGE_CONFIG, page.getConfig().getRoot().copy( asSet.getTree() ) );
         }
-
-        return asData;
     }
 
-
-    public Page fromData( final DataSet asData )
+    public Page fromData( final PropertySet asData )
     {
         final Page.Builder page = Page.newPage();
-        if ( asData.hasData( CONTROLLER ) && !asData.getProperty( CONTROLLER ).hasNullValue() )
+        if ( asData.isNotNull( CONTROLLER ) )
         {
-            page.controller( PageDescriptorKey.from( asData.getProperty( CONTROLLER ).getString() ) );
+            page.controller( PageDescriptorKey.from( asData.getString( CONTROLLER ) ) );
         }
-        if ( asData.hasData( PAGE_TEMPLATE ) && !asData.getProperty( PAGE_TEMPLATE ).hasNullValue() )
+        if ( asData.isNotNull( PAGE_TEMPLATE ) )
         {
-            page.template( PageTemplateKey.from( asData.getProperty( PAGE_TEMPLATE ).getString() ) );
+            page.template( PageTemplateKey.from( asData.getString( PAGE_TEMPLATE ) ) );
         }
-        if ( asData.hasData( PAGE_REGIONS ) )
+        final PageRegions.Builder pageRegionsBuilder = PageRegions.newPageRegions();
+        for ( final Property regionAsProp : asData.getProperties( "region" ) )
         {
-            page.regions( regionsDataSerializer.fromData( asData.getDataSet( PAGE_REGIONS ) ) );
+            pageRegionsBuilder.add( regionDataSerializer.fromData( regionAsProp.getSet() ) );
         }
-        if ( asData.hasData( PAGE_CONFIG ) )
+        page.regions( pageRegionsBuilder.build() );
+        if ( asData.hasProperty( PAGE_CONFIG ) )
         {
-            page.config( asData.getData( PAGE_CONFIG ).toDataSet().toRootDataSet() );
+            page.config( asData.getSet( PAGE_CONFIG ).toTree() );
         }
         return page.build();
     }

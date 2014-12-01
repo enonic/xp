@@ -4,8 +4,7 @@ import java.util.LinkedHashSet;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
@@ -18,7 +17,6 @@ import com.enonic.wem.api.security.UserStoreKey;
 
 class PrincipalKeyNodeTranslator
 {
-
     public static NodeName toNodeName( final PrincipalKey principalKey )
     {
         return NodeName.from( principalKey.getId() );
@@ -33,10 +31,10 @@ class PrincipalKeyNodeTranslator
     {
         final String principalId = node.name().toString();
 
-        final RootDataSet rootDataSet = node.data();
+        final PropertyTree rootDataSet = node.data();
 
-        final String principalType = getStringAndAssertNotNull( rootDataSet, PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY );
-        final String userStoreKey = getString( rootDataSet, PrincipalNodeTranslator.USER_STORE_KEY );
+        final String principalType = rootDataSet.getString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY );
+        final String userStoreKey = rootDataSet.getString( PrincipalNodeTranslator.USER_STORE_KEY );
 
         final PrincipalType type = PrincipalType.valueOf( principalType );
         switch ( type )
@@ -60,23 +58,4 @@ class PrincipalKeyNodeTranslator
         }
         return PrincipalKeys.from( principals );
     }
-
-    private static String getStringAndAssertNotNull( final RootDataSet data, String key )
-    {
-        final Property property = data.getProperty( key );
-
-        if ( property == null )
-        {
-            throw new IllegalArgumentException( "Failed to deserialize node to principal, missing property " + key );
-        }
-
-        return property.getValue().asString();
-    }
-
-    private static String getString( final RootDataSet data, String key )
-    {
-        final Property property = data.getProperty( key );
-        return property == null ? null : property.getValue().asString();
-    }
-
 }

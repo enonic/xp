@@ -1,16 +1,19 @@
 module api.form.inputtype {
 
+    import Property = api.data2.Property;
+    import PropertyArray = api.data2.PropertyArray;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+
     export interface InputTypeView<RAW_VALUE_TYPE> {
 
-        getValueType(): api.data.type.ValueType;
+        getValueType(): ValueType;
 
         getElement(): api.dom.Element;
 
-        layout(input: api.form.Input, properties: api.data.Property[]);
+        layout(input: api.form.Input, propertyArray: PropertyArray);
 
-        newInitialValue(): RAW_VALUE_TYPE;
-
-        getValues(): api.data.Value[];
+        newInitialValue(): Value;
 
         getAttachments(): api.content.attachment.Attachment[];
 
@@ -34,21 +37,6 @@ module api.form.inputtype {
          * Returns true if focus was successfully given.
          */
         giveFocus(): boolean;
-
-        /**
-         * Note: Event must never be thrown while function layout is being executed.
-         */
-        onValueAdded(listener: (event: ValueAddedEvent) => void);
-
-        unValueAdded(listener: (event: ValueAddedEvent) => void);
-
-        onValueChanged(listener: (event: ValueChangedEvent) => void);
-
-        unValueChanged(listener: (event: ValueChangedEvent) => void);
-
-        onValueRemoved(listener: (event: ValueRemovedEvent) => void);
-
-        unValueRemoved(listener: (event: ValueRemovedEvent) => void);
 
         validate(silent: boolean) : InputValidationRecording;
 

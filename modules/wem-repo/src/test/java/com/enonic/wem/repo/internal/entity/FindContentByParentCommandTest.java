@@ -2,8 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
@@ -113,8 +112,8 @@ public class FindContentByParentCommandTest
         for ( int i = 0; i < size; i++ )
         {
             // Add numeric order value to ensure numeric ordering
-            final RootDataSet data = new RootDataSet();
-            data.setProperty( "myOrderNumber", Value.newDouble( i ) );
+            final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+            data.setDouble( "myOrderNumber", (double) i );
 
             createNode( CreateNodeParams.create().
                 parent( createdNode.path() ).

@@ -12,13 +12,18 @@ module api.content.page {
 
     export class PageDescriptorDropdown extends Dropdown<PageDescriptor> {
 
-        constructor(name:string, config: PageDescriptorDropdownConfig) {
+        private loader: api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>;
+
+        private loadedDataListeners: {(event: LoadedDataEvent<PageDescriptor>):void}[] = [];
+
+        constructor(name: string, config: PageDescriptorDropdownConfig) {
             super(name, <DropdownConfig<PageDescriptor>>{
                 optionDisplayValueViewer: new PageDescriptorViewer(),
                 dataIdProperty: 'value'
             });
 
-            config.loader.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
+            this.loader = config.loader;
+            this.loader.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
                 event.getData().forEach((descriptor: PageDescriptor) => {
                     this.addOption({
                         value: descriptor.getKey().toString(),
@@ -26,10 +31,26 @@ module api.content.page {
                         indices: [descriptor.getDisplayName(), descriptor.getName().toString()]
                     });
                 });
+                this.notifyLoadedData(event);
             });
 
             config.loader.load();
         }
 
+        onLoadedData(listener: (event: LoadedDataEvent<PageDescriptor>) => void) {
+            this.loadedDataListeners.push(listener);
+        }
+
+        unLoadedData(listener: (event: LoadedDataEvent<PageDescriptor>) => void) {
+            this.loadedDataListeners = this.loadedDataListeners.filter((currentListener: (event: LoadedDataEvent<PageDescriptor>)=>void)=> {
+                return currentListener != listener;
+            });
+        }
+
+        private notifyLoadedData(event: LoadedDataEvent<PageDescriptor>) {
+            this.loadedDataListeners.forEach((listener: (event: LoadedDataEvent<PageDescriptor>)=>void)=> {
+                listener.call(this, event);
+            });
+        }
     }
 }

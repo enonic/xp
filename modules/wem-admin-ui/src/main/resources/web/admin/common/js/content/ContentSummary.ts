@@ -1,5 +1,7 @@
 module api.content {
 
+    import PropertyIdProvider = api.data2.PropertyIdProvider;
+
     export class ContentSummary extends ContentIdBaseItem {
 
         private id: string;
@@ -219,14 +221,14 @@ module api.content {
             return true;
         }
 
-        static fromJson(json: api.content.json.ContentSummaryJson): ContentSummary {
+        static fromJson(json: api.content.json.ContentSummaryJson, propertyIdProvider: PropertyIdProvider): ContentSummary {
             return new ContentSummaryBuilder().fromContentSummaryJson(json).build();
         }
 
-        static fromJsonArray(jsonArray: api.content.json.ContentSummaryJson[]): ContentSummary[] {
+        static fromJsonArray(jsonArray: api.content.json.ContentSummaryJson[], propertyIdProvider: PropertyIdProvider): ContentSummary[] {
             var array: ContentSummary[] = [];
             jsonArray.forEach((json: api.content.json.ContentSummaryJson) => {
-                array.push(ContentSummary.fromJson(json));
+                array.push(ContentSummary.fromJson(json, propertyIdProvider));
             });
             return array;
         }

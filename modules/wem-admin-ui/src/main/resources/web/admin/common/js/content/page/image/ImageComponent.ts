@@ -6,13 +6,14 @@ module api.content.page.image {
     import OccurrencesBuilder = api.form.OccurrencesBuilder;
     import TextLine = api.form.inputtype.text.TextLine;
     import TextArea = api.form.inputtype.text.TextArea;
-    import RootDataSet = api.data.RootDataSet;
+    import PropertyTree = api.data2.PropertyTree;
+    import PropertyIdProvider = api.data2.PropertyIdProvider;
 
     export class ImageComponent extends api.content.page.PageComponent implements api.Equitable, api.Cloneable {
 
         private image: api.content.ContentId;
 
-        private config: RootDataSet;
+        private config: PropertyTree;
 
         private form: Form;
 
@@ -40,17 +41,19 @@ module api.content.page.image {
             return this.form;
         }
 
-        getConfig(): api.data.RootDataSet {
+        getConfig(): PropertyTree {
             return this.config;
-        }
-
-        setConfig(value: api.data.RootDataSet) {
-            this.config = value;
         }
 
         setImage(value: api.content.ContentId) {
             this.image = value;
         }
+
+        reset() {
+            this.image = null;
+            //this.config.                                                                                              Arn Jørund
+        }
+
 
         toJson(): api.content.page.PageComponentTypeWrapperJson {
 
@@ -86,8 +89,8 @@ module api.content.page.image {
             return true;
         }
 
-        clone(): ImageComponent {
-            return new ImageComponentBuilder(this).build();
+        clone(generateNewPropertyIds: boolean = false): ImageComponent {
+            return new ImageComponentBuilder(this, generateNewPropertyIds).build();
         }
     }
 
@@ -95,13 +98,13 @@ module api.content.page.image {
 
         image: api.content.ContentId;
 
-        config: RootDataSet;
+        config: PropertyTree;
 
-        constructor(source?: ImageComponent) {
+        constructor(source?: ImageComponent, generateNewPropertyIds: boolean = false) {
             super(source);
             if (source) {
                 this.image = source.getImage();
-                this.config = source.getConfig();
+                this.config = source.getConfig().copy(generateNewPropertyIds);
             }
         }
 
@@ -110,12 +113,12 @@ module api.content.page.image {
             return this;
         }
 
-        public setConfig(value: api.data.RootDataSet): ImageComponentBuilder {
+        public setConfig(value: PropertyTree): ImageComponentBuilder {
             this.config = value;
             return this;
         }
 
-        public fromJson(json: ImageComponentJson, region: Region): ImageComponentBuilder {
+        public fromJson(json: ImageComponentJson, region: Region, propertyIdProvider: PropertyIdProvider): ImageComponentBuilder {
 
             if (json.image) {
                 this.setImage(new api.content.ContentId(json.image));
@@ -124,7 +127,7 @@ module api.content.page.image {
             this.setName(new api.content.page.ComponentName(json.name));
 
 
-            this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
+            this.setConfig(PropertyTree.fromJson(json.config, propertyIdProvider));
             this.setParent(region);
 
             return this;

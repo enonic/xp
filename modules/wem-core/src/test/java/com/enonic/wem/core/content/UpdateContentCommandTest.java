@@ -16,8 +16,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
@@ -51,13 +50,14 @@ public class UpdateContentCommandTest
     public void given_content_not_found_when_handle_then_NOT_FOUND_is_returned()
         throws Exception
     {
-        ContentData existingContentData = new ContentData();
-        existingContentData.add( Property.newString( "myData", "aaa" ) );
+        // setup
+        PropertyTree existingContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        existingContentData.addString( "myData", "aaa" );
 
-        final ContentData unchangedContentData = new ContentData();
-        unchangedContentData.add( Property.newString( "myData", "aaa" ) );
+        PropertyTree unchangedContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        unchangedContentData.addString( "myData", "aaa" );
 
-        final ContentId contentId = ContentId.from( "mycontent" );
+        ContentId contentId = ContentId.from( "mycontent" );
 
         UpdateContentParams params = new UpdateContentParams().
             modifier( PrincipalKey.from( "user:system:admin" ) ).
@@ -86,13 +86,14 @@ public class UpdateContentCommandTest
     public void contentDao_update_not_invoked_when_nothing_is_changed()
         throws Exception
     {
-        ContentData existingContentData = new ContentData();
-        existingContentData.add( Property.newString( "myData", "aaa" ) );
+        // setup
+        PropertyTree existingContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        existingContentData.addString( "myData", "aaa" );
 
         Content existingContent = createContent( existingContentData );
 
-        final ContentData unchangedContentData = new ContentData();
-        unchangedContentData.add( Property.newString( "myData", "aaa" ) );
+        PropertyTree unchangedContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        unchangedContentData.addString( "myData", "aaa" );
 
         UpdateContentParams params = new UpdateContentParams().
             modifier( PrincipalKey.from( "user:system:admin" ) ).
@@ -120,7 +121,7 @@ public class UpdateContentCommandTest
         Mockito.verify( nodeService, Mockito.never() ).update( Mockito.isA( UpdateNodeParams.class ) );
     }
 
-    private Content createContent( final ContentData contentData )
+    private Content createContent( final PropertyTree contentData )
     {
         return newContent().
             id( ContentId.from( "1" ) ).

@@ -5,14 +5,14 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.module.ModuleKey;
 
 public final class ModuleConfig
 {
     private final ModuleKey module;
 
-    private final RootDataSet config;
+    private final PropertyTree config;
 
     public ModuleConfig( final Builder builder )
     {
@@ -27,7 +27,7 @@ public final class ModuleConfig
         return module;
     }
 
-    public RootDataSet getConfig()
+    public PropertyTree getConfig()
     {
         return config;
     }
@@ -64,7 +64,7 @@ public final class ModuleConfig
     {
         private ModuleKey module;
 
-        private RootDataSet config;
+        private PropertyTree config;
 
         public Builder module( ModuleKey value )
         {
@@ -72,7 +72,7 @@ public final class ModuleConfig
             return this;
         }
 
-        public Builder config( RootDataSet value )
+        public Builder config( PropertyTree value )
         {
             this.config = value;
             return this;

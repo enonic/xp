@@ -6,13 +6,12 @@ import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -37,7 +36,7 @@ class CreatePageTemplateCommand
 
     private PageRegions pageRegions;
 
-    private RootDataSet pageConfig;
+    private PropertyTree pageConfig;
 
     public CreatePageTemplateCommand contentService( final ContentService contentService )
     {
@@ -87,7 +86,7 @@ class CreatePageTemplateCommand
         return this;
     }
 
-    public CreatePageTemplateCommand pageConfig( final RootDataSet pageConfig )
+    public CreatePageTemplateCommand pageConfig( final PropertyTree pageConfig )
     {
         this.pageConfig = pageConfig;
         return this;
@@ -95,10 +94,10 @@ class CreatePageTemplateCommand
 
     public PageTemplate execute()
     {
-        final ContentData data = new ContentData();
+        final PropertyTree data = new PropertyTree();
         new PageTemplateFormDataBuilder().
             supports( supports ).
-            appendData( data );
+            appendData( data.getRoot() );
 
         final Content content = contentService.create( new CreateContentParams().
             name( name ).

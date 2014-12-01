@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponent;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.PageComponentType;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 
 public final class PartComponent
     extends AbstractDescriptorBasedPageComponent<PartDescriptorKey>
@@ -25,6 +25,21 @@ public final class PartComponent
     public PageComponentType getType()
     {
         return PartComponentType.INSTANCE;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof PartComponent ) )
+        {
+            return false;
+        }
+
+        return super.equals( o );
     }
 
     public static class Builder
@@ -58,7 +73,7 @@ public final class PartComponent
             return this;
         }
 
-        public Builder config( final RootDataSet config )
+        public Builder config( final PropertyTree config )
         {
             this.config = config;
             return this;

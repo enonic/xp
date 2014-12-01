@@ -1,10 +1,12 @@
 module api.content.page {
 
+    import PropertyTree = api.data2.PropertyTree;
+
     export class DescriptorBasedPageComponent extends PageComponent implements api.Equitable, api.Cloneable {
 
         private descriptorKey: DescriptorKey;
 
-        private config: api.data.RootDataSet;
+        private config: PropertyTree;
 
         constructor(builder?: DescriptorBasedPageComponentBuilder<any>) {
 
@@ -33,11 +35,7 @@ module api.content.page {
             this.descriptorKey = key;
         }
 
-        setConfig(value: api.data.RootDataSet) {
-            this.config = value;
-        }
-
-        getConfig(): api.data.RootDataSet {
+        getConfig(): PropertyTree {
             return this.config;
         }
 
@@ -76,7 +74,7 @@ module api.content.page {
             return true;
         }
 
-        clone(): PageComponent {
+        clone(generateNewPropertyIds: boolean = false): DescriptorBasedPageComponent {
             throw new Error("Must be implemented by inheritors");
         }
     }
@@ -85,13 +83,13 @@ module api.content.page {
 
         descriptor: DescriptorKey;
 
-        config: api.data.RootDataSet;
+        config: PropertyTree;
 
-        constructor(source?: DescriptorBasedPageComponent) {
+        constructor(source?: DescriptorBasedPageComponent, generateNewPropertyIds: boolean = false) {
             super(source);
             if( source ) {
                 this.descriptor = source.getDescriptor();
-                this.config = source.getConfig().clone();
+                this.config = source.getConfig().copy(generateNewPropertyIds);
             }
         }
 
@@ -100,7 +98,7 @@ module api.content.page {
             return this;
         }
 
-        public setConfig(value: api.data.RootDataSet): PageComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
+        public setConfig(value: PropertyTree): PageComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
             this.config = value;
             return this;
         }

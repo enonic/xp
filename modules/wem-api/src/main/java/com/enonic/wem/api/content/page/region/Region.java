@@ -1,13 +1,15 @@
 package com.enonic.wem.api.content.page.region;
 
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 
-public class Region
+public final class Region
 {
     private final String name;
 
@@ -95,6 +97,29 @@ public class Region
     public ImmutableList<PageComponent> getComponents()
     {
         return pageComponents;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof Region ) )
+        {
+            return false;
+        }
+
+        final Region region = (Region) o;
+
+        return Objects.equals( name, region.name ) && Objects.equals( pageComponents, region.pageComponents );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( name, pageComponents );
     }
 
     public static class Builder

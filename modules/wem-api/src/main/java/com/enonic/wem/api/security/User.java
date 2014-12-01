@@ -20,6 +20,7 @@ public final class User
     private User( final Builder builder )
     {
         super( builder );
+        Preconditions.checkNotNull( builder.login, "login is required for a User" );
         this.email = builder.email;
         this.login = requireNonNull( builder.login );
         this.loginDisabled = builder.loginDisabled;

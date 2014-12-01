@@ -1,34 +1,30 @@
 package com.enonic.wem.core.form;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.enonic.wem.api.data.Data;
+import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data2.PropertySet;
 import com.enonic.wem.api.form.FormItem;
+import com.enonic.wem.api.form.FormItemType;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.support.serializer.AbstractDataListSerializer;
 
 public class FormItemsDataSerializer
     extends AbstractDataListSerializer<FormItems, FormItems>
 {
-    private final FormItemDataSerializer formItemDataSerializer = new FormItemDataSerializer();
-
-    public List<Data> toData( final FormItems formItems )
+    public void toData( final FormItems formItems, final PropertySet parent )
     {
-        final List<Data> formItemsAsData = new ArrayList<>();
-        for ( FormItem formItem : formItems )
+        for ( final FormItem formItem : formItems )
         {
-            formItemsAsData.add( formItemDataSerializer.toData( formItem ) );
+            new FormItemDataSerializer( formItem.getType() ).toData( formItem, parent );
         }
-        return formItemsAsData;
     }
 
-    public FormItems fromData( final List<Data> dataList )
+    public FormItems fromData( final Iterable<Property> formItemsProperties )
     {
-        FormItems formItems = new FormItems();
-        for ( Data data : dataList )
+        final FormItems formItems = new FormItems();
+        for ( final Property formItemProperty : formItemsProperties )
         {
-            formItems.add( formItemDataSerializer.fromData( data.toDataSet() ) );
+            formItems.add( new FormItemDataSerializer( FormItemType.parse( formItemProperty.getName() ) ).
+                fromData( formItemProperty.getSet() ) );
         }
         return formItems;
     }

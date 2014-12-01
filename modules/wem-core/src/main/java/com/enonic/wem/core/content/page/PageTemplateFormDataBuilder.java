@@ -1,8 +1,7 @@
 package com.enonic.wem.core.content.page;
 
 
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertySet;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
@@ -17,13 +16,13 @@ class PageTemplateFormDataBuilder
         return this;
     }
 
-    void appendData( final RootDataSet data )
+    void appendData( final PropertySet data )
     {
         if ( supports != null )
         {
             for ( ContentTypeName name : supports )
             {
-                data.addProperty( "supports", Value.newString( name.toString() ) );
+                data.addString( "supports", name.toString() );
             }
         }
     }

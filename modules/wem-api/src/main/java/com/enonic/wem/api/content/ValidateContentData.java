@@ -2,21 +2,21 @@ package com.enonic.wem.api.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class ValidateContentData
 {
-    private ContentData contentData;
+    private PropertyTree contentData;
 
     private ContentTypeName contentType;
 
-    public ContentData getContentData()
+    public PropertyTree getContentData()
     {
         return contentData;
     }
 
-    public ValidateContentData contentData( final ContentData contentData )
+    public ValidateContentData contentData( final PropertyTree contentData )
     {
         this.contentData = contentData;
         return this;
@@ -35,7 +35,7 @@ public class ValidateContentData
 
     public void validate()
     {
-        Preconditions.checkNotNull( contentData, "contentData cannot be null" );
+        Preconditions.checkNotNull( contentData, "data cannot be null" );
         Preconditions.checkNotNull( contentType, "contentType cannot be null" );
     }
 }

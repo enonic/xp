@@ -22,52 +22,70 @@
   "childOrder": "modifiedtime ASC, displayname DESC",
   "createdTime": "2013-01-02T03:04:05Z",
   "creator": "user:test:creator",
-  "data": {
-    "set": [
-      {
-        "DataSet": {
-          "name": "a",
+  "data": [
+    {
+      "name": "a",
+      "type": "PropertySet",
+      "values": [
+        {
+          "id": "1",
           "set": [
             {
-              "DataSet": {
-                "name": "b",
-                "set": [
-                  {
-                    "Property": {
+              "name": "b",
+              "type": "PropertySet",
+              "values": [
+                {
+                  "id": "2",
+                  "set": [
+                    {
                       "name": "c",
                       "type": "Double",
-                      "value": "2.0"
+                      "values": [
+                        {
+                          "id": "3",
+                          "v": 2.0
+                        }
+                      ]
                     }
-                  }
-                ]
-              }
+                  ]
+                }
+              ]
             }
           ]
         }
-      },
-      {
-        "Property": {
-          "name": "b",
-          "type": "LocalDate",
-          "value": "2013-01-02"
+      ]
+    },
+    {
+      "name": "b",
+      "type": "LocalDate",
+      "values": [
+        {
+          "id": "4",
+          "v": "2013-01-02"
         }
-      },
-      {
-        "Property": {
-          "name": "c",
-          "type": "String",
-          "value": "runar"
+      ]
+    },
+    {
+      "name": "c",
+      "type": "String",
+      "values": [
+        {
+          "id": "5",
+          "v": "runar"
         }
-      },
-      {
-        "Property": {
-          "name": "d",
-          "type": "DateTime",
-          "value": "2013-01-02T03:04:05Z"
+      ]
+    },
+    {
+      "name": "d",
+      "type": "LocalDateTime",
+      "values": [
+        {
+          "id": "6",
+          "v": "2013-01-02T03:04:05"
         }
-      }
-    ]
-  },
+      ]
+    }
+  ],
   "effectiveAccessControlList": [
     {
       "allow": ["READ"],

@@ -6,7 +6,6 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ValidateContentData;
-import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
@@ -63,8 +62,7 @@ public class ValidateContentDataCommandTest
         final Content content = Content.newContent().path( "/mycontent" ).type( contentType.getName() ).build();
 
         // exercise
-        final ValidateContentData data =
-            new ValidateContentData().contentData( content.getContentData() ).contentType( contentType.getName() );
+        final ValidateContentData data = new ValidateContentData().contentData( content.getData() ).contentType( contentType.getName() );
 
         // test
         final DataValidationErrors result = this.command.data( data ).execute();
@@ -91,11 +89,10 @@ public class ValidateContentDataCommandTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         final Content content = newContent().path( "/mycontent" ).type( contentType.getName() ).build();
-        content.getContentData().setProperty( "mySet.myInput", Value.newString( "thing" ) );
+        content.getData().setString( "mySet.myInput", "thing" );
 
         // exercise
-        final ValidateContentData data =
-            new ValidateContentData().contentData( content.getContentData() ).contentType( contentType.getName() );
+        final ValidateContentData data = new ValidateContentData().contentData( content.getData() ).contentType( contentType.getName() );
 
         // test
         final DataValidationErrors result = this.command.data( data ).execute();

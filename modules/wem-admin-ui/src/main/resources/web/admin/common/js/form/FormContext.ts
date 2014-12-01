@@ -1,5 +1,8 @@
 module api.form {
 
+    import PropertyPath = api.data2.PropertyPath;
+    import PropertyArray = api.data2.PropertyArray;
+
     export class FormContext {
 
         private showEmptyFormItemSetOccurrences: boolean;
@@ -12,12 +15,13 @@ module api.form {
             return this.showEmptyFormItemSetOccurrences;
         }
 
-        createInputTypeViewContext(inputTypeConfig: any, parentDataPath: api.data.DataPath,
-                                  input: Input): api.form.inputtype.InputTypeViewContext<any> {
+        createInputTypeViewContext(inputTypeConfig: any, parentPropertyPath: PropertyPath,
+                                   input: Input): api.form.inputtype.InputTypeViewContext<any> {
+
             return <api.form.inputtype.InputTypeViewContext<any>> {
                 input: input,
                 inputConfig: inputTypeConfig,
-                parentDataPath: parentDataPath
+                parentDataPath: parentPropertyPath
             };
         }
     }

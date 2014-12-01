@@ -1,11 +1,13 @@
 package com.enonic.wem.admin.rest.resource.content;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -34,7 +36,6 @@ import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplateKey;
@@ -44,9 +45,9 @@ import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data2.PropertyIdProviderAccessor;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
@@ -78,6 +79,8 @@ import static org.junit.Assert.*;
 public class ContentResourceTest
     extends AbstractResourceTest
 {
+    private final LocalDate currentDate = LocalDate.of( 2013, 8, 23 );
+
     private final String currentTime = "2013-08-23T12:55:09.162Z";
 
     private ContentTypeService contentTypeService;
@@ -85,6 +88,12 @@ public class ContentResourceTest
     private ContentService contentService;
 
     private SecurityService securityService;
+
+    @Before
+    public void before()
+    {
+        PropertyIdProviderAccessor.instance().set( new PropertyTree.PredictivePropertyIdProvider() );
+    }
 
     @Override
     protected Object getResourceInstance()
@@ -111,13 +120,13 @@ public class ContentResourceTest
     {
         final Content content = createContent( "aaa", "my_a_content", "mymodule:my_type" );
 
-        final ContentData data = content.getContentData();
+        final PropertyTree data = content.getData();
 
-        data.setProperty( "myArray[0]", Value.newLong( 1 ) );
-        data.setProperty( "myArray[1]", Value.newLong( 2 ) );
+        data.setLong( "myArray[0]", 1L );
+        data.setLong( "myArray[1]", 2L );
 
-        data.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
-        data.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
+        data.setDouble( "mySetWithArray.myArray[0]", 3.14159 );
+        data.setDouble( "mySetWithArray.myArray[1]", 1.333 );
 
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( content );
@@ -136,11 +145,11 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
 
-        final ContentData aContentData = aContent.getContentData();
-        aContentData.setProperty( "myProperty", Value.newInstant( Instant.parse( this.currentTime ) ) );
+        final PropertyTree aContentData = aContent.getData();
+        aContentData.setLocalDate( "myProperty", currentDate );
 
-        aContentData.setProperty( "mySet.setProperty1", Value.newLong( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
+        aContentData.setLong( "mySet.setProperty1", 1L );
+        aContentData.setLong( "mySet.setProperty2", 2L );
 
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent );
@@ -170,11 +179,11 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
 
-        final ContentData aContentData = aContent.getContentData();
-        aContentData.setProperty( "myProperty", Value.newInstant( Instant.parse( this.currentTime ) ) );
+        final PropertyTree aContentData = aContent.getData();
+        aContentData.setLocalDate( "myProperty", this.currentDate );
 
-        aContentData.setProperty( "mySet.setProperty1", Value.newLong( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
+        aContentData.setLong( "mySet.setProperty1", 1L );
+        aContentData.setLong( "mySet.setProperty2", 2L );
 
         Mockito.when( contentService.getByPath( Mockito.eq( ContentPath.from( "/my_a_content" ) ) ) ).thenReturn( aContent );
 
@@ -204,13 +213,13 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
 
-        final ContentData aContentData = aContent.getContentData();
+        final PropertyTree aContentData = aContent.getData();
 
-        aContentData.setProperty( "myArray[0]", Value.newLong( 1 ) );
-        aContentData.setProperty( "myArray[1]", Value.newLong( 2 ) );
+        aContentData.setLong( "myArray[0]", 1L );
+        aContentData.setLong( "myArray[1]", 2L );
 
-        aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
-        aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
+        aContentData.setDouble( "mySetWithArray.myArray[0]", 3.14159 );
+        aContentData.setDouble( "mySetWithArray.myArray[1]", 1.333 );
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( aContent );
 
@@ -223,8 +232,8 @@ public class ContentResourceTest
     public void get_site_content_by_id()
         throws Exception
     {
-        RootDataSet moduleConfigConfig = new RootDataSet();
-        moduleConfigConfig.setProperty( "A", Value.newLong( 1 ) );
+        PropertyTree moduleConfigConfig = new PropertyTree();
+        moduleConfigConfig.setLong( "A", 1L );
         ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
             module( ModuleKey.from( "mymodule" ) ).
             config( moduleConfigConfig ).
@@ -232,8 +241,8 @@ public class ContentResourceTest
 
         Site content = createSite( "aaa", "my_a_content", "mymodule:my_type", ModuleConfigs.from( moduleConfig ) );
 
-        ContentData contentData = content.getContentData();
-        contentData.setProperty( "myProperty", Value.newString( "myValue" ) );
+        PropertyTree contentData = content.getData();
+        contentData.setString( "myProperty", "myValue" );
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( content );
 
@@ -246,8 +255,8 @@ public class ContentResourceTest
     public void get_page_content_by_id()
         throws Exception
     {
-        RootDataSet componentConfig = new RootDataSet();
-        componentConfig.setProperty( "my-prop", Value.newString( "value" ) );
+        PropertyTree componentConfig = new PropertyTree();
+        componentConfig.setString( "my-prop", "value" );
 
         PartComponent component = PartComponent.newPartComponent().
             name( "my-component" ).
@@ -264,8 +273,8 @@ public class ContentResourceTest
             add( region ).
             build();
 
-        RootDataSet pageConfig = new RootDataSet();
-        pageConfig.setProperty( "background-color", Value.newString( "blue" ) );
+        PropertyTree pageConfig = new PropertyTree();
+        pageConfig.setString( "background-color", "blue" );
         Page page = Page.newPage().
             template( PageTemplateKey.from( "mypagetemplate" ) ).
             regions( regions ).
@@ -275,8 +284,8 @@ public class ContentResourceTest
         Content content = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         content = newContent( content ).page( page ).build();
 
-        ContentData contentData = content.getContentData();
-        contentData.setProperty( "myProperty", Value.newString( "myValue" ) );
+        PropertyTree contentData = content.getData();
+        contentData.setString( "myProperty", "myValue" );
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( content );
 
@@ -291,11 +300,11 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
 
-        final ContentData aContentData = aContent.getContentData();
-        aContentData.setProperty( "myProperty", Value.newInstant( Instant.parse( this.currentTime ) ) );
+        final PropertyTree aContentData = aContent.getData();
+        aContentData.setLocalDate( "myProperty", this.currentDate );
 
-        aContentData.setProperty( "mySet.setProperty1", Value.newLong( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", Value.newLong( 2 ) );
+        aContentData.setLong( "mySet.setProperty1", 1L );
+        aContentData.setLong( "mySet.setProperty2", 2L );
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( aContent );
 
@@ -322,13 +331,13 @@ public class ContentResourceTest
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
 
-        final ContentData aContentData = aContent.getContentData();
+        final PropertyTree aContentData = aContent.getData();
 
-        aContentData.setProperty( "myArray[0]", Value.newString( "arrayValue1" ) );
-        aContentData.setProperty( "myArray[1]", Value.newString( "arrayValue2" ) );
+        aContentData.setString( "myArray[0]", "arrayValue1" );
+        aContentData.setString( "myArray[1]", "arrayValue2" );
 
-        aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
-        aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
+        aContentData.setDouble( "mySetWithArray.myArray[0]", 3.14159 );
+        aContentData.setDouble( "mySetWithArray.myArray[1]", 1.333 );
 
         Mockito.when( contentService.getById( Mockito.eq( ContentId.from( "aaa" ) ) ) ).thenReturn( aContent );
 
@@ -692,13 +701,13 @@ public class ContentResourceTest
 
         final Content aContent = createContent( contentIdString, "my_a_content", "mymodule:my_type" );
 
-        final ContentData aContentData = aContent.getContentData();
+        final PropertyTree aContentData = aContent.getData();
 
-        aContentData.setProperty( "myArray[0]", Value.newString( "arrayValue1" ) );
-        aContentData.setProperty( "myArray[1]", Value.newString( "arrayValue2" ) );
+        aContentData.setString( "myArray[0]", "arrayValue1" );
+        aContentData.setString( "myArray[1]", "arrayValue2" );
 
-        aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
-        aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
+        aContentData.setDouble( "mySetWithArray.myArray[0]", 3.14159 );
+        aContentData.setDouble( "mySetWithArray.myArray[1]", 1.333 );
 
         final PushContentParams pushContentParams =
             new PushContentParams( ContentConstants.WORKSPACE_PROD, ContentId.from( contentIdString ) );
@@ -739,13 +748,13 @@ public class ContentResourceTest
 
         final Content aContent = createContent( contentIdString, "my_a_content", "mymodule:my_type" );
 
-        final ContentData aContentData = aContent.getContentData();
+        final PropertyTree aContentData = aContent.getData();
 
-        aContentData.setProperty( "myArray[0]", Value.newString( "arrayValue1" ) );
-        aContentData.setProperty( "myArray[1]", Value.newString( "arrayValue2" ) );
+        aContentData.setString( "myArray[0]", "arrayValue1" );
+        aContentData.setString( "myArray[1]", "arrayValue2" );
 
-        aContentData.setProperty( "mySetWithArray.myArray[0]", Value.newDouble( 3.14159 ) );
-        aContentData.setProperty( "mySetWithArray.myArray[1]", Value.newDouble( 1.333 ) );
+        aContentData.setDouble( "mySetWithArray.myArray[0]", 3.14159 );
+        aContentData.setDouble( "mySetWithArray.myArray[1]", 1.333 );
 
         final DuplicateContentParams duplicateContentParams = new DuplicateContentParams( ContentId.from( contentIdString ) );
 
@@ -832,7 +841,8 @@ public class ContentResourceTest
         List<DataValidationError> errors = new ArrayList<>( 2 );
 
         Input input = Input.newInput().name( "myInput" ).inputType( InputTypes.PHONE ).required( true ).maximumOccurrences( 3 ).build();
-        Property property = Property.newString( "myProperty", "myValue" );
+        PropertyTree propertyTree = new PropertyTree();
+        Property property = propertyTree.setString( "myProperty", "myValue" );
 
         errors.add( new MaximumOccurrencesValidationError( input, 5 ) );
         errors.add( new MissingRequiredValueValidationError( input, property ) );
@@ -843,8 +853,8 @@ public class ContentResourceTest
 
     private Content createContent( final String id, final String name, final String contentTypeName )
     {
-        final RootDataSet metadata = new RootDataSet();
-        metadata.setProperty( "myProperty", Value.newLong( 1 ) );
+        final PropertyTree metadata = new PropertyTree();
+        metadata.setLong( "myProperty", 1L );
 
         return newContent().
             id( ContentId.from( id ) ).

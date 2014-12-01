@@ -4,10 +4,11 @@ module api.schema.content.inputtype {
     import InputValidationRecording = api.form.inputtype.InputValidationRecording;
     import InputValidityChangedEvent = api.form.inputtype.InputValidityChangedEvent;
     import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
-    import ValueTypes = api.data.type.ValueTypes;
-    import ValueType = api.data.type.ValueType;
-    import Value = api.data.Value;
-    import Property = api.data.Property;
+    import Property = api.data2.Property;
+    import PropertyArray = api.data2.PropertyArray;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
     import Input = api.form.Input;
     import ContentTypeComboBox = api.schema.content.ContentTypeComboBox;
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
@@ -17,6 +18,8 @@ module api.schema.content.inputtype {
     export class ContentTypeFilter extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
         private input: Input;
+
+        private propertyArray: PropertyArray;
 
         private combobox: ContentTypeComboBox;
 
@@ -32,21 +35,22 @@ module api.schema.content.inputtype {
             return ValueTypes.STRING;
         }
 
-        newInitialValue(): string {
+        newInitialValue(): Value {
             return null;
         }
 
-        layout(input: Input, properties: api.data.Property[]) {
+        layout(input: Input, propertyArray: PropertyArray) {
 
             this.layoutInProgress = true;
 
             this.input = input;
+            this.propertyArray = propertyArray;
 
             this.combobox = new ContentTypeComboBox(input.getOccurrences().getMaximum());
 
             // select properties once when combobox has been loaded first time
             var selectProperties = (items: ContentTypeSummary[]) => {
-                var names = properties.map((property: Property) => property.getValue().asString());
+                var names = propertyArray.getProperties().map((property: Property) => property.getValue().getString());
                 items.filter((item: ContentTypeSummary) => (names.indexOf(item.getContentTypeName().toString()) >= 0)).
                     forEach((item: ContentTypeSummary) => this.combobox.select(item));
 
@@ -62,24 +66,24 @@ module api.schema.content.inputtype {
 
                 var value = new Value(event.getOption().displayValue.getContentTypeName().toString(), ValueTypes.STRING);
                 if (this.combobox.countSelected() == 1) { // overwrite initial value
-                    this.notifyValueChanged(new api.form.inputtype.ValueChangedEvent(value, 0));
+                    this.propertyArray.set(0, value);
                 }
                 else {
-                    this.notifyValueAdded(value);
+                    this.propertyArray.add(value);
                 }
 
                 this.validate(false);
             });
 
             this.combobox.onOptionDeselected((option: SelectedOption<ContentTypeSummary>) => {
-                this.notifyValueRemoved(option.getIndex());
+                this.propertyArray.remove(option.getIndex());
                 this.validate(false);
             });
 
             this.appendChild(this.combobox);
         }
 
-        getValues(): Value[] {
+        private getValues(): Value[] {
             return this.combobox.getSelectedDisplayValues().map((contentType: ContentTypeSummary) => {
                 return new Value(contentType.getContentTypeName().toString(), ValueTypes.STRING);
             });

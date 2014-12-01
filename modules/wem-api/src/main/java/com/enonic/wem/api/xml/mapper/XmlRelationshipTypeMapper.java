@@ -42,7 +42,7 @@ public final class XmlRelationshipTypeMapper
         final List<String> result = Lists.newArrayList();
         for ( final ContentTypeName ctyName : allowedFromTypes )
         {
-            result.add( ctyName.getContentTypeName() );
+            result.add( ctyName.toString() );
         }
         return result;
     }

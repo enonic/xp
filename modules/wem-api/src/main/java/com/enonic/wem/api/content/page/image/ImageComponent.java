@@ -1,6 +1,8 @@
 package com.enonic.wem.api.content.page.image;
 
 
+import java.util.Objects;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.ContentId;
@@ -8,7 +10,7 @@ import com.enonic.wem.api.content.page.AbstractPageComponent;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.PageComponentType;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 
 public class ImageComponent
     extends AbstractPageComponent
@@ -18,13 +20,13 @@ public class ImageComponent
 
     private ContentId image;
 
-    private RootDataSet config;
+    private PropertyTree config;
 
     public ImageComponent( final Builder builder )
     {
         super( builder );
         this.image = builder.image;
-        this.config = builder.config;
+        this.config = builder.config != null ? builder.config : new PropertyTree();
     }
 
     public static Builder newImageComponent()
@@ -48,14 +50,14 @@ public class ImageComponent
         return config != null;
     }
 
-    public RootDataSet getConfig()
+    public PropertyTree getConfig()
     {
         return this.config;
     }
 
     public boolean hasCaption()
     {
-        return config.hasData( CAPTION ) && StringUtils.isNotBlank( config.getProperty( CAPTION ).getString() );
+        return config.hasProperty( CAPTION ) && StringUtils.isNotBlank( config.getString( CAPTION ) );
     }
 
     /**
@@ -63,16 +65,43 @@ public class ImageComponent
      */
     public String getCaption()
     {
-        return config.getProperty( CAPTION ).getString();
+        return config.getString( CAPTION );
     }
 
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        if ( !super.equals( o ) )
+        {
+            return false;
+        }
+
+        final ImageComponent that = (ImageComponent) o;
+
+        return Objects.equals( image, that.image ) && Objects.equals( config, that.config );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( super.hashCode(), image, config );
+    }
 
     public static class Builder
         extends AbstractPageComponent.Builder
     {
         private ContentId image;
 
-        private RootDataSet config;
+        private PropertyTree config;
 
         private Builder()
         {
@@ -97,7 +126,7 @@ public class ImageComponent
             return this;
         }
 
-        public Builder config( final RootDataSet config )
+        public Builder config( final PropertyTree config )
         {
             this.config = config;
             return this;

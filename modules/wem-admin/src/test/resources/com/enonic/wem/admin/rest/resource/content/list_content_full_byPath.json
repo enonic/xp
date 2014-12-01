@@ -21,11 +21,14 @@
         {
           "data": [
             {
-              "Property": {
-                "name": "myProperty",
-                "type": "Long",
-                "value": 1
-              }
+              "name": "myProperty",
+              "type": "Long",
+              "values": [
+                {
+                  "id": "1",
+                  "v": 1
+                }
+              ]
             }
           ],
           "name": "myModule:myField"
@@ -62,11 +65,14 @@
         {
           "data": [
             {
-              "Property": {
-                "name": "myProperty",
-                "type": "Long",
-                "value": 1
-              }
+              "name": "myProperty",
+              "type": "Long",
+              "values": [
+                {
+                  "id": "2",
+                  "v": 1
+                }
+              ]
             }
           ],
           "name": "myModule:myField"

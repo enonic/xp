@@ -2,12 +2,11 @@ package com.enonic.wem.api.content.page;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data2.Value;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
@@ -27,7 +26,7 @@ public final class PageTemplate
         return key;
     }
 
-    public RootDataSet getConfig()
+    public PropertyTree getConfig()
     {
         return getPage().getConfig();
     }
@@ -43,9 +42,8 @@ public final class PageTemplate
 
     public ContentTypeNames getCanRender()
     {
-        final List<Property> supports = this.getContentData().getPropertiesByName( "supports" );
-        final ArrayList<ContentTypeName> list = new ArrayList<>( supports.size() );
-        for ( final Property property : supports )
+        final ArrayList<ContentTypeName> list = new ArrayList<>( this.getData().countNames( "supports" ) );
+        for ( final Property property : this.getData().getProperties( "supports" ) )
         {
             if ( !property.hasNullValue() )
             {
@@ -123,7 +121,7 @@ public final class PageTemplate
         {
             for ( ContentTypeName name : names )
             {
-                this.contentData.addProperty( "supports", Value.newString( name.toString() ) );
+                this.data.addProperty( "supports", Value.newString( name.toString() ) );
             }
             return this;
         }
@@ -146,7 +144,7 @@ public final class PageTemplate
             return this;
         }
 
-        public Builder config( final RootDataSet config )
+        public Builder config( final PropertyTree config )
         {
             if ( this.page == null )
             {

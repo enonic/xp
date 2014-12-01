@@ -111,7 +111,7 @@ module api.content.page {
             return true;
         }
 
-        clone(): PageComponent {
+        clone(generateNewPropertyIds: boolean = false): PageComponent {
             throw new Error("Must be implemented by inheritors");
         }
     }

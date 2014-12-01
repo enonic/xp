@@ -33,13 +33,10 @@ import com.enonic.wem.api.content.SetContentChildOrderParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.site.CreateSiteParams;
-import com.enonic.wem.api.content.site.ModuleConfig;
-import com.enonic.wem.api.content.site.ModuleConfigDataSerializer;
+import com.enonic.wem.api.content.site.ModuleConfigsDataSerializer;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.data.DataId;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.node.Node;
@@ -73,7 +70,7 @@ public class ContentServiceImpl
 
     private EventPublisher eventPublisher;
 
-    private final static ModuleConfigDataSerializer MODULE_CONFIG_DATA_SERIALIZER = new ModuleConfigDataSerializer();
+    private final static ModuleConfigsDataSerializer MODULE_CONFIGS_DATA_SERIALIZER = new ModuleConfigsDataSerializer();
 
     @Override
     public Content getById( final ContentId id )
@@ -154,15 +151,12 @@ public class ContentServiceImpl
     @Override
     public Site create( final CreateSiteParams params )
     {
-
         // TODO: validate that PageTemplates are only created below  Site/templates
 
-        final ContentData data = new ContentData();
-        data.setProperty( DataId.from( "description", 0 ), Value.newString( params.getDescription() ) );
-        for ( final ModuleConfig moduleConfig : params.getModuleConfigs() )
-        {
-            data.addProperty( "modules", Value.newData( MODULE_CONFIG_DATA_SERIALIZER.toData( moduleConfig ) ) );
-        }
+        final PropertyTree data = new PropertyTree();
+        data.setString( "description", params.getDescription() );
+
+        MODULE_CONFIGS_DATA_SERIALIZER.toProperties( params.getModuleConfigs(), data.getRoot() );
 
         final CreateContentParams createContentParams = new CreateContentParams().
             contentType( ContentTypeName.site() ).
@@ -189,7 +183,7 @@ public class ContentServiceImpl
             parent( site.getPath() ).
             contentType( ContentTypeName.templateFolder() ).
             draft( false ).
-            contentData( new ContentData() ) );
+            contentData( new PropertyTree() ) );
 
         return site;
     }
@@ -225,7 +219,7 @@ public class ContentServiceImpl
                 parent( content.getPath() ).
                 contentType( ContentTypeName.templateFolder() ).
                 draft( false ).
-                contentData( new ContentData() ) );
+                contentData( new PropertyTree() ) );
         }
 
         return content;

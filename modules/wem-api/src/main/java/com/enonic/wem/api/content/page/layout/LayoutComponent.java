@@ -1,5 +1,7 @@
 package com.enonic.wem.api.content.page.layout;
 
+import java.util.Objects;
+
 import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponent;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.ComponentPath;
@@ -7,7 +9,7 @@ import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageComponentType;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 
 @SuppressWarnings("UnusedDeclaration")
 public final class LayoutComponent
@@ -65,6 +67,38 @@ public final class LayoutComponent
         return regions.getComponent( path );
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof LayoutComponent ) )
+        {
+            return false;
+        }
+        if ( !super.equals( o ) )
+        {
+            return false;
+        }
+
+        final LayoutComponent that = (LayoutComponent) o;
+
+        if ( !regions.equals( that.regions ) )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( super.hashCode(), regions );
+    }
+
     public static class Builder
         extends AbstractDescriptorBasedPageComponent.Builder<LayoutDescriptorKey>
     {
@@ -87,13 +121,19 @@ public final class LayoutComponent
             return this;
         }
 
+        public Builder descriptor( String value )
+        {
+            this.descrpitor = LayoutDescriptorKey.from( value );
+            return this;
+        }
+
         public Builder descriptor( LayoutDescriptorKey value )
         {
             this.descrpitor = value;
             return this;
         }
 
-        public Builder config( final RootDataSet config )
+        public Builder config( final PropertyTree config )
         {
             this.config = config;
             return this;

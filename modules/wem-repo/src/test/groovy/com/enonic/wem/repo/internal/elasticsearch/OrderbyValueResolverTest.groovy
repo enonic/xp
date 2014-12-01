@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch
 
-import com.enonic.wem.api.data.Value
-import com.enonic.wem.repo.internal.elasticsearch.OrderbyValueResolver
+import com.enonic.wem.api.data2.Value
+import com.enonic.wem.api.data2.ValueTypes
 import com.google.common.collect.Lists
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -38,7 +38,7 @@ class OrderbyValueResolverTest
     def createInstantOrderByValue( String... values )
     {
         def unsorted = Lists.newArrayList()
-        values.each { value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( Value.newInstant( value ) ) ); }
+        values.each { value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( ValueTypes.DATE_TIME.parseValue( value ) ) ); }
         return unsorted
     }
 

@@ -1,7 +1,7 @@
 module app.wizard.page.contextwindow.inspect {
 
     import PropertyChangedEvent = api.PropertyChangedEvent;
-    import RootDataSet = api.data.RootDataSet;
+    import PropertyTree = api.data2.PropertyTree;
     import FormContextBuilder = api.form.FormContextBuilder;
     import FormView = api.form.FormView;
     import Content = api.content.Content;
@@ -59,8 +59,11 @@ module app.wizard.page.contextwindow.inspect {
 
             if (this.pageModel.isPageTemplate()) {
                 if (this.pageModel.hasController()) {
-                    this.selectController(this.pageModel.getController());
-                    this.pageControllerSelectorForm.show();
+
+                    this.pageControllerDropdown.onLoadedData(() => {
+                        this.selectController(this.pageModel.getController());
+                        this.pageControllerSelectorForm.show();
+                    });
                 }
                 else if (this.pageModel.hasTemplate()) {
                     this.pageTemplateSelectorForm.show();
@@ -71,9 +74,12 @@ module app.wizard.page.contextwindow.inspect {
             }
             else {
                 if (this.pageModel.hasController()) {
-                    this.selectController(this.pageModel.getController());
-                    this.refreshConfigForm(this.pageModel.getController(), this.pageModel.getConfig());
-                    this.pageControllerSelectorForm.show();
+
+                    this.pageControllerDropdown.onLoadedData(() => {
+                        this.selectController(this.pageModel.getController());
+                        this.refreshConfigForm(this.pageModel.getController(), this.pageModel.getConfig());
+                        this.pageControllerSelectorForm.show();
+                    });
                 }
                 else if (this.pageModel.hasTemplate() || this.pageModel.isUsingDefaultTemplate()) {
                     this.pageTemplateSelectorForm.show();
@@ -186,7 +192,7 @@ module app.wizard.page.contextwindow.inspect {
             return form;
         }
 
-        private refreshConfigForm(pageDescriptor: PageDescriptor, config: RootDataSet) {
+        private refreshConfigForm(pageDescriptor: PageDescriptor, config: PropertyTree) {
 
             if (this.configForm) {
                 this.removeChild(this.configForm);
@@ -196,7 +202,7 @@ module app.wizard.page.contextwindow.inspect {
                 return;
             }
 
-            this.configForm = new FormView(new FormContextBuilder().build(), pageDescriptor.getConfig(), config);
+            this.configForm = new FormView(new FormContextBuilder().build(), pageDescriptor.getConfig(), config.getRoot());
             this.appendChild(this.configForm);
         }
     }

@@ -6,8 +6,8 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.data.DataSet;
+import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemPath;
 import com.enonic.wem.api.form.FormItemSet;
@@ -32,31 +32,31 @@ class MaximumOccurrencesValidator
         return Collections.unmodifiableList( validationErrors );
     }
 
-    void validate( final ContentData dataSet )
+    void validate( final PropertyTree propertyTree )
     {
-        for ( final String entryName : dataSet.getDataNames() )
+        final PropertySet root = propertyTree.getRoot();
+        for ( final String entryName : root.getPropertyNames() )
         {
-            final FormItemPath parentFormItemPath = FormItemPath.from( dataSet.getPath().resolvePathElementNames() );
-            final FormItemPath path = FormItemPath.from( parentFormItemPath, entryName );
+            final FormItemPath path = FormItemPath.from( FormItemPath.ROOT, entryName );
             final FormItem formItem = contentType.form().getFormItem( path );
 
             if ( formItem instanceof Input )
             {
-                validateMaxOccurrences( dataSet, (Input) formItem );
+                validateMaxOccurrences( root, (Input) formItem );
             }
             else if ( formItem instanceof FormItemSet )
             {
-                validateMaxOccurrences( dataSet, (FormItemSet) formItem );
+                validateMaxOccurrences( root, (FormItemSet) formItem );
             }
         }
     }
 
-    private void validateMaxOccurrences( final DataSet parentDataSet, final FormItemSet formItemSet )
+    private void validateMaxOccurrences( final PropertySet parentDataSet, final FormItemSet formItemSet )
     {
         final int maxOccurrences = formItemSet.getOccurrences().getMaximum();
         if ( maxOccurrences > 0 )
         {
-            final int size = parentDataSet.nameCount( formItemSet.getName() );
+            final int size = parentDataSet.countProperties( formItemSet.getName() );
             if ( size > maxOccurrences )
             {
                 validationErrors.add( new MaximumOccurrencesValidationError( formItemSet, size ) );
@@ -64,12 +64,12 @@ class MaximumOccurrencesValidator
         }
     }
 
-    private void validateMaxOccurrences( final DataSet parentDataSet, final Input input )
+    private void validateMaxOccurrences( final PropertySet parentDataSet, final Input input )
     {
         final int maxOccurrences = input.getOccurrences().getMaximum();
         if ( maxOccurrences > 0 )
         {
-            final int size = parentDataSet.nameCount( input.getName() );
+            final int size = parentDataSet.countProperties( input.getName() );
             if ( size > maxOccurrences )
             {
                 validationErrors.add( new MaximumOccurrencesValidationError( input, size ) );

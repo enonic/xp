@@ -6,7 +6,7 @@ import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ValidateContentData;
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -41,7 +41,7 @@ abstract class AbstractContentCommand
             execute();
     }
 
-    DataValidationErrors validate( final ContentTypeName contentType, final ContentData contentData )
+    DataValidationErrors validate( final ContentTypeName contentType, final PropertyTree contentData )
     {
         final ValidateContentData data = new ValidateContentData().contentType( contentType ).contentData( contentData );
 

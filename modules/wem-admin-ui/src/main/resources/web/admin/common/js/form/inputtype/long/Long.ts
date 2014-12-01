@@ -1,7 +1,10 @@
 module api.content.form.inputtype.long {
 
     import BaseInputTypeNotManagingAdd = api.form.inputtype.support.BaseInputTypeNotManagingAdd;
-    import ValueTypes = api.data.type.ValueTypes;
+    import Property = api.data2.Property;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
 
     export class Long extends BaseInputTypeNotManagingAdd<any,number> {
 
@@ -9,39 +12,32 @@ module api.content.form.inputtype.long {
             super(config);
         }
 
-        getValueType(): api.data.type.ValueType {
+        getValueType(): ValueType {
             return ValueTypes.LONG;
         }
 
-        newInitialValue(): number {
-            return null;
+        newInitialValue(): Value {
+            return ValueTypes.LONG.newNullValue();
         }
 
-        createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
+        createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
             var inputEl = api.ui.text.TextInput.middle();
-            inputEl.setName(this.getInput().getName() + "-" + property.getArrayIndex());
+            inputEl.setName(this.getInput().getName() + "-" + property.getIndex());
             inputEl.setValue(!property.hasNullValue() ? property.getString() : "");
+
+            inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
+
+                var value = ValueTypes.LONG.newValue(event.getNewValue());
+                property.setValue(value);
+            });
+
             return inputEl;
         }
 
         availableSizeChanged() {
         }
 
-        onOccurrenceValueChanged(element: api.dom.Element, listener: (event: api.form.inputtype.support.ValueChangedEvent) => void) {
-            var inputEl = <api.ui.text.TextInput>element;
-            inputEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
-
-                var value = ValueTypes.LONG.newValue(event.getNewValue());
-                listener(new api.form.inputtype.support.ValueChangedEvent(value));
-            });
-        }
-
-        getValue(occurrence: api.dom.Element): api.data.Value {
-            var inputEl: api.ui.text.TextInput = <api.ui.text.TextInput>occurrence;
-            return ValueTypes.LONG.newValue(inputEl.getValue());
-        }
-
-        valueBreaksRequiredContract(value: api.data.Value): boolean {
+        valueBreaksRequiredContract(value: Value): boolean {
             return value.isNull() || !value.getType().equals(ValueTypes.LONG);
         }
 

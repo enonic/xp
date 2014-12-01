@@ -6,8 +6,7 @@ import java.time.ZoneId;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
@@ -38,12 +37,12 @@ public class GroupNodeTranslatorTest
 
         assertEquals( "group-a", createNodeParams.getName() );
 
-        final RootDataSet rootDataSet = createNodeParams.getData();
+        final PropertyTree rootDataSet = createNodeParams.getData();
         assertNotNull( rootDataSet );
-        assertEquals( 3, rootDataSet.size() );
-        assertEquals( UserStoreKey.system().toString(), rootDataSet.getProperty( PrincipalNodeTranslator.USER_STORE_KEY ).getString() );
-        assertEquals( PrincipalType.GROUP.toString(), rootDataSet.getProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).getString() );
-        assertEquals( "My Group", rootDataSet.getProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY ).getString() );
+        assertEquals( 3, rootDataSet.getTotalSize() );
+        assertEquals( UserStoreKey.system().toString(), rootDataSet.getString( PrincipalNodeTranslator.USER_STORE_KEY ) );
+        assertEquals( PrincipalType.GROUP.toString(), rootDataSet.getString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ) );
+        assertEquals( "My Group", rootDataSet.getString( PrincipalNodeTranslator.DISPLAY_NAME_KEY ) );
     }
 
 
@@ -53,15 +52,15 @@ public class GroupNodeTranslatorTest
     {
         final PrincipalKey groupKey = PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" );
 
-        final RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY, Value.newString( "Group A" ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( groupKey.getType().toString() ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.USER_STORE_KEY, Value.newString( groupKey.getUserStore().toString() ) );
+        final PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        rootDataSet.setString( PrincipalNodeTranslator.DISPLAY_NAME_KEY, "Group A" );
+        rootDataSet.setString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, groupKey.getType().toString() );
+        rootDataSet.setString( PrincipalNodeTranslator.USER_STORE_KEY, groupKey.getUserStore().toString() );
 
         final Node node = Node.newNode().
             id( NodeId.from( "id" ) ).
             name( PrincipalKeyNodeTranslator.toNodeName( groupKey ) ).
-            rootDataSet( rootDataSet ).
+            data( rootDataSet ).
             modifiedTime( Instant.now( clock ) ).
             build();
 

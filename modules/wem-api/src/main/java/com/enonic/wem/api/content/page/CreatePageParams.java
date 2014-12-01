@@ -1,7 +1,9 @@
 package com.enonic.wem.api.content.page;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 
 public final class CreatePageParams
 {
@@ -13,7 +15,7 @@ public final class CreatePageParams
 
     private PageRegions regions;
 
-    private RootDataSet config;
+    private PropertyTree config;
 
     public CreatePageParams content( ContentId value )
     {
@@ -39,7 +41,7 @@ public final class CreatePageParams
         return this;
     }
 
-    public CreatePageParams config( RootDataSet value )
+    public CreatePageParams config( PropertyTree value )
     {
         this.config = value;
         return this;
@@ -65,8 +67,15 @@ public final class CreatePageParams
         return regions;
     }
 
-    public RootDataSet getConfig()
+    public PropertyTree getConfig()
     {
         return config;
+    }
+
+    public void validate()
+    {
+        Preconditions.checkNotNull( this.content, "content cannot be null" );
+        Preconditions.checkNotNull( this.config, "config cannot be null" );
+        Preconditions.checkNotNull( this.regions, "regions cannot be null" );
     }
 }

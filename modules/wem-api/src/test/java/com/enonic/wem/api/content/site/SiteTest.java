@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.site;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.module.ModuleKey;
 
 import static org.junit.Assert.*;
@@ -28,7 +28,7 @@ public class SiteTest
     {
         ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
             module( ModuleKey.from( "mymodule" ) ).
-            config( new RootDataSet() ).
+            config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             build();
         Site site = Site.newSite().
             moduleConfigs( ModuleConfigs.from( moduleConfig ) ).

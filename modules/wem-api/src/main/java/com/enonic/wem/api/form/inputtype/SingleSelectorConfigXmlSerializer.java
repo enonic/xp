@@ -15,11 +15,9 @@ final class SingleSelectorConfigXmlSerializer
     @Override
     protected void serializeConfig( final InputTypeConfig config, final DomBuilder builder )
     {
-        builder.start( "options" );
-
         final SingleSelectorConfig singleSelectorConfig = (SingleSelectorConfig) config;
         builder.start( "selector-type" ).text( singleSelectorConfig.getType().toString() ).end();
-
+        builder.start( "options" );
         for ( final Option option : singleSelectorConfig.getOptions() )
         {
             builder.start( "option" );
@@ -27,7 +25,6 @@ final class SingleSelectorConfigXmlSerializer
             builder.start( "value" ).text( option.getValue() ).end();
             builder.end();
         }
-
         builder.end();
     }
 

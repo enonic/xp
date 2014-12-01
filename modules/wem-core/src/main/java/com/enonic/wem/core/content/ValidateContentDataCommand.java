@@ -3,7 +3,7 @@ package com.enonic.wem.core.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ValidateContentData;
-import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -26,7 +26,7 @@ final class ValidateContentDataCommand
 
     DataValidationErrors doExecute()
     {
-        final ContentData contentData = this.data.getContentData();
+        final PropertyTree contentData = this.data.getContentData();
         final ContentTypeName contentTypeName = this.data.getContentType();
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
 

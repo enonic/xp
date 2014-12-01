@@ -6,8 +6,7 @@ import java.time.ZoneId;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
@@ -40,12 +39,12 @@ public class UserNodeTranslatorTest
 
         assertEquals( "rmy", createNodeParams.getName() );
 
-        final RootDataSet rootDataSet = createNodeParams.getData();
-        assertEquals( UserStoreKey.system().toString(), rootDataSet.getProperty( PrincipalNodeTranslator.USER_STORE_KEY ).getString() );
-        assertEquals( PrincipalType.USER.toString(), rootDataSet.getProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).getString() );
-        assertEquals( "displayname", rootDataSet.getProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY ).getString() );
+        final PropertyTree rootDataSet = createNodeParams.getData();
+        assertEquals( UserStoreKey.system().toString(), rootDataSet.getString( PrincipalNodeTranslator.USER_STORE_KEY ) );
+        assertEquals( PrincipalType.USER.toString(), rootDataSet.getString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ) );
+        assertEquals( "displayname", rootDataSet.getString( PrincipalNodeTranslator.DISPLAY_NAME_KEY ) );
         assertNotNull( rootDataSet );
-        assertEquals( 5, rootDataSet.size() );
+        assertEquals( 5, rootDataSet.getTotalSize() );
     }
 
 
@@ -55,17 +54,17 @@ public class UserNodeTranslatorTest
     {
         final PrincipalKey userKey = PrincipalKey.ofUser( UserStoreKey.system(), "i-am-a-user" );
 
-        final RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( PrincipalNodeTranslator.LOGIN_KEY, Value.newString( "loginkey" ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.EMAIL_KEY, Value.newString( "rmy@enonic.com" ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.DISPLAY_NAME_KEY, Value.newString( "displayname" ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, Value.newString( userKey.getType().toString() ) );
-        rootDataSet.setProperty( PrincipalNodeTranslator.USER_STORE_KEY, Value.newString( userKey.getUserStore().toString() ) );
+        final PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        rootDataSet.setString( PrincipalNodeTranslator.LOGIN_KEY, "loginkey" );
+        rootDataSet.setString( PrincipalNodeTranslator.EMAIL_KEY, "rmy@enonic.com" );
+        rootDataSet.setString( PrincipalNodeTranslator.DISPLAY_NAME_KEY, "displayname" );
+        rootDataSet.setString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, userKey.getType().toString() );
+        rootDataSet.setString( PrincipalNodeTranslator.USER_STORE_KEY, userKey.getUserStore().toString() );
 
         final Node node = Node.newNode().
             id( NodeId.from( "id" ) ).
             name( PrincipalKeyNodeTranslator.toNodeName( userKey ) ).
-            rootDataSet( rootDataSet ).
+            data( rootDataSet ).
             modifiedTime( Instant.now( clock ) ).
             build();
 

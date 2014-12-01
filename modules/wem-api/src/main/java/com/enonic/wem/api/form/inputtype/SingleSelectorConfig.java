@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.Property;
 import com.enonic.wem.api.form.InvalidValueException;
 
 public class SingleSelectorConfig
@@ -59,7 +59,8 @@ public class SingleSelectorConfig
         return new Builder();
     }
 
-    public static class Builder implements OptionBuilder
+    public static class Builder
+        implements OptionBuilder
     {
         private SingleSelectorConfig config = new SingleSelectorConfig();
 

@@ -123,6 +123,9 @@ module api.ui.tags {
                         this.tagSuggestions.show();
                         this.preservedValue = searchString;
                     }
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                    return [];
                 }).done();
             });
 

@@ -1,12 +1,17 @@
 module api.form {
 
+    import PropertyArray = api.data2.PropertyArray;
+
     export interface FormItemOccurrencesConfig {
 
         formItem: FormItem;
 
+        propertyArray: PropertyArray;
+
         occurrenceViewContainer: api.dom.Element;
 
         allowedOccurrences?: Occurrences;
+
     }
 
     export class FormItemOccurrences<V extends FormItemOccurrenceView> {
@@ -21,6 +26,8 @@ module api.form {
 
         private formItem: FormItem;
 
+        propertyArray: PropertyArray;
+
         private allowedOccurrences: Occurrences;
 
         private occurrenceAddedListeners: {(event: OccurrenceAddedEvent):void}[] = [];
@@ -33,13 +40,10 @@ module api.form {
 
         constructor(config: FormItemOccurrencesConfig) {
             this.formItem = config.formItem;
+            this.propertyArray = config.propertyArray;
             this.occurrenceViewContainer = config.occurrenceViewContainer;
             this.allowedOccurrences = config.allowedOccurrences;
             this.layingOut = false;
-        }
-
-        isLayingOut(): boolean {
-            return this.layingOut;
         }
 
         getAllowedOccurrences(): Occurrences {
@@ -50,19 +54,8 @@ module api.form {
             this.occurrenceAddedListeners.push(listener);
         }
 
-        onOccurrenceRemoved(listener: (event: OccurrenceRemovedEvent)=>void) {
-            this.occurrenceRemovedListeners.push(listener);
-        }
-
         unOccurrenceAdded(listener: (event: OccurrenceAddedEvent)=>void) {
             this.occurrenceAddedListeners = this.occurrenceAddedListeners.filter((currentListener: (event: OccurrenceAddedEvent)=>void)=> {
-                return listener != currentListener;
-            });
-        }
-
-        unOccurrenceRemoved(listener: (event: OccurrenceRemovedEvent)=>void) {
-            this.occurrenceRemovedListeners =
-            this.occurrenceRemovedListeners.filter((currentListener: (event: OccurrenceRemovedEvent)=>void)=> {
                 return listener != currentListener;
             });
         }
@@ -70,6 +63,17 @@ module api.form {
         private notifyOccurrenceAdded(occurrence: FormItemOccurrence<V>, occurrenceView: V) {
             this.occurrenceAddedListeners.forEach((listener: (event: OccurrenceAddedEvent)=>void)=> {
                 listener.call(this, new OccurrenceAddedEvent(occurrence, occurrenceView))
+            });
+        }
+
+        onOccurrenceRemoved(listener: (event: OccurrenceRemovedEvent)=>void) {
+            this.occurrenceRemovedListeners.push(listener);
+        }
+
+        unOccurrenceRemoved(listener: (event: OccurrenceRemovedEvent)=>void) {
+            this.occurrenceRemovedListeners =
+            this.occurrenceRemovedListeners.filter((currentListener: (event: OccurrenceRemovedEvent)=>void)=> {
+                return listener != currentListener;
             });
         }
 
@@ -147,6 +151,9 @@ module api.form {
 
             this.resetOccurrenceIndexes();
             this.refreshOccurrenceViews();
+
+            this.propertyArray.remove(indexToRemove);
+
             this.notifyOccurrenceRemoved(occurrenceToRemove, occurrenceViewToRemove);
         }
 
@@ -195,14 +202,6 @@ module api.form {
             this.blurListeners.forEach((listener) => {
                 listener(event);
             })
-        }
-
-        addOccurrenceAfter(fromOccurrence: V) {
-
-            var insertAtIndex: number = fromOccurrence.getIndex() + 1;
-            var occurrence: FormItemOccurrence<V> = this.createNewOccurrence(this, insertAtIndex);
-
-            this.doAddOccurrence(occurrence);
         }
 
         private doAddOccurrence(occurrence: FormItemOccurrence<V>) {
@@ -267,6 +266,8 @@ module api.form {
             // move FormItemOccurrenceView
             api.util.ArrayHelper.moveElement(fromIndex, toIndex, this.occurrenceViews);
 
+            this.propertyArray.move(fromIndex, toIndex)
+
         }
 
         getOccurrences(): FormItemOccurrence<V>[] {
@@ -279,15 +280,6 @@ module api.form {
 
         getOccurrenceViews(): V[] {
             return this.occurrenceViews;
-        }
-
-        getOccurrenceViewById(elementId: string): V {
-            for (var i = 0; i < this.occurrenceViews.length; i++) {
-                if (this.occurrenceViews[i].getId() == elementId) {
-                    return this.occurrenceViews[i];
-                }
-            }
-            return null;
         }
     }
 }

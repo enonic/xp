@@ -3,7 +3,10 @@ module api.content.form.inputtype.image {
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import ContentSummary = api.content.ContentSummary;
-    import Value = api.data.Value;
+    import Property = api.data2.Property;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
     import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
     import LoadMask = api.ui.mask.LoadMask;
 
@@ -302,7 +305,7 @@ module api.content.form.inputtype.image {
 
         getValues(): Value[] {
             return this.getSelectedOptions().map((selectedOption: SelectedOption<ImageSelectorDisplayValue>) => {
-                return new Value(selectedOption.getOption().value, api.data.type.ValueTypes.CONTENT_ID);
+                return ValueTypes.CONTENT_ID.newValue(selectedOption.getOption().value);
             });
         }
 

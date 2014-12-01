@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data2.Property;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
 
@@ -62,6 +62,12 @@ public final class Input
         this.inputTypeConfig = builder.inputTypeConfig;
 
         this.type.validateOccurrences( this.occurrences );
+    }
+
+    @Override
+    public FormItemType getType()
+    {
+        return FormItemType.INPUT;
     }
 
     public InputType getInputType()

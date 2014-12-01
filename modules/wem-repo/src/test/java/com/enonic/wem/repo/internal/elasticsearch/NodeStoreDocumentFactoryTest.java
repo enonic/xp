@@ -12,9 +12,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
@@ -182,13 +180,13 @@ public class NodeStoreDocumentFactoryTest
     public void add_properties_then_index_document_items_created_for_each_property()
         throws Exception
     {
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.addProperty( DataPath.from( "a.b.c" ), Value.newDouble( 2.0 ) );
-        rootDataSet.setProperty( DataPath.from( "a.b.d" ), Value.newLocalDate( LocalDate.now() ) );
+        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        rootDataSet.setDouble( "a.b.c", 2.0 );
+        rootDataSet.setLocalDate( "a.b.d", LocalDate.now() );
 
         Node node = Node.newNode().
             id( NodeId.from( "myId" ) ).
-            rootDataSet( rootDataSet ).
+            data( rootDataSet ).
             build();
 
         final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
@@ -209,13 +207,13 @@ public class NodeStoreDocumentFactoryTest
     public void create_for_properties_with_multiple_values()
         throws Exception
     {
-        RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.addProperty( DataPath.from( "a.b.c" ), Value.newDouble( 2.0 ) );
-        rootDataSet.addProperty( DataPath.from( "a.b.c" ), Value.newDouble( 3.0 ) );
+        PropertyTree rootDataSet = new PropertyTree();
+        rootDataSet.setDouble( "a.b.c", 2.0 );
+        rootDataSet.setDouble( "a.b.c[1]", 3.0 );
 
         Node node = Node.newNode().
             id( NodeId.from( "myId" ) ).
-            rootDataSet( rootDataSet ).
+            data( rootDataSet ).
             build();
 
         final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().

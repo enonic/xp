@@ -1,10 +1,11 @@
 module api.content.site.inputtype.moduleconfigurator {
 
-    import Property = api.data.Property;
+    import Property = api.data2.Property;
+    import PropertyTree = api.data2.PropertyTree;
+    import PropertySet = api.data2.PropertySet;
     import Module = api.module.Module;
     import ModuleViewer = api.module.ModuleViewer;
     import ModuleLoader = api.module.ModuleLoader;
-    import RootDataSet = api.data.RootDataSet;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import SelectedOptionView = api.ui.selector.combobox.SelectedOptionView;
@@ -28,6 +29,14 @@ module api.content.site.inputtype.moduleconfigurator {
             super(builder);
         }
 
+        getSelectedOptionViews(): ModuleConfiguratorSelectedOptionView[] {
+            var views: ModuleConfiguratorSelectedOptionView[] = [];
+            this.getSelectedOptions().forEach((selectedOption: SelectedOption<Module>) => {
+                views.push(<ModuleConfiguratorSelectedOptionView>selectedOption.getOptionView());
+            });
+            return views;
+        }
+
     }
 
     export class ModuleConfiguratorSelectedOptionsView extends BaseSelectedOptionsView<Module> {
@@ -41,7 +50,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
         createSelectedOption(option: Option<Module>): SelectedOption<Module> {
             var moduleConfig = this.moduleConfigProvider.getConfig(option.displayValue.getModuleKey());
-            var moduleConfigData = moduleConfig ? moduleConfig.getConfig() : new RootDataSet();
+            var moduleConfigData: PropertySet = moduleConfig ? moduleConfig.getConfig() : new PropertyTree().getRoot();
             var optionView = new ModuleConfiguratorSelectedOptionView(option, moduleConfigData);
 
             return new SelectedOption<Module>(optionView, this.count());
@@ -55,7 +64,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
         private selectedOptionToBeRemovedListeners: {(): void;}[];
 
-        constructor(option: Option<Module>, config: RootDataSet) {
+        constructor(option: Option<Module>, config: PropertySet) {
             this.selectedOptionToBeRemovedListeners = [];
             this.option = option;
 

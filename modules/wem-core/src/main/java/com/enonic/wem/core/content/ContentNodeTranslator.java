@@ -18,7 +18,7 @@ import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
@@ -54,7 +54,8 @@ public class ContentNodeTranslator
         {
             params.name( Name.ensureValidName( params.getDisplayName() ) );
         }
-        final RootDataSet contentAsData = CONTENT_SERIALIZER.toData( params );
+        final PropertyTree contentAsData = new PropertyTree();
+        CONTENT_SERIALIZER.toData( params, contentAsData.getRoot() );
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create();
 
@@ -128,7 +129,7 @@ public class ContentNodeTranslator
             thumbnail = null;
         }
 
-        final Content.Builder builder = CONTENT_SERIALIZER.fromData( node.data() );
+        final Content.Builder builder = CONTENT_SERIALIZER.fromData( node.data().getRoot() );
 
         builder.
             id( ContentId.from( node.id().toString() ) ).
@@ -150,7 +151,8 @@ public class ContentNodeTranslator
 
     private NodeEditor toNodeEditor( final Content content, final Attachments attachments )
     {
-        final RootDataSet rootDataSet = CONTENT_SERIALIZER.toData( content );
+        final PropertyTree tree = new PropertyTree();
+        CONTENT_SERIALIZER.toData( content, tree.getRoot() );
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create();
 
@@ -174,7 +176,7 @@ public class ContentNodeTranslator
                 name( NodeName.from( content.getName().toString() ) ).
                 attachments( nodeAttachmentsBuilder.build() ).
                 indexConfigDocument( indexConfigDocument ).
-                rootDataSet( rootDataSet ).
+                rootDataSet( tree ).
                 accessControlList( content.getAccessControlList() ).
                 effectiveAcl( content.getEffectiveAccessControlList() ).
                 inheritPermissions( content.inheritsPermissions() );

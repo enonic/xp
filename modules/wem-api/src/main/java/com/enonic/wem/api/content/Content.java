@@ -8,12 +8,11 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.rendering.Renderable;
@@ -49,7 +48,7 @@ public class Content
 
     private final Form form;
 
-    private final ContentData contentData;
+    private final PropertyTree data;
 
     private final ImmutableList<Metadata> metadata;
 
@@ -81,6 +80,7 @@ public class Content
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
         Preconditions.checkNotNull( builder.parentPath, "parentPath is required for a Content" );
+        Preconditions.checkNotNull( builder.data, "data is required for a Content" );
 
         if ( builder.page != null )
         {
@@ -101,7 +101,7 @@ public class Content
         this.path = ContentPath.from( builder.parentPath, builder.name.toString() );
         this.id = builder.contentId;
         this.form = builder.form;
-        this.contentData = builder.contentData;
+        this.data = builder.data;
         this.metadata = ImmutableList.copyOf( builder.metadata );
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
@@ -182,9 +182,9 @@ public class Content
         return form;
     }
 
-    public ContentData getContentData()
+    public PropertyTree getData()
     {
-        return contentData;
+        return data;
     }
 
     public boolean hasMetadata( final String name )
@@ -197,12 +197,12 @@ public class Content
         return getMetadata( name ) != null;
     }
 
-    public RootDataSet getMetadata( final String name )
+    public PropertyTree getMetadata( final String name )
     {
         return getMetadata( MetadataSchemaName.from( name ) );
     }
 
-    public RootDataSet getMetadata( final MetadataSchemaName name )
+    public PropertyTree getMetadata( final MetadataSchemaName name )
     {
         for ( Metadata item : this.metadata )
         {
@@ -213,6 +213,11 @@ public class Content
         }
 
         return null;
+    }
+
+    public boolean hasMetadata()
+    {
+        return !this.metadata.isEmpty();
     }
 
     public ImmutableList<Metadata> getAllMetadata()
@@ -342,7 +347,7 @@ public class Content
 
         Form form;
 
-        protected ContentData contentData;
+        protected PropertyTree data;
 
         List<Metadata> metadata;
 
@@ -374,7 +379,7 @@ public class Content
 
         BaseBuilder()
         {
-            this.contentData = new ContentData();
+            this.data = new PropertyTree();
             this.metadata = new ArrayList<>();
             this.inheritPermissions = true;
         }
@@ -387,7 +392,7 @@ public class Content
             this.name = content.name;
             this.type = content.type;
             this.form = content.form; // TODO make DataSet immutable, or make copy
-            this.contentData = content.contentData; // TODO make DataSet immutable, or make copy
+            this.data = content.data; // TODO make DataSet immutable, or make copy
             this.metadata = content.metadata;
             this.displayName = content.displayName;
             this.owner = content.owner;
@@ -438,10 +443,10 @@ public class Content
             return this;
         }
 
-        public EditBuilder contentData( final ContentData contentData )
+        public EditBuilder contentData( final PropertyTree contentData )
         {
-            changes.recordChange( newPossibleChange( "contentData" ).from( this.original.getContentData() ).to( contentData ).build() );
-            this.contentData = contentData;
+            changes.recordChange( newPossibleChange( "data" ).from( this.original.getData() ).to( contentData ).build() );
+            this.data = contentData;
             return this;
         }
 
@@ -576,9 +581,9 @@ public class Content
             return this;
         }
 
-        public Builder<BUILDER, C> contentData( final ContentData contentData )
+        public Builder<BUILDER, C> contentData( final PropertyTree contentData )
         {
-            this.contentData = contentData;
+            this.data = contentData;
             return this;
         }
 

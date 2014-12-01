@@ -31,6 +31,8 @@ final class CreatePageCommand
 
     public Content execute()
     {
+        this.params.validate();
+
         final Page page = newPage().
             controller( this.params.getController() ).
             template( this.params.getPageTemplate() ).

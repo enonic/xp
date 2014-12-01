@@ -50,7 +50,7 @@ module api.content.page.text {
             return true;
         }
 
-        clone(): TextComponent {
+        clone(generateNewPropertyIds: boolean = false): TextComponent {
             return new TextComponentBuilder(this).build();
         }
     }

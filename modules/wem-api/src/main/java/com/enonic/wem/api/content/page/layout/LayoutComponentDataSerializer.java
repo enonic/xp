@@ -1,36 +1,42 @@
 package com.enonic.wem.api.content.page.layout;
 
 
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentDataSerializer;
+import com.enonic.wem.api.content.page.DescriptorKey;
+import com.enonic.wem.api.content.page.region.Region;
+import com.enonic.wem.api.content.page.region.RegionDataSerializer;
+import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data2.PropertySet;
 
 public class LayoutComponentDataSerializer
     extends AbstractDescriptorBasedPageComponentDataSerializer<LayoutComponent, LayoutComponent>
 {
-    public static final String LAYOUT_REGIONS = "regions";
+    private final RegionDataSerializer regionDataSerializer = new RegionDataSerializer();
 
-    private static LayoutRegionsDataSerializer regionsDataSerializer = new LayoutRegionsDataSerializer( LAYOUT_REGIONS );
-
-    public DataSet toData( final LayoutComponent component )
+    public void toData( final LayoutComponent component, final PropertySet parent )
     {
-        final DataSet asData = new DataSet( LayoutComponent.class.getSimpleName() );
-        applyPageComponentToData( component, asData );
+        final PropertySet asSet = parent.addSet( LayoutComponent.class.getSimpleName() );
+        applyPageComponentToData( component, asSet );
         if ( component.hasRegions() )
         {
-            asData.add( regionsDataSerializer.toData( component.getRegions() ) );
+            for ( final Region region : component.getRegions() )
+            {
+                regionDataSerializer.toData( region, asSet );
+            }
         }
-        return asData;
     }
 
-    public LayoutComponent fromData( final DataSet asData )
+    public LayoutComponent fromData( final PropertySet asData )
     {
-        LayoutComponent.Builder component = LayoutComponent.newLayoutComponent();
+        final LayoutComponent.Builder component = LayoutComponent.newLayoutComponent();
         applyPageComponentFromData( component, asData );
-        if ( asData.hasData( LAYOUT_REGIONS ) )
+
+        final LayoutRegions.Builder pageRegionsBuilder = LayoutRegions.newLayoutRegions();
+        for ( final Property regionAsProp : asData.getProperties( "region" ) )
         {
-            component.regions( regionsDataSerializer.fromData( asData.getDataSet( LAYOUT_REGIONS ) ) );
+            pageRegionsBuilder.add( regionDataSerializer.fromData( regionAsProp.getSet() ) );
         }
+        component.regions( pageRegionsBuilder.build() );
         return component.build();
     }
 

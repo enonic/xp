@@ -1,5 +1,12 @@
 module api.form {
 
+    import PropertySet = api.data2.PropertySet;
+    import Property = api.data2.Property;
+    import PropertyArray = api.data2.PropertyArray;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
+
     export interface FormItemSetViewConfig {
 
         context: FormContext;
@@ -8,14 +15,14 @@ module api.form {
 
         parent: FormItemSetOccurrenceView;
 
-        parentDataSet: api.data.DataSet;
+        parentDataSet: PropertySet;
     }
 
     export class FormItemSetView extends FormItemView {
 
         private formItemSet: FormItemSet;
 
-        private parentDataSet: api.data.DataSet;
+        private parentDataSet: PropertySet;
 
         private occurrenceViewsContainer: api.dom.DivEl;
 
@@ -68,14 +75,22 @@ module api.form {
 
             this.appendChild(this.occurrenceViewsContainer);
 
+            var propertyArray = this.parentDataSet.getPropertyArray(config.formItemSet.getName());
+            if (!propertyArray) {
+                propertyArray = PropertyArray.create().
+                    setType(ValueTypes.DATA).
+                    setName(config.formItemSet.getName()).
+                    setParent(this.parentDataSet).
+                    build();
+                this.parentDataSet.addPropertyArray(propertyArray);
+            }
 
-            this.formItemSetOccurrences =
-            new FormItemSetOccurrences(<FormItemSetOccurrencesConfig>{
+            this.formItemSetOccurrences = new FormItemSetOccurrences(<FormItemSetOccurrencesConfig>{
                 context: this.getContext(),
                 occurrenceViewContainer: this.occurrenceViewsContainer,
                 formItemSet: config.formItemSet,
                 parent: this.getParent(),
-                parentDataSet: this.parentDataSet
+                propertyArray: propertyArray
             });
             this.formItemSetOccurrences.layout();
 
@@ -91,9 +106,6 @@ module api.form {
                 }
             });
             this.formItemSetOccurrences.onOccurrenceRemoved((event: OccurrenceRemovedEvent) => {
-
-                var dataId = new api.data.DataId(this.formItemSet.getName(), event.getOccurrence().getIndex());
-                this.parentDataSet.removeData(dataId);
 
                 this.refresh();
 
@@ -214,7 +226,7 @@ module api.form {
 
         private resolveValidationRecordingPath(): ValidationRecordingPath {
 
-            return new ValidationRecordingPath(this.getParentDataPath(), this.formItemSet.getName(),
+            return new ValidationRecordingPath(this.parentDataSet.getPropertyPath(), this.formItemSet.getName(),
                 this.formItemSet.getOccurrences().getMinimum(), this.formItemSet.getOccurrences().getMaximum());
         }
 
@@ -317,15 +329,10 @@ module api.form {
                 api.util.assert(draggedElement.hasClass("form-item-set-occurrence-view"));
                 var draggedToIndex = draggedElement.getSiblingIndex();
 
-                this.handleMovedOccurrence(this.draggingIndex, draggedToIndex);
+                this.formItemSetOccurrences.moveOccurrence(this.draggingIndex, draggedToIndex);
             }
 
             this.draggingIndex = -1;
-        }
-
-        private handleMovedOccurrence(index: number, destinationIndex: number) {
-
-            this.formItemSetOccurrences.moveOccurrence(index, destinationIndex);
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

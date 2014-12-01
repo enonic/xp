@@ -40,6 +40,12 @@ public class FormItemSet
         }
     }
 
+    @Override
+    public FormItemType getType()
+    {
+        return FormItemType.FORM_ITEM_SET;
+    }
+
     public void add( final FormItem formItem )
     {
         this.formItems.add( formItem );

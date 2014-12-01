@@ -14,14 +14,9 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.data2.PropertyPath;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
@@ -71,42 +66,41 @@ public class ContentNodeTranslatorTest
     }
 
     @Test
-    public void toNode_contentData_to_rootdataset()
+    public void toCreateNode_contentData_to_rootdataset()
         throws Exception
     {
-        final DataSet rootDataSet = RootDataSet.create().set( "test", "testValue", ValueTypes.STRING ).build();
+        final PropertyTree contentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        contentData.setString( "test", "testValue" );
 
         final CreateContentParams mycontent = new CreateContentParams().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
             contentType( ContentTypeName.from( "mymodule:my-content-type" ) ).
-            contentData( new ContentData( rootDataSet.toRootDataSet() ) );
+            contentData( contentData );
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );
 
-        final Property testProperty = createNode.getData().getProperty( CONTENT_DATA_PREFIX + ".test" );
-
-        assertNotNull( testProperty );
-        assertEquals( "testValue", testProperty.getValue().asString() );
+        assertEquals( "testValue", createNode.getData().getString( CONTENT_DATA_PREFIX + ".test" ) );
     }
 
     @Test
     public void translate_entityIndexConfig_decide_by_type_for_contentdata()
         throws Exception
     {
-        final DataSet rootDataSet = RootDataSet.create().set( "test", "testValue", ValueTypes.STRING ).build();
+        final PropertyTree contentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        contentData.setString( "test", "testValue" );
 
         final CreateContentParams mycontent = new CreateContentParams().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
             contentType( ContentTypeName.from( "mymodule:my-content-type" ) ).
-            contentData( new ContentData( rootDataSet.toRootDataSet() ) );
+            contentData( contentData );
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );
 
         final IndexConfigDocument indexConfigDocument = createNode.getIndexConfigDocument();
 
-        final IndexConfig configForData = indexConfigDocument.getConfigForPath( DataPath.from( CONTENT_DATA_PREFIX + ".test" ) );
+        final IndexConfig configForData = indexConfigDocument.getConfigForPath( PropertyPath.from( CONTENT_DATA_PREFIX + ".test" ) );
 
         assertNotNull( configForData );
         assertEquals( true, configForData.isEnabled() );
@@ -132,6 +126,7 @@ public class ContentNodeTranslatorTest
         final CreateContentParams mycontent = new CreateContentParams().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
+            contentData( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             contentType( ContentTypeName.from( "mymodule:my-content-type" ) ).
             form( form );
 
@@ -139,7 +134,8 @@ public class ContentNodeTranslatorTest
 
         final IndexConfigDocument indexConfigDocument = createNode.getIndexConfigDocument();
 
-        final IndexConfig indexConfig = indexConfigDocument.getConfigForPath( DataPath.from( "form.formItems.Input[0].inputType.name" ) );
+        final IndexConfig indexConfig =
+            indexConfigDocument.getConfigForPath( PropertyPath.from( "form.formItems.Input[0].inputType.name" ) );
 
         assertNotNull( indexConfig );
         assertTrue( !indexConfig.isEnabled() && !indexConfig.isFulltext() && !indexConfig.isnGram() );
@@ -179,7 +175,6 @@ public class ContentNodeTranslatorTest
     @Test
     public void node_to_content_thumbnail()
     {
-
         final com.enonic.wem.api.node.Attachments attachments =
             com.enonic.wem.api.node.Attachments.from( com.enonic.wem.api.node.Attachment.newAttachment().
                 blobKey( new BlobKey( "myThumbnail" ) ).
@@ -188,15 +183,18 @@ public class ContentNodeTranslatorTest
                 mimeType( "image/png" ).
                 build() );
 
-        final RootDataSet data = new RootDataSet();
-        data.addProperty( "contentType", Value.newString( "my-type" ) );
+        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        data.addString( "contentType", "my-type" );
+        data.addBoolean( "draft", false );
+        data.addSet( "data" );
+        data.addSet( "form" );
 
         final Node node = Node.newNode().id( NodeId.from( "myId" ) ).
             attachments( attachments ).
             parent( NodePath.ROOT ).
             path( "myPath" ).
             name( NodeName.from( "myname" ) ).
-            rootDataSet( data ).
+            data( data ).
             build();
 
         final Content content = translator.fromNode( node );
@@ -209,6 +207,7 @@ public class ContentNodeTranslatorTest
     {
         final CreateContentParams mycontent = new CreateContentParams().
             parent( ContentPath.ROOT ).
+            contentData( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             displayName( "test Name" );
         final CreateNodeParams createNodeParams = translator.toCreateNode( mycontent );
         Assert.assertNotNull( createNodeParams );
@@ -232,14 +231,17 @@ public class ContentNodeTranslatorTest
         AccessControlList acl = AccessControlList.create().add( entry1 ).add( entry2 ).build();
         AccessControlList effectiveAcl = acl.getEffective( AccessControlList.empty() );
 
-        final RootDataSet data = new RootDataSet();
-        data.addProperty( "contentType", Value.newString( "my-type" ) );
+        final PropertyTree contentAsData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        contentAsData.addString( "contentType", "my-type" );
+        contentAsData.addBoolean( "draft", false );
+        contentAsData.addSet( "data" );
+        contentAsData.addSet( "form" );
 
         final Node node = Node.newNode().id( NodeId.from( "myId" ) ).
             parent( NodePath.ROOT ).
             path( "myPath" ).
             name( NodeName.from( "myname" ) ).
-            rootDataSet( data ).
+            data( contentAsData ).
             accessControlList( acl ).
             effectiveAcl( effectiveAcl ).
             build();

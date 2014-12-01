@@ -1,14 +1,13 @@
 module api.form.inputtype.support {
 
-    import DataPath = api.data.DataPath;
+    import PropertyPath = api.data2.PropertyPath;
+    import Property = api.data2.Property;
+    import PropertyArray = api.data2.PropertyArray;
+    import Value = api.data2.Value;
+    import ValueType = api.data2.ValueType;
+    import ValueTypes = api.data2.ValueTypes;
 
     export class BaseInputTypeManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
-
-        private valueAddedListeners: {(event: api.form.inputtype.ValueAddedEvent) : void}[] = [];
-
-        private valueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent) : void}[] = [];
-
-        private valueRemovedListeners: {(event: api.form.inputtype.ValueRemovedEvent) : void}[] = [];
 
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
@@ -28,31 +27,25 @@ module api.form.inputtype.support {
             return true;
         }
 
-        getValueType(): api.data.type.ValueType {
+        getValueType(): ValueType {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         /**
          * Must be overridden by inheritors.
          */
-        newInitialValue(): RAW_VALUE_TYPE {
+        newInitialValue(): Value {
             throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
         /**
          * Must be overridden by inheritors.
          */
-        layout(input: api.form.Input, properties: api.data.Property[]) {
+        layout(input: api.form.Input, propertyArray: PropertyArray) {
 
             throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
-        /**
-         * Must be overridden by inheritors.
-         */
-        getValues(): api.data.Value[] {
-            throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
-        }
 
         getAttachments(): api.content.attachment.Attachment[] {
             return [];
@@ -64,56 +57,6 @@ module api.form.inputtype.support {
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
             throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
-        }
-
-        onValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
-            this.valueAddedListeners.push(listener);
-        }
-
-        unValueAdded(listener: (event: api.form.inputtype.ValueAddedEvent) => void) {
-            this.valueAddedListeners.filter((currentListener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        notifyValueAdded(value: api.data.Value) {
-            var event = new api.form.inputtype.ValueAddedEvent(value);
-            this.valueAddedListeners.forEach((listener: (event: api.form.inputtype.ValueAddedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
-        onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            this.valueChangedListeners.push(listener);
-        }
-
-        unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            this.valueChangedListeners.filter((currentListener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        notifyValueChanged(event: api.form.inputtype.ValueChangedEvent) {
-            this.valueChangedListeners.forEach((listener: (event: api.form.inputtype.ValueChangedEvent)=>void) => {
-                listener(event);
-            });
-        }
-
-        onValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
-            this.valueRemovedListeners.push(listener);
-        }
-
-        unValueRemoved(listener: (event: api.form.inputtype.ValueRemovedEvent) => void) {
-            this.valueRemovedListeners.filter((currentListener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
-                return listener == currentListener;
-            });
-        }
-
-        notifyValueRemoved(index: number) {
-            var event = new api.form.inputtype.ValueRemovedEvent(index);
-            this.valueRemovedListeners.forEach((listener: (event: api.form.inputtype.ValueRemovedEvent)=>void) => {
-                listener(event);
-            });
         }
 
         onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {

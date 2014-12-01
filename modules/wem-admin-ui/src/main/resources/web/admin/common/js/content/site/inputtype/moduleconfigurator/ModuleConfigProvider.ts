@@ -1,19 +1,22 @@
 module api.content.site.inputtype.moduleconfigurator {
 
+    import Property = api.data2.Property;
+    import PropertyArray = api.data2.PropertyArray;
+
     export class ModuleConfigProvider {
 
-        private properties: api.data.Property[];
+        private propertyArray: PropertyArray;
 
-        constructor(properties: api.data.Property[]) {
-            this.properties = properties;
+        constructor(propertyArray: PropertyArray) {
+            this.propertyArray = propertyArray;
         }
 
         getConfig(moduleKey: api.module.ModuleKey): api.content.site.ModuleConfig {
             var match: api.content.site.ModuleConfig = null;
 
-            this.properties.forEach((property: api.data.Property) => {
+            this.propertyArray.forEach((property: Property) => {
                 if (property.hasNonNullValue()) {
-                    var rootDataSet = property.getData();
+                    var rootDataSet = property.getSet();
                     var moduleConfig = new api.content.site.ModuleConfigBuilder().fromData(rootDataSet).build();
                     if (moduleConfig.getModuleKey().equals(moduleKey)) {
                         match = moduleConfig;

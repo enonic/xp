@@ -19,9 +19,7 @@ import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -99,10 +97,8 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
 
     private Content createPage( final String id, final String path, final String contentTypeName, final boolean withPage )
     {
-        RootDataSet rootDataSet = new RootDataSet();
-
-        Property dataSet = new Property( "property1", Value.newString( "value1" ) );
-        rootDataSet.add( dataSet );
+        PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        rootDataSet.addString( "property1", "value1" );
 
         final Content.Builder content = Content.newContent().
             id( ContentId.from( id ) ).
@@ -133,10 +129,8 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
 
     private Site createSite( final String id, final String path, final String contentTypeName )
     {
-        RootDataSet rootDataSet = new RootDataSet();
-
-        Property dataSet = new Property( "property1", Value.newString( "value1" ) );
-        rootDataSet.add( dataSet );
+        PropertyTree rootDataSet = new PropertyTree();
+        rootDataSet.addString( "property1", "value1" );
 
         Page page = Page.newPage().
             template( PageTemplateKey.from( "my-page" ) ).
@@ -156,8 +150,8 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
 
     private PageTemplate createPageTemplate()
     {
-        final RootDataSet pageTemplateConfig = new RootDataSet();
-        pageTemplateConfig.addProperty( "pause", Value.newLong( 10000 ) );
+        final PropertyTree pageTemplateConfig = new PropertyTree();
+        pageTemplateConfig.addLong( "pause", 10000L );
 
         PageRegions pageRegions = PageRegions.newPageRegions().
             add( Region.newRegion().name( "main-region" ).

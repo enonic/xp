@@ -4,6 +4,7 @@ module app.wizard.page.contextwindow.inspect {
     import ImageComponent = api.content.page.image.ImageComponent;
     import PageComponentView = api.liveedit.PageComponentView;
     import ImageComponentView = api.liveedit.image.ImageComponentView;
+    import PropertyTree = api.data2.PropertyTree;
 
     export class ImageInspectionPanel extends PageComponentInspectionPanel<ImageComponent> {
 
@@ -36,12 +37,8 @@ module app.wizard.page.contextwindow.inspect {
             var formContext = new api.form.FormContextBuilder().
                 build();
             var configData = this.imageComponent.getConfig();
-            if (!configData) {
-                configData = new api.data.RootDataSet();
-                this.imageComponent.setConfig(configData);
-            }
             var configForm = this.imageComponent.getForm();
-            this.formView = new api.form.FormView(formContext, configForm, configData);
+            this.formView = new api.form.FormView(formContext, configForm, configData.getRoot());
             this.appendChild(this.formView);
         }
 

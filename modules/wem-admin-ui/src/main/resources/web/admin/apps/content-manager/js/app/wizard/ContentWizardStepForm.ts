@@ -4,7 +4,7 @@ module app.wizard {
     import Form = api.form.Form;
     import FormContext = api.form.FormContext;
     import FormView = api.form.FormView;
-    import RootDataSet = api.data.RootDataSet;
+    import PropertyTree = api.data2.PropertyTree;
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
 
     export class ContentWizardStepForm extends api.app.wizard.WizardStepForm {
@@ -15,13 +15,13 @@ module app.wizard {
 
         private formView: FormView;
 
-        private data: RootDataSet;
+        private data: PropertyTree;
 
         constructor() {
             super();
         }
 
-        layout(formContext: FormContext, data: RootDataSet, form: Form) {
+        layout(formContext: FormContext, data: PropertyTree, form: Form) {
 
             this.formContext = formContext;
             this.form = form;
@@ -32,9 +32,9 @@ module app.wizard {
             }
         }
 
-        private doLayout(form: Form, data: RootDataSet) {
+        private doLayout(form: Form, data: PropertyTree) {
 
-            this.formView = new FormView(this.formContext, form, data);
+            this.formView = new FormView(this.formContext, form, data.getRoot());
             this.formView.onFocus((event) => {
                 this.notifyFocused(event);
             });
@@ -70,7 +70,7 @@ module app.wizard {
             return this.formView;
         }
 
-        getRootDataSet(): RootDataSet {
+        getData(): PropertyTree {
 
             return this.data;
         }

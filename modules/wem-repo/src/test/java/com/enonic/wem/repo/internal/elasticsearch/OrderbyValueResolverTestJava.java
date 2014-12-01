@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Value;
 import com.enonic.wem.repo.internal.entity.NodeOrderValueResolver;
 
 import static org.junit.Assert.*;
@@ -23,12 +23,12 @@ public class OrderbyValueResolverTestJava
 
         List<String> orderStrings = Lists.newArrayList();
         final String third = OrderbyValueResolver.getOrderbyValue(
-            Value.newDouble( NodeOrderValueResolver.START_ORDER_VALUE + NodeOrderValueResolver.ORDER_SPACE ) );
+            Value.newDouble( (double) NodeOrderValueResolver.START_ORDER_VALUE + NodeOrderValueResolver.ORDER_SPACE ) );
         orderStrings.add( third );
-        final String second = OrderbyValueResolver.getOrderbyValue( Value.newDouble( NodeOrderValueResolver.START_ORDER_VALUE ) );
+        final String second = OrderbyValueResolver.getOrderbyValue( Value.newDouble( (double) NodeOrderValueResolver.START_ORDER_VALUE ) );
         orderStrings.add( second );
         final String first = OrderbyValueResolver.getOrderbyValue(
-            Value.newDouble( NodeOrderValueResolver.START_ORDER_VALUE - NodeOrderValueResolver.ORDER_SPACE ) );
+            Value.newDouble( (double) NodeOrderValueResolver.START_ORDER_VALUE - NodeOrderValueResolver.ORDER_SPACE ) );
         orderStrings.add( first );
         Collections.sort( orderStrings );
 

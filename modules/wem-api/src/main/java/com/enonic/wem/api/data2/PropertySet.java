@@ -5,8 +5,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -52,6 +54,54 @@ public final class PropertySet
     Property getProperty()
     {
         return property;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public Map<String, Object> toMap()
+    {
+        final LinkedHashMap<String, Object> map = new LinkedHashMap<>( propertyArrayByName.size() * 2 );
+
+        for ( Map.Entry<String, PropertyArray> entry : this.propertyArrayByName.entrySet() )
+        {
+            final String name = entry.getKey();
+
+            for ( final Property property : entry.getValue().getProperties() )
+            {
+                final Value value = property.getValue();
+                if ( value.isPropertySet() )
+                {
+                    setMapValue( map, name, value.asData().toMap() );
+                }
+                else
+                {
+                    setMapValue( map, name, property.getObject() );
+                }
+            }
+        }
+
+        return map;
+    }
+
+    private void setMapValue( final Map<String, Object> map, final String key, final Object value )
+    {
+        final Object rawValue = map.get( key );
+        final ArrayList<Object> listValue;
+        if ( rawValue == null )
+        {
+            listValue = new ArrayList<>();
+            map.put( key, listValue );
+        }
+        else if ( rawValue instanceof ArrayList )
+        {
+            //noinspection unchecked
+            listValue = (ArrayList<Object>) rawValue;
+        }
+        else
+        {
+            throw new IllegalStateException( "Expected ArrayList, unexpected type of value: " + rawValue.getClass().getName() );
+        }
+
+        listValue.add( value );
     }
 
     @Override
@@ -1000,7 +1050,10 @@ public final class PropertySet
         final ImmutableList.Builder<PropertySet> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
-            stringsBuilder.add( property.getSet() );
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getSet() );
+            }
         }
         return stringsBuilder.build();
     }
@@ -1029,7 +1082,10 @@ public final class PropertySet
         final ImmutableList.Builder<String> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
-            stringsBuilder.add( property.getString() );
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getString() );
+            }
         }
         return stringsBuilder.build();
     }
@@ -1058,7 +1114,11 @@ public final class PropertySet
         final ImmutableList.Builder<Boolean> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
-            stringsBuilder.add( property.getBoolean() );
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getBoolean() );
+
+            }
         }
         return stringsBuilder.build();
     }
@@ -1087,7 +1147,10 @@ public final class PropertySet
         final ImmutableList.Builder<Long> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
-            stringsBuilder.add( property.getLong() );
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getLong() );
+            }
         }
         return stringsBuilder.build();
     }
@@ -1116,7 +1179,10 @@ public final class PropertySet
         final ImmutableList.Builder<Double> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
-            stringsBuilder.add( property.getDouble() );
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getDouble() );
+            }
         }
         return stringsBuilder.build();
     }
@@ -1145,7 +1211,10 @@ public final class PropertySet
         final ImmutableList.Builder<GeoPoint> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
-            stringsBuilder.add( property.getGeoPoint() );
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getGeoPoint() );
+            }
         }
         return stringsBuilder.build();
     }
@@ -1174,7 +1243,10 @@ public final class PropertySet
         final ImmutableList.Builder<ContentId> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
-            stringsBuilder.add( property.getContentId() );
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getContentId() );
+            }
         }
         return stringsBuilder.build();
     }
@@ -1203,7 +1275,10 @@ public final class PropertySet
         final ImmutableList.Builder<Reference> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
-            stringsBuilder.add( property.getReference() );
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getReference() );
+            }
         }
         return stringsBuilder.build();
     }
@@ -1232,7 +1307,10 @@ public final class PropertySet
         final ImmutableList.Builder<Link> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
-            stringsBuilder.add( property.getLink() );
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getLink() );
+            }
         }
         return stringsBuilder.build();
     }
@@ -1261,7 +1339,10 @@ public final class PropertySet
         final ImmutableList.Builder<LocalDate> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
-            stringsBuilder.add( property.getLocalDate() );
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getLocalDate() );
+            }
         }
         return stringsBuilder.build();
     }
@@ -1290,7 +1371,10 @@ public final class PropertySet
         final ImmutableList.Builder<LocalDateTime> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
-            stringsBuilder.add( property.getLocalDateTime() );
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getLocalDateTime() );
+            }
         }
         return stringsBuilder.build();
     }
@@ -1319,7 +1403,10 @@ public final class PropertySet
         final ImmutableList.Builder<LocalTime> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
-            stringsBuilder.add( property.getLocalTime() );
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getLocalTime() );
+            }
         }
         return stringsBuilder.build();
     }
@@ -1348,7 +1435,10 @@ public final class PropertySet
         final ImmutableList.Builder<Instant> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
-            stringsBuilder.add( property.getInstant() );
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getInstant() );
+            }
         }
         return stringsBuilder.build();
     }

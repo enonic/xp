@@ -1,9 +1,9 @@
 module api.content.site {
 
-    import Property = api.data.Property;
-    import DataId = api.data.DataId;
+    import Property = api.data2.Property;
+    import PropertyIdProvider = api.data2.PropertyIdProvider;
     import ModuleKey = api.module.ModuleKey;
-    import ValueTypes = api.data.type.ValueTypes;
+    import ValueTypes = api.data2.ValueTypes;
 
     export class Site extends api.content.Content implements api.Equitable, api.Cloneable {
 
@@ -16,15 +16,14 @@ module api.content.site {
         }
 
         getDescription(): string {
-            return this.getContentData().getProperty("description").getString();
+            return this.getContentData().getString("description");
         }
 
         getModuleConfigs(): ModuleConfig[] {
 
             var moduleConfigs: ModuleConfig[] = [];
-            var modulesProperites = this.getContentData().getPropertiesByName("modules");
-            modulesProperites.forEach((moduleProperty: Property) => {
-                var moduleConfigData = moduleProperty.getData();
+            this.getContentData().forEachProperty("moduleConfig", (moduleProperty: Property) => {
+                var moduleConfigData = moduleProperty.getSet();
                 if (moduleConfigData) {
                     var moduleConfig = new ModuleConfigBuilder().fromData(moduleConfigData).build();
                     moduleConfigs.push(moduleConfig);
@@ -63,8 +62,8 @@ module api.content.site {
             super(source);
         }
 
-        fromContentJson(contentJson: api.content.json.ContentJson): SiteBuilder {
-            super.fromContentJson(contentJson);
+        fromContentJson(contentJson: api.content.json.ContentJson, propertyIdProvider: PropertyIdProvider): SiteBuilder {
+            super.fromContentJson(contentJson, propertyIdProvider);
             return this;
         }
 

@@ -1,5 +1,7 @@
 module api.form {
 
+    import PropertySet = api.data2.PropertySet;
+
     export interface FieldSetViewConfig {
 
         context: FormContext;
@@ -8,7 +10,7 @@ module api.form {
 
         parent: FormItemSetOccurrenceView;
 
-        dataSet?: api.data.DataSet;
+        dataSet?: PropertySet;
     }
 
     export class FieldSetView extends LayoutView {
@@ -35,32 +37,7 @@ module api.form {
             });
         }
 
-        public getFormItemView(name: string): FormItemView {
-
-            // TODO: Performance could be improved if the views where accessible by name from a map
-
-            for (var i = 0; i < this.formItemViews.length; i++) {
-                var curr = this.formItemViews[i];
-                if (name == curr.getFormItem().getName()) {
-                    return curr;
-                }
-            }
-
-            // FormItemView not found - look inside FieldSet-s
-            for (var i = 0; i < this.formItemViews.length; i++) {
-                var curr = this.formItemViews[i];
-                if (api.ObjectHelper.iFrameSafeInstanceOf(curr, FieldSetView)) {
-                    var view = (<FieldSetView>curr).getFormItemView(name);
-                    if (view != null) {
-                        return view;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        private doLayout(dataSet: api.data.DataSet) {
+        private doLayout(dataSet: PropertySet) {
 
             var label = new FieldSetLabel(this.fieldSet);
             this.appendChild(label);

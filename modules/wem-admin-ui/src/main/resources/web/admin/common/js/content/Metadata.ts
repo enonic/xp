@@ -1,21 +1,22 @@
 module api.content {
 
     import MetadataSchemaName = api.schema.metadata.MetadataSchemaName;
-    import RootDataSet = api.data.RootDataSet;
+    import PropertyTree = api.data2.PropertyTree;
+    import PropertyIdProvider = api.data2.PropertyIdProvider;
 
     export class Metadata implements api.Cloneable {
 
         private name: MetadataSchemaName;
 
-        private data: RootDataSet;
+        private data: PropertyTree;
 
-        constructor(name: MetadataSchemaName, data: RootDataSet) {
+        constructor(name: MetadataSchemaName, data: PropertyTree) {
             this.name = name;
             this.data = data;
         }
 
-        static fromJson(metadataJson: api.content.json.MetadataJson): Metadata {
-            return new Metadata( new MetadataSchemaName(metadataJson.name), api.data.DataFactory.createRootDataSet(metadataJson.data));
+        static fromJson(metadataJson: api.content.json.MetadataJson, propertyIdProvider: PropertyIdProvider): Metadata {
+            return new Metadata(new MetadataSchemaName(metadataJson.name), PropertyTree.fromJson(metadataJson.data, propertyIdProvider));
         }
 
         toJson(): api.content.json.MetadataJson {
@@ -26,14 +27,14 @@ module api.content {
         }
 
         clone(): Metadata {
-            return new Metadata(this.name, this.data.clone());
+            return new Metadata(this.name, this.data.copy());
         }
 
         getName(): MetadataSchemaName {
             return this.name;
         }
 
-        getData(): RootDataSet {
+        getData(): PropertyTree {
             return this.data;
         }
     }

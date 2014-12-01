@@ -36,7 +36,7 @@ public final class ContentTypeFilterJson
             {
                 if ( !contentTypeFilter.isContentTypeAllowed( contentType ) )
                 {
-                    denyList.add( contentType.getContentTypeName() );
+                    denyList.add( contentType.toString() );
                 }
             }
             this.deny = denyList.build();
@@ -49,7 +49,7 @@ public final class ContentTypeFilterJson
             {
                 if ( contentTypeFilter.isContentTypeAllowed( contentType ) )
                 {
-                    allowList.add( contentType.getContentTypeName() );
+                    allowList.add( contentType.toString() );
                 }
             }
             this.allow = allowList.build();

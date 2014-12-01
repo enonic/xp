@@ -1,5 +1,7 @@
 module api.content.page {
 
+    import PropertyIdProvider = api.data2.PropertyIdProvider;
+
     export class PageRegions extends AbstractRegions implements api.Equitable, api.Cloneable {
 
         constructor(builder: PageRegionsBuilder) {
@@ -61,7 +63,7 @@ module api.content.page {
             }
         }
 
-        fromJson(regionsJson: api.content.page.region.RegionJson[]): PageRegionsBuilder {
+        fromJson(regionsJson: api.content.page.region.RegionJson[], propertyIdProvider: PropertyIdProvider): PageRegionsBuilder {
 
             regionsJson.forEach((regionJson: api.content.page.region.RegionJson) => {
 
@@ -71,7 +73,7 @@ module api.content.page {
                     build();
 
                 regionJson.components.forEach((componentJson: api.content.page.PageComponentTypeWrapperJson) => {
-                    var pageComponent = PageComponentFactory.createFromJson(componentJson, region);
+                    var pageComponent = PageComponentFactory.createFromJson(componentJson, region, propertyIdProvider);
                     region.addComponent(pageComponent);
                 });
 

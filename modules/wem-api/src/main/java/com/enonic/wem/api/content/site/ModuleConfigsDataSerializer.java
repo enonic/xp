@@ -1,45 +1,34 @@
 package com.enonic.wem.api.content.site;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data2.PropertySet;
 
 public class ModuleConfigsDataSerializer
 {
     private ModuleConfigDataSerializer moduleConfigSerializer = new ModuleConfigDataSerializer();
 
-    List<Property> toData( final ModuleConfigs moduleConfigs )
+    public void toProperties( final ModuleConfigs moduleConfigs, final PropertySet parentSet )
     {
-        final List<Property> list = new ArrayList<>();
         for ( final ModuleConfig moduleConfig : moduleConfigs )
         {
-            list.add( new Property( "modules", Value.newData( moduleConfigSerializer.toData( moduleConfig ) ) ) );
+            moduleConfigSerializer.toData( moduleConfig, parentSet );
         }
-        return list;
     }
 
-    ModuleConfigs.Builder fromData( final DataSet data )
+    void toProperties( final ModuleConfig moduleConfig, final PropertySet parentSet )
+    {
+        moduleConfigSerializer.toData( moduleConfig, parentSet );
+    }
+
+    ModuleConfigs.Builder fromProperties( final PropertySet data )
     {
         final ModuleConfigs.Builder builder = ModuleConfigs.builder();
-        for ( final Property moduleProperty : data.getPropertiesByName( "modules" ) )
+        for ( final Property moduleConfigAsProperty : data.getProperties( "moduleConfig" ) )
         {
-            final RootDataSet moduleConfigData = moduleProperty.getData();
-            if ( moduleConfigData != null )
-            {
-                final ModuleConfig moduleConfig = moduleConfigSerializer.fromData( moduleConfigData );
-                builder.add( moduleConfig );
-            }
+            final ModuleConfig moduleConfig = moduleConfigSerializer.fromData( moduleConfigAsProperty.getSet() );
+            builder.add( moduleConfig );
         }
         return builder;
-    }
-
-    void addToData( final ModuleConfig moduleConfig, final DataSet data )
-    {
-        data.addProperty( "modules", Value.newData( moduleConfigSerializer.toData( moduleConfig ) ) );
     }
 }

@@ -2,8 +2,8 @@ package com.enonic.wem.api.content.page.text;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data2.PropertyTree;
 
 import static org.junit.Assert.*;
 
@@ -14,23 +14,25 @@ public class TextComponentDataSerializerTest
     {
         // setup
         TextComponent textComponent = TextComponent.newTextComponent().name( "myText" ).text( "some text" ).build();
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
 
         // exercise
-        DataSet data = new TextComponentDataSerializer().toData( textComponent );
+        new TextComponentDataSerializer().toData( textComponent, tree.getRoot() );
 
         // verify
-        assertEquals( "TextComponent", data.getName() );
-        assertEquals( "myText", data.getProperty( "name" ).getString() );
-        assertEquals( "some text", data.getProperty( "text" ).getString() );
+        PropertySet set = tree.getSet( TextComponent.class.getSimpleName() );
+        assertEquals( "myText", set.getString( "name" ) );
+        assertEquals( "some text", set.getString( "text" ) );
     }
 
     @Test
     public void fromData()
     {
         // setup
-        DataSet data = new DataSet( "TextComponent" );
-        data.setProperty( "name", Value.newString( "myText" ) );
-        data.setProperty( "text", Value.newString( "some text" ) );
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        PropertySet data = tree.addSet( TextComponent.class.getSimpleName() );
+        data.setString( "name", "myText" );
+        data.setString( "text", "some text" );
 
         // exercise
         TextComponent textComponent = new TextComponentDataSerializer().fromData( data );

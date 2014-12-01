@@ -4,8 +4,7 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -177,8 +176,8 @@ public class MoveChildNodeCommandTest
 
     private Node createNode( final String name, final NodePath parent )
     {
-        final RootDataSet data = new RootDataSet();
-        data.setProperty( "displayName", Value.newString( name ) );
+        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        data.setString( "displayName", name );
 
         return createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( name ) ).
