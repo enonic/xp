@@ -10,6 +10,7 @@ import com.enonic.wem.api.Name;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
@@ -39,8 +40,6 @@ public class ContentNodeTranslator
     private ContentTypeService contentTypeService;
 
     private BlobService blobService;
-
-    private static final NodePath CONTENTS_ROOT_PATH = NodePath.newPath( "/content" ).build();
 
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
 
@@ -110,7 +109,7 @@ public class ContentNodeTranslator
     private Content doGetFromNode( final Node node )
     {
         final NodePath parentNodePath = node.path().getParentPath();
-        final NodePath parentContentPathAsNodePath = parentNodePath.removeFromBeginning( CONTENTS_ROOT_PATH );
+        final NodePath parentContentPathAsNodePath = parentNodePath.removeFromBeginning( ContentConstants.CONTENT_ROOT_PATH );
         final ContentPath parentContentPath = ContentPath.from( parentContentPathAsNodePath.toString() );
 
         final com.enonic.wem.api.node.Attachments nodeAttachments = node.attachments();
@@ -198,7 +197,7 @@ public class ContentNodeTranslator
 
     private NodePath resolveParentNodePath( final ContentPath parentContentPath )
     {
-        return NodePath.newPath( CONTENTS_ROOT_PATH ).elements( parentContentPath.toString() ).build();
+        return NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements( parentContentPath.toString() ).build();
     }
 
     private Thumbnail resolveThumbnailAttachment( final CreateContentParams params )

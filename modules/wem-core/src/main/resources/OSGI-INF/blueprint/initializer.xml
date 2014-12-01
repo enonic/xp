@@ -11,8 +11,13 @@
     <property name="repositoryInitializer" ref="repositoryInitializer"/>
     <property name="initializers" ref="dataInitializers"/>
     <property name="securityInitializer" ref="securityInitializer"/>
+    <property name="contentInitializer" ref="contentInitializer"/>
   </bean>
 
   <service ref="startupInitializer" auto-export="interfaces"/>
+
+  <bean id="contentInitializer" class="com.enonic.wem.core.content.ContentInitializer">
+    <property name="nodeService" ref="nodeService"/>
+  </bean>
 
 </blueprint>
