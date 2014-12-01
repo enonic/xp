@@ -1,23 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <bean id="moduleService" class="com.enonic.wem.core.module.ModuleServiceImpl"/>
-
-  <service ref="moduleService" auto-export="interfaces"/>
-
-  <bean id="moduleLoader" class="com.enonic.wem.core.module.ModuleLoader" init-method="start" destroy-method="stop">
-    <argument index="0" ref="blueprintBundleContext"/>
-    <argument index="1" ref="moduleService"/>
-    <argument index="2" ref="eventPublisher"/>
-  </bean>
-
-  <service auto-export="interfaces">
-    <service-properties>
-      <entry key="url.handler.protocol" value="module"/>
-    </service-properties>
-    <bean class="com.enonic.wem.core.module.ModuleURLStreamHandler">
-      <property name="bundleContext" ref="blueprintBundleContext"/>
-    </bean>
-  </service>
+  <reference id="moduleService" interface="com.enonic.wem.api.module.ModuleService"/>
 
 </blueprint>

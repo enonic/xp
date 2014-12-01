@@ -16,7 +16,6 @@ import com.enonic.wem.api.schema.content.ContentTypeProvider;
 import com.enonic.wem.api.schema.metadata.MetadataProvider;
 import com.enonic.wem.api.schema.mixin.MixinProvider;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeProvider;
-import com.enonic.wem.core.module.ModuleServiceImpl;
 import com.enonic.wem.core.schema.content.ModuleContentTypeProvider;
 import com.enonic.wem.core.schema.metadata.ModuleMetadataProvider;
 import com.enonic.wem.core.schema.mixin.ModuleMixinProvider;
@@ -25,13 +24,13 @@ import com.enonic.wem.core.schema.relationship.ModuleRelationshipTypeProvider;
 public final class SchemaModuleListener
     implements EventListener
 {
-    private final ModuleServiceImpl moduleService;
+    private final ModuleService moduleService;
 
     private final EventFilter<ModuleUpdatedEvent> eventFilter;
 
     public SchemaModuleListener( final ModuleService moduleService )
     {
-        this.moduleService = (ModuleServiceImpl) moduleService;
+        this.moduleService = moduleService;
         this.eventFilter = EventFilter.filterOn( ModuleUpdatedEvent.class, this::onModuleUpdatedEvent );
     }
 

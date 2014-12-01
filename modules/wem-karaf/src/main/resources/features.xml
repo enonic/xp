@@ -23,6 +23,7 @@
 
     <bundle start-level="50">mvn:com.enonic.wem/wem-api/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-event/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/wem-module/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-blob/${project.version}</bundle>
 
     <bundle start-level="50">mvn:com.enonic.wem/wem-repo/${project.version}</bundle>

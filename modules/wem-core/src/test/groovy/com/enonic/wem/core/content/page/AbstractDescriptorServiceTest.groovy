@@ -3,7 +3,6 @@ package com.enonic.wem.core.content.page
 import com.enonic.wem.api.module.*
 import com.enonic.wem.api.resource.ResourceKey
 import com.enonic.wem.api.resource.ResourceUrlTestHelper
-import com.enonic.wem.core.module.ModuleBuilder
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
@@ -40,7 +39,6 @@ abstract class AbstractDescriptorServiceTest
             moduleKey( key ).
             moduleVersion( ModuleVersion.from( "1.0.0" ) ).
             displayName( moduleKey.toUpperCase() ).
-            moduleDir( new File( this.modulesDir, key.toString() ) ).
             build();
 
         this.moduleService.getModule( ModuleKey.from( moduleKey ) ) >> module
