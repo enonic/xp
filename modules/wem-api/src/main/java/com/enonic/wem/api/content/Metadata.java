@@ -2,7 +2,7 @@ package com.enonic.wem.api.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 
 public class Metadata

@@ -10,8 +10,8 @@ import com.enonic.wem.admin.json.content.page.AbstractPageComponentJson;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.image.ImageComponent;
-import com.enonic.wem.api.data2.PropertyArrayJson;
-import com.enonic.wem.api.data2.PropertyTreeJson;
+import com.enonic.wem.api.data.PropertyArrayJson;
+import com.enonic.wem.api.data.PropertyTreeJson;
 
 import static com.enonic.wem.api.content.page.image.ImageComponent.newImageComponent;
 

@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.page.part;
 
 import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentDataSerializer;
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data.PropertySet;
 
 public class PartComponentDataSerializer
     extends AbstractDescriptorBasedPageComponentDataSerializer<PartComponent, PartComponent>

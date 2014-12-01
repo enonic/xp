@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.form.InvalidValueException;
 
 public class ComboBoxConfig

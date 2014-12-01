@@ -3,7 +3,7 @@ package com.enonic.wem.core.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ValidateContentData;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;

@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.query.ContentQuery;
-import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;

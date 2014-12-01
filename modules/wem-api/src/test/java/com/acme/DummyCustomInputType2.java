@@ -1,8 +1,8 @@
 package com.acme;
 
 
-import com.enonic.wem.api.data2.Property;
-import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
 import com.enonic.wem.api.form.inputtype.InputTypeExtension;

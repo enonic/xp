@@ -3,8 +3,8 @@ package com.enonic.wem.api.form.inputtype;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data2.Value;
-import com.enonic.wem.api.data2.ValueTypes;
+import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data.ValueTypes;
 
 import static junit.framework.Assert.assertEquals;
 

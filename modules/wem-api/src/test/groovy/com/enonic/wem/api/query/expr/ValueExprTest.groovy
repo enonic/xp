@@ -1,6 +1,6 @@
 package com.enonic.wem.api.query.expr
 
-import com.enonic.wem.api.data2.ValueTypes
+import com.enonic.wem.api.data.ValueTypes
 import spock.lang.Specification
 import spock.lang.Unroll
 

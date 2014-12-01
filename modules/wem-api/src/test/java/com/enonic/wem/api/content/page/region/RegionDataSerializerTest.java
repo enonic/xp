@@ -5,8 +5,8 @@ import org.junit.Test;
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.data2.PropertyIdProvider;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyIdProvider;
+import com.enonic.wem.api.data.PropertyTree;
 
 import static org.junit.Assert.*;
 

@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.page.region;
 
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageComponentsDataSerializer;
-import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 
 import static com.enonic.wem.api.content.page.region.Region.newRegion;

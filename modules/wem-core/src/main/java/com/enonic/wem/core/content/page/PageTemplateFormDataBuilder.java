@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.page;
 
 
-import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 

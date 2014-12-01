@@ -16,7 +16,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;

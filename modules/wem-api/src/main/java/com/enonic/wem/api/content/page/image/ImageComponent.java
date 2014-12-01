@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.page.AbstractPageComponent;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.PageComponentType;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyTree;
 
 public class ImageComponent
     extends AbstractPageComponent

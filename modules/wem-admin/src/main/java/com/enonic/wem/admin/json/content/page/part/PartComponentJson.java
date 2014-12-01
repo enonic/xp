@@ -9,8 +9,8 @@ import com.enonic.wem.admin.json.content.page.AbstractDescriptorBasedPageCompone
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
-import com.enonic.wem.api.data2.PropertyArrayJson;
-import com.enonic.wem.api.data2.PropertyTreeJson;
+import com.enonic.wem.api.data.PropertyArrayJson;
+import com.enonic.wem.api.data.PropertyTreeJson;
 
 import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
 

@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data.Property;
 
 public class ValidationRegex
 {

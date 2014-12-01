@@ -1,8 +1,8 @@
 package com.enonic.wem.api.query.expr;
 
-import com.enonic.wem.api.data2.Value;
-import com.enonic.wem.api.data2.ValueType;
-import com.enonic.wem.api.data2.ValueTypes;
+import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data.ValueType;
+import com.enonic.wem.api.data.ValueTypes;
 
 public final class ValueExpr
     implements Expression

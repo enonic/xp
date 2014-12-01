@@ -7,7 +7,7 @@ import java.time.ZoneOffset;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data2.PropertyPath;
+import com.enonic.wem.api.data.PropertyPath;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
 

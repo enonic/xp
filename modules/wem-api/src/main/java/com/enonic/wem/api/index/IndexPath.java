@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import com.google.common.collect.Collections2;
 
-import com.enonic.wem.api.data2.Property;
+import com.enonic.wem.api.data.Property;
 
 public class IndexPath
 {

@@ -2,8 +2,8 @@ package com.enonic.wem.core.form;
 
 import org.w3c.dom.Document;
 
-import com.enonic.wem.api.data2.Property;
-import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemSet;

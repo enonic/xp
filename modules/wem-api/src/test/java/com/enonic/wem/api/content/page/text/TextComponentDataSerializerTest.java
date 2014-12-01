@@ -2,8 +2,8 @@ package com.enonic.wem.api.content.page.text;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data2.PropertySet;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertySet;
+import com.enonic.wem.api.data.PropertyTree;
 
 import static org.junit.Assert.*;
 

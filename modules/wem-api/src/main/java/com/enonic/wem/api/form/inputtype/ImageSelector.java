@@ -2,8 +2,8 @@ package com.enonic.wem.api.form.inputtype;
 
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data2.Property;
-import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 
 final class ImageSelector

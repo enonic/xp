@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.data2.PropertyPath;
+import com.enonic.wem.api.data.PropertyPath;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.support.ChangeTraceable;

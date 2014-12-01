@@ -4,8 +4,8 @@ package com.enonic.wem.admin.json.content.page;
 import java.util.List;
 
 import com.enonic.wem.api.content.page.DescriptorBasedPageComponent;
-import com.enonic.wem.api.data2.PropertyArrayJson;
-import com.enonic.wem.api.data2.PropertyTreeJson;
+import com.enonic.wem.api.data.PropertyArrayJson;
+import com.enonic.wem.api.data.PropertyTreeJson;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class AbstractDescriptorBasedPageComponentJson<COMPONENT extends DescriptorBasedPageComponent>

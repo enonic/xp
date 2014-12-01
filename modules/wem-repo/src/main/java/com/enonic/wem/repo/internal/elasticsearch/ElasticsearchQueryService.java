@@ -7,7 +7,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeIndexPath;

@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;

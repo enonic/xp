@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.query.filter.Filter;
 import com.enonic.wem.api.query.filter.RangeFilter;
 

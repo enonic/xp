@@ -1,7 +1,7 @@
 package com.enonic.wem.api.form.inputtype;
 
-import com.enonic.wem.api.data2.Property;
-import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.Value;
 
 /* temporary solution for custom:className */
 public class CustomInputType

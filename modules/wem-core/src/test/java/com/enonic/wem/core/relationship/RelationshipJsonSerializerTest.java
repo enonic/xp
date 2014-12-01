@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data2.PropertyPath;
+import com.enonic.wem.api.data.PropertyPath;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.security.PrincipalKey;

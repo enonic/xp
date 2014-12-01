@@ -2,7 +2,7 @@ package com.enonic.wem.api.content.page.text;
 
 
 import com.enonic.wem.api.content.page.AbstractPageComponentDataSerializer;
-import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data.PropertySet;
 
 public class TextComponentDataSerializer
     extends AbstractPageComponentDataSerializer<TextComponent, TextComponent>

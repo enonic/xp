@@ -8,10 +8,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data2.Property;
-import com.enonic.wem.api.data2.PropertySet;
-import com.enonic.wem.api.data2.PropertyTree;
-import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.PropertySet;
+import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;

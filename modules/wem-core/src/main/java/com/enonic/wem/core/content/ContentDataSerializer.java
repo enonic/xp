@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;

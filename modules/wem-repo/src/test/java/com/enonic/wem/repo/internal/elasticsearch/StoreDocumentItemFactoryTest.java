@@ -7,8 +7,8 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.enonic.wem.api.data2.Property;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;

@@ -5,8 +5,8 @@ import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponentDataS
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.page.region.RegionDataSerializer;
-import com.enonic.wem.api.data2.Property;
-import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.PropertySet;
 
 public class LayoutComponentDataSerializer
     extends AbstractDescriptorBasedPageComponentDataSerializer<LayoutComponent, LayoutComponent>

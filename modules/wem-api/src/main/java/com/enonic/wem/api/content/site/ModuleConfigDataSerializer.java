@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content.site;
 
 
-import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.module.ModuleKey;
 
 public class ModuleConfigDataSerializer

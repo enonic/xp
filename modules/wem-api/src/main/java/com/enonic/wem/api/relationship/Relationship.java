@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data2.PropertyPath;
+import com.enonic.wem.api.data.PropertyPath;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;

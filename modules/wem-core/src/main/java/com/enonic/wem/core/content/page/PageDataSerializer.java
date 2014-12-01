@@ -6,8 +6,8 @@ import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.page.region.RegionDataSerializer;
-import com.enonic.wem.api.data2.Property;
-import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 
 public class PageDataSerializer

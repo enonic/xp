@@ -2,7 +2,7 @@ package com.enonic.wem.api.node;
 
 import java.util.Objects;
 
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.security.acl.AccessControlList;

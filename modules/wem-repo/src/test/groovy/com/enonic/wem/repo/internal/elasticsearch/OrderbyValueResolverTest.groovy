@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch
 
-import com.enonic.wem.api.data2.Value
-import com.enonic.wem.api.data2.ValueTypes
+import com.enonic.wem.api.data.Value
+import com.enonic.wem.api.data.ValueTypes
 import com.google.common.collect.Lists
 import spock.lang.Specification
 import spock.lang.Unroll

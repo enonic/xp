@@ -6,7 +6,7 @@ import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyTree;
 
 import static com.enonic.wem.api.content.page.Page.newPage;
 import static com.enonic.wem.api.content.page.layout.LayoutComponent.newLayoutComponent;

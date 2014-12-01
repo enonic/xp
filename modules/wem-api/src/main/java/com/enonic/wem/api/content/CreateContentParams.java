@@ -11,7 +11,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.schema.content.ContentTypeName;

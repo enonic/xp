@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.site;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.module.ModuleKey;
 
 import static org.junit.Assert.*;

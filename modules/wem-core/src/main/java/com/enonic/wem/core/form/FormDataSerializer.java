@@ -1,6 +1,6 @@
 package com.enonic.wem.core.form;
 
-import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;

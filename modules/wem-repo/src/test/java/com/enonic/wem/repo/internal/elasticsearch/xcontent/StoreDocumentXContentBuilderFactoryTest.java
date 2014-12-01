@@ -11,7 +11,7 @@ import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.Test;
 
-import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.repo.internal.elasticsearch.IndexConstants;

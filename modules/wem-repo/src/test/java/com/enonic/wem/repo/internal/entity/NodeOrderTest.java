@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.data2.PropertyTree;
-import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.node.CreateNodeParams;

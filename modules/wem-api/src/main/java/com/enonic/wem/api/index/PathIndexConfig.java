@@ -1,6 +1,6 @@
 package com.enonic.wem.api.index;
 
-import com.enonic.wem.api.data2.PropertyPath;
+import com.enonic.wem.api.data.PropertyPath;
 
 public class PathIndexConfig
     implements Comparable<PathIndexConfig>

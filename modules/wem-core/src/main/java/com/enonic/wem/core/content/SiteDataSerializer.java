@@ -2,7 +2,7 @@ package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data.PropertySet;
 
 class SiteDataSerializer
 {

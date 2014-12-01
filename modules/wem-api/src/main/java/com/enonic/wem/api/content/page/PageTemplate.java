@@ -4,9 +4,9 @@ package com.enonic.wem.api.content.page;
 import java.util.ArrayList;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.data2.Property;
-import com.enonic.wem.api.data2.PropertyTree;
-import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 

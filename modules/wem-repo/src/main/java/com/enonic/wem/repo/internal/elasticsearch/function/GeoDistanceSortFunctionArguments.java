@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.function;
 
 import java.util.List;
 
-import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.query.expr.ValueExpr;
 import com.enonic.wem.api.util.GeoPoint;
 

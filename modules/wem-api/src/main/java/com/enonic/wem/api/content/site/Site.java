@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content.site;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.module.ModuleKey;
 
 public final class Site

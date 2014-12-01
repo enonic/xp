@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;

@@ -6,8 +6,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.data2.PropertyArrayJson;
-import com.enonic.wem.api.data2.PropertyTreeJson;
+import com.enonic.wem.api.data.PropertyArrayJson;
+import com.enonic.wem.api.data.PropertyTreeJson;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;

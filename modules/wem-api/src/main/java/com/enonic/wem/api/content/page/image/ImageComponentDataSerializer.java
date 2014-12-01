@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.page.image;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.AbstractPageComponentDataSerializer;
-import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data.PropertySet;
 
 public class ImageComponentDataSerializer
     extends AbstractPageComponentDataSerializer<ImageComponent, ImageComponent>

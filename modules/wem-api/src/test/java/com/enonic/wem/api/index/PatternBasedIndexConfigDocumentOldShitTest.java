@@ -2,7 +2,7 @@ package com.enonic.wem.api.index;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data2.PropertyPath;
+import com.enonic.wem.api.data.PropertyPath;
 
 import static org.junit.Assert.*;
 

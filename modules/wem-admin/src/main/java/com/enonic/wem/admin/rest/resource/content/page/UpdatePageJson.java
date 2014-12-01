@@ -15,8 +15,8 @@ import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageEditor;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.UpdatePageParams;
-import com.enonic.wem.api.data2.PropertyArrayJson;
-import com.enonic.wem.api.data2.PropertyTreeJson;
+import com.enonic.wem.api.data.PropertyArrayJson;
+import com.enonic.wem.api.data.PropertyTreeJson;
 
 import static com.enonic.wem.api.content.page.Page.editPage;
 

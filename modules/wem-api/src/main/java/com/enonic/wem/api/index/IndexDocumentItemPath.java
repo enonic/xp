@@ -9,8 +9,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.BasePath;
-import com.enonic.wem.api.data2.Property;
-import com.enonic.wem.api.data2.PropertyPath;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.PropertyPath;
 
 public class IndexDocumentItemPath
 {

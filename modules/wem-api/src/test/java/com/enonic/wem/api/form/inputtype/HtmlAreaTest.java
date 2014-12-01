@@ -3,7 +3,7 @@ package com.enonic.wem.api.form.inputtype;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 
 public class HtmlAreaTest

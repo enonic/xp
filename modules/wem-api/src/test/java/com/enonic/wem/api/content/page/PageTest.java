@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.support.AbstractEqualsTest;
 
 public class PageTest

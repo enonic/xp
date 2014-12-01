@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content.page;
 
 
-import com.enonic.wem.api.data2.PropertySet;
+import com.enonic.wem.api.data.PropertySet;
 
 public abstract class AbstractDescriptorBasedPageComponentDataSerializer<TO_DATA_INPUT extends DescriptorBasedPageComponent, FROM_DATA_OUTPUT extends DescriptorBasedPageComponent>
     extends AbstractPageComponentDataSerializer<TO_DATA_INPUT, FROM_DATA_OUTPUT>

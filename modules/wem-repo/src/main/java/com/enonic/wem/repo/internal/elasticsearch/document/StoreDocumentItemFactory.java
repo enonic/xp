@@ -4,10 +4,10 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data2.Property;
-import com.enonic.wem.api.data2.Value;
-import com.enonic.wem.api.data2.ValueType;
-import com.enonic.wem.api.data2.ValueTypes;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data.ValueType;
+import com.enonic.wem.api.data.ValueTypes;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.node.NodeIndexPath;

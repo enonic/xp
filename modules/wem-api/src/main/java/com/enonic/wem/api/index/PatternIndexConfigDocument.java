@@ -5,7 +5,7 @@ import java.util.SortedSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data2.PropertyPath;
+import com.enonic.wem.api.data.PropertyPath;
 
 public class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument

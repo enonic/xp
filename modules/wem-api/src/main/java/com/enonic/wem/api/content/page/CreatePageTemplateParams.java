@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.page;
 
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public class CreatePageTemplateParams
