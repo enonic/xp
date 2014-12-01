@@ -2,6 +2,7 @@ module app.wizard {
 
     import Principal = api.security.Principal;
     import PrincipalKey = api.security.PrincipalKey;
+    import PrincipalType = api.security.PrincipalType;
 
     export class PrincipalWizardPanelFactory {
 
@@ -47,11 +48,24 @@ module app.wizard {
                 setAppBarTabId(this.appBarTabId).
                 setPersistedPrincipal(this.principalToEdit);
 
-            if (this.principalToEdit.isRole()) {
+            switch (this.principalToEdit.getType()) {
+            case PrincipalType.ROLE:
                 new RoleWizardPanel(wizardParams, (wizard: PrincipalWizardPanel) => {
                     deferred.resolve(wizard);
                 });
-            } else {
+                break;
+            case PrincipalType.USER:
+                /* TODO: Replace with UserWizardPanel implementation. */
+                new PrincipalWizardPanel(wizardParams, (wizard: PrincipalWizardPanel) => {
+                    deferred.resolve(wizard);
+                });
+                break;
+            case PrincipalType.GROUP:
+                new GroupWizardPanel(wizardParams, (wizard: PrincipalWizardPanel) => {
+                    deferred.resolve(wizard);
+                });
+                break;
+            default:
                 new PrincipalWizardPanel(wizardParams, (wizard: PrincipalWizardPanel) => {
                     deferred.resolve(wizard);
                 });

@@ -1,6 +1,6 @@
 module app.wizard {
 
-    export class RoleWizardStepForm extends api.app.wizard.WizardStepForm {
+    export class PrincipalDescriptionWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private description: api.ui.text.TextInput;
 
@@ -25,7 +25,7 @@ module app.wizard {
             this.appendChild(formView);
         }
 
-        layout(role: api.security.Role) {
+        layout(principal: api.security.Principal) {
 //            this.description.setValue(role.getDescription());
             this.description.setValue("");
         }

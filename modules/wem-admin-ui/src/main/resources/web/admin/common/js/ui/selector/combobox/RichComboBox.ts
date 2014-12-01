@@ -96,6 +96,10 @@ module api.ui.selector.combobox {
             return this.comboBox.maximumOccurrencesReached();
         }
 
+        getComboBox(): ComboBox<OPTION_DISPLAY_VALUE> {
+            return this.comboBox;
+        }
+
         countSelected(): number {
             return this.comboBox.countSelectedOptions();
         }

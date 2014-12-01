@@ -22,6 +22,23 @@ module api.security {
             this.members.push(member);
         }
 
+        equals(o: api.Equitable): boolean {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Group)) {
+                return false;
+            }
+
+            var other = <Group> o;
+            return super.equals(o) && api.ObjectHelper.arrayEquals(this.members, other.getMembers());
+        }
+
+        clone(): Group {
+            return this.newBuilder().build();
+        }
+
+        newBuilder(): GroupBuilder {
+            return new GroupBuilder(this);
+        }
+
         static create(): GroupBuilder {
             return new GroupBuilder();
         }
@@ -65,6 +82,11 @@ module api.security {
 
         setDisplayName(displayName: string): GroupBuilder {
             this.displayName = displayName;
+            return this;
+        }
+
+        setMembers(members: PrincipalKey[]): GroupBuilder {
+            this.members = members || [];
             return this;
         }
 
