@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.convert;
+package com.enonic.wem.script.convert;
 
 final class ShortConverter
     extends NumberConverter<Short>

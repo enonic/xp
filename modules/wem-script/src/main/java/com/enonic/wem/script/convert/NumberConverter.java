@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.convert;
+package com.enonic.wem.script.convert;
 
 abstract class NumberConverter<T extends Number>
     implements Converter<T>

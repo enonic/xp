@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.script.internal.convert.Converters;
+import com.enonic.wem.script.convert.Converters;
 
 public final class BeanMapper
 {

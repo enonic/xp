@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.convert;
+package com.enonic.wem.script.convert;
 
 import com.enonic.wem.api.content.ContentId;
 

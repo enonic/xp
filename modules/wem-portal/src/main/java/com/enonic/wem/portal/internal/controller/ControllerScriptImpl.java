@@ -8,7 +8,7 @@ import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptExports;
-import com.enonic.wem.script.internal.convert.Converters;
+import com.enonic.wem.script.convert.Converters;
 
 final class ControllerScriptImpl
     implements ControllerScript
