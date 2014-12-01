@@ -63,7 +63,7 @@ public class XmlNodeSerializerTest
             name( NodeName.from( "my-node-name" ) ).
             parent( NodePath.ROOT ).
             childOrder( ChildOrder.manualOrder() ).
-            propertyTree( propertyTree ).
+            data( propertyTree ).
             build();
 
         final XmlNode xml = XmlNodeMapper.toXml( node );

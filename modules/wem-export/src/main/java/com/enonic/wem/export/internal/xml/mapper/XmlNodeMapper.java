@@ -28,9 +28,9 @@ public class XmlNodeMapper
         xml.setName( node.name().toString() );
         xml.setChildOrder( getAsStringOrNull( node.getChildOrder() ) );
 
-        if ( node.getPropertyTree() != null )
+        if ( node.data() != null )
         {
-            xml.setProperties( XmlPropertyTreeMapper.toXml( node.getPropertyTree() ) );
+            xml.setProperties( XmlPropertyTreeMapper.toXml( node.data() ) );
         }
 
         return xml;
