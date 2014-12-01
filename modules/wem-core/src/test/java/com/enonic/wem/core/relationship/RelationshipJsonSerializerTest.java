@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.data2.PropertyPath;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -69,7 +69,7 @@ public class RelationshipJsonSerializerTest
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
             type( RelationshipTypeName.PARENT ).
-            managed( DataPath.from( "mySet.myData" ) ).
+            managed( PropertyPath.from( "mySet.myData" ) ).
             createdTime( NOW ).
             creator( PrincipalKey.from( "user:system:admin" ) ).
             build();
@@ -137,7 +137,7 @@ public class RelationshipJsonSerializerTest
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
             type( RelationshipTypeName.PARENT ).
-            managed( DataPath.from( "mySet.myData" ) ).
+            managed( PropertyPath.from( "mySet.myData" ) ).
             property( "stars", "4" ).
             property( "stripes", "3" ).
             createdTime( NOW ).
@@ -159,7 +159,7 @@ public class RelationshipJsonSerializerTest
         assertEquals( ContentId.from( "222" ), parsedRelationship.getToContent() );
         assertEquals( RelationshipTypeName.PARENT, parsedRelationship.getType() );
         assertEquals( true, parsedRelationship.isManaged() );
-        assertEquals( DataPath.from( "mySet.myData" ), parsedRelationship.getManagingData() );
+        assertEquals( PropertyPath.from( "mySet.myData" ), parsedRelationship.getManagingData() );
         assertEquals( "4", parsedRelationship.getProperty( "stars" ) );
         assertEquals( "3", parsedRelationship.getProperty( "stripes" ) );
         assertEquals( NOW, parsedRelationship.getCreatedTime() );

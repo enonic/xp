@@ -7,13 +7,13 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.data2.PropertyPath;
+import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
-import com.enonic.wem.api.node.NodeId;
 
 public final class Relationship
     implements IllegalEditAware<Relationship>, ChangeTraceable
@@ -103,7 +103,7 @@ public final class Relationship
         return key.isManaged();
     }
 
-    public DataPath getManagingData()
+    public PropertyPath getManagingData()
     {
         return key.getManagingData();
     }
@@ -147,7 +147,7 @@ public final class Relationship
 
         private Map<String, String> properties = Maps.newLinkedHashMap();
 
-        private DataPath managingData;
+        private PropertyPath managingData;
 
         private PrincipalKey modifier;
 
@@ -233,7 +233,7 @@ public final class Relationship
             return this;
         }
 
-        public Builder managed( DataPath managingData )
+        public Builder managed( PropertyPath managingData )
         {
             this.managingData = managingData;
             return this;

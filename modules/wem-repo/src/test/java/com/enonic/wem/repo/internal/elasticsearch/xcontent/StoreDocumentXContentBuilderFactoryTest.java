@@ -11,8 +11,9 @@ import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.Test;
 
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Value;
 import com.enonic.wem.api.index.IndexPath;
+import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.repo.internal.elasticsearch.IndexConstants;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentDateItem;
@@ -84,8 +85,10 @@ public class StoreDocumentXContentBuilderFactoryTest
             addEntry( new StoreDocumentNumberItem( IndexPath.from( "myNumericField" ), 2.0 ) ).
             addEntry( new StoreDocumentDateItem( IndexPath.from( "myDateField" ), Instant.now() ) ).
             addEntry( new StoreDocumentDateItem( IndexPath.from( "myDateField" ), Instant.now() ) ).
-            addEntry( new StoreDocumentGeoPointItem( IndexPath.from( "myGeoPoint" ), Value.newGeoPoint( "80,80" ).toString() ) ).
-            addEntry( new StoreDocumentGeoPointItem( IndexPath.from( "myGeoPoint" ), Value.newGeoPoint( "81,81" ).toString() ) ).
+            addEntry(
+                new StoreDocumentGeoPointItem( IndexPath.from( "myGeoPoint" ), Value.newGeoPoint( GeoPoint.from( "80,80" ) ).toString() ) ).
+            addEntry(
+                new StoreDocumentGeoPointItem( IndexPath.from( "myGeoPoint" ), Value.newGeoPoint( GeoPoint.from( "81,81" ) ).toString() ) ).
             build();
 
         final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( storeDocument );

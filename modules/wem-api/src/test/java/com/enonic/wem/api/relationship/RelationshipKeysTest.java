@@ -4,7 +4,7 @@ package com.enonic.wem.api.relationship;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.data2.PropertyPath;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.support.AbstractEqualsTest;
 
@@ -14,20 +14,20 @@ public class RelationshipKeysTest
         type( RelationshipTypeName.PARENT ).
         fromContent( ContentId.from( "111" ) ).
         toContent( ContentId.from( "222" ) ).
-        managingData( DataPath.from( "myInput" ) ).build();
+        managingData( PropertyPath.from( "myInput" ) ).build();
 
 
     private static final RelationshipKey parent_111_222_myOtherInput = RelationshipKey.newRelationshipKey().
         type( RelationshipTypeName.PARENT ).
         fromContent( ContentId.from( "111" ) ).
         toContent( ContentId.from( "222" ) ).
-        managingData( DataPath.from( "myOtherInput" ) ).build();
+        managingData( PropertyPath.from( "myOtherInput" ) ).build();
 
     private static final RelationshipKey parent_555_222_myInput = RelationshipKey.newRelationshipKey().
         type( RelationshipTypeName.PARENT ).
         fromContent( ContentId.from( "555" ) ).
         toContent( ContentId.from( "222" ) ).
-        managingData( DataPath.from( "myInput" ) ).build();
+        managingData( PropertyPath.from( "myInput" ) ).build();
 
     @Test
     public void equals()

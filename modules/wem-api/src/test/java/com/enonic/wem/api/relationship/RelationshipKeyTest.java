@@ -4,7 +4,7 @@ package com.enonic.wem.api.relationship;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.data2.PropertyPath;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.support.AbstractEqualsTest;
 
@@ -22,7 +22,7 @@ public class RelationshipKeyTest
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
-                    managingData( DataPath.from( "myInput" ) ).
+                    managingData( PropertyPath.from( "myInput" ) ).
                     build();
             }
 
@@ -33,22 +33,22 @@ public class RelationshipKeyTest
                     type( RelationshipTypeName.LINK ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
-                    managingData( DataPath.from( "myInput" ) ).
+                    managingData( PropertyPath.from( "myInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "333" ) ).
                     toContent( ContentId.from( "222" ) ).
-                    managingData( DataPath.from( "myInput" ) ).
+                    managingData( PropertyPath.from( "myInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "444" ) ).
-                    managingData( DataPath.from( "myInput" ) ).
+                    managingData( PropertyPath.from( "myInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
-                    managingData( DataPath.from( "myOtherInput" ) ).
+                    managingData( PropertyPath.from( "myOtherInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
@@ -63,7 +63,7 @@ public class RelationshipKeyTest
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
-                    managingData( DataPath.from( "myInput" ) ).
+                    managingData( PropertyPath.from( "myInput" ) ).
                     build();
             }
 
@@ -74,7 +74,7 @@ public class RelationshipKeyTest
                     type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
-                    managingData( DataPath.from( "myInput" ) ).
+                    managingData( PropertyPath.from( "myInput" ) ).
                     build();
             }
         };

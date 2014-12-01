@@ -3,7 +3,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.util.Objects;
 
-import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.data2.PropertyPath;
 import com.enonic.wem.api.node.NodeId;
 
 /**
@@ -20,9 +20,10 @@ public final class RelationshipKey
     /**
      * Path to the Data in the fromItem that is managing this Relationship.
      */
-    private final DataPath managingData;
+    private final PropertyPath managingData;
 
-    private RelationshipKey( final RelationshipTypeName type, final NodeId fromContent, final NodeId toItem, final DataPath managingData )
+    private RelationshipKey( final RelationshipTypeName type, final NodeId fromContent, final NodeId toItem,
+                             final PropertyPath managingData )
     {
         this.type = type;
         this.fromItem = fromContent;
@@ -53,7 +54,7 @@ public final class RelationshipKey
         return managingData != null;
     }
 
-    public DataPath getManagingData()
+    public PropertyPath getManagingData()
     {
         return managingData;
     }
@@ -105,7 +106,7 @@ public final class RelationshipKey
         return new RelationshipKey( type, fromItem, toItem, null );
     }
 
-    public static RelationshipKey from( final RelationshipTypeName type, final NodeId fromItem, final DataPath managingData,
+    public static RelationshipKey from( final RelationshipTypeName type, final NodeId fromItem, final PropertyPath managingData,
                                         final NodeId toItem )
     {
         return new RelationshipKey( type, fromItem, toItem, managingData );
@@ -124,7 +125,7 @@ public final class RelationshipKey
 
         private NodeId toItem;
 
-        private DataPath managingData;
+        private PropertyPath managingData;
 
         public Builder type( RelationshipTypeName relationshipType )
         {
@@ -144,7 +145,7 @@ public final class RelationshipKey
             return this;
         }
 
-        public Builder managingData( DataPath dataPath )
+        public Builder managingData( PropertyPath dataPath )
         {
             this.managingData = dataPath;
             return this;

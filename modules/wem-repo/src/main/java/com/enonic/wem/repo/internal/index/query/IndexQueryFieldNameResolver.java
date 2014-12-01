@@ -3,7 +3,7 @@ package com.enonic.wem.repo.internal.index.query;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Value;
 import com.enonic.wem.api.query.expr.CompareExpr;
 import com.enonic.wem.api.query.expr.FieldExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;

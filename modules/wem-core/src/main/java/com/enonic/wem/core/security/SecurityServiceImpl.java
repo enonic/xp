@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Value;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;

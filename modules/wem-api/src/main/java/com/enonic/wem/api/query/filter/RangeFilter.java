@@ -1,6 +1,6 @@
 package com.enonic.wem.api.query.filter;
 
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Value;
 
 public class RangeFilter
     extends FieldFilter

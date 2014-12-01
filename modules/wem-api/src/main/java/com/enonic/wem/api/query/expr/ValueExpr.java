@@ -1,8 +1,8 @@
 package com.enonic.wem.api.query.expr;
 
-import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueType;
-import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data2.ValueType;
+import com.enonic.wem.api.data2.ValueTypes;
 
 public final class ValueExpr
     implements Expression
@@ -70,11 +70,11 @@ public final class ValueExpr
 
     public static ValueExpr instant( final String value )
     {
-        return new ValueExpr( Value.newInstant( value ) );
+        return new ValueExpr( Value.newInstant( ValueTypes.DATE_TIME.convert( value ) ) );
     }
 
     public static ValueExpr geoPoint( final String value )
     {
-        return new ValueExpr( Value.newGeoPoint( value ) );
+        return new ValueExpr( Value.newGeoPoint( ValueTypes.GEO_POINT.convert( value ) ) );
     }
 }

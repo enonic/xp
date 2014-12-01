@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch.query.builder
 
-import com.enonic.wem.api.data.Value
+import com.enonic.wem.api.data2.Value
 import com.enonic.wem.api.query.filter.BooleanFilter
 import com.enonic.wem.api.query.filter.ExistsFilter
 import com.enonic.wem.api.query.filter.Filters

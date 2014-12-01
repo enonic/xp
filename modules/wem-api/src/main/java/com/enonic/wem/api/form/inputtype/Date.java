@@ -1,9 +1,9 @@
 package com.enonic.wem.api.form.inputtype;
 
 
-import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.data2.Property;
 import com.enonic.wem.api.data2.Value;
+import com.enonic.wem.api.data2.ValueTypes;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 
 final class Date

@@ -8,7 +8,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Value;
 
 public class ValueFilter
     extends FieldFilter

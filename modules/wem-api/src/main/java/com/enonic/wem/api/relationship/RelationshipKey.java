@@ -4,7 +4,7 @@ package com.enonic.wem.api.relationship;
 import java.util.Objects;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.data2.PropertyPath;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 /**
@@ -18,10 +18,10 @@ public final class RelationshipKey
 
     private final ContentId toContent;
 
-    private final DataPath managingData;
+    private final PropertyPath managingData;
 
     private RelationshipKey( final RelationshipTypeName type, final ContentId fromContent, final ContentId toContent,
-                             final DataPath managingData )
+                             final PropertyPath managingData )
     {
         this.type = type;
         this.fromContent = fromContent;
@@ -47,7 +47,7 @@ public final class RelationshipKey
         return fromContent;
     }
 
-    public DataPath getManagingData()
+    public PropertyPath getManagingData()
     {
         return managingData;
     }
@@ -99,7 +99,7 @@ public final class RelationshipKey
         return new RelationshipKey( type, fromContent, toContent, null );
     }
 
-    public static RelationshipKey from( final RelationshipTypeName type, final ContentId fromContent, final DataPath managingData,
+    public static RelationshipKey from( final RelationshipTypeName type, final ContentId fromContent, final PropertyPath managingData,
                                         final ContentId toContent )
     {
         return new RelationshipKey( type, fromContent, toContent, managingData );
@@ -118,7 +118,7 @@ public final class RelationshipKey
 
         private ContentId toContent;
 
-        private DataPath managingData;
+        private PropertyPath managingData;
 
         public Builder type( RelationshipTypeName relationshipType )
         {
@@ -138,7 +138,7 @@ public final class RelationshipKey
             return this;
         }
 
-        public Builder managingData( DataPath dataPath )
+        public Builder managingData( PropertyPath dataPath )
         {
             this.managingData = dataPath;
             return this;

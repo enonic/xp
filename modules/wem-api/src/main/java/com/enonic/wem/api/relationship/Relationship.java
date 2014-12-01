@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.data2.PropertyPath;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -40,7 +40,7 @@ public final class Relationship
     /**
      * Path to the Data in the fromContent that is managing this Relationship.
      */
-    private final DataPath managingData;
+    private final PropertyPath managingData;
 
     public Relationship( final Builder builder )
     {
@@ -116,7 +116,7 @@ public final class Relationship
         return managingData != null;
     }
 
-    public DataPath getManagingData()
+    public PropertyPath getManagingData()
     {
         return managingData;
     }
@@ -160,7 +160,7 @@ public final class Relationship
 
         private Map<String, String> properties = Maps.newLinkedHashMap();
 
-        private DataPath managingData;
+        private PropertyPath managingData;
 
         private PrincipalKey modifier;
 
@@ -246,7 +246,7 @@ public final class Relationship
             return this;
         }
 
-        public Builder managed( DataPath managingData )
+        public Builder managed( PropertyPath managingData )
         {
             this.managingData = managingData;
             return this;

@@ -17,9 +17,6 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data2.PropertyTree;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.rendering.Renderable;
@@ -110,9 +107,8 @@ public class ComponentInstructionTest
 
     private Content createPage( final String id, final String name, final String contentTypeName )
     {
-        RootDataSet rootDataSet = new RootDataSet();
-        Property dataSet = new Property( "property1", Value.newString( "value1" ) );
-        rootDataSet.add( dataSet );
+        PropertyTree rootDataSet = new PropertyTree();
+        rootDataSet.addString( "property1", "value1" );
 
         Region region = newRegion().
             name( "myRegion" ).

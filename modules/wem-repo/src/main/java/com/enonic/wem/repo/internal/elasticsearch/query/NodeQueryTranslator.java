@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.query;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
-import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data2.Value;
 import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.filter.ValueFilter;

@@ -6,8 +6,8 @@ import java.util.LinkedHashMap;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.data.type.ValueType;
-import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.data2.ValueType;
+import com.enonic.wem.api.data2.ValueTypes;
 
 public final class InputTypes
 {
@@ -85,7 +85,7 @@ public final class InputTypes
 
     private static LinkedHashMap<String, InputType> inputTypeByName = new LinkedHashMap<>();
 
-    private static LinkedHashMap<Integer, InputType> inputTypeByDataTypeKey = new LinkedHashMap<>();
+    private static LinkedHashMap<String, InputType> inputTypeBySimpleClassName = new LinkedHashMap<>();
 
     static
     {
@@ -111,7 +111,7 @@ public final class InputTypes
 
     private static void registerDefaultInputType( ValueType valueType, InputType inputType )
     {
-        Object previousDataType = inputTypeByDataTypeKey.put( valueType.getKey(), inputType );
+        Object previousDataType = inputTypeBySimpleClassName.put( valueType.getClass().getSimpleName(), inputType );
         Preconditions.checkState( previousDataType == null, "Default InputType already registered for ValueType: " + valueType );
     }
 

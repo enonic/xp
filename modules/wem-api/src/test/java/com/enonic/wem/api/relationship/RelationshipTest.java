@@ -7,7 +7,7 @@ import java.time.ZoneOffset;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.data2.PropertyPath;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
 
@@ -51,7 +51,7 @@ public class RelationshipTest
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
         relationBuilder.type( RelationshipTypeName.from( "system:like" ) );
-        relationBuilder.managed( DataPath.from( "myData" ) );
+        relationBuilder.managed( PropertyPath.from( "myData" ) );
 
         // exercise
         Relationship relationship = relationBuilder.build();
