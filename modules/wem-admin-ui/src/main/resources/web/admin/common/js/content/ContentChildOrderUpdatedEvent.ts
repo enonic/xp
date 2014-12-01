@@ -1,10 +1,10 @@
 module api.content {
 
-    export interface ContentPublishedEventJson {
+    export interface ContentChildOrderUpdatedEventJson {
         contentId: string;
     }
 
-    export class ContentPublishedEvent extends api.event.Event {
+    export class ContentChildOrderUpdatedEvent extends api.event.Event {
 
         private contentId: api.content.ContentId;
 
@@ -17,16 +17,16 @@ module api.content {
             return this.contentId;
         }
 
-        static on(handler: (event: ContentPublishedEvent) => void) {
+        static on(handler: (event: ContentChildOrderUpdatedEvent) => void) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
         }
 
-        static un(handler?: (event: ContentPublishedEvent) => void) {
+        static un(handler?: (event: ContentChildOrderUpdatedEvent) => void) {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
 
-        static fromJson(json: ContentPublishedEventJson): ContentPublishedEvent {
-            return new ContentPublishedEvent(new ContentId(json.contentId));
+        static fromJson(json: ContentChildOrderUpdatedEventJson): ContentChildOrderUpdatedEvent {
+            return new ContentChildOrderUpdatedEvent(new ContentId(json.contentId));
         }
     }
 }

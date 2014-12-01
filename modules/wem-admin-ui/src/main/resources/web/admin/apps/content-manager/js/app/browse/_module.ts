@@ -21,3 +21,7 @@
 ///<reference path='OpenSortDialogEvent.ts' />
 ///<reference path='SortContentDialog.ts' />
 ///<reference path='SortContentTreeGrid.ts' />
+///<reference path='SortContentTabMenu.ts' />
+///<reference path='SortContentTabMenuItem.ts' />
+///<reference path='SortContentTabMenuItems.ts' />
+///<reference path='SaveSortedContentEvent.ts' />

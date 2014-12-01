@@ -10,6 +10,8 @@ module api.content {
 
         private size: number;
 
+        private order: ChildOrder;
+
         constructor(parentId: ContentId) {
             super();
             super.setMethod("GET");
@@ -31,12 +33,18 @@ module api.content {
             return this;
         }
 
+        setOrder(value: ChildOrder): ListContentByIdRequest {
+            this.order = value;
+            return this;
+        }
+
         getParams(): Object {
             return {
                 parentId: this.parentId ? this.parentId.toString() : null,
                 expand: this.expand,
                 from: this.from,
-                size: this.size
+                size: this.size,
+                childOrder: !!this.order ? this.order.toString() : ""
             };
         }
 

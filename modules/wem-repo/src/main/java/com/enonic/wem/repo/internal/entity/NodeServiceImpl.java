@@ -1,6 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.FindNodesByParentParams;
@@ -44,6 +45,9 @@ public class NodeServiceImpl
     private VersionService versionService;
 
     private QueryService queryService;
+
+    private EventPublisher eventPublisher;
+
 
     @Override
     public Node getById( final NodeId id )
@@ -334,6 +338,7 @@ public class NodeServiceImpl
             versionService( this.versionService ).
             indexService( this.indexService ).
             childOrder( params.getChildOrder() ).
+            eventPublisher( this.eventPublisher ).
             nodeId( params.getNodeId() ).
             build().
             execute();
@@ -389,4 +394,10 @@ public class NodeServiceImpl
     {
         this.queryService = queryService;
     }
+
+    public void setEventPublisher( EventPublisher eventPublisher )
+    {
+        this.eventPublisher = eventPublisher;
+    }
+
 }
