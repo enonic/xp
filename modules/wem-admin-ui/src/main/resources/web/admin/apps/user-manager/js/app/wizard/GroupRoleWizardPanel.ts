@@ -73,10 +73,10 @@ module app.wizard {
 
         layoutPersistedItem(persistedPrincipal: Principal): wemQ.Promise<void> {
 
-            var viewedPrincipal;
             if (!this.constructing) {
 
                 var deferred = wemQ.defer<void>();
+                var viewedPrincipal = this.assembleViewedPrincipal();
 
                 if (!this.isPersistedEqualsViewed()) {
 
@@ -100,11 +100,11 @@ module app.wizard {
         }
 
         hasUnsavedChanges(): boolean {
-            var persistedPrincipal = this.getPersistedItem().asGroup();
+            var persistedPrincipal = this.getPersistedItem();
             if (persistedPrincipal == undefined) {
                 return true;
             } else {
-                return this.isPersistedEqualsViewed();
+                return !this.isPersistedEqualsViewed();
             }
         }
 

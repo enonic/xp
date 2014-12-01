@@ -107,7 +107,7 @@ module app.wizard {
             viewedPrincipal.getMembers().sort((a,b) => { return a.getId().localeCompare(b.getId()); });
             persistedPrincipal.getMembers().sort((a,b) => { return a.getId().localeCompare(b.getId()); });
 
-            return !viewedPrincipal.equals(persistedPrincipal);
+            return viewedPrincipal.equals(persistedPrincipal);
         }
     }
 }
