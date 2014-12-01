@@ -2,8 +2,8 @@ package com.enonic.wem.portal.internal.controller;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.HttpHeaders;
-import com.google.gson.Gson;
 
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
@@ -58,6 +58,13 @@ public final class PortalResponseSerializer
 
     private String convertToJson( final Object value )
     {
-        return new Gson().toJson( value );
+        try
+        {
+            return new ObjectMapper().writeValueAsString( value );
+        }
+        catch ( final Exception e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 }
