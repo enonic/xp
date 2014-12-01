@@ -14,6 +14,8 @@ public final class AccessControlEntry
 {
     private final PrincipalKey principal;
 
+    private final boolean inherited;
+
     private final ImmutableSet<Permission> allowedPermissions;
 
     private final ImmutableSet<Permission> deniedPermissions;
@@ -21,6 +23,7 @@ public final class AccessControlEntry
     private AccessControlEntry( final Builder builder )
     {
         this.principal = checkNotNull( builder.principal, "ACE principal cannot be null" );
+        this.inherited = builder.inherited;
         this.allowedPermissions = Sets.immutableEnumSet( builder.allowedPermissions );
         this.deniedPermissions = Sets.immutableEnumSet( builder.deniedPermissions );
     }
@@ -28,6 +31,11 @@ public final class AccessControlEntry
     public PrincipalKey getPrincipal()
     {
         return principal;
+    }
+
+    public boolean isInherited()
+    {
+        return this.inherited;
     }
 
     public Iterable<Permission> getAllowedPermissions()
@@ -134,6 +142,8 @@ public final class AccessControlEntry
     {
         private PrincipalKey principal;
 
+        private boolean inherited;
+
         private final EnumSet<Permission> allowedPermissions;
 
         private final EnumSet<Permission> deniedPermissions;
@@ -147,6 +157,7 @@ public final class AccessControlEntry
         private Builder( final AccessControlEntry ace )
         {
             this.principal = ace.principal;
+            this.inherited = ace.inherited;
             this.allowedPermissions = EnumSet.copyOf( ace.allowedPermissions );
             this.deniedPermissions = EnumSet.copyOf( ace.deniedPermissions );
         }
@@ -175,6 +186,12 @@ public final class AccessControlEntry
         {
             this.allowedPermissions.remove( permission );
             this.deniedPermissions.remove( permission );
+            return this;
+        }
+
+        public Builder inherited( final boolean inherited )
+        {
+            this.inherited = inherited;
             return this;
         }
 

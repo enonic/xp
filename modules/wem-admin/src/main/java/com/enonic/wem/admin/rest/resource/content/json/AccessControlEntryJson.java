@@ -29,10 +29,11 @@ public final class AccessControlEntryJson
     @JsonCreator
     public AccessControlEntryJson( @JsonProperty("principal") final PrincipalJson principal, //
                                    @JsonProperty("allow") final List<String> allow, //
-                                   @JsonProperty("deny") final List<String> deny )
+                                   @JsonProperty("deny") final List<String> deny, //
+                                   @JsonProperty("inherited") final boolean inherited )
     {
         final AccessControlEntry.Builder builder = AccessControlEntry.create().
-            principal( PrincipalKey.from( principal.getKey() ) );
+            principal( PrincipalKey.from( principal.getKey() ) ).inherited( inherited );
 
         for ( final String permission : allow )
         {
@@ -61,6 +62,11 @@ public final class AccessControlEntryJson
     public List<String> getDeny()
     {
         return toStringList( entry.getDeniedPermissions() );
+    }
+
+    public boolean isInherited()
+    {
+        return entry.isInherited();
     }
 
     private List<String> toStringList( final Iterable<Permission> permissions )
