@@ -38,7 +38,7 @@ class OrderbyValueResolverTest
     def createInstantOrderByValue( String... values )
     {
         def unsorted = Lists.newArrayList()
-        values.each { value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( ValueTypes.DATE_TIME.parseValue( value ) ) ); }
+        values.each { value -> unsorted.add( OrderbyValueResolver.getOrderbyValue( ValueTypes.DATE_TIME.fromJsonValue( value ) ) ); }
         return unsorted
     }
 
