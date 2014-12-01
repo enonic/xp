@@ -11,11 +11,13 @@ module api.security.acl {
         private accessSelector: AccessSelector;
         private permissionSelector: PermissionSelector;
 
+        private valueChangedListeners: {(item: AccessControlEntry): void}[] = [];
         private editable: boolean = true;
 
         constructor(ace: AccessControlEntry) {
             super();
-            this.setClass('access-control-list-item');
+            this.setClass('access-control-entry');
+            this.toggleClass('inherited', ace.isInherited());
 
             this.ace = ace;
 
@@ -32,6 +34,7 @@ module api.security.acl {
                     allow: this.ace.getAllowedPermissions().sort(),
                     deny: this.ace.getDeniedPermissions().sort()
                 }));
+                this.notifyValueChanged(this.getAccessControlEntry());
             });
             this.appendChild(this.permissionSelector);
 
@@ -61,15 +64,21 @@ module api.security.acl {
             return this.editable;
         }
 
-        public onValueChanged(listener: (event: api.ui.ValueChangedEvent) => void) {
-            this.permissionSelector.onValueChanged(listener);
+        onValueChanged(listener: (item: AccessControlEntry) => void) {
+            this.valueChangedListeners.push(listener);
         }
 
-        public unValueChanged(listener: (event: api.ui.ValueChangedEvent) => void) {
-            this.permissionSelector.unValueChanged(listener);
+        unValueChanged(listener: (item: AccessControlEntry) => void) {
+            this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
+                return curr != listener;
+            })
         }
 
-
+        notifyValueChanged(item: AccessControlEntry) {
+            this.valueChangedListeners.forEach((listener) => {
+                listener(item);
+            })
+        }
 
         public setAccessControlEntry(ace: AccessControlEntry, silent?: boolean) {
             this.ace = ace;
@@ -83,8 +92,8 @@ module api.security.acl {
                 allow: ace.getAllowedPermissions().sort(),
                 deny: ace.getDeniedPermissions().sort()
             };
-            this.permissionSelector.setValue(permissions, silent);
             this.accessSelector.setValue(this.getAccessValueFromPermissions(permissions), silent);
+            // permissions will be set on access selector value change
         }
 
         public getAccessControlEntry(): AccessControlEntry {

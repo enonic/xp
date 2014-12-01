@@ -1,4 +1,4 @@
-.access-control-list-item {
+.access-control-entry {
   position: relative;
   padding: 5px 42px 5px 5px;
   .clearfix();
@@ -11,6 +11,17 @@
     }
   }
 
+  &.inherited {
+    .permission-toggle {
+      &:not(.dirty) {
+        padding: 2px 10px;
+        border: 0 none;
+        background: @admin-almost-white;
+        color: @admin-dark-gray-font;
+      }
+    }
+  }
+
   .names-and-icon-view {
     float: left;
     margin: 0 10px 0 0;
@@ -19,9 +30,10 @@
 
   .icon-close {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 16px;
+    right: 16px;
     cursor: pointer;
+    font-size: 12px;
   }
 
   .permission-selector {

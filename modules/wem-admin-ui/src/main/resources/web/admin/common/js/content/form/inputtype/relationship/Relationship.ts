@@ -121,7 +121,7 @@ module api.content.form.inputtype.relationship {
 
         getValues(): api.data.Value[] {
             var values: api.data.Value[] = [];
-            this.contentComboBox.getSelectedValues().forEach((content: api.content.ContentSummary) => {
+            this.contentComboBox.getSelectedDisplayValues().forEach((content: api.content.ContentSummary) => {
                 var value = new api.data.Value(content.getContentId(), api.data.type.ValueTypes.CONTENT_ID);
                 values.push(value);
             });

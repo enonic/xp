@@ -86,7 +86,8 @@ module api.security.acl {
                 } else {
                     state = PermissionState.INHERIT;
                 }
-                toggle.setState(state);
+                // set it silently to throw just 1 change event
+                toggle.setState(state, true);
             });
             if (!silent) {
                 this.notifyValueChanged(new api.ui.ValueChangedEvent(JSON.stringify(this.oldValue), JSON.stringify(newValue)));

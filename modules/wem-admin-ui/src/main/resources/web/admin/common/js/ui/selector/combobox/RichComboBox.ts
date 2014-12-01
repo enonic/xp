@@ -39,6 +39,7 @@ module api.ui.selector.combobox {
             this.loadedListeners = [];
             this.loadingListeners = [];
 
+            this.comboBoxName = config.comboBoxName;
             this.identifierMethod = config.identifierMethod;
 
             this.comboBoxView = new api.dom.DivEl();
@@ -62,20 +63,26 @@ module api.ui.selector.combobox {
             this.addClass('rich-combobox');
         }
 
-        getSelectedValues(): OPTION_DISPLAY_VALUE[] {
-            return this.comboBox.getSelectedOptions().map((option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => {
+        getSelectedDisplayValues(): OPTION_DISPLAY_VALUE[] {
+            return this.comboBox.getSelectedOptions().map((option: Option<OPTION_DISPLAY_VALUE>) => {
                 return option.displayValue;
             });
         }
 
-        getValues(): OPTION_DISPLAY_VALUE[] {
-            return this.comboBox.getOptions().map((option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => {
+        getSelectedValues(): string[] {
+            return this.comboBox.getSelectedOptions().map((option: Option<OPTION_DISPLAY_VALUE>) => {
+                return option.value;
+            });
+        }
+
+        getDisplayValues(): OPTION_DISPLAY_VALUE[] {
+            return this.comboBox.getOptions().map((option: Option<OPTION_DISPLAY_VALUE>) => {
                 return option.displayValue;
             });
         }
 
-        getStringValues(): string[] {
-            return this.comboBox.getSelectedOptions().map((option: api.ui.selector.Option<OPTION_DISPLAY_VALUE>) => {
+        getValues(): string[] {
+            return this.comboBox.getOptions().map((option: Option<OPTION_DISPLAY_VALUE>) => {
                 return option.value;
             });
         }
@@ -112,14 +119,29 @@ module api.ui.selector.combobox {
             this.comboBox.deselectOption(this.createOption(value));
         }
 
+        clearSelection(ignoreEmpty: boolean = false) {
+            this.comboBox.clearSelection(ignoreEmpty);
+        }
+
         isSelected(value: OPTION_DISPLAY_VALUE): boolean {
-            return this.getSelectedValues().indexOf(value) > -1;
+            var selectedValues = this.getSelectedValues();
+            var valueToFind = this.getDisplayValueId(value);
+            for (var i = 0; i < selectedValues.length; i++) {
+                if (selectedValues[i] == valueToFind) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private getDisplayValueId(value: OPTION_DISPLAY_VALUE): string {
+            var val = value[this.identifierMethod]();
+            return typeof val == 'object' && val['toString'] ? val.toString() : val;
         }
 
         private createOption(value: OPTION_DISPLAY_VALUE): Option<OPTION_DISPLAY_VALUE> {
-            var val = value[this.identifierMethod]();
             return {
-                value: typeof val == 'object' && val['toString'] ? val.toString() : val,
+                value: this.getDisplayValueId(value),
                 displayValue: value
             }
         }
@@ -159,10 +181,7 @@ module api.ui.selector.combobox {
         private createOptions(items: OPTION_DISPLAY_VALUE[]): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
             var options = [];
             items.forEach((itemInst: OPTION_DISPLAY_VALUE) => {
-                options.push({
-                    value: itemInst[this.identifierMethod](),
-                    displayValue: itemInst
-                });
+                options.push(this.createOption(itemInst));
             });
             return options;
         }

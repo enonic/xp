@@ -16,14 +16,16 @@
 
 .security-wizard-step-form {
 
-  .checkbox {
-    padding: 10px;
+  .reset-link {
+    cursor: pointer;
+    float: right;
 
-    &.separator {
-      margin: 10px 0;
-      border-top: 1px solid @admin-medium-gray-border;
+    &.disabled {
+      cursor: default;
+      color: @admin-medium-gray-font
     }
   }
+
 }
 
 ._0-240, ._240-360, ._360-540, ._540-720 {

@@ -11,8 +11,11 @@ module api.security.acl {
 
         private deniedPermissions: Permission[];
 
-        constructor(principal: Principal) {
+        private inherited: boolean;
+
+        constructor(principal: Principal, inherited: boolean = false) {
             this.principal = principal;
+            this.inherited = inherited;
             this.allowedPermissions = [];
             this.deniedPermissions = [];
         }
@@ -43,6 +46,14 @@ module api.security.acl {
 
         setDeniedPermissions(permissions: Permission[]): void {
             this.deniedPermissions = permissions;
+        }
+
+        setInherited(inherited: boolean) {
+            this.inherited = inherited;
+        }
+
+        isInherited(): boolean {
+            return this.inherited;
         }
 
         isAllowed(permission: Permission): boolean {
@@ -99,12 +110,13 @@ module api.security.acl {
             return {
                 "principal": this.principal.toJson(),
                 "allow": this.allowedPermissions.map((perm) => Permission[perm]),
-                "deny": this.deniedPermissions.map((perm) => Permission[perm])
+                "deny": this.deniedPermissions.map((perm) => Permission[perm]),
+                "inherited": this.inherited
             };
         }
 
         static fromJson(json: api.security.acl.AccessControlEntryJson): AccessControlEntry {
-            var ace = new AccessControlEntry(Principal.fromJson(json.principal));
+            var ace = new AccessControlEntry(Principal.fromJson(json.principal), json.inherited);
             var allow: Permission[] = json.allow.map((permStr) => Permission[permStr.toUpperCase()]);
             var deny: Permission[] = json.deny.map((permStr) => Permission[permStr.toUpperCase()]);
             ace.setAllowedPermissions(allow);

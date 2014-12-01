@@ -25,7 +25,7 @@ module api.content.page.layout {
 
             var descriptorToSelect: LayoutDescriptor;
 
-            this.getValues().forEach((descriptor: LayoutDescriptor) => {
+            this.getSelectedDisplayValues().forEach((descriptor: LayoutDescriptor) => {
                 if (descriptor.getKey().toString() == key.toString()) {
                     descriptorToSelect = descriptor;
                 }

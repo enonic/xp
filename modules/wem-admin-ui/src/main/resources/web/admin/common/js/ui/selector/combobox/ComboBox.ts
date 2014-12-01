@@ -258,6 +258,10 @@ module api.ui.selector.combobox {
         }
 
         selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
+            api.util.assertNotNull(option, "option cannot be null");
+            if (this.isOptionSelected(option)) {
+                return;
+            }
 
             var added = this.selectedOptionsView.addOption(option);
             if (!added) {
@@ -287,10 +291,13 @@ module api.ui.selector.combobox {
             return this.selectedOptionsView.isSelected(option);
         }
 
-        deselectOption(optionToRemove: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
-            api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
+        deselectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
+            api.util.assertNotNull(option, "option cannot be null");
+            if (!this.isOptionSelected(option)) {
+                return;
+            }
 
-            this.selectedOptionsView.removeOption(optionToRemove, silent);
+            this.selectedOptionsView.removeOption(option, silent);
 
             this.comboBoxDropdown.markSelections(this.getSelectedOptions());
             this.hideDropdown();

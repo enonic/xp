@@ -5,16 +5,29 @@ module api.security.acl {
     import BaseSelectedOptionView = api.ui.selector.combobox.BaseSelectedOptionView;
 
     export class AccessControlComboBox extends api.ui.selector.combobox.RichComboBox<AccessControlEntry> {
+
+        private aceSelectedOptionsView: ACESelectedOptionsView;
+
         constructor() {
+            this.aceSelectedOptionsView = new ACESelectedOptionsView();
+
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<AccessControlEntry>().
                 setMaximumOccurrences(0).
                 setComboBoxName("principalSelector").
                 setIdentifierMethod("getPrincipalKey").
                 setLoader(new AccessControlEntryLoader()).
-                setSelectedOptionsView(new ACESelectedOptionsView()).
+                setSelectedOptionsView(this.aceSelectedOptionsView).
                 setOptionDisplayValueViewer(new AccessControlEntryViewer()).
                 setDelayedInputValueChangedHandling(500);
             super(builder);
+        }
+
+        onOptionValueChanged(listener: (item: AccessControlEntry) => void) {
+            this.aceSelectedOptionsView.onItemValueChanged(listener);
+        }
+
+        unItemValueChanged(listener: (item: AccessControlEntry) => void) {
+            this.aceSelectedOptionsView.unItemValueChanged(listener);
         }
     }
 
@@ -81,6 +94,14 @@ module api.security.acl {
                 value: this.getItemId(entry)
             };
             var itemView = new ACESelectedOptionView(option);
+            itemView.onValueChanged((item: AccessControlEntry) => {
+                // update our selected options list with new values
+                var selectedOption = this.getById(item.getPrincipalKey().toString());
+                if (selectedOption) {
+                    selectedOption.getOption().displayValue = item;
+                }
+                this.notifyItemValueChanged(item);
+            });
             var selectedOption = new SelectedOption<AccessControlEntry>(itemView, this.list.length);
 
             itemView.onSelectedOptionRemoveRequest(() => {
@@ -123,7 +144,7 @@ module api.security.acl {
         }
 
         count(): number {
-            return this.getItemCount();
+            return this.list.length;
         }
 
         getSelectedOptions(): SelectedOption<AccessControlEntry>[] {

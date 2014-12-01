@@ -1,93 +1,67 @@
 module app.wizard {
 
-    import Principal = api.security.Principal;
-    import PrincipalKey = api.security.PrincipalKey;
-    import AccessControlListView = api.security.acl.AccessControlListView;
     import AccessControlComboBox = api.security.acl.AccessControlComboBox;
     import AccessControlEntry = api.security.acl.AccessControlEntry;
 
     export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private content: api.content.Content;
-
         private comboBox: AccessControlComboBox;
-        private inheritCheckbox: api.ui.Checkbox;
-
-        private inheritedPermissions: AccessControlListView;
+        // save them to keep track of the modified state
+        private originalValues: AccessControlEntry[];
 
         constructor() {
             super("security-wizard-step-form");
 
             var form = new api.ui.form.Form();
+            this.appendChild(form);
+
             var fieldSet = new api.ui.form.Fieldset();
             form.add(fieldSet);
 
             this.comboBox = new AccessControlComboBox();
-            var selectionChangeListener = () => {
-                this.inheritCheckbox.toggleClass('separator', this.comboBox.getSelectedValues().length > 0);
-            };
-            this.comboBox.onOptionDeselected(selectionChangeListener);
-            this.comboBox.onOptionSelected(selectionChangeListener);
-
-            this.inheritedPermissions = new AccessControlListView('inherited');
-            this.inheritedPermissions.setItemsEditable(false);
-
-            this.inheritCheckbox = new api.ui.Checkbox('Inherit permissions');
-            this.inheritCheckbox.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                var checked = event.getNewValue() == 'true';
-                this.inheritedPermissions.setVisible(checked);
-                if (this.content) {
-                    if (!checked) {
-                        // turning off inherited, so restore custom permissions
-                        var entries = this.content.getPermissions().getEntries();
-                        if (entries.length > 0) {
-                            this.selectPermissions(entries);
-                        }
-                    } else {
-                        // turning on inherited, so filter out matches in custom permissions
-                        var inheritedEntries = this.content.getInheritedPermissions().getEntries();
-                        if (inheritedEntries.length > 0) {
-                            this.deselectPermissions(inheritedEntries);
-                        }
-                    }
+            var restoreLink = new api.dom.AEl('reset-link disabled');
+            restoreLink.setHtml('Restore');
+            restoreLink.onClicked((event: MouseEvent) => {
+                if (!restoreLink.hasClass('disabled')) {
+                    this.layout(this.content);
                 }
             });
+            this.comboBox.addAdditionalElement(restoreLink);
 
-            // add elements to composite element to appear under one label
-            this.comboBox.addAdditionalElement(this.inheritCheckbox);
-            this.comboBox.addAdditionalElement(this.inheritedPermissions);
+            var changeListener = () => {
+                var selectedValues = this.comboBox.getSelectedDisplayValues().sort();
+                restoreLink.toggleClass('disabled', api.ObjectHelper.arrayEquals(this.originalValues, selectedValues));
+            };
+            this.comboBox.onOptionValueChanged(changeListener);
+            this.comboBox.onOptionSelected(changeListener);
+            this.comboBox.onOptionDeselected(changeListener);
 
             fieldSet.add(new api.ui.form.FormItemBuilder(this.comboBox).setLabel("Permissions").build());
-            this.appendChild(form);
         }
 
         layout(content: api.content.Content) {
-            this.content = content;
-            this.selectPermissions(content.getPermissions().getEntries());
+            this.comboBox.clearSelection();
 
-            var inheritedEntries = content.getInheritedPermissions().getEntries();
-            this.inheritedPermissions.setItems(inheritedEntries);
+            var inherited = content.getInheritedPermissions().getEntries();
+            //TODO: temp fix until inherited flag comes from backend
+            inherited.forEach((ace) => {
+                ace.setInherited(true);
+            });
 
-            this.inheritCheckbox.setChecked(inheritedEntries.length > 0);
-        }
+            var permissions = [].concat(content.getPermissions().getEntries(), inherited);
+            var keyFunction = (ace: AccessControlEntry) => {
+                return ace.getPrincipalKey().toString();
+            };
+            this.originalValues = api.util.ArrayHelper.removeDuplicates(permissions, keyFunction).sort();
 
-        private selectPermissions(toSelect: AccessControlEntry[]) {
-            toSelect.forEach((item) => {
+            this.originalValues.forEach((item) => {
                 if (!this.comboBox.isSelected(item)) {
                     this.comboBox.select(item);
                 }
             });
-        }
 
-        private deselectPermissions(toDeselect: AccessControlEntry[]) {
-            this.comboBox.getSelectedValues().forEach((selectedPermission: AccessControlEntry) => {
-                for (var i = 0; i < toDeselect.length; i++) {
-                    if (toDeselect[i].getPrincipalKey().equals(selectedPermission.getPrincipalKey())) {
-                        this.comboBox.deselect(selectedPermission);
-                        break;
-                    }
-                }
-            });
+            this.content = content;
         }
 
         giveFocus(): boolean {

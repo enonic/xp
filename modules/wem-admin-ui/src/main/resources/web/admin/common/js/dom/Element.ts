@@ -463,7 +463,7 @@ module api.dom {
 
         private removeFromChildren(child: Element) {
             var childIndex = this.children.indexOf(child);
-            if (!(childIndex >= 0)) {
+            if (childIndex < 0) {
                 throw new Error("Child element to remove not found");
             }
             this.children.splice(childIndex, 1);

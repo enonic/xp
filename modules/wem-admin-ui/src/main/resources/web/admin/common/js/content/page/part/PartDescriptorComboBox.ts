@@ -25,7 +25,7 @@ module api.content.page.part {
 
             var descriptorToSelect: PartDescriptor;
 
-            this.getValues().forEach((descriptor: PartDescriptor) => {
+            this.getSelectedDisplayValues().forEach((descriptor: PartDescriptor) => {
                 if (descriptor.getKey().toString() == key.toString()) {
                     descriptorToSelect = descriptor;
                 }

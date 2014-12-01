@@ -56,7 +56,7 @@ module app.wizard {
                 var principalKeys = this.getPrincipalMembers().map((key:PrincipalKey) => {
                     return key.getId();
                 });
-                var selected = this.principals.getValues().filter((principal:Principal) => {
+                var selected = this.principals.getDisplayValues().filter((principal: Principal) => {
                     return principalKeys.indexOf(principal.getKey().getId()) >= 0;
                 });
                 selected.forEach((selection) => {
@@ -66,7 +66,7 @@ module app.wizard {
         }
 
         getMembers(): Principal[] {
-            return this.principals.getSelectedValues();
+            return this.principals.getSelectedDisplayValues();
         }
 
         getPrincipals(): PrincipalComboBox {

@@ -26,6 +26,14 @@ module api.util {
             }
         }
 
+        static removeDuplicates(array: any[], keyFunction: (item: any) => string) {
+            var seen = {};
+            return array.filter(function (item) {
+                var key = keyFunction(item);
+                return seen.hasOwnProperty(key) ? false : (seen[key] = true);
+            })
+        }
+
     }
 
 }
