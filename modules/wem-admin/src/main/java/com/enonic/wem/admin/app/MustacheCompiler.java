@@ -1,4 +1,4 @@
-package com.enonic.wem.core.mustache;
+package com.enonic.wem.admin.app;
 
 import java.io.IOException;
 import java.net.URL;

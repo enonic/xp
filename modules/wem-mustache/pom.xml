@@ -40,9 +40,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.samskivert</groupId>
+      <groupId>com.enonic.osgi.bundles</groupId>
       <artifactId>jmustache</artifactId>
-      <version>1.9</version>
+      <version>1.9.0_1</version>
     </dependency>
   </dependencies>
 
@@ -60,9 +60,6 @@
               !com.enonic.wem.mustache.internal.*,
               com.enonic.wem.mustache.*,
             </Export-Package>
-            <Embed-Dependency>
-              jmustache
-            </Embed-Dependency>
           </instructions>
         </configuration>
       </plugin>

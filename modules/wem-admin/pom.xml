@@ -65,6 +65,11 @@
       <artifactId>websocket-server</artifactId>
       <version>9.0.7.v20131107</version>
     </dependency>
+    <dependency>
+      <groupId>com.enonic.osgi.bundles</groupId>
+      <artifactId>jmustache</artifactId>
+      <version>1.9.0_1</version>
+    </dependency>
   </dependencies>
 
   <build>
