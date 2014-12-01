@@ -1,6 +1,6 @@
 package com.enonic.wem.export.internal.writer;
 
-public class SystemOutExportWriter
+class SystemOutExportWriter
     implements ExportWriter
 {
     @Override
@@ -12,6 +12,6 @@ public class SystemOutExportWriter
     @Override
     public void writeElement( final ExportItemPath path, final String serializedNode )
     {
-        System.out.println( "Path: " + path.getPathAsString() + ":\n\r" + serializedNode );
+        System.out.println( "Write export: " + path.getPathAsString() + ":\n\r" + serializedNode );
     }
 }

@@ -8,7 +8,7 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.export.internal.writer.ExportItemPath;
 import com.enonic.wem.export.internal.writer.ExportWriter;
-import com.enonic.wem.export.internal.writer.NodeExportPathResolver;
+import com.enonic.wem.export.internal.writer.NodeExportItemPathResolver;
 import com.enonic.wem.export.internal.xml.XmlNode;
 import com.enonic.wem.export.internal.xml.mapper.XmlNodeMapper;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
@@ -16,8 +16,6 @@ import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 public class BatchedNodeExporter
 {
     private final static int DEFAULT_BATCH_SIZE = 100;
-
-    public static final String NODE_POSTFIX = ".xml";
 
     private final NodePath nodePath;
 
@@ -38,7 +36,7 @@ public class BatchedNodeExporter
         nodeService = builder.nodeService;
         exportWriter = builder.exportWriter;
         xmlNodeSerializer = builder.xmlNodeSerializer;
-        this.rootPath = NodeExportPathResolver.resolveRoot( builder.basePath, "node" );
+        this.rootPath = NodeExportItemPathResolver.resolveRoot( builder.basePath, "node" );
     }
 
     public NodeExportResult export()
@@ -95,21 +93,21 @@ public class BatchedNodeExporter
 
         final String serializedNode = this.xmlNodeSerializer.serialize( xmlNode );
 
-        final ExportItemPath systemFolder = createNodeSystemFolder( node );
+        final ExportItemPath systemFolder = createNodeItemFolder( node );
 
-        exportWriter.writeElement( NodeExportPathResolver.resolveNodeXmlPath( systemFolder, node ), serializedNode );
+        exportWriter.writeElement( NodeExportItemPathResolver.resolveNodeXmlPath( systemFolder ), serializedNode );
     }
 
-    private ExportItemPath createNodeSystemFolder( final Node node )
+    private ExportItemPath createNodeItemFolder( final Node node )
     {
-        final ExportItemPath nodeBasePath = NodeExportPathResolver.resolveNodeBasePath( this.rootPath, node );
+        final ExportItemPath nodeBasePath = NodeExportItemPathResolver.resolveNodeBasePath( this.rootPath, node );
 
         exportWriter.createDirectory( nodeBasePath );
 
-        final ExportItemPath systemFolder = NodeExportPathResolver.resolveSystemFolder( nodeBasePath );
+        final ExportItemPath nodeDataFolder = NodeExportItemPathResolver.resolveDataPath( nodeBasePath );
 
-        exportWriter.createDirectory( systemFolder );
-        return systemFolder;
+        exportWriter.createDirectory( nodeDataFolder );
+        return nodeDataFolder;
     }
 
     public static Builder create()

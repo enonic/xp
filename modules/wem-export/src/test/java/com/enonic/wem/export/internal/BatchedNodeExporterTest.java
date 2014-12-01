@@ -10,8 +10,8 @@ import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.export.internal.writer.ExportItemPath;
-import com.enonic.wem.export.internal.writer.ExportWriter;
-import com.enonic.wem.export.internal.writer.SystemOutExportWriter;
+import com.enonic.wem.export.internal.writer.NodeExportItemPathResolver;
+import com.enonic.wem.export.internal.writer.VerifiableExportWriter;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
 import static org.junit.Assert.*;
@@ -20,14 +20,17 @@ public class BatchedNodeExporterTest
 {
     private NodeService nodeService;
 
-    private ExportWriter exportWriter;
+    private VerifiableExportWriter exportWriter;
+
+    private ExportItemPath exportRootPath;
 
     @Before
     public void setUp()
         throws Exception
     {
         this.nodeService = new NodeServiceMock();
-        this.exportWriter = new SystemOutExportWriter();
+        this.exportWriter = new VerifiableExportWriter();
+        this.exportRootPath = ExportItemPath.from( "exports" );
     }
 
     @Test
@@ -43,11 +46,23 @@ public class BatchedNodeExporterTest
             nodeExportWriter( exportWriter ).
             nodePath( NodePath.ROOT ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            basePath( ExportItemPath.from( "exports" ) ).
+            basePath( exportRootPath ).
             build().
             export();
 
         assertEquals( 1, result.size() );
+
+        verifyNodeExported( node );
+
+    }
+
+    private void verifyNodeExported( final Node node )
+    {
+        final ExportItemPath nodeBasePath = NodeExportItemPathResolver.resolveNodeBasePath( exportRootPath, node );
+
+        final ExportItemPath nodeXmlPath = NodeExportItemPathResolver.resolveNodeXmlPath( nodeBasePath );
+
+        this.exportWriter.getExportedItems().containsKey( nodeXmlPath );
     }
 
     @Test
@@ -76,16 +91,17 @@ public class BatchedNodeExporterTest
 
         assertEquals( 10, result.size() );
 
-        assertTrue( result.getExportedNodes().contains( root.path() ) );
-        assertTrue( result.getExportedNodes().contains( child1.path() ) );
-        assertTrue( result.getExportedNodes().contains( child1_1.path() ) );
-        assertTrue( result.getExportedNodes().contains( child1_2.path() ) );
-        assertTrue( result.getExportedNodes().contains( child1_3.path() ) );
-        assertTrue( result.getExportedNodes().contains( child1_4.path() ) );
-        assertTrue( result.getExportedNodes().contains( child1_4_1.path() ) );
-        assertTrue( result.getExportedNodes().contains( child1_4_2.path() ) );
-        assertTrue( result.getExportedNodes().contains( child2.path() ) );
-        assertTrue( result.getExportedNodes().contains( child2_1.path() ) );
+        verifyNodeExported( root );
+        verifyNodeExported( child1 );
+        verifyNodeExported( child1_1 );
+        verifyNodeExported( child1_2 );
+        verifyNodeExported( child1_3 );
+        verifyNodeExported( child1_4 );
+        verifyNodeExported( child1_4_1 );
+        verifyNodeExported( child1_4_2 );
+        verifyNodeExported( child2 );
+        verifyNodeExported( child2_1 );
+
     }
 
     private Node createNode( final String name, final NodePath root )
