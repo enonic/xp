@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.export.ExportService;
 import com.enonic.wem.api.export.NodeExportResult;
+import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.servlet.ServletRequestUrlHelper;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
@@ -21,13 +22,26 @@ public class ExportResource
     private ExportService exportService;
 
     @GET
-    @Path("snapshot")
-    public Response snapshot( @QueryParam("path") final String path )
+    @Path("export")
+    public Response exportNodes( @QueryParam("path") final String path )
         throws Exception
     {
         final NodePath nodePath = NodePath.newPath( path ).build();
 
-        final NodeExportResult result = this.exportService.export( nodePath );
+        final NodeExportResult result = this.exportService.exportNodes( nodePath );
+
+        final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
+        return Response.temporaryRedirect( new URI( uri ) ).build();
+    }
+
+    @GET
+    @Path("import")
+    public Response importNodes( @QueryParam("importName") final String importName, @QueryParam("importRoot") final String importPath )
+        throws Exception
+    {
+        final NodePath importRoot = NodePath.newPath( importPath ).build();
+
+        final NodeImportResult nodeImportResult = this.exportService.importNodes( importName, importRoot );
 
         final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
         return Response.temporaryRedirect( new URI( uri ) ).build();
@@ -37,5 +51,6 @@ public class ExportResource
     {
         this.exportService = exportService;
     }
+
 }
 

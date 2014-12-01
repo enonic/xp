@@ -8,10 +8,12 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.api.export.ExportService;
 import com.enonic.wem.api.export.NodeExportResult;
+import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.home.HomeDir;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.export.internal.BatchedNodeExporter;
+import com.enonic.wem.export.internal.NodeImporter;
 import com.enonic.wem.export.internal.writer.ExportItemPath;
 import com.enonic.wem.export.internal.writer.FileExportWriter;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
@@ -26,7 +28,7 @@ public class ExportServiceImpl
 
 
     @Override
-    public NodeExportResult export( final NodePath nodePath )
+    public NodeExportResult exportNodes( final NodePath nodePath )
     {
 
         return BatchedNodeExporter.create().
@@ -40,6 +42,18 @@ public class ExportServiceImpl
             export();
     }
 
+    @Override
+    public NodeImportResult importNodes( final String exportName, final NodePath importRoot )
+    {
+        return NodeImporter.create().
+            xmlNodeSerializer( this.xmlNodeSerializer ).
+            nodeService( this.nodeService ).
+            exportHome( ExportItemPath.from( HomeDir.get().toString() + "/exports" ) ).
+            exportName( exportName ).
+            importRoot( importRoot ).
+            build().
+            execute();
+    }
 
     @Reference
     public void setNodeService( final NodeService nodeService )

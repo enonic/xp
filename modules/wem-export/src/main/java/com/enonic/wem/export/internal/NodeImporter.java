@@ -44,7 +44,19 @@ public class NodeImporter
         // If node.childOrder.isManual:
         //  - synchronize order with content in manualChildOrder.txt
 
-        final ExportItemPaths children = this.exportReader.getChildrenPaths( exportRootPath );
+        doImport( this.exportRootPath );
+
+        return new NodeImportResult();
+    }
+
+    private ExportItemPaths getChildPaths( final ExportItemPath path )
+    {
+        return this.exportReader.getChildrenPaths( path );
+    }
+
+    private void doImport( final ExportItemPath path )
+    {
+        final ExportItemPaths children = getChildPaths( path );
 
         for ( final ExportItemPath child : children )
         {
@@ -58,11 +70,14 @@ public class NodeImporter
 
             final Node createdNode = this.nodeService.create( createNodeParams );
 
+            doImport( child );
         }
-
-        return new NodeImportResult();
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
 
     public static final class Builder
     {
