@@ -1,12 +1,12 @@
 package com.enonic.wem.export.internal.reader;
 
-import com.enonic.wem.export.internal.writer.ExportItemPath;
-import com.enonic.wem.export.internal.writer.ExportItemPaths;
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
 public interface ExportReader
 {
-    public ExportItemPaths getChildrenPaths( final ExportItemPath parent );
+    public Stream<Path> getChildrenPaths( final Path parent );
 
-    public String getItem( final ExportItemPath path );
+    public String getItem( final Path path );
 
 }

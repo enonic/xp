@@ -1,5 +1,6 @@
 package com.enonic.wem.export;
 
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -14,7 +15,6 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.export.internal.BatchedNodeExporter;
 import com.enonic.wem.export.internal.NodeImporter;
-import com.enonic.wem.export.internal.writer.ExportItemPath;
 import com.enonic.wem.export.internal.writer.FileExportWriter;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
@@ -36,7 +36,7 @@ public class ExportServiceImpl
             nodePath( nodePath ).
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            exportHome( ExportItemPath.from( HomeDir.get().toString() + "/exports" ) ).
+            exportHome( Paths.get( HomeDir.get().toString(), "/exports" ) ).
             exportName( "node_" + LocalDateTime.now().format( DateTimeFormatter.ISO_LOCAL_DATE_TIME ) ).
             build().
             export();
@@ -48,7 +48,7 @@ public class ExportServiceImpl
         return NodeImporter.create().
             xmlNodeSerializer( this.xmlNodeSerializer ).
             nodeService( this.nodeService ).
-            exportHome( ExportItemPath.from( HomeDir.get().toString() + "/exports" ) ).
+            exportHome( Paths.get( HomeDir.get().toString(), "/exports" ) ).
             exportName( exportName ).
             importRoot( importRoot ).
             build().

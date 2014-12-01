@@ -1,5 +1,8 @@
 package com.enonic.wem.export.internal.writer;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 
@@ -12,31 +15,31 @@ public class NodeExportPathResolver
 
     private static final String ORDER_EXPORT_NAME = "manualChildOrder.txt";
 
-    public static ExportItemPath resolveExportRoot( final ExportItemPath basePath, final String exportName )
+    public static Path resolveExportRoot( final Path basePath, final String exportName )
     {
-        return ExportItemPath.from( basePath, exportName );
+        return Paths.get( basePath.toString(), exportName );
     }
 
-    public static ExportItemPath resolveExportNodeRoot( final ExportItemPath rootPath, final Node node )
+    public static Path resolveExportNodeRoot( final Path rootPath, final Node node )
     {
         final NodePath nodePath = node.path();
 
-        return ExportItemPath.from( rootPath, nodePath.asRelative().toString() );
+        return Paths.get( rootPath.toString(), nodePath.asRelative().toString() );
     }
 
-    public static ExportItemPath resolveExportNodeDataPath( final ExportItemPath basePath )
+    public static Path resolveExportNodeDataPath( final Path basePath )
     {
-        return ExportItemPath.from( basePath, SYSTEM_FOLDER_NAME );
+        return Paths.get( basePath.toString(), SYSTEM_FOLDER_NAME );
     }
 
-    public static ExportItemPath resolveOrderListPath( final ExportItemPath basePath )
+    public static Path resolveOrderListPath( final Path basePath )
     {
-        return ExportItemPath.from( basePath, ORDER_EXPORT_NAME );
+        return Paths.get( basePath.toString(), ORDER_EXPORT_NAME );
     }
 
-    public static ExportItemPath resolveNodeXmlPath( ExportItemPath basePath )
+    public static Path resolveNodeXmlPath( Path basePath )
     {
-        return ExportItemPath.from( basePath, NODE_XML_EXPORT_NAME );
+        return Paths.get( basePath.toString(), NODE_XML_EXPORT_NAME );
     }
 
 }

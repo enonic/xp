@@ -1,5 +1,7 @@
 package com.enonic.wem.export.internal;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import org.junit.Before;
@@ -12,7 +14,6 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.export.internal.writer.ExportItemPath;
 import com.enonic.wem.export.internal.writer.NodeExportPathResolver;
 import com.enonic.wem.export.internal.writer.VerifiableExportWriter;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
@@ -25,7 +26,7 @@ public class BatchedNodeExporterTest
 
     private VerifiableExportWriter exportWriter;
 
-    private ExportItemPath exportHome;
+    private Path exportHome;
 
     private final String exportName = "node";
 
@@ -35,7 +36,7 @@ public class BatchedNodeExporterTest
     {
         this.nodeService = new NodeServiceMock();
         this.exportWriter = new VerifiableExportWriter();
-        this.exportHome = ExportItemPath.from( "exports" );
+        this.exportHome = Paths.get( "exports" );
     }
 
     @Test
@@ -128,7 +129,7 @@ public class BatchedNodeExporterTest
             build().
             export();
 
-        final Map<ExportItemPath, String> exportedItems = this.exportWriter.getExportedItems();
+        final Map<Path, String> exportedItems = this.exportWriter.getExportedItems();
 
         assertTrue( exportedItems.containsKey( getOrderListPath( root ) ) );
         assertFalse( exportedItems.containsKey( getOrderListPath( child1 ) ) );
@@ -144,14 +145,14 @@ public class BatchedNodeExporterTest
         return this.nodeService.create( CreateNodeParams.from( node ).build() );
     }
 
-    private ExportItemPath getExportNodeDataPath( final Node root )
+    private Path getExportNodeDataPath( final Node root )
     {
-        final ExportItemPath rootExportPath = NodeExportPathResolver.resolveExportRoot( exportHome, exportName );
-        final ExportItemPath nodeBasePath = NodeExportPathResolver.resolveExportNodeRoot( rootExportPath, root );
+        final Path rootExportPath = NodeExportPathResolver.resolveExportRoot( exportHome, exportName );
+        final Path nodeBasePath = NodeExportPathResolver.resolveExportNodeRoot( rootExportPath, root );
         return NodeExportPathResolver.resolveExportNodeDataPath( nodeBasePath );
     }
 
-    private ExportItemPath getOrderListPath( final Node node )
+    private Path getOrderListPath( final Node node )
     {
         return NodeExportPathResolver.resolveOrderListPath( getExportNodeDataPath( node ) );
     }

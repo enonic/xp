@@ -1,5 +1,7 @@
 package com.enonic.wem.export.internal;
 
+import java.nio.file.Path;
+
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -7,7 +9,6 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.Nodes;
-import com.enonic.wem.export.internal.writer.ExportItemPath;
 import com.enonic.wem.export.internal.writer.ExportWriter;
 import com.enonic.wem.export.internal.writer.NodeExportPathResolver;
 import com.enonic.wem.export.internal.xml.XmlNode;
@@ -28,7 +29,7 @@ public class BatchedNodeExporter
 
     private final XmlNodeSerializer xmlNodeSerializer;
 
-    private final ExportItemPath exportRootPath;
+    private final Path exportRootPath;
 
     private final static String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
@@ -135,14 +136,14 @@ public class BatchedNodeExporter
 
         final String serializedNode = this.xmlNodeSerializer.serialize( xmlNode );
 
-        final ExportItemPath systemFolder = getNodeDataFolder( node );
+        final Path systemFolder = getNodeDataFolder( node );
 
         exportWriter.writeElement( NodeExportPathResolver.resolveNodeXmlPath( systemFolder ), serializedNode );
     }
 
-    private ExportItemPath getNodeDataFolder( final Node node )
+    private Path getNodeDataFolder( final Node node )
     {
-        final ExportItemPath nodeBasePath = NodeExportPathResolver.resolveExportNodeRoot( this.exportRootPath, node );
+        final Path nodeBasePath = NodeExportPathResolver.resolveExportNodeRoot( this.exportRootPath, node );
         return NodeExportPathResolver.resolveExportNodeDataPath( nodeBasePath );
     }
 
@@ -164,7 +165,7 @@ public class BatchedNodeExporter
 
         private XmlNodeSerializer xmlNodeSerializer;
 
-        private ExportItemPath exportHome;
+        private Path exportHome;
 
         private String exportName;
 
@@ -184,7 +185,7 @@ public class BatchedNodeExporter
             return this;
         }
 
-        public Builder exportHome( ExportItemPath basePath )
+        public Builder exportHome( Path basePath )
         {
             this.exportHome = basePath;
             return this;

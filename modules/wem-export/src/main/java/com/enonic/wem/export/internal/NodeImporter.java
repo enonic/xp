@@ -1,5 +1,8 @@
 package com.enonic.wem.export.internal;
 
+import java.nio.file.Path;
+import java.util.stream.Stream;
+
 import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
@@ -7,8 +10,6 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.export.internal.builder.NodeXmlBuilder;
 import com.enonic.wem.export.internal.reader.ExportReader;
-import com.enonic.wem.export.internal.writer.ExportItemPath;
-import com.enonic.wem.export.internal.writer.ExportItemPaths;
 import com.enonic.wem.export.internal.writer.NodeExportPathResolver;
 import com.enonic.wem.export.internal.xml.XmlNode;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
@@ -23,7 +24,7 @@ public class NodeImporter
 
     private final XmlNodeSerializer xmlNodeSerializer;
 
-    private final ExportItemPath exportRootPath;
+    private final Path exportRootPath;
 
 
     private NodeImporter( final Builder builder )
@@ -49,17 +50,17 @@ public class NodeImporter
         return new NodeImportResult();
     }
 
-    private ExportItemPaths getChildPaths( final ExportItemPath path )
+    private Stream<Path> getChildPaths( final Path path )
     {
         return this.exportReader.getChildrenPaths( path );
     }
 
-    private void doImport( final ExportItemPath path )
+    private void doImport( final Path path )
     {
-        final ExportItemPaths children = getChildPaths( path );
+        final Stream<Path> children = getChildPaths( path );
 
-        for ( final ExportItemPath child : children )
-        {
+        children.forEach( ( child ) -> {
+
             final String serializedNode = this.exportReader.getItem( child );
 
             final XmlNode xmlNode = this.xmlNodeSerializer.parse( serializedNode );
@@ -71,7 +72,7 @@ public class NodeImporter
             final Node createdNode = this.nodeService.create( createNodeParams );
 
             doImport( child );
-        }
+        } );
     }
 
     public static Builder create()
@@ -89,7 +90,7 @@ public class NodeImporter
 
         private XmlNodeSerializer xmlNodeSerializer;
 
-        private ExportItemPath exportHome;
+        private Path exportHome;
 
         private String exportName;
 
@@ -103,7 +104,7 @@ public class NodeImporter
             return this;
         }
 
-        public Builder exportHome( ExportItemPath basePath )
+        public Builder exportHome( Path basePath )
         {
             this.exportHome = basePath;
             return this;
@@ -138,7 +139,6 @@ public class NodeImporter
             return new NodeImporter( this );
         }
     }
-
 
 }
 
