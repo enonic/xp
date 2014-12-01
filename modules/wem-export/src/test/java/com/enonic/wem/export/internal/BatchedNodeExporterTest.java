@@ -1,16 +1,19 @@
 package com.enonic.wem.export.internal;
 
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.export.NodeExportResult;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.export.internal.writer.ExportItemPath;
-import com.enonic.wem.export.internal.writer.NodeExportItemPathResolver;
+import com.enonic.wem.export.internal.writer.NodeExportPathResolver;
 import com.enonic.wem.export.internal.writer.VerifiableExportWriter;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
@@ -22,7 +25,9 @@ public class BatchedNodeExporterTest
 
     private VerifiableExportWriter exportWriter;
 
-    private ExportItemPath exportRootPath;
+    private ExportItemPath exportHome;
+
+    private final String exportName = "node";
 
     @Before
     public void setUp()
@@ -30,7 +35,7 @@ public class BatchedNodeExporterTest
     {
         this.nodeService = new NodeServiceMock();
         this.exportWriter = new VerifiableExportWriter();
-        this.exportRootPath = ExportItemPath.from( "exports" );
+        this.exportHome = ExportItemPath.from( "exports" );
     }
 
     @Test
@@ -46,23 +51,14 @@ public class BatchedNodeExporterTest
             nodeExportWriter( exportWriter ).
             nodePath( NodePath.ROOT ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            basePath( exportRootPath ).
+            exportHome( exportHome ).
+            exportName( exportName ).
             build().
             export();
 
         assertEquals( 1, result.size() );
 
         verifyNodeExported( node );
-
-    }
-
-    private void verifyNodeExported( final Node node )
-    {
-        final ExportItemPath nodeBasePath = NodeExportItemPathResolver.resolveNodeBasePath( exportRootPath, node );
-
-        final ExportItemPath nodeXmlPath = NodeExportItemPathResolver.resolveNodeXmlPath( nodeBasePath );
-
-        this.exportWriter.getExportedItems().containsKey( nodeXmlPath );
     }
 
     @Test
@@ -85,7 +81,8 @@ public class BatchedNodeExporterTest
             nodeExportWriter( this.exportWriter ).
             nodePath( NodePath.ROOT ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            basePath( ExportItemPath.from( "exports" ) ).
+            exportHome( this.exportHome ).
+            exportName( exportName ).
             build().
             export();
 
@@ -101,7 +98,40 @@ public class BatchedNodeExporterTest
         verifyNodeExported( child1_4_2 );
         verifyNodeExported( child2 );
         verifyNodeExported( child2_1 );
+    }
 
+    @Test
+    public void writerOrderList()
+    {
+        final Node root = Node.newNode().
+            name( NodeName.from( "root" ) ).
+            parent( NodePath.ROOT ).
+            childOrder( ChildOrder.manualOrder() ).
+            build();
+
+        this.nodeService.create( CreateNodeParams.from( root ).build() );
+
+        final Node child1 = createNode( "child1", root.path() );
+        createNode( "child2", root.path() );
+        createNode( "child3", root.path() );
+        createNode( "child4", root.path() );
+        createNode( "child5", root.path() );
+        createNode( "child6", root.path() );
+
+        BatchedNodeExporter.create().
+            nodeService( this.nodeService ).
+            nodeExportWriter( this.exportWriter ).
+            nodePath( NodePath.ROOT ).
+            xmlNodeSerializer( new XmlNodeSerializer() ).
+            exportHome( this.exportHome ).
+            exportName( exportName ).
+            build().
+            export();
+
+        final Map<ExportItemPath, String> exportedItems = this.exportWriter.getExportedItems();
+
+        assertTrue( exportedItems.containsKey( getOrderListPath( root ) ) );
+        assertFalse( exportedItems.containsKey( getOrderListPath( child1 ) ) );
     }
 
     private Node createNode( final String name, final NodePath root )
@@ -112,5 +142,23 @@ public class BatchedNodeExporterTest
             build();
 
         return this.nodeService.create( CreateNodeParams.from( node ).build() );
+    }
+
+    private ExportItemPath getExportNodeDataPath( final Node root )
+    {
+        final ExportItemPath rootExportPath = NodeExportPathResolver.resolveExportRoot( exportHome, exportName );
+        final ExportItemPath nodeBasePath = NodeExportPathResolver.resolveExportNodeRoot( rootExportPath, root );
+        return NodeExportPathResolver.resolveExportNodeDataPath( nodeBasePath );
+    }
+
+    private ExportItemPath getOrderListPath( final Node node )
+    {
+        return NodeExportPathResolver.resolveOrderListPath( getExportNodeDataPath( node ) );
+    }
+
+    private void verifyNodeExported( final Node node )
+    {
+        assertTrue( this.exportWriter.getExportedItems().containsKey(
+            NodeExportPathResolver.resolveNodeXmlPath( getExportNodeDataPath( node ) ) ) );
     }
 }

@@ -12,6 +12,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.node.NodePath;
+
 public class ExportItemPath
 {
     private final ImmutableList<String> elements;
@@ -31,6 +33,11 @@ public class ExportItemPath
     public static ExportItemPath from( final ExportItemPath exportItemPath, final String... elements )
     {
         return create( exportItemPath ).addAll( elements ).build();
+    }
+
+    public static ExportItemPath from( final NodePath nodePath )
+    {
+        return ExportItemPath.from( nodePath.asRelative().toString() );
     }
 
     public static ExportItemPath from( final String path )
@@ -79,6 +86,12 @@ public class ExportItemPath
         return builder.build();
     }
 
+    @Override
+    public String toString()
+    {
+        return this.getPathAsString();
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -124,5 +137,33 @@ public class ExportItemPath
         {
             return new ExportItemPath( this );
         }
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final ExportItemPath that = (ExportItemPath) o;
+
+        if ( elements != null ? !elements.equals( that.elements ) : that.elements != null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return elements != null ? elements.hashCode() : 0;
     }
 }

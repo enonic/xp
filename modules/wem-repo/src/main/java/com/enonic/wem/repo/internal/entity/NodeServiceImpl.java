@@ -76,15 +76,7 @@ public class NodeServiceImpl
     @Override
     public Node getByPath( final NodePath path )
     {
-        final Node node = doGetByPath( path, true );
-
-        if ( node == null )
-        {
-            throw new NodeNotFoundException(
-                "Node with path " + path + " not found in workspace " + ContextAccessor.current().getWorkspace().getName() );
-        }
-
-        return node;
+        return doGetByPath( path, true );
     }
 
     private Node doGetByPath( final NodePath path, final boolean resolveHasChild )

@@ -91,6 +91,12 @@ public final class Nodes
             return this;
         }
 
+        public Builder addAll( Nodes nodes )
+        {
+            this.nodes.addAll( nodes.getSet() );
+            return this;
+        }
+
         public Nodes build()
         {
             return new Nodes( nodes );

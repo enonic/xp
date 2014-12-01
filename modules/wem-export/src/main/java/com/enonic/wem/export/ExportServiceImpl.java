@@ -1,5 +1,8 @@
 package com.enonic.wem.export;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -31,7 +34,8 @@ public class ExportServiceImpl
             nodePath( nodePath ).
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            basePath( ExportItemPath.from( HomeDir.get().toString() + "/export" ) ).
+            exportHome( ExportItemPath.from( HomeDir.get().toString() + "/exports" ) ).
+            exportName( "node_" + LocalDateTime.now().format( DateTimeFormatter.ISO_LOCAL_DATE_TIME ) ).
             build().
             export();
     }

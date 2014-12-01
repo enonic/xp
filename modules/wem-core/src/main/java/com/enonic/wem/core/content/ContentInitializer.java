@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodeService;
 
 public class ContentInitializer
@@ -17,11 +16,9 @@ public class ContentInitializer
 
     public final void init()
     {
-        try
-        {
-            nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
-        }
-        catch ( NodeNotFoundException e )
+        final Node rootNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
+
+        if ( rootNode == null )
         {
             LOG.info( "Content root-node not found, creating" );
 
@@ -34,7 +31,6 @@ public class ContentInitializer
 
             LOG.info( "Created content root-node: " + root.path() );
         }
-
     }
 
     public void setNodeService( final NodeService nodeService )

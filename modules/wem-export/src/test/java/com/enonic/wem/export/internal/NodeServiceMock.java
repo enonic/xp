@@ -50,6 +50,7 @@ class NodeServiceMock
             parent( params.getParent() ).
             createdTime( Instant.now() ).
             creator( PrincipalKey.ofUser( UserStoreKey.system(), "rmy" ) ).
+            childOrder( params.getChildOrder() ).
             build();
 
         nodeIdMap.putIfAbsent( createdNode.id(), createdNode );
