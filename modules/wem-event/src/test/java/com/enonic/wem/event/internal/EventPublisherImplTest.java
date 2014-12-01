@@ -1,6 +1,4 @@
-package com.enonic.wem.core.event;
-
-import java.util.List;
+package com.enonic.wem.event.internal;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,7 +6,6 @@ import org.junit.Test;
 import com.enonic.wem.api.event.Event;
 import com.enonic.wem.api.event.EventListener;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -39,10 +36,12 @@ public class EventPublisherImplTest
         throws Exception
     {
         final EventListener eventListener1 = mock( EventListener.class );
-        final List<EventListener> eventListeners = newArrayList( eventListener1 );
-        eventPublisher.setEventListeners( eventListeners );
+        eventPublisher.addListener( eventListener1 );
 
         final Event event = new TestEvent();
+        eventPublisher.publish( event );
+
+        eventPublisher.removeListener( eventListener1 );
         eventPublisher.publish( event );
 
         verify( eventListener1, times( 1 ) ).onEvent( any( TestEvent.class ) );
@@ -53,10 +52,13 @@ public class EventPublisherImplTest
         throws Exception
     {
         final EventListener eventListener1 = mock( EventListener.class );
+        eventPublisher.addListener( eventListener1 );
+
         final EventListener eventListener2 = mock( EventListener.class );
+        eventPublisher.addListener( eventListener2 );
+
         final EventListener eventListener3 = mock( EventListener.class );
-        final List<EventListener> eventListeners = newArrayList( eventListener1, eventListener2, eventListener3 );
-        eventPublisher.setEventListeners( eventListeners );
+        eventPublisher.addListener( eventListener3 );
 
         final Event event = new TestEvent();
         eventPublisher.publish( event );
@@ -71,10 +73,13 @@ public class EventPublisherImplTest
         throws Exception
     {
         final EventListener eventListener1 = mock( EventListener.class );
+        eventPublisher.addListener( eventListener1 );
+
         final EventListener eventListener2 = mock( EventListener.class );
+        eventPublisher.addListener( eventListener2 );
+
         final EventListener eventListener3 = mock( EventListener.class );
-        final List<EventListener> eventListeners = newArrayList( eventListener1, eventListener2, eventListener3 );
-        eventPublisher.setEventListeners( eventListeners );
+        eventPublisher.addListener( eventListener3 );
 
         doThrow( new RuntimeException( "Error" ) ).when( eventListener2 ).onEvent( any( Event.class ) );
 
