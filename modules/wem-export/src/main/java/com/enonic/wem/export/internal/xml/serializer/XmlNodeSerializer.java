@@ -47,7 +47,7 @@ public final class XmlNodeSerializer
         }
     }
 
-    private XmlNode parse( final String text )
+    public XmlNode parse( final String text )
     {
         try
         {
