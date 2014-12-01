@@ -1,6 +1,9 @@
-package com.enonic.wem.script.convert;
+package com.enonic.wem.api.convert;
 
 import org.junit.Test;
+
+import com.enonic.wem.api.convert.ConvertException;
+import com.enonic.wem.api.convert.Converters;
 
 import static org.junit.Assert.*;
 

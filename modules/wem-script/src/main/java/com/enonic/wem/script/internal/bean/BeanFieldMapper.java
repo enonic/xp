@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.script.convert.Converters;
+import com.enonic.wem.api.convert.Converters;
 
 public final class BeanFieldMapper
 {

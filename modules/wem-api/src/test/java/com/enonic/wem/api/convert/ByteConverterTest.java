@@ -1,4 +1,4 @@
-package com.enonic.wem.script.convert;
+package com.enonic.wem.api.convert;
 
 public class ByteConverterTest
     extends NumberConverterTest<Byte>
