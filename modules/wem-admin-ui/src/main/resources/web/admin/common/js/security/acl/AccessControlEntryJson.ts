@@ -8,7 +8,7 @@ module api.security.acl {
 
         deny: string[];
 
-        inherited?: boolean;
+        // inherited?: boolean;
 
     }
 }

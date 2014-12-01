@@ -110,13 +110,14 @@ module api.security.acl {
             return {
                 "principal": this.principal.toJson(),
                 "allow": this.allowedPermissions.map((perm) => Permission[perm]),
-                "deny": this.deniedPermissions.map((perm) => Permission[perm]),
-                "inherited": this.inherited
+                "deny": this.deniedPermissions.map((perm) => Permission[perm])
+                //"inherited": this.inherited
             };
         }
 
         static fromJson(json: api.security.acl.AccessControlEntryJson): AccessControlEntry {
-            var ace = new AccessControlEntry(Principal.fromJson(json.principal), json.inherited);
+            var ace = new AccessControlEntry(Principal.fromJson(json.principal));
+            //var ace = new AccessControlEntry(Principal.fromJson(json.principal), json.inherited);
             var allow: Permission[] = json.allow.map((permStr) => Permission[permStr.toUpperCase()]);
             var deny: Permission[] = json.deny.map((permStr) => Permission[permStr.toUpperCase()]);
             ace.setAllowedPermissions(allow);
