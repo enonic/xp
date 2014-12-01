@@ -1,7 +1,11 @@
 ///<reference path='PrincipalWizardPanel.ts' />
+///<reference path='GroupRoleWizardPanel.ts' />
 ///<reference path='RoleWizardPanel.ts' />
+///<reference path='GroupWizardPanel.ts' />
 ///<reference path='PrincipalWizardPanelFactory.ts' />
 ///<reference path='PrincipalWizardPanelParams.ts' />
 ///<reference path='PrincipalWizardToolbar.ts' />
-///<reference path='RoleWizardStepForm.ts' />
-///<reference path='GrantsWizardStepForm.ts' />
+///<reference path='PrincipalDescriptionWizardStepForm.ts' />
+///<reference path='PrincipalMembersWizardStepForm.ts' />
+///<reference path='RoleMembersWizardStepForm.ts' />
+///<reference path='GroupMembersWizardStepForm.ts' />
