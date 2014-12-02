@@ -6,8 +6,8 @@ import java.time.LocalTime;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data2.PropertySet;
-import com.enonic.wem.api.data2.PropertyTree;
+import com.enonic.wem.api.data.PropertySet;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
