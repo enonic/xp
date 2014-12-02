@@ -344,7 +344,6 @@ module app.browse {
             var rootNode = this.getRoot().getCurrentRoot();
             if (node != rootNode) {
                 if (node.hasChildren()) {
-                    var expanded = node.isExpanded();
                     node.setChildren([]);
                     node.setMaxChildren(0);
 
@@ -354,9 +353,6 @@ module app.browse {
                             parentNode.setChildren(this.dataToTreeNodes(dataList, parentNode));
                             var rootList = this.getRoot().getCurrentRoot().treeToList();
                             this.initData(rootList);
-                            if (expanded) {
-                                this.expandNode(parentNode);
-                            }
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         }).done();

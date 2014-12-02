@@ -348,7 +348,7 @@ module api.ui.treegrid {
                     var fetchedChildren = this.dataToTreeNodes(dataList, node.getParent());
                     var newChildren = oldChildren.concat(fetchedChildren.slice(oldChildren.length));
                     node.getParent().setChildren(newChildren);
-                    this.sortNodeChildren(node.getParent());
+                    this.initData(this.root.getCurrentRoot().treeToList());
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
@@ -605,7 +605,7 @@ module api.ui.treegrid {
                         stashedNodeToUpdate.clearViewers();
                     }
                     this.notifyDataChanged(new DataChangedEvent<DATA>(nodesToUpdate, DataChangedEvent.UPDATED));
-                    this.sortNodeChildren(nodeToUpdate.getParent());
+                    this.initData(this.root.getCurrentRoot().treeToList());
                     this.root.updateSelection(dataId, data);
                     this.triggerSelectionChangedListeners();
                 }).catch((reason: any) => {
