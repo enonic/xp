@@ -2,12 +2,12 @@ module app.browse.action {
 
     export class SaveSortedContentAction extends api.ui.Action {
 
-        constructor() {
+        constructor(dialog: SortContentDialog) {
             super("Save");
-            this.setEnabled(false);
+            this.setEnabled(true);
 
             this.onExecuted(() => {
-
+                new SaveSortedContentEvent(dialog.getContent()).fire();
             });
         }
     }

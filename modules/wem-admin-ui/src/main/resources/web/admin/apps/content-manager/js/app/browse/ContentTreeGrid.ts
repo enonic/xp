@@ -341,23 +341,27 @@ module app.browse {
         }
 
         sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
-            var comparator: api.Comparator<TreeNode<ContentSummaryAndCompareStatus>>;
-            if (this.getRoot().getCurrentRoot() == node) {
-                comparator = new api.content.ContentByDisplayNameComparator();
-            } else {
-                comparator = new api.content.ContentByModifiedTimeComparator();
-            }
-            var children = node.getChildren(),
-                lastNode = children[children.length - 1],
-                emptyNode = (!lastNode || !!lastNode.getData()) ? null : lastNode;
+            var rootNode = this.getRoot().getCurrentRoot();
+            if (node != rootNode) {
+                if (node.hasChildren()) {
+                    var expanded = node.isExpanded();
+                    node.setChildren([]);
+                    node.setMaxChildren(0);
 
-            children = !emptyNode ? children : children.splice(children.indexOf(emptyNode), 1);
-            children = children.sort(comparator.compare);
-            if (emptyNode) {
-                children.push(emptyNode);
+                    this.fetchChildren(node)
+                        .then((dataList: ContentSummaryAndCompareStatus[]) => {
+                            var parentNode = this.getRoot().getCurrentRoot().findNode(node.getDataId());
+                            parentNode.setChildren(this.dataToTreeNodes(dataList, parentNode));
+                            var rootList = this.getRoot().getCurrentRoot().treeToList();
+                            this.initData(rootList);
+                            if (expanded) {
+                                this.expandNode(parentNode);
+                            }
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).done();
+                }
             }
-            node.setChildren(children);
-            this.initData(this.getRoot().getCurrentRoot().treeToList());
         }
     }
 }

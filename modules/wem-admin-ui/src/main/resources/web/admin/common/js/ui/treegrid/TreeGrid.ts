@@ -757,7 +757,7 @@ module api.ui.treegrid {
             this.grid.setSelectedRows(selection);
         }
 
-        private expandNode(node?: TreeNode<DATA>) {
+        expandNode(node?: TreeNode<DATA>) {
             node = node || this.root.getCurrentRoot();
 
             var rootList: TreeNode<DATA>[],

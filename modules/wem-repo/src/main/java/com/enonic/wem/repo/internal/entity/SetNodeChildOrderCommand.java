@@ -2,14 +2,19 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.util.LinkedHashSet;
 
+import com.google.common.base.Preconditions;
+
+import com.enonic.wem.api.content.ContentChildOrderUpdatedEvent;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.query.expr.QueryExpr;
-import com.enonic.wem.api.node.NodeQuery;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeQuery;
+import com.enonic.wem.api.query.expr.QueryExpr;
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 
 public class SetNodeChildOrderCommand
     extends AbstractNodeCommand
@@ -18,11 +23,14 @@ public class SetNodeChildOrderCommand
 
     private final ChildOrder childOrder;
 
+    private final EventPublisher eventPublisher;
+
     private SetNodeChildOrderCommand( final Builder builder )
     {
         super( builder );
         this.nodeId = builder.nodeId;
-        this.childOrder = builder.childOrdrer;
+        this.childOrder = builder.childOrder;
+        this.eventPublisher = builder.eventPublisher;
     }
 
     public static Builder create()
@@ -46,6 +54,8 @@ public class SetNodeChildOrderCommand
         final Node editedNode = Node.editNode( parentNode ).childOrder( childOrder ).build();
 
         doStoreNode( editedNode );
+
+        eventPublisher.publish( new ContentChildOrderUpdatedEvent( ContentId.from( nodeId.toString() ) ) );
 
         return doGetById( editedNode.id(), false );
     }
@@ -78,7 +88,9 @@ public class SetNodeChildOrderCommand
     {
         private NodeId nodeId;
 
-        private ChildOrder childOrdrer;
+        private ChildOrder childOrder;
+
+        private EventPublisher eventPublisher;
 
         private Builder()
         {
@@ -92,12 +104,26 @@ public class SetNodeChildOrderCommand
 
         public Builder childOrder( final ChildOrder childOrder )
         {
-            this.childOrdrer = childOrder;
+            this.childOrder = childOrder;
             return this;
+        }
+
+        public Builder eventPublisher( final EventPublisher eventPublisher )
+        {
+            this.eventPublisher = eventPublisher;
+            return this;
+        }
+
+        void validate()
+        {
+            Preconditions.checkNotNull( nodeId );
+            Preconditions.checkNotNull( childOrder );
+            Preconditions.checkNotNull( eventPublisher );
         }
 
         public SetNodeChildOrderCommand build()
         {
+            validate();
             return new SetNodeChildOrderCommand( this );
         }
     }

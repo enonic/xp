@@ -13,6 +13,10 @@ module api.content {
             return this.function;
         }
 
+        toString() {
+            return this.function + " " + super.getDirection();
+        }
+
         toJson(): json.OrderExprJson {
             return {
                 "function": this.function,
