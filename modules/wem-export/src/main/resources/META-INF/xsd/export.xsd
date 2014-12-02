@@ -18,9 +18,9 @@
 
   <xs:complexType name="node">
     <xs:all>
-      <xs:element minOccurs="0" name="id" type="xs:string"/>
+      <xs:element minOccurs="1" name="id" type="xs:string"/>
       <xs:element minOccurs="1" name="name" type="xs:string"/>
-      <xs:element minOccurs="0" name="parent" type="xs:string"/>
+      <xs:element minOccurs="1" name="parent" type="xs:string"/>
       <xs:element minOccurs="0" name="childOrder" type="xs:string"/>
       <xs:element name="properties" type="propertyTree"/>
     </xs:all>
