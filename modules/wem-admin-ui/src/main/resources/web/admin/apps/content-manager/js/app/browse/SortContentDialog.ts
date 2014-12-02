@@ -5,14 +5,26 @@ module app.browse {
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
     import Element = api.dom.Element;
     import SaveSortedContentAction = action.SaveSortedContentAction;
+    import ContentSummary = api.content.ContentSummary;
+    import ChildOrder = api.content.ChildOrder;
 
     export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
         private sortAction: SaveSortedContentAction;
 
+        private parentContent: api.content.ContentSummary;
+
         private contentGrid: app.browse.SortContentTreeGrid;
+        private sortContentMenu: SortContentTabMenu;
+
+        private curChildOrder: ChildOrder;
+        private isOpen: boolean;
 
         constructor() {
+            super({
+                title: new api.ui.dialog.ModalDialogHeader("")
+            });
+
             var menu = new api.ui.tab.TabMenu();
             var tabMenuItem = new api.ui.tab.TabMenuItemBuilder().setLabel("(sorting type)").build();
             tabMenuItem.setActive(true);
@@ -20,15 +32,22 @@ module app.browse {
             menu.selectNavigationItem(0);
             menu.show();
 
-            super({
-                title: new api.ui.dialog.ModalDialogHeader("")
-            });
+            this.sortContentMenu = new SortContentTabMenu();
+            this.sortContentMenu.show();
+            this.appendChild(this.sortContentMenu);
+            this.sortContentMenu.onSortOrderChanged(() => {
+                this.curChildOrder = this.sortContentMenu.getSelectedNavigationItem().getChildOrder();
+                this.contentGrid.setChildOrder(this.curChildOrder);
+                api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.parentContent.getContentId()).
+                    done((response: api.content.ContentSummaryAndCompareStatus) => {
+                        this.contentGrid.reload(response);
+                    });
 
-            this.appendChild(menu);
+            });
 
             this.getEl().addClass("sort-content-dialog");
 
-            this.sortAction = new SaveSortedContentAction();
+            this.sortAction = new SaveSortedContentAction(this);
 
             this.setCancelAction(new api.ui.Action("Cancel", "esc"));
             this.addAction(this.sortAction);
@@ -37,6 +56,7 @@ module app.browse {
             this.contentGrid.getEl().addClass("sort-content-grid");
             this.contentGrid.onLoaded(() => {
                 this.contentGrid.render(true);
+
                 if (this.contentGrid.getContentId()) {
                     this.open();
                 }
@@ -51,9 +71,25 @@ module app.browse {
             this.getCancelAction().onExecuted(()=> {
                 this.close();
             });
+            this.sortAction.onExecuted(() => {
+                if (this.curChildOrder.equals(this.parentContent.getChildOrder())) {
+                    this.close();
+                } else {
+                    new api.content.OrderContentRequest()
+                        .setContentId(this.parentContent.getContentId())
+                        .setChildOrder(this.curChildOrder).
+                        sendAndParse().done(() => {
+                            new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
+                            this.close();
+                        });
+                }
+            });
 
             OpenSortDialogEvent.on((event) => {
-                api.content.ContentSummaryAndCompareStatusFetcher.fetch(event.getContent().getContentId()).
+                this.parentContent = event.getContent();
+                this.curChildOrder = this.parentContent.getChildOrder();
+                this.sortContentMenu.selectNavigationItemByOrder(this.curChildOrder);
+                api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.parentContent.getContentId()).
                     done((response: api.content.ContentSummaryAndCompareStatus) => {
                         this.contentGrid.reload(response);
                         if (!response.hasChildren()) {
@@ -69,7 +105,14 @@ module app.browse {
         }
 
         open() {
-            super.open();
+            if (!this.isOpen) {
+                if (this.contentGrid.getGrid().getDataView().getLength() > 0) {
+                    this.contentGrid.getGrid().getEl().setHeightPx(45);//chrome invalid grid render fix
+                }
+                this.contentGrid.getGrid().resizeCanvas();
+                super.open();
+                this.isOpen = true;
+            }
         }
 
         show() {
@@ -80,6 +123,11 @@ module app.browse {
         close() {
             super.close();
             this.remove();
+            this.isOpen = false;
+        }
+
+        getContent(): ContentSummary {
+            return this.parentContent;
         }
     }
 

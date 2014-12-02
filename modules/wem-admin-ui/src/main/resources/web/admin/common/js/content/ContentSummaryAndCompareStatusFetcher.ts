@@ -2,24 +2,25 @@ module api.content {
 
     export class ContentSummaryAndCompareStatusFetcher {
 
-        static fetchChildren(parentContentId: ContentId, from: number = 0,
-                             size: number = -1): wemQ.Promise<ContentResponse<ContentSummaryAndCompareStatus>> {
+        static fetchChildren(parentContentId: ContentId, from: number = 0, size: number = -1,
+                             childOrder?: ChildOrder): wemQ.Promise<ContentResponse<ContentSummaryAndCompareStatus>> {
 
             var deferred = wemQ.defer<ContentResponse<ContentSummaryAndCompareStatus>>();
 
             new ListContentByIdRequest(parentContentId).
                 setFrom(from).
                 setSize(size).
+                setOrder(childOrder).
                 sendAndParse().
-            then((response: ContentResponse<ContentSummary>)=> {
-                CompareContentRequest.fromContentSummaries(response.getContents()).sendAndParse().then((compareResults: CompareContentResults) => {
-                    var result = new ContentResponse<ContentSummaryAndCompareStatus>(
-                        ContentSummaryAndCompareStatusFetcher.updateCompareStatus(response.getContents(), compareResults),
-                        response.getMetadata()
-                    );
-                    deferred.resolve(result);
+                then((response: ContentResponse<ContentSummary>)=> {
+                    CompareContentRequest.fromContentSummaries(response.getContents()).sendAndParse().then((compareResults: CompareContentResults) => {
+                        var result = new ContentResponse<ContentSummaryAndCompareStatus>(
+                            ContentSummaryAndCompareStatusFetcher.updateCompareStatus(response.getContents(), compareResults),
+                            response.getMetadata()
+                        );
+                        deferred.resolve(result);
+                    });
                 });
-            });
 
             return deferred.promise;
         }

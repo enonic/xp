@@ -513,7 +513,9 @@ module api.ui.treegrid {
         }
 
         getSelectedDataList(): DATA[] {
-            return this.root.getFullSelection().map((node: TreeNode<DATA>) => { return node.getData(); });
+            return this.root.getFullSelection().map((node: TreeNode<DATA>) => {
+                return node.getData();
+            });
         }
 
         // Hard reset
@@ -757,7 +759,7 @@ module api.ui.treegrid {
             this.grid.setSelectedRows(selection);
         }
 
-        private expandNode(node?: TreeNode<DATA>) {
+        expandNode(node?: TreeNode<DATA>) {
             node = node || this.root.getCurrentRoot();
 
             var rootList: TreeNode<DATA>[],
@@ -842,8 +844,8 @@ module api.ui.treegrid {
 
 //            this.animateCollapse(collapsedRows, animatedRows);
 
-              // Save the selected collapsed rows in cache
-              this.root.stashSelection();
+            // Save the selected collapsed rows in cache
+            this.root.stashSelection();
 
 //            setTimeout(() => {
             this.gridData.refresh();
