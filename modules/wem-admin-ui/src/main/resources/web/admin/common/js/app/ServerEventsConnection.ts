@@ -89,9 +89,9 @@ module api.app {
             if (eventType === 'ContentPublishedEvent') {
                 return api.content.ContentPublishedEvent.fromJson(serverEventJson.event);
             }
-            else if (eventType === 'ContentChildOrderUpdatedEvent') {
-                return api.content.ContentChildOrderUpdatedEvent.fromJson(serverEventJson.event);
-            }
+            /* else if (eventType === 'ContentChildOrderUpdatedEvent') {
+             return api.content.ContentChildOrderUpdatedEvent.fromJson(serverEventJson.event);
+             }*/
             else if (eventType === 'ContentTypeUpdatedEvent') {
                 return api.schema.content.ContentTypeUpdatedEvent.fromJson(serverEventJson.event);
             }

@@ -79,14 +79,11 @@ module app.browse {
                         .setContentId(this.parentContent.getContentId())
                         .setChildOrder(this.curChildOrder).
                         sendAndParse().done(() => {
+                            new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
                             this.close();
                         });
                 }
             });
-
-            /* this.onShown(() => {
-             this.contentGrid.getGrid().resizeCanvas();
-             });*/
 
             OpenSortDialogEvent.on((event) => {
                 this.parentContent = event.getContent();
