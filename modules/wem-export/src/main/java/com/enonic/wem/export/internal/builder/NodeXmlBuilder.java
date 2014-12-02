@@ -14,7 +14,8 @@ public class NodeXmlBuilder
             parent( NodePath.newPath( xmlNode.getParent() ).build() ).
             childOrder( ChildOrder.from( xmlNode.getChildOrder() ) ).
             // propertyTree
-                // ACL
+                data( PropertyTreeXmlBuilder.build( xmlNode.getProperties() ) ).
+            // ACL
                 // indexConfigDocument
                 build();
     }

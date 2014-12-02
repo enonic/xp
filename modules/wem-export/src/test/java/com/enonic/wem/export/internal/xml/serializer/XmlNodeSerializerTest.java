@@ -2,6 +2,7 @@ package com.enonic.wem.export.internal.xml.serializer;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.junit.Test;
@@ -28,9 +29,7 @@ public class XmlNodeSerializerTest
     {
         final Instant instant = Instant.parse( "2014-11-28T14:16:00Z" );
 
-        //final LocalDateTime localDateTime = LocalDateTime.of( 2014, 11, 28, 21, 0, 0, 0 );
-
-        final LocalTime localTime = LocalTime.of( 21, 42, 0 );
+        final LocalDateTime localDateTime = LocalDateTime.of( 2014, 11, 28, 21, 0, 0, 0 );
 
         final PropertyTree propertyTree = new PropertyTree();
 
@@ -42,10 +41,10 @@ public class XmlNodeSerializerTest
         propertyTree.addGeoPoint( "myGeoPoint", GeoPoint.from( "8,4" ) );
         // Date & Time
         propertyTree.addInstant( "myInstant", instant );
-        propertyTree.addLocalTime( "myLocalTime", localTime );
+        propertyTree.addLocalTime( "myLocalTime", LocalTime.of( 21, 42, 0 ) );
         propertyTree.addLocalDate( "myLocalDate", LocalDate.of( 2014, 11, 28 ) );
         // This is causing trouble, since ms is added no matter what is set in the variable.
-        //propertyTree.addLocalDateTime( "myLocalDateTime", localDateTime );
+        propertyTree.addLocalDateTime( "myLocalDateTime", localDateTime );
         // Links and ref
         propertyTree.addReference( "myRef", Reference.from( "abcd" ) );
         propertyTree.addLink( "myLink", Link.from( "/root/parent/child" ) );

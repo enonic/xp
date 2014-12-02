@@ -5,7 +5,7 @@ import javax.xml.bind.JAXBElement;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.export.internal.xml.ObjectFactory;
 import com.enonic.wem.export.internal.xml.XmlDateTimeProperty;
-import com.enonic.wem.export.internal.xml.util.InstantConverter;
+import com.enonic.wem.export.internal.xml.util.DateTimeConverter;
 
 class LocalDateTimePropertyMapper
 {
@@ -13,7 +13,7 @@ class LocalDateTimePropertyMapper
     {
         XmlDateTimeProperty prop = new XmlDateTimeProperty();
         prop.setName( property.getName() );
-        prop.setValue( InstantConverter.convertToXmlSerializable( property.getLocalDateTime() ) );
+        prop.setValue( DateTimeConverter.toXMLGregorianCalendar( property.getLocalDateTime() ) );
 
         return objectFactory.createXmlPropertyTreeDateTime( prop );
     }

@@ -12,7 +12,8 @@
     <geoPoint name="myGeoPoint">8.0,4.0</geoPoint>
     <dateTime name="myInstant">2014-11-28T15:16:00.000+01:00</dateTime>
     <localTime name="myLocalTime">21:42:00.000Z</localTime>
-    <localDate name="myLocalDate">2014-11-28Z</localDate>
+    <localDate name="myLocalDate">2014-11-28+01:00</localDate>
+    <dateTime name="myLocalDateTime">2014-11-28T22:00:00.000+01:00</dateTime>
     <reference name="myRef">abcd</reference>
     <link name="myLink">/root/parent/child</link>
     <property-set name="mySet">
