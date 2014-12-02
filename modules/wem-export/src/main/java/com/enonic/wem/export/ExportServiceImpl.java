@@ -30,7 +30,6 @@ public class ExportServiceImpl
     @Override
     public NodeExportResult exportNodes( final NodePath nodePath )
     {
-
         return BatchedNodeExporter.create().
             xmlNodeSerializer( xmlNodeSerializer ).
             exportRootNode( nodePath ).
