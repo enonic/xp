@@ -5,14 +5,14 @@ module api.ui {
         public static ORIENTATION_VERTICAL = "vertical";
         public static ORIENTATION_HORIZONTAL = "horizontal";
 
-        private name:string;
-        private options:RadioButton[] = [];
+        private name: string;
+        private options: RadioButton[] = [];
 
-        private oldValue:string = "";
+        private oldValue: string = "";
 
         private valueChangedListeners: {(event: ValueChangedEvent):void}[] = [];
 
-        constructor(name:string, orientation?:string) {
+        constructor(name: string, orientation?: string) {
             super("div", "radio-group");
             this.name = name;
             if (RadioGroup.ORIENTATION_VERTICAL == orientation) {
@@ -21,7 +21,7 @@ module api.ui {
 
         }
 
-        public addOption(value:string, label:string, checked?:boolean) {
+        public addOption(value: string, label: string, checked?: boolean) {
             var radio = new RadioButton(label, value, this.name, checked);
             this.options.push(radio);
             this.appendChild(radio);
@@ -31,15 +31,16 @@ module api.ui {
             });
         }
 
-        setValue(value:string):void {
+        setValue(value: string): RadioGroup {
             var option;
             for (var i = 0; i < this.options.length; i++) {
                 option = this.options[i];
                 option.setChecked(option.getValue() == value);
             }
+            return this;
         }
 
-        getValue():string {
+        getValue(): string {
             var option;
             for (var i = 0; i < this.options.length; i++) {
                 option = this.options[i];
@@ -50,11 +51,11 @@ module api.ui {
             return undefined;
         }
 
-        getName():string {
+        getName(): string {
             return this.name;
         }
 
-        onValueChanged(listener:(event:ValueChangedEvent)=>void) {
+        onValueChanged(listener: (event: ValueChangedEvent)=>void) {
             this.valueChangedListeners.push(listener);
         }
 
@@ -74,10 +75,10 @@ module api.ui {
 
     export class RadioButton extends api.dom.FormInputEl {
 
-        private radio:api.dom.InputEl;
-        private label:api.dom.LabelEl;
+        private radio: api.dom.InputEl;
+        private label: api.dom.LabelEl;
 
-        constructor(label:string, value:string, name:string, checked?:boolean) {
+        constructor(label: string, value: string, name: string, checked?: boolean) {
             super("span", "radio-button");
 
             this.radio = new api.dom.InputEl();
@@ -91,23 +92,24 @@ module api.ui {
             this.setChecked(checked);
         }
 
-        setValue(value:string):void {
+        setValue(value: string): RadioButton {
             this.radio.setValue(value);
+            return this;
         }
 
-        getValue():string {
+        getValue(): string {
             return this.radio.getValue();
         }
 
-        getName():string {
+        getName(): string {
             return this.radio.getName();
         }
 
-        public isChecked():boolean {
+        public isChecked(): boolean {
             return this.radio.getHTMLElement()['checked'];
         }
 
-        public setChecked(checked:boolean = false):RadioButton {
+        public setChecked(checked: boolean = false): RadioButton {
             this.radio.getHTMLElement()['checked'] = checked;
             return this;
         }

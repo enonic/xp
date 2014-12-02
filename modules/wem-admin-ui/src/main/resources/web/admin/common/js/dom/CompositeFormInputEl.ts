@@ -28,8 +28,9 @@ module api.dom {
             return this.wrappedInput.getName();
         }
 
-        setValue(value: string) {
+        setValue(value: string): CompositeFormInputEl {
             this.wrappedInput.setValue(value);
+            return this;
         }
 
         addAdditionalElement(element: api.dom.Element) {

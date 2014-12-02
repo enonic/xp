@@ -32,12 +32,13 @@ module api.ui.text {
             api.dom.WindowDOM.get().onResized((event: UIEvent) => this.updateSize(), this);
         }
 
-        setValue(text: string) {
+        setValue(text: string): TextArea {
             if (this.oldValue != text) {
                 super.setValue(text);
                 this.notifyValueChanged(this.oldValue, text);
                 this.oldValue = text;
             }
+            return this;
         }
 
         setRows(rows: number) {

@@ -44,6 +44,48 @@ describe("api.util.StringHelperTest", function () {
 
     });
 
+    describe("isUpperCase", function () {
+
+        it("should return false if invalid arguments are passed", function () {
+            expect(sh.isUpperCase(null)).toBe(false);
+            expect(sh.isUpperCase("")).toBe(false);
+        });
+        it("should be true if all letters are uppercase", function () {
+            expect(sh.isUpperCase("LOREM IPSUM  123% !")).toBe(true);
+        });
+        it("should be false if not all letters are uppercase", function () {
+            expect(sh.isUpperCase("LOReM IPSUM  123% !")).toBe(false);
+        });
+    });
+
+    describe("isLowerCase", function () {
+
+        it("should return false if invalid arguments are passed", function () {
+            expect(sh.isLowerCase(null)).toBe(false);
+            expect(sh.isLowerCase("")).toBe(false);
+        });
+        it("should be true if all letters are uppercase", function () {
+            expect(sh.isLowerCase("lorem ipsum  123% !")).toBe(true);
+        });
+        it("should be false if not all letters are uppercase", function () {
+            expect(sh.isLowerCase("lorem Ipsum  123% !")).toBe(false);
+        });
+    });
+
+    describe("isAlphaNumeric", function () {
+
+        it("should return false if invalid arguments are passed", function () {
+            expect(sh.isAlphaNumeric(null)).toBe(false);
+            expect(sh.isAlphaNumeric("")).toBe(false);
+        });
+        it("should be true for alphanumeric sequence ", function () {
+            expect(sh.isAlphaNumeric("loREm ipsum  123")).toBe(true);
+        });
+        it("should be false for non-alphanumeric sequence", function () {
+            expect(sh.isAlphaNumeric("loREm Ipsum  123% !")).toBe(false);
+        });
+    });
+
     describe("isEmpty", function () {
 
         it("should be true for null", function () {
