@@ -33,10 +33,10 @@ public class ExportServiceImpl
 
         return BatchedNodeExporter.create().
             xmlNodeSerializer( xmlNodeSerializer ).
-            nodePath( nodePath ).
+            exportRootNode( nodePath ).
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            exportHome( Paths.get( HomeDir.get().toString(), "/exports" ) ).
+            exportHomePath( Paths.get( HomeDir.get().toString(), "/exports" ) ).
             exportName( "node_" + LocalDateTime.now().format( DateTimeFormatter.ISO_LOCAL_DATE_TIME ) ).
             build().
             export();

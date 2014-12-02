@@ -7,22 +7,22 @@ import java.util.List;
 
 import com.enonic.wem.api.node.NodePath;
 
-public class TreeNode<T>
-    implements Iterable<TreeNode<T>>
+public class MockNodeTree<T>
+    implements Iterable<MockNodeTree<T>>
 {
     final T data;
 
-    private TreeNode<T> parent;
+    private MockNodeTree<T> parent;
 
-    final List<TreeNode<T>> children;
+    final List<MockNodeTree<T>> children;
 
-    public TreeNode<T> find( final NodePath nodePath )
+    public MockNodeTree<T> find( final NodePath nodePath )
     {
         return doFindTreeNode( nodePath, this );
     }
 
 
-    private TreeNode<T> doFindTreeNode( final NodePath nodePath, final TreeNode<T> treeNode )
+    private MockNodeTree doFindTreeNode( final NodePath nodePath, final MockNodeTree<T> treeNode )
     {
         if ( treeNode == null )
         {
@@ -34,9 +34,9 @@ public class TreeNode<T>
             return treeNode;
         }
 
-        for ( final TreeNode child : treeNode.children )
+        for ( final MockNodeTree child : treeNode.children )
         {
-            final TreeNode foundNode = doFindTreeNode( nodePath, child );
+            final MockNodeTree foundNode = doFindTreeNode( nodePath, child );
 
             if ( foundNode != null )
             {
@@ -48,22 +48,22 @@ public class TreeNode<T>
     }
 
 
-    public TreeNode( T data )
+    public MockNodeTree( T data )
     {
         this.data = data;
         this.children = new LinkedList<>();
     }
 
-    public TreeNode<T> addChild( T child )
+    public MockNodeTree<T> addChild( T child )
     {
-        TreeNode<T> childNode = new TreeNode<T>( child );
+        MockNodeTree<T> childNode = new MockNodeTree<>( child );
         childNode.parent = this;
         this.children.add( childNode );
         return childNode;
     }
 
     @Override
-    public Iterator<TreeNode<T>> iterator()
+    public Iterator<MockNodeTree<T>> iterator()
     {
         return children.iterator();
     }

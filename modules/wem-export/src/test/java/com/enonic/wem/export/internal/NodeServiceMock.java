@@ -39,7 +39,7 @@ class NodeServiceMock
 
     private final Map<NodePath, Node> nodePathMap = new HashMap<>();
 
-    private final TreeNode<NodePath> nodeTree = new TreeNode<>( NodePath.ROOT );
+    private final MockNodeTree<NodePath> nodeTree = new MockNodeTree<>( NodePath.ROOT );
 
     @Override
     public Node create( final CreateNodeParams params )
@@ -56,7 +56,7 @@ class NodeServiceMock
         nodeIdMap.putIfAbsent( createdNode.id(), createdNode );
         nodePathMap.putIfAbsent( createdNode.path(), createdNode );
 
-        final TreeNode<NodePath> nodePathTreeNode = this.nodeTree.find( createdNode.parent() );
+        final MockNodeTree<NodePath> nodePathTreeNode = this.nodeTree.find( createdNode.parent() );
 
         if ( nodePathTreeNode == null )
         {
@@ -131,7 +131,7 @@ class NodeServiceMock
     @Override
     public FindNodesByParentResult findByParent( final FindNodesByParentParams params )
     {
-        final TreeNode<NodePath> parentNode = this.nodeTree.find( params.getParentPath() );
+        final MockNodeTree<NodePath> parentNode = this.nodeTree.find( params.getParentPath() );
 
         if ( parentNode == null )
         {
@@ -142,7 +142,7 @@ class NodeServiceMock
 
         final Nodes.Builder nodesBuilder = Nodes.create();
 
-        for ( final TreeNode<NodePath> treeNode : parentNode.children )
+        for ( final MockNodeTree<NodePath> treeNode : parentNode.children )
         {
             nodesBuilder.add( nodePathMap.get( treeNode.data ) );
         }

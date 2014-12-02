@@ -19,7 +19,7 @@ public class BatchedNodeExporter
 {
     private final static int DEFAULT_BATCH_SIZE = 100;
 
-    private final NodePath nodePath;
+    private final NodePath exportRootNode;
 
     private final int batchSize;
 
@@ -29,25 +29,25 @@ public class BatchedNodeExporter
 
     private final XmlNodeSerializer xmlNodeSerializer;
 
-    private final Path exportRootPath;
+    private final Path exportTargetPath;
 
     private final static String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     private BatchedNodeExporter( Builder builder )
     {
-        nodePath = builder.nodePath;
+        exportRootNode = builder.exportRootNode;
         batchSize = builder.batchSize;
         nodeService = builder.nodeService;
         exportWriter = builder.exportWriter;
         xmlNodeSerializer = builder.xmlNodeSerializer;
-        this.exportRootPath = NodeExportPathResolver.resolveExportRoot( builder.exportHome, builder.exportName );
+        this.exportTargetPath = NodeExportPathResolver.resolveExportTargetPath( builder.exportHomePath, builder.exportName );
     }
 
     public NodeExportResult export()
     {
         final NodeExportResult.Builder resultBuilder = NodeExportResult.create();
 
-        doProcessNode( this.nodePath, resultBuilder );
+        doProcessNode( this.exportRootNode, resultBuilder );
 
         return resultBuilder.build();
     }
@@ -143,8 +143,8 @@ public class BatchedNodeExporter
 
     private Path getNodeDataFolder( final Node node )
     {
-        final Path nodeBasePath = NodeExportPathResolver.resolveExportNodeRoot( this.exportRootPath, node );
-        return NodeExportPathResolver.resolveExportNodeDataPath( nodeBasePath );
+        final Path nodeBasePath = NodeExportPathResolver.resolveNodeBasePath( this.exportTargetPath, node.path(), exportRootNode );
+        return NodeExportPathResolver.resolveNodeDataFolder( nodeBasePath );
     }
 
     public static Builder create()
@@ -155,7 +155,7 @@ public class BatchedNodeExporter
 
     public static final class Builder
     {
-        private NodePath nodePath;
+        private NodePath exportRootNode;
 
         private int batchSize = DEFAULT_BATCH_SIZE;
 
@@ -165,7 +165,7 @@ public class BatchedNodeExporter
 
         private XmlNodeSerializer xmlNodeSerializer;
 
-        private Path exportHome;
+        private Path exportHomePath;
 
         private String exportName;
 
@@ -173,9 +173,9 @@ public class BatchedNodeExporter
         {
         }
 
-        public Builder nodePath( NodePath nodePath )
+        public Builder exportRootNode( NodePath exportRootNode )
         {
-            this.nodePath = nodePath;
+            this.exportRootNode = exportRootNode;
             return this;
         }
 
@@ -185,9 +185,9 @@ public class BatchedNodeExporter
             return this;
         }
 
-        public Builder exportHome( Path basePath )
+        public Builder exportHomePath( Path exportHomePath )
         {
-            this.exportHome = basePath;
+            this.exportHomePath = exportHomePath;
             return this;
         }
 

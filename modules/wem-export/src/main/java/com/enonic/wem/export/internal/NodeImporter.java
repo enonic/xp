@@ -31,7 +31,7 @@ public class NodeImporter
     {
         this.nodeService = builder.nodeService;
         this.exportReader = builder.exportReader;
-        this.exportRootPath = NodeExportPathResolver.resolveExportRoot( builder.exportHome, builder.exportName );
+        this.exportRootPath = NodeExportPathResolver.resolveExportTargetPath( builder.exportHome, builder.exportName );
         this.xmlNodeSerializer = builder.xmlNodeSerializer;
         this.importRoot = builder.importRoot;
     }

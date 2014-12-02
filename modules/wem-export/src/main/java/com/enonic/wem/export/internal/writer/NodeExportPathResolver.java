@@ -3,7 +3,6 @@ package com.enonic.wem.export.internal.writer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 
 public class NodeExportPathResolver
@@ -15,19 +14,24 @@ public class NodeExportPathResolver
 
     private static final String ORDER_EXPORT_NAME = "manualChildOrder.txt";
 
-    public static Path resolveExportRoot( final Path basePath, final String exportName )
+    public static Path resolveExportTargetPath( final Path basePath, final String exportName )
     {
         return Paths.get( basePath.toString(), exportName );
     }
 
-    public static Path resolveExportNodeRoot( final Path rootPath, final Node node )
+    public static Path resolveNodeBasePath( final Path rootPath, final NodePath nodePath, final NodePath exportNodePathRoot )
     {
-        final NodePath nodePath = node.path();
+        // Get path relative to export-root
 
-        return Paths.get( rootPath.toString(), nodePath.asRelative().toString() );
+        final Path fullNodePath = Paths.get( nodePath.toString() );
+        final Path exportBasePath = Paths.get( exportNodePathRoot.toString() );
+
+        final Path relativePath = exportBasePath.relativize( fullNodePath );
+
+        return Paths.get( rootPath.toString(), relativePath.toString() );
     }
 
-    public static Path resolveExportNodeDataPath( final Path basePath )
+    public static Path resolveNodeDataFolder( final Path basePath )
     {
         return Paths.get( basePath.toString(), SYSTEM_FOLDER_NAME );
     }
