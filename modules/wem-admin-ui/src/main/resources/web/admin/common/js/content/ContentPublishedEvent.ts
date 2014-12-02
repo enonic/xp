@@ -17,11 +17,11 @@ module api.content {
             return this.contentId;
         }
 
-        static on(handler: (event: ContentUpdatedEvent) => void) {
+        static on(handler: (event: ContentPublishedEvent) => void) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
         }
 
-        static un(handler?: (event: ContentUpdatedEvent) => void) {
+        static un(handler?: (event: ContentPublishedEvent) => void) {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
 

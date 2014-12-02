@@ -4,12 +4,12 @@ import java.util.LinkedHashSet;
 
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.query.expr.QueryExpr;
-import com.enonic.wem.api.node.NodeQuery;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeQuery;
+import com.enonic.wem.api.query.expr.QueryExpr;
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 
 public class SetNodeChildOrderCommand
     extends AbstractNodeCommand
@@ -22,7 +22,7 @@ public class SetNodeChildOrderCommand
     {
         super( builder );
         this.nodeId = builder.nodeId;
-        this.childOrder = builder.childOrdrer;
+        this.childOrder = builder.childOrder;
     }
 
     public static Builder create()
@@ -78,7 +78,7 @@ public class SetNodeChildOrderCommand
     {
         private NodeId nodeId;
 
-        private ChildOrder childOrdrer;
+        private ChildOrder childOrder;
 
         private Builder()
         {
@@ -92,7 +92,7 @@ public class SetNodeChildOrderCommand
 
         public Builder childOrder( final ChildOrder childOrder )
         {
-            this.childOrdrer = childOrder;
+            this.childOrder = childOrder;
             return this;
         }
 

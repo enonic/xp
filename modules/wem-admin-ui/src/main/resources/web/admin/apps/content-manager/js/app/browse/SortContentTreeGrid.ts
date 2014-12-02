@@ -18,12 +18,15 @@ module app.browse {
     import ContentSummaryViewer = api.content.ContentSummaryViewer;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
+    import ChildOrder = api.content.ChildOrder;
 
     import CompareStatus = api.content.CompareStatus;
 
     export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
         private contentId: api.content.ContentId;
+
+        private curChildOrder: ChildOrder;
 
         static MAX_FETCH_SIZE: number = 30;
 
@@ -133,7 +136,8 @@ module app.browse {
                 from--;
             }
 
-            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, SortContentTreeGrid.MAX_FETCH_SIZE).
+            return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, SortContentTreeGrid.MAX_FETCH_SIZE,
+                this.curChildOrder).
                 then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {
                     var contents = parentNode.getChildren().map((el) => {
                         return el.getData();
@@ -158,6 +162,14 @@ module app.browse {
 
         getContentId() {
             return this.contentId;
+        }
+
+        getChildOrder(): ChildOrder {
+            return this.curChildOrder;
+        }
+
+        setChildOrder(value: ChildOrder) {
+            this.curChildOrder = value;
         }
 
 

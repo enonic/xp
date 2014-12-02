@@ -110,7 +110,25 @@ module api.ui.tab {
                 this.menuEl.appendChild(tab);
                 this.tabMenuButton.show();
             }
+            this.initializeNewItemEvents(tab);
+        }
 
+        prependNavigationItem(tab: TabMenuItem) {
+            this.tabs.unshift(tab);
+            this.tabs.forEach((curTab: TabMenuItem) => {
+                curTab.setIndex(curTab.getIndex() + 1);
+            });
+            tab.setIndex(0);
+
+            if (tab.isVisibleInMenu()) {
+                this.menuEl.prependChild(tab);
+                this.tabMenuButton.show();
+            }
+
+            this.initializeNewItemEvents(tab);
+        }
+
+        private initializeNewItemEvents(tab: TabMenuItem) {
             tab.onSelected((event: TabMenuItemSelectedEvent) => {
                 this.selectNavigationItem(event.getTab().getIndex());
                 if (this.hideOnItemClick) {
@@ -123,6 +141,7 @@ module api.ui.tab {
 
             this.notifyTabAddedListeners(tab);
         }
+
 
         isEmpty(): boolean {
             return this.tabs.length == 0;
@@ -190,6 +209,13 @@ module api.ui.tab {
                 }
             }
             this.notifyTabRemovedListeners(tab);
+        }
+
+        removeNavigationItems() {
+            this.tabs.forEach((tab: TabMenuItem) => {
+                this.removeNavigationItem(tab);
+            });
+            this.tabs = [];
         }
 
         private updateActiveTab(tabIndex: number) {

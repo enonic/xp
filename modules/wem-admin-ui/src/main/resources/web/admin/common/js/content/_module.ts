@@ -24,6 +24,7 @@
 ///<reference path='GetContentSummaryByIds' />
 ///<reference path='GetContentByPathRequest.ts' />
 ///<reference path='CreateContentRequest.ts' />
+///<reference path='OrderContentRequest.ts' />
 ///<reference path='UpdateContentRequest.ts' />
 ///<reference path='DuplicateContentRequest.ts' />
 ///<reference path='ListContentResult.ts' />
@@ -35,6 +36,7 @@
 ///<reference path='ContentUpdatedEvent.ts' />
 ///<reference path='ContentDeletedEvent.ts' />
 ///<reference path='ContentPublishedEvent.ts' />
+///<reference path='ContentChildOrderUpdatedEvent.ts' />
 ///<reference path='ContentComboBox.ts' />
 ///<reference path='ContentQueryRequest.ts' />
 ///<reference path='ContentQueryResult.ts' />

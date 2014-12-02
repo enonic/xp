@@ -76,6 +76,13 @@ module app.browse {
                 this.contentTreeGridPanel.updateContentNode(event.getContentId());
             });
 
+            api.content.ContentChildOrderUpdatedEvent.on((event) => {
+                this.contentTreeGridPanel.updateContentNode(event.getContentId());
+                var updatedNode = this.contentTreeGridPanel.getRoot().getCurrentRoot()
+                    .findNode(event.getContentId().toString());
+                this.contentTreeGridPanel.sortNodeChildren(updatedNode);
+            });
+
             var showMask = () => {
                 this.contentTreeGridPanelMask.show();
             };
