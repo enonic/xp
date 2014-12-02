@@ -2,15 +2,15 @@ module app.browse {
 
     export class BaseUserEvent extends api.event.Event {
 
-        private gridItem: app.browse.UserTreeGridItem[];
+        private gridItems: app.browse.UserTreeGridItem[];
 
-        constructor(gridItem: app.browse.UserTreeGridItem[]) {
-            this.gridItem = gridItem;
+        constructor(gridItems: app.browse.UserTreeGridItem[]) {
+            this.gridItems = gridItems;
             super();
         }
 
         getPrincipals(): app.browse.UserTreeGridItem[] {
-            return this.gridItem;
+            return this.gridItems;
         }
     }
 }

@@ -12,4 +12,4 @@
 ///<reference path='UserItemDeletePromptEvent.ts'/>
 ///<reference path='PrincipalDuplicatedEvent.ts'/>
 ///<reference path='PrincipalSynchronizedEvent.ts'/>
-///<reference path='ShowNewPrincipalDialogEvent.ts'/>
+///<reference path='NewPrincipalEvent.ts'/>

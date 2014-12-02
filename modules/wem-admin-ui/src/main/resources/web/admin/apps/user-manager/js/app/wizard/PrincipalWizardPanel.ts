@@ -2,7 +2,9 @@ module app.wizard {
 
     import Principal = api.security.Principal;
     import PrincipalKey = api.security.PrincipalKey;
+    import PrincipalType = api.security.PrincipalType;
     import PrincipalNamedEvent = api.security.PrincipalNamedEvent;
+    import UserStoreKey = api.security.UserStoreKey;
 
     import FormView = api.form.FormView;
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
@@ -26,22 +28,34 @@ module app.wizard {
 
         constructing: boolean;
 
+        principalType: PrincipalType;
+
+        principalPath: string;
+
         principalNamedListeners: {(event: PrincipalNamedEvent): void}[];
 
         constructor(params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
 
             this.constructing = true;
             this.isPrincipalFormValid = false;
+            this.principalNamedListeners = [];
+
+            this.principalType = params.persistedType;
+            this.principalPath = params.persistedPath;
 
             var iconUrl = api.dom.ImgEl.PLACEHOLDER;
             this.formIcon = new FormIcon(iconUrl, "Click to upload icon");
             this.formIcon.addClass("icon icon-xlarge");
-            if (params.persistedPrincipal.isRole()) {
-                this.formIcon.addClass("icon-user7");
-            } else if (params.persistedPrincipal.isUser()) {
+            switch (this.principalType) {
+            case PrincipalType.USER:
                 this.formIcon.addClass("icon-user");
-            } else if (params.persistedPrincipal.isGroup()) {
+                break;
+            case PrincipalType.GROUP:
                 this.formIcon.addClass("icon-users");
+                break;
+            case PrincipalType.ROLE:
+                this.formIcon.addClass("icon-user7");
+                break;
             }
 
             this.wizardActions = new app.wizard.action.PrincipalWizardActions(this);
@@ -54,7 +68,7 @@ module app.wizard {
 
             this.principalWizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
 
-            this.principalWizardHeader.setPath(this.createPrincipalPath(params.persistedPrincipal));
+            this.principalWizardHeader.setPath(this.principalPath);
 
             super({
                 tabId: params.tabId,
@@ -83,7 +97,7 @@ module app.wizard {
                     if (this.getPersistedItem()) {
                         app.Router.setHash("edit/" + this.getPersistedItem().getKey());
                     } else {
-                        app.Router.setHash("new/" + this.getPersistedItem().getType());
+                        app.Router.setHash("new/" + this.principalType);
                     }
 
                     responsiveItem.update();
@@ -93,16 +107,6 @@ module app.wizard {
 
                 callback(this);
             });
-        }
-
-        /*
-         * Should be overridden by the children and return valid path,
-         * according to the position as long as it's hardcoded.
-         */
-        createPrincipalPath(principal?: Principal): string {
-            var path = principal.getKey().toString().split(":");
-            path.pop();
-            return path.length === 0 ? "/" : "/" + path.reverse().join("/") + "/";
         }
 
         giveInitialFocus() {
@@ -138,7 +142,7 @@ module app.wizard {
         postLayoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
-            this.principalWizardHeader.initNames(this.getPersistedItem().getDisplayName(), this.getPersistedItem().getKey().getId(), false);
+            this.principalWizardHeader.initNames("", this.principalPath, false);
 
             deferred.resolve(null);
             return deferred.promise;
@@ -221,7 +225,6 @@ module app.wizard {
         assembleViewedPrincipal(): Principal {
             var key = this.getPersistedItem().getKey(),
                 displayName = this.principalWizardHeader.getDisplayName(),
-                type = this.getPersistedItem().getType(),
                 modifiedTime = this.getPersistedItem().getModifiedTime();
 
             return new Principal(key, displayName, modifiedTime);

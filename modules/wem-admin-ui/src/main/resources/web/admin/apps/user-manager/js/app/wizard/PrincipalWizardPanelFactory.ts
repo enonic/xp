@@ -3,6 +3,7 @@ module app.wizard {
     import Principal = api.security.Principal;
     import PrincipalKey = api.security.PrincipalKey;
     import PrincipalType = api.security.PrincipalType;
+    import UserStoreKey = api.security.UserStoreKey;
 
     export class PrincipalWizardPanelFactory {
 
@@ -14,15 +15,43 @@ module app.wizard {
 
         private principalToEdit: Principal;
 
+        private principalType: PrincipalType;
+
+        private principalPath: string;
+
+        private userStore: UserStoreKey;
 
         setPrincipalToEdit(value: PrincipalKey): PrincipalWizardPanelFactory {
             this.principalKey = value;
             return this;
         }
 
+        setPrincipalType(value: PrincipalType): PrincipalWizardPanelFactory {
+            this.principalType = value;
+            return this;
+        }
+
+        setPrincipalPath(value: string): PrincipalWizardPanelFactory {
+            this.principalPath = value;
+            return this;
+        }
+
+        setUserStore(value: UserStoreKey): PrincipalWizardPanelFactory {
+            this.userStore = value;
+            return this;
+        }
+
+
         setAppBarTabId(value: api.app.bar.AppBarTabId): PrincipalWizardPanelFactory {
             this.appBarTabId = value;
             return this;
+        }
+
+        createForNew(): wemQ.Promise<PrincipalWizardPanel> {
+
+            this.creatingForNew = true;
+
+            return this.newPrincipalWizardPanelForNew();
         }
 
         createForEdit(): wemQ.Promise<PrincipalWizardPanel> {
@@ -39,6 +68,20 @@ module app.wizard {
             return new api.security.GetPrincipalByKeyRequest(this.principalKey).sendAndParse();
         }
 
+        private newPrincipalWizardPanelForNew(): wemQ.Promise<app.wizard.PrincipalWizardPanel> {
+
+            var deferred = wemQ.defer<app.wizard.PrincipalWizardPanel>();
+
+            var wizardParams = new app.wizard.PrincipalWizardPanelParams().
+                setPrincipalType(this.principalType).
+                setPrincipalPath(this.principalPath).
+                setUserStore(this.userStore).
+                setAppBarTabId(this.appBarTabId);
+
+            this.resolvePrincipalWizardPanel(deferred, wizardParams);
+
+            return deferred.promise;
+        }
 
         private newPrincipalWizardPanelForEdit(): wemQ.Promise<PrincipalWizardPanel> {
 
@@ -46,32 +89,40 @@ module app.wizard {
 
             var wizardParams = new PrincipalWizardPanelParams().
                 setAppBarTabId(this.appBarTabId).
+                setPrincipalType(this.principalType).
+                setPrincipalPath(this.principalPath).
+                setUserStore(this.userStore).
                 setPersistedPrincipal(this.principalToEdit);
 
-            switch (this.principalToEdit.getType()) {
+            this.resolvePrincipalWizardPanel(deferred, wizardParams);
+
+            return deferred.promise;
+        }
+
+        private resolvePrincipalWizardPanel(deferred: wemQ.Deferred<PrincipalWizardPanel>,
+                                            wizardParams: PrincipalWizardPanelParams) {
+            switch (wizardParams.persistedType) {
             case PrincipalType.ROLE:
-                new RoleWizardPanel(wizardParams, (wizard: PrincipalWizardPanel) => {
+                new RoleWizardPanel(wizardParams, (wizard:PrincipalWizardPanel) => {
                     deferred.resolve(wizard);
                 });
                 break;
             case PrincipalType.USER:
                 /* TODO: Replace with UserWizardPanel implementation. */
-                new PrincipalWizardPanel(wizardParams, (wizard: PrincipalWizardPanel) => {
+                new PrincipalWizardPanel(wizardParams, (wizard:PrincipalWizardPanel) => {
                     deferred.resolve(wizard);
                 });
                 break;
             case PrincipalType.GROUP:
-                new GroupWizardPanel(wizardParams, (wizard: PrincipalWizardPanel) => {
+                new GroupWizardPanel(wizardParams, (wizard:PrincipalWizardPanel) => {
                     deferred.resolve(wizard);
                 });
                 break;
             default:
-                new PrincipalWizardPanel(wizardParams, (wizard: PrincipalWizardPanel) => {
+                new PrincipalWizardPanel(wizardParams, (wizard:PrincipalWizardPanel) => {
                     deferred.resolve(wizard);
                 });
             }
-
-            return deferred.promise;
         }
     }
 }
