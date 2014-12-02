@@ -209,11 +209,12 @@ module api.ui.selector.dropdown {
             return this.dropdownDropdown.getOptionByRow(rowIndex);
         }
 
-        setValue(value: string) {
+        setValue(value: string): Dropdown<OPTION_DISPLAY_VALUE> {
             var option = this.getOptionByValue(value);
             if (option != null) {
                 this.selectOption(option);
             }
+            return this;
         }
 
         selectRow(index: number) {

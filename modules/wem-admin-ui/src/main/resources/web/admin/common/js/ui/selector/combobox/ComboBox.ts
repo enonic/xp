@@ -197,11 +197,12 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.setFilterArgs(args);
         }
 
-        setValue(value: string) {
+        setValue(value: string): ComboBox<OPTION_DISPLAY_VALUE> {
             var option = this.getOptionByValue(value);
             if (option != null) {
                 this.selectOption(option);
             }
+            return this;
         }
 
         setValues(values: string[]) {

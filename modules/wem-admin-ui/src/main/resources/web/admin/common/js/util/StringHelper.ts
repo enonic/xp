@@ -18,6 +18,34 @@ module api.util {
             });
         }
 
+        static isUpperCase(str: string): boolean {
+            if (StringHelper.isEmpty(str)) {
+                return false;
+            }
+            for (var i = 0; i < str.length; i++) {
+                if (str[i] != str[i].toUpperCase()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        static isLowerCase(str: string): boolean {
+            if (StringHelper.isEmpty(str)) {
+                return false;
+            }
+            for (var i = 0; i < str.length; i++) {
+                if (str[i] != str[i].toLowerCase()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        static isAlphaNumeric(str: string): boolean {
+            return StringHelper.isEmpty(str) ? false : /^[a-zA-Z0-9\s]+$/i.test(str);
+        }
+
         static isEmpty(str: string): boolean {
             return !str || str.length == 0;
         }

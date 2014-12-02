@@ -8,16 +8,22 @@ module api.dom {
             this.addClass('form-input');
         }
 
-        getValue(): string {
-            return this.getEl().getValue();
-        }
-
         getName(): string {
             return this.getEl().getAttribute("name");
         }
 
-        setValue(value: string) {
+        setName(name: string): FormInputEl {
+            this.getEl().setAttribute("name", name);
+            return this;
+        }
+
+        getValue(): string {
+            return this.getEl().getValue();
+        }
+
+        setValue(value: string): FormInputEl {
             this.getEl().setValue(value);
+            return this;
         }
 
         onChange(listener: (event: Event) => void) {

@@ -153,7 +153,7 @@ module api.ui.uploader {
             return this.value;
         }
 
-        setValue(value: string) {
+        setValue(value: string): ImageUploader {
             this.value = value;
             var src: string;
             if (value && (value.indexOf('/') == -1)) {
@@ -165,6 +165,7 @@ module api.ui.uploader {
             if (src != null) {
                 this.image.setSrc(src);
             }
+            return this;
         }
 
         setMaximumOccurrences(value: number) {

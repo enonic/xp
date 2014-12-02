@@ -5,3 +5,4 @@
 ///<reference path='PasswordInput.ts' />
 ///<reference path='TextArea.ts' />
 ///<reference path='CodeArea.ts' />
+///<reference path='PasswordGenerator.ts' />

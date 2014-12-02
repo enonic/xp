@@ -62,8 +62,9 @@ module api.ui.text {
             });
         }
 
-        setValue(value: string) {
+        setValue(value: string): CodeArea {
             this.codeMirror.setValue(value);
+            return this;
         }
 
         getValue(): string {

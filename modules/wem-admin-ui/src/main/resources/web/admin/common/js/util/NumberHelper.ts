@@ -9,5 +9,9 @@ module api.util {
         static isNumber(value: any): boolean {
             return typeof value === 'number' && !isNaN(value);
         }
+
+        static randomBetween(from: number, to: number): number {
+            return from + Math.round(Math.random() * (to - from));
+        }
     }
 }

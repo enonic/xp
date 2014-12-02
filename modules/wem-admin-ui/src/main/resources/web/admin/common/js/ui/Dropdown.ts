@@ -19,10 +19,11 @@ module api.ui {
             this.appendChild(option);
         }
 
-        setValue(value: string) {
+        setValue(value: string): Dropdown {
             super.setValue(value);
             this.notifyValueChanged(this.oldValue, value);
             this.oldValue = value;
+            return this;
         }
 
 
