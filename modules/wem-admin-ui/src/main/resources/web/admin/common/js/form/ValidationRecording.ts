@@ -23,7 +23,7 @@ module api.form {
         }
 
         isMinimumOccurrencesValid(): boolean {
-            return this.breaksMaximumOccurrencesArray.length == 0;
+            return this.breaksMinimumOccurrencesArray.length == 0;
         }
 
         isMaximumOccurrencesValid(): boolean {
