@@ -4,10 +4,6 @@ module app.create {
 
         constructor() {
             super();
-
-            var title = new api.dom.H4El();
-            title.setHtml("Recently used");
-            this.prependChild(title);
         }
 
         setItems(items: NewContentDialogListItem[]) {
