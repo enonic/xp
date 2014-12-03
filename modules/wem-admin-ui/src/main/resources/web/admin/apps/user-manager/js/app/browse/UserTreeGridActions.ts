@@ -4,7 +4,7 @@ module app.browse {
 
     export class UserTreeGridActions implements TreeGridActions {
 
-        public SHOW_NEW_DIALOG_ACTION: Action;
+        public NEW: Action;
         public EDIT: Action;
         public DELETE: Action;
         public DUPLICATE: Action;
@@ -13,14 +13,13 @@ module app.browse {
         private actions: api.ui.Action[] = [];
 
         constructor(grid: app.browse.UserItemsTreeGrid) {
-            this.SHOW_NEW_DIALOG_ACTION = new app.browse.action.ShowNewPrincipalDialogAction(grid);
+            this.NEW = new app.browse.action.NewPrincipalAction(grid);
             this.EDIT = new app.browse.action.EditPrincipalAction(grid);
-            this.DELETE = new app.browse.action.DeleteUserItemAction(grid);
+            this.DELETE = new app.browse.action.DeletePrincipalAction(grid);
             this.DUPLICATE = new app.browse.action.DuplicatePrincipalAction(grid);
             this.SYNCH = new app.browse.action.SynchPrincipalAction(grid);
 
-            this.actions.push(this.SHOW_NEW_DIALOG_ACTION, this.EDIT, this.DELETE, this.DUPLICATE,
-                this.SYNCH);
+            this.actions.push(this.NEW, this.EDIT, this.DELETE, this.DUPLICATE, this.SYNCH);
         }
 
         getAllActions(): api.ui.Action[] {
@@ -28,23 +27,39 @@ module app.browse {
         }
 
         updateActionsEnabledState(selectedItems: UserTreeGridItem[]) {
-            var userStoresSelected: number = 0;
-            var principalsSelected: number = 0;
+            var userStoresSelected:  number = 0,
+                principalsSelected:  number = 0,
+                directoriesSelected: number = 0;
+
             selectedItems.forEach((item: UserTreeGridItem) => {
                 var itemType = item.getType();
-                if (itemType === UserTreeGridItemType.PRINCIPAL) {
+                switch (itemType) {
+                case UserTreeGridItemType.PRINCIPAL:
                     principalsSelected++;
-                } else if (itemType === UserTreeGridItemType.USER_STORE) {
+                    break;
+                case UserTreeGridItemType.ROLES:
+                    directoriesSelected++;
+                    break;
+                case UserTreeGridItemType.GROUPS:
+                    directoriesSelected++;
+                    break;
+                case UserTreeGridItemType.USERS:
+                    directoriesSelected++;
+                    break;
+                case UserTreeGridItemType.USER_STORE:
                     userStoresSelected++;
+                    break;
                 }
             });
-            var anyPrincipal = principalsSelected > 0;
-            var anyUserStore = userStoresSelected > 0;
 
-            this.SHOW_NEW_DIALOG_ACTION.setEnabled(true);
+            var totalSelection = userStoresSelected + principalsSelected + directoriesSelected,
+                anyPrincipal = principalsSelected > 0,
+                anyUserStore = userStoresSelected > 0;
+
+            this.NEW.setEnabled((directoriesSelected == 1) && (totalSelection == 1));
             this.EDIT.setEnabled(anyPrincipal);
             this.DELETE.setEnabled(anyPrincipal);
-            this.DUPLICATE.setEnabled((principalsSelected == 1) && (userStoresSelected == 0));
+            this.DUPLICATE.setEnabled((principalsSelected == 1) && (totalSelection == 1));
             this.SYNCH.setEnabled(anyUserStore);
         }
     }

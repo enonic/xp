@@ -1,6 +1,7 @@
 module app.browse.action {
 
     import Action = api.ui.Action;
+
     export class EditPrincipalAction extends Action {
 
         constructor(grid: UserItemsTreeGrid) {

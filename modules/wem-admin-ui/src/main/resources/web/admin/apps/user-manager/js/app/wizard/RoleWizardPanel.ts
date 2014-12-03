@@ -6,6 +6,7 @@ module app.wizard {
     import UpdateRoleRequest = api.security.UpdateRoleRequest;
 
     import Principal = api.security.Principal;
+    import PrincipalKey = api.security.PrincipalKey;
 
     import WizardStep = api.app.wizard.WizardStep;
 
@@ -57,8 +58,10 @@ module app.wizard {
         }
 
         produceCreateRoleRequest(): CreateRoleRequest {
-            var role = this.assembleViewedPrincipal().asRole();
-            return new CreateRoleRequest().setKey(role.getKey()).setDisplayName(role.getDisplayName()).setMembers(role.getMembers());
+            var key = PrincipalKey.ofRole(Math.random().toString(36).slice(2)),
+                name = this.principalWizardHeader.getDisplayName(),
+                members = this.getMembersWizardStepForm().getMembers().map((el) => { return el.getKey(); });
+            return new CreateRoleRequest().setKey(key).setDisplayName(name).setMembers(members);
         }
 
         updatePersistedItem(): wemQ.Promise<Principal> {
