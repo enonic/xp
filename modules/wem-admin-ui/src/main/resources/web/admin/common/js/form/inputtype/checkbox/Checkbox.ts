@@ -24,7 +24,7 @@ module api.content.form.inputtype.checkbox {
             return ValueTypes.BOOLEAN.newFalse();
         }
 
-        layoutProperty(input: api.form.Input, property: Property) {
+        layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
 
             if (property.hasNonNullValue()) {
                 this.checkbox.setChecked(property.getBoolean());
@@ -40,6 +40,8 @@ module api.content.form.inputtype.checkbox {
                     property.setValue(newValue);
                 }
             });
+
+            return wemQ<void>(null);
         }
 
         giveFocus(): boolean {

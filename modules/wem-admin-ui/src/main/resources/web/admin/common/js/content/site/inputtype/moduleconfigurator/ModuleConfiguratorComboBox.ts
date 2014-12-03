@@ -4,8 +4,10 @@ module api.content.site.inputtype.moduleconfigurator {
     import PropertyTree = api.data.PropertyTree;
     import PropertySet = api.data.PropertySet;
     import Module = api.module.Module;
+    import ModuleKey = api.module.ModuleKey;
     import ModuleViewer = api.module.ModuleViewer;
     import ModuleLoader = api.module.ModuleLoader;
+    import FormView = api.form.FormView;
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import SelectedOptionView = api.ui.selector.combobox.SelectedOptionView;
@@ -14,15 +16,18 @@ module api.content.site.inputtype.moduleconfigurator {
 
     export class ModuleConfiguratorComboBox extends api.ui.selector.combobox.RichComboBox<Module> {
 
+        private moduleConfiguratorSelectedOptionsView: ModuleConfiguratorSelectedOptionsView;
+
         constructor(maxOccurrences: number, moduleConfigProvider: ModuleConfigProvider) {
 
+            this.moduleConfiguratorSelectedOptionsView = new ModuleConfiguratorSelectedOptionsView(moduleConfigProvider);
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Module>();
             builder.
                 setMaximumOccurrences(maxOccurrences).
                 setIdentifierMethod('getModuleKey').
                 setComboBoxName("moduleSelector").
                 setLoader(new ModuleLoader()).
-                setSelectedOptionsView(new ModuleConfiguratorSelectedOptionsView(moduleConfigProvider)).
+                setSelectedOptionsView(this.moduleConfiguratorSelectedOptionsView).
                 setOptionDisplayValueViewer(new ModuleViewer()).
                 setDelayedInputValueChangedHandling(500);
 
@@ -37,11 +42,20 @@ module api.content.site.inputtype.moduleconfigurator {
             return views;
         }
 
+        onModuleConfigFormDisplayed(listener: {(moduleKey: ModuleKey, formView: FormView): void;}) {
+            this.moduleConfiguratorSelectedOptionsView.onModuleConfigFormDisplayed(listener);
+        }
+
+        unModuleConfigFormDisplayed(listener: {(moduleKey: ModuleKey, formView: FormView): void;}) {
+            this.moduleConfiguratorSelectedOptionsView.unModuleConfigFormDisplayed(listener);
+        }
     }
 
     export class ModuleConfiguratorSelectedOptionsView extends BaseSelectedOptionsView<Module> {
 
         private moduleConfigProvider: ModuleConfigProvider;
+
+        private moduleConfigFormDisplayedListeners: {(moduleKey: ModuleKey, formView: FormView) : void}[] = [];
 
         constructor(moduleConfigProvider: ModuleConfigProvider) {
             super();
@@ -52,8 +66,24 @@ module api.content.site.inputtype.moduleconfigurator {
             var moduleConfig = this.moduleConfigProvider.getConfig(option.displayValue.getModuleKey());
             var moduleConfigData: PropertySet = moduleConfig ? moduleConfig.getConfig() : new PropertyTree().getRoot();
             var optionView = new ModuleConfiguratorSelectedOptionView(option, moduleConfigData);
+            optionView.onModuleConfigFormDisplayed((moduleKey: ModuleKey) => {
+                this.notifyModuleConfigFormDisplayed(moduleKey, optionView.getFormView());
+            });
 
             return new SelectedOption<Module>(optionView, this.count());
+        }
+
+        onModuleConfigFormDisplayed(listener: {(moduleKey: ModuleKey, formView: FormView): void;}) {
+            this.moduleConfigFormDisplayedListeners.push(listener);
+        }
+
+        unModuleConfigFormDisplayed(listener: {(moduleKey: ModuleKey, formView: FormView): void;}) {
+            this.moduleConfigFormDisplayedListeners =
+            this.moduleConfigFormDisplayedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyModuleConfigFormDisplayed(moduleKey: ModuleKey, formView: FormView) {
+            this.moduleConfigFormDisplayedListeners.forEach((listener) => listener(moduleKey, formView));
         }
 
     }

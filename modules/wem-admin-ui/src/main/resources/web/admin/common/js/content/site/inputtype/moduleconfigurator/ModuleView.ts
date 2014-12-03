@@ -7,6 +7,7 @@ module api.content.site.inputtype.moduleconfigurator {
     import FormView = api.form.FormView;
     import FormContextBuilder = api.form.FormContextBuilder;
     import Module = api.module.Module;
+    import ModuleKey = api.module.ModuleKey;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
@@ -21,6 +22,8 @@ module api.content.site.inputtype.moduleconfigurator {
         private removeClickedListeners: {(event: MouseEvent): void;}[];
 
         private collapseClickedListeners: {(event: MouseEvent): void;}[];
+
+        private moduleConfigFormDisplayedListeners: {(moduleKey: ModuleKey) : void}[] = [];
 
         constructor(mod: Module, config: PropertySet) {
             super("module-view");
@@ -68,6 +71,12 @@ module api.content.site.inputtype.moduleconfigurator {
             var formContext = new FormContextBuilder().build();
 
             this.formView = new FormView(formContext, this.module.getForm(), this.config);
+            this.formView.layout().then(() => {
+                this.notifyModuleConfigFormDisplayed(this.module.getModuleKey());
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
+
             this.formView.addClass("module-form");
             this.appendChild(this.formView);
         }
@@ -111,6 +120,19 @@ module api.content.site.inputtype.moduleconfigurator {
             this.collapseClickedListeners.forEach((listener) => {
                 listener(event);
             })
+        }
+
+        onModuleConfigFormDisplayed(listener: {(moduleKey: ModuleKey): void;}) {
+            this.moduleConfigFormDisplayedListeners.push(listener);
+        }
+
+        unModuleConfigFormDisplayed(listener: {(moduleKey: ModuleKey): void;}) {
+            this.moduleConfigFormDisplayedListeners =
+            this.moduleConfigFormDisplayedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyModuleConfigFormDisplayed(moduleKey: ModuleKey) {
+            this.moduleConfigFormDisplayedListeners.forEach((listener) => listener(moduleKey));
         }
     }
 }

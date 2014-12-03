@@ -204,6 +204,9 @@ module app.wizard.page.contextwindow.inspect {
 
             this.configForm = new FormView(new FormContextBuilder().build(), pageDescriptor.getConfig(), config.getRoot());
             this.appendChild(this.configForm);
+            this.configForm.layout().catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
         }
     }
 }

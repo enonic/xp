@@ -11,6 +11,10 @@ module api.form {
             this.formItemOccurrence = formItemOccurrence;
         }
 
+        public layout(): wemQ.Promise<void> {
+            return wemQ<void>(null);
+        }
+
         onRemoveButtonClicked(listener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) {
             this.removeButtonClickedListeners.push(listener);
         }

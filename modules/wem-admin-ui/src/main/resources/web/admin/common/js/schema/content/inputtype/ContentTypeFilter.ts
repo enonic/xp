@@ -39,7 +39,7 @@ module api.schema.content.inputtype {
             return null;
         }
 
-        layout(input: Input, propertyArray: PropertyArray) {
+        layout(input: Input, propertyArray: PropertyArray): wemQ.Promise<void> {
 
             this.layoutInProgress = true;
 
@@ -81,6 +81,8 @@ module api.schema.content.inputtype {
             });
 
             this.appendChild(this.combobox);
+
+            return wemQ<void>(null);
         }
 
         private getValues(): Value[] {

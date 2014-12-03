@@ -55,8 +55,6 @@ module api.form {
             this.parent = config.parent;
             this.constructedWithData = config.dataSet != null;
             this.propertySet = config.dataSet;
-            this.doLayout();
-            this.refresh();
         }
 
         getDataPath(): PropertyPath {
@@ -64,7 +62,10 @@ module api.form {
             return this.propertySet.getProperty().getPath();
         }
 
-        private doLayout() {
+        public layout(): wemQ.Promise<void> {
+
+            var deferred = wemQ.defer<void>();
+
             this.removeButton = new api.dom.AEl("remove-button");
             this.appendChild(this.removeButton);
             this.removeButton.onClicked((event: MouseEvent) => {
@@ -78,32 +79,43 @@ module api.form {
             this.appendChild(this.formItemSetOccurrencesContainer);
 
 
-            this.formItemViews = new FormItemLayer().
+            var layoutPromise: wemQ.Promise<FormItemView[]> = new FormItemLayer().
                 setFormContext(this.context).
                 setFormItems(this.formItemSet.getFormItems()).
                 setParentElement(this.formItemSetOccurrencesContainer).
                 setParent(this).
                 layout(this.propertySet);
 
-            this.validate(true);
+            layoutPromise.then((formItemViews: FormItemView[]) => {
 
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.onValidityChanged((event: ValidityChangedEvent) => {
+                this.formItemViews = formItemViews;
+                this.validate(true);
 
-                    var previousValidState = this.previousValidationRecording.isValid();
-                    if (event.isValid()) {
-                        this.previousValidationRecording.removeByPath(event.getOrigin());
-                    }
-                    else {
-                        this.previousValidationRecording.flatten(event.getRecording());
-                    }
+                this.formItemViews.forEach((formItemView: FormItemView) => {
+                    formItemView.onValidityChanged((event: ValidityChangedEvent) => {
 
-                    if (previousValidState != this.previousValidationRecording.isValid()) {
-                        this.notifyValidityChanged(new ValidityChangedEvent(this.previousValidationRecording,
-                            this.resolveValidationRecordingPath()));
-                    }
+                        var previousValidState = this.previousValidationRecording.isValid();
+                        if (event.isValid()) {
+                            this.previousValidationRecording.removeByPath(event.getOrigin());
+                        }
+                        else {
+                            this.previousValidationRecording.flatten(event.getRecording());
+                        }
+
+                        if (previousValidState != this.previousValidationRecording.isValid()) {
+                            this.notifyValidityChanged(new ValidityChangedEvent(this.previousValidationRecording,
+                                this.resolveValidationRecordingPath()));
+                        }
+                    });
                 });
-            });
+
+                this.refresh();
+                deferred.resolve(null);
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
+
+            return deferred.promise;
         }
 
         getFormItemViews(): FormItemView[] {
@@ -155,6 +167,13 @@ module api.form {
 
         getLastValidationRecording(): ValidationRecording {
             return this.previousValidationRecording;
+        }
+
+        public displayValidationErrors(value: boolean) {
+            console.log("FormItemSetOccurrenceView.displayValidationErrors: " + value);
+            this.formItemViews.forEach((view: FormItemView) => {
+                view.displayValidationErrors(value);
+            });
         }
 
         validate(silent: boolean = true): ValidationRecording {

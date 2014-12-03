@@ -45,7 +45,7 @@ module app.wizard {
                 spread<void>(() => {
                     this.getDescriptionWizardStepForm().layout(principal);
                     this.getMembersWizardStepForm().layout(principal);
-                return wemQ(null);
+                return wemQ<void>(null);
             });
         }
 

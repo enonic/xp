@@ -123,7 +123,7 @@ module api.content.form.inputtype.image {
             return null;
         }
 
-        layout(input: api.form.Input, propertyArray: PropertyArray) {
+        layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
 
             this.layoutInProgress = true;
             this.input = input;
@@ -163,19 +163,14 @@ module api.content.form.inputtype.image {
             this.appendChild(this.selectedOptionsView);
 
             var loadContentPromise = this.doLoadContent(this.propertyArray);
-            loadContentPromise.then((contents: ContentSummary[]) => {
-                    contents.forEach((content: ContentSummary) => {
-                        this.comboBox.selectOption(<Option<ImageSelectorDisplayValue>>{
-                            value: content.getId(),
-                            displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
-                        });
+            return loadContentPromise.then((contents: ContentSummary[]) => {
+                contents.forEach((content: ContentSummary) => {
+                    this.comboBox.selectOption(<Option<ImageSelectorDisplayValue>>{
+                        value: content.getId(),
+                        displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
                     });
-
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).finally(()=> {
-                    this.layoutInProgress = false;
-                }).done();
+                });
+            });
         }
 
         private doLoadContent(propertyArray: PropertyArray): wemQ.Promise<ContentSummary[]> {

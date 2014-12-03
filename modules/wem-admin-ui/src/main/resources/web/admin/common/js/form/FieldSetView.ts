@@ -17,6 +17,8 @@ module api.form {
 
         private fieldSet: FieldSet;
 
+        private propertySet: PropertySet;
+
         private formItemViews: FormItemView[] = [];
 
         constructor(config: FieldSetViewConfig) {
@@ -28,7 +30,7 @@ module api.form {
             });
 
             this.fieldSet = config.fieldSet;
-            this.doLayout(config.dataSet);
+            this.propertySet = config.dataSet;
         }
 
         broadcastFormSizeChanged() {
@@ -37,7 +39,14 @@ module api.form {
             });
         }
 
-        private doLayout(dataSet: PropertySet) {
+        public layout(): wemQ.Promise<void> {
+
+            return this.doLayout();
+        }
+
+        private doLayout(): wemQ.Promise<void> {
+
+            var deferred = wemQ.defer<void>();
 
             var label = new FieldSetLabel(this.fieldSet);
             this.appendChild(label);
@@ -45,12 +54,21 @@ module api.form {
             var wrappingDiv = new api.dom.DivEl("field-set-container");
             this.appendChild(wrappingDiv);
 
-            this.formItemViews = new FormItemLayer().
+            var layoutPromise: wemQ.Promise<FormItemView[]> = new FormItemLayer().
                 setFormContext(this.getContext()).
                 setFormItems(this.fieldSet.getFormItems()).
                 setParentElement(wrappingDiv).
                 setParent(this.getParent()).
-                layout(dataSet);
+                layout(this.propertySet);
+            layoutPromise.then((formItemViews: FormItemView[]) => {
+                this.formItemViews = formItemViews;
+
+                deferred.resolve(null);
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
+
+            return deferred.promise;
         }
 
         onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
@@ -80,6 +98,12 @@ module api.form {
 
             }
             return focusGiven;
+        }
+
+        public displayValidationErrors(value: boolean) {
+            this.formItemViews.forEach((view: FormItemView) => {
+                view.displayValidationErrors(value);
+            });
         }
 
         validate(silent: boolean = true): ValidationRecording {

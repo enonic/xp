@@ -3,6 +3,8 @@ module api.content.site.inputtype.moduleconfigurator {
     import PropertyTree = api.data.PropertyTree;
     import Property = api.data.Property;
     import PropertyArray = api.data.PropertyArray;
+    import FormView = api.form.FormView;
+    import FormValidityChangedEvent = api.form.FormValidityChangedEvent;
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
@@ -28,12 +30,13 @@ module api.content.site.inputtype.moduleconfigurator {
 
         private comboBox: ModuleConfiguratorComboBox;
 
-        private layoutInProgress: boolean;
-
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
+
+        private _displayValidationErrors: boolean;
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super("module-configurator");
+            this._displayValidationErrors = false;
             this.context = config;
         }
 
@@ -45,9 +48,8 @@ module api.content.site.inputtype.moduleconfigurator {
             return null;
         }
 
-        layout(input: api.form.Input, propertyArray: PropertyArray) {
+        layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
 
-            this.layoutInProgress = true;
             this.input = input;
             this.propertyArray = propertyArray;
 
@@ -56,48 +58,21 @@ module api.content.site.inputtype.moduleconfigurator {
 
             this.appendChild(this.comboBox);
 
-            this.doLoadModules(propertyArray).
-                catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).finally(()=> {
-                    this.layoutInProgress = false;
-                }).done();
-        }
+            return this.doLoadModules(propertyArray).then(() => {
 
-        private doLoadModules(propertyArray: PropertyArray): wemQ.Promise<Module[]> {
-            var promises: wemQ.Promise<Module>[] = [];
-            propertyArray.forEach((property: Property) => {
+                this.comboBox.onOptionDeselected((removed: SelectedOption<Module>) => {
+                    this.propertyArray.remove(removed.getIndex());
+                    this.validate(false);
+                });
 
-                if (property.hasNonNullValue()) {
-                    var moduleConfig = new ModuleConfigBuilder().fromData(property.getSet()).build();
-                    var promise = new GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse();
-                    promises.push(promise);
-                    promise.then((requestedModule: Module) => {
-                        this.comboBox.select(requestedModule);
-                    }).done();
+                this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<Module>) => {
 
-                }
-            });
-            return wemQ.all<Module>(promises);
-        }
-
-        private createComboBox(input: api.form.Input, moduleConfigProvider: ModuleConfigProvider): ModuleConfiguratorComboBox {
-
-            var comboBox = new ModuleConfiguratorComboBox(input.getOccurrences().getMaximum() || 0, moduleConfigProvider);
-
-            comboBox.onOptionDeselected((removed: SelectedOption<Module>) => {
-                this.propertyArray.remove(removed.getIndex());
-                this.validate(false);
-            });
-
-            comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<Module>) => {
-                if (!this.layoutInProgress) {
                     var key = event.getOption().displayValue.getModuleKey();
                     if (!key) {
                         return;
                     }
 
-                    var selectedOption = comboBox.getSelectedOption(event.getOption());
+                    var selectedOption = this.comboBox.getSelectedOption(event.getOption());
                     var selectedOptionView: ModuleConfiguratorSelectedOptionView = <ModuleConfiguratorSelectedOptionView>selectedOption.getOptionView();
                     var configData = selectedOptionView.getFormView().getData();
 
@@ -109,28 +84,72 @@ module api.content.site.inputtype.moduleconfigurator {
                     var moduleConfigAsData = moduleConfig.toPropertySet(this.propertyArray.newSet());
                     var newValue = new Value(moduleConfigAsData, ValueTypes.DATA);
 
-                    if (comboBox.countSelected() == 1) { // overwrite initial value
+                    if (this.comboBox.countSelected() == 1) { // overwrite initial value
                         this.propertyArray.set(0, newValue);
                     }
                     else {
                         this.propertyArray.add(newValue);
                     }
-                }
-                this.validate(false);
-            });
 
-            return comboBox;
+                    this.validate(false);
+                });
+            });
+        }
+
+        private doLoadModules(propertyArray: PropertyArray): wemQ.Promise<void> {
+            var deferred = wemQ.defer<void>();
+
+            var moduleConfigFormsToDisplay: string[] = [];
+            propertyArray.forEach((property: Property) => {
+
+                if (property.hasNonNullValue()) {
+                    var moduleConfig = new ModuleConfigBuilder().fromData(property.getSet()).build();
+                    moduleConfigFormsToDisplay.push(moduleConfig.getModuleKey().toString());
+
+                    new GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse().
+                        then((requestedModule: Module) => {
+
+                            this.comboBox.onModuleConfigFormDisplayed((moduleKey: ModuleKey, formView: FormView) => {
+                                var indexToRemove = moduleConfigFormsToDisplay.indexOf(moduleKey.toString());
+                                if (indexToRemove != -1) {
+                                    moduleConfigFormsToDisplay.splice(indexToRemove, 1);
+                                }
+                                if (moduleConfigFormsToDisplay.length == 0) {
+                                    deferred.resolve(null);
+                                }
+
+                                formView.onValidityChanged((event: FormValidityChangedEvent) => {
+
+                                    this.validate(false);
+                                });
+                            });
+                            this.comboBox.select(requestedModule);
+                        });
+                }
+            });
+            return deferred.promise;
+        }
+
+        private createComboBox(input: api.form.Input, moduleConfigProvider: ModuleConfigProvider): ModuleConfiguratorComboBox {
+
+            return new ModuleConfiguratorComboBox(input.getOccurrences().getMaximum() || 0, moduleConfigProvider);
         }
 
         availableSizeChanged() {
         }
 
+        displayValidationErrors(value: boolean) {
+            this._displayValidationErrors = value;
+            this.comboBox.getSelectedOptionViews().forEach((view: ModuleConfiguratorSelectedOptionView) => {
+                view.getFormView().displayValidationErrors(value);
+            });
+        }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
             var recording = new api.form.inputtype.InputValidationRecording();
 
-            // check the number of occurrencees
+            // check the number of occurrences
             var numberOfValids = this.comboBox.countSelected();
             if (numberOfValids < this.input.getOccurrences().getMinimum()) {
                 recording.setBreaksMinimumOccurrences(true);
@@ -139,9 +158,8 @@ module api.content.site.inputtype.moduleconfigurator {
                 recording.setBreaksMaximumOccurrences(true);
             }
 
-            // check
             this.comboBox.getSelectedOptionViews().forEach((view: ModuleConfiguratorSelectedOptionView) => {
-                view.getFormView().displayValidationErrors(true);
+
                 var validationRecording = view.getFormView().validate(silent);
                 if (!validationRecording.isMinimumOccurrencesValid()) {
                     recording.setBreaksMinimumOccurrences(true);
@@ -149,7 +167,6 @@ module api.content.site.inputtype.moduleconfigurator {
                 if (!validationRecording.isMaximumOccurrencesValid()) {
                     recording.setBreaksMaximumOccurrences(true);
                 }
-                console.log(validationRecording);
             });
 
             if (!silent) {

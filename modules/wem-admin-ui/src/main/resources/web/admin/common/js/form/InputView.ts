@@ -52,11 +52,9 @@ module api.form {
             this.input = config.input;
             this.parentPropertySet = config.parentDataSet;
 
-            this.doLayout();
-            this.refresh();
         }
 
-        private doLayout() {
+        public layout(): wemQ.Promise<void> {
 
             if (this.input.getLabel()) {
                 var label = new InputLabel(this.input);
@@ -65,19 +63,7 @@ module api.form {
                 this.addClass("no-label")
             }
 
-            var inputType: api.form.InputTypeName = this.input.getInputType();
-            var inputTypeViewContext = this.getContext().createInputTypeViewContext(this.input.getInputTypeConfig(),
-                this.parentPropertySet.getPropertyPath(), this.input);
-
-            if (inputtype.InputTypeManager.isRegistered(inputType.getName())) {
-
-                this.inputTypeView = inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewContext);
-            }
-            else {
-                console.log("Input type [" + inputType.getName() + "] needs to be registered first.");
-                this.inputTypeView = inputtype.InputTypeManager.createView("NoInputTypeFound", inputTypeViewContext);
-            }
-
+            this.inputTypeView = this.createInputTypeView();
             this.inputTypeView.onEditContentRequest((content: api.content.ContentSummary) => {
                 this.notifyEditContentRequested(content);
             });
@@ -96,43 +82,63 @@ module api.form {
                 }
             }
 
-            this.inputTypeView.layout(this.input, this.propertyArray);
+            var inputTypeViewLayoutPromise = this.inputTypeView.layout(this.input, this.propertyArray);
+            inputTypeViewLayoutPromise.then(() => {
+                this.appendChild(this.inputTypeView.getElement());
 
-            this.appendChild(this.inputTypeView.getElement());
+                if (!this.inputTypeView.isManagingAdd()) {
 
-            if (!this.inputTypeView.isManagingAdd()) {
+                    var inputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd<any>>this.inputTypeView;
+                    inputTypeViewNotManagingAdd.onOccurrenceAdded(() => {
+                        this.refresh();
+                    });
+                    inputTypeViewNotManagingAdd.onOccurrenceRemoved((event: api.form.OccurrenceRemovedEvent) => {
+                        this.refresh();
 
-                var inputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd<any>>this.inputTypeView;
-                inputTypeViewNotManagingAdd.onOccurrenceAdded(() => {
-                    this.refresh();
+                        if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(),
+                                api.form.inputtype.support.InputOccurrenceView)) {
+                            // force validate, since InputView might have become invalid
+                            this.validate(false);
+                        }
+                    });
+
+                    this.addButton = new api.ui.button.Button("Add");
+                    this.addButton.addClass("small");
+                    this.addButton.onClicked((event: MouseEvent) => {
+                        inputTypeViewNotManagingAdd.createAndAddOccurrence();
+                    });
+
+                    this.bottomButtonRow = new api.dom.DivEl("bottom-button-row");
+                    this.appendChild(this.bottomButtonRow);
+                    this.bottomButtonRow.appendChild(this.addButton);
+                }
+
+                this.validationViewer = new ValidationRecordingViewer();
+                this.appendChild(this.validationViewer);
+
+                this.inputTypeView.onValidityChanged((event: api.form.inputtype.InputValidityChangedEvent)=> {
+
+                    this.handleInputValidationRecording(event.getRecording(), false);
                 });
-                inputTypeViewNotManagingAdd.onOccurrenceRemoved((event: api.form.OccurrenceRemovedEvent) => {
-                    this.refresh();
 
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(), api.form.inputtype.support.InputOccurrenceView)) {
-                        // force validate, since InputView might have become invalid
-                        this.validate(false);
-                    }
-                });
-
-                this.addButton = new api.ui.button.Button("Add");
-                this.addButton.addClass("small");
-                this.addButton.onClicked((event: MouseEvent) => {
-                    inputTypeViewNotManagingAdd.createAndAddOccurrence();
-                });
-
-                this.bottomButtonRow = new api.dom.DivEl("bottom-button-row");
-                this.appendChild(this.bottomButtonRow);
-                this.bottomButtonRow.appendChild(this.addButton);
-            }
-
-            this.validationViewer = new api.form.ValidationRecordingViewer();
-            this.appendChild(this.validationViewer);
-
-            this.inputTypeView.onValidityChanged((event: api.form.inputtype.InputValidityChangedEvent)=> {
-
-                this.handleInputValidationRecording(event.getRecording(), false);
+                this.refresh();
             });
+
+            return inputTypeViewLayoutPromise;
+        }
+
+        private createInputTypeView(): api.form.inputtype.InputTypeView<any> {
+            var inputType: api.form.InputTypeName = this.input.getInputType();
+            var inputTypeViewContext = this.getContext().createInputTypeViewContext(this.input.getInputTypeConfig(),
+                this.parentPropertySet.getPropertyPath(), this.input);
+
+            if (inputtype.InputTypeManager.isRegistered(inputType.getName())) {
+                return inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewContext);
+            }
+            else {
+                console.log("Input type [" + inputType.getName() + "] needs to be registered first.");
+                return inputtype.InputTypeManager.createView("NoInputTypeFound", inputTypeViewContext);
+            }
         }
 
         broadcastFormSizeChanged() {
@@ -157,6 +163,10 @@ module api.form {
             return new ValidationRecordingPath(this.propertyArray.getParentPropertyPath(), this.input.getName(),
                 this.input.getOccurrences().getMinimum(),
                 this.input.getOccurrences().getMaximum());
+        }
+
+        public displayValidationErrors(value: boolean) {
+            this.inputTypeView.displayValidationErrors(value);
         }
 
         validate(silent: boolean = true): ValidationRecording {
@@ -228,7 +238,11 @@ module api.form {
                 this.removeClass("valid");
                 this.addClass("invalid");
             }
-            this.validationViewer.setObject(recording)
+            this.validationViewer.setObject(recording);
+
+            if (recording.isValid()) {
+
+            }
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

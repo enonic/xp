@@ -13,7 +13,7 @@ module api.form {
 
     export class LayoutView extends FormItemView {
 
-        private layout: Layout;
+        private _layout: Layout;
 
         constructor(config: LayoutViewConfig) {
             super(<FormItemViewConfig>{
@@ -23,7 +23,11 @@ module api.form {
                 parent: config.parent
             });
 
-            this.layout = config.layout;
+            this._layout = config.layout;
+        }
+
+        public layout(): wemQ.Promise<void> {
+            throw new Error("Must be implemented by inheritors");
         }
     }
 }

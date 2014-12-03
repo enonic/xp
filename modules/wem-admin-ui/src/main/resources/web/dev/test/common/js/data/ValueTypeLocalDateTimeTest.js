@@ -47,9 +47,9 @@ describe("api.data.type.LocalDateTimeValueTypeTest", function () {
 
     describe("when newValue", function () {
 
-        it("given date time string '2000-01-01T12:30:00' then a new Value with that date is returned", function () {
-            var actual = ValueTypes.LOCAL_DATE_TIME.newValue("2000-01-01T12:30:00");
-            var expected = new Value(new Date(Date.UTC(2000, 0, 1, 12, 30, 0)), ValueTypes.LOCAL_DATE_TIME);
+        it("given date time string '2000-01-01T12:30:01' then a new Value with that date is returned", function () {
+            var actual = ValueTypes.LOCAL_DATE_TIME.newValue("2000-01-01T12:30:01");
+            var expected = new Value(new Date(Date.UTC(2000, 0, 1, 12, 30, 1)), ValueTypes.LOCAL_DATE_TIME);
             expect(actual).toEqual(expected);
         });
 

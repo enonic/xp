@@ -40,6 +40,9 @@ module app.wizard.page.contextwindow.inspect {
             var configForm = this.imageComponent.getForm();
             this.formView = new api.form.FormView(formContext, configForm, configData.getRoot());
             this.appendChild(this.formView);
+            this.formView.layout().catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
         }
 
         getPageComponentView(): ImageComponentView {

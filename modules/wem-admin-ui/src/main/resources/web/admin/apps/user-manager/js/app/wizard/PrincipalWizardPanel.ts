@@ -6,7 +6,6 @@ module app.wizard {
     import PrincipalNamedEvent = api.security.PrincipalNamedEvent;
     import UserStoreKey = api.security.UserStoreKey;
 
-    import FormView = api.form.FormView;
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;

@@ -33,11 +33,12 @@ module api.form.inputtype.support {
             return true;
         }
 
-        layout(input: api.form.Input, propertyArray: PropertyArray) {
-            this.layoutProperty(input, propertyArray.get(0))
+        layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
+            this.layoutProperty(input, propertyArray.get(0));
+            return wemQ<void>(null);
         }
 
-        layoutProperty(input: api.form.Input, property: Property) {
+        layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
 
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
@@ -52,6 +53,13 @@ module api.form.inputtype.support {
 
         getAttachments(): api.content.attachment.Attachment[] {
             return [];
+        }
+
+        /**
+         * Override when needed.
+         */
+        displayValidationErrors(value: boolean) {
+
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {

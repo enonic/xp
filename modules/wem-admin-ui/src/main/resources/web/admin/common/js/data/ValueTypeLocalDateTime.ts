@@ -26,13 +26,8 @@ module api.data {
             if (value.length != 19) {
                 return false;
             }
-            if (!(value.charAt(4) == '-' && value.charAt(7) == '-')) {
-                return false;
-            }
-            if (!(value.charAt(10) == 'T' && value.charAt(13) == ':' && value.charAt(16) == ':')) {
-                return false;
-            }
-            return this.isValid(new Date(value));
+            var valueAsDate = api.util.DateHelper.parseUTCDateTime(value);
+            return this.isValid(valueAsDate);
         }
 
         newValue(value: string): Value {

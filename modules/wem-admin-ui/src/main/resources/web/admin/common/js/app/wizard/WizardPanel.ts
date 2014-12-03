@@ -354,14 +354,6 @@ module api.app.wizard {
             return this.splitPanel;
         }
 
-        public setLivePanel(livePanel: api.ui.panel.Panel) {
-            if (this.splitPanel) {
-                this.removeChild(this.splitPanel);
-            }
-            this.splitPanel = this.createSplitPanel(this.formPanel, livePanel);
-            this.appendChild(this.splitPanel);
-        }
-
         private createSplitPanel(firstPanel: api.ui.panel.Panel, secondPanel: api.ui.panel.Panel): api.ui.panel.SplitPanel {
             var splitPanel = new api.ui.panel.SplitPanelBuilder(firstPanel, secondPanel)
                 .setFirstPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL)

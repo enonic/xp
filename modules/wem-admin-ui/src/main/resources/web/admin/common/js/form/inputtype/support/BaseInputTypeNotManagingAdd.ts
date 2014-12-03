@@ -114,7 +114,7 @@ module api.form.inputtype.support {
             this.inputOccurrences.createAndAddOccurrence();
         }
 
-        layout(input: api.form.Input, propertyArray: PropertyArray) {
+        layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
 
             this.input = input;
             this.propertyArray = propertyArray;
@@ -130,8 +130,9 @@ module api.form.inputtype.support {
                 });
             });
 
-            this.inputOccurrences.layout();
-            wemjq(this.getHTMLElement()).sortable("refresh");
+            return this.inputOccurrences.layout().then(() => {
+                wemjq(this.getHTMLElement()).sortable("refresh");
+            });
         }
 
 
@@ -153,6 +154,13 @@ module api.form.inputtype.support {
 
         getAttachments(): api.content.attachment.Attachment[] {
             return [];
+        }
+
+        /**
+         * Override when needed.
+         */
+        displayValidationErrors(value: boolean) {
+
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {

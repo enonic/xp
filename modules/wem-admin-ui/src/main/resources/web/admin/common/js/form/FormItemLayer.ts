@@ -34,18 +34,21 @@ module api.form {
             return this;
         }
 
-        layout(dataSet: PropertySet): FormItemView[] {
+        layout(propertySet: PropertySet): wemQ.Promise<FormItemView[]> {
+
             this.formItemViews = [];
 
-            this.doLayoutDataSet(dataSet);
-
-            return this.formItemViews;
+            return this.doLayoutPropertySet(propertySet).then(() => {
+                return wemQ<FormItemView[]>(this.formItemViews);
+            });
         }
 
+        private doLayoutPropertySet(propertySet: PropertySet): wemQ.Promise<void> {
 
-        private doLayoutDataSet(propertySet: PropertySet) {
+            var layoutPromises: wemQ.Promise<void>[] = [];
 
             this.formItems.forEach((formItem: FormItem) => {
+
                 if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FormItemSet)) {
 
                     var formItemSet: FormItemSet = <FormItemSet>formItem;
@@ -55,9 +58,10 @@ module api.form {
                         parent: this.parent,
                         parentDataSet: propertySet
                     });
-
                     this.parentEl.appendChild(formItemSetView);
                     this.formItemViews.push(formItemSetView);
+
+                    layoutPromises.push(formItemSetView.layout());
                 }
                 else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FieldSet)) {
 
@@ -71,6 +75,8 @@ module api.form {
 
                     this.parentEl.appendChild(fieldSetView);
                     this.formItemViews.push(fieldSetView);
+
+                    layoutPromises.push(fieldSetView.layout());
                 }
                 else if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, Input)) {
 
@@ -82,10 +88,18 @@ module api.form {
                         parent: this.parent,
                         parentDataSet: propertySet
                     });
-
                     this.parentEl.appendChild(inputView);
                     this.formItemViews.push(inputView);
+
+                    layoutPromises.push(inputView.layout());
                 }
+            });
+
+            return wemQ.all(layoutPromises).spread<void>(() => {
+                api.util.assert(this.formItems.length == this.formItemViews.length,
+                    "Not all FormItemView-s was created. Expected " + this.formItems.length + ", was: " + this.formItemViews.length);
+
+                return wemQ<void>(null);
             });
         }
     }

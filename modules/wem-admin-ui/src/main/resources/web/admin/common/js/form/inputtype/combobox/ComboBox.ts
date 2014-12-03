@@ -45,7 +45,7 @@ module api.form.inputtype.combobox {
             return null;
         }
 
-        layout(input: api.form.Input, propertyArray: PropertyArray) {
+        layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
 
             this.input = input;
             this.propertyArray = propertyArray;
@@ -66,6 +66,8 @@ module api.form.inputtype.combobox {
 
             this.appendChild(this.comboBox);
             this.appendChild(this.selectedOptionsView);
+
+            return wemQ<void>(null);
         }
 
         createComboBox(input: api.form.Input): api.ui.selector.combobox.ComboBox<string> {

@@ -47,10 +47,10 @@ module api.content.form.inputtype.imageupload {
         }
 
         newInitialValue(): Value {
-            return null;
+            return ValueTypes.STRING.newNullValue();
         }
 
-        layoutProperty(input: api.form.Input, property: Property) {
+        layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
 
             if (property.hasNonNullValue()) {
                 this.attachmentName = property.getString();
@@ -73,9 +73,10 @@ module api.content.form.inputtype.imageupload {
             this.imageUploader.onImageReset(() => {
                 this.attachment = null;
                 this.attachmentName = null;
-                var value = ValueTypes.STRING.newNullValue();
-                property.setValue(value);
+                property.setValue(ValueTypes.STRING.newNullValue());
             });
+
+            return wemQ<void>(null);
         }
 
         getAttachments(): api.content.attachment.Attachment[] {

@@ -33,52 +33,68 @@ module api.form {
             this.context = context;
             this.form = form;
             this.rootDataSet = propertySet;
-            this.doLayout();
         }
 
-        private doLayout() {
+        public layout(): wemQ.Promise<void> {
 
-            this.formItemViews = new FormItemLayer().
+            var deferred = wemQ.defer<void>();
+
+            var formItems = this.form.getFormItems();
+            var layoutPromise: wemQ.Promise<FormItemView[]> = new FormItemLayer().
                 setFormContext(this.context).
-                setFormItems(this.form.getFormItems()).
+                setFormItems(formItems).
                 setParentElement(this).
                 layout(this.rootDataSet);
 
-            this.formItemViews.forEach((formItemView: FormItemView) => {
+            layoutPromise.then((formItemViews: FormItemView[]) => {
 
-                formItemView.onFocus((event: FocusEvent) => {
-                    this.notifyFocused(event);
-                });
+                this.formItemViews = formItemViews;
+                api.util.assert(this.formItemViews.length == formItems.length,
+                    "Not all FormItemView-s was created. Expected " + formItems.length + ", was: " + formItemViews.length);
 
-                formItemView.onBlur((event: FocusEvent) => {
-                    this.notifyBlurred(event);
-                });
+                deferred.resolve(null);
 
-                formItemView.onValidityChanged((event: ValidityChangedEvent) => {
+                this.formItemViews.forEach((formItemView: FormItemView) => {
 
-                    if (!this.previousValidationRecording) {
-                        this.previousValidationRecording = event.getRecording();
-                        this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording));
-                    }
-                    else {
-                        var previousValidState = this.previousValidationRecording.isValid();
+                    formItemView.onFocus((event: FocusEvent) => {
+                        this.notifyFocused(event);
+                    });
 
-                        if (event.isValid()) {
-                            this.previousValidationRecording.removeByPath(event.getOrigin());
-                        }
-                        else {
-                            this.previousValidationRecording.flatten(event.getRecording());
-                        }
+                    formItemView.onBlur((event: FocusEvent) => {
+                        this.notifyBlurred(event);
+                    });
 
-                        if (previousValidState != this.previousValidationRecording.isValid()) {
+                    formItemView.onValidityChanged((event: ValidityChangedEvent) => {
+
+                        if (!this.previousValidationRecording) {
+                            this.previousValidationRecording = event.getRecording();
                             this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording));
                         }
-                    }
-                });
-            });
+                        else {
+                            var previousValidState = this.previousValidationRecording.isValid();
 
-            api.dom.WindowDOM.get().onResized((event: UIEvent) => this.checkSizeChanges(), this);
-            this.onShown(() => this.checkSizeChanges());
+                            if (event.isValid()) {
+                                this.previousValidationRecording.removeByPath(event.getOrigin());
+                            }
+                            else {
+                                this.previousValidationRecording.flatten(event.getRecording());
+                            }
+
+                            if (previousValidState != this.previousValidationRecording.isValid()) {
+                                this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording));
+                            }
+                        }
+                    });
+                });
+
+                api.dom.WindowDOM.get().onResized((event: UIEvent) => this.checkSizeChanges(), this);
+                this.onShown(() => this.checkSizeChanges());
+
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
+
+            return deferred.promise;
         }
 
         private checkSizeChanges() {
@@ -124,11 +140,14 @@ module api.form {
             return this.previousValidationRecording.isValid();
         }
 
-        public displayValidationErrors(display: boolean) {
-            if (display) {
+        public displayValidationErrors(value: boolean) {
+            if (value) {
                 this.addClass("display-validation-errors");
             } else {
                 this.removeClass("display-validation-errors");
+            }
+            for (var i = 0; i < this.formItemViews.length; i++) {
+                this.formItemViews[i].displayValidationErrors(value);
             }
         }
 

@@ -16,8 +16,6 @@ module api.form {
 
     export class FormItemOccurrences<V extends FormItemOccurrenceView> {
 
-        private layingOut: boolean;
-
         private occurrences: FormItemOccurrence<V>[] = [];
 
         private occurrenceViews: V[] = [];
@@ -43,7 +41,6 @@ module api.form {
             this.propertyArray = config.propertyArray;
             this.occurrenceViewContainer = config.occurrenceViewContainer;
             this.allowedOccurrences = config.allowedOccurrences;
-            this.layingOut = false;
         }
 
         getAllowedOccurrences(): Occurrences {
@@ -107,23 +104,23 @@ module api.form {
             return this.allowedOccurrences.maximumReached(this.countOccurrences());
         }
 
-        layout() {
+        layout(): wemQ.Promise<void> {
+            var layoutPromises: wemQ.Promise<void>[] = [];
+            this.occurrences.forEach((occurrence: FormItemOccurrence<V>) => {
+                var occurrenceView: V = this.createNewOccurrenceView(occurrence);
 
-            this.layingOut = true;
+                this.occurrenceViewContainer.appendChild(occurrenceView);
 
-            try {
-
-                this.occurrences.forEach((occurrence: FormItemOccurrence<V>) => {
-                    var occurrenceView: V = this.createNewOccurrenceView(occurrence);
+                var layoutPromise = occurrenceView.layout();
+                layoutPromises.push(layoutPromise);
+                layoutPromise.then(() => {
                     occurrenceView.onFocus((event: FocusEvent) => this.notifyFocused(event));
                     occurrenceView.onBlur((event: FocusEvent) => this.notifyBlurred(event));
                     this.occurrenceViews.push(occurrenceView);
-                    this.occurrenceViewContainer.appendChild(occurrenceView);
                 });
-            }
-            finally {
-                this.layingOut = false;
-            }
+            });
+
+            return wemQ.all(layoutPromises).spread<void>(() => wemQ<void>(null));
         }
 
         createNewOccurrenceView(occurrence: FormItemOccurrence<V>): V {

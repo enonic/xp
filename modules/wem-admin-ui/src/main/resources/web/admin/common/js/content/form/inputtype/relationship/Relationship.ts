@@ -5,6 +5,7 @@ module api.content.form.inputtype.relationship {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
+    import GetRelationshipTypeByNameRequest = api.schema.relationshiptype.GetRelationshipTypeByNameRequest;
 
     export interface RelationshipConfig {
         relationshipType: string
@@ -23,8 +24,6 @@ module api.content.form.inputtype.relationship {
         private contentComboBox: api.content.ContentComboBox;
 
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
-
-        private layoutInProgress: boolean;
 
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext<RelationshipConfig>) {
             super("relationship");
@@ -47,9 +46,7 @@ module api.content.form.inputtype.relationship {
             return null;
         }
 
-        layout(input: api.form.Input, propertyArray: PropertyArray) {
-
-            this.layoutInProgress = true;
+        layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
 
             this.input = input;
             this.propertyArray = propertyArray;
@@ -62,31 +59,9 @@ module api.content.form.inputtype.relationship {
                 .setLoader(relationshipLoader)
                 .build();
 
-            this.contentComboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
-
-                if (!this.layoutInProgress) {
-                    var value = new Value(event.getOption().displayValue.getContentId(), ValueTypes.CONTENT_ID);
-                    if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
-                        this.propertyArray.set(0, value);
-                    }
-                    else {
-                        this.propertyArray.add(value);
-                    }
-
-                }
-                this.validate(false);
-            });
-
-            this.contentComboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
-
-                this.propertyArray.remove(removed.getIndex());
-                this.validate(false);
-            });
-
-
-            new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName).
+            return new GetRelationshipTypeByNameRequest(this.relationshipTypeName).
                 sendAndParse().
-                done((relationshipType: api.schema.relationshiptype.RelationshipType) => {
+                then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
                     this.contentComboBox.setInputIconUrl(relationshipType.getIconUrl());
                     relationshipLoader.setAllowedContentTypes(relationshipType.getAllowedToTypes());
@@ -94,22 +69,33 @@ module api.content.form.inputtype.relationship {
                     relationshipLoader.load();
                     this.appendChild(this.contentComboBox);
 
-                    this.doLoadContent(propertyArray).
+                    return this.doLoadContent(propertyArray).
                         then((contents: api.content.ContentSummary[]) => {
 
                             contents.forEach((content: api.content.ContentSummary) => {
                                 this.contentComboBox.select(content);
                             });
 
-                        }).catch((reason: any) => {
+                            this.contentComboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
 
-                            api.DefaultErrorHandler.handle(reason);
+                                var value = new Value(event.getOption().displayValue.getContentId(), ValueTypes.CONTENT_ID);
+                                if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
+                                    this.propertyArray.set(0, value);
+                                }
+                                else {
+                                    this.propertyArray.add(value);
+                                }
 
-                        }).finally(()=> {
+                                this.validate(false);
+                            });
 
-                            this.layoutInProgress = false;
+                            this.contentComboBox.onOptionDeselected((removed: api.ui.selector.combobox.SelectedOption<api.content.ContentSummary>) => {
 
-                        }).done();
+                                this.propertyArray.remove(removed.getIndex());
+                                this.validate(false);
+                            });
+
+                        });
                 });
         }
 

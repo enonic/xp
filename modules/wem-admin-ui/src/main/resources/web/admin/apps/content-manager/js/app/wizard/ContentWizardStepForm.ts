@@ -21,37 +21,42 @@ module app.wizard {
             super();
         }
 
-        layout(formContext: FormContext, data: PropertyTree, form: Form) {
+        layout(formContext: FormContext, data: PropertyTree, form: Form): wemQ.Promise<void> {
 
             this.formContext = formContext;
             this.form = form;
             this.data = data;
-            this.doLayout(form, data);
-            if (form.getFormItems().length === 0) {
-                this.hide();
-            }
+            return this.doLayout(form, data).then(() => {
+                if (form.getFormItems().length === 0) {
+                    this.hide();
+                }
+            });
         }
 
-        private doLayout(form: Form, data: PropertyTree) {
+        private doLayout(form: Form, data: PropertyTree): wemQ.Promise<void> {
 
             this.formView = new FormView(this.formContext, form, data.getRoot());
-            this.formView.onFocus((event) => {
-                this.notifyFocused(event);
-            });
-            this.formView.onBlur((event) => {
-                this.notifyBlurred(event);
-            });
-            this.formView.onEditContentRequest((content: api.content.ContentSummary) => {
-                new app.browse.EditContentEvent([content]).fire();
-            });
+            return this.formView.layout().then(() => {
 
-            this.appendChild(this.formView);
+                this.formView.onFocus((event) => {
+                    this.notifyFocused(event);
+                });
+                this.formView.onBlur((event) => {
+                    this.notifyBlurred(event);
+                });
+                this.formView.onEditContentRequest((content: api.content.ContentSummary) => {
+                    new app.browse.EditContentEvent([content]).fire();
+                });
 
-            this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
-                this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
+                this.appendChild(this.formView);
+
+                this.formView.onValidityChanged((event: api.form.FormValidityChangedEvent) => {
+                    this.notifyValidityChanged(new WizardStepValidityChangedEvent(event.isValid()));
+                });
+
+                var formViewValid = this.formView.isValid();
+                this.notifyValidityChanged(new WizardStepValidityChangedEvent(formViewValid));
             });
-
-            this.notifyValidityChanged(new WizardStepValidityChangedEvent(this.formView.isValid()));
         }
 
         public validate(silent?: boolean): api.form.ValidationRecording {

@@ -44,6 +44,9 @@ module app.wizard.page.contextwindow.inspect {
             var config = component.getConfig();
             this.formView = new FormView(formContext, form, config.getRoot());
             this.appendChild(this.formView);
+            this.formView.layout().catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
         }
     }
 }

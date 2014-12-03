@@ -11,7 +11,7 @@ module api.form.inputtype {
 
         getElement(): api.dom.Element;
 
-        layout(input: api.form.Input, propertyArray: PropertyArray);
+        layout(input: api.form.Input, propertyArray: PropertyArray) : wemQ.Promise<void>;
 
         newInitialValue(): Value;
 
@@ -37,6 +37,8 @@ module api.form.inputtype {
          * Returns true if focus was successfully given.
          */
         giveFocus(): boolean;
+
+        displayValidationErrors(value: boolean);
 
         validate(silent: boolean) : InputValidationRecording;
 

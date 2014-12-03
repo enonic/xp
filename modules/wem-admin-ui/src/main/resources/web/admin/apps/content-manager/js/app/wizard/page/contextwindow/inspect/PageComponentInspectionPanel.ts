@@ -1,6 +1,5 @@
 module app.wizard.page.contextwindow.inspect {
 
-    import FormView = api.form.FormView;
     import PageComponent = api.content.page.PageComponent;
     import ComponentName = api.content.page.ComponentName;
     import PageComponentView = api.liveedit.PageComponentView;

@@ -20,12 +20,12 @@ module api.form.inputtype.support {
             return ValueTypes.STRING.newValue("");
         }
 
-        layout(input: api.form.Input, property?: PropertyArray) {
+        layout(input: api.form.Input, property?: PropertyArray): wemQ.Promise<void> {
 
             var divEl = new api.dom.DivEl();
             divEl.getEl().setInnerHtml("Warning: no input type found: " + input.getInputType().toString());
 
-            super.layout(input, property);
+            return super.layout(input, property);
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {

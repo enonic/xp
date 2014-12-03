@@ -57,7 +57,7 @@ module api.content.form.inputtype.tag {
             return null;
         }
 
-        layout(input: api.form.Input, propertyArray: PropertyArray) {
+        layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
 
             this.propertyArray = propertyArray;
             this.tags.clearTags();
@@ -80,6 +80,8 @@ module api.content.form.inputtype.tag {
             this.tags.onTagRemoved((event) => {
                 this.propertyArray.remove(event.getIndex());
             });
+
+            return wemQ<void>(null);
         }
 
         getAttachments(): api.content.attachment.Attachment[] {

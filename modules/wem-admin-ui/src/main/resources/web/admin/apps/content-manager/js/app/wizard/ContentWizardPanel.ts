@@ -79,8 +79,6 @@ module app.wizard {
 
         private createSite: boolean;
 
-        private formContext: ContentFormContext;
-
         private previewAction: api.ui.Action;
 
         private publishAction: api.ui.Action;
@@ -160,9 +158,9 @@ module app.wizard {
             }
 
             this.contentWizardStepForm = new ContentWizardStepForm();
-            this.contentWizardStepForm.onValidityChanged((event: WizardStepValidityChangedEvent) =>
-                    this.isContentFormValid = event.isValid()
-            );
+            this.contentWizardStepForm.onValidityChanged((event: WizardStepValidityChangedEvent) => {
+                this.isContentFormValid = event.isValid();
+            });
             this.metadataStepFormByName = {};
 
             this.securityWizardStepForm = new SecurityWizardStepForm();
@@ -236,6 +234,8 @@ module app.wizard {
         }
 
         giveInitialFocus() {
+
+            console.log("ContentWizardPanel.giveInitialFocus");
             var newWithoutDisplayCameScript = this.isLayingOutNew() && !this.contentType.hasContentDisplayNameScript();
             var displayNameEmpty = api.util.StringHelper.isEmpty(this.getPersistedItem().getDisplayName());
             var editWithEmptyDisplayName = !this.isLayingOutNew() && displayNameEmpty && !this.contentType.hasContentDisplayNameScript();
@@ -244,6 +244,7 @@ module app.wizard {
                 this.contentWizardHeader.giveFocus();
             } else {
                 if (!this.contentWizardStepForm.giveFocus()) {
+                    console.log("ContentWizardPanel.giveInitialFocus() WARNING: Failed to give focus to contentWizardStepForm");
                     this.contentWizardHeader.giveFocus();
                 }
             }
@@ -385,13 +386,13 @@ module app.wizard {
                     addAll(attachmentsArray).
                     build();
 
-                var formContextBuilder = new ContentFormContextBuilder().
+                var formContext = new ContentFormContextBuilder().
                     setSite(this.site).
                     setParentContent(this.parentContent).
                     setPersistedContent(content).
-                    setAttachments(attachments);
-                formContextBuilder.setShowEmptyFormItemSetOccurrences(this.isItemPersisted());
-                this.formContext = formContextBuilder.build();
+                    setAttachments(attachments).
+                    setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).
+                    build();
 
                 var contentData = content.getContentData();
                 contentData.onPropertyChanged((event: api.data.PropertyChangedEvent) => {
@@ -412,7 +413,12 @@ module app.wizard {
                         }
                     }
                 });
-                this.contentWizardStepForm.layout(this.formContext, contentData, this.contentType.getForm());
+
+                var formViewLayoutPromises: wemQ.Promise<void>[] = [];
+                formViewLayoutPromises.push(this.contentWizardStepForm.layout(formContext, contentData, this.contentType.getForm()));
+                // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
+                this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
+
                 this.securityWizardStepForm.layout(content);
 
                 schemas.forEach((schema: MetadataSchema, index: number) => {
@@ -421,27 +427,28 @@ module app.wizard {
                         metadata = new Metadata(schema.getMetadataSchemaName(), new PropertyTree(api.Client.get().getPropertyIdProvider()));
                         content.getAllMetadata().push(metadata);
                     }
-                    this.metadataStepFormByName[schema.getMetadataSchemaName().toString()].layout(this.formContext, metadata.getData(),
-                        schema.getForm());
+                    var metadataFormView = this.metadataStepFormByName[schema.getMetadataSchemaName().toString()];
+                    formViewLayoutPromises.push(metadataFormView.layout(formContext, metadata.getData(), schema.getForm()));
                 });
 
-                // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
-                this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
+                return wemQ.all(formViewLayoutPromises).spread<void>(() => {
 
-                if (this.liveFormPanel) {
+                    console.log("ContentWizardPanel.doLayoutPersistedItem: all FormView-s layed out");
+                    if (this.liveFormPanel) {
 
-                    if (!this.liveEditModel) {
-                        this.initLiveEditModel(content).then(() => {
-                            this.liveFormPanel.setModel(this.liveEditModel);
+                        if (!this.liveEditModel) {
+                            this.initLiveEditModel(content).then(() => {
+                                this.liveFormPanel.setModel(this.liveEditModel);
+                                this.liveFormPanel.loadPage();
+                                return wemQ(null);
+                            });
+                        }
+                        else {
                             this.liveFormPanel.loadPage();
                             return wemQ(null);
-                        });
+                        }
                     }
-                    else {
-                        this.liveFormPanel.loadPage();
-                        return wemQ(null);
-                    }
-                }
+                });
             });
         }
 

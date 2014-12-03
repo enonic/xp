@@ -59,6 +59,10 @@ module api.form {
             return [];
         }
 
+        public displayValidationErrors(value: boolean) {
+            throw new Error("Must be implemented by inheritor");
+        }
+
         validate(silent: boolean = true): ValidationRecording {
 
             // Default method to avoid having to implement method in Layout-s.

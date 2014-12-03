@@ -41,7 +41,7 @@ module api.form.inputtype.support {
         /**
          * Must be overridden by inheritors.
          */
-        layout(input: api.form.Input, propertyArray: PropertyArray) {
+        layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
 
             throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
         }
@@ -49,6 +49,13 @@ module api.form.inputtype.support {
 
         getAttachments(): api.content.attachment.Attachment[] {
             return [];
+        }
+
+        /**
+         * Override when needed.
+         */
+        displayValidationErrors(value: boolean) {
+
         }
 
         /**
