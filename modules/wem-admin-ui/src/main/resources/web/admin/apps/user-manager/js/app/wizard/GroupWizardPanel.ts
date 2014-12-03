@@ -6,6 +6,7 @@ module app.wizard {
     import UpdateGroupRequest = api.security.UpdateGroupRequest;
 
     import Principal = api.security.Principal;
+    import PrincipalKey = api.security.PrincipalKey;
 
     import WizardStep = api.app.wizard.WizardStep;
 
@@ -57,8 +58,10 @@ module app.wizard {
         }
 
         produceCreateGroupRequest(): CreateGroupRequest {
-            var group = this.assembleViewedPrincipal().asGroup();
-            return new CreateGroupRequest().setKey(group.getKey()).setDisplayName(group.getDisplayName()).setMembers(group.getMembers());
+            var key = PrincipalKey.ofGroup(this.getUserStore(), Math.random().toString(36).slice(2)),
+                name = this.principalWizardHeader.getDisplayName(),
+                members = this.getMembersWizardStepForm().getMembers().map((el) => { return el.getKey(); });
+            return new CreateGroupRequest().setKey(key).setDisplayName(name).setMembers(members);
         }
 
         updatePersistedItem(): wemQ.Promise<Principal> {

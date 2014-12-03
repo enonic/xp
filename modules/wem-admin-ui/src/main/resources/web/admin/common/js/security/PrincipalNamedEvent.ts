@@ -15,7 +15,7 @@ module api.security {
             return this.wizard;
         }
 
-        public getUser(): Principal {
+        public getPrincipal(): Principal {
             return this.principal;
         }
 
