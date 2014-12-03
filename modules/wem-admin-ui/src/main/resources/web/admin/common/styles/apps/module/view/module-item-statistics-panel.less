@@ -1,5 +1,6 @@
 .module-item-statistics-panel {
-  overflow: scroll;
+  overflow-x: auto;
+  overflow-y: scroll;
 
   .action-menu {
     position: absolute;
@@ -18,6 +19,10 @@
       width: 64px;
       margin-right: 20px;
     }
+
+    .path {
+      display: none;
+    }
   }
 
   .upgrade-message-container {
@@ -30,27 +35,17 @@
 
   }
   .module-data-container {
-    padding:0 35px;
+    padding: 0 35px;
 
-    .module-item-data-group {
-      padding:35px 0;
+    .item-data-group {
+      display: flex;
+      flex-flow: row wrap;
+      padding: 35px 0;
       border-bottom: 1px solid @admin-light-gray-bg;
 
       h2 {
-        margin-bottom:20px;
-      }
-
-      .data-list {
-        display: inline-block;
-        vertical-align: top;
-        margin-right: 50px;
-        li {
-          &.list-header {
-            font-size: 14px;
-            margin-bottom:5px;
-          }
-          margin-bottom:2px;
-        }
+        flex: 1 100%;
+        color: @admin-light-gray-font;
       }
     }
   }

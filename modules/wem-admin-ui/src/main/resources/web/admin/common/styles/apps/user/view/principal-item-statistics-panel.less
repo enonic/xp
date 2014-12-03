@@ -1,0 +1,70 @@
+.principal-item-statistics-panel {
+  overflow-x: auto;
+  overflow-y: scroll;
+
+  .header {
+    padding: 35px;
+    color: @admin-dark-gray-font;
+    margin: 0;
+
+    .icon {
+      img {
+        height: 128px;
+        width: 128px;
+        margin-right: 20px;
+      }
+
+      &:before {
+        font-size: 128px;
+      }
+
+      min-width: 128px;
+      min-height: 128px;
+      margin-right: 20px;
+      float: left;
+    }
+
+    .title {
+      margin: 30px 0 0 0;
+    }
+
+    .path {
+      padding: 10px 0 0 0;
+      font-size: 18px;
+      line-height: 18px;
+
+      .parent-path {
+        color: @admin-medium-gray-font;
+      }
+    }
+
+    .title, .path {
+      .ellipsis();
+    }
+  }
+
+  .user-data-container {
+
+    padding: 0 35px;
+
+    .item-data-group {
+      &.user .data-list li {
+        &:not(.list-header) {
+          text-decoration: underline;
+        }
+
+        &.list-header {
+          margin-bottom: 2px;
+        }
+      }
+
+      &.roles-and-groups .data-list li {
+        margin-bottom: 10px;
+
+        &.list-header {
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+}

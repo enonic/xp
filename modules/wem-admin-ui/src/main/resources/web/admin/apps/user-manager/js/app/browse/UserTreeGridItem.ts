@@ -47,7 +47,7 @@ module app.browse {
             this.type = type;
         }
 
-        getType() {
+        getType(): UserTreeGridItemType {
             return this.type;
         }
 

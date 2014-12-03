@@ -8,55 +8,61 @@ module api.app.view {
 
         private iconDivEl: api.dom.DivEl;
 
-        private headerTextEl = new api.dom.H1El();
+        private headerTitleEl: api.dom.H1El;
+
+        private headerPathEl: api.dom.H4El;
 
         constructor() {
             super("header");
-            this.appendChild(this.headerTextEl);
-        }
-
-        setItem1(item: ViewItem<M>) {
-            this.browseItem = item;
-
-            if (this.iconEl) {
-                this.removeChild(this.iconEl);
-            }
-            if (this.iconDivEl) {
-                this.removeChild(this.iconDivEl);
-            }
-            var icon: HTMLImageElement = api.util.loader.ImageLoader.get(this.browseItem.getIconUrl() + "?size=64", 64, 64);
-            this.iconEl = <api.dom.ImgEl> new api.dom.Element(new api.dom.NewElementBuilder().
-                setTagName("img").
-                setHelper(new api.dom.ImgHelper(icon)));
-            this.prependChild(this.iconEl);
-
-            this.headerTextEl.getEl().setInnerHtml(this.browseItem.getDisplayName()).setAttribute('title',
-                this.browseItem.getDisplayName());
+            this.headerTitleEl  = new api.dom.H1El("title");
+            this.headerPathEl  = new api.dom.H4El("path");
+            this.appendChild(this.headerTitleEl);
+            this.appendChild(this.headerPathEl);
         }
 
         setItem(item: ViewItem<M>) {
             this.browseItem = item;
+
             if (this.iconEl) {
-                this.removeChild(this.iconEl);
+                this.iconEl.remove();
             }
             if (this.iconDivEl) {
-                this.removeChild(this.iconDivEl);
+                this.iconDivEl.remove();
             }
+
             var icon: HTMLImageElement = null;
             if (this.browseItem.getIconUrl()) {
-                icon = api.util.loader.ImageLoader.get(this.browseItem.getIconUrl() + "?size=64", 64, 64);
+                var size = this.browseItem.getIconSize() || 64;
+                icon = api.util.loader.ImageLoader.get(this.browseItem.getIconUrl() + "?size=size", size, size);
                 this.iconEl = <api.dom.ImgEl> new api.dom.Element(new api.dom.NewElementBuilder().
                     setTagName("img").
                     setHelper(new api.dom.ImgHelper(icon)));
+                this.iconEl.addClass("icon");
                 this.prependChild(this.iconEl);
-
             } else {
-                this.iconDivEl = new api.dom.DivEl(this.browseItem.getIconClass())
+                this.iconDivEl = new api.dom.DivEl(this.browseItem.getIconClass());
+                this.iconDivEl.addClass("icon");
                 this.prependChild(this.iconDivEl);
             }
 
-            this.headerTextEl.getEl().setInnerHtml(this.browseItem.getDisplayName()).setAttribute('title',
-                this.browseItem.getDisplayName());
+            if (this.browseItem.getDisplayName()) {
+                this.headerTitleEl.getEl().
+                    setInnerHtml(this.browseItem.getDisplayName()).setAttribute("title", this.browseItem.getDisplayName());
+            } else {
+                this.headerTitleEl.getEl().setInnerHtml("").setAttribute("title", "");
+            }
+
+            this.headerPathEl.removeChildren();
+            if (this.browseItem.getPath()) {
+                var path = new api.dom.SpanEl("parent-path");
+                path.getEl().setInnerHtml(this.browseItem.getPath());
+                this.headerPathEl.appendChild(path);
+            }
+            if (this.browseItem.getPath()) {
+                var pathName = new api.dom.SpanEl("path-name");
+                pathName.getEl().setInnerHtml(this.browseItem.getPathName());
+                this.headerPathEl.appendChild(pathName);
+            }
         }
     }
 

@@ -10,7 +10,11 @@ module api.app.view {
 
         private path: string;
 
-        private iconUrl;
+        private pathName: string;
+
+        private iconUrl: string;
+
+        private iconSize: number;
 
         constructor(model: M) {
             this.model = model;
@@ -26,8 +30,23 @@ module api.app.view {
             return this;
         }
 
+        setPathName(value: string): ViewItem<M> {
+            this.pathName = value;
+            return this;
+        }
+
         setIconUrl(value: string): ViewItem<M> {
             this.iconUrl = value;
+            return this;
+        }
+
+        setIconClass(iconClass: string): ViewItem<M> {
+            this.iconClass = iconClass;
+            return this;
+        }
+
+        setIconSize(value: number): ViewItem<M> {
+            this.iconSize = value;
             return this;
         }
 
@@ -43,17 +62,20 @@ module api.app.view {
             return this.path;
         }
 
+        getPathName(): string {
+            return this.pathName;
+        }
+
         getIconUrl(): string {
             return this.iconUrl;
         }
 
-        setIconClass(iconClass: string): ViewItem<M> {
-            this.iconClass = iconClass;
-            return this;
-        }
-
         getIconClass(): string {
             return this.iconClass;
+        }
+
+        getIconSize(): number {
+            return this.iconSize;
         }
 
         equals(o: api.Equitable): boolean {
@@ -61,10 +83,14 @@ module api.app.view {
                 return false;
             }
             var other = <ViewItem<M>> o;
-            return this.model.equals(other.model) &&
-                   this.displayName == other.displayName &&
-                   this.path == other.path &&
-                   this.iconUrl == other.iconUrl && this.getIconClass() == other.iconClass;
+            return this.model.equals(other.getModel()) &&
+                   this.displayName === other.getDisplayName() &&
+                   this.path === other.getPath() &&
+                   this.pathName === other.getPathName() &&
+                   this.iconUrl === other.getIconUrl() &&
+                   this.iconClass === other.getIconClass() &&
+                   this.iconSize === other.getIconSize();
+
         }
     }
 
