@@ -16,7 +16,7 @@ public class MockNodeTree<T>
 
     final List<MockNodeTree<T>> children;
 
-    public MockNodeTree<T> find( final NodePath nodePath )
+    public MockNodeTree find( final NodePath nodePath )
     {
         return doFindTreeNode( nodePath, this );
     }
@@ -34,7 +34,7 @@ public class MockNodeTree<T>
             return treeNode;
         }
 
-        for ( final MockNodeTree child : treeNode.children )
+        for ( final MockNodeTree<T> child : treeNode.children )
         {
             final MockNodeTree foundNode = doFindTreeNode( nodePath, child );
 
@@ -60,6 +60,11 @@ public class MockNodeTree<T>
         childNode.parent = this;
         this.children.add( childNode );
         return childNode;
+    }
+
+    public MockNodeTree<T> getParent()
+    {
+        return parent;
     }
 
     @Override

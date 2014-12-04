@@ -1,5 +1,6 @@
 package com.enonic.wem.export.internal;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
@@ -7,6 +8,7 @@ import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodePaths;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.export.internal.builder.NodeXmlBuilder;
 import com.enonic.wem.export.internal.reader.ExportReader;
@@ -38,41 +40,46 @@ public class NodeImporter
 
     public NodeImportResult execute()
     {
-        // Get & check export root directory
-        // Read node, deserialize and create
-        // Get children, for each:
-        //  - Read node, deserialize and create
-        // If node.childOrder.isManual:
-        //  - synchronize order with content in manualChildOrder.txt
+        final NodePaths.Builder nodesBuilder = NodePaths.create();
 
-        doImport( this.exportRootPath );
+        doImportChildren( this.exportRootPath, nodesBuilder );
 
-        return new NodeImportResult();
+        return NodeImportResult.create().
+            importedNodes( nodesBuilder.build() ).
+            build();
+    }
+
+    private void doImportChildren( final Path parentPath, NodePaths.Builder nodesBuilder )
+    {
+        final Stream<Path> children = getChildPaths( parentPath );
+
+        children.forEach( ( child ) -> fetchAndStoreNode( child, nodesBuilder ) );
+    }
+
+    private void fetchAndStoreNode( final Path nodeFilePath, final NodePaths.Builder nodesBuilder )
+    {
+        final File file = this.exportReader.getFile( nodeFilePath );
+
+        if ( file.isFile() && file.getName().equals( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) )
+        {
+            final String serializedNode = this.exportReader.readItem( nodeFilePath );
+
+            final XmlNode xmlNode = this.xmlNodeSerializer.parse( serializedNode );
+
+            final CreateNodeParams createNodeParams = NodeXmlBuilder.build( xmlNode, this.importRoot );
+            final Node createdNode = this.nodeService.create( createNodeParams );
+
+            nodesBuilder.addNodePath( createdNode.path() );
+        }
+        else
+        {
+            doImportChildren( nodeFilePath, nodesBuilder );
+        }
     }
 
     private Stream<Path> getChildPaths( final Path path )
     {
         return this.exportReader.getChildrenPaths( path );
-    }
-
-    private void doImport( final Path path )
-    {
-        final Stream<Path> children = getChildPaths( path );
-
-        children.forEach( ( child ) -> {
-
-            final String serializedNode = this.exportReader.getItem( child );
-
-            final XmlNode xmlNode = this.xmlNodeSerializer.parse( serializedNode );
-
-            // Check if exists
-
-            final CreateNodeParams createNodeParams = NodeXmlBuilder.build( xmlNode );
-
-            final Node createdNode = this.nodeService.create( createNodeParams );
-
-            doImport( child );
-        } );
     }
 
     public static Builder create()

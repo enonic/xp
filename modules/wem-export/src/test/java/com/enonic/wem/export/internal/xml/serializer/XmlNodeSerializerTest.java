@@ -43,7 +43,6 @@ public class XmlNodeSerializerTest
         propertyTree.addInstant( "myInstant", instant );
         propertyTree.addLocalTime( "myLocalTime", LocalTime.of( 21, 42, 0 ) );
         propertyTree.addLocalDate( "myLocalDate", LocalDate.of( 2014, 11, 28 ) );
-        // This is causing trouble, since ms is added no matter what is set in the variable.
         propertyTree.addLocalDateTime( "myLocalDateTime", localDateTime );
         // Links and ref
         propertyTree.addReference( "myRef", Reference.from( "abcd" ) );

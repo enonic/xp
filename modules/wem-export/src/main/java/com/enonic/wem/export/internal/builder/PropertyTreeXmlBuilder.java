@@ -33,6 +33,11 @@ class PropertyTreeXmlBuilder
     {
         final PropertyTree propertyTree = new PropertyTree();
 
+        if ( xmlPropertyTree == null )
+        {
+            return propertyTree;
+        }
+
         final List<JAXBElement<?>> list = xmlPropertyTree.getList();
 
         doParsePropertyElementList( propertyTree.getRoot(), list );

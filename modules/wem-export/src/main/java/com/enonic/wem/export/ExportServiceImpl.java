@@ -15,6 +15,7 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.export.internal.BatchedNodeExporter;
 import com.enonic.wem.export.internal.NodeImporter;
+import com.enonic.wem.export.internal.reader.FileExportReader;
 import com.enonic.wem.export.internal.writer.FileExportWriter;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
@@ -47,6 +48,7 @@ public class ExportServiceImpl
         return NodeImporter.create().
             xmlNodeSerializer( this.xmlNodeSerializer ).
             nodeService( this.nodeService ).
+            exportReader( new FileExportReader() ).
             exportHome( Paths.get( HomeDir.get().toString(), "/exports" ) ).
             exportName( exportName ).
             importRoot( importRoot ).

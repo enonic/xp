@@ -1,25 +1,24 @@
 package com.enonic.wem.api.export;
 
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodePaths;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIds;
 
 public class NodeExportResult
 {
-    private final NodePaths exportedNodes;
+    private final NodeIds exportedNodes;
 
-    private NodeExportResult( Builder builder )
+    private NodeExportResult( final Builder builder )
     {
-        exportedNodes = builder.exportedNodes.build();
+        exportedNodes = NodeIds.from( builder.nodeIds );
     }
 
-    public NodePaths getExportedNodes()
+    public NodeIds getExportedNodes()
     {
         return exportedNodes;
-    }
-
-    public int size()
-    {
-        return exportedNodes.getSize();
     }
 
     public static Builder create()
@@ -28,17 +27,23 @@ public class NodeExportResult
     }
 
 
+    public int size()
+    {
+        return exportedNodes.getSize();
+    }
+
+
     public static final class Builder
     {
-        private final NodePaths.Builder exportedNodes = NodePaths.create();
+        private final Set<NodeId> nodeIds = Sets.newLinkedHashSet();
 
         private Builder()
         {
         }
 
-        public Builder add( final NodePath nodePath )
+        public Builder add( NodeId nodeId )
         {
-            this.exportedNodes.addNodePath( nodePath );
+            this.nodeIds.add( nodeId );
             return this;
         }
 

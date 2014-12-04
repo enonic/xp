@@ -46,7 +46,7 @@ public class ChildOrder
 
         if ( Strings.isNullOrEmpty( orderExpression ) )
         {
-            return builder.build();
+            return null;
         }
 
         final List<OrderExpr> orderExprs = QueryParser.parseOrderExpressions( orderExpression );

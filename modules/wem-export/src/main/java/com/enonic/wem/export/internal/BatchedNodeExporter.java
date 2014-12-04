@@ -33,7 +33,7 @@ public class BatchedNodeExporter
 
     private final static String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
-    private BatchedNodeExporter( Builder builder )
+    private BatchedNodeExporter( final Builder builder )
     {
         exportRootNode = builder.exportRootNode;
         batchSize = builder.batchSize;
@@ -47,16 +47,16 @@ public class BatchedNodeExporter
     {
         final NodeExportResult.Builder resultBuilder = NodeExportResult.create();
 
-        doProcessNode( this.exportRootNode, resultBuilder );
+        doExportChildNodes( this.exportRootNode, resultBuilder );
 
         return resultBuilder.build();
     }
 
-    private void doProcessNode( final NodePath nodePath, final NodeExportResult.Builder resultBuilder )
+    private void doExportChildNodes( final NodePath parentPath, final NodeExportResult.Builder resultBuilder )
     {
-        final Node parentNode = nodeService.getByPath( nodePath );
+        final Node parentNode = nodeService.getByPath( parentPath );
 
-        final double batches = getNumberOfBatches( nodePath );
+        final double batches = getNumberOfBatches( parentPath );
 
         int currentFrom = 0;
 
@@ -64,25 +64,13 @@ public class BatchedNodeExporter
 
         for ( int i = 1; i <= batches; i++ )
         {
-            final FindNodesByParentResult childrenBatch = exportBatch( nodePath, resultBuilder, currentFrom );
+            final FindNodesByParentResult childrenBatch = exportBatch( parentPath, resultBuilder, currentFrom );
 
             allCurrentLevelChildren.addAll( childrenBatch.getNodes() );
             currentFrom += this.batchSize;
         }
 
         writeNodeOrderList( parentNode, allCurrentLevelChildren.build() );
-    }
-
-    private double getNumberOfBatches( final NodePath nodePath )
-    {
-        final FindNodesByParentResult countResult = nodeService.findByParent( FindNodesByParentParams.create().
-            countOnly( true ).
-            parentPath( nodePath ).
-            build() );
-
-        final long totalHits = countResult.getTotalHits();
-
-        return getBatchSize( totalHits );
     }
 
     private FindNodesByParentResult exportBatch( final NodePath nodePath, final NodeExportResult.Builder resultBuilder,
@@ -103,14 +91,22 @@ public class BatchedNodeExporter
 
     private void exportNode( final NodeExportResult.Builder resultBuilder, final Node child )
     {
-        writeSerializedNode( child );
-        resultBuilder.add( child.path() );
-        doProcessNode( child.path(), resultBuilder );
+        writeNode( child );
+        resultBuilder.add( child.id() );
+        doExportChildNodes( child.path(), resultBuilder );
     }
 
-    private double getBatchSize( final double totalHits )
+    private void writeNode( final Node node )
     {
-        return Math.ceil( totalHits / this.batchSize );
+        final Node relativeNode = Node.newNode( node ).parent( node.parent().removeFromBeginning( this.exportRootNode ) ).build();
+
+        final XmlNode xmlNode = XmlNodeMapper.toXml( relativeNode );
+
+        final String serializedNode = this.xmlNodeSerializer.serialize( xmlNode );
+
+        final Path systemFolder = getNodeDataFolder( node );
+
+        exportWriter.writeElement( NodeExportPathResolver.resolveNodeXmlPath( systemFolder ), serializedNode );
     }
 
     private void writeNodeOrderList( final Node parent, final Nodes children )
@@ -130,15 +126,21 @@ public class BatchedNodeExporter
         exportWriter.writeElement( NodeExportPathResolver.resolveOrderListPath( getNodeDataFolder( parent ) ), builder.toString() );
     }
 
-    private void writeSerializedNode( final Node node )
+    private double getNumberOfBatches( final NodePath nodePath )
     {
-        final XmlNode xmlNode = XmlNodeMapper.toXml( node );
+        final FindNodesByParentResult countResult = nodeService.findByParent( FindNodesByParentParams.create().
+            countOnly( true ).
+            parentPath( nodePath ).
+            build() );
 
-        final String serializedNode = this.xmlNodeSerializer.serialize( xmlNode );
+        final long totalHits = countResult.getTotalHits();
 
-        final Path systemFolder = getNodeDataFolder( node );
+        return getBatchSize( totalHits );
+    }
 
-        exportWriter.writeElement( NodeExportPathResolver.resolveNodeXmlPath( systemFolder ), serializedNode );
+    private double getBatchSize( final double totalHits )
+    {
+        return Math.ceil( totalHits / this.batchSize );
     }
 
     private Path getNodeDataFolder( final Node node )

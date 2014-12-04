@@ -1,5 +1,6 @@
 package com.enonic.wem.export.internal.reader;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,8 +26,13 @@ public class FileExportReader
         }
     }
 
+    public File getFile( final Path path )
+    {
+        return path.toFile();
+    }
+
     @Override
-    public String getItem( final Path path )
+    public String readItem( final Path path )
     {
         try
         {

@@ -1,6 +1,9 @@
 package com.enonic.wem.export.internal;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,6 +18,7 @@ import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.export.internal.writer.FileExportWriter;
+import com.enonic.wem.export.internal.xml.XmlNode;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
 import static org.junit.Assert.*;
@@ -39,8 +43,6 @@ public class BatchedNodeExporterTest
         throws Exception
     {
         final Node node = createNode( "mynode", NodePath.ROOT );
-
-        this.nodeService.create( CreateNodeParams.from( node ).build() );
 
         final NodeExportResult result = BatchedNodeExporter.create().
             nodeService( this.nodeService ).
@@ -153,6 +155,11 @@ public class BatchedNodeExporterTest
 
         assertFileExists( "/myExport/child1_1_1/_/node.xml" );
         assertFileExists( "/myExport/child1_1_2/_/node.xml" );
+
+        assertPath( "/myExport/child1_1_1/_/node.xml", NodePath.newPath( "/child1_1_1" ).build() );
+        assertPath( "/myExport/child1_1_2/_/node.xml", NodePath.newPath( "/child1_1_2" ).build() );
+
+
     }
 
     private Node createNode( final String name, final NodePath root )
@@ -168,6 +175,24 @@ public class BatchedNodeExporterTest
     private void assertFileExists( final String node1Path )
     {
         assertTrue( new File( this.temporaryFolder.getRoot().getPath() + node1Path ).exists() );
+    }
+
+
+    private void assertPath( final String filePath, final NodePath expectedNodePath )
+        throws Exception
+    {
+        final Path filePathAsPath = Paths.get( this.temporaryFolder.getRoot().getPath(), filePath );
+        assertTrue( Files.exists( filePathAsPath ) );
+
+        final String serializedNode = new String( Files.readAllBytes( filePathAsPath ) );
+        final XmlNode xmlNode = new XmlNodeSerializer().parse( serializedNode );
+
+        assertEquals( createNodePathFromXmlNode( xmlNode ), expectedNodePath );
+    }
+
+    private NodePath createNodePathFromXmlNode( final XmlNode xmlNode )
+    {
+        return NodePath.newNodePath( NodePath.newPath( xmlNode.getParent() ).build(), xmlNode.getName() ).build();
     }
 
 }

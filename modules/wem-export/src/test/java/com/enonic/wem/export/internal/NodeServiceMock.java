@@ -89,13 +89,30 @@ class NodeServiceMock
     @Override
     public Node deleteById( final NodeId id )
     {
-        return null;
+        final Node toBeRemoved = this.nodeIdMap.get( id );
+
+        final MockNodeTree<NodePath> treeNode = nodeTree.find( toBeRemoved.path() );
+        treeNode.getParent().children.remove( treeNode );
+
+        this.nodePathMap.remove( toBeRemoved.path() );
+        this.nodeIdMap.remove( toBeRemoved.id() );
+
+        return toBeRemoved;
     }
 
     @Override
     public Node deleteByPath( final NodePath path )
     {
-        return null;
+
+        final MockNodeTree<NodePath> treeNode = nodeTree.find( path );
+        treeNode.getParent().children.remove( treeNode );
+
+        final Node toBeRemoved = this.nodePathMap.get( path );
+
+        this.nodePathMap.remove( path );
+        this.nodeIdMap.remove( toBeRemoved.id() );
+
+        return toBeRemoved;
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentCreatedEvent;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
@@ -70,6 +71,25 @@ final class CreateContentCommand
         }
 
         return translator.fromNode( createdNode );
+    }
+
+    private void createContentRootNode()
+    {
+        final Node rootPath = nodeService.getByPath( ContentNodeHelper.CONTENT_ROOT_NODE.asAbsolute() );
+
+        if ( rootPath != null )
+        {
+            return;
+        }
+
+        LOG.info( "Content root-node not found, creating.." );
+
+        nodeService.create( CreateNodeParams.create().
+            name( ContentConstants.CONTENT_ROOT_NAME ).
+            parent( ContentConstants.CONTENT_ROOT_PARENT ).
+            accessControlList( ContentConstants.CONTENT_ROOT_DEFAULT_ACL ).
+            childOrder( ContentConstants.CONTENT_DEFAULT_CHILD_ORDER ).
+            build() );
     }
 
     private void validateContentData( final CreateContentParams contentParams )

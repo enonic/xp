@@ -36,7 +36,7 @@ final class FindContentByParentCommand
         if ( params.getParentPath() == null )
         {
             parentPath = ContentNodeHelper.CONTENT_ROOT_NODE.asAbsolute();
-            useWorkspaceOrdering = params.getChildOrder().isEmpty();
+            useWorkspaceOrdering = params.getChildOrder() == null || params.getChildOrder().isEmpty();
         }
         else
         {
