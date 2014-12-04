@@ -22,6 +22,8 @@ import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.PrincipalNotFoundException;
+import com.enonic.wem.api.security.PrincipalQuery;
+import com.enonic.wem.api.security.PrincipalQueryResult;
 import com.enonic.wem.api.security.PrincipalRelationship;
 import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.PrincipalType;
@@ -209,6 +211,46 @@ public class SecurityResourceTest
             get().getAsString();
 
         assertJson( "getPrincipalRoleById.json", jsonString );
+    }
+
+    @Test
+    public void isEmailAvailableNegative()
+        throws Exception
+    {
+        final User user = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+            displayName( "Alice" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "alice@enonic.com" ).
+            login( "alice" ).
+            build();
+
+        final PrincipalQueryResult queryResult = PrincipalQueryResult.newResult().addPrincipal( user ).totalSize( 1 ).build();
+        Mockito.when( securityService.query( Mockito.any( PrincipalQuery.class ) ) ).thenReturn( queryResult );
+
+        String jsonString = request().
+            path( "security/principals/emailAvailable" ).
+            queryParam( "email", "true" ).
+            queryParam( "userStoreKey", "true" ).
+            get().getAsString();
+
+        assertJson( "emailNotAvailableSuccess.json", jsonString );
+    }
+
+    @Test
+    public void isEmailAvailablePositive()
+        throws Exception
+    {
+        final PrincipalQueryResult queryResult = PrincipalQueryResult.newResult().totalSize( 0 ).build();
+        Mockito.when( securityService.query( Mockito.any( PrincipalQuery.class ) ) ).thenReturn( queryResult );
+
+        String jsonString = request().
+            path( "security/principals/emailAvailable" ).
+            queryParam( "email", "true" ).
+            queryParam( "userStoreKey", "true" ).
+            get().getAsString();
+
+        assertJson( "emailAvailableSuccess.json", jsonString );
     }
 
     @Test
