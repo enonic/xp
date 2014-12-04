@@ -92,16 +92,16 @@ module api.security {
             return this.refString;
         }
 
-        toPath(): string {
-            if (this.isRole()) {
-                return api.util.StringHelper.format("/role/{0}",
-                    this.getId());
-            } else {
-                return api.util.StringHelper.format("/{0}/{1}/{2}",
-                    this.getUserStore().toString(),
-                    PrincipalType[this.getType()].toLowerCase(),
-                    this.getId());
+        toPath(toParent: boolean = false): string {
+            var path = this.isRole() ? "/roles/" :
+                api.util.StringHelper.format("/{0}/{1}/", this.getUserStore().toString(),
+                    PrincipalType[this.getType()].toLowerCase().replace(/(group|user)/g, "$&s"));
+
+            if (!toParent) {
+                path += this.getId();
             }
+
+            return path;
         }
 
         equals(o: api.Equitable): boolean {

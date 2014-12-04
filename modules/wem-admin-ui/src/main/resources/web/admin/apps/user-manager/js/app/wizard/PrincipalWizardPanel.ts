@@ -69,6 +69,10 @@ module app.wizard {
 
             this.principalWizardHeader.setPath(this.principalPath);
 
+            if (params.persistedPrincipal) {
+                this.principalWizardHeader.disableNameInput();
+            }
+
             super({
                 tabId: params.tabId,
                 persistedItem: params.persistedPrincipal,
@@ -96,7 +100,7 @@ module app.wizard {
                     if (this.getPersistedItem()) {
                         app.Router.setHash("edit/" + this.getPersistedItem().getKey());
                     } else {
-                        app.Router.setHash("new/" + this.principalType);
+                        app.Router.setHash("new/" + PrincipalType[this.principalType].toLowerCase());
                     }
 
                     responsiveItem.update();
@@ -106,6 +110,10 @@ module app.wizard {
 
                 callback(this);
             });
+        }
+
+        getPrincipalWizardHeader(): WizardHeaderWithDisplayNameAndName {
+            return this.principalWizardHeader;
         }
 
         giveInitialFocus() {
@@ -118,6 +126,19 @@ module app.wizard {
             }
 
             this.startRememberFocus();
+        }
+
+        saveChanges(): wemQ.Promise<Principal> {
+            if (!this.principalWizardHeader.getName()) {
+                var deferred = wemQ.defer<Principal>();
+                api.notify.showError("Name can not be empty or null.");
+                // deferred.resolve(null);
+                deferred.reject(new Error("Name can not be empty or null."));
+                return deferred.promise;
+            } else {
+                return super.saveChanges();
+            }
+
         }
 
         createSteps(): wemQ.Promise<any[]> {

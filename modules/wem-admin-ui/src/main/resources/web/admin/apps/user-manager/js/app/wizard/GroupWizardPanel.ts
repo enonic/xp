@@ -52,13 +52,14 @@ module app.wizard {
         persistNewItem(): wemQ.Promise<Principal> {
              return this.produceCreateGroupRequest().sendAndParse().
                 then((principal: Principal) => {
+                    this.getPrincipalWizardHeader().disableNameInput();
                     api.notify.showFeedback('Group was created!');
                     return principal;
                 });
         }
 
         produceCreateGroupRequest(): CreateGroupRequest {
-            var key = PrincipalKey.ofGroup(this.getUserStore(), Math.random().toString(36).slice(2)),
+            var key = PrincipalKey.ofGroup(this.getUserStore(), this.principalWizardHeader.getName()),
                 name = this.principalWizardHeader.getDisplayName(),
                 members = this.getMembersWizardStepForm().getMembers().map((el) => { return el.getKey(); });
             return new CreateGroupRequest().setKey(key).setDisplayName(name).setMembers(members);

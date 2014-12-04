@@ -35,7 +35,6 @@ module app.wizard {
         }
 
         doLayoutPersistedItem(principal: Principal): wemQ.Promise<void> {
-
             var parallelPromises: wemQ.Promise<any>[] = [
                 // Load attachments?
                 this.createSteps()
@@ -52,13 +51,14 @@ module app.wizard {
         persistNewItem(): wemQ.Promise<Principal> {
              return this.produceCreateRoleRequest().sendAndParse().
                 then((principal: Principal) => {
+                    this.getPrincipalWizardHeader().disableNameInput();
                     api.notify.showFeedback('Role was created!');
                     return principal;
                 });
         }
 
         produceCreateRoleRequest(): CreateRoleRequest {
-            var key = PrincipalKey.ofRole(Math.random().toString(36).slice(2)),
+            var key = PrincipalKey.ofRole(this.principalWizardHeader.getName()),
                 name = this.principalWizardHeader.getDisplayName(),
                 members = this.getMembersWizardStepForm().getMembers().map((el) => { return el.getKey(); });
             return new CreateRoleRequest().setKey(key).setDisplayName(name).setMembers(members);

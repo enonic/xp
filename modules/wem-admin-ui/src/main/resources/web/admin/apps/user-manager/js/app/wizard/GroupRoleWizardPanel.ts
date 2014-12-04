@@ -52,13 +52,9 @@ module app.wizard {
         preLayoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
-            // Ensure a nameless and empty content is persisted before rendering new
-            this.saveChanges().
-                then(() => {
-                    deferred.resolve(null);
-                }).catch((reason) => {
-                    deferred.reject(reason);
-                }).done();
+            this.doLayoutPersistedItem(null);
+
+            deferred.resolve(null);
 
             return deferred.promise;
         }
@@ -66,14 +62,13 @@ module app.wizard {
         postLayoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
-            this.principalWizardHeader.initNames(this.getPersistedItem().getDisplayName(), this.getPersistedItem().getKey().getId(), false);
+            this.principalWizardHeader.initNames("", "", false);
 
             deferred.resolve(null);
             return deferred.promise;
         }
 
         layoutPersistedItem(persistedPrincipal: Principal): wemQ.Promise<void> {
-
             if (!this.constructing) {
 
                 var deferred = wemQ.defer<void>();
@@ -94,8 +89,7 @@ module app.wizard {
 
                 deferred.resolve(null);
                 return deferred.promise;
-            }
-            else {
+            } else {
                 return this.doLayoutPersistedItem(persistedPrincipal.clone());
             }
         }

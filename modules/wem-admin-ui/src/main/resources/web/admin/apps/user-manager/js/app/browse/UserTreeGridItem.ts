@@ -97,28 +97,6 @@ module app.browse {
 
         }
 
-        getDataPath(): string {
-            var path = this.getDataId();
-            switch (this.type) {
-            case UserTreeGridItemType.PRINCIPAL:
-                var pathArray = path.split(":");
-                pathArray.pop();
-                path = pathArray.length === 0 ? "/" : "/" + pathArray.reverse().join("/") + "/";
-                path = path.replace(/(role|group|user)(\/)/g, "$1s/");
-                break;
-
-            case UserTreeGridItemType.ROLES:
-                path = path + "/";
-                break;
-
-            default:
-                path = "/" + path + "/";
-                break;
-            }
-            return path;
-
-        }
-
         hasChildren(): boolean {
             return (this.type === UserTreeGridItemType.USER_STORE || this.type === UserTreeGridItemType.GROUPS ||
                     this.type === UserTreeGridItemType.ROLES || this.type === UserTreeGridItemType.USERS);

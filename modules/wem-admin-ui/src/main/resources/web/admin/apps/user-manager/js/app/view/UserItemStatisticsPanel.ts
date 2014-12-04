@@ -57,7 +57,7 @@ module app.view {
             switch (type) {
                 case PrincipalType.USER:
                     item.setPathName(item.getModel().getPrincipal().getKey().getId());
-                    item.setPath(item.getModel().getDataPath());
+                    item.setPath(item.getModel().getPrincipal().getKey().toPath(true));
                     item.setIconSize(128);
                     break;
                 case PrincipalType.GROUP:
