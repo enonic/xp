@@ -69,17 +69,25 @@ module app.view {
         }
 
         private appendUserMetadata(item: ViewItem<UserTreeGridItem>) {
+            // Insert an empty data first to avoid blinking, after full data is loaded.
             var userGroup = new ItemDataGroup("User", "user");
-            userGroup.addDataList("E-mail", item.getModel().getPrincipal().asUser().getEmail());
+            userGroup.addDataList("E-mail", " ");
             this.userDataContainer.appendChild(userGroup);
 
             var rolesAndGroupsGroup = new ItemDataGroup("Roles & Groups", "roles-and-groups");
+            rolesAndGroupsGroup.addDataArray("Roles", []);
+            rolesAndGroupsGroup.addDataArray("Groups", []);
             this.userDataContainer.appendChild(rolesAndGroupsGroup);
 
             new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey()).
                 includeUserMemberships(true).
                 sendAndParse().
                 then((principal: Principal) => {
+                    userGroup = new ItemDataGroup("User", "user");
+                    userGroup.addDataList("E-mail", principal.asUser().getEmail());
+
+                    rolesAndGroupsGroup = new ItemDataGroup("Roles & Groups", "roles-and-groups");
+
                     var roles = principal.asUser().getMemberships().
                         filter((el) => { return el.isRole()}).
                         map((el) => {
@@ -97,6 +105,10 @@ module app.view {
                             return viewer.getHtml();
                         });
                     rolesAndGroupsGroup.addDataArray("Groups", groups);
+
+                    this.userDataContainer.removeChildren();
+                    this.userDataContainer.appendChild(userGroup);
+                    this.userDataContainer.appendChild(rolesAndGroupsGroup);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).finally(() => {
