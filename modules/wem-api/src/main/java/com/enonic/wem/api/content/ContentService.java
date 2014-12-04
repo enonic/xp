@@ -6,6 +6,26 @@ import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 public interface ContentService
 {
+    Site create( final CreateSiteParams params );
+
+    Content create( CreateContentParams params );
+
+    Content update( UpdateContentParams params );
+
+    Content rename( RenameContentParams params );
+
+    String generateContentName( String displayName );
+
+    DeleteContentResult delete( DeleteContentParams params );
+
+    Content push( final PushContentParams params );
+
+    Content duplicate( DuplicateContentParams params );
+
+    Content setChildOrder( final SetContentChildOrderParams params );
+
+    Content orderChild( final OrderChildContentParams params );
+
     Content getById( ContentId id );
 
     Site getNearestSite( ContentId contentId );
@@ -18,21 +38,7 @@ public interface ContentService
 
     FindContentByParentResult findByParent( FindContentByParentParams params );
 
-    Site create( final CreateSiteParams params );
-
-    Content create( CreateContentParams params );
-
-    Content update( UpdateContentParams params );
-
-    Content push( final PushContentParams params );
-
-    DeleteContentResult delete( DeleteContentParams params );
-
     DataValidationErrors validate( ValidateContentData data );
-
-    Content duplicate( DuplicateContentParams params );
-
-    Content rename( RenameContentParams params );
 
     FindContentByQueryResult find( FindContentByQueryParams params );
 
@@ -43,12 +49,6 @@ public interface ContentService
     FindContentVersionsResult getVersions( final FindContentVersionsParams params );
 
     GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params );
-
-    Content setChildOrder( final SetContentChildOrderParams params );
-
-    Content orderChild( final OrderChildContentParams params );
-
-    String generateContentName( String displayName );
 
     ContentPermissions getPermissions( final ContentId contentId );
 }
