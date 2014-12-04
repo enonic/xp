@@ -4,6 +4,9 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.FindNodesByParentParams;
@@ -42,6 +45,8 @@ class NodeServiceMock
 
     private final MockNodeTree<NodePath> nodeTree = new MockNodeTree<>( NodePath.ROOT );
 
+    private final static Logger LOG = LoggerFactory.getLogger( NodeServiceMock.class );
+
     @Override
     public Node create( final CreateNodeParams params )
     {
@@ -55,7 +60,9 @@ class NodeServiceMock
             build();
 
         nodeIdMap.putIfAbsent( createdNode.id(), createdNode );
+        // LOG.info( "Store id " + createdNode.id() );
         nodePathMap.putIfAbsent( createdNode.path(), createdNode );
+        //LOG.info( "Store path " + createdNode.path() );
 
         final MockNodeTree<NodePath> nodePathTreeNode = this.nodeTree.find( createdNode.parent() );
 
@@ -65,6 +72,7 @@ class NodeServiceMock
         }
 
         nodePathTreeNode.addChild( createdNode.path() );
+        LOG.info( "Store in tree " + nodePathTreeNode.data );
 
         return createdNode;
     }

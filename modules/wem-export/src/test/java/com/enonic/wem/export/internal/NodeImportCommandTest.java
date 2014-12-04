@@ -28,7 +28,6 @@ public class NodeImportCommandTest
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-
     @Test(expected = ImportNodeException.class)
     public void import_node_non_existing_parent()
         throws Exception
@@ -103,6 +102,7 @@ public class NodeImportCommandTest
     public void import_nodes_into_child()
         throws Exception
     {
+
         createNodeFile( "/myExport/mynode/_" );
         createNodeFile( "/myExport/mynode/mychild/_" );
         createNodeFile( "/myExport/mynode/mychild/mychildchild/_" );
