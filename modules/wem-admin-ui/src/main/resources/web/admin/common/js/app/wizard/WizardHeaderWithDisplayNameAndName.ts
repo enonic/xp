@@ -130,6 +130,10 @@ module api.app.wizard {
             }
         }
 
+        disableNameInput() {
+            this.nameEl.getEl().setAttribute("disabled", "disabled");
+        }
+
         getName(): string {
             return this.nameEl.getValue();
         }

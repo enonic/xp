@@ -120,7 +120,7 @@ module app {
                 new app.wizard.PrincipalWizardPanelFactory().
                     setAppBarTabId(tabId).
                     setPrincipalType(principalType).
-                    setPrincipalPath(userItem.getDataPath()).
+                    setPrincipalPath(userItem.getPrincipal().getKey().toPath(true)).
                     setUserStore(userItem.getUserStore() ? userItem.getUserStore().getKey() : null).
                     createForNew().then((wizard: app.wizard.PrincipalWizardPanel) => {
                         tabMenuItem = new AppBarTabMenuItemBuilder().setLabel("[New " + tabName + "]").
@@ -161,7 +161,7 @@ module app {
                     new app.wizard.PrincipalWizardPanelFactory().
                         setAppBarTabId(tabId).
                         setPrincipalType(userItem.getPrincipal().getType()).
-                        setPrincipalPath(userItem.getDataPath()).
+                        setPrincipalPath(userItem.getPrincipal().getKey().toPath(true)).
                         setPrincipalToEdit(userItem.getPrincipal().getKey()).
                         createForEdit().then((wizard: app.wizard.PrincipalWizardPanel) => {
                             if (closeViewPanelMenuItem != null) {
