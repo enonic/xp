@@ -15,7 +15,7 @@ import com.enonic.wem.export.internal.xml.XmlNode;
 import com.enonic.wem.export.internal.xml.mapper.XmlNodeMapper;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
-public class BatchedNodeExporter
+public class BatchedNodeExportCommand
 {
     private final static int DEFAULT_BATCH_SIZE = 100;
 
@@ -33,7 +33,7 @@ public class BatchedNodeExporter
 
     private final static String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
-    private BatchedNodeExporter( final Builder builder )
+    private BatchedNodeExportCommand( final Builder builder )
     {
         exportRootNode = builder.exportRootNode;
         batchSize = builder.batchSize;
@@ -217,9 +217,9 @@ public class BatchedNodeExporter
             return this;
         }
 
-        public BatchedNodeExporter build()
+        public BatchedNodeExportCommand build()
         {
-            return new BatchedNodeExporter( this );
+            return new BatchedNodeExportCommand( this );
         }
     }
 }

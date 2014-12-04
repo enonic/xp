@@ -1,7 +1,7 @@
 package com.enonic.wem.export.internal.xml.mapper;
 
+import com.enonic.wem.api.export.ExportNodeException;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.export.ExportNodeException;
 import com.enonic.wem.export.internal.xml.XmlNode;
 
 public class XmlNodeMapper
@@ -23,9 +23,6 @@ public class XmlNodeMapper
     {
         final XmlNode xml = new XmlNode();
 
-        xml.setId( node.id().toString() );
-        xml.setParent( node.parent().toString() );
-        xml.setName( node.name().toString() );
         xml.setChildOrder( getAsStringOrNull( node.getChildOrder() ) );
 
         if ( node.data() != null )

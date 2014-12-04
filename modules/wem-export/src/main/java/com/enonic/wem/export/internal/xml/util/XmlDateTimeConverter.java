@@ -15,9 +15,9 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.enonic.wem.export.ExportNodeException;
+import com.enonic.wem.api.export.ExportNodeException;
 
-public class DateTimeConverter
+public class XmlDateTimeConverter
 {
     private static final int UTC_OFFSET = 0;
 

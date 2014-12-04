@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.enonic.wem.export.ExportNodeException;
+import com.enonic.wem.api.export.ExportNodeException;
 
 public class FileExportWriter
     implements ExportWriter
 {
-
     @Override
     public void createDirectory( final Path path )
     {

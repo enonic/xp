@@ -13,14 +13,14 @@ import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.home.HomeDir;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.export.internal.BatchedNodeExporter;
-import com.enonic.wem.export.internal.NodeImporter;
+import com.enonic.wem.export.internal.BatchedNodeExportCommand;
+import com.enonic.wem.export.internal.NodeImportCommand;
 import com.enonic.wem.export.internal.reader.FileExportReader;
 import com.enonic.wem.export.internal.writer.FileExportWriter;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
 @Component(immediate = true)
-public class ExportServiceImpl
+class ExportServiceImpl
     implements ExportService
 {
     private NodeService nodeService;
@@ -31,7 +31,7 @@ public class ExportServiceImpl
     @Override
     public NodeExportResult exportNodes( final NodePath nodePath )
     {
-        return BatchedNodeExporter.create().
+        return BatchedNodeExportCommand.create().
             xmlNodeSerializer( xmlNodeSerializer ).
             exportRootNode( nodePath ).
             nodeService( this.nodeService ).
@@ -43,15 +43,16 @@ public class ExportServiceImpl
     }
 
     @Override
-    public NodeImportResult importNodes( final String exportName, final NodePath importRoot )
+    public NodeImportResult importNodes( final String exportName, final NodePath importRootPath )
     {
-        return NodeImporter.create().
+
+        return NodeImportCommand.create().
             xmlNodeSerializer( this.xmlNodeSerializer ).
             nodeService( this.nodeService ).
             exportReader( new FileExportReader() ).
             exportHome( Paths.get( HomeDir.get().toString(), "/exports" ) ).
             exportName( exportName ).
-            importRoot( importRoot ).
+            importRoot( importRootPath ).
             build().
             execute();
     }

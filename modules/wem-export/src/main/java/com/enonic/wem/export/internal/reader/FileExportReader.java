@@ -6,8 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
-import com.enonic.wem.export.ImportNodeException;
-
 public class FileExportReader
     implements ExportReader
 {
@@ -22,7 +20,7 @@ public class FileExportReader
         }
         catch ( IOException e )
         {
-            throw new ImportNodeException( "Fetching children of parent item with path " + parent.toString() + " failed", e );
+            throw new ExportReaderException( "Fetching children of parent item with path " + parent.toString() + " failed", e );
         }
     }
 
@@ -40,7 +38,7 @@ public class FileExportReader
         }
         catch ( IOException e )
         {
-            throw new ImportNodeException( "Could not read item with path " + path.toString(), e );
+            throw new ExportReaderException( "Could not read item with path " + path.toString(), e );
         }
     }
 }

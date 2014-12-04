@@ -2,9 +2,6 @@
 <node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:enonic:xp:export:1.0"
       xsi:schemaLocation="urn:enonic:xp:export:1.0 ../../../main/resources/META-INF/xsd/export.xsd">
 
-  <id>my-node-id</id>
-  <name>my-node-name</name>
-  <parent>/</parent>
   <childOrder>_manualordervalue DESC</childOrder>
   <properties>
     <string name="test">value</string>

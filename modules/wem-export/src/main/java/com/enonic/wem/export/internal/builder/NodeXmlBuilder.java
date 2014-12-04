@@ -9,11 +9,14 @@ import com.enonic.wem.export.internal.xml.XmlNode;
 
 public class NodeXmlBuilder
 {
-    public static CreateNodeParams build( final XmlNode xmlNode, final NodePath importRoot )
+    public static CreateNodeParams build( final XmlNode xmlNode, final NodePath nodePath )
     {
+        final String nodeName = nodePath.getLastElement().toString();
+        final NodePath parentPath = nodePath.getParentPath();
+
         return CreateNodeParams.create().
-            name( xmlNode.getName() ).
-            parent( ImportNodeParentPathResolver.resolve( xmlNode.getParent(), importRoot ) ).
+            name( nodeName ).
+            parent( parentPath ).
             childOrder( getChildOrder( xmlNode ) ).
             data( PropertyTreeXmlBuilder.build( xmlNode.getProperties() ) ).
             build();

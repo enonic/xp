@@ -35,8 +35,8 @@ public final class CreateNodeCommand
         Preconditions.checkArgument( params.getParent().isAbsolute(), "Path to parent Node must be absolute: " + params.getParent() );
 
         final Instant now = Instant.now();
-
         verifyNotExistsAlready();
+        verifyParentExists();
 
         final PrincipalKey creator = PrincipalKey.from( "user:system:admin" );
 
@@ -75,6 +75,26 @@ public final class CreateNodeCommand
         this.doStoreNode( newNode );
 
         return newNode;
+    }
+
+    private void verifyParentExists()
+    {
+
+        // FIX, add after CMS-4588 Make sure a parent exist before creating a node
+
+      /*
+        if ( NodePath.ROOT.equals( params.getParent() ) )
+        {
+            return;
+        }
+
+        final Node parentNode = doGetByPath( params.getParent(), false );
+        if ( parentNode == null )
+        {
+            throw new NodeNotFoundException(
+                "Cannot create node with name " + params.getName() + ", parent '" + params.getParent() + "' not found" );
+        }
+        */
     }
 
     private Long resolvePotentialManualOrderValue()

@@ -34,7 +34,6 @@ public abstract class BaseXmlSerializerTest
     }
 
     private String normalizeXml( final String xml )
-        throws Exception
     {
         final Document doc = DomHelper.parse( xml );
         return DomHelper.serialize( doc );

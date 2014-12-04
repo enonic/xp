@@ -1,4 +1,4 @@
-package com.enonic.wem.export;
+package com.enonic.wem.api.export;
 
 public class ExportNodeException
     extends RuntimeException

@@ -7,7 +7,7 @@ import com.enonic.wem.api.node.NodePath;
 
 public class NodeExportPathResolver
 {
-    private static final String SYSTEM_FOLDER_NAME = "_";
+    public static final String SYSTEM_FOLDER_NAME = "_";
 
     public static final String NODE_XML_EXPORT_NAME = "node.xml";
 

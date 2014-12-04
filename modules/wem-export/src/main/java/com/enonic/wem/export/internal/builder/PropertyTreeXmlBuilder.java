@@ -24,7 +24,7 @@ import com.enonic.wem.export.internal.xml.XmlReferenceProperty;
 import com.enonic.wem.export.internal.xml.XmlStringProperty;
 import com.enonic.wem.export.internal.xml.XmlTimeProperty;
 import com.enonic.wem.export.internal.xml.XmlXmlProperty;
-import com.enonic.wem.export.internal.xml.util.DateTimeConverter;
+import com.enonic.wem.export.internal.xml.util.XmlDateTimeConverter;
 import com.enonic.wem.export.internal.xml.util.XmlStringEscaper;
 
 class PropertyTreeXmlBuilder
@@ -145,17 +145,17 @@ class PropertyTreeXmlBuilder
 
     private static void addDateProperty( final XmlDateProperty xmlProperty, final PropertySet propertySet )
     {
-        propertySet.addLocalDate( xmlProperty.getName(), DateTimeConverter.toLocalDate( xmlProperty.getValue() ) );
+        propertySet.addLocalDate( xmlProperty.getName(), XmlDateTimeConverter.toLocalDate( xmlProperty.getValue() ) );
     }
 
     private static void addDateTimeProperty( final XmlDateTimeProperty xmlProperty, final PropertySet propertySet )
     {
-        propertySet.addInstant( xmlProperty.getName(), DateTimeConverter.toInstant( xmlProperty.getValue() ) );
+        propertySet.addInstant( xmlProperty.getName(), XmlDateTimeConverter.toInstant( xmlProperty.getValue() ) );
     }
 
     private static void addTimeProperty( final XmlTimeProperty xmlProperty, final PropertySet propertySet )
     {
-        propertySet.addLocalTime( xmlProperty.getName(), DateTimeConverter.toLocalTime( xmlProperty.getValue() ) );
+        propertySet.addLocalTime( xmlProperty.getName(), XmlDateTimeConverter.toLocalTime( xmlProperty.getValue() ) );
     }
 
     private static void addReferenceProperty( final XmlReferenceProperty xmlProperty, final PropertySet propertySet )

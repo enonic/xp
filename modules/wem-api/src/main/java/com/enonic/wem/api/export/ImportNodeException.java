@@ -1,4 +1,4 @@
-package com.enonic.wem.export;
+package com.enonic.wem.api.export;
 
 public class ImportNodeException
     extends RuntimeException
@@ -12,5 +12,10 @@ public class ImportNodeException
     public ImportNodeException( final String message, final Throwable cause )
     {
         super( message, cause );
+    }
+
+    public ImportNodeException( final Throwable cause )
+    {
+        super( cause );
     }
 }

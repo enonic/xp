@@ -64,9 +64,14 @@ public class NodePath
         return new Builder( source );
     }
 
-    public static Builder newNodePath( final NodePath parent, final String name )
+    public static Builder newNodePath( final NodePath parent, final String path )
     {
-        return new Builder( parent ).addElement( name );
+        final Builder builder = new Builder( parent ).
+            elementDivider( ELEMENT_DIVIDER ).
+            elements( path ).
+            absolute( true );
+
+        return builder;
     }
 
     public Element getElement( int index )

@@ -18,6 +18,7 @@ import com.enonic.wem.api.node.NodeComparisons;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePaths;
 import com.enonic.wem.api.node.NodeQuery;
@@ -60,7 +61,7 @@ class NodeServiceMock
 
         if ( nodePathTreeNode == null )
         {
-            throw new IllegalArgumentException( "Root-path not found" );
+            throw new NodeNotFoundException( "Parent not found: " + createdNode.parent() );
         }
 
         nodePathTreeNode.addChild( createdNode.path() );

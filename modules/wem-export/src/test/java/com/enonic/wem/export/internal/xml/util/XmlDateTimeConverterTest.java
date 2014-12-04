@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class DateTimeConverterTest
+public class XmlDateTimeConverterTest
 {
     @Test
     public void instant()
@@ -21,9 +21,9 @@ public class DateTimeConverterTest
     {
         final Instant instant = Instant.now();
 
-        final XMLGregorianCalendar calendar = DateTimeConverter.toXMLGregorianCalendar( instant );
+        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( instant );
 
-        final Instant instant2 = DateTimeConverter.toInstant( calendar );
+        final Instant instant2 = XmlDateTimeConverter.toInstant( calendar );
 
         assertEquals( instant, instant2 );
     }
@@ -36,11 +36,11 @@ public class DateTimeConverterTest
 
         final Instant instant = Instant.now();
 
-        final XMLGregorianCalendar calendar = DateTimeConverter.toXMLGregorianCalendar( instant );
+        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( instant );
 
         TimeZone.setDefault( TimeZone.getTimeZone( "BET" ) );
 
-        final Instant instant2 = DateTimeConverter.toInstant( calendar );
+        final Instant instant2 = XmlDateTimeConverter.toInstant( calendar );
 
         assertEquals( instant, instant2 );
 
@@ -53,9 +53,9 @@ public class DateTimeConverterTest
     {
         final LocalDateTime localDateTime = LocalDateTime.of( 2014, 12, 3, 19, 39, 0 );
 
-        final XMLGregorianCalendar calendar = DateTimeConverter.toXMLGregorianCalendar( localDateTime );
+        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( localDateTime );
 
-        final LocalDateTime parsedLocalDateTime = DateTimeConverter.toLocalDateTime( calendar );
+        final LocalDateTime parsedLocalDateTime = XmlDateTimeConverter.toLocalDateTime( calendar );
 
         assertEquals( localDateTime, parsedLocalDateTime );
     }
@@ -67,9 +67,9 @@ public class DateTimeConverterTest
     {
         final LocalTime localTime = LocalTime.of( 20, 24, 33 );
 
-        final XMLGregorianCalendar calendar = DateTimeConverter.toXMLGregorianCalendar( localTime );
+        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( localTime );
 
-        final LocalTime parsedTime = DateTimeConverter.toLocalTime( calendar );
+        final LocalTime parsedTime = XmlDateTimeConverter.toLocalTime( calendar );
 
         assertEquals( localTime, parsedTime );
     }
@@ -81,9 +81,9 @@ public class DateTimeConverterTest
     {
         final LocalDate localDate = LocalDate.now();
 
-        final XMLGregorianCalendar calendar = DateTimeConverter.toXMLGregorianCalendar( localDate );
+        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( localDate );
 
-        final LocalDate parsedLocalDate = DateTimeConverter.toLocalDate( calendar );
+        final LocalDate parsedLocalDate = XmlDateTimeConverter.toLocalDate( calendar );
 
         assertEquals( localDate, parsedLocalDate );
     }
@@ -95,9 +95,9 @@ public class DateTimeConverterTest
     {
         final Date date = Date.from( Instant.now() );
 
-        final XMLGregorianCalendar calendar = DateTimeConverter.toXMLGregorianCalendar( date );
+        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( date );
 
-        final Date parsedDate = DateTimeConverter.toDate( calendar );
+        final Date parsedDate = XmlDateTimeConverter.toDate( calendar );
 
         assertEquals( date, parsedDate );
     }

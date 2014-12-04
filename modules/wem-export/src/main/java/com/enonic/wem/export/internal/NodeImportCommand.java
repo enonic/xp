@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+import com.enonic.wem.api.export.ImportNodeException;
 import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
@@ -12,11 +13,12 @@ import com.enonic.wem.api.node.NodePaths;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.export.internal.builder.NodeXmlBuilder;
 import com.enonic.wem.export.internal.reader.ExportReader;
+import com.enonic.wem.export.internal.reader.NodeImportPathResolver;
 import com.enonic.wem.export.internal.writer.NodeExportPathResolver;
 import com.enonic.wem.export.internal.xml.XmlNode;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
-public class NodeImporter
+public class NodeImportCommand
 {
     private final NodePath importRoot;
 
@@ -28,18 +30,22 @@ public class NodeImporter
 
     private final Path exportRootPath;
 
+    private final boolean dryRun;
 
-    private NodeImporter( final Builder builder )
+    private NodeImportCommand( final Builder builder )
     {
         this.nodeService = builder.nodeService;
         this.exportReader = builder.exportReader;
         this.exportRootPath = NodeExportPathResolver.resolveExportTargetPath( builder.exportHome, builder.exportName );
         this.xmlNodeSerializer = builder.xmlNodeSerializer;
         this.importRoot = builder.importRoot;
+        this.dryRun = builder.dryRun;
     }
 
     public NodeImportResult execute()
     {
+        verifyImportRoot();
+
         final NodePaths.Builder nodesBuilder = NodePaths.create();
 
         doImportChildren( this.exportRootPath, nodesBuilder );
@@ -47,6 +53,21 @@ public class NodeImporter
         return NodeImportResult.create().
             importedNodes( nodesBuilder.build() ).
             build();
+    }
+
+    private void verifyImportRoot()
+    {
+        if ( NodePath.ROOT.equals( this.importRoot ) )
+        {
+            return;
+        }
+
+        final Node importRoot = nodeService.getByPath( this.importRoot );
+
+        if ( importRoot == null )
+        {
+            throw new ImportNodeException( "Import root '" + this.importRoot + "' not found" );
+        }
     }
 
     private void doImportChildren( final Path parentPath, NodePaths.Builder nodesBuilder )
@@ -66,10 +87,19 @@ public class NodeImporter
 
             final XmlNode xmlNode = this.xmlNodeSerializer.parse( serializedNode );
 
-            final CreateNodeParams createNodeParams = NodeXmlBuilder.build( xmlNode, this.importRoot );
-            final Node createdNode = this.nodeService.create( createNodeParams );
+            final NodePath nodePath = NodeImportPathResolver.resolve( nodeFilePath, this.exportRootPath, this.importRoot );
 
-            nodesBuilder.addNodePath( createdNode.path() );
+            final CreateNodeParams createNodeParams = NodeXmlBuilder.build( xmlNode, nodePath );
+
+            if ( !dryRun )
+            {
+                final Node createdNode = this.nodeService.create( createNodeParams );
+                nodesBuilder.addNodePath( createdNode.path() );
+            }
+            else
+            {
+                nodesBuilder.addNodePath( nodePath );
+            }
         }
         else
         {
@@ -100,6 +130,8 @@ public class NodeImporter
         private Path exportHome;
 
         private String exportName;
+
+        private boolean dryRun = false;
 
         private Builder()
         {
@@ -141,9 +173,15 @@ public class NodeImporter
             return this;
         }
 
-        public NodeImporter build()
+        public Builder dryRun( final boolean dryRun )
         {
-            return new NodeImporter( this );
+            this.dryRun = dryRun;
+            return this;
+        }
+
+        public NodeImportCommand build()
+        {
+            return new NodeImportCommand( this );
         }
     }
 

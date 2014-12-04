@@ -4,7 +4,7 @@ package com.enonic.wem.export.internal.xml.mapper;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.ValueTypes;
-import com.enonic.wem.export.ExportNodeException;
+import com.enonic.wem.api.export.ExportNodeException;
 import com.enonic.wem.export.internal.xml.ObjectFactory;
 import com.enonic.wem.export.internal.xml.XmlPropertyTree;
 
