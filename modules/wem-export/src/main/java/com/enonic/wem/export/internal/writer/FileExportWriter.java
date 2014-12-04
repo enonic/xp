@@ -1,6 +1,7 @@
 package com.enonic.wem.export.internal.writer;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -36,8 +37,7 @@ public class FileExportWriter
         {
             final Path exportFile = Files.createFile( itemPath );
 
-            // UTF-8??
-            Files.write( exportFile, export.getBytes() );
+            Files.write( exportFile, export.getBytes( StandardCharsets.UTF_8 ) );
         }
         catch ( IOException e )
         {

@@ -2,7 +2,7 @@ package com.enonic.wem.export.internal.reader;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -35,7 +35,7 @@ public class FileExportReader
     {
         try
         {
-            return new String( Files.readAllBytes( path ) );
+            return new String( Files.readAllBytes( path ), StandardCharsets.UTF_8 );
         }
         catch ( IOException e )
         {
@@ -48,7 +48,7 @@ public class FileExportReader
     {
         try
         {
-            return Files.readAllLines( path, Charset.forName( "UTF-8" ) );
+            return Files.readAllLines( path, StandardCharsets.UTF_8 );
         }
         catch ( IOException e )
         {
