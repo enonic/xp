@@ -1,5 +1,5 @@
 <node xmlns="urn:enonic:xp:export:1.0">
-  <childOrder>_manualordervalue DESC</childOrder>
+  <childOrder>_manualOrderValue DESC</childOrder>
   <properties>
     <string name="myString">myStringValue</string>
     <boolean name="myBoolean">true</boolean>

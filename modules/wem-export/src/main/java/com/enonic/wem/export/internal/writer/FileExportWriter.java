@@ -36,6 +36,7 @@ public class FileExportWriter
         {
             final Path exportFile = Files.createFile( itemPath );
 
+            // UTF-8??
             Files.write( exportFile, export.getBytes() );
         }
         catch ( IOException e )

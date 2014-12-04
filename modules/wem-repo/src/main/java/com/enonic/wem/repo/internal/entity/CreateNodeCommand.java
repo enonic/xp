@@ -117,31 +117,63 @@ public final class CreateNodeCommand
 
         if ( parentNode.getChildOrder() != null && parentNode.getChildOrder().isManualOrder() )
         {
-            final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
-                parentPath( parentNode.path() ).
-                childOrder( ChildOrder.manualOrder() ).
-                size( 1 ).
-                build() );
-
-            if ( findNodesByParentResult.isEmpty() )
-            {
-                return NodeOrderValueResolver.START_ORDER_VALUE;
-            }
-            else
-            {
-                final Node first = findNodesByParentResult.getNodes().first();
-
-                if ( first.getManualOrderValue() == null )
-                {
-                    throw new IllegalArgumentException( "Expected that node " + first +
-                                                            " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
-                }
-
-                return first.getManualOrderValue() + NodeOrderValueResolver.ORDER_SPACE;
-            }
+            return doResolveManualOrderValue( parentNode );
         }
 
         return null;
+    }
+
+    private Long doResolveManualOrderValue( final Node parentNode )
+    {
+        final ChildOrder childOrder = this.params.isInsertManualAtBottom() ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
+
+        final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
+            parentPath( parentNode.path() ).
+            childOrder( childOrder ).
+            size( 1 ).
+            build() );
+
+        if ( findNodesByParentResult.isEmpty() )
+        {
+            return NodeOrderValueResolver.START_ORDER_VALUE;
+        }
+        else
+        {
+            if ( params.isInsertManualAtBottom() )
+            {
+                return insertAsLast( findNodesByParentResult );
+            }
+            else
+            {
+                return insertAsFirst( findNodesByParentResult );
+            }
+        }
+    }
+
+    private Long insertAsFirst( final FindNodesByParentResult findNodesByParentResult )
+    {
+        final Node first = findNodesByParentResult.getNodes().first();
+
+        if ( first.getManualOrderValue() == null )
+        {
+            throw new IllegalArgumentException( "Expected that node " + first +
+                                                    " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
+        }
+
+        return first.getManualOrderValue() + NodeOrderValueResolver.ORDER_SPACE;
+    }
+
+    private Long insertAsLast( final FindNodesByParentResult findNodesByParentResult )
+    {
+        final Node first = findNodesByParentResult.getNodes().first();
+
+        if ( first.getManualOrderValue() == null )
+        {
+            throw new IllegalArgumentException( "Expected that node " + first +
+                                                    " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
+        }
+
+        return first.getManualOrderValue() - NodeOrderValueResolver.ORDER_SPACE;
     }
 
     private void verifyNotExistsAlready()

@@ -11,7 +11,7 @@ public class NodeExportPathResolver
 
     public static final String NODE_XML_EXPORT_NAME = "node.xml";
 
-    private static final String ORDER_EXPORT_NAME = "manualChildOrder.txt";
+    public static final String ORDER_EXPORT_NAME = "manualChildOrder.txt";
 
     public static Path resolveExportTargetPath( final Path basePath, final String exportName )
     {
@@ -20,8 +20,6 @@ public class NodeExportPathResolver
 
     public static Path resolveNodeBasePath( final Path rootPath, final NodePath nodePath, final NodePath exportNodePathRoot )
     {
-        // Get path relative to export-root
-
         final Path fullNodePath = Paths.get( nodePath.toString() );
         final Path exportBasePath = Paths.get( exportNodePathRoot.toString() );
 

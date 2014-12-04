@@ -27,6 +27,8 @@ public class CreateNodeParams
 
     private final boolean inheritPermissions;
 
+    private final boolean insertManualAtBottom;
+
     private CreateNodeParams( Builder builder )
     {
         this.parent = builder.parent;
@@ -38,6 +40,7 @@ public class CreateNodeParams
         this.nodeId = builder.nodeId;
         this.accessControlList = builder.accessControlList;
         this.inheritPermissions = builder.inheritPermissions;
+        this.insertManualAtBottom = builder.insertManualAtBottom;
     }
 
     public static Builder create()
@@ -92,6 +95,11 @@ public class CreateNodeParams
         return nodeId;
     }
 
+    public boolean isInsertManualAtBottom()
+    {
+        return insertManualAtBottom;
+    }
+
     public AccessControlList getAccessControlList()
     {
         return accessControlList;
@@ -121,6 +129,8 @@ public class CreateNodeParams
         private AccessControlList accessControlList;
 
         private boolean inheritPermissions;
+
+        private boolean insertManualAtBottom = false;
 
         private Builder()
         {
@@ -178,6 +188,12 @@ public class CreateNodeParams
         public Builder inheritPermissions( final boolean inheritPermissions )
         {
             this.inheritPermissions = inheritPermissions;
+            return this;
+        }
+
+        public Builder insertManualAtBottom( final boolean insertManualAtBottom )
+        {
+            this.insertManualAtBottom = insertManualAtBottom;
             return this;
         }
 

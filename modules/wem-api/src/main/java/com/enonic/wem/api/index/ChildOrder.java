@@ -19,6 +19,9 @@ public class ChildOrder
 
     private static final FieldOrderExpr MANUAL_ORDER = FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
+    private static final FieldOrderExpr MANUAL_ORDER_REVERSE =
+        FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC );
+
     private final OrderExpressions orderExpressions;
 
     private ChildOrder( final Builder builder )
@@ -32,6 +35,14 @@ public class ChildOrder
             add( MANUAL_ORDER ).
             build();
     }
+
+    public static ChildOrder reverseManualOrder()
+    {
+        return ChildOrder.create().
+            add( MANUAL_ORDER_REVERSE ).
+            build();
+    }
+
 
     public static ChildOrder defaultOrder()
     {
