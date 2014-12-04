@@ -21,7 +21,6 @@ import com.enonic.wem.api.node.NodeComparisons;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeName;
-import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePaths;
 import com.enonic.wem.api.node.NodeQuery;
@@ -68,11 +67,11 @@ class NodeServiceMock
 
         if ( nodePathTreeNode == null )
         {
-            throw new NodeNotFoundException( "Parent not found: " + createdNode.parent() );
+            LOG.error( "Could not find nodePathTreeNode for created node: " + createdNode.path() + ", node not inserted in tree" );
+            return createdNode;
         }
 
         nodePathTreeNode.addChild( createdNode.path() );
-        LOG.info( "Stored in tree node with path " + nodePathTreeNode.data );
 
         return createdNode;
     }
