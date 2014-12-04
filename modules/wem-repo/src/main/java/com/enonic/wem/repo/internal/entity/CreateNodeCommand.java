@@ -41,11 +41,15 @@ public final class CreateNodeCommand
         final PrincipalKey creator = PrincipalKey.from( "user:system:admin" );
 
         final AccessControlList paramsAcl = params.getAccessControlList();
-        final AccessControlList acl = paramsAcl == null || paramsAcl.isEmpty() ? NodeDefaultAclFactory.create( creator ) : paramsAcl;
         // calculate effective permissions based on parent acl
+        final AccessControlList parentEffectivePermissions = getAccessControlList( params.getParent() );
+        final AccessControlList nodeAcl = paramsAcl == null || paramsAcl.isEmpty()
+            ? NodeDefaultAclFactory.create( creator )
+            : removeDuplicatedEntries( paramsAcl, parentEffectivePermissions );
+
         final AccessControlList effectiveAcl = params.inheritPermissions()
-            ? acl.getEffective( getAccessControlList( params.getParent() ) )
-            : acl.getEffective( AccessControlList.empty() );
+            ? nodeAcl.getEffective( parentEffectivePermissions )
+            : nodeAcl.getEffective( AccessControlList.empty() );
 
         final Long manualOrderValue = resolvePotentialManualOrderValue();
 
@@ -63,7 +67,7 @@ public final class CreateNodeCommand
             hasChildren( false ).
             childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() ).
             manualOrderValue( manualOrderValue ).
-            accessControlList( acl ).
+            accessControlList( nodeAcl ).
             effectiveAcl( effectiveAcl );
 
         final Node newNode = nodeBuilder.build();

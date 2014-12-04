@@ -26,8 +26,7 @@ module api.security {
         toJson(): PrincipalJson {
             return {
                 displayName: this.displayName,
-                key: this.key.toString(),
-                modifiedTime: this.modifiedTime ? api.util.DateHelper.formatUTCDate(this.modifiedTime) : undefined
+                key: this.key.toString()
             }
         }
 

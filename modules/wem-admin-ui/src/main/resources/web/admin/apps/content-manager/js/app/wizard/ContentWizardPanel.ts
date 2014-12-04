@@ -20,6 +20,7 @@ module app.wizard {
     import ContentType = api.schema.content.ContentType;
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
+    import AccessControlList = api.security.acl.AccessControlList;
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
@@ -321,7 +322,7 @@ module app.wizard {
                 var deferred = wemQ.defer<void>();
 
                 viewedContent = this.assembleViewedContent(persistedContent.newBuilder()).build();
-                if (viewedContent.equals(persistedContent)) {
+                if (viewedContent.equals(persistedContent, true)) {
 
                     if (this.liveFormPanel) {
                         this.liveFormPanel.loadPage();
@@ -554,7 +555,8 @@ module app.wizard {
             }
 
             if (this.securityWizardStepForm) {
-                // TODO: get values
+                var accessControlEntries = this.securityWizardStepForm.getEntries();
+                updateContentRequest.setPermissions(new AccessControlList(accessControlEntries));
             }
 
             if (this.iconUploadItem) {
@@ -576,7 +578,7 @@ module app.wizard {
             } else {
 
                 var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
-                return !viewedContent.equals(persistedContent);
+                return !viewedContent.equals(persistedContent, true);
             }
         }
 
@@ -601,7 +603,8 @@ module app.wizard {
                 viewedContentBuilder.setData(this.contentWizardStepForm.getData());
             }
             if (this.securityWizardStepForm) {
-                // TODO: set data
+                var accessControlEntries = this.securityWizardStepForm.getEntries();
+                viewedContentBuilder.setPermissions(new AccessControlList(accessControlEntries));
             }
 
             var metadata: Metadata[] = [];

@@ -30,13 +30,15 @@ module api.security.acl {
 
             this.permissionSelector = new PermissionSelector();
             this.permissionSelector.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                this.toggleClass("dirty", event.getNewValue() != JSON.stringify({
+                this.toggleClass("dirty", !ace.isInherited() || event.getNewValue() != JSON.stringify({
                     allow: this.ace.getAllowedPermissions().sort(),
                     deny: this.ace.getDeniedPermissions().sort()
                 }));
                 this.notifyValueChanged(this.getAccessControlEntry());
             });
             this.appendChild(this.permissionSelector);
+            this.permissionSelector.setValue({allow: ace.getAllowedPermissions(), deny: ace.getDeniedPermissions()}, true);
+            this.toggleClass("dirty", !ace.isInherited());
 
             this.accessSelector.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 if (Access[event.getNewValue()] == Access.CUSTOM) {
@@ -146,25 +148,32 @@ module api.security.acl {
         }
 
         private isCanRead(allowed: Permission[]): boolean {
-            return allowed.indexOf(Permission.READ) >= 0;
+            return allowed.indexOf(Permission.READ) >= 0 && allowed.length === 1;
         }
 
         private isCanWrite(allowed: Permission[]): boolean {
-            return this.isCanRead(allowed) &&
+            return allowed.indexOf(Permission.READ) >= 0 &&
                    allowed.indexOf(Permission.CREATE) >= 0 &&
                    allowed.indexOf(Permission.MODIFY) >= 0 &&
-                   allowed.indexOf(Permission.DELETE) >= 0;
+                   allowed.indexOf(Permission.DELETE) >= 0 && allowed.length === 4;
         }
 
         private isCanPublish(allowed: Permission[]): boolean {
-            return this.isCanWrite(allowed) &&
-                   allowed.indexOf(Permission.PUBLISH) >= 0;
+            return allowed.indexOf(Permission.READ) >= 0 &&
+                   allowed.indexOf(Permission.CREATE) >= 0 &&
+                   allowed.indexOf(Permission.MODIFY) >= 0 &&
+                   allowed.indexOf(Permission.DELETE) >= 0 &&
+                   allowed.indexOf(Permission.PUBLISH) >= 0 && allowed.length === 5;
         }
 
         private isFullAccess(allowed: Permission[]): boolean {
-            return this.isCanPublish(allowed) &&
+            return allowed.indexOf(Permission.READ) >= 0 &&
+                   allowed.indexOf(Permission.CREATE) >= 0 &&
+                   allowed.indexOf(Permission.MODIFY) >= 0 &&
+                   allowed.indexOf(Permission.DELETE) >= 0 &&
+                   allowed.indexOf(Permission.PUBLISH) >= 0 &&
                    allowed.indexOf(Permission.READ_PERMISSIONS) >= 0 &&
-                   allowed.indexOf(Permission.WRITE_PERMISSIONS) >= 0;
+                   allowed.indexOf(Permission.WRITE_PERMISSIONS) >= 0 && allowed.length === 7;
         }
 
 

@@ -67,7 +67,7 @@ module api.content {
             return this.inheritPermissions;
         }
 
-        equals(o: api.Equitable): boolean {
+        equals(o: api.Equitable, ignorePermissions: boolean = false): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Content)) {
                 return false;
@@ -89,6 +89,10 @@ module api.content {
 
             if (!api.ObjectHelper.equals(this.pageObj, other.pageObj)) {
                 return false;
+            }
+
+            if (ignorePermissions) {
+                return true;
             }
 
             if (!api.ObjectHelper.equals(this.permissions, other.permissions)) {

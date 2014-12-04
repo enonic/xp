@@ -43,17 +43,34 @@ module app.wizard {
         layout(content: api.content.Content) {
             this.comboBox.clearSelection();
 
-            var inherited = content.getInheritedPermissions().getEntries();
-            //TODO: temp fix until inherited flag comes from backend
-            inherited.forEach((ace) => {
+            var inheritedPermissions = content.getInheritedPermissions();
+            var inheritedPermissionsEntries: AccessControlEntry[] = inheritedPermissions.getEntries();
+            var contentPermissions = content.getPermissions();
+            var contentPermissionsEntries: AccessControlEntry[] = contentPermissions.getEntries();
+
+            // merge inherited and content permissions, if overwritten in content skip inherited entry
+            var permissions: AccessControlEntry[] = [];
+            inheritedPermissionsEntries.forEach((ace) => {
                 ace.setInherited(true);
+                var principalKey = ace.getPrincipalKey();
+
+                if (contentPermissions.contains(principalKey)) {
+                    permissions.push(contentPermissions.getEntry(principalKey).clone());
+                } else {
+                    permissions.push(ace.clone());
+                }
             });
 
-            var permissions = [].concat(content.getPermissions().getEntries(), inherited);
-            var keyFunction = (ace: AccessControlEntry) => {
-                return ace.getPrincipalKey().toString();
-            };
-            this.originalValues = api.util.ArrayHelper.removeDuplicates(permissions, keyFunction).sort();
+            contentPermissionsEntries.forEach((ace) => {
+                if (!inheritedPermissions.contains(ace.getPrincipalKey())) {
+                    permissions.push(ace.clone());
+                }
+            });
+
+            console.log('ACL parent  ', inheritedPermissions.toString());
+            console.log('ACL content ', contentPermissions.toString());
+            console.log('ACL combined', new api.security.acl.AccessControlList(permissions).toString());
+            this.originalValues = permissions.sort();
 
             this.originalValues.forEach((item) => {
                 if (!this.comboBox.isSelected(item)) {
@@ -66,6 +83,10 @@ module app.wizard {
 
         giveFocus(): boolean {
             return this.comboBox.giveFocus();
+        }
+
+        getEntries(): AccessControlEntry[] {
+            return this.comboBox.getSelectedDisplayValues();
         }
     }
 }

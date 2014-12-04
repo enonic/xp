@@ -133,6 +133,11 @@ public final class AccessControlList
         return PrincipalKeys.from( principals );
     }
 
+    public AccessControlEntry getEntry( final PrincipalKey principalKey )
+    {
+        return this.entries.get( principalKey );
+    }
+
     public boolean isEmpty()
     {
         return this.entries.isEmpty();

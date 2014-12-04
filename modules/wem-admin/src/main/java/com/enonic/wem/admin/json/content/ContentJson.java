@@ -63,7 +63,9 @@ public final class ContentJson
         this.form = FormJson.resolveJson( content.getForm(), mixinReferencesToFormItemsTransformer );
         this.pageJson = content.hasPage() ? new PageJson( content.getPage() ) : null;
 
-        final Principals principals = contentPrincipalsResolver.resolveAccessControlListPrincipals( content );
+        final Principals principals = contentPrincipalsResolver.resolveAccessControlListPrincipals( content.getAccessControlList(),
+                                                                                                    content.getEffectiveAccessControlList(),
+                                                                                                    parentAcl );
         this.accessControlList = aclToJson( content.getAccessControlList(), principals );
         if ( parentAcl != null )
         {

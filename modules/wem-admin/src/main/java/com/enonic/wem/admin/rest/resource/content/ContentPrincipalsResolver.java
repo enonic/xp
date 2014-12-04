@@ -31,16 +31,19 @@ public final class ContentPrincipalsResolver
     {
         final AccessControlList acl = content.getAccessControlList();
         final AccessControlList effectiveAcl = content.getEffectiveAccessControlList();
-        final Map<PrincipalKey, Principal> principals = Maps.newHashMap();
-        findPrincipals( principals, acl );
-        findPrincipals( principals, effectiveAcl );
-        return Principals.from( principals.values() );
+        return resolveAccessControlListPrincipals( acl, effectiveAcl );
     }
 
-    public Principals resolveAccessControlListPrincipals( final AccessControlList accessControlList )
+    public Principals resolveAccessControlListPrincipals( final AccessControlList... accessControlList )
     {
         final Map<PrincipalKey, Principal> principals = Maps.newHashMap();
-        findPrincipals( principals, accessControlList );
+        for ( AccessControlList acl : accessControlList )
+        {
+            if ( acl != null )
+            {
+                findPrincipals( principals, acl );
+            }
+        }
         return Principals.from( principals.values() );
     }
 

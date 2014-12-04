@@ -125,7 +125,7 @@ module api.security.acl {
         private value: Permission;
         private enabled: boolean = true;
 
-        constructor(option: PermissionSelectorOption, state?: PermissionState) {
+        constructor(option: PermissionSelectorOption, state: PermissionState = PermissionState.INHERIT) {
             super('permission-toggle ' + state);
             this.setHtml(option.name);
             this.value = option.value;

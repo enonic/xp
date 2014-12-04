@@ -5,6 +5,11 @@ module api.security.acl {
 
     export class AccessControlEntry implements api.Equitable {
 
+        private static ALL_PERMISSIONS: Permission[] = [Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE,
+            Permission.PUBLISH,
+            Permission.READ_PERMISSIONS, Permission.WRITE_PERMISSIONS
+        ];
+
         private principal: Principal;
 
         private allowedPermissions: Permission[];
@@ -99,6 +104,28 @@ module api.security.acl {
                    this.permissionEquals(this.deniedPermissions, other.deniedPermissions);
         }
 
+        toString(): string {
+            var values = '';
+            AccessControlEntry.ALL_PERMISSIONS.forEach((permission: Permission) => {
+                if (this.isSet(permission)) {
+                    if (values !== '') {
+                        values += ', ';
+                    }
+                    values += this.isAllowed(permission) ? '+' : '-';
+                    values += Permission[permission].toUpperCase();
+                }
+            });
+            return this.getPrincipalKey().toString() + '[' + values + ']';
+        }
+
+        clone(): AccessControlEntry {
+            var ace = new AccessControlEntry(this.principal.clone());
+            ace.allowedPermissions = this.allowedPermissions.slice(0);
+            ace.deniedPermissions = this.deniedPermissions.slice(0);
+            ace.inherited = this.inherited;
+            return ace;
+        }
+
         private permissionEquals(listA: Permission[], listB: Permission[]): boolean {
             return (listA.length === listB.length) &&
                    listA.every(function (element, idx) {
@@ -111,13 +138,11 @@ module api.security.acl {
                 "principal": this.principal.toJson(),
                 "allow": this.allowedPermissions.map((perm) => Permission[perm]),
                 "deny": this.deniedPermissions.map((perm) => Permission[perm])
-                //"inherited": this.inherited
             };
         }
 
         static fromJson(json: api.security.acl.AccessControlEntryJson): AccessControlEntry {
             var ace = new AccessControlEntry(Principal.fromJson(json.principal));
-            //var ace = new AccessControlEntry(Principal.fromJson(json.principal), json.inherited);
             var allow: Permission[] = json.allow.map((permStr) => Permission[permStr.toUpperCase()]);
             var deny: Permission[] = json.deny.map((permStr) => Permission[permStr.toUpperCase()]);
             ace.setAllowedPermissions(allow);

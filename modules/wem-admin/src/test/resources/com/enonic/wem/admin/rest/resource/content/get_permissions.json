@@ -6,7 +6,6 @@
                 "CREATE"
             ],
             "deny": ["DELETE"],
-            "inherited": false,
             "principal": {
                 "displayName": "anonymous",
                 "key": "user:system:anonymous"
@@ -18,7 +17,6 @@
                 "PUBLISH"
             ],
             "deny": [],
-            "inherited": false,
             "principal": {
                 "displayName": "User 1",
                 "key": "user:system:user1"
@@ -33,7 +31,6 @@
                 "WRITE_PERMISSIONS"
             ],
             "deny": ["PUBLISH"],
-            "inherited": false,
             "principal": {
                 "displayName": "User 2",
                 "key": "user:system:user2"

@@ -401,6 +401,15 @@ public final class ContentResource
     {
         final Content persistedContent = contentService.create( params.getCreateContent() );
 
+        final ContentPath parentPath = persistedContent.getPath().getParentPath();
+        if ( parentPath != null && !parentPath.isRoot() )
+        {
+            final Content parent = contentService.getByPath( parentPath );
+            final AccessControlList parentAcl = parent.getEffectiveAccessControlList();
+            return new ContentJson( persistedContent, parentAcl, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer,
+                                    principalsResolver );
+        }
+
         return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 

@@ -4,8 +4,11 @@ module api.security.acl {
 
         private entries: {[key: string]: AccessControlEntry};
 
-        constructor() {
+        constructor(entries?: AccessControlEntry[]) {
             this.entries = {};
+            if (entries) {
+                this.addAll(entries);
+            }
         }
 
         getEntries(): AccessControlEntry[] {
@@ -18,6 +21,10 @@ module api.security.acl {
             return values;
         }
 
+        getEntry(principalKey: PrincipalKey): AccessControlEntry {
+            return this.entries[principalKey.toString()];
+        }
+
         add(entry: AccessControlEntry): void {
             this.entries[entry.getPrincipalKey().toString()] = entry;
         }
@@ -28,8 +35,12 @@ module api.security.acl {
             });
         }
 
-        remove(principal: PrincipalKey): void {
-            delete this.entries[principal.toString()];
+        contains(principalKey: PrincipalKey): boolean {
+            return this.entries.hasOwnProperty(principalKey.toString());
+        }
+
+        remove(principalKey: PrincipalKey): void {
+            delete this.entries[principalKey.toString()];
         }
 
         toJson(): api.security.acl.AccessControlEntryJson[] {
@@ -41,6 +52,10 @@ module api.security.acl {
             return acl;
         }
 
+        toString(): string {
+            return '[' + this.getEntries().map((ace) => ace.toString()).join(', ') + ']';
+        }
+
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, AccessControlList)) {
@@ -48,7 +63,7 @@ module api.security.acl {
             }
 
             var other = <AccessControlList>o;
-            return api.ObjectHelper.arrayEquals(this.getEntries(), other.getEntries());
+            return api.ObjectHelper.arrayEquals(this.getEntries().sort(), other.getEntries().sort());
         }
 
         static fromJson(json: api.security.acl.AccessControlEntryJson[]): AccessControlList {

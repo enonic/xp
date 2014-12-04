@@ -53,10 +53,6 @@ module api.app {
             return this.appBarTabMenu;
         }
 
-        private askUserForSaveChangesBeforeClosing(wizard: api.app.wizard.WizardPanel<any>) {
-            new api.app.wizard.SaveBeforeCloseDialog(wizard).open();
-        }
-
         addViewPanel(tabMenuItem: api.app.bar.AppBarTabMenuItem, viewPanel: api.app.view.ItemViewPanel<M>) {
             super.addNavigablePanel(tabMenuItem, viewPanel, true);
 
