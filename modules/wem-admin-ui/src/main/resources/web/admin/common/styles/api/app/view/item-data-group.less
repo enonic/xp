@@ -1,0 +1,30 @@
+.item-data-group {
+  display: flex;
+  flex-flow: row wrap;
+  padding: 35px 0;
+  border-bottom: 1px solid @admin-light-gray-bg;
+
+  &:first-child {
+    padding-top: 0px;
+  }
+
+  h2 {
+    flex: 1 100%;
+    color: @admin-light-gray-font;
+  }
+
+  .data-list {
+    display: inline-block;
+    flex: 1 auto;
+    vertical-align: top;
+    margin: 20px 50px 0 0;
+    li {
+      &.list-header {
+        font-size: 14px;
+        font-weight: bold;
+        margin: 0 0 5px 0;
+      }
+      margin-bottom: 2px;
+    }
+  }
+}

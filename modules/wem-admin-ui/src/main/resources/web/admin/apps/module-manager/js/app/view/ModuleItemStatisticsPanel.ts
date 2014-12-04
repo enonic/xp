@@ -10,15 +10,14 @@ module app.view {
     import PageDescriptor = api.content.page.PageDescriptor;
     import PartDescriptor = api.content.page.part.PartDescriptor;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
+    import ItemDataGroup = api.app.view.ItemDataGroup;
 
     export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.Module> {
 
         private upgradeNeeded: boolean = true;
         private upgradeMessageContainer: api.dom.DivEl;
         private moduleDataContainer: api.dom.DivEl;
-        private moduleActions: api.ui.Action[] = [];
         private actionMenu: api.ui.menu.ActionMenu;
-        private currentItem: api.app.view.ViewItem<api.module.Module>;
 
         constructor() {
             super("module-item-statistics-panel");
@@ -40,11 +39,12 @@ module app.view {
         }
 
         setItem(item: api.app.view.ViewItem<api.module.Module>) {
-            if (this.currentItem && this.currentItem.equals(item)) {
+            var currentItem = this.getItem();
+
+            if (currentItem && currentItem.equals(item)) {
                 // do nothing in case item has not changed
                 return;
             }
-            this.currentItem = item;
 
             super.setItem(item);
             var currentModule = item.getModel();
@@ -60,14 +60,14 @@ module app.view {
 
             this.moduleDataContainer.removeChildren();
 
-            var infoGroup = new ModuleItemDataGroup("Info");
+            var infoGroup = new ItemDataGroup("Info", "info");
             infoGroup.addDataList("Build date", "TBA");
             infoGroup.addDataList("Version", currentModule.getVersion());
             infoGroup.addDataList("Key", currentModule.getModuleKey().toString());
             infoGroup.addDataList("System Required",
                     ">= " + currentModule.getMinSystemVersion() + " and <=" + currentModule.getMaxSystemVersion());
 
-            var schemasGroup = new ModuleItemDataGroup("Schemas");
+            var schemasGroup = new ItemDataGroup("Schemas", "schemas");
 
             var moduleKey = currentModule.getModuleKey();
             var schemaPromises = [
@@ -94,7 +94,7 @@ module app.view {
                 catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                 done();
 
-            var descriptorsGroup = new ModuleItemDataGroup("Descriptors");
+            var descriptorsGroup = new ItemDataGroup("Descriptors", "descriptors");
             var descriptorPromises = [
                 new api.content.page.GetPageDescriptorsByModuleRequest(moduleKey).sendAndParse(),
                 new api.content.page.part.GetPartDescriptorsByModuleRequest(moduleKey).sendAndParse(),
@@ -120,42 +120,6 @@ module app.view {
             this.moduleDataContainer.appendChild(descriptorsGroup);
         }
 
-    }
-
-    export class ModuleItemDataGroup extends api.dom.DivEl {
-
-        private header: api.dom.H2El;
-
-        constructor(title: string) {
-            super("module-item-data-group");
-            this.header = new api.dom.H2El();
-            this.header.getEl().setInnerHtml(title);
-            this.appendChild(this.header);
-        }
-
-        addDataList(header: string, ...datas: string[]) {
-            this.addDataArray(header, datas);
-        }
-
-        addDataArray(header: string, datas: string[]) {
-            var dataList = new api.dom.UlEl("data-list");
-
-            if (header) {
-                var headerElement = new api.dom.LiEl();
-                headerElement.addClass("list-header");
-
-                headerElement.getEl().setInnerHtml(header);
-                dataList.appendChild(headerElement);
-            }
-
-            datas.forEach((data) => {
-                var dataElement = new api.dom.LiEl();
-                dataElement.getEl().setInnerHtml(data);
-                dataList.appendChild(dataElement);
-            });
-
-            this.appendChild(dataList);
-        }
     }
 
 }
