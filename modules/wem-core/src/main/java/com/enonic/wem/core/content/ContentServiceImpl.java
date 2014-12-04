@@ -73,82 +73,6 @@ public class ContentServiceImpl
     private final static ModuleConfigsDataSerializer MODULE_CONFIGS_DATA_SERIALIZER = new ModuleConfigsDataSerializer();
 
     @Override
-    public Content getById( final ContentId id )
-    {
-        return doGetById( id );
-    }
-
-    private Content doGetById( final ContentId id )
-    {
-        return GetContentByIdCommand.create( id ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
-            translator( this.contentNodeTranslator ).
-            build().
-            execute();
-    }
-
-    @Override
-    public Site getNearestSite( final ContentId contentId )
-    {
-        return GetNearestSiteCommand.create().
-            contentService( this ).
-            contentId( contentId ).
-            build().
-            execute();
-    }
-
-    @Override
-    public Contents getByIds( final GetContentByIdsParams params )
-    {
-        return GetContentByIdsCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
-            translator( this.contentNodeTranslator ).
-            build().
-            execute();
-    }
-
-    @Override
-    public Content getByPath( final ContentPath path )
-    {
-        return GetContentByPathCommand.create( path ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
-            translator( this.contentNodeTranslator ).
-            build().
-            execute();
-    }
-
-    @Override
-    public Contents getByPaths( final ContentPaths paths )
-    {
-        return GetContentByPathsCommand.create( paths ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
-            translator( this.contentNodeTranslator ).
-            build().
-            execute();
-    }
-
-    @Override
-    public FindContentByParentResult findByParent( final FindContentByParentParams params )
-    {
-        return FindContentByParentCommand.create( params ).
-            //    queryService( this.queryService ).
-                nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
-            translator( this.contentNodeTranslator ).
-            build().
-            execute();
-    }
-
-    @Override
     public Site create( final CreateSiteParams params )
     {
         // TODO: validate that PageTemplates are only created below  Site/templates
@@ -225,46 +149,6 @@ public class ContentServiceImpl
         return content;
     }
 
-    private void validateCreateTemplateFolder( final CreateContentParams params )
-    {
-        try
-        {
-            final Content parent = this.getByPath( params.getParentContentPath() );
-            if ( !parent.getType().isSite() )
-            {
-                final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
-                throw new SystemException( "A template folder can only be created below a content of type 'site'. Path: " + path );
-            }
-        }
-        catch ( ContentNotFoundException e )
-        {
-            final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
-            throw new SystemException( e,
-                                       "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " +
-                                           path );
-        }
-    }
-
-    private void validateCreatePageTemplate( final CreateContentParams params )
-    {
-        try
-        {
-            final Content parent = this.getByPath( params.getParentContentPath() );
-            if ( !parent.getType().isTemplateFolder() )
-            {
-                final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
-                throw new SystemException( "A page template can only be created below a content of type 'template-folder'. Path: " + path );
-            }
-        }
-        catch ( ContentNotFoundException e )
-        {
-            final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
-            throw new SystemException( e,
-                                       "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " +
-                                           path );
-        }
-    }
-
     @Override
     public Content update( final UpdateContentParams params )
     {
@@ -307,6 +191,122 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             build().
             execute();
+    }
+
+    @Override
+    public Content getById( final ContentId id )
+    {
+        return doGetById( id );
+    }
+
+    private Content doGetById( final ContentId id )
+    {
+        return GetContentByIdCommand.create( id ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Site getNearestSite( final ContentId contentId )
+    {
+        return GetNearestSiteCommand.create().
+            contentService( this ).
+            contentId( contentId ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Contents getByIds( final GetContentByIdsParams params )
+    {
+        return GetContentByIdsCommand.create( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Content getByPath( final ContentPath path )
+    {
+        return GetContentByPathCommand.create( path ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Contents getByPaths( final ContentPaths paths )
+    {
+        return GetContentByPathsCommand.create( paths ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
+            build().
+            execute();
+    }
+
+    @Override
+    public FindContentByParentResult findByParent( final FindContentByParentParams params )
+    {
+        return FindContentByParentCommand.create( params ).
+            //    queryService( this.queryService ).
+                nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
+            build().
+            execute();
+    }
+
+    private void validateCreateTemplateFolder( final CreateContentParams params )
+    {
+        try
+        {
+            final Content parent = this.getByPath( params.getParentContentPath() );
+            if ( !parent.getType().isSite() )
+            {
+                final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
+                throw new SystemException( "A template folder can only be created below a content of type 'site'. Path: " + path );
+            }
+        }
+        catch ( ContentNotFoundException e )
+        {
+            final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
+            throw new SystemException( e,
+                                       "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " +
+                                           path );
+        }
+    }
+
+    private void validateCreatePageTemplate( final CreateContentParams params )
+    {
+        try
+        {
+            final Content parent = this.getByPath( params.getParentContentPath() );
+            if ( !parent.getType().isTemplateFolder() )
+            {
+                final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
+                throw new SystemException( "A page template can only be created below a content of type 'template-folder'. Path: " + path );
+            }
+        }
+        catch ( ContentNotFoundException e )
+        {
+            final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
+            throw new SystemException( e,
+                                       "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " +
+                                           path );
+        }
     }
 
     @Override
