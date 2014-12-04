@@ -24,6 +24,11 @@ public final class PrincipalQueryResult
         return totalSize;
     }
 
+    public boolean isEmpty()
+    {
+        return principals.isEmpty();
+    }
+
     public static Builder newResult()
     {
         return new Builder();

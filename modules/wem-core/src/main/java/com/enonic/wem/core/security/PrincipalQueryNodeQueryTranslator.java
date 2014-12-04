@@ -18,6 +18,7 @@ import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStoreKeys;
 
 import static com.enonic.wem.core.security.PrincipalNodeTranslator.DISPLAY_NAME_KEY;
+import static com.enonic.wem.core.security.PrincipalNodeTranslator.EMAIL_KEY;
 import static com.enonic.wem.core.security.PrincipalNodeTranslator.USER_STORE_KEY;
 import static java.util.stream.Collectors.toList;
 
@@ -52,6 +53,15 @@ final class PrincipalQueryNodeQueryTranslator
         if ( StringUtils.isNotBlank( searchText ) )
         {
             nodeQueryBuilder.query( getQueryExpression( searchText ) );
+        }
+
+        final String email = principalQuery.getEmail();
+        if ( StringUtils.isNotBlank( email ) )
+        {
+            nodeQueryBuilder.addQueryFilter( ValueFilter.create().
+                fieldName( EMAIL_KEY ).
+                addValues( email ).
+                build() );
         }
 
         return nodeQueryBuilder.build();

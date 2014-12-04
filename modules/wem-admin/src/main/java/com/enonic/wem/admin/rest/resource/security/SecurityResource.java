@@ -23,6 +23,7 @@ import com.enonic.wem.admin.rest.resource.security.json.CreateUserJson;
 import com.enonic.wem.admin.rest.resource.security.json.DeletePrincipalJson;
 import com.enonic.wem.admin.rest.resource.security.json.DeletePrincipalResultJson;
 import com.enonic.wem.admin.rest.resource.security.json.DeletePrincipalsResultJson;
+import com.enonic.wem.admin.rest.resource.security.json.EmailAvailabilityJson;
 import com.enonic.wem.admin.rest.resource.security.json.GroupJson;
 import com.enonic.wem.admin.rest.resource.security.json.PrincipalJson;
 import com.enonic.wem.admin.rest.resource.security.json.PrincipalsJson;
@@ -36,6 +37,8 @@ import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
+import com.enonic.wem.api.security.PrincipalQuery;
+import com.enonic.wem.api.security.PrincipalQueryResult;
 import com.enonic.wem.api.security.PrincipalRelationship;
 import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.PrincipalType;
@@ -47,7 +50,9 @@ import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
+import static com.enonic.wem.api.security.PrincipalQuery.newQuery;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 
 @SuppressWarnings("UnusedDeclaration")
@@ -136,6 +141,21 @@ public final class SecurityResource
         }
 
         throw new NotFoundWebException( String.format( "Principal [%s] was not found", keyParam ) );
+    }
+
+    @GET
+    @Path("principals/emailAvailable")
+    public EmailAvailabilityJson isEmailAvailable( @QueryParam("userStoreKey") final String userStoreKeyParam,
+                                                   @QueryParam("email") final String email )
+    {
+        if ( isBlank( email ) )
+        {
+            throw new WebApplicationException( "Expected email parameter" );
+        }
+        final UserStoreKey userStoreKey = isBlank( userStoreKeyParam ) ? UserStoreKey.system() : new UserStoreKey( userStoreKeyParam );
+        final PrincipalQuery query = newQuery().email( email ).userStore( userStoreKey ).build();
+        final PrincipalQueryResult queryResult = securityService.query( query );
+        return new EmailAvailabilityJson( queryResult.isEmpty() );
     }
 
     @POST

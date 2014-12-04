@@ -25,11 +25,14 @@ public final class PrincipalQuery
 
     private final String searchText;
 
+    private final String email;
+
     public PrincipalQuery( final Builder builder )
     {
         from = builder.from;
         size = builder.size;
         searchText = builder.searchText;
+        email = builder.email;
         userStores = UserStoreKeys.from( builder.userStores.build() );
         if ( builder.principalTypes.isEmpty() )
         {
@@ -66,6 +69,11 @@ public final class PrincipalQuery
         return searchText;
     }
 
+    public String getEmail()
+    {
+        return email;
+    }
+
     public static Builder newQuery()
     {
         return new Builder();
@@ -82,6 +90,8 @@ public final class PrincipalQuery
         private final ImmutableList.Builder<UserStoreKey> userStores;
 
         private String searchText;
+
+        private String email;
 
         private Builder()
         {
@@ -146,6 +156,12 @@ public final class PrincipalQuery
         public Builder searchText( final String searchText )
         {
             this.searchText = searchText;
+            return this;
+        }
+
+        public Builder email( final String email )
+        {
+            this.email = email;
             return this;
         }
 
