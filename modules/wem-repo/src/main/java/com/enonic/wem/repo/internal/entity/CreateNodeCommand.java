@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -16,6 +17,7 @@ import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 
 public final class CreateNodeCommand
     extends AbstractNodeCommand
@@ -38,7 +40,9 @@ public final class CreateNodeCommand
         verifyNotExistsAlready();
         verifyParentExists();
 
-        final PrincipalKey creator = PrincipalKey.from( "user:system:admin" );
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        final PrincipalKey creator =
+            authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.from( "user:system:admin" );
 
         final AccessControlList paramsAcl = params.getAccessControlList();
         // calculate effective permissions based on parent acl

@@ -3,12 +3,14 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
 
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.util.Exceptions;
 
 public final class UpdateNodeCommand
@@ -63,6 +65,9 @@ public final class UpdateNodeCommand
         persistedNode.checkIllegalEdit( editResult );
 
         final Instant now = Instant.now();
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        final PrincipalKey modifier =
+            authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.from( "user:system:admin" );
 
         // calculate effective permissions based on parent acl
         final NodePath parentPath = editResult.path().getParentPath();
@@ -75,7 +80,7 @@ public final class UpdateNodeCommand
 
         final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
             modifiedTime( now ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            modifier( modifier ).
             data( editResult.data() ).
             attachments( synchronizeAttachments( editResult.attachments(), persistedNode ) ).
             accessControlList( nodeAcl ).
@@ -102,7 +107,6 @@ public final class UpdateNodeCommand
         }
 
         return attachments;
-
     }
 
     public static class Builder
