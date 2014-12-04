@@ -120,7 +120,7 @@ module app {
                 new app.wizard.PrincipalWizardPanelFactory().
                     setAppBarTabId(tabId).
                     setPrincipalType(principalType).
-                    setPrincipalPath(userItem.getPrincipal().getKey().toPath(true)).
+                    setPrincipalPath(userItem.getPrincipal() ? userItem.getPrincipal().getKey().toPath(true) : null).
                     setUserStore(userItem.getUserStore() ? userItem.getUserStore().getKey() : null).
                     createForNew().then((wizard: app.wizard.PrincipalWizardPanel) => {
                         tabMenuItem = new AppBarTabMenuItemBuilder().setLabel("[New " + tabName + "]").

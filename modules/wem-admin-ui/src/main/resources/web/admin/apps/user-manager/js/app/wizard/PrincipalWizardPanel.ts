@@ -131,9 +131,9 @@ module app.wizard {
         saveChanges(): wemQ.Promise<Principal> {
             if (!this.principalWizardHeader.getName()) {
                 var deferred = wemQ.defer<Principal>();
-                api.notify.showError("Name can not be empty or null.");
+                api.notify.showError("Name can not be empty");
                 // deferred.resolve(null);
-                deferred.reject(new Error("Name can not be empty or null."));
+                deferred.reject(new Error("Name can not be empty"));
                 return deferred.promise;
             } else {
                 return super.saveChanges();
