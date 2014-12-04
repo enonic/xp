@@ -128,7 +128,7 @@ public final class CreateNodeCommand
     {
         final InsertManualStrategy insertManualStrategy = this.params.getInsertManualStrategy();
 
-        if ( insertManualStrategy.equals( InsertManualStrategy.MANUAL ) )
+        if ( InsertManualStrategy.MANUAL.equals( insertManualStrategy ) )
         {
             return params.getManualOrderValue();
         }
@@ -155,7 +155,7 @@ public final class CreateNodeCommand
         }
         else
         {
-            if ( insertManualStrategy.equals( InsertManualStrategy.LAST ) )
+            if ( InsertManualStrategy.LAST.equals( insertManualStrategy ) )
             {
                 return insertAsLast( findNodesByParentResult );
             }

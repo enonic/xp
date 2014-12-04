@@ -143,7 +143,7 @@ public class CreateNodeParams
 
         private boolean inheritPermissions;
 
-        private InsertManualStrategy insertManualStrategy;
+        private InsertManualStrategy insertManualStrategy = InsertManualStrategy.FIRST;
 
         private Long manualOrderValue;
 
