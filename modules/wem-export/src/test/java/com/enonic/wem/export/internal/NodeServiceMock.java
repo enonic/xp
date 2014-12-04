@@ -72,7 +72,7 @@ class NodeServiceMock
         }
 
         nodePathTreeNode.addChild( createdNode.path() );
-        LOG.info( "Store in tree " + nodePathTreeNode.data );
+        LOG.info( "Stored in tree node with path " + nodePathTreeNode.data );
 
         return createdNode;
     }
