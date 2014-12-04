@@ -20,7 +20,7 @@ import com.enonic.wem.export.internal.writer.FileExportWriter;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
 @Component(immediate = true)
-class ExportServiceImpl
+public class ExportServiceImpl
     implements ExportService
 {
     private NodeService nodeService;
