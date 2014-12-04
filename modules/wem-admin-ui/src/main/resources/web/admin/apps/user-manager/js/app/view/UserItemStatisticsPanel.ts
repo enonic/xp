@@ -7,7 +7,9 @@ module app.view {
     import UserTreeGridItem = app.browse.UserTreeGridItem;
     import UserTreeGridItemType = app.browse.UserTreeGridItemType;
 
+    import Principal = api.security.Principal;
     import PrincipalType = api.security.PrincipalType;
+    import GetPrincipalByKeyRequest = api.security.GetPrincipalByKeyRequest;
 
 
     export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridItem> {
@@ -72,23 +74,33 @@ module app.view {
             this.userDataContainer.appendChild(userGroup);
 
             var rolesAndGroupsGroup = new ItemDataGroup("Roles & Groups", "roles-and-groups");
-            var roles = item.getModel().getPrincipal().asUser().getMemberships().
-                filter((el) => { return el.isRole()}).
-                map((el) => {
-                    var viewer = new api.security.PrincipalViewer();
-                    viewer.setObject(el);
-                    return viewer.getHtml();
-                });
-            rolesAndGroupsGroup.addDataArray("Roles", roles);
-            var groups = item.getModel().getPrincipal().asUser().getMemberships().
-                filter((el) => { return el.isGroup()}).
-                map((el) => {
-                    var viewer = new api.security.PrincipalViewer();
-                    viewer.setObject(el);
-                    return viewer.getHtml();
-                });
-            rolesAndGroupsGroup.addDataArray("Groups", groups);
             this.userDataContainer.appendChild(rolesAndGroupsGroup);
+
+            new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey()).
+                includeUserMemberships(true).
+                sendAndParse().
+                then((principal: Principal) => {
+                    var roles = principal.asUser().getMemberships().
+                        filter((el) => { return el.isRole()}).
+                        map((el) => {
+                            var viewer = new api.security.PrincipalViewer();
+                            viewer.setObject(el);
+                            return viewer.getHtml();
+                        });
+                    rolesAndGroupsGroup.addDataArray("Roles", roles);
+
+                    var groups = principal.asUser().getMemberships().
+                        filter((el) => { return el.isGroup()}).
+                        map((el) => {
+                            var viewer = new api.security.PrincipalViewer();
+                            viewer.setObject(el);
+                            return viewer.getHtml();
+                        });
+                    rolesAndGroupsGroup.addDataArray("Groups", groups);
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).finally(() => {
+                }).done();
         }
     }
 }
