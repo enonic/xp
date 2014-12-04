@@ -18,7 +18,6 @@ public class FileExportReader
         try
         {
             return Files.list( parent );
-
         }
         catch ( IOException e )
         {

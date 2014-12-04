@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.InsertManualStrategy;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
@@ -64,21 +65,21 @@ public class CreateNodeCommandTest
             setNodeId( NodeId.from( "child-node-1" ) ).
             parent( parentNode.path() ).
             name( "child-node-1" ).
-            insertManualAtBottom( true ).
+            insertManualStrategy( InsertManualStrategy.LAST ).
             build() );
 
         final Node c2 = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "child-node-2" ) ).
             parent( parentNode.path() ).
             name( "child-node-2" ).
-            insertManualAtBottom( true ).
+            insertManualStrategy( InsertManualStrategy.LAST ).
             build() );
 
         final Node c3 = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "child-node-3" ) ).
             parent( parentNode.path() ).
             name( "child-node-3" ).
-            insertManualAtBottom( true ).
+            insertManualStrategy( InsertManualStrategy.LAST ).
             build() );
         refresh();
 

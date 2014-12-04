@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity.dao;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import com.google.common.io.ByteStreams;
@@ -79,15 +80,28 @@ public class NodeDaoImpl
             throw new IllegalArgumentException( "Trying to load blob when blob is null" );
         }
 
+        final InputStream stream = blob.getStream();
+
         try
         {
-            final byte[] bytes = ByteStreams.toByteArray( blob.getStream() );
+            final byte[] bytes = ByteStreams.toByteArray( stream );
 
             return this.nodeJsonSerializer.toNode( new String( bytes, StandardCharsets.UTF_8 ) );
         }
         catch ( IOException e )
         {
             throw new RuntimeException( "Failed to load blob with key" + blob.getKey() );
+        }
+        finally
+        {
+            try
+            {
+                stream.close();
+            }
+            catch ( IOException e )
+            {
+                throw new RuntimeException( "Failed to close stream" );
+            }
         }
     }
 

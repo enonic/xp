@@ -27,7 +27,9 @@ public class CreateNodeParams
 
     private final boolean inheritPermissions;
 
-    private final boolean insertManualAtBottom;
+    private final Long manualOrderValue;
+
+    private final InsertManualStrategy insertManualStrategy;
 
     private CreateNodeParams( Builder builder )
     {
@@ -40,7 +42,8 @@ public class CreateNodeParams
         this.nodeId = builder.nodeId;
         this.accessControlList = builder.accessControlList;
         this.inheritPermissions = builder.inheritPermissions;
-        this.insertManualAtBottom = builder.insertManualAtBottom;
+        this.insertManualStrategy = builder.insertManualStrategy;
+        this.manualOrderValue = builder.manualOrderValue;
     }
 
     public static Builder create()
@@ -95,9 +98,19 @@ public class CreateNodeParams
         return nodeId;
     }
 
-    public boolean isInsertManualAtBottom()
+    public boolean isInheritPermissions()
     {
-        return insertManualAtBottom;
+        return inheritPermissions;
+    }
+
+    public Long getManualOrderValue()
+    {
+        return manualOrderValue;
+    }
+
+    public InsertManualStrategy getInsertManualStrategy()
+    {
+        return insertManualStrategy;
     }
 
     public AccessControlList getAccessControlList()
@@ -130,7 +143,9 @@ public class CreateNodeParams
 
         private boolean inheritPermissions;
 
-        private boolean insertManualAtBottom = false;
+        private InsertManualStrategy insertManualStrategy;
+
+        private Long manualOrderValue;
 
         private Builder()
         {
@@ -191,9 +206,15 @@ public class CreateNodeParams
             return this;
         }
 
-        public Builder insertManualAtBottom( final boolean insertManualAtBottom )
+        public Builder insertManualStrategy( final InsertManualStrategy insertManualStrategy )
         {
-            this.insertManualAtBottom = insertManualAtBottom;
+            this.insertManualStrategy = insertManualStrategy;
+            return this;
+        }
+
+        public Builder manualOrderValue( final Long manualOrderValue )
+        {
+            this.manualOrderValue = manualOrderValue;
             return this;
         }
 
@@ -202,7 +223,6 @@ public class CreateNodeParams
             return new CreateNodeParams( this );
         }
     }
-
 
     @Override
     public boolean equals( final Object o )

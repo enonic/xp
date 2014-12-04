@@ -10,6 +10,7 @@ import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.InsertManualStrategy;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeAlreadyExistException;
 import com.enonic.wem.api.node.NodeId;
@@ -125,7 +126,22 @@ public final class CreateNodeCommand
 
     private Long doResolveManualOrderValue( final Node parentNode )
     {
-        final ChildOrder childOrder = this.params.isInsertManualAtBottom() ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
+        final InsertManualStrategy insertManualStrategy = this.params.getInsertManualStrategy();
+
+        if ( insertManualStrategy.equals( InsertManualStrategy.MANUAL ) )
+        {
+            return params.getManualOrderValue();
+        }
+        else
+        {
+            return resolveFromQuery( parentNode, insertManualStrategy );
+        }
+    }
+
+    private Long resolveFromQuery( final Node parentNode, final InsertManualStrategy insertManualStrategy )
+    {
+        final ChildOrder childOrder =
+            insertManualStrategy.equals( InsertManualStrategy.LAST ) ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
 
         final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( parentNode.path() ).
@@ -139,7 +155,7 @@ public final class CreateNodeCommand
         }
         else
         {
-            if ( params.isInsertManualAtBottom() )
+            if ( insertManualStrategy.equals( InsertManualStrategy.LAST ) )
             {
                 return insertAsLast( findNodesByParentResult );
             }
