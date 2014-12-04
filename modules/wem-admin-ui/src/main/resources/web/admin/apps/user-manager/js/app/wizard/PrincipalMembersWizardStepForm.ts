@@ -5,7 +5,8 @@ module app.wizard {
     import PrincipalKey = api.security.PrincipalKey;
     import PrincipalType = api.security.PrincipalType;
     import PrincipalLoader = api.security.PrincipalLoader;
-    import PrincipalComboBox = api.security.PrincipalComboBox;
+
+    import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 
     import DivEl = api.dom.DivEl;
     import LabelEl = api.dom.LabelEl;

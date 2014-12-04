@@ -1,8 +1,11 @@
-module api.security.acl {
+module api.ui.security.acl {
 
     import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import BaseSelectedOptionView = api.ui.selector.combobox.BaseSelectedOptionView;
+    import Permission = api.security.acl.Permission;
+    import AccessControlEntry = api.security.acl.AccessControlEntry;
+    import AccessControlEntryLoader = api.security.acl.AccessControlEntryLoader;
 
     export class AccessControlComboBox extends api.ui.selector.combobox.RichComboBox<AccessControlEntry> {
 

@@ -1,10 +1,12 @@
-module api.security {
+module api.ui.security.acl {
 
-    export class PrincipalViewer extends api.ui.Viewer<Principal> {
+    import PrincipalType = api.security.PrincipalType;
+    import PrincipalKey = api.security.PrincipalKey;
+    import UserStoreKey = api.security.UserStoreKey;
+    import AccessControlEntry = api.security.acl.AccessControlEntry;
 
+    export class AccessControlEntryViewer extends api.ui.Viewer<AccessControlEntry> {
         private namesAndIconView: api.app.NamesAndIconView;
-
-        private removeClickedListeners: {(event: MouseEvent):void}[] = [];
 
         constructor() {
             super();
@@ -14,12 +16,12 @@ module api.security {
             this.appendChild(this.namesAndIconView);
         }
 
-        setObject(principal: Principal) {
-            super.setObject(principal);
+        setObject(ace: AccessControlEntry) {
+            super.setObject(ace);
 
-            this.namesAndIconView.setMainName(principal.getDisplayName()).
-                setSubName(this.resolveSubName(principal.getKey())).
-                setIconClass(this.resolveIconClass(principal.getKey()));
+            this.namesAndIconView.setMainName(ace.getPrincipalDisplayName()).
+                setSubName(this.resolveSubName(ace.getPrincipalKey())).
+                setIconClass(this.resolveIconClass(ace.getPrincipalKey()));
         }
 
         private resolveSubName(key: PrincipalKey): string {
@@ -45,21 +47,6 @@ module api.security {
         getPreferredHeight(): number {
             return 50;
         }
-
-        onRemoveClicked(listener: (event: MouseEvent) => void) {
-            this.removeClickedListeners.push(listener);
-        }
-
-        unRemoveClicked(listener: (event: MouseEvent) => void) {
-            this.removeClickedListeners = this.removeClickedListeners.filter((current) => {
-                return current !== listener;
-            })
-        }
-
-        notifyRemoveClicked(event: MouseEvent) {
-            this.removeClickedListeners.forEach((listener) => {
-                listener(event);
-            })
-        }
     }
+
 }

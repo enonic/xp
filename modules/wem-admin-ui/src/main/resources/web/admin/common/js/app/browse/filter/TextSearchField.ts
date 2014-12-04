@@ -6,7 +6,7 @@ module api.app.browse.filter {
 
         private valueChangedListeners: Function[] = [];
 
-        private previousValue:string;
+        private previousValue: string;
 
         constructor(placeholder?: string) {
             super('text-search-field');
@@ -38,17 +38,15 @@ module api.app.browse.filter {
             }
         }
 
-        setPlaceholder(placeholder: string) {
-            this.getEl().setAttribute('placeholder', placeholder);
-        }
-
         onValueChanged(listener: () => void) {
             this.valueChangedListeners.push(listener);
         }
 
         private notifyValueChanged() {
             var currentValue = this.getHTMLElement()['value'];
-            if(currentValue == this.previousValue) return;
+            if (currentValue == this.previousValue) {
+                return;
+            }
             this.valueChangedListeners.forEach((listener: () => void) => {
                 listener();
             });

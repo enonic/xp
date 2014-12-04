@@ -1,0 +1,97 @@
+@notavailable-color: #ca3319;
+@checking-color: #bd8d05;
+@available-color: #008424;
+
+.email-input {
+  position: relative;
+
+  .form-input {
+    width: 100%;
+    padding-right: 120px;
+
+    .input-glow();
+    .input-font();
+    .input-border();
+    .box-sizing(border-box);
+  }
+
+  &:after {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+  }
+
+  &.checking {
+    .form-input {
+      .input-border(@checking-color);
+      .input-glow(@checking-color);
+    }
+
+    &:after {
+      content: 'Checking availability';
+    }
+  }
+
+  &.notavailable {
+    .form-input {
+      .input-border(@notavailable-color);
+      .input-glow(@notavailable-color);
+    }
+
+    &:after {
+      color: (@notavailable-color);
+      content: 'Not available';
+    }
+  }
+
+  &.available {
+    .form-input {
+      .input-border(@available-color);
+      .input-glow(@available-color);
+    }
+
+    &:after {
+      color: (@available-color);
+      content: 'Available';
+    }
+  }
+
+  &.error {
+    .form-input {
+      .input-border(@notavailable-color);
+      .input-glow(@notavailable-color);
+    }
+
+    &:after {
+      content: 'Connection error';
+    }
+  }
+
+  &.invalid {
+    .form-input {
+      .input-border(@admin-input-red);
+      .input-glow(@admin-input-red);
+    }
+
+    &:after {
+      content: 'Invalid email';
+    }
+  }
+
+  ._0-240 &,
+  ._240-360 &,
+  ._360-540 & {
+
+    .form-input {
+      padding: 0;
+    }
+
+    &:after {
+      position: static;
+      display: block;
+      text-align: right;
+      padding: 10px 0;
+    }
+  }
+
+}

@@ -1,4 +1,4 @@
-module api.security.acl {
+module api.ui.security.acl {
 
     import Permission = api.security.acl.Permission;
     import PermissionState = api.security.acl.PermissionState;

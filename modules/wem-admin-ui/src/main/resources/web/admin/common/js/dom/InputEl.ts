@@ -33,5 +33,66 @@ module api.dom {
             this.getEl().setAttribute('type', type);
             return this;
         }
+
+        setPlaceholder(value: string): InputEl {
+            this.getEl().setAttribute('placeholder', value);
+            return this;
+        }
+
+        getPlaceholder(): string {
+            return this.getEl().getAttribute('placeholder');
+        }
+
+        getPattern(): string {
+            return this.getEl().getAttribute('pattern');
+        }
+
+        setPattern(pattern: string): InputEl {
+            this.getEl().setAttribute('pattern', pattern);
+            return this;
+        }
+
+        /**
+         * https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Forms_in_HTML
+         * @returns {boolean}
+         */
+        isValid(): boolean {
+            var validity: ValidityState = (<HTMLInputElement> this.getHTMLElement()).validity;
+            return validity && validity.valid;
+        }
+
+        /**
+         * https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Forms_in_HTML
+         * @returns {boolean}
+         */
+        validate(): boolean {
+            return (<HTMLInputElement> this.getHTMLElement()).checkValidity();
+        }
+
+        setRequired(required: boolean): InputEl {
+            if (required) {
+                this.getEl().setAttribute('required', 'required');
+            } else {
+                this.getEl().removeAttribute('required');
+            }
+            return this;
+        }
+
+        isRequired(): boolean {
+            return this.getEl().hasAttribute('required');
+        }
+
+        setReadOnly(readOnly: boolean): InputEl {
+            if (readOnly) {
+                this.getEl().setAttribute('readonly', 'readonly');
+            } else {
+                this.getEl().removeAttribute('readonly');
+            }
+            return this;
+        }
+
+        isReadOnly(): boolean {
+            return this.getEl().hasAttribute('readonly');
+        }
     }
 }

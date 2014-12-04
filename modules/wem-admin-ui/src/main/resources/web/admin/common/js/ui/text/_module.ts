@@ -6,3 +6,4 @@
 ///<reference path='TextArea.ts' />
 ///<reference path='CodeArea.ts' />
 ///<reference path='PasswordGenerator.ts' />
+///<reference path='EmailInput.ts' />

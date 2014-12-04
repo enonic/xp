@@ -17,6 +17,7 @@
 ///<reference path="PrincipalListJson.ts"/>
 ///<reference path="FindPrincipalsRequest.ts"/>
 ///<reference path="GetPrincipalByKeyRequest.ts"/>
+///<reference path="CheckEmailAvailabilityRequest.ts"/>
 ///<reference path="CreateUserRequest.ts"/>
 ///<reference path="CreateGroupRequest.ts"/>
 ///<reference path="CreateRoleRequest.ts"/>
@@ -27,7 +28,5 @@
 ///<reference path="DeletePrincipalResultJson.ts"/>
 ///<reference path="DeletePrincipalResultsJson.ts"/>
 ///<reference path="DeletePrincipalRequest.ts"/>
-///<reference path='PrincipalViewer.ts' />
 ///<reference path='PrincipalLoader.ts' />
-///<reference path='PrincipalComboBox.ts' />
 ///<reference path="PrincipalNamedEvent.ts"/>

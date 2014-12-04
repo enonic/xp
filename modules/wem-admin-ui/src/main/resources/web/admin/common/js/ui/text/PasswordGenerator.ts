@@ -56,6 +56,7 @@ module api.ui.text {
 
         setValue(value: string): PasswordGenerator {
             this.input.setValue(value);
+            this.assessComplexity(value);
             return this;
         }
 

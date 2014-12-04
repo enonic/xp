@@ -11,6 +11,8 @@ module app.view {
     import PrincipalType = api.security.PrincipalType;
     import GetPrincipalByKeyRequest = api.security.GetPrincipalByKeyRequest;
 
+    import PrincipalViewer = api.ui.security.PrincipalViewer;
+
 
     export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridItem> {
 
@@ -91,7 +93,7 @@ module app.view {
                     var roles = principal.asUser().getMemberships().
                         filter((el) => { return el.isRole()}).
                         map((el) => {
-                            var viewer = new api.security.PrincipalViewer();
+                            var viewer = new PrincipalViewer();
                             viewer.setObject(el);
                             return viewer.getHtml();
                         });
@@ -100,7 +102,7 @@ module app.view {
                     var groups = principal.asUser().getMemberships().
                         filter((el) => { return el.isGroup()}).
                         map((el) => {
-                            var viewer = new api.security.PrincipalViewer();
+                            var viewer = new PrincipalViewer();
                             viewer.setObject(el);
                             return viewer.getHtml();
                         });

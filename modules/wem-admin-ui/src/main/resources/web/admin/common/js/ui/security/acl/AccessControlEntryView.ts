@@ -1,10 +1,12 @@
-module api.security.acl {
+module api.ui.security.acl {
 
     import Principal = api.security.Principal;
     import PrincipalType = api.security.PrincipalType;
     import PrincipalKey = api.security.PrincipalKey;
+    import Permission = api.security.acl.Permission;
+    import AccessControlEntry = api.security.acl.AccessControlEntry;
 
-    export class AccessControlEntryView extends api.security.PrincipalViewer {
+    export class AccessControlEntryView extends api.ui.security.PrincipalViewer {
 
         private ace: AccessControlEntry;
 

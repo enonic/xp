@@ -1,6 +1,6 @@
 module app.wizard {
 
-    import AccessControlComboBox = api.security.acl.AccessControlComboBox;
+    import AccessControlComboBox = api.ui.security.acl.AccessControlComboBox;
     import AccessControlEntry = api.security.acl.AccessControlEntry;
 
     export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {

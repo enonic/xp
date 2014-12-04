@@ -1,8 +1,9 @@
-module api.security.acl {
+module api.ui.security.acl {
 
     import Permission = api.security.acl.Permission;
     import Principal = api.security.Principal;
     import PrincipalType = api.security.PrincipalType;
+    import AccessControlEntry = api.security.acl.AccessControlEntry;
 
     export class AccessControlListView extends api.ui.selector.list.ListBox<AccessControlEntry> {
 

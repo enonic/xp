@@ -8,13 +8,5 @@ module api.ui.text {
             this.addClass('password-input');
         }
 
-        setPlaceholder(value: string): PasswordInput {
-            this.getEl().setAttribute('placeholder', value);
-            return this;
-        }
-
-        getPlaceholder(): string {
-            return this.getEl().getAttribute('placeholder');
-        }
     }
 }
