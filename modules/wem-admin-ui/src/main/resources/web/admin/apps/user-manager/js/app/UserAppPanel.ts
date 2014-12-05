@@ -58,7 +58,7 @@ module app {
             super.addWizardPanel(tabMenuItem, wizardPanel);
 
             wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == "displayName") {
+                if (event.getPropertyName() === "displayName") {
                     tabMenuItem.setLabel(<string>event.getNewValue());
                 }
             });

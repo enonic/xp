@@ -18,7 +18,7 @@ module app.wizard.action {
         }
 
         enableActionsForNew() {
-            this.save.setEnabled(true);
+            this.save.setEnabled(false);
             this.duplicate.setEnabled(false);
             this.delete.setEnabled(false);
         }

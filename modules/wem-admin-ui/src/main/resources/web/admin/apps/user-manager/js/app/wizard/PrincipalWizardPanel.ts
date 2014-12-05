@@ -71,6 +71,12 @@ module app.wizard {
 
             if (params.persistedPrincipal) {
                 this.principalWizardHeader.disableNameInput();
+            } else {
+                this.getPrincipalWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
+                    if (event.getPropertyName() === "name") {
+                        this.wizardActions.getSaveAction().setEnabled(!!event.getNewValue());
+                    }
+                });
             }
 
             super({
