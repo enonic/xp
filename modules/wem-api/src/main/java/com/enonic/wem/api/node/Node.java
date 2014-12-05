@@ -1,7 +1,6 @@
 package com.enonic.wem.api.node;
 
 import java.time.Instant;
-import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -57,6 +56,8 @@ public final class Node
 
     private final boolean inheritPermissions;
 
+    private final NodeCollection collection;
+
     private Node( final BaseBuilder builder )
     {
         this.id = builder.id;
@@ -89,6 +90,7 @@ public final class Node
         this.acl = builder.acl == null ? AccessControlList.empty() : builder.acl;
         this.effectiveAcl = builder.effectiveAcl == null ? AccessControlList.empty() : builder.effectiveAcl;
         this.inheritPermissions = builder.inheritPermissions;
+        this.collection = builder.collection;
     }
 
     public NodeName name()
@@ -186,6 +188,11 @@ public final class Node
         return inheritPermissions;
     }
 
+    public NodeCollection getCollection()
+    {
+        return collection;
+    }
+
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
@@ -264,6 +271,8 @@ public final class Node
 
         boolean inheritPermissions;
 
+        NodeCollection collection;
+
         private BaseBuilder()
         {
         }
@@ -284,6 +293,7 @@ public final class Node
             this.acl = node.acl;
             this.effectiveAcl = node.effectiveAcl;
             this.inheritPermissions = node.inheritPermissions;
+            this.collection = node.collection;
         }
 
         private BaseBuilder( final NodeId id, final NodeName name )
@@ -317,6 +327,8 @@ public final class Node
 
         private boolean inheritPermissions;
 
+        private NodeCollection nodeCollection = NodeCollection.DEFAULT_NODE_COLLECTION;
+
         public Builder()
         {
             super();
@@ -343,6 +355,7 @@ public final class Node
             this.acl = node.acl;
             this.effectiveAcl = node.effectiveAcl;
             this.inheritPermissions = node.inheritPermissions;
+            this.nodeCollection = node.collection;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -453,6 +466,12 @@ public final class Node
             return this;
         }
 
+        public Builder collection( final NodeCollection nodeCollection )
+        {
+            this.nodeCollection = nodeCollection;
+            return this;
+        }
+
         public Node build()
         {
             BaseBuilder baseBuilder = new BaseBuilder();
@@ -472,6 +491,7 @@ public final class Node
             baseBuilder.acl = this.acl;
             baseBuilder.effectiveAcl = this.effectiveAcl;
             baseBuilder.inheritPermissions = this.inheritPermissions;
+            baseBuilder.collection = this.nodeCollection;
 
             return new Node( baseBuilder );
         }
@@ -589,11 +609,27 @@ public final class Node
 
         final Node node = (Node) o;
 
+        if ( hasChildren != node.hasChildren )
+        {
+            return false;
+        }
+        if ( inheritPermissions != node.inheritPermissions )
+        {
+            return false;
+        }
+        if ( acl != null ? !acl.equals( node.acl ) : node.acl != null )
+        {
+            return false;
+        }
         if ( attachments != null ? !attachments.equals( node.attachments ) : node.attachments != null )
         {
             return false;
         }
         if ( childOrder != null ? !childOrder.equals( node.childOrder ) : node.childOrder != null )
+        {
+            return false;
+        }
+        if ( collection != null ? !collection.equals( node.collection ) : node.collection != null )
         {
             return false;
         }
@@ -606,6 +642,10 @@ public final class Node
             return false;
         }
         if ( data != null ? !data.equals( node.data ) : node.data != null )
+        {
+            return false;
+        }
+        if ( effectiveAcl != null ? !effectiveAcl.equals( node.effectiveAcl ) : node.effectiveAcl != null )
         {
             return false;
         }
@@ -641,18 +681,6 @@ public final class Node
         {
             return false;
         }
-        if ( !Objects.equals( acl, node.acl ) )
-        {
-            return false;
-        }
-        if ( !Objects.equals( effectiveAcl, node.effectiveAcl ) )
-        {
-            return false;
-        }
-        if ( inheritPermissions != node.inheritPermissions )
-        {
-            return false;
-        }
 
         return true;
     }
@@ -660,7 +688,24 @@ public final class Node
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, name, parent, path, modifier, creator, hasChildren, createdTime, data, modifiedTime, indexConfigDocument,
-                             attachments, childOrder, manualOrderValue, acl, effectiveAcl, inheritPermissions );
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + ( name != null ? name.hashCode() : 0 );
+        result = 31 * result + ( parent != null ? parent.hashCode() : 0 );
+        result = 31 * result + ( path != null ? path.hashCode() : 0 );
+        result = 31 * result + ( modifier != null ? modifier.hashCode() : 0 );
+        result = 31 * result + ( creator != null ? creator.hashCode() : 0 );
+        result = 31 * result + ( hasChildren ? 1 : 0 );
+        result = 31 * result + ( createdTime != null ? createdTime.hashCode() : 0 );
+        result = 31 * result + ( data != null ? data.hashCode() : 0 );
+        result = 31 * result + ( modifiedTime != null ? modifiedTime.hashCode() : 0 );
+        result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
+        result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
+        result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
+        result = 31 * result + ( manualOrderValue != null ? manualOrderValue.hashCode() : 0 );
+        result = 31 * result + ( acl != null ? acl.hashCode() : 0 );
+        result = 31 * result + ( effectiveAcl != null ? effectiveAcl.hashCode() : 0 );
+        result = 31 * result + ( inheritPermissions ? 1 : 0 );
+        result = 31 * result + ( collection != null ? collection.hashCode() : 0 );
+        return result;
     }
 }

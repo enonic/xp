@@ -10,6 +10,8 @@ public class NodeIndexPath
 
     public static final IndexPath VERSION = IndexPath.from( "_versionKey" );
 
+    public static final IndexPath COLLECTION = IndexPath.from( "_collection" );
+
     public static final IndexPath ALL_TEXT = IndexPath.from( "_all_text" );
 
     public static final IndexPath MANUAL_ORDER_VALUE = IndexPath.from( "_manualOrderValue" );

@@ -18,6 +18,7 @@ import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.node.Attachment;
 import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeCollection;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
@@ -89,6 +90,7 @@ public class NodeJsonSerializerTest
                 build() ).
             accessControlList( acl ).
             effectiveAcl( effectiveAcl ).
+            collection( NodeCollection.DEFAULT_NODE_COLLECTION ).
             build();
 
         final String expectedStr = readJson( "serialized-node.json" );

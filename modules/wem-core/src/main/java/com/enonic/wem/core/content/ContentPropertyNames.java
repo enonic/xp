@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content;
 
-class ContentFieldNames
+class ContentPropertyNames
 {
     public static final String PAGE_SET = "page";
 
@@ -17,5 +17,4 @@ class ContentFieldNames
     public static final String DRAFT = "draft";
 
     public static final String METADATA = "metadata";
-
 }

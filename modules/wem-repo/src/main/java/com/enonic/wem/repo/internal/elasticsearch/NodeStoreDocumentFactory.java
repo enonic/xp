@@ -137,6 +137,13 @@ class NodeStoreDocumentFactory
                 StoreDocumentItemFactory.create( NodeIndexPath.MANUAL_ORDER_VALUE, Value.newLong( this.node.getManualOrderValue() ),
                                                  IndexConfig.MINIMAL ) );
         }
+
+        if ( this.node.getCollection() != null )
+        {
+            builder.addEntries(
+                StoreDocumentItemFactory.create( NodeIndexPath.COLLECTION, Value.newString( this.node.getCollection().getName() ),
+                                                 IndexConfig.MINIMAL ) );
+        }
     }
 
     private void addNodeDataProperties( final StoreDocument.Builder builder )

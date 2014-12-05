@@ -24,6 +24,7 @@ public class XmlNodeMapper
         final XmlNode xml = new XmlNode();
 
         xml.setChildOrder( getAsStringOrNull( node.getChildOrder() ) );
+        xml.setCollection( node.getCollection().getName() );
 
         if ( node.data() != null )
         {

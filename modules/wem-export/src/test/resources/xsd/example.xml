@@ -3,6 +3,7 @@
       xsi:schemaLocation="urn:enonic:xp:export:1.0 ../../../main/resources/META-INF/xsd/export.xsd">
 
   <childOrder>_manualordervalue DESC</childOrder>
+  <collection>content</collection>
   <properties>
     <string name="test">value</string>
     <double name="test">3232.23</double>

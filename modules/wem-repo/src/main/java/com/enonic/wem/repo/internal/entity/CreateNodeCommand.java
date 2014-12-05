@@ -13,6 +13,7 @@ import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.InsertManualStrategy;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeAlreadyExistException;
+import com.enonic.wem.api.node.NodeCollection;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
@@ -73,7 +74,8 @@ public final class CreateNodeCommand
             childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() ).
             manualOrderValue( manualOrderValue ).
             accessControlList( nodeAcl ).
-            effectiveAcl( effectiveAcl );
+            effectiveAcl( effectiveAcl ).
+            collection( params.getCollection() != null ? params.getCollection() : NodeCollection.DEFAULT_NODE_COLLECTION );
 
         final Node newNode = nodeBuilder.build();
 

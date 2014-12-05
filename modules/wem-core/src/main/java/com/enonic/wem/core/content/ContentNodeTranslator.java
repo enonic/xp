@@ -78,6 +78,7 @@ public class ContentNodeTranslator
             indexConfigDocument( indexConfigDocument ).
             accessControlList( params.getAccessControlList() ).
             inheritPermissions( params.isInheritPermissions() ).
+            collection( ContentConstants.CONTENT_NODE_COLLECTION ).
             build();
     }
 

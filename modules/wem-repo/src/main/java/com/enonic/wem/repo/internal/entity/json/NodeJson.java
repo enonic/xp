@@ -14,6 +14,7 @@ import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.node.Attachment;
 import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeCollection;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
@@ -68,6 +69,9 @@ final class NodeJson
     @JsonProperty("effectiveAccessControlList")
     private List<AccessControlEntryJson> effectiveAclList;
 
+    @JsonProperty("collection")
+    private String collection;
+
     public Node fromJson()
     {
         return Node.newNode().
@@ -86,6 +90,7 @@ final class NodeJson
             manualOrderValue( this.manualOrderValue ).
             accessControlList( fromJson( this.aclList ) ).
             effectiveAcl( fromJson( this.effectiveAclList ) ).
+            collection( NodeCollection.from( this.collection ) ).
             build();
     }
 
@@ -129,6 +134,7 @@ final class NodeJson
         json.manualOrderValue = node.getManualOrderValue();
         json.aclList = toJson( node.getAccessControlList() );
         json.effectiveAclList = toJson( node.getEffectiveAccessControlList() );
+        json.collection = node.getCollection().getName();
         return json;
     }
 

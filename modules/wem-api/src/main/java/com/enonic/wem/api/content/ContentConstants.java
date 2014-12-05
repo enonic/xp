@@ -3,6 +3,7 @@ package com.enonic.wem.api.content;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.node.NodeCollection;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.query.Direction;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
@@ -45,6 +46,7 @@ public class ContentConstants
 
     public static final NodePath CONTENT_ROOT_PATH = NodePath.newNodePath( CONTENT_ROOT_PARENT, CONTENT_ROOT_NAME ).build();
 
+    public static final NodeCollection CONTENT_NODE_COLLECTION = NodeCollection.from( "content" );
 
     public static final AccessControlList CONTENT_ROOT_DEFAULT_ACL = AccessControlList.create().
         add( AccessControlEntry.create().

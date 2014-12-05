@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.InsertManualStrategy;
+import com.enonic.wem.api.node.NodeCollection;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.export.internal.ProcessNodeSettings;
 import com.enonic.wem.export.internal.xml.XmlNode;
@@ -35,6 +36,7 @@ public class CreateNodeParamsFactory
             name( nodeName ).
             parent( parentPath ).
             childOrder( childOrder ).
+            collection( NodeCollection.from( xmlNode.getCollection() ) ).
             data( PropertyTreeXmlBuilder.build( xmlNode.getProperties() ) );
 
         setInsertManualSettings( builder );

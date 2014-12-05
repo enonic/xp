@@ -31,6 +31,8 @@ public class CreateNodeParams
 
     private final InsertManualStrategy insertManualStrategy;
 
+    private final NodeCollection collection;
+
     private CreateNodeParams( Builder builder )
     {
         this.parent = builder.parent;
@@ -44,6 +46,7 @@ public class CreateNodeParams
         this.inheritPermissions = builder.inheritPermissions;
         this.insertManualStrategy = builder.insertManualStrategy;
         this.manualOrderValue = builder.manualOrderValue;
+        this.collection = builder.collection;
     }
 
     public static Builder create()
@@ -59,6 +62,7 @@ public class CreateNodeParams
             data( node.data() ).
             attachments( node.attachments() ).
             childOrder( node.getChildOrder() ).
+            collection( node.getCollection() ).
             name( node.name().toString() ).
             parent( node.parent() );
     }
@@ -123,6 +127,11 @@ public class CreateNodeParams
         return inheritPermissions;
     }
 
+    public NodeCollection getCollection()
+    {
+        return collection;
+    }
+
     public static final class Builder
     {
         private NodePath parent;
@@ -146,6 +155,8 @@ public class CreateNodeParams
         private InsertManualStrategy insertManualStrategy = InsertManualStrategy.FIRST;
 
         private Long manualOrderValue;
+
+        private NodeCollection collection;
 
         private Builder()
         {
@@ -218,6 +229,12 @@ public class CreateNodeParams
             return this;
         }
 
+        public Builder collection( final NodeCollection collection )
+        {
+            this.collection = collection;
+            return this;
+        }
+
         public CreateNodeParams build()
         {
             return new CreateNodeParams( this );
@@ -245,6 +262,7 @@ public class CreateNodeParams
             Objects.equals( indexConfigDocument, that.indexConfigDocument ) &&
             Objects.equals( childOrder, that.childOrder ) &&
             Objects.equals( accessControlList, that.accessControlList ) &&
+            Objects.equals( collection, that.collection ) &&
             ( inheritPermissions == that.inheritPermissions );
     }
 
@@ -252,6 +270,6 @@ public class CreateNodeParams
     public int hashCode()
     {
         return Objects.hash( parent, name, data, attachments, indexConfigDocument, childOrder, nodeId, accessControlList,
-                             inheritPermissions );
+                             inheritPermissions, collection );
     }
 }

@@ -19,23 +19,23 @@ public class ContentDataSerializer
     extends AbstractDataSetSerializer<Content, Content.Builder>
 {
 
-    private static final FormDataSerializer FORM_SERIALIZER = new FormDataSerializer( ContentFieldNames.FORM_SET );
+    private static final FormDataSerializer FORM_SERIALIZER = new FormDataSerializer( ContentPropertyNames.FORM_SET );
 
-    private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentFieldNames.PAGE_SET );
+    private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE_SET );
 
-    private static final SiteDataSerializer SITE_SERIALIZER = new SiteDataSerializer( ContentFieldNames.SITE_SET );
+    private static final SiteDataSerializer SITE_SERIALIZER = new SiteDataSerializer( ContentPropertyNames.SITE_SET );
 
     public void toData( final Content content, final PropertySet contentAsData )
     {
-        contentAsData.setBoolean( ContentFieldNames.DRAFT, content.isDraft() );
-        contentAsData.ifNotNull().addString( ContentFieldNames.DISPLAY_NAME, content.getDisplayName() );
-        contentAsData.ifNotNull().addString( ContentFieldNames.CONTENT_TYPE, content.getType().toString() );
+        contentAsData.setBoolean( ContentPropertyNames.DRAFT, content.isDraft() );
+        contentAsData.ifNotNull().addString( ContentPropertyNames.DISPLAY_NAME, content.getDisplayName() );
+        contentAsData.ifNotNull().addString( ContentPropertyNames.CONTENT_TYPE, content.getType().toString() );
 
-        contentAsData.addSet( ContentFieldNames.CONTENT_DATA_SET, content.getData().getRoot().copy( contentAsData.getTree() ) );
+        contentAsData.addSet( ContentPropertyNames.CONTENT_DATA_SET, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
         if ( content.hasMetadata() )
         {
-            final PropertySet metadataSet = contentAsData.addSet( ContentFieldNames.METADATA );
+            final PropertySet metadataSet = contentAsData.addSet( ContentPropertyNames.METADATA );
             for ( final Metadata metadata : content.getAllMetadata() )
             {
                 metadataSet.addSet( metadata.getName().toString(), metadata.getData().getRoot().copy( contentAsData.getTree() ) );
@@ -61,7 +61,7 @@ public class ContentDataSerializer
 
     public Content.Builder fromData( final PropertySet set )
     {
-        final ContentTypeName contentTypeName = ContentTypeName.from( set.getString( ContentFieldNames.CONTENT_TYPE ) );
+        final ContentTypeName contentTypeName = ContentTypeName.from( set.getString( ContentPropertyNames.CONTENT_TYPE ) );
         final Content.Builder builder;
         if ( contentTypeName.isPageTemplate() )
         {
@@ -77,11 +77,11 @@ public class ContentDataSerializer
         }
         builder.type( contentTypeName );
 
-        builder.displayName( set.getString( ContentFieldNames.DISPLAY_NAME ) );
-        builder.draft( set.getBoolean( ContentFieldNames.DRAFT ) );
-        builder.contentData( set.getSet( ContentFieldNames.CONTENT_DATA_SET ).toTree() );
+        builder.displayName( set.getString( ContentPropertyNames.DISPLAY_NAME ) );
+        builder.draft( set.getBoolean( ContentPropertyNames.DRAFT ) );
+        builder.contentData( set.getSet( ContentPropertyNames.CONTENT_DATA_SET ).toTree() );
 
-        final PropertySet metadataSet = set.getSet( ContentFieldNames.METADATA );
+        final PropertySet metadataSet = set.getSet( ContentPropertyNames.METADATA );
         if ( metadataSet != null )
         {
             final List<Metadata> metadataList = new ArrayList<>();
@@ -94,26 +94,26 @@ public class ContentDataSerializer
             builder.metadata( metadataList );
         }
 
-        builder.form( FORM_SERIALIZER.fromData( set.getSet( ContentFieldNames.FORM_SET ) ) );
-        if ( set.hasProperty( ContentFieldNames.PAGE_SET ) )
+        builder.form( FORM_SERIALIZER.fromData( set.getSet( ContentPropertyNames.FORM_SET ) ) );
+        if ( set.hasProperty( ContentPropertyNames.PAGE_SET ) )
         {
-            builder.page( PAGE_SERIALIZER.fromData( set.getSet( ContentFieldNames.PAGE_SET ) ) );
+            builder.page( PAGE_SERIALIZER.fromData( set.getSet( ContentPropertyNames.PAGE_SET ) ) );
         }
         return builder;
     }
 
     void toData( final CreateContentParams params, final PropertySet contentAsData )
     {
-        contentAsData.addBoolean( ContentFieldNames.DRAFT, params.isDraft() );
-        contentAsData.ifNotNull().addString( ContentFieldNames.DISPLAY_NAME, params.getDisplayName() );
-        contentAsData.ifNotNull().addString( ContentFieldNames.CONTENT_TYPE,
+        contentAsData.addBoolean( ContentPropertyNames.DRAFT, params.isDraft() );
+        contentAsData.ifNotNull().addString( ContentPropertyNames.DISPLAY_NAME, params.getDisplayName() );
+        contentAsData.ifNotNull().addString( ContentPropertyNames.CONTENT_TYPE,
                                              params.getContentType() != null ? params.getContentType().toString() : null );
 
-        contentAsData.addSet( ContentFieldNames.CONTENT_DATA_SET, params.getData().getRoot().copy( contentAsData.getTree() ) );
+        contentAsData.addSet( ContentPropertyNames.CONTENT_DATA_SET, params.getData().getRoot().copy( contentAsData.getTree() ) );
 
         if ( params.getMetadata() != null && !params.getMetadata().isEmpty() )
         {
-            final PropertySet metadataSet = contentAsData.addSet( ContentFieldNames.METADATA );
+            final PropertySet metadataSet = contentAsData.addSet( ContentPropertyNames.METADATA );
             for ( final Metadata metadata : params.getMetadata() )
             {
                 metadataSet.addSet( metadata.getName().toString(), metadata.getData().getRoot().copy( metadataSet.getTree() ) );

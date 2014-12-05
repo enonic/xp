@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
 
 public class ContentNodeTranslatorTest
 {
-    private static final String CONTENT_DATA_PREFIX = ContentFieldNames.CONTENT_DATA_SET;
+    private static final String CONTENT_DATA_PREFIX = ContentPropertyNames.CONTENT_DATA_SET;
 
     private ContentNodeTranslator translator;
 

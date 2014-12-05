@@ -11,12 +11,12 @@ class ContentIndexConfigFactory
     {
         final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
             analyzer( ContentConstants.CONTENT_DEFAULT_ANALYZER ).
-            add( ContentFieldNames.PAGE_SET, IndexConfig.NONE ).
-            add( ContentFieldNames.SITE_SET, IndexConfig.NONE ).
-            add( ContentFieldNames.DRAFT, IndexConfig.NONE ).
-            add( ContentFieldNames.FORM_SET, IndexConfig.NONE ).
-            add( ContentFieldNames.CONTENT_DATA_SET, IndexConfig.BY_TYPE ).
-            add( ContentFieldNames.CONTENT_TYPE, IndexConfig.MINIMAL ).
+            add( ContentPropertyNames.PAGE_SET, IndexConfig.NONE ).
+            add( ContentPropertyNames.SITE_SET, IndexConfig.NONE ).
+            add( ContentPropertyNames.DRAFT, IndexConfig.NONE ).
+            add( ContentPropertyNames.FORM_SET, IndexConfig.NONE ).
+            add( ContentPropertyNames.CONTENT_DATA_SET, IndexConfig.BY_TYPE ).
+            add( ContentPropertyNames.CONTENT_TYPE, IndexConfig.MINIMAL ).
             defaultConfig( IndexConfig.BY_TYPE ).
             build();
 

@@ -11,6 +11,7 @@ import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeCollection;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
@@ -61,6 +62,7 @@ public class XmlNodeSerializerTest
             name( NodeName.from( "my-node-name" ) ).
             parent( NodePath.ROOT ).
             childOrder( ChildOrder.manualOrder() ).
+            collection( NodeCollection.from( "content" ) ).
             data( propertyTree ).
             build();
 
