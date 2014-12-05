@@ -40,7 +40,7 @@ module api.ui.security {
                 iconClass = "icon-users";
                 break;
             case PrincipalType.ROLE:
-                iconClass = "icon-user7";
+                iconClass = "icon-shield";
                 break;
             }
             return iconClass;

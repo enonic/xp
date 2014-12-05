@@ -38,7 +38,7 @@ module api.ui.security.acl {
                 iconClass = "icon-users";
                 break;
             case PrincipalType.ROLE:
-                iconClass = "icon-user7";
+                iconClass = "icon-shield";
                 break;
             }
             return iconClass;

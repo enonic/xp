@@ -53,7 +53,7 @@ module app.wizard {
                 this.formIcon.addClass("icon-users");
                 break;
             case PrincipalType.ROLE:
-                this.formIcon.addClass("icon-user7");
+                this.formIcon.addClass("icon-shield");
                 break;
             }
 
