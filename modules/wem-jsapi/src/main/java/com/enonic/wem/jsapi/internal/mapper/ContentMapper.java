@@ -34,6 +34,8 @@ public final class ContentMapper
         gen.value( "_modifiedTime", value.getModifiedTime() );
         gen.value( "type", value.getType() );
         gen.value( "displayName", value.getDisplayName() );
+        gen.value( "hasChildren", value.hasChildren() );
+        gen.value( "draft", value.isDraft() );
 
         serializeData( gen, value.getData() );
         serializeMetaData( gen, value.getAllMetadata() );

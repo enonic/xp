@@ -25,6 +25,8 @@
     ]
   },
   "displayName": "My Content",
+  "draft": false,
+  "hasChildren": false,
   "metadata": {
     "mymodule:myschema": {
       "a": ["1"]
