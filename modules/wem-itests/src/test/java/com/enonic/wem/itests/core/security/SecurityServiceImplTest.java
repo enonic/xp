@@ -128,6 +128,7 @@ public class SecurityServiceImplTest
 
         final User user1 = securityService.createUser( createUser1 );
         final User user2 = securityService.createUser( createUser2 );
+        refresh();
 
         final User createdUser1 = securityService.getUser( userKey1 ).get();
         final User createdUser2 = securityService.getUser( userKey2 ).get();
@@ -159,11 +160,13 @@ public class SecurityServiceImplTest
             build();
 
         final User user = securityService.createUser( createUser );
+        refresh();
 
         final UpdateUserParams updateUserParams = UpdateUserParams.create( user ).
             email( "u2@enonic.net" ).
             build();
         final User updateUserResult = securityService.updateUser( updateUserParams );
+        refresh();
 
         final User updatedUser = securityService.getUser( user.getKey() ).get();
 
@@ -193,6 +196,7 @@ public class SecurityServiceImplTest
 
         final Group group1 = securityService.createGroup( createGroup );
         final Group group2 = securityService.createGroup( createGroup2 );
+        refresh();
 
         final Group createdGroup1 = securityService.getGroup( groupKey1 ).get();
         final Group createdGroup2 = securityService.getGroup( groupKey2 ).get();
@@ -214,11 +218,13 @@ public class SecurityServiceImplTest
             build();
 
         final Group group = securityService.createGroup( createGroup );
+        refresh();
 
         final UpdateGroupParams groupUpdate = UpdateGroupParams.create( group ).
             displayName( "___Group B___" ).
             build();
         final Group updatedGroupResult = securityService.updateGroup( groupUpdate );
+        refresh();
 
         final Group updatedGroup = securityService.getGroup( group.getKey() ).get();
         assertEquals( "___Group B___", updatedGroupResult.getDisplayName() );
@@ -269,6 +275,7 @@ public class SecurityServiceImplTest
             displayName( "___Role B___" ).
             build();
         final Role updatedRoleResult = securityService.updateRole( roleUpdate );
+        refresh();
 
         final Role updatedRole = securityService.getRole( role.getKey() ).get();
         assertEquals( "___Role B___", updatedRoleResult.getDisplayName() );
@@ -312,6 +319,7 @@ public class SecurityServiceImplTest
         securityService.addRelationship( membership );
         securityService.addRelationship( membership2 );
         securityService.addRelationship( membership );
+        refresh();
 
         // verify
         final PrincipalRelationships relationships = securityService.getRelationships( groupKey1 );
@@ -349,15 +357,18 @@ public class SecurityServiceImplTest
         securityService.createUser( createUser1 );
         securityService.createUser( createUser2 );
         securityService.createGroup( createGroup );
+        refresh();
 
         PrincipalRelationship membership = PrincipalRelationship.from( groupKey1 ).to( userKey1 );
         PrincipalRelationship membership2 = PrincipalRelationship.from( groupKey1 ).to( userKey2 );
 
         securityService.addRelationship( membership );
         securityService.addRelationship( membership2 );
+        refresh();
 
         // exercise
         securityService.removeRelationship( membership );
+        refresh();
 
         //verify
         final PrincipalRelationships relationships = securityService.getRelationships( groupKey1 );
@@ -394,15 +405,18 @@ public class SecurityServiceImplTest
         securityService.createUser( createUser1 );
         securityService.createUser( createUser2 );
         securityService.createGroup( createGroup );
+        refresh();
 
         PrincipalRelationship membership = PrincipalRelationship.from( groupKey1 ).to( userKey1 );
         PrincipalRelationship membership2 = PrincipalRelationship.from( groupKey1 ).to( userKey2 );
 
         securityService.addRelationship( membership );
         securityService.addRelationship( membership2 );
+        refresh();
 
         // exercise
         securityService.removeRelationships( groupKey1 );
+        refresh();
 
         //verify
         final PrincipalRelationships relationships = securityService.getRelationships( groupKey1 );
@@ -469,6 +483,7 @@ public class SecurityServiceImplTest
             build();
 
         final User user = securityService.createUser( createUser );
+        refresh();
 
         final CustomAuthenticationToken authToken = new CustomAuthenticationToken();
         authToken.setUserStore( SYSTEM );
@@ -507,6 +522,8 @@ public class SecurityServiceImplTest
         securityService.createGroup( createGroup2 );
         securityService.addRelationship( PrincipalRelationship.from( groupKey1 ).to( userKey ) );
         securityService.addRelationship( PrincipalRelationship.from( groupKey2 ).to( userKey ) );
+
+        refresh();
 
         final PrincipalKeys memberships = securityService.getMemberships( userKey );
 
