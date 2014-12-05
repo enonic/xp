@@ -1,6 +1,5 @@
 package com.enonic.wem.repo.internal.elasticsearch.query.builder
 
-import org.elasticsearch.common.Strings
 import org.elasticsearch.common.xcontent.ToXContent
 import org.elasticsearch.common.xcontent.XContentBuilder
 import org.elasticsearch.common.xcontent.XContentFactory
@@ -38,7 +37,7 @@ class BaseTestBuilderFactory
     def cleanString( final String input )
     {
         String output = input.replace( LINE_BREAK, "" );
-        output = Strings.trimAllWhitespace( output )
+        output = output.replaceAll( "\\s+", "" );
         return output;
     }
 
