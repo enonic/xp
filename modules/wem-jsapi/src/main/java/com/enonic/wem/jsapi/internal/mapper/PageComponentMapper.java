@@ -5,10 +5,25 @@ import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.script.serializer.MapGenerator;
+import com.enonic.wem.script.serializer.MapSerializable;
 
 public final class PageComponentMapper
+    implements MapSerializable
 {
-    public static void serialize( final MapGenerator gen, final PageComponent value )
+    private final PageComponent value;
+
+    public PageComponentMapper( final PageComponent value )
+    {
+        this.value = value;
+    }
+
+    @Override
+    public void serialize( final MapGenerator gen )
+    {
+        serialize( gen, this.value );
+    }
+
+    private static void serialize( final MapGenerator gen, final PageComponent value )
     {
         gen.value( "name", value.getName() );
         gen.value( "path", value.getPath() );
@@ -29,7 +44,7 @@ public final class PageComponentMapper
     {
         gen.value( "descriptor", comp.getDescriptor() );
         gen.map( "config" );
-        PropertyTreeMapper.serialize( gen, comp.getConfig() );
+        new PropertyTreeMapper( comp.getConfig() ).serialize( gen );
         gen.end();
     }
 
@@ -39,7 +54,7 @@ public final class PageComponentMapper
         for ( final Region region : comp.getRegions() )
         {
             gen.map();
-            RegionMapper.serialize( gen, region );
+            new RegionMapper( region ).serialize( gen );
             gen.end();
         }
         gen.end();

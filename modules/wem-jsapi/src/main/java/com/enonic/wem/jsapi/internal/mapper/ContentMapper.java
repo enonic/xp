@@ -23,7 +23,7 @@ public final class ContentMapper
         serialize( gen, this.value );
     }
 
-    public static void serialize( final MapGenerator gen, final Content value )
+    private static void serialize( final MapGenerator gen, final Content value )
     {
         gen.value( "_id", value.getId() );
         gen.value( "_name", value.getName() );
@@ -43,7 +43,7 @@ public final class ContentMapper
     private static void serializeData( final MapGenerator gen, final PropertyTree value )
     {
         gen.map( "data" );
-        PropertyTreeMapper.serialize( gen, value );
+        new PropertyTreeMapper( value ).serialize( gen );
         gen.end();
     }
 
@@ -53,7 +53,7 @@ public final class ContentMapper
         for ( final Metadata value : values )
         {
             gen.map( value.getName().toString() );
-            PropertyTreeMapper.serialize( gen, value.getData() );
+            new PropertyTreeMapper( value.getData() ).serialize( gen );
             gen.end();
         }
         gen.end();
@@ -62,7 +62,7 @@ public final class ContentMapper
     private static void serializePage( final MapGenerator gen, final Page value )
     {
         gen.map( "page" );
-        PageMapper.serialize( gen, value );
+        new PageMapper( value ).serialize( gen );
         gen.end();
     }
 }

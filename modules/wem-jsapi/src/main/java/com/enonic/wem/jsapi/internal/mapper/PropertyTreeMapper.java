@@ -5,10 +5,25 @@ import java.util.Map;
 
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.script.serializer.MapGenerator;
+import com.enonic.wem.script.serializer.MapSerializable;
 
 public final class PropertyTreeMapper
+    implements MapSerializable
 {
-    public static void serialize( final MapGenerator gen, final PropertyTree value )
+    private final PropertyTree value;
+
+    public PropertyTreeMapper( final PropertyTree value )
+    {
+        this.value = value;
+    }
+
+    @Override
+    public void serialize( final MapGenerator gen )
+    {
+        serialize( gen, this.value );
+    }
+
+    private static void serialize( final MapGenerator gen, final PropertyTree value )
     {
         final Map<String, Object> map = value.toMap();
         serializeMap( gen, map );
