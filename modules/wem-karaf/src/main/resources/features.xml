@@ -40,6 +40,7 @@
     <bundle start-level="50">mvn:com.enonic.wem/wem-thymeleaf/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-mustache/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-xslt/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/wem-jsapi/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-admin/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-admin-ui/${project.version}</bundle>
   </feature>
