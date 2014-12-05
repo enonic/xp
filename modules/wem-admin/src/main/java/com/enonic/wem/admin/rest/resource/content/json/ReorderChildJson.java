@@ -3,15 +3,15 @@ package com.enonic.wem.admin.rest.resource.content.json;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class OrderChildJson
+public class ReorderChildJson
 {
-    private String contentId;
+    private final String contentId;
 
-    private String moveBefore;
+    private final String moveBefore;
 
     @JsonCreator
-    public OrderChildJson( @JsonProperty("contentId") final String contentId, //
-                           @JsonProperty("moveBefore") final String moveBefore )
+    public ReorderChildJson( @JsonProperty("contentId") final String contentId, //
+                             @JsonProperty("moveBefore") final String moveBefore )
     {
         this.contentId = contentId;
         this.moveBefore = moveBefore;

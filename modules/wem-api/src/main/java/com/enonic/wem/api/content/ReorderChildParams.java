@@ -1,17 +1,16 @@
 package com.enonic.wem.api.content;
 
-public class OrderChildContentParams
+public class ReorderChildParams
 {
     private final ContentId contentToMove;
 
     private final ContentId contentToMoveBefore;
 
-    private OrderChildContentParams( final Builder builder )
+    private ReorderChildParams( final Builder builder )
     {
         contentToMove = builder.contentToMove;
         contentToMoveBefore = builder.contentToMoveBefore;
     }
-
 
     public ContentId getContentToMove()
     {
@@ -51,9 +50,9 @@ public class OrderChildContentParams
             return this;
         }
 
-        public OrderChildContentParams build()
+        public ReorderChildParams build()
         {
-            return new OrderChildContentParams( this );
+            return new ReorderChildParams( this );
         }
     }
 }

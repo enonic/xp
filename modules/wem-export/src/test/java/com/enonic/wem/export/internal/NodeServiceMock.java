@@ -27,8 +27,9 @@ import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.Nodes;
-import com.enonic.wem.api.node.OrderChildNodeParams;
 import com.enonic.wem.api.node.RenameNodeParams;
+import com.enonic.wem.api.node.ReorderChildNodesParams;
+import com.enonic.wem.api.node.ReorderChildNodesResult;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -217,7 +218,7 @@ class NodeServiceMock
     }
 
     @Override
-    public Node moveChild( final OrderChildNodeParams params )
+    public ReorderChildNodesResult reorderChildren( final ReorderChildNodesParams params )
     {
         return null;
     }

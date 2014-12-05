@@ -16,7 +16,7 @@ import com.enonic.wem.api.query.expr.ValueExpr;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 
-public class MoveChildNodeCommand
+public class ReorderChildNodeCommand
     extends AbstractNodeCommand
 {
     private final Node nodeToMove;
@@ -25,7 +25,7 @@ public class MoveChildNodeCommand
 
     private final Node nodeToMoveBefore;
 
-    private MoveChildNodeCommand( final Builder builder )
+    private ReorderChildNodeCommand( final Builder builder )
     {
         super( builder );
         nodeToMove = builder.nodeToMove;
@@ -189,9 +189,9 @@ public class MoveChildNodeCommand
             Preconditions.checkNotNull( nodeToMove );
         }
 
-        public MoveChildNodeCommand build()
+        public ReorderChildNodeCommand build()
         {
-            return new MoveChildNodeCommand( this );
+            return new ReorderChildNodeCommand( this );
         }
     }
 }

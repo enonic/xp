@@ -1,11 +1,13 @@
 package com.enonic.wem.api.node;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 
@@ -16,6 +18,11 @@ public class NodeIds
     private NodeIds( final ImmutableSet<NodeId> set )
     {
         super( set );
+    }
+
+    private NodeIds( final Builder builder )
+    {
+        super( ImmutableSet.copyOf( builder.nodeIds ) );
     }
 
     public static NodeIds empty()
@@ -37,6 +44,11 @@ public class NodeIds
     public static NodeIds from( final Iterable<NodeId> ids )
     {
         return new NodeIds( ImmutableSet.copyOf( ids ) );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public ImmutableSet<String> getAsStrings()
@@ -67,4 +79,22 @@ public class NodeIds
             return NodeId.from( value );
         }
     }
+
+    public static class Builder
+    {
+        private LinkedHashSet<NodeId> nodeIds = Sets.newLinkedHashSet();
+
+        public Builder add( final NodeId nodeId )
+        {
+            this.nodeIds.add( nodeId );
+            return this;
+        }
+
+        public NodeIds build()
+        {
+            return new NodeIds( this );
+        }
+
+    }
+
 }

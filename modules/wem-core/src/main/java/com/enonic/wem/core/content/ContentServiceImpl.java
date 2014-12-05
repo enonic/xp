@@ -26,9 +26,11 @@ import com.enonic.wem.api.content.FindContentVersionsResult;
 import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
-import com.enonic.wem.api.content.OrderChildContentParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
+import com.enonic.wem.api.content.ReorderChildContentsParams;
+import com.enonic.wem.api.content.ReorderChildContentsResult;
+import com.enonic.wem.api.content.ReorderChildParams;
 import com.enonic.wem.api.content.SetContentChildOrderParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
@@ -42,7 +44,9 @@ import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.node.OrderChildNodeParams;
+import com.enonic.wem.api.node.ReorderChildNodeParams;
+import com.enonic.wem.api.node.ReorderChildNodesParams;
+import com.enonic.wem.api.node.ReorderChildNodesResult;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -415,14 +419,21 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content orderChild( final OrderChildContentParams params )
+    public ReorderChildContentsResult reorderChildren( final ReorderChildContentsParams params )
     {
-        final Node node = nodeService.moveChild( OrderChildNodeParams.create().
-            nodeId( NodeId.from( params.getContentToMove() ) ).
-            moveBefore( params.getContentToMoveBefore() == null ? null : NodeId.from( params.getContentToMoveBefore() ) ).
-            build() );
+        final ReorderChildNodesParams.Builder builder = ReorderChildNodesParams.create();
 
-        return contentNodeTranslator.fromNode( node );
+        for ( final ReorderChildParams param : params )
+        {
+            builder.add( ReorderChildNodeParams.create().
+                nodeId( NodeId.from( param.getContentToMove() ) ).
+                moveBefore( param.getContentToMoveBefore() == null ? null : NodeId.from( param.getContentToMoveBefore() ) ).
+                build() );
+        }
+
+        final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
+
+        return new ReorderChildContentsResult( reorderChildNodesResult.getSize() );
     }
 
     @Override

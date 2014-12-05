@@ -24,7 +24,7 @@ public interface ContentService
 
     Content setChildOrder( final SetContentChildOrderParams params );
 
-    Content orderChild( final OrderChildContentParams params );
+    ReorderChildContentsResult reorderChildren( final ReorderChildContentsParams params );
 
     Content getById( ContentId id );
 

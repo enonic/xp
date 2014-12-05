@@ -1,12 +1,12 @@
 package com.enonic.wem.api.node;
 
-public class OrderChildNodeParams
+public class ReorderChildNodeParams
 {
     private final NodeId nodeId;
 
     private final NodeId moveBefore;
 
-    private OrderChildNodeParams( Builder builder )
+    private ReorderChildNodeParams( Builder builder )
     {
         nodeId = builder.nodeId;
         moveBefore = builder.moveBefore;
@@ -51,9 +51,9 @@ public class OrderChildNodeParams
             return this;
         }
 
-        public OrderChildNodeParams build()
+        public ReorderChildNodeParams build()
         {
-            return new OrderChildNodeParams( this );
+            return new ReorderChildNodeParams( this );
         }
     }
 }

@@ -40,7 +40,7 @@ public interface NodeService
 
     Node setChildOrder( final SetNodeChildOrderParams params );
 
-    Node moveChild( final OrderChildNodeParams params );
+    ReorderChildNodesResult reorderChildren( final ReorderChildNodesParams params );
 
     Node getByVersionId( NodeVersionId nodeVersionid );
 

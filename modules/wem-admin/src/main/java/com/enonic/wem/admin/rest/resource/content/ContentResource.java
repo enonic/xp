@@ -16,7 +16,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
@@ -29,6 +28,7 @@ import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.wem.admin.json.content.GetContentVersionsResultJson;
+import com.enonic.wem.admin.json.content.ReorderChildrenResultJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
@@ -42,8 +42,9 @@ import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.DuplicateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.GetContentVersionsJson;
-import com.enonic.wem.admin.rest.resource.content.json.OrderChildJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
+import com.enonic.wem.admin.rest.resource.content.json.ReorderChildJson;
+import com.enonic.wem.admin.rest.resource.content.json.ReorderChildrenJson;
 import com.enonic.wem.admin.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.api.content.CompareContentResults;
@@ -68,9 +69,11 @@ import com.enonic.wem.api.content.FindContentVersionsParams;
 import com.enonic.wem.api.content.FindContentVersionsResult;
 import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
-import com.enonic.wem.api.content.OrderChildContentParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
+import com.enonic.wem.api.content.ReorderChildContentsParams;
+import com.enonic.wem.api.content.ReorderChildContentsResult;
+import com.enonic.wem.api.content.ReorderChildParams;
 import com.enonic.wem.api.content.SetContentChildOrderParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
@@ -428,15 +431,22 @@ public final class ContentResource
 
 
     @POST
-    @Path("orderChild")
-    public ContentJson orderChild( final OrderChildJson params )
+    @Path("reorderChildren")
+    public ReorderChildrenResultJson reorderChildContents( final ReorderChildrenJson params )
     {
-        final Content updatedContent = this.contentService.orderChild( OrderChildContentParams.create().
-            contentToMove( ContentId.from( params.getContentId() ) ).
-            contentToMoveBefore( ( Strings.isNullOrEmpty( params.getMoveBefore() ) ? null : ContentId.from( params.getMoveBefore() ) ) ).
-            build() );
+        final ReorderChildContentsParams.Builder builder = ReorderChildContentsParams.create();
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+        for ( final ReorderChildJson reorderChildJson : params.getReorderChildren() )
+        {
+            builder.add( ReorderChildParams.create().
+                contentToMove( ContentId.from( reorderChildJson.getContentId() ) ).
+                contentToMoveBefore( ContentId.from( reorderChildJson.getMoveBefore() ) ).
+                build() );
+        }
+
+        final ReorderChildContentsResult result = this.contentService.reorderChildren( builder.build() );
+
+        return new ReorderChildrenResultJson( result );
     }
 
     @POST

@@ -21,8 +21,9 @@ import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.Nodes;
-import com.enonic.wem.api.node.OrderChildNodeParams;
 import com.enonic.wem.api.node.RenameNodeParams;
+import com.enonic.wem.api.node.ReorderChildNodesParams;
+import com.enonic.wem.api.node.ReorderChildNodesResult;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.workspace.Workspace;
@@ -332,21 +333,15 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node moveChild( final OrderChildNodeParams params )
+    public ReorderChildNodesResult reorderChildren( final ReorderChildNodesParams params )
     {
-        final Node nodeToMove = doGetById( params.getNodeId(), false );
-        final Node nodeToMoveBefore = params.getMoveBefore() == null ? null : doGetById( params.getMoveBefore(), false );
-        final Node parentNode = doGetByPath( nodeToMove.parent(), false );
-
-        return MoveChildNodeCommand.create().
-            queryService( this.queryService ).
-            nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
-            versionService( this.versionService ).
+        return ReorderChildNodesCommand.create().
+            params( params ).
             indexService( this.indexService ).
-            parentNode( parentNode ).
-            nodeToMove( nodeToMove ).
-            nodeToMoveBefore( nodeToMoveBefore ).
+            nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
+            versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
             build().
             execute();
     }

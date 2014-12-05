@@ -36,9 +36,9 @@ public class NodeImportCommand
 
     private final NodeImportResult.Builder nodeImportResult;
 
-    public static final Long IMPORT_NODE_ORDER_START_VALUE = 0l;
+    private static final Long IMPORT_NODE_ORDER_START_VALUE = 0l;
 
-    public static final Long IMPORT_NODE_ORDER_SPACE = (long) Integer.MAX_VALUE;
+    private static final Long IMPORT_NODE_ORDER_SPACE = (long) Integer.MAX_VALUE;
 
 
     private NodeImportCommand( final Builder builder )
@@ -122,15 +122,6 @@ public class NodeImportCommand
             execute();
 
         final Node createdNode = this.nodeService.create( createNodeParams );
-
-        try
-        {
-            Thread.sleep( 300 );
-        }
-        catch ( InterruptedException e )
-        {
-            e.printStackTrace();
-        }
 
         nodeImportResult.add( createdNode.path() );
 

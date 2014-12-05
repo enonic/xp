@@ -19,7 +19,7 @@ import com.enonic.wem.api.query.expr.OrderExpr;
 
 import static org.junit.Assert.*;
 
-public class MoveChildNodeCommandTest
+public class ReorderChildNodeCommandTest
     extends AbstractNodeTest
 {
 
@@ -38,7 +38,7 @@ public class MoveChildNodeCommandTest
         setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
-        MoveChildNodeCommand.create().
+        ReorderChildNodeCommand.create().
             parentNode( getNodeById( parentNode.id() ) ).
             nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
             nodeToMoveBefore( getNodeById( NodeId.from( "a" ) ) ).
@@ -80,7 +80,7 @@ public class MoveChildNodeCommandTest
         setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
-        MoveChildNodeCommand.create().
+        ReorderChildNodeCommand.create().
             parentNode( getNodeById( parentNode.id() ) ).
             nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
             nodeToMoveBefore( getNodeById( NodeId.from( "b" ) ) ).
@@ -122,7 +122,7 @@ public class MoveChildNodeCommandTest
         setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
-        MoveChildNodeCommand.create().
+        ReorderChildNodeCommand.create().
             parentNode( getNodeById( parentNode.id() ) ).
             nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
             indexService( this.indexService ).
