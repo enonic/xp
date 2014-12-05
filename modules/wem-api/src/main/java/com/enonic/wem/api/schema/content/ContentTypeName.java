@@ -200,6 +200,22 @@ public final class ContentTypeName
         return MEDIA.equals( this );
     }
 
+    public boolean isDescendantOfMedia()
+    {
+        return MEDIA_ARCHIVE.equals( this ) ||
+            MEDIA_AUDIO.equals( this ) ||
+            MEDIA_VIDEO.equals( this ) ||
+            MEDIA_CODE.equals( this ) ||
+            MEDIA_DATA.equals( this ) ||
+            MEDIA_DOCUMENT.equals( this ) ||
+            MEDIA_EXECUTABLE.equals( this ) ||
+            MEDIA_IMAGE.equals( this ) ||
+            MEDIA_SPREADSHEET.equals( this ) ||
+            MEDIA_PRESENTATION.equals( this ) ||
+            MEDIA_VECTOR.equals( this ) ||
+            MEDIA_TEXT.equals( this );
+    }
+
     public boolean isTextMedia()
     {
         return MEDIA_TEXT.equals( this );
