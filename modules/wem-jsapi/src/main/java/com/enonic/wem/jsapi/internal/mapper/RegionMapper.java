@@ -3,31 +3,23 @@ package com.enonic.wem.jsapi.internal.mapper;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.script.serializer.MapGenerator;
-import com.enonic.wem.script.serializer.MapSerializable;
 
-final class RegionMapper
-    implements MapSerializable
+public final class RegionMapper
 {
-    private final Region value;
-
-    public RegionMapper( final Region value )
+    public static void serialize( final MapGenerator gen, final Region value )
     {
-        this.value = value;
+        gen.value( "name", value.getName() );
+        serializeComponents( gen, value.getComponents() );
     }
 
-    @Override
-    public void serialize( final MapGenerator gen )
-    {
-        gen.value( "name", this.value.getName() );
-        serializeComponents( gen );
-    }
-
-    private void serializeComponents( final MapGenerator gen )
+    private static void serializeComponents( final MapGenerator gen, final Iterable<PageComponent> values )
     {
         gen.array( "components" );
-        for ( final PageComponent component : this.value.getComponents() )
+        for ( final PageComponent component : values )
         {
-            gen.value( ResultMappers.mapper( component ) );
+            gen.map();
+            PageComponentMapper.serialize( gen, component );
+            gen.end();
         }
         gen.end();
     }

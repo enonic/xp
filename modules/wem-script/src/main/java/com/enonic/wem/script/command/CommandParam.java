@@ -18,4 +18,6 @@ public interface CommandParam
     public Map<String, Object> map();
 
     public <T> List<T> array( Class<T> type );
+
+    // public <T> T bean(Class<T> type);
 }

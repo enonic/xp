@@ -5,57 +5,47 @@ import java.util.Map;
 
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.script.serializer.MapGenerator;
-import com.enonic.wem.script.serializer.MapSerializable;
 
-final class PropertyTreeMapper
-    implements MapSerializable
+public final class PropertyTreeMapper
 {
-    private final PropertyTree value;
-
-    public PropertyTreeMapper( final PropertyTree value )
+    public static void serialize( final MapGenerator gen, final PropertyTree value )
     {
-        this.value = value;
+        final Map<String, Object> map = value.toMap();
+        serializeMap( gen, map );
     }
 
-    @Override
-    public void serialize( final MapGenerator gen )
-    {
-        final Map<String, Object> map = this.value.toMap();
-        serialize( gen, map );
-    }
-
-    private void serialize( final MapGenerator gen, final Map<?, ?> map )
+    private static void serializeMap( final MapGenerator gen, final Map<?, ?> map )
     {
         for ( final Map.Entry<?, ?> entry : map.entrySet() )
         {
-            serialize( gen, entry.getKey().toString(), entry.getValue() );
+            serializeKeyValue( gen, entry.getKey().toString(), entry.getValue() );
         }
     }
 
-    private void serialize( final MapGenerator gen, final String key, final Object value )
+    private static void serializeKeyValue( final MapGenerator gen, final String key, final Object value )
     {
         if ( value instanceof List )
         {
-            serialize( gen, key, (List<?>) value );
+            serializeList( gen, key, (List<?>) value );
         }
     }
 
-    private void serialize( final MapGenerator gen, final String key, final List<?> values )
+    private static void serializeList( final MapGenerator gen, final String key, final List<?> values )
     {
         gen.array( key );
         for ( final Object value : values )
         {
-            serialize( gen, value );
+            serializeValue( gen, value );
         }
         gen.end();
     }
 
-    private void serialize( final MapGenerator gen, final Object value )
+    private static void serializeValue( final MapGenerator gen, final Object value )
     {
         if ( value instanceof Map )
         {
             gen.map();
-            serialize( gen, (Map<?, ?>) value );
+            serializeMap( gen, (Map<?, ?>) value );
             gen.end();
         }
         else

@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.jsapi.internal.mapper.ResultMappers;
+import com.enonic.wem.jsapi.internal.mapper.ContentMapper;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
 
@@ -64,7 +64,7 @@ public final class GetContentHandler
 
     private Object convert( final Content content )
     {
-        return ResultMappers.mapper( content );
+        return new ContentMapper( content );
     }
 
     @Reference

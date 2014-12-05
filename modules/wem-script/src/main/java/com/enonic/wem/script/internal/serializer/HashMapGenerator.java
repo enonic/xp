@@ -10,12 +10,6 @@ public final class HashMapGenerator
     extends MapGeneratorBase
 {
     @Override
-    protected MapGeneratorBase newGenerator()
-    {
-        return new HashMapGenerator();
-    }
-
-    @Override
     protected Object newMap()
     {
         return Maps.newHashMap();

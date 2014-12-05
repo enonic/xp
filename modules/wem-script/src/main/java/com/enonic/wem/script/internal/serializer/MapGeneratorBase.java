@@ -3,7 +3,6 @@ package com.enonic.wem.script.internal.serializer;
 import java.util.Stack;
 
 import com.enonic.wem.script.serializer.MapGenerator;
-import com.enonic.wem.script.serializer.MapSerializable;
 
 public abstract class MapGeneratorBase
     implements MapGenerator
@@ -33,8 +32,6 @@ public abstract class MapGeneratorBase
     protected abstract boolean isMap( Object value );
 
     protected abstract boolean isArray( Object value );
-
-    protected abstract MapGeneratorBase newGenerator();
 
     private void checkIfMap()
     {
@@ -144,13 +141,6 @@ public abstract class MapGeneratorBase
         if ( value instanceof Boolean )
         {
             return value;
-        }
-
-        if ( value instanceof MapSerializable )
-        {
-            final MapGeneratorBase generator = newGenerator();
-            ( (MapSerializable) value ).serialize( generator );
-            return generator.getRoot();
         }
 
         return value.toString();

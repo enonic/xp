@@ -8,12 +8,6 @@ public final class ScriptMapGenerator
     extends MapGeneratorBase
 {
     @Override
-    protected MapGeneratorBase newGenerator()
-    {
-        return new ScriptMapGenerator();
-    }
-    
-    @Override
     protected Object newMap()
     {
         return Global.newEmptyInstance();

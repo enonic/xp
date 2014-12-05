@@ -2,10 +2,12 @@ package com.enonic.wem.jsapi.internal.mapper;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Metadata;
+import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.script.serializer.MapGenerator;
 import com.enonic.wem.script.serializer.MapSerializable;
 
-final class ContentMapper
+public final class ContentMapper
     implements MapSerializable
 {
     private final Content value;
@@ -18,38 +20,49 @@ final class ContentMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        gen.value( "_id", this.value.getId() );
-        gen.value( "_name", this.value.getName() );
-        gen.value( "_path", this.value.getPath() );
-        gen.value( "_creator", this.value.getCreator() );
-        gen.value( "_modifier", this.value.getModifier() );
-        gen.value( "_createdTime", this.value.getCreatedTime() );
-        gen.value( "_modifiedTime", this.value.getModifiedTime() );
-        gen.value( "type", this.value.getType() );
-        gen.value( "displayName", this.value.getDisplayName() );
-
-        serializeData( gen );
-        serializeMetaData( gen );
-        serializePage( gen );
+        serialize( gen, this.value );
     }
 
-    private void serializeData( final MapGenerator gen )
+    public static void serialize( final MapGenerator gen, final Content value )
     {
-        gen.value( "data", ResultMappers.mapper( this.value.getData() ) );
+        gen.value( "_id", value.getId() );
+        gen.value( "_name", value.getName() );
+        gen.value( "_path", value.getPath() );
+        gen.value( "_creator", value.getCreator() );
+        gen.value( "_modifier", value.getModifier() );
+        gen.value( "_createdTime", value.getCreatedTime() );
+        gen.value( "_modifiedTime", value.getModifiedTime() );
+        gen.value( "type", value.getType() );
+        gen.value( "displayName", value.getDisplayName() );
+
+        serializeData( gen, value.getData() );
+        serializeMetaData( gen, value.getAllMetadata() );
+        serializePage( gen, value.getPage() );
     }
 
-    private void serializeMetaData( final MapGenerator gen )
+    private static void serializeData( final MapGenerator gen, final PropertyTree value )
+    {
+        gen.map( "data" );
+        PropertyTreeMapper.serialize( gen, value );
+        gen.end();
+    }
+
+    private static void serializeMetaData( final MapGenerator gen, final Iterable<Metadata> values )
     {
         gen.map( "metadata" );
-        for ( final Metadata metadata : this.value.getAllMetadata() )
+        for ( final Metadata value : values )
         {
-            gen.value( metadata.getName().toString(), ResultMappers.mapper( metadata.getData() ) );
+            gen.map( value.getName().toString() );
+            PropertyTreeMapper.serialize( gen, value.getData() );
+            gen.end();
         }
         gen.end();
     }
 
-    private void serializePage( final MapGenerator gen )
+    private static void serializePage( final MapGenerator gen, final Page value )
     {
-        gen.value( "page", ResultMappers.mapper( this.value.getPage() ) );
+        gen.map( "page" );
+        PageMapper.serialize( gen, value );
+        gen.end();
     }
 }

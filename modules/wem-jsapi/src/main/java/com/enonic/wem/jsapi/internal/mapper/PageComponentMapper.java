@@ -5,48 +5,42 @@ import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.script.serializer.MapGenerator;
-import com.enonic.wem.script.serializer.MapSerializable;
 
-final class PageComponentMapper
-    implements MapSerializable
+public final class PageComponentMapper
 {
-    private final PageComponent value;
-
-    public PageComponentMapper( final PageComponent value )
+    public static void serialize( final MapGenerator gen, final PageComponent value )
     {
-        this.value = value;
-    }
+        gen.value( "name", value.getName() );
+        gen.value( "path", value.getPath() );
+        gen.value( "type", value.getType() );
 
-    @Override
-    public void serialize( final MapGenerator gen )
-    {
-        gen.value( "name", this.value.getName() );
-        gen.value( "path", this.value.getPath() );
-        gen.value( "type", this.value.getType() );
-
-        if ( this.value instanceof DescriptorBasedPageComponent )
+        if ( value instanceof DescriptorBasedPageComponent )
         {
-            serialize( gen, (DescriptorBasedPageComponent) this.value );
+            serialize( gen, (DescriptorBasedPageComponent) value );
         }
 
-        if ( this.value instanceof LayoutComponent )
+        if ( value instanceof LayoutComponent )
         {
-            serialize( gen, (LayoutComponent) this.value );
+            serialize( gen, (LayoutComponent) value );
         }
     }
 
-    private void serialize( final MapGenerator gen, final DescriptorBasedPageComponent comp )
+    private static void serialize( final MapGenerator gen, final DescriptorBasedPageComponent comp )
     {
         gen.value( "descriptor", comp.getDescriptor() );
-        gen.value( "config", ResultMappers.mapper( comp.getConfig() ) );
+        gen.map( "config" );
+        PropertyTreeMapper.serialize( gen, comp.getConfig() );
+        gen.end();
     }
 
-    private void serialize( final MapGenerator gen, final LayoutComponent comp )
+    private static void serialize( final MapGenerator gen, final LayoutComponent comp )
     {
         gen.array( "regions" );
         for ( final Region region : comp.getRegions() )
         {
-            gen.value( ResultMappers.mapper( region ) );
+            gen.map();
+            RegionMapper.serialize( gen, region );
+            gen.end();
         }
         gen.end();
     }
