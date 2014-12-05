@@ -25,13 +25,14 @@
     }
 
     .title {
-      margin: 30px 0 0 0;
+      min-height: 42px;
+      margin: 32px 0 0 0;
     }
 
     .path {
-      padding: 10px 0 0 0;
+      padding: 4px 0 0 0;
       font-size: 18px;
-      line-height: 18px;
+      line-height: 24px;
 
       .parent-path {
         color: @admin-medium-gray-font;
@@ -59,13 +60,30 @@
         }
       }
 
-      &.roles-and-groups .data-list li {
+      &.memeberships .data-list li {
         margin-bottom: 10px;
 
         &.list-header {
           margin-bottom: 10px;
         }
       }
+
+      &.group-and-role .data-list li {
+
+        &.list-header {
+          min-height: 20px;
+        }
+      }
+
+      &.members .data-list li {
+        margin-bottom: 10px;
+
+        &.list-header {
+          display: none;
+        }
+      }
+
+
     }
   }
 }
