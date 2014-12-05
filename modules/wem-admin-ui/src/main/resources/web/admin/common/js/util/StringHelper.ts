@@ -22,28 +22,21 @@ module api.util {
             if (StringHelper.isEmpty(str)) {
                 return false;
             }
-            for (var i = 0; i < str.length; i++) {
-                if (str[i] != str[i].toUpperCase()) {
-                    return false;
-                }
-            }
-            return true;
+            return str.toUpperCase() == str;
         }
 
         static isLowerCase(str: string): boolean {
             if (StringHelper.isEmpty(str)) {
                 return false;
             }
-            for (var i = 0; i < str.length; i++) {
-                if (str[i] != str[i].toLowerCase()) {
-                    return false;
-                }
-            }
-            return true;
+            return str.toLowerCase() == str;
         }
 
-        static isAlphaNumeric(str: string): boolean {
-            return StringHelper.isEmpty(str) ? false : /^[a-zA-Z0-9\s]+$/i.test(str);
+        static isMixedCase(str: string): boolean {
+            if (StringHelper.isEmpty(str)) {
+                return false;
+            }
+            return !StringHelper.isLowerCase(str) && !StringHelper.isUpperCase(str);
         }
 
         static isEmpty(str: string): boolean {

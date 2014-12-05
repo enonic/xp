@@ -105,10 +105,10 @@ module api.ui.text {
 
 
         private generatePassword() {
-            var length = NumberHelper.randomBetween(12, 16),
+            var length = NumberHelper.randomBetween(14, 16),
                 maxSpecials = NumberHelper.randomBetween(1, 3),
                 specials = 0,
-                maxDigits = NumberHelper.randomBetween(1, 3),
+                maxDigits = NumberHelper.randomBetween(2, 4),
                 digits = 0,
                 maxUppercase = NumberHelper.randomBetween(2, 4),
                 uppercase = 0,
@@ -126,7 +126,7 @@ module api.ui.text {
                         result += this.SPECIAL_CHARS.charAt(NumberHelper.randomBetween(0, this.SPECIAL_CHARS.length - 1));
                         specials++;
                     } else {
-                        length++;
+                        i--;
                         ArrayHelper.removeValue(CharType.SPECIAL, types);
                     }
                     break;
@@ -135,7 +135,7 @@ module api.ui.text {
                         result += this.DIGIT_CHARS.charAt(NumberHelper.randomBetween(0, this.DIGIT_CHARS.length - 1));
                         digits++;
                     } else {
-                        length++;
+                        i--;
                         ArrayHelper.removeValue(CharType.DIGIT, types);
                     }
                     break;
@@ -144,7 +144,7 @@ module api.ui.text {
                         result += this.UPPERCASE_CHARS.charAt(NumberHelper.randomBetween(0, this.UPPERCASE_CHARS.length - 1));
                         uppercase++;
                     } else {
-                        length++;
+                        i--;
                         ArrayHelper.removeValue(CharType.UPPERCASE, types);
                     }
                     break;
@@ -153,43 +153,56 @@ module api.ui.text {
                         result += this.LOWERCASE_CHARS.charAt(NumberHelper.randomBetween(0, this.LOWERCASE_CHARS.length - 1));
                         lowercase++;
                     } else {
-                        length++;
+                        i--;
                         ArrayHelper.removeValue(CharType.LOWERCASE, types);
                     }
                     break;
                 }
             }
-            console.log('Generated ' + result.length + ' chars password (SP:' + maxSpecials + ', DG:' + maxDigits + ',UC:' + maxUppercase +
+            console.log('Generated ' + length + ' chars password (SP:' + maxSpecials + ', DG:' + maxDigits + ',UC:' + maxUppercase +
                         ', LC:' + maxLowercase + ') = ' + result);
             this.input.setValue(result);
         }
 
         private isWeak(value: string): boolean {
             return !StringHelper.isBlank(value) &&
-                   (value.length < 8 ||
-                    StringHelper.isLowerCase(value) ||
-                    StringHelper.isUpperCase(value))
+                   (value.length < 8 || StringHelper.isLowerCase(value) || StringHelper.isUpperCase(value))
         }
 
         private isGood(value: string): boolean {
             return !StringHelper.isBlank(value) &&
-                   ((value.length >= 8) ||
-                    (value.length >= 6 && !StringHelper.isAlphaNumeric(value) &&
-                     (!StringHelper.isLowerCase(value) || !StringHelper.isUpperCase(value))));
+                   (value.length >= 8 || (value.length >= 6 &&
+                                          StringHelper.isMixedCase(value) &&
+                                          this.containsNonAlphabetChars(value)));
         }
 
         private isStrong(value: string): boolean {
-            return !StringHelper.isBlank(value) && value.length >= 8 && !StringHelper.isAlphaNumeric(value) &&
-                   !StringHelper.isLowerCase(value) && !StringHelper.isUpperCase(value);
+            return !StringHelper.isBlank(value) &&
+                   value.length >= 10 &&
+                   StringHelper.isMixedCase(value) &&
+                   this.containsNonAlphabetChars(value);
         }
 
         private isExtreme(value: string): boolean {
-            return !StringHelper.isBlank(value) && value.length >= 12 && !StringHelper.isAlphaNumeric(value) &&
-                   this.containsDigits(value) && !StringHelper.isLowerCase(value) && !StringHelper.isUpperCase(value);
+            return !StringHelper.isBlank(value) &&
+                   value.length >= 14 &&
+                   StringHelper.isMixedCase(value) &&
+                   this.containsDigits(value) &&
+                   this.containsSpecialChars(value);
+
         }
 
         private containsDigits(value: string): boolean {
-            return /\d/i.test(value);
+            return /\d/.test(value);
         }
+
+        private containsSpecialChars(value: string): boolean {
+            return /[^a-z0-9\s]/i.test(value);
+        }
+
+        private containsNonAlphabetChars(value: string): boolean {
+            return /[^a-z\s]/i.test(value);
+        }
+
     }
 }

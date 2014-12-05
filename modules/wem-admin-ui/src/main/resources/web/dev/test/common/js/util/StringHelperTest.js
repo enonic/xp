@@ -72,17 +72,18 @@ describe("api.util.StringHelperTest", function () {
         });
     });
 
-    describe("isAlphaNumeric", function () {
+    describe("isMixedCase", function () {
 
         it("should return false if invalid arguments are passed", function () {
-            expect(sh.isAlphaNumeric(null)).toBe(false);
-            expect(sh.isAlphaNumeric("")).toBe(false);
+            expect(sh.isMixedCase(null)).toBe(false);
+            expect(sh.isMixedCase("")).toBe(false);
         });
-        it("should be true for alphanumeric sequence ", function () {
-            expect(sh.isAlphaNumeric("loREm ipsum  123")).toBe(true);
+        it("should be true if value contains both cases", function () {
+            expect(sh.isMixedCase("lorem ipsUm  123% !")).toBe(true);
         });
-        it("should be false for non-alphanumeric sequence", function () {
-            expect(sh.isAlphaNumeric("loREm Ipsum  123% !")).toBe(false);
+        it("should be false if all letters either lower or upper case", function () {
+            expect(sh.isMixedCase("lorem ipsum  123% !")).toBe(false);
+            expect(sh.isMixedCase("LOREM IPSUM  123% !")).toBe(false);
         });
     });
 
