@@ -27,11 +27,17 @@ module api.ui.text {
         constructor() {
             super("div", "password-generator");
 
+            var inputWrapper = new api.dom.DivEl('input-wrapper');
+            this.appendChild(inputWrapper);
+
+            var strengthMeter = new api.dom.DivEl('strength-meter');
+            inputWrapper.appendChild(strengthMeter);
+
             this.input = new PasswordInput();
             this.input.onInput((event: Event) => {
                 this.assessComplexity(this.input.getValue());
             });
-            this.appendChild(this.input);
+            inputWrapper.appendChild(this.input);
 
             this.showLink = new api.dom.AEl('show-link');
             this.showLink.onClicked((event: MouseEvent) => {
