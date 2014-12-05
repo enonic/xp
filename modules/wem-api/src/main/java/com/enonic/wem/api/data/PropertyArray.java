@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 
-final class PropertyArray
+public final class PropertyArray
 {
     private PropertyTree tree;
 

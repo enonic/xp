@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+// TODO: Add json(..) that will convert using jackson
 public interface CommandParam
 {
     public CommandParam required();

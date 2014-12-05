@@ -42,6 +42,7 @@
     <module>modules/wem-xslt</module>
     <module>modules/wem-thymeleaf</module>
     <module>modules/wem-mustache</module>
+    <module>modules/wem-jsapi</module>
     <module>modules/wem-karaf</module>
     <module>modules/wem-launcher</module>
     <module>modules/wem-distro</module>

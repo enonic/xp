@@ -1,14 +1,19 @@
 package com.enonic.wem.script.serializer;
 
+// TODO: Rename to MapBuilder, MapWriter or something else?
 public interface MapGenerator
 {
-    public MapGenerator map();
+    MapGenerator map();
 
-    public MapGenerator array();
+    MapGenerator map( String key );
 
-    public MapGenerator end();
+    MapGenerator array();
 
-    public MapGenerator name( String name );
+    MapGenerator array( String key );
 
-    public MapGenerator value( Object value );
+    MapGenerator value( Object value );
+
+    MapGenerator value( String key, Object value );
+
+    MapGenerator end();
 }

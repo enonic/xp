@@ -1,51 +1,55 @@
 package com.enonic.wem.script.internal.serializer;
 
-import jdk.nashorn.internal.objects.Global;
-import jdk.nashorn.internal.objects.NativeArray;
-import jdk.nashorn.internal.runtime.ScriptObject;
+import java.util.List;
+import java.util.Map;
 
-public final class ScriptMapGenerator
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+public final class HashMapGenerator
     extends MapGeneratorBase
 {
     @Override
     protected MapGeneratorBase newGenerator()
     {
-        return new ScriptMapGenerator();
+        return new HashMapGenerator();
     }
-    
+
     @Override
     protected Object newMap()
     {
-        return Global.newEmptyInstance();
+        return Maps.newHashMap();
     }
 
     @Override
     protected Object newArray()
     {
-        return Global.allocate( new Object[0] );
+        return Lists.newArrayList();
     }
 
     @Override
     protected boolean isMap( final Object value )
     {
-        return !isArray( value );
+        return ( value instanceof Map );
     }
 
     @Override
     protected boolean isArray( final Object value )
     {
-        return ( (ScriptObject) value ).isArray();
+        return ( value instanceof List );
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void putInMap( final Object map, final String key, final Object value )
     {
-        ( (ScriptObject) map ).put( key, value, false );
+        ( (Map) map ).put( key, value );
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void addToArray( final Object array, final Object value )
     {
-        NativeArray.push( array, value );
+        ( (List) array ).add( value );
     }
 }

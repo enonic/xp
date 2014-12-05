@@ -21,7 +21,7 @@ public final class JsObjectConverter
     {
         final ScriptMapGenerator generator = new ScriptMapGenerator();
         value.serialize( generator );
-        return generator.getRootObject();
+        return generator.getRoot();
     }
 
     public static Object fromJs( final Object value )

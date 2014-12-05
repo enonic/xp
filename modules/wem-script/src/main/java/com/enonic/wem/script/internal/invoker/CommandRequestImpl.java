@@ -44,7 +44,7 @@ public final class CommandRequestImpl
     }
 
     @Override
-    public Map<String, Object> paramsMap()
+    public Map<String, Object> getParams()
     {
         return this.paramsMap;
     }
