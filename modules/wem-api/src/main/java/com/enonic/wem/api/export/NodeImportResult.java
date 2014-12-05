@@ -1,5 +1,6 @@
 package com.enonic.wem.api.export;
 
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePaths;
 
 public class NodeImportResult
@@ -8,7 +9,12 @@ public class NodeImportResult
 
     private NodeImportResult( Builder builder )
     {
-        importedNodes = builder.importedNodes;
+        importedNodes = builder.importedNodes.build();
+    }
+
+    public NodePaths getImportedNodes()
+    {
+        return importedNodes;
     }
 
     public static Builder create()
@@ -16,18 +22,17 @@ public class NodeImportResult
         return new Builder();
     }
 
-
     public static final class Builder
     {
-        private NodePaths importedNodes;
+        private NodePaths.Builder importedNodes = NodePaths.create();
 
         private Builder()
         {
         }
 
-        public Builder importedNodes( NodePaths importedNodes )
+        public Builder add( NodePath nodePath )
         {
-            this.importedNodes = importedNodes;
+            this.importedNodes.addNodePath( nodePath );
             return this;
         }
 

@@ -9,11 +9,11 @@ import java.util.stream.Stream;
 import com.enonic.wem.api.export.ImportNodeException;
 import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.InsertManualStrategy;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodePaths;
 import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.export.internal.builder.XmlNodeCreateNodeParamsFactory;
+import com.enonic.wem.export.internal.builder.CreateNodeParamsFactory;
 import com.enonic.wem.export.internal.reader.ExportReader;
 import com.enonic.wem.export.internal.reader.NodeImportPathResolver;
 import com.enonic.wem.export.internal.writer.NodeExportPathResolver;
@@ -34,6 +34,13 @@ public class NodeImportCommand
 
     private final boolean dryRun;
 
+    private final NodeImportResult.Builder nodeImportResult;
+
+    public static final Long IMPORT_NODE_ORDER_START_VALUE = 0l;
+
+    public static final Long IMPORT_NODE_ORDER_SPACE = (long) Integer.MAX_VALUE;
+
+
     private NodeImportCommand( final Builder builder )
     {
         this.nodeService = builder.nodeService;
@@ -42,84 +49,90 @@ public class NodeImportCommand
         this.xmlNodeSerializer = builder.xmlNodeSerializer;
         this.importRoot = builder.importRoot;
         this.dryRun = builder.dryRun;
+        this.nodeImportResult = NodeImportResult.create();
     }
 
     public NodeImportResult execute()
     {
         verifyImportRoot();
 
-        final NodePaths.Builder nodesBuilder = NodePaths.create();
+        importFromDirectoryLayout( this.exportRootPath );
 
-        importFromDirectoryLayout( this.exportRootPath, nodesBuilder );
-
-        return NodeImportResult.create().
-            importedNodes( nodesBuilder.build() ).
-            build();
+        return this.nodeImportResult.build();
     }
 
-    private void verifyImportRoot()
-    {
-        if ( NodePath.ROOT.equals( this.importRoot ) )
-        {
-            return;
-        }
-
-        final Node importRoot = nodeService.getByPath( this.importRoot );
-
-        if ( importRoot == null )
-        {
-            throw new ImportNodeException( "Import root '" + this.importRoot + "' not found" );
-        }
-    }
-
-    private void processNodeBasePath( final Path nodeBasePath, final NodePaths.Builder nodesBuilder )
-    {
-        final Node node = processNodeXmlFile( nodeBasePath, nodesBuilder );
-
-        if ( !node.getChildOrder().isManualOrder() )
-        {
-            importFromDirectoryLayout( nodeBasePath, nodesBuilder );
-        }
-        else
-        {
-            importWithManualOrder( nodeBasePath, nodesBuilder );
-        }
-    }
-
-    private void importFromDirectoryLayout( final Path parentPath, NodePaths.Builder nodesBuilder )
+    private void importFromDirectoryLayout( final Path parentPath )
     {
         final Stream<Path> children = getChildPaths( parentPath );
 
         children.filter( ( path ) -> !( path.endsWith( Paths.get( NodeExportPathResolver.SYSTEM_FOLDER_NAME ) ) ) ).
-            forEach( ( child ) -> processNodeBasePath( child, nodesBuilder ) );
+            forEach( ( child ) -> processNodeBasePath( child, ProcessNodeSettings.create() ) );
     }
 
-    private void importWithManualOrder( final Path nodeBasePath, final NodePaths.Builder nodesBuilder )
+    private void importWithManualOrder( final Path nodeBasePath )
     {
         final List<String> childNames = processManualOrderFile( nodeBasePath );
+
+        long currentManualOrderValue = IMPORT_NODE_ORDER_START_VALUE;
 
         for ( final String childName : childNames )
         {
             final Path childNodePath = NodeImportPathResolver.resolveChildNodePath( nodeBasePath, childName );
 
+            final ProcessNodeSettings.Builder processNodeSettings = ProcessNodeSettings.create().
+                insertManualStrategy( InsertManualStrategy.MANUAL ).
+                manualOrderValue( currentManualOrderValue );
+
             if ( childNodePath != null )
             {
-                processNodeBasePath( childNodePath, nodesBuilder );
+                processNodeBasePath( childNodePath, processNodeSettings );
             }
+
+            currentManualOrderValue -= IMPORT_NODE_ORDER_SPACE;
+
         }
     }
 
-    private Node processNodeXmlFile( final Path nodeBasePath, final NodePaths.Builder nodesBuilder )
+    private void processNodeBasePath( final Path nodeBasePath, final ProcessNodeSettings.Builder processNodeSettings )
+    {
+        final Node node = processNodeXmlFile( nodeBasePath, processNodeSettings );
+
+        if ( !node.getChildOrder().isManualOrder() )
+        {
+            importFromDirectoryLayout( nodeBasePath );
+        }
+        else
+        {
+            importWithManualOrder( nodeBasePath );
+        }
+    }
+
+    private Node processNodeXmlFile( final Path nodeBasePath, final ProcessNodeSettings.Builder processNodeSettings )
     {
         final XmlNode xmlNode = getXmlNodeFromPath( nodeBasePath );
 
         final NodePath importNodePath =
             NodeImportPathResolver.resolveImportedNodePath( nodeBasePath, this.exportRootPath, this.importRoot );
 
-        final CreateNodeParams createNodeParams = XmlNodeCreateNodeParamsFactory.build( xmlNode, importNodePath );
+        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create().
+            processNodeSettings( processNodeSettings.build() ).
+            xmlNode( xmlNode ).
+            importPath( importNodePath ).
+            build().
+            execute();
 
         final Node createdNode = this.nodeService.create( createNodeParams );
-        nodesBuilder.addNodePath( createdNode.path() );
+
+        try
+        {
+            Thread.sleep( 300 );
+        }
+        catch ( InterruptedException e )
+        {
+            e.printStackTrace();
+        }
+
+        nodeImportResult.add( createdNode.path() );
 
         return createdNode;
     }
@@ -150,6 +163,22 @@ public class NodeImportCommand
         final String serializedNode = this.exportReader.readItem( nodeXmlFilePath );
         return this.xmlNodeSerializer.parse( serializedNode );
     }
+
+    private void verifyImportRoot()
+    {
+        if ( NodePath.ROOT.equals( this.importRoot ) )
+        {
+            return;
+        }
+
+        final Node importRoot = nodeService.getByPath( this.importRoot );
+
+        if ( importRoot == null )
+        {
+            throw new ImportNodeException( "Import root '" + this.importRoot + "' not found" );
+        }
+    }
+
 
     private Stream<Path> getChildPaths( final Path path )
     {

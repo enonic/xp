@@ -129,7 +129,7 @@ public class MoveChildNodeCommand
 
     private Long resolveInsertFirstOrderValue( final Long nodeAfterOrderValue )
     {
-        return nodeAfterOrderValue + NodeOrderValueResolver.ORDER_SPACE;
+        return nodeAfterOrderValue + NodeManualOrderValueResolver.ORDER_SPACE;
     }
 
     private Long resolveInsertLastOrderValue( final NodeQueryResult result )
@@ -137,12 +137,12 @@ public class MoveChildNodeCommand
         final NodeId lastNodeId = result.getNodeQueryResultSet().first();
         final Node lastNode = doGetById( lastNodeId, false );
 
-        return lastNode.getManualOrderValue() - NodeOrderValueResolver.ORDER_SPACE;
+        return lastNode.getManualOrderValue() - NodeManualOrderValueResolver.ORDER_SPACE;
     }
 
     private Long resoleOnlyNodeOrderValue()
     {
-        return NodeOrderValueResolver.START_ORDER_VALUE;
+        return NodeManualOrderValueResolver.START_ORDER_VALUE;
     }
 
     public static Builder create()

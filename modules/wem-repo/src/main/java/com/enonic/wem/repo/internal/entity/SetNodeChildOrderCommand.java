@@ -59,9 +59,10 @@ public class SetNodeChildOrderCommand
 
         final LinkedHashSet<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();
 
-        final LinkedHashSet<NodeOrderValueResolver.NodeIdOrderValue> orderedNodeIds = NodeOrderValueResolver.resolve( childNodeIds );
+        final LinkedHashSet<NodeManualOrderValueResolver.NodeIdOrderValue> orderedNodeIds =
+            NodeManualOrderValueResolver.resolve( childNodeIds );
 
-        for ( final NodeOrderValueResolver.NodeIdOrderValue nodeIdOrderValue : orderedNodeIds )
+        for ( final NodeManualOrderValueResolver.NodeIdOrderValue nodeIdOrderValue : orderedNodeIds )
         {
             // TODO: Bulk?
 

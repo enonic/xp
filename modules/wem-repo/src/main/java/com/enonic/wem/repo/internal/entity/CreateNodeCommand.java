@@ -151,7 +151,7 @@ public final class CreateNodeCommand
 
         if ( findNodesByParentResult.isEmpty() )
         {
-            return NodeOrderValueResolver.START_ORDER_VALUE;
+            return NodeManualOrderValueResolver.START_ORDER_VALUE;
         }
         else
         {
@@ -176,7 +176,7 @@ public final class CreateNodeCommand
                                                     " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
         }
 
-        return first.getManualOrderValue() + NodeOrderValueResolver.ORDER_SPACE;
+        return first.getManualOrderValue() + NodeManualOrderValueResolver.ORDER_SPACE;
     }
 
     private Long insertAsLast( final FindNodesByParentResult findNodesByParentResult )
@@ -189,7 +189,7 @@ public final class CreateNodeCommand
                                                     " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
         }
 
-        return first.getManualOrderValue() - NodeOrderValueResolver.ORDER_SPACE;
+        return first.getManualOrderValue() - NodeManualOrderValueResolver.ORDER_SPACE;
     }
 
     private void verifyNotExistsAlready()

@@ -7,11 +7,10 @@ import org.junit.Test;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.repo.internal.entity.NodeOrderValueResolver;
 
 import static org.junit.Assert.*;
 
-public class NodeOrderValueResolverTest
+public class NodeManualOrderValueResolverTest
 {
 
     @Test
@@ -25,11 +24,11 @@ public class NodeOrderValueResolverTest
             nodeIds.add( NodeId.from( i ) );
         }
 
-        final LinkedHashSet<NodeOrderValueResolver.NodeIdOrderValue> resolvedOrder = NodeOrderValueResolver.resolve( nodeIds );
+        final LinkedHashSet<NodeManualOrderValueResolver.NodeIdOrderValue> resolvedOrder = NodeManualOrderValueResolver.resolve( nodeIds );
 
-        double previousValue = NodeOrderValueResolver.START_ORDER_VALUE + 1;
+        double previousValue = NodeManualOrderValueResolver.START_ORDER_VALUE + 1;
 
-        for ( final NodeOrderValueResolver.NodeIdOrderValue nodeIdOrderValue : resolvedOrder )
+        for ( final NodeManualOrderValueResolver.NodeIdOrderValue nodeIdOrderValue : resolvedOrder )
         {
             assertTrue( previousValue > nodeIdOrderValue.getManualOrderValue() );
             previousValue = nodeIdOrderValue.getManualOrderValue();

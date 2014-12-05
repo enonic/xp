@@ -6,7 +6,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.node.NodeId;
 
-public class NodeOrderValueResolver
+public class NodeManualOrderValueResolver
 {
     public static final Long ORDER_SPACE = (long) Integer.MAX_VALUE;
 
