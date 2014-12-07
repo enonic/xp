@@ -16,11 +16,8 @@ module api.security.acl {
 
         private deniedPermissions: Permission[];
 
-        private inherited: boolean;
-
-        constructor(principal: Principal, inherited: boolean = false) {
+        constructor(principal: Principal) {
             this.principal = principal;
-            this.inherited = inherited;
             this.allowedPermissions = [];
             this.deniedPermissions = [];
         }
@@ -51,14 +48,6 @@ module api.security.acl {
 
         setDeniedPermissions(permissions: Permission[]): void {
             this.deniedPermissions = permissions;
-        }
-
-        setInherited(inherited: boolean) {
-            this.inherited = inherited;
-        }
-
-        isInherited(): boolean {
-            return this.inherited;
         }
 
         isAllowed(permission: Permission): boolean {
@@ -122,7 +111,6 @@ module api.security.acl {
             var ace = new AccessControlEntry(this.principal.clone());
             ace.allowedPermissions = this.allowedPermissions.slice(0);
             ace.deniedPermissions = this.deniedPermissions.slice(0);
-            ace.inherited = this.inherited;
             return ace;
         }
 

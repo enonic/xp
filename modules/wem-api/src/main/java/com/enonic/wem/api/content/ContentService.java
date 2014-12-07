@@ -49,6 +49,4 @@ public interface ContentService
     FindContentVersionsResult getVersions( final FindContentVersionsParams params );
 
     GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params );
-
-    ContentPermissions getPermissions( final ContentId contentId );
 }

@@ -47,7 +47,7 @@ public class AccessControlTest
         final CreateNodeParams params = CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
-            accessControlList( aclList ).
+            permissions( aclList ).
             build();
 
         final Node node = this.nodeService.create( params );

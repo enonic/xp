@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.Principals;
@@ -25,13 +24,6 @@ public final class ContentPrincipalsResolver
     public ContentPrincipalsResolver( final SecurityService securityService )
     {
         this.securityService = securityService;
-    }
-
-    public Principals resolveAccessControlListPrincipals( final Content content )
-    {
-        final AccessControlList acl = content.getAccessControlList();
-        final AccessControlList effectiveAcl = content.getEffectiveAccessControlList();
-        return resolveAccessControlListPrincipals( acl, effectiveAcl );
     }
 
     public Principals resolveAccessControlListPrincipals( final AccessControlList... accessControlList )

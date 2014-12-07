@@ -42,7 +42,7 @@ public final class CreateContentParams
 
     private Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
 
-    private AccessControlList accessControlList;
+    private AccessControlList permissions;
 
     private boolean inheritPermissions;
 
@@ -139,9 +139,9 @@ public final class CreateContentParams
         return attachments( Iterables.toArray( attachments, Attachment.class ) );
     }
 
-    public CreateContentParams accessControlList( final AccessControlList accessControlList )
+    public CreateContentParams permissions( final AccessControlList permissions )
     {
-        this.accessControlList = accessControlList;
+        this.permissions = permissions;
         return this;
     }
 
@@ -211,9 +211,9 @@ public final class CreateContentParams
         return orderExpressions;
     }
 
-    public AccessControlList getAccessControlList()
+    public AccessControlList getPermissions()
     {
-        return accessControlList;
+        return permissions;
     }
 
     public boolean isInheritPermissions()

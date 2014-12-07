@@ -48,7 +48,7 @@ public class ElasticsearchQueryServiceTest
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
-            accessControlList( AccessControlList.of( AccessControlEntry.create().
+            permissions( AccessControlList.of( AccessControlEntry.create().
                 principal( PrincipalKey.from( "user:system:rmy" ) ).
                 allow( Permission.READ ).
                 build() ) ).
@@ -72,7 +72,7 @@ public class ElasticsearchQueryServiceTest
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
-            accessControlList( AccessControlList.of( AccessControlEntry.create().
+            permissions( AccessControlList.of( AccessControlEntry.create().
                 principal( User.anonymous().getKey() ).
                 allow( Permission.READ ).
                 build() ) ).
@@ -97,7 +97,7 @@ public class ElasticsearchQueryServiceTest
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
-            accessControlList( AccessControlList.of( AccessControlEntry.create().
+            permissions( AccessControlList.of( AccessControlEntry.create().
                 principal( PrincipalKey.from( "group:system:mygroup" ) ).
                 allow( Permission.READ ).
                 build() ) ).
@@ -121,7 +121,7 @@ public class ElasticsearchQueryServiceTest
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
-            accessControlList( AccessControlList.of( AccessControlEntry.create().
+            permissions( AccessControlList.of( AccessControlEntry.create().
                 principal( PrincipalKey.from( "user:system:rmy" ) ).
                 allow( Permission.DELETE ).
                 build() ) ).
@@ -165,7 +165,7 @@ public class ElasticsearchQueryServiceTest
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
-            accessControlList( AccessControlList.of( AccessControlEntry.create().
+            permissions( AccessControlList.of( AccessControlEntry.create().
                 principal( PrincipalKey.ofAnonymous() ).
                 allow( Permission.READ ).
                 build() ) ).

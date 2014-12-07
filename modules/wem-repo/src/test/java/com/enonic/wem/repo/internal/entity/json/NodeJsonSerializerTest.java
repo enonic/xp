@@ -62,7 +62,6 @@ public class NodeJsonSerializerTest
             deny( Permission.PUBLISH ).
             build();
         AccessControlList acl = AccessControlList.create().add( entry1 ).add( entry2 ).build();
-        AccessControlList effectiveAcl = acl.getEffective( AccessControlList.empty() );
 
         Node node = Node.newNode().
             id( NodeId.from( "myId" ) ).
@@ -88,8 +87,7 @@ public class NodeJsonSerializerTest
                 add( FieldOrderExpr.create( IndexPath.from( "modifiedTime" ), OrderExpr.Direction.ASC ) ).
                 add( FieldOrderExpr.create( IndexPath.from( "displayName" ), OrderExpr.Direction.DESC ) ).
                 build() ).
-            accessControlList( acl ).
-            effectiveAcl( effectiveAcl ).
+            permissions( acl ).
             collection( NodeCollection.DEFAULT_NODE_COLLECTION ).
             build();
 

@@ -50,7 +50,7 @@ public class GetNodeByIdCommandTest
         final CreateNodeParams createNodeParams = CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
-            accessControlList( AccessControlList.create().
+            permissions( AccessControlList.create().
                 add( AccessControlEntry.create().
                     deny( Permission.READ ).
                     principal( PrincipalKey.ofAnonymous() ).

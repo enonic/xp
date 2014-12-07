@@ -19,7 +19,7 @@ module api.ui.security.acl {
         constructor(ace: AccessControlEntry) {
             super();
             this.setClass('access-control-entry');
-            this.toggleClass('inherited', ace.isInherited());
+            //this.toggleClass('inherited', ace.isInherited());
 
             this.ace = ace;
 
@@ -32,7 +32,7 @@ module api.ui.security.acl {
 
             this.permissionSelector = new PermissionSelector();
             this.permissionSelector.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                this.toggleClass("dirty", !ace.isInherited() || event.getNewValue() != JSON.stringify({
+                this.toggleClass("dirty", event.getNewValue() != JSON.stringify({
                     allow: this.ace.getAllowedPermissions().sort(),
                     deny: this.ace.getDeniedPermissions().sort()
                 }));
@@ -40,7 +40,7 @@ module api.ui.security.acl {
             });
             this.appendChild(this.permissionSelector);
             this.permissionSelector.setValue({allow: ace.getAllowedPermissions(), deny: ace.getDeniedPermissions()}, true);
-            this.toggleClass("dirty", !ace.isInherited());
+            // this.toggleClass("dirty", !ace.isInherited());
 
             this.accessSelector.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 if (Access[event.getNewValue()] == Access.CUSTOM) {

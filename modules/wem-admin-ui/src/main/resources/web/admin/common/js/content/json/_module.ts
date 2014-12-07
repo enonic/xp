@@ -9,7 +9,6 @@
 ///<reference path='GetContentVersionsResultsJson.ts' />
 ///<reference path='GetActiveContentVersionsResultsJson.ts' />
 ///<reference path='ActiveContentVersionJson.ts' />
-///<reference path='ContentPermissionsJson.ts' />
 ///<reference path='ChildOrderJson.ts' />
 ///<reference path='SetChildOrderJson.ts' />
 ///<reference path='OrderExprJson.ts' />

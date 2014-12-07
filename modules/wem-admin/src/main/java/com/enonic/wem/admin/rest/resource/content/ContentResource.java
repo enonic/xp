@@ -35,7 +35,6 @@ import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.CompareContentsJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
-import com.enonic.wem.admin.rest.resource.content.json.ContentPermissionsJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
@@ -57,7 +56,6 @@ import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
-import com.enonic.wem.api.content.ContentPermissions;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DuplicateContentParams;
@@ -84,10 +82,7 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.PrincipalKeys;
-import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.SecurityService;
-import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
@@ -143,14 +138,6 @@ public final class ContentResource
         }
         else
         {
-            final ContentPath parentPath = content.getPath().getParentPath();
-            if ( parentPath != null && !parentPath.isRoot() )
-            {
-                final Content parent = contentService.getByPath( parentPath );
-                final AccessControlList parentAcl = parent.getEffectiveAccessControlList();
-                return new ContentJson( content, parentAcl, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer,
-                                        principalsResolver );
-            }
             return new ContentJson( content, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
         }
     }
@@ -403,19 +390,8 @@ public final class ContentResource
     public ContentJson create( final CreateContentJson params )
     {
         final Content persistedContent = contentService.create( params.getCreateContent() );
-
-        final ContentPath parentPath = persistedContent.getPath().getParentPath();
-        if ( parentPath != null && !parentPath.isRoot() )
-        {
-            final Content parent = contentService.getByPath( parentPath );
-            final AccessControlList parentAcl = parent.getEffectiveAccessControlList();
-            return new ContentJson( persistedContent, parentAcl, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer,
-                                    principalsResolver );
-        }
-
         return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
-
 
     @POST
     @Path("setChildOrder")
@@ -428,7 +404,6 @@ public final class ContentResource
 
         return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
-
 
     @POST
     @Path("reorderChildren")
@@ -465,20 +440,6 @@ public final class ContentResource
         final RenameContentParams renameParams = json.getRenameContentParams();
         final Content renamedContent = contentService.rename( renameParams );
         return new ContentJson( renamedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
-    }
-
-    @GET
-    @Path("getPermissions")
-    public ContentPermissionsJson getPermissions( @QueryParam("id") final String contentIdParam )
-    {
-        final ContentId contentId = ContentId.from( contentIdParam );
-        final ContentPermissions contentPermissions = contentService.getPermissions( contentId );
-
-        final PrincipalKeys principalKeys = PrincipalKeys.from( contentPermissions.getPermissions().getAllPrincipals(),
-                                                                contentPermissions.getInheritedPermissions().getAllPrincipals() );
-        final Principals principals = securityService.getPrincipals( principalKeys );
-
-        return new ContentPermissionsJson( contentPermissions, principals );
     }
 
     private List<Attachment> parseAttachments( final List<AttachmentJson> attachmentJsonList )

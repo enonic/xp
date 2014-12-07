@@ -70,9 +70,7 @@ public class Content
 
     private final ChildOrder childOrder;
 
-    private final AccessControlList acl;
-
-    private final AccessControlList effectiveAcl;
+    private final AccessControlList permissions;
 
     private final boolean inheritPermissions;
 
@@ -112,8 +110,7 @@ public class Content
         this.thumbnail = builder.thumbnail;
         this.hasChildren = builder.hasChildren;
         this.childOrder = builder.childOrder;
-        this.acl = builder.acl == null ? AccessControlList.empty() : builder.acl;
-        this.effectiveAcl = builder.effectiveAcl == null ? AccessControlList.empty() : builder.effectiveAcl;
+        this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
     }
 
@@ -270,14 +267,9 @@ public class Content
         return childOrder;
     }
 
-    public AccessControlList getAccessControlList()
+    public AccessControlList getPermissions()
     {
-        return acl;
-    }
-
-    public AccessControlList getEffectiveAccessControlList()
-    {
-        return effectiveAcl;
+        return permissions;
     }
 
     public boolean inheritsPermissions()
@@ -312,8 +304,7 @@ public class Content
         s.add( "creator", creator );
         s.add( "modifier", modifier );
         s.add( "owner", owner );
-        s.add( "acl", acl );
-        s.add( "effectiveAcl", effectiveAcl );
+        s.add( "permissions", permissions );
         s.add( "inheritPermissions", inheritPermissions );
         return s.toString();
     }
@@ -371,9 +362,7 @@ public class Content
 
         ChildOrder childOrder;
 
-        AccessControlList acl;
-
-        AccessControlList effectiveAcl;
+        AccessControlList permissions;
 
         boolean inheritPermissions;
 
@@ -404,8 +393,7 @@ public class Content
             this.page = content.page;
             this.thumbnail = content.thumbnail;
             this.childOrder = content.childOrder;
-            this.acl = content.acl;
-            this.effectiveAcl = content.effectiveAcl;
+            this.permissions = content.permissions;
             this.inheritPermissions = content.inheritPermissions;
         }
     }
@@ -478,18 +466,10 @@ public class Content
             return this;
         }
 
-        public EditBuilder accessControlList( final AccessControlList acl )
+        public EditBuilder permissions( final AccessControlList permissions )
         {
-            changes.recordChange( newPossibleChange( "accessControlList" ).from( this.original.acl ).to( this.acl ).build() );
-            this.acl = acl;
-            return this;
-        }
-
-        public EditBuilder effectiveAccessControlList( final AccessControlList effectiveAcl )
-        {
-            changes.recordChange(
-                newPossibleChange( "effectiveAccessControlList" ).from( this.original.effectiveAcl ).to( this.effectiveAcl ).build() );
-            this.effectiveAcl = effectiveAcl;
+            changes.recordChange( newPossibleChange( "permissions" ).from( this.original.permissions ).to( this.permissions ).build() );
+            this.permissions = permissions;
             return this;
         }
 
@@ -669,15 +649,9 @@ public class Content
             return this;
         }
 
-        public Builder<BUILDER, C> accessControlList( final AccessControlList acl )
+        public Builder<BUILDER, C> permissions( final AccessControlList permissions )
         {
-            this.acl = acl;
-            return this;
-        }
-
-        public Builder<BUILDER, C> effectiveAccessControlList( final AccessControlList effectiveAcl )
-        {
-            this.effectiveAcl = effectiveAcl;
+            this.permissions = permissions;
             return this;
         }
 

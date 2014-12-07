@@ -1,16 +1,4 @@
 {
-  "accessControlList": [
-    {
-      "allow": ["READ"],
-      "deny": ["DELETE"],
-      "principal": "user:system:anonymous"
-    },
-    {
-      "allow": ["MODIFY"],
-      "deny": ["PUBLISH"],
-      "principal": "user:system:user1"
-    }
-  ],
   "attachments": [
     {
       "attachmentName": "attachment",
@@ -87,32 +75,6 @@
       ]
     }
   ],
-  "effectiveAccessControlList": [
-    {
-      "allow": ["READ"],
-      "deny": [
-        "CREATE",
-        "MODIFY",
-        "DELETE",
-        "PUBLISH",
-        "READ_PERMISSIONS",
-        "WRITE_PERMISSIONS"
-      ],
-      "principal": "user:system:anonymous"
-    },
-    {
-      "allow": ["MODIFY"],
-      "deny": [
-        "READ",
-        "CREATE",
-        "DELETE",
-        "PUBLISH",
-        "READ_PERMISSIONS",
-        "WRITE_PERMISSIONS"
-      ],
-      "principal": "user:system:user1"
-    }
-  ],
   "id": "myId",
   "indexConfigDocument": {
     "analyzer": "myAnalyzer",
@@ -136,10 +98,23 @@
       }
     ]
   },
+  "inheritPermissions": false,
   "manualOrderValue": null,
   "modifiedTime": "2013-01-02T03:04:05Z",
   "modifier": "user:test:modifier",
   "name": "my-name",
   "parent": "/",
-  "path": "/my-name"
+  "path": "/my-name",
+  "permissions": [
+    {
+      "allow": ["READ"],
+      "deny": ["DELETE"],
+      "principal": "user:system:anonymous"
+    },
+    {
+      "allow": ["MODIFY"],
+      "deny": ["PUBLISH"],
+      "principal": "user:system:user1"
+    }
+  ]
 }

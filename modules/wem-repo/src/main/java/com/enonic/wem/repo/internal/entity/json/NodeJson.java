@@ -63,11 +63,11 @@ final class NodeJson
     @JsonProperty("manualOrderValue")
     private Long manualOrderValue;
 
-    @JsonProperty("accessControlList")
-    private List<AccessControlEntryJson> aclList;
+    @JsonProperty("permissions")
+    private List<AccessControlEntryJson> permissions;
 
-    @JsonProperty("effectiveAccessControlList")
-    private List<AccessControlEntryJson> effectiveAclList;
+    @JsonProperty("inheritPermissions")
+    private boolean inheritPermissions;
 
     @JsonProperty("collection")
     private String collection;
@@ -88,8 +88,8 @@ final class NodeJson
             attachments( fromAttachmentJsonList( this.attachments ) ).
             childOrder( ChildOrder.from( this.childOrder ) ).
             manualOrderValue( this.manualOrderValue ).
-            accessControlList( fromJson( this.aclList ) ).
-            effectiveAcl( fromJson( this.effectiveAclList ) ).
+            permissions( fromJson( this.permissions ) ).
+            inheritPermissions( this.inheritPermissions ).
             collection( NodeCollection.from( this.collection ) ).
             build();
     }
@@ -132,8 +132,8 @@ final class NodeJson
         json.creator = node.creator() != null ? node.creator().toString() : null;
         json.childOrder = node.getChildOrder().toString();
         json.manualOrderValue = node.getManualOrderValue();
-        json.aclList = toJson( node.getAccessControlList() );
-        json.effectiveAclList = toJson( node.getEffectiveAccessControlList() );
+        json.permissions = toJson( node.getPermissions() );
+        json.inheritPermissions = node.inheritsPermissions();
         json.collection = node.getCollection().getName();
         return json;
     }

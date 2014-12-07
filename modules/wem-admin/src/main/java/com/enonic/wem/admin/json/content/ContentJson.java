@@ -1,7 +1,6 @@
 package com.enonic.wem.admin.json.content;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.enonic.wem.admin.json.content.page.PageJson;
@@ -32,18 +31,9 @@ public final class ContentJson
 
     private final List<AccessControlEntryJson> accessControlList;
 
-    private final List<AccessControlEntryJson> parentAccessControlList;
-
     private final boolean inheritPermissions;
 
     public ContentJson( final Content content, final ContentIconUrlResolver iconUrlResolver,
-                        final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer,
-                        final ContentPrincipalsResolver contentPrincipalsResolver )
-    {
-        this( content, null, iconUrlResolver, mixinReferencesToFormItemsTransformer, contentPrincipalsResolver );
-    }
-
-    public ContentJson( final Content content, final AccessControlList parentAcl, final ContentIconUrlResolver iconUrlResolver,
                         final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer,
                         final ContentPrincipalsResolver contentPrincipalsResolver )
     {
@@ -63,18 +53,8 @@ public final class ContentJson
         this.form = FormJson.resolveJson( content.getForm(), mixinReferencesToFormItemsTransformer );
         this.pageJson = content.hasPage() ? new PageJson( content.getPage() ) : null;
 
-        final Principals principals = contentPrincipalsResolver.resolveAccessControlListPrincipals( content.getAccessControlList(),
-                                                                                                    content.getEffectiveAccessControlList(),
-                                                                                                    parentAcl );
-        this.accessControlList = aclToJson( content.getAccessControlList(), principals );
-        if ( parentAcl != null )
-        {
-            this.parentAccessControlList = aclToJson( parentAcl, principals );
-        }
-        else
-        {
-            this.parentAccessControlList = Collections.EMPTY_LIST;
-        }
+        final Principals principals = contentPrincipalsResolver.resolveAccessControlListPrincipals( content.getPermissions() );
+        this.accessControlList = aclToJson( content.getPermissions(), principals );
         this.inheritPermissions = content.inheritsPermissions();
     }
 
@@ -101,11 +81,6 @@ public final class ContentJson
     public List<AccessControlEntryJson> getPermissions()
     {
         return this.accessControlList;
-    }
-
-    public List<AccessControlEntryJson> getInheritedPermissions()
-    {
-        return this.parentAccessControlList;
     }
 
     public FormJson getForm()

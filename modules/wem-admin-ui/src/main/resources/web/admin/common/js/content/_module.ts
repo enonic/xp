@@ -55,8 +55,6 @@
 ///<reference path='GetContentVersionsRequest.ts' />
 ///<reference path='ContentDuplicatedEvent.ts' />
 ///<reference path='GetNearestSiteRequest.ts' />
-///<reference path='ContentPermissions.ts' />
-///<reference path='GetContentPermissionsRequest.ts' />
 ///<reference path='ContentNamedEvent.ts' />
 
 ///<reference path='OrderExpr.ts' />

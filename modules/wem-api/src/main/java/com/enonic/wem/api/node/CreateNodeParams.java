@@ -23,7 +23,7 @@ public class CreateNodeParams
 
     private final NodeId nodeId;
 
-    private final AccessControlList accessControlList;
+    private final AccessControlList permissions;
 
     private final boolean inheritPermissions;
 
@@ -42,7 +42,7 @@ public class CreateNodeParams
         this.indexConfigDocument = builder.indexConfigDocument;
         this.childOrder = builder.childOrder;
         this.nodeId = builder.nodeId;
-        this.accessControlList = builder.accessControlList;
+        this.permissions = builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.insertManualStrategy = builder.insertManualStrategy;
         this.manualOrderValue = builder.manualOrderValue;
@@ -58,7 +58,7 @@ public class CreateNodeParams
     {
         return new Builder().
             indexConfigDocument( node.getIndexConfigDocument() ).
-            accessControlList( node.getAccessControlList() ).
+            permissions( node.getPermissions() ).
             data( node.data() ).
             attachments( node.attachments() ).
             childOrder( node.getChildOrder() ).
@@ -117,9 +117,9 @@ public class CreateNodeParams
         return insertManualStrategy;
     }
 
-    public AccessControlList getAccessControlList()
+    public AccessControlList getPermissions()
     {
-        return accessControlList;
+        return permissions;
     }
 
     public boolean inheritPermissions()
@@ -148,7 +148,7 @@ public class CreateNodeParams
 
         private NodeId nodeId;
 
-        private AccessControlList accessControlList;
+        private AccessControlList permissions;
 
         private boolean inheritPermissions;
 
@@ -160,7 +160,7 @@ public class CreateNodeParams
 
         private Builder()
         {
-            this.inheritPermissions = true;
+            this.inheritPermissions = false;
         }
 
         public Builder setNodeId( final NodeId nodeId )
@@ -205,9 +205,9 @@ public class CreateNodeParams
             return this;
         }
 
-        public Builder accessControlList( final AccessControlList accessControlList )
+        public Builder permissions( final AccessControlList permissions )
         {
-            this.accessControlList = accessControlList;
+            this.permissions = permissions;
             return this;
         }
 
@@ -261,7 +261,7 @@ public class CreateNodeParams
             Objects.equals( attachments, that.attachments ) &&
             Objects.equals( indexConfigDocument, that.indexConfigDocument ) &&
             Objects.equals( childOrder, that.childOrder ) &&
-            Objects.equals( accessControlList, that.accessControlList ) &&
+            Objects.equals( permissions, that.permissions ) &&
             Objects.equals( collection, that.collection ) &&
             ( inheritPermissions == that.inheritPermissions );
     }
@@ -269,7 +269,7 @@ public class CreateNodeParams
     @Override
     public int hashCode()
     {
-        return Objects.hash( parent, name, data, attachments, indexConfigDocument, childOrder, nodeId, accessControlList,
-                             inheritPermissions, collection );
+        return Objects.hash( parent, name, data, attachments, indexConfigDocument, childOrder, nodeId, permissions, inheritPermissions,
+                             collection );
     }
 }

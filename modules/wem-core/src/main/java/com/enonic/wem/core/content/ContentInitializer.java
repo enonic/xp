@@ -25,7 +25,7 @@ public class ContentInitializer
             final Node root = nodeService.create( CreateNodeParams.create().
                 name( ContentConstants.CONTENT_ROOT_NAME ).
                 parent( ContentConstants.CONTENT_ROOT_PARENT ).
-                accessControlList( ContentConstants.CONTENT_ROOT_DEFAULT_ACL ).
+                permissions( ContentConstants.CONTENT_ROOT_DEFAULT_ACL ).
                 childOrder( ContentConstants.CONTENT_DEFAULT_CHILD_ORDER ).
                 build() );
 

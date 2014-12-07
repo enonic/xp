@@ -76,7 +76,7 @@ public class ContentNodeTranslator
             data( contentAsData ).
             attachments( nodeAttachmentsBuilder.build() ).
             indexConfigDocument( indexConfigDocument ).
-            accessControlList( params.getAccessControlList() ).
+            permissions( params.getPermissions() ).
             inheritPermissions( params.isInheritPermissions() ).
             collection( ContentConstants.CONTENT_NODE_COLLECTION ).
             build();
@@ -141,8 +141,7 @@ public class ContentNodeTranslator
             modifier( node.getModifier() ).
             hasChildren( node.getHasChildren() ).
             childOrder( node.getChildOrder() ).
-            accessControlList( node.getAccessControlList() ).
-            effectiveAccessControlList( node.getEffectiveAccessControlList() ).
+            permissions( node.getPermissions() ).
             inheritPermissions( node.inheritsPermissions() ).
             thumbnail( thumbnail );
 
@@ -177,8 +176,7 @@ public class ContentNodeTranslator
                 attachments( nodeAttachmentsBuilder.build() ).
                 indexConfigDocument( indexConfigDocument ).
                 rootDataSet( tree ).
-                accessControlList( content.getAccessControlList() ).
-                effectiveAcl( content.getEffectiveAccessControlList() ).
+                permissions( content.getPermissions() ).
                 inheritPermissions( content.inheritsPermissions() );
         };
     }

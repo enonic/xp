@@ -74,7 +74,7 @@ class NodeStoreDocumentFactory
     {
         addNodeBaseProperties( builder );
 
-        builder.addEntries( AccessControlListStoreDocumentFactory.create( this.node.getEffectiveAccessControlList() ) );
+        builder.addEntries( AccessControlListStoreDocumentFactory.create( this.node.getPermissions() ) );
     }
 
     private void addNodeBaseProperties( final StoreDocument.Builder builder )

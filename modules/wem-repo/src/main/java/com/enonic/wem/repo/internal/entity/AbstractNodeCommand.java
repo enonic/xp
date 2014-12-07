@@ -14,8 +14,6 @@ import com.enonic.wem.api.node.Nodes;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpressions;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexService;
@@ -130,31 +128,15 @@ abstract class AbstractNodeCommand
             execute();
     }
 
-    protected AccessControlList getAccessControlList( final NodePath nodePath )
+    protected AccessControlList getPermissions( final NodePath nodePath )
     {
         if ( nodePath.isRoot() )
         {
             return AccessControlList.empty();
         }
         final Node node = doGetByPath( nodePath, false );
-        return node != null ? node.getEffectiveAccessControlList() : AccessControlList.empty();
+        return node != null ? node.getPermissions() : AccessControlList.empty();
     }
-
-    protected AccessControlList removeDuplicatedEntries( final AccessControlList source, final AccessControlList target )
-    {
-        final AccessControlList.Builder result = AccessControlList.create();
-        for ( PrincipalKey principal : source.getAllPrincipals() )
-        {
-            final AccessControlEntry sourceEntry = source.getEntry( principal );
-            final AccessControlEntry targetEntry = target.getEntry( principal );
-            if ( !sourceEntry.equals( targetEntry ) )
-            {
-                result.add( sourceEntry );
-            }
-        }
-        return result.build();
-    }
-
 
     public static class Builder<B extends Builder>
     {

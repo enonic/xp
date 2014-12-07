@@ -12,8 +12,6 @@ module api.content.json {
 
         permissions: api.security.acl.AccessControlEntryJson[];
 
-        inheritedPermissions: api.security.acl.AccessControlEntryJson[];
-
         inheritPermissions: boolean;
     }
 }

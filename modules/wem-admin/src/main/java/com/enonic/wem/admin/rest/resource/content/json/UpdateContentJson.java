@@ -66,7 +66,7 @@ public class UpdateContentJson
                 if ( permissions != null )
                 {
                     final AccessControlList acl = parseAcl( permissions );
-                    editContentBuilder = editContentBuilder.accessControlList( acl );
+                    editContentBuilder = editContentBuilder.permissions( acl );
                 }
                 return editContentBuilder;
             } );

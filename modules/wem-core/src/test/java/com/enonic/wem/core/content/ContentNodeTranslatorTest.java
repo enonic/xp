@@ -229,7 +229,6 @@ public class ContentNodeTranslatorTest
             deny( Permission.PUBLISH ).
             build();
         AccessControlList acl = AccessControlList.create().add( entry1 ).add( entry2 ).build();
-        AccessControlList effectiveAcl = acl.getEffective( AccessControlList.empty() );
 
         final PropertyTree contentAsData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         contentAsData.addString( "contentType", "my-type" );
@@ -242,14 +241,12 @@ public class ContentNodeTranslatorTest
             path( "myPath" ).
             name( NodeName.from( "myname" ) ).
             data( contentAsData ).
-            accessControlList( acl ).
-            effectiveAcl( effectiveAcl ).
+            permissions( acl ).
             build();
 
         final Content content = translator.fromNode( node );
 
-        Assert.assertNotNull( content.getAccessControlList() );
-        Assert.assertNotNull( content.getEffectiveAccessControlList() );
+        Assert.assertNotNull( content.getPermissions() );
     }
 
 }

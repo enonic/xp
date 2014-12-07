@@ -64,7 +64,7 @@ public class CreateContentJson
         if ( permissions != null )
         {
             final AccessControlList acl = parseAcl( permissions );
-            this.createContent.accessControlList( acl );
+            this.createContent.permissions( acl );
         }
 
         createContent.setInheritPermissions( inheritPermissions );

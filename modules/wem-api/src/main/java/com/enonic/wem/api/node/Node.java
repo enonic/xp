@@ -50,9 +50,7 @@ public final class Node
 
     private final Long manualOrderValue;
 
-    private final AccessControlList acl;
-
-    private final AccessControlList effectiveAcl;
+    private final AccessControlList permissions;
 
     private final boolean inheritPermissions;
 
@@ -87,8 +85,7 @@ public final class Node
         this.hasChildren = builder.hasChildren;
         this.childOrder = builder.childOrder;
         this.manualOrderValue = builder.manualOrderValue;
-        this.acl = builder.acl == null ? AccessControlList.empty() : builder.acl;
-        this.effectiveAcl = builder.effectiveAcl == null ? AccessControlList.empty() : builder.effectiveAcl;
+        this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.collection = builder.collection;
     }
@@ -173,14 +170,9 @@ public final class Node
         return manualOrderValue;
     }
 
-    public AccessControlList getAccessControlList()
+    public AccessControlList getPermissions()
     {
-        return acl;
-    }
-
-    public AccessControlList getEffectiveAccessControlList()
-    {
-        return effectiveAcl;
+        return permissions;
     }
 
     public boolean inheritsPermissions()
@@ -265,9 +257,7 @@ public final class Node
 
         Long manualOrderValue;
 
-        AccessControlList acl;
-
-        AccessControlList effectiveAcl;
+        AccessControlList permissions;
 
         boolean inheritPermissions;
 
@@ -290,8 +280,7 @@ public final class Node
             this.modifier = node.modifier;
             this.childOrder = node.childOrder;
             this.manualOrderValue = node.manualOrderValue;
-            this.acl = node.acl;
-            this.effectiveAcl = node.effectiveAcl;
+            this.permissions = node.permissions;
             this.inheritPermissions = node.inheritPermissions;
             this.collection = node.collection;
         }
@@ -321,9 +310,7 @@ public final class Node
 
         private Long manualOrderValue;
 
-        private AccessControlList acl;
-
-        private AccessControlList effectiveAcl;
+        private AccessControlList permissions;
 
         private boolean inheritPermissions;
 
@@ -352,8 +339,7 @@ public final class Node
             this.creator = node.creator;
             this.childOrder = node.childOrder;
             this.manualOrderValue = node.manualOrderValue;
-            this.acl = node.acl;
-            this.effectiveAcl = node.effectiveAcl;
+            this.permissions = node.permissions;
             this.inheritPermissions = node.inheritPermissions;
             this.nodeCollection = node.collection;
         }
@@ -448,15 +434,9 @@ public final class Node
             return this;
         }
 
-        public Builder accessControlList( final AccessControlList acl )
+        public Builder permissions( final AccessControlList permissions )
         {
-            this.acl = acl;
-            return this;
-        }
-
-        public Builder effectiveAcl( final AccessControlList effectiveAcl )
-        {
-            this.effectiveAcl = effectiveAcl;
+            this.permissions = permissions;
             return this;
         }
 
@@ -488,8 +468,7 @@ public final class Node
             baseBuilder.hasChildren = this.hasChildren;
             baseBuilder.childOrder = this.childOrder;
             baseBuilder.manualOrderValue = this.manualOrderValue;
-            baseBuilder.acl = this.acl;
-            baseBuilder.effectiveAcl = this.effectiveAcl;
+            baseBuilder.permissions = this.permissions;
             baseBuilder.inheritPermissions = this.inheritPermissions;
             baseBuilder.collection = this.nodeCollection;
 
@@ -556,18 +535,10 @@ public final class Node
             return this;
         }
 
-        public EditBuilder accessControlList( final AccessControlList acl )
+        public EditBuilder permissions( final AccessControlList permissions )
         {
-            this.acl = acl;
-            changes.recordChange( newPossibleChange( "accessControlList" ).from( this.originalNode.acl ).to( this.acl ).build() );
-            return this;
-        }
-
-        public EditBuilder effectiveAcl( final AccessControlList effectiveAcl )
-        {
-            this.effectiveAcl = effectiveAcl;
-            changes.recordChange(
-                newPossibleChange( "effectiveAccessControlList" ).from( this.originalNode.effectiveAcl ).to( this.effectiveAcl ).build() );
+            this.permissions = permissions;
+            changes.recordChange( newPossibleChange( "permissions" ).from( this.originalNode.permissions ).to( this.permissions ).build() );
             return this;
         }
 
@@ -617,7 +588,7 @@ public final class Node
         {
             return false;
         }
-        if ( acl != null ? !acl.equals( node.acl ) : node.acl != null )
+        if ( permissions != null ? !permissions.equals( node.permissions ) : node.permissions != null )
         {
             return false;
         }
@@ -642,10 +613,6 @@ public final class Node
             return false;
         }
         if ( data != null ? !data.equals( node.data ) : node.data != null )
-        {
-            return false;
-        }
-        if ( effectiveAcl != null ? !effectiveAcl.equals( node.effectiveAcl ) : node.effectiveAcl != null )
         {
             return false;
         }
@@ -702,8 +669,7 @@ public final class Node
         result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
         result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
         result = 31 * result + ( manualOrderValue != null ? manualOrderValue.hashCode() : 0 );
-        result = 31 * result + ( acl != null ? acl.hashCode() : 0 );
-        result = 31 * result + ( effectiveAcl != null ? effectiveAcl.hashCode() : 0 );
+        result = 31 * result + ( permissions != null ? permissions.hashCode() : 0 );
         result = 31 * result + ( inheritPermissions ? 1 : 0 );
         result = 31 * result + ( collection != null ? collection.hashCode() : 0 );
         return result;

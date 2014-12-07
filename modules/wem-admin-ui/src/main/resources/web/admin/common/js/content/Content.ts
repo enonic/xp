@@ -17,8 +17,6 @@ module api.content {
 
         private permissions: AccessControlList;
 
-        private inheritedPermissions: AccessControlList;
-
         private inheritPermissions: boolean;
 
         constructor(builder: ContentBuilder) {
@@ -31,7 +29,6 @@ module api.content {
             this.metadata = builder.metadata;
             this.pageObj = builder.pageObj;
             this.permissions = builder.permissions || new AccessControlList();
-            this.inheritedPermissions = builder.inheritedPermissions || new AccessControlList();
             this.inheritPermissions = builder.inheritPermissions;
         }
 
@@ -57,10 +54,6 @@ module api.content {
 
         getPermissions(): AccessControlList {
             return this.permissions;
-        }
-
-        getInheritedPermissions(): AccessControlList {
-            return this.inheritedPermissions;
         }
 
         isInheritPermissionsEnabled(): boolean {
@@ -96,10 +89,6 @@ module api.content {
             }
 
             if (!api.ObjectHelper.equals(this.permissions, other.permissions)) {
-                return false;
-            }
-
-            if (!api.ObjectHelper.equals(this.inheritedPermissions, other.inheritedPermissions)) {
                 return false;
             }
 
@@ -144,8 +133,6 @@ module api.content {
 
         permissions: AccessControlList;
 
-        inheritedPermissions: AccessControlList;
-
         inheritPermissions: boolean = true;
 
         constructor(source?: Content) {
@@ -159,7 +146,6 @@ module api.content {
 
                 this.pageObj = source.getPage() ? source.getPage().clone() : null;
                 this.permissions = source.getPermissions(); // TODO clone?
-                this.inheritedPermissions = source.getInheritedPermissions(); // TODO clone?
                 this.inheritPermissions = source.isInheritPermissionsEnabled();
             }
         }
@@ -181,9 +167,6 @@ module api.content {
             }
             if (json.permissions) {
                 this.permissions = AccessControlList.fromJson(json.permissions);
-            }
-            if (json.inheritedPermissions) {
-                this.inheritedPermissions = AccessControlList.fromJson(json.inheritedPermissions);
             }
             if (typeof json.inheritPermissions !== "undefined") {
                 this.inheritPermissions = json.inheritPermissions;
@@ -215,11 +198,6 @@ module api.content {
 
         setPermissions(value: AccessControlList): ContentBuilder {
             this.permissions = value;
-            return this;
-        }
-
-        setInheritedPermissions(value: AccessControlList): ContentBuilder {
-            this.inheritedPermissions = value;
             return this;
         }
 

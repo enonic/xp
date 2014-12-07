@@ -99,7 +99,7 @@ public class NodeServiceImplTest
         final CreateNodeParams params = CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
-            accessControlList( aclList ).
+            permissions( aclList ).
             childOrder( childOrder ).
             build();
 
@@ -107,8 +107,8 @@ public class NodeServiceImplTest
 
         refresh();
 
-        assertTrue( node.getAccessControlList() != null );
-        assertEquals( aclList, node.getAccessControlList() );
+        assertTrue( node.getPermissions() != null );
+        assertEquals( aclList, node.getPermissions() );
         assertEquals( childOrder, node.getChildOrder() );
     }
 

@@ -69,22 +69,17 @@ public final class UpdateNodeCommand
         final PrincipalKey modifier =
             authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.from( "user:system:admin" );
 
-        // calculate effective permissions based on parent acl
         final NodePath parentPath = editResult.path().getParentPath();
-        final AccessControlList parentEffectivePermissions = getAccessControlList( parentPath );
-
-        final AccessControlList nodeAcl = removeDuplicatedEntries( editResult.getAccessControlList(), parentEffectivePermissions );
-        final AccessControlList effectiveAcl = editResult.inheritsPermissions()
-            ? nodeAcl.getEffective( parentEffectivePermissions )
-            : nodeAcl.getEffective( AccessControlList.empty() );
+        final AccessControlList paramPerm = editResult.inheritsPermissions() ? getPermissions( parentPath ) : editResult.getPermissions();
+        final AccessControlList permissions = paramPerm == null ? AccessControlList.empty() : paramPerm;
 
         final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
             modifiedTime( now ).
             modifier( modifier ).
             data( editResult.data() ).
             attachments( synchronizeAttachments( editResult.attachments(), persistedNode ) ).
-            accessControlList( nodeAcl ).
-            effectiveAcl( effectiveAcl ).
+            permissions( permissions ).
+            inheritPermissions( editResult.inheritsPermissions() ).
             indexConfigDocument( editResult.getIndexConfigDocument() != null
                                      ? editResult.getIndexConfigDocument()
                                      : persistedNode.getIndexConfigDocument() );

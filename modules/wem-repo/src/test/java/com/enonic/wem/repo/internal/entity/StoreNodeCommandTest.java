@@ -26,7 +26,7 @@ public class StoreNodeCommandTest
             build() );
 
         Node updatedNode = Node.newNode( newNode ).
-            accessControlList( AccessControlList.create().
+            permissions( AccessControlList.create().
                 add( AccessControlEntry.create().
                     allow( Permission.READ ).
                     allow( Permission.CREATE ).

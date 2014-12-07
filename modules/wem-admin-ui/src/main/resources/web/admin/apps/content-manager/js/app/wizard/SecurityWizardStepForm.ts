@@ -43,34 +43,11 @@ module app.wizard {
         layout(content: api.content.Content) {
             this.comboBox.clearSelection();
 
-            var inheritedPermissions = content.getInheritedPermissions();
-            var inheritedPermissionsEntries: AccessControlEntry[] = inheritedPermissions.getEntries();
             var contentPermissions = content.getPermissions();
             var contentPermissionsEntries: AccessControlEntry[] = contentPermissions.getEntries();
 
-            // merge inherited and content permissions, if overwritten in content skip inherited entry
-            var permissions: AccessControlEntry[] = [];
-            inheritedPermissionsEntries.forEach((ace) => {
-                ace.setInherited(true);
-                var principalKey = ace.getPrincipalKey();
-
-                if (contentPermissions.contains(principalKey)) {
-                    permissions.push(contentPermissions.getEntry(principalKey).clone());
-                } else {
-                    permissions.push(ace.clone());
-                }
-            });
-
-            contentPermissionsEntries.forEach((ace) => {
-                if (!inheritedPermissions.contains(ace.getPrincipalKey())) {
-                    permissions.push(ace.clone());
-                }
-            });
-
-            console.log('ACL parent  ', inheritedPermissions.toString());
-            console.log('ACL content ', contentPermissions.toString());
-            console.log('ACL combined', new api.security.acl.AccessControlList(permissions).toString());
-            this.originalValues = permissions.sort();
+            console.log('Content permissions', contentPermissions.toString());
+            this.originalValues = contentPermissionsEntries.sort();
 
             this.originalValues.forEach((item) => {
                 if (!this.comboBox.isSelected(item)) {
