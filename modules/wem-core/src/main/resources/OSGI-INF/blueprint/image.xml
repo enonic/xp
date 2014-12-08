@@ -5,4 +5,12 @@
 
   <service auto-export="interfaces" ref="imageFilterBuilder"/>
 
+  <reference id="tikaParser" interface="org.apache.tika.parser.Parser"/>
+  <reference id="tikaDetector" interface="org.apache.tika.detect.Detector"/>
+
+  <bean class="com.enonic.wem.core.image.TikaUsageService" init-method="diag">
+    <property name="parser" ref="tikaParser"/>
+    <property name="detector" ref="tikaDetector"/>
+  </bean>
+
 </blueprint>
