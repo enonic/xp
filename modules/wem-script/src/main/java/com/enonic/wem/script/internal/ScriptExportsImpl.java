@@ -30,7 +30,7 @@ final class ScriptExportsImpl
     }
 
     @Override
-    public boolean hasProperty( final String name )
+    public boolean hasMethod( final String name )
     {
         return ( this.bindings != null ) && ( this.bindings.get( name ) != null );
     }

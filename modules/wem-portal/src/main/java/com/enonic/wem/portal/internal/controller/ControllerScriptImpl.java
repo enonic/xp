@@ -43,7 +43,7 @@ final class ControllerScriptImpl
         final String method = context.getRequest().getMethod();
         final String methodName = method.toLowerCase();
 
-        if ( !this.scriptExports.hasProperty( methodName ) )
+        if ( !this.scriptExports.hasMethod( methodName ) )
         {
             populateResponse( context.getResponse(), null );
             return;

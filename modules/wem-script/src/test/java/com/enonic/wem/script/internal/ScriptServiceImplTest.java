@@ -19,7 +19,7 @@ public class ScriptServiceImplTest
         final ScriptExports exports = runTestScript( script );
         assertNotNull( exports );
         assertSame( script, exports.getScript() );
-        assertFalse( exports.hasProperty( "hello" ) );
+        assertFalse( exports.hasMethod( "hello" ) );
     }
 
     @Test
@@ -29,7 +29,7 @@ public class ScriptServiceImplTest
         final ScriptExports exports = runTestScript( script );
         assertNotNull( exports );
         assertSame( script, exports.getScript() );
-        assertTrue( exports.hasProperty( "hello" ) );
+        assertTrue( exports.hasMethod( "hello" ) );
         assertEquals( "Hello World!", exports.executeMethod( "hello", "World" ).getValue() );
     }
 
