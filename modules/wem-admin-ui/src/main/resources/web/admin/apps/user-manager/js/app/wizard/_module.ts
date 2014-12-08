@@ -1,4 +1,5 @@
 ///<reference path='PrincipalWizardPanel.ts' />
+///<reference path='UserWizardPanel.ts' />
 ///<reference path='GroupRoleWizardPanel.ts' />
 ///<reference path='RoleWizardPanel.ts' />
 ///<reference path='GroupWizardPanel.ts' />
@@ -7,5 +8,8 @@
 ///<reference path='PrincipalWizardToolbar.ts' />
 ///<reference path='PrincipalDescriptionWizardStepForm.ts' />
 ///<reference path='PrincipalMembersWizardStepForm.ts' />
+///<reference path='UserEmailWizardStepForm.ts' />
+///<reference path='UserPasswordWizardStepForm.ts' />
+///<reference path='UserMembershipsWizardStepForm.ts' />
 ///<reference path='RoleMembersWizardStepForm.ts' />
 ///<reference path='GroupMembersWizardStepForm.ts' />

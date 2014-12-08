@@ -96,8 +96,8 @@ module app {
             if (userItem) {
                 switch (userItem.getType()) {
                     case UserTreeGridItemType.USERS:
-                        /* TODO: Add assign, when the UserBrowsePanel in implemented. */
                         principalType = PrincipalType.USER;
+                        tabName = "User";
                         break;
                     case UserTreeGridItemType.GROUPS:
                         principalType = PrincipalType.GROUP;

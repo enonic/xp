@@ -108,8 +108,7 @@ module app.wizard {
                 });
                 break;
             case PrincipalType.USER:
-                /* TODO: Replace with UserWizardPanel implementation. */
-                new PrincipalWizardPanel(wizardParams, (wizard:PrincipalWizardPanel) => {
+                new UserWizardPanel(wizardParams, (wizard:PrincipalWizardPanel) => {
                     deferred.resolve(wizard);
                 });
                 break;
