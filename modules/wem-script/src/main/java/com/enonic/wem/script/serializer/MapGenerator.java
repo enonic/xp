@@ -1,6 +1,5 @@
 package com.enonic.wem.script.serializer;
 
-// TODO: Rename to MapBuilder, MapWriter or something else?
 public interface MapGenerator
 {
     MapGenerator map();

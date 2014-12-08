@@ -1,35 +1,29 @@
 package com.enonic.wem.script.internal.bean;
 
-import javax.script.Bindings;
-
 import org.junit.Test;
 
 import com.enonic.wem.api.resource.ResourceProblemException;
+import com.enonic.wem.script.AbstractScriptTest;
+import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptObject;
-import com.enonic.wem.script.internal.NashornScriptTest;
 
 import static org.junit.Assert.*;
 
 public class ScriptObjectImplTest
-    extends NashornScriptTest
+    extends AbstractScriptTest
 {
-    @Override
-    protected void configure( final Bindings bindings )
-    {
-    }
-
-    private ScriptObject evalObject( final String script )
+    private ScriptObject evalObject( final String name )
         throws Exception
     {
-        final Object result = eval( script );
-        return new ScriptObjectImpl( result );
+        final ScriptExports exports = runTestScript( "object/object-test.js" );
+        return exports.executeMethod( name );
     }
 
     @Test
     public void testUndefined()
         throws Exception
     {
-        final ScriptObject obj = evalObject( "var x = undefined; x" );
+        final ScriptObject obj = evalObject( "testUndefined" );
 
         assertEquals( false, obj.isArray() );
         assertEquals( false, obj.isFunction() );
@@ -49,7 +43,7 @@ public class ScriptObjectImplTest
     public void testValue()
         throws Exception
     {
-        final ScriptObject obj = evalObject( "var x = 1; x" );
+        final ScriptObject obj = evalObject( "testValue" );
 
         assertEquals( false, obj.isArray() );
         assertEquals( false, obj.isFunction() );
@@ -69,7 +63,7 @@ public class ScriptObjectImplTest
     public void testArray()
         throws Exception
     {
-        final ScriptObject obj = evalObject( "var x = [1,2]; x" );
+        final ScriptObject obj = evalObject( "testArray" );
 
         assertEquals( true, obj.isArray() );
         assertEquals( false, obj.isFunction() );
@@ -90,7 +84,7 @@ public class ScriptObjectImplTest
     public void testObject()
         throws Exception
     {
-        final ScriptObject obj = evalObject( "var x = { a:1, b:2 }; x" );
+        final ScriptObject obj = evalObject( "testObject" );
 
         assertEquals( false, obj.isArray() );
         assertEquals( false, obj.isFunction() );
@@ -110,7 +104,7 @@ public class ScriptObjectImplTest
     public void testFunction()
         throws Exception
     {
-        final ScriptObject obj = evalObject( "var x = function(a) { return a; }; x" );
+        final ScriptObject obj = evalObject( "testFunction" );
 
         assertEquals( false, obj.isArray() );
         assertEquals( true, obj.isFunction() );
@@ -130,7 +124,7 @@ public class ScriptObjectImplTest
     public void testFunction_error()
         throws Exception
     {
-        final ScriptObject obj = evalObject( "var x = function(a) { throw 'error'; }; x" );
+        final ScriptObject obj = evalObject( "testFunctionError" );
 
         try
         {

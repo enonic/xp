@@ -5,6 +5,7 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
+import jdk.nashorn.api.scripting.JSObject;
 import jdk.nashorn.api.scripting.NashornException;
 
 import com.enonic.wem.api.resource.Resource;
@@ -88,6 +89,19 @@ final class ScriptExecutorImpl
         }
     }
 
+    @Override
+    public Object invokeMethod( final Object scope, final JSObject func, final Object... args )
+    {
+        try
+        {
+            return func.call( scope, args );
+        }
+        catch ( final Exception e )
+        {
+            throw handleException( e );
+        }
+    }
+
     private RuntimeException handleException( final Exception e )
     {
         if ( e instanceof ResourceProblemException )
@@ -113,7 +127,7 @@ final class ScriptExecutorImpl
         final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
         builder.cause( e.getCause() );
         builder.lineNumber( e.getLineNumber() );
-        builder.resource( ResourceKey.from( e.getFileName() ) );
+        builder.resource( toResourceKey( e.getFileName() ) );
         return builder.build();
     }
 
@@ -128,8 +142,20 @@ final class ScriptExecutorImpl
         final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
         builder.cause( e );
         builder.lineNumber( elem.getLineNumber() );
-        builder.resource( ResourceKey.from( elem.getFileName() ) );
+        builder.resource( toResourceKey( elem.getFileName() ) );
         return builder.build();
+    }
+
+    private ResourceKey toResourceKey( final String name )
+    {
+        try
+        {
+            return ResourceKey.from( name );
+        }
+        catch ( final IllegalArgumentException e )
+        {
+            return null;
+        }
     }
 
     private StackTraceElement findScriptTraceElement( final RuntimeException e )
