@@ -1,14 +1,12 @@
 package com.enonic.wem.portal.internal.controller;
 
-import java.util.Map;
-
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalContextAccessor;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptExports;
-import com.enonic.wem.api.convert.Converters;
+import com.enonic.wem.script.ScriptObject;
 
 final class ControllerScriptImpl
     implements ControllerScript
@@ -51,25 +49,23 @@ final class ControllerScriptImpl
             return;
         }
 
-        final Object result = this.scriptExports.executeMethod( methodName, request );
+        final ScriptObject result = this.scriptExports.executeMethod( methodName, request );
         populateResponse( context.getResponse(), result );
     }
 
-    private void populateResponse( final PortalResponse response, final Object result )
+    private void populateResponse( final PortalResponse response, final ScriptObject result )
     {
         response.setStatus( PortalResponse.STATUS_METHOD_NOT_ALLOWED );
-        if ( result instanceof Map )
-        {
-            populateFromMap( response, (Map<?, ?>) result );
-        }
-    }
 
-    private void populateFromMap( final PortalResponse response, final Map<?, ?> map )
-    {
-        populateStatus( response, Converters.convert( map.get( "status" ), Integer.class ) );
-        populateContentType( response, Converters.convert( map.get( "contentType" ), String.class ) );
-        populateBody( response, map.get( "body" ) );
-        populateHeaders( response, map.get( "headers" ) );
+        if ( ( result == null ) || !result.isObject() )
+        {
+            return;
+        }
+
+        populateStatus( response, result.getMember( "status" ).getValue( Integer.class ) );
+        populateContentType( response, result.getMember( "contentType" ).getValue( String.class ) );
+        populateBody( response, result.getMember( "body" ).getValue() );
+        populateHeaders( response, result.getMember( "headers" ) );
     }
 
     private void populateStatus( final PortalResponse response, final Integer value )
@@ -87,16 +83,16 @@ final class ControllerScriptImpl
         response.setBody( value );
     }
 
-    private void populateHeaders( final PortalResponse response, final Object value )
+    private void populateHeaders( final PortalResponse response, final ScriptObject value )
     {
-        if ( !( value instanceof Map ) )
+        if ( !value.isObject() )
         {
             return;
         }
 
-        for ( final Map.Entry<?, ?> entry : ( (Map<?, ?>) value ).entrySet() )
+        for ( final String key : value.getKeys() )
         {
-            response.addHeader( entry.getKey().toString(), entry.getValue().toString() );
+            response.addHeader( key, value.getMember( key ).getValue( String.class ) );
         }
     }
 }

@@ -16,6 +16,7 @@ import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.script.AbstractScriptTest;
 import com.enonic.wem.script.ScriptExports;
+import com.enonic.wem.script.ScriptObject;
 
 import static org.junit.Assert.*;
 
@@ -40,7 +41,7 @@ public class RenderViewHandlerTest
         addHandler( handler );
     }
 
-    private Object execute( final String method )
+    private ScriptObject execute( final String method )
         throws Exception
     {
         final ScriptExports exports = runTestScript( "xslt-test.js" );
@@ -76,7 +77,7 @@ public class RenderViewHandlerTest
     public void renderTest()
         throws Exception
     {
-        final String result = cleanupXml( execute( "render" ).toString() );
+        final String result = cleanupXml( execute( "render" ).getValue().toString() );
         final String expected = cleanupXml( Resources.toString( getClass().getResource( "/view/test-result.xml" ), Charsets.UTF_8 ) );
         assertEquals( expected, result );
     }

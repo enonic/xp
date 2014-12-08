@@ -4,6 +4,8 @@ import javax.script.Bindings;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptExports;
+import com.enonic.wem.script.ScriptObject;
+import com.enonic.wem.script.internal.bean.ScriptObjectImpl;
 
 final class ScriptExportsImpl
     implements ScriptExports
@@ -34,8 +36,8 @@ final class ScriptExportsImpl
     }
 
     @Override
-    public Object executeMethod( final String name, final Object... args )
+    public ScriptObject executeMethod( final String name, final Object... args )
     {
-        return this.executor.invokeMethod( this.bindings, name, args );
+        return new ScriptObjectImpl( this.executor.invokeMethod( this.bindings, name, args ) );
     }
 }

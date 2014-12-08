@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 
 import jdk.nashorn.api.scripting.JSObject;
 import jdk.nashorn.api.scripting.ScriptUtils;
+import jdk.nashorn.internal.runtime.Undefined;
 
 import com.enonic.wem.api.convert.Converters;
 import com.enonic.wem.script.ScriptObject;
 import com.enonic.wem.script.internal.error.ErrorHelper;
+import com.enonic.wem.script.internal.util.JsObjectConverter;
 
 public final class ScriptObjectImpl
     implements ScriptObject
@@ -20,7 +22,12 @@ public final class ScriptObjectImpl
 
     public ScriptObjectImpl( final Object value )
     {
-        final Object unwrapped = ScriptUtils.unwrap( value );
+        Object unwrapped = ScriptUtils.unwrap( value );
+        if ( unwrapped instanceof Undefined )
+        {
+            unwrapped = null;
+        }
+
         this.jsObject = ( unwrapped instanceof JSObject ) ? (JSObject) unwrapped : null;
         this.value = ( this.jsObject == null ) ? unwrapped : null;
     }
@@ -115,7 +122,7 @@ public final class ScriptObjectImpl
 
         try
         {
-            final Object result = this.jsObject.call( this.jsObject, args );
+            final Object result = this.jsObject.call( this.jsObject, JsObjectConverter.toJsArray( args ) );
             return new ScriptObjectImpl( result );
         }
         catch ( final Exception e )

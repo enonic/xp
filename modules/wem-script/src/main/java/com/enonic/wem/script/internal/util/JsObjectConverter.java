@@ -17,6 +17,17 @@ public final class JsObjectConverter
         return value;
     }
 
+    public static Object[] toJsArray( final Object[] values )
+    {
+        final Object[] result = new Object[values.length];
+        for ( int i = 0; i < values.length; i++ )
+        {
+            result[i] = toJs( values[i] );
+        }
+
+        return result;
+    }
+
     private static Object toJs( final MapSerializable value )
     {
         final ScriptMapGenerator generator = new ScriptMapGenerator();

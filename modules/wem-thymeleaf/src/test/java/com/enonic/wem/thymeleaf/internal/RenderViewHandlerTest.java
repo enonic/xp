@@ -35,7 +35,7 @@ public class RenderViewHandlerTest
         throws Exception
     {
         final ScriptExports exports = runTestScript( "thymeleaf-test.js" );
-        return exports.executeMethod( method );
+        return exports.executeMethod( method ).getValue();
     }
 
     private void executeException( final String method, final String expectedMessage )

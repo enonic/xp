@@ -16,7 +16,6 @@ import com.enonic.wem.script.internal.function.RequireFunction;
 import com.enonic.wem.script.internal.function.ResolveFunction;
 import com.enonic.wem.script.internal.invoker.CommandInvoker;
 import com.enonic.wem.script.internal.logger.ScriptLogger;
-import com.enonic.wem.script.internal.util.JsObjectConverter;
 
 final class ScriptExecutorImpl
     implements ScriptExecutor
@@ -77,9 +76,7 @@ final class ScriptExecutorImpl
     {
         try
         {
-            final Object result = this.invocable.invokeMethod( scope, name, args );
-            return JsObjectConverter.fromJs( result );
-
+            return this.invocable.invokeMethod( scope, name, args );
         }
         catch ( final NoSuchMethodException e )
         {

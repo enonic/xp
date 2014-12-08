@@ -16,6 +16,7 @@ import com.google.common.io.Resources;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.script.AbstractScriptTest;
 import com.enonic.wem.script.ScriptExports;
+import com.enonic.wem.script.ScriptObject;
 
 import static org.junit.Assert.*;
 
@@ -34,7 +35,7 @@ public class RenderViewHandlerTest
         throws Exception
     {
         final ScriptExports exports = runTestScript( "mustache-test.js" );
-        return exports.executeMethod( method );
+        return exports.executeMethod( method ).getValue();
     }
 
     private void executeException( final String method, final String expectedMessage )

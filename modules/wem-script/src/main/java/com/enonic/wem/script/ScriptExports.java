@@ -8,5 +8,5 @@ public interface ScriptExports
 
     public boolean hasProperty( String name );
 
-    public Object executeMethod( String name, Object... args );
+    public ScriptObject executeMethod( String name, Object... args );
 }
