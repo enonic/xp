@@ -21,6 +21,16 @@ public class AttachmentListJson
         this.attachments = builder.build();
     }
 
+    public static List<AttachmentJson> toJson( final Attachments attachments )
+    {
+        final ImmutableList.Builder<AttachmentJson> builder = new ImmutableList.Builder<>();
+        for ( final Attachment attachment : attachments )
+        {
+            builder.add( new AttachmentJson( attachment ) );
+        }
+        return builder.build();
+    }
+
     public List<AttachmentJson> getAttachments()
     {
         return attachments;

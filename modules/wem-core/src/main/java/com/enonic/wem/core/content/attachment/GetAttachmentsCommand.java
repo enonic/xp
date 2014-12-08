@@ -2,7 +2,6 @@ package com.enonic.wem.core.content.attachment;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.NoNodeWithIdFoundException;
@@ -10,7 +9,6 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.core.content.ContentAttachmentNodeTranslator;
-import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
 
 
 final class GetAttachmentsCommand
@@ -38,21 +36,7 @@ final class GetAttachmentsCommand
         {
             final NodeId nodeId = NodeId.from( this.contentId );
             final Node node = nodeService.getById( nodeId );
-            final Attachments.Builder attachmentsBuilder = Attachments.builder();
-
-            for ( com.enonic.wem.api.node.Attachment entityAttachment : node.attachments() )
-            {
-                final boolean isThumbnail = entityAttachment.name().equals( ThumbnailAttachmentSerializer.THUMB_NAME );
-
-                if ( !isThumbnail )
-                {
-                    final Attachment attachment = CONTENT_ATTACHMENT_NODE_TRANSLATOR.toContentAttachment( entityAttachment );
-
-                    attachmentsBuilder.add( attachment );
-                }
-            }
-
-            return attachmentsBuilder.build();
+            return CONTENT_ATTACHMENT_NODE_TRANSLATOR.toContentAttachments( node.attachments() );
         }
         catch ( NoNodeWithIdFoundException e )
         {

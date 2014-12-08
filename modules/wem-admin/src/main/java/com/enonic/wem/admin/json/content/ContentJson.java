@@ -3,6 +3,8 @@ package com.enonic.wem.admin.json.content;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
+import com.enonic.wem.admin.json.content.attachment.AttachmentListJson;
 import com.enonic.wem.admin.json.content.page.PageJson;
 import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.admin.rest.resource.content.ContentPrincipalsResolver;
@@ -23,6 +25,8 @@ public final class ContentJson
 {
     private final List<PropertyArrayJson> data;
 
+    private final List<AttachmentJson> attachments;
+
     private final List<MetadataJson> metadata;
 
     private final FormJson form;
@@ -39,6 +43,7 @@ public final class ContentJson
     {
         super( content, iconUrlResolver );
         this.data = PropertyTreeJson.toJson( content.getData() );
+        this.attachments = AttachmentListJson.toJson( content.getAttachments() );
 
         this.metadata = new ArrayList<>();
         final List<Metadata> metadataList = content.getAllMetadata();
@@ -71,6 +76,11 @@ public final class ContentJson
     public List<PropertyArrayJson> getData()
     {
         return data;
+    }
+
+    public List<AttachmentJson> getAttachments()
+    {
+        return attachments;
     }
 
     public List<MetadataJson> getMetadata()

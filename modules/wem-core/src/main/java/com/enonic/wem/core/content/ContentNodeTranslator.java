@@ -37,15 +37,15 @@ import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
 
 public class ContentNodeTranslator
 {
-    private ContentTypeService contentTypeService;
-
-    private BlobService blobService;
-
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
 
     private static final ContentAttachmentNodeTranslator CONTENT_ATTACHMENT_NODE_TRANSLATOR = new ContentAttachmentNodeTranslator();
 
     private final ContentDataSerializer CONTENT_SERIALIZER = new ContentDataSerializer();
+
+    private ContentTypeService contentTypeService;
+
+    private BlobService blobService;
 
     public CreateNodeParams toCreateNode( final CreateContentParams params )
     {
@@ -131,6 +131,8 @@ public class ContentNodeTranslator
 
         final Content.Builder builder = CONTENT_SERIALIZER.fromData( node.data().getRoot() );
 
+        final Attachments attachments = CONTENT_ATTACHMENT_NODE_TRANSLATOR.toContentAttachments( node.attachments() );
+
         builder.
             id( ContentId.from( node.id().toString() ) ).
             parentPath( parentContentPath ).
@@ -143,7 +145,8 @@ public class ContentNodeTranslator
             childOrder( node.getChildOrder() ).
             permissions( node.getPermissions() ).
             inheritPermissions( node.inheritsPermissions() ).
-            thumbnail( thumbnail );
+            thumbnail( thumbnail ).
+            attachments( attachments );
 
         return builder.build();
     }

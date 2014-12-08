@@ -2,6 +2,7 @@ package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.node.Attachments;
+import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
 
 public class ContentAttachmentNodeTranslator
 {
@@ -35,6 +36,21 @@ public class ContentAttachmentNodeTranslator
             mimeType( contentAttachment.getMimeType() ).
             size( contentAttachment.getSize() ).
             name( contentAttachment.getName() ).build();
+    }
+
+    public com.enonic.wem.api.content.attachment.Attachments toContentAttachments(
+        final com.enonic.wem.api.node.Attachments nodeAttachments )
+    {
+        final com.enonic.wem.api.content.attachment.Attachments.Builder attachmentsBuilder =
+            com.enonic.wem.api.content.attachment.Attachments.builder();
+        for ( com.enonic.wem.api.node.Attachment entityAttachment : nodeAttachments )
+        {
+            if ( !entityAttachment.name().equals( ThumbnailAttachmentSerializer.THUMB_NAME ) )
+            {
+                attachmentsBuilder.add( toContentAttachment( entityAttachment ) );
+            }
+        }
+        return attachmentsBuilder.build();
     }
 
     public Attachment toContentAttachment( final com.enonic.wem.api.node.Attachment entityAttachment )

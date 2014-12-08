@@ -8,6 +8,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
@@ -49,6 +50,8 @@ public class Content
     private final Form form;
 
     private final PropertyTree data;
+
+    private final Attachments attachments;
 
     private final ImmutableList<Metadata> metadata;
 
@@ -100,6 +103,7 @@ public class Content
         this.id = builder.contentId;
         this.form = builder.form;
         this.data = builder.data;
+        this.attachments = builder.attachments;
         this.metadata = ImmutableList.copyOf( builder.metadata );
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
@@ -112,6 +116,21 @@ public class Content
         this.childOrder = builder.childOrder;
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
+    }
+
+    public static Builder newContent()
+    {
+        return new Builder();
+    }
+
+    public static Builder newContent( final Content content )
+    {
+        return new Builder( content );
+    }
+
+    public static EditBuilder editContent( final Content content )
+    {
+        return new EditBuilder( content );
     }
 
     public ContentPath getParentPath()
@@ -182,6 +201,11 @@ public class Content
     public PropertyTree getData()
     {
         return data;
+    }
+
+    public Attachments getAttachments()
+    {
+        return attachments;
     }
 
     public boolean hasMetadata( final String name )
@@ -309,36 +333,25 @@ public class Content
         return s.toString();
     }
 
-    public static Builder newContent()
-    {
-        return new Builder();
-    }
-
-    public static Builder newContent( final Content content )
-    {
-        return new Builder( content );
-    }
-
-    public static EditBuilder editContent( final Content content )
-    {
-        return new EditBuilder( content );
-    }
-
     static abstract class BaseBuilder
     {
+        protected ContentId contentId;
+
+        protected PropertyTree data;
+
+        protected Page page;
+
         boolean draft;
 
         ContentPath parentPath;
 
         ContentName name;
 
-        protected ContentId contentId;
-
         ContentTypeName type;
 
         Form form;
 
-        protected PropertyTree data;
+        Attachments attachments;
 
         List<Metadata> metadata;
 
@@ -354,8 +367,6 @@ public class Content
 
         PrincipalKey modifier;
 
-        protected Page page;
-
         Thumbnail thumbnail;
 
         boolean hasChildren;
@@ -369,6 +380,7 @@ public class Content
         BaseBuilder()
         {
             this.data = new PropertyTree();
+            this.attachments = Attachments.empty();
             this.metadata = new ArrayList<>();
             this.inheritPermissions = true;
         }
@@ -382,6 +394,7 @@ public class Content
             this.type = content.type;
             this.form = content.form; // TODO make DataSet immutable, or make copy
             this.data = content.data; // TODO make DataSet immutable, or make copy
+            this.attachments = content.attachments; // TODO make DataSet immutable, or make copy
             this.metadata = content.metadata;
             this.displayName = content.displayName;
             this.owner = content.owner;
@@ -564,6 +577,12 @@ public class Content
         public Builder<BUILDER, C> contentData( final PropertyTree contentData )
         {
             this.data = contentData;
+            return this;
+        }
+
+        public Builder<BUILDER, C> attachments( final Attachments attachments )
+        {
+            this.attachments = attachments;
             return this;
         }
 
