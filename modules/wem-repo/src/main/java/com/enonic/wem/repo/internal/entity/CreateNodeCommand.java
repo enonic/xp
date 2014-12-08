@@ -46,9 +46,12 @@ public final class CreateNodeCommand
         final PrincipalKey creator =
             authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.from( "user:system:admin" );
 
-        final AccessControlList paramPerm = params.inheritPermissions() ? getPermissions( params.getParent() ) : params.getPermissions();
-        final AccessControlList permissions =
-            paramPerm == null || paramPerm.isEmpty() ? NodeDefaultAclFactory.create( creator ) : paramPerm;
+        AccessControlList paramPermissions = params.getPermissions();
+        if ( paramPermissions == null || paramPermissions.isEmpty() )
+        {
+            paramPermissions = NodeDefaultAclFactory.create( creator );
+        }
+        final AccessControlList permissions = evaluatePermissions( params.getParent(), params.inheritPermissions(), paramPermissions );
 
         final Long manualOrderValue = resolvePotentialManualOrderValue();
 

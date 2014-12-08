@@ -3,8 +3,10 @@ package com.enonic.wem.core.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalRelationship;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
@@ -35,6 +37,14 @@ public final class SecurityInitializer
             password( "password" ).
             build();
         addUser( createAdmin );
+
+        final CreateRoleParams createEnterpriseAdmin = CreateRoleParams.create().
+            roleKey( PrincipalKey.ofEnterpriseAdmin() ).
+            displayName( "Enterprise Administrator" ).
+            build();
+        addRole( createEnterpriseAdmin );
+
+        addMember( PrincipalKey.ofEnterpriseAdmin(), createAdmin.getKey() );
     }
 
     private void addUser( final CreateUserParams createUser )
@@ -52,6 +62,36 @@ public final class SecurityInitializer
             LOG.error( "Unable to initialize user: " + createUser.getKey().toString(), t );
         }
     }
+
+    private void addRole( final CreateRoleParams createRoleParams )
+    {
+        try
+        {
+            if ( !securityService.getRole( createRoleParams.getKey() ).isPresent() )
+            {
+                securityService.createRole( createRoleParams );
+                LOG.info( "Role created: " + createRoleParams.getKey().toString() );
+            }
+        }
+        catch ( Throwable t )
+        {
+            LOG.error( "Unable to initialize role: " + createRoleParams.getKey().toString(), t );
+        }
+    }
+
+    private void addMember( final PrincipalKey container, final PrincipalKey member )
+    {
+        try
+        {
+            securityService.addRelationship( PrincipalRelationship.from( container ).to( member ) );
+            LOG.info( "Added " + member + " as member of " + container );
+        }
+        catch ( Throwable t )
+        {
+            LOG.error( "Unable to add member: " + container + " -> " + member, t );
+        }
+    }
+
 
     public void setSecurityService( final SecurityService securityService )
     {

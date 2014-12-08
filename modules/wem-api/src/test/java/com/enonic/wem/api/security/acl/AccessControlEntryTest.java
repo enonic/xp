@@ -81,7 +81,7 @@ public class AccessControlEntryTest
             deny( Permission.WRITE_PERMISSIONS ).
             build();
 
-        final AccessControlEntry newAce = AccessControlEntry.newACE( ace ).
+        final AccessControlEntry newAce = AccessControlEntry.create( ace ).
             principal( PrincipalKey.ofAnonymous() ).
             remove( Permission.WRITE_PERMISSIONS ).
             remove( Permission.READ_PERMISSIONS ).

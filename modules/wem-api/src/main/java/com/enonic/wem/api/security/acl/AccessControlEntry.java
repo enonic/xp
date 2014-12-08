@@ -125,7 +125,7 @@ public final class AccessControlEntry
         return new Builder();
     }
 
-    public static Builder newACE( final AccessControlEntry ace )
+    public static Builder create( final AccessControlEntry ace )
     {
         return new Builder( ace );
     }
@@ -180,14 +180,10 @@ public final class AccessControlEntry
 
         public Builder allowAll()
         {
-            this.allow( Permission.CREATE );
-            this.allow( Permission.DELETE );
-            this.allow( Permission.PUBLISH );
-            this.allow( Permission.READ );
-            this.allow( Permission.MODIFY );
-            this.allow( Permission.READ_PERMISSIONS );
-            this.allow( Permission.WRITE_PERMISSIONS );
-
+            for ( Permission permission : Permission.values() )
+            {
+                this.allow( permission );
+            }
             return this;
         }
 

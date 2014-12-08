@@ -546,7 +546,8 @@ module app.wizard {
                 setDisplayName(viewedContent.getDisplayName()).
                 setContentData(viewedContent.getContentData()).
                 setMetadata(viewedContent.getAllMetadata()).
-                setPermissions(viewedContent.getPermissions());
+                setPermissions(viewedContent.getPermissions()).
+                setInheritPermissions(false);
 
             if (this.contentWizardStepForm) {
                 var updateAttachments = UpdateAttachments.create(persistedContent.getContentId(),

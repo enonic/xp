@@ -70,8 +70,8 @@ public final class UpdateNodeCommand
             authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.from( "user:system:admin" );
 
         final NodePath parentPath = editResult.path().getParentPath();
-        final AccessControlList paramPerm = editResult.inheritsPermissions() ? getPermissions( parentPath ) : editResult.getPermissions();
-        final AccessControlList permissions = paramPerm == null ? AccessControlList.empty() : paramPerm;
+        final AccessControlList paramPerm = editResult.getPermissions() == null ? AccessControlList.empty() : editResult.getPermissions();
+        final AccessControlList permissions = evaluatePermissions( parentPath, editResult.inheritsPermissions(), paramPerm );
 
         final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
             modifiedTime( now ).

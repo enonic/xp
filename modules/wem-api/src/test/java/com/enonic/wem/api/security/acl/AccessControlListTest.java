@@ -23,9 +23,9 @@ public class AccessControlListTest
             build();
 
         final AccessControlList emptyAcl = AccessControlList.empty();
-        final AccessControlList copyAcl = AccessControlList.newACL( emptyAcl ).add( entry1 ).build();
-        final AccessControlList copyAcl2 = AccessControlList.newACL( copyAcl ).add( entry2 ).build();
-        final AccessControlList copyAcl3 = AccessControlList.newACL( copyAcl2 ).remove( PrincipalKey.ofAnonymous() ).build();
+        final AccessControlList copyAcl = AccessControlList.create( emptyAcl ).add( entry1 ).build();
+        final AccessControlList copyAcl2 = AccessControlList.create( copyAcl ).add( entry2 ).build();
+        final AccessControlList copyAcl3 = AccessControlList.create( copyAcl2 ).remove( PrincipalKey.ofAnonymous() ).build();
 
         assertEquals( "[]", emptyAcl.toString() );
         assertEquals( "[user:system:anonymous[+read]]", copyAcl.toString() );

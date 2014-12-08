@@ -14,6 +14,8 @@ import com.enonic.wem.api.node.Nodes;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpressions;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexService;
@@ -23,8 +25,12 @@ import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
 abstract class AbstractNodeCommand
 {
+
     static final OrderExpressions DEFAULT_ORDER_EXPRESSIONS =
         OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) );
+
+    static final AccessControlEntry ENTERPRISE_ADMIN_FULL_PERMISSIONS = AccessControlEntry.create().
+        principal( PrincipalKey.ofEnterpriseAdmin() ).allowAll().build();
 
     final IndexService indexService;
 
@@ -128,7 +134,15 @@ abstract class AbstractNodeCommand
             execute();
     }
 
-    protected AccessControlList getPermissions( final NodePath nodePath )
+    protected AccessControlList evaluatePermissions( final NodePath parentPath, final boolean inheritPermissions,
+                                                     final AccessControlList permissions )
+    {
+        final AccessControlList effectivePermissions = inheritPermissions ? getPermissions( parentPath ) : permissions;
+//        return AccessControlList.create( effectivePermissions ).add( ENTERPRISE_ADMIN_FULL_PERMISSIONS ).build();
+        return effectivePermissions;
+    }
+
+    private AccessControlList getPermissions( final NodePath nodePath )
     {
         if ( nodePath.isRoot() )
         {
