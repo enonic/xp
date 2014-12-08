@@ -2,8 +2,9 @@ module api.content.attachment {
 
     export class Attachments {
 
-        private attachmentByName: {[s:string] : Attachment;
-        } = {};
+        private attachmentByName: {[s:string] : Attachment;} = {};
+
+        private attachmentByLabel: {[s:string] : Attachment;} = {};
 
         private attachments: Attachment[] = [];
 
@@ -13,19 +14,30 @@ module api.content.attachment {
 
             var count: number = 0;
             builder.attachments.forEach((attachment: Attachment) => {
-                this.attachmentByName[attachment.getAttachmentName().toString()] = attachment;
+                this.attachmentByName[attachment.getName().toString()] = attachment;
+                this.attachmentByLabel[attachment.getLabel()] = attachment;
                 count++;
                 this.attachments.push(attachment);
             });
             this.size = count;
         }
 
-        getAttachment(name: string): Attachment {
+        forEach(callBack: {(attachment: Attachment, index: number): void;}) {
+            this.attachments.forEach((attachment: Attachment, index: number) => {
+                callBack(attachment, index);
+            });
+        }
+
+        getAttachmentByName(name: string): Attachment {
             return this.attachmentByName[name];
         }
 
-        getAttachments(): Attachment[] {
-            return this.attachments;
+        getAttachmentByLabel(label: string): Attachment {
+            return this.attachmentByLabel[name];
+        }
+
+        getAttachment(index: number): Attachment {
+            return this.attachments[index];
         }
 
         getSize(): number {

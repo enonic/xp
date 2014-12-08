@@ -1,5 +1,7 @@
 package com.enonic.wem.api.content.attachment;
 
+import org.apache.commons.io.FilenameUtils;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -44,6 +46,16 @@ public final class Attachment
     public String getName()
     {
         return name;
+    }
+
+    public String getNameWithoutExtension()
+    {
+        return FilenameUtils.getBaseName( name );
+    }
+
+    public String getExtension()
+    {
+        return FilenameUtils.getExtension( name );
     }
 
     public String getLabel()

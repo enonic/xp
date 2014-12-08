@@ -302,7 +302,7 @@ module api.content.form.inputtype.image {
 
                     var attachment = new api.content.attachment.AttachmentBuilder().
                         setBlobKey(uploadItem.getBlobKey()).
-                        setAttachmentName(attachmentName).
+                        setName(attachmentName).
                         setMimeType(uploadItem.getMimeType()).
                         setSize(uploadItem.getSize()).
                         build();

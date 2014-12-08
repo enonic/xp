@@ -27,7 +27,8 @@ module api.content.attachment {
         fromJsonToAttachment(json: AttachmentJson): Attachment {
             return new AttachmentBuilder().
                 setBlobKey(new api.blob.BlobKey(json.blobKey)).
-                setAttachmentName(new AttachmentName(json.attachmentName)).
+                setName(new AttachmentName(json.name)).
+                setLabel(json.label).
                 setSize(json.size).
                 setMimeType(json.mimeType).
                 build();

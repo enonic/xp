@@ -4,7 +4,9 @@ module api.content.attachment {
 
         private blobKey: api.blob.BlobKey;
 
-        private attachmentName: AttachmentName;
+        private name: AttachmentName;
+
+        private label: string;
 
         private mimeType: string;
 
@@ -12,7 +14,8 @@ module api.content.attachment {
 
         constructor(builder: AttachmentBuilder) {
             this.blobKey = builder.blobKey;
-            this.attachmentName = builder.attachmentName;
+            this.name = builder.name;
+            this.label = builder.label;
             this.mimeType = builder.mimeType;
             this.size = builder.size;
         }
@@ -21,8 +24,12 @@ module api.content.attachment {
             return this.blobKey;
         }
 
-        getAttachmentName(): AttachmentName {
-            return this.attachmentName;
+        getName(): AttachmentName {
+            return this.name;
+        }
+
+        getLabel(): string {
+            return this.label;
         }
 
         getMimeType(): string {
@@ -34,10 +41,10 @@ module api.content.attachment {
         }
 
         toJson(): api.content.attachment.AttachmentJson {
-
             return {
                 "blobKey": this.getBlobKey().toString(),
-                "attachmentName": this.getAttachmentName().toString(),
+                "name": this.getName().toString(),
+                "label": this.getLabel(),
                 "mimeType": this.getMimeType(),
                 "size": this.getSize()
             };
@@ -49,7 +56,9 @@ module api.content.attachment {
 
         blobKey: api.blob.BlobKey;
 
-        attachmentName: AttachmentName;
+        name: AttachmentName;
+
+        label: string;
 
         mimeType: string;
 
@@ -60,8 +69,13 @@ module api.content.attachment {
             return this;
         }
 
-        public setAttachmentName(value: AttachmentName): AttachmentBuilder {
-            this.attachmentName = value;
+        public setName(value: AttachmentName): AttachmentBuilder {
+            this.name = value;
+            return this;
+        }
+
+        public setLabel(value: string): AttachmentBuilder {
+            this.label = value;
             return this;
         }
 

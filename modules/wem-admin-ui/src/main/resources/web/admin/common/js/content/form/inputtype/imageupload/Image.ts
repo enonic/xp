@@ -19,13 +19,7 @@ module api.content.form.inputtype.imageupload {
             super(config, "image");
 
             var input = config.input;
-            var attachments: api.content.attachment.Attachment[] = config.attachments.getAttachments();
-
-            if (attachments.length > 1) {
-                throw new Error("Expected max one attachment for Image content, actual " + (attachments.length));
-            }
-
-            this.attachment = attachments.pop();
+            this.attachment = config.attachments.getAttachmentByLabel("source");
 
             var uploadUrl = api.util.UriHelper.getRestUri("blob/upload");
             var imageUploaderConfig = <api.ui.uploader.ImageUploaderConfig> {
@@ -107,7 +101,7 @@ module api.content.form.inputtype.imageupload {
         private uploadItemToAttachment(uploadItem: api.ui.uploader.UploadItem): api.content.attachment.Attachment {
             return new api.content.attachment.AttachmentBuilder().
                 setBlobKey(uploadItem.getBlobKey()).
-                setAttachmentName(new api.content.attachment.AttachmentName(uploadItem.getName())).
+                setName(new api.content.attachment.AttachmentName(uploadItem.getName())).
                 setMimeType(uploadItem.getMimeType()).
                 setSize(uploadItem.getSize()).
                 build();

@@ -4,7 +4,9 @@ module api.content.attachment {
 
         blobKey:string;
 
-        attachmentName:string;
+        name:string;
+
+        label:string;
 
         mimeType:string;
 

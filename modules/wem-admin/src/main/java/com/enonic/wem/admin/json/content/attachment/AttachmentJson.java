@@ -14,14 +14,15 @@ public class AttachmentJson
 
     @JsonCreator
     public AttachmentJson( @JsonProperty("blobKey") final String blobKeyAsString, //
-                           @JsonProperty("attachmentName") final String attachmentNameAsString, //
+                           @JsonProperty("name") final String nameAsString, //
+                           @JsonProperty("label") final String labelAsString, //
                            @JsonProperty("mimeType") final String mimeType, //
                            @JsonProperty("size") final String sizeAsString )
     {
         this.attachment = Attachment.newAttachment().
             blobKey( new BlobKey( blobKeyAsString ) ).
             size( Strings.isNullOrEmpty( sizeAsString ) ? 0 : Long.valueOf( sizeAsString ) ).
-            name( attachmentNameAsString ).
+            name( nameAsString ).
             mimeType( mimeType ).
             build();
     }
@@ -36,9 +37,14 @@ public class AttachmentJson
         return this.attachment.getBlobKey().toString();
     }
 
-    public String getAttachmentName()
+    public String getName()
     {
         return this.attachment.getName();
+    }
+
+    public String getLabel()
+    {
+        return this.attachment.getLabel();
     }
 
     public String getMimeType()

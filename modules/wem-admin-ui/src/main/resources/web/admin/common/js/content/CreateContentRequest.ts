@@ -115,7 +115,8 @@ module api.content {
             this.attachments.forEach((attachment: api.content.attachment.Attachment)=> {
                 var attachmentJsonbj: api.content.attachment.AttachmentJson = {
                     "blobKey": attachment.getBlobKey().toString(),
-                    "attachmentName": attachment.getAttachmentName().toString(),
+                    "name": attachment.getName().toString(),
+                    "label": attachment.getLabel(),
                     "mimeType": attachment.getMimeType(),
                     "size": attachment.getSize()
                 };

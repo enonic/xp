@@ -22,11 +22,11 @@ module api.content {
         toJson(): api.content.attachment.UpdateAttachmentsJson {
 
             var attachments: api.content.attachment.AttachmentJson[] = [];
-            this.attachments.getAttachments().forEach((attachment: api.content.attachment.Attachment)=> {
+            this.attachments.forEach((attachment: api.content.attachment.Attachment)=> {
                 attachments.push(attachment.toJson());
             });
 
-            return {
+            return <api.content.attachment.UpdateAttachmentsJson>{
                 "contentId": this.contentId.toString(),
                 "attachments": attachments
             }
