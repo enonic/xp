@@ -1,5 +1,3 @@
-var assert = Java.type('org.junit.Assert');
-
 var relative = resolve('./test.html').toString();
 assert.assertEquals('mymodule:/resolve/test.html', relative);
 

@@ -24,7 +24,6 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.DeleteContentParams;
-import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.DuplicateContentParams;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
@@ -534,10 +533,10 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn(
-            new DeleteContentResult( newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() ) );
+            newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() );
 
         Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn(
-            new DeleteContentResult( newContent().parentPath( ContentPath.ROOT ).name( "two" ).build() ) );
+            newContent().parentPath( ContentPath.ROOT ).name( "two" ).build() );
 
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
@@ -582,7 +581,7 @@ public class ContentResourceTest
 
         Mockito.when(
             contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "one" ) ) ) ) ).thenReturn(
-            new DeleteContentResult( newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() ) );
+            newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() );
 
         final Content aContent2 = createContent( "aaa", "my_a_content2", "mymodule:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).

@@ -31,6 +31,11 @@ public final class ScriptServiceImpl
         this.executor = new ScriptExecutorImpl( engine, this.invoker );
     }
 
+    public void addGlobalBinding( String key, Object value )
+    {
+        this.executor.addGlobalBinding( key, value );
+    }
+
     @Override
     public ScriptExports execute( final ResourceKey script )
     {

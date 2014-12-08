@@ -34,7 +34,7 @@ public class CommandHandlerTest
         }
         catch ( final ResourceProblemException e )
         {
-            assertEquals( 3, e.getLineNumber() );
+            assertEquals( 1, e.getLineNumber() );
             assertEquals( script, e.getResource() );
             assertEquals( "Command [test.command] not found", e.getMessage() );
         }

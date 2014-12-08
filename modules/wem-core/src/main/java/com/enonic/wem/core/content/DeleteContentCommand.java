@@ -6,7 +6,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.DeleteContentParams;
-import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.NoNodeAtPathFoundException;
 import com.enonic.wem.api.node.Node;
@@ -24,14 +23,14 @@ final class DeleteContentCommand
         this.params = builder.params;
     }
 
-    DeleteContentResult execute()
+    Content execute()
     {
         params.validate();
 
         return doExecute();
     }
 
-    private DeleteContentResult doExecute()
+    private Content doExecute()
     {
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.params.getContentPath() );
 
@@ -39,9 +38,7 @@ final class DeleteContentCommand
         {
             final Node deletedNode = nodeService.deleteByPath( nodePath );
 
-            final Content deletedContent = translator.fromNode( deletedNode );
-
-            return new DeleteContentResult( deletedContent );
+            return translator.fromNode( deletedNode );
         }
         catch ( NoNodeAtPathFoundException e )
         {

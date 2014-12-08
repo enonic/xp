@@ -1,11 +1,14 @@
 package com.enonic.wem.script.internal;
 
+import java.util.Map;
+
 import javax.script.Bindings;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
-import jdk.nashorn.api.scripting.JSObject;
+import com.google.common.collect.Maps;
+
 import jdk.nashorn.api.scripting.NashornException;
 
 import com.enonic.wem.api.resource.Resource;
@@ -27,16 +30,25 @@ final class ScriptExecutorImpl
 
     private final CommandInvoker invoker;
 
+    private final Map<String, Object> globals;
+
     public ScriptExecutorImpl( final ScriptEngine engine, final CommandInvoker invoker )
     {
         this.engine = engine;
         this.invocable = (Invocable) this.engine;
         this.invoker = invoker;
+        this.globals = Maps.newHashMap();
     }
 
     private Bindings createBindings()
     {
         return this.engine.createBindings();
+    }
+
+    @Override
+    public void addGlobalBinding( final String key, final Object value )
+    {
+        this.globals.put( key, value );
     }
 
     private void doExecute( final Bindings bindings, final ResourceKey script )
@@ -59,6 +71,7 @@ final class ScriptExecutorImpl
     public Bindings executeRequire( final ResourceKey script )
     {
         final Bindings bindings = createBindings();
+        bindings.putAll( this.globals );
 
         final Bindings exports = createBindings();
         bindings.put( "exports", exports );
@@ -82,19 +95,6 @@ final class ScriptExecutorImpl
         catch ( final NoSuchMethodException e )
         {
             return null;
-        }
-        catch ( final Exception e )
-        {
-            throw handleException( e );
-        }
-    }
-
-    @Override
-    public Object invokeMethod( final Object scope, final JSObject func, final Object... args )
-    {
-        try
-        {
-            return func.call( scope, args );
         }
         catch ( final Exception e )
         {

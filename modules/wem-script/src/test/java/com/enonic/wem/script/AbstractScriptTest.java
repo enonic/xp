@@ -16,6 +16,7 @@ public abstract class AbstractScriptTest
     public AbstractScriptTest()
     {
         this.scriptService = new ScriptServiceImpl();
+        this.scriptService.addGlobalBinding( "assert", new AssertHelper() );
         final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockModuleScheme();
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
     }

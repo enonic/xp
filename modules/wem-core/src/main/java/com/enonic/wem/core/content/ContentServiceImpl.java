@@ -14,7 +14,6 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.DeleteContentParams;
-import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.DuplicateContentParams;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
@@ -166,7 +165,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public DeleteContentResult delete( final DeleteContentParams params )
+    public Content delete( final DeleteContentParams params )
     {
         return DeleteContentCommand.create().
             nodeService( this.nodeService ).

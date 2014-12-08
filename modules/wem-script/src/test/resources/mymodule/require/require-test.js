@@ -1,5 +1,3 @@
-var assert = Java.type('org.junit.Assert');
-
 var other = require('other');
 assert.assertEquals('Hello World!', other.hello('World'));
 
