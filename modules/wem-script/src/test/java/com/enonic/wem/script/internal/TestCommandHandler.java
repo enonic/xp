@@ -18,8 +18,8 @@ public final class TestCommandHandler
     public Object execute( final CommandRequest req )
     {
         final String name = req.param( "name" ).value( String.class );
-        final Function<Object, Object> transform = req.param( "transform" ).callback();
+        final Function<Object[], Object> transform = req.param( "transform" ).callback();
 
-        return transform.apply( name ).toString();
+        return transform.apply( new Object[]{name} ).toString();
     }
 }

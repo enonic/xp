@@ -6,8 +6,9 @@ import java.util.function.Function;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.script.command.CommandParam;
 import com.enonic.wem.api.convert.Converters;
+import com.enonic.wem.script.command.CommandParam;
+import com.enonic.wem.script.internal.util.JsObjectConverter;
 
 final class CommandParamImpl
     implements CommandParam
@@ -60,16 +61,28 @@ final class CommandParamImpl
 
     @Override
     @SuppressWarnings("unchecked")
-    public Function<Object, Object> callback()
+    public Function<Object[], Object> callback()
     {
         checkRequired();
 
         if ( this.value instanceof Function )
         {
-            return (Function<Object, Object>) this.value;
+            return wrapFunction( (Function<Object[], Object>) this.value );
         }
 
         return null;
+    }
+
+    private Function<Object[], Object> wrapFunction( final Function<Object[], Object> func )
+    {
+        return new Function<Object[], Object>()
+        {
+            @Override
+            public Object apply( final Object[] args )
+            {
+                return func.apply( JsObjectConverter.toJsArray( args ) );
+            }
+        };
     }
 
     @Override

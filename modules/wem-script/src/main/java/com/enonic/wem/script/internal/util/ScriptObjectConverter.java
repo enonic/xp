@@ -80,7 +80,7 @@ public final class ScriptObjectConverter
         return result;
     }
 
-    private static Function<Object, Object> toFunction( final ScriptObjectMirror source )
+    private static Function<Object[], Object> toFunction( final ScriptObjectMirror source )
     {
         return arg -> toObject( source.call( source, arg ) );
     }

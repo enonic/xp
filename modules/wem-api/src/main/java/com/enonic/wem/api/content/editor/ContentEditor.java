@@ -2,7 +2,7 @@ package com.enonic.wem.api.content.editor;
 
 import com.enonic.wem.api.content.Content;
 
-public interface ContentEditor<C extends Content>
+public interface ContentEditor
 {
-    public Content.EditBuilder edit( C toBeEdited );
+    public Content.EditBuilder edit( Content toBeEdited );
 }

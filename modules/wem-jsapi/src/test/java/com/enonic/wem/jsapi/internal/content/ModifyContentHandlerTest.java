@@ -1,0 +1,71 @@
+package com.enonic.wem.jsapi.internal.content;
+
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import junit.framework.Assert;
+
+import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.UpdateContentParams;
+import com.enonic.wem.api.content.editor.ContentEditor;
+import com.enonic.wem.jsapi.internal.AbstractHandlerTest;
+import com.enonic.wem.script.command.CommandHandler;
+
+public class ModifyContentHandlerTest
+    extends AbstractHandlerTest
+{
+    private ContentService contentService;
+
+    @Override
+    protected CommandHandler createHandler()
+        throws Exception
+    {
+        this.contentService = Mockito.mock( ContentService.class );
+
+        final ModifyContentHandler handler = new ModifyContentHandler();
+        handler.setContentService( this.contentService );
+
+        return handler;
+    }
+
+    @Test
+    public void modifyById()
+        throws Exception
+    {
+        execute( "modifyById" );
+    }
+
+    @Test
+    public void modifyByPath()
+        throws Exception
+    {
+        final Content content = ContentFixtures.newContent();
+        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        Mockito.when( this.contentService.update( Mockito.any() ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0] ) );
+
+        execute( "modifyByPath" );
+    }
+
+    private Content invokeUpdate( final UpdateContentParams params )
+    {
+        Assert.assertEquals( ContentId.from( "123456" ), params.getContentId() );
+
+        final ContentEditor editor = params.getEditor();
+        Assert.assertNotNull( editor );
+
+        final Content content = ContentFixtures.newContent();
+        editor.edit( content );
+        return null;
+    }
+
+    @Test
+    public void modify_notFound()
+        throws Exception
+    {
+        execute( "modify_notFound" );
+    }
+}
