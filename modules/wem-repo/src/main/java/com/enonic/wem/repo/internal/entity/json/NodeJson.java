@@ -18,6 +18,7 @@ import com.enonic.wem.api.node.NodeCollection;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeType;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -69,8 +70,8 @@ final class NodeJson
     @JsonProperty("inheritPermissions")
     private boolean inheritPermissions;
 
-    @JsonProperty("collection")
-    private String collection;
+    @JsonProperty("nodeType")
+    private String nodeType;
 
     public Node fromJson()
     {
@@ -90,7 +91,7 @@ final class NodeJson
             manualOrderValue( this.manualOrderValue ).
             permissions( fromJson( this.permissions ) ).
             inheritPermissions( this.inheritPermissions ).
-            collection( NodeCollection.from( this.collection ) ).
+            nodeType( NodeType.from( this.nodeType ) ).
             build();
     }
 
@@ -134,7 +135,7 @@ final class NodeJson
         json.manualOrderValue = node.getManualOrderValue();
         json.permissions = toJson( node.getPermissions() );
         json.inheritPermissions = node.inheritsPermissions();
-        json.collection = node.getCollection().getName();
+        json.nodeType = node.getNodeType().getName();
         return json;
     }
 

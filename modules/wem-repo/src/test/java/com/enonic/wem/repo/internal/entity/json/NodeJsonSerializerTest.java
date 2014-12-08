@@ -22,6 +22,7 @@ import com.enonic.wem.api.node.NodeCollection;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeType;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -88,7 +89,7 @@ public class NodeJsonSerializerTest
                 add( FieldOrderExpr.create( IndexPath.from( "displayName" ), OrderExpr.Direction.DESC ) ).
                 build() ).
             permissions( acl ).
-            collection( NodeCollection.DEFAULT_NODE_COLLECTION ).
+            nodeType( NodeType.from( "myNodeType" ) ).
             build();
 
         final String expectedStr = readJson( "serialized-node.json" );

@@ -25,7 +25,7 @@ class ContentQueryNodeQueryTranslator
     private static void doTranslate( final ContentQuery contentQuery, final NodeQuery.Builder builder )
     {
         final ValueFilter contentCollectionFilter = ValueFilter.create().
-            fieldName( NodeIndexPath.COLLECTION.getPath() ).
+            fieldName( NodeIndexPath.NODE_TYPE.getPath() ).
             addValue( Value.newString( ContentConstants.CONTENT_NODE_COLLECTION.getName() ) ).
             build();
 

@@ -17,6 +17,7 @@ import com.enonic.wem.api.node.NodeCollection;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeType;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
@@ -71,7 +72,7 @@ public final class CreateNodeCommand
             manualOrderValue( manualOrderValue ).
             permissions( permissions ).
             inheritPermissions( params.inheritPermissions() ).
-            collection( params.getCollection() != null ? params.getCollection() : NodeCollection.DEFAULT_NODE_COLLECTION );
+            nodeType( params.getNodeType() != null ? params.getNodeType() : NodeType.DEFAULT_NODE_COLLECTION );
 
         final Node newNode = nodeBuilder.build();
 

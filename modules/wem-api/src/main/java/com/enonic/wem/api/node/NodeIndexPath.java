@@ -10,7 +10,7 @@ public class NodeIndexPath
 
     public static final IndexPath VERSION = IndexPath.from( "_versionKey" );
 
-    public static final IndexPath COLLECTION = IndexPath.from( "_collection" );
+    public static final IndexPath NODE_TYPE = IndexPath.from( "_collection" );
 
     public static final IndexPath ALL_TEXT = IndexPath.from( "_all_text" );
 

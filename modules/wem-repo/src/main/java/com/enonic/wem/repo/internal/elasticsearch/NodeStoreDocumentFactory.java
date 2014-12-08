@@ -138,10 +138,10 @@ class NodeStoreDocumentFactory
                                                  IndexConfig.MINIMAL ) );
         }
 
-        if ( this.node.getCollection() != null )
+        if ( this.node.getNodeType() != null )
         {
             builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.COLLECTION, Value.newString( this.node.getCollection().getName() ),
+                StoreDocumentItemFactory.create( NodeIndexPath.NODE_TYPE, Value.newString( this.node.getNodeType().getName() ),
                                                  IndexConfig.MINIMAL ) );
         }
     }

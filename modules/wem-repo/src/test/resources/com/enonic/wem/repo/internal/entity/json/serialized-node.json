@@ -8,7 +8,6 @@
     }
   ],
   "childOrder": "modifiedtime ASC, displayname DESC",
-  "collection": "default",
   "createdTime": "2013-01-02T03:04:05Z",
   "creator": "user:test:creator",
   "data": [
@@ -103,6 +102,7 @@
   "modifiedTime": "2013-01-02T03:04:05Z",
   "modifier": "user:test:modifier",
   "name": "my-name",
+  "nodeType": "myNodeType",
   "parent": "/",
   "path": "/my-name",
   "permissions": [

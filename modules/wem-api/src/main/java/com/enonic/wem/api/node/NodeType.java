@@ -1,19 +1,19 @@
 package com.enonic.wem.api.node;
 
-public class NodeCollection
+public class NodeType
 {
-    public final static NodeCollection DEFAULT_NODE_COLLECTION = NodeCollection.from( "default" );
+    public final static NodeType DEFAULT_NODE_COLLECTION = NodeType.from( "default" );
 
     private final String name;
 
-    private NodeCollection( final String name )
+    private NodeType( final String name )
     {
         this.name = name;
     }
 
-    public static NodeCollection from( final String name )
+    public static NodeType from( final String name )
     {
-        return new NodeCollection( name );
+        return new NodeType( name );
     }
 
     public String getName()
@@ -33,7 +33,7 @@ public class NodeCollection
             return false;
         }
 
-        final NodeCollection that = (NodeCollection) o;
+        final NodeType that = (NodeType) o;
 
         if ( name != null ? !name.equals( that.name ) : that.name != null )
         {

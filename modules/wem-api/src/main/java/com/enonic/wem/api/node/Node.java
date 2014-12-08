@@ -54,7 +54,7 @@ public final class Node
 
     private final boolean inheritPermissions;
 
-    private final NodeCollection collection;
+    private final NodeType nodeType;
 
     private Node( final BaseBuilder builder )
     {
@@ -87,7 +87,7 @@ public final class Node
         this.manualOrderValue = builder.manualOrderValue;
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
-        this.collection = builder.collection;
+        this.nodeType = builder.nodeType;
     }
 
     public NodeName name()
@@ -180,9 +180,9 @@ public final class Node
         return inheritPermissions;
     }
 
-    public NodeCollection getCollection()
+    public NodeType getNodeType()
     {
-        return collection;
+        return nodeType;
     }
 
     public void validateForIndexing()
@@ -261,7 +261,7 @@ public final class Node
 
         boolean inheritPermissions;
 
-        NodeCollection collection;
+        NodeType nodeType;
 
         private BaseBuilder()
         {
@@ -282,7 +282,7 @@ public final class Node
             this.manualOrderValue = node.manualOrderValue;
             this.permissions = node.permissions;
             this.inheritPermissions = node.inheritPermissions;
-            this.collection = node.collection;
+            this.nodeType = node.nodeType;
         }
 
         private BaseBuilder( final NodeId id, final NodeName name )
@@ -314,7 +314,7 @@ public final class Node
 
         private boolean inheritPermissions;
 
-        private NodeCollection nodeCollection = NodeCollection.DEFAULT_NODE_COLLECTION;
+        private NodeType nodeType = NodeType.DEFAULT_NODE_COLLECTION;
 
         public Builder()
         {
@@ -341,7 +341,7 @@ public final class Node
             this.manualOrderValue = node.manualOrderValue;
             this.permissions = node.permissions;
             this.inheritPermissions = node.inheritPermissions;
-            this.nodeCollection = node.collection;
+            this.nodeType = node.nodeType;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -446,9 +446,9 @@ public final class Node
             return this;
         }
 
-        public Builder collection( final NodeCollection nodeCollection )
+        public Builder nodeType( final NodeType nodeType )
         {
-            this.nodeCollection = nodeCollection;
+            this.nodeType = nodeType;
             return this;
         }
 
@@ -470,12 +470,11 @@ public final class Node
             baseBuilder.manualOrderValue = this.manualOrderValue;
             baseBuilder.permissions = this.permissions;
             baseBuilder.inheritPermissions = this.inheritPermissions;
-            baseBuilder.collection = this.nodeCollection;
+            baseBuilder.nodeType = this.nodeType;
 
             return new Node( baseBuilder );
         }
     }
-
 
     public static class EditBuilder
         extends BaseBuilder
@@ -600,7 +599,7 @@ public final class Node
         {
             return false;
         }
-        if ( collection != null ? !collection.equals( node.collection ) : node.collection != null )
+        if ( nodeType != null ? !nodeType.equals( node.nodeType ) : node.nodeType != null )
         {
             return false;
         }
@@ -671,7 +670,7 @@ public final class Node
         result = 31 * result + ( manualOrderValue != null ? manualOrderValue.hashCode() : 0 );
         result = 31 * result + ( permissions != null ? permissions.hashCode() : 0 );
         result = 31 * result + ( inheritPermissions ? 1 : 0 );
-        result = 31 * result + ( collection != null ? collection.hashCode() : 0 );
+        result = 31 * result + ( nodeType != null ? nodeType.hashCode() : 0 );
         return result;
     }
 }
