@@ -29,11 +29,17 @@ public abstract class NashornScriptTest
 
     protected abstract void configure( Bindings bindings );
 
-    protected final void execute( final String name )
+    protected final Object execute( final String name )
         throws Exception
     {
         final URL url = getClass().getResource( getClass().getSimpleName() + "-" + name + ".js" );
         final String script = Resources.toString( url, Charsets.UTF_8 );
-        this.engine.eval( script, this.bindings );
+        return eval( script );
+    }
+
+    protected final Object eval( final String script )
+        throws Exception
+    {
+        return this.engine.eval( script, this.bindings );
     }
 }
