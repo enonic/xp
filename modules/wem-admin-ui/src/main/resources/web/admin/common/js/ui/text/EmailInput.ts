@@ -47,6 +47,10 @@ module api.ui.text {
             return this;
         }
 
+        isAvailable(): boolean {
+            return this.status === "available";
+        }
+
         private checkAvailability(email: string) {
             var status;
             var isValid = this.input.isValid();

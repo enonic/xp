@@ -35,6 +35,18 @@ module api.security {
             return this.memberships;
         }
 
+        setMemberships(memberships: Principal[]) {
+            this.memberships = memberships;
+        }
+
+        clone(): User {
+            return this.newBuilder().build();
+        }
+
+        newBuilder(): UserBuilder {
+            return new UserBuilder(this);
+        }
+
         static create(): UserBuilder {
             return new UserBuilder();
         }

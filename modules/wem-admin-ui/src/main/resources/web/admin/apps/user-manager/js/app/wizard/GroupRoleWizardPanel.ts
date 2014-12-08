@@ -10,6 +10,7 @@ module app.wizard {
 
         private descriptionWizardStepForm: PrincipalDescriptionWizardStepForm;
         private membersWizardStepForm: PrincipalMembersWizardStepForm;
+
         private userStore: UserStoreKey;
 
         constructor(membersWizardStepForm: PrincipalMembersWizardStepForm,
