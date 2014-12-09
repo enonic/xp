@@ -25,6 +25,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.ImageMediaHelper;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.image.ImageHelper;
@@ -212,7 +213,7 @@ public final class ImageResource
         final ContentId imageContentId = ContentId.from( id );
         final Content imageContent = getContent( imageContentId );
 
-        final Attachment attachment = imageContent.getAttachments().first();
+        final Attachment attachment = ImageMediaHelper.getImageAttachment( imageContent );
         if ( attachment == null )
         {
             throw notFound( "Attachment [%s] not found", imageContent.getName().toString() );

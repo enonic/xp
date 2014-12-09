@@ -21,9 +21,9 @@ import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.ImageMediaHelper;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
@@ -107,8 +107,7 @@ public final class ContentIconResource
 
     private ResolvedImage resolveResponseFromContentImageAttachment( final Content content, final int size )
     {
-        final String attachmentName = getImageAttachmentName( content );
-        final Attachment attachment = content.getAttachments().getAttachment( attachmentName );
+        final Attachment attachment = ImageMediaHelper.getImageAttachment( content );
 
         if ( attachment != null )
         {
@@ -120,13 +119,6 @@ public final class ContentIconResource
             }
         }
         return ResolvedImage.unresolved();
-    }
-
-    private String getImageAttachmentName( final Content content )
-    {
-        final PropertyTree contentData = content.getData();
-        final String image = contentData.getString( "image" );
-        return image == null ? content.getName().toString() : image;
     }
 
     public void setBlobService( final BlobService blobService )
