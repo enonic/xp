@@ -163,11 +163,20 @@ public final class SecurityResource
     public UserJson createUser( final CreateUserJson params )
     {
         final User user = securityService.createUser( params.getCreateUserParams() );
+        final PrincipalKey userKey = user.getKey();
         if ( params.getPassword() != null )
         {
-            securityService.setPassword( user.getKey(), params.getPassword() );
+            securityService.setPassword( userKey, params.getPassword() );
         }
-        return new UserJson( user );
+
+        for ( PrincipalKey membershipToAdd : params.getMemberships() )
+        {
+            final PrincipalRelationship rel = PrincipalRelationship.from( membershipToAdd ).to( userKey );
+            securityService.addRelationship( rel );
+        }
+
+        final Principals memberships = securityService.getPrincipals( securityService.getMemberships( userKey ) );
+        return new UserJson( user, memberships );
     }
 
     @POST
@@ -203,7 +212,21 @@ public final class SecurityResource
     public UserJson updateUser( final UpdateUserJson params )
     {
         final User user = securityService.updateUser( params.getUpdateUserParams() );
-        return new UserJson( user );
+
+        final PrincipalKey userKey = user.getKey();
+        for ( PrincipalKey membershipToAdd : params.getAddMemberships() )
+        {
+            final PrincipalRelationship rel = PrincipalRelationship.from( membershipToAdd ).to( userKey );
+            securityService.addRelationship( rel );
+        }
+        for ( PrincipalKey membershipToRemove : params.getRemoveMemberships() )
+        {
+            final PrincipalRelationship rel = PrincipalRelationship.from( membershipToRemove ).to( userKey );
+            securityService.removeRelationship( rel );
+        }
+
+        final Principals memberships = securityService.getPrincipals( securityService.getMemberships( userKey ) );
+        return new UserJson( user, memberships );
     }
 
     @POST

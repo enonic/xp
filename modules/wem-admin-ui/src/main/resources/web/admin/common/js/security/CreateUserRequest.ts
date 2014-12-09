@@ -7,6 +7,7 @@ module api.security {
         private email: string;
         private login: string;
         private password: string;
+        private memberships: PrincipalKey[] = [];
 
         constructor() {
             super();
@@ -38,13 +39,19 @@ module api.security {
             return this;
         }
 
+        setMemberships(memberships: PrincipalKey[]): CreateUserRequest {
+            this.memberships = memberships.slice(0);
+            return this;
+        }
+
         getParams(): Object {
             return {
                 key: this.key.toString(),
                 displayName: this.displayName,
                 email: this.email,
                 login: this.login,
-                password: this.password
+                password: this.password,
+                memberships: this.memberships.map((memberKey) => memberKey.toString())
             };
         }
 

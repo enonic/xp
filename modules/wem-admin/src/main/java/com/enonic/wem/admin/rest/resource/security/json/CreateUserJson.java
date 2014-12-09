@@ -1,12 +1,17 @@
 package com.enonic.wem.admin.rest.resource.security.json;
 
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalKeys;
+
+import static java.util.stream.Collectors.toList;
 
 public final class CreateUserJson
 {
@@ -14,10 +19,12 @@ public final class CreateUserJson
 
     private final String password;
 
+    private final PrincipalKeys memberships;
+
     @JsonCreator
     public CreateUserJson( @JsonProperty("key") final String userKey, @JsonProperty("displayName") final String displayName,
                            @JsonProperty("email") final String email, @JsonProperty("login") final String login,
-                           @JsonProperty("password") final String password )
+                           @JsonProperty("password") final String password, @JsonProperty("memberships") final List<String> memberships )
     {
         final PrincipalKey principalKey = PrincipalKey.from( userKey );
         this.createUserParams = CreateUserParams.create().
@@ -27,6 +34,7 @@ public final class CreateUserJson
             login( login ).
             build();
         this.password = password;
+        this.memberships = PrincipalKeys.from( memberships.stream().map( PrincipalKey::from ).collect( toList() ) );
     }
 
     @JsonIgnore
@@ -39,5 +47,11 @@ public final class CreateUserJson
     public String getPassword()
     {
         return password;
+    }
+
+    @JsonIgnore
+    public PrincipalKeys getMemberships()
+    {
+        return memberships;
     }
 }

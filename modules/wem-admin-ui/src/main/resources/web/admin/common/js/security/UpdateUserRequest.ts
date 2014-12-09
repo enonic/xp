@@ -6,6 +6,8 @@ module api.security {
         private displayName: string;
         private email: string;
         private login: string;
+        private membershipsToAdd: PrincipalKey[] = [];
+        private membershipsToRemove: PrincipalKey[] = [];
 
         constructor() {
             super();
@@ -32,12 +34,24 @@ module api.security {
             return this;
         }
 
+        addMemberships(memberships: PrincipalKey[]): UpdateUserRequest {
+            this.membershipsToAdd = memberships.slice(0);
+            return this;
+        }
+
+        removeMemberships(memberships: PrincipalKey[]): UpdateUserRequest {
+            this.membershipsToRemove = memberships.slice(0);
+            return this;
+        }
+
         getParams(): Object {
             return {
                 key: this.key.toString(),
                 displayName: this.displayName,
                 email: this.email,
-                login: this.login
+                login: this.login,
+                addMemberships: this.membershipsToAdd.map((memberKey) => memberKey.toString()),
+                removeMemberships: this.membershipsToRemove.map((memberKey) => memberKey.toString())
             };
         }
 
