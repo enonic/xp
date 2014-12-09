@@ -64,6 +64,15 @@ module api.content.attachment {
 
         size: number;
 
+        public fromJson(json: AttachmentJson): AttachmentBuilder {
+            this.setBlobKey(new api.blob.BlobKey(json.blobKey)).
+                setName(new AttachmentName(json.name)).
+                setLabel(json.label).
+                setSize(json.size).
+                setMimeType(json.mimeType);
+            return this;
+        }
+
         public setBlobKey(value: api.blob.BlobKey): AttachmentBuilder {
             this.blobKey = value;
             return this;

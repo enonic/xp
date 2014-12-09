@@ -72,12 +72,6 @@
   </service>
 
   <service auto-export="interfaces">
-    <bean class="com.enonic.wem.admin.rest.resource.content.ContentAttachmentResource">
-      <property name="attachmentService" ref="attachmentService"/>
-    </bean>
-  </service>
-
-  <service auto-export="interfaces">
     <bean class="com.enonic.wem.admin.rest.resource.blob.BlobResource">
       <property name="blobService" ref="blobService"/>
     </bean>

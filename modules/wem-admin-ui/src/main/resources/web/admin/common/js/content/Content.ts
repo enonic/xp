@@ -9,6 +9,8 @@ module api.content {
 
         private data: PropertyTree;
 
+        private attachments: api.content.attachment.Attachments;
+
         private metadata: Metadata[] = [];
 
         private form: api.form.Form;
@@ -24,6 +26,7 @@ module api.content {
 
             api.util.assertNotNull(builder.data, "data is required for Content");
             this.data = builder.data;
+            this.attachments = builder.attachments;
             this.form = builder.form;
 
             this.metadata = builder.metadata;
@@ -34,6 +37,10 @@ module api.content {
 
         getContentData(): PropertyTree {
             return this.data;
+        }
+
+        getAttachments(): api.content.attachment.Attachments {
+            return this.attachments;
         }
 
         getMetadata(name: api.schema.metadata.MetadataSchemaName): Metadata {
@@ -125,6 +132,8 @@ module api.content {
 
         data: PropertyTree;
 
+        attachments: api.content.attachment.Attachments;
+
         form: api.form.Form;
 
         metadata: Metadata[];
@@ -140,6 +149,7 @@ module api.content {
             if (source) {
 
                 this.data = source.getContentData() ? source.getContentData().copy() : null;
+                this.attachments = source.getAttachments();
                 this.form = source.getForm();
 
                 this.metadata = source.getAllMetadata().map((metadata: Metadata) => metadata.clone());
@@ -155,6 +165,7 @@ module api.content {
             super.fromContentSummaryJson(json);
 
             this.data = PropertyTree.fromJson(json.data, propertyIdProvider);
+            this.attachments = new api.content.attachment.AttachmentsBuilder().fromJson(json.attachments).build();
             this.metadata = [];
             json.metadata.forEach((metadataJson: api.content.json.MetadataJson) => {
                 this.metadata.push(Metadata.fromJson(metadataJson, propertyIdProvider));
@@ -177,6 +188,11 @@ module api.content {
 
         setData(value: PropertyTree): ContentBuilder {
             this.data = value;
+            return this;
+        }
+
+        setAttachments(value: api.content.attachment.Attachments): ContentBuilder {
+            this.attachments = value;
             return this;
         }
 

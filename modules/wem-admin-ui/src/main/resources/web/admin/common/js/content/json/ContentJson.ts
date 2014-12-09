@@ -4,6 +4,8 @@ module api.content.json {
 
         data: api.data.PropertyArrayJson[];
 
+        attachments: api.content.attachment.AttachmentJson[];
+
         metadata: api.content.json.MetadataJson[];
 
         form: api.form.json.FormJson;

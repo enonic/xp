@@ -375,23 +375,16 @@ module app.wizard {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
 
-            var parallelPromises: wemQ.Promise<any>[] = [
-                new api.content.attachment.GetAttachmentsRequest(content.getContentId()).sendAndParse(),
-                this.createSteps()
-            ];
+            var parallelPromises: wemQ.Promise<any>[] = [this.createSteps()];
 
             return wemQ.all(parallelPromises).
-                spread<void>((attachmentsArray: api.content.attachment.Attachment[], schemas: MetadataSchema[]) => {
-
-                var attachments = new api.content.attachment.AttachmentsBuilder().
-                    addAll(attachmentsArray).
-                    build();
+                spread<void>((schemas: MetadataSchema[]) => {
 
                 var formContext = new ContentFormContextBuilder().
                     setSite(this.site).
                     setParentContent(this.parentContent).
                     setPersistedContent(content).
-                    setAttachments(attachments).
+                    setAttachments(content.getAttachments()).
                     setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).
                     build();
 

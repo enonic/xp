@@ -49,6 +49,13 @@ module api.content.attachment {
 
         attachments: Attachment[] = [];
 
+        public fromJson(jsons: AttachmentJson[]): AttachmentsBuilder {
+            jsons.forEach((json: AttachmentJson) => {
+                this.attachments.push(new AttachmentBuilder().fromJson(json).build());
+            });
+            return this;
+        }
+
         public add(value: Attachment): AttachmentsBuilder {
             this.attachments.push(value);
             return this;

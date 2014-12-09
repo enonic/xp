@@ -43,7 +43,7 @@ module api.content.form {
         }
 
         getAttachments(): api.content.attachment.Attachments {
-            return this.attachments;
+            return this.persistedContent.getAttachments();
         }
 
         createInputTypeViewContext(inputTypeConfig: any, parentPropertyPath: PropertyPath,
