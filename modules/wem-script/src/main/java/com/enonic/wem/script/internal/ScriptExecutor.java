@@ -14,6 +14,4 @@ public interface ScriptExecutor
     public void addGlobalBinding( String key, Object value );
 
     public ScriptObject invokeMethod( Object scope, JSObject func, Object... args );
-
-    public Object convertToJsObject( Object value );
 }

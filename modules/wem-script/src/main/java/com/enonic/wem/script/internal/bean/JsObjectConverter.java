@@ -9,6 +9,8 @@ import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import jdk.nashorn.api.scripting.ScriptUtils;
+import jdk.nashorn.internal.objects.Global;
+import jdk.nashorn.internal.objects.NativeArray;
 
 import com.enonic.wem.script.internal.serializer.ScriptMapGenerator;
 import com.enonic.wem.script.serializer.MapSerializable;
@@ -20,6 +22,11 @@ public final class JsObjectConverter
         if ( value instanceof MapSerializable )
         {
             return toJs( (MapSerializable) value );
+        }
+
+        if ( value instanceof List )
+        {
+            return toJs( (List) value );
         }
 
         return value;
@@ -41,6 +48,17 @@ public final class JsObjectConverter
         final ScriptMapGenerator generator = new ScriptMapGenerator();
         value.serialize( generator );
         return generator.getRoot();
+    }
+
+    private static Object toJs( final List list )
+    {
+        final Object array = Global.allocate( new Object[0] );
+        for ( final Object element : list )
+        {
+            NativeArray.push( array, toJs( element ) );
+        }
+
+        return array;
     }
 
     public static Object fromJs( final Object value )

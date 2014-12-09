@@ -8,10 +8,14 @@ import javax.script.ScriptEngine;
 import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.JSObject;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import jdk.nashorn.internal.objects.Global;
+import jdk.nashorn.internal.runtime.Context;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptObject;
+import com.enonic.wem.script.internal.bean.JsObjectConverter;
 import com.enonic.wem.script.internal.bean.ScriptObjectFactory;
 import com.enonic.wem.script.internal.bean.ScriptObjectFactoryImpl;
 import com.enonic.wem.script.internal.error.ErrorHelper;
@@ -32,12 +36,23 @@ final class ScriptExecutorImpl
 
     private final ScriptObjectFactory scriptObjectFactory;
 
+    private final Global global;
+
     public ScriptExecutorImpl( final ScriptEngine engine, final CommandInvoker invoker )
     {
         this.engine = engine;
         this.invoker = invoker;
         this.globals = Maps.newHashMap();
         this.scriptObjectFactory = new ScriptObjectFactoryImpl( this );
+
+        try
+        {
+            this.global = ( (ScriptObjectMirror) engine.eval( "this" ) ).to( Global.class );
+        }
+        catch ( final Exception e )
+        {
+            throw new Error( e );
+        }
     }
 
     private Bindings createBindings()
@@ -90,7 +105,8 @@ final class ScriptExecutorImpl
     {
         try
         {
-            final Object result = func.call( scope, args );
+            final Object[] converted = convertToJsObject( args );
+            final Object result = func.call( scope, converted );
             return this.scriptObjectFactory.create( result );
         }
         catch ( final Exception e )
@@ -99,9 +115,21 @@ final class ScriptExecutorImpl
         }
     }
 
-    @Override
-    public Object convertToJsObject( final Object value )
+    private Object[] convertToJsObject( final Object[] value )
     {
-        return null;
+        if ( Context.getGlobal() != null )
+        {
+            return JsObjectConverter.toJsArray( value );
+        }
+
+        try
+        {
+            Context.setGlobal( this.global );
+            return JsObjectConverter.toJsArray( value );
+        }
+        finally
+        {
+            Context.setGlobal( null );
+        }
     }
 }
