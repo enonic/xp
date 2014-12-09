@@ -1,57 +1,44 @@
 .image-uploader {
+  position: relative;
 
-  input[type=text] {
-    width: 100%;
-    margin-bottom: 4px;
-  }
-
-  .dropzone {
-    height: 250px;
-    width: 100%;
-    line-height: 250px;
-  }
-
-  .progress {
-    width: 100%;
-    margin: 25px 0;
-    //.linear-gradient(top, #444, #666);
-
-    .progress-indicator {
-      height: 32px;
-      background-color: #8db800;
-      //.linear-gradient(top, #a7d200, #8db800);
-    }
-
-  }
-
-  .image-box:hover img {
-    border-color: darken(@admin-input-blue, 10%);
-  }
-
-  .image-box {
-    position: relative;
-
-    .tool-button {
-      .button(@admin-dark-gray, transparent);
-      box-sizing: content-box;
-      vertical-align: top;
-      height: 24px;
-      width: 24px;
-      padding: 0;
-      margin: 7px 10px 7px 0px;
-      border: none;
-      cursor: pointer;
-    }
+  .result {
 
     img {
       width: 100%;
+      max-height: 500px;
       border: 1px solid transparent;
+
+      &:hover {
+        border-color: darken(@admin-input-blue, 10%);
+      }
+
+      &.selected {
+        border-color: darken(@admin-input-blue, 10%);
+        .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
+      }
     }
 
-    img.selected {
-      border-color: darken(@admin-input-blue, 10%);
-      .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
+    .toolbar {
+      height: auto;
+
+      button {
+        border: 1px solid transparent;
+        padding: 5px;
+        margin: 0;
+        cursor: pointer;
+
+        &:before {
+          height: 24px;
+          width: 24px;
+          font-size: 24px;
+        }
+
+        span {
+          display: none;
+        }
+      }
     }
+
   }
 
 }

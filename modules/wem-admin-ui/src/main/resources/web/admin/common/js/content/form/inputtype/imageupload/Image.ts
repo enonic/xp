@@ -21,12 +21,11 @@ module api.content.form.inputtype.imageupload {
             var input = config.input;
             this.attachment = config.attachments.getAttachmentByLabel("source");
 
-            var uploadUrl = api.util.UriHelper.getRestUri("blob/upload");
-            var imageUploaderConfig = <api.ui.uploader.ImageUploaderConfig> {
-                showImageAfterUpload: true,
+            this.imageUploader = new api.ui.uploader.ImageUploader({
+                name: input.getName(),
+                url: api.util.UriHelper.getRestUri("blob/upload"),
                 maximumOccurrences: 1
-            };
-            this.imageUploader = new api.ui.uploader.ImageUploader(input.getName(), uploadUrl, imageUploaderConfig);
+            });
 
 
             this.appendChild(this.imageUploader);
@@ -54,7 +53,7 @@ module api.content.form.inputtype.imageupload {
                 this.imageUploader.setValue(imgUrl);
             }
 
-            this.imageUploader.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
+            this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent) => {
                 if (this.attachmentName == null) {
                     this.attachmentName = event.getUploadedItem().getName();
                     this.attachment = this.uploadItemToAttachment(event.getUploadedItem());
@@ -64,7 +63,7 @@ module api.content.form.inputtype.imageupload {
                 }
             });
 
-            this.imageUploader.onImageReset(() => {
+            this.imageUploader.onUploadReset(() => {
                 this.attachment = null;
                 this.attachmentName = null;
                 property.setValue(ValueTypes.STRING.newNullValue());
