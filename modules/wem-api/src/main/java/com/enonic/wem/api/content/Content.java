@@ -481,15 +481,16 @@ public class Content
 
         public EditBuilder permissions( final AccessControlList permissions )
         {
-            changes.recordChange( newPossibleChange( "permissions" ).from( this.original.permissions ).to( this.permissions ).build() );
             this.permissions = permissions;
+            changes.recordChange( newPossibleChange( "permissions" ).from( this.original.permissions ).to( permissions ).build() );
             return this;
         }
 
         public EditBuilder inheritPermissions( final boolean inheritPermissions )
         {
+            this.inheritPermissions = inheritPermissions;
             changes.recordChange(
-                newPossibleChange( "inheritPermissions" ).from( this.original.inheritPermissions ).to( this.inheritPermissions ).build() );
+                newPossibleChange( "inheritPermissions" ).from( this.original.inheritPermissions ).to( inheritPermissions ).build() );
             this.inheritPermissions = inheritPermissions;
             return this;
         }

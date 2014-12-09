@@ -1,12 +1,14 @@
 package com.enonic.wem.api.content;
 
+import java.util.concurrent.Future;
+
 import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 public interface ContentService
 {
-    Site create( final CreateSiteParams params );
+    Site create( CreateSiteParams params );
 
     Content create( CreateContentParams params );
 
@@ -18,13 +20,13 @@ public interface ContentService
 
     Content delete( DeleteContentParams params );
 
-    Content push( final PushContentParams params );
+    Content push( PushContentParams params );
 
     Content duplicate( DuplicateContentParams params );
 
-    Content setChildOrder( final SetContentChildOrderParams params );
+    Content setChildOrder( SetContentChildOrderParams params );
 
-    ReorderChildContentsResult reorderChildren( final ReorderChildContentsParams params );
+    ReorderChildContentsResult reorderChildren( ReorderChildContentsParams params );
 
     Content getById( ContentId id );
 
@@ -42,11 +44,14 @@ public interface ContentService
 
     FindContentByQueryResult find( FindContentByQueryParams params );
 
-    CompareContentResult compare( final CompareContentParams params );
+    CompareContentResult compare( CompareContentParams params );
 
-    CompareContentResults compare( final CompareContentsParams params );
+    CompareContentResults compare( CompareContentsParams params );
 
-    FindContentVersionsResult getVersions( final FindContentVersionsParams params );
+    FindContentVersionsResult getVersions( FindContentVersionsParams params );
 
-    GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params );
+    GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
+
+    Future<Integer> applyPermissions( ApplyContentPermissionsParams params );
+
 }

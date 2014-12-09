@@ -157,17 +157,23 @@ public final class AccessControlEntry
             return this;
         }
 
-        public Builder allow( final Permission permission )
+        public Builder allow( final Permission... permissions )
         {
-            this.deniedPermissions.remove( permission );
-            this.allowedPermissions.add( permission );
+            for ( Permission permission : permissions )
+            {
+                this.deniedPermissions.remove( permission );
+                this.allowedPermissions.add( permission );
+            }
             return this;
         }
 
-        public Builder deny( final Permission permission )
+        public Builder deny( final Permission... permissions )
         {
-            this.allowedPermissions.remove( permission );
-            this.deniedPermissions.add( permission );
+            for ( Permission permission : permissions )
+            {
+                this.allowedPermissions.remove( permission );
+                this.deniedPermissions.add( permission );
+            }
             return this;
         }
 

@@ -45,4 +45,7 @@ public interface NodeService
     Node getByVersionId( NodeVersionId nodeVersionid );
 
     void snapshot();
+
+    int applyPermissions( ApplyNodePermissionsParams params );
+
 }

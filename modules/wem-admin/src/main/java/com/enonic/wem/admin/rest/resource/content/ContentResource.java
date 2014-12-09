@@ -33,6 +33,7 @@ import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
+import com.enonic.wem.admin.rest.resource.content.json.ApplyContentPermissionsJson;
 import com.enonic.wem.admin.rest.resource.content.json.CompareContentsJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
@@ -46,6 +47,7 @@ import com.enonic.wem.admin.rest.resource.content.json.ReorderChildJson;
 import com.enonic.wem.admin.rest.resource.content.json.ReorderChildrenJson;
 import com.enonic.wem.admin.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
+import com.enonic.wem.api.content.ApplyContentPermissionsParams;
 import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.CompareContentsParams;
 import com.enonic.wem.api.content.Content;
@@ -76,12 +78,14 @@ import com.enonic.wem.api.content.SetContentChildOrderParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.SecurityService;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
@@ -437,6 +441,26 @@ public final class ContentResource
         final RenameContentParams renameParams = json.getRenameContentParams();
         final Content renamedContent = contentService.rename( renameParams );
         return new ContentJson( renamedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+    }
+
+    @POST
+    @Path("applyPermissions")
+    public ContentJson applyPermissions( final ApplyContentPermissionsJson jsonParams )
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        final PrincipalKey modifier =
+            authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
+
+        final UpdateContentParams updatePermissionsParams = jsonParams.getUpdateContentParams().modifier( modifier );
+        final Content updatedContent = contentService.update( updatePermissionsParams );
+
+        contentService.applyPermissions( ApplyContentPermissionsParams.create().
+            contentId( updatedContent.getId() ).
+            overwriteChildPermissions( jsonParams.isOverwriteChildPermissions() ).
+            modifier( modifier ).
+            build() );
+
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
     private List<Attachment> parseAttachments( final List<AttachmentJson> attachmentJsonList )

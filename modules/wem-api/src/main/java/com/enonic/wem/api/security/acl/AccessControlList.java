@@ -57,6 +57,11 @@ public final class AccessControlList
         return this.entries.get( principalKey );
     }
 
+    public boolean contains( final PrincipalKey principalKey )
+    {
+        return this.entries.containsKey( principalKey );
+    }
+
     public boolean isEmpty()
     {
         return this.entries.isEmpty();

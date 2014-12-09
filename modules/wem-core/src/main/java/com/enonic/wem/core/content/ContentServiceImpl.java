@@ -1,6 +1,11 @@
 package com.enonic.wem.core.content;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import com.enonic.wem.api.blob.BlobService;
+import com.enonic.wem.api.content.ApplyContentPermissionsParams;
 import com.enonic.wem.api.content.CompareContentParams;
 import com.enonic.wem.api.content.CompareContentResult;
 import com.enonic.wem.api.content.CompareContentResults;
@@ -58,6 +63,8 @@ public class ContentServiceImpl
 
     private static final String TEMPLATES_FOLDER_DISPLAY_NAME = "Templates";
 
+    private static final ModuleConfigsDataSerializer MODULE_CONFIGS_DATA_SERIALIZER = new ModuleConfigsDataSerializer();
+
     private ContentTypeService contentTypeService;
 
     private NodeService nodeService;
@@ -68,7 +75,7 @@ public class ContentServiceImpl
 
     private EventPublisher eventPublisher;
 
-    private final static ModuleConfigsDataSerializer MODULE_CONFIGS_DATA_SERIALIZER = new ModuleConfigsDataSerializer();
+    private final ExecutorService applyPermissionsExecutor = Executors.newSingleThreadExecutor(); // TODO review executor settings
 
     @Override
     public Site create( final CreateSiteParams params )
@@ -433,6 +440,19 @@ public class ContentServiceImpl
     public String generateContentName( final String displayName )
     {
         return new ContentPathNameGenerator().generatePathName( displayName );
+    }
+
+    @Override
+    public Future<Integer> applyPermissions( final ApplyContentPermissionsParams params )
+    {
+        final ApplyContentPermissionsCommand applyPermissionsCommand = ApplyContentPermissionsCommand.create( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
+            build();
+
+        return this.applyPermissionsExecutor.submit( applyPermissionsCommand::execute );
     }
 
     public void setContentTypeService( final ContentTypeService contentTypeService )

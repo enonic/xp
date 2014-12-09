@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ws.rs.core.MediaType;
 
@@ -15,6 +16,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.resource.MockRestResponse;
 import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.content.ApplyContentPermissionsParams;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
@@ -60,11 +62,16 @@ import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.schema.content.validator.MaximumOccurrencesValidationError;
 import com.enonic.wem.api.schema.content.validator.MissingRequiredValueValidationError;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.SecurityService;
+import com.enonic.wem.api.security.User;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.site.Site.newSite;
+import static com.enonic.wem.api.security.acl.Permission.READ;
 import static org.junit.Assert.*;
 
 public class ContentResourceTest
@@ -774,6 +781,34 @@ public class ContentResourceTest
             entity( readFromFile( "duplicate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
+    }
+
+    @Test
+    public void applyPermissions()
+        throws Exception
+    {
+        Content content = createContent( "content-id", "content-name", "mymodule:content-type" );
+
+        final User admin = User.create().displayName( "Admin" ).key( PrincipalKey.from( "user:system:admin" ) ).login( "admin" ).build();
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "user:system:admin" ) ) ).thenReturn(
+            Optional.of( admin ) );
+        final User anon = User.create().displayName( "Anonymous" ).key( PrincipalKey.ofAnonymous() ).login( "anonymous" ).build();
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn(
+            Optional.of( anon ) );
+
+        final AccessControlList permissions =
+            AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.from( "user:system:admin" ) ).allowAll().build(),
+                                  AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build() );
+        content = Content.newContent( content ).permissions( permissions ).inheritPermissions( true ).build();
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
+
+        String jsonString = request().path( "content/applyPermissions" ).
+            entity( readFromFile( "apply_content_permissions_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( contentService, Mockito.times( 1 ) ).applyPermissions( Mockito.isA( ApplyContentPermissionsParams.class ) );
+
+        assertJson( "apply_content_permissions_success.json", jsonString );
     }
 
     private DataValidationErrors createDataValidationErrors()

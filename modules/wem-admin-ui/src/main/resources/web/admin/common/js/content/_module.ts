@@ -18,6 +18,7 @@
 ///<reference path='Metadata.ts' />
 
 ///<reference path='ContentResourceRequest.ts' />
+///<reference path='ApplyContentPermissionsRequest.ts' />
 ///<reference path='GetContentByIdRequest.ts' />
 ///<reference path='GetContentSummaryByIdRequest' />
 ///<reference path='GetContentSummaryByIds' />

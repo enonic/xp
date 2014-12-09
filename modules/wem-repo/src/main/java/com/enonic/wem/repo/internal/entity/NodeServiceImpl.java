@@ -1,6 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.node.ApplyNodePermissionsParams;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.FindNodesByParentParams;
@@ -350,6 +351,20 @@ public class NodeServiceImpl
     public void snapshot()
     {
         this.indexService.snapshot( ContextAccessor.current().getRepositoryId() );
+    }
+
+    @Override
+    public int applyPermissions( final ApplyNodePermissionsParams params )
+    {
+        return ApplyNodePermissionsCommand.create().
+            params( params ).
+            indexService( this.indexService ).
+            nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
+            versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
+            build().
+            execute();
     }
 
     public void setIndexService( final IndexService indexService )
