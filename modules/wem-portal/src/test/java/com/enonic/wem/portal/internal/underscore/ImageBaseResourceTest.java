@@ -11,10 +11,10 @@ import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.mock.memory.MemoryBlob;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -60,12 +60,10 @@ public abstract class ImageBaseResourceTest
             label( "small" ).
             build();
 
-        final ContentPath contentPath = ContentPath.from( "path/to/content" );
-        final Content content = createContent( "content-id", contentPath, "mymodule:image", attachment );
-        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).
-            thenReturn( content );
-        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).
-            thenReturn( content );
+        final Content content = createContent( "content-id", "path/to/content", "mymodule:image", attachment );
+
+        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
+        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
 
         final byte[] imageData = ByteStreams.toByteArray( getClass().getResourceAsStream( "enonic-logo.png" ) );
 
@@ -81,18 +79,23 @@ public abstract class ImageBaseResourceTest
         return source -> source;
     }
 
-    private Content createContent( final String id, final ContentPath contentPath, final String contentTypeName,
+    private Content createContent( final String id, final String contentPath, final String contentTypeName,
                                    final Attachment... attachments )
     {
+        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        data.addString( "image", attachments[0].getName() );
+
         return Content.newContent().
             id( ContentId.from( id ) ).
             path( contentPath ).
             createdTime( Instant.now() ).
+            type( ContentTypeName.imageMedia() ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
             displayName( "My Content" ).
             modifiedTime( Instant.now() ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
+            data( data ).
             attachments( Attachments.from( attachments ) ).
             build();
     }
