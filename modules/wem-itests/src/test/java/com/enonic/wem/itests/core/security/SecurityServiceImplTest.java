@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.mock.memory.MockBlobService;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.security.CreateGroupParams;
 import com.enonic.wem.api.security.CreateRoleParams;
@@ -94,6 +96,13 @@ public class SecurityServiceImplTest
 
         createRepository( SystemConstants.SYSTEM_REPO );
         waitForClusterHealth();
+
+        securityService.createUserStore( SystemConstants.SYSTEM_USERSTORE.getKey(), SystemConstants.SYSTEM_USERSTORE.getDisplayName() );
+
+        SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( PrincipalKey.ROLES_NODE_NAME ).
+            build() ) );
     }
 
     void createRepository( final Repository repository )

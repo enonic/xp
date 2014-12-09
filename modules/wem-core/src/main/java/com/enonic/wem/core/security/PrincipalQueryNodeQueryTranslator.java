@@ -17,9 +17,10 @@ import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStoreKeys;
 
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.DISPLAY_NAME_KEY;
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.EMAIL_KEY;
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.USER_STORE_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.DISPLAY_NAME_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.EMAIL_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.PRINCIPAL_TYPE_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.USER_STORE_KEY;
 import static java.util.stream.Collectors.toList;
 
 final class PrincipalQueryNodeQueryTranslator
@@ -44,7 +45,7 @@ final class PrincipalQueryNodeQueryTranslator
         if ( !types.isEmpty() )
         {
             nodeQueryBuilder.addQueryFilter( ValueFilter.create().
-                fieldName( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ).
+                fieldName( PRINCIPAL_TYPE_KEY ).
                 addValues( types.stream().map( Object::toString ).collect( toList() ) ).
                 build() );
         }

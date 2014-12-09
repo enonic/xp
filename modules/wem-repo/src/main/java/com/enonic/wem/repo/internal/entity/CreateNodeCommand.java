@@ -15,6 +15,7 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeAlreadyExistException;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeType;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -82,10 +83,6 @@ public final class CreateNodeCommand
 
     private void verifyParentExists()
     {
-
-        // FIX, add after CMS-4588 Make sure a parent exist before creating a node
-
-      /*
         if ( NodePath.ROOT.equals( params.getParent() ) )
         {
             return;
@@ -97,7 +94,6 @@ public final class CreateNodeCommand
             throw new NodeNotFoundException(
                 "Cannot create node with name " + params.getName() + ", parent '" + params.getParent() + "' not found" );
         }
-        */
     }
 
     private Long resolvePotentialManualOrderValue()

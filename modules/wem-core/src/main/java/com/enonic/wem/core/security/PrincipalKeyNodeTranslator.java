@@ -33,8 +33,8 @@ class PrincipalKeyNodeTranslator
 
         final PropertyTree rootDataSet = node.data();
 
-        final String principalType = rootDataSet.getString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY );
-        final String userStoreKey = rootDataSet.getString( PrincipalNodeTranslator.USER_STORE_KEY );
+        final String principalType = rootDataSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY );
+        final String userStoreKey = rootDataSet.getString( PrincipalPropertyNames.USER_STORE_KEY );
 
         final PrincipalType type = PrincipalType.valueOf( principalType );
         switch ( type )

@@ -3,11 +3,16 @@ package com.enonic.wem.core.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalRelationship;
 import com.enonic.wem.api.security.SecurityService;
+import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
 
@@ -17,9 +22,13 @@ public final class SecurityInitializer
 
     private SecurityService securityService;
 
+    private NodeService nodeService;
+
     public final void init()
     {
         LOG.info( "Initializing security principals" );
+
+        initializeUserStores();
 
         final User anonymous = User.anonymous();
         final CreateUserParams createUser = CreateUserParams.create().
@@ -38,6 +47,8 @@ public final class SecurityInitializer
             build();
         addUser( createAdmin );
 
+        initializeRoleFolder();
+
         final CreateRoleParams createEnterpriseAdmin = CreateRoleParams.create().
             roleKey( PrincipalKey.ofEnterpriseAdmin() ).
             displayName( "Enterprise Administrator" ).
@@ -45,6 +56,21 @@ public final class SecurityInitializer
         addRole( createEnterpriseAdmin );
 
         addMember( PrincipalKey.ofEnterpriseAdmin(), createAdmin.getKey() );
+    }
+
+
+    private void initializeUserStores()
+    {
+        final Node systemUserStore = SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.getByPath(
+            NodePath.newNodePath( NodePath.ROOT, SystemConstants.SYSTEM_USERSTORE.getDisplayName() ).build() ) );
+
+        if ( systemUserStore == null )
+        {
+            LOG.info( "Initializing userstore " + SystemConstants.SYSTEM_USERSTORE.getKey() );
+
+            this.securityService.createUserStore( SystemConstants.SYSTEM_USERSTORE.getKey(),
+                                                  SystemConstants.SYSTEM_USERSTORE.getDisplayName() );
+        }
     }
 
     private void addUser( final CreateUserParams createUser )
@@ -92,9 +118,31 @@ public final class SecurityInitializer
         }
     }
 
+    private void initializeRoleFolder()
+    {
+        final Node roleNode = SystemConstants.CONTEXT_USER_STORES.callWith(
+            () -> nodeService.getByPath( NodePath.newNodePath( NodePath.ROOT, PrincipalKey.ROLES_NODE_NAME ).build() ) );
+
+        if ( roleNode == null )
+        {
+            LOG.info( "Initializing roles folder" );
+
+            SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
+                parent( NodePath.ROOT ).
+                name( PrincipalKey.ROLES_NODE_NAME ).
+                build() ) );
+        }
+    }
 
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
     }
+
+    public void setNodeService( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
+    }
 }
+
+

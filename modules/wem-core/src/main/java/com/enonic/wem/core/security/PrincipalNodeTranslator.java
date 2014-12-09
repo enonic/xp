@@ -27,22 +27,15 @@ import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
 import com.enonic.wem.api.security.User;
 
+import static com.enonic.wem.core.security.PrincipalPropertyNames.DISPLAY_NAME_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.EMAIL_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.LOGIN_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.MEMBER_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.PRINCIPAL_TYPE_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.USER_STORE_KEY;
+
 abstract class PrincipalNodeTranslator
 {
-    public static final String DISPLAY_NAME_KEY = "displayName";
-
-    public static final String PRINCIPAL_TYPE_KEY = "principalType";
-
-    public static final String PRINCIPAL_KEY = "principalKey";
-
-    public static final String USER_STORE_KEY = "userStoreKey";
-
-    public static final String EMAIL_KEY = "email";
-
-    public static final String LOGIN_KEY = "login";
-
-    public static final String MEMBER_KEY = "member";
-
     static Principals fromNodes( final Nodes nodes )
     {
         final LinkedHashSet<Principal> principals = Sets.newLinkedHashSet();
@@ -190,7 +183,7 @@ abstract class PrincipalNodeTranslator
                     filter( ( val ) -> !relationshipToKey.equals( val.asString() ) ).
                     collect( Collectors.toList() );
 
-                data.removeProperty( MEMBER_KEY );
+                data.removeProperty( PrincipalPropertyNames.MEMBER_KEY );
                 data.setValues( MEMBER_KEY, updatedMembers );
 
                 return Node.editNode( toBeEdited ).rootDataSet( data );

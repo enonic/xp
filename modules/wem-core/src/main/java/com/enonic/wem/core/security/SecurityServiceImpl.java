@@ -13,12 +13,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeAlreadyExistException;
 import com.enonic.wem.api.node.NodeNotFoundException;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.UpdateNodeParams;
@@ -45,6 +47,7 @@ import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
 import com.enonic.wem.api.security.SecurityService;
+import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.security.UpdateGroupParams;
 import com.enonic.wem.api.security.UpdateRoleParams;
 import com.enonic.wem.api.security.UpdateUserParams;
@@ -74,9 +77,7 @@ public final class SecurityServiceImpl
     {
         this.clock = Clock.systemUTC();
         this.userStores = new CopyOnWriteArrayList<>();
-
-        final UserStore systemUserStore = UserStore.newUserStore().key( UserStoreKey.system() ).displayName( "System" ).build();
-        this.userStores.add( systemUserStore );
+        this.userStores.add( SystemConstants.SYSTEM_USERSTORE );
     }
 
     @Override
@@ -156,7 +157,7 @@ public final class SecurityServiceImpl
         {
             final FindNodesByQueryResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( NodeQuery.create().
                 addQueryFilter( ValueFilter.create().
-                    fieldName( PrincipalNodeTranslator.MEMBER_KEY ).
+                    fieldName( PrincipalPropertyNames.MEMBER_KEY ).
                     addValue( Value.newString( member.toString() ) ).
                     build() ).
                 build() ) );
@@ -565,6 +566,28 @@ public final class SecurityServiceImpl
         {
             return PrincipalQueryResult.newResult().build();
         }
+    }
+
+    public void createUserStore( final UserStoreKey userStoreKey, String displayName )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, displayName );
+
+        final Node systemNode = SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( userStoreKey.toString() ).
+            data( data ).
+            build() ) );
+
+        SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
+            parent( systemNode.path() ).
+            name( "user" ).
+            build() ) );
+
+        SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
+            parent( systemNode.path() ).
+            name( "group" ).
+            build() ) );
     }
 
     public void setNodeService( final NodeService nodeService )

@@ -5,13 +5,13 @@ import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.DISPLAY_NAME_KEY;
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.EMAIL_KEY;
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.LOGIN_KEY;
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.MEMBER_KEY;
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.PRINCIPAL_KEY;
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY;
-import static com.enonic.wem.core.security.PrincipalNodeTranslator.USER_STORE_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.DISPLAY_NAME_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.EMAIL_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.LOGIN_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.MEMBER_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.PRINCIPAL_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.PRINCIPAL_TYPE_KEY;
+import static com.enonic.wem.core.security.PrincipalPropertyNames.USER_STORE_KEY;
 
 class PrincipalIndexConfigFactory
 {

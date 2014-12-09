@@ -21,7 +21,7 @@ public final class PrincipalKey
 
     private static final PrincipalKey ENTERPRISE_ADMIN = PrincipalKey.ofRole( "administrator" );
 
-    final static String ROLES_NODE_NAME = "role";
+    public final static String ROLES_NODE_NAME = "role";
 
     private final UserStoreKey userStore;
 

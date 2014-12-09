@@ -8,6 +8,8 @@ import com.enonic.wem.api.workspace.Workspace;
 
 public final class SystemConstants
 {
+    public static final UserStore SYSTEM_USERSTORE = UserStore.newUserStore().key( UserStoreKey.system() ).displayName( "System" ).build();
+
     public static final Workspace WORKSPACE_USER_STORES = Workspace.create().
         name( "userstores" ).
         build();

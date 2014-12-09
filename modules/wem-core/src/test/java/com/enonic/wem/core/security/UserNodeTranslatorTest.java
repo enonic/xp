@@ -40,9 +40,9 @@ public class UserNodeTranslatorTest
         assertEquals( "rmy", createNodeParams.getName() );
 
         final PropertyTree rootDataSet = createNodeParams.getData();
-        assertEquals( UserStoreKey.system().toString(), rootDataSet.getString( PrincipalNodeTranslator.USER_STORE_KEY ) );
-        assertEquals( PrincipalType.USER.toString(), rootDataSet.getString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ) );
-        assertEquals( "displayname", rootDataSet.getString( PrincipalNodeTranslator.DISPLAY_NAME_KEY ) );
+        assertEquals( UserStoreKey.system().toString(), rootDataSet.getString( PrincipalPropertyNames.USER_STORE_KEY ) );
+        assertEquals( PrincipalType.USER.toString(), rootDataSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
+        assertEquals( "displayname", rootDataSet.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) );
         assertNotNull( rootDataSet );
         assertEquals( 5, rootDataSet.getTotalSize() );
     }
@@ -55,11 +55,11 @@ public class UserNodeTranslatorTest
         final PrincipalKey userKey = PrincipalKey.ofUser( UserStoreKey.system(), "i-am-a-user" );
 
         final PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        rootDataSet.setString( PrincipalNodeTranslator.LOGIN_KEY, "loginkey" );
-        rootDataSet.setString( PrincipalNodeTranslator.EMAIL_KEY, "rmy@enonic.com" );
-        rootDataSet.setString( PrincipalNodeTranslator.DISPLAY_NAME_KEY, "displayname" );
-        rootDataSet.setString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, userKey.getType().toString() );
-        rootDataSet.setString( PrincipalNodeTranslator.USER_STORE_KEY, userKey.getUserStore().toString() );
+        rootDataSet.setString( PrincipalPropertyNames.LOGIN_KEY, "loginkey" );
+        rootDataSet.setString( PrincipalPropertyNames.EMAIL_KEY, "rmy@enonic.com" );
+        rootDataSet.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, "displayname" );
+        rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, userKey.getType().toString() );
+        rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, userKey.getUserStore().toString() );
 
         final Node node = Node.newNode().
             id( NodeId.from( "id" ) ).

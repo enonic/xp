@@ -5,6 +5,7 @@
 
   <bean id="securityInitializer" class="com.enonic.wem.core.security.SecurityInitializer">
     <property name="securityService" ref="securityService"/>
+    <property name="nodeService" ref="nodeService"/>
   </bean>
 
   <bean id="startupInitializer" class="com.enonic.wem.core.initializer.StartupInitializerImpl" init-method="start">

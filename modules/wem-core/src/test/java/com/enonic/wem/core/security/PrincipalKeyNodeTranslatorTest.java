@@ -46,8 +46,8 @@ public class PrincipalKeyNodeTranslatorTest
         throws Exception
     {
         PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        rootDataSet.setString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, PrincipalType.USER.toString() );
-        rootDataSet.setString( PrincipalNodeTranslator.USER_STORE_KEY, UserStoreKey.system().toString() );
+        rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, PrincipalType.USER.toString() );
+        rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, UserStoreKey.system().toString() );
 
         Node userNode = Node.newNode().data( rootDataSet ).
             name( NodeName.from( "rmy" ) ).
@@ -65,8 +65,8 @@ public class PrincipalKeyNodeTranslatorTest
         throws Exception
     {
         PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        rootDataSet.setString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, "fisk" );
-        rootDataSet.setString( PrincipalNodeTranslator.USER_STORE_KEY, UserStoreKey.system().toString() );
+        rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, "fisk" );
+        rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, UserStoreKey.system().toString() );
 
         Node userNode = Node.newNode().data( rootDataSet ).
             name( NodeName.from( "rmy" ) ).

@@ -40,9 +40,9 @@ public class GroupNodeTranslatorTest
         final PropertyTree rootDataSet = createNodeParams.getData();
         assertNotNull( rootDataSet );
         assertEquals( 3, rootDataSet.getTotalSize() );
-        assertEquals( UserStoreKey.system().toString(), rootDataSet.getString( PrincipalNodeTranslator.USER_STORE_KEY ) );
-        assertEquals( PrincipalType.GROUP.toString(), rootDataSet.getString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY ) );
-        assertEquals( "My Group", rootDataSet.getString( PrincipalNodeTranslator.DISPLAY_NAME_KEY ) );
+        assertEquals( UserStoreKey.system().toString(), rootDataSet.getString( PrincipalPropertyNames.USER_STORE_KEY ) );
+        assertEquals( PrincipalType.GROUP.toString(), rootDataSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
+        assertEquals( "My Group", rootDataSet.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) );
     }
 
 
@@ -53,9 +53,9 @@ public class GroupNodeTranslatorTest
         final PrincipalKey groupKey = PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" );
 
         final PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        rootDataSet.setString( PrincipalNodeTranslator.DISPLAY_NAME_KEY, "Group A" );
-        rootDataSet.setString( PrincipalNodeTranslator.PRINCIPAL_TYPE_KEY, groupKey.getType().toString() );
-        rootDataSet.setString( PrincipalNodeTranslator.USER_STORE_KEY, groupKey.getUserStore().toString() );
+        rootDataSet.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, "Group A" );
+        rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, groupKey.getType().toString() );
+        rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, groupKey.getUserStore().toString() );
 
         final Node node = Node.newNode().
             id( NodeId.from( "id" ) ).

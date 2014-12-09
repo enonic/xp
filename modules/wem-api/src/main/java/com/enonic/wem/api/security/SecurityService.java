@@ -138,4 +138,6 @@ public interface SecurityService
 
     void removeRelationships( PrincipalKey from );
 
+    public void createUserStore( final UserStoreKey userStoreKey, String displayName );
+
 }
