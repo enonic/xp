@@ -31,23 +31,33 @@ module app.create {
 
             this.addClass("new-content-dialog");
 
-            var leftColumn = new api.dom.DivEl().setClass("column column-left");
-            this.appendChildToContentPanel(leftColumn);
+            var section = new api.dom.SectionEl().setClass("column");
+            this.appendChildToContentPanel(section);
 
             this.input = api.ui.text.TextInput.large("list-filter").setPlaceholder("Search");
-            leftColumn.appendChild(this.input);
+            section.appendChild(this.input);
 
             this.contentList = new app.create.NewContentDialogList();
-            leftColumn.appendChild(this.contentList);
+            section.appendChild(this.contentList);
 
-            var rightColumn = new api.dom.DivEl("column column-right");
-            this.appendChildToContentPanel(rightColumn);
+            var aside = new api.dom.AsideEl("column");
+            this.appendChildToContentPanel(aside);
 
-            var dropzone = new api.dom.DivEl("dropzone").setId('new-content-dialog-dropzone');
-            rightColumn.appendChild(dropzone);
+            var dropzone = new api.ui.uploader.FileUploader({
+                name: 'new-content-uploader',
+                url: api.util.UriHelper.getRestUri("blob/upload"),
+                showButtons: false,
+                showResult: false,
+                deferred: true  // wait till the window is shown
+            });
+            aside.appendChild(dropzone);
+
+            var recentTitle = new api.dom.H1El();
+            recentTitle.setHtml('Recently Used');
+            aside.appendChild(recentTitle);
 
             this.recentList = new RecentItemsList();
-            rightColumn.appendChild(this.recentList);
+            aside.appendChild(this.recentList);
 
             this.setCancelAction(new api.ui.Action("Cancel", "esc"));
 

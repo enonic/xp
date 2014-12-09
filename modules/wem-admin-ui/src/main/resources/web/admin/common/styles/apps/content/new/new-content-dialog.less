@@ -42,28 +42,19 @@
   }
 
   .dropzone {
-    padding: 10px;
     height: 100px;
     line-height: 31px;
-  }
 
-  .dropzone:before {
-    content: 'Drag files here to upload';
-    vertical-align: middle;
+    &:before {
+      margin-top: 15px;
+      display: inline-block;
+    }
   }
 
   .content-types-list {
-    height: 336px;
+    height: 308px;
     overflow-y: auto;
     overflow-x: hidden;
-
-    > h4 {
-      font-size: 14px;
-      color: #888;
-      margin: 20px 0px;
-      line-height: 0.9em;
-      padding-left: 10px
-    }
 
     .content-types-list-item {
       position: relative;
@@ -95,23 +86,27 @@
     height: 100%;
     float: left;
 
-    &.column-left {
-      width: 60%;
+    > h1 {
+      font-size: 14px;
+      color: #888;
+      margin: 20px 0px;
+      line-height: 0.9em;
+      padding-left: 10px;
+      border-bottom: 1px solid #aaa;
     }
+  }
 
-    &.column-right {
-      margin-left: 4%;
-      width: 36%;
+  section {
+    width: 60%;
+  }
 
-      .content-types-list {
-        height: 270px;
+  aside {
+    margin-left: 4%;
+    width: 36%;
 
-        h4 {
-          border-bottom: 1px solid #aaa;
-        }
-      }
+    .content-types-list {
+      height: 215px;
     }
-
   }
 
 }
