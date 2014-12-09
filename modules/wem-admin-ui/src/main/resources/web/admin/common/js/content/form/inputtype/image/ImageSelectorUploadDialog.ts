@@ -1,8 +1,8 @@
 module api.content.form.inputtype.image {
 
-    import ImageUploadedEvent = api.ui.uploader.ImageUploadedEvent;
-    import ImageUploadStartedEvent = api.ui.uploader.ImageUploadStartedEvent;
-    import ImageUploadProgressEvent = api.ui.uploader.ImageUploadProgressEvent;
+    import ImageUploadedEvent = api.ui.uploader.FileUploadedEvent;
+    import ImageUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
+    import ImageUploadProgressEvent = api.ui.uploader.FileUploadProgressEvent;
 
     export class ImageSelectorUploadDialog extends api.ui.dialog.ModalDialog {
 

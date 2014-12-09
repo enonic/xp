@@ -6,7 +6,7 @@ module app.wizard.page {
     import SiteModel = api.content.site.SiteModel;
     import LiveEditModel = api.liveedit.LiveEditModel;
     import PageComponent = api.content.page.PageComponent;
-    import UploadDialog = api.content.form.inputtype.image.UploadDialog;
+    import ImageUploadDialog = api.content.form.inputtype.image.ImageUploadDialog;
 
     import PageComponentView = api.liveedit.PageComponentView;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
@@ -245,13 +245,13 @@ module app.wizard.page {
         public listenToPage() {
 
             ImageOpenUploadDialogEvent.on((openDialogEvent: ImageOpenUploadDialogEvent) => {
-                var uploadDialog = new UploadDialog();
-                uploadDialog.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
+                var imageUploadDialog = new ImageUploadDialog();
+                imageUploadDialog.onImageUploaded((event: api.ui.uploader.FileUploadedEvent) => {
                     new ImageUploadedEvent(event.getUploadedItem(), openDialogEvent.getTargetImagePlaceholder()).fire(this.liveEditWindow);
-                    uploadDialog.close();
-                    uploadDialog.remove();
+                    imageUploadDialog.close();
+                    imageUploadDialog.remove();
                 });
-                uploadDialog.open();
+                imageUploadDialog.open();
             }, this.liveEditWindow);
 
             DraggingPageComponentViewStartedEvent.on(this.notifyDraggingPageComponentViewStarted.bind(this), this.liveEditWindow);

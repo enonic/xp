@@ -1,5 +1,7 @@
 ///<reference path='UploadItem.ts' />
-///<reference path='ImageUploadedEvent.ts' />
-///<reference path='ImageUploadProgressEvent.ts' />
-///<reference path='ImageUploadStartedEvent.ts' />
+///<reference path='FileUploadStartedEvent.ts' />
+///<reference path='FileUploadProgressEvent.ts' />
+///<reference path='FileUploadedEvent.ts' />
+///<reference path='FileUploadCompleteEvent.ts' />
+///<reference path='FileUploader.ts' />
 ///<reference path='ImageUploader.ts' />

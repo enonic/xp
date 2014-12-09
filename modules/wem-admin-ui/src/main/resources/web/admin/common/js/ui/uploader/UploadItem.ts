@@ -12,7 +12,7 @@ module api.ui.uploader {
 
         private size: number;
 
-        private progress: number;
+        private progress: number = 0;
 
         constructor(builder: UploadItemBuilder) {
             this.id = builder.id;
@@ -31,20 +31,45 @@ module api.ui.uploader {
             return this.blobKey;
         }
 
+        setBlobKey(key: api.blob.BlobKey): UploadItem {
+            this.blobKey = key;
+            return this;
+        }
+
         getName(): string {
             return this.name;
+        }
+
+        setName(name: string): UploadItem {
+            this.name = name;
+            return this;
         }
 
         getMimeType(): string {
             return this.mimeType;
         }
 
+        setMimeType(type: string): UploadItem {
+            this.mimeType = type;
+            return this;
+        }
+
         getSize(): number {
             return this.size;
         }
 
+        setSize(size: number): UploadItem {
+            this.size = size;
+            return this;
+        }
+
         getProgress(): number {
             return this.progress;
+        }
+
+        setProgress(progress: number): UploadItem {
+            this.progress = progress;
+            return this;
         }
 
     }

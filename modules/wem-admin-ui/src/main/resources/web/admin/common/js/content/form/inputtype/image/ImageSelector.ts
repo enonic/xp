@@ -80,7 +80,7 @@ module api.content.form.inputtype.image {
                 });
 
             this.uploadDialog = new ImageSelectorUploadDialog();
-            this.uploadDialog.onUploadStarted((event: api.ui.uploader.ImageUploadStartedEvent) => {
+            this.uploadDialog.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent) => {
                 this.uploadDialog.close();
 
                 event.getUploadedItems().forEach((uploadItem: api.ui.uploader.UploadItem) => {
@@ -92,11 +92,11 @@ module api.content.form.inputtype.image {
                     this.comboBox.selectOption(option);
                 });
             });
-            this.uploadDialog.onUploadProgress((event: api.ui.uploader.ImageUploadProgressEvent) => {
+            this.uploadDialog.onUploadProgress((event: api.ui.uploader.FileUploadProgressEvent) => {
                 var selectedOption = this.selectedOptionsView.getById(event.getUploadItem().getId());
                 (<SelectedOptionView>selectedOption.getOptionView()).setProgress(event.getUploadItem().getProgress());
             });
-            this.uploadDialog.onImageUploaded((event: api.ui.uploader.ImageUploadedEvent) => {
+            this.uploadDialog.onImageUploaded((event: api.ui.uploader.FileUploadedEvent) => {
                 this.createImageContent(event.getUploadedItem());
             });
 

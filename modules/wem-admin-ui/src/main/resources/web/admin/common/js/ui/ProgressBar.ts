@@ -2,14 +2,14 @@ module api.ui {
 
     export class ProgressBar extends api.dom.DivEl {
 
-        private progress:api.dom.DivEl;
-        private value:number;
+        private progress: api.dom.DivEl;
+        private value: number;
 
         /**
          * Widget to display progress
          * @param value the initial value (defaults to 0)
          */
-            constructor(value?:number) {
+        constructor(value?: number) {
             super("progress-bar");
             this.value = value || 0;
 
@@ -18,13 +18,13 @@ module api.ui {
             this.setValue(this.value);
         }
 
-        setValue(value:number) {
+        setValue(value: number) {
             var normalizedValue = value > 0 ? this.normalizeValue(value) : 0;
             this.progress.getEl().setWidth(normalizedValue * 100 + "%");
             this.value = normalizedValue;
         }
 
-        getValue():number {
+        getValue(): number {
             return this.value;
         }
 
@@ -33,7 +33,7 @@ module api.ui {
          * @param value value to normalize
          * @returns {number} normalized value
          */
-        private normalizeValue(value:number) {
+        private normalizeValue(value: number) {
             var integralLength = Math.ceil(Math.log(value) / Math.log(10));
             var maxValue = Math.pow(10, integralLength);
             return value / maxValue;
