@@ -13,6 +13,7 @@ module api.ui.uploader {
         showButtons?: boolean;
         showResult?: boolean;
         maximumOccurrences?: number;
+        deferred?: boolean;
     }
 
     export class FileUploader extends api.dom.FormInputEl {
@@ -42,20 +43,26 @@ module api.ui.uploader {
 
             this.config = config;
             // init defaults
-            if (!this.config.showResult) {
+            if (this.config.showResult == undefined) {
                 this.config.showResult = true;
             }
-            if (!this.config.allowMultiSelection) {
+            if (this.config.allowMultiSelection == undefined) {
                 this.config.allowMultiSelection = false;
             }
-            if (!this.config.showButtons) {
+            if (this.config.showButtons == undefined) {
                 this.config.showButtons = true;
             }
-            if (!this.config.maximumOccurrences) {
+            if (this.config.maximumOccurrences == undefined) {
                 this.config.maximumOccurrences = 0;
             }
-            if (!this.config.allowBrowse) {
+            if (this.config.allowBrowse == undefined) {
                 this.config.allowBrowse = true;
+            }
+            if (this.config.allowTypes == undefined) {
+                this.config.allowTypes = [];
+            }
+            if (this.config.deferred == undefined) {
+                this.config.deferred = false;
             }
 
             if (config.showInput) {
@@ -99,16 +106,22 @@ module api.ui.uploader {
                 new KeyBinding('backspace', resetHandler)
             ]);
 
-            this.onRendered((event) => {
+            var initHandler = (event) => {
                 if (!this.uploader && this.config.url) {
                     this.uploader = this.initUploader(this.dropzone.getId());
+
+                    if (this.value) {
+                        this.setValue(this.value);
+                    } else {
+                        this.setDropzoneVisible();
+                    }
                 }
-                if (this.value) {
-                    this.setValue(this.value);
-                } else {
-                    this.setDropzoneVisible();
-                }
-            });
+            };
+            if (this.config.deferred) {
+                this.onShown((event) => initHandler(event))
+            } else {
+                this.onRendered((event) => initHandler(event));
+            }
 
             this.onRemoved((event) => {
                 this.uploader.destroy();

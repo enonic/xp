@@ -38,3 +38,5 @@
 ///<reference path='FieldsetEl.ts' />
 ///<reference path='LegendEl.ts' />
 ///<reference path='FormEl.ts' />
+///<reference path='AsideEl.ts' />
+///<reference path='SectionEl.ts' />
