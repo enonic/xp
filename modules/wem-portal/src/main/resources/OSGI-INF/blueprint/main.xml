@@ -11,8 +11,6 @@
 
   <reference id="contentService" interface="com.enonic.wem.api.content.ContentService"/>
 
-  <reference id="attachmentService" interface="com.enonic.wem.api.content.attachment.AttachmentService"/>
-
   <reference id="moduleService" interface="com.enonic.wem.api.module.ModuleService"/>
 
   <reference id="blobService" interface="com.enonic.wem.api.blob.BlobService"/>

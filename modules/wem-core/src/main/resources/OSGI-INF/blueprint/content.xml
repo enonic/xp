@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <bean id="attachmentService" class="com.enonic.wem.core.content.attachment.AttachmentServiceImpl">
-    <property name="nodeService" ref="nodeService"/>
-  </bean>
-
-  <service ref="attachmentService" auto-export="interfaces"/>
-
   <bean id="contentNodeTranslator" class="com.enonic.wem.core.content.ContentNodeTranslator">
     <property name="blobService" ref="blobService"/>
     <property name="contentTypeService" ref="contentTypeService"/>
@@ -16,7 +10,6 @@
     <property name="contentTypeService" ref="contentTypeService"/>
     <property name="nodeService" ref="nodeService"/>
     <property name="blobService" ref="blobService"/>
-    <property name="attachmentService" ref="attachmentService"/>
     <property name="contentNodeTranslator" ref="contentNodeTranslator"/>
     <property name="eventPublisher" ref="eventPublisher"/>
   </bean>

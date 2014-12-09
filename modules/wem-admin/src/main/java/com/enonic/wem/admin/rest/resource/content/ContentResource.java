@@ -76,7 +76,6 @@ import com.enonic.wem.api.content.SetContentChildOrderParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -107,8 +106,6 @@ public final class ContentResource
     private ContentService contentService;
 
     private ContentTypeService contentTypeService;
-
-    private AttachmentService attachmentService;
 
     private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
 
@@ -454,7 +451,7 @@ public final class ContentResource
 
     private ContentIconUrlResolver newContentIconUrlResolver()
     {
-        return new ContentIconUrlResolver( this.contentTypeService, this.attachmentService );
+        return new ContentIconUrlResolver( this.contentTypeService );
     }
 
     public void setContentService( final ContentService contentService )
@@ -465,11 +462,6 @@ public final class ContentResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
-    }
-
-    public void setAttachmentService( final AttachmentService attachmentService )
-    {
-        this.attachmentService = attachmentService;
     }
 
     public void setMixinService( final MixinService mixinService )

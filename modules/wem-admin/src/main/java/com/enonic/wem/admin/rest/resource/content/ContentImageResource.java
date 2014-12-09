@@ -18,8 +18,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -36,8 +34,6 @@ public final class ContentImageResource
     implements JaxRsComponent
 {
     private static final ContentImageHelper helper = new ContentImageHelper();
-
-    private AttachmentService attachmentService;
 
     private ContentTypeService contentTypeService;
 
@@ -90,10 +86,7 @@ public final class ContentImageResource
     private ResolvedImage resolveResponseFromContentImageAttachment( final Content content, final int size )
     {
         final String attachmentName = getImageAttachmentName( content );
-        final Attachment attachment = attachmentService.get( GetAttachmentParameters.create().
-            contentId( content.getId() ).
-            attachmentName( attachmentName ).
-            build() );
+        final Attachment attachment = content.getAttachments().getAttachment( attachmentName );
 
         if ( attachment != null )
         {
@@ -146,11 +139,6 @@ public final class ContentImageResource
             return null;
         }
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
-    }
-
-    public void setAttachmentService( final AttachmentService attachmentService )
-    {
-        this.attachmentService = attachmentService;
     }
 
     public void setContentTypeService( final ContentTypeService contentTypeService )

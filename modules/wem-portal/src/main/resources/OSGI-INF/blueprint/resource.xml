@@ -17,7 +17,6 @@
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.portal.internal.underscore.ImageResourceProvider">
       <property name="imageFilterBuilder" ref="imageFilterBuilder"/>
-      <property name="attachmentService" ref="attachmentService"/>
       <property name="blobService" ref="blobService"/>
       <property name="contentService" ref="contentService"/>
     </bean>

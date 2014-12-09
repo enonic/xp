@@ -26,8 +26,6 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.image.ImageHelper;
 import com.enonic.wem.core.image.filter.BuilderContext;
@@ -44,8 +42,6 @@ public final class ImageResource
     private final static int DEFAULT_QUALITY = 85;
 
     protected ImageFilterBuilder imageFilterBuilder;
-
-    protected AttachmentService attachmentService;
 
     protected BlobService blobService;
 
@@ -174,18 +170,6 @@ public final class ImageResource
         return this.blobService.get( blobKey );
     }
 
-    private Attachment getAttachment( final ContentId contentId )
-    {
-        try
-        {
-            return this.attachmentService.getAll( contentId ).first();
-        }
-        catch ( final ContentNotFoundException e )
-        {
-            throw notFound( "Attachment for content [%s] not found", contentId.toString() );
-        }
-    }
-
     private Content getContent( final ContentId contentId )
     {
         final Content content = this.contentService.getById( contentId );
@@ -212,10 +196,8 @@ public final class ImageResource
     {
         try
         {
-            return this.attachmentService.get( GetAttachmentParameters.create().
-                contentId( contentId ).
-                attachmentName( attachmentName ).
-                build() );
+            final Content content = contentService.getById( contentId );
+            return content.getAttachments().getAttachment( attachmentName );
         }
         catch ( ContentNotFoundException e )
         {
@@ -230,7 +212,7 @@ public final class ImageResource
         final ContentId imageContentId = ContentId.from( id );
         final Content imageContent = getContent( imageContentId );
 
-        final Attachment attachment = getAttachment( imageContent.getId() );
+        final Attachment attachment = imageContent.getAttachments().first();
         if ( attachment == null )
         {
             throw notFound( "Attachment [%s] not found", imageContent.getName().toString() );

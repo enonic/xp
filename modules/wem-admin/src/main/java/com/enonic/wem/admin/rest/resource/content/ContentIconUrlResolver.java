@@ -4,8 +4,6 @@ import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconResolver
 import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.attachment.GetAttachmentParameters;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -16,18 +14,15 @@ public final class ContentIconUrlResolver
 {
     private ContentTypeService contentTypeService;
 
-    private AttachmentService attachmentService;
-
     private ContentTypeIconResolver contentTypeIconResolver;
 
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
-    public ContentIconUrlResolver( final ContentTypeService contentTypeService, final AttachmentService attachmentService )
+    public ContentIconUrlResolver( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
         this.contentTypeIconResolver = new ContentTypeIconResolver( contentTypeService );
         this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( this.contentTypeIconResolver );
-        this.attachmentService = attachmentService;
     }
 
     private String getImageAttachmentName( final Content content )
@@ -51,10 +46,7 @@ public final class ContentIconUrlResolver
         else if ( content.getType().isImageMedia() )
         {
             final String attachmentName = getImageAttachmentName( content );
-            final Attachment attachment = attachmentService.get( GetAttachmentParameters.create().
-                contentId( content.getId() ).
-                attachmentName( attachmentName ).
-                build() );
+            final Attachment attachment = content.getAttachments().getAttachment( attachmentName );
             if ( attachment != null )
             {
                 return ServletRequestUrlHelper.createUri(

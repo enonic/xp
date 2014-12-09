@@ -17,7 +17,6 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.page.GetDefaultPageTemplateParams;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
@@ -41,8 +40,6 @@ public final class PageTemplateResource
     private ContentService contentService;
 
     private ContentTypeService contentTypeService;
-
-    private AttachmentService attachmentService;
 
     private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
 
@@ -146,7 +143,7 @@ public final class PageTemplateResource
 
     private ContentIconUrlResolver newContentIconUrlResolver()
     {
-        return new ContentIconUrlResolver( this.contentTypeService, this.attachmentService );
+        return new ContentIconUrlResolver( this.contentTypeService );
     }
 
     public void setPageTemplateService( final PageTemplateService pageTemplateService )
@@ -162,11 +159,6 @@ public final class PageTemplateResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
-    }
-
-    public void setAttachmentService( final AttachmentService attachmentService )
-    {
-        this.attachmentService = attachmentService;
     }
 
     public void setMixinService( final MixinService mixinService )

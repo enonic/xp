@@ -14,8 +14,6 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.api.content.attachment.AttachmentService;
-import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.node.Node;
@@ -32,8 +30,6 @@ import static com.enonic.wem.api.content.Content.newContent;
 public class UpdateContentCommandTest
 {
     private static final Instant CREATED_TIME = LocalDateTime.of( 2013, 1, 1, 12, 0, 0, 0 ).toInstant( ZoneOffset.UTC );
-
-    private final AttachmentService attachmentService = Mockito.mock( AttachmentService.class );
 
     private final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
 
@@ -66,14 +62,11 @@ public class UpdateContentCommandTest
 
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
-            attachmentService( this.attachmentService ).
             nodeService( this.nodeService ).
             blobService( this.blobService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build();
-
-        Mockito.when( attachmentService.getAll( contentId ) ).thenReturn( Attachments.empty() );
 
         Mockito.when( nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
 
@@ -102,7 +95,6 @@ public class UpdateContentCommandTest
 
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
-            attachmentService( this.attachmentService ).
             nodeService( this.nodeService ).
             blobService( this.blobService ).
             translator( this.translator ).

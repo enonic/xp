@@ -14,7 +14,6 @@ import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.admin.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.UpdatePageParams;
@@ -32,8 +31,6 @@ public final class PageResource
     private PageService pageService;
 
     private ContentTypeService contentTypeService;
-
-    private AttachmentService attachmentService;
 
     private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
 
@@ -74,7 +71,7 @@ public final class PageResource
 
     private ContentIconUrlResolver newContentIconUrlResolver()
     {
-        return new ContentIconUrlResolver( this.contentTypeService, this.attachmentService );
+        return new ContentIconUrlResolver( this.contentTypeService );
     }
 
     public void setMixinService( final MixinService mixinService )
@@ -90,11 +87,6 @@ public final class PageResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
-    }
-
-    public void setAttachmentService( final AttachmentService attachmentService )
-    {
-        this.attachmentService = attachmentService;
     }
 
     public void setSecurityService( final SecurityService securityService )

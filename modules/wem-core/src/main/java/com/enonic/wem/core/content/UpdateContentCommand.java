@@ -14,7 +14,6 @@ import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentUpdatedEvent;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.event.EventPublisher;
@@ -35,8 +34,6 @@ final class UpdateContentCommand
 
     private final static Logger LOG = LoggerFactory.getLogger( UpdateContentCommand.class );
 
-    private final AttachmentService attachmentService;
-
     private final EventPublisher eventPublisher;
 
     private final UpdateContentParams params;
@@ -44,7 +41,6 @@ final class UpdateContentCommand
     private UpdateContentCommand( final Builder builder )
     {
         super( builder );
-        this.attachmentService = builder.attachmentService;
         this.params = builder.params;
         this.eventPublisher = builder.eventPublisher;
     }
@@ -92,7 +88,7 @@ final class UpdateContentCommand
         }
         else
         {
-            attachments = attachmentService.getAll( this.params.getContentId() );
+            attachments = contentBeforeChange.getAttachments();
         }
 
         final UpdateNodeParams updateNodeParams = translator.toUpdateNodeCommand( editedContent, attachments );
@@ -180,19 +176,11 @@ final class UpdateContentCommand
     {
         private final UpdateContentParams params;
 
-        private AttachmentService attachmentService;
-
         private EventPublisher eventPublisher;
 
         public Builder( final UpdateContentParams params )
         {
             this.params = params;
-        }
-
-        public Builder attachmentService( final AttachmentService attachmentService )
-        {
-            this.attachmentService = attachmentService;
-            return this;
         }
 
         public Builder eventPublisher( final EventPublisher eventPublisher )
@@ -203,7 +191,6 @@ final class UpdateContentCommand
 
         void validate()
         {
-            Preconditions.checkNotNull( attachmentService );
             Preconditions.checkNotNull( params );
             Preconditions.checkNotNull( eventPublisher );
         }

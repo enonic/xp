@@ -32,7 +32,6 @@ import com.enonic.wem.api.content.ReorderChildParams;
 import com.enonic.wem.api.content.SetContentChildOrderParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
-import com.enonic.wem.api.content.attachment.AttachmentService;
 import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.ModuleConfigsDataSerializer;
 import com.enonic.wem.api.content.site.Site;
@@ -64,8 +63,6 @@ public class ContentServiceImpl
     private NodeService nodeService;
 
     private BlobService blobService;
-
-    private AttachmentService attachmentService;
 
     private ContentNodeTranslator contentNodeTranslator;
 
@@ -157,7 +154,6 @@ public class ContentServiceImpl
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
-            attachmentService( this.attachmentService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             build().
@@ -452,11 +448,6 @@ public class ContentServiceImpl
     public void setBlobService( final BlobService blobService )
     {
         this.blobService = blobService;
-    }
-
-    public void setAttachmentService( final AttachmentService attachmentService )
-    {
-        this.attachmentService = attachmentService;
     }
 
     public void setContentNodeTranslator( final ContentNodeTranslator contentNodeTranslator )

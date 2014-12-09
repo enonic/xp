@@ -3,8 +3,6 @@
 
   <reference id="startupInitializer" interface="com.enonic.wem.core.initializer.StartupInitializer"/>
 
-  <reference id="attachmentService" interface="com.enonic.wem.api.content.attachment.AttachmentService"/>
-
   <reference id="securityService" interface="com.enonic.wem.api.security.SecurityService"/>
 
   <reference id="contentService" interface="com.enonic.wem.api.content.ContentService"/>
@@ -56,7 +54,6 @@
 
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.admin.rest.resource.content.ContentImageResource">
-      <property name="attachmentService" ref="attachmentService"/>
       <property name="contentService" ref="contentService"/>
       <property name="contentTypeService" ref="contentTypeService"/>
       <property name="blobService" ref="blobService"/>
@@ -65,7 +62,6 @@
 
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.admin.rest.resource.content.ContentIconResource">
-      <property name="attachmentService" ref="attachmentService"/>
       <property name="contentService" ref="contentService"/>
       <property name="blobService" ref="blobService"/>
     </bean>
@@ -100,7 +96,6 @@
     <bean class="com.enonic.wem.admin.rest.resource.content.ContentResource">
       <property name="contentService" ref="contentService"/>
       <property name="contentTypeService" ref="contentTypeService"/>
-      <property name="attachmentService" ref="attachmentService"/>
       <property name="mixinService" ref="mixinService"/>
       <property name="securityService" ref="securityService"/>
     </bean>
@@ -115,7 +110,6 @@
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.admin.rest.resource.content.page.PageResource">
       <property name="contentTypeService" ref="contentTypeService"/>
-      <property name="attachmentService" ref="attachmentService"/>
       <property name="mixinService" ref="mixinService"/>
       <property name="pageService" ref="pageService"/>
       <property name="securityService" ref="securityService"/>
@@ -139,7 +133,6 @@
       <property name="pageTemplateService" ref="pageTemplateService"/>
       <property name="contentService" ref="contentService"/>
       <property name="contentTypeService" ref="contentTypeService"/>
-      <property name="attachmentService" ref="attachmentService"/>
       <property name="mixinService" ref="mixinService"/>
       <property name="securityService" ref="securityService"/>
     </bean>
