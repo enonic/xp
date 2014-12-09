@@ -13,6 +13,7 @@ import java.util.UUID;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.util.Binary;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -427,6 +428,33 @@ public final class PropertyTree
     public Property[] addXmls( final String name, final String... value )
     {
         return this.root.addXmls( name, value );
+    }
+
+    // setting binary
+
+    public Property setBinary( final PropertyPath path, final Binary value )
+    {
+        return this.root.setBinary( path, value );
+    }
+
+    public Property setBinary( final String path, final Binary value )
+    {
+        return this.root.setBinary( path, value );
+    }
+
+    public Property setBinary( final String name, final int index, final Binary value )
+    {
+        return this.root.setBinary( name, index, value );
+    }
+
+    public Property addBinary( final String name, final Binary value )
+    {
+        return this.root.addBinary( name, value );
+    }
+
+    public Property[] addBinaries( final String name, final Binary... value )
+    {
+        return this.root.addBinaries( name, value );
     }
 
     // setting reference
@@ -857,24 +885,24 @@ public final class PropertyTree
 
     // getting reference
 
-    public Reference getReference( final String name, final int index )
+    public Binary getBinary( final String name, final int index )
     {
-        return this.root.getReference( name, index );
+        return this.root.getBinary( name, index );
     }
 
-    public Reference getReference( final PropertyPath path )
+    public Binary getBinary( final PropertyPath path )
     {
-        return this.root.getReference( path );
+        return this.root.getBinary( path );
     }
 
-    public Reference getReference( final String path )
+    public Binary getBinary( final String path )
     {
-        return this.root.getReference( path );
+        return this.root.getBinary( path );
     }
 
-    public Iterable<Reference> getReferences( final String name )
+    public Iterable<Binary> getBinaries( final String name )
     {
-        return this.root.getReferences( name );
+        return this.root.getBinaries( name );
     }
 
     // getting link
@@ -897,6 +925,30 @@ public final class PropertyTree
     public Iterable<Link> getLinks( final String name )
     {
         return this.root.getLinks( name );
+    }
+
+    // getting binary
+
+    // getting reference
+
+    public Reference getReference( final String name, final int index )
+    {
+        return this.root.getReference( name, index );
+    }
+
+    public Reference getReference( final PropertyPath path )
+    {
+        return this.root.getReference( path );
+    }
+
+    public Reference getReference( final String path )
+    {
+        return this.root.getReference( path );
+    }
+
+    public Iterable<Reference> getReferences( final String name )
+    {
+        return this.root.getReferences( name );
     }
 
     // getting local date

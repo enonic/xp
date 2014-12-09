@@ -10,6 +10,7 @@ import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.util.Binary;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -152,6 +153,11 @@ public final class Property
     public Reference getReference()
     {
         return value.asReference();
+    }
+
+    public Binary getBinary()
+    {
+        return value.asBinary();
     }
 
     public Link getLink()

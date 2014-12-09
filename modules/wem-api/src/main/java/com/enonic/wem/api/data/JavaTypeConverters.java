@@ -11,6 +11,7 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.util.Binary;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -57,6 +58,8 @@ final class JavaTypeConverters
     public final static JavaTypeConverter<GeoPoint> GEO_POINT = newGeoPoint();
 
     public final static JavaTypeConverter<Reference> REFERENCE = newReference();
+
+    public final static JavaTypeConverter<Binary> BINARY = newBinary();
 
     public final static JavaTypeConverter<Link> LINK = newLink();
 
@@ -333,6 +336,22 @@ final class JavaTypeConverters
         }
     }
 
+    private static Binary convertToBinary( final Object value )
+    {
+        if ( value instanceof Binary )
+        {
+            return (Binary) value;
+        }
+        else if ( value instanceof String )
+        {
+            return Binary.from( (String) value );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     private static Link convertToLink( final Object value )
     {
         if ( value instanceof Link )
@@ -407,6 +426,11 @@ final class JavaTypeConverters
     private static JavaTypeConverter<Reference> newReference()
     {
         return new JavaTypeConverter<>( Reference.class, JavaTypeConverters::convertToReference );
+    }
+
+    private static JavaTypeConverter<Binary> newBinary()
+    {
+        return new JavaTypeConverter<>( Binary.class, JavaTypeConverters::convertToBinary );
     }
 
     private static JavaTypeConverter<Link> newLink()

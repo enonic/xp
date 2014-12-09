@@ -275,6 +275,21 @@ public abstract class ValueType<T>
         }
     }
 
+    static class Binary
+        extends ValueType<com.enonic.wem.api.util.Binary>
+    {
+        Binary()
+        {
+            super( "Binary", JavaTypeConverters.BINARY );
+        }
+
+        @Override
+        Value fromJsonValue( final Object object )
+        {
+            return new Value.Binary( convertNullSafe( object ) );
+        }
+    }
+
     static class ContentId
         extends ValueType<com.enonic.wem.api.content.ContentId>
     {

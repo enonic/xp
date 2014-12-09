@@ -222,6 +222,20 @@ public abstract class Value
         return ValueTypes.REFERENCE.convert( object );
     }
 
+
+    /**
+     * Attempts to return value as Reference, using best effort converting if value is not of type Reference.
+     */
+    public com.enonic.wem.api.util.Binary asBinary()
+    {
+        if ( object == null )
+        {
+            return null;
+        }
+        return ValueTypes.BINARY.convert( object );
+    }
+
+
     /**
      * Attempts to return value as Reference, using best effort converting if value is not of type Reference.
      */
@@ -335,6 +349,11 @@ public abstract class Value
     public static Value newReference( final com.enonic.wem.api.util.Reference value )
     {
         return new Reference( value );
+    }
+
+    public static Value newBinary( final com.enonic.wem.api.util.Binary value )
+    {
+        return new Binary( value );
     }
 
     public static Value newLink( final com.enonic.wem.api.util.Link value )
@@ -581,6 +600,36 @@ public abstract class Value
             return asString();
         }
     }
+
+    static class Binary
+        extends Value
+    {
+
+        Binary( final com.enonic.wem.api.util.Binary value )
+        {
+            super( ValueTypes.BINARY, value );
+        }
+
+        Binary( final Binary source )
+        {
+            super( ValueTypes.BINARY, source.getObject() );
+        }
+
+        @Override
+        Value copy( final PropertyTree tree )
+        {
+            return new Binary( this );
+        }
+
+        @Override
+        Object toJsonValue()
+        {
+            return asString();
+        }
+
+    }
+
+
 
     static class Link
         extends Value

@@ -15,6 +15,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.util.Binary;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -993,6 +994,38 @@ public final class PropertySet
         return properties;
     }
 
+    // setting reference
+    public Property setBinary( final String path, final Binary value )
+    {
+        return this.setProperty( PropertyPath.from( path ), Value.newBinary( value ) );
+    }
+
+    public Property setBinary( final PropertyPath path, final Binary value )
+    {
+        return this.setProperty( path, Value.newBinary( value ) );
+    }
+
+    public Property setBinary( final String name, final int index, final Binary value )
+    {
+        return this.setProperty( name, index, Value.newBinary( value ) );
+    }
+
+    public Property addBinary( final String name, final Binary value )
+    {
+        return this.addProperty( name, Value.newBinary( value ) );
+    }
+
+    public Property[] addBinaries( final String name, final Binary... values )
+    {
+        final Property[] properties = new Property[values.length];
+        for ( int i = 0; i < values.length; i++ )
+        {
+            properties[i] = this.addProperty( name, Value.newBinary( values[i] ) );
+        }
+        return properties;
+    }
+
+
     // setting link
     public Property setLink( final String path, final Link value )
     {
@@ -1278,6 +1311,38 @@ public final class PropertySet
             if ( !property.hasNullValue() )
             {
                 stringsBuilder.add( property.getReference() );
+            }
+        }
+        return stringsBuilder.build();
+    }
+
+    // getting binary
+
+    public Binary getBinary( final String name, final int index )
+    {
+        final Property property = this.getProperty( name, index );
+        return property != null ? property.getValue().asBinary() : null;
+    }
+
+    public Binary getBinary( final PropertyPath path )
+    {
+        final Property property = this.getProperty( path );
+        return property != null ? property.getValue().asBinary() : null;
+    }
+
+    public Binary getBinary( final String path )
+    {
+        return getBinary( PropertyPath.from( path ) );
+    }
+
+    public Iterable<Binary> getBinaries( final String name )
+    {
+        final ImmutableList.Builder<Binary> stringsBuilder = new ImmutableList.Builder<>();
+        for ( final Property property : getProperties( name ) )
+        {
+            if ( !property.hasNullValue() )
+            {
+                stringsBuilder.add( property.getBinary() );
             }
         }
         return stringsBuilder.build();
