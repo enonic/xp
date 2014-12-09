@@ -7,7 +7,7 @@ import jdk.nashorn.api.scripting.AbstractJSObject;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.internal.invoker.CommandInvoker;
 import com.enonic.wem.script.internal.invoker.CommandRequestImpl;
-import com.enonic.wem.script.internal.util.JsObjectConverter;
+import com.enonic.wem.script.internal.bean.JsObjectConverter;
 
 public final class ExecuteFunction
     extends AbstractJSObject

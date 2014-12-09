@@ -11,7 +11,6 @@ import jdk.nashorn.internal.runtime.Undefined;
 import com.enonic.wem.api.convert.Converters;
 import com.enonic.wem.script.ScriptObject;
 import com.enonic.wem.script.internal.error.ErrorHelper;
-import com.enonic.wem.script.internal.util.JsObjectConverter;
 
 public final class ScriptObjectImpl
     implements ScriptObject

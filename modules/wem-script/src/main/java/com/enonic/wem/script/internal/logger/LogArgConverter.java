@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.script.internal.util.JsObjectConverter;
+import com.enonic.wem.script.internal.bean.JsObjectConverter;
 
 final class LogArgConverter
 {

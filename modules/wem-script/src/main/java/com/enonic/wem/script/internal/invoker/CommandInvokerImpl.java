@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
-import com.enonic.wem.script.internal.util.JsObjectConverter;
+import com.enonic.wem.script.internal.bean.JsObjectConverter;
 
 public final class CommandInvokerImpl
     implements CommandInvoker

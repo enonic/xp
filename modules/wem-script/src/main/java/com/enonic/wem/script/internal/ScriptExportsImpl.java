@@ -2,10 +2,11 @@ package com.enonic.wem.script.internal;
 
 import javax.script.Bindings;
 
+import jdk.nashorn.api.scripting.JSObject;
+
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptObject;
-import com.enonic.wem.script.internal.bean.ScriptObjectImpl;
 
 final class ScriptExportsImpl
     implements ScriptExports
@@ -32,12 +33,40 @@ final class ScriptExportsImpl
     @Override
     public boolean hasMethod( final String name )
     {
-        return ( this.bindings != null ) && ( this.bindings.get( name ) != null );
+        return getMethod( name ) != null;
+    }
+
+    private JSObject getMethod( final String name )
+    {
+        if ( this.bindings == null )
+        {
+            return null;
+        }
+
+        final Object result = this.bindings.get( name );
+        if ( !( result instanceof JSObject ) )
+        {
+            return null;
+        }
+
+        final JSObject jsObject = (JSObject) result;
+        if ( jsObject.isFunction() )
+        {
+            return jsObject;
+        }
+
+        return null;
     }
 
     @Override
     public ScriptObject executeMethod( final String name, final Object... args )
     {
-        return new ScriptObjectImpl( this.executor.invokeMethod( this.bindings, name, args ) );
+        final JSObject method = getMethod( name );
+        if ( method == null )
+        {
+            return null;
+        }
+
+        return this.executor.invokeMethod( this.bindings, method, args );
     }
 }

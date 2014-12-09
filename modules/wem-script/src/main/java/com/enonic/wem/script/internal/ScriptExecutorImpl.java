@@ -3,18 +3,18 @@ package com.enonic.wem.script.internal;
 import java.util.Map;
 
 import javax.script.Bindings;
-import javax.script.Invocable;
 import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 
 import com.google.common.collect.Maps;
 
-import jdk.nashorn.api.scripting.NashornException;
+import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceProblemException;
-import com.enonic.wem.api.util.Exceptions;
+import com.enonic.wem.script.ScriptObject;
+import com.enonic.wem.script.internal.bean.ScriptObjectFactory;
+import com.enonic.wem.script.internal.bean.ScriptObjectFactoryImpl;
+import com.enonic.wem.script.internal.error.ErrorHelper;
 import com.enonic.wem.script.internal.function.ExecuteFunction;
 import com.enonic.wem.script.internal.function.RequireFunction;
 import com.enonic.wem.script.internal.function.ResolveFunction;
@@ -26,18 +26,18 @@ final class ScriptExecutorImpl
 {
     private final ScriptEngine engine;
 
-    private final Invocable invocable;
-
     private final CommandInvoker invoker;
 
     private final Map<String, Object> globals;
 
+    private final ScriptObjectFactory scriptObjectFactory;
+
     public ScriptExecutorImpl( final ScriptEngine engine, final CommandInvoker invoker )
     {
         this.engine = engine;
-        this.invocable = (Invocable) this.engine;
         this.invoker = invoker;
         this.globals = Maps.newHashMap();
+        this.scriptObjectFactory = new ScriptObjectFactoryImpl( this );
     }
 
     private Bindings createBindings()
@@ -63,7 +63,7 @@ final class ScriptExecutorImpl
         }
         catch ( final Exception e )
         {
-            throw handleException( e );
+            throw ErrorHelper.handleError( e );
         }
     }
 
@@ -86,81 +86,22 @@ final class ScriptExecutorImpl
     }
 
     @Override
-    public Object invokeMethod( final Object scope, final String name, final Object... args )
+    public ScriptObject invokeMethod( final Object scope, final JSObject func, final Object... args )
     {
         try
         {
-            return this.invocable.invokeMethod( scope, name, args );
-        }
-        catch ( final NoSuchMethodException e )
-        {
-            return null;
+            final Object result = func.call( scope, args );
+            return this.scriptObjectFactory.create( result );
         }
         catch ( final Exception e )
         {
-            throw handleException( e );
+            throw ErrorHelper.handleError( e );
         }
     }
 
-    private RuntimeException handleException( final Exception e )
+    @Override
+    public Object convertToJsObject( final Object value )
     {
-        if ( e instanceof ResourceProblemException )
-        {
-            return (ResourceProblemException) e;
-        }
-
-        if ( e instanceof ScriptException )
-        {
-            return doHandleException( (ScriptException) e );
-        }
-
-        if ( e instanceof RuntimeException )
-        {
-            return doHandleException( (RuntimeException) e );
-        }
-
-        return Exceptions.unchecked( e );
-    }
-
-    private ResourceProblemException doHandleException( final ScriptException e )
-    {
-        final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
-        builder.cause( e.getCause() );
-        builder.lineNumber( e.getLineNumber() );
-        builder.resource( toResourceKey( e.getFileName() ) );
-        return builder.build();
-    }
-
-    private RuntimeException doHandleException( final RuntimeException e )
-    {
-        final StackTraceElement elem = findScriptTraceElement( e );
-        if ( elem == null )
-        {
-            return e;
-        }
-
-        final ResourceProblemException.Builder builder = ResourceProblemException.newBuilder();
-        builder.cause( e );
-        builder.lineNumber( elem.getLineNumber() );
-        builder.resource( toResourceKey( elem.getFileName() ) );
-        return builder.build();
-    }
-
-    private ResourceKey toResourceKey( final String name )
-    {
-        try
-        {
-            return ResourceKey.from( name );
-        }
-        catch ( final IllegalArgumentException e )
-        {
-            return null;
-        }
-    }
-
-    private StackTraceElement findScriptTraceElement( final RuntimeException e )
-    {
-        final StackTraceElement[] elements = NashornException.getScriptFrames( e );
-        return elements.length > 0 ? elements[0] : null;
+        return null;
     }
 }

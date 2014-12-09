@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.convert.Converters;
 import com.enonic.wem.script.command.CommandParam;
-import com.enonic.wem.script.internal.util.JsObjectConverter;
+import com.enonic.wem.script.internal.bean.JsObjectConverter;
 
 final class CommandParamImpl
     implements CommandParam

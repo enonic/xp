@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import junit.framework.Assert;
 
-import com.enonic.wem.script.internal.util.JsObjectConverter;
+import com.enonic.wem.script.internal.bean.JsObjectConverter;
 
 public final class AssertHelper
 {

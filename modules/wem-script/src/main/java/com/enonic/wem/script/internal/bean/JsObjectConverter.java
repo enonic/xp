@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.util;
+package com.enonic.wem.script.internal.bean;
 
 import java.util.List;
 import java.util.Map;
@@ -10,9 +10,50 @@ import com.google.common.collect.Maps;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import jdk.nashorn.api.scripting.ScriptUtils;
 
-public final class ScriptObjectConverter
+import com.enonic.wem.script.internal.serializer.ScriptMapGenerator;
+import com.enonic.wem.script.serializer.MapSerializable;
+
+public final class JsObjectConverter
 {
-    public static Object toObject( final Object source )
+    public static Object toJs( final Object value )
+    {
+        if ( value instanceof MapSerializable )
+        {
+            return toJs( (MapSerializable) value );
+        }
+
+        return value;
+    }
+
+    public static Object[] toJsArray( final Object[] values )
+    {
+        final Object[] result = new Object[values.length];
+        for ( int i = 0; i < values.length; i++ )
+        {
+            result[i] = toJs( values[i] );
+        }
+
+        return result;
+    }
+
+    private static Object toJs( final MapSerializable value )
+    {
+        final ScriptMapGenerator generator = new ScriptMapGenerator();
+        value.serialize( generator );
+        return generator.getRoot();
+    }
+
+    public static Object fromJs( final Object value )
+    {
+        return toObject( value );
+    }
+
+    public static Map<String, Object> fromJsAsMap( final Object value )
+    {
+        return toMap( value );
+    }
+
+    private static Object toObject( final Object source )
     {
         final Object object = ScriptUtils.wrap( source );
         if ( object instanceof ScriptObjectMirror )

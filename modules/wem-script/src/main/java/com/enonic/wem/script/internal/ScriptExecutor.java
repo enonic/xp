@@ -2,7 +2,10 @@ package com.enonic.wem.script.internal;
 
 import javax.script.Bindings;
 
+import jdk.nashorn.api.scripting.JSObject;
+
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.script.ScriptObject;
 
 public interface ScriptExecutor
 {
@@ -10,5 +13,7 @@ public interface ScriptExecutor
 
     public void addGlobalBinding( String key, Object value );
 
-    public Object invokeMethod( Object scope, String name, Object... args );
+    public ScriptObject invokeMethod( Object scope, JSObject func, Object... args );
+
+    public Object convertToJsObject( Object value );
 }
