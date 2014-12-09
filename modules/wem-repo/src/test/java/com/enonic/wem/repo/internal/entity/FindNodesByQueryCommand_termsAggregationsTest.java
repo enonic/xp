@@ -26,12 +26,7 @@ public class FindNodesByQueryCommand_termsAggregationsTest
     public void aggregation_terms_asc()
         throws Exception
     {
-        createNode( "c1", "n1", NodePath.ROOT );
-        createNode( "c1", "n2", NodePath.ROOT );
-        createNode( "c2", "n3", NodePath.ROOT );
-        createNode( "c2", "n4", NodePath.ROOT );
-        createNode( "c2", "n5", NodePath.ROOT );
-        createNode( "c3", "n6", NodePath.ROOT );
+        create_c1_c2_c3_with_2_3_1_category_hits();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( AggregationQuery.newTermsAggregation( "category" ).
@@ -68,12 +63,7 @@ public class FindNodesByQueryCommand_termsAggregationsTest
     public void aggregation_terms_desc()
         throws Exception
     {
-        createNode( "c1", "n1", NodePath.ROOT );
-        createNode( "c1", "n2", NodePath.ROOT );
-        createNode( "c2", "n3", NodePath.ROOT );
-        createNode( "c2", "n4", NodePath.ROOT );
-        createNode( "c2", "n5", NodePath.ROOT );
-        createNode( "c3", "n6", NodePath.ROOT );
+        create_c1_c2_c3_with_2_3_1_category_hits();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( AggregationQuery.newTermsAggregation( "category" ).
@@ -111,12 +101,7 @@ public class FindNodesByQueryCommand_termsAggregationsTest
     public void aggregation_terms_size()
         throws Exception
     {
-        createNode( "c1", "n1", NodePath.ROOT );
-        createNode( "c1", "n2", NodePath.ROOT );
-        createNode( "c2", "n3", NodePath.ROOT );
-        createNode( "c2", "n4", NodePath.ROOT );
-        createNode( "c2", "n5", NodePath.ROOT );
-        createNode( "c3", "n6", NodePath.ROOT );
+        create_c1_c2_c3_with_2_3_1_category_hits();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( AggregationQuery.newTermsAggregation( "category" ).
@@ -150,12 +135,7 @@ public class FindNodesByQueryCommand_termsAggregationsTest
     public void aggregation_terms_order_by_term()
         throws Exception
     {
-        createNode( "c1", "n1", NodePath.ROOT );
-        createNode( "c1", "n2", NodePath.ROOT );
-        createNode( "c2", "n3", NodePath.ROOT );
-        createNode( "c2", "n4", NodePath.ROOT );
-        createNode( "c2", "n5", NodePath.ROOT );
-        createNode( "c3", "n6", NodePath.ROOT );
+        create_c1_c2_c3_with_2_3_1_category_hits();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( AggregationQuery.newTermsAggregation( "category" ).
@@ -187,6 +167,20 @@ public class FindNodesByQueryCommand_termsAggregationsTest
         assertEquals( "c3", next.getKey() );
         assertEquals( 1, next.getDocCount() );
     }
+
+
+    private void create_c1_c2_c3_with_2_3_1_category_hits()
+    {
+        createNode( "c1", "n1", NodePath.ROOT );
+        createNode( "c1", "n2", NodePath.ROOT );
+
+        createNode( "c2", "n3", NodePath.ROOT );
+        createNode( "c2", "n4", NodePath.ROOT );
+        createNode( "c2", "n5", NodePath.ROOT );
+
+        createNode( "c3", "n6", NodePath.ROOT );
+    }
+
 
     private Node createNode( final String categoryValue, final String name, final NodePath parent )
     {
