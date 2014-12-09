@@ -143,16 +143,4 @@ public class FindNodesByQueryCommandTest
         assertNotNull( result.getNodes().getNodeById( node.id() ) );
     }
 
-    private FindNodesByQueryResult doFindByQuery( final NodeQuery query )
-    {
-        return FindNodesByQueryCommand.create().
-            query( query ).
-            queryService( this.queryService ).
-            versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
-            nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
-            build().
-            execute();
-    }
 }

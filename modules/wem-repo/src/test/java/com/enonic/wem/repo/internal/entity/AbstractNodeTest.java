@@ -8,8 +8,10 @@ import com.enonic.wem.api.mock.memory.MockBlobService;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
@@ -117,6 +119,19 @@ public abstract class AbstractNodeTest
             indexService( indexService ).
             versionService( versionService ).
             nodeDao( nodeDao ).
+            build().
+            execute();
+    }
+
+    FindNodesByQueryResult doFindByQuery( final NodeQuery query )
+    {
+        return FindNodesByQueryCommand.create().
+            query( query ).
+            queryService( this.queryService ).
+            versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            indexService( this.indexService ).
             build().
             execute();
     }
