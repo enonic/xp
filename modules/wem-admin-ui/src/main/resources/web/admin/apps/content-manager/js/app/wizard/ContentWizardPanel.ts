@@ -501,7 +501,7 @@ module app.wizard {
                 setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setForm(this.contentType.getForm()).
-                setContentData(contentData).
+                setData(contentData).
                 setMetadata([]);
 
             return createRequest;
@@ -537,7 +537,7 @@ module app.wizard {
                 setForm(persistedContent.getForm()).
                 setContentName(viewedContent.getName()).
                 setDisplayName(viewedContent.getDisplayName()).
-                setContentData(viewedContent.getContentData()).
+                setData(viewedContent.getContentData()).
                 setMetadata(viewedContent.getAllMetadata()).
                 setPermissions(viewedContent.getPermissions()).
                 setInheritPermissions(false);

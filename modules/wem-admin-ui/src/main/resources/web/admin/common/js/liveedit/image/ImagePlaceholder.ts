@@ -84,21 +84,8 @@ module api.liveedit.image {
                         setSize(uploadItem.getSize()).
                         build();
 
-                    var contentData = new api.content.image.ImageContentDataFactory().
-                        setImage(attachmentName).
-                        setMimeType(uploadItem.getMimeType()).
-                        create();
-
-                    var createContentRequest = new api.content.CreateContentRequest().
-                        setDraft(false).
-                        setParent(imageView.liveEditModel.getContent().getPath()).
-                        setName(api.content.ContentName.fromString(api.content.ContentName.ensureValidContentName(attachmentName.toString()))).
-                        setContentType(contentType.getContentTypeName()).
-                        setDisplayName(attachmentName.toString()).
-                        setForm(contentType.getForm()).
-                        setContentData(contentData).
-                        addAttachment(attachment);
-
+                    var createContentRequest = api.content.CreateImageContentRequest.fromAttachment(attachment,
+                        imageView.liveEditModel.getContent().getPath());
                     return createContentRequest.sendAndParse();
 
                 }).then((createdContent: api.content.Content) => {

@@ -60,7 +60,7 @@ public abstract class ImageBaseResourceTest
             label( "small" ).
             build();
 
-        final Content content = createContent( "content-id", "path/to/content", "mymodule:image", attachment );
+        final Content content = createContent( "content-id", "path/to/content", attachment );
 
         Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
         Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
@@ -79,8 +79,7 @@ public abstract class ImageBaseResourceTest
         return source -> source;
     }
 
-    private Content createContent( final String id, final String contentPath, final String contentTypeName,
-                                   final Attachment... attachments )
+    private Content createContent( final String id, final String contentPath, final Attachment... attachments )
     {
         final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         data.addString( "image", attachments[0].getName() );
@@ -94,7 +93,6 @@ public abstract class ImageBaseResourceTest
             displayName( "My Content" ).
             modifiedTime( Instant.now() ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.from( contentTypeName ) ).
             data( data ).
             attachments( Attachments.from( attachments ) ).
             build();

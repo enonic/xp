@@ -58,7 +58,7 @@ public class UpdateContentCommandTest
         UpdateContentParams params = new UpdateContentParams().
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             contentId( contentId ).
-            editor( toBeEdited -> editContent( toBeEdited ).contentData( unchangedContentData ) );
+            editor( toBeEdited -> editContent( toBeEdited ).data( unchangedContentData ) );
 
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
@@ -91,7 +91,7 @@ public class UpdateContentCommandTest
         UpdateContentParams params = new UpdateContentParams().
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             contentId( existingContent.getId() ).
-            editor( toBeEdited -> editContent( toBeEdited ).contentData( unchangedContentData ) );
+            editor( toBeEdited -> editContent( toBeEdited ).data( unchangedContentData ) );
 
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
@@ -122,7 +122,7 @@ public class UpdateContentCommandTest
             createdTime( CREATED_TIME ).
             displayName( "MyContent" ).
             owner( PrincipalKey.from( "user:system:admin" ) ).
-            contentData( contentData ).
+            data( contentData ).
             build();
     }
 }

@@ -55,7 +55,7 @@ module api.content {
             return this;
         }
 
-        setContentData(data: api.data.PropertyTree): CreateContentRequest {
+        setData(data: api.data.PropertyTree): CreateContentRequest {
             this.data = data;
             return this;
         }

@@ -34,7 +34,7 @@ public final class ContentFixtures
         builder.modifiedTime( Instant.ofEpochSecond( 0 ) );
         builder.creator( PrincipalKey.from( "user:system:admin" ) );
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
-        builder.contentData( newPropertyTree() );
+        builder.data( newPropertyTree() );
 
         builder.addMetadata( new Metadata( MetadataSchemaName.from( "mymodule:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );

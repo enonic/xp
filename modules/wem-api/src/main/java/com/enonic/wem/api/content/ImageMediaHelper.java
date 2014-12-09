@@ -4,6 +4,7 @@ package com.enonic.wem.api.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class ImageMediaHelper
 {
@@ -12,7 +13,8 @@ public class ImageMediaHelper
      */
     public static Attachment getImageAttachment( final Content content )
     {
-        Preconditions.checkState( content.getType().isImageMedia(), "Expected content to be of type image: " + content.getType() );
+        Preconditions.checkState( content.getType().isImageMedia(),
+                                  "Expected content to be of type [" + ContentTypeName.imageMedia() + "]: " + content.getType() );
 
         final String imageAttachmentName = content.getData().getString( "image" );
         if ( imageAttachmentName == null )

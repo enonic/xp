@@ -79,7 +79,7 @@ public class ContentDataSerializer
 
         builder.displayName( set.getString( ContentPropertyNames.DISPLAY_NAME ) );
         builder.draft( set.getBoolean( ContentPropertyNames.DRAFT ) );
-        builder.contentData( set.getSet( ContentPropertyNames.CONTENT_DATA_SET ).toTree() );
+        builder.data( set.getSet( ContentPropertyNames.CONTENT_DATA_SET ).toTree() );
 
         final PropertySet metadataSet = set.getSet( ContentPropertyNames.METADATA );
         if ( metadataSet != null )

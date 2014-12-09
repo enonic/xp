@@ -22,7 +22,6 @@ import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.ImageMediaHelper;
@@ -193,19 +192,6 @@ public final class ImageResource
         throw notFound( "Content with path [%s] not found", contentPath.toString() );
     }
 
-    private Attachment getAttachment( final ContentId contentId, final String attachmentName )
-    {
-        try
-        {
-            final Content content = contentService.getById( contentId );
-            return content.getAttachments().getAttachment( attachmentName );
-        }
-        catch ( ContentNotFoundException e )
-        {
-            throw notFound( "Attachment [%s] for content [%s] not found", attachmentName, contentId.toString() );
-        }
-    }
-
     @GET
     @Path("id/{imageId}")
     public Response getById( @PathParam("imageId") final String id )
@@ -238,7 +224,7 @@ public final class ImageResource
     public Response getByName( @PathParam("fileName") final String fileName )
     {
         final Content content = getContent( this.contentPath );
-        final Attachment attachment = getAttachment( content.getId(), fileName );
+        final Attachment attachment = content.getAttachments().getAttachment( fileName );
 
         final Blob blob = getBlob( attachment.getBlobKey() );
         if ( blob == null )

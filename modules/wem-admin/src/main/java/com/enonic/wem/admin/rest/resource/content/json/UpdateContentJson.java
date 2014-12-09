@@ -34,7 +34,7 @@ public class UpdateContentJson
 
     @JsonCreator
     UpdateContentJson( @JsonProperty("contentId") final String contentId, @JsonProperty("contentName") final String contentName,
-                       @JsonProperty("contentData") final List<PropertyArrayJson> contentDataJsonList,
+                       @JsonProperty("data") final List<PropertyArrayJson> propertyArrayJsonList,
                        @JsonProperty("metadata") final List<MetadataJson> metadataJsonList, @JsonProperty("form") final FormJson form,
                        @JsonProperty("displayName") final String displayName,
                        @JsonProperty("updateAttachments") final UpdateAttachmentsJson updateAttachments,
@@ -44,7 +44,7 @@ public class UpdateContentJson
     {
         this.contentName = ContentName.from( contentName );
 
-        final PropertyTree contentData = PropertyTreeJson.fromJson( contentDataJsonList );
+        final PropertyTree contentData = PropertyTreeJson.fromJson( propertyArrayJsonList );
         final List<Metadata> metadataList = parseMetadata( metadataJsonList );
 
         this.updateContentParams = new UpdateContentParams().
@@ -54,7 +54,7 @@ public class UpdateContentJson
             editor( toBeEdited -> {
                 Content.EditBuilder editContentBuilder = editContent( toBeEdited ).
                     form( form.getForm() ).
-                    contentData( contentData ).
+                    data( contentData ).
                     metadata( metadataList ).
                     draft( Boolean.valueOf( draft ) ).
                     displayName( displayName ).

@@ -23,6 +23,7 @@
 ///<reference path='GetContentSummaryByIds' />
 ///<reference path='GetContentByPathRequest.ts' />
 ///<reference path='CreateContentRequest.ts' />
+///<reference path='CreateImageContentRequest.ts' />
 ///<reference path='OrderContentRequest.ts' />
 ///<reference path='UpdateContentRequest.ts' />
 ///<reference path='DuplicateContentRequest.ts' />

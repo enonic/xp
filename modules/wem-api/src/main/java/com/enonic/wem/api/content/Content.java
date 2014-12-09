@@ -444,7 +444,7 @@ public class Content
             return this;
         }
 
-        public EditBuilder contentData( final PropertyTree contentData )
+        public EditBuilder data( final PropertyTree contentData )
         {
             changes.recordChange( newPossibleChange( "data" ).from( this.original.getData() ).to( contentData ).build() );
             this.data = contentData;
@@ -574,9 +574,9 @@ public class Content
             return this;
         }
 
-        public Builder<BUILDER, C> contentData( final PropertyTree contentData )
+        public Builder<BUILDER, C> data( final PropertyTree data )
         {
-            this.data = contentData;
+            this.data = data;
             return this;
         }
 
