@@ -43,6 +43,8 @@ module app.wizard {
 
         layout(principal: Principal) {
             this.email.setValue(principal.asUser().getEmail());
+            this.email.setName(principal.asUser().getEmail());
+            this.email.setOriginEmail(principal.asUser().getEmail());
         }
 
         isValid(): boolean {

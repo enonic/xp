@@ -13,9 +13,9 @@ module api.security {
         constructor(builder: UserBuilder) {
             super(builder.key, builder.displayName, builder.modifiedTime);
             api.util.assert(builder.key.isUser(), 'Expected PrincipalKey of type User');
-            this.email = builder.email;
-            this.login = builder.login;
-            this.loginDisabled = builder.loginDisabled;
+            this.email = builder.email || "";
+            this.login = builder.login || "";
+            this.loginDisabled = builder.loginDisabled || false;
             this.memberships = builder.memberships || [];
         }
 
@@ -37,6 +37,21 @@ module api.security {
 
         setMemberships(memberships: Principal[]) {
             this.memberships = memberships;
+        }
+
+        equals(o: api.Equitable): boolean {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, User)) {
+                return false;
+            }
+
+            var other = <User> o;
+
+            return super.equals(o) &&
+                   this.loginDisabled === other.isDisabled() &&
+                   this.email === other.getEmail() &&
+                   this.login === other.getLogin() &&
+//                   this.password === other.getPassword() &&
+                   api.ObjectHelper.arrayEquals(this.memberships, other.getMemberships());
         }
 
         clone(): User {

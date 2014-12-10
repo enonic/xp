@@ -47,9 +47,23 @@ module app.wizard {
         }
 
         saveChanges(): wemQ.Promise<Principal> {
-            if (this.userEmailWizardStepForm.isValid() &&
-                this.userEmailWizardStepForm.isValid()) {
+            // TODO: Add a validation of the password filed, when implemented.
+            var formEmail = this.userEmailWizardStepForm.getEmail(),
+                email = this.getPersistedItem() ? this.getPersistedItem().asUser().getEmail() : null;
+            if (this.userEmailWizardStepForm.isValid() || (formEmail === email)) {
                 return super.saveChanges();
+            } else {
+                var deferred = wemQ.defer<Principal>(),
+                    message = "";
+                if (!formEmail) {
+                    message = "E-mail can not be empty.";
+                } else {
+                    message = "E-mail is invalid.";
+                }
+                api.notify.showError(message);
+                // deferred.resolve(null);
+                deferred.reject(new Error(message));
+                return deferred.promise;
             }
         }
 
@@ -119,23 +133,25 @@ module app.wizard {
                 this.createSteps()
             ];
 
-            if (principal) {
+            if (!!principal) {
                 parallelPromises.push(
                     new GetPrincipalByKeyRequest(this.getPersistedItem().getKey()).
                         includeUserMemberships(true).
                         sendAndParse().
                         then((p: Principal) => {
+                            this.getPersistedItem().asUser();
                             this.getPersistedItem().asUser().setMemberships(p.asUser().getMemberships());
                             principal = this.getPersistedItem().asUser().clone();
                         })
                 );
             }
 
-            return wemQ.all(parallelPromises).
-                spread<void>(() => {
+            return wemQ.all(parallelPromises).spread<void>(() => {
+                this.principalWizardHeader.setDisplayName(principal.getDisplayName());
                 this.userEmailWizardStepForm.layout(principal);
                 this.userPasswordWizardStepForm.layout(principal);
                 this.userMembershipsWizardStepForm.layout(principal);
+
                 return wemQ(null);
             });
         }
@@ -144,22 +160,26 @@ module app.wizard {
             return this.produceCreateUserRequest().sendAndParse().
                 then((principal: Principal) => {
                     this.principalWizardHeader.disableNameInput();
+                    this.principalWizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('User was created!');
                     return principal;
                 });
         }
 
         produceCreateUserRequest(): CreateUserRequest {
-            var key = PrincipalKey.ofUser(this.userStore, this.principalWizardHeader.getName()),
-                name = this.principalWizardHeader.getDisplayName(),
-                email = "",
-                login = this.principalWizardHeader.getName(),
-                password = "";
+            var user = this.assembleViewedPrincipal().asUser(),
+                key = PrincipalKey.ofUser(this.userStore, this.principalWizardHeader.getName()),
+                name = user.getDisplayName(),
+                email = user.getEmail(),
+                login = user.getLogin(),
+                password = this.userPasswordWizardStepForm.getPassword(),
+                memberships = user.getMemberships().map((el) => { return el.getKey(); });
             return new CreateUserRequest().setKey(key).
                                            setDisplayName(name).
                                            setEmail(email).
                                            setLogin(login).
-                                           setPassword(password);
+                                           setPassword(password).
+                                           setMemberships(memberships);
         }
 
         updatePersistedItem(): wemQ.Promise<Principal> {
@@ -169,6 +189,7 @@ module app.wizard {
                     if (!this.getPersistedItem().getDisplayName() && !!principal.getDisplayName()) {
                         this.notifyPrincipalNamed(principal);
                     }
+                    this.userEmailWizardStepForm.layout(principal);
                     api.notify.showFeedback('User was updated!');
 
                     return principal;
@@ -180,22 +201,30 @@ module app.wizard {
                 key = user.getKey(),
                 displayName = user.getDisplayName(),
                 email = user.getEmail(),
-                login = user.getLogin();
+                login = user.getLogin(),
+                oldMemberships = this.getPersistedItem().asUser().getMemberships().map((el) => { return el.getKey(); }),
+                oldMembershipsIds = oldMemberships.map((el) => { return el.getId(); }),
+                newMemberships = user.getMemberships().map((el) => { return el.getKey(); }),
+                newMembershipsIds = newMemberships.map((el) => { return el.getId(); }),
+                addMemberships = newMemberships.filter((el) => { return oldMembershipsIds.indexOf(el.getId()) < 0; }),
+                removeMemberships = oldMemberships.filter((el) => { return newMembershipsIds.indexOf(el.getId()) < 0; });
 
             return new UpdateUserRequest().
                 setKey(key).
                 setDisplayName(displayName).
                 setEmail(email).
-                setLogin(login);
+                setLogin(login).
+                addMemberships(addMemberships).
+                removeMemberships(removeMemberships);
         }
 
         assembleViewedPrincipal(): Principal {
-            return new UserBuilder(this.getPersistedItem().asUser()).
+            return new UserBuilder(!!this.getPersistedItem() ? this.getPersistedItem().asUser() : null).
                 setDisplayName(this.principalWizardHeader.getDisplayName()).
                 setEmail(this.userEmailWizardStepForm.getEmail()).
-//                setLogin().
-//                setMemberships().
-//                setDisabled().
+                setLogin(this.principalWizardHeader.getName()).
+                setMemberships(this.userMembershipsWizardStepForm.getMemberships()).
+                // setDisabled().
                 build();
         }
 
@@ -203,8 +232,16 @@ module app.wizard {
             var persistedPrincipal = this.getPersistedItem().asUser();
             var viewedPrincipal = this.assembleViewedPrincipal().asUser();
             // Group/User order can be different for viewed and persisted principal
-//            viewedPrincipal.getMembers().sort((a,b) => { return a.getId().localeCompare(b.getId()); });
-//            persistedPrincipal.getMembers().sort((a,b) => { return a.getId().localeCompare(b.getId()); });
+            viewedPrincipal.getMemberships().sort((a,b) => { return a.getKey().getId().localeCompare(b.getKey().getId()); });
+            persistedPrincipal.getMemberships().sort((a,b) => { return a.getKey().getId().localeCompare(b.getKey().getId()); });
+
+            // #hack - The newly added members will have different modifiedData
+            var viewedMembershipsKeys = viewedPrincipal.getMemberships().map((el) => { return el.getKey() }),
+                persistedMembershipsKeys = persistedPrincipal.getMemberships().map((el) => { return el.getKey() });
+
+            if (api.ObjectHelper.arrayEquals(viewedMembershipsKeys, persistedMembershipsKeys)) {
+                viewedPrincipal.setMemberships(persistedPrincipal.getMemberships());
+            }
 
             return viewedPrincipal.equals(persistedPrincipal);
         }
