@@ -283,6 +283,7 @@ public final class Node
             this.permissions = node.permissions;
             this.inheritPermissions = node.inheritPermissions;
             this.nodeType = node.nodeType;
+            this.attachments = node.attachments;
         }
 
         private BaseBuilder( final NodeId id, final NodeName name )
