@@ -117,6 +117,136 @@ public final class ContentResource
 
     private SecurityService securityService;
 
+    @POST
+    @Path("create")
+    public ContentJson create( final CreateContentJson params )
+    {
+        final Content persistedContent = contentService.create( params.getCreateContent() );
+        return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+    }
+
+    @POST
+    @Path("duplicate")
+    public ContentJson duplicate( final DuplicateContentJson params )
+    {
+        final Content duplicatedContent = contentService.duplicate( new DuplicateContentParams( params.getContentId() ) );
+
+        return new ContentJson( duplicatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+    }
+
+    @POST
+    @Path("update")
+    public ContentJson update( final UpdateContentJson json )
+    {
+        final UpdateContentParams updateParams = json.getUpdateContentParams();
+
+        final Content updatedContent = contentService.update( updateParams );
+        if ( json.getContentName().equals( updatedContent.getName() ) )
+        {
+            return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer,
+                                    principalsResolver );
+        }
+
+        final RenameContentParams renameParams = json.getRenameContentParams();
+        final Content renamedContent = contentService.rename( renameParams );
+        return new ContentJson( renamedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+    }
+
+
+    @POST
+    @Path("delete")
+    public DeleteContentResultJson delete( final DeleteContentJson json )
+    {
+        final ContentPaths contentsToDelete = ContentPaths.from( json.getContentPaths() );
+
+        //sort contents by nesting order to avoid removing parent content before child.
+        List<ContentPath> contentsToDeleteList = Lists.newArrayList( contentsToDelete.getSet() );
+        Collections.sort( contentsToDeleteList, ( ContentPath contentPath1, ContentPath contentPath2 ) -> ( contentPath2.elementCount() -
+            contentPath1.elementCount() ) );
+
+        final DeleteContentResultJson jsonResult = new DeleteContentResultJson();
+
+        for ( final ContentPath contentToDelete : contentsToDeleteList )
+        {
+            final DeleteContentParams deleteContent = new DeleteContentParams();
+            deleteContent.deleter( PrincipalKey.ofAnonymous() );
+            deleteContent.contentPath( contentToDelete );
+
+            try
+            {
+                contentService.delete( deleteContent );
+                jsonResult.addSuccess( contentToDelete );
+            }
+            catch ( ContentNotFoundException | UnableToDeleteContentException e )
+            {
+                jsonResult.addFailure( deleteContent.getContentPath(), e.getMessage() );
+            }
+        }
+
+        return jsonResult;
+    }
+
+    @POST
+    @Path("publish")
+    public ContentJson publish( final PublishContentJson params )
+    {
+        final Content publishedContent =
+            contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, params.getContentId() ) );
+
+        return new ContentJson( publishedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+    }
+
+    @POST
+    @Path("applyPermissions")
+    public ContentJson applyPermissions( final ApplyContentPermissionsJson jsonParams )
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        final PrincipalKey modifier =
+            authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
+
+        final UpdateContentParams updatePermissionsParams = jsonParams.getUpdateContentParams().modifier( modifier );
+        final Content updatedContent = contentService.update( updatePermissionsParams );
+
+        contentService.applyPermissions( ApplyContentPermissionsParams.create().
+            contentId( updatedContent.getId() ).
+            overwriteChildPermissions( jsonParams.isOverwriteChildPermissions() ).
+            modifier( modifier ).
+            build() );
+
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+    }
+
+    @POST
+    @Path("setChildOrder")
+    public ContentJson setChildOrder( final SetChildOrderJson params )
+    {
+        final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
+            childOrder( params.getChildOrder().getChildOrder() ).
+            contentId( ContentId.from( params.getContentId() ) ).
+            build() );
+
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+    }
+
+    @POST
+    @Path("reorderChildren")
+    public ReorderChildrenResultJson reorderChildContents( final ReorderChildrenJson params )
+    {
+        final ReorderChildContentsParams.Builder builder = ReorderChildContentsParams.create();
+
+        for ( final ReorderChildJson reorderChildJson : params.getReorderChildren() )
+        {
+            builder.add( ReorderChildParams.create().
+                contentToMove( ContentId.from( reorderChildJson.getContentId() ) ).
+                contentToMoveBefore( ContentId.from( reorderChildJson.getMoveBefore() ) ).
+                build() );
+        }
+
+        final ReorderChildContentsResult result = this.contentService.reorderChildren( builder.build() );
+
+        return new ReorderChildrenResultJson( result );
+    }
+
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam,
                                   @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
@@ -297,39 +427,6 @@ public final class ContentResource
     }
 
     @POST
-    @Path("delete")
-    public DeleteContentResultJson delete( final DeleteContentJson json )
-    {
-        final ContentPaths contentsToDelete = ContentPaths.from( json.getContentPaths() );
-
-        //sort contents by nesting order to avoid removing parent content before child.
-        List<ContentPath> contentsToDeleteList = Lists.newArrayList( contentsToDelete.getSet() );
-        Collections.sort( contentsToDeleteList, ( ContentPath contentPath1, ContentPath contentPath2 ) -> ( contentPath2.elementCount() -
-            contentPath1.elementCount() ) );
-
-        final DeleteContentResultJson jsonResult = new DeleteContentResultJson();
-
-        for ( final ContentPath contentToDelete : contentsToDeleteList )
-        {
-            final DeleteContentParams deleteContent = new DeleteContentParams();
-            deleteContent.deleter( PrincipalKey.ofAnonymous() );
-            deleteContent.contentPath( contentToDelete );
-
-            try
-            {
-                contentService.delete( deleteContent );
-                jsonResult.addSuccess( contentToDelete );
-            }
-            catch ( ContentNotFoundException | UnableToDeleteContentException e )
-            {
-                jsonResult.addFailure( deleteContent.getContentPath(), e.getMessage() );
-            }
-        }
-
-        return jsonResult;
-    }
-
-    @POST
     @Path("compare")
     public CompareContentResultsJson compare( final CompareContentsJson params )
     {
@@ -365,102 +462,6 @@ public final class ContentResource
             build() );
 
         return new GetActiveContentVersionsResultJson( result );
-    }
-
-    @POST
-    @Path("publish")
-    public ContentJson publish( final PublishContentJson params )
-    {
-        final Content publishedContent =
-            contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, params.getContentId() ) );
-
-        return new ContentJson( publishedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
-    }
-
-    @POST
-    @Path("duplicate")
-    public ContentJson duplicate( final DuplicateContentJson params )
-    {
-        final Content duplicatedContent = contentService.duplicate( new DuplicateContentParams( params.getContentId() ) );
-
-        return new ContentJson( duplicatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
-    }
-
-    @POST
-    @Path("create")
-    public ContentJson create( final CreateContentJson params )
-    {
-        final Content persistedContent = contentService.create( params.getCreateContent() );
-        return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
-    }
-
-    @POST
-    @Path("setChildOrder")
-    public ContentJson setChildOrder( final SetChildOrderJson params )
-    {
-        final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
-            childOrder( params.getChildOrder().getChildOrder() ).
-            contentId( ContentId.from( params.getContentId() ) ).
-            build() );
-
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
-    }
-
-    @POST
-    @Path("reorderChildren")
-    public ReorderChildrenResultJson reorderChildContents( final ReorderChildrenJson params )
-    {
-        final ReorderChildContentsParams.Builder builder = ReorderChildContentsParams.create();
-
-        for ( final ReorderChildJson reorderChildJson : params.getReorderChildren() )
-        {
-            builder.add( ReorderChildParams.create().
-                contentToMove( ContentId.from( reorderChildJson.getContentId() ) ).
-                contentToMoveBefore( ContentId.from( reorderChildJson.getMoveBefore() ) ).
-                build() );
-        }
-
-        final ReorderChildContentsResult result = this.contentService.reorderChildren( builder.build() );
-
-        return new ReorderChildrenResultJson( result );
-    }
-
-    @POST
-    @Path("update")
-    public ContentJson update( final UpdateContentJson json )
-    {
-        final UpdateContentParams updateParams = json.getUpdateContentParams();
-
-        final Content updatedContent = contentService.update( updateParams );
-        if ( json.getContentName().equals( updatedContent.getName() ) )
-        {
-            return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer,
-                                    principalsResolver );
-        }
-
-        final RenameContentParams renameParams = json.getRenameContentParams();
-        final Content renamedContent = contentService.rename( renameParams );
-        return new ContentJson( renamedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
-    }
-
-    @POST
-    @Path("applyPermissions")
-    public ContentJson applyPermissions( final ApplyContentPermissionsJson jsonParams )
-    {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final PrincipalKey modifier =
-            authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
-
-        final UpdateContentParams updatePermissionsParams = jsonParams.getUpdateContentParams().modifier( modifier );
-        final Content updatedContent = contentService.update( updatePermissionsParams );
-
-        contentService.applyPermissions( ApplyContentPermissionsParams.create().
-            contentId( updatedContent.getId() ).
-            overwriteChildPermissions( jsonParams.isOverwriteChildPermissions() ).
-            modifier( modifier ).
-            build() );
-
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
     private List<Attachment> parseAttachments( final List<AttachmentJson> attachmentJsonList )
