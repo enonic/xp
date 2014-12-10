@@ -167,13 +167,12 @@ module app.wizard {
         }
 
         produceCreateUserRequest(): CreateUserRequest {
-            var user = this.assembleViewedPrincipal().asUser(),
-                key = PrincipalKey.ofUser(this.userStore, this.principalWizardHeader.getName()),
-                name = user.getDisplayName(),
-                email = user.getEmail(),
-                login = user.getLogin(),
+            var key = PrincipalKey.ofUser(this.userStore, this.principalWizardHeader.getName()),
+                name = this.principalWizardHeader.getDisplayName(),
+                email = this.userEmailWizardStepForm.getEmail(),
+                login = this.principalWizardHeader.getName(),
                 password = this.userPasswordWizardStepForm.getPassword(),
-                memberships = user.getMemberships().map((el) => { return el.getKey(); });
+                memberships = this.userMembershipsWizardStepForm.getMemberships().map((el) => { return el.getKey(); });
             return new CreateUserRequest().setKey(key).
                                            setDisplayName(name).
                                            setEmail(email).
