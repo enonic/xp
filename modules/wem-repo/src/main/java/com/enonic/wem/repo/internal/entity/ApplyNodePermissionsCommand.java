@@ -12,10 +12,7 @@ import com.enonic.wem.api.node.ApplyNodePermissionsParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.Nodes;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 
 final class ApplyNodePermissionsCommand
@@ -25,10 +22,13 @@ final class ApplyNodePermissionsCommand
 
     private final ApplyNodePermissionsParams params;
 
+    private final PermissionsMergingStrategy mergingStrategy;
+
     private ApplyNodePermissionsCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.mergingStrategy = builder.mergingStrategy;
     }
 
     public int execute()
@@ -81,7 +81,7 @@ final class ApplyNodePermissionsCommand
         }
         else
         {
-            final AccessControlList mergedPermissions = mergePermissions( node.getPermissions(), parentPermissions );
+            final AccessControlList mergedPermissions = mergingStrategy.mergePermissions( node.getPermissions(), parentPermissions );
             updatedNode = createUpdatedNode( node, mergedPermissions, false );
         }
 
@@ -99,70 +99,6 @@ final class ApplyNodePermissionsCommand
         return updateNodeBuilder.build();
     }
 
-    public AccessControlList mergePermissions( final AccessControlList childAcl, final AccessControlList parentAcl )
-    {
-        final AccessControlList.Builder effective = AccessControlList.create();
-        // apply parent entries
-        for ( AccessControlEntry parentEntry : parentAcl )
-        {
-            final PrincipalKey principal = parentEntry.getPrincipal();
-            if ( childAcl.contains( principal ) )
-            {
-                final AccessControlEntry childEntry = childAcl.getEntry( principal );
-                final AccessControlEntry mergedEntry = mergeAccessControlEntries( childEntry, parentEntry );
-                effective.add( mergedEntry );
-            }
-            else
-            {
-                effective.add( parentEntry );
-            }
-        }
-
-        // apply child entries not in parent
-        for ( AccessControlEntry childEntry : childAcl )
-        {
-            if ( !parentAcl.contains( childEntry.getPrincipal() ) )
-            {
-                effective.add( childEntry );
-            }
-        }
-
-        return effective.build();
-    }
-
-    private AccessControlEntry mergeAccessControlEntries( final AccessControlEntry childEntry, final AccessControlEntry parentEntry )
-    {
-        final AccessControlEntry.Builder entry = AccessControlEntry.create().principal( childEntry.getPrincipal() );
-        for ( Permission permission : Permission.values() )
-        {
-            if ( childEntry.isSet( permission ) )
-            {
-                // set effective permission from child
-                if ( childEntry.isAllowed( permission ) )
-                {
-                    entry.allow( permission );
-                }
-                else
-                {
-                    entry.deny( permission );
-                }
-            }
-            else if ( parentEntry.isSet( permission ) )
-            {
-                // inherit permission from parent
-                if ( parentEntry.isAllowed( permission ) )
-                {
-                    entry.allow( permission );
-                }
-                else
-                {
-                    entry.deny( permission );
-                }
-            }
-        }
-        return entry.build();
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -172,6 +108,8 @@ final class ApplyNodePermissionsCommand
         extends AbstractNodeCommand.Builder<Builder>
     {
         private ApplyNodePermissionsParams params;
+
+        private PermissionsMergingStrategy mergingStrategy = new DefaultPermissionsMergingStrategy();
 
         Builder()
         {
@@ -184,6 +122,12 @@ final class ApplyNodePermissionsCommand
             return this;
         }
 
+        public Builder mergingStrategy( final PermissionsMergingStrategy mergingStrategy )
+        {
+            this.mergingStrategy = mergingStrategy;
+            return this;
+        }
+
         public ApplyNodePermissionsCommand build()
         {
             validate();
@@ -193,6 +137,7 @@ final class ApplyNodePermissionsCommand
         void validate()
         {
             Preconditions.checkNotNull( params );
+            Preconditions.checkNotNull( mergingStrategy );
         }
     }
 

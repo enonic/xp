@@ -1,6 +1,6 @@
 package com.enonic.wem.api.content;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.Site;
@@ -52,6 +52,6 @@ public interface ContentService
 
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
-    Future<Integer> applyPermissions( ApplyContentPermissionsParams params );
+    CompletableFuture<Integer> applyPermissions( ApplyContentPermissionsParams params );
 
 }

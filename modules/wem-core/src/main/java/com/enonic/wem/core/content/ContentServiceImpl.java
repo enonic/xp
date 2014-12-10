@@ -1,8 +1,14 @@
 package com.enonic.wem.core.content;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ApplyContentPermissionsParams;
@@ -58,6 +64,7 @@ import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 public class ContentServiceImpl
     implements ContentService
 {
+    private final static Logger LOG = LoggerFactory.getLogger( ContentServiceImpl.class );
 
     public static final String TEMPLATES_FOLDER_NAME = "_templates";
 
@@ -75,7 +82,16 @@ public class ContentServiceImpl
 
     private EventPublisher eventPublisher;
 
-    private final ExecutorService applyPermissionsExecutor = Executors.newSingleThreadExecutor(); // TODO review executor settings
+    private final ExecutorService applyPermissionsExecutor;
+
+    public ContentServiceImpl()
+    {
+        final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().
+            setNameFormat( "apply-permissions-thread-%d" ).
+            setUncaughtExceptionHandler( ( t, e ) -> LOG.error( "Apply Permissions failed", e ) ).
+            build();
+        this.applyPermissionsExecutor = Executors.newFixedThreadPool( 5, namedThreadFactory );
+    }
 
     @Override
     public Site create( final CreateSiteParams params )
@@ -443,7 +459,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Future<Integer> applyPermissions( final ApplyContentPermissionsParams params )
+    public CompletableFuture<Integer> applyPermissions( final ApplyContentPermissionsParams params )
     {
         final ApplyContentPermissionsCommand applyPermissionsCommand = ApplyContentPermissionsCommand.create( params ).
             nodeService( this.nodeService ).
@@ -452,7 +468,7 @@ public class ContentServiceImpl
             translator( this.contentNodeTranslator ).
             build();
 
-        return this.applyPermissionsExecutor.submit( applyPermissionsCommand::execute );
+        return CompletableFuture.supplyAsync( applyPermissionsCommand::execute, applyPermissionsExecutor );
     }
 
     public void setContentTypeService( final ContentTypeService contentTypeService )
