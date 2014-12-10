@@ -87,9 +87,7 @@ public class NodeDaoImpl
             throw new IllegalArgumentException( "Trying to load blob when blob is null" );
         }
 
-        final InputStream stream = blob.getStream();
-
-        try
+        try (final InputStream stream = blob.getStream())
         {
             final byte[] bytes = ByteStreams.toByteArray( stream );
 
@@ -98,17 +96,6 @@ public class NodeDaoImpl
         catch ( IOException e )
         {
             throw new RuntimeException( "Failed to load blob with key: " + blob.getKey() );
-        }
-        finally
-        {
-            try
-            {
-                stream.close();
-            }
-            catch ( IOException e )
-            {
-                throw new RuntimeException( "Failed to close blob stream with key: " + blob.getKey() );
-            }
         }
     }
 
