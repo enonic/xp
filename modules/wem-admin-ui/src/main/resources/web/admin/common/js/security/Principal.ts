@@ -12,15 +12,19 @@ module api.security {
 
         constructor(principalKey: PrincipalKey, displayName: string, modifiedTime?: Date) {
             this.key = principalKey;
-            this.displayName = displayName;
+            this.displayName = displayName || "";
             this.type = principalKey.getType();
             this.modifiedTime = modifiedTime;
         }
 
         static fromJson(json: PrincipalJson): Principal {
             var key = PrincipalKey.fromString(json.key);
-            var date = json.modifiedTime ? api.util.DateHelper.parseUTCDate(json.modifiedTime) : undefined;
+            var date = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
             return new Principal(key, json.displayName, date);
+        }
+
+        static fromPrincipal(principal: Principal): Principal {
+            return new Principal(principal.getKey(), principal.getDisplayName(), principal.getModifiedTime());
         }
 
         toJson(): PrincipalJson {
@@ -76,6 +80,7 @@ module api.security {
             }
 
             var other = <Principal> o;
+
             return this.key.equals(other.key) &&
                    this.displayName === other.displayName &&
                    this.type === other.type &&

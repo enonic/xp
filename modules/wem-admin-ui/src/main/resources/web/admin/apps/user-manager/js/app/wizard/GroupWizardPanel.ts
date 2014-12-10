@@ -41,10 +41,11 @@ module app.wizard {
                 this.createSteps()
             ];
 
-            return wemQ.all(parallelPromises).
-                spread<void>(() => {
-                    this.getDescriptionWizardStepForm().layout(principal);
-                    this.getMembersWizardStepForm().layout(principal);
+            return wemQ.all(parallelPromises).spread<void>(() => {
+                this.principalWizardHeader.setDisplayName(principal.getDisplayName());
+                this.getDescriptionWizardStepForm().layout(principal);
+                this.getMembersWizardStepForm().layout(principal);
+
                 return wemQ(null);
             });
         }
@@ -53,6 +54,7 @@ module app.wizard {
              return this.produceCreateGroupRequest().sendAndParse().
                 then((principal: Principal) => {
                     this.getPrincipalWizardHeader().disableNameInput();
+                     this.principalWizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('Group was created!');
                     return principal;
                 });
@@ -85,9 +87,8 @@ module app.wizard {
                 oldMembers = this.getPersistedItem().asGroup().getMembers(),
                 oldMembersIds = oldMembers.map((el) => { return el.getId(); }),
                 newMembers = group.getMembers(),
-                newMembersIds = newMembers.map((el) => { return el.getId(); });
-
-            var addMembers = newMembers.filter((el) => { return oldMembersIds.indexOf(el.getId()) < 0; }),
+                newMembersIds = newMembers.map((el) => { return el.getId(); }),
+                addMembers = newMembers.filter((el) => { return oldMembersIds.indexOf(el.getId()) < 0; }),
                 removeMembers = oldMembers.filter((el) => { return newMembersIds.indexOf(el.getId()) < 0; });
 
             return new UpdateGroupRequest().

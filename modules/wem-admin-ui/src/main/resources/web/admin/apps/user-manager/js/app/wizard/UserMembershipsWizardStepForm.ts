@@ -107,8 +107,10 @@ module app.wizard {
             }
         }
 
-        getPrincipal(): Principal {
-            return this.principal;
+        getMemberships(): Principal[] {
+            return this.groups.getSelectedDisplayValues().
+                concat(this.roles.getSelectedDisplayValues()).
+                map((el) => { return Principal.fromPrincipal(el); });
         }
 
         giveFocus(): boolean {

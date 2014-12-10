@@ -8,6 +8,8 @@ module api.ui.text {
 
         private input: InputEl;
 
+        private originEmail: string;
+
         private status: string;
         private checkTimeout: number;
 
@@ -38,6 +40,15 @@ module api.ui.text {
             return this;
         }
 
+        getOriginEmail(): string {
+            return this.originEmail;
+        }
+
+        setOriginEmail(value: string): EmailInput {
+            this.originEmail = value;
+            return this;
+        }
+
         getName(): string {
             return this.input.getName();
         }
@@ -48,7 +59,7 @@ module api.ui.text {
         }
 
         isAvailable(): boolean {
-            return this.status === "available";
+            return this.hasClass('available');
         }
 
         private checkAvailability(email: string) {
@@ -60,7 +71,7 @@ module api.ui.text {
                 status = 'checking';
 
                 new CheckEmailAvailabilityRequest(email).sendAndParse().then((available: boolean) => {
-                    this.updateStatus(available ? 'available' : 'notavailable');
+                    this.updateStatus((available || email === this.originEmail) ? 'available' : 'notavailable');
                 }).fail((reason) => {
                     this.updateStatus('error');
                 })
@@ -70,7 +81,7 @@ module api.ui.text {
         }
 
         private updateStatus(status?: string) {
-            if (this.status) {
+            if (!!this.status) {
                 this.removeClass(this.status);
             }
             if (!StringHelper.isEmpty(status)) {

@@ -71,6 +71,7 @@ module app.wizard {
 
             if (params.persistedPrincipal) {
                 this.principalWizardHeader.disableNameInput();
+                this.principalWizardHeader.setAutoGenerationEnabled(false);
             } else {
                 this.getPrincipalWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
                     if (event.getPropertyName() === "name") {

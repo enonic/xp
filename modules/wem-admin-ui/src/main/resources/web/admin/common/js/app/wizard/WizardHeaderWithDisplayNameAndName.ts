@@ -31,6 +31,8 @@ module api.app.wizard {
 
         private autoGenerateName: boolean = false;
 
+        private autoGenerationEnabled: boolean = true;
+
         constructor(builder: WizardHeaderWithDisplayNameAndNameBuilder) {
             super();
             this.displayNameGenerator = builder.displayNameGenerator;
@@ -79,7 +81,7 @@ module api.app.wizard {
 
         }
 
-        private checkAutoGenerateName(name: string, displayName: string) {
+        private checkAutoGenerateName(name: string, displayName: string): boolean {
             return api.util.StringHelper.isEmpty(name) || displayName == name || name == this.generateName(displayName);
         }
 
@@ -107,13 +109,16 @@ module api.app.wizard {
         }
 
         private doAutoGenerateName(value: string) {
-            if (this.autoGenerateName) {
+            if (this.autoGenerateName && this.autoGenerationEnabled) {
                 this.nameEl.setValue(this.generateName(value));
             }
         }
 
-        setDisplayName(value: string) {
+        setAutoGenerationEnabled(value: boolean) {
+            this.autoGenerationEnabled = value;
+        }
 
+        setDisplayName(value: string) {
             if (this.displayNameProgrammaticallySet) {
                 this.displayNameEl.setValue(value);
                 this.doAutoGenerateName(value);
