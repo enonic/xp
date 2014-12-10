@@ -1,16 +1,16 @@
 package com.enonic.wem.api.query.aggregation;
 
 public class NumericRangeAggregationQuery
-    extends RangeAggregationQuery<NumericRange>
+    extends AbstractRangeAggregationQuery<NumericRange>
 {
 
-    public NumericRangeAggregationQuery( final RangeAggregationQuery.Builder builder )
+    private NumericRangeAggregationQuery( final Builder builder )
     {
-        super( builder );
+        super( builder, builder.ranges );
     }
 
     public static class Builder
-        extends RangeAggregationQuery.Builder<Builder, NumericRange>
+        extends AbstractRangeAggregationQuery.Builder<Builder, NumericRange>
     {
 
         public Builder( final String name )

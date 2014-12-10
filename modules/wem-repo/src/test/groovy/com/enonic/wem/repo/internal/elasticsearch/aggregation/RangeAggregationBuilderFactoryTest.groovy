@@ -1,8 +1,8 @@
 package com.enonic.wem.repo.internal.elasticsearch.aggregation
 
+import com.enonic.wem.api.query.aggregation.AbstractRangeAggregationQuery
 import com.enonic.wem.api.query.aggregation.DateRange
 import com.enonic.wem.api.query.aggregation.NumericRange
-import com.enonic.wem.api.query.aggregation.RangeAggregationQuery
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.BaseTestBuilderFactory
 import org.elasticsearch.common.xcontent.ToXContent
 import org.elasticsearch.common.xcontent.XContentBuilder
@@ -26,7 +26,7 @@ class RangeAggregationBuilderFactoryTest
         given:
         def expectedJson = this.getClass().getResource( "aggs_daterange.json" ).text
 
-        def RangeAggregationQuery query = RangeAggregationQuery.dateRangeQuery( "myRangeQuery" ).
+        def AbstractRangeAggregationQuery query = AbstractRangeAggregationQuery.dateRangeQuery( "myRangeQuery" ).
             fieldName( "myField" ).
             range( DateRange.newDateRange().
                        key( "to eternity" ).
@@ -52,7 +52,7 @@ class RangeAggregationBuilderFactoryTest
         given:
         def expectedJson = this.getClass().getResource( "aggs_daterange_datemath.json" ).text
 
-        def RangeAggregationQuery query = RangeAggregationQuery.dateRangeQuery( "myRangeQuery" ).
+        def AbstractRangeAggregationQuery query = AbstractRangeAggregationQuery.dateRangeQuery( "myRangeQuery" ).
             fieldName( "myField" ).
             range( DateRange.newDateRange().
                        key( "ten days from now" ).
@@ -78,7 +78,7 @@ class RangeAggregationBuilderFactoryTest
         given:
         def expectedJson = this.getClass().getResource( "aggs_numericrange.json" ).text
 
-        def RangeAggregationQuery query = RangeAggregationQuery.numericRangeQuery( "myRangeQuery" ).
+        def AbstractRangeAggregationQuery query = AbstractRangeAggregationQuery.numericRangeQuery( "myRangeQuery" ).
             fieldName( "myField" ).
             range( NumericRange.newNumericRange().
                        key( "to eternity" ).

@@ -1,15 +1,15 @@
 package com.enonic.wem.api.query.aggregation;
 
 public class DateRangeAggregationQuery
-    extends RangeAggregationQuery<DateRange>
+    extends AbstractRangeAggregationQuery<DateRange>
 {
-    public DateRangeAggregationQuery( final RangeAggregationQuery.Builder builder )
+    private DateRangeAggregationQuery( final Builder builder )
     {
-        super( builder );
+        super( builder, builder.ranges );
     }
 
     public static class Builder
-        extends RangeAggregationQuery.Builder<Builder, DateRange>
+        extends AbstractRangeAggregationQuery.Builder<Builder, DateRange>
     {
         public Builder( final String name )
         {

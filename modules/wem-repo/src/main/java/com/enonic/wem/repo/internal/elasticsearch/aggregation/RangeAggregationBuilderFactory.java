@@ -4,16 +4,16 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.RangeBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRangeBuilder;
 
+import com.enonic.wem.api.query.aggregation.AbstractRangeAggregationQuery;
 import com.enonic.wem.api.query.aggregation.DateRange;
 import com.enonic.wem.api.query.aggregation.DateRangeAggregationQuery;
 import com.enonic.wem.api.query.aggregation.NumericRange;
 import com.enonic.wem.api.query.aggregation.NumericRangeAggregationQuery;
-import com.enonic.wem.api.query.aggregation.RangeAggregationQuery;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 public class RangeAggregationBuilderFactory
 {
-    public static AggregationBuilder create( final RangeAggregationQuery aggregationQuery )
+    public static AggregationBuilder create( final AbstractRangeAggregationQuery aggregationQuery )
     {
         if ( aggregationQuery instanceof DateRangeAggregationQuery )
         {

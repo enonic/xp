@@ -5,17 +5,17 @@ import java.util.Collection;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-public abstract class RangeAggregationQuery<R extends Range>
+public abstract class AbstractRangeAggregationQuery<R extends Range>
     extends AggregationQuery
 {
     private final String fieldName;
 
     private final ImmutableSet<R> ranges;
 
-    protected RangeAggregationQuery( final Builder builder )
+    AbstractRangeAggregationQuery( final Builder builder, final Collection<R> ranges )
     {
         super( builder.name );
-        this.ranges = ImmutableSet.copyOf( builder.ranges );
+        this.ranges = ImmutableSet.copyOf( ranges );
         this.fieldName = builder.fieldName;
     }
 

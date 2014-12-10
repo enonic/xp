@@ -1,6 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch.aggregation;
 
 
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.slf4j.Logger;
@@ -26,11 +27,15 @@ public class AggregationsFactory
         {
             if ( aggregation instanceof Terms )
             {
-                aggregationsBuilder.add( createTermsAggregation( (Terms) aggregation ) );
+                aggregationsBuilder.add( createTermsAggregationBuckets( (Terms) aggregation ) );
             }
             else if ( aggregation instanceof DateRange )
             {
-                aggregationsBuilder.add( createDateRangeFacet( (DateRange) aggregation ) );
+                aggregationsBuilder.add( createDateRangeBuckets( (DateRange) aggregation ) );
+            }
+            else if ( aggregation instanceof DateHistogram )
+            {
+                aggregationsBuilder.add( createDateHistogramBuckets( (DateHistogram) aggregation ) );
             }
             else
             {
@@ -41,19 +46,27 @@ public class AggregationsFactory
         return aggregationsBuilder.build();
     }
 
-    private static BucketAggregation createTermsAggregation( final Terms termsAggregation )
+    private static BucketAggregation createTermsAggregationBuckets( final Terms termsAggregation )
     {
         return BucketAggregation.bucketAggregation( termsAggregation.getName() ).
             buckets( BucketsFactory.createFromTerms( termsAggregation.getBuckets() ) ).
             build();
     }
 
-    private static BucketAggregation createDateRangeFacet( final DateRange dateRangeAggregation )
+    private static BucketAggregation createDateRangeBuckets( final DateRange dateRangeAggregation )
     {
         return BucketAggregation.bucketAggregation( dateRangeAggregation.getName() ).
             buckets( BucketsFactory.createFromDateRange( dateRangeAggregation.getBuckets() ) ).
             build();
     }
+
+    private static BucketAggregation createDateHistogramBuckets( final DateHistogram dateHistogram )
+    {
+        return BucketAggregation.bucketAggregation( dateHistogram.getName() ).
+            buckets( BucketsFactory.createFromDateHistogram( dateHistogram.getBuckets() ) ).
+            build();
+    }
+
 
 }
 

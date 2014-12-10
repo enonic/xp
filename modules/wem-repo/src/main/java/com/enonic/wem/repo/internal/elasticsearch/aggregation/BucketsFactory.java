@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.aggregation;
 
 import java.util.Collection;
 
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 
@@ -35,6 +36,18 @@ class BucketsFactory
             dateRangeBucket.setFrom( bucket.getFromAsDate() != null ? bucket.getFromAsDate().toDate().toInstant() : null );
             dateRangeBucket.setTo( bucket.getToAsDate() != null ? bucket.getToAsDate().toDate().toInstant() : null );
             bucketsBuilder.add( dateRangeBucket );
+        }
+
+        return bucketsBuilder.build();
+    }
+
+    public static Buckets createFromDateHistogram( final Collection<? extends DateHistogram.Bucket> buckets )
+    {
+        final Buckets.Builder bucketsBuilder = new Buckets.Builder();
+
+        for ( final DateHistogram.Bucket bucket : buckets )
+        {
+            bucketsBuilder.add( new Bucket( bucket.getKey(), bucket.getDocCount() ) );
         }
 
         return bucketsBuilder.build();

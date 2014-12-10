@@ -16,7 +16,7 @@ class DateRangeAggregationQueryTest
         def Instant future = LocalDateTime.of( 2055, 01, 01, 12, 00 ).toInstant( ZoneOffset.UTC );
 
         when:
-        DateRangeAggregationQuery query = RangeAggregationQuery.dateRangeQuery().
+        DateRangeAggregationQuery query = AbstractRangeAggregationQuery.dateRangeQuery().
             fieldName( "myFieldName" ).
             range( Range.newDateRange().
                        from( past ).

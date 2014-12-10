@@ -9,8 +9,9 @@ import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.query.aggregation.AbstractHistogramAggregationQuery;
+import com.enonic.wem.api.query.aggregation.AbstractRangeAggregationQuery;
 import com.enonic.wem.api.query.aggregation.AggregationQuery;
-import com.enonic.wem.api.query.aggregation.RangeAggregationQuery;
 import com.enonic.wem.api.query.aggregation.TermsAggregationQuery;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
@@ -27,9 +28,14 @@ public class AggregationBuilderFactory
             {
                 aggregationBuilders.add( createTerms( (TermsAggregationQuery) aggregationQuery ) );
             }
-            else if ( aggregationQuery instanceof RangeAggregationQuery )
+            else if ( aggregationQuery instanceof AbstractRangeAggregationQuery )
             {
-                aggregationBuilders.add( RangeAggregationBuilderFactory.create( (RangeAggregationQuery) aggregationQuery ) );
+                aggregationBuilders.add( RangeAggregationBuilderFactory.create( (AbstractRangeAggregationQuery) aggregationQuery ) );
+            }
+            else if ( aggregationQuery instanceof AbstractHistogramAggregationQuery )
+            {
+                aggregationBuilders.add(
+                    HistogramAggregationQueryBuilderFactory.create( (AbstractHistogramAggregationQuery) aggregationQuery ) );
             }
         }
 
