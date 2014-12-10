@@ -8,8 +8,6 @@ module app.wizard {
 
         contentType: api.schema.content.ContentType;
 
-        mediaAttachment: api.content.attachment.Attachment;
-
         parentContent: api.content.Content;
 
         persistedContent: api.content.Content;
@@ -25,11 +23,6 @@ module app.wizard {
 
         setContentType(value: api.schema.content.ContentType): ContentWizardPanelParams {
             this.contentType = value;
-            return this;
-        }
-
-        setMediaAttachment(value: api.content.attachment.Attachment): ContentWizardPanelParams {
-            this.mediaAttachment = value;
             return this;
         }
 

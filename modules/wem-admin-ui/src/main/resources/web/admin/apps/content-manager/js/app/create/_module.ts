@@ -1,4 +1,5 @@
 ///<reference path='NewContentEvent.ts' />
+///<reference path='NewMediaEvent.ts' />
 ///<reference path='NewContentDialog.ts' />
 
 ///<reference path='NewContentDialogList.ts' />

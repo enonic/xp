@@ -1,34 +1,33 @@
 module app.create {
 
-    import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import Content = api.content.Content;
     import Attachment = api.content.attachment.Attachment;
 
-    export class NewContentEvent extends api.event.Event {
+    export class NewMediaEvent extends api.event.Event {
 
-        private contentType: ContentTypeSummary;
+        private content: Content;
 
         private parentContent: Content;
 
-        constructor(contentType: ContentTypeSummary, parentContent: Content) {
+        constructor(content: Content, parentContent: Content) {
             super();
-            this.contentType = contentType;
+            this.content = content;
             this.parentContent = parentContent;
         }
 
-        getContentType(): ContentTypeSummary {
-            return this.contentType;
+        getContent(): Content {
+            return this.content;
         }
 
         getParentContent(): Content {
             return this.parentContent;
         }
 
-        static on(handler: (event: NewContentEvent) => void) {
+        static on(handler: (event: NewMediaEvent) => void) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
         }
 
-        static un(handler?: (event: NewContentEvent) => void) {
+        static un(handler?: (event: NewMediaEvent) => void) {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
     }

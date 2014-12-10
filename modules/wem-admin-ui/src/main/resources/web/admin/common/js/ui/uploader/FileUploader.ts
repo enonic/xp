@@ -14,6 +14,7 @@ module api.ui.uploader {
         showResult?: boolean;
         maximumOccurrences?: number;
         deferred?: boolean;
+        params?: {};
     }
 
     export class FileUploader extends api.dom.FormInputEl {
@@ -223,6 +224,7 @@ module api.ui.uploader {
             }
 
             var uploader = new plupload.Uploader({
+                multipart_params: this.config.params,
                 runtimes: 'gears,html5,flash,silverlight,browserplus',
                 multi_selection: this.config.allowMultiSelection,
                 browse_button: this.config.allowBrowse ? elId : undefined,

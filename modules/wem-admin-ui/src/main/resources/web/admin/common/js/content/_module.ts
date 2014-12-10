@@ -1,4 +1,3 @@
-///<reference path='ContentTypeResolver.ts' />
 ///<reference path='ContentId.ts' />
 ///<reference path='ContentName.ts' />
 ///<reference path='ContentUnnamed.ts' />

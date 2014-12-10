@@ -38,14 +38,14 @@ function startApplication() {
                         new api.content.GetContentByPathRequest(parentContent.getPath().getParentPath()).
                             sendAndParse().then((grandParent: api.content.Content) => {
 
-                                newContentDialog.setParentContent(newParentContent, grandParent);
+                                newContentDialog.setParentContent(newParentContent);
                                 newContentDialog.open();
                             }).catch((reason: any) => {
                                 api.DefaultErrorHandler.handle(reason);
                             }).done();
                     }
                     else {
-                        newContentDialog.setParentContent(newParentContent, null);
+                        newContentDialog.setParentContent(newParentContent);
                         newContentDialog.open();
                     }
                 }).catch((reason: any) => {
@@ -53,7 +53,7 @@ function startApplication() {
                 }).done();
         }
         else {
-            newContentDialog.setParentContent(null, null);
+            newContentDialog.setParentContent(null);
             newContentDialog.open();
         }
     });

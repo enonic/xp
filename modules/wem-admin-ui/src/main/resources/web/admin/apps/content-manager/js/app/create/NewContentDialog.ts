@@ -2,8 +2,8 @@ module app.create {
 
     import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
     import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
-    import ContentTypeResolver = api.content.ContentTypeResolver;
     import ContentName = api.content.ContentName;
+    import Content = api.content.Content;
     import Attachment = api.content.attachment.Attachment;
     import AttachmentName = api.content.attachment.AttachmentName;
     import ContentTypeName = api.schema.content.ContentTypeName;
@@ -14,7 +14,8 @@ module app.create {
     export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
         private parentContent: api.content.Content;
-        private grandParent: api.content.Content;
+
+        private fileUploaderParams: {};
 
         private contentDialogTitle: NewContentDialogTitle;
 
@@ -49,16 +50,20 @@ module app.create {
             var aside = new api.dom.AsideEl("column");
             this.appendChildToContentPanel(aside);
 
+            this.fileUploaderParams = {};
+
             var dropzone = new api.ui.uploader.FileUploader({
+                params: this.fileUploaderParams,
                 name: 'new-content-uploader',
-                url: api.util.UriHelper.getRestUri("blob/upload"),
+                url: api.util.UriHelper.getRestUri("content/createMedia"),
                 showButtons: false,
                 showResult: false,
                 deferred: true  // wait till the window is shown
             });
             aside.appendChild(dropzone);
             dropzone.onFileUploaded((event: FileUploadedEvent) => {
-                this.closeAndFireNewContentEventFromUploadItem(event.getUploadedItem());
+                // TODO: Find a way get the returned content
+                // TODO: this.closeAndFireNewMediaEvent(event.getContent());
             });
 
             var recentTitle = new api.dom.H1El();
@@ -105,23 +110,12 @@ module app.create {
             new NewContentEvent(item.getContentType(), this.parentContent).fire();
         }
 
-        private closeAndFireNewContentEventFromUploadItem(uploadItem: api.ui.uploader.UploadItem) {
+        private closeAndFireNewMediaEvent(newMediaContent: Content) {
 
             this.close();
 
-            var contentTypeName = ContentTypeResolver.resolveFromMimeType(uploadItem.getMimeType());
-            new GetContentTypeByNameRequest(contentTypeName).sendAndParse().then((contentType: ContentType) => {
-                var attachment = Attachment.create().
-                    setBlobKey(uploadItem.getBlobKey()).
-                    setName(new AttachmentName(uploadItem.getName())).
-                    setMimeType(uploadItem.getMimeType()).
-                    setSize(uploadItem.getSize()).
-                    build();
+            new NewMediaEvent(newMediaContent, this.parentContent).fire();
 
-                new NewContentEvent(contentType, this.parentContent, attachment).fire();
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
         }
 
         private filterList() {
@@ -164,9 +158,9 @@ module app.create {
             });
         }
 
-        setParentContent(parent: api.content.Content, grandParent: api.content.Content) {
+        setParentContent(parent: api.content.Content) {
             this.parentContent = parent;
-            this.grandParent = grandParent;
+            (<any>this.fileUploaderParams).parent = parent ? parent.getPath().toString() : api.content.ContentPath.ROOT;
         }
 
         show() {

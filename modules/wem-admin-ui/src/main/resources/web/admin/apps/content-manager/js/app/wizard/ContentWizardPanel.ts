@@ -58,11 +58,6 @@ module app.wizard {
 
         private contentType: ContentType;
 
-        /**
-         * Attachment for creating new media content.
-         */
-        private mediaAttachment: Attachment;
-
         private formIcon: FormIcon;
 
         private contentWizardHeader: WizardHeaderWithDisplayNameAndName;
@@ -117,7 +112,6 @@ module app.wizard {
             this.defaultModels = params.defaultModels;
             this.site = params.site;
             this.contentType = params.contentType;
-            this.mediaAttachment = params.mediaAttachment;
             this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
             this.contentWizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().
                 setDisplayNameGenerator(this.displayNameScriptExecutor).
@@ -500,8 +494,9 @@ module app.wizard {
 
             var parentPath = this.parentContent != null ? this.parentContent.getPath() : api.content.ContentPath.ROOT;
 
-            if (this.contentType.isImage() && this.mediaAttachment) {
-                return CreateImageContentRequest.fromAttachment(this.mediaAttachment, parentPath);
+            if (this.contentType.isImage()) {
+                //return CreateImageContentRequest.fromAttachment(this.mediaAttachment, parentPath);
+                return null;
             }
             else {
                 var data = new PropertyTree();
