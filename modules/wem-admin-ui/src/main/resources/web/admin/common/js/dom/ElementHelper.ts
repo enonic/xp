@@ -149,7 +149,7 @@ module api.dom {
             return this.el.className;
         }
 
-        setTitle(value:string): ElementHelper {
+        setTitle(value: string): ElementHelper {
             this.el.title = value;
             return this;
         }
@@ -307,6 +307,14 @@ module api.dom {
 
         setTopPx(value: number): ElementHelper {
             return this.setTop(value + "px");
+        }
+
+        getTopPx(): number {
+            return parseFloat(this.getTop());
+        }
+
+        getTop(): string {
+            return this.el.style.top;
         }
 
         setBottom(value: string): ElementHelper {

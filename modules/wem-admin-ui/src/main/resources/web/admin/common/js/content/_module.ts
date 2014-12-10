@@ -27,6 +27,7 @@
 ///<reference path='CreateContentRequest.ts' />
 ///<reference path='CreateImageContentRequest.ts' />
 ///<reference path='OrderContentRequest.ts' />
+///<reference path='OrderChildContentRequest.ts' />
 ///<reference path='UpdateContentRequest.ts' />
 ///<reference path='DuplicateContentRequest.ts' />
 ///<reference path='ListContentResult.ts' />
@@ -59,6 +60,8 @@
 ///<reference path='ContentDuplicatedEvent.ts' />
 ///<reference path='GetNearestSiteRequest.ts' />
 ///<reference path='ContentNamedEvent.ts' />
+///<reference path='OrderChildMovement.ts' />
+///<reference path='OrderChildMovements.ts' />
 
 ///<reference path='OrderExpr.ts' />
 ///<reference path='DynamicOrderExpr.ts' />

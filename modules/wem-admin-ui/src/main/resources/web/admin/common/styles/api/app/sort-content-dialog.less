@@ -1,6 +1,28 @@
 .sort-content-dialog {
   width: 650px;
 
+  .slick-viewport {
+    max-height: 600px;
+    overflow: auto;
+  }
+  .drag-icon {
+    cursor: move;
+    font-size: 22px;
+  }
+
+  .slick-reorder-proxy {
+    opacity: 0;
+  }
+
+  .slick-reorder-guide {
+    display: none;
+  }
+
+  .slick-row {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+
   h6 {
     font-size: 12.5px;
     height: 40px;
@@ -9,6 +31,10 @@
   .grid-canvas {
     position: static;
     min-height: 45px;
+
+    .selected {
+      z-index: 2;
+    }
   }
 
   .no-content {
@@ -64,8 +90,8 @@
     right: 30px;
   }
   .sort-content-grid {
-    overflow: auto;
-    max-height: 500px;
+    /*overflow: auto;*/
+    /*max-height: 500px;*/
     height: 100%;
     width: 100%;
   }

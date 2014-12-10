@@ -31,6 +31,16 @@ module app.browse {
         static MAX_FETCH_SIZE: number = 30;
 
         constructor() {
+            var dragColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
+                setName("Drag").
+                setId("drag").
+                setMinWidth(50).
+                setMaxWidth(50).
+                setField("contentSummary.order").
+                setCssClass("drag-icon").
+                setFormatter(this.dragFormatter).
+                setBehavior("selectAndMove").
+                build();
             var nameColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
                 setName("Name").
                 setId("displayName").
@@ -50,13 +60,17 @@ module app.browse {
 
             super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().
                     setColumns([
+                        dragColumn,
                         nameColumn,
                         compareStatusColumn
                     ]).
                     setPartialLoadEnabled(true).
                     setCheckableRows(false).
                     setShowToolbar(false).
-                    prependClasses("content-tree-grid")
+                    setDragAndDrop(true).
+                    disableMultipleSelection(true).
+                    prependClasses("content-tree-grid").
+                    setSelectedCellCssClass("selected-sort-row selected")
             );
 
         }
@@ -93,6 +107,14 @@ module app.browse {
             default:
                 return "Unknown"
             }
+        }
+
+        private dragFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
+            var wrapper = new api.dom.SpanEl();
+            wrapper.getEl().setTitle(value);
+            var icon = new api.dom.DivEl("icon-menu3 drag-icon");
+            wrapper.getEl().setInnerHtml(icon.toString());
+            return wrapper.toString();
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {

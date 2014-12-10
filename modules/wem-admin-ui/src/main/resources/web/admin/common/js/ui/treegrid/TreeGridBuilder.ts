@@ -163,6 +163,33 @@ module api.ui.treegrid {
             return this.options.isCheckableRows()
         }
 
+        setDragAndDrop(dragAndDrop: boolean): TreeGridBuilder<NODE> {
+            this.options.setDragAndDrop(dragAndDrop);
+            return this;
+        }
+
+        isDragAndDrop(): boolean {
+            return this.options.isDragAndDrop();
+        }
+
+        setSelectedCellCssClass(selectedCellCss: string): TreeGridBuilder<NODE> {
+            this.options.setSelectedCellCssClass(selectedCellCss);
+            return this;
+        }
+
+        getSelectedCellCssClass(): string {
+            return this.options.getSelectedCellCssClass();
+        }
+
+        disableMultipleSelection(disableMultipleSelection: boolean): TreeGridBuilder<NODE> {
+            this.options.disableMultipleSelection(disableMultipleSelection);
+            return this;
+        }
+
+        isMultipleSelectionDisabled(): boolean {
+            return this.options.isMultipleSelectionDisabled();
+        }
+
         setHotkeysEnabled(enabled: boolean): TreeGridBuilder<NODE> {
             this.hotkeysEnabled = enabled;
             return this;

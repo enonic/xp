@@ -7,6 +7,7 @@ module app.browse {
     import SaveSortedContentAction = action.SaveSortedContentAction;
     import ContentSummary = api.content.ContentSummary;
     import ChildOrder = api.content.ChildOrder;
+    import OrderChildMovements = api.content.OrderChildMovements;
 
     export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -15,9 +16,15 @@ module app.browse {
         private parentContent: api.content.ContentSummary;
 
         private contentGrid: app.browse.SortContentTreeGrid;
+
         private sortContentMenu: SortContentTabMenu;
 
         private curChildOrder: ChildOrder;
+
+        private prevChildOrder: ChildOrder;
+
+        private gridDragHandler: ContentGridDragHandler;
+
         private isOpen: boolean;
 
         constructor() {
@@ -35,14 +42,24 @@ module app.browse {
             this.sortContentMenu = new SortContentTabMenu();
             this.sortContentMenu.show();
             this.appendChild(this.sortContentMenu);
-            this.sortContentMenu.onSortOrderChanged(() => {
-                this.curChildOrder = this.sortContentMenu.getSelectedNavigationItem().getChildOrder();
-                this.contentGrid.setChildOrder(this.curChildOrder);
-                api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.parentContent.getContentId()).
-                    done((response: api.content.ContentSummaryAndCompareStatus) => {
-                        this.contentGrid.reload(response);
-                    });
 
+            this.sortContentMenu.onSortOrderChanged(() => {
+                var newOrder = this.sortContentMenu.getSelectedNavigationItem().getChildOrder();
+                if (!this.curChildOrder.equals(newOrder)) {
+                    if (!newOrder.isManual()) {
+                        this.curChildOrder = newOrder;
+                        this.contentGrid.setChildOrder(this.curChildOrder);
+                        api.content.ContentSummaryAndCompareStatusFetcher.fetch(this.parentContent.getContentId()).
+                            done((response: api.content.ContentSummaryAndCompareStatus) => {
+                                this.contentGrid.reload(response);
+                            });
+                        this.gridDragHandler.clearContentMovements();
+                    } else {
+                        this.prevChildOrder = this.curChildOrder;
+                        this.curChildOrder = newOrder;
+                        this.contentGrid.setChildOrder(this.curChildOrder);
+                    }
+                }
             });
 
             this.getEl().addClass("sort-content-dialog");
@@ -62,6 +79,11 @@ module app.browse {
                 }
             });
 
+            this.gridDragHandler = new ContentGridDragHandler(this.contentGrid);
+            this.gridDragHandler.onPositionChanged(() => {
+                this.sortContentMenu.selectManualSortingItem();
+            });
+
             var header = new api.dom.H6El();
             header.setHtml("Sort content by selecting default sort above, or drag and drop for manual sorting");
             this.appendChild(header);
@@ -72,16 +94,34 @@ module app.browse {
                 this.close();
             });
             this.sortAction.onExecuted(() => {
-                if (this.curChildOrder.equals(this.parentContent.getChildOrder())) {
+
+                if (this.curChildOrder.equals(this.parentContent.getChildOrder()) && !this.curChildOrder.isManual()) {
                     this.close();
                 } else {
-                    new api.content.OrderContentRequest()
-                        .setContentId(this.parentContent.getContentId())
-                        .setChildOrder(this.curChildOrder).
-                        sendAndParse().done(() => {
+                    if (this.curChildOrder.isManual()) {
+                        if (this.prevChildOrder && !this.prevChildOrder.isManual()) {
+
+                            this.setContentChildOrder(this.prevChildOrder).done(() => {
+                                this.setContentChildOrder(this.curChildOrder).done(() => {
+                                    this.setManualReorder(this.gridDragHandler.getContentMovements()).done(() => {
+                                        new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
+                                        this.close();
+                                    });
+                                });
+                            });
+
+                        } else {
+                            this.setManualReorder(this.gridDragHandler.getContentMovements()).done(() => {
+                                new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
+                                this.close();
+                            });
+                        }
+                    } else {
+                        this.setContentChildOrder(this.curChildOrder).done(() => {
                             new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
                             this.close();
                         });
+                    }
                 }
             });
 
@@ -124,10 +164,24 @@ module app.browse {
             super.close();
             this.remove();
             this.isOpen = false;
+            this.contentGrid.setChildOrder(null);
+            this.gridDragHandler.clearContentMovements();
         }
 
         getContent(): ContentSummary {
             return this.parentContent;
+        }
+
+        private setContentChildOrder(order: ChildOrder): wemQ.Promise<api.content.Content> {
+            return new api.content.OrderContentRequest()
+                .setContentId(this.parentContent.getContentId())
+                .setChildOrder(order).
+                sendAndParse();
+        }
+
+        private setManualReorder(movements: OrderChildMovements): wemQ.Promise<api.content.Content> {
+            return new api.content.OrderChildContentRequest()
+                .setContentMovements(movements).sendAndParse();
         }
     }
 

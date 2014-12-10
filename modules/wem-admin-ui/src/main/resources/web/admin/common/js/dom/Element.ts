@@ -929,7 +929,8 @@ module api.dom {
             var elementASHtmlElement = elementAsJQ.get(0);
             return !!elementASHtmlElement ? new Element(new ElementFromHelperBuilder().
                 setHelper(new ElementHelper(elementASHtmlElement)).
-                setLoadExistingChildren(setLoadExistingChildren))
+                setLoadExistingChildren(setLoadExistingChildren).
+                setParentElement(Element.fromString(elementASHtmlElement.parentElement)))
                 : null;
         }
 

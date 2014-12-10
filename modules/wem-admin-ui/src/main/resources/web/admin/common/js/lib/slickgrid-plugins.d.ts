@@ -14,4 +14,18 @@ declare module Slick {
 
         getColumnDefinition():Slick.Column<T>;
     }
+
+    export class RowMoveManager<T extends Slick.SlickData> {
+
+        constructor(options: any);
+
+        onBeforeMoveRows(): Slick.Event<OnMoveRowsEventData>;
+
+        onMoveRows(): Slick.Event<OnMoveRowsEventData>;
+
+    }
+
+    export interface OnMoveRowsEventData {
+
+    }
 }

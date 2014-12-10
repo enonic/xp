@@ -26,6 +26,13 @@ module api.content {
             this.orderExpressions.push(expr);
         }
 
+        addOrderExpressions(expressions: OrderExpr[]) {
+            expressions.forEach((expr: OrderExpr) => {
+                this.orderExpressions.push(expr);
+            });
+
+        }
+
 
         static fromJson(childOrderJson: ChildOrderJson): ChildOrder {
             var childOrder: ChildOrder = new ChildOrder();

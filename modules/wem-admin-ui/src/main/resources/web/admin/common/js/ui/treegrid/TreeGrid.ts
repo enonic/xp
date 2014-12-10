@@ -182,6 +182,26 @@ module api.ui.treegrid {
             this.onShown(() => {
                 this.grid.resizeCanvas();
                 if (builder.isHotkeysEnabled()) {
+                    var multipleSelectionBindings: KeyBinding[];
+
+                    if (!this.gridOptions.isMultipleSelectionDisabled()) {
+                        var multipleSelectionBindings =
+                            [new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
+                                if (this.active) {
+                                    this.scrollToRow(this.grid.addSelectedUp());
+                                }
+                                event.preventDefault();
+                                event.stopImmediatePropagation();
+                            }),
+                                new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
+                                    if (this.active) {
+                                        this.scrollToRow(this.grid.addSelectedDown());
+                                    }
+                                    event.preventDefault();
+                                    event.stopImmediatePropagation();
+                                })]
+                    }
+
                     keyBindings = [
                         new KeyBinding('up', () => {
                             if (this.active) {
@@ -192,20 +212,6 @@ module api.ui.treegrid {
                             if (this.active) {
                                 this.scrollToRow(this.grid.moveSelectedDown());
                             }
-                        }),
-                        new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
-                            if (this.active) {
-                                this.scrollToRow(this.grid.addSelectedUp());
-                            }
-                            event.preventDefault();
-                            event.stopImmediatePropagation();
-                        }),
-                        new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
-                            if (this.active) {
-                                this.scrollToRow(this.grid.addSelectedDown());
-                            }
-                            event.preventDefault();
-                            event.stopImmediatePropagation();
                         }),
                         new KeyBinding('left', () => {
                             var selected = this.grid.getSelectedRows();
@@ -242,6 +248,9 @@ module api.ui.treegrid {
                             this.deselectAll();
                         })
                     ];
+                    if (multipleSelectionBindings) {
+                        keyBindings = keyBindings.concat(multipleSelectionBindings)
+                    }
                     KeyBindings.get().bindKeys(keyBindings);
                 }
             });
@@ -327,12 +336,16 @@ module api.ui.treegrid {
             return !!this.toolbar;
         }
 
-        private scrollToRow(row: number) {
+        scrollToRow(row: number) {
+            var gridClasses = (" " + this.grid.getEl().getClass()).replace(/\s/g, ".");
+            var canvas = Element.fromString(".tree-grid " + gridClasses + " .grid-canvas", false);
+            var viewport = Element.fromString(".tree-grid " + gridClasses + " .slick-viewport", false);
+            var scrollEl = viewport.getEl();
             if (row > -1 && this.grid.getSelectedRows().length > 0) {
-                if (this.grid.getEl().getScrollTop() > row * 45) {
-                    this.grid.getEl().setScrollTop(row * 45);
-                } else if (this.grid.getEl().getScrollTop() + this.grid.getEl().getHeight() < (row + 1) * 45) {
-                    this.grid.getEl().setScrollTop((row + 1) * 45 - this.grid.getEl().getHeight());
+                if (scrollEl.getScrollTop() > row * 45) {
+                    scrollEl.setScrollTop(row * 45);
+                } else if (scrollEl.getScrollTop() + scrollEl.getHeight() < (row + 1) * 45) {
+                    scrollEl.setScrollTop((row + 1) * 45 - scrollEl.getHeight());
                 }
             }
         }
