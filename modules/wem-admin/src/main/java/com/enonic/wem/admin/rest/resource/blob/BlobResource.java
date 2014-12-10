@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.blob;
 
+import java.io.InputStream;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -80,15 +81,18 @@ public final class BlobResource
         final String name = file.getName();
         final String mediaType = file.getContentType();
 
-        final Blob blob = blobService.create( file.getInputStream() );
-        final UploadItem item = UploadItem.newUploadItem().
-            mimeType( mediaType ).
-            size( blob.getLength() ).
-            name( name ).
-            blobKey( blob.getKey() ).
-            build();
+        try (final InputStream stream = file.getInputStream())
+        {
+            final Blob blob = blobService.create( stream );
+            final UploadItem item = UploadItem.newUploadItem().
+                mimeType( mediaType ).
+                size( blob.getLength() ).
+                name( name ).
+                blobKey( blob.getKey() ).
+                build();
 
-        items.add( item );
+            items.add( item );
+        }
     }
 
     public void setBlobService( final BlobService blobService )

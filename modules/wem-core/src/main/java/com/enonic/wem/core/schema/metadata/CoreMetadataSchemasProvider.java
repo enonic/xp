@@ -74,9 +74,8 @@ public final class CoreMetadataSchemasProvider
     {
         final String metaInfFolderBasePath = "/" + "META-INF" + "/" + metaInfFolderName;
         final String filePath = metaInfFolderBasePath + "/" + name.toLowerCase() + ".png";
-        try
+        try (final InputStream stream = this.getClass().getResourceAsStream( filePath ))
         {
-            final InputStream stream = this.getClass().getResourceAsStream( filePath );
             if ( stream == null )
             {
                 return null;

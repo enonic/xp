@@ -1,5 +1,7 @@
 package com.enonic.wem.core.schema;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Instant;
 import java.util.Map;
 
@@ -37,7 +39,14 @@ public final class IconDao
             filter( entry -> entry.getValue().equals( extension ) ).
             map( Map.Entry::getKey ).
             findFirst().orElse( MediaType.ANY_IMAGE_TYPE );
-        return Icon.from( imageResource.openStream(), mediaType.toString(), modifiedTime );
+        try (final InputStream stream = imageResource.openStream())
+        {
+            return Icon.from( stream, mediaType.toString(), modifiedTime );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( "Failed to close icon file with resource from: " + imageResource.getUrl().toString(), e );
+        }
 
     }
 }

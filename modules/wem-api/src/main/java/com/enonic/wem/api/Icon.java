@@ -97,9 +97,9 @@ public final class Icon
     public static Icon from( final InputStream dataStream, final String mimeType, final Instant modifiedTime )
     {
         Preconditions.checkNotNull( dataStream, "dataStream is mandatory" );
-        try (InputStream is = dataStream)
+        try
         {
-            return new Icon( ByteStreams.toByteArray( is ), mimeType, modifiedTime );
+            return new Icon( ByteStreams.toByteArray( dataStream ), mimeType, modifiedTime );
         }
         catch ( IOException e )
         {
