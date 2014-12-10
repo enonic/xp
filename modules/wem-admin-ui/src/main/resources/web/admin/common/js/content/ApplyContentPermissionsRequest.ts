@@ -40,7 +40,7 @@ module api.content {
         getParams(): Object {
             return {
                 contentId: this.id,
-                permissions: this.permissions.toJson(),
+                permissions: this.permissions ? this.permissions.toJson() : undefined,
                 inheritPermissions: this.inheritPermissions,
                 overwriteChildPermissions: this.overwriteChildPermissions
             };

@@ -1,0 +1,93 @@
+// NOT STABLE ENOUGH ACROSS BROWSERS YET
+// https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Flexible_boxes
+
+.display-flex(@dir, @justify, @align) {
+  display: -webkit-flex;
+  -webkit-flex-direction: @dir;
+  -webkit-justify-content: @justify;
+  -webkit-align-items: @align;
+
+  display: flex;
+  flex-direction: @dir;
+  justify-content: @justify;
+  align-items: @align;
+}
+
+.flex(@flex) {
+  -webkit-flex: @flex;
+
+  flex: @flex;
+}
+
+.edit-permissions-dialog {
+  min-width: 800px;
+
+  .dialog-header .path {
+    font-size: 16px;
+  }
+
+  .inherit-perm-check {
+    margin-bottom: 20px;
+  }
+
+  .overwrite-child-check {
+    position: absolute;
+    bottom: 40px;
+    &.checkbox label {
+      color: @admin-blue !important;
+    }
+  }
+
+  .principal-combobox {
+    height: 308px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    &.disabled {
+      .combobox {
+        display: none;
+      }
+
+      .access-control-entry {
+
+        .icon-close {
+          display: none;
+        }
+
+        .names-and-icon-view {
+          .names-view {
+            color: @admin-light-gray-font;
+          }
+        }
+
+        .access-selector {
+          .label {
+            color: @admin-light-gray-font;
+          }
+        }
+
+        .permission-toggle {
+          &.allow {
+            background: @admin-shadow-gray;
+            border: 1px solid @admin-medium-gray-border;
+            color: @admin-white;
+          }
+
+          &.deny {
+            background: @admin-dark-gray;
+            border: 1px solid @admin-medium-gray-border;
+            color: @admin-white;
+          }
+        }
+
+      }
+
+    }
+
+  }
+
+  section {
+    height: 100%;
+  }
+
+}
