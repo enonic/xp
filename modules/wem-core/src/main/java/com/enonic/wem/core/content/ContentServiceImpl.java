@@ -24,6 +24,7 @@ import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.CreateMediaParams;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DuplicateContentParams;
 import com.enonic.wem.api.content.FindContentByParentParams;
@@ -171,6 +172,20 @@ public class ContentServiceImpl
     }
 
     @Override
+    public Content create( final CreateMediaParams params )
+    {
+        return CreateMediaCommand.create().
+            params( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+    }
+
+    @Override
     public Content update( final UpdateContentParams params )
     {
         return UpdateContentCommand.create( params ).
@@ -206,9 +221,9 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             contentId( params.getContentId() ).
             target( params.getTarget() ).
-            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -226,6 +241,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -248,6 +264,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -260,6 +277,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -272,6 +290,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -285,6 +304,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -354,6 +374,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -367,6 +388,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -401,6 +423,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             contentId( params.getContentId() ).
             from( params.getFrom() ).
             size( params.getSize() ).
@@ -417,6 +440,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             contentId( params.getContentId() ).
             workspaces( params.getWorkspaces() ).
             build().
@@ -466,6 +490,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             build();
 
         return CompletableFuture.supplyAsync( applyPermissionsCommand::execute, applyPermissionsExecutor );

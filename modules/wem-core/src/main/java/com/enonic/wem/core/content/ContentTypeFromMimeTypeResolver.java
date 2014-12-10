@@ -1,0 +1,53 @@
+package com.enonic.wem.core.content;
+
+
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
+import com.enonic.wem.api.schema.content.ContentTypeName;
+
+final class ContentTypeFromMimeTypeResolver
+{
+    private final static Map<String, ContentTypeName> MAP = Maps.newHashMap();
+
+    static
+    {
+        // Image
+        MAP.put( "image/gif", ContentTypeName.imageMedia() );
+        MAP.put( "image/jpeg", ContentTypeName.imageMedia() );
+        MAP.put( "image/pjpeg", ContentTypeName.imageMedia() );
+        MAP.put( "image/png", ContentTypeName.imageMedia() );
+        MAP.put( "image/svg+xml", ContentTypeName.imageMedia() );
+        MAP.put( "image/tiff", ContentTypeName.imageMedia() );
+        MAP.put( "image/vnd.djvu", ContentTypeName.imageMedia() );
+
+        // Audio
+        MAP.put( "audio/basic", ContentTypeName.audioMedia() );
+        MAP.put( "audio/L24", ContentTypeName.audioMedia() );
+        MAP.put( "audio/mp4", ContentTypeName.audioMedia() );
+        MAP.put( "audio/mpeg", ContentTypeName.audioMedia() );
+        MAP.put( "audio/ogg", ContentTypeName.audioMedia() );
+        MAP.put( "audio/opus", ContentTypeName.audioMedia() );
+        MAP.put( "audio/vorbis", ContentTypeName.audioMedia() );
+        MAP.put( "audio/vnd.rn-realaudio", ContentTypeName.audioMedia() );
+        MAP.put( "audio/vnd.wave", ContentTypeName.audioMedia() );
+        MAP.put( "audio/webm", ContentTypeName.audioMedia() );
+
+        // Audio
+        MAP.put( "video/avi", ContentTypeName.videoMedia() );
+        MAP.put( "video/mpeg", ContentTypeName.videoMedia() );
+        MAP.put( "video/mp4", ContentTypeName.videoMedia() );
+        MAP.put( "video/ogg", ContentTypeName.videoMedia() );
+        MAP.put( "video/quicktime", ContentTypeName.videoMedia() );
+        MAP.put( "video/webm", ContentTypeName.videoMedia() );
+        MAP.put( "video/x-matroska", ContentTypeName.videoMedia() );
+        MAP.put( "video/x-ms-wmv", ContentTypeName.videoMedia() );
+        MAP.put( "video/x-flv", ContentTypeName.videoMedia() );
+    }
+
+    static ContentTypeName resolve( final String mimeType )
+    {
+        return MAP.get( mimeType );
+    }
+}

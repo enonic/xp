@@ -3,6 +3,8 @@ package com.enonic.wem.core.content;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentCreatedEvent;
@@ -10,7 +12,6 @@ import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeAlreadyExistException;
@@ -26,13 +27,10 @@ final class CreateContentCommand
 
     private final CreateContentParams params;
 
-    private final EventPublisher eventPublisher;
-
     private CreateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.eventPublisher = builder.eventPublisher;
     }
 
     Content execute()
@@ -91,17 +89,24 @@ final class CreateContentCommand
         return new Builder();
     }
 
+    public static Builder create( AbstractContentCommand source )
+    {
+        return new Builder( source );
+    }
+
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
         private CreateContentParams params;
 
-        private EventPublisher eventPublisher;
-
-        public Builder setParams( final CreateContentParams params )
+        private Builder()
         {
-            this.params = params;
-            return this;
+            // nothing
+        }
+
+        private Builder( AbstractContentCommand source )
+        {
+            super( source );
         }
 
         public Builder params( final CreateContentParams params )
@@ -110,14 +115,10 @@ final class CreateContentCommand
             return this;
         }
 
-        public Builder eventPublisher( final EventPublisher eventPublisher )
-        {
-            this.eventPublisher = eventPublisher;
-            return this;
-        }
-
         void validate()
         {
+            super.validate();
+            Preconditions.checkNotNull( params, "params must be given" );
             super.validate();
         }
 

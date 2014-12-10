@@ -12,6 +12,8 @@ public interface ContentService
 
     Content create( CreateContentParams params );
 
+    Content create( CreateMediaParams params );
+
     Content update( UpdateContentParams params );
 
     Content rename( RenameContentParams params );

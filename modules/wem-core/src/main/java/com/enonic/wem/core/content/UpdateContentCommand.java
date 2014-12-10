@@ -17,7 +17,6 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -35,15 +34,12 @@ final class UpdateContentCommand
 
     private final static Logger LOG = LoggerFactory.getLogger( UpdateContentCommand.class );
 
-    private final EventPublisher eventPublisher;
-
     private final UpdateContentParams params;
 
     private UpdateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.eventPublisher = builder.eventPublisher;
     }
 
     public static Builder create( final UpdateContentParams params )
@@ -180,23 +176,14 @@ final class UpdateContentCommand
     {
         private final UpdateContentParams params;
 
-        private EventPublisher eventPublisher;
-
         public Builder( final UpdateContentParams params )
         {
             this.params = params;
         }
 
-        public Builder eventPublisher( final EventPublisher eventPublisher )
-        {
-            this.eventPublisher = eventPublisher;
-            return this;
-        }
-
         void validate()
         {
             Preconditions.checkNotNull( params );
-            Preconditions.checkNotNull( eventPublisher );
         }
 
         public UpdateContentCommand build()

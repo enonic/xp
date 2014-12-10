@@ -7,6 +7,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -22,12 +23,15 @@ abstract class AbstractContentCommand
 
     final BlobService blobService;
 
+    final EventPublisher eventPublisher;
+
     AbstractContentCommand( final Builder builder )
     {
         this.blobService = builder.blobService;
         this.contentTypeService = builder.contentTypeService;
         this.nodeService = builder.nodeService;
         this.translator = builder.translator;
+        this.eventPublisher = builder.eventPublisher;
     }
 
     Content getContent( final ContentId contentId )
@@ -58,6 +62,22 @@ abstract class AbstractContentCommand
 
         private ContentNodeTranslator translator;
 
+        private EventPublisher eventPublisher;
+
+        Builder()
+        {
+
+        }
+
+        Builder( final AbstractContentCommand source )
+        {
+            this.translator = source.translator;
+            this.nodeService = source.nodeService;
+            this.contentTypeService = source.contentTypeService;
+            this.blobService = source.blobService;
+            this.eventPublisher = source.eventPublisher;
+        }
+
         @SuppressWarnings("unchecked")
         public B nodeService( final NodeService nodeService )
         {
@@ -86,12 +106,20 @@ abstract class AbstractContentCommand
             return (B) this;
         }
 
+        @SuppressWarnings("unchecked")
+        public B eventPublisher( final EventPublisher eventPublisher )
+        {
+            this.eventPublisher = eventPublisher;
+            return (B) this;
+        }
+
         void validate()
         {
             Preconditions.checkNotNull( nodeService );
             Preconditions.checkNotNull( contentTypeService );
             Preconditions.checkNotNull( blobService );
             Preconditions.checkNotNull( translator );
+            Preconditions.checkNotNull( eventPublisher );
         }
     }
 

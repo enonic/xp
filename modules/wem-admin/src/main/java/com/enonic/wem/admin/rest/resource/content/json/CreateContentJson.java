@@ -23,7 +23,7 @@ import com.enonic.wem.api.security.acl.AccessControlList;
 
 public class CreateContentJson
 {
-    final CreateContentParams createContent;
+    private final CreateContentParams createContent;
 
     private List<AttachmentJson> attachments;
 

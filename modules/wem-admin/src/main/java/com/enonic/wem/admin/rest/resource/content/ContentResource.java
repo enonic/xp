@@ -1,5 +1,7 @@
 package com.enonic.wem.admin.rest.resource.content;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
@@ -31,6 +34,7 @@ import com.enonic.wem.admin.json.content.GetContentVersionsResultJson;
 import com.enonic.wem.admin.json.content.ReorderChildrenResultJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
+import com.enonic.wem.admin.rest.multipart.MultipartForm;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.ApplyContentPermissionsJson;
@@ -59,6 +63,7 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.CreateMediaParams;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DuplicateContentParams;
 import com.enonic.wem.api.content.FindContentByParentParams;
@@ -86,6 +91,7 @@ import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
@@ -122,6 +128,32 @@ public final class ContentResource
     public ContentJson create( final CreateContentJson params )
     {
         final Content persistedContent = contentService.create( params.getCreateContent() );
+        return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+    }
+
+    @POST
+    @Path("createMedia")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public ContentJson createMedia( final MultipartForm form )
+    {
+        final Content persistedContent;
+        final CreateMediaParams createMediaParams = new CreateMediaParams();
+        createMediaParams.parent( ContentPath.from( form.get( "parent" ).getString() ) );
+        createMediaParams.name( form.get( "name" ).getString() );
+
+        final FileItem mediaFile = form.get( "file" );
+        createMediaParams.mimeType( mediaFile.getContentType() );
+
+        try (final InputStream inputStream = mediaFile.getInputStream())
+        {
+            createMediaParams.inputStream( inputStream );
+            persistedContent = contentService.create( createMediaParams );
+        }
+        catch ( IOException e )
+        {
+            throw Exceptions.unchecked( e );
+        }
+
         return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
