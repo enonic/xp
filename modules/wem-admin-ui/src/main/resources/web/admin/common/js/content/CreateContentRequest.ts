@@ -96,7 +96,7 @@ module api.content {
                 name: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.name.toString(),
                 parent: this.parent.toString(),
                 contentType: this.contentType.toString(),
-                form: this.form.toJson(),
+                form: this.form ? this.form.toJson() : undefined,
                 data: this.data.toJson(),
                 metadata: this.metadataToJson(),
                 displayName: this.displayName,

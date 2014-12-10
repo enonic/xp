@@ -44,7 +44,7 @@ public class CreateContentJson
         this.createContent.displayName( displayName );
         this.createContent.parent( ContentPath.from( parent ) );
         this.createContent.contentType( ContentTypeName.from( contentType ) );
-        this.createContent.form( formJson.getForm() );
+        this.createContent.form( formJson != null ? formJson.getForm() : null );
 
         final PropertyTree contentData = PropertyTreeJson.fromJson( dataJsonList );
         this.createContent.contentData( contentData );

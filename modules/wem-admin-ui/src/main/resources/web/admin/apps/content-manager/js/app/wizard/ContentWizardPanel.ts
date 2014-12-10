@@ -6,9 +6,11 @@ module app.wizard {
     import ContentFormContextBuilder = api.content.form.ContentFormContextBuilder;
     import Content = api.content.Content;
     import ContentBuilder = api.content.ContentBuilder;
+    import Attachment = api.content.attachment.Attachment;
     import ThumbnailBuilder = api.content.ThumbnailBuilder;
     import ContentName = api.content.ContentName;
     import CreateContentRequest = api.content.CreateContentRequest;
+    import CreateImageContentRequest = api.content.CreateImageContentRequest;
     import UpdateContentRequest = api.content.UpdateContentRequest;
     import UpdateAttachments = api.content.UpdateAttachments;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
@@ -55,6 +57,11 @@ module app.wizard {
         private siteModel: SiteModel;
 
         private contentType: ContentType;
+
+        /**
+         * Attachment for creating new media content.
+         */
+        private mediaAttachment: Attachment;
 
         private formIcon: FormIcon;
 
@@ -110,6 +117,7 @@ module app.wizard {
             this.defaultModels = params.defaultModels;
             this.site = params.site;
             this.contentType = params.contentType;
+            this.mediaAttachment = params.mediaAttachment;
             this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
             this.contentWizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().
                 setDisplayNameGenerator(this.displayNameScriptExecutor).
@@ -490,21 +498,23 @@ module app.wizard {
 
         private produceCreateContentRequest(): CreateContentRequest {
 
-            var contentData = new PropertyTree();
-
             var parentPath = this.parentContent != null ? this.parentContent.getPath() : api.content.ContentPath.ROOT;
 
-            var createRequest = new CreateContentRequest().
-                setDraft(this.persistAsDraft).
-                setName(api.content.ContentUnnamed.newUnnamed()).
-                setParent(parentPath).
-                setContentType(this.contentType.getContentTypeName()).
-                setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setForm(this.contentType.getForm()).
-                setData(contentData).
-                setMetadata([]);
-
-            return createRequest;
+            if (this.contentType.isImage() && this.mediaAttachment) {
+                return CreateImageContentRequest.fromAttachment(this.mediaAttachment, parentPath);
+            }
+            else {
+                var data = new PropertyTree();
+                return new CreateContentRequest().
+                    setDraft(this.persistAsDraft).
+                    setName(api.content.ContentUnnamed.newUnnamed()).
+                    setParent(parentPath).
+                    setContentType(this.contentType.getContentTypeName()).
+                    setDisplayName(this.contentWizardHeader.getDisplayName()).
+                    setForm(this.contentType.getForm()).
+                    setData(data).
+                    setMetadata([]);
+            }
         }
 
         updatePersistedItem(): wemQ.Promise<Content> {

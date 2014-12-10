@@ -99,7 +99,6 @@ module app {
         private handleNew(newContentEvent: app.create.NewContentEvent) {
 
             var contentTypeSummary = newContentEvent.getContentType();
-            var parentContent = newContentEvent.getParentContent();
             var tabId = api.app.bar.AppBarTabId.forNew(contentTypeSummary.getName());
             var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
@@ -109,10 +108,11 @@ module app {
                 this.mask.show();
                 var contentWizardPanelFactory = new app.wizard.ContentWizardPanelFactory().
                     setAppBarTabId(tabId).
-                    setParentContent(parentContent).
+                    setParentContent(newContentEvent.getParentContent()).
+                    setMediaAttachment(newContentEvent.getMediaAttachment()).
                     setContentTypeName(contentTypeSummary.getContentTypeName());
 
-                contentWizardPanelFactory.setCreateSite(newContentEvent.isCreateSite());
+                contentWizardPanelFactory.setCreateSite(newContentEvent.getContentType().isSite());
                 contentWizardPanelFactory.createForNew().then((wizard: app.wizard.ContentWizardPanel) => {
                     tabMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel("[New " + contentTypeSummary.getDisplayName() + "]").
                         setTabId(tabId).

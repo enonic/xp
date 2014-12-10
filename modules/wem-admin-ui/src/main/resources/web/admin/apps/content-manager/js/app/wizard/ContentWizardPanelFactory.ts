@@ -4,6 +4,7 @@ module app.wizard {
     import ContentId = api.content.ContentId;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import Content = api.content.Content;
+    import Attachment = api.content.attachment.Attachment;
     import Site = api.content.site.Site;
     import ContentType = api.schema.content.ContentType;
     import DefaultModels = app.wizard.page.DefaultModels;
@@ -28,6 +29,8 @@ module app.wizard {
 
         private contentType: ContentType;
 
+        private mediaAttachment: api.content.attachment.Attachment;
+
         private siteContent: Site;
 
         private defaultModels: DefaultModels;
@@ -39,6 +42,11 @@ module app.wizard {
 
         setContentTypeName(value: ContentTypeName): ContentWizardPanelFactory {
             this.contentTypeName = value;
+            return this;
+        }
+
+        setMediaAttachment(value: Attachment): ContentWizardPanelFactory {
+            this.mediaAttachment = value;
             return this;
         }
 
@@ -166,6 +174,7 @@ module app.wizard {
             var wizardParams = new app.wizard.ContentWizardPanelParams().
                 setAppBarTabId(this.appBarTabId).
                 setContentType(this.contentType).
+                setMediaAttachment(this.mediaAttachment).
                 setParentContent(this.parentContent).
                 setSite(this.siteContent).
                 setDefaultModels(this.defaultModels);

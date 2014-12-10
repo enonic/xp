@@ -1,27 +1,34 @@
 module app.create {
 
+    import ContentTypeSummary = api.schema.content.ContentTypeSummary;
+    import Content = api.content.Content;
+    import Attachment = api.content.attachment.Attachment;
+
     export class NewContentEvent extends api.event.Event {
 
-        private contentType: api.schema.content.ContentTypeSummary;
+        private contentType: ContentTypeSummary;
 
-        private parentContent: api.content.Content;
+        private mediaAttachment: Attachment;
 
-        constructor(contentType: api.schema.content.ContentTypeSummary, parentContent: api.content.Content) {
+        private parentContent: Content;
+
+        constructor(contentType: ContentTypeSummary, parentContent: Content, mediaAttachment?: Attachment) {
             super();
             this.contentType = contentType;
             this.parentContent = parentContent;
+            this.mediaAttachment = mediaAttachment;
         }
 
-        getContentType(): api.schema.content.ContentTypeSummary {
+        getContentType(): ContentTypeSummary {
             return this.contentType;
         }
 
-        getParentContent(): api.content.Content {
-            return this.parentContent;
+        getMediaAttachment(): Attachment {
+            return this.mediaAttachment;
         }
 
-        isCreateSite(): boolean {
-            return this.contentType.isSite();
+        getParentContent(): Content {
+            return this.parentContent;
         }
 
         static on(handler: (event: NewContentEvent) => void) {

@@ -50,6 +50,10 @@ module api.content.attachment {
             };
         }
 
+        public static create(): AttachmentBuilder {
+            return new AttachmentBuilder();
+        }
+
     }
 
     export class AttachmentBuilder {

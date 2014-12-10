@@ -1,9 +1,15 @@
 module app.create {
 
     import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
+    import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
+    import ContentTypeResolver = api.content.ContentTypeResolver;
     import ContentName = api.content.ContentName;
+    import Attachment = api.content.attachment.Attachment;
+    import AttachmentName = api.content.attachment.AttachmentName;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
+    import ContentType = api.schema.content.ContentType;
+    import FileUploadedEvent = api.ui.uploader.FileUploadedEvent;
 
     export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -51,6 +57,9 @@ module app.create {
                 deferred: true  // wait till the window is shown
             });
             aside.appendChild(dropzone);
+            dropzone.onFileUploaded((event: FileUploadedEvent) => {
+                this.closeAndFireNewContentEventFromUploadItem(event.getUploadedItem());
+            });
 
             var recentTitle = new api.dom.H1El();
             recentTitle.setHtml('Recently Used');
@@ -94,6 +103,25 @@ module app.create {
         private closeAndFireEventFromContentType(item: NewContentDialogListItem) {
             this.close();
             new NewContentEvent(item.getContentType(), this.parentContent).fire();
+        }
+
+        private closeAndFireNewContentEventFromUploadItem(uploadItem: api.ui.uploader.UploadItem) {
+
+            this.close();
+
+            var contentTypeName = ContentTypeResolver.resolveFromMimeType(uploadItem.getMimeType());
+            new GetContentTypeByNameRequest(contentTypeName).sendAndParse().then((contentType: ContentType) => {
+                var attachment = Attachment.create().
+                    setBlobKey(uploadItem.getBlobKey()).
+                    setName(new AttachmentName(uploadItem.getName())).
+                    setMimeType(uploadItem.getMimeType()).
+                    setSize(uploadItem.getSize()).
+                    build();
+
+                new NewContentEvent(contentType, this.parentContent, attachment).fire();
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
         }
 
         private filterList() {
