@@ -1,5 +1,6 @@
 package com.enonic.wem.core.schema.content;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
@@ -131,9 +132,8 @@ public final class CoreContentTypesProvider
     {
         final String metaInfFolderBasePath = "/" + "META-INF" + "/" + metaInfFolderName;
         final String filePath = metaInfFolderBasePath + "/" + name.toLowerCase() + ".png";
-        try
+        try (final InputStream stream = this.getClass().getResourceAsStream( filePath ))
         {
-            final InputStream stream = this.getClass().getResourceAsStream( filePath );
             if ( stream == null )
             {
                 return null;

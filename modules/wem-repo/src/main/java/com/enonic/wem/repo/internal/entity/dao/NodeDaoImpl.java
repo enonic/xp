@@ -36,8 +36,15 @@ public class NodeDaoImpl
     {
         final String serializedNode = this.nodeJsonSerializer.toString( newNode );
 
-        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream( serializedNode.getBytes( StandardCharsets.UTF_8 ) );
-        return blobService.create( byteArrayInputStream );
+        try (final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+            serializedNode.getBytes( StandardCharsets.UTF_8 ) ))
+        {
+            return blobService.create( byteArrayInputStream );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( "Failed to create blob for node: " + newNode.toString(), e );
+        }
     }
 
     @Override
@@ -90,7 +97,7 @@ public class NodeDaoImpl
         }
         catch ( IOException e )
         {
-            throw new RuntimeException( "Failed to load blob with key" + blob.getKey() );
+            throw new RuntimeException( "Failed to load blob with key: " + blob.getKey() );
         }
         finally
         {
@@ -100,7 +107,7 @@ public class NodeDaoImpl
             }
             catch ( IOException e )
             {
-                throw new RuntimeException( "Failed to close stream" );
+                throw new RuntimeException( "Failed to close blob stream with key: " + blob.getKey() );
             }
         }
     }

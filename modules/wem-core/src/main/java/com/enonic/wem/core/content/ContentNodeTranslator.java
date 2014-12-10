@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -230,13 +231,16 @@ public class ContentNodeTranslator
         final Blob originalImage = blobService.get( origin.getBlobKey() );
         final ByteSource source = ThumbnailFactory.resolve( originalImage );
         final Blob thumbnailBlob;
-        try
+        try (final InputStream stream = source.openStream())
         {
-            thumbnailBlob = blobService.create( source.openStream() );
+            thumbnailBlob = blobService.create( stream );
         }
         catch ( IOException e )
         {
-            throw new RuntimeException( "Failed to create blob for thumbnail attachment: " + e.getMessage() );
+            throw new RuntimeException( "Failed to create thumbnail blob for attachment: " + origin.getNameWithoutExtension() +
+                                            ( origin.getExtension() == null || origin.getExtension().equals( "" )
+                                                ? ""
+                                                : "." + origin.getExtension() ), e );
         }
         return Thumbnail.from( thumbnailBlob.getKey(), THUMBNAIL_MIME_TYPE, thumbnailBlob.getLength() );
     }

@@ -146,7 +146,10 @@ public final class Resource
     {
         try
         {
-            return ByteStreams.toByteArray( openStream() );
+            try (final InputStream stream = openStream())
+            {
+                return ByteStreams.toByteArray( stream );
+            }
         }
         catch ( final IOException e )
         {
