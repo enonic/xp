@@ -13,7 +13,7 @@ module api.ui.uploader {
         constructor(config: ImageUploaderConfig) {
             this.images = [];
 
-            if (!config.allowTypes) {
+            if (config.allowTypes == undefined) {
                 config.allowTypes = [
                     {title: 'Image files', extensions: 'jpg,gif,png'}
                 ];
@@ -30,12 +30,29 @@ module api.ui.uploader {
             results.removeChildren();
             this.images.length = 0;
 
-            var values = [].concat(JSON.parse(value));
-            values.forEach((val) => {
-                results.appendChild(this.createImageResult(val));
+            this.parseValues(value).forEach((val) => {
+                if (val) {
+                    results.appendChild(this.createImageResult(val));
+                }
             });
 
             return this;
+        }
+
+        private parseValues(jsonString: string): string[] {
+            try {
+                var o = JSON.parse(jsonString);
+
+                // Handle non-exception-throwing cases:
+                // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
+                // but... JSON.parse(null) returns 'null', and typeof null === "object",
+                if (o && typeof o === "object" && o.length) {
+                    return o;
+                }
+            } catch (e) { }
+
+            // Value is not JSON so just return it
+            return [jsonString];
         }
 
         private createImageResult(url: string): api.dom.DivEl {
