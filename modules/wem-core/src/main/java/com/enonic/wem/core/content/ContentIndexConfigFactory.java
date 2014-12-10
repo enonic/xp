@@ -4,6 +4,7 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.node.AttachmentPropertyNames;
 
 class ContentIndexConfigFactory
 {
@@ -17,6 +18,7 @@ class ContentIndexConfigFactory
             add( ContentPropertyNames.FORM_SET, IndexConfig.NONE ).
             add( ContentPropertyNames.CONTENT_DATA_SET, IndexConfig.BY_TYPE ).
             add( ContentPropertyNames.CONTENT_TYPE, IndexConfig.MINIMAL ).
+            add( AttachmentPropertyNames.ROOT, IndexConfig.NONE ).
             defaultConfig( IndexConfig.BY_TYPE ).
             build();
 

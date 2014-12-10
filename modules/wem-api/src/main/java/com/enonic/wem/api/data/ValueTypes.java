@@ -68,6 +68,7 @@ public final class ValueTypes
         register( BOOLEAN );
         register( REFERENCE );
         register( LINK );
+        register( BINARY );
     }
 
     private static void register( ValueType valueType )

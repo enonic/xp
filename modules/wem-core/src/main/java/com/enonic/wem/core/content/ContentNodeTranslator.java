@@ -23,6 +23,7 @@ import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.IndexConfigDocument;
+import com.enonic.wem.api.node.AttachmentPropertyNames;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeEditor;
@@ -44,10 +45,6 @@ public class ContentNodeTranslator
 
     private static final ContentAttachmentNodeTranslator CONTENT_ATTACHMENT_NODE_TRANSLATOR = new ContentAttachmentNodeTranslator();
 
-    private static final ContentAttachmentsNodeTranslator2 CONTENT_ATTACHMENT_NODE_TRANSLATOR2 = new ContentAttachmentsNodeTranslator2();
-
-    public static final String ATTACHMENTS = "attachments";
-
     private final ContentDataSerializer CONTENT_SERIALIZER = new ContentDataSerializer();
 
     private ContentTypeService contentTypeService;
@@ -60,10 +57,11 @@ public class ContentNodeTranslator
         {
             params.name( Name.ensureValidName( params.getDisplayName() ) );
         }
+
         final PropertyTree contentAsData = new PropertyTree();
         CONTENT_SERIALIZER.toData( params, contentAsData.getRoot() );
 
-        processAttachments2( params, contentAsData );
+        processAttachments2( params.getAttachments(), contentAsData );
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create();
 
@@ -81,10 +79,10 @@ public class ContentNodeTranslator
             build();
     }
 
-    private void processAttachments2( final CreateContentParams params, final PropertyTree contentAsData )
+    private void processAttachments2( final Attachments attachments, final PropertyTree contentAsData )
     {
-        final PropertySet attachementsSet = CONTENT_ATTACHMENT_NODE_TRANSLATOR2.translate( contentAsData, params.getAttachments() );
-        contentAsData.addSet( ATTACHMENTS, attachementsSet );
+        final PropertySet attachementsSet = ContentAttachmentsNodeTranslator2.translate( contentAsData, attachments );
+        contentAsData.addSet( AttachmentPropertyNames.ROOT, attachementsSet );
     }
 
     private com.enonic.wem.api.node.Attachments.Builder processAttachments( final CreateContentParams params )
@@ -183,6 +181,8 @@ public class ContentNodeTranslator
 
             final com.enonic.wem.api.node.Attachments contentAttachmentsAsNodeAttachments =
                 CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( attachments );
+
+            processAttachments2( attachments, tree );
 
             final com.enonic.wem.api.node.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.api.node.Attachments.builder().
                 addAll( contentAttachmentsAsNodeAttachments );

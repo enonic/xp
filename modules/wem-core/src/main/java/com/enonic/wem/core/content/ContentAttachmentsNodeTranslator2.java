@@ -8,16 +8,15 @@ import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.util.Binary;
 
+import static com.enonic.wem.api.node.AttachmentPropertyNames.BLOB;
+import static com.enonic.wem.api.node.AttachmentPropertyNames.LABEL;
+import static com.enonic.wem.api.node.AttachmentPropertyNames.MIMETYPE;
+import static com.enonic.wem.api.node.AttachmentPropertyNames.SIZE;
+
 public class ContentAttachmentsNodeTranslator2
 {
     // TODO: Where should these be? Needed in repo also I guess
-    public static final String BLOB = "blob";
 
-    public static final String MIMETYPE = "mimeType";
-
-    public static final String SIZE = "size";
-
-    public static final String LABEL = "label";
 
     public static PropertySet translate( final PropertyTree propertyTree, final Attachments attachments )
     {
@@ -38,7 +37,7 @@ public class ContentAttachmentsNodeTranslator2
 
     private static void addAttachment( final PropertySet attachmentsSet, final Attachment attachment )
     {
-        final PropertySet attachmentSet = attachmentsSet.addSet( attachment.getName() );
+        final PropertySet attachmentSet = attachmentsSet.addSet( createAttachmentSetName( attachment.getName() ) );
 
         attachmentSet.addBinary( BLOB, Binary.from( attachment.getName(), attachment.getMimeType(), attachment.getBlobKey() ) );
         attachmentSet.addString( MIMETYPE, attachment.getMimeType() );
@@ -48,6 +47,15 @@ public class ContentAttachmentsNodeTranslator2
         {
             attachmentSet.addString( LABEL, attachment.getLabel() );
         }
+    }
+
+    private static String createAttachmentSetName( final String attachmentName )
+    {
+        String attachmentSetName = attachmentName.replace( ".", "_" );
+        attachmentSetName = attachmentSetName.replace( "[", "_" );
+        attachmentSetName = attachmentSetName.replace( "]", "_" );
+
+        return attachmentSetName;
     }
 
 }
