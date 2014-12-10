@@ -25,3 +25,4 @@
 ///<reference path='SortContentTabMenuItem.ts' />
 ///<reference path='SortContentTabMenuItems.ts' />
 ///<reference path='SaveSortedContentEvent.ts' />
+///<reference path='ContentGridDragHandler.ts' />

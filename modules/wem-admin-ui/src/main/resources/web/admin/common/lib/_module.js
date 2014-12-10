@@ -18,6 +18,7 @@
 // @include slickgrid/slick.remotemodel.js
 // @include slickgrid/slick.rowselectionmodel.js
 // @include slickgrid/slick.checkboxselectcolumn.js
+// @include slickgrid/slick.rowmovemanager.js
 // @include mousetrap.js
 // @include mousetrap-global-bind.min.js
 // @include q.js

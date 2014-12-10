@@ -29,6 +29,10 @@ module app.browse {
             return (<SortContentTabMenuItem>super.getSelectedNavigationItem());
         }
 
+        getSortMenuNavigationItems(): SortContentTabMenuItems {
+            return this.navigationItems;
+        }
+
         addNavigationItems(items: SortContentTabMenuItem[]) {
             if (items) {
                 items.forEach((item: SortContentTabMenuItem) => {
@@ -50,6 +54,11 @@ module app.browse {
                 }
             }
         }
+
+        selectManualSortingItem() {
+            this.selectNavigationItemByOrder(this.navigationItems.SORT_MANUAL_ITEM.getChildOrder());
+        }
+
 
         onSortOrderChanged(listener: () => void) {
             this.sortOrderChangedListeners.push(listener);

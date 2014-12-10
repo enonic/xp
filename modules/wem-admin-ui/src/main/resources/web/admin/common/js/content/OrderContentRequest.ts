@@ -26,7 +26,7 @@ module api.content {
             return this.contentToJson();
         }
 
-        contentToJson(): json.SetChildOrderJson {
+        private contentToJson(): json.SetChildOrderJson {
             return ChildOrder.toSetChildOrderJson(this.contentId, this.childOrder);
         }
 

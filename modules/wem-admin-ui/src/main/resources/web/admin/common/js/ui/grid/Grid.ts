@@ -13,11 +13,15 @@ module api.ui.grid {
 
         private checkableRows: boolean;
 
+        private dragAndDrop: boolean;
+
         private slickGrid: Slick.Grid<T>;
 
         private dataView: DataView<T>;
 
         private checkboxSelectorPlugin;
+
+        private rowManagerPlugin;
 
         constructor(dataView: DataView<T>, columns: GridColumn<T>[], options?: GridOptions<T>) {
             super("grid");
@@ -30,6 +34,7 @@ module api.ui.grid {
 
             this.checkboxSelectorPlugin = null;
             this.checkableRows = options.isCheckableRows() || false;
+            this.dragAndDrop = options.isDragAndDrop() || false;
             if (this.checkableRows) {
                 this.checkboxSelectorPlugin = new Slick.CheckboxSelectColumn({
                     cssClass: "slick-cell-checkboxsel",
@@ -37,7 +42,11 @@ module api.ui.grid {
                 });
                 columns.unshift(this.checkboxSelectorPlugin.getColumnDefinition());
             }
-
+            if (this.dragAndDrop) {
+                this.rowManagerPlugin = new Slick.RowMoveManager({
+                    cancelEditOnDrag: true
+                });
+            }
             this.getEl().setHeight((options.getHeight() || this.defaultHeight) + "px");
             this.getEl().setWidth((options.getWidth() || this.defaultWidth) + "px");
             this.dataView = dataView;
@@ -48,6 +57,9 @@ module api.ui.grid {
             }
             if (this.checkboxSelectorPlugin != null) {
                 this.slickGrid.registerPlugin(this.checkboxSelectorPlugin);
+            }
+            if (this.rowManagerPlugin != null) {
+                this.slickGrid.registerPlugin(this.rowManagerPlugin);
             }
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
@@ -111,7 +123,7 @@ module api.ui.grid {
         }
 
         registerPlugin(plugin: Slick.Plugin<T>) {
-            this.slickGrid.unregisterPlugin(plugin);
+            this.slickGrid.registerPlugin(plugin);
         }
 
         unregisterPlugin(plugin: Slick.Plugin<T>) {
@@ -345,6 +357,26 @@ module api.ui.grid {
 
         subscribeOnContextMenu(callback: (e, args) => void) {
             this.slickGrid.onContextMenu.subscribe(callback);
+        }
+
+        subscribeOnDrag(callback: (e, args) => void) {
+            this.slickGrid.onDrag.subscribe(callback);
+        }
+
+        subscribeOnDragEnd(callback: (e, args) => void) {
+            this.slickGrid.onDragEnd.subscribe(callback);
+        }
+
+        subscribeBeforeMoveRows(callback: (e, args) => void) {
+            if (this.rowManagerPlugin) {
+                this.rowManagerPlugin.onBeforeMoveRows.subscribe(callback);
+            }
+        }
+
+        subscribeMoveRows(callback: (e, args) => void) {
+            if (this.rowManagerPlugin) {
+                this.rowManagerPlugin.onMoveRows.subscribe(callback);
+            }
         }
     }
 }
