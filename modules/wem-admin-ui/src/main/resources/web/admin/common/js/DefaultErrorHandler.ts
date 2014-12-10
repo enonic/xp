@@ -6,6 +6,7 @@ module api {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(error, Error)) {
                 // Rethrowing Error so that we will get a nice stack trace in the console.
+                console.error(error);
                 throw error;
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(error, Exception)) {
