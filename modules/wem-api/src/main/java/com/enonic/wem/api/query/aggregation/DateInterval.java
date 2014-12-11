@@ -1,5 +1,7 @@
 package com.enonic.wem.api.query.aggregation;
 
+import com.google.common.base.Preconditions;
+
 public class DateInterval
     extends Interval
 {
@@ -12,6 +14,7 @@ public class DateInterval
 
     public static DateInterval from( final String dateInterval )
     {
+        Preconditions.checkNotNull( dateInterval );
         return new DateInterval( dateInterval );
     }
 

@@ -15,11 +15,11 @@ public class DateHistogramAggregationQueryJson
     private DateHistogramAggregationQuery dateHistogramAggregationQuery;
 
     @JsonCreator
-    public DateHistogramAggregationQueryJson( @JsonProperty("name") final String name, //
-                                              @JsonProperty("fieldName") final String fieldName, //
-                                              @JsonProperty("interval") final String interval, //
+    public DateHistogramAggregationQueryJson( @JsonProperty(value = "name", required = true) final String name, //
+                                              @JsonProperty(value = "fieldName", required = true) final String fieldName, //
+                                              @JsonProperty(value = "interval", required = true) final String interval, //
                                               @JsonProperty("format") final String format, //
-                                              @JsonProperty("midDocCount") final Integer minDocCount )
+                                              @JsonProperty("minDocCount") final Integer minDocCount )
     {
         final DateHistogramAggregationQuery.Builder builder = DateHistogramAggregationQuery.create( name ).
             fieldName( fieldName ).
