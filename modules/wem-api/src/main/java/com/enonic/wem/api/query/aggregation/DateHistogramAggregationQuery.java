@@ -1,11 +1,11 @@
 package com.enonic.wem.api.query.aggregation;
 
-public class DateHistogramAggregationsQuery
+public class DateHistogramAggregationQuery
     extends AbstractHistogramAggregationQuery<DateInterval>
 {
     private final String format;
 
-    private DateHistogramAggregationsQuery( final Builder builder )
+    private DateHistogramAggregationQuery( final Builder builder )
     {
         super( builder, builder.interval );
         this.format = builder.format;
@@ -37,9 +37,9 @@ public class DateHistogramAggregationsQuery
             return this;
         }
 
-        public DateHistogramAggregationsQuery build()
+        public DateHistogramAggregationQuery build()
         {
-            return new DateHistogramAggregationsQuery( this );
+            return new DateHistogramAggregationQuery( this );
         }
     }
 

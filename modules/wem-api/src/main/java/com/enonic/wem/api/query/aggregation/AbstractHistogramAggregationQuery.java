@@ -5,6 +5,8 @@ public abstract class AbstractHistogramAggregationQuery<T extends Interval>
 {
     private final String fieldName;
 
+    private final Long minDocCount;
+
     private final T interval;
 
     AbstractHistogramAggregationQuery( final Builder builder, final T interval )
@@ -12,6 +14,7 @@ public abstract class AbstractHistogramAggregationQuery<T extends Interval>
         super( builder.name );
         this.fieldName = builder.fieldName;
         this.interval = interval;
+        this.minDocCount = builder.minDocCount;
     }
 
     public String getFieldName()
@@ -24,12 +27,19 @@ public abstract class AbstractHistogramAggregationQuery<T extends Interval>
         return interval;
     }
 
+    public Long getMinDocCount()
+    {
+        return minDocCount;
+    }
+
     public abstract static class Builder<B extends Builder, T extends Interval>
         extends AggregationQuery.Builder
     {
         private String fieldName;
 
         T interval;
+
+        private long minDocCount = 1;
 
         public Builder( final String name )
         {
@@ -50,6 +60,12 @@ public abstract class AbstractHistogramAggregationQuery<T extends Interval>
             return (B) this;
         }
 
+        @SuppressWarnings("unchecked")
+        public B minDocCount( final Long minDocCount )
+        {
+            this.minDocCount = minDocCount;
+            return (B) this;
+        }
     }
 
 

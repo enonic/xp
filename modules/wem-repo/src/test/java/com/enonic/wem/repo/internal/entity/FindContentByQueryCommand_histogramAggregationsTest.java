@@ -2,11 +2,8 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.enonic.wem.api.aggregation.Aggregation;
-import com.enonic.wem.api.aggregation.Bucket;
 import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -14,10 +11,9 @@ import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
-import com.enonic.wem.api.query.aggregation.DateHistogramAggregationsQuery;
+import com.enonic.wem.api.query.aggregation.DateHistogramAggregationQuery;
 import com.enonic.wem.api.query.aggregation.DateInterval;
 
-import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;
 
 public class FindContentByQueryCommand_histogramAggregationsTest
@@ -25,17 +21,62 @@ public class FindContentByQueryCommand_histogramAggregationsTest
 {
 
     @Test
-    public void hours()
+    public void intervals()
         throws Exception
     {
         createNode( Instant.parse( "2014-12-10T10:00:00Z" ), "n1", NodePath.ROOT );
-        createNode( Instant.parse( "2014-12-10T11:30:00Z" ), "n2", NodePath.ROOT );
-        createNode( Instant.parse( "2014-12-10T12:45:00Z" ), "n3", NodePath.ROOT );
-        createNode( Instant.parse( "2014-12-10T13:59:59Z" ), "n4", NodePath.ROOT );
-        createNode( Instant.parse( "2014-12-10T14:01:00Z" ), "n5", NodePath.ROOT );
+        createNode( Instant.parse( "2014-12-10T10:30:00Z" ), "n2", NodePath.ROOT );
+        createNode( Instant.parse( "2014-12-10T11:30:00Z" ), "n3", NodePath.ROOT );
+        createNode( Instant.parse( "2014-12-10T12:45:00Z" ), "n4", NodePath.ROOT );
+        createNode( Instant.parse( "2014-12-10T13:59:59Z" ), "n5", NodePath.ROOT );
+        createNode( Instant.parse( "2014-12-10T14:01:00Z" ), "n6", NodePath.ROOT );
 
         final NodeQuery query = NodeQuery.create().
-            addAggregationQuery( DateHistogramAggregationsQuery.create( "dateHistogram" ).
+            addAggregationQuery( DateHistogramAggregationQuery.create( "hour" ).
+                fieldName( "instant" ).
+                interval( DateInterval.from( "1h" ) ).
+                build() ).
+            addAggregationQuery( DateHistogramAggregationQuery.create( "day" ).
+                fieldName( "instant" ).
+                interval( DateInterval.from( "1d" ) ).
+                build() ).
+            addAggregationQuery( DateHistogramAggregationQuery.create( "minute" ).
+                fieldName( "instant" ).
+                interval( DateInterval.from( "1m" ) ).
+                build() ).
+            build();
+
+        FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 3, result.getAggregations().getSize() );
+
+        final BucketAggregation hour = (BucketAggregation) result.getAggregations().get( "hour" );
+        final BucketAggregation day = (BucketAggregation) result.getAggregations().get( "day" );
+        final BucketAggregation minute = (BucketAggregation) result.getAggregations().get( "minute" );
+
+        assertEquals( 5, hour.getBuckets().getSize() );
+        assertEquals( 1, day.getBuckets().getSize() );
+        assertEquals( 6, minute.getBuckets().getSize() );
+    }
+
+    @Test
+    public void min_doc_count()
+        throws Exception
+    {
+        // Create 5 nodes with two hours between
+        createNode( Instant.parse( "2014-12-10T10:00:00Z" ), "n1", NodePath.ROOT );
+        createNode( Instant.parse( "2014-12-10T12:00:00Z" ), "n2", NodePath.ROOT );
+        createNode( Instant.parse( "2014-12-10T14:00:00Z" ), "n3", NodePath.ROOT );
+        createNode( Instant.parse( "2014-12-10T16:00:59Z" ), "n4", NodePath.ROOT );
+        createNode( Instant.parse( "2014-12-10T18:00:00Z" ), "n5", NodePath.ROOT );
+
+        final NodeQuery query = NodeQuery.create().
+            addAggregationQuery( DateHistogramAggregationQuery.create( "dateHistogramWithZero" ).
+                fieldName( "instant" ).
+                interval( DateInterval.from( "1h" ) ).
+                minDocCount( 0l ).
+                build() ).
+            addAggregationQuery( DateHistogramAggregationQuery.create( "dateHistogramWithDefault" ).
                 fieldName( "instant" ).
                 interval( DateInterval.from( "1h" ) ).
                 build() ).
@@ -43,49 +84,51 @@ public class FindContentByQueryCommand_histogramAggregationsTest
 
         FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 1, result.getAggregations().getSize() );
+        assertEquals( 2, result.getAggregations().getSize() );
 
-        final Aggregation dateHistogram = result.getAggregations().get( "dateHistogram" );
+        // The min-doc-count=0 will also return the empty fill-ins
+        final BucketAggregation zeroDocCount = (BucketAggregation) result.getAggregations().get( "dateHistogramWithZero" );
+        final BucketAggregation defaultDocCount = (BucketAggregation) result.getAggregations().get( "dateHistogramWithDefault" );
 
-        assertTrue( dateHistogram instanceof BucketAggregation );
-
-        final BucketAggregation dateBuckets = (BucketAggregation) dateHistogram;
-
-        assertEquals( 5, dateBuckets.getBuckets().getSize() );
-
-        for ( final Bucket bucket : dateBuckets.getBuckets() )
-        {
-            assertEquals( 1, bucket.getDocCount() );
-        }
+        assertEquals( 9, zeroDocCount.getBuckets().getSize() );
+        assertEquals( 5, defaultDocCount.getBuckets().getSize() );
     }
 
 
-    @Ignore
     @Test
-    public void test()
+    public void format()
         throws Exception
     {
-        createNode( 6.0, "n1", NodePath.ROOT );
-        createNode( 8.0, "n2", NodePath.ROOT );
-        createNode( 11.0, "n3", NodePath.ROOT );
-        createNode( 15.0, "n4", NodePath.ROOT );
-        createNode( 17.0, "n5", NodePath.ROOT );
-        createNode( 2.0, "n6", NodePath.ROOT );
-        createNode( 24.0, "n7", NodePath.ROOT );
+        // Create 5 nodes with two hours between
+        createNode( Instant.parse( "2014-12-10T10:30:00Z" ), "n1", NodePath.ROOT );
+        createNode( Instant.parse( "2014-12-10T10:40:00Z" ), "n2", NodePath.ROOT );
 
         final NodeQuery query = NodeQuery.create().
-            addAggregationQuery( DateHistogramAggregationsQuery.create( "ofesfsefst" ).
+            addAggregationQuery( DateHistogramAggregationQuery.create( "hhMM" ).
                 fieldName( "instant" ).
-                interval( DateInterval.from( "1m" ) ).
+                interval( DateInterval.from( "1h" ) ).
+                format( "HH:mm" ).
+                build() ).
+            addAggregationQuery( DateHistogramAggregationQuery.create( "mm" ).
+                fieldName( "instant" ).
+                interval( DateInterval.from( "1h" ) ).
+                format( "mm" ).
                 build() ).
             build();
 
-        printContentRepoIndex();
-
         FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 1, result.getAggregations().getSize() );
+        assertEquals( 2, result.getAggregations().getSize() );
 
+        // The min-doc-count=0 will also return the empty fill-ins
+        final BucketAggregation hhMM = (BucketAggregation) result.getAggregations().get( "hhMM" );
+        final BucketAggregation mm = (BucketAggregation) result.getAggregations().get( "mm" );
+
+        assertEquals( 1, hhMM.getBuckets().getSize() );
+        assertEquals( 1, mm.getBuckets().getSize() );
+
+        assertEquals( "10:00", hhMM.getBuckets().first().getKey() );
+        assertEquals( "00", mm.getBuckets().first().getKey() );
     }
 
 
@@ -93,20 +136,6 @@ public class FindContentByQueryCommand_histogramAggregationsTest
     {
         final PropertyTree data = new PropertyTree();
         data.addInstant( "instant", instantValue );
-
-        return createNode( CreateNodeParams.create().
-            parent( parent ).
-            name( name ).
-            data( data ).
-            build() );
-
-    }
-
-
-    private Node createNode( final Double value, final String name, final NodePath parent )
-    {
-        final PropertyTree data = new PropertyTree();
-        data.addDouble( "instant", value );
 
         return createNode( CreateNodeParams.create().
             parent( parent ).

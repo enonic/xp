@@ -6,31 +6,31 @@ import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramBuilder;
 
 import com.enonic.wem.api.query.aggregation.AbstractHistogramAggregationQuery;
-import com.enonic.wem.api.query.aggregation.DateHistogramAggregationsQuery;
+import com.enonic.wem.api.query.aggregation.DateHistogramAggregationQuery;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 class HistogramAggregationQueryBuilderFactory
 {
     public static AggregationBuilder create( final AbstractHistogramAggregationQuery histogramAggregationQuery )
     {
-        if ( histogramAggregationQuery instanceof DateHistogramAggregationsQuery )
+        if ( histogramAggregationQuery instanceof DateHistogramAggregationQuery )
         {
-            return createDateHistogram( (DateHistogramAggregationsQuery) histogramAggregationQuery );
+            return createDateHistogram( (DateHistogramAggregationQuery) histogramAggregationQuery );
         }
 
         throw new IllegalArgumentException( "Unknow histogramAggregationQuery type: " + histogramAggregationQuery.getClass().getName() );
     }
 
-    private static AggregationBuilder createDateHistogram( final DateHistogramAggregationsQuery dateHistogramAggregationsQuery )
+    private static AggregationBuilder createDateHistogram( final DateHistogramAggregationQuery aggregationQuery )
     {
-        final DateHistogramBuilder builder = new DateHistogramBuilder( dateHistogramAggregationsQuery.getName() ).
-            interval( new DateHistogram.Interval( dateHistogramAggregationsQuery.getInterval().toString() ) ).
-            field( IndexQueryFieldNameResolver.resolveDateTimeFieldName( dateHistogramAggregationsQuery.getFieldName() ) ).
-            minDocCount( 0 );
+        final DateHistogramBuilder builder = new DateHistogramBuilder( aggregationQuery.getName() ).
+            interval( new DateHistogram.Interval( aggregationQuery.getInterval().toString() ) ).
+            field( IndexQueryFieldNameResolver.resolveDateTimeFieldName( aggregationQuery.getFieldName() ) ).
+            minDocCount( aggregationQuery.getMinDocCount() );
 
-        if ( dateHistogramAggregationsQuery.getFormat() != null )
+        if ( aggregationQuery.getFormat() != null )
         {
-            builder.format( dateHistogramAggregationsQuery.getFormat() );
+            builder.format( aggregationQuery.getFormat() );
         }
 
         return builder;
