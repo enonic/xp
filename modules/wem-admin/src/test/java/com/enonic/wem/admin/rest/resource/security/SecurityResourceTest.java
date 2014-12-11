@@ -37,6 +37,9 @@ import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
+import com.enonic.wem.api.security.acl.UserStoreAccess;
+import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
+import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 
 import static com.enonic.wem.api.security.PrincipalRelationship.from;
 
@@ -67,7 +70,7 @@ public class SecurityResourceTest
     }
 
     @Test
-    public void get_userStores()
+    public void getUserStores()
         throws Exception
     {
         final UserStores userStores = createUserStores();
@@ -77,11 +80,32 @@ public class SecurityResourceTest
 
         String jsonString = request().path( "security/userstore/list" ).get().getAsString();
 
-        assertJson( "get_userstores.json", jsonString );
+        assertJson( "getUserstores.json", jsonString );
     }
 
     @Test
-    public void get_principals()
+    public void getUserStoreByKey()
+        throws Exception
+    {
+        final UserStore userStore = createUserStores().getUserStore( USER_STORE_1 );
+
+        Mockito.when( securityService.getUserStore( USER_STORE_1 ) ).thenReturn( userStore );
+
+        final UserStoreAccessControlList userStorePermissions = UserStoreAccessControlList.create().
+            add( UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:local:user1" ) ).access(
+                UserStoreAccess.CREATE_USERS ).build() ).
+            add( UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:local:mygroup" ) ).access(
+                UserStoreAccess.USER_STORE_MANAGER ).build() ).
+            build();
+        Mockito.when( securityService.getUserStorePermissions( USER_STORE_1 ) ).thenReturn( userStorePermissions );
+
+        String jsonString = request().path( "security/userstore" ).queryParam( "key", "local" ).get().getAsString();
+
+        assertJson( "getUserstoreByKey.json", jsonString );
+    }
+
+    @Test
+    public void getPrincipals()
         throws Exception
     {
         final UserStores userStores = createUserStores();
@@ -97,7 +121,7 @@ public class SecurityResourceTest
             queryParam( "userStoreKey", "local" ).
             get().getAsString();
 
-        assertJson( "get_principals.json", jsonString );
+        assertJson( "getPrincipals.json", jsonString );
     }
 
     @Test

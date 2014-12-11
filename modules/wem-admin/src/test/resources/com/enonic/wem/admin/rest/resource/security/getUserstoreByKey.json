@@ -1,0 +1,14 @@
+{
+  "displayName": "Local LDAP",
+  "key": "local",
+  "permissions": [
+    {
+      "access": "USER_STORE_MANAGER",
+      "principalKey": "user:local:mygroup"
+    },
+    {
+      "access": "CREATE_USERS",
+      "principalKey": "user:local:user1"
+    }
+  ]
+}
