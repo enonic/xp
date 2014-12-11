@@ -9,7 +9,7 @@ import com.enonic.wem.api.security.UserStores;
 
 public final class UserStoresJson
 {
-    private final List<UserStoreJson> userStoresJson;
+    private final List<UserStoreSummaryJson> userStoresJson;
 
     public UserStoresJson( final UserStores userStores )
     {
@@ -18,12 +18,12 @@ public final class UserStoresJson
         {
             for ( UserStore userStore : userStores )
             {
-                userStoresJson.add( new UserStoreJson( userStore ) );
+                userStoresJson.add( new UserStoreSummaryJson( userStore ) );
             }
         }
     }
 
-    public List<UserStoreJson> getUserStores()
+    public List<UserStoreSummaryJson> getUserStores()
     {
         return userStoresJson;
     }

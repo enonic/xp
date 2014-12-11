@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -16,6 +15,8 @@ import com.google.common.primitives.Ints;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.FindNodesByParentParams;
+import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeAlreadyExistException;
@@ -55,6 +56,7 @@ import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
+import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationException;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
@@ -67,8 +69,6 @@ import static com.enonic.wem.core.security.PrincipalKeyNodeTranslator.toNodeId;
 public final class SecurityServiceImpl
     implements SecurityService
 {
-    private final List<UserStore> userStores;
-
     private NodeService nodeService;
 
     private Clock clock;
@@ -76,8 +76,38 @@ public final class SecurityServiceImpl
     public SecurityServiceImpl()
     {
         this.clock = Clock.systemUTC();
-        this.userStores = new CopyOnWriteArrayList<>();
-        this.userStores.add( SystemConstants.SYSTEM_USERSTORE );
+    }
+
+    @Override
+    public UserStores getUserStores()
+    {
+        final FindNodesByParentParams findByParent = FindNodesByParentParams.create().
+            parentPath( UserStoreNodeTranslator.getUserStoresParentPath() ).build();
+        final FindNodesByParentResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByParent( findByParent ) );
+
+        return UserStoreNodeTranslator.fromNodes( result.getNodes() );
+    }
+
+    @Override
+    public UserStore getUserStore( final UserStoreKey userStore )
+    {
+        final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( userStore );
+        final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getByPath( userStoreNodePath ) );
+        return node == null ? null : UserStoreNodeTranslator.fromNode( node );
+    }
+
+    @Override
+    public UserStoreAccessControlList getUserStorePermissions( final UserStoreKey userStore )
+    {
+        final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( userStore );
+        final NodePath usersNodePath = UserStoreNodeTranslator.toUserStoreUsersNodePath( userStore );
+        final NodePath groupsNodePath = UserStoreNodeTranslator.toUserStoreGroupsNodePath( userStore );
+
+        final Node userStoreNode = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getByPath( userStoreNodePath ) );
+        final Node usersNode = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getByPath( usersNodePath ) );
+        final Node groupsNode = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getByPath( groupsNodePath ) );
+
+        return UserStoreNodeTranslator.userStorePermissionsFromNode( userStoreNode, usersNode, groupsNode );
     }
 
     @Override
@@ -168,12 +198,6 @@ public final class SecurityServiceImpl
         {
             return PrincipalKeys.empty();
         }
-    }
-
-    @Override
-    public UserStores getUserStores()
-    {
-        return UserStores.from( this.userStores );
     }
 
     @Override
@@ -571,22 +595,22 @@ public final class SecurityServiceImpl
     public void createUserStore( final UserStoreKey userStoreKey, String displayName )
     {
         final PropertyTree data = new PropertyTree();
-        data.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, displayName );
+        data.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, displayName );
 
         final Node systemNode = SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
+            parent( UserStoreNodeTranslator.getUserStoresParentPath() ).
             name( userStoreKey.toString() ).
             data( data ).
             build() ) );
 
         SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
             parent( systemNode.path() ).
-            name( "user" ).
+            name( UserStoreNodeTranslator.USER_FOLDER_NODE_NAME ).
             build() ) );
 
         SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
             parent( systemNode.path() ).
-            name( "group" ).
+            name( UserStoreNodeTranslator.GROUP_FOLDER_NODE_NAME ).
             build() ) );
     }
 

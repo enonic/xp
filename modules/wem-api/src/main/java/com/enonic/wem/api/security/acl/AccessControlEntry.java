@@ -1,5 +1,6 @@
 package com.enonic.wem.api.security.acl;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Objects;
 
@@ -40,19 +41,24 @@ public final class AccessControlEntry
         return deniedPermissions;
     }
 
-    public boolean isAllowed( final Permission permission )
+    public boolean isAllowed( final Permission... permissions )
     {
-        return this.allowedPermissions.contains( permission ) && !this.deniedPermissions.contains( permission );
+        return this.allowedPermissions.containsAll( Arrays.asList( permissions ) );
     }
 
-    public boolean isDenied( final Permission permission )
+    public boolean isDenied( final Permission... permissions )
     {
-        return !this.isAllowed( permission );
+        return !this.isAllowed( permissions );
     }
 
     public boolean isSet( final Permission permission )
     {
         return this.allowedPermissions.contains( permission ) || this.deniedPermissions.contains( permission );
+    }
+
+    public boolean isAllowedAll()
+    {
+        return this.allowedPermissions.containsAll( Arrays.asList( Permission.values() ) );
     }
 
     @Override

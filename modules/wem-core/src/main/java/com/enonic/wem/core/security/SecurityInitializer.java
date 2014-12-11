@@ -120,16 +120,16 @@ public final class SecurityInitializer
 
     private void initializeRoleFolder()
     {
-        final Node roleNode = SystemConstants.CONTEXT_USER_STORES.callWith(
-            () -> nodeService.getByPath( NodePath.newNodePath( NodePath.ROOT, PrincipalKey.ROLES_NODE_NAME ).build() ) );
+        final NodePath rolesNodePath = UserStoreNodeTranslator.getRolesNodePath();
+        final Node roleNode = SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.getByPath( rolesNodePath ) );
 
         if ( roleNode == null )
         {
             LOG.info( "Initializing roles folder" );
 
             SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
-                parent( NodePath.ROOT ).
-                name( PrincipalKey.ROLES_NODE_NAME ).
+                parent( rolesNodePath.getParentPath() ).
+                name( rolesNodePath.getLastElement().toString() ).
                 build() ) );
         }
     }

@@ -21,7 +21,11 @@ public final class PrincipalKey
 
     private static final PrincipalKey ENTERPRISE_ADMIN = PrincipalKey.ofRole( "administrator" );
 
-    public final static String ROLES_NODE_NAME = "role";
+    public final static String ROLES_NODE_NAME = "roles";
+
+    public final static String GROUPS_NODE_NAME = "groups";
+
+    public final static String USERS_NODE_NAME = "users";
 
     private final UserStoreKey userStore;
 
@@ -107,9 +111,10 @@ public final class PrincipalKey
         }
         else
         {
+            final String folderName = this.isGroup() ? GROUPS_NODE_NAME : USERS_NODE_NAME;
             return NodePath.newPath().
                 addElement( getUserStore().toString() ).
-                addElement( getType().toString().toLowerCase() ).
+                addElement( folderName ).
                 addElement( getId() ).
                 build();
         }

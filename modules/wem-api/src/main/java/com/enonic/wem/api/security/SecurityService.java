@@ -3,12 +3,17 @@ package com.enonic.wem.api.security;
 import java.util.List;
 import java.util.Optional;
 
+import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
 
 public interface SecurityService
 {
     UserStores getUserStores();
+
+    UserStore getUserStore( UserStoreKey userStore );
+
+    UserStoreAccessControlList getUserStorePermissions( UserStoreKey userStore );
 
     Principals findPrincipals( UserStoreKey useStore, List<PrincipalType> types, String query );
 

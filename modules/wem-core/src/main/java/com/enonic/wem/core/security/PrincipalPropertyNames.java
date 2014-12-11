@@ -1,6 +1,6 @@
 package com.enonic.wem.core.security;
 
-public class PrincipalPropertyNames
+final class PrincipalPropertyNames
 {
     public static final String DISPLAY_NAME_KEY = "displayName";
 

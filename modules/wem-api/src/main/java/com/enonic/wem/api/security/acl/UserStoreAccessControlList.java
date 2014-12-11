@@ -12,47 +12,27 @@ import com.enonic.wem.api.security.PrincipalKeys;
 
 import static java.util.stream.Collectors.toSet;
 
-public final class AccessControlList
-    implements Iterable<AccessControlEntry>
+public final class UserStoreAccessControlList
+    implements Iterable<UserStoreAccessControlEntry>
 {
-    private final static AccessControlList EMPTY = AccessControlList.create().build();
+    private final static UserStoreAccessControlList EMPTY = UserStoreAccessControlList.create().build();
 
-    private final ImmutableMap<PrincipalKey, AccessControlEntry> entries;
+    private final ImmutableMap<PrincipalKey, UserStoreAccessControlEntry> entries;
 
-    private AccessControlList( final Builder builder )
+    private UserStoreAccessControlList( final Builder builder )
     {
         this.entries = ImmutableMap.copyOf( builder.entries );
-    }
-
-    public boolean isAllowedFor( final PrincipalKey principal, final Permission... permissions )
-    {
-        final AccessControlEntry entry = this.entries.get( principal );
-        return entry != null && entry.isAllowed( permissions );
-    }
-
-    public boolean isDeniedFor( final PrincipalKey principal, final Permission permissions )
-    {
-        return !isAllowedFor( principal, permissions );
     }
 
     public PrincipalKeys getAllPrincipals()
     {
         final Set<PrincipalKey> principals = this.entries.values().stream().
-            map( AccessControlEntry::getPrincipal ).
+            map( UserStoreAccessControlEntry::getPrincipal ).
             collect( toSet() );
         return PrincipalKeys.from( principals );
     }
 
-    public PrincipalKeys getPrincipalsWithPermission( final Permission permission )
-    {
-        final Set<PrincipalKey> principals = this.entries.values().stream().
-            filter( ( entry ) -> entry.isAllowed( permission ) ).
-            map( AccessControlEntry::getPrincipal ).
-            collect( toSet() );
-        return PrincipalKeys.from( principals );
-    }
-
-    public AccessControlEntry getEntry( final PrincipalKey principalKey )
+    public UserStoreAccessControlEntry getEntry( final PrincipalKey principalKey )
     {
         return this.entries.get( principalKey );
     }
@@ -74,7 +54,7 @@ public final class AccessControlList
     }
 
     @Override
-    public Iterator<AccessControlEntry> iterator()
+    public Iterator<UserStoreAccessControlEntry> iterator()
     {
         return entries.values().iterator();
     }
@@ -86,12 +66,12 @@ public final class AccessControlList
         {
             return true;
         }
-        if ( !( o instanceof AccessControlList ) )
+        if ( !( o instanceof UserStoreAccessControlList ) )
         {
             return false;
         }
 
-        final AccessControlList that = (AccessControlList) o;
+        final UserStoreAccessControlList that = (UserStoreAccessControlList) o;
         return this.entries.equals( that.entries );
     }
 
@@ -101,14 +81,14 @@ public final class AccessControlList
         return this.entries.hashCode();
     }
 
-    public static AccessControlList empty()
+    public static UserStoreAccessControlList empty()
     {
         return EMPTY;
     }
 
-    public static AccessControlList of( final AccessControlEntry... entries )
+    public static UserStoreAccessControlList of( final UserStoreAccessControlEntry... entries )
     {
-        return AccessControlList.create().addAll( entries ).build();
+        return UserStoreAccessControlList.create().addAll( entries ).build();
     }
 
     public static Builder create()
@@ -116,44 +96,44 @@ public final class AccessControlList
         return new Builder();
     }
 
-    public static Builder create( final AccessControlList acl )
+    public static Builder create( final UserStoreAccessControlList acl )
     {
         return new Builder( acl );
     }
 
     public static class Builder
     {
-        private final Map<PrincipalKey, AccessControlEntry> entries;
+        private final Map<PrincipalKey, UserStoreAccessControlEntry> entries;
 
         private Builder()
         {
             this.entries = Maps.newHashMap();
         }
 
-        private Builder( final AccessControlList acl )
+        private Builder( final UserStoreAccessControlList acl )
         {
             this.entries = Maps.newHashMap();
             this.entries.putAll( acl.entries );
         }
 
-        public Builder add( final AccessControlEntry entry )
+        public Builder add( final UserStoreAccessControlEntry entry )
         {
             this.entries.put( entry.getPrincipal(), entry );
             return this;
         }
 
-        public Builder addAll( final Iterable<AccessControlEntry> entries )
+        public Builder addAll( final Iterable<UserStoreAccessControlEntry> entries )
         {
-            for ( AccessControlEntry entry : entries )
+            for ( UserStoreAccessControlEntry entry : entries )
             {
                 this.entries.put( entry.getPrincipal(), entry );
             }
             return this;
         }
 
-        public Builder addAll( final AccessControlEntry... entries )
+        public Builder addAll( final UserStoreAccessControlEntry... entries )
         {
-            for ( AccessControlEntry entry : entries )
+            for ( UserStoreAccessControlEntry entry : entries )
             {
                 this.entries.put( entry.getPrincipal(), entry );
             }
@@ -166,9 +146,9 @@ public final class AccessControlList
             return this;
         }
 
-        public AccessControlList build()
+        public UserStoreAccessControlList build()
         {
-            return new AccessControlList( this );
+            return new UserStoreAccessControlList( this );
         }
     }
 
