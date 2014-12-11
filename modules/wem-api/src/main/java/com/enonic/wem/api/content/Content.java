@@ -18,17 +18,10 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.api.support.ChangeTraceable;
-import com.enonic.wem.api.support.Changes;
-import com.enonic.wem.api.support.illegaledit.IllegalEdit;
-import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
-import com.enonic.wem.api.support.illegaledit.IllegalEditException;
-
-import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 @SuppressWarnings("UnusedDeclaration")
 public class Content
-    implements IllegalEditAware<Content>, ChangeTraceable, Renderable
+    implements Renderable
 {
     private final boolean draft;
 
@@ -74,7 +67,7 @@ public class Content
 
     private final boolean inheritPermissions;
 
-    protected Content( final BaseBuilder builder )
+    protected Content( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
         Preconditions.checkNotNull( builder.parentPath, "parentPath is required for a Content" );
@@ -97,7 +90,7 @@ public class Content
         this.name = builder.name;
         this.parentPath = builder.parentPath;
         this.path = ContentPath.from( builder.parentPath, builder.name.toString() );
-        this.id = builder.contentId;
+        this.id = builder.id;
         this.form = builder.form;
         this.data = builder.data;
         this.attachments = builder.attachments;
@@ -123,11 +116,6 @@ public class Content
     public static Builder newContent( final Content content )
     {
         return new Builder( content );
-    }
-
-    public static EditBuilder editContent( final Content content )
-    {
-        return new EditBuilder( content );
     }
 
     public ContentPath getParentPath()
@@ -342,64 +330,51 @@ public class Content
                              hasChildren, inheritPermissions, childOrder, thumbnail, form, permissions, attachments, data, metadata, page );
     }
 
-    @Override
-    public void checkIllegalEdit( final Content to )
-        throws IllegalEditException
+    public static class Builder<BUILDER extends Builder, C extends Content>
     {
-        IllegalEdit.check( "id", this.getId(), to.getId(), Content.class );
-        IllegalEdit.check( "path", this.getPath(), to.getPath(), Content.class );
-        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Content.class );
-        IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), Content.class );
-        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Content.class );
-        IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), Content.class );
-        IllegalEdit.check( "owner", this.getOwner(), to.getOwner(), Content.class );
-    }
-
-    static abstract class BaseBuilder
-    {
-        protected ContentId contentId;
+        protected ContentId id;
 
         protected PropertyTree data;
 
         protected Page page;
 
-        boolean draft;
+        protected boolean draft;
 
-        ContentPath parentPath;
+        protected ContentPath parentPath;
 
-        ContentName name;
+        protected ContentName name;
 
-        ContentTypeName type;
+        protected ContentTypeName type;
 
-        Form form;
+        protected Form form;
 
-        Attachments attachments;
+        protected Attachments attachments;
 
-        Metadatas metadata;
+        protected Metadatas metadata;
 
-        String displayName;
+        protected String displayName;
 
-        PrincipalKey owner;
+        protected PrincipalKey owner;
 
-        Instant createdTime;
+        protected Instant createdTime;
 
-        Instant modifiedTime;
+        protected Instant modifiedTime;
 
-        PrincipalKey creator;
+        protected PrincipalKey creator;
 
-        PrincipalKey modifier;
+        protected PrincipalKey modifier;
 
-        Thumbnail thumbnail;
+        protected Thumbnail thumbnail;
 
-        boolean hasChildren;
+        protected boolean hasChildren;
 
-        ChildOrder childOrder;
+        protected ChildOrder childOrder;
 
-        AccessControlList permissions;
+        protected AccessControlList permissions;
 
-        boolean inheritPermissions;
+        protected boolean inheritPermissions;
 
-        BaseBuilder()
+        public Builder()
         {
             this.data = new PropertyTree();
             this.attachments = Attachments.empty();
@@ -407,9 +382,10 @@ public class Content
             this.inheritPermissions = true;
         }
 
-        BaseBuilder( final Content source )
+        public Builder( final Content source )
         {
-            this.contentId = source.id;
+
+            this.id = source.id;
             this.draft = source.draft;
             this.parentPath = source.parentPath;
             this.name = source.name;
@@ -430,122 +406,6 @@ public class Content
             this.childOrder = source.childOrder;
             this.permissions = source.permissions;
             this.inheritPermissions = source.inheritPermissions;
-        }
-    }
-
-    public static class EditBuilder
-        extends BaseBuilder
-    {
-        private final Content original;
-
-        private final Changes.Builder changes = new Changes.Builder();
-
-        public EditBuilder( final Content original )
-        {
-            super( original );
-            this.original = original;
-        }
-
-        public EditBuilder type( final ContentTypeName type )
-        {
-            changes.recordChange( newPossibleChange( "type" ).from( this.original.getType() ).to( type ).build() );
-            this.type = type;
-            return this;
-        }
-
-        public EditBuilder draft( boolean draft )
-        {
-            this.draft = draft;
-            return this;
-        }
-
-        public EditBuilder form( final Form form )
-        {
-            changes.recordChange( newPossibleChange( "form" ).from( this.original.getForm() ).to( form ).build() );
-            this.form = form;
-            return this;
-        }
-
-        public EditBuilder data( final PropertyTree contentData )
-        {
-            changes.recordChange( newPossibleChange( "data" ).from( this.original.getData() ).to( contentData ).build() );
-            this.data = contentData;
-            return this;
-        }
-
-        public EditBuilder metadata( final Metadatas metadata )
-        {
-            changes.recordChange( newPossibleChange( "metadata" ).from( this.original.metadata ).to( metadata ).build() );
-            this.metadata = metadata;
-            return this;
-        }
-
-        public EditBuilder displayName( final String displayName )
-        {
-            changes.recordChange( newPossibleChange( "displayName" ).from( this.original.getDisplayName() ).to( displayName ).build() );
-            this.displayName = displayName;
-            return this;
-        }
-
-        public EditBuilder page( final Page page )
-        {
-            changes.recordChange( newPossibleChange( "page" ).from( this.original.getPage() ).to( page ).build() );
-            this.page = page;
-            return this;
-        }
-
-        public EditBuilder thumbnail( final Thumbnail thumbnail )
-        {
-            changes.recordChange( newPossibleChange( "thumbnail" ).from( this.original.getThumbnail() ).to( thumbnail ).build() );
-            this.thumbnail = thumbnail;
-            return this;
-        }
-
-        public EditBuilder permissions( final AccessControlList permissions )
-        {
-            this.permissions = permissions;
-            changes.recordChange( newPossibleChange( "permissions" ).from( this.original.permissions ).to( permissions ).build() );
-            return this;
-        }
-
-        public EditBuilder inheritPermissions( final boolean inheritPermissions )
-        {
-            this.inheritPermissions = inheritPermissions;
-            changes.recordChange(
-                newPossibleChange( "inheritPermissions" ).from( this.original.inheritPermissions ).to( inheritPermissions ).build() );
-            this.inheritPermissions = inheritPermissions;
-            return this;
-        }
-
-        public boolean isChanges()
-        {
-            return this.changes.isChanges();
-        }
-
-        public EditBuilder childOrder( final ChildOrder childOrder )
-        {
-            changes.recordChange( newPossibleChange( "childOrder" ).from( this.childOrder ).to( childOrder ).build() );
-            this.childOrder = childOrder;
-            return this;
-        }
-
-        public Content build()
-        {
-            return new Content( this );
-        }
-    }
-
-    public static class Builder<BUILDER extends Builder, C extends Content>
-        extends BaseBuilder
-    {
-        public Builder()
-        {
-            super();
-        }
-
-        public Builder( final Content content )
-        {
-            super( content );
         }
 
         public Builder<BUILDER, C> parentPath( final ContentPath path )
@@ -663,7 +523,7 @@ public class Content
 
         public Builder<BUILDER, C> id( final ContentId contentId )
         {
-            this.contentId = contentId;
+            this.id = contentId;
             return this;
         }
 

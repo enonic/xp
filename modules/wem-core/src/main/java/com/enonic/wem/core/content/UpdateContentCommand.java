@@ -70,7 +70,7 @@ final class UpdateContentCommand
             return contentBeforeChange;
         }
 
-        validateEditedContent( contentBeforeChange, editedContent );
+        validateEditedContent( editedContent );
 
         editedContent = newContent( editedContent ).modifier( this.params.getModifier() ).build();
         if ( !editedContent.hasThumbnail() )
@@ -102,10 +102,8 @@ final class UpdateContentCommand
         return translator.fromNode( editedNode );
     }
 
-    private void validateEditedContent( final Content persistedContent, final Content edited )
+    private void validateEditedContent( final Content edited )
     {
-        persistedContent.checkIllegalEdit( edited );
-
         if ( !edited.isDraft() )
         {
             validateContentData( edited );
