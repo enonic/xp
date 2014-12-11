@@ -36,11 +36,7 @@ abstract class AbstractContentCommand
 
     Content getContent( final ContentId contentId )
     {
-        return GetContentByIdCommand.create( contentId ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
-            translator( this.translator ).
+        return GetContentByIdCommand.create( contentId, this ).
             build().
             execute();
     }
