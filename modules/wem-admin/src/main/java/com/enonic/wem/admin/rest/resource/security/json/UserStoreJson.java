@@ -1,35 +1,31 @@
 package com.enonic.wem.admin.rest.resource.security.json;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.enonic.wem.api.security.UserStore;
+import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
+import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 
 @SuppressWarnings("UnusedDeclaration")
 public class UserStoreJson
+    extends UserStoreSummaryJson
 {
-    private final UserStore userStore;
+    private final UserStoreAccessControlList userStoreAccessControlList;
 
-    @JsonCreator
-    public UserStoreJson( @JsonProperty("displayName") final String displayName, @JsonProperty("key") final UserStoreKeyJson keyJson )
+    public UserStoreJson( final UserStore userStore, final UserStoreAccessControlList userStoreAccessControlList )
     {
-
-        this.userStore = UserStore.newUserStore().displayName( displayName ).key( keyJson.getUserStoreKey() ).build();
+        super( userStore );
+        this.userStoreAccessControlList = userStoreAccessControlList;
     }
 
-    public UserStoreJson( final UserStore userStore )
+    public List<UserStoreAccessControlEntryJson> getPermissions()
     {
-        this.userStore = userStore;
-
-    }
-
-    public String getDisplayName()
-    {
-        return userStore.getDisplayName();
-    }
-
-    public String getKey()
-    {
-        return userStore.getKey().toString();
+        final List<UserStoreAccessControlEntryJson> list = new ArrayList<>();
+        for ( UserStoreAccessControlEntry entry : userStoreAccessControlList )
+        {
+            list.add( new UserStoreAccessControlEntryJson( entry ) );
+        }
+        return list;
     }
 }

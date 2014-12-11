@@ -32,6 +32,7 @@ import com.enonic.wem.admin.rest.resource.security.json.UpdateGroupJson;
 import com.enonic.wem.admin.rest.resource.security.json.UpdateRoleJson;
 import com.enonic.wem.admin.rest.resource.security.json.UpdateUserJson;
 import com.enonic.wem.admin.rest.resource.security.json.UserJson;
+import com.enonic.wem.admin.rest.resource.security.json.UserStoreJson;
 import com.enonic.wem.admin.rest.resource.security.json.UserStoresJson;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
@@ -46,8 +47,10 @@ import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.User;
+import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
+import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 import static com.enonic.wem.api.security.PrincipalQuery.newQuery;
@@ -69,6 +72,26 @@ public final class SecurityResource
     {
         final UserStores userStores = securityService.getUserStores();
         return new UserStoresJson( userStores );
+    }
+
+    @GET
+    @Path("userstore")
+    public UserStoreJson getUserStore( @QueryParam("key") final String keyParam )
+    {
+        if ( keyParam == null )
+        {
+            return null;
+        }
+
+        final UserStoreKey userStoreKey = new UserStoreKey( keyParam );
+        final UserStore userStore = securityService.getUserStore( userStoreKey );
+        if ( userStore == null )
+        {
+            throw new NotFoundWebException( String.format( "User Store [%s] not found", keyParam ) );
+        }
+
+        final UserStoreAccessControlList userStorePermissions = securityService.getUserStorePermissions( userStoreKey );
+        return new UserStoreJson( userStore, userStorePermissions );
     }
 
     @GET
