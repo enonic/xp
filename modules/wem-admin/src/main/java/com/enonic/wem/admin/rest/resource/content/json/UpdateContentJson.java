@@ -9,10 +9,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.content.MetadataJson;
-import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.Metadata;
+import com.enonic.wem.api.content.Metadatas;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.data.PropertyArrayJson;
@@ -21,8 +21,6 @@ import com.enonic.wem.api.data.PropertyTreeJson;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
-
-import static com.enonic.wem.api.content.Content.editContent;
 
 public class UpdateContentJson
 {
@@ -45,30 +43,27 @@ public class UpdateContentJson
         this.contentName = ContentName.from( contentName );
 
         final PropertyTree contentData = PropertyTreeJson.fromJson( propertyArrayJsonList );
-        final List<Metadata> metadataList = parseMetadata( metadataJsonList );
+        final Metadatas metadatas = parseMetadata( metadataJsonList );
 
         this.updateContentParams = new UpdateContentParams().
             contentId( ContentId.from( contentId ) ).
             modifier( PrincipalKey.ofAnonymous() ).
             updateAttachments( updateAttachments != null ? updateAttachments.getUpdateAttachments() : null ).
-            editor( toBeEdited -> {
-                Content.EditBuilder editContentBuilder = editContent( toBeEdited ).
-                    form( form.getForm() ).
-                    data( contentData ).
-                    metadata( metadataList ).
-                    draft( Boolean.valueOf( draft ) ).
-                    displayName( displayName ).
-                    inheritPermissions( inheritPermissions );
+            editor( edit -> {
+                edit.form = form.getForm();
+                edit.data = contentData;
+                edit.metadata = metadatas;
+                edit.draft = Boolean.valueOf( draft );
+                edit.displayName = displayName;
+                edit.inheritPermissions = inheritPermissions;
                 if ( thumbnail != null )
                 {
-                    editContentBuilder = editContentBuilder.thumbnail( thumbnail.getThumbnail() );
+                    edit.thumbnail = thumbnail.getThumbnail();
                 }
                 if ( permissions != null )
                 {
-                    final AccessControlList acl = parseAcl( permissions );
-                    editContentBuilder = editContentBuilder.permissions( acl );
+                    edit.permissions = parseAcl( permissions );
                 }
-                return editContentBuilder;
             } );
 
         this.renameContentParams = new RenameContentParams().
@@ -94,14 +89,14 @@ public class UpdateContentJson
         return contentName;
     }
 
-    private List<Metadata> parseMetadata( final List<MetadataJson> metadataJsonList )
+    private Metadatas parseMetadata( final List<MetadataJson> metadataJsonList )
     {
         final List<Metadata> metadataList = new ArrayList<>();
         for ( MetadataJson metadataJson : metadataJsonList )
         {
             metadataList.add( metadataJson.getMetadata() );
         }
-        return metadataList;
+        return Metadatas.from( metadataList );
     }
 
     private AccessControlList parseAcl( final List<AccessControlEntryJson> accessControlListJson )

@@ -14,9 +14,29 @@ public final class PageRegions
         return new Builder();
     }
 
+    public static Builder newPageRegions( final PageRegions source )
+    {
+        return new Builder( source );
+    }
+
+    public PageRegions copy()
+    {
+        return PageRegions.newPageRegions( this ).build();
+    }
+
     public static class Builder
         extends AbstractRegions.Builder<Builder>
     {
+        private Builder( final PageRegions source )
+        {
+            super( source );
+        }
+
+        private Builder()
+        {
+            // Default
+        }
+
         public PageRegions build()
         {
             return new PageRegions( this );

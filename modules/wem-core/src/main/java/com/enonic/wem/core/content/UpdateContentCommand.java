@@ -13,6 +13,7 @@ import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentUpdatedEvent;
+import com.enonic.wem.api.content.EditableContent;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
@@ -57,14 +58,18 @@ final class UpdateContentCommand
     private Content doExecute()
     {
         final Content contentBeforeChange = getContent( params.getContentId() );
-        final Content.EditBuilder editBuilder = this.params.getEditor().edit( contentBeforeChange );
 
-        if ( !editBuilder.isChanges() && this.params.getUpdateAttachments() == null )
+        Content editedContent;
+
+        final EditableContent editableContent = new EditableContent( contentBeforeChange );
+        this.params.getEditor().edit( editableContent );
+        editedContent = editableContent.build();
+
+        if ( contentBeforeChange.equals( editedContent ) )
         {
             return contentBeforeChange;
         }
 
-        Content editedContent = editBuilder.build();
         validateEditedContent( contentBeforeChange, editedContent );
 
         editedContent = newContent( editedContent ).modifier( this.params.getModifier() ).build();

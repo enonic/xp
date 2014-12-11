@@ -11,8 +11,6 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.security.acl.AccessControlList;
 
-import static com.enonic.wem.api.content.Content.editContent;
-
 public class ApplyContentPermissionsJson
 {
     final UpdateContentParams updateContentParams;
@@ -27,9 +25,10 @@ public class ApplyContentPermissionsJson
     {
         this.updateContentParams = new UpdateContentParams().
             contentId( ContentId.from( contentId ) ).
-            editor( toBeEdited -> editContent( toBeEdited ).
-                inheritPermissions( inheritPermissions ).
-                permissions( parseAcl( permissions ) ) );
+            editor( edit -> {
+                edit.inheritPermissions = inheritPermissions;
+                edit.permissions = parseAcl( permissions );
+            } );
 
         this.overwriteChildPermissions = overwriteChildPermissions;
     }

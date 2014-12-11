@@ -41,6 +41,17 @@ public final class LayoutComponent
         return new Builder();
     }
 
+    public static Builder newLayoutComponent( final LayoutComponent source )
+    {
+        return new Builder( source );
+    }
+
+    @Override
+    public PageComponent copy()
+    {
+        return newLayoutComponent( this ).build();
+    }
+
     @Override
     public PageComponentType getType()
     {
@@ -107,6 +118,12 @@ public final class LayoutComponent
         private Builder()
         {
 
+        }
+
+        private Builder( final LayoutComponent source )
+        {
+            super( source );
+            regions = source.regions.copy();
         }
 
         public Builder name( ComponentName value )

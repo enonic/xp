@@ -76,6 +76,14 @@ public abstract class AbstractDescriptorBasedPageComponent<DESCRIPTOR_KEY extend
             this.config = new PropertyTree();
         }
 
+        protected Builder( final AbstractDescriptorBasedPageComponent source )
+        {
+            super( source );
+            this.config = source.getConfig().copy();
+            //noinspection unchecked
+            this.descrpitor = (DESCRIPTOR_KEY) source.getDescriptor();
+        }
+
         public Builder name( ComponentName value )
         {
             this.name = value;

@@ -3,6 +3,7 @@ package com.enonic.wem.api.content.page.part;
 
 import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponent;
 import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageComponentType;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.PropertyTree;
@@ -19,6 +20,17 @@ public final class PartComponent
     public static Builder newPartComponent()
     {
         return new Builder();
+    }
+
+    public static Builder newPartComponent( final PartComponent source )
+    {
+        return new Builder( source );
+    }
+
+    @Override
+    public PageComponent copy()
+    {
+        return newPartComponent( this ).build();
     }
 
     @Override
@@ -47,6 +59,12 @@ public final class PartComponent
     {
         private Builder()
         {
+            // Default
+        }
+
+        private Builder( final PartComponent source )
+        {
+            super( source );
         }
 
         public Builder name( ComponentName value )

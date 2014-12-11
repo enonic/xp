@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.enonic.wem.api.content.page.AbstractPageComponent;
 import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageComponentType;
 
 public class TextComponent
@@ -21,6 +22,17 @@ public class TextComponent
     public static Builder newTextComponent()
     {
         return new Builder();
+    }
+
+    public static Builder newTextComponent( final TextComponent source )
+    {
+        return new Builder( source );
+    }
+
+    @Override
+    public PageComponent copy()
+    {
+        return newTextComponent( this ).build();
     }
 
     public PageComponentType getType()
@@ -71,8 +83,15 @@ public class TextComponent
     {
         private String text;
 
-        private Builder()
+        Builder()
         {
+            // Default
+        }
+
+        private Builder( final TextComponent source )
+        {
+            super( source );
+            text = source.text;
         }
 
         public Builder name( ComponentName value )

@@ -1,12 +1,9 @@
 package com.enonic.wem.api.content;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.page.Page;
@@ -53,7 +50,7 @@ public class Content
 
     private final Attachments attachments;
 
-    private final ImmutableList<Metadata> metadata;
+    private final Metadatas metadata;
 
     private final Instant createdTime;
 
@@ -104,7 +101,7 @@ public class Content
         this.form = builder.form;
         this.data = builder.data;
         this.attachments = builder.attachments;
-        this.metadata = ImmutableList.copyOf( builder.metadata );
+        this.metadata = builder.metadata;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.creator = builder.creator;
@@ -241,7 +238,7 @@ public class Content
         return !this.metadata.isEmpty();
     }
 
-    public ImmutableList<Metadata> getAllMetadata()
+    public Metadatas getAllMetadata()
     {
         return this.metadata;
     }
@@ -302,6 +299,50 @@ public class Content
     }
 
     @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof Content ) )
+        {
+            return false;
+        }
+
+        final Content other = (Content) o;
+
+        return Objects.equals( id, other.id ) &&
+            Objects.equals( name, other.name ) &&
+            Objects.equals( parentPath, other.parentPath ) &&
+            Objects.equals( displayName, other.displayName ) &&
+            Objects.equals( type, other.type ) &&
+            Objects.equals( draft, other.draft ) &&
+            Objects.equals( modifier, other.modifier ) &&
+            Objects.equals( creator, other.creator ) &&
+            Objects.equals( owner, other.owner ) &&
+            Objects.equals( createdTime, other.createdTime ) &&
+            Objects.equals( modifiedTime, other.modifiedTime ) &&
+            Objects.equals( hasChildren, other.hasChildren ) &&
+            Objects.equals( inheritPermissions, other.inheritPermissions ) &&
+            Objects.equals( childOrder, other.childOrder ) &&
+            Objects.equals( thumbnail, other.thumbnail ) &&
+            Objects.equals( form, other.form ) &&
+            Objects.equals( permissions, other.permissions ) &&
+            Objects.equals( attachments, other.attachments ) &&
+            Objects.equals( data, other.data ) &&
+            Objects.equals( metadata, other.metadata ) &&
+            Objects.equals( page, other.page );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( id, name, parentPath, displayName, type, draft, modifier, creator, owner, createdTime, modifiedTime,
+                             hasChildren, inheritPermissions, childOrder, thumbnail, form, permissions, attachments, data, metadata, page );
+    }
+
+    @Override
     public void checkIllegalEdit( final Content to )
         throws IllegalEditException
     {
@@ -312,25 +353,6 @@ public class Content
         IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Content.class );
         IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), Content.class );
         IllegalEdit.check( "owner", this.getOwner(), to.getOwner(), Content.class );
-    }
-
-    @Override
-    public String toString()
-    {
-        final Objects.ToStringHelper s = Objects.toStringHelper( this );
-        s.add( "id", id );
-        s.add( "draft", draft );
-        s.add( "path", path );
-        s.add( "displayName", displayName );
-        s.add( "contentType", type );
-        s.add( "createdTime", createdTime );
-        s.add( "modifiedTime", modifiedTime );
-        s.add( "creator", creator );
-        s.add( "modifier", modifier );
-        s.add( "owner", owner );
-        s.add( "permissions", permissions );
-        s.add( "inheritPermissions", inheritPermissions );
-        return s.toString();
     }
 
     static abstract class BaseBuilder
@@ -353,7 +375,7 @@ public class Content
 
         Attachments attachments;
 
-        List<Metadata> metadata;
+        Metadatas metadata;
 
         String displayName;
 
@@ -381,33 +403,33 @@ public class Content
         {
             this.data = new PropertyTree();
             this.attachments = Attachments.empty();
-            this.metadata = new ArrayList<>();
+            this.metadata = Metadatas.empty();
             this.inheritPermissions = true;
         }
 
-        BaseBuilder( final Content content )
+        BaseBuilder( final Content source )
         {
-            this.contentId = content.id;
-            this.draft = content.draft;
-            this.parentPath = content.parentPath;
-            this.name = content.name;
-            this.type = content.type;
-            this.form = content.form; // TODO make DataSet immutable, or make copy
-            this.data = content.data; // TODO make DataSet immutable, or make copy
-            this.attachments = content.attachments; // TODO make DataSet immutable, or make copy
-            this.metadata = content.metadata;
-            this.displayName = content.displayName;
-            this.owner = content.owner;
-            this.createdTime = content.createdTime;
-            this.modifiedTime = content.modifiedTime;
-            this.creator = content.creator;
-            this.modifier = content.modifier;
-            this.hasChildren = content.hasChildren;
-            this.page = content.page;
-            this.thumbnail = content.thumbnail;
-            this.childOrder = content.childOrder;
-            this.permissions = content.permissions;
-            this.inheritPermissions = content.inheritPermissions;
+            this.contentId = source.id;
+            this.draft = source.draft;
+            this.parentPath = source.parentPath;
+            this.name = source.name;
+            this.type = source.type;
+            this.form = source.form != null ? source.form.copy() : null;
+            this.data = source.data != null ? source.data.copy() : null;
+            this.attachments = source.attachments;
+            this.metadata = source.metadata != null ? source.metadata.copy() : null;
+            this.displayName = source.displayName;
+            this.owner = source.owner;
+            this.createdTime = source.createdTime;
+            this.modifiedTime = source.modifiedTime;
+            this.creator = source.creator;
+            this.modifier = source.modifier;
+            this.hasChildren = source.hasChildren;
+            this.page = source.page != null ? source.page.copy() : null;
+            this.thumbnail = source.thumbnail;
+            this.childOrder = source.childOrder;
+            this.permissions = source.permissions;
+            this.inheritPermissions = source.inheritPermissions;
         }
     }
 
@@ -451,7 +473,7 @@ public class Content
             return this;
         }
 
-        public EditBuilder metadata( final List<Metadata> metadata )
+        public EditBuilder metadata( final Metadatas metadata )
         {
             changes.recordChange( newPossibleChange( "metadata" ).from( this.original.metadata ).to( metadata ).build() );
             this.metadata = metadata;
@@ -591,13 +613,13 @@ public class Content
         {
             if ( this.metadata == null )
             {
-                this.metadata = new ArrayList<>();
+                this.metadata = Metadatas.empty();
             }
-            this.metadata.add( metadata );
+            this.metadata = Metadatas.from( this.metadata, metadata );
             return this;
         }
 
-        public Builder<BUILDER, C> metadata( final List<Metadata> metadata )
+        public Builder<BUILDER, C> metadata( final Metadatas metadata )
         {
             this.metadata = metadata;
             return this;

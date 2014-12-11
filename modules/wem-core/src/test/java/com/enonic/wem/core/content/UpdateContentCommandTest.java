@@ -24,7 +24,6 @@ import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.security.PrincipalKey;
 
-import static com.enonic.wem.api.content.Content.editContent;
 import static com.enonic.wem.api.content.Content.newContent;
 
 public class UpdateContentCommandTest
@@ -41,7 +40,6 @@ public class UpdateContentCommandTest
 
     private final EventPublisher eventPublisher = Mockito.mock( EventPublisher.class );
 
-    //@Ignore // Rewriting content stuff to node
     @Test(expected = ContentNotFoundException.class)
     public void given_content_not_found_when_handle_then_NOT_FOUND_is_returned()
         throws Exception
@@ -50,15 +48,13 @@ public class UpdateContentCommandTest
         PropertyTree existingContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         existingContentData.addString( "myData", "aaa" );
 
-        PropertyTree unchangedContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        unchangedContentData.addString( "myData", "aaa" );
-
         ContentId contentId = ContentId.from( "mycontent" );
 
         UpdateContentParams params = new UpdateContentParams().
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             contentId( contentId ).
-            editor( toBeEdited -> editContent( toBeEdited ).data( unchangedContentData ) );
+            editor( edit -> {
+            } );
 
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
@@ -85,13 +81,11 @@ public class UpdateContentCommandTest
 
         Content existingContent = createContent( existingContentData );
 
-        PropertyTree unchangedContentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        unchangedContentData.addString( "myData", "aaa" );
-
         UpdateContentParams params = new UpdateContentParams().
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             contentId( existingContent.getId() ).
-            editor( toBeEdited -> editContent( toBeEdited ).data( unchangedContentData ) );
+            editor( edit -> {
+            } );
 
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
@@ -102,8 +96,7 @@ public class UpdateContentCommandTest
             build();
 
         final Node mockNode = Node.newNode().build();
-        Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).
-            thenReturn( mockNode );
+        Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
         Mockito.when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
 
         // exercise

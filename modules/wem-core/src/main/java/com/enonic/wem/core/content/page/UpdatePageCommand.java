@@ -11,8 +11,6 @@ import com.enonic.wem.api.content.page.PageNotFoundException;
 import com.enonic.wem.api.content.page.UpdatePageParams;
 import com.enonic.wem.api.context.ContextAccessor;
 
-import static com.enonic.wem.api.content.Content.editContent;
-
 final class UpdatePageCommand
 {
     private final UpdatePageParams params;
@@ -51,7 +49,7 @@ final class UpdatePageCommand
 
             final UpdateContentParams params = new UpdateContentParams().
                 contentId( this.params.getContent() ).
-                editor( toBeEdited -> editContent( toBeEdited ).page( editedPage ) );
+                editor( edit -> edit.page = editedPage );
 
             this.contentService.update( params );
         }

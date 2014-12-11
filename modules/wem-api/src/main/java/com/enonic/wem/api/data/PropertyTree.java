@@ -73,9 +73,9 @@ public final class PropertyTree
         root = new PropertySet( this );
     }
 
-    public PropertyTree( final PropertyTree source )
+    PropertyTree( final PropertyTree source, final PropertyIdProvider idProvider )
     {
-        idProvider = new DefaultPropertyIdProvider();
+        this.idProvider = idProvider;
         root = source.getRoot().copy( this );
     }
 
@@ -133,7 +133,7 @@ public final class PropertyTree
 
     public PropertyTree copy()
     {
-        return new PropertyTree( this );
+        return new PropertyTree( this, this.idProvider );
     }
 
     /**

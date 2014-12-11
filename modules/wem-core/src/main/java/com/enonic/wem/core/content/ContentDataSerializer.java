@@ -1,11 +1,9 @@
 package com.enonic.wem.core.content;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.Metadata;
+import com.enonic.wem.api.content.Metadatas;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.PropertySet;
@@ -84,14 +82,13 @@ public class ContentDataSerializer
         final PropertySet metadataSet = set.getSet( ContentPropertyNames.METADATA );
         if ( metadataSet != null )
         {
-            final List<Metadata> metadataList = new ArrayList<>();
-
+            final Metadatas.Builder metadatasBuilder = Metadatas.builder();
             for ( final String metadataName : metadataSet.getPropertyNames() )
             {
-                metadataList.add( new Metadata( MetadataSchemaName.from( metadataName ), metadataSet.getSet( metadataName ).toTree() ) );
+                metadatasBuilder.add(
+                    new Metadata( MetadataSchemaName.from( metadataName ), metadataSet.getSet( metadataName ).toTree() ) );
             }
-
-            builder.metadata( metadataList );
+            builder.metadata( metadatasBuilder.build() );
         }
 
         builder.form( FORM_SERIALIZER.fromData( set.getSet( ContentPropertyNames.FORM_SET ) ) );

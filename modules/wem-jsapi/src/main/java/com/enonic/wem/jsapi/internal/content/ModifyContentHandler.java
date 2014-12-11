@@ -10,8 +10,6 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.jsapi.internal.mapper.ContentMapper;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
 
@@ -41,7 +39,7 @@ public final class ModifyContentHandler
 
         final UpdateContentParams params = new UpdateContentParams();
         params.contentId( id );
-        params.editor( newContentEditor( editor ) );
+        //params.editor( newContentEditor( editor ) );
 
         this.contentService.update( params );
         return null;
@@ -65,13 +63,13 @@ public final class ModifyContentHandler
         }
     }
 
-    private ContentEditor newContentEditor( final Function<Object[], Object> func )
+    /*private ContentEditor newContentEditor( final Function<Object[], Object> func )
     {
         return toBeEdited -> {
             final Object value = func.apply( new Object[]{new ContentMapper( toBeEdited )} );
             return null;
         };
-    }
+    }*/
 
     @Reference
     public void setContentService( final ContentService contentService )

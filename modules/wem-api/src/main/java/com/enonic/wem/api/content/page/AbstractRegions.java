@@ -96,6 +96,19 @@ public abstract class AbstractRegions
     {
         private final List<Region> regions = new ArrayList<>();
 
+        protected Builder()
+        {
+            // Default
+        }
+
+        protected Builder( final AbstractRegions source )
+        {
+            for ( final Region sourceRegion : source.regions )
+            {
+                regions.add( sourceRegion.copy() );
+            }
+        }
+
         @SuppressWarnings("unchecked")
         private BUILDER getThis()
         {

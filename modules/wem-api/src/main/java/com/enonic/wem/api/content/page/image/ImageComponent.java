@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.AbstractPageComponent;
 import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageComponentType;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.PropertyTree;
@@ -32,6 +33,17 @@ public class ImageComponent
     public static Builder newImageComponent()
     {
         return new Builder();
+    }
+
+    public static Builder newImageComponent( final ImageComponent source )
+    {
+        return new Builder( source );
+    }
+
+    @Override
+    public PageComponent copy()
+    {
+        return newImageComponent( this ).build();
     }
 
     @Override
@@ -105,7 +117,14 @@ public class ImageComponent
 
         private Builder()
         {
+            // Default
+        }
 
+        private Builder( final ImageComponent source )
+        {
+            super( source );
+            image = source.image;
+            config = source.config.copy();
         }
 
         public Builder image( final ContentId value )

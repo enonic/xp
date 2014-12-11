@@ -26,9 +26,9 @@ public final class Page
 
     private Page( final PageProperties properties )
     {
+        Preconditions.checkNotNull( properties.config, "config cannot be null" );
         this.controller = properties.controller;
         this.template = properties.template;
-        Preconditions.checkNotNull( properties.config, "config cannot be null" );
         this.config = properties.config;
         this.regions = properties.regions;
     }
@@ -134,6 +134,11 @@ public final class Page
         return new Builder( source );
     }
 
+    public Page copy()
+    {
+        return newPage( this ).build();
+    }
+
     static class PageProperties
     {
         PageDescriptorKey controller;
@@ -151,11 +156,10 @@ public final class Page
 
         PageProperties( final Page source )
         {
-            this.config = source.config.copy();
-            this.template = source.getTemplate();
-            this.controller = source.getController();
-            this.regions = source.getRegions();
-            this.config = source.getConfig();
+            this.template = source.template;
+            this.controller = source.controller;
+            this.regions = source.regions != null ? source.regions.copy() : null;
+            this.config = source.config != null ? source.config.copy() : null;
         }
 
         public PageProperties controller( PageDescriptorKey value )

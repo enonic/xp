@@ -45,6 +45,11 @@ public final class Region
         return new Builder( source );
     }
 
+    public Region copy()
+    {
+        return Region.newRegion( this ).build();
+    }
+
     public String getName()
     {
         return name;
@@ -140,7 +145,7 @@ public final class Region
             this.name = source.name;
             for ( final PageComponent component : source.pageComponents )
             {
-                this.components.add( component );
+                this.components.add( component.copy() );
             }
             this.parent = source.parent;
         }

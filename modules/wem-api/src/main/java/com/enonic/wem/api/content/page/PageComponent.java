@@ -13,4 +13,6 @@ public interface PageComponent
     ComponentPath getPath();
 
     void setParent( Region region );
+
+    PageComponent copy();
 }

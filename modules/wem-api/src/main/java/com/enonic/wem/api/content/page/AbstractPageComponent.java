@@ -67,6 +67,16 @@ public abstract class AbstractPageComponent
     {
         protected ComponentName name;
 
+        protected Builder()
+        {
+            // Default
+        }
+
+        protected Builder( AbstractPageComponent source )
+        {
+            this.name = source.name;
+        }
+
         public Builder name( ComponentName value )
         {
             this.name = value;

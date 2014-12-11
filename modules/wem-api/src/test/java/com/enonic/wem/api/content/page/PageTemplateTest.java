@@ -22,7 +22,8 @@ public class PageTemplateTest
             key( PageTemplateKey.from( "abcdefg" ) ).
             canRender( ContentTypeNames.from( "mainmodule:article", "mainmodule:banner" ) ).
             controller( PageDescriptorKey.from( ModuleKey.from( "mainmodule" ), new ComponentDescriptorName( "landing-page" ) ) ).
-            config( pageTemplateConfig );
+            config( pageTemplateConfig ).
+            regions( PageRegions.newPageRegions().build() );
         builder.displayName( "Main page template" );
         builder.name( "main-page-template" );
         builder.parentPath( ContentPath.ROOT );

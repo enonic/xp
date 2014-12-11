@@ -46,13 +46,9 @@ public final class ContentJson
         this.attachments = AttachmentListJson.toJson( content.getAttachments() );
 
         this.metadata = new ArrayList<>();
-        final List<Metadata> metadataList = content.getAllMetadata();
-        if ( metadataList != null )
+        for ( Metadata item : content.getAllMetadata() )
         {
-            for ( Metadata item : metadataList )
-            {
-                this.metadata.add( new MetadataJson( item ) );
-            }
+            this.metadata.add( new MetadataJson( item ) );
         }
 
         this.form = FormJson.resolveJson( content.getForm(), mixinReferencesToFormItemsTransformer );

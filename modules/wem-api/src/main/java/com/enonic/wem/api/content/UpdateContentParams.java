@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.UpdateAttachmentsParams;
-import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.security.PrincipalKey;
 
 public final class UpdateContentParams

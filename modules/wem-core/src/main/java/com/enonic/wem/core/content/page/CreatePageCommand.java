@@ -5,11 +5,9 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.Page;
 
-import static com.enonic.wem.api.content.Content.editContent;
 import static com.enonic.wem.api.content.page.Page.newPage;
 
 final class CreatePageCommand
@@ -42,14 +40,7 @@ final class CreatePageCommand
 
         final UpdateContentParams params = new UpdateContentParams().
             contentId( this.params.getContent() ).
-            editor( new ContentEditor()
-            {
-                @Override
-                public Content.EditBuilder edit( final Content toBeEdited )
-                {
-                    return editContent( toBeEdited ).page( page );
-                }
-            } );
+            editor( edit -> edit.page = page );
 
         return this.contentService.update( params );
     }
