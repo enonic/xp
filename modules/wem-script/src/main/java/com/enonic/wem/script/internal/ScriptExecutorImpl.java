@@ -8,9 +8,6 @@ import javax.script.ScriptEngine;
 import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.JSObject;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
-import jdk.nashorn.internal.objects.Global;
-import jdk.nashorn.internal.runtime.Context;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
@@ -36,7 +33,7 @@ final class ScriptExecutorImpl
 
     private final ScriptObjectFactory scriptObjectFactory;
 
-    private final Global global;
+    // private final Global global;
 
     public ScriptExecutorImpl( final ScriptEngine engine, final CommandInvoker invoker )
     {
@@ -45,6 +42,7 @@ final class ScriptExecutorImpl
         this.globals = Maps.newHashMap();
         this.scriptObjectFactory = new ScriptObjectFactoryImpl( this );
 
+        /*
         try
         {
             this.global = ( (ScriptObjectMirror) engine.eval( "this" ) ).to( Global.class );
@@ -53,6 +51,7 @@ final class ScriptExecutorImpl
         {
             throw new Error( e );
         }
+        */
     }
 
     private Bindings createBindings()
@@ -117,6 +116,9 @@ final class ScriptExecutorImpl
 
     private Object[] convertToJsObject( final Object[] value )
     {
+        return JsObjectConverter.toJsArray( value );
+
+        /*
         if ( Context.getGlobal() != null )
         {
             return JsObjectConverter.toJsArray( value );
@@ -131,5 +133,6 @@ final class ScriptExecutorImpl
         {
             Context.setGlobal( null );
         }
+        */
     }
 }
