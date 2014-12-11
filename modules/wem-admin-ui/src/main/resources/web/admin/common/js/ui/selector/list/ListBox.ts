@@ -86,6 +86,14 @@ module api.ui.selector.list {
             throw new Error("You must override getItemId to find item views by items");
         }
 
+        getItemView(item: I) {
+            return this.itemViews[this.getItemId(item)];
+        }
+
+        getItemViews() {
+            return this.getItems().map((item) => this.getItemView(item));
+        }
+
         refreshList() {
             this.layoutList(this.items);
         }

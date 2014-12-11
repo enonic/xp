@@ -112,6 +112,11 @@ module api.ui.security.acl {
             })
         }
 
+        show() {
+            super.show();
+            this.getEl().setDisplay("flex");
+        }
+
     }
 
 

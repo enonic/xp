@@ -56,6 +56,14 @@ module api.ui.security.acl {
             this.setAccessControlEntry(this.ace, true);
         }
 
+        getPermissionSelector(): PermissionSelector {
+            return this.permissionSelector;
+        }
+
+        getValueChangedListeners(): {(item: AccessControlEntry): void}[] {
+            return this.valueChangedListeners;
+        }
+
         setEditable(editable: boolean) {
             if (editable != this.editable) {
                 this.permissionSelector.setEnabled(editable);

@@ -1,69 +1,116 @@
 module app.wizard {
 
-    import AccessControlComboBox = api.ui.security.acl.AccessControlComboBox;
+    import AccessControlList = api.security.acl.AccessControlList;
+    import AccessControlListView = api.ui.security.acl.AccessControlListView;
+    import AccessControlEntryView = api.ui.security.acl.AccessControlEntryView;
     import AccessControlEntry = api.security.acl.AccessControlEntry;
+    import Content = api.content.Content;
+
+    import DivEl = api.dom.DivEl;
+    import LabelEl = api.dom.LabelEl;
+    import AEl = api.dom.AEl;
 
     export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
-        private content: api.content.Content;
-        private comboBox: AccessControlComboBox;
-        // save them to keep track of the modified state
-        private originalValues: AccessControlEntry[];
+        private label: LabelEl;
+        private inheritance: DivEl;
+        private accessListView: AccessControlListView;
+        private editLink: AEl;
+
+        private content: Content;
 
         constructor() {
             super("security-wizard-step-form");
 
-            var form = new api.ui.form.Form();
-            this.appendChild(form);
+            var label = new DivEl("input-label"),
+                wrapper = new DivEl("wrapper required");
+            this.label = new LabelEl("Permissions");
+            wrapper.appendChild(this.label);
+            label.appendChild(wrapper);
 
-            var fieldSet = new api.ui.form.Fieldset();
-            form.add(fieldSet);
+            this.inheritance = new DivEl(/*"inheritance"*/);
 
-            this.comboBox = new AccessControlComboBox();
-            var restoreLink = new api.dom.AEl('reset-link disabled');
-            restoreLink.setHtml('Restore');
-            restoreLink.onClicked((event: MouseEvent) => {
-                if (!restoreLink.hasClass('disabled')) {
-                    this.layout(this.content);
+            this.accessListView = new AccessControlListView();
+            this.accessListView.setItemsEditable(false);
+
+            this.editLink = new AEl("edit-permissions");
+            this.editLink.setHtml("Edit Permissions");
+
+            var formView = new DivEl("form-view"),
+                inputView = new DivEl("input-view valid"),
+                inputTypeView = new DivEl("input-type-view"),
+                inputOccurrenceView = new DivEl("input-occurrence-view single-occurrence"),
+                inputWrapper = new DivEl("input-wrapper");
+
+            inputWrapper.appendChild(this.inheritance);
+            inputWrapper.appendChild(this.accessListView);
+            inputWrapper.appendChild(this.editLink);
+
+            inputOccurrenceView.appendChild(inputWrapper);
+            inputTypeView.appendChild(inputOccurrenceView);
+            inputView.appendChild(label);
+            inputView.appendChild(inputTypeView);
+            formView.appendChild(inputView);
+
+            this.appendChild(formView);
+
+            this.editLink.onClicked(() => {
+                if (!!this.content) {
+                    new OpenEditPermissionsDialogEvent(this.content).fire();
                 }
             });
-            this.comboBox.addAdditionalElement(restoreLink);
 
-            var changeListener = () => {
-                var selectedValues = this.comboBox.getSelectedDisplayValues().sort();
-                restoreLink.toggleClass('disabled', api.ObjectHelper.arrayEquals(this.originalValues, selectedValues));
-            };
-            this.comboBox.onOptionValueChanged(changeListener);
-            this.comboBox.onOptionSelected(changeListener);
-            this.comboBox.onOptionDeselected(changeListener);
-
-            fieldSet.add(new api.ui.form.FormItemBuilder(this.comboBox).setLabel("Permissions").build());
+            ContentPermissionsAppliedEvent.on((event) => {
+                this.layout(event.getContent())
+            });
         }
 
         layout(content: api.content.Content) {
-            this.comboBox.clearSelection();
 
-            var contentPermissions = content.getPermissions();
-            var contentPermissionsEntries: AccessControlEntry[] = contentPermissions.getEntries();
+            this.accessListView.clearItems();
 
-            console.log('Content permissions', contentPermissions.toString());
-            this.originalValues = contentPermissionsEntries.sort();
+            content.getPermissions().getEntries().sort().forEach((entry) => {
+                this.accessListView.addItem(entry);
 
-            this.originalValues.forEach((item) => {
-                if (!this.comboBox.isSelected(item)) {
-                    this.comboBox.select(item);
-                }
+                var entryView = <AccessControlEntryView> this.accessListView.getItemView(entry),
+                    selector = entryView.getPermissionSelector();
+
+                // detach onValueChanged events
+                entryView.getValueChangedListeners().splice(0);
+                entryView.getPermissionSelector().hide();
+
+                entryView.onClicked(() => {
+                    var isDisplayed = selector.getEl().getDisplay() !== "flex";
+
+                    this.accessListView.getItemViews().forEach((itemView) => {
+                        (<AccessControlEntryView>itemView).getPermissionSelector().hide();
+                    });
+
+                    if (isDisplayed) {
+                        selector.show();
+                    }
+
+                });
             });
+
+            var inheritsText = "";
+            if (content.isInheritPermissionsEnabled() && content.isRoot() == false) {
+                inheritsText = "Inherits permissions from parent";
+                this.inheritance.addClass("inheritance");
+            } else {
+                this.inheritance.removeClass("inheritance");
+            }
+            this.inheritance.setHtml(inheritsText);
 
             this.content = content;
         }
 
         giveFocus(): boolean {
-            return this.comboBox.giveFocus();
+            return this.accessListView.giveFocus();
         }
 
         getEntries(): AccessControlEntry[] {
-            return this.comboBox.getSelectedDisplayValues();
+            return this.accessListView.getItems();
         }
     }
 }
