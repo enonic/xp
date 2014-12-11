@@ -5,6 +5,7 @@ module app.browse {
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import Element = api.dom.Element;
     import TreeGrid = api.ui.treegrid.TreeGrid;
+    import TreeNode = api.ui.treegrid.TreeNode;
 
     export class ContentGridDragHandler {
 
@@ -77,18 +78,19 @@ module app.browse {
             var gridClasses = (" " + this.contentGrid.getGrid().getEl().getClass()).replace(/\s/g, "."),
                 children = Element.elementsFromRequest(".tree-grid " + gridClasses + " .grid-canvas .slick-row", false);
 
+            //gets top of draggable item
             var draggableTop = !!this.draggableItem ? this.draggableItem.getEl().getTopPx() : 0;
 
             for (var key in children) {
                 var currentRowTop = children[key].getEl().getTopPx();
-                if (data.rows[0] < data.insertBefore) {
-                    if (this.draggableTop < currentRowTop && currentRowTop - this.rowHeight / 2 <= draggableTop) {
+                if (data.rows[0] < data.insertBefore) {//move item down
+                    if (this.draggableTop < currentRowTop && currentRowTop - this.rowHeight / 2 <= draggableTop) { //items between draggable and insert before
                         children[key].getEl().setMarginTop("-" + this.rowHeight + "px");
                     } else {
                         children[key].getEl().setMarginTop(null);
                     }
-                } else if (data.rows[0] > data.insertBefore) {
-                    if (this.draggableTop > currentRowTop && currentRowTop + this.rowHeight / 2 >= draggableTop) {
+                } else if (data.rows[0] > data.insertBefore) {//move item up
+                    if (this.draggableTop > currentRowTop && currentRowTop + this.rowHeight / 2 >= draggableTop) {//items between draggable and insert before
                         children[key].getEl().setMarginTop(this.rowHeight + "px");
                     } else {
                         children[key].getEl().setMarginTop(null);
@@ -108,37 +110,47 @@ module app.browse {
             var moveBeforeRowDataId = (dataView.getLength() <= args.insertBefore)
                 ? null
                 : dataView.getItem(args.insertBefore).getData().getContentId();
-            var extractedRows = [], left, right;
+            var extractedRow, left, right;
             var insertBefore = <number>args.insertBefore;
             left = dataView.slick().getItems().slice(0, insertBefore);
             right = dataView.slick().getItems().slice(insertBefore, dataView.slick().getItems().length);
 
 
-            extractedRows.push(dataView.slick().getItems()[draggableRow]);
+            extractedRow = dataView.slick().getItem(draggableRow);
 
+            // removes draggable item
             if (draggableRow < insertBefore) {
                 left.splice(draggableRow, 1);
             } else {
                 right.splice(draggableRow - insertBefore, 1);
             }
 
-            var data = left.concat(extractedRows.concat(right));
+            // gets new data after inserting
+            left.push(extractedRow);
+            var data = left.concat(right);
 
-            var selectedRows = left.length;
+            // draggable count in new data
+            var selectedRow = left.length - 1;
+            this.makeMovementInNodes(draggableRow, args.insertBefore, data);
 
+
+            this.contentGrid.getGrid().setSelectedRows([selectedRow]);
+            this.movements.addChildMovement(new OrderChildMovement(rowDataId, moveBeforeRowDataId));
+            this.notifyPositionChanged();
+        }
+
+        private makeMovementInNodes(draggableRow: number, insertBefore: number, data: TreeNode<ContentSummaryAndCompareStatus>[]) {
             var root = this.contentGrid.getRoot().getCurrentRoot();
             var rootChildren = root.getChildren();
 
             var item = rootChildren.slice(draggableRow, draggableRow + 1)[0];
             this.contentGrid.initData(data);
-            this.contentGrid.getGrid().setSelectedRows([selectedRows]);
             rootChildren.splice(rootChildren.indexOf(item), 1);
-            var insertPosition = (draggableRow > args.insertBefore) ? args.insertBefore : args.insertBefore - 1;
+            var insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore - 1;
             rootChildren.splice(insertPosition, 0, item);
+
             root.setChildren(rootChildren);
 
-            this.movements.addChildMovement(new OrderChildMovement(rowDataId, moveBeforeRowDataId));
-            this.notifyPositionChanged();
         }
 
         private notifyPositionChanged() {
