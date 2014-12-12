@@ -168,4 +168,8 @@
     </bean>
   </service>
 
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.status.InfoResource"/>
+  </service>
+
 </blueprint>
