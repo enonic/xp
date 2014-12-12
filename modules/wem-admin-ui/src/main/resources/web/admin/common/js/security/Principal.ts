@@ -89,10 +89,6 @@ module api.security {
                 return false;
             }
 
-            if (!api.ObjectHelper.anyEquals(this.type, other.type)) {
-                return false;
-            }
-
             if (!api.ObjectHelper.dateEquals(this.modifiedTime, other.modifiedTime)) {
                 return false;
             }

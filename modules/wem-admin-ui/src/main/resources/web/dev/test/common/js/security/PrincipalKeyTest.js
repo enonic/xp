@@ -6,8 +6,8 @@ describe("api.security.PrincipalKeyTest", function () {
 
         it("given an equal then true is returned", function () {
 
-            var key1 = PrincipalKey.fromString("user:mystore:other");
-            var key2 = PrincipalKey.fromString("user:mystore:other");
+            var key1 = PrincipalKey.fromString("user:mystore:a");
+            var key2 = PrincipalKey.fromString("user:mystore:a");
 
             expect(key1.equals(key2)).toBeTruthy();
         });
@@ -22,16 +22,16 @@ describe("api.security.PrincipalKeyTest", function () {
 
         it("given unequal store then false is returned", function () {
 
-            var key1 = PrincipalKey.fromString("user:mystore:other");
-            var key2 = PrincipalKey.fromString("user:otherstore:other");
+            var key1 = PrincipalKey.fromString("user:mystore:a");
+            var key2 = PrincipalKey.fromString("user:otherstore:a");
 
             expect(key1.equals(key2)).toBeFalsy();
         });
 
         it("given unequal type then false is returned", function () {
 
-            var key1 = PrincipalKey.fromString("user:mystore:other");
-            var key2 = PrincipalKey.fromString("group:mystore:other");
+            var key1 = PrincipalKey.fromString("user:mystore:a");
+            var key2 = PrincipalKey.fromString("group:mystore:a");
 
             expect(key1.equals(key2)).toBeFalsy();
         });
