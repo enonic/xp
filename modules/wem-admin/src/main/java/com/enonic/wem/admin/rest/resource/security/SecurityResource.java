@@ -20,6 +20,7 @@ import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.security.json.CreateGroupJson;
 import com.enonic.wem.admin.rest.resource.security.json.CreateRoleJson;
 import com.enonic.wem.admin.rest.resource.security.json.CreateUserJson;
+import com.enonic.wem.admin.rest.resource.security.json.CreateUserStoreJson;
 import com.enonic.wem.admin.rest.resource.security.json.DeletePrincipalJson;
 import com.enonic.wem.admin.rest.resource.security.json.DeletePrincipalResultJson;
 import com.enonic.wem.admin.rest.resource.security.json.DeletePrincipalsResultJson;
@@ -92,6 +93,15 @@ public final class SecurityResource
 
         final UserStoreAccessControlList userStorePermissions = securityService.getUserStorePermissions( userStoreKey );
         return new UserStoreJson( userStore, userStorePermissions );
+    }
+
+    @POST
+    @Path("userstore/create")
+    public UserStoreJson createUserStore( final CreateUserStoreJson params )
+    {
+        final UserStore userStore = securityService.createUserStore( params.getCreateUserStoreParams() );
+        final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
+        return new UserStoreJson( userStore, permissions );
     }
 
     @GET

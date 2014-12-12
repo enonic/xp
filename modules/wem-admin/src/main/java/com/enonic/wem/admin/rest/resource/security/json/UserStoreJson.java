@@ -8,7 +8,7 @@ import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 
 @SuppressWarnings("UnusedDeclaration")
-public class UserStoreJson
+public final class UserStoreJson
     extends UserStoreSummaryJson
 {
     private final UserStoreAccessControlList userStoreAccessControlList;
