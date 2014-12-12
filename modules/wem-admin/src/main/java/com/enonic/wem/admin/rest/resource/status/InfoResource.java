@@ -16,6 +16,7 @@ import com.enonic.wem.admin.status.GCStatusInfoBuilder;
 import com.enonic.wem.admin.status.JVMStatusInfoBuilder;
 import com.enonic.wem.admin.status.MemoryStatusInfoBuilder;
 import com.enonic.wem.admin.status.OSStatusInfoBuilder;
+import com.enonic.wem.admin.status.PropertiesStatusInfoBuilder;
 import com.enonic.wem.admin.status.StatusInfoBuilder;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
@@ -32,6 +33,7 @@ public final class InfoResource
         this.infoBuilders.add( new JVMStatusInfoBuilder() );
         this.infoBuilders.add( new MemoryStatusInfoBuilder() );
         this.infoBuilders.add( new GCStatusInfoBuilder() );
+        this.infoBuilders.add( new PropertiesStatusInfoBuilder() );
         Collections.sort( this.infoBuilders );
     }
 
