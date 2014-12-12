@@ -25,6 +25,12 @@ module api.ui.security.acl {
             super(builder);
         }
 
+        setEditable(editable: boolean) {
+            this.getSelectedOptions().forEach((option: SelectedOption<AccessControlEntry>) => {
+                (<ACESelectedOptionView>option.getOptionView()).setEditable(editable);
+            });
+        }
+
         onOptionValueChanged(listener: (item: AccessControlEntry) => void) {
             this.aceSelectedOptionsView.onItemValueChanged(listener);
         }

@@ -46,6 +46,7 @@ module app.wizard {
                 if (inheritPermissions) {
                     this.layoutInheritedPermissions();
                 }
+                this.comboBox.setEditable(!inheritPermissions);
             };
             this.inheritPermissionsCheck.onValueChanged(changeListener);
 
