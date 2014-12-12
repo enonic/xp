@@ -1,5 +1,7 @@
 package com.enonic.wem.core.security;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import com.enonic.wem.api.data.PropertySet;
@@ -12,6 +14,7 @@ import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
@@ -124,6 +127,80 @@ abstract class UserStoreNodeTranslator
         }
 
         return acl.build();
+    }
+
+    static AccessControlList userStorePermissionsToUserStoreNodePermissions( final UserStoreAccessControlList userStorePermissions )
+    {
+        final List<AccessControlEntry> entries = new ArrayList<>();
+        entries.add( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build() ); // TODO remove this later
+        for ( UserStoreAccessControlEntry entry : userStorePermissions )
+        {
+            if ( entry.getAccess() == ADMINISTRATOR )
+            {
+                final AccessControlEntry ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
+                    allow( READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS ).build();
+                entries.add( ace );
+            }
+        }
+        return AccessControlList.create().addAll( entries ).build();
+    }
+
+    static AccessControlList userStorePermissionsToUsersNodePermissions( final UserStoreAccessControlList userStorePermissions )
+    {
+        final List<AccessControlEntry> entries = new ArrayList<>();
+        entries.add( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build() ); // TODO remove this later
+        for ( UserStoreAccessControlEntry entry : userStorePermissions )
+        {
+            final AccessControlEntry ace;
+            switch ( entry.getAccess() )
+            {
+                case CREATE_USERS:
+                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
+                        allow( CREATE ).build();
+                    entries.add( ace );
+                    break;
+                case WRITE_USERS:
+                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
+                        allow( READ, CREATE, MODIFY, DELETE ).build();
+                    entries.add( ace );
+                    break;
+                case USER_STORE_MANAGER:
+                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
+                        allow( READ, CREATE, MODIFY, DELETE ).build();
+                    entries.add( ace );
+                    break;
+                case ADMINISTRATOR:
+                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
+                        allow( READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS ).build();
+                    entries.add( ace );
+                    break;
+            }
+        }
+        return AccessControlList.create().addAll( entries ).build();
+    }
+
+    static AccessControlList userStorePermissionsToGroupsNodePermissions( final UserStoreAccessControlList userStorePermissions )
+    {
+        final List<AccessControlEntry> entries = new ArrayList<>();
+        entries.add( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build() ); // TODO remove this later
+        for ( UserStoreAccessControlEntry entry : userStorePermissions )
+        {
+            final AccessControlEntry ace;
+            switch ( entry.getAccess() )
+            {
+                case USER_STORE_MANAGER:
+                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
+                        allow( READ, CREATE, MODIFY, DELETE ).build();
+                    entries.add( ace );
+                    break;
+                case ADMINISTRATOR:
+                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
+                        allow( READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS ).build();
+                    entries.add( ace );
+                    break;
+            }
+        }
+        return AccessControlList.create().addAll( entries ).build();
     }
 
     private static UserStore createUserStoreFromNode( final Node node )

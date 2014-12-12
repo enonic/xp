@@ -11,6 +11,7 @@ import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.security.CreateGroupParams;
 import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
+import com.enonic.wem.api.security.CreateUserStoreParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
@@ -22,7 +23,10 @@ import com.enonic.wem.api.security.UpdateGroupParams;
 import com.enonic.wem.api.security.UpdateRoleParams;
 import com.enonic.wem.api.security.UpdateUserParams;
 import com.enonic.wem.api.security.User;
+import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
+import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationException;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
@@ -38,6 +42,9 @@ import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializerImpl;
 
+import static com.enonic.wem.api.security.acl.UserStoreAccess.ADMINISTRATOR;
+import static com.enonic.wem.api.security.acl.UserStoreAccess.CREATE_USERS;
+import static com.enonic.wem.api.security.acl.UserStoreAccess.WRITE_USERS;
 import static org.junit.Assert.*;
 
 public class SecurityServiceImplTest
@@ -97,7 +104,11 @@ public class SecurityServiceImplTest
         createRepository( SystemConstants.SYSTEM_REPO );
         waitForClusterHealth();
 
-        securityService.createUserStore( SystemConstants.SYSTEM_USERSTORE.getKey(), SystemConstants.SYSTEM_USERSTORE.getDisplayName() );
+        final CreateUserStoreParams createParams = CreateUserStoreParams.create().
+            key( SystemConstants.SYSTEM_USERSTORE.getKey() ).
+            displayName( SystemConstants.SYSTEM_USERSTORE.getDisplayName() ).
+            build();
+        securityService.createUserStore( createParams );
 
         SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -539,6 +550,36 @@ public class SecurityServiceImplTest
         assertTrue( memberships.contains( groupKey1 ) );
         assertTrue( memberships.contains( groupKey2 ) );
         assertEquals( 2, memberships.getSize() );
+    }
+
+    @Test
+    public void testCreateUserStore()
+        throws Exception
+    {
+        final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "user1" );
+        final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "group-a" );
+        final PrincipalKey groupKey2 = PrincipalKey.ofGroup( SYSTEM, "group-b" );
+
+        final UserStoreAccessControlList permissions =
+            UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build(),
+                                           UserStoreAccessControlEntry.create().principal( groupKey1 ).access( ADMINISTRATOR ).build(),
+                                           UserStoreAccessControlEntry.create().principal( groupKey2 ).access( WRITE_USERS ).build() );
+        final CreateUserStoreParams createUserStore = CreateUserStoreParams.create().
+            key( new UserStoreKey( "enonic" ) ).
+            displayName( "Enonic User Store" ).
+            permissions( permissions ).
+            build();
+
+        final UserStore userStoreCreated = securityService.createUserStore( createUserStore );
+        assertNotNull( userStoreCreated );
+        assertEquals( "enonic", userStoreCreated.getKey().toString() );
+        assertEquals( "Enonic User Store", userStoreCreated.getDisplayName() );
+
+        final UserStoreAccessControlList createdPermissions = securityService.getUserStorePermissions( new UserStoreKey( "enonic" ) );
+        assertNotNull( userStoreCreated );
+        assertEquals( CREATE_USERS, createdPermissions.getEntry( userKey ).getAccess() );
+        assertEquals( ADMINISTRATOR, createdPermissions.getEntry( groupKey1 ).getAccess() );
+        assertEquals( WRITE_USERS, createdPermissions.getEntry( groupKey2 ).getAccess() );
     }
 
     private class CustomAuthenticationToken

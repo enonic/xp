@@ -15,6 +15,8 @@ public interface SecurityService
 
     UserStoreAccessControlList getUserStorePermissions( UserStoreKey userStore );
 
+    UserStore createUserStore( CreateUserStoreParams createUserStoreParams );
+
     Principals findPrincipals( UserStoreKey useStore, List<PrincipalType> types, String query );
 
     AuthenticationInfo authenticate( AuthenticationToken token );
@@ -142,7 +144,5 @@ public interface SecurityService
     void removeRelationship( PrincipalRelationship relationship );
 
     void removeRelationships( PrincipalKey from );
-
-    public void createUserStore( final UserStoreKey userStoreKey, String displayName );
 
 }

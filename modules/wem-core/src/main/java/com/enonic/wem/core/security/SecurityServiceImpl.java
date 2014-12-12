@@ -20,6 +20,7 @@ import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeAlreadyExistException;
+import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
@@ -34,6 +35,7 @@ import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.security.CreateGroupParams;
 import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
+import com.enonic.wem.api.security.CreateUserStoreParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalAlreadyExistsException;
@@ -56,6 +58,7 @@ import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
+import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationException;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
@@ -592,26 +595,53 @@ public final class SecurityServiceImpl
         }
     }
 
-    public void createUserStore( final UserStoreKey userStoreKey, String displayName )
+    @Override
+    public UserStore createUserStore( final CreateUserStoreParams createUserStoreParams )
     {
         final PropertyTree data = new PropertyTree();
-        data.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, displayName );
+        data.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, createUserStoreParams.getDisplayName() );
 
-        final Node systemNode = SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
-            parent( UserStoreNodeTranslator.getUserStoresParentPath() ).
-            name( userStoreKey.toString() ).
-            data( data ).
-            build() ) );
+        final Node node = SystemConstants.CONTEXT_USER_STORES.callWith( () -> {
 
-        SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
-            parent( systemNode.path() ).
-            name( UserStoreNodeTranslator.USER_FOLDER_NODE_NAME ).
-            build() ) );
+            final Node userStoreNode = nodeService.create( CreateNodeParams.create().
+                parent( UserStoreNodeTranslator.getUserStoresParentPath() ).
+                name( createUserStoreParams.getKey().toString() ).
+                data( data ).
+                build() );
+            final Node usersNode = nodeService.create( CreateNodeParams.create().
+                parent( userStoreNode.path() ).
+                name( UserStoreNodeTranslator.USER_FOLDER_NODE_NAME ).
+                build() );
+            final Node groupsNode = nodeService.create( CreateNodeParams.create().
+                parent( userStoreNode.path() ).
+                name( UserStoreNodeTranslator.GROUP_FOLDER_NODE_NAME ).
+                build() );
 
-        SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
-            parent( systemNode.path() ).
-            name( UserStoreNodeTranslator.GROUP_FOLDER_NODE_NAME ).
-            build() ) );
+            final UserStoreAccessControlList permissions = createUserStoreParams.getUserStorePermissions();
+            final AccessControlList userStoreNodePermissions =
+                UserStoreNodeTranslator.userStorePermissionsToUserStoreNodePermissions( permissions );
+            final AccessControlList usersNodePermissions =
+                UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
+            final AccessControlList groupsNodePermissions =
+                UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
+
+            setNodePermissions( userStoreNode.id(), userStoreNodePermissions, false );
+            setNodePermissions( usersNode.id(), usersNodePermissions, false );
+            setNodePermissions( groupsNode.id(), groupsNodePermissions, false );
+
+            return userStoreNode;
+        } );
+
+        return UserStoreNodeTranslator.fromNode( node );
+    }
+
+    private void setNodePermissions( final NodeId nodeId, final AccessControlList permissions, final boolean inheritPermissions )
+    {
+        final UpdateNodeParams updateParams = new UpdateNodeParams().
+            id( nodeId ).
+            editor( toBeEdited -> Node.editNode( toBeEdited ).permissions( permissions ).inheritPermissions( inheritPermissions ) );
+
+        nodeService.update( updateParams );
     }
 
     public void setNodeService( final NodeService nodeService )

@@ -9,16 +9,25 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
+import com.enonic.wem.api.security.CreateUserStoreParams;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalRelationship;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
+import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
+
+import static com.enonic.wem.api.security.acl.UserStoreAccess.ADMINISTRATOR;
+import static com.enonic.wem.api.security.acl.UserStoreAccess.USER_STORE_MANAGER;
 
 public final class SecurityInitializer
 {
+
     private final static Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
+
+    public static final PrincipalKey ADMIN_USER_KEY = PrincipalKey.ofUser( UserStoreKey.system(), "admin" );
 
     private SecurityService securityService;
 
@@ -40,7 +49,7 @@ public final class SecurityInitializer
         addUser( createUser );
 
         final CreateUserParams createAdmin = CreateUserParams.create().
-            userKey( PrincipalKey.ofUser( UserStoreKey.system(), "admin" ) ).
+            userKey( ADMIN_USER_KEY ).
             displayName( "Administrator" ).
             login( "admin" ).
             password( "password" ).
@@ -66,10 +75,17 @@ public final class SecurityInitializer
 
         if ( systemUserStore == null )
         {
-            LOG.info( "Initializing userstore " + SystemConstants.SYSTEM_USERSTORE.getKey() );
+            LOG.info( "Initializing user store " + SystemConstants.SYSTEM_USERSTORE.getKey() );
 
-            this.securityService.createUserStore( SystemConstants.SYSTEM_USERSTORE.getKey(),
-                                                  SystemConstants.SYSTEM_USERSTORE.getDisplayName() );
+            final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
+                UserStoreAccessControlEntry.create().principal( PrincipalKey.ofEnterpriseAdmin() ).access( ADMINISTRATOR ).build(),
+                UserStoreAccessControlEntry.create().principal( ADMIN_USER_KEY ).access( USER_STORE_MANAGER ).build() );
+
+            final CreateUserStoreParams createParams = CreateUserStoreParams.create().
+                key( SystemConstants.SYSTEM_USERSTORE.getKey() ).
+                displayName( SystemConstants.SYSTEM_USERSTORE.getDisplayName() ).
+                permissions( permissions ).build();
+            this.securityService.createUserStore( createParams );
         }
     }
 
