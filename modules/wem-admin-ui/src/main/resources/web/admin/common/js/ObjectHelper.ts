@@ -71,6 +71,31 @@ module api {
             return true;
         }
 
+        static anyArrayEquals(arrayA: any[], arrayB: any[]) {
+
+            if (!arrayA && !arrayB) {
+                return true;
+            }
+            else if (!arrayA && arrayB) {
+                return false;
+            }
+            else if (arrayA && !arrayB) {
+                return false;
+            }
+
+            if (arrayA.length != arrayB.length) {
+                return false;
+            }
+
+            for (var i = 0; i < arrayA.length; i++) {
+                if (!ObjectHelper.objectEquals(arrayA[i], arrayB[i])) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         static mapEquals(mapA: {[s:string] : Equitable;}, mapB: {[s:string] : Equitable;}) {
 
             if (!mapA && !mapB) {

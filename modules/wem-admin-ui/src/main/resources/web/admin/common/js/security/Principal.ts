@@ -81,10 +81,23 @@ module api.security {
 
             var other = <Principal> o;
 
-            return this.key.equals(other.key) &&
-                   this.displayName === other.displayName &&
-                   this.type === other.type &&
-                   api.ObjectHelper.dateEquals(this.modifiedTime, other.modifiedTime);
+            if (!api.ObjectHelper.equals(this.key, other.key)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.stringEquals(this.displayName, other.displayName)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.anyEquals(this.type, other.type)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.dateEquals(this.modifiedTime, other.modifiedTime)) {
+                return false;
+            }
+
+            return true;
         }
 
         clone(): Principal {

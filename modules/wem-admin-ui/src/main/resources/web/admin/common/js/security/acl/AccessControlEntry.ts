@@ -3,7 +3,7 @@ module api.security.acl {
     import ArrayHelper = api.util.ArrayHelper;
     import Principal = api.security.Principal;
 
-    export class AccessControlEntry implements api.Equitable {
+    export class AccessControlEntry implements api.Equitable, api.Cloneable {
 
         private static ALL_PERMISSIONS: Permission[] = [Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE,
             Permission.PUBLISH,
@@ -87,10 +87,19 @@ module api.security.acl {
             }
 
             var other = <AccessControlEntry>o;
-            return this.principal.getKey().equals(other.getPrincipalKey()) &&
-                   (this.principal.getDisplayName() == other.getPrincipalDisplayName()) &&
-                   this.permissionEquals(this.allowedPermissions, other.allowedPermissions) &&
-                   this.permissionEquals(this.deniedPermissions, other.deniedPermissions);
+
+            if (!api.ObjectHelper.equals(this.principal, other.principal)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.anyArrayEquals(this.allowedPermissions, other.allowedPermissions)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.anyArrayEquals(this.deniedPermissions, other.deniedPermissions)) {
+                return false;
+            }
+            return true;
         }
 
         toString(): string {
@@ -112,13 +121,6 @@ module api.security.acl {
             ace.allowedPermissions = this.allowedPermissions.slice(0);
             ace.deniedPermissions = this.deniedPermissions.slice(0);
             return ace;
-        }
-
-        private permissionEquals(listA: Permission[], listB: Permission[]): boolean {
-            return (listA.length === listB.length) &&
-                   listA.every(function (element, idx) {
-                       return element === listB[idx];
-                   });
         }
 
         toJson(): api.security.acl.AccessControlEntryJson {
