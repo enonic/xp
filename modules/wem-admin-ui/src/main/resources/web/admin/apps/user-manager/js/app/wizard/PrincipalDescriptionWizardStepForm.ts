@@ -6,7 +6,7 @@ module app.wizard {
 
         constructor() {
             super();
-            // TODO: Update the nested structure, after the simple form creation is implemented.
+
             this.description = new api.ui.text.TextInput("middle");
             var formView = new api.dom.DivEl("form-view"),
                 inputView = new api.dom.DivEl("input-view valid"),
