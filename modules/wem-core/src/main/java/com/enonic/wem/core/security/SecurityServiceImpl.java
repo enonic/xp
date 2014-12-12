@@ -14,6 +14,7 @@ import com.google.common.primitives.Ints;
 
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.node.ApplyNodePermissionsParams;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -54,6 +55,7 @@ import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.security.UpdateGroupParams;
 import com.enonic.wem.api.security.UpdateRoleParams;
 import com.enonic.wem.api.security.UpdateUserParams;
+import com.enonic.wem.api.security.UpdateUserStoreParams;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
@@ -633,6 +635,52 @@ public final class SecurityServiceImpl
         } );
 
         return UserStoreNodeTranslator.fromNode( node );
+    }
+
+    @Override
+    public UserStore updateUserStore( final UpdateUserStoreParams updateUserStoreParams )
+    {
+        return CONTEXT_USER_STORES.callWith( () -> {
+
+            final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( updateUserStoreParams.getKey() );
+            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getByPath( userStoreNodePath ) );
+            if ( node == null )
+            {
+                return null;
+            }
+
+            final UpdateNodeParams updateNodeParams = UserStoreNodeTranslator.toUpdateNodeParams( updateUserStoreParams, node.id() );
+            final Node userStoreNode = nodeService.update( updateNodeParams );
+
+            if ( updateUserStoreParams.getUserStorePermissions() != null )
+            {
+                final Node usersNode =
+                    nodeService.getByPath( UserStoreNodeTranslator.toUserStoreUsersNodePath( updateUserStoreParams.getKey() ) );
+                final Node groupsNode =
+                    nodeService.getByPath( UserStoreNodeTranslator.toUserStoreGroupsNodePath( updateUserStoreParams.getKey() ) );
+
+                final UserStoreAccessControlList permissions = updateUserStoreParams.getUserStorePermissions();
+                final AccessControlList userStoreNodePermissions =
+                    UserStoreNodeTranslator.userStorePermissionsToUserStoreNodePermissions( permissions );
+                final AccessControlList usersNodePermissions =
+                    UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
+                final AccessControlList groupsNodePermissions =
+                    UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
+
+                setNodePermissions( userStoreNode.id(), userStoreNodePermissions, false );
+                setNodePermissions( usersNode.id(), usersNodePermissions, false );
+                setNodePermissions( groupsNode.id(), groupsNodePermissions, false );
+
+                final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
+                    nodeId( userStoreNode.id() ).
+                    overwriteChildPermissions( false ).
+                    modifier( PrincipalKey.ofAnonymous() ). // TODO get actual user
+                    build();
+                nodeService.applyPermissions( applyPermissions );
+            }
+
+            return UserStoreNodeTranslator.fromNode( userStoreNode );
+        } );
     }
 
     private void setNodePermissions( final NodeId nodeId, final AccessControlList permissions, final boolean inheritPermissions )

@@ -17,6 +17,8 @@ public interface SecurityService
 
     UserStore createUserStore( CreateUserStoreParams createUserStoreParams );
 
+    UserStore updateUserStore( UpdateUserStoreParams updateUserStoreParams );
+
     Principals findPrincipals( UserStoreKey useStore, List<PrincipalType> types, String query );
 
     AuthenticationInfo authenticate( AuthenticationToken token );

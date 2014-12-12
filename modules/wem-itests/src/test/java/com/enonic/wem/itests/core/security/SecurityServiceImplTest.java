@@ -22,6 +22,7 @@ import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.security.UpdateGroupParams;
 import com.enonic.wem.api.security.UpdateRoleParams;
 import com.enonic.wem.api.security.UpdateUserParams;
+import com.enonic.wem.api.security.UpdateUserStoreParams;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
@@ -580,6 +581,49 @@ public class SecurityServiceImplTest
         assertEquals( CREATE_USERS, createdPermissions.getEntry( userKey ).getAccess() );
         assertEquals( ADMINISTRATOR, createdPermissions.getEntry( groupKey1 ).getAccess() );
         assertEquals( WRITE_USERS, createdPermissions.getEntry( groupKey2 ).getAccess() );
+    }
+
+    @Test
+    public void testUpdateUserStore()
+        throws Exception
+    {
+        // setup
+        final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "user1" );
+        final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "group-a" );
+        final PrincipalKey groupKey2 = PrincipalKey.ofGroup( SYSTEM, "group-b" );
+
+        final UserStoreAccessControlList permissions =
+            UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build(),
+                                           UserStoreAccessControlEntry.create().principal( groupKey1 ).access( ADMINISTRATOR ).build(),
+                                           UserStoreAccessControlEntry.create().principal( groupKey2 ).access( WRITE_USERS ).build() );
+        final CreateUserStoreParams createUserStore = CreateUserStoreParams.create().
+            key( new UserStoreKey( "enonic" ) ).
+            displayName( "Enonic User Store" ).
+            permissions( permissions ).
+            build();
+        final UserStore userStoreCreated = securityService.createUserStore( createUserStore );
+
+        // exercise
+        final UserStoreAccessControlList updatePermissions =
+            UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build(),
+                                           UserStoreAccessControlEntry.create().principal( groupKey1 ).access( ADMINISTRATOR ).build() );
+        final UpdateUserStoreParams updateUserStore = UpdateUserStoreParams.create().
+            key( new UserStoreKey( "enonic" ) ).
+            displayName( "Enonic User Store updated" ).
+            permissions( updatePermissions ).
+            build();
+        final UserStore userStoreUpdated = securityService.updateUserStore( updateUserStore );
+
+        // verify
+        assertNotNull( userStoreUpdated );
+        assertEquals( "enonic", userStoreUpdated.getKey().toString() );
+        assertEquals( "Enonic User Store updated", userStoreUpdated.getDisplayName() );
+
+        final UserStoreAccessControlList updatedPermissions = securityService.getUserStorePermissions( new UserStoreKey( "enonic" ) );
+        assertNotNull( userStoreCreated );
+        assertEquals( CREATE_USERS, updatedPermissions.getEntry( userKey ).getAccess() );
+        assertEquals( ADMINISTRATOR, updatedPermissions.getEntry( groupKey1 ).getAccess() );
+        assertNull( updatedPermissions.getEntry( groupKey2 ) );
     }
 
     private class CustomAuthenticationToken

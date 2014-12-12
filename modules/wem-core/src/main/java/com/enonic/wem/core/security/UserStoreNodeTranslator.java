@@ -5,12 +5,16 @@ import java.util.List;
 import java.util.Objects;
 
 import com.enonic.wem.api.data.PropertySet;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
+import com.enonic.wem.api.security.UpdateUserStoreParams;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
@@ -201,6 +205,16 @@ abstract class UserStoreNodeTranslator
             }
         }
         return AccessControlList.create().addAll( entries ).build();
+    }
+
+    static UpdateNodeParams toUpdateNodeParams( final UpdateUserStoreParams updateUserStoreParams, final NodeId nodeId )
+    {
+        return new UpdateNodeParams().
+            id( nodeId ).
+            editor( editableNode -> {
+                final PropertyTree nodeData = editableNode.data;
+                nodeData.setString( DISPLAY_NAME_KEY, updateUserStoreParams.getDisplayName() );
+            } );
     }
 
     private static UserStore createUserStoreFromNode( final Node node )
