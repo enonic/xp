@@ -11,7 +11,7 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.util.Binary;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -59,7 +59,7 @@ final class JavaTypeConverters
 
     public final static JavaTypeConverter<Reference> REFERENCE = newReference();
 
-    public final static JavaTypeConverter<Binary> BINARY = newBinary();
+    public final static JavaTypeConverter<BinaryReference> BINARY_REFERENCE = newBinaryReference();
 
     public final static JavaTypeConverter<Link> LINK = newLink();
 
@@ -336,15 +336,15 @@ final class JavaTypeConverters
         }
     }
 
-    private static Binary convertToBinary( final Object value )
+    private static BinaryReference convertToBinaryReference( final Object value )
     {
-        if ( value instanceof Binary )
+        if ( value instanceof BinaryReference )
         {
-            return (Binary) value;
+            return (BinaryReference) value;
         }
         else if ( value instanceof String )
         {
-            return Binary.from( (String) value );
+            return BinaryReference.from( (String) value );
         }
         else
         {
@@ -428,9 +428,9 @@ final class JavaTypeConverters
         return new JavaTypeConverter<>( Reference.class, JavaTypeConverters::convertToReference );
     }
 
-    private static JavaTypeConverter<Binary> newBinary()
+    private static JavaTypeConverter<BinaryReference> newBinaryReference()
     {
-        return new JavaTypeConverter<>( Binary.class, JavaTypeConverters::convertToBinary );
+        return new JavaTypeConverter<>( BinaryReference.class, JavaTypeConverters::convertToBinaryReference );
     }
 
     private static JavaTypeConverter<Link> newLink()

@@ -37,12 +37,12 @@ public class ContentAttachmentsNodeTranslator2Test
 
         final PropertySet attachmentProperties = ContentAttachmentsNodeTranslator2.translate( propertyTree, attachments );
 
-        assertNotNull( attachmentProperties.getBinary( "my-attachment-1.blob" ) );
+        assertNotNull( attachmentProperties.getBinaryReference( "my-attachment-1.blob" ) );
         assertEquals( "source", attachmentProperties.getString( "my-attachment-1.label" ) );
         assertEquals( "text/plain", attachmentProperties.getString( "my-attachment-1.mimeType" ) );
         assertEquals( new Long( 123 ), attachmentProperties.getLong( "my-attachment-1.size" ) );
 
-        assertNotNull( attachmentProperties.getBinary( "my-attachment-2.blob" ) );
+        assertNotNull( attachmentProperties.getBinaryReference( "my-attachment-2.blob" ) );
         assertEquals( "large", attachmentProperties.getString( "my-attachment-2.label" ) );
         assertEquals( "image/png", attachmentProperties.getString( "my-attachment-2.mimeType" ) );
         assertEquals( new Long( 234 ), attachmentProperties.getLong( "my-attachment-2.size" ) );

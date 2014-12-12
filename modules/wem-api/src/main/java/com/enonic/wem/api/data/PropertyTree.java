@@ -13,7 +13,7 @@ import java.util.UUID;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.util.Binary;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -432,29 +432,29 @@ public final class PropertyTree
 
     // setting binary
 
-    public Property setBinary( final PropertyPath path, final Binary value )
+    public Property setBinaryReference( final PropertyPath path, final BinaryReference value )
     {
-        return this.root.setBinary( path, value );
+        return this.root.setBinaryReference( path, value );
     }
 
-    public Property setBinary( final String path, final Binary value )
+    public Property setBinaryReference( final String path, final BinaryReference value )
     {
-        return this.root.setBinary( path, value );
+        return this.root.setBinaryReference( path, value );
     }
 
-    public Property setBinary( final String name, final int index, final Binary value )
+    public Property setBinaryReference( final String name, final int index, final BinaryReference value )
     {
-        return this.root.setBinary( name, index, value );
+        return this.root.setBinaryReference( name, index, value );
     }
 
-    public Property addBinary( final String name, final Binary value )
+    public Property addBinaryReference( final String name, final BinaryReference value )
     {
-        return this.root.addBinary( name, value );
+        return this.root.addBinaryReference( name, value );
     }
 
-    public Property[] addBinaries( final String name, final Binary... value )
+    public Property[] addBinaryReferences( final String name, final BinaryReference... value )
     {
-        return this.root.addBinaries( name, value );
+        return this.root.addBinaryReferences( name, value );
     }
 
     // setting reference
@@ -885,24 +885,24 @@ public final class PropertyTree
 
     // getting reference
 
-    public Binary getBinary( final String name, final int index )
+    public BinaryReference getBinaryReference( final String name, final int index )
     {
-        return this.root.getBinary( name, index );
+        return this.root.getBinaryReference( name, index );
     }
 
-    public Binary getBinary( final PropertyPath path )
+    public BinaryReference getBinaryReference( final PropertyPath path )
     {
-        return this.root.getBinary( path );
+        return this.root.getBinaryReference( path );
     }
 
-    public Binary getBinary( final String path )
+    public BinaryReference getBinaryReference( final String path )
     {
-        return this.root.getBinary( path );
+        return this.root.getBinaryReference( path );
     }
 
-    public Iterable<Binary> getBinaries( final String name )
+    public Iterable<BinaryReference> getBinaryReferences( final String name )
     {
-        return this.root.getBinaries( name );
+        return this.root.getBinaryReferences( name );
     }
 
     // getting link

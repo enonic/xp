@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.enonic.wem.api.support.JsonTestHelper;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -41,6 +42,7 @@ public class PropertyTreeJsonTest
         tree.addLocalTime( "singleLocalTime", LocalTime.of( 12, 0, 0 ) );
         tree.addInstant( "singleInstant", Instant.parse( "2007-12-03T10:15:30.00Z" ) );
         tree.addReference( "reference", Reference.from( "my-node-id" ) );
+        tree.addBinaryReference( "binaryRef", BinaryReference.from( "myImage" ) );
         tree.addLink( "link", Link.from( "/root/my-node" ) );
         PropertySet singleSet = tree.addSet( "singleSet" );
         singleSet.addLong( "long", 1L );
@@ -59,6 +61,8 @@ public class PropertyTreeJsonTest
         tree.addGeoPoints( "arrayGeoPoint", GeoPoint.from( "1.1,-2.2" ), GeoPoint.from( "-2.2,1.1" ) );
         tree.addReferences( "references", Reference.from( "my-node-id-1" ), Reference.from( "my-node-id-2" ) );
         tree.addLinks( "links", Link.from( "/root/my-node-1" ), Link.from( "/root/my-node-2" ) );
+        tree.addBinaryReferences( "binaryReferences", BinaryReference.from( "image1" ), BinaryReference.from( "image2" ) );
+
         PropertySet arraySet1 = tree.addSet( "arraySet" );
         arraySet1.addString( "string", "a" );
         arraySet1.addLongs( "long", 1L, 2L );

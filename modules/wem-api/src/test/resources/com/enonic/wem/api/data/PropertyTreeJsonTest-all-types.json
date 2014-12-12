@@ -1,392 +1,416 @@
 [
-    {
-        "name": "singleString",
-        "type": "String",
-        "values": [
-            {
-                "id": "1",
-                "v": "a"
-            }
-        ]
-    },
-    {
-        "name": "singleHtmlPart",
-        "type": "String",
-        "values": [
-            {
-                "id": "2",
-                "v": "<h1>Hello</h1>"
-            }
-        ]
-    },
-    {
-        "name": "singleXML",
-        "type": "Xml",
-        "values": [
-            {
-                "id": "3",
-                "v": "<xml>Hello</xml>"
-            }
-        ]
-    },
-    {
-        "name": "singleBoolean",
-        "type": "Boolean",
-        "values": [
-            {
-                "id": "4",
-                "v": true
-            }
-        ]
-    },
-    {
-        "name": "singleLong",
-        "type": "Long",
-        "values": [
-            {
-                "id": "5",
+  {
+    "name": "singleString",
+    "type": "String",
+    "values": [
+      {
+        "id": "1",
+        "v": "a"
+      }
+    ]
+  },
+  {
+    "name": "singleHtmlPart",
+    "type": "String",
+    "values": [
+      {
+        "id": "2",
+        "v": "<h1>Hello</h1>"
+      }
+    ]
+  },
+  {
+    "name": "singleXML",
+    "type": "Xml",
+    "values": [
+      {
+        "id": "3",
+        "v": "<xml>Hello</xml>"
+      }
+    ]
+  },
+  {
+    "name": "singleBoolean",
+    "type": "Boolean",
+    "values": [
+      {
+        "id": "4",
+        "v": true
+      }
+    ]
+  },
+  {
+    "name": "singleLong",
+    "type": "Long",
+    "values": [
+      {
+        "id": "5",
+        "v": 1
+      }
+    ]
+  },
+  {
+    "name": "singleDouble",
+    "type": "Double",
+    "values": [
+      {
+        "id": "6",
+        "v": 1.1
+      }
+    ]
+  },
+  {
+    "name": "singleGeoPoint",
+    "type": "GeoPoint",
+    "values": [
+      {
+        "id": "7",
+        "v": "1.1,-2.2"
+      }
+    ]
+  },
+  {
+    "name": "singleLocalDate",
+    "type": "LocalDate",
+    "values": [
+      {
+        "id": "8",
+        "v": "2006-01-08"
+      }
+    ]
+  },
+  {
+    "name": "singleLocalDateTime",
+    "type": "LocalDateTime",
+    "values": [
+      {
+        "id": "9",
+        "v": "2006-01-08T12:00:00"
+      }
+    ]
+  },
+  {
+    "name": "singleLocalTime",
+    "type": "LocalTime",
+    "values": [
+      {
+        "id": "10",
+        "v": "12:00"
+      }
+    ]
+  },
+  {
+    "name": "singleInstant",
+    "type": "DateTime",
+    "values": [
+      {
+        "id": "11",
+        "v": "2007-12-03T10:15:30Z"
+      }
+    ]
+  },
+  {
+    "name": "reference",
+    "type": "Reference",
+    "values": [
+      {
+        "id": "12",
+        "v": "my-node-id"
+      }
+    ]
+  },
+  {
+    "name": "binaryRef",
+    "type": "BinaryReference",
+    "values": [
+      {
+        "id": "13",
+        "v": "myImage"
+      }
+    ]
+  },
+  {
+    "name": "link",
+    "type": "Link",
+    "values": [
+      {
+        "id": "14",
+        "v": "/root/my-node"
+      }
+    ]
+  },
+  {
+    "name": "singleSet",
+    "type": "PropertySet",
+    "values": [
+      {
+        "id": "15",
+        "set": [
+          {
+            "name": "long",
+            "type": "Long",
+            "values": [
+              {
+                "id": "16",
                 "v": 1
-            }
-        ]
-    },
-    {
-        "name": "singleDouble",
-        "type": "Double",
-        "values": [
-            {
-                "id": "6",
-                "v": 1.1
-            }
-        ]
-    },
-    {
-        "name": "singleGeoPoint",
-        "type": "GeoPoint",
-        "values": [
-            {
-                "id": "7",
-                "v": "1.1,-2.2"
-            }
-        ]
-    },
-    {
-        "name": "singleLocalDate",
-        "type": "LocalDate",
-        "values": [
-            {
-                "id": "8",
-                "v": "2006-01-08"
-            }
-        ]
-    },
-    {
-        "name": "singleLocalDateTime",
-        "type": "LocalDateTime",
-        "values": [
-            {
-                "id": "9",
-                "v": "2006-01-08T12:00:00"
-            }
-        ]
-    },
-    {
-        "name": "singleLocalTime",
-        "type": "LocalTime",
-        "values": [
-            {
-                "id": "10",
-                "v": "12:00"
-            }
-        ]
-    },
-    {
-        "name": "singleInstant",
-        "type": "DateTime",
-        "values": [
-            {
-                "id": "11",
-                "v": "2007-12-03T10:15:30Z"
-            }
-        ]
-    },
-    {
-        "name": "reference",
-        "type": "Reference",
-        "values": [
-            {
-                "id": "12",
-                "v": "my-node-id"
-            }
-        ]
-    },
-    {
-        "name": "link",
-        "type": "Link",
-        "values": [
-            {
-                "id": "13",
-                "v": "/root/my-node"
-            }
-        ]
-    },
-    {
-        "name": "singleSet",
-        "type": "PropertySet",
-        "values": [
-            {
-                "id": "14",
+              }
+            ]
+          },
+          {
+            "name": "setWithinSet",
+            "type": "PropertySet",
+            "values": [
+              {
+                "id": "17",
                 "set": [
-                    {
-                        "name": "long",
-                        "type": "Long",
-                        "values": [
-                            {
-                                "id": "15",
-                                "v": 1
-                            }
-                        ]
-                    },
-                    {
-                        "name": "setWithinSet",
-                        "type": "PropertySet",
-                        "values": [
-                            {
-                                "id": "16",
-                                "set": [
-                                    {
-                                        "name": "long",
-                                        "type": "Long",
-                                        "values": [
-                                            {
-                                                "id": "17",
-                                                "v": 1
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+                  {
+                    "name": "long",
+                    "type": "Long",
+                    "values": [
+                      {
+                        "id": "18",
+                        "v": 1
+                      }
+                    ]
+                  }
                 ]
-            }
+              }
+            ]
+          }
         ]
-    },
-    {
-        "name": "arrayString",
-        "type": "String",
-        "values": [
-            {
-                "id": "18",
-                "v": "a"
-            },
-            {
-                "id": "19",
-                "v": "b"
-            }
-        ]
-    },
-    {
-        "name": "arrayHtmlPart",
-        "type": "HtmlPart",
-        "values": [
-            {
-                "id": "20",
-                "v": "<h1>Hello</h1>"
-            },
-            {
-                "id": "21",
-                "v": "<h1>World</h1>"
-            }
-        ]
-    },
-    {
-        "name": "arrayXML",
-        "type": "Xml",
-        "values": [
-            {
-                "id": "22",
-                "v": "<xml>Hello</xml>"
-            },
-            {
-                "id": "23",
-                "v": "<xml>World</xml>"
-            }
-        ]
-    },
-    {
-        "name": "arrayBoolean",
-        "type": "Boolean",
-        "values": [
-            {
-                "id": "24",
-                "v": true
-            },
-            {
-                "id": "25",
-                "v": false
-            }
-        ]
-    },
-    {
-        "name": "arrayLong",
-        "type": "Long",
-        "values": [
-            {
-                "id": "26",
-                "v": 1
-            },
-            {
-                "id": "27",
-                "v": 2
-            }
-        ]
-    },
-    {
-        "name": "arrayDouble",
-        "type": "Double",
-        "values": [
-            {
-                "id": "28",
-                "v": 1.1
-            },
-            {
-                "id": "29",
-                "v": 1.2
-            }
-        ]
-    },
-    {
-        "name": "arrayLocalDates",
-        "type": "LocalDate",
-        "values": [
-            {
-                "id": "30",
-                "v": "2006-01-08"
-            },
-            {
-                "id": "31",
-                "v": "2015-01-31"
-            }
-        ]
-    },
-    {
-        "name": "arrayLocalDateTimes",
-        "type": "LocalDateTime",
-        "values": [
-            {
-                "id": "32",
-                "v": "2006-01-08T12:00:00"
-            },
-            {
-                "id": "33",
-                "v": "2015-01-31T12:00:00"
-            }
-        ]
-    },
-    {
-        "name": "arrayGeoPoint",
-        "type": "GeoPoint",
-        "values": [
-            {
-                "id": "34",
-                "v": "1.1,-2.2"
-            },
-            {
-                "id": "35",
-                "v": "-2.2,1.1"
-            }
-        ]
-    },
-    {
-        "name": "references",
-        "type": "Reference",
-        "values": [
-            {
-                "id": "36",
-                "v": "my-node-id-1"
-            },
-            {
-                "id": "37",
-                "v": "my-node-id-2"
-            }
-        ]
-    },
-    {
-        "name": "links",
-        "type": "Link",
-        "values": [
-            {
-                "id": "38",
-                "v": "/root/my-node-1"
-            },
-            {
-                "id": "39",
-                "v": "/root/my-node-2"
-            }
-        ]
-    },
-    {
-        "name": "arraySet",
-        "type": "PropertySet",
-        "values": [
-            {
-                "id": "40",
-                "set": [
-                    {
-                        "name": "string",
-                        "type": "String",
-                        "values": [
-                            {
-                                "id": "41",
-                                "v": "a"
-                            }
-                        ]
-                    },
-                    {
-                        "name": "long",
-                        "type": "Long",
-                        "values": [
-                            {
-                                "id": "42",
-                                "v": 1
-                            },
-                            {
-                                "id": "43",
-                                "v": 2
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
+      }
+    ]
+  },
+  {
+    "name": "arrayString",
+    "type": "String",
+    "values": [
+      {
+        "id": "19",
+        "v": "a"
+      },
+      {
+        "id": "20",
+        "v": "b"
+      }
+    ]
+  },
+  {
+    "name": "arrayHtmlPart",
+    "type": "HtmlPart",
+    "values": [
+      {
+        "id": "21",
+        "v": "<h1>Hello</h1>"
+      },
+      {
+        "id": "22",
+        "v": "<h1>World</h1>"
+      }
+    ]
+  },
+  {
+    "name": "arrayXML",
+    "type": "Xml",
+    "values": [
+      {
+        "id": "23",
+        "v": "<xml>Hello</xml>"
+      },
+      {
+        "id": "24",
+        "v": "<xml>World</xml>"
+      }
+    ]
+  },
+  {
+    "name": "arrayBoolean",
+    "type": "Boolean",
+    "values": [
+      {
+        "id": "25",
+        "v": true
+      },
+      {
+        "id": "26",
+        "v": false
+      }
+    ]
+  },
+  {
+    "name": "arrayLong",
+    "type": "Long",
+    "values": [
+      {
+        "id": "27",
+        "v": 1
+      },
+      {
+        "id": "28",
+        "v": 2
+      }
+    ]
+  },
+  {
+    "name": "arrayDouble",
+    "type": "Double",
+    "values": [
+      {
+        "id": "29",
+        "v": 1.1
+      },
+      {
+        "id": "30",
+        "v": 1.2
+      }
+    ]
+  },
+  {
+    "name": "arrayLocalDates",
+    "type": "LocalDate",
+    "values": [
+      {
+        "id": "31",
+        "v": "2006-01-08"
+      },
+      {
+        "id": "32",
+        "v": "2015-01-31"
+      }
+    ]
+  },
+  {
+    "name": "arrayLocalDateTimes",
+    "type": "LocalDateTime",
+    "values": [
+      {
+        "id": "33",
+        "v": "2006-01-08T12:00:00"
+      },
+      {
+        "id": "34",
+        "v": "2015-01-31T12:00:00"
+      }
+    ]
+  },
+  {
+    "name": "arrayGeoPoint",
+    "type": "GeoPoint",
+    "values": [
+      {
+        "id": "35",
+        "v": "1.1,-2.2"
+      },
+      {
+        "id": "36",
+        "v": "-2.2,1.1"
+      }
+    ]
+  },
+  {
+    "name": "references",
+    "type": "Reference",
+    "values": [
+      {
+        "id": "37",
+        "v": "my-node-id-1"
+      },
+      {
+        "id": "38",
+        "v": "my-node-id-2"
+      }
+    ]
+  },
+  {
+    "name": "links",
+    "type": "Link",
+    "values": [
+      {
+        "id": "39",
+        "v": "/root/my-node-1"
+      },
+      {
+        "id": "40",
+        "v": "/root/my-node-2"
+      }
+    ]
+  },
+  {
+    "name": "binaryReferences",
+    "type": "BinaryReference",
+    "values": [
+      {
+        "id": "41",
+        "v": "image1"
+      },
+      {
+        "id": "42",
+        "v": "image2"
+      }
+    ]
+  },
+  {
+    "name": "arraySet",
+    "type": "PropertySet",
+    "values": [
+      {
+        "id": "43",
+        "set": [
+          {
+            "name": "string",
+            "type": "String",
+            "values": [
+              {
                 "id": "44",
-                "set": [
-                    {
-                        "name": "string",
-                        "type": "String",
-                        "values": [
-                            {
-                                "id": "45",
-                                "v": "b"
-                            },
-                            {
-                                "id": "46",
-                                "v": "c"
-                            }
-                        ]
-                    },
-                    {
-                        "name": "long",
-                        "type": "Long",
-                        "values": [
-                            {
-                                "id": "47",
-                                "v": 2
-                            }
-                        ]
-                    }
-                ]
-            }
+                "v": "a"
+              }
+            ]
+          },
+          {
+            "name": "long",
+            "type": "Long",
+            "values": [
+              {
+                "id": "45",
+                "v": 1
+              },
+              {
+                "id": "46",
+                "v": 2
+              }
+            ]
+          }
         ]
-    }
+      },
+      {
+        "id": "47",
+        "set": [
+          {
+            "name": "string",
+            "type": "String",
+            "values": [
+              {
+                "id": "48",
+                "v": "b"
+              },
+              {
+                "id": "49",
+                "v": "c"
+              }
+            ]
+          },
+          {
+            "name": "long",
+            "type": "Long",
+            "values": [
+              {
+                "id": "50",
+                "v": 2
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
 ]

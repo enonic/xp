@@ -275,12 +275,12 @@ public abstract class ValueType<T>
         }
     }
 
-    static class Binary
-        extends ValueType<com.enonic.wem.api.util.Binary>
+    static class BinaryReference
+        extends ValueType<com.enonic.wem.api.util.BinaryReference>
     {
-        Binary()
+        BinaryReference()
         {
-            super( "Binary", JavaTypeConverters.BINARY );
+            super( "BinaryReference", JavaTypeConverters.BINARY_REFERENCE );
         }
 
         @Override

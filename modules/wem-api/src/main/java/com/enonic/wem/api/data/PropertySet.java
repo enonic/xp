@@ -15,7 +15,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.util.Binary;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -995,27 +995,27 @@ public final class PropertySet
     }
 
     // setting reference
-    public Property setBinary( final String path, final Binary value )
+    public Property setBinaryReference( final String path, final BinaryReference value )
     {
         return this.setProperty( PropertyPath.from( path ), Value.newBinary( value ) );
     }
 
-    public Property setBinary( final PropertyPath path, final Binary value )
+    public Property setBinaryReference( final PropertyPath path, final BinaryReference value )
     {
         return this.setProperty( path, Value.newBinary( value ) );
     }
 
-    public Property setBinary( final String name, final int index, final Binary value )
+    public Property setBinaryReference( final String name, final int index, final BinaryReference value )
     {
         return this.setProperty( name, index, Value.newBinary( value ) );
     }
 
-    public Property addBinary( final String name, final Binary value )
+    public Property addBinaryReference( final String name, final BinaryReference value )
     {
         return this.addProperty( name, Value.newBinary( value ) );
     }
 
-    public Property[] addBinaries( final String name, final Binary... values )
+    public Property[] addBinaryReferences( final String name, final BinaryReference... values )
     {
         final Property[] properties = new Property[values.length];
         for ( int i = 0; i < values.length; i++ )
@@ -1318,26 +1318,26 @@ public final class PropertySet
 
     // getting binary
 
-    public Binary getBinary( final String name, final int index )
+    public BinaryReference getBinaryReference( final String name, final int index )
     {
         final Property property = this.getProperty( name, index );
         return property != null ? property.getValue().asBinary() : null;
     }
 
-    public Binary getBinary( final PropertyPath path )
+    public BinaryReference getBinaryReference( final PropertyPath path )
     {
         final Property property = this.getProperty( path );
         return property != null ? property.getValue().asBinary() : null;
     }
 
-    public Binary getBinary( final String path )
+    public BinaryReference getBinaryReference( final String path )
     {
-        return getBinary( PropertyPath.from( path ) );
+        return getBinaryReference( PropertyPath.from( path ) );
     }
 
-    public Iterable<Binary> getBinaries( final String name )
+    public Iterable<BinaryReference> getBinaryReferences( final String name )
     {
-        final ImmutableList.Builder<Binary> stringsBuilder = new ImmutableList.Builder<>();
+        final ImmutableList.Builder<BinaryReference> stringsBuilder = new ImmutableList.Builder<>();
         for ( final Property property : getProperties( name ) )
         {
             if ( !property.hasNullValue() )

@@ -10,7 +10,6 @@ import java.util.Map;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.util.Binary;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -47,7 +46,7 @@ public final class ValueTypes
 
     public static final ValueType<Boolean> BOOLEAN = new ValueType.Boolean();
 
-    public static final ValueType<Binary> BINARY = new ValueType.Binary();
+    public static final ValueType<com.enonic.wem.api.util.BinaryReference> BINARY_REFERENCE = new ValueType.BinaryReference();
 
     private static final Map<String, ValueType> typesByName = new HashMap<>();
 
@@ -68,7 +67,7 @@ public final class ValueTypes
         register( BOOLEAN );
         register( REFERENCE );
         register( LINK );
-        register( BINARY );
+        register( BINARY_REFERENCE );
     }
 
     private static void register( ValueType valueType )
