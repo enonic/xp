@@ -20,7 +20,5 @@ public class DateRangeAggregationQuery
         {
             return new DateRangeAggregationQuery( this );
         }
-
-
     }
 }

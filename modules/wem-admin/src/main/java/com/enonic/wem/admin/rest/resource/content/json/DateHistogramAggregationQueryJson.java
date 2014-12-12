@@ -5,14 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
 
 import com.enonic.wem.api.query.aggregation.AggregationQuery;
-import com.enonic.wem.api.query.aggregation.DateHistogramAggregationQuery;
-import com.enonic.wem.api.query.aggregation.DateInterval;
 
 public class DateHistogramAggregationQueryJson
     extends AggregationQueryJson
 {
 
-    private DateHistogramAggregationQuery dateHistogramAggregationQuery;
+    private final DateHistogramAggregationQuery dateHistogramAggregationQuery;
 
     @JsonCreator
     public DateHistogramAggregationQueryJson( @JsonProperty(value = "name", required = true) final String name, //
@@ -23,7 +21,7 @@ public class DateHistogramAggregationQueryJson
     {
         final DateHistogramAggregationQuery.Builder builder = DateHistogramAggregationQuery.create( name ).
             fieldName( fieldName ).
-            interval( DateInterval.from( interval ) );
+            interval( interval );
 
         if ( !Strings.isNullOrEmpty( format ) )
         {

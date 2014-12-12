@@ -12,11 +12,10 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.aggregation.DateHistogramAggregationQuery;
-import com.enonic.wem.api.query.aggregation.DateInterval;
 
 import static org.junit.Assert.*;
 
-public class FindContentByQueryCommand_histogramAggregationsTest
+public class FindContentByQueryCommand_dateHistogramAggregationsTest
     extends AbstractNodeTest
 {
 
@@ -34,15 +33,15 @@ public class FindContentByQueryCommand_histogramAggregationsTest
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( DateHistogramAggregationQuery.create( "hour" ).
                 fieldName( "instant" ).
-                interval( DateInterval.from( "1h" ) ).
+                interval( "1h" ).
                 build() ).
             addAggregationQuery( DateHistogramAggregationQuery.create( "day" ).
                 fieldName( "instant" ).
-                interval( DateInterval.from( "1d" ) ).
+                interval( "1d" ).
                 build() ).
             addAggregationQuery( DateHistogramAggregationQuery.create( "minute" ).
                 fieldName( "instant" ).
-                interval( DateInterval.from( "1m" ) ).
+                interval( "1m" ).
                 build() ).
             build();
 
@@ -73,12 +72,12 @@ public class FindContentByQueryCommand_histogramAggregationsTest
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( DateHistogramAggregationQuery.create( "dateHistogramWithZero" ).
                 fieldName( "instant" ).
-                interval( DateInterval.from( "1h" ) ).
+                interval( "1h" ).
                 minDocCount( 0l ).
                 build() ).
             addAggregationQuery( DateHistogramAggregationQuery.create( "dateHistogramWithDefault" ).
                 fieldName( "instant" ).
-                interval( DateInterval.from( "1h" ) ).
+                interval( "1h" ).
                 build() ).
             build();
 
@@ -106,12 +105,12 @@ public class FindContentByQueryCommand_histogramAggregationsTest
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( DateHistogramAggregationQuery.create( "hhMM" ).
                 fieldName( "instant" ).
-                interval( DateInterval.from( "1h" ) ).
+                interval( "1h" ).
                 format( "HH:mm" ).
                 build() ).
             addAggregationQuery( DateHistogramAggregationQuery.create( "mm" ).
                 fieldName( "instant" ).
-                interval( DateInterval.from( "1h" ) ).
+                interval( "1h" ).
                 format( "mm" ).
                 build() ).
             build();

@@ -10,7 +10,8 @@ import com.enonic.wem.api.query.aggregation.AggregationQuery;
 @JsonSubTypes({                                                                                                   //
     @JsonSubTypes.Type(value = TermsAggregationQueryJson.class, name = "TermsAggregationQuery"),    //
     @JsonSubTypes.Type(value = DateHistogramAggregationQueryJson.class, name = "DateHistogramAggregationQuery"),    //
-    @JsonSubTypes.Type(value = DateRangeAggregationQueryJson.class, name = "DateRangeAggregationQuery") //
+    @JsonSubTypes.Type(value = DateRangeAggregationQueryJson.class, name = "DateRangeAggregationQuery"), //
+    @JsonSubTypes.Type(value = HistogramAggregationQueryJson.class, name = "HistogramAggregationQuery") //
 })
 public abstract class AggregationQueryJson
 {

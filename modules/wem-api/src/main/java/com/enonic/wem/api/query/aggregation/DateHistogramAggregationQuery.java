@@ -1,7 +1,7 @@
 package com.enonic.wem.api.query.aggregation;
 
 public class DateHistogramAggregationQuery
-    extends AbstractHistogramAggregationQuery<DateInterval>
+    extends AbstractHistogramAggregationQuery<String>
 {
     private final String format;
 
@@ -22,7 +22,7 @@ public class DateHistogramAggregationQuery
     }
 
     public static class Builder
-        extends AbstractHistogramAggregationQuery.Builder<Builder, DateInterval>
+        extends AbstractHistogramAggregationQuery.Builder<Builder, String>
     {
         private String format;
 

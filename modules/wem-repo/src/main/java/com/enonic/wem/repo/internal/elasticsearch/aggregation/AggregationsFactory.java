@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.aggregation;
 
 
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
+import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.slf4j.Logger;
@@ -37,6 +38,10 @@ public class AggregationsFactory
             {
                 aggregationsBuilder.add( createDateHistogramBuckets( (DateHistogram) aggregation ) );
             }
+            else if ( aggregation instanceof Histogram )
+            {
+                aggregationsBuilder.add( createHistogramBuckets( (Histogram) aggregation ) );
+            }
             else
             {
                 LOG.warn( "Aggregation translator for " + aggregation.getClass().getName() + " not implemented, skipping" );
@@ -64,6 +69,13 @@ public class AggregationsFactory
     {
         return BucketAggregation.bucketAggregation( dateHistogram.getName() ).
             buckets( BucketsFactory.createFromDateHistogram( dateHistogram.getBuckets() ) ).
+            build();
+    }
+
+    private static BucketAggregation createHistogramBuckets( final Histogram histogram )
+    {
+        return BucketAggregation.bucketAggregation( histogram.getName() ).
+            buckets( BucketsFactory.createFromHistogram( histogram.getBuckets() ) ).
             build();
     }
 

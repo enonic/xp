@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.elasticsearch.aggregation;
 import java.util.Collection;
 
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
+import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 
@@ -13,7 +14,7 @@ import com.enonic.wem.api.aggregation.DateRangeBucket;
 class BucketsFactory
 {
 
-    public static Buckets createFromTerms( final Collection<Terms.Bucket> buckets )
+    static Buckets createFromTerms( final Collection<Terms.Bucket> buckets )
     {
         final Buckets.Builder bucketsBuilder = new Buckets.Builder();
 
@@ -26,7 +27,7 @@ class BucketsFactory
     }
 
 
-    public static Buckets createFromDateRange( final Collection<? extends DateRange.Bucket> buckets )
+    static Buckets createFromDateRange( final Collection<? extends DateRange.Bucket> buckets )
     {
         final Buckets.Builder bucketsBuilder = new Buckets.Builder();
 
@@ -41,11 +42,23 @@ class BucketsFactory
         return bucketsBuilder.build();
     }
 
-    public static Buckets createFromDateHistogram( final Collection<? extends DateHistogram.Bucket> buckets )
+    static Buckets createFromDateHistogram( final Collection<? extends DateHistogram.Bucket> buckets )
     {
         final Buckets.Builder bucketsBuilder = new Buckets.Builder();
 
         for ( final DateHistogram.Bucket bucket : buckets )
+        {
+            bucketsBuilder.add( new Bucket( bucket.getKey(), bucket.getDocCount() ) );
+        }
+
+        return bucketsBuilder.build();
+    }
+
+    static Buckets createFromHistogram( final Collection<? extends Histogram.Bucket> buckets )
+    {
+        final Buckets.Builder bucketsBuilder = new Buckets.Builder();
+
+        for ( final Histogram.Bucket bucket : buckets )
         {
             bucketsBuilder.add( new Bucket( bucket.getKey(), bucket.getDocCount() ) );
         }

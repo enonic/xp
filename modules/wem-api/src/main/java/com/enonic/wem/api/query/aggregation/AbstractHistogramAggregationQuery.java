@@ -1,6 +1,6 @@
 package com.enonic.wem.api.query.aggregation;
 
-public abstract class AbstractHistogramAggregationQuery<T extends Interval>
+public abstract class AbstractHistogramAggregationQuery<T>
     extends AggregationQuery
 {
     private final String fieldName;
@@ -32,7 +32,7 @@ public abstract class AbstractHistogramAggregationQuery<T extends Interval>
         return minDocCount;
     }
 
-    public abstract static class Builder<B extends Builder, T extends Interval>
+    public abstract static class Builder<B extends Builder, T>
         extends AggregationQuery.Builder
     {
         private String fieldName;
