@@ -1,0 +1,10 @@
+{
+  "displayName": "Enonic User Store",
+  "key": "enonic",
+  "permissions": [
+    {
+      "access": "ADMINISTRATOR",
+      "principalKey": "user:system:tsi"
+    }
+  ]
+}

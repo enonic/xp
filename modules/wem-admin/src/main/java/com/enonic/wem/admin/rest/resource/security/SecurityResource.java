@@ -32,6 +32,7 @@ import com.enonic.wem.admin.rest.resource.security.json.RoleJson;
 import com.enonic.wem.admin.rest.resource.security.json.UpdateGroupJson;
 import com.enonic.wem.admin.rest.resource.security.json.UpdateRoleJson;
 import com.enonic.wem.admin.rest.resource.security.json.UpdateUserJson;
+import com.enonic.wem.admin.rest.resource.security.json.UpdateUserStoreJson;
 import com.enonic.wem.admin.rest.resource.security.json.UserJson;
 import com.enonic.wem.admin.rest.resource.security.json.UserStoreJson;
 import com.enonic.wem.admin.rest.resource.security.json.UserStoresJson;
@@ -100,6 +101,15 @@ public final class SecurityResource
     public UserStoreJson createUserStore( final CreateUserStoreJson params )
     {
         final UserStore userStore = securityService.createUserStore( params.getCreateUserStoreParams() );
+        final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
+        return new UserStoreJson( userStore, permissions );
+    }
+
+    @POST
+    @Path("userstore/update")
+    public UserStoreJson updateUserStore( final UpdateUserStoreJson params )
+    {
+        final UserStore userStore = securityService.updateUserStore( params.getUpdateUserStoreParams() );
         final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
         return new UserStoreJson( userStore, permissions );
     }

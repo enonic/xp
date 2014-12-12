@@ -34,6 +34,7 @@ import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.UpdateGroupParams;
 import com.enonic.wem.api.security.UpdateRoleParams;
 import com.enonic.wem.api.security.UpdateUserParams;
+import com.enonic.wem.api.security.UpdateUserStoreParams;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
@@ -126,6 +127,28 @@ public class SecurityResourceTest
             post().getAsString();
 
         assertJson( "createUserStoreSuccess.json", jsonString );
+    }
+
+    @Test
+    public void updateUserStore()
+        throws Exception
+    {
+        final UserStoreKey userStoreKey = new UserStoreKey( "enonic" );
+        final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
+            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:tsi" ) ).access( ADMINISTRATOR ).build() );
+        final UserStore userStore = UserStore.newUserStore().
+            key( new UserStoreKey( "enonic" ) ).
+            displayName( "Enonic User Store" ).
+            build();
+        Mockito.when( securityService.updateUserStore( Mockito.isA( UpdateUserStoreParams.class ) ) ).thenReturn( userStore );
+
+        Mockito.when( securityService.getUserStorePermissions( userStoreKey ) ).thenReturn( permissions );
+
+        String jsonString = request().path( "security/userstore/update" ).
+            entity( readFromFile( "updateUserStoreParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "updateUserStoreSuccess.json", jsonString );
     }
 
     @Test
