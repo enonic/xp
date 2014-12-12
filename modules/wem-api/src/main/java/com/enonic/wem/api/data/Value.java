@@ -228,7 +228,7 @@ public abstract class Value
     /**
      * Attempts to return value as Reference, using best effort converting if value is not of type Reference.
      */
-    public BinaryReference asBinary()
+    public BinaryReference asBinaryReference()
     {
         if ( object == null )
         {

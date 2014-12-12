@@ -1,10 +1,14 @@
 package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.data.ValueTypes;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -13,6 +17,7 @@ import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.InsertManualStrategy;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeAlreadyExistException;
+import com.enonic.wem.api.node.NodeBinaryReferenceException;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodeNotFoundException;
@@ -47,14 +52,24 @@ public final class CreateNodeCommand
         final PrincipalKey creator =
             authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.from( "user:system:admin" );
 
-        AccessControlList paramPermissions = params.getPermissions();
-        if ( paramPermissions == null || paramPermissions.isEmpty() )
-        {
-            paramPermissions = NodeDefaultAclFactory.create( creator );
-        }
-        final AccessControlList permissions = evaluatePermissions( params.getParent(), params.inheritPermissions(), paramPermissions );
+        final AccessControlList permissions = getAccessControlEntries( creator );
 
         final Long manualOrderValue = resolvePotentialManualOrderValue();
+
+        final PropertyTree data = params.getData();
+
+        final Set<Property> binaryReferences = data.getByValueType( ValueTypes.BINARY_REFERENCE );
+
+        for ( final Property binaryRef : binaryReferences )
+        {
+            if ( !this.params.getBinaryReferences().contains( binaryRef.getBinaryReference() ) )
+            {
+                throw new NodeBinaryReferenceException( "No binary with reference " + binaryRef + " found in createNodeParams" );
+            }
+
+            // Store binary -> blobKey
+            // Add binary-data to node (blobKey)
+        }
 
         final Node.Builder nodeBuilder = Node.newNode().
             id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
@@ -79,6 +94,16 @@ public final class CreateNodeCommand
         this.doStoreNode( newNode );
 
         return newNode;
+    }
+
+    private AccessControlList getAccessControlEntries( final PrincipalKey creator )
+    {
+        AccessControlList paramPermissions = params.getPermissions();
+        if ( paramPermissions == null || paramPermissions.isEmpty() )
+        {
+            paramPermissions = NodeDefaultAclFactory.create( creator );
+        }
+        return evaluatePermissions( params.getParent(), params.inheritPermissions(), paramPermissions );
     }
 
     private void verifyParentExists()

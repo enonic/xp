@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.ApplyNodePermissionsParams;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -27,6 +29,7 @@ import com.enonic.wem.api.node.ReorderChildNodesParams;
 import com.enonic.wem.api.node.ReorderChildNodesResult;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexService;
@@ -358,6 +361,21 @@ public class NodeServiceImpl
     {
         return ApplyNodePermissionsCommand.create().
             params( params ).
+            indexService( this.indexService ).
+            nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
+            versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public ByteSource getBinary( final NodeId nodeId, final BinaryReference reference )
+    {
+        return GetNodeBinaryCommand.create().
+            binaryReference( reference ).
+            nodeId( nodeId ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).

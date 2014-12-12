@@ -1321,13 +1321,13 @@ public final class PropertySet
     public BinaryReference getBinaryReference( final String name, final int index )
     {
         final Property property = this.getProperty( name, index );
-        return property != null ? property.getValue().asBinary() : null;
+        return property != null ? property.getValue().asBinaryReference() : null;
     }
 
     public BinaryReference getBinaryReference( final PropertyPath path )
     {
         final Property property = this.getProperty( path );
-        return property != null ? property.getValue().asBinary() : null;
+        return property != null ? property.getValue().asBinaryReference() : null;
     }
 
     public BinaryReference getBinaryReference( final String path )
@@ -1342,7 +1342,7 @@ public final class PropertySet
         {
             if ( !property.hasNullValue() )
             {
-                stringsBuilder.add( property.getBinary() );
+                stringsBuilder.add( property.getBinaryReference() );
             }
         }
         return stringsBuilder.build();

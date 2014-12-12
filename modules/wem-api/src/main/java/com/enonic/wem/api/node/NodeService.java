@@ -1,5 +1,8 @@
 package com.enonic.wem.api.node;
 
+import com.google.common.io.ByteSource;
+
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.workspace.Workspace;
 
 public interface NodeService
@@ -48,4 +51,5 @@ public interface NodeService
 
     int applyPermissions( ApplyNodePermissionsParams params );
 
+    ByteSource getBinary( final NodeId nodeId, final BinaryReference reference );
 }

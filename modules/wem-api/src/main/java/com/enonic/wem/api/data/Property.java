@@ -155,9 +155,9 @@ public final class Property
         return value.asReference();
     }
 
-    public BinaryReference getBinary()
+    public BinaryReference getBinaryReference()
     {
-        return value.asBinary();
+        return value.asBinaryReference();
     }
 
     public Link getLink()

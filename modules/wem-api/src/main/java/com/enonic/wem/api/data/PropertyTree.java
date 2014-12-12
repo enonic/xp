@@ -8,9 +8,11 @@ import java.time.LocalTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.util.BinaryReference;
@@ -134,6 +136,21 @@ public final class PropertyTree
     public PropertyTree copy()
     {
         return new PropertyTree( this, this.idProvider );
+    }
+
+    public Set<Property> getByValueType( final ValueType valueType )
+    {
+        final Set<Property> properties = Sets.newHashSet();
+
+        for ( final PropertyId propertyId : propertyById.keySet() )
+        {
+            if ( propertyById.get( propertyId ).getType().equals( valueType ) )
+            {
+                properties.add( propertyById.get( propertyId ) );
+            }
+        }
+
+        return properties;
     }
 
     /**

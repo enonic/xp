@@ -1,11 +1,17 @@
 package com.enonic.wem.api.node;
 
 import java.util.Objects;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.util.BinaryReference;
+import com.enonic.wem.api.util.BinaryReferences;
 
 public class CreateNodeParams
 {
@@ -33,6 +39,8 @@ public class CreateNodeParams
 
     private final NodeType nodeType;
 
+    private final BinaryReferences binaryReferences;
+
     private CreateNodeParams( Builder builder )
     {
         this.parent = builder.parent;
@@ -47,6 +55,7 @@ public class CreateNodeParams
         this.insertManualStrategy = builder.insertManualStrategy;
         this.manualOrderValue = builder.manualOrderValue;
         this.nodeType = builder.nodeType;
+        this.binaryReferences = new BinaryReferences( ImmutableSet.copyOf( builder.binaryReferences ) );
     }
 
     public static Builder create()
@@ -132,6 +141,11 @@ public class CreateNodeParams
         return nodeType;
     }
 
+    public BinaryReferences getBinaryReferences()
+    {
+        return binaryReferences;
+    }
+
     public static final class Builder
     {
         private NodePath parent;
@@ -162,6 +176,8 @@ public class CreateNodeParams
         {
             this.inheritPermissions = false;
         }
+
+        private Set<BinaryReference> binaryReferences = Sets.newHashSet();
 
         public Builder setNodeId( final NodeId nodeId )
         {
@@ -235,6 +251,12 @@ public class CreateNodeParams
             return this;
         }
 
+        public Builder addBinaryReference( final BinaryReference binaryReference )
+        {
+            this.binaryReferences.add( binaryReference );
+            return this;
+        }
+
         public CreateNodeParams build()
         {
             return new CreateNodeParams( this );
@@ -263,7 +285,8 @@ public class CreateNodeParams
             Objects.equals( childOrder, that.childOrder ) &&
             Objects.equals( permissions, that.permissions ) &&
             Objects.equals( nodeType, that.nodeType ) &&
-            ( inheritPermissions == that.inheritPermissions );
+            Objects.equals( binaryReferences, that.binaryReferences ) &&
+            inheritPermissions == that.inheritPermissions;
     }
 
     @Override
