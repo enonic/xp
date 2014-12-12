@@ -17,6 +17,7 @@ import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.security.CreateGroupParams;
 import com.enonic.wem.api.security.CreateRoleParams;
 import com.enonic.wem.api.security.CreateUserParams;
+import com.enonic.wem.api.security.CreateUserStoreParams;
 import com.enonic.wem.api.security.Group;
 import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -42,6 +43,7 @@ import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 
 import static com.enonic.wem.api.security.PrincipalRelationship.from;
+import static com.enonic.wem.api.security.acl.UserStoreAccess.ADMINISTRATOR;
 
 public class SecurityResourceTest
     extends AbstractResourceTest
@@ -102,6 +104,28 @@ public class SecurityResourceTest
         String jsonString = request().path( "security/userstore" ).queryParam( "key", "local" ).get().getAsString();
 
         assertJson( "getUserstoreByKey.json", jsonString );
+    }
+
+    @Test
+    public void createUserStore()
+        throws Exception
+    {
+        final UserStoreKey userStoreKey = new UserStoreKey( "enonic" );
+        final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
+            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:tsi" ) ).access( ADMINISTRATOR ).build() );
+        final UserStore userStore = UserStore.newUserStore().
+            key( new UserStoreKey( "enonic" ) ).
+            displayName( "Enonic User Store" ).
+            build();
+        Mockito.when( securityService.createUserStore( Mockito.isA( CreateUserStoreParams.class ) ) ).thenReturn( userStore );
+
+        Mockito.when( securityService.getUserStorePermissions( userStoreKey ) ).thenReturn( permissions );
+
+        String jsonString = request().path( "security/userstore/create" ).
+            entity( readFromFile( "createUserStoreParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "createUserstoreSuccess.json", jsonString );
     }
 
     @Test
