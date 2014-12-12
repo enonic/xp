@@ -125,7 +125,7 @@ public class SecurityResourceTest
             entity( readFromFile( "createUserStoreParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "createUserstoreSuccess.json", jsonString );
+        assertJson( "createUserStoreSuccess.json", jsonString );
     }
 
     @Test
