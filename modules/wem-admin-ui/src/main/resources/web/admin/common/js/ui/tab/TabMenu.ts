@@ -43,9 +43,11 @@ module api.ui.tab {
             api.dom.Body.get().onClicked((event: MouseEvent) => this.hideMenuOnOutsideClick(event));
 
             this.onClicked((e: MouseEvent) => {
-                // menu itself was clicked so do nothing
-                e.preventDefault();
-                e.stopPropagation();
+                if (this.enabled) {
+                    // menu itself was clicked so do nothing
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
             });
         }
 
