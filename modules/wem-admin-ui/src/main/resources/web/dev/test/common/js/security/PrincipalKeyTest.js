@@ -1,4 +1,4 @@
-describe("api.security.PrincipalTest", function () {
+describe("api.security.PrincipalKeyTest", function () {
 
     var PrincipalKey = api.security.PrincipalKey;
 
