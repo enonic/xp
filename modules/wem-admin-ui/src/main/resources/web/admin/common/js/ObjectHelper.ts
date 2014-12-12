@@ -150,7 +150,7 @@ module api {
                 return false;
             }
 
-            return a == b;
+            return a.toString() === b.toString();
         }
 
         static stringArrayEquals(arrayA: string[], arrayB: string[]) {
