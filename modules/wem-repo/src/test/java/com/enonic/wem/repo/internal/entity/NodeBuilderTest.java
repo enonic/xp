@@ -7,11 +7,9 @@ import org.junit.Test;
 
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 import static org.junit.Assert.*;
 
@@ -78,42 +76,4 @@ public class NodeBuilderTest
         assertNotNull( myNode.creator() );
         assertNotNull( myNode.path() );
     }
-
-    @Test(expected = IllegalEditException.class)
-    public void checkIllegalEdit_given_changed_parent_then_illegal()
-        throws Exception
-    {
-
-        final Node myNode = Node.newNode( NodeId.from( "myid" ) ).
-            name( NodeName.from( "my-name" ) ).
-            parent( NodePath.ROOT ).
-            build();
-
-        final Node myEditedNode = Node.newNode( NodeId.from( "myid" ) ).
-            name( NodeName.from( "my-name" ) ).
-            parent( NodePath.newPath( "test" ).build() ).
-            build();
-
-        myNode.checkIllegalEdit( myEditedNode );
-    }
-
-    @Test(expected = IllegalEditException.class)
-    public void checkIllegalEdit_given_changed_modifier_then_illegal()
-        throws Exception
-    {
-
-        final Node myNode = Node.newNode( NodeId.from( "myid" ) ).
-            name( NodeName.from( "my-name" ) ).
-            parent( NodePath.ROOT ).
-            build();
-
-        final Node myEditedNode = Node.newNode( NodeId.from( "myid" ) ).
-            name( NodeName.from( "my-name" ) ).
-            parent( NodePath.ROOT ).
-            modifier( PrincipalKey.from( "user:test:modifier" ) ).
-            build();
-
-        myNode.checkIllegalEdit( myEditedNode );
-    }
-
 }

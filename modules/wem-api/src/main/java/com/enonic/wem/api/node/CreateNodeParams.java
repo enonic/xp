@@ -138,9 +138,9 @@ public class CreateNodeParams
 
         private String name;
 
-        private PropertyTree data;
+        private PropertyTree data = new PropertyTree();
 
-        private Attachments attachments;
+        private Attachments attachments = Attachments.empty();
 
         private IndexConfigDocument indexConfigDocument;
 
@@ -148,7 +148,7 @@ public class CreateNodeParams
 
         private NodeId nodeId;
 
-        private AccessControlList permissions;
+        private AccessControlList permissions = AccessControlList.empty();
 
         private boolean inheritPermissions;
 

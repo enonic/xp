@@ -125,91 +125,68 @@ abstract class PrincipalNodeTranslator
     {
         Preconditions.checkNotNull( principal );
 
-        final UpdateNodeParams updateNodeParams = new UpdateNodeParams().id( NodeId.from( principal.getKey() ) ).
-            editor( toBeEdited -> {
-                final PropertyTree data = toBeEdited.data().copy();
-
-                data.setString( DISPLAY_NAME_KEY, principal.getDisplayName() );
+        return new UpdateNodeParams().
+            id( NodeId.from( principal.getKey() ) ).
+            editor( editableNode -> {
+                final PropertyTree nodeData = editableNode.data;
+                nodeData.setString( DISPLAY_NAME_KEY, principal.getDisplayName() );
                 switch ( principal.getKey().getType() )
                 {
                     case USER:
-                        populateUserData( data.getRoot(), (User) principal );
+                        populateUserData( nodeData.getRoot(), (User) principal );
                 }
-
-                return Node.editNode( toBeEdited ).rootDataSet( data );
             } );
-
-        return updateNodeParams;
     }
 
     static UpdateNodeParams addRelationshipToUpdateNodeParams( final PrincipalRelationship relationship )
     {
         Preconditions.checkNotNull( relationship );
 
-        final UpdateNodeParams updateNodeParams = new UpdateNodeParams().id( NodeId.from( relationship.getFrom() ) ).
-            editor( toBeEdited -> {
-                final PropertyTree data = toBeEdited.data().copy();
-
+        return new UpdateNodeParams().
+            id( NodeId.from( relationship.getFrom() ) ).
+            editor( editableNode -> {
+                final PropertyTree nodeData = editableNode.data;
                 final String relationshipToKey = relationship.getTo().toString();
-
-                final boolean relationshipInList = data.getProperties( MEMBER_KEY ).stream().
+                final boolean relationshipInList = nodeData.getProperties( MEMBER_KEY ).stream().
                     map( Property::getValue ).
                     map( Value::asString ).
                     anyMatch( relationshipToKey::equals );
 
                 if ( !relationshipInList )
                 {
-                    data.addString( MEMBER_KEY, relationshipToKey );
+                    nodeData.addString( MEMBER_KEY, relationshipToKey );
                 }
-
-                return Node.editNode( toBeEdited ).rootDataSet( data );
             } );
-
-        return updateNodeParams;
     }
 
     static UpdateNodeParams removeRelationshipToUpdateNodeParams( final PrincipalRelationship relationship )
     {
         Preconditions.checkNotNull( relationship );
 
-        final UpdateNodeParams updateNodeParams = new UpdateNodeParams().id( NodeId.from( relationship.getFrom() ) ).
-            editor( toBeEdited -> {
-                final PropertyTree data = toBeEdited.data().copy();
-
+        return new UpdateNodeParams().id( NodeId.from( relationship.getFrom() ) ).
+            editor( editableNode -> {
+                final PropertyTree nodeData = editableNode.data;
                 final String relationshipToKey = relationship.getTo().toString();
 
-                final List<Value> updatedMembers = data.getProperties( MEMBER_KEY ).stream().
+                final List<Value> updatedMembers = nodeData.getProperties( MEMBER_KEY ).stream().
                     map( Property::getValue ).
                     filter( ( val ) -> !relationshipToKey.equals( val.asString() ) ).
                     collect( Collectors.toList() );
 
-                data.removeProperty( PrincipalPropertyNames.MEMBER_KEY );
-                data.setValues( MEMBER_KEY, updatedMembers );
-
-                return Node.editNode( toBeEdited ).rootDataSet( data );
+                nodeData.removeProperty( PrincipalPropertyNames.MEMBER_KEY );
+                nodeData.setValues( MEMBER_KEY, updatedMembers );
             } );
-
-        return updateNodeParams;
     }
 
     static UpdateNodeParams removeAllRelationshipsToUpdateNodeParams( final PrincipalKey from )
     {
         Preconditions.checkNotNull( from );
 
-        final UpdateNodeParams updateNodeParams = new UpdateNodeParams().id( NodeId.from( from ) ).
-            editor( toBeEdited -> {
-                if ( toBeEdited == null )
-                {
-                    return Node.editNode( Node.newNode().build() );
-                }
-                final PropertyTree data = toBeEdited.data().copy();
-
+        return new UpdateNodeParams().id( NodeId.from( from ) ).
+            editor( editableNode -> {
+                final PropertyTree data = editableNode.data;
                 data.removeProperties( MEMBER_KEY );
-
-                return Node.editNode( toBeEdited ).rootDataSet( data );
             } );
-
-        return updateNodeParams;
     }
 
     static PrincipalRelationships relationshipsFromNode( final Node node )

@@ -172,17 +172,17 @@ public class ContentNodeTranslator
 
     private NodeEditor toNodeEditor( final Content content, final Attachments attachments )
     {
-        final PropertyTree tree = new PropertyTree();
-        CONTENT_SERIALIZER.toData( content, tree.getRoot() );
+        final PropertyTree data = new PropertyTree();
+        CONTENT_SERIALIZER.toData( content, data.getRoot() );
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create();
 
-        return toBeEdited -> {
+        return editableNode -> {
 
             final com.enonic.wem.api.node.Attachments contentAttachmentsAsNodeAttachments =
                 CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( attachments );
 
-            processAttachments2( attachments, tree );
+            processAttachments2( attachments, data );
 
             final com.enonic.wem.api.node.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.api.node.Attachments.builder().
                 addAll( contentAttachmentsAsNodeAttachments );
@@ -194,14 +194,12 @@ public class ContentNodeTranslator
             {
                 nodeAttachmentsBuilder.add( thumbnailAttachment );
             }
-
-            return Node.editNode( toBeEdited ).
-                name( NodeName.from( content.getName().toString() ) ).
-                attachments( nodeAttachmentsBuilder.build() ).
-                indexConfigDocument( indexConfigDocument ).
-                rootDataSet( tree ).
-                permissions( content.getPermissions() ).
-                inheritPermissions( content.inheritsPermissions() );
+            editableNode.name = NodeName.from( content.getName().toString() );
+            editableNode.attachments = nodeAttachmentsBuilder.build();
+            editableNode.indexConfigDocument = indexConfigDocument;
+            editableNode.data = data;
+            editableNode.permissions = content.getPermissions();
+            editableNode.inheritPermissions = content.inheritsPermissions();
         };
     }
 

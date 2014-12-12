@@ -6,15 +6,11 @@ import com.google.common.base.Objects;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.BaseSchema;
-import com.enonic.wem.api.support.illegaledit.IllegalEdit;
-import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
-import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 import static com.enonic.wem.api.form.Form.newForm;
 
 public final class ContentType
     extends BaseSchema<ContentTypeName>
-    implements IllegalEditAware<ContentType>
 {
     private final ContentTypeName superType;
 
@@ -100,15 +96,6 @@ public final class ContentType
         return contentDisplayNameScript;
     }
 
-    @Override
-    public void checkIllegalEdit( final ContentType to )
-        throws IllegalEditException
-    {
-        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), ContentType.class );
-        IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), ContentType.class );
-        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), ContentType.class );
-        IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), ContentType.class );
-    }
 
     @Override
     public String toString()

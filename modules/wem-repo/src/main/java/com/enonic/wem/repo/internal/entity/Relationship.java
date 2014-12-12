@@ -10,13 +10,8 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.data.PropertyPath;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.support.ChangeTraceable;
-import com.enonic.wem.api.support.illegaledit.IllegalEdit;
-import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
-import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public final class Relationship
-    implements IllegalEditAware<Relationship>, ChangeTraceable
 {
     private final RelationshipId id;
 
@@ -106,19 +101,6 @@ public final class Relationship
     public PropertyPath getManagingData()
     {
         return key.getManagingData();
-    }
-
-    @Override
-    public void checkIllegalEdit( final Relationship to )
-        throws IllegalEditException
-    {
-        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Relationship.class );
-        IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), Relationship.class );
-        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Relationship.class );
-        IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), Relationship.class );
-        IllegalEdit.check( "fromItem", this.getFromItem(), to.getFromItem(), Relationship.class );
-        IllegalEdit.check( "toItem", this.getToItem(), to.getToItem(), Relationship.class );
-        IllegalEdit.check( "type", this.getType(), to.getType(), Relationship.class );
     }
 
     public static Builder newRelationship()

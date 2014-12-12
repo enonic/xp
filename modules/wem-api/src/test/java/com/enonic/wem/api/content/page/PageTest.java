@@ -16,7 +16,7 @@ public class PageTest
         config1.addString( "some", "config" );
 
         PropertyTree config2 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        config1.addString( "other", "config" );
+        config2.addString( "other", "config" );
 
         Region region1 = Region.newRegion().
             name( "main" ).

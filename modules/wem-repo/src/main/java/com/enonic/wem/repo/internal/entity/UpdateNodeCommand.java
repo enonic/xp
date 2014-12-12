@@ -5,6 +5,7 @@ import java.time.Instant;
 
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.Attachments;
+import com.enonic.wem.api.node.EditableNode;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.UpdateNodeParams;
@@ -43,13 +44,15 @@ public final class UpdateNodeCommand
     {
         final Node persistedNode = doGetById( params.getId(), false );
 
-        final Node.EditBuilder editBuilder = params.getEditor().edit( persistedNode );
-        if ( !editBuilder.isChanges() )
+        final EditableNode editableNode = new EditableNode( persistedNode );
+        params.getEditor().edit( editableNode );
+        final Node editedNode = editableNode.build();
+        if ( editedNode.equals( persistedNode ) )
         {
             return persistedNode;
         }
 
-        final Node updatedNode = createUpdatedNode( persistedNode, editBuilder );
+        final Node updatedNode = createUpdatedNode( persistedNode, editedNode );
 
         doStoreNode( updatedNode );
 
@@ -59,31 +62,24 @@ public final class UpdateNodeCommand
             resolve( updatedNode );
     }
 
-    private Node createUpdatedNode( final Node persistedNode, final Node.EditBuilder editBuilder )
+    private Node createUpdatedNode( final Node persistedNode, final Node editedNode )
     {
-        final Node editResult = editBuilder.build();
-        persistedNode.checkIllegalEdit( editResult );
-
         final Instant now = Instant.now();
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         final PrincipalKey modifier =
             authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.from( "user:system:admin" );
 
-        final NodePath parentPath = editResult.path().getParentPath();
-        final AccessControlList paramPerm = editResult.getPermissions() == null ? AccessControlList.empty() : editResult.getPermissions();
-        final AccessControlList permissions = evaluatePermissions( parentPath, editResult.inheritsPermissions(), paramPerm );
+        final NodePath parentPath = editedNode.path().getParentPath();
+        //final AccessControlList paramPerm = editedNode.getPermissions() == null ? AccessControlList.empty() : editedNode.getPermissions();
+        final AccessControlList permissions =
+            evaluatePermissions( parentPath, editedNode.inheritsPermissions(), editedNode.getPermissions() );
+        final Attachments attachments = synchronizeAttachments( editedNode.attachments(), persistedNode );
 
-        final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
+        final Node.Builder updateNodeBuilder = Node.newNode( editedNode ).
             modifiedTime( now ).
             modifier( modifier ).
-            data( editResult.data() ).
-            attachments( synchronizeAttachments( editResult.attachments(), persistedNode ) ).
-            permissions( permissions ).
-            inheritPermissions( editResult.inheritsPermissions() ).
-            indexConfigDocument( editResult.getIndexConfigDocument() != null
-                                     ? editResult.getIndexConfigDocument()
-                                     : persistedNode.getIndexConfigDocument() );
-
+            attachments( attachments ).
+            permissions( permissions );
         return updateNodeBuilder.build();
     }
 

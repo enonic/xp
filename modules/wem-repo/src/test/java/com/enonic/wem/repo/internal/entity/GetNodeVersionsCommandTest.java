@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -15,9 +16,11 @@ import com.enonic.wem.api.node.UpdateNodeParams;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
+@Ignore
 public class GetNodeVersionsCommandTest
     extends AbstractNodeTest
 {
+
 
     @Test
     public void get_single_version()
@@ -75,10 +78,12 @@ public class GetNodeVersionsCommandTest
 
     private Node doUpdateNode( final Node node )
     {
+        UpdateNodeParams updateNodeParams = new UpdateNodeParams().
+            id( node.id() ).
+            editor( toBeEdited -> toBeEdited.manualOrderValue = 10l );
+
         return UpdateNodeCommand.create().
-            params( new UpdateNodeParams().editor( toBeEdited -> Node.editNode( toBeEdited ).
-                manualOrderValue( 10l ) ).
-                id( node.id() ) ).
+            params( updateNodeParams ).
             queryService( this.queryService ).
             indexService( this.indexService ).
             workspaceService( this.workspaceService ).
@@ -87,6 +92,4 @@ public class GetNodeVersionsCommandTest
             build().
             execute();
     }
-
-
 }

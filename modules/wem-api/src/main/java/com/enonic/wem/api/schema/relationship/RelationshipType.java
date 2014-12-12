@@ -10,12 +10,9 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.support.illegaledit.IllegalEdit;
-import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 
 public final class RelationshipType
     extends BaseSchema<RelationshipTypeName>
-    implements IllegalEditAware<RelationshipType>
 {
     private final String fromSemantic;
 
@@ -81,12 +78,6 @@ public final class RelationshipType
     {
         return Objects.hashCode( getName(), getDisplayName(), getDescription(), fromSemantic, toSemantic, allowedFromTypes,
                                  allowedToTypes );
-    }
-
-    public void checkIllegalEdit( final RelationshipType to )
-    {
-        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), RelationshipType.class );
-
     }
 
     public static Builder newRelationshipType()

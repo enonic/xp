@@ -639,7 +639,10 @@ public final class SecurityServiceImpl
     {
         final UpdateNodeParams updateParams = new UpdateNodeParams().
             id( nodeId ).
-            editor( toBeEdited -> Node.editNode( toBeEdited ).permissions( permissions ).inheritPermissions( inheritPermissions ) );
+            editor( editableNode -> {
+                editableNode.permissions = permissions;
+                editableNode.inheritPermissions = inheritPermissions;
+            } );
 
         nodeService.update( updateParams );
     }

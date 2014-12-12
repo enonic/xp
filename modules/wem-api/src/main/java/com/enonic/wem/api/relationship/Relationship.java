@@ -12,12 +12,8 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.PropertyPath;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.support.illegaledit.IllegalEdit;
-import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
-import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public final class Relationship
-    implements IllegalEditAware<Relationship>
 {
     private final RelationshipId id;
 
@@ -119,19 +115,6 @@ public final class Relationship
     public PropertyPath getManagingData()
     {
         return managingData;
-    }
-
-    @Override
-    public void checkIllegalEdit( final Relationship to )
-        throws IllegalEditException
-    {
-        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Relationship.class );
-        IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), Relationship.class );
-        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Relationship.class );
-        IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), Relationship.class );
-        IllegalEdit.check( "fromContent", this.getFromContent(), to.getFromContent(), Relationship.class );
-        IllegalEdit.check( "toContent", this.getToContent(), to.getToContent(), Relationship.class );
-        IllegalEdit.check( "type", this.getType(), to.getType(), Relationship.class );
     }
 
     public static Builder newRelationship()

@@ -98,7 +98,7 @@ public class ReorderChildNodeCommand
 
     private Node doUpdateNodeOrderValue( final Long newOrderValue )
     {
-        final Node updatedNode = Node.editNode( nodeToMove ).
+        final Node updatedNode = Node.newNode( nodeToMove ).
             manualOrderValue( newOrderValue ).
             build();
 

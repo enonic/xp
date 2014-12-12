@@ -1,6 +1,7 @@
 package com.enonic.wem.api.node;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -11,16 +12,8 @@ import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.api.support.ChangeTraceable;
-import com.enonic.wem.api.support.Changes;
-import com.enonic.wem.api.support.illegaledit.IllegalEdit;
-import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
-import com.enonic.wem.api.support.illegaledit.IllegalEditException;
-
-import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class Node
-    implements ChangeTraceable, IllegalEditAware<Node>
 {
     private final NodeId id;
 
@@ -28,19 +21,21 @@ public final class Node
 
     private final NodePath parent;
 
-    private final NodePath path;
+    private final NodeType nodeType;
 
-    private final PrincipalKey modifier;
+    private final NodePath path;
 
     private final PrincipalKey creator;
 
-    private final boolean hasChildren;
-
     private final Instant createdTime;
 
-    private final PropertyTree data;
+    private final PrincipalKey modifier;
 
     private final Instant modifiedTime;
+
+    private final boolean hasChildren;
+
+    private final PropertyTree data;
 
     private final IndexConfigDocument indexConfigDocument;
 
@@ -54,17 +49,29 @@ public final class Node
 
     private final boolean inheritPermissions;
 
-    private final NodeType nodeType;
-
-    private Node( final BaseBuilder builder )
+    private Node( final Builder builder )
     {
+        Preconditions.checkNotNull( builder.permissions, "permissions are required" );
+        Preconditions.checkNotNull( builder.attachments, "attachments are required" );
+        Preconditions.checkNotNull( builder.data, "data are required" );
+
         this.id = builder.id;
+        this.name = builder.name;
+        this.parent = builder.parent;
+        this.nodeType = builder.nodeType;
+        this.creator = builder.creator;
         this.createdTime = builder.createdTime;
+        this.modifier = builder.modifier;
         this.modifiedTime = builder.modifiedTime;
-
+        this.hasChildren = builder.hasChildren;
         this.data = builder.data != null ? builder.data : new PropertyTree();
-
         this.attachments = builder.attachments == null ? Attachments.empty() : builder.attachments;
+        this.childOrder = builder.childOrder;
+        this.manualOrderValue = builder.manualOrderValue;
+        this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
+        this.inheritPermissions = builder.inheritPermissions;
+
+        this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
 
         if ( builder.indexConfigDocument != null )
         {
@@ -76,18 +83,6 @@ public final class Node
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build();
         }
-
-        this.creator = builder.creator;
-        this.name = builder.name;
-        this.parent = builder.parent;
-        this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
-        this.modifier = builder.modifier;
-        this.hasChildren = builder.hasChildren;
-        this.childOrder = builder.childOrder;
-        this.manualOrderValue = builder.manualOrderValue;
-        this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
-        this.inheritPermissions = builder.inheritPermissions;
-        this.nodeType = builder.nodeType;
     }
 
     public NodeName name()
@@ -191,19 +186,6 @@ public final class Node
         Preconditions.checkNotNull( this.indexConfigDocument, "EntityIndexConfig must be set" );
     }
 
-    @Override
-    public void checkIllegalEdit( final Node to )
-        throws IllegalEditException
-    {
-        IllegalEdit.check( "id", this.id(), to.id(), Node.class );
-        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Node.class );
-        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Node.class );
-
-        IllegalEdit.check( "parent", this.parent(), to.parent(), Node.class );
-        IllegalEdit.check( "creator", this.creator(), to.creator(), Node.class );
-        IllegalEdit.check( "modifier", this.modifier(), to.modifier(), Node.class );
-    }
-
     public String toString()
     {
         return this.path.toString();
@@ -224,79 +206,20 @@ public final class Node
         return new Builder( node );
     }
 
-    public static EditBuilder editNode( final Node original )
-    {
-        return new EditBuilder( original );
-    }
-
-    private static class BaseBuilder
-    {
-        NodeName name;
-
-        NodePath parent;
-
-        PrincipalKey modifier;
-
-        PrincipalKey creator;
-
-        boolean hasChildren = false;
-
-        NodeId id;
-
-        Instant createdTime;
-
-        Instant modifiedTime;
-
-        PropertyTree data = new PropertyTree();
-
-        Attachments attachments;
-
-        IndexConfigDocument indexConfigDocument;
-
-        ChildOrder childOrder;
-
-        Long manualOrderValue;
-
-        AccessControlList permissions;
-
-        boolean inheritPermissions;
-
-        NodeType nodeType;
-
-        private BaseBuilder()
-        {
-        }
-
-        private BaseBuilder( final Node node )
-        {
-            this.id = node.id;
-            this.createdTime = node.createdTime;
-            this.modifiedTime = node.modifiedTime;
-            this.data = node.data;
-            this.indexConfigDocument = node.indexConfigDocument;
-            this.name = node.name;
-            this.parent = node.parent;
-            this.creator = node.creator;
-            this.modifier = node.modifier;
-            this.childOrder = node.childOrder;
-            this.manualOrderValue = node.manualOrderValue;
-            this.permissions = node.permissions;
-            this.inheritPermissions = node.inheritPermissions;
-            this.nodeType = node.nodeType;
-            this.attachments = node.attachments;
-        }
-
-        private BaseBuilder( final NodeId id, final NodeName name )
-        {
-            this.id = id;
-            this.name = name;
-            this.inheritPermissions = true;
-        }
-    }
-
     public static class Builder
-        extends BaseBuilder
     {
+        private NodeId id;
+
+        private Instant createdTime;
+
+        private Instant modifiedTime;
+
+        private PropertyTree data = new PropertyTree();
+
+        private Attachments attachments = Attachments.empty();
+
+        private IndexConfigDocument indexConfigDocument;
+
         private NodeName name;
 
         private NodePath parent;
@@ -311,7 +234,7 @@ public final class Node
 
         private Long manualOrderValue;
 
-        private AccessControlList permissions;
+        private AccessControlList permissions = AccessControlList.empty();
 
         private boolean inheritPermissions;
 
@@ -330,25 +253,33 @@ public final class Node
         public Builder( final Node node )
         {
             this.id = node.id;
-            this.createdTime = node.createdTime;
-            this.modifiedTime = node.modifiedTime;
-            this.data = node.data;
-            this.attachments = node.attachments;
             this.name = node.name;
             this.parent = node.parent;
-            this.modifier = node.modifier;
+            this.nodeType = node.nodeType;
             this.creator = node.creator;
+            this.createdTime = node.createdTime;
+            this.modifier = node.modifier;
+            this.modifiedTime = node.modifiedTime;
+            this.hasChildren = node.hasChildren;
+            this.data = node.data;
+            this.indexConfigDocument = node.indexConfigDocument;
+            this.attachments = node.attachments;
             this.childOrder = node.childOrder;
             this.manualOrderValue = node.manualOrderValue;
             this.permissions = node.permissions;
             this.inheritPermissions = node.inheritPermissions;
-            this.nodeType = node.nodeType;
         }
 
         public Builder( final NodeId id, final NodeName name )
         {
             this.id = id;
             this.name = name;
+        }
+
+        public Builder name( final String value )
+        {
+            this.name( NodeName.from( value ) );
+            return this;
         }
 
         public Builder name( final NodeName value )
@@ -455,113 +386,6 @@ public final class Node
 
         public Node build()
         {
-            BaseBuilder baseBuilder = new BaseBuilder();
-            baseBuilder.id = this.id;
-            baseBuilder.createdTime = this.createdTime;
-            baseBuilder.modifiedTime = this.modifiedTime;
-            baseBuilder.data = this.data;
-            baseBuilder.attachments = this.attachments;
-            baseBuilder.name = this.name;
-            baseBuilder.parent = this.parent;
-            baseBuilder.creator = this.creator;
-            baseBuilder.modifier = this.modifier;
-            baseBuilder.indexConfigDocument = this.indexConfigDocument;
-            baseBuilder.hasChildren = this.hasChildren;
-            baseBuilder.childOrder = this.childOrder;
-            baseBuilder.manualOrderValue = this.manualOrderValue;
-            baseBuilder.permissions = this.permissions;
-            baseBuilder.inheritPermissions = this.inheritPermissions;
-            baseBuilder.nodeType = this.nodeType;
-
-            return new Node( baseBuilder );
-        }
-    }
-
-    public static class EditBuilder
-        extends BaseBuilder
-    {
-        private final Node originalNode;
-
-        final Changes.Builder changes = new Changes.Builder();
-
-        public EditBuilder( final Node original )
-        {
-            super( original );
-            this.originalNode = original;
-        }
-
-        public EditBuilder name( final NodeName value )
-        {
-            changes.recordChange( newPossibleChange( "name" ).from( this.originalNode.name ).to( value ).build() );
-            this.name = value;
-            return this;
-        }
-
-        public EditBuilder rootDataSet( final PropertyTree value )
-        {
-            this.data = value;
-            changes.recordChange( newPossibleChange( "data" ).from( this.originalNode.data() ).to( this.data ).build() );
-            return this;
-        }
-
-        public EditBuilder attachments( final Attachments value )
-        {
-            this.attachments = value;
-            changes.recordChange(
-                newPossibleChange( "attachments" ).from( this.originalNode.attachments() ).to( this.attachments ).build() );
-            return this;
-        }
-
-        public EditBuilder indexConfigDocument( final IndexConfigDocument indexConfigDocument )
-        {
-            changes.recordChange(
-                newPossibleChange( "data" ).from( this.originalNode.indexConfigDocument ).to( this.indexConfigDocument ).build() );
-            this.indexConfigDocument = indexConfigDocument;
-            return this;
-        }
-
-        public EditBuilder childOrder( final ChildOrder childOrder )
-        {
-            this.childOrder = childOrder;
-            changes.recordChange( newPossibleChange( "childOrder" ).from( this.originalNode.childOrder ).to( this.childOrder ).build() );
-            return this;
-        }
-
-        public EditBuilder manualOrderValue( final Long manualOrderValue )
-        {
-            this.manualOrderValue = manualOrderValue;
-            changes.recordChange(
-                newPossibleChange( "manualOrderValue" ).from( this.originalNode.manualOrderValue ).to( this.manualOrderValue ).build() );
-            return this;
-        }
-
-        public EditBuilder permissions( final AccessControlList permissions )
-        {
-            this.permissions = permissions;
-            changes.recordChange( newPossibleChange( "permissions" ).from( this.originalNode.permissions ).to( this.permissions ).build() );
-            return this;
-        }
-
-        public EditBuilder inheritPermissions( final boolean inheritPermissions )
-        {
-            this.inheritPermissions = inheritPermissions;
-            changes.recordChange( newPossibleChange( "inheritPermissions" ).from( this.originalNode.inheritPermissions ).to(
-                this.inheritPermissions ).build() );
-            return this;
-        }
-
-        public boolean isChanges()
-        {
-            return this.changes.isChanges();
-        }
-
-        public Changes getChanges()
-        {
-            return this.changes.build();
-        }
-
-        public Node build()
-        {
             return new Node( this );
         }
     }
@@ -580,98 +404,28 @@ public final class Node
 
         final Node node = (Node) o;
 
-        if ( hasChildren != node.hasChildren )
-        {
-            return false;
-        }
-        if ( inheritPermissions != node.inheritPermissions )
-        {
-            return false;
-        }
-        if ( permissions != null ? !permissions.equals( node.permissions ) : node.permissions != null )
-        {
-            return false;
-        }
-        if ( attachments != null ? !attachments.equals( node.attachments ) : node.attachments != null )
-        {
-            return false;
-        }
-        if ( childOrder != null ? !childOrder.equals( node.childOrder ) : node.childOrder != null )
-        {
-            return false;
-        }
-        if ( nodeType != null ? !nodeType.equals( node.nodeType ) : node.nodeType != null )
-        {
-            return false;
-        }
-        if ( createdTime != null ? !createdTime.equals( node.createdTime ) : node.createdTime != null )
-        {
-            return false;
-        }
-        if ( creator != null ? !creator.equals( node.creator ) : node.creator != null )
-        {
-            return false;
-        }
-        if ( data != null ? !data.equals( node.data ) : node.data != null )
-        {
-            return false;
-        }
-        if ( id != null ? !id.equals( node.id ) : node.id != null )
-        {
-            return false;
-        }
-        if ( indexConfigDocument != null ? !indexConfigDocument.equals( node.indexConfigDocument ) : node.indexConfigDocument != null )
-        {
-            return false;
-        }
-        if ( manualOrderValue != null ? !manualOrderValue.equals( node.manualOrderValue ) : node.manualOrderValue != null )
-        {
-            return false;
-        }
-        if ( modifiedTime != null ? !modifiedTime.equals( node.modifiedTime ) : node.modifiedTime != null )
-        {
-            return false;
-        }
-        if ( modifier != null ? !modifier.equals( node.modifier ) : node.modifier != null )
-        {
-            return false;
-        }
-        if ( name != null ? !name.equals( node.name ) : node.name != null )
-        {
-            return false;
-        }
-        if ( parent != null ? !parent.equals( node.parent ) : node.parent != null )
-        {
-            return false;
-        }
-        if ( path != null ? !path.equals( node.path ) : node.path != null )
-        {
-            return false;
-        }
-
-        return true;
+        return Objects.equals( id, node.id ) &&
+            Objects.equals( name, node.name ) &&
+            Objects.equals( nodeType, node.nodeType ) &&
+            Objects.equals( parent, node.parent ) &&
+            Objects.equals( hasChildren, node.hasChildren ) &&
+            Objects.equals( inheritPermissions, node.inheritPermissions ) &&
+            Objects.equals( creator, node.creator ) &&
+            Objects.equals( modifier, node.modifier ) &&
+            Objects.equals( createdTime, node.createdTime ) &&
+            Objects.equals( modifiedTime, node.modifiedTime ) &&
+            Objects.equals( manualOrderValue, node.manualOrderValue ) &&
+            Objects.equals( childOrder, node.childOrder ) &&
+            Objects.equals( attachments, node.attachments ) &&
+            Objects.equals( permissions, node.permissions ) &&
+            Objects.equals( data, node.data ) &&
+            Objects.equals( indexConfigDocument, node.indexConfigDocument );
     }
 
     @Override
     public int hashCode()
     {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + ( name != null ? name.hashCode() : 0 );
-        result = 31 * result + ( parent != null ? parent.hashCode() : 0 );
-        result = 31 * result + ( path != null ? path.hashCode() : 0 );
-        result = 31 * result + ( modifier != null ? modifier.hashCode() : 0 );
-        result = 31 * result + ( creator != null ? creator.hashCode() : 0 );
-        result = 31 * result + ( hasChildren ? 1 : 0 );
-        result = 31 * result + ( createdTime != null ? createdTime.hashCode() : 0 );
-        result = 31 * result + ( data != null ? data.hashCode() : 0 );
-        result = 31 * result + ( modifiedTime != null ? modifiedTime.hashCode() : 0 );
-        result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
-        result = 31 * result + ( attachments != null ? attachments.hashCode() : 0 );
-        result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
-        result = 31 * result + ( manualOrderValue != null ? manualOrderValue.hashCode() : 0 );
-        result = 31 * result + ( permissions != null ? permissions.hashCode() : 0 );
-        result = 31 * result + ( inheritPermissions ? 1 : 0 );
-        result = 31 * result + ( nodeType != null ? nodeType.hashCode() : 0 );
-        return result;
+        return Objects.hash( id, name, parent, nodeType, hasChildren, inheritPermissions, creator, modifier, createdTime, modifiedTime,
+                             manualOrderValue, childOrder, attachments, permissions, data, indexConfigDocument );
     }
 }

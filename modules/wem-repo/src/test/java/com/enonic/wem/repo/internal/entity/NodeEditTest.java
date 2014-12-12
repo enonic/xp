@@ -19,14 +19,13 @@ import static org.junit.Assert.*;
 
 public class NodeEditTest
 {
-
     @Test
     public void edit_nothing()
         throws Exception
     {
         final Node node = createNode();
 
-        final Node editedNode = Node.editNode( node ).build();
+        final Node editedNode = Node.newNode( node ).build();
 
         assertEquals( node, editedNode );
     }
@@ -39,7 +38,7 @@ public class NodeEditTest
 
         final NodeName newName = NodeName.from( "newname" );
 
-        final Node editedNode = Node.editNode( node ).
+        final Node editedNode = Node.newNode( node ).
             name( newName ).
             build();
 
@@ -56,7 +55,7 @@ public class NodeEditTest
             defaultConfig( IndexConfig.FULLTEXT ).
             build();
 
-        final Node editedNode = Node.editNode( node ).
+        final Node editedNode = Node.newNode( node ).
             indexConfigDocument( newIndexConfig ).
             build();
 

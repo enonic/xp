@@ -4,15 +4,11 @@ package com.enonic.wem.repo.internal.entity;
 import java.time.Instant;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Name;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.api.support.illegaledit.IllegalEdit;
-import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 
 public final class RelationshipType
-    implements IllegalEditAware<RelationshipType>
 {
     private final Name name;
 
@@ -111,16 +107,6 @@ public final class RelationshipType
     public int hashCode()
     {
         return Objects.hashCode( name, displayName, relationshipTypeName, fromSemantic, toSemantic );
-    }
-
-    public void checkIllegalEdit( final RelationshipType to )
-    {
-        Preconditions.checkArgument( this.getCreatedTime().equals( to.getCreatedTime() ) );
-        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), RelationshipType.class );
-        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), RelationshipType.class );
-
-        // Cannot be changed since they are a part of a Relationship's storage path in JCR.
-        IllegalEdit.check( "name", this.getName(), to.getName(), RelationshipType.class );
     }
 
     public static Builder newRelationshipType()

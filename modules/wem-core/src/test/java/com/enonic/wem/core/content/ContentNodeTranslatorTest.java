@@ -24,6 +24,7 @@ import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.EditableNode;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
@@ -163,7 +164,9 @@ public class ContentNodeTranslatorTest
 
         final Node node = Node.newNode().build();
 
-        final Node editedNode = updateNode.getEditor().edit( node ).build();
+        EditableNode toBeEdited = new EditableNode( node );
+        updateNode.getEditor().edit( toBeEdited );
+        final Node editedNode = toBeEdited.build();
 
         final com.enonic.wem.api.node.Attachment thumbnailAttachment =
             editedNode.attachments().getAttachment( ThumbnailAttachmentSerializer.THUMB_NAME );
