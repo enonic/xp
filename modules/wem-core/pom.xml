@@ -44,7 +44,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tika</groupId>
-      <artifactId>tika-core</artifactId>
+      <artifactId>tika-parsers</artifactId>
       <version>1.6</version>
     </dependency>
   </dependencies>

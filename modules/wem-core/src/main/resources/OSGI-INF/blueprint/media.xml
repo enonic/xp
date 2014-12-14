@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <reference id="tikaParser" interface="org.apache.tika.parser.Parser"/>
+  <reference id="tikaDetector" interface="org.apache.tika.detect.Detector"/>
+
+  <bean id="mediaInfoService" class="com.enonic.wem.core.media.MediaInfoService" init-method="diag">
+    <property name="parser" ref="tikaParser"/>
+    <property name="detector" ref="tikaDetector"/>
+  </bean>
+
+</blueprint>
