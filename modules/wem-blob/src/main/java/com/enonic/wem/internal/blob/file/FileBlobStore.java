@@ -11,9 +11,12 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
+
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.home.HomeDir;
 import com.enonic.wem.api.blob.BlobKeyCreator;
+import com.enonic.wem.api.home.HomeDir;
 import com.enonic.wem.internal.blob.BlobRecord;
 import com.enonic.wem.internal.blob.BlobStore;
 import com.enonic.wem.internal.blob.BlobStoreException;
@@ -107,6 +110,19 @@ public final class FileBlobStore
     {
         final File file = getBlobFile( key );
         return delete( file );
+    }
+
+    @Override
+    public ByteSource getByteSource( final BlobKey key )
+        throws BlobStoreException
+    {
+        final File file = getBlobFile( key );
+        if ( !file.exists() )
+        {
+            return null;
+        }
+
+        return Files.asByteSource( file );
     }
 
     private File getBlobFile( final BlobKey key )

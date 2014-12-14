@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.support.AbstractImmutableEntitySet;
+import com.enonic.wem.api.util.BinaryReference;
 
 public class AttachedBinaries
     extends AbstractImmutableEntitySet<AttachedBinary>
@@ -32,6 +33,19 @@ public class AttachedBinaries
         return new AttachedBinaries( returnFields );
     }
 
+    public AttachedBinary getByBinaryReference( final BinaryReference reference )
+    {
+        for ( final AttachedBinary attachedBinary : this.set )
+        {
+            if ( attachedBinary.getBinaryReference().equals( reference ) )
+            {
+                return attachedBinary;
+            }
+        }
+
+        return null;
+    }
+
     private static AttachedBinaries fromCollection( final Collection<AttachedBinary> references )
     {
         return new AttachedBinaries( ImmutableSet.copyOf( references ) );
@@ -44,7 +58,7 @@ public class AttachedBinaries
 
     public static class Builder
     {
-        private Set<AttachedBinary> nodeAttachedBinaries = Sets.newHashSet();
+        private final Set<AttachedBinary> nodeAttachedBinaries = Sets.newHashSet();
 
         public Builder add( final AttachedBinary attachedBinary )
         {

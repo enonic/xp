@@ -3,6 +3,8 @@ package com.enonic.wem.internal.blob;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.api.blob.BlobKey;
 
 /**
@@ -54,6 +56,9 @@ public interface BlobStore
      * @throws IOException if an error occurred
      */
     public boolean deleteRecord( BlobKey key )
+        throws BlobStoreException;
+
+    public ByteSource getByteSource( BlobKey key )
         throws BlobStoreException;
 }
 

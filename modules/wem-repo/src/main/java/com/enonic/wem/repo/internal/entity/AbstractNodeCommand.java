@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -108,7 +109,7 @@ abstract class AbstractNodeCommand
     }
 
 
-    Node doCreateNode( final CreateNodeParams params )
+    Node doCreateNode( final CreateNodeParams params, final BlobService blobService )
     {
         return CreateNodeCommand.create().
             params( params ).
@@ -117,6 +118,7 @@ abstract class AbstractNodeCommand
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
+            blobService( blobService ).
             build().
             execute();
     }

@@ -2,23 +2,27 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.repo.internal.index.query.QueryService;
 
 public class DuplicateNodeCommand
     extends AbstractNodeCommand
 {
     private final NodeId nodeId;
 
+    private final BlobService blobService;
+
     private DuplicateNodeCommand( final Builder builder )
     {
         super( builder );
         this.nodeId = builder.id;
+        this.blobService = builder.blobService;
     }
 
     public Node execute()
@@ -31,7 +35,7 @@ public class DuplicateNodeCommand
             name( newNodeName ).
             build();
 
-        final Node duplicatedNode = doCreateNode( builder );
+        final Node duplicatedNode = doCreateNode( builder, this.blobService );
 
         storeChildNodes( existingNode, duplicatedNode );
 
@@ -50,7 +54,7 @@ public class DuplicateNodeCommand
         {
             final Node newChildNode = this.doCreateNode( CreateNodeParams.from( node ).
                 parent( newParent.path() ).
-                build() );
+                build(), blobService );
 
             storeChildNodes( node, newChildNode );
         }
@@ -91,6 +95,8 @@ public class DuplicateNodeCommand
     {
         private NodeId id;
 
+        private BlobService blobService;
+
         Builder()
         {
             super();
@@ -108,9 +114,17 @@ public class DuplicateNodeCommand
             return new DuplicateNodeCommand( this );
         }
 
+        public Builder blobService( final BlobService blobService )
+        {
+            this.blobService = blobService;
+            return this;
+        }
+
         void validate()
         {
+            super.validate();
             Preconditions.checkNotNull( id );
+            Preconditions.checkNotNull( blobService );
         }
     }
 

@@ -11,7 +11,6 @@ public class BinaryReference
 
     public static BinaryReference from( final String value )
     {
-        // TODO: deserialize
         return new BinaryReference( value );
     }
 

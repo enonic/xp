@@ -1,9 +1,12 @@
 package com.enonic.wem.api.mock.memory;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
@@ -31,5 +34,18 @@ public final class MockBlobService
     public Blob get( final BlobKey key )
     {
         return this.blobs.get( key );
+    }
+
+    @Override
+    public ByteSource getByteSource( final BlobKey blobKey )
+    {
+        try
+        {
+            return ByteSource.wrap( ByteStreams.toByteArray( blobs.get( blobKey ).getStream() ) );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( "failed to get ByteSource for blobKey " + blobKey, e );
+        }
     }
 }

@@ -174,6 +174,7 @@ public class NodeServiceImpl
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
+            blobService( this.blobService ).
             build().
             execute();
     }
@@ -259,6 +260,7 @@ public class NodeServiceImpl
             workspaceService( this.workspaceService ).
             indexService( this.indexService ).
             versionService( this.versionService ).
+            blobService( this.blobService ).
             build().
             execute();
     }
@@ -384,6 +386,7 @@ public class NodeServiceImpl
             queryService( this.queryService ).
             versionService( this.versionService ).
             workspaceService( this.workspaceService ).
+            blobService( this.blobService ).
             build().
             execute();
     }
