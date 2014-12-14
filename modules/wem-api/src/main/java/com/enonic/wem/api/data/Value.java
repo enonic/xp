@@ -4,8 +4,6 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.util.BinaryReference;
-
 /**
  * A generic holder for the value of a Property.
  */
@@ -228,7 +226,7 @@ public abstract class Value
     /**
      * Attempts to return value as Reference, using best effort converting if value is not of type Reference.
      */
-    public BinaryReference asBinaryReference()
+    public com.enonic.wem.api.util.BinaryReference asBinaryReference()
     {
         if ( object == null )
         {
@@ -353,9 +351,9 @@ public abstract class Value
         return new Reference( value );
     }
 
-    public static Value newBinary( final BinaryReference value )
+    public static Value newBinary( final com.enonic.wem.api.util.BinaryReference value )
     {
-        return new Binary( value );
+        return new BinaryReference( value );
     }
 
     public static Value newLink( final com.enonic.wem.api.util.Link value )
@@ -603,16 +601,16 @@ public abstract class Value
         }
     }
 
-    static class Binary
+    static class BinaryReference
         extends Value
     {
 
-        Binary( final BinaryReference value )
+        BinaryReference( final com.enonic.wem.api.util.BinaryReference value )
         {
             super( ValueTypes.BINARY_REFERENCE, value );
         }
 
-        Binary( final Binary source )
+        BinaryReference( final BinaryReference source )
         {
             super( ValueTypes.BINARY_REFERENCE, source.getObject() );
         }
@@ -620,7 +618,7 @@ public abstract class Value
         @Override
         Value copy( final PropertyTree tree )
         {
-            return new Binary( this );
+            return new BinaryReference( this );
         }
 
         @Override
@@ -630,7 +628,6 @@ public abstract class Value
         }
 
     }
-
 
 
     static class Link

@@ -11,6 +11,8 @@ import com.enonic.wem.api.data.PropertyTreeJson;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.node.AttachedBinaries;
+import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.Attachment;
 import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.Node;
@@ -72,6 +74,9 @@ final class NodeJson
     @JsonProperty("nodeType")
     private String nodeType;
 
+    @JsonProperty("attachedBinaries")
+    private List<AttachedBinaryJson> attachedBinaries;
+
     public Node fromJson()
     {
         return Node.newNode().
@@ -91,6 +96,7 @@ final class NodeJson
             permissions( fromJson( this.permissions ) ).
             inheritPermissions( this.inheritPermissions ).
             nodeType( NodeType.from( this.nodeType ) ).
+            attachedBinaries( fromNodeAttahcedBinaryJsonList( attachedBinaries ) ).
             build();
     }
 
@@ -109,6 +115,17 @@ final class NodeJson
     {
         final Attachments.Builder builder = Attachments.builder();
         for ( final AttachmentJson entry : list )
+        {
+            builder.add( entry.fromJson() );
+        }
+
+        return builder.build();
+    }
+
+    private AttachedBinaries fromNodeAttahcedBinaryJsonList( final List<AttachedBinaryJson> list )
+    {
+        final AttachedBinaries.Builder builder = AttachedBinaries.create();
+        for ( final AttachedBinaryJson entry : list )
         {
             builder.add( entry.fromJson() );
         }
@@ -135,6 +152,7 @@ final class NodeJson
         json.permissions = toJson( node.getPermissions() );
         json.inheritPermissions = node.inheritsPermissions();
         json.nodeType = node.getNodeType().getName();
+        json.attachedBinaries = toNodeAttachedBinaryJsonList( node.getAttachedBinaries() );
         return json;
     }
 
@@ -176,5 +194,22 @@ final class NodeJson
         }
 
         return attachmentJsons;
+    }
+
+    private static List<AttachedBinaryJson> toNodeAttachedBinaryJsonList( final AttachedBinaries attachedBinaries )
+    {
+        if ( attachedBinaries == null )
+        {
+            return null;
+        }
+
+        final List<AttachedBinaryJson> attachedBinaryJsons = Lists.newArrayList();
+
+        for ( final AttachedBinary attachedBinary : attachedBinaries )
+        {
+            attachedBinaryJsons.add( AttachedBinaryJson.toJson( attachedBinary ) );
+        }
+
+        return attachedBinaryJsons;
     }
 }

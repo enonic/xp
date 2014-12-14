@@ -7,7 +7,7 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.util.BinaryReference;
 
-public class GetNodeBinaryCommand
+public class GetBinaryCommand
     extends AbstractNodeCommand
 {
     private final BinaryReference binaryReference;
@@ -16,7 +16,7 @@ public class GetNodeBinaryCommand
 
     private final NodeId nodeId;
 
-    public GetNodeBinaryCommand( final Builder builder )
+    public GetBinaryCommand( final Builder builder )
     {
         super( builder );
         this.binaryReference = builder.binaryReference;
@@ -68,9 +68,9 @@ public class GetNodeBinaryCommand
             return this;
         }
 
-        public GetNodeBinaryCommand build()
+        public GetBinaryCommand build()
         {
-            return new GetNodeBinaryCommand( this );
+            return new GetBinaryCommand( this );
         }
     }
 }

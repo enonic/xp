@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.blob.BlobKey;
@@ -12,6 +13,7 @@ import static org.junit.Assert.*;
 
 public class ContentAttachmentsNodeTranslator2Test
 {
+    @Ignore
     @Test
     public void translate()
         throws Exception

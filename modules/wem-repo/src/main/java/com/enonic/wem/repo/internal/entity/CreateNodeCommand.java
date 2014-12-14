@@ -1,16 +1,22 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.blob.Blob;
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.ValueTypes;
 import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.node.AttachedBinaries;
+import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.Attachments;
+import com.enonic.wem.api.node.BinaryAttachment;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -32,11 +38,13 @@ public final class CreateNodeCommand
 {
     private final CreateNodeParams params;
 
+    private final BlobService blobService;
+
     private CreateNodeCommand( final Builder builder )
     {
         super( builder );
-
         this.params = builder.params;
+        this.blobService = builder.blobService;
     }
 
     public Node execute()
@@ -56,20 +64,7 @@ public final class CreateNodeCommand
 
         final Long manualOrderValue = resolvePotentialManualOrderValue();
 
-        final PropertyTree data = params.getData();
-
-        final Set<Property> binaryReferences = data.getByValueType( ValueTypes.BINARY_REFERENCE );
-
-        for ( final Property binaryRef : binaryReferences )
-        {
-            if ( !this.params.getBinaryReferences().contains( binaryRef.getBinaryReference() ) )
-            {
-                throw new NodeBinaryReferenceException( "No binary with reference " + binaryRef + " found in createNodeParams" );
-            }
-
-            // Store binary -> blobKey
-            // Add binary-data to node (blobKey)
-        }
+        final AttachedBinaries attachedBinaries = storeAndAttachBinaries();
 
         final Node.Builder nodeBuilder = Node.newNode().
             id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
@@ -87,13 +82,45 @@ public final class CreateNodeCommand
             manualOrderValue( manualOrderValue ).
             permissions( permissions ).
             inheritPermissions( params.inheritPermissions() ).
-            nodeType( params.getNodeType() != null ? params.getNodeType() : NodeType.DEFAULT_NODE_COLLECTION );
+            nodeType( params.getNodeType() != null ? params.getNodeType() : NodeType.DEFAULT_NODE_COLLECTION ).
+            attachedBinaries( attachedBinaries );
 
         final Node newNode = nodeBuilder.build();
 
         this.doStoreNode( newNode );
 
         return newNode;
+    }
+
+    private AttachedBinaries storeAndAttachBinaries()
+    {
+        final PropertyTree data = params.getData();
+
+        final Set<Property> binaryReferences = data.getByValueType( ValueTypes.BINARY_REFERENCE );
+
+        final AttachedBinaries.Builder builder = AttachedBinaries.create();
+
+        for ( final Property binaryRef : binaryReferences )
+        {
+            final BinaryAttachment binaryAttachment = this.params.getBinaryAttachments().get( binaryRef.getBinaryReference() );
+
+            if ( binaryAttachment == null )
+            {
+                throw new NodeBinaryReferenceException( "No binary with reference " + binaryRef + " attached in createNodeParams" );
+            }
+
+            try
+            {
+                final Blob blob = this.blobService.create( binaryAttachment.getByteSource().openStream() );
+                builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey() ) );
+            }
+            catch ( IOException e )
+            {
+                e.printStackTrace();
+            }
+        }
+
+        return builder.build();
     }
 
     private AccessControlList getAccessControlEntries( final PrincipalKey creator )
@@ -233,6 +260,8 @@ public final class CreateNodeCommand
     {
         private CreateNodeParams params;
 
+        private BlobService blobService;
+
         Builder()
         {
             super();
@@ -244,11 +273,18 @@ public final class CreateNodeCommand
             return this;
         }
 
+        public Builder blobService( final BlobService blobService )
+        {
+            this.blobService = blobService;
+            return this;
+        }
+
         protected void validate()
         {
             super.validate();
             Preconditions.checkNotNull( params );
         }
+
 
         public CreateNodeCommand build()
         {

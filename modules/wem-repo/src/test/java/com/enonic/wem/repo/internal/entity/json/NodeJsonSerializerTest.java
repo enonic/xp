@@ -15,6 +15,8 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.wem.api.node.AttachedBinaries;
+import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.Attachment;
 import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.Node;
@@ -29,6 +31,7 @@ import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
+import com.enonic.wem.api.util.BinaryReference;
 
 import static org.junit.Assert.*;
 
@@ -50,6 +53,8 @@ public class NodeJsonSerializerTest
         nodeData.setLocalDate( "b", LocalDate.of( 2013, 1, 2 ) );
         nodeData.setString( "c", "runar" );
         nodeData.setLocalDateTime( "d", LocalDateTime.of( 2013, 1, 2, 3, 4, 5, 0 ) );
+        nodeData.setBinaryReference( "e", BinaryReference.from( "myImage1" ) );
+        nodeData.setBinaryReference( "f", BinaryReference.from( "myImage2" ) );
 
         final AccessControlEntry entry1 = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
@@ -89,6 +94,10 @@ public class NodeJsonSerializerTest
                 build() ).
             permissions( acl ).
             nodeType( NodeType.from( "myNodeType" ) ).
+            attachedBinaries( AttachedBinaries.create().
+                add( new AttachedBinary( BinaryReference.from( "myImage1" ), new BlobKey( "a" ) ) ).
+                add( new AttachedBinary( BinaryReference.from( "myImage2" ), new BlobKey( "b" ) ) ).
+                build() ).
             build();
 
         final String expectedStr = readJson( "serialized-node.json" );

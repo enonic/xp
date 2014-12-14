@@ -7,6 +7,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.api.node.ApplyNodePermissionsParams;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
@@ -35,6 +37,7 @@ import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.workspace.Workspace;
 
 class NodeServiceMock
@@ -226,6 +229,12 @@ class NodeServiceMock
 
     @Override
     public Node getByVersionId( final NodeVersionId nodeVersionid )
+    {
+        return null;
+    }
+
+    @Override
+    public ByteSource getBinary( final NodeId nodeId, final BinaryReference reference )
     {
         return null;
     }

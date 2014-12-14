@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 
-import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.util.Exceptions;
 
 public final class NodeJsonSerializer
 {
@@ -27,6 +27,7 @@ public final class NodeJsonSerializer
         try
         {
             return this.mapper.writeValueAsString( NodeJson.toJson( node ) );
+
         }
         catch ( final JsonProcessingException e )
         {

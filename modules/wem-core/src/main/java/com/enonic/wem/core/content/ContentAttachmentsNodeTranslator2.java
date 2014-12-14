@@ -6,9 +6,7 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.util.BinaryReference;
 
-import static com.enonic.wem.api.node.AttachmentPropertyNames.BLOB;
 import static com.enonic.wem.api.node.AttachmentPropertyNames.LABEL;
 import static com.enonic.wem.api.node.AttachmentPropertyNames.MIMETYPE;
 import static com.enonic.wem.api.node.AttachmentPropertyNames.SIZE;
@@ -39,8 +37,8 @@ public class ContentAttachmentsNodeTranslator2
     {
         final PropertySet attachmentSet = attachmentsSet.addSet( createAttachmentSetName( attachment.getName() ) );
 
-        attachmentSet.addBinaryReference( BLOB,
-                                          BinaryReference.from( attachment.getName(), attachment.getMimeType(), attachment.getBlobKey() ) );
+//        attachmentSet.addBinaryReference( BLOB,
+        //                                         BinaryReference.from( attachment. ) );
         attachmentSet.addString( MIMETYPE, attachment.getMimeType() );
         attachmentSet.addLong( SIZE, attachment.getSize() );
 

@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.ApplyNodePermissionsParams;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -49,6 +50,8 @@ public class NodeServiceImpl
     private VersionService versionService;
 
     private QueryService queryService;
+
+    private BlobService blobService;
 
     @Override
     public Node getById( final NodeId id )
@@ -373,7 +376,7 @@ public class NodeServiceImpl
     @Override
     public ByteSource getBinary( final NodeId nodeId, final BinaryReference reference )
     {
-        return GetNodeBinaryCommand.create().
+        return GetBinaryCommand.create().
             binaryReference( reference ).
             nodeId( nodeId ).
             indexService( this.indexService ).
@@ -408,5 +411,10 @@ public class NodeServiceImpl
     public void setQueryService( final QueryService queryService )
     {
         this.queryService = queryService;
+    }
+
+    public void setBlobService( final BlobService blobService )
+    {
+        this.blobService = blobService;
     }
 }

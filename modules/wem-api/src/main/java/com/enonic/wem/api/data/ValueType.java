@@ -286,7 +286,7 @@ public abstract class ValueType<T>
         @Override
         Value fromJsonValue( final Object object )
         {
-            return new Value.Binary( convertNullSafe( object ) );
+            return new Value.BinaryReference( convertNullSafe( object ) );
         }
     }
 

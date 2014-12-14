@@ -35,13 +35,15 @@ public abstract class AbstractNodeTest
 
     ElasticsearchQueryService queryService;
 
+    BlobService blobService;
+
     @Before
     public void setUp()
         throws Exception
     {
         super.setUp();
 
-        final BlobService blobService = new MockBlobService();
+        blobService = new MockBlobService();
 
         this.nodeDao = new NodeDaoImpl();
         nodeDao.setBlobService( blobService );
@@ -86,6 +88,7 @@ public abstract class AbstractNodeTest
             indexService( this.indexService ).
             versionService( this.versionService ).
             queryService( this.queryService ).
+            blobService( this.blobService ).
             params( createNodeParams ).
             build().
             execute();

@@ -95,7 +95,7 @@ public class NodeDaoImpl
         }
         catch ( IOException e )
         {
-            throw new RuntimeException( "Failed to load blob with key: " + blob.getKey() );
+            throw new RuntimeException( "Failed to load blob with key: " + blob.getKey(), e );
         }
     }
 

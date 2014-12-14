@@ -2,14 +2,20 @@ package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
 
+import com.google.common.io.ByteSource;
+
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.InsertManualStrategy;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.util.BinaryReference;
 
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class CreateNodeCommandTest
     extends AbstractNodeTest
@@ -88,5 +94,25 @@ public class CreateNodeCommandTest
         assertTrue( c2.getManualOrderValue() > c3.getManualOrderValue() );
     }
 
+    @Test
+    public void attach_binary()
+        throws Exception
+    {
+        PropertyTree data = new PropertyTree();
+        data.setBinaryReference( "myCar", BinaryReference.from( "myImage" ) );
 
+        final Node node = createNode( CreateNodeParams.create().
+            name( "test" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            attachBinary( BinaryReference.from( "myImage" ), ByteSource.empty() ).
+            build() );
+
+        final AttachedBinaries attachedBinaries = node.getAttachedBinaries();
+
+        final Node nodeById = getNodeById( node.id() );
+
+        assertEquals( attachedBinaries, nodeById.getAttachedBinaries() );
+
+    }
 }

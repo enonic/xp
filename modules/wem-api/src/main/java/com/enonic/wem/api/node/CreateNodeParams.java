@@ -5,13 +5,13 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.util.BinaryReference;
-import com.enonic.wem.api.util.BinaryReferences;
 
 public class CreateNodeParams
 {
@@ -39,7 +39,7 @@ public class CreateNodeParams
 
     private final NodeType nodeType;
 
-    private final BinaryReferences binaryReferences;
+    private final BinaryAttachments binaryAttachments;
 
     private CreateNodeParams( Builder builder )
     {
@@ -55,7 +55,7 @@ public class CreateNodeParams
         this.insertManualStrategy = builder.insertManualStrategy;
         this.manualOrderValue = builder.manualOrderValue;
         this.nodeType = builder.nodeType;
-        this.binaryReferences = new BinaryReferences( ImmutableSet.copyOf( builder.binaryReferences ) );
+        this.binaryAttachments = new BinaryAttachments( ImmutableSet.copyOf( builder.binaryAttachments ) );
     }
 
     public static Builder create()
@@ -73,6 +73,7 @@ public class CreateNodeParams
             childOrder( node.getChildOrder() ).
             nodeType( node.getNodeType() ).
             name( node.name().toString() ).
+
             parent( node.parent() );
     }
 
@@ -141,9 +142,9 @@ public class CreateNodeParams
         return nodeType;
     }
 
-    public BinaryReferences getBinaryReferences()
+    public BinaryAttachments getBinaryAttachments()
     {
-        return binaryReferences;
+        return binaryAttachments;
     }
 
     public static final class Builder
@@ -177,7 +178,7 @@ public class CreateNodeParams
             this.inheritPermissions = false;
         }
 
-        private Set<BinaryReference> binaryReferences = Sets.newHashSet();
+        private Set<BinaryAttachment> binaryAttachments = Sets.newHashSet();
 
         public Builder setNodeId( final NodeId nodeId )
         {
@@ -251,9 +252,9 @@ public class CreateNodeParams
             return this;
         }
 
-        public Builder addBinaryReference( final BinaryReference binaryReference )
+        public Builder attachBinary( final BinaryReference binaryReference, final ByteSource byteSource )
         {
-            this.binaryReferences.add( binaryReference );
+            this.binaryAttachments.add( new BinaryAttachment( binaryReference, byteSource ) );
             return this;
         }
 
@@ -285,7 +286,7 @@ public class CreateNodeParams
             Objects.equals( childOrder, that.childOrder ) &&
             Objects.equals( permissions, that.permissions ) &&
             Objects.equals( nodeType, that.nodeType ) &&
-            Objects.equals( binaryReferences, that.binaryReferences ) &&
+            Objects.equals( binaryAttachments, that.binaryAttachments ) &&
             inheritPermissions == that.inheritPermissions;
     }
 
@@ -293,6 +294,6 @@ public class CreateNodeParams
     public int hashCode()
     {
         return Objects.hash( parent, name, data, attachments, indexConfigDocument, childOrder, nodeId, permissions, inheritPermissions,
-                             nodeType );
+                             nodeType, binaryAttachments );
     }
 }

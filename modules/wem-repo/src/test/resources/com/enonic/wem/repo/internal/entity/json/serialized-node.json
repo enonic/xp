@@ -1,4 +1,14 @@
 {
+  "attachedBinaries": [
+    {
+      "binaryReference": "myImage1",
+      "blobKey": "a"
+    },
+    {
+      "binaryReference": "myImage2",
+      "blobKey": "b"
+    }
+  ],
   "attachments": [
     {
       "attachmentName": "attachment",
@@ -70,6 +80,26 @@
         {
           "id": "6",
           "v": "2013-01-02T03:04:05"
+        }
+      ]
+    },
+    {
+      "name": "e",
+      "type": "BinaryReference",
+      "values": [
+        {
+          "id": "7",
+          "v": "myImage1"
+        }
+      ]
+    },
+    {
+      "name": "f",
+      "type": "BinaryReference",
+      "values": [
+        {
+          "id": "8",
+          "v": "myImage2"
         }
       ]
     }

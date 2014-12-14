@@ -49,6 +49,8 @@ public final class Node
 
     private final boolean inheritPermissions;
 
+    private final AttachedBinaries attachedBinaries;
+
     private Node( final Builder builder )
     {
         Preconditions.checkNotNull( builder.permissions, "permissions are required" );
@@ -70,6 +72,7 @@ public final class Node
         this.manualOrderValue = builder.manualOrderValue;
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
+        this.attachedBinaries = builder.attachedBinaries;
 
         this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
 
@@ -180,6 +183,11 @@ public final class Node
         return nodeType;
     }
 
+    public AttachedBinaries getAttachedBinaries()
+    {
+        return attachedBinaries;
+    }
+
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
@@ -240,6 +248,8 @@ public final class Node
 
         private NodeType nodeType = NodeType.DEFAULT_NODE_COLLECTION;
 
+        private AttachedBinaries attachedBinaries;
+
         public Builder()
         {
             super();
@@ -268,6 +278,7 @@ public final class Node
             this.manualOrderValue = node.manualOrderValue;
             this.permissions = node.permissions;
             this.inheritPermissions = node.inheritPermissions;
+            this.attachedBinaries = node.attachedBinaries;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -384,6 +395,12 @@ public final class Node
             return this;
         }
 
+        public Builder attachedBinaries( final AttachedBinaries attachedBinaries )
+        {
+            this.attachedBinaries = attachedBinaries;
+            return this;
+        }
+
         public Node build()
         {
             return new Node( this );
@@ -419,6 +436,7 @@ public final class Node
             Objects.equals( attachments, node.attachments ) &&
             Objects.equals( permissions, node.permissions ) &&
             Objects.equals( data, node.data ) &&
+            Objects.equals( attachedBinaries, node.attachedBinaries ) &&
             Objects.equals( indexConfigDocument, node.indexConfigDocument );
     }
 
@@ -426,6 +444,6 @@ public final class Node
     public int hashCode()
     {
         return Objects.hash( id, name, parent, nodeType, hasChildren, inheritPermissions, creator, modifier, createdTime, modifiedTime,
-                             manualOrderValue, childOrder, attachments, permissions, data, indexConfigDocument );
+                             manualOrderValue, childOrder, attachments, permissions, data, indexConfigDocument, attachedBinaries );
     }
 }
