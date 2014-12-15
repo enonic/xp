@@ -1,29 +1,29 @@
 package com.enonic.wem.api.node;
 
+import java.util.Set;
+
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 public class UpdateNodeParams
 {
-    private NodeId id;
+    private final NodeId id;
 
-    private NodeEditor editor;
+    private final NodeEditor editor;
 
-    public UpdateNodeParams id( final NodeId value )
+    private final BinaryAttachments binaryAttachments;
+
+    private UpdateNodeParams( final Builder builder )
     {
-        this.id = value;
-        return this;
+        id = builder.id;
+        editor = builder.editor;
+        binaryAttachments = new BinaryAttachments( ImmutableSet.copyOf( builder.binaryAttachments ) );
     }
 
-    public UpdateNodeParams editor( final NodeEditor value )
+    public static Builder create()
     {
-        this.editor = value;
-        return this;
-    }
-
-    public void validate()
-    {
-        Preconditions.checkNotNull( this.id, "id cannot be null" );
-        Preconditions.checkNotNull( this.editor, "editor cannot be null" );
+        return new Builder();
     }
 
     public NodeId getId()
@@ -36,4 +36,46 @@ public class UpdateNodeParams
         return editor;
     }
 
+    public static final class Builder
+    {
+        private NodeId id;
+
+        private NodeEditor editor;
+
+        private Set<BinaryAttachment> binaryAttachments = Sets.newHashSet();
+
+        private Builder()
+        {
+        }
+
+        public Builder id( NodeId id )
+        {
+            this.id = id;
+            return this;
+        }
+
+        public Builder editor( NodeEditor editor )
+        {
+            this.editor = editor;
+            return this;
+        }
+
+        public Builder attachBinary( final BinaryAttachment binaryAttachment )
+        {
+            this.binaryAttachments.add( binaryAttachment );
+            return this;
+        }
+
+        public UpdateNodeParams build()
+        {
+            this.validate();
+            return new UpdateNodeParams( this );
+        }
+
+        private void validate()
+        {
+            Preconditions.checkNotNull( this.id, "id cannot be null" );
+            Preconditions.checkNotNull( this.editor, "editor cannot be null" );
+        }
+    }
 }

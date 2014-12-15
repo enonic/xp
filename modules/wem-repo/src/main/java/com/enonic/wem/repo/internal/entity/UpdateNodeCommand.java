@@ -28,8 +28,6 @@ public final class UpdateNodeCommand
 
     public Node execute()
     {
-        this.params.validate();
-
         try
         {
             return doExecute();

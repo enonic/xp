@@ -78,9 +78,10 @@ public class GetNodeVersionsCommandTest
 
     private Node doUpdateNode( final Node node )
     {
-        UpdateNodeParams updateNodeParams = new UpdateNodeParams().
+        UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( node.id() ).
-            editor( toBeEdited -> toBeEdited.manualOrderValue = 10l );
+            editor( toBeEdited -> toBeEdited.manualOrderValue = 10l ).
+            build();
 
         return UpdateNodeCommand.create().
             params( updateNodeParams ).

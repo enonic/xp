@@ -209,12 +209,13 @@ abstract class UserStoreNodeTranslator
 
     static UpdateNodeParams toUpdateNodeParams( final UpdateUserStoreParams updateUserStoreParams, final NodeId nodeId )
     {
-        return new UpdateNodeParams().
+        return UpdateNodeParams.create().
             id( nodeId ).
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
                 nodeData.setString( DISPLAY_NAME_KEY, updateUserStoreParams.getDisplayName() );
-            } );
+            } ).
+            build();
     }
 
     private static UserStore createUserStoreFromNode( final Node node )

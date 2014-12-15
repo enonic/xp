@@ -685,12 +685,13 @@ public final class SecurityServiceImpl
 
     private void setNodePermissions( final NodeId nodeId, final AccessControlList permissions, final boolean inheritPermissions )
     {
-        final UpdateNodeParams updateParams = new UpdateNodeParams().
+        final UpdateNodeParams updateParams = UpdateNodeParams.create().
             id( nodeId ).
             editor( editableNode -> {
                 editableNode.permissions = permissions;
                 editableNode.inheritPermissions = inheritPermissions;
-            } );
+            } ).
+            build();
 
         nodeService.update( updateParams );
     }

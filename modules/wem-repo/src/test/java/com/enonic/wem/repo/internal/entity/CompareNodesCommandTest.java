@@ -118,9 +118,10 @@ public class CompareNodesCommandTest
 
     private Node doUpdateNode( final Node createdNode )
     {
-        final UpdateNodeParams updateNodeParams = new UpdateNodeParams().
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( createdNode.id() ).
-            editor( editableNode -> editableNode.manualOrderValue = 10l );
+            editor( editableNode -> editableNode.manualOrderValue = 10l ).
+            build();
 
         return UpdateNodeCommand.create().
             params( updateNodeParams ).

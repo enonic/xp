@@ -67,9 +67,10 @@ public class GetActiveNodeVersionsCommandTest
 
     private void updateNode( final Node node )
     {
-        UpdateNodeParams updateNodeParams = new UpdateNodeParams().
+        UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( node.id() ).
-            editor( toBeEdited -> toBeEdited.name = NodeName.from( toBeEdited.name.toString() + "-edit" ) );
+            editor( toBeEdited -> toBeEdited.name = NodeName.from( toBeEdited.name.toString() + "-edit" ) ).
+            build();
 
         UpdateNodeCommand.create().
             params( updateNodeParams ).

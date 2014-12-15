@@ -103,9 +103,10 @@ public class ContentNodeTranslator
 
     public UpdateNodeParams toUpdateNodeCommand( final Content content, final Attachments attachments )
     {
-        return new UpdateNodeParams().
+        return UpdateNodeParams.create().
             id( NodeId.from( content.getId() ) ).
-            editor( toNodeEditor( content, attachments ) );
+            editor( toNodeEditor( content, attachments ) ).
+            build();
     }
 
     public Contents fromNodes( final Nodes nodes )

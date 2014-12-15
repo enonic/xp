@@ -125,7 +125,7 @@ abstract class PrincipalNodeTranslator
     {
         Preconditions.checkNotNull( principal );
 
-        return new UpdateNodeParams().
+        return UpdateNodeParams.create().
             id( NodeId.from( principal.getKey() ) ).
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
@@ -135,14 +135,15 @@ abstract class PrincipalNodeTranslator
                     case USER:
                         populateUserData( nodeData.getRoot(), (User) principal );
                 }
-            } );
+            } ).
+            build();
     }
 
     static UpdateNodeParams addRelationshipToUpdateNodeParams( final PrincipalRelationship relationship )
     {
         Preconditions.checkNotNull( relationship );
 
-        return new UpdateNodeParams().
+        return UpdateNodeParams.create().
             id( NodeId.from( relationship.getFrom() ) ).
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
@@ -156,14 +157,16 @@ abstract class PrincipalNodeTranslator
                 {
                     nodeData.addString( MEMBER_KEY, relationshipToKey );
                 }
-            } );
+            } ).
+            build();
     }
 
     static UpdateNodeParams removeRelationshipToUpdateNodeParams( final PrincipalRelationship relationship )
     {
         Preconditions.checkNotNull( relationship );
 
-        return new UpdateNodeParams().id( NodeId.from( relationship.getFrom() ) ).
+        return UpdateNodeParams.create().
+            id( NodeId.from( relationship.getFrom() ) ).
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
                 final String relationshipToKey = relationship.getTo().toString();
@@ -175,18 +178,21 @@ abstract class PrincipalNodeTranslator
 
                 nodeData.removeProperty( PrincipalPropertyNames.MEMBER_KEY );
                 nodeData.setValues( MEMBER_KEY, updatedMembers );
-            } );
+            } ).
+            build();
     }
 
     static UpdateNodeParams removeAllRelationshipsToUpdateNodeParams( final PrincipalKey from )
     {
         Preconditions.checkNotNull( from );
 
-        return new UpdateNodeParams().id( NodeId.from( from ) ).
+        return UpdateNodeParams.create().
+            id( NodeId.from( from ) ).
             editor( editableNode -> {
                 final PropertyTree data = editableNode.data;
                 data.removeProperties( MEMBER_KEY );
-            } );
+            } ).
+            build();
     }
 
     static PrincipalRelationships relationshipsFromNode( final Node node )
