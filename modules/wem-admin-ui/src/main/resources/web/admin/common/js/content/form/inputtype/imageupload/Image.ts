@@ -1,5 +1,3 @@
-declare var plupload;
-
 module api.content.form.inputtype.imageupload {
 
     import Property = api.data.Property;
@@ -9,7 +7,7 @@ module api.content.form.inputtype.imageupload {
 
     export class Image extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any,string> {
 
-        private imageUploader: api.ui.uploader.ImageUploader;
+        private imageUploader: api.ui.uploader.FileUploader;
 
         private attachmentName: string;
 
@@ -17,16 +15,13 @@ module api.content.form.inputtype.imageupload {
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
             super(config, "image");
-
             var input = config.input;
-            this.attachment = config.attachments.getAttachmentByLabel("source");
+            this.attachment = config.attachments.getAttachment(0);
 
-            this.imageUploader = new api.ui.uploader.ImageUploader({
+            this.imageUploader = new api.ui.uploader.FileUploader({
                 name: input.getName(),
-                url: api.util.UriHelper.getRestUri("blob/upload"),
                 maximumOccurrences: 1
             });
-
 
             this.appendChild(this.imageUploader);
         }
@@ -44,7 +39,6 @@ module api.content.form.inputtype.imageupload {
         }
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
-
             if (property.hasNonNullValue()) {
                 this.attachmentName = property.getString();
                 var imgUrl = new ContentImageUrlResolver().
@@ -53,10 +47,10 @@ module api.content.form.inputtype.imageupload {
                 this.imageUploader.setValue(imgUrl);
             }
 
-            this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent) => {
+            this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.ui.uploader.UploadItem>) => {
                 if (this.attachmentName == null) {
-                    this.attachmentName = event.getUploadedItem().getName();
-                    this.attachment = this.uploadItemToAttachment(event.getUploadedItem());
+                    this.attachmentName = event.getUploadItem().getName();
+                    this.attachment = this.uploadItemToAttachment(event.getUploadItem());
 
                     var value = new Value(this.attachmentName, ValueTypes.STRING);
                     property.setValue(value);
@@ -107,5 +101,5 @@ module api.content.form.inputtype.imageupload {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("Image", Image));
+    api.form.inputtype.InputTypeManager.register(new api.Class("ImageUploader", Image));
 }

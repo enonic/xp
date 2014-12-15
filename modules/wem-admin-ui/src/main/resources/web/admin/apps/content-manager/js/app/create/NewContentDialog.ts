@@ -15,7 +15,7 @@ module app.create {
 
         private parentContent: api.content.Content;
 
-        private fileUploaderParams: {};
+        private fileUploaderParams: {parent: string};
 
         private contentDialogTitle: NewContentDialogTitle;
 
@@ -26,6 +26,8 @@ module app.create {
         private recentListMask: api.ui.mask.LoadMask;
 
         private input: api.ui.text.TextInput;
+
+        private dropzone: api.content.ContentUploader;
 
         private listItems: NewContentDialogListItem[];
 
@@ -50,20 +52,20 @@ module app.create {
             var aside = new api.dom.AsideEl("column");
             this.appendChildToContentPanel(aside);
 
-            this.fileUploaderParams = {};
+            this.fileUploaderParams = {
+                parent: undefined
+            };
 
-            var dropzone = new api.ui.uploader.FileUploader({
+            this.dropzone = new api.content.ContentUploader({
                 params: this.fileUploaderParams,
                 name: 'new-content-uploader',
-                url: api.util.UriHelper.getRestUri("content/createMedia"),
                 showButtons: false,
                 showResult: false,
                 deferred: true  // wait till the window is shown
             });
-            aside.appendChild(dropzone);
-            dropzone.onFileUploaded((event: FileUploadedEvent) => {
-                // TODO: Find a way get the returned content
-                // TODO: this.closeAndFireNewMediaEvent(event.getContent());
+            aside.appendChild(this.dropzone);
+            this.dropzone.onFileUploaded((event: FileUploadedEvent<api.content.Content>) => {
+                this.closeAndFireNewMediaEvent(event.getUploadItem());
             });
 
             var recentTitle = new api.dom.H1El();
@@ -160,7 +162,7 @@ module app.create {
 
         setParentContent(parent: api.content.Content) {
             this.parentContent = parent;
-            (<any>this.fileUploaderParams).parent = parent ? parent.getPath().toString() : api.content.ContentPath.ROOT;
+            this.fileUploaderParams.parent = parent ? parent.getPath().toString() : api.content.ContentPath.ROOT.toString();
         }
 
         show() {
@@ -176,9 +178,16 @@ module app.create {
             }
             this.input.giveFocus();
 
+            this.dropzone.reset();
+
             // CMS-3711: reload content types each time when dialog is show.
             // It is slow but newly create content types are displayed.
             this.loadContentTypes();
+        }
+
+        hide() {
+            super.hide();
+            this.dropzone.stop();
         }
 
         private loadContentTypes() {

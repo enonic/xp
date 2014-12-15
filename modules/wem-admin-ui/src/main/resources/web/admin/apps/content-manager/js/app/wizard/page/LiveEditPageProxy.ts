@@ -246,8 +246,8 @@ module app.wizard.page {
 
             ImageOpenUploadDialogEvent.on((openDialogEvent: ImageOpenUploadDialogEvent) => {
                 var imageUploadDialog = new ImageUploadDialog();
-                imageUploadDialog.onImageUploaded((event: api.ui.uploader.FileUploadedEvent) => {
-                    new ImageUploadedEvent(event.getUploadedItem(), openDialogEvent.getTargetImagePlaceholder()).fire(this.liveEditWindow);
+                imageUploadDialog.onImageUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
+                    new ImageUploadedEvent(event.getUploadItem(), openDialogEvent.getTargetImagePlaceholder()).fire(this.liveEditWindow);
                     imageUploadDialog.close();
                     imageUploadDialog.remove();
                 });

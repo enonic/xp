@@ -67,3 +67,6 @@
 ///<reference path='FieldOrderExpr.ts' />
 ///<reference path='ChildOrder.ts' />
 
+///<reference path='ContentUploader.ts' />
+///<reference path='ImageUploader.ts' />
+
