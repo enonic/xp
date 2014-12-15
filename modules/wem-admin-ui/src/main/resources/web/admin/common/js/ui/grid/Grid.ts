@@ -217,6 +217,13 @@ module api.ui.grid {
             return index;
         }
 
+        isRowSelected(row: number): boolean {
+            var rows = this.getSelectedRows(),
+                index = rows.indexOf(row);
+
+            return index >= 0;
+        }
+
         selectAll() {
             var rows = [];
             for (var i = 0; i < this.slickGrid.getDataLength(); i++) {
