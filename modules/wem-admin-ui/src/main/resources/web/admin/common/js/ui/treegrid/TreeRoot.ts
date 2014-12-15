@@ -144,10 +144,10 @@ module api.ui.treegrid {
 
         updateSelection(dataId: string, data: DATA) {
             this.currentSelection.forEach((el) => {
-                if (el.getDataId() !== dataId) { el.setData(data); }
+                if (el.getDataId() === dataId) { el.setData(data); }
             });
             this.stashedSelection.forEach((el) => {
-                if (el.getDataId() !== dataId) { el.setData(data); }
+                if (el.getDataId() === dataId) { el.setData(data); }
             });
         }
     }

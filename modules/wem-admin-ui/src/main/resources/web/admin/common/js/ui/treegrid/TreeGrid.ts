@@ -611,7 +611,13 @@ module api.ui.treegrid {
                     nodesToUpdate.forEach((node) => {
                         node.setData(data);
                         node.clearViewers();
-                        this.gridData.updateItem(node.getId(), node);
+                        if (node.isVisible()) {
+                            var selected = this.grid.isRowSelected(this.gridData.getRowById(node.getId()));
+                            this.gridData.updateItem(node.getId(), node);
+                            if (selected) {
+                                this.grid.selectRow(this.gridData.getRowById(node.getId()));
+                            }
+                        }
                     });
                     if (!!stashedNodeToUpdate) {
                         stashedNodeToUpdate.setData(data);
@@ -632,7 +638,7 @@ module api.ui.treegrid {
             }
             var root = stashedParentNode || this.root.getCurrentRoot(),
                 dataId = this.getDataId(data),
-                node;
+                node: TreeNode<DATA>;
 
             while (node = root.findNode(dataId)) {
                 if (node.hasChildren()) {

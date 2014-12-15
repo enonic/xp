@@ -138,7 +138,7 @@ module api.ui.treegrid {
             return this.children.length > 0;
         }
 
-        regenerateId() {
+        regenerateId(): void {
             this.id = Math.random().toString(36).substring(2);
         }
 
@@ -167,6 +167,10 @@ module api.ui.treegrid {
                 }
             }
             this.children = children;
+
+            if (this.children.length === 0) {
+                this.expanded = false;
+            }
         }
 
         /*
@@ -182,11 +186,11 @@ module api.ui.treegrid {
             return visible;
         }
 
-        /*
-         Transforms tree into the list of nodes with current node as root.
-         @empty    - determines to get nodes with empty data.
-         @expanded - determines to display only reachable nodes.
-         @selected - determines to display only seleted nodes.
+        /**
+         * Transforms tree into the list of nodes with current node as root.
+         * @param empty    - determines to get nodes with empty data.
+         * @param expanded - determines to display only reachable nodes.
+         * @param selected - determines to display only seleted nodes.
          */
         treeToList(empty: boolean = false, expanded: boolean = true, selected: boolean = false): TreeNode<DATA>[] {
             var list: TreeNode<DATA>[] = [];
