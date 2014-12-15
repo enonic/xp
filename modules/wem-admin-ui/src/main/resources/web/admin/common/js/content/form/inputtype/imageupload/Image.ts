@@ -7,7 +7,7 @@ module api.content.form.inputtype.imageupload {
 
     export class Image extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any,string> {
 
-        private imageUploader: api.ui.uploader.FileUploader;
+        private imageUploader: api.content.ImageUploader;
 
         private attachmentName: string;
 
@@ -18,7 +18,7 @@ module api.content.form.inputtype.imageupload {
             var input = config.input;
             this.attachment = config.attachments.getAttachment(0);
 
-            this.imageUploader = new api.ui.uploader.FileUploader({
+            this.imageUploader = new api.content.ImageUploader({
                 name: input.getName(),
                 maximumOccurrences: 1
             });
@@ -47,13 +47,15 @@ module api.content.form.inputtype.imageupload {
                 this.imageUploader.setValue(imgUrl);
             }
 
-            this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.ui.uploader.UploadItem>) => {
+            this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                 if (this.attachmentName == null) {
-                    this.attachmentName = event.getUploadItem().getName();
-                    this.attachment = this.uploadItemToAttachment(event.getUploadItem());
+                    this.attachment = event.getUploadItem().getAttachments().getAttachmentByLabel('source');
 
-                    var value = new Value(this.attachmentName, ValueTypes.STRING);
-                    property.setValue(value);
+                    if (this.attachment) {
+                        this.attachmentName = this.attachment.getName().toString();
+                        var value = new Value(this.attachmentName, ValueTypes.STRING);
+                        property.setValue(value);
+                    }
                 }
             });
 
@@ -90,16 +92,7 @@ module api.content.form.inputtype.imageupload {
         unBlur(listener: (event: FocusEvent) => void) {
             this.imageUploader.unBlur(listener);
         }
-
-        private uploadItemToAttachment(uploadItem: api.ui.uploader.UploadItem): api.content.attachment.Attachment {
-            return new api.content.attachment.AttachmentBuilder().
-                setBlobKey(uploadItem.getBlobKey()).
-                setName(new api.content.attachment.AttachmentName(uploadItem.getName())).
-                setMimeType(uploadItem.getMimeType()).
-                setSize(uploadItem.getSize()).
-                build();
-        }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("ImageUploader", Image));
+    api.form.inputtype.InputTypeManager.register(new api.Class("Image", Image));
 }
