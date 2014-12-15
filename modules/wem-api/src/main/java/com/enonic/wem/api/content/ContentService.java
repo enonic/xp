@@ -2,9 +2,12 @@ package com.enonic.wem.api.content;
 
 import java.util.concurrent.CompletableFuture;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.util.BinaryReference;
 
 public interface ContentService
 {
@@ -30,6 +33,8 @@ public interface ContentService
 
     ReorderChildContentsResult reorderChildren( ReorderChildContentsParams params );
 
+    CompletableFuture<Integer> applyPermissions( ApplyContentPermissionsParams params );
+
     Content getById( ContentId id );
 
     Site getNearestSite( ContentId contentId );
@@ -54,6 +59,6 @@ public interface ContentService
 
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
-    CompletableFuture<Integer> applyPermissions( ApplyContentPermissionsParams params );
+    ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference );
 
 }

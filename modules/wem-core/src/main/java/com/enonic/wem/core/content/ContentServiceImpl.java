@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.wem.api.blob.BlobService;
@@ -61,6 +62,7 @@ import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.util.BinaryReference;
 
 public class ContentServiceImpl
     implements ContentService
@@ -494,6 +496,12 @@ public class ContentServiceImpl
             build();
 
         return CompletableFuture.supplyAsync( applyPermissionsCommand::execute, applyPermissionsExecutor );
+    }
+
+    @Override
+    public ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference )
+    {
+        return nodeService.getBinary( NodeId.from( contentId.toString() ), binaryReference );
     }
 
     public void setContentTypeService( final ContentTypeService contentTypeService )
