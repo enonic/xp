@@ -2,18 +2,12 @@ package com.enonic.wem.xslt.internal;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.api.resource.ResourceProblemException;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.api.xml.DomHelper;
-import com.enonic.wem.portal.PortalContext;
-import com.enonic.wem.portal.PortalContextAccessor;
-import com.enonic.wem.portal.PortalRequest;
-import com.enonic.wem.portal.RenderingMode;
 import com.enonic.wem.script.AbstractScriptTest;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptObject;
@@ -26,16 +20,6 @@ public class RenderViewHandlerTest
     @Before
     public void setUp()
     {
-        final PortalRequest portalRequest = Mockito.mock( PortalRequest.class );
-        Mockito.when( portalRequest.getBaseUri() ).thenReturn( "/root" );
-        Mockito.when( portalRequest.getMode() ).thenReturn( RenderingMode.EDIT );
-        Mockito.when( portalRequest.getWorkspace() ).thenReturn( Workspace.from( "stage" ) );
-
-        final PortalContext portalContext = Mockito.mock( PortalContext.class );
-        Mockito.when( portalContext.getRequest() ).thenReturn( portalRequest );
-
-        PortalContextAccessor.set( portalContext );
-
         final RenderViewHandler handler = new RenderViewHandler();
         handler.setFactory( new XsltProcessorFactoryImpl() );
         addHandler( handler );
@@ -44,7 +28,7 @@ public class RenderViewHandlerTest
     private ScriptObject execute( final String method )
         throws Exception
     {
-        final ScriptExports exports = runTestScript( "xslt-test.js" );
+        final ScriptExports exports = runTestScript( getClass(), null );
         return exports.executeMethod( method );
     }
 
@@ -78,7 +62,8 @@ public class RenderViewHandlerTest
         throws Exception
     {
         final String result = cleanupXml( execute( "render" ).getValue().toString() );
-        final String expected = cleanupXml( Resources.toString( getClass().getResource( "/view/test-result.xml" ), Charsets.UTF_8 ) );
+        final String expected =
+            cleanupXml( Resources.toString( getClass().getResource( getClass().getSimpleName() + "-result.xml" ), Charsets.UTF_8 ) );
         assertEquals( expected, result );
     }
 
@@ -88,3 +73,4 @@ public class RenderViewHandlerTest
         return DomHelper.serialize( DomHelper.parse( xml ) );
     }
 }
+

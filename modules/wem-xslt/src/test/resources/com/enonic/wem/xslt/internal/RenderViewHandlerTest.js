@@ -6,7 +6,7 @@ exports.render_no_view = function () {
 
 exports.render = function () {
 
-    var view = resolve('view/test.xsl');
+    var view = resolve('RenderViewHandlerTest-view.xsl');
     return execute('xslt.render', {
         view: view,
         model: {

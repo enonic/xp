@@ -40,4 +40,10 @@ public abstract class AbstractScriptTest
     {
         return this.scriptService.execute( key );
     }
+
+    protected final ScriptExports runTestScript( final Class clz, final String baseName )
+    {
+        final String name = "/" + clz.getName().replace( '.', '/' ) + ( baseName != null ? ( "-" + baseName ) : "" ) + ".js";
+        return runTestScript( ResourceKey.from( MYMODULE_KEY, name ) );
+    }
 }
