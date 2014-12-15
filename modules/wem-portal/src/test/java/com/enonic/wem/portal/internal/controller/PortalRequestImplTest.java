@@ -11,7 +11,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
 
 import static org.junit.Assert.*;
 
@@ -31,10 +31,10 @@ public class PortalRequestImplTest
     public void setMode()
     {
         final PortalRequestImpl request = new PortalRequestImpl();
-        assertEquals( RenderingMode.LIVE, request.getMode() );
+        assertEquals( RenderMode.LIVE, request.getMode() );
 
         request.setMode( "edit" );
-        assertEquals( RenderingMode.EDIT, request.getMode() );
+        assertEquals( RenderMode.EDIT, request.getMode() );
     }
 
     @Test

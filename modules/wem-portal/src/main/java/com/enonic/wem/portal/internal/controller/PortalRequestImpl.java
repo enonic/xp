@@ -9,7 +9,7 @@ import com.google.common.collect.Multimap;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.PortalRequest;
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
 import com.enonic.wem.servlet.ServletRequestUrlHelper;
 
 public final class PortalRequestImpl
@@ -19,7 +19,7 @@ public final class PortalRequestImpl
 
     private final Multimap<String, String> params;
 
-    private RenderingMode mode;
+    private RenderMode mode;
 
     private Workspace workspace;
 
@@ -27,7 +27,7 @@ public final class PortalRequestImpl
 
     public PortalRequestImpl()
     {
-        this.mode = RenderingMode.LIVE;
+        this.mode = RenderMode.LIVE;
         this.workspace = DEFAULT_WORKSPACE;
         this.params = HashMultimap.create();
     }
@@ -51,7 +51,7 @@ public final class PortalRequestImpl
     }
 
     @Override
-    public RenderingMode getMode()
+    public RenderMode getMode()
     {
         return this.mode;
     }
@@ -67,14 +67,14 @@ public final class PortalRequestImpl
         this.method = method;
     }
 
-    public void setMode( final RenderingMode mode )
+    public void setMode( final RenderMode mode )
     {
         this.mode = mode;
     }
 
     public void setMode( final String mode )
     {
-        setMode( RenderingMode.from( mode, RenderingMode.LIVE ) );
+        setMode( RenderMode.from( mode, RenderMode.LIVE ) );
     }
 
     public void setWorkspace( final Workspace workspace )

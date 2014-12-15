@@ -12,17 +12,15 @@ import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
 import com.enonic.wem.portal.url.PortalUrlBuilders;
 
 public final class PortalContextImpl
     implements PortalContext, PortalRequest
 {
-    private PortalRequestImpl request;
+    private PortalRequest request;
 
     private PortalResponse response;
-
-    private RenderingMode mode;
 
     private Site site;
 
@@ -45,7 +43,7 @@ public final class PortalContextImpl
         return this.request;
     }
 
-    public void setRequest( final PortalRequestImpl request )
+    public void setRequest( final PortalRequest request )
     {
         this.request = request;
     }
@@ -62,14 +60,9 @@ public final class PortalContextImpl
     }
 
     @Override
-    public RenderingMode getMode()
+    public RenderMode getMode()
     {
-        return mode;
-    }
-
-    public void setMode( final RenderingMode mode )
-    {
-        this.mode = mode;
+        return this.request.getMode();
     }
 
     @Override

@@ -22,7 +22,7 @@ import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
 import com.enonic.wem.portal.internal.base.BaseResource;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
@@ -47,7 +47,7 @@ public abstract class RenderBaseResource
 
     protected Workspace workspace;
 
-    protected RenderingMode mode;
+    protected RenderMode mode;
 
     @javax.ws.rs.core.Context
     protected Request request;
@@ -81,7 +81,7 @@ public abstract class RenderBaseResource
 
     protected final Content getContent( final String contentSelector )
     {
-        final boolean inEditMode = ( this.mode == RenderingMode.EDIT );
+        final boolean inEditMode = ( this.mode == RenderMode.EDIT );
         if ( inEditMode )
         {
             final ContentId contentId = ContentId.from( contentSelector );

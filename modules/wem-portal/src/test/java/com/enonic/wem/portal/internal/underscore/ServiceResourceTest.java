@@ -9,7 +9,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import com.google.common.collect.Multimap;
 
 import com.enonic.wem.portal.PortalRequest;
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
 import com.enonic.wem.portal.internal.base.ModuleBaseResourceTest;
 import com.enonic.wem.portal.internal.controller.ControllerScript;
 import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
@@ -56,7 +56,7 @@ public class ServiceResourceTest
         final PortalRequest jsHttpRequest = jsContext.getValue().getRequest();
         assertNotNull( jsHttpRequest );
         assertEquals( "GET", jsHttpRequest.getMethod() );
-        assertEquals( RenderingMode.LIVE, jsHttpRequest.getMode() );
+        assertEquals( RenderMode.LIVE, jsHttpRequest.getMode() );
 
         final Multimap<String, String> params = jsHttpRequest.getParams();
         assertNotNull( params );

@@ -7,14 +7,14 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.base.Joiner;
 
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
 public abstract class BaseResource
 {
-    protected final RenderingMode parseMode( final String mode )
+    protected final RenderMode parseMode( final String mode )
     {
-        final RenderingMode parsed = RenderingMode.from( mode );
+        final RenderMode parsed = RenderMode.from( mode );
         if ( parsed != null )
         {
             return parsed;
@@ -52,7 +52,7 @@ public abstract class BaseResource
 
     private WebApplicationException illegalMode( final String mode )
     {
-        final String validModes = Joiner.on( "," ).join( RenderingMode.values() ).toLowerCase();
+        final String validModes = Joiner.on( "," ).join( RenderMode.values() ).toLowerCase();
         return notFound( "Illegal mode [%s]. Should be one of [%s].", mode, validModes );
     }
 }

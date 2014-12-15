@@ -10,7 +10,7 @@ import com.google.common.io.Resources;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.postprocess.PostProcessInjection;
 
@@ -30,7 +30,7 @@ public final class LiveEditInjection
     @Override
     public String inject( final PortalContext context, final Tag tag )
     {
-        if ( RenderingMode.EDIT != context.getRequest().getMode() )
+        if ( RenderMode.EDIT != context.getRequest().getMode() )
         {
             return null;
         }

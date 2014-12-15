@@ -9,28 +9,28 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
+import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 
 import static org.junit.Assert.*;
 
 public class PortalUrlBuildersTest
 {
-    private PortalContext context;
+    private PortalContextImpl context;
 
     private PortalRequest request;
 
     @Before
     public void setup()
     {
-        this.context = Mockito.mock( PortalContext.class );
         this.request = Mockito.mock( PortalRequest.class );
 
-        Mockito.when( this.context.getRequest() ).thenReturn( this.request );
+        this.context = new PortalContextImpl();
+        this.context.setRequest( this.request );
 
         setBaseUri( "" );
-        setMode( RenderingMode.LIVE );
+        setMode( RenderMode.LIVE );
         setWorkspace( Workspace.from( "stage" ) );
         setResolvedModule( "mymodule" );
         setContent( ContentPath.from( "path/to/content" ) );
@@ -41,7 +41,7 @@ public class PortalUrlBuildersTest
         Mockito.when( this.request.getBaseUri() ).thenReturn( baseUri );
     }
 
-    private void setMode( final RenderingMode mode )
+    private void setMode( final RenderMode mode )
     {
         Mockito.when( this.request.getMode() ).thenReturn( mode );
     }
@@ -54,13 +54,13 @@ public class PortalUrlBuildersTest
     private void setResolvedModule( final String resolvedModule )
     {
         final ModuleKey moduleKey = ModuleKey.from( resolvedModule );
-        Mockito.when( this.context.getModule() ).thenReturn( moduleKey );
+        this.context.setModule( moduleKey );
     }
 
     private void setContent( final ContentPath path )
     {
         final Content content = Content.newContent().path( path ).build();
-        Mockito.when( this.context.getContent() ).thenReturn( content );
+        this.context.setContent( content );
     }
 
     @Test
@@ -75,7 +75,7 @@ public class PortalUrlBuildersTest
     @Test
     public void createUrl()
     {
-        setMode( RenderingMode.EDIT );
+        setMode( RenderMode.EDIT );
         setWorkspace( Workspace.from( "test" ) );
 
         final PortalUrlBuilders bean = new PortalUrlBuilders( this.context );

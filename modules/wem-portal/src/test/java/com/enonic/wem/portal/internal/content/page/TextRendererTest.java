@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.page.text.TextComponent;
 import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
@@ -28,7 +28,7 @@ public class TextRendererTest
     public void before()
     {
         jsHttpRequest = new PortalRequestImpl();
-        jsHttpRequest.setMode( RenderingMode.LIVE );
+        jsHttpRequest.setMode( RenderMode.LIVE );
 
         jsHttpResponse = new PortalResponse();
 
@@ -55,7 +55,7 @@ public class TextRendererTest
     public void given_TextComponent_with_no_text_and_RenderMode_is_EDIT_when_render_then_empty_LiveEdit_div_is_returned()
     {
         // setup
-        jsHttpRequest.setMode( RenderingMode.EDIT );
+        jsHttpRequest.setMode( RenderMode.EDIT );
         textComponent = TextComponent.newTextComponent().name( "myTextComponent" ).build();
         renderer = new TextRenderer();
 
@@ -72,7 +72,7 @@ public class TextRendererTest
     public void given_TextComponent_with_no_text_and_RenderMode_is_PREVIEW_when_render_then_empty_div_is_returned()
     {
         // setup
-        jsHttpRequest.setMode( RenderingMode.PREVIEW );
+        jsHttpRequest.setMode( RenderMode.PREVIEW );
         textComponent = TextComponent.newTextComponent().name( "myTextComponent" ).build();
         renderer = new TextRenderer();
 
@@ -103,7 +103,7 @@ public class TextRendererTest
     public void given_TextComponent_with_some_text_and_RenderMode_is_EDIT_when_render_then_result_is_wrapped_by_LiveEdit_div()
     {
         // setup
-        jsHttpRequest.setMode( RenderingMode.EDIT );
+        jsHttpRequest.setMode( RenderMode.EDIT );
         String text = "<h2>hello</h2><p>How are you?</p>";
         textComponent = TextComponent.newTextComponent().name( "myTextComponent" ).text( text ).build();
         renderer = new TextRenderer();

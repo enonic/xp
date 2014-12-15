@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -24,13 +24,13 @@ public final class ImageRenderer
     @Override
     public RenderResult render( final ImageComponent component, final PortalContext context )
     {
-        final RenderingMode renderingMode = getRenderingMode( context );
+        final RenderMode renderMode = getRenderingMode( context );
         final PortalResponse response = context.getResponse();
         response.setContentType( "text/html" );
         response.setPostProcess( false );
 
         final StringBuilder s = new StringBuilder();
-        if ( renderingMode == RenderingMode.EDIT )
+        if ( renderMode == RenderMode.EDIT )
         {
             s.append( "<div data-live-edit-type=\"" ).append( component.getType().toString() ).append( "\">" );
         }
@@ -50,7 +50,7 @@ public final class ImageRenderer
             s.append( "</figure>" );
 
         }
-        if ( renderingMode == RenderingMode.EDIT )
+        if ( renderMode == RenderMode.EDIT )
         {
             s.append( "</div>" );
         }
@@ -58,9 +58,9 @@ public final class ImageRenderer
         return new PortalResponseSerializer( response ).serialize();
     }
 
-    private RenderingMode getRenderingMode( final PortalContext context )
+    private RenderMode getRenderingMode( final PortalContext context )
     {
         final PortalRequest req = context.getRequest();
-        return req == null ? RenderingMode.LIVE : req.getMode();
+        return req == null ? RenderMode.LIVE : req.getMode();
     }
 }

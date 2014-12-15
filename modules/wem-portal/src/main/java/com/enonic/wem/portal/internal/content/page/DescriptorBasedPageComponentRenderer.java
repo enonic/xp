@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
 import com.enonic.wem.portal.internal.controller.ControllerScript;
 import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
@@ -53,8 +53,8 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
 
     private RenderResult renderEmptyComponent( final AbstractDescriptorBasedPageComponent pageComponent, final PortalContext context )
     {
-        final RenderingMode renderingMode = getRenderingMode( context );
-        switch ( renderingMode )
+        final RenderMode renderMode = getRenderingMode( context );
+        switch ( renderMode )
         {
             case EDIT:
                 return renderEmptyComponentEditMode( pageComponent );
@@ -98,10 +98,10 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
 
     protected abstract Descriptor getComponentDescriptor( final DescriptorKey descriptorKey );
 
-    private RenderingMode getRenderingMode( final PortalContext context )
+    private RenderMode getRenderingMode( final PortalContext context )
     {
         final PortalRequest req = context.getRequest();
-        return req == null ? RenderingMode.LIVE : req.getMode();
+        return req == null ? RenderMode.LIVE : req.getMode();
     }
 
     public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )

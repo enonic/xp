@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
 import com.enonic.wem.portal.internal.controller.ControllerScript;
 import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
@@ -51,7 +51,7 @@ public class PageRenderer
             "<meta charset=\"utf-8\"/>" +
             "<title>" + content.getDisplayName() + "</title>" +
             "</head>";
-        if ( RenderingMode.EDIT.equals( context.getMode() ) )
+        if ( RenderMode.EDIT.equals( context.getMode() ) )
         {
             html += "<body data-live-edit-type=\"page\"></body>";
         }

@@ -12,7 +12,7 @@ import javax.ws.rs.core.UriInfo;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
 import com.enonic.wem.portal.internal.base.BaseResource;
 import com.enonic.wem.portal.internal.controller.ControllerScript;
 import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
@@ -29,7 +29,7 @@ public final class ServiceResource
 
     protected ControllerScriptFactory controllerScriptFactory;
 
-    protected RenderingMode mode;
+    protected RenderMode mode;
 
     protected ModuleKey moduleKey;
 

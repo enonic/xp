@@ -6,7 +6,7 @@ import com.enonic.wem.api.content.page.text.TextComponent;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.RenderingMode;
+import com.enonic.wem.portal.RenderMode;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
@@ -28,7 +28,7 @@ public final class TextRenderer
     @Override
     public RenderResult render( final TextComponent textComponent, final PortalContext context )
     {
-        final RenderingMode renderingMode = getRenderingMode( context );
+        final RenderMode renderMode = getRenderingMode( context );
         final PortalResponse response = context.getResponse();
         response.setContentType( "text/html" );
         response.setPostProcess( false );
@@ -39,7 +39,7 @@ public final class TextRenderer
         }
         else
         {
-            if ( renderingMode == RenderingMode.EDIT )
+            if ( renderMode == RenderMode.EDIT )
             {
                 response.setBody( MessageFormat.format( "<div data-live-edit-type=\"{0}\">{1}</div>", textComponent.getType().toString(),
                                                         textComponent.getText() ) );
@@ -56,8 +56,8 @@ public final class TextRenderer
     private void renderEmptyTextComponent( final TextComponent textComponent, final PortalContext context )
     {
         final PortalResponse response = context.getResponse();
-        final RenderingMode renderingMode = getRenderingMode( context );
-        switch ( renderingMode )
+        final RenderMode renderMode = getRenderingMode( context );
+        switch ( renderMode )
         {
             case EDIT:
                 response.setBody( MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, textComponent.getType().toString() ) );
@@ -73,9 +73,9 @@ public final class TextRenderer
         }
     }
 
-    private RenderingMode getRenderingMode( final PortalContext context )
+    private RenderMode getRenderingMode( final PortalContext context )
     {
         final PortalRequest req = context.getRequest();
-        return req == null ? RenderingMode.LIVE : req.getMode();
+        return req == null ? RenderMode.LIVE : req.getMode();
     }
 }

@@ -1,7 +1,7 @@
 package com.enonic.wem.portal;
 
 
-public enum RenderingMode
+public enum RenderMode
 {
     EDIT( "edit" ),
     PREVIEW( "preview" ),
@@ -9,7 +9,7 @@ public enum RenderingMode
 
     private final String name;
 
-    private RenderingMode( final String name )
+    private RenderMode( final String name )
     {
         this.name = name;
     }
@@ -19,12 +19,12 @@ public enum RenderingMode
         return name;
     }
 
-    public static RenderingMode from( final String value )
+    public static RenderMode from( final String value )
     {
         return from( value, null );
     }
 
-    public static RenderingMode from( final String value, final RenderingMode defaultValue )
+    public static RenderMode from( final String value, final RenderMode defaultValue )
     {
         if ( value == null )
         {
@@ -32,7 +32,7 @@ public enum RenderingMode
         }
         try
         {
-            return RenderingMode.valueOf( value.toUpperCase() );
+            return RenderMode.valueOf( value.toUpperCase() );
         }
         catch ( IllegalArgumentException e )
         {
