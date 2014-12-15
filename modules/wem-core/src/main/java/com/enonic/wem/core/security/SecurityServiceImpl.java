@@ -209,6 +209,7 @@ public final class SecurityServiceImpl
     public Principals findPrincipals( final UserStoreKey userStore, final List<PrincipalType> types, final String query )
     {
         final PrincipalQuery.Builder principalQuery = PrincipalQuery.newQuery().
+            getAll().
             includeTypes( types ).
             searchText( query );
         if ( userStore != null )

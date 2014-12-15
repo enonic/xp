@@ -19,7 +19,7 @@ public final class PrincipalKey
 
     private static final PrincipalKey ANONYMOUS_PRINCIPAL = new PrincipalKey();
 
-    private static final PrincipalKey ENTERPRISE_ADMIN = PrincipalKey.ofRole( "administrator" );
+    private static final PrincipalKey ENTERPRISE_ADMIN = PrincipalKey.ofRole( "ea" );
 
     public final static String ROLES_NODE_NAME = "roles";
 

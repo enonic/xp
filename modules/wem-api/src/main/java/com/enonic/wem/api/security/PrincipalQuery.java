@@ -13,6 +13,8 @@ public final class PrincipalQuery
 {
     private static final int DEFAULT_SIZE = 10;
 
+    private static final int GET_ALL_SIZE_FLAG = -1;
+
     private static final ImmutableSet<PrincipalType> ALL_TYPES = Sets.immutableEnumSet( EnumSet.allOf( PrincipalType.class ) );
 
     private final int from;
@@ -108,6 +110,12 @@ public final class PrincipalQuery
         public Builder size( final int size )
         {
             this.size = size;
+            return this;
+        }
+
+        public Builder getAll()
+        {
+            this.size = GET_ALL_SIZE_FLAG;
             return this;
         }
 

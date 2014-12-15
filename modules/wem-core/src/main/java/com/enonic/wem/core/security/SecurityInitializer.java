@@ -15,6 +15,7 @@ import com.enonic.wem.api.security.PrincipalRelationship;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.security.User;
+import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
@@ -64,15 +65,25 @@ public final class SecurityInitializer
             build();
         addRole( createEnterpriseAdmin );
 
+        final CreateRoleParams createUserManager = CreateRoleParams.create().
+            roleKey( PrincipalKey.ofRole( "um" ) ).
+            displayName( "User Manager" ).
+            build();
+        addRole( createUserManager );
+
+        final CreateRoleParams createContentManager = CreateRoleParams.create().
+            roleKey( PrincipalKey.ofRole( "cm" ) ).
+            displayName( "Content Manager" ).
+            build();
+        addRole( createContentManager );
+
         addMember( PrincipalKey.ofEnterpriseAdmin(), createAdmin.getKey() );
     }
 
 
     private void initializeUserStores()
     {
-        final Node systemUserStore = SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.getByPath(
-            NodePath.newNodePath( NodePath.ROOT, SystemConstants.SYSTEM_USERSTORE.getDisplayName() ).build() ) );
-
+        final UserStore systemUserStore = securityService.getUserStore( UserStoreKey.system() );
         if ( systemUserStore == null )
         {
             LOG.info( "Initializing user store " + SystemConstants.SYSTEM_USERSTORE.getKey() );
