@@ -29,7 +29,7 @@ module api.content {
             this.attachments = builder.attachments;
             this.form = builder.form;
 
-            this.metadata = builder.metadata;
+            this.metadata = builder.metadata || [];
             this.pageObj = builder.pageObj;
             this.permissions = builder.permissions || new AccessControlList();
             this.inheritPermissions = builder.inheritPermissions;
@@ -152,7 +152,7 @@ module api.content {
                 this.attachments = source.getAttachments();
                 this.form = source.getForm();
 
-                this.metadata = source.getAllMetadata().map((metadata: Metadata) => metadata.clone());
+                this.metadata = source.getAllMetadata() ? source.getAllMetadata().map((metadata: Metadata) => metadata.clone()) : [];
 
                 this.pageObj = source.getPage() ? source.getPage().clone() : null;
                 this.permissions = source.getPermissions(); // TODO clone?

@@ -22,7 +22,15 @@ module api.liveedit.image {
 
             var imageUploadHandler = (event: ImageUploadedEvent) => {
                 if (event.getTargetImagePlaceholder() === this) {
-                    this.createImageContent(event.getUploadedItem(), imageView);
+                    var createdContent = event.getUploadedItem();
+
+                    new api.content.ContentCreatedEvent(createdContent.getContentId()).fire();
+
+                    new ImageComponentSetImageEvent().
+                        setImageId(createdContent.getContentId()).
+                        setImageComponentView(this.imageComponentView).
+                        setName(createdContent.getName().toString()).
+                        fire();
                 }
             };
             ImageUploadedEvent.on(imageUploadHandler);
@@ -64,48 +72,6 @@ module api.liveedit.image {
                     fire();
 
             });
-        }
-
-
-        private createImageContent(uploadItem: api.ui.uploader.UploadItem, imageView: ImageComponentView) {
-
-            this.imageComponentView.showLoadingSpinner();
-
-            new api.schema.content.GetContentTypeByNameRequest(ContentTypeName.IMAGE).
-                sendAndParse().
-                then((contentType: api.schema.content.ContentType) => {
-
-                    var attachmentName = new api.content.attachment.AttachmentName(uploadItem.getName());
-
-                    var attachment = new api.content.attachment.AttachmentBuilder().
-                        setBlobKey(uploadItem.getBlobKey()).
-                        setName(attachmentName).
-                        setMimeType(uploadItem.getMimeType()).
-                        setSize(uploadItem.getSize()).
-                        build();
-
-                    var createContentRequest = api.content.CreateImageContentRequest.fromAttachment(attachment,
-                        imageView.liveEditModel.getContent().getPath());
-                    return createContentRequest.sendAndParse();
-
-                }).then((createdContent: api.content.Content) => {
-                    new api.content.ContentCreatedEvent(createdContent.getContentId()).fire();
-
-                    new ImageComponentSetImageEvent().
-                        setImageId(createdContent.getContentId()).
-                        setImageComponentView(this.imageComponentView).
-                        setName(uploadItem.getName()).
-                        fire();
-
-                }).catch((reason) => {
-
-                    new ImageComponentSetImageEvent().
-                        setErrorMessage(reason.message).
-                        fire();
-
-                    this.imageComponentView.hideLoadingSpinner();
-
-                }).done();
         }
 
         select() {

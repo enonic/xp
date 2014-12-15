@@ -17,6 +17,12 @@ module api.content.form.inputtype.image {
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Option = api.ui.selector.Option;
 
+    import UploadItem = api.ui.uploader.UploadItem;
+    import FileUploadedEvent = api.ui.uploader.FileUploadedEvent;
+    import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
+    import FileUploadProgressEvent = api.ui.uploader.FileUploadProgressEvent;
+    import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
+
     export interface ImageSelectorConfig {
         relationshipType: string
     }
@@ -39,7 +45,7 @@ module api.content.form.inputtype.image {
 
         private contentRequestsAllowed: boolean;
 
-        private uploadDialog: ImageSelectorUploadDialog;
+        private uploadDialog: ImageUploadDialog;
 
         private editContentRequestListeners: {(content: ContentSummary): void }[] = [];
 
@@ -79,12 +85,14 @@ module api.content.form.inputtype.image {
                     this.loadOptions("");
                 });
 
-            this.uploadDialog = new ImageSelectorUploadDialog();
-            this.uploadDialog.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent) => {
+            this.uploadDialog = new ImageUploadDialog();
+            this.uploadDialog.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
                 this.uploadDialog.close();
 
-                event.getUploadedItems().forEach((uploadItem: api.ui.uploader.UploadItem) => {
-                    var value = ImageSelectorDisplayValue.fromUploadItem(uploadItem);
+                event.getUploadItems().forEach((uploadItem: Content) => {
+
+                    var value = ImageSelectorDisplayValue.fromContentSummary(uploadItem);
+
                     var option = <api.ui.selector.Option<ImageSelectorDisplayValue>>{
                         value: value.getId(),
                         displayValue: value
@@ -92,12 +100,21 @@ module api.content.form.inputtype.image {
                     this.comboBox.selectOption(option);
                 });
             });
-            this.uploadDialog.onUploadProgress((event: api.ui.uploader.FileUploadProgressEvent) => {
+            this.uploadDialog.onUploadProgress((event: FileUploadProgressEvent<Content>) => {
                 var selectedOption = this.selectedOptionsView.getById(event.getUploadItem().getId());
-                (<SelectedOptionView>selectedOption.getOptionView()).setProgress(event.getUploadItem().getProgress());
+                (<SelectedOptionView>selectedOption.getOptionView()).setProgress(event.getProgress());
             });
-            this.uploadDialog.onImageUploaded((event: api.ui.uploader.FileUploadedEvent) => {
-                this.createImageContent(event.getUploadedItem());
+            this.uploadDialog.onImageUploaded((event: FileUploadedEvent<Content>) => {
+                var createdContent = event.getUploadItem();
+
+                new api.content.ContentCreatedEvent(createdContent.getContentId()).fire();
+
+                var value = ImageSelectorDisplayValue.fromContentSummary(createdContent);
+                this.comboBox.selectOption({
+                    value: value.getId(),
+                    displayValue: value
+                });
+
             });
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
@@ -290,41 +307,6 @@ module api.content.form.inputtype.image {
                     displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
                 };
             });
-        }
-
-        private createImageContent(uploadItem: api.ui.uploader.UploadItem) {
-
-            new api.schema.content.GetContentTypeByNameRequest(ContentTypeName.IMAGE).
-                sendAndParse().
-                then((contentType: api.schema.content.ContentType) => {
-
-                    var attachmentName = new api.content.attachment.AttachmentName(uploadItem.getName());
-
-                    var attachment = new api.content.attachment.AttachmentBuilder().
-                        setBlobKey(uploadItem.getBlobKey()).
-                        setName(attachmentName).
-                        setMimeType(uploadItem.getMimeType()).
-                        setSize(uploadItem.getSize()).
-                        build();
-
-                    var createContentRequest = api.content.CreateImageContentRequest.fromAttachment(attachment, this.config.contentPath);
-
-                    return createContentRequest.sendAndParse();
-
-                }).then((createdContent: api.content.Content) => {
-                    new api.content.ContentCreatedEvent(createdContent.getContentId()).fire();
-
-                    var value = ImageSelectorDisplayValue.fromContentSummary(createdContent, uploadItem);
-                    this.comboBox.selectOption({
-                        value: value.getId(),
-                        displayValue: value
-                    });
-
-                }).catch((reason: any) => {
-
-                    api.DefaultErrorHandler.handle(reason);
-
-                }).done();
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

@@ -1,12 +1,12 @@
-module api.ui.uploader {
+module api.content {
 
     import Button = api.ui.button.Button;
     import CloseButton = api.ui.button.CloseButton;
 
-    export interface ImageUploaderConfig extends FileUploaderConfig {
+    export interface ImageUploaderConfig extends ContentUploaderConfig {
     }
 
-    export class ImageUploader extends FileUploader {
+    export class ImageUploader extends ContentUploader {
 
         private images: api.dom.ImgEl[];
 
