@@ -7,10 +7,10 @@
   <xsl:template match="/">
     <output>
       <value>
-        <xsl:value-of select="portal:url('a=1')"/>
+        <xsl:value-of select="portal:url('_path=a')"/>
       </value>
       <value>
-        <xsl:value-of select="portal:url('a=1','b=2')"/>
+        <xsl:value-of select="portal:url('_path=a','b=2')"/>
       </value>
       <value>
         <xsl:value-of select="portal:pageUrl('a=1')"/>
@@ -19,16 +19,16 @@
         <xsl:value-of select="portal:pageUrl('a=1','b=2')"/>
       </value>
       <value>
-        <xsl:value-of select="portal:imageUrl('a=1')"/>
+        <xsl:value-of select="portal:imageUrl('_id=123')"/>
       </value>
       <value>
-        <xsl:value-of select="portal:imageUrl('a=1','b=2')"/>
+        <xsl:value-of select="portal:imageUrl('_name=a','b=2')"/>
       </value>
       <value>
-        <xsl:value-of select="portal:assetUrl('a=1')"/>
+        <xsl:value-of select="portal:assetUrl('_path=a')"/>
       </value>
       <value>
-        <xsl:value-of select="portal:assetUrl('a=1','b=2')"/>
+        <xsl:value-of select="portal:assetUrl('_path=a','b=2')"/>
       </value>
       <value>
         <xsl:value-of select="portal:attachmentUrl('a=1')"/>
@@ -37,16 +37,16 @@
         <xsl:value-of select="portal:attachmentUrl('a=1','b=2')"/>
       </value>
       <value>
-        <xsl:value-of select="portal:serviceUrl('a=1')"/>
+        <xsl:value-of select="portal:serviceUrl('_service=a')"/>
       </value>
       <value>
-        <xsl:value-of select="portal:serviceUrl('a=1','b=2')"/>
+        <xsl:value-of select="portal:serviceUrl('_service=a','b=2')"/>
       </value>
       <value>
-        <xsl:value-of select="portal:componentUrl('a=1')"/>
+        <xsl:value-of select="portal:componentUrl('_component=a')"/>
       </value>
       <value>
-        <xsl:value-of select="portal:componentUrl('a=1','b=2')"/>
+        <xsl:value-of select="portal:componentUrl('_component=a','b=2')"/>
       </value>
     </output>
   </xsl:template>

@@ -8,8 +8,10 @@ import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceType;
 
-import com.enonic.wem.portal.view.ViewFunctions;
-import com.enonic.wem.portal.view.ViewHelper;
+import com.enonic.wem.portal.PortalContext;
+import com.enonic.wem.portal.PortalContextAccessor;
+import com.enonic.wem.portal.url.PortalUrlBuilders;
+import com.enonic.wem.portal.url.PortalUrlBuildersHelper;
 
 abstract class AbstractUrlFunction
     extends AbstractFunction
@@ -27,18 +29,15 @@ abstract class AbstractUrlFunction
                 params[i] = toSingleString( arguments[i] );
             }
 
-            final Multimap<String, String> paramsMap = ViewHelper.toParamMap( params );
+            final Multimap<String, String> paramsMap = PortalUrlBuildersHelper.toParamMap( params );
             final String result = execute( paramsMap );
             return createValue( result );
         }
     }
 
-    protected final ViewFunctions functions;
-
-    public AbstractUrlFunction( final String name, final ViewFunctions functions )
+    public AbstractUrlFunction( final String name )
     {
         super( name );
-        this.functions = functions;
         setMinimumNumberOfArguments( 0 );
         setMaximumNumberOfArguments( 100 );
         setResultType( SequenceType.SINGLE_STRING );
@@ -49,6 +48,12 @@ abstract class AbstractUrlFunction
     public final ExtensionFunctionCall makeCallExpression()
     {
         return new Call();
+    }
+
+    protected final PortalUrlBuilders createUrlBuilders()
+    {
+        final PortalContext context = PortalContextAccessor.get();
+        return new PortalUrlBuilders( context );
     }
 
     protected abstract String execute( final Multimap<String, String> params );

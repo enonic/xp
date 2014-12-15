@@ -1,7 +1,9 @@
-package com.enonic.wem.xslt.internal.function;
+package com.enonic.wem.portal.internal.command;
 
-import org.junit.Test;
+import org.junit.Before;
 import org.mockito.Mockito;
+
+import junit.framework.Assert;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -11,12 +13,15 @@ import com.enonic.wem.portal.PortalContextAccessor;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.RenderMode;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
+import com.enonic.wem.script.AbstractScriptTest;
+import com.enonic.wem.script.ScriptExports;
+import com.enonic.wem.script.command.CommandHandler;
 
-public class UrlFunctionsTest
-    extends AbstractFunctionTest
+public abstract class AbstractUrlHandlerTest
+    extends AbstractScriptTest
 {
-    @Test
-    public void testAll()
+    @Before
+    public final void setup()
         throws Exception
     {
         final PortalRequest request = Mockito.mock( PortalRequest.class );
@@ -32,7 +37,19 @@ public class UrlFunctionsTest
         context.setContent( content );
 
         PortalContextAccessor.set( context );
+        addHandler( createHandler() );
+    }
 
-        processTemplate( "all" );
+    protected abstract CommandHandler createHandler()
+        throws Exception;
+
+    protected void execute( final String name )
+        throws Exception
+    {
+        final String path = getClass().getName().replace( '.', '/' ) + ".js";
+        final ScriptExports exports = runTestScript( path );
+
+        Assert.assertTrue( "No functions exported named [" + name + "]", exports.hasMethod( name ) );
+        exports.executeMethod( name );
     }
 }

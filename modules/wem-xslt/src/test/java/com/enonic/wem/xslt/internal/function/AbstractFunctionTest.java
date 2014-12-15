@@ -30,7 +30,6 @@ public abstract class AbstractFunctionTest
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
 
         final XsltProcessorFactoryImpl factory = new XsltProcessorFactoryImpl();
-        factory.setViewFunctions( new MockViewFunctions() );
         this.processor = factory.newProcessor();
     }
 

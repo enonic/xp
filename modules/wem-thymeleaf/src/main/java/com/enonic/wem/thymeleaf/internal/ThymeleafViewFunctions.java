@@ -2,50 +2,58 @@ package com.enonic.wem.thymeleaf.internal;
 
 import java.util.List;
 
-import com.enonic.wem.portal.view.ViewFunctions;
-import com.enonic.wem.portal.view.ViewHelper;
+import com.google.common.collect.Multimap;
+
+import com.enonic.wem.portal.PortalContext;
+import com.enonic.wem.portal.PortalContextAccessor;
+import com.enonic.wem.portal.url.PortalUrlBuilders;
+import com.enonic.wem.portal.url.PortalUrlBuildersHelper;
 
 final class ThymeleafViewFunctions
 {
-    private final ViewFunctions functions;
-
-    public ThymeleafViewFunctions( final ViewFunctions functions )
+    private PortalUrlBuilders createUrlBuilders()
     {
-        this.functions = functions;
+        final PortalContext context = PortalContextAccessor.get();
+        return new PortalUrlBuilders( context );
+    }
+
+    private Multimap<String, String> toMap( final List<String> params )
+    {
+        return PortalUrlBuildersHelper.toParamMap( params );
     }
 
     public String url( final List<String> params )
     {
-        return this.functions.url( ViewHelper.toParamMap( params ) );
+        return PortalUrlBuildersHelper.apply( createUrlBuilders().generalUrl(), toMap( params ) ).toString();
     }
 
     public String assetUrl( final List<String> params )
     {
-        return this.functions.assetUrl( ViewHelper.toParamMap( params ) );
+        return PortalUrlBuildersHelper.apply( createUrlBuilders().assetUrl(), toMap( params ) ).toString();
     }
 
     public String pageUrl( final List<String> params )
     {
-        return this.functions.pageUrl( ViewHelper.toParamMap( params ) );
+        return PortalUrlBuildersHelper.apply( createUrlBuilders().pageUrl(), toMap( params ) ).toString();
     }
 
     public String attachmentUrl( final List<String> params )
     {
-        return this.functions.attachmentUrl( ViewHelper.toParamMap( params ) );
+        return PortalUrlBuildersHelper.apply( createUrlBuilders().attachmentUrl(), toMap( params ) ).toString();
     }
 
     public String componentUrl( final List<String> params )
     {
-        return this.functions.componentUrl( ViewHelper.toParamMap( params ) );
+        return PortalUrlBuildersHelper.apply( createUrlBuilders().componentUrl(), toMap( params ) ).toString();
     }
 
     public String imageUrl( final List<String> params )
     {
-        return this.functions.imageUrl( ViewHelper.toParamMap( params ) );
+        return PortalUrlBuildersHelper.apply( createUrlBuilders().imageUrl(), toMap( params ) ).toString();
     }
 
     public String serviceUrl( final List<String> params )
     {
-        return this.functions.serviceUrl( ViewHelper.toParamMap( params ) );
+        return PortalUrlBuildersHelper.apply( createUrlBuilders().serviceUrl(), toMap( params ) ).toString();
     }
 }

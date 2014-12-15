@@ -2,11 +2,20 @@ package com.enonic.wem.thymeleaf.internal;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
+import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.portal.PortalContextAccessor;
+import com.enonic.wem.portal.PortalRequest;
+import com.enonic.wem.portal.RenderMode;
+import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.script.AbstractScriptTest;
 import com.enonic.wem.script.ScriptExports;
 
@@ -18,9 +27,21 @@ public class RenderViewHandlerTest
     @Before
     public void setUp()
     {
-        final ThymeleafProcessorFactoryImpl factory = new ThymeleafProcessorFactoryImpl();
-        factory.setViewFunctions( new MockViewFunctions() );
+        final PortalRequest request = Mockito.mock( PortalRequest.class );
+        Mockito.when( request.getBaseUri() ).thenReturn( "/root" );
+        Mockito.when( request.getMode() ).thenReturn( RenderMode.LIVE );
+        Mockito.when( request.getWorkspace() ).thenReturn( Workspace.from( "stage" ) );
 
+        final PortalContextImpl context = new PortalContextImpl();
+        context.setRequest( request );
+        context.setModule( ModuleKey.from( "mymodule" ) );
+
+        final Content content = Content.newContent().id( ContentId.from( "123" ) ).path( "some/path" ).build();
+        context.setContent( content );
+
+        PortalContextAccessor.set( context );
+
+        final ThymeleafProcessorFactoryImpl factory = new ThymeleafProcessorFactoryImpl();
         final RenderViewHandler handler = new RenderViewHandler();
         handler.setFactory( factory );
         addHandler( handler );
