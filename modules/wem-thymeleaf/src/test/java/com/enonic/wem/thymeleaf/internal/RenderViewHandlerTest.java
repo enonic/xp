@@ -7,7 +7,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.api.resource.ResourceProblemException;
-import com.enonic.wem.portal.view.MockViewFunctions;
 import com.enonic.wem.script.AbstractScriptTest;
 import com.enonic.wem.script.ScriptExports;
 

@@ -29,6 +29,12 @@ public final class XsltProcessorFactoryImpl
         this.configuration.setValidationWarnings( true );
     }
 
+    @Reference
+    public void setViewFunctions( final ViewFunctions functions )
+    {
+        new XsltFunctionLibrary( functions ).registerAll( this.configuration );
+    }
+
     private TransformerFactory createTransformerFactory()
     {
         return new TransformerFactoryImpl( this.configuration );
@@ -39,11 +45,5 @@ public final class XsltProcessorFactoryImpl
     {
         final TransformerFactory factory = createTransformerFactory();
         return new XsltProcessorImpl( factory );
-    }
-
-    @Reference
-    public void setViewFunctions( final ViewFunctions viewFunctions )
-    {
-        new XsltFunctionLibrary( viewFunctions ).registerAll( this.configuration );
     }
 }

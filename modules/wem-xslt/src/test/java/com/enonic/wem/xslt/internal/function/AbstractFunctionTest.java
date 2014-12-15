@@ -14,7 +14,6 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.wem.api.xml.DomHelper;
-import com.enonic.wem.portal.view.MockViewFunctions;
 import com.enonic.wem.xslt.XsltProcessor;
 import com.enonic.wem.xslt.internal.XsltProcessorFactoryImpl;
 
@@ -24,18 +23,14 @@ public abstract class AbstractFunctionTest
 {
     private XsltProcessor processor;
 
-    protected MockViewFunctions viewFunctions;
-
     @Before
     public final void setup()
     {
         final ResourceUrlRegistry urlRegistry = ResourceUrlTestHelper.mockModuleScheme();
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
 
-        this.viewFunctions = new MockViewFunctions();
-
         final XsltProcessorFactoryImpl factory = new XsltProcessorFactoryImpl();
-        factory.setViewFunctions( this.viewFunctions );
+        factory.setViewFunctions( new MockViewFunctions() );
         this.processor = factory.newProcessor();
     }
 

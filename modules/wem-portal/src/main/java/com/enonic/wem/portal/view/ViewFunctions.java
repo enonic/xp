@@ -1,18 +1,20 @@
 package com.enonic.wem.portal.view;
 
+import com.google.common.collect.Multimap;
+
 public interface ViewFunctions
 {
-    public String url( String... params );
+    public String url( Multimap<String, String> params );
 
-    public String assetUrl( String... params );
+    public String assetUrl( Multimap<String, String> params );
 
-    public String pageUrl( String... params );
+    public String pageUrl( Multimap<String, String> params );
 
-    public String imageUrl( String... params );
+    public String attachmentUrl( Multimap<String, String> params );
 
-    public String attachmentUrl( String... params );
+    public String componentUrl( Multimap<String, String> params );
 
-    public String serviceUrl( String... params );
+    public String imageUrl( Multimap<String, String> params );
 
-    public String componentUrl( String... params );
+    public String serviceUrl( Multimap<String, String> params );
 }

@@ -3,60 +3,49 @@ package com.enonic.wem.thymeleaf.internal;
 import java.util.List;
 
 import com.enonic.wem.portal.view.ViewFunctions;
+import com.enonic.wem.portal.view.ViewHelper;
 
 final class ThymeleafViewFunctions
 {
-    private final ViewFunctions viewFunctions;
+    private final ViewFunctions functions;
 
-    public ThymeleafViewFunctions( final ViewFunctions viewFunctions )
+    public ThymeleafViewFunctions( final ViewFunctions functions )
     {
-        this.viewFunctions = viewFunctions;
+        this.functions = functions;
     }
 
-    private String[] toArray( final List<String> list )
+    public String url( final List<String> params )
     {
-        return list.toArray( new String[list.size()] );
+        return this.functions.url( ViewHelper.toParamMap( params ) );
     }
 
-    @SuppressWarnings("unused")
-    public String url( final List<String> list )
+    public String assetUrl( final List<String> params )
     {
-        return this.viewFunctions.url( toArray( list ) );
+        return this.functions.assetUrl( ViewHelper.toParamMap( params ) );
     }
 
-    @SuppressWarnings("unused")
-    public String assetUrl( final List<String> list )
+    public String pageUrl( final List<String> params )
     {
-        return this.viewFunctions.assetUrl( toArray( list ) );
+        return this.functions.pageUrl( ViewHelper.toParamMap( params ) );
     }
 
-    @SuppressWarnings("unused")
-    public String pageUrl( final List<String> list )
+    public String attachmentUrl( final List<String> params )
     {
-        return this.viewFunctions.pageUrl( toArray( list ) );
+        return this.functions.attachmentUrl( ViewHelper.toParamMap( params ) );
     }
 
-    @SuppressWarnings("unused")
-    public String attachmentUrl( final List<String> list )
+    public String componentUrl( final List<String> params )
     {
-        return this.viewFunctions.attachmentUrl( toArray( list ) );
+        return this.functions.componentUrl( ViewHelper.toParamMap( params ) );
     }
 
-    @SuppressWarnings("unused")
-    public String componentUrl( final List<String> list )
+    public String imageUrl( final List<String> params )
     {
-        return this.viewFunctions.componentUrl( toArray( list ) );
+        return this.functions.imageUrl( ViewHelper.toParamMap( params ) );
     }
 
-    @SuppressWarnings("unused")
-    public String imageUrl( final List<String> list )
+    public String serviceUrl( final List<String> params )
     {
-        return this.viewFunctions.imageUrl( toArray( list ) );
-    }
-
-    @SuppressWarnings("unused")
-    public String serviceUrl( final List<String> list )
-    {
-        return this.viewFunctions.serviceUrl( toArray( list ) );
+        return this.functions.serviceUrl( ViewHelper.toParamMap( params ) );
     }
 }

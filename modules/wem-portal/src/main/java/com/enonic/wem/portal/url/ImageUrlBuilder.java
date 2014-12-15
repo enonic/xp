@@ -1,78 +1,79 @@
 package com.enonic.wem.portal.url;
 
-import java.util.Map;
-
 import com.google.common.base.Joiner;
+import com.google.common.collect.Multimap;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.emptyToNull;
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class ImageUrlBuilder
     extends PortalUrlBuilder<ImageUrlBuilder>
 {
     private String background;
 
-    private Integer quality;
+    private String quality;
 
-    private ContentId imageId;
+    private String imageId;
 
-    private ContentName imageName;
+    private String imageName;
 
-    private String[] filters;
+    private String filter;
 
-    public ImageUrlBuilder()
+    public ImageUrlBuilder imageId( final String value )
     {
-        this.filters = new String[0];
-    }
-
-    public ImageUrlBuilder imageName( final String imageName )
-    {
-        return imageName( isNullOrEmpty( imageName ) ? null : ContentName.from( imageName ) );
-    }
-
-    public ImageUrlBuilder imageId( final String imageId )
-    {
-        return imageId( isNullOrEmpty( imageId ) ? null : ContentId.from( imageId ) );
-    }
-
-    public ImageUrlBuilder imageName( final ContentName imageName )
-    {
-        this.imageName = imageName;
+        this.imageId = emptyToNull( value );
         return this;
     }
 
-    public ImageUrlBuilder imageId( final ContentId imageId )
+    public ImageUrlBuilder imageId( final ContentId value )
     {
-        this.imageId = imageId;
+        return imageId( value != null ? value.toString() : null );
+    }
+
+    public ImageUrlBuilder imageName( final String value )
+    {
+        this.imageName = emptyToNull( value );
         return this;
     }
 
-    public ImageUrlBuilder filter( final String... filters )
+    public ImageUrlBuilder imageName( final ContentName value )
     {
-        this.filters = filters;
+        return imageName( value != null ? value.toString() : null );
+    }
+
+    public ImageUrlBuilder filter( final String value )
+    {
+        this.filter = emptyToNull( value );
         return this;
     }
 
-    public ImageUrlBuilder background( final String backgroundColor )
+    public ImageUrlBuilder filters( final String... value )
     {
-        this.background = emptyToNull( backgroundColor );
+        this.filter = Joiner.on( ";" ).skipNulls().join( value );
+        return this;
+    }
+
+    public ImageUrlBuilder background( final String value )
+    {
+        this.background = emptyToNull( value );
         return this;
     }
 
     public ImageUrlBuilder quality( final int quality )
     {
-        checkArgument( quality > 0, "Image Quality must be between 1 and 100. Value: %s", quality );
-        checkArgument( quality <= 100, "Image Quality must be between 1 and 100. Value: %s", quality );
-        this.quality = quality;
+        return quality( String.valueOf( quality ) );
+    }
+
+    public ImageUrlBuilder quality( final String value )
+    {
+        this.quality = emptyToNull( value );
         return this;
     }
 
     @Override
-    protected void buildUrl( final StringBuilder url, final Map<String, String> params )
+    protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
 
@@ -81,18 +82,17 @@ public final class ImageUrlBuilder
 
         if ( this.imageName != null )
         {
-            appendPart( url, this.imageName.toString() );
+            appendPart( url, this.imageName );
         }
         else if ( this.imageId != null )
         {
             appendPart( url, "id" );
-            appendPart( url, this.imageId.toString() );
+            appendPart( url, this.imageId );
         }
 
-        if ( this.filters.length > 0 )
+        if ( this.filter != null )
         {
-            final String filtersStr = Joiner.on( ";" ).skipNulls().join( this.filters );
-            params.put( "filter", filtersStr );
+            params.put( "filter", this.filter );
         }
 
         if ( this.background != null )

@@ -20,7 +20,7 @@ public final class ThymeleafProcessorFactoryImpl
 {
     private final TemplateEngine engine;
 
-    private ViewFunctions viewFunctions;
+    private ViewFunctions functions;
 
     public ThymeleafProcessorFactoryImpl()
     {
@@ -43,12 +43,12 @@ public final class ThymeleafProcessorFactoryImpl
     @Override
     public ThymeleafProcessor newProcessor()
     {
-        return new ThymeleafProcessorImpl( this.engine, this.viewFunctions );
+        return new ThymeleafProcessorImpl( this.engine, this.functions );
     }
 
     @Reference
-    public void setViewFunctions( final ViewFunctions viewFunctions )
+    public void setViewFunctions( final ViewFunctions functions )
     {
-        this.viewFunctions = viewFunctions;
+        this.functions = functions;
     }
 }

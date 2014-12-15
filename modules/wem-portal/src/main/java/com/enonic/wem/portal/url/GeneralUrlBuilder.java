@@ -1,29 +1,28 @@
 package com.enonic.wem.portal.url;
 
-import java.util.Map;
+import com.google.common.collect.Multimap;
 
 import static com.google.common.base.Strings.emptyToNull;
 
 public final class GeneralUrlBuilder
     extends PortalUrlBuilder<GeneralUrlBuilder>
 {
-    private String optionPath;
+    private String path;
 
-    public GeneralUrlBuilder optionPath( final String optionPath )
+    public GeneralUrlBuilder path( final String value )
     {
-        this.optionPath = emptyToNull( optionPath );
+        this.path = emptyToNull( value );
         return this;
     }
 
     @Override
-    protected void buildUrl( final StringBuilder url, final Map<String, String> params )
+    protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
 
-        if ( this.optionPath != null )
+        if ( this.path != null )
         {
-            appendPart( url, "_" );
-            appendPart( url, this.optionPath );
+            appendPart( url, this.path );
         }
     }
 }

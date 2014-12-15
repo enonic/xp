@@ -1,115 +1,111 @@
 package com.enonic.wem.portal.internal.view;
 
-import java.util.Map;
+import java.util.Collection;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
+import com.enonic.wem.portal.PortalContext;
+import com.enonic.wem.portal.PortalContextAccessor;
+import com.enonic.wem.portal.url.AssetUrlBuilder;
+import com.enonic.wem.portal.url.AttachmentUrlBuilder;
+import com.enonic.wem.portal.url.ComponentUrlBuilder;
+import com.enonic.wem.portal.url.GeneralUrlBuilder;
+import com.enonic.wem.portal.url.ImageUrlBuilder;
+import com.enonic.wem.portal.url.PageUrlBuilder;
+import com.enonic.wem.portal.url.PortalUrlBuilders;
+import com.enonic.wem.portal.url.ServiceUrlBuilder;
 import com.enonic.wem.portal.view.ViewFunctions;
 
 @Component
 public final class ViewFunctionsImpl
     implements ViewFunctions
 {
-    @Override
-    public String url( final String... params )
+    private String getSystemParam( final Multimap<String, String> params, final String name )
     {
-        return url( toMap( params ) );
-    }
-
-    private String url( final Map<String, String> params )
-    {
-        return null;
-    }
-
-    @Override
-    public String assetUrl( final String... params )
-    {
-        return assetUrl( toMap( params ) );
-    }
-
-    private String assetUrl( final Map<String, String> params )
-    {
-        return null;
-    }
-
-    @Override
-    public String pageUrl( final String... params )
-    {
-        return pageUrl( toMap( params ) );
-    }
-
-    private String pageUrl( final Map<String, String> params )
-    {
-        return null;
-    }
-
-    @Override
-    public String imageUrl( final String... params )
-    {
-        return imageUrl( toMap( params ) );
-    }
-
-    private String imageUrl( final Map<String, String> params )
-    {
-        return null;
-    }
-
-    @Override
-    public String attachmentUrl( final String... params )
-    {
-        return attachmentUrl( toMap( params ) );
-    }
-
-    private String attachmentUrl( final Map<String, String> params )
-    {
-        return null;
-    }
-
-    @Override
-    public String serviceUrl( final String... params )
-    {
-        return serviceUrl( toMap( params ) );
-    }
-
-    private String serviceUrl( final Map<String, String> params )
-    {
-        return null;
-    }
-
-    @Override
-    public String componentUrl( final String... params )
-    {
-        return componentUrl( toMap( params ) );
-    }
-
-    private String componentUrl( final Map<String, String> params )
-    {
-        return null;
-    }
-
-    private Map<String, String> toMap( final String... params )
-    {
-        final Map<String, String> map = Maps.newHashMap();
-        for ( final String param : params )
+        final Collection<String> values = params.removeAll( name );
+        if ( values == null )
         {
-            addParam( map, param );
+            return null;
         }
 
-        return map;
-    }
-
-    private void addParam( final Map<String, String> map, final String param )
-    {
-        final int pos = param.indexOf( '=' );
-        if ( ( pos <= 0 ) || ( pos >= param.length() ) )
+        if ( values.isEmpty() )
         {
-            return;
+            return null;
         }
 
-        final String key = param.substring( 0, pos ).trim();
-        final String value = param.substring( pos + 1 ).trim();
-        map.put( key, value );
+        return values.iterator().next();
+    }
+
+    private PortalUrlBuilders urlBuilders()
+    {
+        final PortalContext context = PortalContextAccessor.get();
+        return new PortalUrlBuilders( context );
+    }
+
+    @Override
+    public String url( final Multimap<String, String> params )
+    {
+        final GeneralUrlBuilder builder = urlBuilders().generalUrl();
+        builder.path( getSystemParam( params, "_path" ) );
+        builder.params( params );
+        return builder.toString();
+    }
+
+    @Override
+    public String assetUrl( final Multimap<String, String> params )
+    {
+        final AssetUrlBuilder builder = urlBuilders().assetUrl();
+        builder.path( getSystemParam( params, "_path" ) );
+        builder.params( params );
+        return builder.toString();
+    }
+
+    @Override
+    public String pageUrl( final Multimap<String, String> params )
+    {
+        final PageUrlBuilder builder = urlBuilders().pageUrl();
+        builder.params( params );
+        return builder.toString();
+    }
+
+    @Override
+    public String attachmentUrl( final Multimap<String, String> params )
+    {
+        final AttachmentUrlBuilder builder = urlBuilders().attachmentUrl();
+        builder.params( params );
+        return builder.toString();
+    }
+
+    @Override
+    public String componentUrl( final Multimap<String, String> params )
+    {
+        final ComponentUrlBuilder builder = urlBuilders().componentUrl();
+        builder.component( getSystemParam( params, "_component" ) );
+        builder.params( params );
+        return builder.toString();
+    }
+
+    @Override
+    public String imageUrl( final Multimap<String, String> params )
+    {
+        final ImageUrlBuilder builder = urlBuilders().imageUrl();
+        builder.imageId( getSystemParam( params, "_id" ) );
+        builder.imageName( getSystemParam( params, "_name" ) );
+        builder.quality( getSystemParam( params, "_quality" ) );
+        builder.filter( getSystemParam( params, "_filter" ) );
+        builder.background( getSystemParam( params, "_background" ) );
+        builder.params( params );
+        return builder.toString();
+    }
+
+    @Override
+    public String serviceUrl( final Multimap<String, String> params )
+    {
+        final ServiceUrlBuilder builder = urlBuilders().serviceUrl();
+        builder.service( getSystemParam( params, "_service" ) );
+        builder.params( params );
+        return builder.toString();
     }
 }

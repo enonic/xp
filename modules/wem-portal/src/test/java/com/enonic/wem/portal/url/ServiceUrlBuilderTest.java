@@ -5,17 +5,15 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ServiceUrlBuilderTest
+    extends AbstractUrlBuilderTest
 {
     @Test
-    public void createServiceUrl()
+    public void createUrl()
     {
-        final ServiceUrlBuilder urlBuilder = new ServiceUrlBuilder().
-            baseUri( "/root" ).
-            contentPath( "some/path" ).
-            module( "mymodule" ).
-            serviceName( "myservice" ).
+        final ServiceUrlBuilder builder = this.builders.serviceUrl().
+            service( "myservice" ).
             param( "a", 3 );
 
-        assertEquals( "/root/portal/live/stage/some/path/_/service/mymodule/myservice?a=3", urlBuilder.toString() );
+        assertEquals( "/root/portal/live/stage/some/path/_/service/mymodule/myservice?a=3", builder.toString() );
     }
 }

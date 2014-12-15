@@ -22,13 +22,13 @@ final class ThymeleafProcessorImpl
 
     private final Map<String, Object> parameters;
 
-    private final ViewFunctions viewFunctions;
+    private final ViewFunctions functions;
 
-    public ThymeleafProcessorImpl( final TemplateEngine engine, final ViewFunctions viewFunctions )
+    public ThymeleafProcessorImpl( final TemplateEngine engine, final ViewFunctions functions )
     {
         this.engine = engine;
         this.parameters = Maps.newHashMap();
-        this.viewFunctions = viewFunctions;
+        this.functions = functions;
     }
 
     @Override
@@ -56,7 +56,7 @@ final class ThymeleafProcessorImpl
         {
             final Context context = new Context();
             context.setVariables( this.parameters );
-            context.setVariable( "portal", new ThymeleafViewFunctions( this.viewFunctions ) );
+            context.setVariable( "portal", new ThymeleafViewFunctions( this.functions ) );
             return this.engine.process( this.view.toString(), context );
         }
         catch ( final RuntimeException e )

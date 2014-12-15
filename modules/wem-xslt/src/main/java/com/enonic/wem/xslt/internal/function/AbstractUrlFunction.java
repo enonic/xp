@@ -1,5 +1,7 @@
 package com.enonic.wem.xslt.internal.function;
 
+import com.google.common.collect.Multimap;
+
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.om.Sequence;
@@ -7,6 +9,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceType;
 
 import com.enonic.wem.portal.view.ViewFunctions;
+import com.enonic.wem.portal.view.ViewHelper;
 
 abstract class AbstractUrlFunction
     extends AbstractFunction
@@ -24,7 +27,8 @@ abstract class AbstractUrlFunction
                 params[i] = toSingleString( arguments[i] );
             }
 
-            final String result = execute( params );
+            final Multimap<String, String> paramsMap = ViewHelper.toParamMap( params );
+            final String result = execute( paramsMap );
             return createValue( result );
         }
     }
@@ -47,5 +51,5 @@ abstract class AbstractUrlFunction
         return new Call();
     }
 
-    protected abstract String execute( final String... params );
+    protected abstract String execute( final Multimap<String, String> params );
 }

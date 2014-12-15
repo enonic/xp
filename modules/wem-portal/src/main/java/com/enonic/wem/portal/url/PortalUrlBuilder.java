@@ -1,14 +1,16 @@
 package com.enonic.wem.portal.url;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.net.UrlEscapers;
 
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.portal.RenderMode;
 
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -18,25 +20,19 @@ import static org.apache.commons.lang.StringUtils.removeStart;
 
 public abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
 {
-    private static final String DEFAULT_MODE = "live";
-
-    private static final String DEFAULT_WORKSPACE = "stage";
-
     private String baseUri;
 
-    private String mode;
+    private String renderMode;
 
     private String workspace;
 
     private String contentPath;
 
-    private final Map<String, String> params;
+    private final Multimap<String, String> params;
 
     public PortalUrlBuilder()
     {
-        this.params = Maps.newLinkedHashMap();
-        this.mode = DEFAULT_MODE;
-        this.workspace = DEFAULT_WORKSPACE;
+        this.params = HashMultimap.create();
     }
 
     public final T baseUri( final String baseUri )
@@ -45,33 +41,43 @@ public abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
         return typecastThis();
     }
 
-    public final T mode( final String mode )
+    public final T renderMode( final String value )
     {
-        this.mode = mode == null ? DEFAULT_MODE : mode;
+        this.renderMode = emptyToNull( value );
         return typecastThis();
     }
 
-    public final T workspace( final String workspace )
+    public final T renderMode( final RenderMode value )
     {
-        this.workspace = workspace == null ? DEFAULT_WORKSPACE : workspace;
+        return renderMode( value != null ? value.toString() : null );
+    }
+
+    public final T workspace( final String value )
+    {
+        this.workspace = emptyToNull( value );
         return typecastThis();
+    }
+
+    public final T workspace( final Workspace value )
+    {
+        return workspace( value != null ? value.toString() : null );
+    }
+
+    public final T contentPath( final String value )
+    {
+        this.contentPath = emptyToNull( value );
+        return typecastThis();
+    }
+
+    public final T contentPath( final ContentPath value )
+    {
+        return contentPath( value != null ? value.toString() : null );
     }
 
     public final T param( final String name, final Object value )
     {
-        this.params.put( name, value != null ? value.toString() : null );
-        return typecastThis();
-    }
-
-    public final T contentPath( final String contentPath )
-    {
-        this.contentPath = emptyToNull( contentPath );
-        return typecastThis();
-    }
-
-    public final T contentPath( final ContentPath contentPath )
-    {
-        this.contentPath = contentPath == null ? "" : contentPath.toString();
+        final String strValue = value != null ? value.toString() : null;
+        this.params.put( name, strValue );
         return typecastThis();
     }
 
@@ -81,51 +87,13 @@ public abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
         return (T) this;
     }
 
-    private String urlEncode( final String value )
-    {
-        try
-        {
-            return URLEncoder.encode( value, "UTF-8" );
-        }
-        catch ( UnsupportedEncodingException e )
-        {
-            throw Throwables.propagate( e );
-        }
-    }
-
-    protected void buildUrl( final StringBuilder url, final Map<String, String> params )
-    {
-        appendPart( url, this.mode );
-        appendPart( url, this.workspace );
-        appendPart( url, this.contentPath );
-
-        params.putAll( this.params );
-    }
-
-    private String buildUrl()
-    {
-        final StringBuilder str = new StringBuilder();
-
-        if ( this.baseUri != null )
-        {
-            str.append( removeEnd( this.baseUri, "/" ) );
-        }
-
-        appendPart( str, "/portal" );
-
-        final Map<String, String> params = Maps.newLinkedHashMap();
-        buildUrl( str, params );
-        appendParams( str, params );
-
-        return str.toString();
-    }
-
     protected final void appendPart( final StringBuilder str, final String urlPart )
     {
         if ( isNullOrEmpty( urlPart ) )
         {
             return;
         }
+
         final boolean endsWithSlash = ( str.length() > 0 ) && ( str.charAt( str.length() - 1 ) == '/' );
         final boolean startsWithSlash = urlPart.charAt( 0 ) == '/';
         if ( endsWithSlash && startsWithSlash )
@@ -142,7 +110,7 @@ public abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
         }
     }
 
-    private void appendParams( final StringBuilder str, final Map<String, String> params )
+    private void appendParams( final StringBuilder str, final Collection<Map.Entry<String, String>> params )
     {
         if ( params.isEmpty() )
         {
@@ -151,7 +119,7 @@ public abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
 
         str.append( "?" );
 
-        final Iterator<Map.Entry<String, String>> it = params.entrySet().iterator();
+        final Iterator<Map.Entry<String, String>> it = params.iterator();
         appendParam( str, it.next() );
 
         while ( it.hasNext() )
@@ -172,8 +140,46 @@ public abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
         str.append( key ).append( "=" ).append( encoded );
     }
 
+    private String urlEncode( final String value )
+    {
+        return UrlEscapers.urlFormParameterEscaper().escape( value );
+    }
+
+    public final T params( final Multimap<String, String> params )
+    {
+        this.params.putAll( params );
+        return typecastThis();
+    }
+
+    public final String build()
+    {
+        final StringBuilder str = new StringBuilder();
+        if ( this.baseUri != null )
+        {
+            str.append( removeEnd( this.baseUri, "/" ) );
+        }
+
+        appendPart( str, "/portal" );
+
+        final Multimap<String, String> params = HashMultimap.create();
+        buildUrl( str, params );
+        appendParams( str, params.entries() );
+
+        return str.toString();
+    }
+
+    protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
+    {
+        appendPart( url, this.renderMode );
+        appendPart( url, this.workspace );
+        appendPart( url, this.contentPath );
+
+        params.putAll( this.params );
+    }
+
+    @Override
     public final String toString()
     {
-        return buildUrl();
+        return build();
     }
 }
