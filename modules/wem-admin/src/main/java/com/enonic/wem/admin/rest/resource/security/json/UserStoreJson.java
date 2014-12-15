@@ -3,6 +3,8 @@ package com.enonic.wem.admin.rest.resource.security.json;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.wem.api.security.Principal;
+import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
@@ -11,21 +13,25 @@ import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 public final class UserStoreJson
     extends UserStoreSummaryJson
 {
-    private final UserStoreAccessControlList userStoreAccessControlList;
+    private final List<UserStoreAccessControlEntryJson> permissions;
 
-    public UserStoreJson( final UserStore userStore, final UserStoreAccessControlList userStoreAccessControlList )
+    public UserStoreJson( final UserStore userStore, final UserStoreAccessControlList userStoreAccessControlList,
+                          final Principals principals )
     {
         super( userStore );
-        this.userStoreAccessControlList = userStoreAccessControlList;
+        this.permissions = new ArrayList<>();
+        for ( UserStoreAccessControlEntry entry : userStoreAccessControlList )
+        {
+            final Principal principal = principals.getPrincipal( entry.getPrincipal() );
+            if ( principal != null )
+            {
+                this.permissions.add( new UserStoreAccessControlEntryJson( entry, principal ) );
+            }
+        }
     }
 
     public List<UserStoreAccessControlEntryJson> getPermissions()
     {
-        final List<UserStoreAccessControlEntryJson> list = new ArrayList<>();
-        for ( UserStoreAccessControlEntry entry : userStoreAccessControlList )
-        {
-            list.add( new UserStoreAccessControlEntryJson( entry ) );
-        }
-        return list;
+        return this.permissions;
     }
 }

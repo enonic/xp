@@ -4,7 +4,10 @@
   "permissions": [
     {
       "access": "ADMINISTRATOR",
-      "principalKey": "user:system:tsi"
+      "principal": {
+        "displayName": "User 1",
+        "key": "user:system:user1"
+      }
     }
   ]
 }

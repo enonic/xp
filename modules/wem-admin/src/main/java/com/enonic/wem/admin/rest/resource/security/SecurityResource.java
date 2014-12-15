@@ -93,7 +93,9 @@ public final class SecurityResource
         }
 
         final UserStoreAccessControlList userStorePermissions = securityService.getUserStorePermissions( userStoreKey );
-        return new UserStoreJson( userStore, userStorePermissions );
+
+        final Principals principals = securityService.getPrincipals( userStorePermissions.getAllPrincipals() );
+        return new UserStoreJson( userStore, userStorePermissions, principals );
     }
 
     @POST
@@ -102,7 +104,9 @@ public final class SecurityResource
     {
         final UserStore userStore = securityService.createUserStore( params.getCreateUserStoreParams() );
         final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
-        return new UserStoreJson( userStore, permissions );
+
+        final Principals principals = securityService.getPrincipals( permissions.getAllPrincipals() );
+        return new UserStoreJson( userStore, permissions, principals );
     }
 
     @POST
@@ -111,7 +115,9 @@ public final class SecurityResource
     {
         final UserStore userStore = securityService.updateUserStore( params.getUpdateUserStoreParams() );
         final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
-        return new UserStoreJson( userStore, permissions );
+
+        final Principals principals = securityService.getPrincipals( permissions.getAllPrincipals() );
+        return new UserStoreJson( userStore, permissions, principals );
     }
 
     @GET

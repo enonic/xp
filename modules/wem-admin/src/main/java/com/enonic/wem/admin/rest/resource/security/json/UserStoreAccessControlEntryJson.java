@@ -1,33 +1,42 @@
 package com.enonic.wem.admin.rest.resource.security.json;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.UserStoreAccess;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
 
+@SuppressWarnings("UnusedDeclaration")
 public final class UserStoreAccessControlEntryJson
 {
     private final UserStoreAccessControlEntry entry;
 
-    public UserStoreAccessControlEntryJson( final UserStoreAccessControlEntry entry )
+    private final PrincipalJson principalJson;
+
+    public UserStoreAccessControlEntryJson( final UserStoreAccessControlEntry entry, final Principal principal )
     {
         this.entry = entry;
+        this.principalJson = new PrincipalJson( principal );
     }
 
     @JsonCreator
-    public UserStoreAccessControlEntryJson( @JsonProperty("principalKey") final String principalKey,
+    public UserStoreAccessControlEntryJson( @JsonProperty("principal") final PrincipalJson principal,
                                             @JsonProperty("access") final String access )
     {
-        this.entry = UserStoreAccessControlEntry.create().principal( PrincipalKey.from( principalKey ) ).access(
+        Objects.requireNonNull( principal, "Missing principal parameter" );
+        this.entry = UserStoreAccessControlEntry.create().principal( PrincipalKey.from( principal.getKey() ) ).access(
             UserStoreAccess.valueOf( access.toUpperCase() ) ).build();
+        this.principalJson = null;
     }
 
-    public String getPrincipalKey()
+    public PrincipalJson getPrincipal()
     {
-        return this.entry.getPrincipal().toString();
+        return this.principalJson;
     }
 
     public String getAccess()

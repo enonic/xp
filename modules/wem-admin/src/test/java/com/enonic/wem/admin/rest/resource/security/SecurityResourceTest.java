@@ -94,10 +94,25 @@ public class SecurityResourceTest
 
         Mockito.when( securityService.getUserStore( USER_STORE_1 ) ).thenReturn( userStore );
 
+        final User user1 = User.create().
+            key( PrincipalKey.from( "user:local:user1" ) ).
+            displayName( "User 1" ).
+            login( "user1" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+        final Group group1 = Group.create().
+            key( PrincipalKey.from( "group:local:mygroup" ) ).
+            displayName( "My Group" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        final Principals principals = Principals.from( user1, group1 );
+        Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
+
         final UserStoreAccessControlList userStorePermissions = UserStoreAccessControlList.create().
             add( UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:local:user1" ) ).access(
                 UserStoreAccess.CREATE_USERS ).build() ).
-            add( UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:local:mygroup" ) ).access(
+            add( UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "group:local:mygroup" ) ).access(
                 UserStoreAccess.USER_STORE_MANAGER ).build() ).
             build();
         Mockito.when( securityService.getUserStorePermissions( USER_STORE_1 ) ).thenReturn( userStorePermissions );
@@ -111,9 +126,18 @@ public class SecurityResourceTest
     public void createUserStore()
         throws Exception
     {
+        final User user1 = User.create().
+            key( PrincipalKey.from( "user:system:user1" )  ).
+            displayName( "User 1" ).
+            login( "user1" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+        final Principals principals = Principals.from( user1 );
+        Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
+
         final UserStoreKey userStoreKey = new UserStoreKey( "enonic" );
         final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
-            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:tsi" ) ).access( ADMINISTRATOR ).build() );
+            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
         final UserStore userStore = UserStore.newUserStore().
             key( new UserStoreKey( "enonic" ) ).
             displayName( "Enonic User Store" ).
@@ -133,9 +157,18 @@ public class SecurityResourceTest
     public void updateUserStore()
         throws Exception
     {
+        final User user1 = User.create().
+            key( PrincipalKey.from( "user:system:user1" )  ).
+            displayName( "User 1" ).
+            login( "user1" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+        final Principals principals = Principals.from( user1 );
+        Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn( principals );
+
         final UserStoreKey userStoreKey = new UserStoreKey( "enonic" );
         final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
-            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:tsi" ) ).access( ADMINISTRATOR ).build() );
+            UserStoreAccessControlEntry.create().principal( PrincipalKey.from( "user:system:user1" ) ).access( ADMINISTRATOR ).build() );
         final UserStore userStore = UserStore.newUserStore().
             key( new UserStoreKey( "enonic" ) ).
             displayName( "Enonic User Store" ).
