@@ -63,6 +63,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.util.BinaryReference;
+import com.enonic.wem.core.media.MediaInfoService;
 
 public class ContentServiceImpl
     implements ContentService
@@ -84,6 +85,8 @@ public class ContentServiceImpl
     private ContentNodeTranslator contentNodeTranslator;
 
     private EventPublisher eventPublisher;
+
+    private MediaInfoService mediaInfoService;
 
     private final ExecutorService applyPermissionsExecutor;
 
@@ -527,5 +530,10 @@ public class ContentServiceImpl
     public void setEventPublisher( final EventPublisher eventPublisher )
     {
         this.eventPublisher = eventPublisher;
+    }
+
+    public void setMediaInfoService( final MediaInfoService mediaInfoService )
+    {
+        this.mediaInfoService = mediaInfoService;
     }
 }
