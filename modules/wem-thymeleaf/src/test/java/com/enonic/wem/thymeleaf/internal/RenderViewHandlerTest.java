@@ -1,7 +1,6 @@
 package com.enonic.wem.thymeleaf.internal;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
@@ -70,7 +69,6 @@ public class RenderViewHandlerTest
     }
 
     @Test
-    @Ignore
     public void functionsTest()
         throws Exception
     {

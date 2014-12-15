@@ -56,7 +56,7 @@ final class ThymeleafProcessorImpl
         {
             final Context context = new Context();
             context.setVariables( this.parameters );
-            context.setVariable( "portal", new ThymeleafViewFunctions() );
+            context.setVariable( "portal", new ThymeleafViewFunctions( this.viewFunctions ) );
             return this.engine.process( this.view.toString(), context );
         }
         catch ( final RuntimeException e )

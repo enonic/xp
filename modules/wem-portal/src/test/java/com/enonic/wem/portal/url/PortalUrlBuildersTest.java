@@ -7,7 +7,6 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.PortalContext;
@@ -54,10 +53,8 @@ public class PortalUrlBuildersTest
 
     private void setResolvedModule( final String resolvedModule )
     {
-        final Module module = Mockito.mock( Module.class );
         final ModuleKey moduleKey = ModuleKey.from( resolvedModule );
-        Mockito.when( module.getKey() ).thenReturn( moduleKey );
-        Mockito.when( this.context.getModule() ).thenReturn( module );
+        Mockito.when( this.context.getModule() ).thenReturn( moduleKey );
     }
 
     private void setContent( final ContentPath path )

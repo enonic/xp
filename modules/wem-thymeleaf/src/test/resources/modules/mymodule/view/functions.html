@@ -1,3 +1,16 @@
 <div>
-    <div data-th-text="${portal.url(#{'a'})}">url</div>
+    <div data-th-text="${portal.url({'a=1'})}">url</div>
+    <div data-th-text="${portal.url({'a=1','b=2'})}">url</div>
+    <div data-th-text="${portal.pageUrl({'a=1'})}">url</div>
+    <div data-th-text="${portal.pageUrl({'a=1','b=2'})}">url</div>
+    <div data-th-text="${portal.imageUrl({'a=1'})}">url</div>
+    <div data-th-text="${portal.imageUrl({'a=1','b=2'})}">url</div>
+    <div data-th-text="${portal.assetUrl({'a=1'})}">url</div>
+    <div data-th-text="${portal.assetUrl({'a=1','b=2'})}">url</div>
+    <div data-th-text="${portal.attachmentUrl({'a=1'})}">url</div>
+    <div data-th-text="${portal.attachmentUrl({'a=1','b=2'})}">url</div>
+    <div data-th-text="${portal.serviceUrl({'a=1'})}">url</div>
+    <div data-th-text="${portal.serviceUrl({'a=1','b=2'})}">url</div>
+    <div data-th-text="${portal.componentUrl({'a=1'})}">url</div>
+    <div data-th-text="${portal.componentUrl({'a=1','b=2'})}">url</div>
 </div>

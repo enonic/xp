@@ -82,7 +82,7 @@ public final class ContentResource
         context.setPageDescriptor( pageDescriptor );
         if ( pageDescriptor != null )
         {
-            context.setModule( getModule( pageDescriptor.getKey().getModuleKey() ) );
+            context.setModule( pageDescriptor.getKey().getModuleKey() );
         }
 
         final PortalRequestImpl jsRequest = new PortalRequestImpl();

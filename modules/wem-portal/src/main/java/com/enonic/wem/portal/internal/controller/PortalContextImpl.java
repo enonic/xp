@@ -7,7 +7,7 @@ import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
@@ -32,7 +32,7 @@ public final class PortalContextImpl
 
     private PageComponent component;
 
-    private Module module;
+    private ModuleKey module;
 
     public PortalContextImpl()
     {
@@ -123,12 +123,12 @@ public final class PortalContextImpl
     }
 
     @Override
-    public Module getModule()
+    public ModuleKey getModule()
     {
         return this.module;
     }
 
-    public void setModule( final Module module )
+    public void setModule( final ModuleKey module )
     {
         this.module = module;
     }

@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleKey;
 
 @SuppressWarnings("UnusedDeclaration")
 public interface PortalContext
@@ -25,7 +25,7 @@ public interface PortalContext
 
     public void setComponent( PageComponent component );
 
-    public Module getModule();
+    public ModuleKey getModule();
 
     public PageDescriptor getPageDescriptor();
 }

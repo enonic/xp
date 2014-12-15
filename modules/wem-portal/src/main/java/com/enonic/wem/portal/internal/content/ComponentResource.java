@@ -100,7 +100,7 @@ public final class ComponentResource
         context.setSite( site );
         context.setComponent( component );
 
-        context.setModule( getModule( moduleKey ) );
+        context.setModule( moduleKey );
 
         final PortalRequestImpl jsRequest = new PortalRequestImpl();
         jsRequest.setMode( this.mode );

@@ -3,7 +3,7 @@ package com.enonic.wem.portal.url;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.portal.PortalContext;
 
 public final class PortalUrlBuilders
@@ -15,20 +15,19 @@ public final class PortalUrlBuilders
         this.context = context;
     }
 
-    // TODO: Hack!
     public String getBaseUrl()
     {
-        return this.context.getRequest().getBaseUri();
+        return this.context.getBaseUri();
     }
 
     private String getMode()
     {
-        return this.context.getRequest().getMode().toString();
+        return this.context.getMode().toString();
     }
 
     private String getWorkspace()
     {
-        return this.context.getRequest().getWorkspace().toString();
+        return this.context.getWorkspace().toString();
     }
 
     private ContentPath getContentPath()
@@ -39,8 +38,8 @@ public final class PortalUrlBuilders
 
     private String getModule()
     {
-        final Module module = this.context.getModule();
-        return module != null ? module.getKey().toString() : null;
+        final ModuleKey module = this.context.getModule();
+        return module != null ? module.toString() : null;
     }
 
     private <T extends PortalUrlBuilder> T setDefaults( final T builder )
