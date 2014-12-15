@@ -2,11 +2,11 @@ package com.enonic.wem.api.util;
 
 public class BinaryReference
 {
-    private final String name;
+    private final String value;
 
-    private BinaryReference( final String name )
+    private BinaryReference( final String value )
     {
-        this.name = name;
+        this.value = value;
     }
 
     public static BinaryReference from( final String value )
@@ -17,7 +17,7 @@ public class BinaryReference
     @Override
     public String toString()
     {
-        return this.name;
+        return this.value;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class BinaryReference
 
         final BinaryReference that = (BinaryReference) o;
 
-        if ( name != null ? !name.equals( that.name ) : that.name != null )
+        if ( value != null ? !value.equals( that.value ) : that.value != null )
         {
             return false;
         }
@@ -46,7 +46,7 @@ public class BinaryReference
     @Override
     public int hashCode()
     {
-        return name != null ? name.hashCode() : 0;
+        return value != null ? value.hashCode() : 0;
     }
 }
 

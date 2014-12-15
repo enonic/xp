@@ -11,6 +11,7 @@
 ///<reference path='ValueTypeLocalTime.ts' />
 ///<reference path='ValueTypeDateTime.ts' />
 ///<reference path='ValueTypeGeoPoint.ts' />
+///<reference path='ValueTypeBinaryReference.ts' />
 ///<reference path='ValueTypeContentId.ts' />
 ///<reference path='ValueTypes.ts' />
 ///<reference path='Value.ts' />

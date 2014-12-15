@@ -86,6 +86,13 @@ module api.data {
             return <api.util.GeoPoint>this.value;
         }
 
+        getBinaryReference(): api.util.BinaryReference {
+            if (this.isNull()) {
+                return null;
+            }
+            return <api.util.BinaryReference>this.value;
+        }
+
         getLocalTime(): api.util.LocalTime {
             if (this.isNull()) {
                 return null;

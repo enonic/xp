@@ -11,3 +11,4 @@
 ///<reference path='DelayedFunctionCall.ts' />
 ///<reference path='GeoPoint.ts' />
 ///<reference path='LocalTime.ts' />
+///<reference path='BinaryReference.ts' />
