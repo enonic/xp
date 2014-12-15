@@ -9,10 +9,10 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.portal.PortalResponse;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
-import com.enonic.wem.portal.postprocess.PostProcessInjection;
-import com.enonic.wem.portal.postprocess.PostProcessInstruction;
+import com.enonic.xp.portal.postprocess.PostProcessInjection;
+import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 import static junit.framework.Assert.assertEquals;
 

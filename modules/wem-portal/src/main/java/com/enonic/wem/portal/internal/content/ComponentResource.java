@@ -13,7 +13,7 @@ import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.portal.PortalContext;
+import com.enonic.xp.portal.PortalContext;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;

@@ -1,7 +1,7 @@
 package com.enonic.wem.portal.internal.postprocess;
 
 
-import com.enonic.wem.portal.PortalContext;
+import com.enonic.xp.portal.PortalContext;
 
 public interface PostProcessor
 {

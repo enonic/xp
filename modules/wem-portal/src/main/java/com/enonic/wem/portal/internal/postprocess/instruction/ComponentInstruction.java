@@ -14,12 +14,12 @@ import com.enonic.wem.api.content.page.PageComponentService;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.portal.PortalContext;
+import com.enonic.xp.portal.PortalContext;
 import com.enonic.wem.portal.internal.rendering.RenderException;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
-import com.enonic.wem.portal.postprocess.PostProcessInstruction;
+import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
 

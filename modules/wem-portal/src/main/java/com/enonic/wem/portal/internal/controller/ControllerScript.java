@@ -1,6 +1,6 @@
 package com.enonic.wem.portal.internal.controller;
 
-import com.enonic.wem.portal.PortalContext;
+import com.enonic.xp.portal.PortalContext;
 
 public interface ControllerScript
 {

@@ -6,7 +6,7 @@ import org.junit.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.net.MediaType;
 
-import com.enonic.wem.portal.PortalResponse;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
 import static com.google.common.net.MediaType.JSON_UTF_8;

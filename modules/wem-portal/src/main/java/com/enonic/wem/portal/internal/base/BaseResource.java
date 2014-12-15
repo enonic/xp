@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.base.Joiner;
 
-import com.enonic.wem.portal.RenderMode;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
 public abstract class BaseResource

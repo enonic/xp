@@ -1,9 +1,9 @@
 package com.enonic.wem.portal.internal.controller;
 
-import com.enonic.wem.portal.PortalContext;
-import com.enonic.wem.portal.PortalContextAccessor;
-import com.enonic.wem.portal.PortalRequest;
-import com.enonic.wem.portal.PortalResponse;
+import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalContextAccessor;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptObject;

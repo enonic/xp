@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <reference-list id="postProcessInjections" interface="com.enonic.wem.portal.postprocess.PostProcessInjection"
+  <reference-list id="postProcessInjections" interface="com.enonic.xp.portal.postprocess.PostProcessInjection"
                   availability="optional"/>
 
-  <reference-list id="postProcessInstructions" interface="com.enonic.wem.portal.postprocess.PostProcessInstruction"
+  <reference-list id="postProcessInstructions" interface="com.enonic.xp.portal.postprocess.PostProcessInstruction"
                   availability="optional"/>
 
   <bean id="postProcessor" class="com.enonic.wem.portal.internal.postprocess.PostProcessorImpl">

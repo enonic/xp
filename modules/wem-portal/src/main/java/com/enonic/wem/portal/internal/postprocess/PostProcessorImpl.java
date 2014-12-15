@@ -2,10 +2,10 @@ package com.enonic.wem.portal.internal.postprocess;
 
 import java.util.List;
 
-import com.enonic.wem.portal.PortalContext;
-import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.postprocess.PostProcessInjection;
-import com.enonic.wem.portal.postprocess.PostProcessInstruction;
+import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.postprocess.PostProcessInjection;
+import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 public final class PostProcessorImpl
     implements PostProcessor

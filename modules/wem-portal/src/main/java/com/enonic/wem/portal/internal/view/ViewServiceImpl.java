@@ -9,9 +9,9 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.portal.view.ViewModel;
-import com.enonic.wem.portal.view.ViewProcessor;
-import com.enonic.wem.portal.view.ViewService;
+import com.enonic.xp.portal.view.ViewModel;
+import com.enonic.xp.portal.view.ViewProcessor;
+import com.enonic.xp.portal.view.ViewService;
 
 @Component(immediate = true)
 public final class ViewServiceImpl

@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.rendering.Renderable;
-import com.enonic.wem.portal.PortalContext;
+import com.enonic.xp.portal.PortalContext;
 
 import static org.junit.Assert.*;
 

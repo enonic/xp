@@ -18,6 +18,11 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>portal-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>wem-servlet</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -68,10 +73,6 @@
             <Import-Package>
               *
             </Import-Package>
-            <Export-Package>
-              !*.internal.*,
-              com.enonic.wem.portal.*
-            </Export-Package>
           </instructions>
         </configuration>
       </plugin>

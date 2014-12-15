@@ -8,8 +8,8 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.portal.PortalRequest;
-import com.enonic.wem.portal.RenderMode;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.wem.servlet.ServletRequestUrlHelper;
 
 public final class PortalRequestImpl

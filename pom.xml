@@ -38,10 +38,16 @@
     <module>modules/wem-servlet</module>
     <module>modules/wem-admin</module>
     <module>modules/wem-admin-ui</module>
+
+    <module>modules/portal-api</module>
+    <module>modules/portal-mustache</module>
+    <module>modules/portal-thymeleaf</module>
+    <module>modules/portal-xslt</module>
+    <module>modules/portal-jslib</module>
+
+    <!-- TODO: Rename to portal-impl -->
     <module>modules/wem-portal</module>
-    <module>modules/wem-xslt</module>
-    <module>modules/wem-thymeleaf</module>
-    <module>modules/wem-mustache</module>
+
     <module>modules/wem-jsapi</module>
     <module>modules/wem-karaf</module>
     <module>modules/wem-launcher</module>

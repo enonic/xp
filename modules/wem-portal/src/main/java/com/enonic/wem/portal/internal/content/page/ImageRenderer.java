@@ -2,15 +2,15 @@ package com.enonic.wem.portal.internal.content.page;
 
 
 import com.enonic.wem.api.content.page.image.ImageComponent;
-import com.enonic.wem.portal.PortalContext;
-import com.enonic.wem.portal.PortalRequest;
-import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.RenderMode;
+import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
-import com.enonic.wem.portal.url.ImageUrlBuilder;
-import com.enonic.wem.portal.url.PortalUrlBuilders;
+import com.enonic.xp.portal.url.ImageUrlBuilder;
+import com.enonic.xp.portal.url.PortalUrlBuilders;
 
 public final class ImageRenderer
     implements Renderer<ImageComponent, PortalContext>

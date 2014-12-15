@@ -11,7 +11,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.portal.RenderMode;
+import com.enonic.xp.portal.RenderMode;
 
 import static org.junit.Assert.*;
 

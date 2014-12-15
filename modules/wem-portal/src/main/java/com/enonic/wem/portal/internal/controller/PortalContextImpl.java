@@ -9,10 +9,10 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.portal.PortalContext;
-import com.enonic.wem.portal.PortalRequest;
-import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.RenderMode;
+import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 
 public final class PortalContextImpl
     implements PortalContext, PortalRequest

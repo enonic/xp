@@ -9,10 +9,10 @@ import org.mockito.Mockito;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.portal.RenderMode;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
-import com.enonic.wem.portal.postprocess.PostProcessInjection;
+import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.wem.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;

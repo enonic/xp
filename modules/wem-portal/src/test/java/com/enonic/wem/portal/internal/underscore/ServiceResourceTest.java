@@ -8,8 +8,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.portal.PortalRequest;
-import com.enonic.wem.portal.RenderMode;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.wem.portal.internal.base.ModuleBaseResourceTest;
 import com.enonic.wem.portal.internal.controller.ControllerScript;
 import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;

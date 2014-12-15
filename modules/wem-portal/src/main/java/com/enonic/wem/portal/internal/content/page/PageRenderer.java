@@ -2,9 +2,9 @@ package com.enonic.wem.portal.internal.content.page;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.portal.PortalContext;
-import com.enonic.wem.portal.PortalResponse;
-import com.enonic.wem.portal.RenderMode;
+import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.wem.portal.internal.controller.ControllerScript;
 import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;

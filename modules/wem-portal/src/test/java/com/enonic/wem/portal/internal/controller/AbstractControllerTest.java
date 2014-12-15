@@ -5,7 +5,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
-import com.enonic.wem.portal.PortalResponse;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.internal.ScriptServiceImpl;
 

@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.portal.PortalResponse;
+import com.enonic.xp.portal.PortalResponse;
 
 import static org.junit.Assert.*;
 

@@ -5,7 +5,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.HttpHeaders;
 
-import com.enonic.wem.portal.PortalResponse;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 
 public final class PortalResponseSerializer

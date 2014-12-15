@@ -12,10 +12,10 @@ import org.attoparser.markup.MarkupAttoParser;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.portal.PortalContext;
+import com.enonic.xp.portal.PortalContext;
 import com.enonic.wem.portal.internal.rendering.RenderException;
-import com.enonic.wem.portal.postprocess.PostProcessInjection;
-import com.enonic.wem.portal.postprocess.PostProcessInstruction;
+import com.enonic.xp.portal.postprocess.PostProcessInjection;
+import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 final class PostProcessEvaluator
     implements IAttoHandler, ICommentHandling, IBasicElementHandling

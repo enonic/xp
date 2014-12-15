@@ -6,7 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.rendering.Renderable;
-import com.enonic.wem.portal.PortalContext;
+import com.enonic.xp.portal.PortalContext;
 
 public final class RendererFactoryImpl
     implements RendererFactory

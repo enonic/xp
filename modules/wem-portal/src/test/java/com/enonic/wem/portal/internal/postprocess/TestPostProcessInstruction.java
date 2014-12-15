@@ -1,7 +1,7 @@
 package com.enonic.wem.portal.internal.postprocess;
 
-import com.enonic.wem.portal.PortalContext;
-import com.enonic.wem.portal.postprocess.PostProcessInstruction;
+import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 public final class TestPostProcessInstruction
     implements PostProcessInstruction
