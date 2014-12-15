@@ -149,7 +149,7 @@ public class ElasticsearchDao
         }
         catch ( ElasticsearchException e )
         {
-            LOG.error( "Search request failed", e );
+            LOG.error( "Search request failed", e.getRootCause() );
 
             throw new IndexException( "Search request failed", e );
         }
