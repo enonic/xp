@@ -80,7 +80,7 @@ module app.wizard {
                 entryView.getPermissionSelector().hide();
 
                 entryView.onClicked(() => {
-                    var isDisplayed = selector.getEl().getDisplay() !== "flex";
+                    var isDisplayed = selector.getEl().getDisplay() !== "block";
 
                     this.accessListView.getItemViews().forEach((itemView) => {
                         (<AccessControlEntryView>itemView).getPermissionSelector().hide();
