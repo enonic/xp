@@ -4,6 +4,7 @@ import java.util.Map;
 
 import static com.google.common.base.Strings.emptyToNull;
 
+// TODO: Asset is probably a better name.
 public final class PublicUrlBuilder
     extends PortalUrlBuilder<PublicUrlBuilder>
 {

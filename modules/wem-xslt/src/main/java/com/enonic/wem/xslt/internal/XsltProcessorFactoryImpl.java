@@ -3,10 +3,12 @@ package com.enonic.wem.xslt.internal;
 import javax.xml.transform.TransformerFactory;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
 
+import com.enonic.wem.portal.view.ViewFunctions;
 import com.enonic.wem.xslt.XsltProcessor;
 import com.enonic.wem.xslt.XsltProcessorFactory;
 import com.enonic.wem.xslt.internal.function.XsltFunctionLibrary;
@@ -25,7 +27,6 @@ public final class XsltProcessorFactoryImpl
         this.configuration.setVersionWarning( false );
         this.configuration.setCompileWithTracing( true );
         this.configuration.setValidationWarnings( true );
-        new XsltFunctionLibrary().registerAll( this.configuration );
     }
 
     private TransformerFactory createTransformerFactory()
@@ -38,5 +39,11 @@ public final class XsltProcessorFactoryImpl
     {
         final TransformerFactory factory = createTransformerFactory();
         return new XsltProcessorImpl( factory );
+    }
+
+    @Reference
+    public void setViewFunctions( final ViewFunctions viewFunctions )
+    {
+        new XsltFunctionLibrary( viewFunctions ).registerAll( this.configuration );
     }
 }

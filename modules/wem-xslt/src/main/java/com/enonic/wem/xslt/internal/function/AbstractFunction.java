@@ -64,7 +64,6 @@ abstract class AbstractFunction
     protected final void setArgumentTypes( final SequenceType... types )
     {
         this.argumentTypes = types;
-        this.maxArguments = this.argumentTypes.length;
     }
 
     protected final void setMinimumNumberOfArguments( final int num )
@@ -74,12 +73,6 @@ abstract class AbstractFunction
 
     protected final void setMaximumNumberOfArguments( final int args )
     {
-        final SequenceType[] types = new SequenceType[args];
-        for ( int i = 0; i < types.length; i++ )
-        {
-            types[i] = SequenceType.ANY_SEQUENCE;
-        }
-
-        setArgumentTypes( types );
+        this.maxArguments = args;
     }
 }

@@ -124,7 +124,6 @@ final class XsltProcessorImpl
         throws Exception
     {
         createTransformer();
-        setParameters();
 
         final StringWriter out = new StringWriter();
         final StreamResult result = new StreamResult( out );
@@ -148,12 +147,5 @@ final class XsltProcessorImpl
         this.transformer = this.factory.newTransformer( this.xsltSource );
         this.transformer.setErrorListener( this.errors );
         this.transformer.setOutputProperty( OutputKeys.OMIT_XML_DECLARATION, "yes" );
-    }
-
-    private void setParameters()
-        throws Exception
-    {
-        final ContextDocBuilder contextDocBuilder = new ContextDocBuilder();
-        this.transformer.setParameter( "_", contextDocBuilder.createContextDoc() );
     }
 }
