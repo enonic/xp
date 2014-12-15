@@ -41,7 +41,7 @@ module app.wizard {
 
             var changeListener = () => {
                 var inheritPermissions = this.inheritPermissionsCheck.isChecked();
-                // this.applyAction.setEnabled(inheritPermissions);
+
                 this.comboBox.toggleClass('disabled', inheritPermissions);
                 if (inheritPermissions) {
                     this.layoutInheritedPermissions();
@@ -49,6 +49,14 @@ module app.wizard {
                 this.comboBox.setEditable(!inheritPermissions);
             };
             this.inheritPermissionsCheck.onValueChanged(changeListener);
+            var comboBoxChangeListener = () => {
+                var currentEntries: AccessControlEntry[] = this.getEntries().sort();
+                var permissionsModified: boolean = !api.ObjectHelper.arrayEquals(currentEntries, this.originalValues);
+                this.applyAction.setEnabled(permissionsModified);
+            };
+            this.comboBox.onOptionValueChanged(comboBoxChangeListener);
+            this.comboBox.onOptionSelected(comboBoxChangeListener);
+            this.comboBox.onOptionDeselected(comboBoxChangeListener);
 
             this.overwriteChildPermissionsCheck = new api.ui.Checkbox().setLabel('Overwrite child permissions');
             this.overwriteChildPermissionsCheck.addClass('overwrite-child-check');

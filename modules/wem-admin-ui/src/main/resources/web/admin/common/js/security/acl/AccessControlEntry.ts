@@ -17,7 +17,7 @@ module api.security.acl {
         private deniedPermissions: Permission[];
 
         constructor(principal: Principal) {
-            this.principal = principal;
+            this.principal = api.util.assertNotNull(principal);
             this.allowedPermissions = [];
             this.deniedPermissions = [];
         }
@@ -88,7 +88,7 @@ module api.security.acl {
 
             var other = <AccessControlEntry>o;
 
-            if (!api.ObjectHelper.equals(this.principal, other.principal)) {
+            if (!api.ObjectHelper.equals(this.getPrincipalKey(), other.getPrincipalKey())) {
                 return false;
             }
 
