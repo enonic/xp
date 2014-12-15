@@ -1,11 +1,11 @@
-module api.content.form.inputtype.imageupload {
+module api.content.form.inputtype.upload {
 
     import Property = api.data.Property;
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
 
-    export class Image extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any,string> {
+    export class ImageUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any,string> {
 
         private imageUploader: api.ui.uploader.FileUploader;
 
@@ -101,5 +101,5 @@ module api.content.form.inputtype.imageupload {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("ImageUploader", Image));
+    api.form.inputtype.InputTypeManager.register(new api.Class("ImageUploader", ImageUploader));
 }
