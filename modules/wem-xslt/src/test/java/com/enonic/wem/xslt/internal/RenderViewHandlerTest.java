@@ -28,7 +28,7 @@ public class RenderViewHandlerTest
     private ScriptObject execute( final String method )
         throws Exception
     {
-        final ScriptExports exports = runTestScript( getClass(), null );
+        final ScriptExports exports = runTestScript( "xslt-test.js" );
         return exports.executeMethod( method );
     }
 
@@ -63,7 +63,7 @@ public class RenderViewHandlerTest
     {
         final String result = cleanupXml( execute( "render" ).getValue().toString() );
         final String expected =
-            cleanupXml( Resources.toString( getClass().getResource( getClass().getSimpleName() + "-result.xml" ), Charsets.UTF_8 ) );
+            cleanupXml( Resources.toString( getClass().getResource( "/modules/mymodule/view/test-result.xml" ), Charsets.UTF_8 ) );
         assertEquals( expected, result );
     }
 

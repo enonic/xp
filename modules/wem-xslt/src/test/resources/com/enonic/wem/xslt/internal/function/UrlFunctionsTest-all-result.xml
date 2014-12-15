@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <output>
-  <value>url(a=1)</value>
-  <value>url(a=1,b=2)</value>
-  <value>pageUrl(a=1)</value>
-  <value>pageUrl(a=1,b=2)</value>
-  <value>imageUrl(a=1)</value>
-  <value>imageUrl(a=1,b=2)</value>
-  <value>assetUrl(a=1)</value>
-  <value>assetUrl(a=1,b=2)</value>
-  <value>attachmentUrl(a=1)</value>
-  <value>attachmentUrl(a=1,b=2)</value>
-  <value>serviceUrl(a=1)</value>
-  <value>serviceUrl(a=1,b=2)</value>
-  <value>componentUrl(a=1)</value>
-  <value>componentUrl(a=1,b=2)</value>
+  <value>/url?a=1</value>
+  <value>/url?a=1&amp;b=2</value>
+  <value>/pageUrl?a=1</value>
+  <value>/pageUrl?a=1&amp;b=2</value>
+  <value>/imageUrl?a=1</value>
+  <value>/imageUrl?a=1&amp;b=2</value>
+  <value>/assetUrl?a=1</value>
+  <value>/assetUrl?a=1&amp;b=2</value>
+  <value>/attachmentUrl?a=1</value>
+  <value>/attachmentUrl?a=1&amp;b=2</value>
+  <value>/serviceUrl?a=1</value>
+  <value>/serviceUrl?a=1&amp;b=2</value>
+  <value>/componentUrl?a=1</value>
+  <value>/componentUrl?a=1&amp;b=2</value>
 </output>

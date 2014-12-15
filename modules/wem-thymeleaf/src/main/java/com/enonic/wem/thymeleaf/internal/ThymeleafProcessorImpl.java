@@ -10,7 +10,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
-import com.enonic.wem.portal.PortalContextAccessor;
+import com.enonic.wem.portal.view.ViewFunctions;
 import com.enonic.wem.thymeleaf.ThymeleafProcessor;
 
 final class ThymeleafProcessorImpl
@@ -22,10 +22,13 @@ final class ThymeleafProcessorImpl
 
     private final Map<String, Object> parameters;
 
-    public ThymeleafProcessorImpl( final TemplateEngine engine )
+    private final ViewFunctions viewFunctions;
+
+    public ThymeleafProcessorImpl( final TemplateEngine engine, final ViewFunctions viewFunctions )
     {
         this.engine = engine;
         this.parameters = Maps.newHashMap();
+        this.viewFunctions = viewFunctions;
     }
 
     @Override
@@ -53,7 +56,7 @@ final class ThymeleafProcessorImpl
         {
             final Context context = new Context();
             context.setVariables( this.parameters );
-            context.setVariable( "portal", new ThymeleafPortalHelper( PortalContextAccessor.get()) );
+            context.setVariable( "portal", new ThymeleafViewFunctions() );
             return this.engine.process( this.view.toString(), context );
         }
         catch ( final RuntimeException e )

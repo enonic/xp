@@ -14,6 +14,7 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.wem.api.xml.DomHelper;
+import com.enonic.wem.portal.view.MockViewFunctions;
 import com.enonic.wem.xslt.XsltProcessor;
 import com.enonic.wem.xslt.internal.XsltProcessorFactoryImpl;
 
