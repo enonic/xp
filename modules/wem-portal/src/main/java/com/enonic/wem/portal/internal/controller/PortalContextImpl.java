@@ -13,7 +13,6 @@ import com.enonic.wem.portal.PortalContext;
 import com.enonic.wem.portal.PortalRequest;
 import com.enonic.wem.portal.PortalResponse;
 import com.enonic.wem.portal.RenderMode;
-import com.enonic.wem.portal.url.PortalUrlBuilders;
 
 public final class PortalContextImpl
     implements PortalContext, PortalRequest
@@ -96,11 +95,6 @@ public final class PortalContextImpl
     public void setPageTemplate( final PageTemplate pageTemplate )
     {
         this.pageTemplate = pageTemplate;
-    }
-
-    public PortalUrlBuilders getUrl()
-    {
-        return new PortalUrlBuilders( this );
     }
 
     @Override

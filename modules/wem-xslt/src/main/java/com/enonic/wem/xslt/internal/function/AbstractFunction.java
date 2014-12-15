@@ -7,7 +7,7 @@ import net.sf.saxon.value.SequenceType;
 abstract class AbstractFunction
     extends ExtensionFunctionDefinition
 {
-    private final static String NAMESPACE_URI = "http://www.enonic.com/xp/portal";
+    private final static String NAMESPACE_URI = "urn:enonic:xp:portal:1.0";
 
     private final StructuredQName name;
 
