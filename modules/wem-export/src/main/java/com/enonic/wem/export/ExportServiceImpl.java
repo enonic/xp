@@ -27,7 +27,6 @@ public class ExportServiceImpl
 
     private final XmlNodeSerializer xmlNodeSerializer = new XmlNodeSerializer();
 
-
     @Override
     public NodeExportResult exportNodes( final NodePath nodePath )
     {
@@ -35,11 +34,12 @@ public class ExportServiceImpl
             xmlNodeSerializer( xmlNodeSerializer ).
             exportRootNode( nodePath ).
             nodeService( this.nodeService ).
+
             nodeExportWriter( new FileExportWriter() ).
             exportHomePath( Paths.get( HomeDir.get().toString(), "/exports" ) ).
             exportName( "node_" + LocalDateTime.now().format( DateTimeFormatter.ISO_LOCAL_DATE_TIME ) ).
             build().
-            export();
+            execute();
     }
 
     @Override

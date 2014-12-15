@@ -248,7 +248,7 @@ public final class Node
 
         private NodeType nodeType = NodeType.DEFAULT_NODE_COLLECTION;
 
-        private AttachedBinaries attachedBinaries;
+        private AttachedBinaries attachedBinaries = AttachedBinaries.empty();
 
         public Builder()
         {

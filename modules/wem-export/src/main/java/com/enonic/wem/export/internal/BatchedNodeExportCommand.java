@@ -2,13 +2,17 @@ package com.enonic.wem.export.internal;
 
 import java.nio.file.Path;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.api.export.NodeExportResult;
+import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.export.internal.writer.ExportWriter;
 import com.enonic.wem.export.internal.writer.NodeExportPathResolver;
 import com.enonic.wem.export.internal.xml.XmlNode;
@@ -35,15 +39,15 @@ public class BatchedNodeExportCommand
 
     private BatchedNodeExportCommand( final Builder builder )
     {
-        exportRootNode = builder.exportRootNode;
-        batchSize = builder.batchSize;
-        nodeService = builder.nodeService;
-        exportWriter = builder.exportWriter;
-        xmlNodeSerializer = builder.xmlNodeSerializer;
+        this.exportRootNode = builder.exportRootNode;
+        this.batchSize = builder.batchSize;
+        this.nodeService = builder.nodeService;
+        this.exportWriter = builder.exportWriter;
+        this.xmlNodeSerializer = builder.xmlNodeSerializer;
         this.exportTargetPath = NodeExportPathResolver.resolveExportTargetPath( builder.exportHomePath, builder.exportName );
     }
 
-    public NodeExportResult export()
+    public NodeExportResult execute()
     {
         final NodeExportResult.Builder resultBuilder = NodeExportResult.create();
 
@@ -104,9 +108,21 @@ public class BatchedNodeExportCommand
 
         final String serializedNode = this.xmlNodeSerializer.serialize( xmlNode );
 
-        final Path systemFolder = getNodeDataFolder( node );
+        final Path nodeDataFolder = getNodeDataFolder( node );
 
-        exportWriter.writeElement( NodeExportPathResolver.resolveNodeXmlPath( systemFolder ), serializedNode );
+        exportWriter.writeElement( NodeExportPathResolver.resolveNodeXmlPath( nodeDataFolder ), serializedNode );
+
+        exportNodeBinaries( relativeNode, nodeDataFolder );
+    }
+
+    private void exportNodeBinaries( final Node relativeNode, final Path nodeDataFolder )
+    {
+        for ( final AttachedBinary attachedBinary : relativeNode.getAttachedBinaries() )
+        {
+            final BinaryReference reference = attachedBinary.getBinaryReference();
+            final ByteSource byteSource = this.nodeService.getBinary( relativeNode.id(), reference );
+            this.exportWriter.writeSource( NodeExportPathResolver.resolveBinaryPath( nodeDataFolder, reference ), byteSource );
+        }
     }
 
     private void writeNodeOrderList( final Node parent, final Nodes children )

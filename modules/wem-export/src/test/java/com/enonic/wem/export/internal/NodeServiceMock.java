@@ -7,9 +7,14 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.node.ApplyNodePermissionsParams;
+import com.enonic.wem.api.node.AttachedBinaries;
+import com.enonic.wem.api.node.AttachedBinary;
+import com.enonic.wem.api.node.BinaryAttachment;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.FindNodesByParentParams;
@@ -51,17 +56,31 @@ class NodeServiceMock
 
     private final static Logger LOG = LoggerFactory.getLogger( NodeServiceMock.class );
 
+    private final Map<BinaryReference, ByteSource> blobStore = Maps.newHashMap();
+
     @Override
     public Node create( final CreateNodeParams params )
     {
-        final Node createdNode = Node.newNode().
+        final Node.Builder builder = Node.newNode().
             id( params.getNodeId() != null ? params.getNodeId() : NodeId.from( System.nanoTime() ) ).
             name( NodeName.from( params.getName() ) ).
             parent( params.getParent() ).
             createdTime( Instant.now() ).
             creator( PrincipalKey.ofUser( UserStoreKey.system(), "rmy" ) ).
-            childOrder( params.getChildOrder() ).
-            build();
+            childOrder( params.getChildOrder() );
+
+        final AttachedBinaries.Builder attachmentBuilder = AttachedBinaries.create();
+
+        for ( final BinaryAttachment binaryAttachment : params.getBinaryAttachments() )
+        {
+            final BlobKey blobKey = new BlobKey( binaryAttachment.getReference().toString() );
+            attachmentBuilder.add( new AttachedBinary( binaryAttachment.getReference(), blobKey ) );
+            blobStore.put( binaryAttachment.getReference(), binaryAttachment.getByteSource() );
+        }
+
+        builder.attachedBinaries( attachmentBuilder.build() );
+
+        final Node createdNode = builder.build();
 
         nodeIdMap.putIfAbsent( createdNode.id(), createdNode );
         // LOG.info( "Store id " + createdNode.id() );
@@ -236,7 +255,7 @@ class NodeServiceMock
     @Override
     public ByteSource getBinary( final NodeId nodeId, final BinaryReference reference )
     {
-        return null;
+        return this.blobStore.get( reference );
     }
 
     @Override

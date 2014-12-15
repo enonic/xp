@@ -5,6 +5,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.api.export.ExportNodeException;
 
 public class FileExportWriter
@@ -42,6 +44,21 @@ public class FileExportWriter
         catch ( IOException e )
         {
             throw new ExportNodeException( "failed to create file with path " + itemPath.toString(), e );
+        }
+    }
+
+    @Override
+    public void writeSource( final Path itemPath, final ByteSource source )
+    {
+        this.doCreateDirectories( itemPath.getParent() );
+
+        try
+        {
+            Files.copy( source.openStream(), itemPath );
+        }
+        catch ( IOException e )
+        {
+            throw new ExportNodeException( "failed to write source to path " + itemPath.toString(), e );
         }
     }
 }

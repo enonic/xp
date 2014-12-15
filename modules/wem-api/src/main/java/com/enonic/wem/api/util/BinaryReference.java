@@ -1,5 +1,8 @@
 package com.enonic.wem.api.util;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+
 public class BinaryReference
 {
     private final String value;
@@ -11,6 +14,7 @@ public class BinaryReference
 
     public static BinaryReference from( final String value )
     {
+        Preconditions.checkArgument( !Strings.isNullOrEmpty( value ), "BinaryReference must not be null or empty" );
         return new BinaryReference( value );
     }
 

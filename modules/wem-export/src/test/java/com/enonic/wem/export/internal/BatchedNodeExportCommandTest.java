@@ -7,6 +7,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.google.common.io.ByteSource;
+
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -14,6 +17,7 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.export.internal.writer.FileExportWriter;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
@@ -38,7 +42,7 @@ public class BatchedNodeExportCommandTest
     public void one_node_file()
         throws Exception
     {
-        final Node node = createNode( "mynode", NodePath.ROOT );
+        createNode( "mynode", NodePath.ROOT );
 
         final NodeExportResult result = BatchedNodeExportCommand.create().
             nodeService( this.nodeService ).
@@ -48,7 +52,7 @@ public class BatchedNodeExportCommandTest
             exportHomePath( this.temporaryFolder.getRoot().toPath() ).
             exportName( "myExport" ).
             build().
-            export();
+            execute();
 
         assertEquals( 1, result.size() );
 
@@ -76,7 +80,7 @@ public class BatchedNodeExportCommandTest
             exportHomePath( this.temporaryFolder.getRoot().toPath() ).
             exportName( "myExport" ).
             build().
-            export();
+            execute();
 
         assertEquals( 8, result.size() );
 
@@ -116,7 +120,7 @@ public class BatchedNodeExportCommandTest
             exportHomePath( this.temporaryFolder.getRoot().toPath() ).
             exportName( "myExport" ).
             build().
-            export();
+            execute();
 
         assertEquals( 7, result.size() );
 
@@ -145,13 +149,47 @@ public class BatchedNodeExportCommandTest
             exportHomePath( this.temporaryFolder.getRoot().toPath() ).
             exportName( "myExport" ).
             build().
-            export();
+            execute();
 
         assertEquals( 2, result.size() );
 
         assertFileExists( "/myExport/child1_1_1/_/node.xml" );
         assertFileExists( "/myExport/child1_1_2/_/node.xml" );
     }
+
+    @Test
+    public void create_binary_files()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        final BinaryReference binaryRef1 = BinaryReference.from( "image1.jpg" );
+        final BinaryReference binaryRef2 = BinaryReference.from( "image2.jpg" );
+        data.addBinaryReference( "my-image-1", binaryRef1 );
+        data.addBinaryReference( "my-image-2", binaryRef2 );
+
+        this.nodeService.create( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            attachBinary( binaryRef1, ByteSource.wrap( "this-is-the-binary-data-for-image1".getBytes() ) ).
+            attachBinary( binaryRef2, ByteSource.wrap( "this-is-the-binary-data-for-image2".getBytes() ) ).
+            build() );
+
+        BatchedNodeExportCommand.create().
+            nodeService( this.nodeService ).
+            nodeExportWriter( new FileExportWriter() ).
+            exportRootNode( NodePath.ROOT ).
+            xmlNodeSerializer( new XmlNodeSerializer() ).
+            exportHomePath( this.temporaryFolder.getRoot().toPath() ).
+            exportName( "myExport" ).
+            build().
+            execute();
+
+        assertFileExists( "/myExport/my-node/_/node.xml" );
+        assertFileExists( "/myExport/my-node/_/bin/image1.jpg" );
+        assertFileExists( "/myExport/my-node/_/bin/image2.jpg" );
+    }
+
 
     private Node createNode( final String name, final NodePath root )
     {
