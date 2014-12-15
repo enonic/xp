@@ -26,7 +26,6 @@ import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
 abstract class AbstractNodeCommand
 {
-
     static final OrderExpressions DEFAULT_ORDER_EXPRESSIONS =
         OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) );
 

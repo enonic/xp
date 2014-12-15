@@ -46,7 +46,7 @@ public class AttachedBinaries
         return null;
     }
 
-    private static AttachedBinaries fromCollection( final Collection<AttachedBinary> references )
+    public static AttachedBinaries fromCollection( final Collection<AttachedBinary> references )
     {
         return new AttachedBinaries( ImmutableSet.copyOf( references ) );
     }
@@ -64,6 +64,11 @@ public class AttachedBinaries
         {
             this.nodeAttachedBinaries.add( attachedBinary );
             return this;
+        }
+
+        public Set<AttachedBinary> getNodeAttachedBinaries()
+        {
+            return nodeAttachedBinaries;
         }
 
         public AttachedBinaries build()

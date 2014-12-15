@@ -3,7 +3,9 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
 
+import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.EditableNode;
 import com.enonic.wem.api.node.Node;
@@ -19,11 +21,14 @@ public final class UpdateNodeCommand
 {
     private final UpdateNodeParams params;
 
+    private final BlobService blobService;
+
     private UpdateNodeCommand( final Builder builder )
     {
         super( builder );
 
         this.params = builder.params;
+        this.blobService = builder.blobService;
     }
 
     public Node execute()
@@ -34,7 +39,7 @@ public final class UpdateNodeCommand
         }
         catch ( final Exception e )
         {
-            throw Exceptions.newRutime( "Error updating node " + params.getId() ).withCause( e );
+            throw Exceptions.unchecked( e );
         }
     }
 
@@ -44,13 +49,24 @@ public final class UpdateNodeCommand
 
         final EditableNode editableNode = new EditableNode( persistedNode );
         params.getEditor().edit( editableNode );
+
+        final AttachedBinaries updatedBinaries = UpdatedAttachedBinariesResolver.create().
+            editableNode( editableNode ).
+            persistedNode( persistedNode ).
+            binaryAttachments( this.params.getBinaryAttachments() ).
+            blobService( this.blobService ).
+            build().
+            resolve();
+
         final Node editedNode = editableNode.build();
         if ( editedNode.equals( persistedNode ) )
         {
             return persistedNode;
         }
 
-        final Node updatedNode = createUpdatedNode( persistedNode, editedNode );
+        final Node updatedNode = createUpdatedNode( persistedNode, Node.newNode( editedNode ).
+            attachedBinaries( updatedBinaries ).
+            build() );
 
         doStoreNode( updatedNode );
 
@@ -103,6 +119,8 @@ public final class UpdateNodeCommand
     {
         private UpdateNodeParams params;
 
+        private BlobService blobService;
+
         private Builder()
         {
             super();
@@ -111,6 +129,12 @@ public final class UpdateNodeCommand
         public Builder params( final UpdateNodeParams params )
         {
             this.params = params;
+            return this;
+        }
+
+        public Builder blobService( final BlobService blobService )
+        {
+            this.blobService = blobService;
             return this;
         }
 

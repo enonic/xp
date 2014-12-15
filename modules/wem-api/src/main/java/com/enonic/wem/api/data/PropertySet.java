@@ -228,6 +228,11 @@ public final class PropertySet
     void addPropertyArray( final PropertyArray array )
     {
         this.propertyArrayByName.put( array.getName(), array );
+
+        for ( final Property property : array.getProperties() )
+        {
+            this.propertyTree.registerProperty( property );
+        }
     }
 
     void add( final Property property )

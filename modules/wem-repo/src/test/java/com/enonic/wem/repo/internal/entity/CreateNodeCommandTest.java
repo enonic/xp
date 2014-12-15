@@ -10,6 +10,7 @@ import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.InsertManualStrategy;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeBinaryReferenceException;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.util.BinaryReference;
@@ -110,9 +111,41 @@ public class CreateNodeCommandTest
 
         final AttachedBinaries attachedBinaries = node.getAttachedBinaries();
 
-        final Node nodeById = getNodeById( node.id() );
+        assertEquals( 1, attachedBinaries.getSize() );
+    }
 
-        assertEquals( attachedBinaries, nodeById.getAttachedBinaries() );
+    @Test
+    public void attach_binaries()
+        throws Exception
+    {
+        PropertyTree data = new PropertyTree();
+        data.setBinaryReference( "myCar", BinaryReference.from( "myImage" ) );
+        data.setBinaryReference( "myOtherCar", BinaryReference.from( "myOtherImage" ) );
 
+        final Node node = createNode( CreateNodeParams.create().
+            name( "test" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            attachBinary( BinaryReference.from( "myImage" ), ByteSource.wrap( "myImageBytes".getBytes() ) ).
+            attachBinary( BinaryReference.from( "myOtherImage" ), ByteSource.wrap( "myOtherImageBytes".getBytes() ) ).
+            build() );
+
+        final AttachedBinaries attachedBinaries = node.getAttachedBinaries();
+
+        assertEquals( 2, attachedBinaries.getSize() );
+    }
+
+    @Test(expected = NodeBinaryReferenceException.class)
+    public void attached_binary_not_given()
+        throws Exception
+    {
+        PropertyTree data = new PropertyTree();
+        data.setBinaryReference( "myCar", BinaryReference.from( "myImage" ) );
+
+        createNode( CreateNodeParams.create().
+            name( "test" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            build() );
     }
 }

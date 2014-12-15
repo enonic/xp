@@ -1,6 +1,5 @@
 package com.enonic.wem.api.util;
 
-import java.util.Collection;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -11,7 +10,7 @@ import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 public class BinaryReferences
     extends AbstractImmutableEntitySet<BinaryReference>
 {
-    public BinaryReferences( final ImmutableSet<BinaryReference> set )
+    private BinaryReferences( final ImmutableSet<BinaryReference> set )
     {
         super( set );
     }
@@ -27,9 +26,24 @@ public class BinaryReferences
         return new BinaryReferences( returnFields );
     }
 
-    private static BinaryReferences fromCollection( final Collection<BinaryReference> references )
+    public static Builder create()
     {
-        return new BinaryReferences( ImmutableSet.copyOf( references ) );
+        return new Builder();
     }
 
+    public static class Builder
+    {
+        private Set<BinaryReference> binaryReferences = Sets.newHashSet();
+
+        public Builder add( final BinaryReference binaryReference )
+        {
+            this.binaryReferences.add( binaryReference );
+            return this;
+        }
+
+        public BinaryReferences build()
+        {
+            return new BinaryReferences( ImmutableSet.copyOf( this.binaryReferences ) );
+        }
+    }
 }

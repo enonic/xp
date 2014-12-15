@@ -189,6 +189,7 @@ public class NodeServiceImpl
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
             queryService( this.queryService ).
+            blobService( this.blobService ).
             build().
             execute();
     }

@@ -41,10 +41,12 @@ public class PropertyArrayJson
     {
         final ValueType valueType = ValueTypes.getByName( type );
         final PropertyArray array = new PropertyArray( parent.getTree(), parent, name, valueType );
-        parent.addPropertyArray( array );
+
         for ( final ValueAndPropertyIdJson valueJson : values )
         {
             valueJson.fromJson( array, valueType );
         }
+
+        parent.addPropertyArray( array );
     }
 }

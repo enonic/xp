@@ -5,6 +5,9 @@ import java.util.Set;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.common.io.ByteSource;
+
+import com.enonic.wem.api.util.BinaryReference;
 
 public class UpdateNodeParams
 {
@@ -19,6 +22,11 @@ public class UpdateNodeParams
         id = builder.id;
         editor = builder.editor;
         binaryAttachments = new BinaryAttachments( ImmutableSet.copyOf( builder.binaryAttachments ) );
+    }
+
+    public BinaryAttachments getBinaryAttachments()
+    {
+        return binaryAttachments;
     }
 
     public static Builder create()
@@ -48,21 +56,21 @@ public class UpdateNodeParams
         {
         }
 
-        public Builder id( NodeId id )
+        public Builder id( final NodeId id )
         {
             this.id = id;
             return this;
         }
 
-        public Builder editor( NodeEditor editor )
+        public Builder editor( final NodeEditor editor )
         {
             this.editor = editor;
             return this;
         }
 
-        public Builder attachBinary( final BinaryAttachment binaryAttachment )
+        public Builder attachBinary( final BinaryReference binaryReference, final ByteSource byteSource )
         {
-            this.binaryAttachments.add( binaryAttachment );
+            this.binaryAttachments.add( new BinaryAttachment( binaryReference, byteSource ) );
             return this;
         }
 
