@@ -167,6 +167,9 @@ module app.wizard {
             this.metadataStepFormByName = {};
 
             this.securityWizardStepForm = new SecurityWizardStepForm();
+            ContentPermissionsAppliedEvent.on((event) => {
+                this.contentPermissionsUpdated(event.getContent());
+            });
 
             var isSiteOrWithinSite = this.site || this.createSite;
             var hasPageTemplate = this.defaultModels && this.defaultModels.hasPageTemplate();
@@ -324,7 +327,7 @@ module app.wizard {
                 var deferred = wemQ.defer<void>();
 
                 viewedContent = this.assembleViewedContent(persistedContent.newBuilder()).build();
-                if (viewedContent.equals(persistedContent, true)) {
+                if (viewedContent.equals(persistedContent)) {
 
                     if (this.liveFormPanel) {
                         this.liveFormPanel.loadPage();
@@ -544,18 +547,11 @@ module app.wizard {
                 setDisplayName(viewedContent.getDisplayName()).
                 setData(viewedContent.getContentData()).
                 setMetadata(viewedContent.getAllMetadata());
-            // setPermissions(viewedContent.getPermissions()).
-            // setInheritPermissions(false);
 
             if (this.contentWizardStepForm) {
                 var updateAttachments = UpdateAttachments.create(persistedContent.getContentId(),
                     this.contentWizardStepForm.getFormView().getAttachments());
                 updateContentRequest.setUpdateAttachments(updateAttachments);
-            }
-
-            if (this.securityWizardStepForm) {
-                var accessControlEntries = this.securityWizardStepForm.getEntries();
-                updateContentRequest.setPermissions(new AccessControlList(accessControlEntries));
             }
 
             if (this.iconUploadItem) {
@@ -577,7 +573,7 @@ module app.wizard {
             } else {
 
                 var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
-                return !viewedContent.equals(persistedContent, true);
+                return !viewedContent.equals(persistedContent);
             }
         }
 
@@ -600,10 +596,6 @@ module app.wizard {
             viewedContentBuilder.setDisplayName(this.contentWizardHeader.getDisplayName());
             if (this.contentWizardStepForm) {
                 viewedContentBuilder.setData(this.contentWizardStepForm.getData());
-            }
-            if (this.securityWizardStepForm) {
-                var accessControlEntries = this.securityWizardStepForm.getEntries();
-                viewedContentBuilder.setPermissions(new AccessControlList(accessControlEntries));
             }
 
             var metadata: Metadata[] = [];
@@ -700,6 +692,20 @@ module app.wizard {
                 listener.call(this, new api.content.ContentNamedEvent(this, content));
             });
         }
+
+        private contentPermissionsUpdated(content: Content) {
+            var persistedContent: Content = this.getPersistedItem();
+
+            if (persistedContent && (content.getId() === persistedContent.getId())) {
+                var updatedContent: Content = persistedContent.newBuilder().
+                    setInheritPermissionsEnabled(content.isInheritPermissionsEnabled()).
+                    setPermissions(content.getPermissions().clone()).
+                    build();
+                this.setPersistedItem(updatedContent);
+            }
+
+        }
+
     }
 
 }

@@ -20,9 +20,8 @@ import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.PropertyTreeJson;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.acl.AccessControlList;
 
-public class UpdateContentJson
+public final class UpdateContentJson
 {
     final ContentName contentName;
 
@@ -36,9 +35,7 @@ public class UpdateContentJson
                        @JsonProperty("metadata") final List<MetadataJson> metadataJsonList, @JsonProperty("form") final FormJson form,
                        @JsonProperty("displayName") final String displayName,
                        @JsonProperty("updateAttachments") final UpdateAttachmentsJson updateAttachments,
-                       @JsonProperty("thumbnail") final ThumbnailJson thumbnail, @JsonProperty("draft") final String draft,
-                       @JsonProperty("permissions") final List<AccessControlEntryJson> permissions,
-                       @JsonProperty("inheritPermissions") final boolean inheritPermissions )
+                       @JsonProperty("thumbnail") final ThumbnailJson thumbnail, @JsonProperty("draft") final String draft )
     {
         this.contentName = ContentName.from( contentName );
 
@@ -55,14 +52,9 @@ public class UpdateContentJson
                 edit.metadata = metadatas;
                 edit.draft = Boolean.valueOf( draft );
                 edit.displayName = displayName;
-                edit.inheritPermissions = inheritPermissions;
                 if ( thumbnail != null )
                 {
                     edit.thumbnail = thumbnail.getThumbnail();
-                }
-                if ( permissions != null )
-                {
-                    edit.permissions = parseAcl( permissions );
                 }
             } );
 
@@ -97,15 +89,5 @@ public class UpdateContentJson
             metadataList.add( metadataJson.getMetadata() );
         }
         return Metadatas.from( metadataList );
-    }
-
-    private AccessControlList parseAcl( final List<AccessControlEntryJson> accessControlListJson )
-    {
-        final AccessControlList.Builder builder = AccessControlList.create();
-        for ( final AccessControlEntryJson entryJson : accessControlListJson )
-        {
-            builder.add( entryJson.getSourceEntry() );
-        }
-        return builder.build();
     }
 }

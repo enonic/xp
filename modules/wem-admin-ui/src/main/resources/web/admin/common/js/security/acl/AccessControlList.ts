@@ -1,6 +1,6 @@
 module api.security.acl {
 
-    export class AccessControlList implements api.Equitable {
+    export class AccessControlList implements api.Equitable, api.Cloneable {
 
         private entries: {[key: string]: AccessControlEntry};
 
@@ -64,6 +64,16 @@ module api.security.acl {
 
             var other = <AccessControlList>o;
             return api.ObjectHelper.arrayEquals(this.getEntries().sort(), other.getEntries().sort());
+        }
+
+        clone(): AccessControlList {
+            var entries: AccessControlEntry[] = [];
+            for (var key in this.entries) {
+                if (this.entries.hasOwnProperty(key)) {
+                    entries.push(this.entries[key].clone());
+                }
+            }
+            return new AccessControlList(entries);
         }
 
         static fromJson(json: api.security.acl.AccessControlEntryJson[]): AccessControlList {

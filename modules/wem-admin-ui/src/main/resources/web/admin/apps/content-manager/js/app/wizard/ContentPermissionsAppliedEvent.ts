@@ -1,14 +1,14 @@
 module app.wizard {
 
     export class ContentPermissionsAppliedEvent extends api.event.Event {
-        private content: any;
+        private content: api.content.Content;
 
-        constructor(content: any) {
+        constructor(content: api.content.Content) {
             super();
             this.content = content;
         }
 
-        getContent(): any {
+        getContent(): api.content.Content {
             return this.content;
         }
 

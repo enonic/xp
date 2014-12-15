@@ -20,13 +20,8 @@ module api.content {
 
         private attachments: api.content.attachment.Attachment[] = [];
 
-        private permissions: api.security.acl.AccessControlList;
-
-        private inheritPermissions: boolean;
-
         constructor() {
             super();
-            this.inheritPermissions = true;
             super.setMethod("POST");
         }
 
@@ -80,16 +75,6 @@ module api.content {
             return this;
         }
 
-        setPermissions(permissions: api.security.acl.AccessControlList): CreateContentRequest {
-            this.permissions = permissions;
-            return this;
-        }
-
-        setInheritPermissions(inheritPermissions: boolean): CreateContentRequest {
-            this.inheritPermissions = inheritPermissions;
-            return this;
-        }
-
         getParams(): Object {
             return {
                 draft: this.draft,
@@ -100,9 +85,7 @@ module api.content {
                 data: this.data.toJson(),
                 metadata: this.metadataToJson(),
                 displayName: this.displayName,
-                attachments: this.attachmentsToJson(),
-                permissions: this.permissions ? this.permissions.toJson() : undefined,
-                inheritPermissions: this.inheritPermissions
+                attachments: this.attachmentsToJson()
             };
         }
 

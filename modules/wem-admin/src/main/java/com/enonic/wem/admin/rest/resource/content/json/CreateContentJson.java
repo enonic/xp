@@ -19,9 +19,8 @@ import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.PropertyTreeJson;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.security.acl.AccessControlList;
 
-public class CreateContentJson
+public final class CreateContentJson
 {
     private final CreateContentParams createContent;
 
@@ -33,9 +32,7 @@ public class CreateContentJson
                        @JsonProperty("contentType") final String contentType, @JsonProperty("form") final FormJson formJson,
                        @JsonProperty("data") final List<PropertyArrayJson> dataJsonList,
                        @JsonProperty("attachments") final List<AttachmentJson> attachmentJsonList,
-                       @JsonProperty("metadata") final List<MetadataJson> metadataJsonList,
-                       @JsonProperty("permissions") final List<AccessControlEntryJson> permissions,
-                       @JsonProperty("inheritPermissions") final boolean inheritPermissions )
+                       @JsonProperty("metadata") final List<MetadataJson> metadataJsonList )
     {
 
         this.createContent = new CreateContentParams();
@@ -61,23 +58,7 @@ public class CreateContentJson
             this.createContent.attachments( attachmentJson.getAttachment() );
         }
 
-        if ( permissions != null )
-        {
-            final AccessControlList acl = parseAcl( permissions );
-            this.createContent.permissions( acl );
-        }
-
-        createContent.setInheritPermissions( inheritPermissions );
-    }
-
-    private AccessControlList parseAcl( final List<AccessControlEntryJson> accessControlListJson )
-    {
-        final AccessControlList.Builder builder = AccessControlList.create();
-        for ( final AccessControlEntryJson entryJson : accessControlListJson )
-        {
-            builder.add( entryJson.getSourceEntry() );
-        }
-        return builder.build();
+        createContent.setInheritPermissions( true );
     }
 
     @JsonIgnore

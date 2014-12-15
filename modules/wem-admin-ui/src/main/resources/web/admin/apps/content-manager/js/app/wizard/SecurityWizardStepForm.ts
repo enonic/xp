@@ -61,7 +61,10 @@ module app.wizard {
             });
 
             ContentPermissionsAppliedEvent.on((event) => {
-                this.layout(event.getContent())
+                var content = event.getContent();
+                if (content.getId() === this.content.getId()) {
+                    this.layout(content);
+                }
             });
         }
 
@@ -109,8 +112,5 @@ module app.wizard {
             return this.accessListView.giveFocus();
         }
 
-        getEntries(): AccessControlEntry[] {
-            return this.accessListView.getItems();
-        }
     }
 }

@@ -20,15 +20,10 @@ module api.content {
 
         private thumbnail: api.content.Thumbnail;
 
-        private permissions: api.security.acl.AccessControlList;
-
-        private inheritPermissions: boolean;
-
         constructor(id: string) {
             super();
             this.id = id;
             this.draft = false;
-            this.inheritPermissions = true;
             this.setMethod("POST");
         }
 
@@ -75,16 +70,6 @@ module api.content {
             return this;
         }
 
-        setPermissions(permissions: api.security.acl.AccessControlList): UpdateContentRequest {
-            this.permissions = permissions;
-            return this;
-        }
-
-        setInheritPermissions(inheritPermissions: boolean): UpdateContentRequest {
-            this.inheritPermissions = inheritPermissions;
-            return this;
-        }
-
         getParams(): Object {
             return {
                 contentId: this.id,
@@ -95,9 +80,7 @@ module api.content {
                 metadata: (this.metadata || []).map((metadata: Metadata) => metadata.toJson()),
                 displayName: this.displayName,
                 updateAttachments: this.updateAttachments ? this.updateAttachments.toJson() : null,
-                thumbnail: this.thumbnail ? this.thumbnail.toJson() : undefined,
-                permissions: this.permissions ? this.permissions.toJson() : undefined,
-                inheritPermissions: this.inheritPermissions
+                thumbnail: this.thumbnail ? this.thumbnail.toJson() : undefined
             };
         }
 
