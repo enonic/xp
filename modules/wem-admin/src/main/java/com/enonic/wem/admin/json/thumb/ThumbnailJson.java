@@ -12,7 +12,7 @@ public class ThumbnailJson
 
     private final String mimeType;
 
-    ThumbnailJson( final Thumbnail thumbnail )
+    public ThumbnailJson( final Thumbnail thumbnail )
     {
         this.binaryReference = thumbnail.getBinaryReference().toString();
         this.size = thumbnail.getSize();
