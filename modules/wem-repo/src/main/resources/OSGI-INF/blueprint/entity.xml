@@ -13,6 +13,7 @@
     <property name="workspaceService" ref="workspaceService"/>
     <property name="versionService" ref="versionService"/>
     <property name="queryService" ref="queryService"/>
+    <property name="blobService" ref="blobService"/>
   </bean>
 
   <service ref="nodeService" auto-export="interfaces"/>
