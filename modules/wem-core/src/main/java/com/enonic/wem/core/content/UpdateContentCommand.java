@@ -79,11 +79,12 @@ final class UpdateContentCommand
 
         editedContent = newContent( editedContent ).modifier( this.params.getModifier() ).build();
 
-        final ContentEditor editorFromProcessor =
+        final ProcessUpdateResult processUpdateResult =
             proxyProcessor.processEdit( contentBeforeChange.getType(), params, params.getCreateAttachments() );
-        if ( editorFromProcessor != null )
+        if ( processUpdateResult != null )
         {
-            editedContent = editContent( editorFromProcessor, editedContent );
+            editedContent = editContent( processUpdateResult.editor, editedContent );
+            this.params.createAttachments( processUpdateResult.createAttachments );
         }
 
         if ( !editedContent.hasThumbnail() )

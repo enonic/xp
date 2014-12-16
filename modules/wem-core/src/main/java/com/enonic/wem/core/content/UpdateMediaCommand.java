@@ -1,8 +1,5 @@
 package com.enonic.wem.core.content;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.Content;
@@ -18,10 +15,6 @@ import com.enonic.wem.core.media.MediaInfoService;
 final class UpdateMediaCommand
     extends AbstractContentCommand
 {
-    private static final String THUMBNAIL_MIME_TYPE = "image/png";
-
-    private final static Logger LOG = LoggerFactory.getLogger( UpdateMediaCommand.class );
-
     private final UpdateMediaParams params;
 
     private final MediaInfoService mediaInfoService;

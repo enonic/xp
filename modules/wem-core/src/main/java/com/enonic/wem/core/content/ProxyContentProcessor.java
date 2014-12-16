@@ -1,13 +1,12 @@
 package com.enonic.wem.core.content;
 
-import com.enonic.wem.api.content.ContentEditor;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.media.MediaInfo;
 
-public class ProxyContentProcessor
+class ProxyContentProcessor
 {
     private final ImageContentProcessor imageHandler;
 
@@ -28,10 +27,10 @@ public class ProxyContentProcessor
         }
     }
 
-    public ContentEditor processEdit( final ContentTypeName contenTypeName, final UpdateContentParams updateContentParams,
-                                      final CreateAttachments createAttachments )
+    ProcessUpdateResult processEdit( final ContentTypeName contentTypeName, final UpdateContentParams updateContentParams,
+                                     final CreateAttachments createAttachments )
     {
-        if ( contenTypeName.isImageMedia() )
+        if ( contentTypeName.isImageMedia() )
         {
             return imageHandler.processUpdate( updateContentParams, createAttachments );
         }

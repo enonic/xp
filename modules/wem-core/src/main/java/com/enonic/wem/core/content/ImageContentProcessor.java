@@ -97,36 +97,36 @@ public final class ImageContentProcessor
         return attachments.build();
     }
 
-    public ContentEditor processUpdate( final UpdateContentParams params, final CreateAttachments createAttachments )
+    public ProcessUpdateResult processUpdate( final UpdateContentParams params, final CreateAttachments createAttachments )
     {
+        final CreateAttachments processedCreateAttachments;
         if ( createAttachments.getSize() == 1 )
         {
-            final CreateAttachment createAttachment = createAttachments.first();
+            final CreateAttachment sourceAttachment = createAttachments.first();
+            final BufferedImage sourceImage;
+            try (final InputStream inputStream = sourceAttachment.getByteSource().openStream())
+            {
+                sourceImage = ImageHelper.toBufferedImage( inputStream );
+            }
+            catch ( IOException e )
+            {
+                throw Exceptions.unchecked( e );
+            }
 
+            final CreateAttachments.Builder builder = CreateAttachments.builder();
+            builder.add( sourceAttachment );
+            builder.add( scaleImages( sourceImage, sourceAttachment ) );
+
+            processedCreateAttachments = builder.build();
         }
-
-        return null;
-        //return editable -> applyMetadata( editable.data.getRoot(), mediaInfo );
-    }
-
-    /*public EditableContent processUpdate( EditableContent editableContent, final Content original, final Attachments originalAttachments )
-    {
-        if ( originalAttachments.getSize() == 0 && editableContent.attachments != null && editableContent.attachments.size() == 1 )
+        else
         {
-            final Attachment attachment = originalAttachments.get( 0 );
-
-            final Blob sourceImageAsBlob = blobService.get( attachment.getBlobKey() );
-            final ImageMetadata metadata = ImageMetadata.from( sourceImageAsBlob.getStream() );
-
-            final PropertyTree data = editableContent.data;
-            // Enrich the data with the image metadata
-            metadata.toProperties( data.getRoot() );
-
-            final BufferedImage sourceImage = ImageHelper.toBufferedImage( sourceImageAsBlob );
-            editableContent.attachments = scaleImages( sourceImage, attachment ).getList();
+            processedCreateAttachments = createAttachments;
         }
-        return editableContent;
-    }*/
+
+        final ContentEditor editor = editable -> applyMetadata( editable.data.getRoot(), mediaInfo );
+        return new ProcessUpdateResult( processedCreateAttachments, editor );
+    }
 
     private static class Scale
     {
