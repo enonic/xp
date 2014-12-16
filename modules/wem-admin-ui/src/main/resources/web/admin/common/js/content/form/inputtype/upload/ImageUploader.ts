@@ -39,10 +39,22 @@ module api.content.form.inputtype.upload {
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
             if (property.hasNonNullValue()) {
-                var imgUrl = new ContentImageUrlResolver().
-                    setContentId(this.getContext().contentId).
-                    setSize(494).resolve();
-                this.imageUploader.setValue(imgUrl);
+
+                new api.content.GetContentByIdRequest(this.getContext().contentId).
+                    sendAndParse().
+                    then((content: api.content.Content) => {
+
+                        var imgUrl = new ContentImageUrlResolver().
+                            setContentId(this.getContext().contentId).
+                            setSize(494).
+                            setTimestamp(content.getModifiedTime()).
+                            resolve();
+
+                        this.imageUploader.setValue(imgUrl);
+
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    }).done();
             }
 
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {

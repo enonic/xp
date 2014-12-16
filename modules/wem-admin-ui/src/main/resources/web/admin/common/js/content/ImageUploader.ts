@@ -55,15 +55,8 @@ module api.content {
             return [jsonString];
         }
 
-        private createImageResult(value: string): api.dom.DivEl {
+        private createImageResult(src: string): api.dom.DivEl {
             var container = new api.dom.DivEl();
-
-            var src: string;
-            if (value && (value.indexOf('/') == -1)) {
-                src = api.util.UriHelper.getRestUri('blob/' + value + '?mimeType=image/png');
-            } else {
-                src = value;
-            }
 
             var image = new api.dom.ImgEl(src);
 
