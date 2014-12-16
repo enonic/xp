@@ -139,7 +139,8 @@ public class BatchedNodeExportCommand
             builder.append( node.name().toString() ).append( LINE_SEPARATOR );
         }
 
-        exportWriter.writeElement( NodeExportPathResolver.resolveOrderListPath( getNodeDataFolder( parent ) ), builder.toString() );
+        final Path nodeOrderListPath = NodeExportPathResolver.resolveOrderListPath( getNodeDataFolder( parent ) );
+        exportWriter.writeElement( nodeOrderListPath, builder.toString() );
     }
 
     private double getNumberOfBatches( final NodePath nodePath )

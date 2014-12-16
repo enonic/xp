@@ -79,6 +79,10 @@ class XmlPropertyMapper
         {
             return LinkPropertyMapper.map( property, objectFactory );
         }
+        else if ( type.equals( ValueTypes.BINARY_REFERENCE ) )
+        {
+            return BinaryReferencePropertyMapper.map( property, objectFactory );
+        }
 
         throw new ExportNodeException( "Unknown property-type: " + property.getType() );
     }

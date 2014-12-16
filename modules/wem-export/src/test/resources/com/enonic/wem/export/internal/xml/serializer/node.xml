@@ -14,6 +14,8 @@
     <dateTime name="myLocalDateTime">2014-11-28T22:00:00.000+01:00</dateTime>
     <reference name="myRef">abcd</reference>
     <link name="myLink">/root/parent/child</link>
+    <binaryReference name="myBinaryRef1">image.jpg</binaryReference>
+    <binaryReference name="myBinaryRef2">image2.jpg</binaryReference>
     <property-set name="mySet">
       <string name="myString">myStringValue</string>
       <boolean name="myBoolean">true</boolean>
@@ -23,4 +25,14 @@
       </property-set>
     </property-set>
   </properties>
+  <attachedBinaries>
+    <attachedBinary>
+      <blobKey>b</blobKey>
+      <binaryReference>image2.jpg</binaryReference>
+    </attachedBinary>
+    <attachedBinary>
+      <blobKey>a</blobKey>
+      <binaryReference>image.jpg</binaryReference>
+    </attachedBinary>
+  </attachedBinaries>
 </node>

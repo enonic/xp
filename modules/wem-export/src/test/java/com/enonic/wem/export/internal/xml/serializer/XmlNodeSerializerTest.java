@@ -7,14 +7,18 @@ import java.time.LocalTime;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.node.AttachedBinaries;
+import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeType;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -48,6 +52,10 @@ public class XmlNodeSerializerTest
         // Links and ref
         propertyTree.addReference( "myRef", Reference.from( "abcd" ) );
         propertyTree.addLink( "myLink", Link.from( "/root/parent/child" ) );
+        // Binary refs
+        propertyTree.addBinaryReference( "myBinaryRef1", BinaryReference.from( "image.jpg" ) );
+        propertyTree.addBinaryReference( "myBinaryRef2", BinaryReference.from( "image2.jpg" ) );
+
         // Property-set
         final PropertySet mySubset = propertyTree.addSet( "mySet" );
         mySubset.setString( "myString", "myStringValue" );
@@ -64,6 +72,10 @@ public class XmlNodeSerializerTest
             childOrder( ChildOrder.manualOrder() ).
             nodeType( NodeType.from( "content" ) ).
             data( propertyTree ).
+            attachedBinaries( AttachedBinaries.create().
+                add( new AttachedBinary( BinaryReference.from( "image.jpg" ), new BlobKey( "a" ) ) ).
+                add( new AttachedBinary( BinaryReference.from( "image2.jpg" ), new BlobKey( "b" ) ) ).
+                build() ).
             build();
 
         final XmlNode xml = XmlNodeMapper.toXml( node );

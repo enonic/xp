@@ -21,7 +21,21 @@
       <xs:element minOccurs="0" maxOccurs="1" name="childOrder" type="xs:string"/>
       <xs:element minOccurs="0" maxOccurs="1" name="nodeType" type="xs:string"/>
       <xs:element name="properties" type="propertyTree"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="attachedBinaries" type="attachedBinaries"/>
     </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="attachedBinaries">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="attachedBinary">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="blobKey" type="xs:string"/>
+            <xs:element name="binaryReference" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="propertyTree">
@@ -41,7 +55,7 @@
         <xs:element name="localDateTime" type="dateTimeProperty"/>
         <xs:element name="localDate" type="dateProperty"/>
         <xs:element name="localTime" type="timeProperty"/>
-        <xs:element name="binary" type="binaryProperty"/>
+        <xs:element name="binaryReference" type="binaryReferenceProperty"/>
         <xs:element name="reference" type="referenceProperty"/>
         <xs:element name="link" type="linkProperty"/>
         <xs:element name="htmlPart" type="htmlPartProperty"/>
@@ -127,11 +141,10 @@
     </xs:simpleContent>
   </xs:complexType>
 
-  <xs:complexType name="binaryProperty">
+  <xs:complexType name="binaryReferenceProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
         <xs:attributeGroup ref="property"/>
-        <xs:attribute name="mimeType" type="xs:string" use="required"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -159,7 +172,6 @@
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
-
 
   <xs:complexType name="referenceProperty">
     <xs:simpleContent>

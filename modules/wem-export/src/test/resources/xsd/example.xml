@@ -3,7 +3,7 @@
       xsi:schemaLocation="urn:enonic:xp:export:1.0 ../../../main/resources/META-INF/xsd/export.xsd">
 
   <childOrder>_manualordervalue DESC</childOrder>
-  <collection>content</collection>
+  <nodeType>content</nodeType>
   <properties>
     <string name="test">value</string>
     <double name="test">3232.23</double>
@@ -39,4 +39,14 @@
       </property-set>
     </property-set>
   </properties>
+  <attachedBinaries>
+    <attachedBinary>
+      <blobKey>abc</blobKey>
+      <binaryReference>my-image.jpg</binaryReference>
+    </attachedBinary>
+    <attachedBinary>
+      <blobKey>abcd</blobKey>
+      <binaryReference>my-image2.jpg</binaryReference>
+    </attachedBinary>
+  </attachedBinaries>
 </node>

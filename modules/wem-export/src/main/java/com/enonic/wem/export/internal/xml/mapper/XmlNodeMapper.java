@@ -6,7 +6,6 @@ import com.enonic.wem.export.internal.xml.XmlNode;
 
 public class XmlNodeMapper
 {
-
     public static XmlNode toXml( final Node node )
     {
         try
@@ -25,6 +24,7 @@ public class XmlNodeMapper
 
         xml.setChildOrder( getAsStringOrNull( node.getChildOrder() ) );
         xml.setNodeType( node.getNodeType().getName() );
+        xml.setAttachedBinaries( XmlAttachedBinariesMapper.toXml( node.getAttachedBinaries() ) );
 
         if ( node.data() != null )
         {
@@ -33,32 +33,6 @@ public class XmlNodeMapper
 
         return xml;
     }
-
-    /*
-    public static void fromXml( final XmlNode xml, final Node.Builder builder )
-    {
-        try
-        {
-            doDeserializeNode( xml, builder );
-        }
-        catch ( Exception e )
-        {
-            throw new ExportNodeException( "Failed to deserialize node from xml", e );
-        }
-    }
-
-    private static void doDeserializeNode( final XmlNode xml, final Node.Builder builder )
-    {
-        builder.name( NodeName.from( xml.getName() ) ).
-            parent( NodePath.newPath( xml.getParent() ).build() ).
-            id( NodeId.from( xml.getId() ) ).
-            childOrder( ChildOrder.from( xml.getChildOrder() ) ).
-            createdTime( InstantConverter.convertToInstant( xml.getCreatedTime() ) ).
-            modifiedTime( InstantConverter.convertToInstant( xml.getModifiedTime() ) ).
-            creator( PrincipalKey.from( xml.getCreator() ) ).
-            modifier( PrincipalKey.from( xml.getModifier() ) );
-    }
-*/
 
     private static String getAsStringOrNull( final Object object )
     {
