@@ -44,9 +44,7 @@
     <module>modules/portal-thymeleaf</module>
     <module>modules/portal-xslt</module>
     <module>modules/portal-jslib</module>
-
-    <!-- TODO: Rename to portal-impl -->
-    <module>modules/wem-portal</module>
+    <module>modules/portal-impl</module>
 
     <module>modules/wem-jsapi</module>
     <module>modules/wem-karaf</module>

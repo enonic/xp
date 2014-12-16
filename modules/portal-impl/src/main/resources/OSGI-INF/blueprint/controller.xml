@@ -13,7 +13,7 @@
   </bean>
 
   <bean id="controllerScriptFactory" class="com.enonic.wem.portal.internal.controller.ControllerScriptFactoryImpl">
-  <property name="scriptService" ref="scriptService"/>
+    <property name="scriptService" ref="scriptService"/>
     <property name="postProcessor" ref="postProcessor"/>
   </bean>
 
@@ -23,8 +23,8 @@
 
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.portal.internal.postprocess.instruction.ComponentInstruction">
-      <argument index="0" ref="rendererFactory"/>
-      <argument index="1" ref="pageComponentService"/>
+      <property name="rendererFactory" ref="rendererFactory"/>
+      <property name="pageComponentService" ref="pageComponentService"/>
     </bean>
   </service>
 

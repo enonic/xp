@@ -11,9 +11,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-portal</artifactId>
+  <artifactId>portal-impl</artifactId>
   <packaging>bundle</packaging>
-  <name>Enonic WEM Portal</name>
+  <name>Enonic XP Portal :: Impl</name>
 
   <dependencies>
     <dependency>

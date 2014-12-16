@@ -45,8 +45,8 @@
     <bundle start-level="50">mvn:com.enonic.wem/portal-thymeleaf/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/portal-xslt/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/portal-jslib/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/portal-impl/${project.version}</bundle>
 
-    <bundle start-level="50">mvn:com.enonic.wem/wem-portal/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-jsapi/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-admin/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-admin-ui/${project.version}</bundle>

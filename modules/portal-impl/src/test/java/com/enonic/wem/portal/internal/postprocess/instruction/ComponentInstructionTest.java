@@ -22,12 +22,12 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalResponse;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
+import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalResponse;
 
 import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
@@ -46,7 +46,9 @@ public class ComponentInstructionTest
     {
         RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
         PageComponentService pageComponentService = Mockito.mock( PageComponentService.class );
-        ComponentInstruction instruction = new ComponentInstruction( rendererFactory, pageComponentService );
+        ComponentInstruction instruction = new ComponentInstruction();
+        instruction.setRendererFactory( rendererFactory );
+        instruction.setPageComponentService( pageComponentService );
 
         PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );
@@ -70,7 +72,9 @@ public class ComponentInstructionTest
 
         PageComponent component = createPartComponent();
         doReturn( component ).when( pageComponentService ).getByName( isA( ModuleKey.class ), isA( ComponentName.class ) );
-        ComponentInstruction instruction = new ComponentInstruction( rendererFactory, pageComponentService );
+        ComponentInstruction instruction = new ComponentInstruction();
+        instruction.setRendererFactory( rendererFactory );
+        instruction.setPageComponentService( pageComponentService );
 
         PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );

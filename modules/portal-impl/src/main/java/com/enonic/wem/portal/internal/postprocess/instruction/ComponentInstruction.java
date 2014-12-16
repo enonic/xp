@@ -2,6 +2,8 @@ package com.enonic.wem.portal.internal.postprocess.instruction;
 
 import java.util.List;
 
+import org.osgi.service.component.annotations.Reference;
+
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
@@ -14,11 +16,11 @@ import com.enonic.wem.api.content.page.PageComponentService;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.xp.portal.PortalContext;
 import com.enonic.wem.portal.internal.rendering.RenderException;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
+import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
@@ -28,13 +30,19 @@ public final class ComponentInstruction
 {
     static final String MODULE_COMPONENT_PREFIX = "module:";
 
-    private final RendererFactory rendererFactory;
+    private RendererFactory rendererFactory;
 
-    private final PageComponentService pageComponentService;
+    private PageComponentService pageComponentService;
 
-    public ComponentInstruction( final RendererFactory rendererFactory, final PageComponentService pageComponentService )
+    @Reference
+    public void setRendererFactory( final RendererFactory rendererFactory )
     {
         this.rendererFactory = rendererFactory;
+    }
+
+    @Reference
+    public void setPageComponentService( final PageComponentService pageComponentService )
+    {
         this.pageComponentService = pageComponentService;
     }
 
@@ -130,5 +138,4 @@ public final class ComponentInstruction
             return pageTemplate.getRegions();
         }
     }
-
 }

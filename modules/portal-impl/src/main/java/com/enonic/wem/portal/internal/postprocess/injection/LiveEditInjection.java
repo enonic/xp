@@ -10,8 +10,8 @@ import com.google.common.io.Resources;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 
 public final class LiveEditInjection
