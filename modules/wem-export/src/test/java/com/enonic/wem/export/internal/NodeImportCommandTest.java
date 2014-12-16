@@ -45,7 +45,8 @@ public class NodeImportCommandTest
     public void import_node()
         throws Exception
     {
-        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.getRoot().getPath() + "/myExport/mynode/_" ) );
+        final Path nodeFileDir =
+            Files.createDirectories( Paths.get( temporaryFolder.getRoot().getPath() + Paths.get( "myExport", "mynode", "_" ).toString() ) );
         assert nodeFileDir != null;
 
         final byte[] nodeXmlFile = readFromFile( "node_unordered.xml" ).getBytes();
