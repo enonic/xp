@@ -7,9 +7,11 @@ import javax.xml.bind.JAXBIntrospector;
 
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
+import com.enonic.wem.export.internal.xml.XmlBinaryReferenceProperty;
 import com.enonic.wem.export.internal.xml.XmlBooleanProperty;
 import com.enonic.wem.export.internal.xml.XmlDateProperty;
 import com.enonic.wem.export.internal.xml.XmlDateTimeProperty;
@@ -103,6 +105,10 @@ class PropertyTreeXmlBuilder
             {
                 addGeoPointProperty( (XmlGeoPointProperty) propertyValue, propertySet );
             }
+            else if ( propertyValue instanceof XmlBinaryReferenceProperty )
+            {
+                addBinaryReferenceProperty( (XmlBinaryReferenceProperty) propertyValue, propertySet );
+            }
         }
     }
 
@@ -171,5 +177,10 @@ class PropertyTreeXmlBuilder
     private static void addGeoPointProperty( final XmlGeoPointProperty xmlProperty, final PropertySet propertySet )
     {
         propertySet.addGeoPoint( xmlProperty.getName(), GeoPoint.from( xmlProperty.getValue() ) );
+    }
+
+    private static void addBinaryReferenceProperty( final XmlBinaryReferenceProperty xmlProperty, final PropertySet propertySet )
+    {
+        propertySet.addBinaryReference( xmlProperty.getName(), BinaryReference.from( xmlProperty.getValue() ) );
     }
 }
