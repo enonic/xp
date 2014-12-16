@@ -14,7 +14,13 @@ public class NodeImportPathResolver
     {
         final Path relativeFilePath = exportRootPath.relativize( filePath );
 
-        return NodePath.newNodePath( importRoot, relativeFilePath.toString() ).build().asAbsolute();
+        final NodePath.Builder builder = NodePath.newPath( importRoot );
+
+        relativeFilePath.forEach( ( path ) -> {
+            builder.addElement( path.toString() );
+        } );
+
+        return builder.build();
     }
 
     public static Path resolveOrderFilePath( final Path nodeBasePath )

@@ -21,7 +21,7 @@ public class NodeExportPathResolverTest
 
         final Path relativePath = NodeExportPathResolver.resolveNodeBasePath( rootPath, nodePath, exportRootPath );
 
-        assertEquals( "/exports/my-article/image-archive", relativePath.toString() );
+        assertEquals( Paths.get( "/exports", "my-article", "image-archive" ), relativePath );
     }
 
     @Test
@@ -34,7 +34,7 @@ public class NodeExportPathResolverTest
 
         final Path relativePath = NodeExportPathResolver.resolveNodeBasePath( rootPath, nodePath, exportRootPath );
 
-        assertEquals( "/exports", relativePath.toString() );
+        assertEquals( Paths.get( "/exports" ), relativePath );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -47,7 +47,6 @@ public class NodeExportPathResolverTest
 
         NodeExportPathResolver.resolveNodeBasePath( rootPath, nodePath, exportRootPath );
     }
-
 
     private NodePath createNodePath( final String value )
     {

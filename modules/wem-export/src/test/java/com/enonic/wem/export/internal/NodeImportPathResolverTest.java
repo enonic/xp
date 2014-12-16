@@ -11,14 +11,12 @@ import static org.junit.Assert.*;
 
 public class NodeImportPathResolverTest
 {
-
-
     @Test
     public void resolve_into_folder()
         throws Exception
     {
-        final NodePath resolvedPath = NodeImportPathResolver.resolveImportedNodePath( Paths.get( "/var/folder/myExport/mynode/" ),
-                                                                                      Paths.get( "/var/folder/myExport" ),
+        final NodePath resolvedPath = NodeImportPathResolver.resolveImportedNodePath( Paths.get( "/var", "folder", "myExport", "mynode" ),
+                                                                                      Paths.get( "/var", "folder", "myExport" ),
                                                                                       NodePath.newNodePath( NodePath.ROOT,
                                                                                                             "myimport" ).build() );
 
@@ -29,10 +27,10 @@ public class NodeImportPathResolverTest
     public void resolve_child_into_folder()
         throws Exception
     {
-        final NodePath resolvedPath = NodeImportPathResolver.resolveImportedNodePath( Paths.get( "/var/folder/myExport/mynode/mychild/" ),
-                                                                                      Paths.get( "/var/folder/myExport" ),
-                                                                                      NodePath.newNodePath( NodePath.ROOT,
-                                                                                                            "myimport" ).build() );
+        final NodePath resolvedPath =
+            NodeImportPathResolver.resolveImportedNodePath( Paths.get( "/var", "folder", "myExport", "mynode", "mychild" ),
+                                                            Paths.get( "/var", "folder", "myExport" ),
+                                                            NodePath.newNodePath( NodePath.ROOT, "myimport" ).build() );
 
         assertEquals( "/myimport/mynode/mychild", resolvedPath.toString() );
         assertEquals( "/myimport/mynode", resolvedPath.getParentPath().toString() );
@@ -43,9 +41,11 @@ public class NodeImportPathResolverTest
     public void resolve_into_root()
         throws Exception
     {
-        final NodePath resolvedPath = NodeImportPathResolver.resolveImportedNodePath( Paths.get( "/var/folder/myExport/mynode/" ),
-                                                                                      Paths.get( "/var/folder/myExport" ), NodePath.ROOT );
+        final NodePath resolvedPath = NodeImportPathResolver.resolveImportedNodePath( Paths.get( "/var", "folder", "myExport", "mynode" ),
+                                                                                      Paths.get( "/var", "folder", "myExport" ),
+                                                                                      NodePath.ROOT );
 
         assertEquals( "/mynode", resolvedPath.toString() );
     }
+
 }

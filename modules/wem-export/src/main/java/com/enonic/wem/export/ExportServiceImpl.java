@@ -36,7 +36,7 @@ public class ExportServiceImpl
             nodeService( this.nodeService ).
 
             nodeExportWriter( new FileExportWriter() ).
-            exportHomePath( Paths.get( HomeDir.get().toString(), "/exports" ) ).
+            exportHomePath( Paths.get( HomeDir.get().toString(), "exports" ) ).
             exportName( "node_" + LocalDateTime.now().format( DateTimeFormatter.ISO_LOCAL_DATE_TIME ) ).
             build().
             execute();
@@ -50,7 +50,7 @@ public class ExportServiceImpl
             xmlNodeSerializer( this.xmlNodeSerializer ).
             nodeService( this.nodeService ).
             exportReader( new FileExportReader() ).
-            exportHome( Paths.get( HomeDir.get().toString(), "/exports" ) ).
+            exportHome( Paths.get( HomeDir.get().toString(), "exports" ) ).
             exportName( exportName ).
             importRoot( importRootPath ).
             build().
