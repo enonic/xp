@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.admin.status.GCStatusInfoBuilder;
 import com.enonic.wem.admin.status.JVMStatusInfoBuilder;
 import com.enonic.wem.admin.status.MemoryStatusInfoBuilder;
+import com.enonic.wem.admin.status.NashornStatusInfoBuilder;
 import com.enonic.wem.admin.status.OSStatusInfoBuilder;
 import com.enonic.wem.admin.status.PropertiesStatusInfoBuilder;
 import com.enonic.wem.admin.status.StatusInfoBuilder;
@@ -34,6 +35,7 @@ public final class InfoResource
         this.infoBuilders.add( new MemoryStatusInfoBuilder() );
         this.infoBuilders.add( new GCStatusInfoBuilder() );
         this.infoBuilders.add( new PropertiesStatusInfoBuilder() );
+        this.infoBuilders.add( new NashornStatusInfoBuilder() );
         Collections.sort( this.infoBuilders );
     }
 
