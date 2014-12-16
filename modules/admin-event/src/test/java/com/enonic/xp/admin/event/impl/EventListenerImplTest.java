@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.event;
+package com.enonic.xp.admin.event.impl;
 
 import org.junit.Before;
 import org.junit.Test;

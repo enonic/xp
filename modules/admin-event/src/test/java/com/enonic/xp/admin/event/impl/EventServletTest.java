@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.event;
+package com.enonic.xp.admin.event.impl;
 
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;

@@ -1,6 +1,5 @@
-package com.enonic.wem.admin.json.module;
+package com.enonic.xp.admin.event.impl.json;
 
-import com.enonic.wem.admin.event.EventJson;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;
 
 public final class ModuleUpdatedEventJson

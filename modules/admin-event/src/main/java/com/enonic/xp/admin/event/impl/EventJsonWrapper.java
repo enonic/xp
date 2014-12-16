@@ -1,6 +1,7 @@
-package com.enonic.wem.admin.event;
+package com.enonic.xp.admin.event.impl;
 
 import com.enonic.wem.api.event.Event;
+import com.enonic.xp.admin.event.impl.json.EventJson;
 
 final class EventJsonWrapper
 {

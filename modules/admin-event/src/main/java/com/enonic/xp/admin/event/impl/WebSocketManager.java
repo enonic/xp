@@ -1,8 +1,7 @@
-package com.enonic.wem.admin.event;
+package com.enonic.xp.admin.event.impl;
 
 public interface WebSocketManager
 {
-
     void registerSocket( EventWebSocket webSocket );
 
     void unregisterSocket( EventWebSocket webSocket );

@@ -48,8 +48,10 @@
     <bundle start-level="50">mvn:com.enonic.wem/portal-impl/${project.version}</bundle>
 
     <bundle start-level="50">mvn:com.enonic.wem/wem-jsapi/${project.version}</bundle>
+
     <bundle start-level="50">mvn:com.enonic.wem/wem-admin/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/wem-admin-ui/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/admin-event/${project.version}</bundle>
   </feature>
 
 </features>

@@ -1,16 +1,12 @@
-package com.enonic.wem.admin.event;
+package com.enonic.xp.admin.event.impl;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 
-import com.enonic.wem.admin.json.ObjectMapperHelper;
-import com.enonic.wem.admin.json.content.ContentCreatedEventJson;
-import com.enonic.wem.admin.json.content.ContentPublishedEventJson;
-import com.enonic.wem.admin.json.content.ContentUpdatedEventJson;
-import com.enonic.wem.admin.json.module.ModuleUpdatedEventJson;
-import com.enonic.wem.admin.json.schema.content.ContentTypeDeletedEventJson;
-import com.enonic.wem.admin.json.schema.content.ContentTypeUpdatedEventJson;
 import com.enonic.wem.api.content.ContentCreatedEvent;
 import com.enonic.wem.api.content.ContentPublishedEvent;
 import com.enonic.wem.api.content.ContentUpdatedEvent;
@@ -19,7 +15,16 @@ import com.enonic.wem.api.event.EventListener;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;
 import com.enonic.wem.api.schema.content.ContentTypeDeletedEvent;
 import com.enonic.wem.api.schema.content.ContentTypeUpdatedEvent;
+import com.enonic.xp.admin.event.impl.json.ContentCreatedEventJson;
+import com.enonic.xp.admin.event.impl.json.ContentPublishedEventJson;
+import com.enonic.xp.admin.event.impl.json.ContentTypeDeletedEventJson;
+import com.enonic.xp.admin.event.impl.json.ContentTypeUpdatedEventJson;
+import com.enonic.xp.admin.event.impl.json.ContentUpdatedEventJson;
+import com.enonic.xp.admin.event.impl.json.EventJson;
+import com.enonic.xp.admin.event.impl.json.ModuleUpdatedEventJson;
+import com.enonic.xp.admin.event.impl.json.ObjectMapperHelper;
 
+@Component(immediate = true)
 public final class EventListenerImpl
     implements EventListener
 {
@@ -86,6 +91,7 @@ public final class EventListenerImpl
         return null;
     }
 
+    @Reference
     public void setWebSocketManager( final WebSocketManager webSocketManager )
     {
         this.webSocketManager = webSocketManager;

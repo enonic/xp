@@ -1,6 +1,5 @@
-package com.enonic.wem.admin.json.content;
+package com.enonic.xp.admin.event.impl.json;
 
-import com.enonic.wem.admin.event.EventJson;
 import com.enonic.wem.api.content.ContentCreatedEvent;
 
 public final class ContentCreatedEventJson

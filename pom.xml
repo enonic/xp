@@ -36,8 +36,11 @@
     <module>modules/wem-export</module>
     <module>modules/wem-script</module>
     <module>modules/wem-servlet</module>
+
     <module>modules/wem-admin</module>
     <module>modules/wem-admin-ui</module>
+
+    <module>modules/admin-event</module>
 
     <module>modules/portal-api</module>
     <module>modules/portal-mustache</module>
