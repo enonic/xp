@@ -6,17 +6,23 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.api.export.ImportNodeException;
 import com.enonic.wem.api.export.NodeImportResult;
+import com.enonic.wem.api.node.BinaryAttachment;
+import com.enonic.wem.api.node.BinaryAttachments;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.InsertManualStrategy;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.export.internal.builder.CreateNodeParamsFactory;
 import com.enonic.wem.export.internal.reader.ExportReader;
 import com.enonic.wem.export.internal.reader.NodeImportPathResolver;
 import com.enonic.wem.export.internal.writer.NodeExportPathResolver;
+import com.enonic.wem.export.internal.xml.XmlAttachedBinaries;
 import com.enonic.wem.export.internal.xml.XmlNode;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
@@ -89,7 +95,6 @@ public class NodeImportCommand
             }
 
             currentManualOrderValue -= IMPORT_NODE_ORDER_SPACE;
-
         }
     }
 
@@ -114,10 +119,13 @@ public class NodeImportCommand
         final NodePath importNodePath =
             NodeImportPathResolver.resolveImportedNodePath( nodeBasePath, this.exportRootPath, this.importRoot );
 
+        final BinaryAttachments binaryAttachments = resolveBinaryAttachments( nodeBasePath, xmlNode );
+
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create().
             processNodeSettings( processNodeSettings.build() ).
             xmlNode( xmlNode ).
             importPath( importNodePath ).
+            binaryAttachments( binaryAttachments ).
             build().
             execute();
 
@@ -126,6 +134,36 @@ public class NodeImportCommand
         nodeImportResult.add( createdNode.path() );
 
         return createdNode;
+    }
+
+    private BinaryAttachments resolveBinaryAttachments( final Path nodeBasePath, final XmlNode xmlNode )
+    {
+        final XmlAttachedBinaries attachedBinaries = xmlNode.getAttachedBinaries();
+
+        if ( attachedBinaries == null )
+        {
+            return BinaryAttachments.empty();
+        }
+
+        final BinaryAttachments.Builder builder = BinaryAttachments.create();
+
+        for ( final XmlAttachedBinaries.AttachedBinary attachedBinary : attachedBinaries.getAttachedBinary() )
+        {
+            final String binaryReference = attachedBinary.getBinaryReference();
+
+            final Path binaryFilePath = NodeImportPathResolver.resolveBinaryFilePath( nodeBasePath, binaryReference );
+
+            final ByteSource binarySource = this.exportReader.getSource( binaryFilePath );
+
+            if ( binarySource == null )
+            {
+                throw new ImportNodeException( "Missing binary file, expected file: " + binaryFilePath );
+            }
+
+            builder.add( new BinaryAttachment( BinaryReference.from( binaryReference ), binarySource ) );
+        }
+
+        return builder.build();
     }
 
     private List<String> processManualOrderFile( final Path nodeBasePath )

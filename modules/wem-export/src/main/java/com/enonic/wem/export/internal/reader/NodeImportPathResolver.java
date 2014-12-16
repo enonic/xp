@@ -22,6 +22,12 @@ public class NodeImportPathResolver
         return Paths.get( nodeBasePath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME, NodeExportPathResolver.ORDER_EXPORT_NAME );
     }
 
+    public static Path resolveBinaryFilePath( final Path nodeBasePath, final String binaryReference )
+    {
+        return Paths.get( nodeBasePath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME, NodeExportPathResolver.BINARY_FOLDER,
+                          binaryReference );
+    }
+
 
     public static Path resolveNodeXmlFilePath( final Path nodeBasePath )
     {

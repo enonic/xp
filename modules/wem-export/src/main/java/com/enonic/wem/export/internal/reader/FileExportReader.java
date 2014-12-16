@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.google.common.io.ByteSource;
+
 public class FileExportReader
     implements ExportReader
 {
@@ -54,6 +56,19 @@ public class FileExportReader
         {
             throw new ExportReaderException( "Could not read item with path " + path, e );
         }
+    }
 
+    @Override
+    public ByteSource getSource( final Path path )
+    {
+
+        final File file = path.toFile();
+
+        if ( !file.exists() )
+        {
+            return null;
+        }
+
+        return com.google.common.io.Files.asByteSource( file );
     }
 }

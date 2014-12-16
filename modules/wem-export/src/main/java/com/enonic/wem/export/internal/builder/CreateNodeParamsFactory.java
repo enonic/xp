@@ -3,6 +3,7 @@ package com.enonic.wem.export.internal.builder;
 import com.google.common.base.Strings;
 
 import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.node.BinaryAttachments;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.InsertManualStrategy;
 import com.enonic.wem.api.node.NodePath;
@@ -18,11 +19,14 @@ public class CreateNodeParamsFactory
 
     private final ProcessNodeSettings processNodeSettings;
 
+    private final BinaryAttachments binaryAttachments;
+
     private CreateNodeParamsFactory( Builder builder )
     {
         xmlNode = builder.xmlNode;
         nodeImportPath = builder.importPath;
         processNodeSettings = builder.processNodeSettings;
+        binaryAttachments = builder.binaryAttachments;
     }
 
     public CreateNodeParams execute()
@@ -37,7 +41,8 @@ public class CreateNodeParamsFactory
             parent( parentPath ).
             childOrder( childOrder ).
             nodeType( NodeType.from( xmlNode.getNodeType() ) ).
-            data( PropertyTreeXmlBuilder.build( xmlNode.getProperties() ) );
+            data( PropertyTreeXmlBuilder.build( xmlNode.getProperties() ) ).
+            setAttachedBinaries( binaryAttachments );
 
         setInsertManualSettings( builder );
 
@@ -83,6 +88,8 @@ public class CreateNodeParamsFactory
 
         private ProcessNodeSettings processNodeSettings;
 
+        private BinaryAttachments binaryAttachments;
+
         private Builder()
         {
         }
@@ -102,6 +109,12 @@ public class CreateNodeParamsFactory
         public Builder processNodeSettings( ProcessNodeSettings processNodeSettings )
         {
             this.processNodeSettings = processNodeSettings;
+            return this;
+        }
+
+        public Builder binaryAttachments( final BinaryAttachments binaryAttachments )
+        {
+            this.binaryAttachments = binaryAttachments;
             return this;
         }
 

@@ -15,10 +15,12 @@ import com.google.common.io.Resources;
 
 import com.enonic.wem.api.export.ImportNodeException;
 import com.enonic.wem.api.export.NodeImportResult;
+import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.export.internal.reader.FileExportReader;
 import com.enonic.wem.export.internal.writer.NodeExportPathResolver;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
@@ -227,13 +229,55 @@ public class NodeImportCommandTest
         assertNull( mychild3 );
     }
 
-    private void createOrderFile( final String path, final String... childNodeNames )
+    @Test(expected = ImportNodeException.class)
+    public void import_with_binaries_missing_file()
+        throws Exception
+    {
+        createNodeXmlFileWithBinaries( "/myExport/mynode" );
+
+        NodeImportCommand.create().
+            nodeService( this.importNodeService ).
+            exportReader( new FileExportReader() ).
+            xmlNodeSerializer( new XmlNodeSerializer() ).
+            importRoot( NodePath.ROOT ).
+            exportHome( this.temporaryFolder.getRoot().toPath() ).
+            exportName( "myExport" ).
+            build().
+            execute();
+    }
+
+    @Test
+    public void import_with_binary()
+        throws Exception
+    {
+        createNodeXmlFileWithBinaries( "/myExport/mynode" );
+        createBinaryFile( "/myExport/mynode", "image.jpg", "this-is-the-source".getBytes() );
+
+        final NodeImportResult importedNode = NodeImportCommand.create().
+            nodeService( this.importNodeService ).
+            exportReader( new FileExportReader() ).
+            xmlNodeSerializer( new XmlNodeSerializer() ).
+            importRoot( NodePath.ROOT ).
+            exportHome( this.temporaryFolder.getRoot().toPath() ).
+            exportName( "myExport" ).
+            build().
+            execute();
+
+        final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
+
+        assertEquals( 1, mynode.getAttachedBinaries().getSize() );
+        final AttachedBinary attachedBinary = mynode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "image.jpg" ) );
+        assertNotNull( attachedBinary );
+        assertNotNull( attachedBinary.getBlobKey() );
+    }
+
+    private void createOrderFile( final String exportPath, final String... childNodeNames )
         throws Exception
     {
         final String lineSeparator = System.getProperty( "line.separator" );
 
-        final Path nodeFileDir =
-            Files.createDirectories( Paths.get( temporaryFolder.getRoot().getPath(), path, NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
+        final Path nodeFileDir = Files.createDirectories(
+            Paths.get( temporaryFolder.getRoot().getPath(), exportPath, NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
 
         StringBuilder builder = new StringBuilder();
 
@@ -243,17 +287,41 @@ public class NodeImportCommandTest
             builder.append( lineSeparator );
         }
 
+        assert nodeFileDir != null;
         Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.ORDER_EXPORT_NAME ), builder.toString().getBytes() );
     }
 
-    private void createNodeXmlFile( final String path, boolean ordered )
+    private void createBinaryFile( final String exportPath, final String fileName, final byte[] bytes )
+        throws Exception
+    {
+        final Path nodeFileDir = Files.createDirectories(
+            Paths.get( temporaryFolder.getRoot().getPath(), exportPath, NodeExportPathResolver.SYSTEM_FOLDER_NAME,
+                       NodeExportPathResolver.BINARY_FOLDER ) );
+
+        assert nodeFileDir != null;
+        Files.write( Paths.get( nodeFileDir.toString(), fileName ), bytes );
+    }
+
+    private void createNodeXmlFile( final String exportPath, boolean ordered )
+        throws Exception
+    {
+        final Path nodeFileDir = Files.createDirectories(
+            Paths.get( temporaryFolder.getRoot().getPath(), exportPath, NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
+
+        assert nodeFileDir != null;
+        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),
+                     readFromFile( ordered ? "node_manual_ordered.xml" : "node_unordered.xml" ).getBytes() );
+    }
+
+    private void createNodeXmlFileWithBinaries( final String path )
         throws Exception
     {
         final Path nodeFileDir =
             Files.createDirectories( Paths.get( temporaryFolder.getRoot().getPath(), path, NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
 
+        assert nodeFileDir != null;
         Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),
-                     readFromFile( ordered ? "node_manual_ordered.xml" : "node_unordered.xml" ).getBytes() );
+                     readFromFile( "node_with_binary.xml" ).getBytes() );
     }
 
 

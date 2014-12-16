@@ -258,6 +258,12 @@ public class CreateNodeParams
             return this;
         }
 
+        public Builder setAttachedBinaries( final BinaryAttachments binaryAttachments )
+        {
+            this.binaryAttachments = Sets.newHashSet( binaryAttachments );
+            return this;
+        }
+
         public CreateNodeParams build()
         {
             return new CreateNodeParams( this );
