@@ -4,6 +4,7 @@ module app.create {
     import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
     import ContentName = api.content.ContentName;
     import Content = api.content.Content;
+    import ContentPath = api.content.ContentPath;
     import Attachment = api.content.attachment.Attachment;
     import AttachmentName = api.content.attachment.AttachmentName;
     import ContentTypeName = api.schema.content.ContentTypeName;
@@ -15,7 +16,7 @@ module app.create {
 
         private parentContent: api.content.Content;
 
-        private fileUploaderParams: {parent: string};
+        private mediaUploaderParams: {parent: string};
 
         private contentDialogTitle: NewContentDialogTitle;
 
@@ -52,12 +53,13 @@ module app.create {
             var aside = new api.dom.AsideEl("column");
             this.appendChildToContentPanel(aside);
 
-            this.fileUploaderParams = {
-                parent: undefined
+            this.mediaUploaderParams = {
+                parent: ContentPath.ROOT.toString()
             };
 
             this.dropzone = new api.content.ContentUploader({
-                params: this.fileUploaderParams,
+                operation: api.content.ContentUploaderOperation.create,
+                params: this.mediaUploaderParams,
                 name: 'new-content-uploader',
                 showButtons: false,
                 showResult: false,
@@ -162,7 +164,7 @@ module app.create {
 
         setParentContent(parent: api.content.Content) {
             this.parentContent = parent;
-            this.fileUploaderParams.parent = parent ? parent.getPath().toString() : api.content.ContentPath.ROOT.toString();
+            this.mediaUploaderParams.parent = parent ? parent.getPath().toString() : api.content.ContentPath.ROOT.toString();
         }
 
         show() {

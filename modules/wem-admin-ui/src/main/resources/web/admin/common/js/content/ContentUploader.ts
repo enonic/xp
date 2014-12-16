@@ -3,7 +3,15 @@ module api.content {
     import Button = api.ui.button.Button;
     import CloseButton = api.ui.button.CloseButton;
 
+    export enum ContentUploaderOperation
+    {
+        create,
+        update
+    }
+
     export interface ContentUploaderConfig extends api.ui.uploader.UploaderConfig {
+
+        operation: ContentUploaderOperation;
     }
 
     export class ContentUploader extends api.ui.uploader.Uploader<Content> {
@@ -13,7 +21,7 @@ module api.content {
         constructor(config: ContentUploaderConfig) {
 
             if (config.url == undefined) {
-                config.url = api.util.UriHelper.getRestUri("content/createMedia")
+                config.url = api.util.UriHelper.getRestUri("content/" + ContentUploaderOperation[config.operation] + "Media")
             }
 
             super(config);
@@ -24,7 +32,7 @@ module api.content {
         createUploadItem(file): Content {
 
             var builder = new ContentBuilder().
-                setData(new api.data.PropertyTree()).
+                setData(new api.data.PropertyTree(this.propertyIdProvider)).
                 setName(ContentName.fromString(file.id)).
                 setDisplayName(file.name);
             return (<ContentBuilder> builder).build();

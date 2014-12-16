@@ -18,8 +18,6 @@ module api.content {
 
         private displayName: string;
 
-        private attachments: api.content.attachment.Attachment[] = [];
-
         constructor() {
             super();
             super.setMethod("POST");
@@ -65,16 +63,6 @@ module api.content {
             return this;
         }
 
-        addAttachment(attachment: api.content.attachment.Attachment): CreateContentRequest {
-            this.attachments.push(attachment);
-            return this;
-        }
-
-        addAttachments(attachments: api.content.attachment.Attachment[]): CreateContentRequest {
-            this.attachments = this.attachments.concat(attachments);
-            return this;
-        }
-
         getParams(): Object {
             return {
                 draft: this.draft,
@@ -84,28 +72,12 @@ module api.content {
                 form: this.form ? this.form.toJson() : undefined,
                 data: this.data.toJson(),
                 metadata: this.metadataToJson(),
-                displayName: this.displayName,
-                attachments: this.attachmentsToJson()
+                displayName: this.displayName
             };
         }
 
         private metadataToJson(): api.content.json.MetadataJson[] {
             return this.metadata ? this.metadata.map((metadata: Metadata) => metadata.toJson()) : null;
-        }
-
-        private attachmentsToJson(): api.content.attachment.AttachmentJson[] {
-            var array: api.content.attachment.AttachmentJson[] = [];
-            this.attachments.forEach((attachment: api.content.attachment.Attachment)=> {
-                var attachmentJsonbj: api.content.attachment.AttachmentJson = {
-                    "blobKey": attachment.getBlobKey().toString(),
-                    "name": attachment.getName().toString(),
-                    "label": attachment.getLabel(),
-                    "mimeType": attachment.getMimeType(),
-                    "size": attachment.getSize()
-                };
-                array.push(attachmentJsonbj);
-            });
-            return array;
         }
 
         getRequestPath(): api.rest.Path {

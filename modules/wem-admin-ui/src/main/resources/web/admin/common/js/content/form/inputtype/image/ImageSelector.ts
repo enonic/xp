@@ -85,7 +85,7 @@ module api.content.form.inputtype.image {
                     this.loadOptions("");
                 });
 
-            this.uploadDialog = new ImageUploadDialog();
+            this.uploadDialog = new ImageUploadDialog(config.contentPath);
             this.uploadDialog.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
                 this.uploadDialog.close();
 

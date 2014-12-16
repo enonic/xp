@@ -10,7 +10,7 @@ module api.content.form.inputtype.image {
 
         private imageUploader: api.content.ImageUploader;
 
-        constructor() {
+        constructor(parentContent: api.content.ContentPath) {
             super({
                 title: new api.ui.dialog.ModalDialogHeader("Image uploader")
             });
@@ -22,9 +22,11 @@ module api.content.form.inputtype.image {
             this.appendChildToContentPanel(description);
 
             this.imageUploader = new api.content.ImageUploader({
+                operation: api.content.ContentUploaderOperation.create,
                 name: 'image-selector-upload-dialog',
                 showButtons: false,
-                showResult: false
+                showResult: false,
+                parent: parentContent
             });
 
             this.imageUploader.onUploadCompleted(() => {

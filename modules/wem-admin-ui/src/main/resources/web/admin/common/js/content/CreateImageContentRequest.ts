@@ -18,8 +18,8 @@ module api.content {
                 setName(ContentName.fromString(ContentName.ensureValidContentName(attachment.getName().toString()))).
                 setContentType(api.schema.content.ContentTypeName.IMAGE).
                 setDisplayName(attachment.getName().toString()).
-                setData(data).
-                addAttachment(attachment);
+                setData(data);//.
+            // TODO: Remove? addAttachment(attachment);
 
             return request;
         }
