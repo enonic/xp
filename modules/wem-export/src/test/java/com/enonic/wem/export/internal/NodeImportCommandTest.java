@@ -252,7 +252,7 @@ public class NodeImportCommandTest
         throws Exception
     {
         createNodeXmlFileWithBinaries( Paths.get( "myExport", "mynode" ) );
-        createBinaryFile( "/myExport/mynode", "image.jpg", "this-is-the-source".getBytes() );
+        createBinaryFile( Paths.get( "myExport", "mynode" ), "image.jpg", "this-is-the-source".getBytes() );
 
         final NodeImportResult importedNode = NodeImportCommand.create().
             nodeService( this.importNodeService ).
@@ -292,11 +292,11 @@ public class NodeImportCommandTest
         Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.ORDER_EXPORT_NAME ), builder.toString().getBytes() );
     }
 
-    private void createBinaryFile( final String exportPath, final String fileName, final byte[] bytes )
+    private void createBinaryFile( final Path exportPath, final String fileName, final byte[] bytes )
         throws Exception
     {
         final Path nodeFileDir = Files.createDirectories(
-            Paths.get( temporaryFolder.getRoot().getPath(), exportPath, NodeExportPathResolver.SYSTEM_FOLDER_NAME,
+            Paths.get( temporaryFolder.getRoot().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME,
                        NodeExportPathResolver.BINARY_FOLDER ) );
 
         assert nodeFileDir != null;
