@@ -16,7 +16,7 @@
     <localTime name="myLocalDate">09:10:00</localTime>
     <reference name="myRef">1234567890</reference>
     <link name="myLink">/content/stuff/more/here</link>
-    <binary name="myfile" mimeType="application/pdf">fish_recipe.pdf</binary>
+    <binaryReference name="myfile">fish_recipe.pdf</binaryReference>
     <htmlPart name="myPart">
       <![CDATA[
         <h1>This is my title</h1>
@@ -49,4 +49,36 @@
       <binaryReference>my-image2.jpg</binaryReference>
     </attachedBinary>
   </attachedBinaries>
+  <indexConfigs>
+    <analyzer>myAnalyzer</analyzer>
+    <defaultConfig>
+      <decideByType>false</decideByType>
+      <enabled>true</enabled>
+      <nGram>true</nGram>
+      <fulltext>true</fulltext>
+      <includeInAllText>true</includeInAllText>
+    </defaultConfig>
+    <pathIndexConfigs>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>true</decideByType>
+          <enabled>true</enabled>
+          <nGram>true</nGram>
+          <fulltext>true</fulltext>
+          <includeInAllText>true</includeInAllText>
+        </indexConfig>
+        <path>myProperty</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>true</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>true</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>myOtherProperty</path>
+      </pathIndexConfig>
+    </pathIndexConfigs>
+  </indexConfigs>
 </node>

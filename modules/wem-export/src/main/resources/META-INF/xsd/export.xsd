@@ -22,6 +22,7 @@
       <xs:element minOccurs="0" maxOccurs="1" name="nodeType" type="xs:string"/>
       <xs:element name="properties" type="propertyTree"/>
       <xs:element minOccurs="0" maxOccurs="1" name="attachedBinaries" type="attachedBinaries"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="indexConfigs" type="indexConfigs"/>
     </xs:all>
   </xs:complexType>
 
@@ -179,6 +180,38 @@
         <xs:attributeGroup ref="property"/>
       </xs:extension>
     </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="indexConfig">
+    <xs:sequence>
+      <xs:element name="decideByType" type="xs:boolean"/>
+      <xs:element name="enabled" type="xs:boolean"/>
+      <xs:element name="nGram" type="xs:boolean"/>
+      <xs:element name="fulltext" type="xs:boolean"/>
+      <xs:element name="includeInAllText" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="pathIndexConfig">
+    <xs:sequence>
+      <xs:element name="indexConfig" type="indexConfig"/>
+      <xs:element name="path" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="indexConfigs">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="analyzer" type="xs:string"/>
+      <xs:element minOccurs="1" maxOccurs="1" name="defaultConfig" type="indexConfig"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="pathIndexConfigs">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="pathIndexConfig" type="pathIndexConfig"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="node" type="node"/>

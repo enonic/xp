@@ -35,4 +35,14 @@
       <binaryReference>image.jpg</binaryReference>
     </attachedBinary>
   </attachedBinaries>
+  <indexConfigs>
+    <defaultConfig>
+      <decideByType>true</decideByType>
+      <enabled>true</enabled>
+      <nGram>false</nGram>
+      <fulltext>false</fulltext>
+      <includeInAllText>false</includeInAllText>
+    </defaultConfig>
+    <pathIndexConfigs/>
+  </indexConfigs>
 </node>

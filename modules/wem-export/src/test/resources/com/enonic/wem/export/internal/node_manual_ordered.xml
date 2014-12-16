@@ -23,4 +23,36 @@
       </property-set>
     </property-set>
   </properties>
+  <indexConfigs>
+    <analyzer>myAnalyzer</analyzer>
+    <defaultConfig>
+      <decideByType>false</decideByType>
+      <enabled>true</enabled>
+      <nGram>true</nGram>
+      <fulltext>true</fulltext>
+      <includeInAllText>true</includeInAllText>
+    </defaultConfig>
+    <pathIndexConfigs>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>true</decideByType>
+          <enabled>true</enabled>
+          <nGram>true</nGram>
+          <fulltext>true</fulltext>
+          <includeInAllText>true</includeInAllText>
+        </indexConfig>
+        <path>myProperty</path>
+      </pathIndexConfig>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>true</decideByType>
+          <enabled>false</enabled>
+          <nGram>false</nGram>
+          <fulltext>true</fulltext>
+          <includeInAllText>false</includeInAllText>
+        </indexConfig>
+        <path>myOtherProperty</path>
+      </pathIndexConfig>
+    </pathIndexConfigs>
+  </indexConfigs>
 </node>

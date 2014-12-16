@@ -31,7 +31,7 @@ import com.enonic.wem.export.internal.xml.util.XmlStringEscaper;
 
 class PropertyTreeXmlBuilder
 {
-    public static PropertyTree build( final XmlPropertyTree xmlPropertyTree )
+    static PropertyTree build( final XmlPropertyTree xmlPropertyTree )
     {
         final PropertyTree propertyTree = new PropertyTree();
 

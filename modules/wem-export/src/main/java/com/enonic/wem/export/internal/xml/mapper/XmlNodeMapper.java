@@ -24,12 +24,14 @@ public class XmlNodeMapper
 
         xml.setChildOrder( getAsStringOrNull( node.getChildOrder() ) );
         xml.setNodeType( node.getNodeType().getName() );
-        xml.setAttachedBinaries( XmlAttachedBinariesMapper.toXml( node.getAttachedBinaries() ) );
 
         if ( node.data() != null )
         {
             xml.setProperties( XmlPropertyTreeMapper.toXml( node.data() ) );
         }
+
+        xml.setAttachedBinaries( XmlAttachedBinariesMapper.toXml( node.getAttachedBinaries() ) );
+        xml.setIndexConfigs( XmlIndexConfigsMapper.toXml( node.getIndexConfigDocument() ) );
 
         return xml;
     }

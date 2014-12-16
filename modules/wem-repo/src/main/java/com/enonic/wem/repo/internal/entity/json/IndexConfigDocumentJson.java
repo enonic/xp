@@ -36,7 +36,7 @@ final class IndexConfigDocumentJson
     {
         final IndexConfigDocumentJson json = new IndexConfigDocumentJson();
         json.analyzer = config.getAnalyzer();
-        json.patternConfigs = config.pathIndexConfigs.stream().map( PatternConfigJson::toJson ).collect( Collectors.toList() );
+        json.patternConfigs = config.getPathIndexConfigs().stream().map( PatternConfigJson::toJson ).collect( Collectors.toList() );
         json.defaultConfig = IndexConfigJson.toJson( config.getDefaultConfig() );
         return json;
     }

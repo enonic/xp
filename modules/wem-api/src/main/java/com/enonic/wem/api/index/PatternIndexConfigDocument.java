@@ -10,7 +10,7 @@ import com.enonic.wem.api.data.PropertyPath;
 public class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument
 {
-    public final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs;
+    private final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs;
 
     private final IndexConfig defaultConfig;
 
@@ -31,6 +31,10 @@ public class PatternIndexConfigDocument
         return new Builder();
     }
 
+    public ImmutableSortedSet<PathIndexConfig> getPathIndexConfigs()
+    {
+        return pathIndexConfigs;
+    }
 
     @Override
     public IndexConfig getConfigForPath( final PropertyPath dataPath )
