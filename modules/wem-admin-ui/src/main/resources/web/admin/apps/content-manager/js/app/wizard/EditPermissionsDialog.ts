@@ -8,6 +8,7 @@ module app.wizard {
 
         private content: Content;
         private originalValues: AccessControlEntry[];
+        private originalInherit: boolean;
 
         private dialogTitle: EditPermissionsDialogTitle;
         private inheritPermissionsCheck: api.ui.Checkbox;
@@ -39,6 +40,13 @@ module app.wizard {
             this.comboBox.addClass('principal-combobox');
             form.appendChild(this.comboBox);
 
+            var comboBoxChangeListener = () => {
+                var currentEntries: AccessControlEntry[] = this.getEntries().sort();
+                var permissionsModified: boolean = !api.ObjectHelper.arrayEquals(currentEntries, this.originalValues);
+                var inheritCheckModified: boolean = this.inheritPermissionsCheck.isChecked() !== this.originalInherit;
+                this.applyAction.setEnabled(permissionsModified || inheritCheckModified);
+            };
+
             var changeListener = () => {
                 var inheritPermissions = this.inheritPermissionsCheck.isChecked();
 
@@ -47,13 +55,11 @@ module app.wizard {
                     this.layoutInheritedPermissions();
                 }
                 this.comboBox.setEditable(!inheritPermissions);
+
+                comboBoxChangeListener();
             };
             this.inheritPermissionsCheck.onValueChanged(changeListener);
-            var comboBoxChangeListener = () => {
-                var currentEntries: AccessControlEntry[] = this.getEntries().sort();
-                var permissionsModified: boolean = !api.ObjectHelper.arrayEquals(currentEntries, this.originalValues);
-                this.applyAction.setEnabled(permissionsModified);
-            };
+
             this.comboBox.onOptionValueChanged(comboBoxChangeListener);
             this.comboBox.onOptionSelected(comboBoxChangeListener);
             this.comboBox.onOptionDeselected(comboBoxChangeListener);
@@ -105,6 +111,7 @@ module app.wizard {
             var contentPermissions = this.content.getPermissions();
             var contentPermissionsEntries: AccessControlEntry[] = contentPermissions.getEntries();
             this.originalValues = contentPermissionsEntries.sort();
+            this.originalInherit = this.content.isInheritPermissionsEnabled();
 
             this.originalValues.forEach((item) => {
                 if (!this.comboBox.isSelected(item)) {

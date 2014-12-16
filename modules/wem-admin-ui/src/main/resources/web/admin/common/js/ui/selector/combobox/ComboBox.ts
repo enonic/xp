@@ -322,6 +322,7 @@ module api.ui.selector.combobox {
 
             this.comboBoxDropdown.markSelections([], ignoreEmpty);
 
+            this.input.setValue("");
             this.input.openForTypingAndFocus();
 
             this.dropdownHandle.setEnabled(true);
