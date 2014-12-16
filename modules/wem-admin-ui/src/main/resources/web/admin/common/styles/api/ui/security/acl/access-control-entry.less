@@ -1,6 +1,8 @@
 .access-control-entry {
   position: relative;
   padding: 5px 42px 5px 5px;
+  .flexbox();
+  flex-flow: row wrap;
   .clearfix();
 
   &.dirty {
@@ -26,6 +28,7 @@
     float: left;
     margin: 0 10px 0 0;
     min-width: 200px;
+    .flex(1 auto);
   }
 
   .icon-close {
@@ -73,6 +76,10 @@
       padding: 40px 4px 4px;
     }
 
+  }
+
+  .permission-selector {
+    .flex(100%);
   }
 
 }
