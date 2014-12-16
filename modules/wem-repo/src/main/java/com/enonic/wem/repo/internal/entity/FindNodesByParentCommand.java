@@ -1,10 +1,15 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
+import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.Nodes;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.repo.internal.index.IndexContext;
@@ -28,15 +33,25 @@ public class FindNodesByParentCommand
 
     public FindNodesByParentResult execute()
     {
+        NodePath parentPath = params.getParentPath();
+        if ( parentPath == null )
+        {
+            parentPath = getPathFromId( params.getParentId() );
+            if ( parentPath == null )
+            {
+                return FindNodesByParentResult.create().nodes( Nodes.empty() ).totalHits( 0l ).hits( 0l ).build();
+            }
+        }
+
         final ChildOrder order = NodeChildOrderResolver.create().
             nodeDao( this.nodeDao ).
             workspaceService( this.queryService ).
-            nodePath( params.getParentPath() ).
+            nodePath( parentPath ).
             childOrder( params.getChildOrder() ).
             build().
             resolve();
 
-        final NodeQuery query = createByPathQuery( order );
+        final NodeQuery query = createByPathQuery( order, parentPath );
 
         final NodeQueryResult nodeQueryResult = this.queryService.find( query, IndexContext.from( ContextAccessor.current() ) );
 
@@ -49,15 +64,27 @@ public class FindNodesByParentCommand
             build();
     }
 
-    private NodeQuery createByPathQuery( final ChildOrder order )
+    private NodeQuery createByPathQuery( final ChildOrder order, final NodePath parentPath )
     {
         return NodeQuery.create().
-            parent( this.params.getParentPath() ).
+            parent( parentPath ).
             query( new QueryExpr( order.getOrderExpressions() ) ).
             from( params.getFrom() ).
             size( params.getSize() ).
             countOnly( params.isCountOnly() ).
             build();
+    }
+
+    private NodePath getPathFromId( final NodeId nodeId )
+    {
+        final Context context = ContextAccessor.current();
+        final NodeVersionId currentVersion = this.queryService.get( nodeId, IndexContext.from( context ) );
+        if ( currentVersion == null )
+        {
+            return null;
+        }
+        final Node currentNode = nodeDao.getByVersionId( currentVersion );
+        return currentNode == null ? null : currentNode.path();
     }
 
     public static class Builder

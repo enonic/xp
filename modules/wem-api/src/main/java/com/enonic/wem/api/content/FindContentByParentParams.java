@@ -1,10 +1,16 @@
 package com.enonic.wem.api.content;
 
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.index.ChildOrder;
 
-public class FindContentByParentParams
+public final class FindContentByParentParams
 {
     private final ContentPath parentPath;
+
+    private final ContentId parentId;
 
     private final Integer size;
 
@@ -16,7 +22,10 @@ public class FindContentByParentParams
 
     private FindContentByParentParams( Builder builder )
     {
+        Preconditions.checkArgument( builder.parentPath == null || builder.parentId == null,
+                                     "expected either parentPath or parentId, but not both" );
         this.parentPath = builder.parentPath;
+        this.parentId = builder.parentId;
         this.size = builder.size;
         this.from = builder.from;
         this.childOrder = builder.childOrder;
@@ -25,6 +34,11 @@ public class FindContentByParentParams
     public ContentPath getParentPath()
     {
         return parentPath;
+    }
+
+    public ContentId getParentId()
+    {
+        return parentId;
     }
 
     public Integer getSize()
@@ -42,6 +56,31 @@ public class FindContentByParentParams
         return childOrder;
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof FindContentByParentParams ) )
+        {
+            return false;
+        }
+        final FindContentByParentParams that = (FindContentByParentParams) o;
+        return Objects.equals( this.parentPath, that.parentPath ) &&
+            Objects.equals( this.parentId, that.parentId ) &&
+            Objects.equals( this.size, that.size ) &&
+            Objects.equals( this.from, that.from ) &&
+            Objects.equals( this.childOrder, that.childOrder );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( parentPath, parentId, size, from, childOrder );
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -50,6 +89,8 @@ public class FindContentByParentParams
     public static final class Builder
     {
         private ContentPath parentPath;
+
+        private ContentId parentId;
 
         private Integer size = DEFAULT_SIZE;
 
@@ -64,6 +105,12 @@ public class FindContentByParentParams
         public Builder parentPath( ContentPath parentPath )
         {
             this.parentPath = parentPath;
+            return this;
+        }
+
+        public Builder parentId( ContentId parentId )
+        {
+            this.parentId = parentId;
             return this;
         }
 

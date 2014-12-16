@@ -64,7 +64,10 @@ public final class ContentMapper
     private static void serializePage( final MapGenerator gen, final Page value )
     {
         gen.map( "page" );
-        new PageMapper( value ).serialize( gen );
+        if ( value != null )
+        {
+            new PageMapper( value ).serialize( gen );
+        }
         gen.end();
     }
 }

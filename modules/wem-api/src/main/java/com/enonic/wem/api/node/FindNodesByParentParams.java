@@ -1,10 +1,14 @@
 package com.enonic.wem.api.node;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.index.ChildOrder;
 
 public class FindNodesByParentParams
 {
     private final NodePath parentPath;
+
+    private final NodeId parentId;
 
     private final Integer size;
 
@@ -14,11 +18,12 @@ public class FindNodesByParentParams
 
     private final boolean countOnly;
 
-    private static final Integer DEFAULT_SIZE = 500;
-
     private FindNodesByParentParams( Builder builder )
     {
+        Preconditions.checkArgument( builder.parentPath == null || builder.parentId == null,
+                                     "expected either parentPath or parentId, but not both" );
         parentPath = builder.parentPath;
+        parentId = builder.parentId;
         size = builder.size;
         from = builder.from;
         childOrder = builder.childOrder;
@@ -28,6 +33,11 @@ public class FindNodesByParentParams
     public NodePath getParentPath()
     {
         return parentPath;
+    }
+
+    public NodeId getParentId()
+    {
+        return parentId;
     }
 
     public Integer getSize()
@@ -59,6 +69,8 @@ public class FindNodesByParentParams
     {
         private NodePath parentPath;
 
+        private NodeId parentId;
+
         private Integer size = 10;
 
         private Integer from = 0;
@@ -74,6 +86,12 @@ public class FindNodesByParentParams
         public Builder parentPath( final NodePath parentPath )
         {
             this.parentPath = parentPath;
+            return this;
+        }
+
+        public Builder parentId( NodeId parentId )
+        {
+            this.parentId = parentId;
             return this;
         }
 

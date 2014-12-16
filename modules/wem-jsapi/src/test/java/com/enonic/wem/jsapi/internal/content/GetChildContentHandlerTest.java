@@ -3,7 +3,12 @@ package com.enonic.wem.jsapi.internal.content;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.FindContentByParentParams;
+import com.enonic.wem.api.content.FindContentByParentResult;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.jsapi.internal.AbstractHandlerTest;
 import com.enonic.wem.script.command.CommandHandler;
 
@@ -25,22 +30,71 @@ public class GetChildContentHandlerTest
     }
 
     @Test
-    public void getById()
+    public void getChildrenById()
         throws Exception
     {
-        // final Content content = ContentFixtures.newContent();
-        // Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        final Contents contents = ContentFixtures.newContents();
+
+        final FindContentByParentResult findResult =
+            FindContentByParentResult.create().hits( 20 ).totalHits( 20 ).contents( contents ).build();
+        Mockito.when( this.contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn( findResult );
 
         execute( "getChildrenById" );
     }
 
     @Test
-    public void getByPath()
+    public void getChildrenByPath()
         throws Exception
     {
-        // final Content content = ContentFixtures.newContent();
-        // Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+        final Contents contents = ContentFixtures.newContents();
+
+        final FindContentByParentResult findResult =
+            FindContentByParentResult.create().hits( 20 ).totalHits( 20 ).contents( contents ).build();
+        Mockito.when( this.contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn( findResult );
 
         execute( "getChildrenByPath" );
     }
+
+    @Test
+    public void getChildrenById_notFound()
+        throws Exception
+    {
+        final FindContentByParentResult findResult =
+            FindContentByParentResult.create().hits( 0 ).totalHits( 0 ).contents( Contents.empty() ).build();
+        Mockito.when( this.contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn( findResult );
+
+        execute( "getChildrenById_notFound" );
+    }
+
+    @Test
+    public void getChildrenByPath_notFound()
+        throws Exception
+    {
+        final FindContentByParentResult findResult =
+            FindContentByParentResult.create().hits( 0 ).totalHits( 0 ).contents( Contents.empty() ).build();
+        Mockito.when( this.contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn( findResult );
+
+        execute( "getChildrenByPath_notFound" );
+    }
+
+    @Test
+    public void getChildrenByPath_allParameters()
+        throws Exception
+    {
+        final Contents contents = ContentFixtures.newContents();
+
+        final FindContentByParentResult findResult =
+            FindContentByParentResult.create().hits( 20 ).totalHits( 20 ).contents( contents ).build();
+
+        final FindContentByParentParams expectedFindParams = FindContentByParentParams.create().
+            parentPath( ContentPath.from( "/a/b/mycontent" ) ).
+            from( 5 ).
+            size( 3 ).
+            childOrder( ChildOrder.from( "_modifiedTime ASC" ) ).
+            build();
+        Mockito.when( this.contentService.findByParent( Mockito.eq( expectedFindParams ) ) ).thenReturn( findResult );
+
+        execute( "getChildrenByPath_allParameters" );
+    }
+
 }

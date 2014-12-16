@@ -5,6 +5,7 @@ import java.time.Instant;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
@@ -40,6 +41,44 @@ public final class ContentFixtures
         builder.page( newPage() );
 
         return builder.build();
+    }
+
+    public static Contents newContents()
+    {
+        final Content content1 = Content.newContent().
+            id( ContentId.from( "111111" ) ).
+            name( "mycontent" ).
+            displayName( "My Content" ).
+            parentPath( ContentPath.from( "/a/b" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
+            createdTime( Instant.ofEpochSecond( 0 ) ).
+            build();
+
+        final Content content2 = Content.newContent().
+            id( ContentId.from( "222222" ) ).
+            name( "othercontent" ).
+            displayName( "Other Content" ).
+            parentPath( ContentPath.from( "/a/b" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
+            createdTime( Instant.ofEpochSecond( 0 ) ).
+            build();
+
+        final Content content3 = Content.newContent().
+            id( ContentId.from( "333333" ) ).
+            name( "another" ).
+            displayName( "Another Content" ).
+            parentPath( ContentPath.from( "/a/b" ) ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
+            createdTime( Instant.ofEpochSecond( 0 ) ).
+            build();
+
+        return Contents.from( content1, content2, content3 );
     }
 
     public static PropertyTree newPropertyTree()

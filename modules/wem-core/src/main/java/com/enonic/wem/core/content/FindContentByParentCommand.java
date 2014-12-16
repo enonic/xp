@@ -8,6 +8,7 @@ import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.Nodes;
 
@@ -29,26 +30,34 @@ final class FindContentByParentCommand
 
     FindContentByParentResult execute()
     {
-        final NodePath parentPath;
-
         boolean useWorkspaceOrdering = false;
 
-        if ( params.getParentPath() == null )
+        final FindNodesByParentParams.Builder findNodesParam = FindNodesByParentParams.create();
+
+        if ( params.getParentPath() == null && params.getParentId() == null )
         {
-            parentPath = ContentNodeHelper.CONTENT_ROOT_NODE.asAbsolute();
+            final NodePath parentPath = ContentNodeHelper.CONTENT_ROOT_NODE.asAbsolute();
+            findNodesParam.parentPath( parentPath );
+
             useWorkspaceOrdering = params.getChildOrder() == null || params.getChildOrder().isEmpty();
+        }
+        else if ( params.getParentPath() != null )
+        {
+            final NodePath parentPath = ContentNodeHelper.translateContentPathToNodePath( params.getParentPath() );
+            findNodesParam.parentPath( parentPath );
         }
         else
         {
-            parentPath = ContentNodeHelper.translateContentPathToNodePath( params.getParentPath() );
+            final NodeId parentId = NodeId.from( params.getParentId().toString() );
+            findNodesParam.parentId( parentId );
         }
 
-        final FindNodesByParentResult result = nodeService.findByParent( FindNodesByParentParams.create().
-            parentPath( parentPath ).
+        findNodesParam.
             from( params.getFrom() ).
             size( params.getSize() ).
             childOrder( useWorkspaceOrdering ? ContextAccessor.current().getWorkspace().getChildOrder() : params.getChildOrder() ).
-            build() );
+            build();
+        final FindNodesByParentResult result = nodeService.findByParent( findNodesParam.build() );
 
         final Nodes nodes = result.getNodes();
 
