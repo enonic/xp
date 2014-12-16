@@ -56,7 +56,6 @@
     <bean class="com.enonic.wem.admin.rest.resource.content.ContentImageResource">
       <property name="contentService" ref="contentService"/>
       <property name="contentTypeService" ref="contentTypeService"/>
-      <property name="blobService" ref="blobService"/>
     </bean>
   </service>
 

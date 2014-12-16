@@ -3,9 +3,10 @@ package com.enonic.wem.admin.json.content;
 
 import com.enonic.wem.api.content.thumb.Thumbnail;
 
+@SuppressWarnings("UnusedDeclaration")
 public class ContentThumbnailJson
 {
-    private final String blobKey;
+    private final String binaryReference;
 
     private final long size;
 
@@ -13,14 +14,14 @@ public class ContentThumbnailJson
 
     ContentThumbnailJson( final Thumbnail thumbnail )
     {
-        this.blobKey = thumbnail.getBlobKey().toString();
+        this.binaryReference = thumbnail.getBinaryReference().toString();
         this.size = thumbnail.getSize();
         this.mimeType = thumbnail.getMimeType();
     }
 
-    public String getBlobKey()
+    public String getBinaryReference()
     {
-        return blobKey;
+        return binaryReference;
     }
 
     public long getSize()

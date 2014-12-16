@@ -16,6 +16,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.api.util.Exceptions;
 
 public final class MediaInfoService
@@ -41,13 +43,13 @@ public final class MediaInfoService
         }
     }
 
-    public MediaInfo parseMediaInfo( final InputStream inputStream )
+    public MediaInfo parseMediaInfo( final ByteSource byteSource )
     {
         final ParseContext context = new ParseContext();
         final ContentHandler handler = new DefaultHandler();
         final Metadata metadata = new Metadata();
 
-        try
+        try (final InputStream inputStream = byteSource.openStream())
         {
             parser.parse( inputStream, handler, metadata, context );
         }
@@ -65,14 +67,15 @@ public final class MediaInfoService
             builder.addMetadata( name, value );
         }
 
-        try
+        /* TODO: opening a new InputStream and reading it fails the second time
+        try (final InputStream inputStream = byteSource.openStream())
         {
             builder.mediaType( detector.detect( inputStream, metadata ) );
         }
         catch ( IOException e )
         {
             throw Exceptions.unchecked( e );
-        }
+        }*/
         return builder.build();
     }
 

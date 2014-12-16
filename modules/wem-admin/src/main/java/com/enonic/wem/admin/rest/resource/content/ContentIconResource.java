@@ -14,9 +14,10 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter;
-import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -94,11 +95,11 @@ public final class ContentIconResource
 
         if ( contentThumbnail != null )
         {
-            final Blob blob = blobService.get( contentThumbnail.getBlobKey() );
-            if ( blob != null )
+            final ByteSource binary = contentService.getBinary( content.getId(), contentThumbnail.getBinaryReference() );
+            if ( binary != null )
             {
                 ImageFilter filter = crop ? ScaleSquareFilter : ScaleMax;
-                final BufferedImage thumbnailImage = helper.getImageFromBlob( blob, size, filter );
+                final BufferedImage thumbnailImage = helper.readImage( binary, size, filter );
                 return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
             }
         }
@@ -108,13 +109,12 @@ public final class ContentIconResource
     private ResolvedImage resolveResponseFromContentImageAttachment( final Content content, final int size )
     {
         final Attachment attachment = ImageMediaHelper.getImageAttachment( content );
-
         if ( attachment != null )
         {
-            final Blob blob = blobService.get( attachment.getBlobKey() );
-            if ( blob != null )
+            final ByteSource binary = contentService.getBinary( content.getId(), attachment.getBinaryReference() );
+            if ( binary != null )
             {
-                final BufferedImage contentImage = helper.getImageFromBlob( blob, size, ScaleSquareFilter );
+                final BufferedImage contentImage = helper.readImage( binary, size, ScaleSquareFilter );
                 return new ResolvedImage( contentImage, attachment.getMimeType() );
             }
         }

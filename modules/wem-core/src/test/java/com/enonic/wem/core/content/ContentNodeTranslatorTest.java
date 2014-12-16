@@ -8,14 +8,11 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.content.thumb.Thumbnail;
+import com.enonic.wem.api.content.attachment.AttachmentNames;
 import com.enonic.wem.api.data.PropertyPath;
+import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
@@ -23,13 +20,13 @@ import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
+import com.enonic.wem.api.node.AttachedBinaries;
+import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.EditableNode;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -39,7 +36,7 @@ import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
-import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
+import com.enonic.wem.api.util.BinaryReference;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -47,7 +44,7 @@ import static org.junit.Assert.*;
 
 public class ContentNodeTranslatorTest
 {
-    private static final String CONTENT_DATA_PREFIX = ContentPropertyNames.CONTENT_DATA_SET;
+    private static final String CONTENT_DATA_PREFIX = ContentPropertyNames.DATA;
 
     private ContentNodeTranslator translator;
 
@@ -76,7 +73,7 @@ public class ContentNodeTranslatorTest
         final CreateContentParams mycontent = new CreateContentParams().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
-            contentType( ContentTypeName.from( "mymodule:my-content-type" ) ).
+            type( ContentTypeName.from( "mymodule:my-content-type" ) ).
             contentData( contentData );
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );
@@ -94,7 +91,7 @@ public class ContentNodeTranslatorTest
         final CreateContentParams mycontent = new CreateContentParams().
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
-            contentType( ContentTypeName.from( "mymodule:my-content-type" ) ).
+            type( ContentTypeName.from( "mymodule:my-content-type" ) ).
             contentData( contentData );
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );
@@ -128,7 +125,7 @@ public class ContentNodeTranslatorTest
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
             contentData( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
-            contentType( ContentTypeName.from( "mymodule:my-content-type" ) ).
+            type( ContentTypeName.from( "mymodule:my-content-type" ) ).
             form( form );
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );
@@ -143,64 +140,31 @@ public class ContentNodeTranslatorTest
     }
 
     @Test
-    public void update_content_translate_thumbnail_to_node_attachment()
-        throws Exception
-    {
-        final Content content = Content.newContent().
-            id( ContentId.from( "myId" ) ).
-            displayName( "displayName" ).
-            name( ContentName.from( "myname" ) ).
-            parentPath( ContentPath.from( ContentPath.from( "parent" ), "myname" ) ).
-            thumbnail( Thumbnail.from( new BlobKey( "myBlobKey" ), "image/png", 100 ) ).
-            build();
-
-        final Attachments attachments = Attachments.from( Attachment.newAttachment().
-            blobKey( new BlobKey( "myBlobKey" ) ).
-            name( "MyAttachment" ).size( 1200 ).
-            mimeType( "image/png" ).
-            build() );
-
-        final UpdateNodeParams updateNode = translator.toUpdateNodeCommand( content, attachments );
-
-        final Node node = Node.newNode().build();
-
-        EditableNode toBeEdited = new EditableNode( node );
-        updateNode.getEditor().edit( toBeEdited );
-        final Node editedNode = toBeEdited.build();
-
-        final com.enonic.wem.api.node.Attachment thumbnailAttachment =
-            editedNode.attachments().getAttachment( ThumbnailAttachmentSerializer.THUMB_NAME );
-
-        assertNotNull( thumbnailAttachment );
-
-    }
-
-    @Test
     public void node_to_content_thumbnail()
     {
-        final com.enonic.wem.api.node.Attachments attachments =
-            com.enonic.wem.api.node.Attachments.from( com.enonic.wem.api.node.Attachment.newAttachment().
-                blobKey( new BlobKey( "myThumbnail" ) ).
-                name( ThumbnailAttachmentSerializer.THUMB_NAME ).
-                size( 1200 ).
-                mimeType( "image/png" ).
-                build() );
+        AttachedBinaries attachedBinaries = AttachedBinaries.create().
+            add( new AttachedBinary( BinaryReference.from( AttachmentNames.THUMBNAIL ), new BlobKey( "myBlobKey" ) ) ).
+            build();
 
-        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        data.addString( "contentType", "my-type" );
+        PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        data.addString( "type", "my-type" );
         data.addBoolean( "draft", false );
         data.addSet( "data" );
         data.addSet( "form" );
+        PropertySet attachmentSet = data.addSet( "attachment" );
+        attachmentSet.addString( "name", AttachmentNames.THUMBNAIL );
+        attachmentSet.addString( "mimeType", "image/png" );
+        attachmentSet.addLong( "size", 1L );
 
-        final Node node = Node.newNode().id( NodeId.from( "myId" ) ).
-            attachments( attachments ).
+        Node node = Node.newNode().id( NodeId.from( "myId" ) ).
+            attachedBinaries( attachedBinaries ).
             parent( NodePath.ROOT ).
             path( "myPath" ).
             name( NodeName.from( "myname" ) ).
             data( data ).
             build();
 
-        final Content content = translator.fromNode( node );
+        Content content = translator.fromNode( node );
 
         Assert.assertNotNull( content.getThumbnail() );
     }
@@ -234,7 +198,7 @@ public class ContentNodeTranslatorTest
         AccessControlList acl = AccessControlList.create().add( entry1 ).add( entry2 ).build();
 
         final PropertyTree contentAsData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        contentAsData.addString( "contentType", "my-type" );
+        contentAsData.addString( "type", "my-type" );
         contentAsData.addBoolean( "draft", false );
         contentAsData.addSet( "data" );
         contentAsData.addSet( "form" );

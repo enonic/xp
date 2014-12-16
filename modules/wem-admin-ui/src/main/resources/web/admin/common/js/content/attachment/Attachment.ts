@@ -2,8 +2,6 @@ module api.content.attachment {
 
     export class Attachment {
 
-        private blobKey: api.blob.BlobKey;
-
         private name: AttachmentName;
 
         private label: string;
@@ -13,15 +11,14 @@ module api.content.attachment {
         private size: number;
 
         constructor(builder: AttachmentBuilder) {
-            this.blobKey = builder.blobKey;
             this.name = builder.name;
             this.label = builder.label;
             this.mimeType = builder.mimeType;
             this.size = builder.size;
         }
 
-        getBlobKey(): api.blob.BlobKey {
-            return this.blobKey;
+        getBinaryReference(): api.util.BinaryReference {
+            return new api.util.BinaryReference(this.name.toString());
         }
 
         getName(): AttachmentName {
@@ -42,7 +39,6 @@ module api.content.attachment {
 
         toJson(): api.content.attachment.AttachmentJson {
             return {
-                "blobKey": this.getBlobKey().toString(),
                 "name": this.getName().toString(),
                 "label": this.getLabel(),
                 "mimeType": this.getMimeType(),
@@ -58,8 +54,6 @@ module api.content.attachment {
 
     export class AttachmentBuilder {
 
-        blobKey: api.blob.BlobKey;
-
         name: AttachmentName;
 
         label: string;
@@ -69,18 +63,13 @@ module api.content.attachment {
         size: number;
 
         public fromJson(json: AttachmentJson): AttachmentBuilder {
-            this.setBlobKey(new api.blob.BlobKey(json.blobKey)).
-                setName(new AttachmentName(json.name)).
+            this.setName(new AttachmentName(json.name)).
                 setLabel(json.label).
                 setSize(json.size).
                 setMimeType(json.mimeType);
             return this;
         }
 
-        public setBlobKey(value: api.blob.BlobKey): AttachmentBuilder {
-            this.blobKey = value;
-            return this;
-        }
 
         public setName(value: AttachmentName): AttachmentBuilder {
             this.name = value;

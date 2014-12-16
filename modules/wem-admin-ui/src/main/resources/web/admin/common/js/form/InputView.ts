@@ -154,10 +154,6 @@ module api.form {
             }
         }
 
-        getAttachments(): api.content.attachment.Attachment[] {
-            return this.inputTypeView.getAttachments();
-        }
-
         private resolveValidationRecordingPath(): ValidationRecordingPath {
 
             return new ValidationRecordingPath(this.propertyArray.getParentPropertyPath(), this.input.getName(),

@@ -232,10 +232,6 @@ module api.form {
             return this.formItemSetOccurrences.getOccurrenceViews()[index];
         }
 
-        getAttachments(): api.content.attachment.Attachment[] {
-            return this.formItemSetOccurrences.getAttachments();
-        }
-
         private resolveValidationRecordingPath(): ValidationRecordingPath {
 
             return new ValidationRecordingPath(this.parentDataSet.getPropertyPath(), this.formItemSet.getName(),

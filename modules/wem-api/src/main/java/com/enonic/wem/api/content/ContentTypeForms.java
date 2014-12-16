@@ -1,4 +1,4 @@
-package com.enonic.wem.api.schema.content;
+package com.enonic.wem.api.content;
 
 
 import java.util.LinkedHashMap;
@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class ContentTypeForms
 {
@@ -39,7 +40,7 @@ public class ContentTypeForms
         build();
 
     public static final Form MEDIA_IMAGE = Form.newForm().
-        addFormItem( Input.newInput().name( "image" ).
+        addFormItem( Input.newInput().name( "media" ).
             inputType( InputTypes.IMAGE_UPLOADER ).build() ).
         addFormItem( Input.newInput().name( "mimeType" ).
             inputType( InputTypes.TEXT_LINE ).

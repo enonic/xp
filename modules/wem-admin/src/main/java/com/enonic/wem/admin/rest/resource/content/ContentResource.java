@@ -1,7 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,10 +14,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
 import com.enonic.wem.admin.json.content.CompareContentResultsJson;
@@ -82,7 +81,11 @@ import com.enonic.wem.api.content.ReorderChildParams;
 import com.enonic.wem.api.content.SetContentChildOrderParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
+import com.enonic.wem.api.content.UpdateMediaParams;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.attachment.AttachmentNames;
+import com.enonic.wem.api.content.attachment.CreateAttachment;
+import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.index.ChildOrder;
@@ -91,7 +94,6 @@ import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.workspace.Workspaces;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
@@ -141,18 +143,50 @@ public final class ContentResource
         createMediaParams.parent( ContentPath.from( form.get( "parent" ).getString() ) );
         createMediaParams.name( form.get( "name" ).getString() );
 
-        final FileItem mediaFile = form.get( "file" );
+        final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
         createMediaParams.mimeType( mediaFile.getContentType() );
+        createMediaParams.byteSource( Files.asByteSource( mediaFile.getStoreLocation() ) );
+        persistedContent = contentService.create( createMediaParams );
 
-        try (final InputStream inputStream = mediaFile.getInputStream())
-        {
-            createMediaParams.inputStream( inputStream );
-            persistedContent = contentService.create( createMediaParams );
-        }
-        catch ( IOException e )
-        {
-            throw Exceptions.unchecked( e );
-        }
+        return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+    }
+
+    @POST
+    @Path("updateMedia")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public ContentJson updateMedia( final MultipartForm form )
+    {
+        final Content persistedContent;
+        final UpdateMediaParams params = new UpdateMediaParams();
+        params.content( ContentId.from( form.get( "content" ).getString() ) );
+        params.name( form.get( "name" ).getString() );
+
+        final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
+        params.mimeType( mediaFile.getContentType() );
+        params.byteSource( Files.asByteSource( mediaFile.getStoreLocation() ) );
+        persistedContent = contentService.update( params );
+
+        return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+    }
+
+    @POST
+    @Path("updateThumbnail")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public ContentJson updateThumbnail( final MultipartForm form )
+    {
+        final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
+
+        final CreateAttachment thumbnailAttachment = CreateAttachment.create().
+            name( AttachmentNames.THUMBNAIL ).
+            mimeType( mediaFile.getContentType() ).
+            byteSource( Files.asByteSource( mediaFile.getStoreLocation() ) ).
+            build();
+
+        final UpdateContentParams params = new UpdateContentParams();
+        params.contentId( ContentId.from( form.get( "id" ).getString() ) );
+        params.createAttachments( CreateAttachments.from( thumbnailAttachment ) );
+
+        final Content persistedContent = contentService.update( params );
 
         return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }

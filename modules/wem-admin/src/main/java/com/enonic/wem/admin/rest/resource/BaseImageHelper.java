@@ -1,29 +1,15 @@
 package com.enonic.wem.admin.rest.resource;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.core.image.filter.effect.ScaleSquareFilter;
 
 public abstract class BaseImageHelper
 {
-    protected BufferedImage toBufferedImage( final byte[] data )
-    {
-        try
-        {
-            return ImageIO.read( new ByteArrayInputStream( data ) );
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Failed to read BufferedImage from byte array", e );
-        }
-    }
-
     protected BufferedImage toBufferedImage( final InputStream dataStream )
     {
         try
@@ -57,11 +43,6 @@ public abstract class BaseImageHelper
         {
             throw new RuntimeException( "Failed to load default image: " + imageName, e );
         }
-    }
-
-    public BufferedImage resizeImage( final Blob blob, final int size )
-    {
-        return resizeImage( toBufferedImage( blob.getStream() ), size );
     }
 
     public BufferedImage resizeImage( final InputStream is, final int size )

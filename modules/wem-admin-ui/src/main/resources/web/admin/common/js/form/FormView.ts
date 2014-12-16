@@ -155,14 +155,6 @@ module api.form {
             return this.rootDataSet;
         }
 
-        getAttachments(): api.content.attachment.Attachment[] {
-            var attachments: api.content.attachment.Attachment[] = [];
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-                attachments = attachments.concat(formItemView.getAttachments());
-            });
-            return attachments;
-        }
-
         giveFocus(): boolean {
             var focusGiven = false;
             if (this.formItemViews.length > 0) {

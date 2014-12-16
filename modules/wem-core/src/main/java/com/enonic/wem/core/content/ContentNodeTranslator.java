@@ -18,12 +18,11 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.attachment.Attachments;
+import com.enonic.wem.api.content.attachment.CreateAttachment;
+import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
-import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.IndexConfigDocument;
-import com.enonic.wem.api.node.AttachmentPropertyNames;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeEditor;
@@ -36,15 +35,9 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.core.content.serializer.ThumbnailAttachmentSerializer;
 
 public class ContentNodeTranslator
 {
-
-    private static final String THUMBNAIL_MIME_TYPE = "image/png";
-
-    private static final ContentAttachmentNodeTranslator CONTENT_ATTACHMENT_NODE_TRANSLATOR = new ContentAttachmentNodeTranslator();
-
     private final ContentDataSerializer CONTENT_SERIALIZER = new ContentDataSerializer();
 
     private ContentTypeService contentTypeService;
@@ -61,52 +54,37 @@ public class ContentNodeTranslator
         final PropertyTree contentAsData = new PropertyTree();
         CONTENT_SERIALIZER.toData( params, contentAsData.getRoot() );
 
-        processAttachments2( params.getAttachments(), contentAsData );
-
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create();
 
-        final com.enonic.wem.api.node.Attachments.Builder nodeAttachmentsBuilder = processAttachments( params );
-
-        return CreateNodeParams.create().
+        final CreateNodeParams.Builder builder = CreateNodeParams.create().
             name( resolveNodeName( params.getName() ) ).
-            parent( resolveParentNodePath( params.getParentContentPath() ) ).
+            parent( resolveParentNodePath( params.getParent() ) ).
             data( contentAsData ).
-            attachments( nodeAttachmentsBuilder.build() ).
             indexConfigDocument( indexConfigDocument ).
             permissions( params.getPermissions() ).
             inheritPermissions( params.isInheritPermissions() ).
-            nodeType( ContentConstants.CONTENT_NODE_COLLECTION ).
-            build();
-    }
+            nodeType( ContentConstants.CONTENT_NODE_COLLECTION );
 
-    private void processAttachments2( final Attachments attachments, final PropertyTree contentAsData )
-    {
-        final PropertySet attachementsSet = ContentAttachmentsNodeTranslator2.translate( contentAsData, attachments );
-        contentAsData.addSet( AttachmentPropertyNames.ROOT, attachementsSet );
-    }
-
-    private com.enonic.wem.api.node.Attachments.Builder processAttachments( final CreateContentParams params )
-    {
-        final Attachments contentAttachments = params.getAttachments();
-
-        final com.enonic.wem.api.node.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.api.node.Attachments.builder().
-            addAll( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( contentAttachments ) );
-
-        final Thumbnail thumbnail = resolveThumbnailAttachment( params );
-
-        if ( thumbnail != null )
+        for ( final CreateAttachment attachment : params.getCreateAttachments() )
         {
-            nodeAttachmentsBuilder.add( ThumbnailAttachmentSerializer.toAttachment( thumbnail ) );
+            builder.attachBinary( attachment.getBinaryReference(), attachment.getByteSource() );
         }
-        return nodeAttachmentsBuilder;
+
+        // TODO: Thumbnail?
+        return builder.build();
     }
 
-    public UpdateNodeParams toUpdateNodeCommand( final Content content, final Attachments attachments )
+    public UpdateNodeParams toUpdateNodeCommand( final Content content, final CreateAttachments createAttachments )
     {
-        return UpdateNodeParams.create().
+        final UpdateNodeParams.Builder builder = UpdateNodeParams.create().
             id( NodeId.from( content.getId() ) ).
-            editor( toNodeEditor( content, attachments ) ).
-            build();
+            editor( toNodeEditor( content, createAttachments ) );
+
+        for ( final CreateAttachment createAttachment : createAttachments )
+        {
+            builder.attachBinary( createAttachment.getBinaryReference(), createAttachment.getByteSource() );
+        }
+        return builder.build();
     }
 
     public Contents fromNodes( final Nodes nodes )
@@ -126,33 +104,13 @@ public class ContentNodeTranslator
         return doGetFromNode( node );
     }
 
-
     private Content doGetFromNode( final Node node )
     {
         final NodePath parentNodePath = node.path().getParentPath();
         final NodePath parentContentPathAsNodePath = parentNodePath.removeFromBeginning( ContentConstants.CONTENT_ROOT_PATH );
         final ContentPath parentContentPath = ContentPath.from( parentContentPathAsNodePath.toString() );
 
-        final com.enonic.wem.api.node.Attachments nodeAttachments = node.attachments();
-
-        final com.enonic.wem.api.node.Attachment thumbnailAttachment =
-            nodeAttachments.getAttachment( ThumbnailAttachmentSerializer.THUMB_NAME );
-
-        final Thumbnail thumbnail;
-
-        if ( thumbnailAttachment != null )
-        {
-            thumbnail = ThumbnailAttachmentSerializer.toThumbnail( thumbnailAttachment );
-        }
-        else
-        {
-            thumbnail = null;
-        }
-
         final Content.Builder builder = CONTENT_SERIALIZER.fromData( node.data().getRoot() );
-
-        final Attachments attachments = CONTENT_ATTACHMENT_NODE_TRANSLATOR.toContentAttachments( node.attachments() );
-
         builder.
             id( ContentId.from( node.id().toString() ) ).
             parentPath( parentContentPath ).
@@ -164,39 +122,21 @@ public class ContentNodeTranslator
             hasChildren( node.getHasChildren() ).
             childOrder( node.getChildOrder() ).
             permissions( node.getPermissions() ).
-            inheritPermissions( node.inheritsPermissions() ).
-            thumbnail( thumbnail ).
-            attachments( attachments );
+            inheritPermissions( node.inheritsPermissions() );
 
         return builder.build();
     }
 
-    private NodeEditor toNodeEditor( final Content content, final Attachments attachments )
+    private NodeEditor toNodeEditor( final Content content, final CreateAttachments createAttachments )
     {
         final PropertyTree data = new PropertyTree();
-        CONTENT_SERIALIZER.toData( content, data.getRoot() );
+        CONTENT_SERIALIZER.toData( content, data.getRoot(), createAttachments );
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create();
 
         return editableNode -> {
 
-            final com.enonic.wem.api.node.Attachments contentAttachmentsAsNodeAttachments =
-                CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( attachments );
-
-            processAttachments2( attachments, data );
-
-            final com.enonic.wem.api.node.Attachments.Builder nodeAttachmentsBuilder = com.enonic.wem.api.node.Attachments.builder().
-                addAll( contentAttachmentsAsNodeAttachments );
-
-            final com.enonic.wem.api.node.Attachment thumbnailAttachment =
-                ThumbnailAttachmentSerializer.toAttachment( content.getThumbnail() );
-
-            if ( thumbnailAttachment != null )
-            {
-                nodeAttachmentsBuilder.add( thumbnailAttachment );
-            }
             editableNode.name = NodeName.from( content.getName().toString() );
-            editableNode.attachments = nodeAttachmentsBuilder.build();
             editableNode.indexConfigDocument = indexConfigDocument;
             editableNode.data = data;
             editableNode.permissions = content.getPermissions();
@@ -222,9 +162,9 @@ public class ContentNodeTranslator
         return NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements( parentContentPath.toString() ).build();
     }
 
-    private Thumbnail resolveThumbnailAttachment( final CreateContentParams params )
+    /*private Thumbnail resolveThumbnailAttachment( final CreateContentParams params )
     {
-        final ContentType contentType = getContentType( params.getContentType() );
+        final ContentType contentType = getContentType( params.getType() );
         if ( contentType.getSuperType() == null )
         {
             return null;
@@ -243,11 +183,11 @@ public class ContentNodeTranslator
             }
         }
         return null;
-    }
+    }*/
 
     private Thumbnail createThumbnail( final Attachment origin )
     {
-        final Blob originalImage = blobService.get( origin.getBlobKey() );
+        final Blob originalImage = blobService.get( /* TODO: origin.getBlobKey()*/ null );
         final ByteSource source = ThumbnailFactory.resolve( originalImage );
         final Blob thumbnailBlob;
         try (final InputStream stream = source.openStream())
@@ -261,7 +201,7 @@ public class ContentNodeTranslator
                                                 ? ""
                                                 : "." + origin.getExtension() ), e );
         }
-        return Thumbnail.from( thumbnailBlob.getKey(), THUMBNAIL_MIME_TYPE, thumbnailBlob.getLength() );
+        return null; // TODO: Thumbnail.from( thumbnailBlob.getKey(), THUMBNAIL_MIME_TYPE, thumbnailBlob.getLength() );
     }
 
     private ContentType getContentType( final ContentTypeName contentTypeName )

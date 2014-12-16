@@ -16,8 +16,6 @@ module api.content {
 
         private draft: boolean;
 
-        private updateAttachments: api.content.UpdateAttachments;
-
         private thumbnail: api.content.Thumbnail;
 
         constructor(id: string) {
@@ -25,10 +23,6 @@ module api.content {
             this.id = id;
             this.draft = false;
             this.setMethod("POST");
-        }
-
-        setUpdateAttachments(updateAttachments: api.content.UpdateAttachments) {
-            this.updateAttachments = updateAttachments;
         }
 
         setThumbnail(thumbnail: api.content.Thumbnail) {
@@ -79,7 +73,6 @@ module api.content {
                 data: this.data.toJson(),
                 metadata: (this.metadata || []).map((metadata: Metadata) => metadata.toJson()),
                 displayName: this.displayName,
-                updateAttachments: this.updateAttachments ? this.updateAttachments.toJson() : null,
                 thumbnail: this.thumbnail ? this.thumbnail.toJson() : undefined
             };
         }

@@ -3,29 +3,30 @@ package com.enonic.wem.api.content.thumb;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.util.BinaryReference;
 
 public final class Thumbnail
 {
-    private final BlobKey blobKey;
+    private final BinaryReference binaryReference;
 
     private final String mimeType;
 
     private final long size;
 
-    private Thumbnail( final BlobKey blobKey, final String mimeType, final Long size )
+    private Thumbnail( final BinaryReference binaryReference, final String mimeType, final Long size )
     {
         Preconditions.checkNotNull( mimeType, "mimeType is mandatory for an icon" );
-        Preconditions.checkNotNull( blobKey, "blobKey is mandatory" );
-        Preconditions.checkNotNull( blobKey, "size is mandatory" );
-        this.blobKey = blobKey;
+        Preconditions.checkNotNull( binaryReference, "binaryReference is mandatory" );
+        Preconditions.checkNotNull( size, "size is mandatory" );
+        this.binaryReference = binaryReference;
         this.mimeType = mimeType;
         this.size = size;
     }
 
-    public BlobKey getBlobKey()
+    // TODO: Rename to getBinaryReference
+    public BinaryReference getBinaryReference()
     {
-        return blobKey;
+        return binaryReference;
     }
 
     public String getMimeType()
@@ -56,7 +57,7 @@ public final class Thumbnail
         {
             return false;
         }
-        if ( blobKey != null ? !blobKey.equals( thumbnail.blobKey ) : thumbnail.blobKey != null )
+        if ( binaryReference != null ? !binaryReference.equals( thumbnail.binaryReference ) : thumbnail.binaryReference != null )
         {
             return false;
         }
@@ -71,7 +72,7 @@ public final class Thumbnail
     @Override
     public int hashCode()
     {
-        int result = blobKey != null ? blobKey.hashCode() : 0;
+        int result = binaryReference != null ? binaryReference.hashCode() : 0;
         result = 31 * result + ( mimeType != null ? mimeType.hashCode() : 0 );
         result = 31 * result + (int) ( size ^ ( size >>> 32 ) );
         return result;
@@ -82,13 +83,13 @@ public final class Thumbnail
     {
         return Objects.toStringHelper( this ).
             add( "mimeType", mimeType ).
-            add( "blobKey", blobKey ).
+            add( "binaryReference", binaryReference ).
             add( "size", size ).
             toString();
     }
 
-    public static Thumbnail from( final BlobKey blobKey, final String mimeType, final long size )
+    public static Thumbnail from( final BinaryReference binaryReference, final String mimeType, final long size )
     {
-        return new Thumbnail( blobKey, mimeType, size );
+        return new Thumbnail( binaryReference, mimeType, size );
     }
 }

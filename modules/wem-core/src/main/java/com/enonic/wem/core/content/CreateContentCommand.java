@@ -19,6 +19,7 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.core.media.MediaInfo;
 
 final class CreateContentCommand
     extends AbstractContentCommand
@@ -27,10 +28,13 @@ final class CreateContentCommand
 
     private final CreateContentParams params;
 
+    private final MediaInfo mediaInfo;
+
     private CreateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.mediaInfo = builder.mediaInfo;
     }
 
     Content execute()
@@ -49,12 +53,13 @@ final class CreateContentCommand
 
         if ( params.getForm() == null )
         {
-            final ContentType contentType =
-                contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getContentType() ) );
+            final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
             params.form( contentType.form() );
         }
 
-        final CreateNodeParams createNodeParams = translator.toCreateNode( params );
+        final CreateContentParams handledParams = new ProxyContentProcessor( mediaInfo ).processCreateMedia( params );
+
+        final CreateNodeParams createNodeParams = translator.toCreateNode( handledParams );
 
         final Node createdNode;
         try
@@ -64,7 +69,7 @@ final class CreateContentCommand
         }
         catch ( NodeAlreadyExistException e )
         {
-            throw new ContentAlreadyExistException( ContentPath.from( params.getParentContentPath(), params.getName().toString() ) );
+            throw new ContentAlreadyExistException( ContentPath.from( params.getParent(), params.getName().toString() ) );
         }
 
         return translator.fromNode( createdNode );
@@ -72,7 +77,7 @@ final class CreateContentCommand
 
     private void validateContentData( final CreateContentParams contentParams )
     {
-        final DataValidationErrors dataValidationErrors = validate( contentParams.getContentType(), contentParams.getData() );
+        final DataValidationErrors dataValidationErrors = validate( contentParams.getType(), contentParams.getData() );
 
         for ( DataValidationError error : dataValidationErrors )
         {
@@ -84,20 +89,22 @@ final class CreateContentCommand
         }
     }
 
-    public static Builder create()
+    static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder create( AbstractContentCommand source )
+    static Builder create( AbstractContentCommand source )
     {
         return new Builder( source );
     }
 
-    public static class Builder
+    static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
         private CreateContentParams params;
+
+        private MediaInfo mediaInfo;
 
         private Builder()
         {
@@ -109,9 +116,15 @@ final class CreateContentCommand
             super( source );
         }
 
-        public Builder params( final CreateContentParams params )
+        Builder params( final CreateContentParams params )
         {
             this.params = params;
+            return this;
+        }
+
+        Builder mediaInfo( final MediaInfo value )
+        {
+            this.mediaInfo = value;
             return this;
         }
 
@@ -119,7 +132,6 @@ final class CreateContentCommand
         {
             super.validate();
             Preconditions.checkNotNull( params, "params must be given" );
-            super.validate();
         }
 
         public CreateContentCommand build()

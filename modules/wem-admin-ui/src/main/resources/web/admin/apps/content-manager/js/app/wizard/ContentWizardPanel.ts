@@ -10,9 +10,7 @@ module app.wizard {
     import ThumbnailBuilder = api.content.ThumbnailBuilder;
     import ContentName = api.content.ContentName;
     import CreateContentRequest = api.content.CreateContentRequest;
-    import CreateImageContentRequest = api.content.CreateImageContentRequest;
     import UpdateContentRequest = api.content.UpdateContentRequest;
-    import UpdateAttachments = api.content.UpdateAttachments;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
     import Metadata = api.content.Metadata;
     import Page = api.content.page.Page;
@@ -68,7 +66,7 @@ module app.wizard {
 
         private metadataStepFormByName: {[name: string]: ContentWizardStepForm;};
 
-        private iconUploadItem: api.ui.uploader.UploadItem;
+        // TODO: CMS-4677 private iconUploadItem: api.ui.uploader.UploadItem;
 
         private displayNameScriptExecutor: DisplayNameScriptExecutor;
 
@@ -121,10 +119,10 @@ module app.wizard {
                 api.util.UriHelper.getRestUri("blob/upload"));
 
             this.formIcon.onUploadFinished((event: UploadFinishedEvent) => {
-
-                this.iconUploadItem = event.getUploadItem();
-                this.formIcon.setSrc(api.util.UriHelper.getRestUri('blob/' + this.iconUploadItem.getBlobKey() + '?mimeType=' +
-                                                                   event.getUploadItem().getMimeType()));
+                // TODO: CMS-4677
+                //this.iconUploadItem = event.getUploadItem();
+                //this.formIcon.setSrc(api.util.UriHelper.getRestUri('blob/' + this.iconUploadItem.getBlobKey() + '?mimeType=' +
+                //                                                   event.getUploadItem().getMimeType()));
             });
 
             this.wizardActions = new app.wizard.action.ContentWizardActions(this);
@@ -498,7 +496,7 @@ module app.wizard {
             var parentPath = this.parentContent != null ? this.parentContent.getPath() : api.content.ContentPath.ROOT;
 
             if (this.contentType.isImage()) {
-                //return CreateImageContentRequest.fromAttachment(this.mediaAttachment, parentPath);
+                // TODO: Check on all media types?
                 return null;
             }
             else {
@@ -548,20 +546,14 @@ module app.wizard {
                 setData(viewedContent.getContentData()).
                 setMetadata(viewedContent.getAllMetadata());
 
-            if (this.contentWizardStepForm) {
-                var updateAttachments = UpdateAttachments.create(persistedContent.getContentId(),
-                    this.contentWizardStepForm.getFormView().getAttachments());
-                updateContentRequest.setUpdateAttachments(updateAttachments);
-            }
-
-            if (this.iconUploadItem) {
+            /* TODO: CMS-4677 if (this.iconUploadItem) {
                 var thumbnail = new ThumbnailBuilder().
-                    setBlobKey(this.iconUploadItem.getBlobKey()).
+             setBinaryReference(this.iconUploadItem.getBlobKey()).
                     setMimeType(this.iconUploadItem.getMimeType()).
                     setSize(this.iconUploadItem.getSize()).
                     build();
                 updateContentRequest.setThumbnail(thumbnail);
-            }
+             }*/
 
             return updateContentRequest;
         }

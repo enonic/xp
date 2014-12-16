@@ -1,16 +1,12 @@
 package com.enonic.wem.api.content;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.attachment.Attachments;
+import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.query.expr.OrderExpr;
@@ -26,7 +22,7 @@ public final class CreateContentParams
 
     private List<Metadata> metadata;
 
-    private ContentTypeName contentType;
+    private ContentTypeName type;
 
     private PrincipalKey owner;
 
@@ -38,7 +34,7 @@ public final class CreateContentParams
 
     private boolean draft;
 
-    private Map<String, Attachment> attachments = Maps.newHashMap();
+    private CreateAttachments createAttachments = CreateAttachments.empty();
 
     private Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
 
@@ -46,9 +42,9 @@ public final class CreateContentParams
 
     private boolean inheritPermissions;
 
-    public CreateContentParams contentType( final ContentTypeName value )
+    public CreateContentParams type( final ContentTypeName value )
     {
-        this.contentType = value;
+        this.type = value;
         return this;
     }
 
@@ -73,6 +69,12 @@ public final class CreateContentParams
     public CreateContentParams metadata( final List<Metadata> metadata )
     {
         this.metadata = metadata;
+        return this;
+    }
+
+    public CreateContentParams createAttachments( final CreateAttachments value )
+    {
+        this.createAttachments = value;
         return this;
     }
 
@@ -118,27 +120,6 @@ public final class CreateContentParams
         return this;
     }
 
-    public CreateContentParams attachments( final Attachment... attachments )
-    {
-        for ( Attachment attachment : attachments )
-        {
-            if ( attachment == null )
-            {
-                continue;
-            }
-
-            Preconditions.checkArgument( !this.attachments.containsKey( attachment.getName() ), "attachment with duplicated name: %s",
-                                         attachment.getName() );
-            this.attachments.put( attachment.getName(), attachment );
-        }
-        return this;
-    }
-
-    public CreateContentParams attachments( final Iterable<Attachment> attachments )
-    {
-        return attachments( Iterables.toArray( attachments, Attachment.class ) );
-    }
-
     public CreateContentParams permissions( final AccessControlList permissions )
     {
         this.permissions = permissions;
@@ -151,14 +132,14 @@ public final class CreateContentParams
         return this;
     }
 
-    public ContentPath getParentContentPath()
+    public ContentPath getParent()
     {
         return parentContentPath;
     }
 
-    public ContentTypeName getContentType()
+    public ContentTypeName getType()
     {
-        return contentType;
+        return type;
     }
 
     public Form getForm()
@@ -174,6 +155,11 @@ public final class CreateContentParams
     public List<Metadata> getMetadata()
     {
         return metadata;
+    }
+
+    public CreateAttachments getCreateAttachments()
+    {
+        return createAttachments;
     }
 
     public PrincipalKey getOwner()
@@ -196,16 +182,6 @@ public final class CreateContentParams
         return draft;
     }
 
-    public Attachments getAttachments()
-    {
-        return Attachments.from( attachments.values() );
-    }
-
-    public Attachment getAttachment( final String attachmentName )
-    {
-        return attachments.get( attachmentName );
-    }
-
     public Set<OrderExpr> getOrderExpressions()
     {
         return orderExpressions;
@@ -223,8 +199,9 @@ public final class CreateContentParams
 
     public void validate()
     {
-        Preconditions.checkNotNull( this.data, "data cannot be null" );
+        Preconditions.checkNotNull( data, "data cannot be null" );
         Preconditions.checkArgument( draft || this.parentContentPath != null, "parentContentPath cannot be null" );
-        Preconditions.checkNotNull( this.displayName, "displayName cannot be null" );
+        Preconditions.checkNotNull( displayName, "displayName cannot be null" );
+        Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
     }
 }

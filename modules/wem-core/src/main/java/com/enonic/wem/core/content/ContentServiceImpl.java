@@ -23,6 +23,7 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.ContentTypeForms;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.CreateMediaParams;
@@ -44,6 +45,7 @@ import com.enonic.wem.api.content.ReorderChildContentsResult;
 import com.enonic.wem.api.content.ReorderChildParams;
 import com.enonic.wem.api.content.SetContentChildOrderParams;
 import com.enonic.wem.api.content.UpdateContentParams;
+import com.enonic.wem.api.content.UpdateMediaParams;
 import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.ModuleConfigsDataSerializer;
@@ -58,7 +60,6 @@ import com.enonic.wem.api.node.ReorderChildNodeParams;
 import com.enonic.wem.api.node.ReorderChildNodesParams;
 import com.enonic.wem.api.node.ReorderChildNodesResult;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
-import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
@@ -110,7 +111,7 @@ public class ContentServiceImpl
         MODULE_CONFIGS_DATA_SERIALIZER.toProperties( params.getModuleConfigs(), data.getRoot() );
 
         final CreateContentParams createContentParams = new CreateContentParams().
-            contentType( ContentTypeName.site() ).
+            type( ContentTypeName.site() ).
             parent( params.getParentContentPath() ).
             name( params.getName() ).
             displayName( params.getDisplayName() ).
@@ -132,7 +133,7 @@ public class ContentServiceImpl
             displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
             name( TEMPLATES_FOLDER_NAME ).
             parent( site.getPath() ).
-            contentType( ContentTypeName.templateFolder() ).
+            type( ContentTypeName.templateFolder() ).
             draft( false ).
             contentData( new PropertyTree() ) );
 
@@ -142,11 +143,11 @@ public class ContentServiceImpl
     @Override
     public Content create( final CreateContentParams params )
     {
-        if ( params.getContentType().isTemplateFolder() )
+        if ( params.getType().isTemplateFolder() )
         {
             validateCreateTemplateFolder( params );
         }
-        else if ( params.getContentType().isPageTemplate() )
+        else if ( params.getType().isPageTemplate() )
         {
             validateCreatePageTemplate( params );
         }
@@ -168,7 +169,7 @@ public class ContentServiceImpl
                 displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
                 name( TEMPLATES_FOLDER_NAME ).
                 parent( content.getPath() ).
-                contentType( ContentTypeName.templateFolder() ).
+                type( ContentTypeName.templateFolder() ).
                 draft( false ).
                 contentData( new PropertyTree() ) );
         }
@@ -186,6 +187,7 @@ public class ContentServiceImpl
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
+            mediaInfoService( this.mediaInfoService ).
             build().
             execute();
     }
@@ -199,6 +201,20 @@ public class ContentServiceImpl
             blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Content update( final UpdateMediaParams params )
+    {
+        return UpdateMediaCommand.create( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            blobService( this.blobService ).
+            translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
+            mediaInfoService( this.mediaInfoService ).
             build().
             execute();
     }
@@ -318,16 +334,16 @@ public class ContentServiceImpl
     {
         try
         {
-            final Content parent = this.getByPath( params.getParentContentPath() );
+            final Content parent = this.getByPath( params.getParent() );
             if ( !parent.getType().isSite() )
             {
-                final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
+                final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
                 throw new SystemException( "A template folder can only be created below a content of type 'site'. Path: " + path );
             }
         }
         catch ( ContentNotFoundException e )
         {
-            final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
+            final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
             throw new SystemException( e,
                                        "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " +
                                            path );
@@ -338,16 +354,16 @@ public class ContentServiceImpl
     {
         try
         {
-            final Content parent = this.getByPath( params.getParentContentPath() );
+            final Content parent = this.getByPath( params.getParent() );
             if ( !parent.getType().isTemplateFolder() )
             {
-                final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
+                final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
                 throw new SystemException( "A page template can only be created below a content of type 'template-folder'. Path: " + path );
             }
         }
         catch ( ContentNotFoundException e )
         {
-            final ContentPath path = ContentPath.from( params.getParentContentPath(), params.getName().toString() );
+            final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
             throw new SystemException( e,
                                        "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " +
                                            path );

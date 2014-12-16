@@ -2,7 +2,7 @@ module api.content {
 
     export interface ThumbnailJson {
 
-        blobKey:string;
+        binaryReference:string;
 
         mimeType:string;
 

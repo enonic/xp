@@ -51,10 +51,6 @@ module api.form.inputtype.support {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
-        getAttachments(): api.content.attachment.Attachment[] {
-            return [];
-        }
-
         /**
          * Override when needed.
          */

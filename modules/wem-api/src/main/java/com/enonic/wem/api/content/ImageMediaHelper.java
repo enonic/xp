@@ -16,7 +16,7 @@ public class ImageMediaHelper
         Preconditions.checkState( content.getType().isImageMedia(),
                                   "Expected content to be of type [" + ContentTypeName.imageMedia() + "]: " + content.getType() );
 
-        final String imageAttachmentName = content.getData().getString( "image" );
+        final String imageAttachmentName = content.getData().getString( "media" );
         if ( imageAttachmentName == null )
         {
             return null;

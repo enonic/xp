@@ -46,7 +46,7 @@ class ContentQueryNodeQueryTranslator
         if ( contentTypeNames != null && contentTypeNames.isNotEmpty() )
         {
             final ValueFilter.Builder contentTypeFilterBuilder = ValueFilter.create().
-                fieldName( ContentPropertyNames.CONTENT_TYPE ).
+                fieldName( ContentPropertyNames.TYPE ).
                 setCache( true );
 
             for ( final ContentTypeName contentTypeName : contentTypeNames )

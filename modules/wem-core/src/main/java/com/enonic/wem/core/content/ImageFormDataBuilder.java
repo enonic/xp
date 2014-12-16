@@ -7,15 +7,15 @@ final class ImageFormDataBuilder
 {
     private String mimeType;
 
-    private String name;
+    private String image;
 
-    ImageFormDataBuilder setName( final String name )
+    ImageFormDataBuilder image( final String name )
     {
-        this.name = name;
+        this.image = name;
         return this;
     }
 
-    ImageFormDataBuilder setMimeType( final String mimeType )
+    ImageFormDataBuilder mimeType( final String mimeType )
     {
         this.mimeType = mimeType;
         return this;
@@ -23,7 +23,7 @@ final class ImageFormDataBuilder
 
     void build( PropertyTree data )
     {
+        data.setString( "media", image );
         data.setString( "mimeType", mimeType );
-        data.setString( "image", name );
     }
 }

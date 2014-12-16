@@ -33,9 +33,7 @@ public final class UpdateContentJson
     UpdateContentJson( @JsonProperty("contentId") final String contentId, @JsonProperty("contentName") final String contentName,
                        @JsonProperty("data") final List<PropertyArrayJson> propertyArrayJsonList,
                        @JsonProperty("metadata") final List<MetadataJson> metadataJsonList, @JsonProperty("form") final FormJson form,
-                       @JsonProperty("displayName") final String displayName,
-                       @JsonProperty("updateAttachments") final UpdateAttachmentsJson updateAttachments,
-                       @JsonProperty("thumbnail") final ThumbnailJson thumbnail, @JsonProperty("draft") final String draft )
+                       @JsonProperty("displayName") final String displayName, @JsonProperty("draft") final String draft )
     {
         this.contentName = ContentName.from( contentName );
 
@@ -45,17 +43,12 @@ public final class UpdateContentJson
         this.updateContentParams = new UpdateContentParams().
             contentId( ContentId.from( contentId ) ).
             modifier( PrincipalKey.ofAnonymous() ).
-            updateAttachments( updateAttachments != null ? updateAttachments.getUpdateAttachments() : null ).
             editor( edit -> {
                 edit.form = form.getForm();
                 edit.data = contentData;
                 edit.metadata = metadatas;
                 edit.draft = Boolean.valueOf( draft );
                 edit.displayName = displayName;
-                if ( thumbnail != null )
-                {
-                    edit.thumbnail = thumbnail.getThumbnail();
-                }
             } );
 
         this.renameContentParams = new RenameContentParams().

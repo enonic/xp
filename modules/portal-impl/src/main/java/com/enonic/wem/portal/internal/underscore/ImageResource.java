@@ -15,10 +15,9 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.io.ByteSource;
 import com.google.common.primitives.Ints;
 
-import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -82,11 +81,106 @@ public final class ImageResource
         this.contentPath = ContentPath.from( value );
     }
 
-    private BufferedImage toBufferedImage( final InputStream dataStream )
+    private String getFormat( final String fileName )
     {
-        try
+        return StringUtils.substringAfterLast( fileName, "." ).toLowerCase();
+    }
+
+    @GET
+    @Path("id/{imageId}")
+    public Response getById( @PathParam("imageId") final String id )
+    {
+        final ContentId imageContentId = ContentId.from( id );
+        final Content imageContent = getContent( imageContentId );
+
+        final Attachment attachment = ImageMediaHelper.getImageAttachment( imageContent );
+        if ( attachment == null )
         {
-            return ImageIO.read( dataStream );
+            throw notFound( "Attachment [%s] not found", imageContent.getName().toString() );
+        }
+
+        final ByteSource binary = contentService.getBinary( imageContentId, attachment.getBinaryReference() );
+        if ( binary == null )
+        {
+            throw notFound( "Binary [%s] not found for content [%s]", attachment.getBinaryReference(), imageContentId );
+        }
+
+        final BufferedImage contentImage = toBufferedImage( binary );
+        final String format = getFormat( attachment.getName() );
+        final BufferedImage image = applyFilters( contentImage, format );
+
+        final byte[] imageData = serializeImage( image, format );
+        return Response.ok().type( attachment.getMimeType() ).entity( imageData ).build();
+    }
+
+    @GET
+    @Path("{fileName}")
+    public Response getByName( @PathParam("fileName") final String attachmentName )
+    {
+        final Content content = getContent( this.contentPath );
+        final Attachment attachment = content.getAttachments().getAttachment( attachmentName );
+
+        final ByteSource binary = contentService.getBinary( content.getId(), attachment.getBinaryReference() );
+        if ( binary == null )
+        {
+            throw notFound( "Binary [%s] not found for content [%s]", attachment.getBinaryReference(), content.getId() );
+        }
+
+        final BufferedImage contentImage = toBufferedImage( binary );
+        final String format = getFormat( attachmentName );
+        final BufferedImage image = applyFilters( contentImage, format );
+
+        final byte[] imageData = serializeImage( image, format );
+        return Response.ok().type( attachment.getMimeType() ).entity( imageData ).build();
+    }
+
+    private BufferedImage applyFilters( final BufferedImage sourceImage, final String format )
+    {
+        if ( Strings.isNullOrEmpty( this.filterParam ) )
+        {
+            return sourceImage;
+        }
+
+        final ImageFilter imageFilter = this.imageFilterBuilder.build( new BuilderContext(), this.filterParam );
+        final BufferedImage targetImage = imageFilter.filter( sourceImage );
+
+        if ( !ImageHelper.supportsAlphaChannel( format ) )
+        {
+            return ImageHelper.removeAlphaChannel( targetImage, this.backgroundColor );
+        }
+        else
+        {
+            return targetImage;
+        }
+    }
+
+    private Content getContent( final ContentId contentId )
+    {
+        final Content content = this.contentService.getById( contentId );
+        if ( content != null )
+        {
+            return content;
+        }
+
+        throw notFound( "Content with id [%s] not found", contentId.toString() );
+    }
+
+    private Content getContent( final ContentPath contentPath )
+    {
+        final Content content = this.contentService.getByPath( contentPath );
+        if ( content != null )
+        {
+            return content;
+        }
+
+        throw notFound( "Content with path [%s] not found", contentPath.toString() );
+    }
+
+    private BufferedImage toBufferedImage( final ByteSource byteSource )
+    {
+        try (final InputStream inputStream = byteSource.openStream())
+        {
+            return ImageIO.read( inputStream );
         }
         catch ( final IOException e )
         {
@@ -138,105 +232,5 @@ public final class ImageResource
         {
             return DEFAULT_BACKGROUND;
         }
-    }
-
-    private String getFormat( final String fileName )
-    {
-        return StringUtils.substringAfterLast( fileName, "." ).toLowerCase();
-    }
-
-    private BufferedImage applyFilters( final BufferedImage sourceImage, final String format )
-    {
-        if ( Strings.isNullOrEmpty( this.filterParam ) )
-        {
-            return sourceImage;
-        }
-
-        final ImageFilter imageFilter = this.imageFilterBuilder.build( new BuilderContext(), this.filterParam );
-        final BufferedImage targetImage = imageFilter.filter( sourceImage );
-
-        if ( !ImageHelper.supportsAlphaChannel( format ) )
-        {
-            return ImageHelper.removeAlphaChannel( targetImage, this.backgroundColor );
-        }
-        else
-        {
-            return targetImage;
-        }
-    }
-
-    private Blob getBlob( final BlobKey blobKey )
-    {
-        return this.blobService.get( blobKey );
-    }
-
-    private Content getContent( final ContentId contentId )
-    {
-        final Content content = this.contentService.getById( contentId );
-        if ( content != null )
-        {
-            return content;
-        }
-
-        throw notFound( "Content with id [%s] not found", contentId.toString() );
-    }
-
-    private Content getContent( final ContentPath contentPath )
-    {
-        final Content content = this.contentService.getByPath( contentPath );
-        if ( content != null )
-        {
-            return content;
-        }
-
-        throw notFound( "Content with path [%s] not found", contentPath.toString() );
-    }
-
-    @GET
-    @Path("id/{imageId}")
-    public Response getById( @PathParam("imageId") final String id )
-    {
-        final ContentId imageContentId = ContentId.from( id );
-        final Content imageContent = getContent( imageContentId );
-
-        final Attachment attachment = ImageMediaHelper.getImageAttachment( imageContent );
-        if ( attachment == null )
-        {
-            throw notFound( "Attachment [%s] not found", imageContent.getName().toString() );
-        }
-
-        final Blob blob = getBlob( attachment.getBlobKey() );
-        if ( blob == null )
-        {
-            throw notFound( "Blob [%s] not found", attachment.getBlobKey() );
-        }
-
-        final BufferedImage contentImage = toBufferedImage( blob.getStream() );
-        final String format = getFormat( attachment.getName() );
-        final BufferedImage image = applyFilters( contentImage, format );
-
-        final byte[] imageData = serializeImage( image, format );
-        return Response.ok().type( attachment.getMimeType() ).entity( imageData ).build();
-    }
-
-    @GET
-    @Path("{fileName}")
-    public Response getByName( @PathParam("fileName") final String fileName )
-    {
-        final Content content = getContent( this.contentPath );
-        final Attachment attachment = content.getAttachments().getAttachment( fileName );
-
-        final Blob blob = getBlob( attachment.getBlobKey() );
-        if ( blob == null )
-        {
-            throw notFound( "Blob [%s] not found", attachment.getBlobKey() );
-        }
-
-        final BufferedImage contentImage = toBufferedImage( blob.getStream() );
-        final String format = getFormat( fileName );
-        final BufferedImage image = applyFilters( contentImage, format );
-
-        final byte[] imageData = serializeImage( image, format );
-        return Response.ok().type( attachment.getMimeType() ).entity( imageData ).build();
     }
 }

@@ -11,9 +11,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
-import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
@@ -36,8 +36,6 @@ public final class ContentImageResource
     private static final ContentImageHelper helper = new ContentImageHelper();
 
     private ContentTypeService contentTypeService;
-
-    private BlobService blobService;
 
     private ContentService contentService;
 
@@ -88,10 +86,10 @@ public final class ContentImageResource
         final Attachment attachment = ImageMediaHelper.getImageAttachment( content );
         if ( attachment != null )
         {
-            final Blob blob = blobService.get( attachment.getBlobKey() );
-            if ( blob != null )
+            final ByteSource binary = contentService.getBinary( content.getId(), attachment.getBinaryReference() );
+            if ( binary != null )
             {
-                final BufferedImage contentImage = helper.getImageFromBlob( blob, size, ScaleMax );
+                final BufferedImage contentImage = helper.readImage( binary, size, ScaleMax );
                 return new ResolvedImage( contentImage, attachment.getMimeType() );
             }
         }
@@ -134,11 +132,6 @@ public final class ContentImageResource
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
-    }
-
-    public void setBlobService( final BlobService blobService )
-    {
-        this.blobService = blobService;
     }
 
     public void setContentService( final ContentService contentService )

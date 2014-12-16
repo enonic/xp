@@ -45,7 +45,7 @@ public class ModifyContentHandlerTest
         final Content content = ContentFixtures.newContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
-        Mockito.when( this.contentService.update( Mockito.any() ) ).thenAnswer(
+        Mockito.when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0] ) );
 
         execute( "modifyByPath" );

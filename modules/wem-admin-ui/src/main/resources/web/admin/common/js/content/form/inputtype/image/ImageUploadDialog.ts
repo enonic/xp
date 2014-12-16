@@ -22,11 +22,13 @@ module api.content.form.inputtype.image {
             this.appendChildToContentPanel(description);
 
             this.imageUploader = new api.content.ImageUploader({
+                params: {
+                    parent: parentContent.getParentPath().toString()
+                },
                 operation: api.content.MediaUploaderOperation.create,
                 name: 'image-selector-upload-dialog',
                 showButtons: false,
                 showResult: false,
-                parent: parentContent
             });
 
             this.imageUploader.onUploadCompleted(() => {

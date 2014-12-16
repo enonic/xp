@@ -3,12 +3,12 @@ package com.enonic.wem.portal.internal.controller;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.thumb.Thumbnail;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.xp.portal.PortalResponse;
 
 import static org.junit.Assert.*;
@@ -48,7 +48,7 @@ public class ControllerScriptImplTest
     public void testGetterAccess()
     {
         final Page page = Page.newPage().template( PageTemplateKey.from( "mypagetemplate" ) ).build();
-        final Thumbnail thumbnail = Thumbnail.from( new BlobKey( "1234" ), "image/jpg", 1000 );
+        final Thumbnail thumbnail = Thumbnail.from( BinaryReference.from( "1234" ), "image/jpg", 1000 );
 
         final Content content =
             Content.newContent().name( "test" ).parentPath( ContentPath.ROOT ).page( page ).thumbnail( thumbnail ).build();

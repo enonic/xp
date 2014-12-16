@@ -143,16 +143,6 @@ module api.form {
             this.removeButton.setVisible(this.formItemSetOccurrence.showRemoveButton());
         }
 
-        getAttachments(): api.content.attachment.Attachment[] {
-            var attachments: api.content.attachment.Attachment[] = [];
-            this.formItemViews.forEach((formItemView: FormItemView) => {
-                formItemView.getAttachments().forEach((attachment: api.content.attachment.Attachment) => {
-                    attachments.push(attachment);
-                });
-            });
-            return attachments;
-        }
-
         showContainer(show: boolean) {
             if (show) {
                 this.formItemSetOccurrencesContainer.show();

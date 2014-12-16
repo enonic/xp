@@ -152,10 +152,6 @@ module api.form.inputtype.support {
             this.inputOccurrences.unBlur(listener);
         }
 
-        getAttachments(): api.content.attachment.Attachment[] {
-            return [];
-        }
-
         /**
          * Override when needed.
          */

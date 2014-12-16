@@ -84,10 +84,6 @@ module api.content.form.inputtype.tag {
             return wemQ<void>(null);
         }
 
-        getAttachments(): api.content.attachment.Attachment[] {
-            return [];
-        }
-
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
             var recording = new api.form.inputtype.InputValidationRecording();

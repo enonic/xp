@@ -2,19 +2,19 @@ module api.content {
 
     export class Thumbnail implements api.Equitable {
 
-        private blobKey: api.blob.BlobKey;
+        private blobKey: api.util.BinaryReference;
 
         private mimeType: string;
 
         private size: number;
 
         constructor(builder: ThumbnailBuilder) {
-            this.blobKey = builder.blobKey;
+            this.blobKey = builder.binaryReference;
             this.mimeType = builder.mimeType;
             this.size = builder.size;
         }
 
-        getBlobKey(): api.blob.BlobKey {
+        getBlobKey(): api.util.BinaryReference {
             return this.blobKey;
         }
 
@@ -29,7 +29,7 @@ module api.content {
         toJson(): api.content.ThumbnailJson {
 
             return {
-                "blobKey": this.getBlobKey().toString(),
+                "binaryReference": this.getBlobKey().toString(),
                 "mimeType": this.getMimeType(),
                 "size": this.getSize()
             };
@@ -59,21 +59,21 @@ module api.content {
 
     export class ThumbnailBuilder {
 
-        blobKey: api.blob.BlobKey;
+        binaryReference: api.util.BinaryReference;
 
         mimeType: string;
 
         size: number;
 
         public fromJson(json: ThumbnailJson): ThumbnailBuilder {
-            this.blobKey = new api.blob.BlobKey(json.blobKey);
+            this.binaryReference = new api.util.BinaryReference(json.binaryReference);
             this.mimeType = json.mimeType;
             this.size = json.size;
             return this;
         }
 
-        public setBlobKey(value: api.blob.BlobKey): ThumbnailBuilder {
-            this.blobKey = value;
+        public setBinaryReference(value: api.util.BinaryReference): ThumbnailBuilder {
+            this.binaryReference = value;
             return this;
         }
 

@@ -15,8 +15,6 @@ module api.form.inputtype {
 
         newInitialValue(): Value;
 
-        getAttachments(): api.content.attachment.Attachment[];
-
         /*
          * Whether the InputTypeView it self is managing adding new occurrences or not.
          * If false, then this is expected to implement interface InputTypeViewNotManagingOccurrences.

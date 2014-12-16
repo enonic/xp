@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.attachment.AttachmentNames;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -466,6 +468,13 @@ public class Content
         public Builder<BUILDER, C> attachments( final Attachments attachments )
         {
             this.attachments = attachments;
+
+            final Attachment thumbnailAttachment = attachments.getAttachment( AttachmentNames.THUMBNAIL );
+            if ( thumbnailAttachment != null )
+            {
+                thumbnail( Thumbnail.from( thumbnailAttachment.getBinaryReference(), thumbnailAttachment.getMimeType(),
+                                           thumbnailAttachment.getSize() ) );
+            }
             return this;
         }
 

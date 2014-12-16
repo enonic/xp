@@ -1,35 +1,42 @@
 package com.enonic.wem.core.content;
 
+import java.io.IOException;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.Metadatas;
+import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.attachment.AttachmentNames;
+import com.enonic.wem.api.content.attachment.Attachments;
+import com.enonic.wem.api.content.attachment.CreateAttachment;
+import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
-import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
+import com.enonic.wem.api.util.BinaryReference;
+import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.content.page.PageDataSerializer;
 import com.enonic.wem.core.form.FormDataSerializer;
 
 public class ContentDataSerializer
-    extends AbstractDataSetSerializer<Content, Content.Builder>
 {
+    private static final FormDataSerializer FORM_SERIALIZER = new FormDataSerializer( ContentPropertyNames.FORM );
 
-    private static final FormDataSerializer FORM_SERIALIZER = new FormDataSerializer( ContentPropertyNames.FORM_SET );
+    private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE );
 
-    private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE_SET );
+    private static final SiteDataSerializer SITE_SERIALIZER = new SiteDataSerializer( ContentPropertyNames.SITE );
 
-    private static final SiteDataSerializer SITE_SERIALIZER = new SiteDataSerializer( ContentPropertyNames.SITE_SET );
-
-    public void toData( final Content content, final PropertySet contentAsData )
+    public void toData( final Content content, final PropertySet contentAsData, final CreateAttachments createAttachments )
     {
         contentAsData.setBoolean( ContentPropertyNames.DRAFT, content.isDraft() );
         contentAsData.ifNotNull().addString( ContentPropertyNames.DISPLAY_NAME, content.getDisplayName() );
-        contentAsData.ifNotNull().addString( ContentPropertyNames.CONTENT_TYPE, content.getType().toString() );
+        contentAsData.ifNotNull().addString( ContentPropertyNames.TYPE, content.getType().toString() );
 
-        contentAsData.addSet( ContentPropertyNames.CONTENT_DATA_SET, content.getData().getRoot().copy( contentAsData.getTree() ) );
+        contentAsData.addSet( ContentPropertyNames.DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
         if ( content.hasMetadata() )
         {
@@ -38,6 +45,11 @@ public class ContentDataSerializer
             {
                 metadataSet.addSet( metadata.getName().toString(), metadata.getData().getRoot().copy( contentAsData.getTree() ) );
             }
+        }
+
+        if ( createAttachments != null )
+        {
+            createAttachmentsToData( createAttachments, contentAsData );
         }
 
         if ( content.getForm() != null )
@@ -57,9 +69,9 @@ public class ContentDataSerializer
         }
     }
 
-    public Content.Builder fromData( final PropertySet set )
+    public Content.Builder fromData( final PropertySet contentAsSet )
     {
-        final ContentTypeName contentTypeName = ContentTypeName.from( set.getString( ContentPropertyNames.CONTENT_TYPE ) );
+        final ContentTypeName contentTypeName = ContentTypeName.from( contentAsSet.getString( ContentPropertyNames.TYPE ) );
         final Content.Builder builder;
         if ( contentTypeName.isPageTemplate() )
         {
@@ -75,11 +87,11 @@ public class ContentDataSerializer
         }
         builder.type( contentTypeName );
 
-        builder.displayName( set.getString( ContentPropertyNames.DISPLAY_NAME ) );
-        builder.draft( set.getBoolean( ContentPropertyNames.DRAFT ) );
-        builder.data( set.getSet( ContentPropertyNames.CONTENT_DATA_SET ).toTree() );
+        builder.displayName( contentAsSet.getString( ContentPropertyNames.DISPLAY_NAME ) );
+        builder.draft( contentAsSet.getBoolean( ContentPropertyNames.DRAFT ) );
+        builder.data( contentAsSet.getSet( ContentPropertyNames.DATA ).toTree() );
 
-        final PropertySet metadataSet = set.getSet( ContentPropertyNames.METADATA );
+        final PropertySet metadataSet = contentAsSet.getSet( ContentPropertyNames.METADATA );
         if ( metadataSet != null )
         {
             final Metadatas.Builder metadatasBuilder = Metadatas.builder();
@@ -91,11 +103,24 @@ public class ContentDataSerializer
             builder.metadata( metadatasBuilder.build() );
         }
 
-        builder.form( FORM_SERIALIZER.fromData( set.getSet( ContentPropertyNames.FORM_SET ) ) );
-        if ( set.hasProperty( ContentPropertyNames.PAGE_SET ) )
+        builder.form( FORM_SERIALIZER.fromData( contentAsSet.getSet( ContentPropertyNames.FORM ) ) );
+        if ( contentAsSet.hasProperty( ContentPropertyNames.PAGE ) )
         {
-            builder.page( PAGE_SERIALIZER.fromData( set.getSet( ContentPropertyNames.PAGE_SET ) ) );
+            builder.page( PAGE_SERIALIZER.fromData( contentAsSet.getSet( ContentPropertyNames.PAGE ) ) );
         }
+
+        final Attachments attachments = dataToAttachments( contentAsSet.getSets( ContentPropertyNames.ATTACHMENT ) );
+        builder.attachments( attachments );
+
+        final Attachment thumbnailAttachment = attachments.getAttachment( AttachmentNames.THUMBNAIL );
+        if ( thumbnailAttachment != null )
+        {
+            final BinaryReference thumbnailBinaryRef = thumbnailAttachment.getBinaryReference();
+            final Thumbnail thumbnail =
+                Thumbnail.from( thumbnailBinaryRef, thumbnailAttachment.getMimeType(), thumbnailAttachment.getSize() );
+            builder.thumbnail( thumbnail );
+        }
+
         return builder;
     }
 
@@ -103,10 +128,9 @@ public class ContentDataSerializer
     {
         contentAsData.addBoolean( ContentPropertyNames.DRAFT, params.isDraft() );
         contentAsData.ifNotNull().addString( ContentPropertyNames.DISPLAY_NAME, params.getDisplayName() );
-        contentAsData.ifNotNull().addString( ContentPropertyNames.CONTENT_TYPE,
-                                             params.getContentType() != null ? params.getContentType().toString() : null );
+        contentAsData.ifNotNull().addString( ContentPropertyNames.TYPE, params.getType() != null ? params.getType().toString() : null );
 
-        contentAsData.addSet( ContentPropertyNames.CONTENT_DATA_SET, params.getData().getRoot().copy( contentAsData.getTree() ) );
+        contentAsData.addSet( ContentPropertyNames.DATA, params.getData().getRoot().copy( contentAsData.getTree() ) );
 
         if ( params.getMetadata() != null && !params.getMetadata().isEmpty() )
         {
@@ -117,9 +141,50 @@ public class ContentDataSerializer
             }
         }
 
+        if ( params.getCreateAttachments() != null )
+        {
+            createAttachmentsToData( params.getCreateAttachments(), contentAsData );
+        }
+
         if ( params.getForm() != null )
         {
             FORM_SERIALIZER.toData( params.getForm(), contentAsData );
+        }
+    }
+
+    Attachments dataToAttachments( final Iterable<PropertySet> attachmentSets )
+    {
+        final Attachments.Builder attachments = Attachments.builder();
+        for ( final PropertySet attachmentAsSet : attachmentSets )
+        {
+            attachments.add( Attachment.newAttachment().
+                name( attachmentAsSet.getString( "name" ) ).
+                label( attachmentAsSet.getString( "label" ) ).
+                mimeType( attachmentAsSet.getString( "mimeType" ) ).
+                size( attachmentAsSet.getLong( "size" ) ).
+                build() );
+        }
+        return attachments.build();
+    }
+
+    void createAttachmentsToData( final CreateAttachments createAttachments, final PropertySet contentAsData )
+    {
+        for ( final CreateAttachment createAttachment : createAttachments )
+        {
+            final PropertySet attachmentSet = contentAsData.addSet( ContentPropertyNames.ATTACHMENT );
+            attachmentSet.addString( "name", createAttachment.getName() );
+            attachmentSet.addString( "label", createAttachment.getLabel() );
+            attachmentSet.addBinaryReference( "binary", createAttachment.getBinaryReference() );
+            attachmentSet.addString( "mimeType", createAttachment.getMimeType() );
+
+            try
+            {
+                attachmentSet.addLong( "size", createAttachment.getByteSource().size() );
+            }
+            catch ( IOException e )
+            {
+                throw Exceptions.unchecked( e );
+            }
         }
     }
 }

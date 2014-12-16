@@ -4,9 +4,9 @@ import java.time.Instant;
 
 import org.mockito.Mockito;
 
+import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
@@ -15,9 +15,9 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.mock.memory.MemoryBlob;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.core.image.filter.BuilderContext;
 import com.enonic.wem.core.image.filter.ImageFilter;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
@@ -54,7 +54,6 @@ public abstract class ImageBaseResourceTest
         final BlobKey blobKey = new BlobKey( "<blobkey-1>" );
 
         final Attachment attachment = Attachment.newAttachment().
-            blobKey( blobKey ).
             name( "enonic-logo.png" ).
             mimeType( "image/png" ).
             label( "small" ).
@@ -67,9 +66,8 @@ public abstract class ImageBaseResourceTest
 
         final byte[] imageData = ByteStreams.toByteArray( getClass().getResourceAsStream( "enonic-logo.png" ) );
 
-        final Blob blob = new MemoryBlob( blobKey, imageData );
-        Mockito.when( this.blobService.get( Mockito.isA( BlobKey.class ) ) ).
-            thenReturn( blob );
+        Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
+            thenReturn( ByteSource.wrap( imageData ) );
         Mockito.when( this.imageFilterBuilder.build( Mockito.isA( BuilderContext.class ), Mockito.isA( String.class ) ) ).
             thenReturn( getImageFilterBuilder() );
     }
@@ -82,7 +80,7 @@ public abstract class ImageBaseResourceTest
     private Content createContent( final String id, final String contentPath, final Attachment... attachments )
     {
         final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        data.addString( "image", attachments[0].getName() );
+        data.addString( "media", attachments[0].getName() );
 
         return Content.newContent().
             id( ContentId.from( id ) ).

@@ -55,4 +55,8 @@
 
   <service ref="pageComponentService" auto-export="interfaces"/>
 
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.core.content.CoreContentTypesProvider"/>
+  </service>
+
 </blueprint>

@@ -5,6 +5,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.ContentTypeForms;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
@@ -12,7 +13,6 @@ import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -105,7 +105,7 @@ class CreatePageTemplateCommand
             owner( PrincipalKey.ofAnonymous() ).
             contentData( data ).
             form( ContentTypeForms.PAGE_TEMPLATE ).
-            contentType( ContentTypeName.pageTemplate() ).
+            type( ContentTypeName.pageTemplate() ).
             parent( ContentPath.from( site, ContentServiceImpl.TEMPLATES_FOLDER_NAME ) ) );
 
         return (PageTemplate) pageService.create( new CreatePageParams().

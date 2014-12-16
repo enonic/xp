@@ -12,11 +12,11 @@ import com.google.common.io.ByteSource;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
+import com.enonic.wem.api.content.ContentEditor;
 import com.enonic.wem.api.content.ContentUpdatedEvent;
 import com.enonic.wem.api.content.EditableContent;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.UpdateNodeParams;
@@ -25,6 +25,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.core.media.MediaInfo;
 
 import static com.enonic.wem.api.content.Content.newContent;
 
@@ -37,15 +38,23 @@ final class UpdateContentCommand
 
     private final UpdateContentParams params;
 
+    private final ProxyContentProcessor proxyProcessor;
+
     private UpdateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.proxyProcessor = new ProxyContentProcessor( builder.mediaInfo );
     }
 
     public static Builder create( final UpdateContentParams params )
     {
         return new Builder( params );
+    }
+
+    public static Builder create( final AbstractContentCommand source )
+    {
+        return new Builder( source );
     }
 
     Content execute()
@@ -59,11 +68,7 @@ final class UpdateContentCommand
     {
         final Content contentBeforeChange = getContent( params.getContentId() );
 
-        Content editedContent;
-
-        final EditableContent editableContent = new EditableContent( contentBeforeChange );
-        this.params.getEditor().edit( editableContent );
-        editedContent = editableContent.build();
+        Content editedContent = editContent( params.getEditor(), contentBeforeChange );
 
         if ( contentBeforeChange.equals( editedContent ) )
         {
@@ -73,6 +78,14 @@ final class UpdateContentCommand
         validateEditedContent( editedContent );
 
         editedContent = newContent( editedContent ).modifier( this.params.getModifier() ).build();
+
+        final ContentEditor editorFromProcessor =
+            proxyProcessor.processEdit( contentBeforeChange.getType(), params, params.getCreateAttachments() );
+        if ( editorFromProcessor != null )
+        {
+            editedContent = editContent( editorFromProcessor, editedContent );
+        }
+
         if ( !editedContent.hasThumbnail() )
         {
             final Thumbnail mediaThumbnail = resolveMediaThumbnail( editedContent );
@@ -82,24 +95,19 @@ final class UpdateContentCommand
             }
         }
 
-        final Attachments attachments;
-
-        if ( this.params.getUpdateAttachments() != null )
-        {
-            attachments = this.params.getUpdateAttachments().getAttachments();
-        }
-        else
-        {
-            attachments = contentBeforeChange.getAttachments();
-        }
-
-        final UpdateNodeParams updateNodeParams = translator.toUpdateNodeCommand( editedContent, attachments );
-
+        final UpdateNodeParams updateNodeParams = translator.toUpdateNodeCommand( editedContent, this.params.getCreateAttachments() );
         final Node editedNode = this.nodeService.update( updateNodeParams );
 
         eventPublisher.publish( new ContentUpdatedEvent( editedContent.getId() ) );
 
         return translator.fromNode( editedNode );
+    }
+
+    private Content editContent( final ContentEditor editor, final Content original )
+    {
+        final EditableContent editableContent = new EditableContent( original );
+        editor.edit( editableContent );
+        return editableContent.build();
     }
 
     private void validateEditedContent( final Content edited )
@@ -135,23 +143,23 @@ final class UpdateContentCommand
 
         if ( contentType.getSuperType().isMedia() )
         {
-            Attachment mediaAttachment = this.params.getAttachment( content.getName().toString() );
+            /*Attachment mediaAttachment = this.params.getAttachment( content.getName().toString() );
 
             if ( mediaAttachment == null )
             {
-                mediaAttachment = this.params.getUpdateAttachments().getAttachments().first();
+                mediaAttachment = this.params.getCreateAttachments().getAttachments().first();
             }
             if ( mediaAttachment != null )
             {
                 return createThumbnail( mediaAttachment );
-            }
+            }*/
         }
         return null;
     }
 
     private Thumbnail createThumbnail( final Attachment attachment )
     {
-        final Blob originalImage = blobService.get( attachment.getBlobKey() );
+        final Blob originalImage = blobService.get( /* TODO: attachment.getBlobKey()*/ null );
         final ByteSource source = ThumbnailFactory.resolve( originalImage );
         final Blob thumbnailBlob;
         try (final InputStream stream = source.openStream())
@@ -166,7 +174,7 @@ final class UpdateContentCommand
                                                 : "." + attachment.getExtension() ), e );
         }
 
-        return Thumbnail.from( thumbnailBlob.getKey(), THUMBNAIL_MIME_TYPE, thumbnailBlob.getLength() );
+        return null; //Thumbnail.from( thumbnailBlob.getKey(), THUMBNAIL_MIME_TYPE, thumbnailBlob.getLength() );
     }
 
     private ContentType getContentType( final ContentTypeName contentTypeName )
@@ -177,11 +185,31 @@ final class UpdateContentCommand
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private final UpdateContentParams params;
+        private UpdateContentParams params;
 
-        public Builder( final UpdateContentParams params )
+        private MediaInfo mediaInfo;
+
+        Builder( final UpdateContentParams params )
         {
             this.params = params;
+        }
+
+        Builder( final AbstractContentCommand source )
+        {
+            super( source );
+
+        }
+
+        Builder params( final UpdateContentParams value )
+        {
+            this.params = value;
+            return this;
+        }
+
+        Builder mediaInfo( final MediaInfo value )
+        {
+            this.mediaInfo = value;
+            return this;
         }
 
         void validate()

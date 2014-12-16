@@ -1,9 +1,8 @@
 package com.enonic.wem.api.content;
 
 
-import java.io.InputStream;
-
 import com.google.common.base.Preconditions;
+import com.google.common.io.ByteSource;
 
 public class CreateMediaParams
 {
@@ -13,7 +12,7 @@ public class CreateMediaParams
 
     private String mimeType;
 
-    private InputStream inputStream;
+    private ByteSource byteSource;
 
     public CreateMediaParams parent( final ContentPath value )
     {
@@ -33,9 +32,9 @@ public class CreateMediaParams
         return this;
     }
 
-    public CreateMediaParams inputStream( final InputStream value )
+    public CreateMediaParams byteSource( final ByteSource value )
     {
-        this.inputStream = value;
+        this.byteSource = value;
         return this;
     }
 
@@ -43,8 +42,7 @@ public class CreateMediaParams
     {
         Preconditions.checkNotNull( this.parent, "parent cannot be null. Use ContentPath.ROOT when content has no parent." );
         Preconditions.checkNotNull( this.name, "name cannot be null" );
-        Preconditions.checkNotNull( this.mimeType, "mimeType cannot be null" );
-        Preconditions.checkNotNull( this.inputStream, "inputStream cannot be null" );
+        Preconditions.checkNotNull( this.byteSource, "byteSource cannot be null" );
     }
 
     public ContentPath getParent()
@@ -62,8 +60,8 @@ public class CreateMediaParams
         return mimeType;
     }
 
-    public InputStream getInputStream()
+    public ByteSource getByteSource()
     {
-        return inputStream;
+        return byteSource;
     }
 }

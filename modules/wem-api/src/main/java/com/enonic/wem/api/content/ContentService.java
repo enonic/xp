@@ -19,6 +19,8 @@ public interface ContentService
 
     Content update( UpdateContentParams params );
 
+    Content update( UpdateMediaParams params );
+
     Content rename( RenameContentParams params );
 
     String generateContentName( String displayName );

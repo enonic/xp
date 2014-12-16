@@ -31,7 +31,6 @@ public final class CreateContentJson
                        @JsonProperty("displayName") final String displayName, @JsonProperty("parent") final String parent,
                        @JsonProperty("contentType") final String contentType, @JsonProperty("form") final FormJson formJson,
                        @JsonProperty("data") final List<PropertyArrayJson> dataJsonList,
-                       @JsonProperty("attachments") final List<AttachmentJson> attachmentJsonList,
                        @JsonProperty("metadata") final List<MetadataJson> metadataJsonList )
     {
 
@@ -40,7 +39,7 @@ public final class CreateContentJson
         this.createContent.name( ContentName.from( name ) );
         this.createContent.displayName( displayName );
         this.createContent.parent( ContentPath.from( parent ) );
-        this.createContent.contentType( ContentTypeName.from( contentType ) );
+        this.createContent.type( ContentTypeName.from( contentType ) );
         this.createContent.form( formJson != null ? formJson.getForm() : null );
 
         final PropertyTree contentData = PropertyTreeJson.fromJson( dataJsonList );
@@ -52,11 +51,6 @@ public final class CreateContentJson
             metadataList.add( metadataJson.getMetadata() );
         }
         this.createContent.metadata( metadataList );
-
-        for ( AttachmentJson attachmentJson : attachmentJsonList )
-        {
-            this.createContent.attachments( attachmentJson.getAttachment() );
-        }
 
         createContent.setInheritPermissions( true );
     }

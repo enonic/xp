@@ -2,29 +2,18 @@ package com.enonic.wem.api.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.attachment.UpdateAttachmentsParams;
+import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.security.PrincipalKey;
 
 public final class UpdateContentParams
 {
-    private UpdateAttachmentsParams updateAttachments;
+    private ContentId contentId;
 
     private ContentEditor editor;
 
     private PrincipalKey modifier;
 
-    private ContentId contentId;
-
-    public ContentEditor getEditor()
-    {
-        return this.editor;
-    }
-
-    public PrincipalKey getModifier()
-    {
-        return modifier;
-    }
+    private CreateAttachments createAttachments = CreateAttachments.empty();
 
     public UpdateContentParams editor( final ContentEditor editor )
     {
@@ -38,37 +27,43 @@ public final class UpdateContentParams
         return this;
     }
 
-    public ContentId getContentId()
-    {
-        return contentId;
-    }
-
     public UpdateContentParams modifier( final PrincipalKey modifier )
     {
         this.modifier = modifier;
         return this;
     }
 
-    public UpdateContentParams updateAttachments( final UpdateAttachmentsParams updateAttachments )
+    public UpdateContentParams createAttachments( final CreateAttachments value )
     {
-        this.updateAttachments = updateAttachments;
+        this.createAttachments = value;
         return this;
-    }
-
-
-    public Attachment getAttachment( final String attachmentName )
-    {
-        return updateAttachments.getAttachments().getAttachment( attachmentName );
-    }
-
-    public UpdateAttachmentsParams getUpdateAttachments()
-    {
-        return updateAttachments;
     }
 
     public void validate()
     {
-        Preconditions.checkNotNull( this.contentId, "contentId cannot be null" );
-        Preconditions.checkNotNull( this.editor, "editor cannot be null" );
+        Preconditions.checkNotNull( contentId, "contentId cannot be null" );
+        Preconditions.checkNotNull( editor, "editor cannot be null" );
+        Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
+    }
+
+    public ContentEditor getEditor()
+    {
+        return this.editor;
+    }
+
+    public PrincipalKey getModifier()
+    {
+        return modifier;
+    }
+
+
+    public ContentId getContentId()
+    {
+        return contentId;
+    }
+
+    public CreateAttachments getCreateAttachments()
+    {
+        return createAttachments;
     }
 }

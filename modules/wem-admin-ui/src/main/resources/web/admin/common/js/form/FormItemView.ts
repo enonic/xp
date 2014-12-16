@@ -52,13 +52,6 @@ module api.form {
             return this.parent;
         }
 
-        /*
-         *  Override if inheriting FormItemView can provide attachments.
-         */
-        getAttachments(): api.content.attachment.Attachment[] {
-            return [];
-        }
-
         public displayValidationErrors(value: boolean) {
             throw new Error("Must be implemented by inheritor");
         }

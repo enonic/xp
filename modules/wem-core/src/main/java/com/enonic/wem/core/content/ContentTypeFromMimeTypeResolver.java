@@ -34,7 +34,7 @@ final class ContentTypeFromMimeTypeResolver
         MAP.put( "audio/vnd.wave", ContentTypeName.audioMedia() );
         MAP.put( "audio/webm", ContentTypeName.audioMedia() );
 
-        // Audio
+        // Video
         MAP.put( "video/avi", ContentTypeName.videoMedia() );
         MAP.put( "video/mpeg", ContentTypeName.videoMedia() );
         MAP.put( "video/mp4", ContentTypeName.videoMedia() );

@@ -27,10 +27,6 @@
   <service ref="metadataRegistry" interface="com.enonic.wem.api.schema.metadata.MetadataRegistry"/>
 
   <service auto-export="interfaces">
-    <bean class="com.enonic.wem.core.schema.content.CoreContentTypesProvider"/>
-  </service>
-
-  <service auto-export="interfaces">
     <bean class="com.enonic.wem.core.schema.metadata.CoreMetadataSchemasProvider"/>
   </service>
 

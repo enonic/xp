@@ -116,16 +116,6 @@ module api.form {
             return newOccurrenceView;
         }
 
-        getAttachments(): api.content.attachment.Attachment[] {
-            var attachments: api.content.attachment.Attachment[] = [];
-            this.getOccurrenceViews().forEach((occurrenceView: FormItemSetOccurrenceView) => {
-                occurrenceView.getAttachments().forEach((attachment: api.content.attachment.Attachment) => {
-                    attachments.push(attachment);
-                });
-            });
-            return attachments;
-        }
-
         showOccurences(show: boolean) {
             var views = <FormItemSetOccurrenceView[]>this.getOccurrenceViews();
             this.occurrencesCollapsed = !show;

@@ -21,6 +21,8 @@ public class CreateNodeParams
 
     private final PropertyTree data;
 
+    private final boolean ensureUniqueName = false;
+
     private final Attachments attachments;
 
     private final IndexConfigDocument indexConfigDocument;

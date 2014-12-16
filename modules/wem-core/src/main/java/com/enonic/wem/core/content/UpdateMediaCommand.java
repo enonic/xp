@@ -1,11 +1,13 @@
 package com.enonic.wem.core.content;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.Name;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.content.CreateMediaParams;
+import com.enonic.wem.api.content.UpdateContentParams;
+import com.enonic.wem.api.content.UpdateMediaParams;
 import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertyTree;
@@ -13,23 +15,32 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.media.MediaInfo;
 import com.enonic.wem.core.media.MediaInfoService;
 
-final class CreateMediaCommand
+final class UpdateMediaCommand
     extends AbstractContentCommand
 {
-    private final CreateMediaParams params;
+    private static final String THUMBNAIL_MIME_TYPE = "image/png";
+
+    private final static Logger LOG = LoggerFactory.getLogger( UpdateMediaCommand.class );
+
+    private final UpdateMediaParams params;
 
     private final MediaInfoService mediaInfoService;
 
-    private CreateMediaCommand( final Builder builder )
+    private UpdateMediaCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
     }
 
+    public static Builder create( final UpdateMediaParams params )
+    {
+        return new Builder( params );
+    }
+
     Content execute()
     {
-        this.params.validate();
+        params.validate();
 
         return doExecute();
     }
@@ -37,27 +48,16 @@ final class CreateMediaCommand
     private Content doExecute()
     {
         final MediaInfo mediaInfo = mediaInfoService.parseMediaInfo( params.getByteSource() );
-        if ( params.getMimeType() == null && mediaInfo.getMediaType() != null )
+        if ( params.getMimeType() == null )
         {
             params.mimeType( mediaInfo.getMediaType().getType() );
         }
-
-        Preconditions.checkNotNull( params.getMimeType(), "Unable to resolve media type" );
 
         final ContentTypeName type = ContentTypeFromMimeTypeResolver.resolve( params.getMimeType() );
         if ( type == null )
         {
             throw new IllegalArgumentException( "Could not resolve a ContentType from MIME type: " + params.getMimeType() );
         }
-
-        final String nameOfContent = Name.ensureValidName( params.getName() );
-
-        // TODO: Resolve form based on type?
-        final PropertyTree data = new PropertyTree();
-        new ImageFormDataBuilder().
-            image( params.getName() ).
-            mimeType( params.getMimeType() ).
-            build( data );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create().
             name( params.getName() ).
@@ -66,39 +66,36 @@ final class CreateMediaCommand
             byteSource( params.getByteSource() ).
             build();
 
-        final CreateContentParams createContentParams = new CreateContentParams().
-            name( nameOfContent ).
-            parent( params.getParent() ).
-            draft( false ).
-            type( type ).
-            displayName( params.getName() ).
-            contentData( data ).
-            createAttachments( CreateAttachments.from( mediaAttachment ) );
+        // TODO: Support renaming? final String nameOfContent = Name.ensureValidName( params.getName() );
 
-        final CreateContentCommand createCommand = CreateContentCommand.create( this ).
+        final PropertyTree data = new PropertyTree();
+        new ImageFormDataBuilder().
+            image( params.getName() ).
+            mimeType( params.getMimeType() ).
+            build( data );
+
+        final UpdateContentParams updateParams = new UpdateContentParams().
+            contentId( params.getContent() ).
+            createAttachments( CreateAttachments.from( mediaAttachment ) ).
+            editor( editable -> editable.data = data );
+
+        final UpdateContentCommand updateCommand = UpdateContentCommand.create( this ).
+            params( updateParams ).
             mediaInfo( mediaInfo ).
-            params( createContentParams ).
             build();
-        return createCommand.execute();
-    }
-
-
-    public static Builder create()
-    {
-        return new Builder();
+        return updateCommand.execute();
     }
 
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private CreateMediaParams params;
+        private final UpdateMediaParams params;
 
         private MediaInfoService mediaInfoService;
 
-        public Builder params( final CreateMediaParams params )
+        public Builder( final UpdateMediaParams params )
         {
             this.params = params;
-            return this;
         }
 
         public Builder mediaInfoService( final MediaInfoService value )
@@ -109,15 +106,15 @@ final class CreateMediaCommand
 
         void validate()
         {
-            Preconditions.checkNotNull( params, "params must be given" );
-            super.validate();
+            Preconditions.checkNotNull( params );
         }
 
-        public CreateMediaCommand build()
+        public UpdateMediaCommand build()
         {
             validate();
-            return new CreateMediaCommand( this );
+            return new UpdateMediaCommand( this );
         }
+
     }
 
 }

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.schema.content;
+package com.enonic.wem.core.content;
 
 import java.io.InputStream;
 import java.time.Instant;
@@ -9,8 +9,8 @@ import org.apache.commons.lang.WordUtils;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeProvider;
 import com.enonic.wem.api.schema.content.ContentTypes;
