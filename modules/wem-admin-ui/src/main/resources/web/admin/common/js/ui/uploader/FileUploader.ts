@@ -28,10 +28,10 @@ module api.ui.uploader {
 
         updateUploadItem(item: UploadItem, serverResponse): UploadItem {
             if (serverResponse.items && serverResponse.items.length > 0) {
-                var uploadedItem = serverResponse.items[0];
+                var uploadedItem: UploadItem = serverResponse.items[0];
                 return item.
-                    setBlobKey(new api.blob.BlobKey(uploadedItem.id)).
-                    setMimeType(uploadedItem.mimeType).
+                    setBlobKey(new api.blob.BlobKey(uploadedItem.getId())).
+                    setMimeType(uploadedItem.getMimeType()).
                     setProgress(100);
             }
         }
@@ -55,8 +55,6 @@ module api.ui.uploader {
                     results.appendChild(this.createBinaryResult(val));
                 }
             });
-
-            return this;
 
             return this;
         }

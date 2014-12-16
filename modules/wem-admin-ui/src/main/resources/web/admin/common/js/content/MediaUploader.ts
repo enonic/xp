@@ -3,25 +3,25 @@ module api.content {
     import Button = api.ui.button.Button;
     import CloseButton = api.ui.button.CloseButton;
 
-    export enum ContentUploaderOperation
+    export enum MediaUploaderOperation
     {
         create,
         update
     }
 
-    export interface ContentUploaderConfig extends api.ui.uploader.UploaderConfig {
+    export interface MediaUploaderConfig extends api.ui.uploader.UploaderConfig {
 
-        operation: ContentUploaderOperation;
+        operation: MediaUploaderOperation;
     }
 
-    export class ContentUploader extends api.ui.uploader.Uploader<Content> {
+    export class MediaUploader extends api.ui.uploader.Uploader<Content> {
 
         private propertyIdProvider: api.data.PropertyIdProvider;
 
-        constructor(config: ContentUploaderConfig) {
+        constructor(config: MediaUploaderConfig) {
 
             if (config.url == undefined) {
-                config.url = api.util.UriHelper.getRestUri("content/" + ContentUploaderOperation[config.operation] + "Media")
+                config.url = api.util.UriHelper.getRestUri("content/" + MediaUploaderOperation[config.operation] + "Media")
             }
 
             super(config);

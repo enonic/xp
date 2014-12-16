@@ -28,7 +28,7 @@ module app.create {
 
         private input: api.ui.text.TextInput;
 
-        private dropzone: api.content.ContentUploader;
+        private mediaUploader: api.content.MediaUploader;
 
         private listItems: NewContentDialogListItem[];
 
@@ -57,16 +57,16 @@ module app.create {
                 parent: ContentPath.ROOT.toString()
             };
 
-            this.dropzone = new api.content.ContentUploader({
-                operation: api.content.ContentUploaderOperation.create,
+            this.mediaUploader = new api.content.MediaUploader({
+                operation: api.content.MediaUploaderOperation.create,
                 params: this.mediaUploaderParams,
                 name: 'new-content-uploader',
                 showButtons: false,
                 showResult: false,
                 deferred: true  // wait till the window is shown
             });
-            aside.appendChild(this.dropzone);
-            this.dropzone.onFileUploaded((event: FileUploadedEvent<api.content.Content>) => {
+            aside.appendChild(this.mediaUploader);
+            this.mediaUploader.onFileUploaded((event: FileUploadedEvent<api.content.Content>) => {
                 this.closeAndFireNewMediaEvent(event.getUploadItem());
             });
 
@@ -180,7 +180,7 @@ module app.create {
             }
             this.input.giveFocus();
 
-            this.dropzone.reset();
+            this.mediaUploader.reset();
 
             // CMS-3711: reload content types each time when dialog is show.
             // It is slow but newly create content types are displayed.
@@ -189,7 +189,7 @@ module app.create {
 
         hide() {
             super.hide();
-            this.dropzone.stop();
+            this.mediaUploader.stop();
         }
 
         private loadContentTypes() {

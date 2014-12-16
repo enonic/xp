@@ -7,7 +7,7 @@ module api.content.form.inputtype.upload {
 
     export class FileUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<any,string> {
 
-        private fileUploader: api.ui.uploader.FileUploader;
+        private fileUploader: api.content.MediaUploader;
 
         private attachmentName: string;
 
@@ -18,7 +18,8 @@ module api.content.form.inputtype.upload {
             var input = config.input;
             this.attachment = config.attachments.getAttachment(0);
 
-            this.fileUploader = new api.ui.uploader.FileUploader({
+            this.fileUploader = new api.content.MediaUploader({
+                operation: api.content.MediaUploaderOperation.create,
                 name: input.getName(),
                 maximumOccurrences: 1
             });
@@ -48,14 +49,16 @@ module api.content.form.inputtype.upload {
                 this.fileUploader.setValue(imgUrl);
             }
 
-            this.fileUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.ui.uploader.UploadItem>) => {
-                if (this.attachmentName == null) {
-                    var uploadItem = event.getUploadItem();
-                    this.attachmentName = uploadItem.getName();
-                    this.attachment = this.createAttachment(uploadItem);
+            this.fileUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
 
-                    var value = new Value(this.attachmentName, ValueTypes.STRING);
-                    property.setValue(value);
+                if (this.attachmentName == null) {
+                    this.attachment = event.getUploadItem().getAttachments().getAttachmentByLabel("source");
+
+                    if (this.attachment) {
+                        this.attachmentName = this.attachment.getName().toString();
+                        var value = new Value(this.attachmentName, ValueTypes.STRING);
+                        property.setValue(value);
+                    }
                 }
             });
 
@@ -91,15 +94,6 @@ module api.content.form.inputtype.upload {
 
         unBlur(listener: (event: FocusEvent) => void) {
             this.fileUploader.unBlur(listener);
-        }
-
-        private createAttachment(uploadItem: api.ui.uploader.UploadItem): api.content.attachment.Attachment {
-            return new api.content.attachment.AttachmentBuilder().
-                setBlobKey(uploadItem.getBlobKey()).
-                setName(new api.content.attachment.AttachmentName(uploadItem.getName())).
-                setMimeType(uploadItem.getMimeType()).
-                setSize(uploadItem.getSize()).
-                build();
         }
     }
 
