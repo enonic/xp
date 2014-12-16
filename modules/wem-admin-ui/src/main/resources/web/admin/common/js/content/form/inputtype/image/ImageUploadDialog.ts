@@ -22,7 +22,7 @@ module api.content.form.inputtype.image {
             this.appendChildToContentPanel(description);
 
             this.imageUploader = new api.content.ImageUploader({
-                operation: api.content.ContentUploaderOperation.create,
+                operation: api.content.MediaUploaderOperation.create,
                 name: 'image-selector-upload-dialog',
                 showButtons: false,
                 showResult: false,

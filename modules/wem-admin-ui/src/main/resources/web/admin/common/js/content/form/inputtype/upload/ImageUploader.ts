@@ -19,7 +19,7 @@ module api.content.form.inputtype.upload {
             this.attachment = config.attachments.getAttachment(0);
 
             this.imageUploader = new api.content.ImageUploader(<api.content.ImageUploaderConfig>{
-                operation: api.content.ContentUploaderOperation.update,
+                operation: api.content.MediaUploaderOperation.update,
                 name: input.getName(),
                 maximumOccurrences: 1,
                 parent: config.contentPath
