@@ -20,6 +20,21 @@ public final class ExceptionInfo
         return this.status;
     }
 
+    public boolean shouldLogAsError()
+    {
+        if ( ( this.status >= 500 ) && ( this.status < 600 ) )
+        {
+            return true;
+        }
+
+        if ( this.status == 400 )
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public String getReasonPhrase()
     {
         return Response.Status.fromStatusCode( this.status ).getReasonPhrase();
