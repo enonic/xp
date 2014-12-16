@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import com.enonic.wem.admin.json.ChangeTraceableJson;
 import com.enonic.wem.admin.json.ItemJson;
+import com.enonic.wem.admin.json.thumb.ThumbnailJson;
 import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.admin.rest.resource.content.json.ChildOrderJson;
 import com.enonic.wem.api.content.Content;
@@ -17,7 +18,7 @@ public class ContentSummaryJson
 
     private final String iconUrl;
 
-    private final ContentThumbnailJson thumbnailJson;
+    private final ThumbnailJson thumbnailJson;
 
     private final boolean deletable;
 
@@ -32,7 +33,7 @@ public class ContentSummaryJson
         super( content.getId() );
         this.content = content;
         this.iconUrl = iconUrlResolver.resolve( content );
-        this.thumbnailJson = content.hasThumbnail() ? new ContentThumbnailJson( content.getThumbnail() ) : null;
+        this.thumbnailJson = content.hasThumbnail() ? new ThumbnailJson( content.getThumbnail() ) : null;
         this.isSite = content.isSite();
         this.isPage = content.hasPage();
         this.deletable = !content.hasChildren();
@@ -44,7 +45,7 @@ public class ContentSummaryJson
         return iconUrl;
     }
 
-    public ContentThumbnailJson getThumbnail()
+    public ThumbnailJson getThumbnail()
     {
         return this.thumbnailJson;
     }

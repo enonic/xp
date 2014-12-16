@@ -20,7 +20,6 @@ import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
-import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -35,6 +34,7 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.thumb.Thumbnail;
 
 public class ContentNodeTranslator
 {

@@ -7,7 +7,7 @@ module app.wizard {
     import Content = api.content.Content;
     import ContentBuilder = api.content.ContentBuilder;
     import Attachment = api.content.attachment.Attachment;
-    import ThumbnailBuilder = api.content.ThumbnailBuilder;
+    import Thumbnail = api.thumb.Thumbnail;
     import ContentName = api.content.ContentName;
     import CreateContentRequest = api.content.CreateContentRequest;
     import UpdateContentRequest = api.content.UpdateContentRequest;
@@ -547,7 +547,7 @@ module app.wizard {
                 setMetadata(viewedContent.getAllMetadata());
 
             /* TODO: CMS-4677 if (this.iconUploadItem) {
-                var thumbnail = new ThumbnailBuilder().
+             var thumbnail = Thumbnail.create().
              setBinaryReference(this.iconUploadItem.getBlobKey()).
                     setMimeType(this.iconUploadItem.getMimeType()).
                     setSize(this.iconUploadItem.getSize()).

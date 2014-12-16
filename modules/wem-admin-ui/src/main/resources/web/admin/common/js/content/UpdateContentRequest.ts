@@ -1,5 +1,7 @@
 module api.content {
 
+    import Thumbnail = api.thumb.Thumbnail;
+
     export class UpdateContentRequest extends ContentResourceRequest<api.content.json.ContentJson, Content> {
 
         private id: string;
@@ -16,7 +18,7 @@ module api.content {
 
         private draft: boolean;
 
-        private thumbnail: api.content.Thumbnail;
+        private thumbnail: Thumbnail;
 
         constructor(id: string) {
             super();
@@ -25,7 +27,7 @@ module api.content {
             this.setMethod("POST");
         }
 
-        setThumbnail(thumbnail: api.content.Thumbnail) {
+        setThumbnail(thumbnail: Thumbnail) {
             this.thumbnail = thumbnail;
         }
 

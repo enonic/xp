@@ -7,7 +7,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.thumb.Thumbnail;
+import com.enonic.wem.api.thumb.Thumbnail;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.xp.portal.PortalResponse;
 

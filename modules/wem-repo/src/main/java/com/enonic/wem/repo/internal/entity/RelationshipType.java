@@ -6,7 +6,7 @@ import java.time.Instant;
 import com.google.common.base.Objects;
 
 import com.enonic.wem.api.Name;
-import com.enonic.wem.api.content.thumb.Thumbnail;
+import com.enonic.wem.api.thumb.Thumbnail;
 
 public final class RelationshipType
 {

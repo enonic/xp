@@ -1,21 +1,21 @@
-module api.content {
+module api.thumb {
 
     export class Thumbnail implements api.Equitable {
 
-        private blobKey: api.util.BinaryReference;
+        private binaryReference: api.util.BinaryReference;
 
         private mimeType: string;
 
         private size: number;
 
         constructor(builder: ThumbnailBuilder) {
-            this.blobKey = builder.binaryReference;
+            this.binaryReference = builder.binaryReference;
             this.mimeType = builder.mimeType;
             this.size = builder.size;
         }
 
-        getBlobKey(): api.util.BinaryReference {
-            return this.blobKey;
+        getBinaryReference(): api.util.BinaryReference {
+            return this.binaryReference;
         }
 
         getMimeType(): string {
@@ -26,10 +26,10 @@ module api.content {
             return this.size;
         }
 
-        toJson(): api.content.ThumbnailJson {
+        toJson(): ThumbnailJson {
 
             return {
-                "binaryReference": this.getBlobKey().toString(),
+                "binaryReference": this.getBinaryReference().toString(),
                 "mimeType": this.getMimeType(),
                 "size": this.getSize()
             };
@@ -43,7 +43,7 @@ module api.content {
 
             var other = <Thumbnail>o;
 
-            if (!api.ObjectHelper.equals(this.blobKey, other.blobKey)){
+            if (!api.ObjectHelper.equals(this.binaryReference, other.binaryReference)) {
                 return false;
             }
             if (!api.ObjectHelper.stringEquals(this.mimeType, other.mimeType)) {
@@ -53,6 +53,10 @@ module api.content {
                 return false;
             }
             return true;
+        }
+
+        public static create(): ThumbnailBuilder {
+            return new ThumbnailBuilder();
         }
 
     }

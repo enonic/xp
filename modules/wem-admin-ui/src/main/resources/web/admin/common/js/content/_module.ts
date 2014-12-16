@@ -13,8 +13,6 @@
 ///<reference path='ContentResponse.ts' />
 ///<reference path='ContentByDisplayNameComparator.ts' />
 ///<reference path='ContentByModifiedTimeComparator.ts' />
-///<reference path='Thumbnail.ts' />
-///<reference path='ThumbnailJson.ts' />
 ///<reference path='Metadata.ts' />
 
 ///<reference path='ContentResourceRequest.ts' />

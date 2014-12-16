@@ -24,7 +24,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.ImageMediaHelper;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.thumb.Thumbnail;
+import com.enonic.wem.api.thumb.Thumbnail;
 import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;

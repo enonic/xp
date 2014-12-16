@@ -107,6 +107,7 @@
 ///<reference path='schema/relationshiptype/_module.ts' />
 ///<reference path='schema/metadata/_module.ts'/>
 
+///<reference path='thumb/_module.ts' />
 ///<reference path='content/json/_module.ts' />
 ///<reference path='content/_module.ts' />
 ///<reference path='content/query/_module.ts' />

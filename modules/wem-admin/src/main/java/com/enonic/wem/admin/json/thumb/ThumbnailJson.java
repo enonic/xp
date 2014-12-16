@@ -1,10 +1,10 @@
-package com.enonic.wem.admin.json.content;
+package com.enonic.wem.admin.json.thumb;
 
 
-import com.enonic.wem.api.content.thumb.Thumbnail;
+import com.enonic.wem.api.thumb.Thumbnail;
 
 @SuppressWarnings("UnusedDeclaration")
-public class ContentThumbnailJson
+public class ThumbnailJson
 {
     private final String binaryReference;
 
@@ -12,7 +12,7 @@ public class ContentThumbnailJson
 
     private final String mimeType;
 
-    ContentThumbnailJson( final Thumbnail thumbnail )
+    ThumbnailJson( final Thumbnail thumbnail )
     {
         this.binaryReference = thumbnail.getBinaryReference().toString();
         this.size = thumbnail.getSize();

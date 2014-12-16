@@ -16,7 +16,7 @@ module api.content.json {
 
         iconUrl:string;
 
-        thumbnail:ThumbnailJson;
+        thumbnail: api.thumb.ThumbnailJson;
 
         modifier:string;
 

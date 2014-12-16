@@ -11,7 +11,6 @@ import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.content.thumb.Thumbnail;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.index.ChildOrder;
@@ -20,6 +19,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.thumb.Thumbnail;
 
 @SuppressWarnings("UnusedDeclaration")
 public class Content

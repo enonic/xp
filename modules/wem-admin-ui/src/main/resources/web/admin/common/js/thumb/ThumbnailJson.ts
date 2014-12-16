@@ -1,4 +1,4 @@
-module api.content {
+module api.thumb {
 
     export interface ThumbnailJson {
 

@@ -1,6 +1,7 @@
-package com.enonic.wem.api.content.thumb;
+package com.enonic.wem.api.thumb;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.util.BinaryReference;
@@ -15,15 +16,14 @@ public final class Thumbnail
 
     private Thumbnail( final BinaryReference binaryReference, final String mimeType, final Long size )
     {
-        Preconditions.checkNotNull( mimeType, "mimeType is mandatory for an icon" );
         Preconditions.checkNotNull( binaryReference, "binaryReference is mandatory" );
+        Preconditions.checkNotNull( mimeType, "mimeType is mandatory for an icon" );
         Preconditions.checkNotNull( size, "size is mandatory" );
         this.binaryReference = binaryReference;
         this.mimeType = mimeType;
         this.size = size;
     }
 
-    // TODO: Rename to getBinaryReference
     public BinaryReference getBinaryReference()
     {
         return binaryReference;
@@ -51,41 +51,17 @@ public final class Thumbnail
             return false;
         }
 
-        final Thumbnail thumbnail = (Thumbnail) o;
+        final Thumbnail other = (Thumbnail) o;
 
-        if ( size != thumbnail.size )
-        {
-            return false;
-        }
-        if ( binaryReference != null ? !binaryReference.equals( thumbnail.binaryReference ) : thumbnail.binaryReference != null )
-        {
-            return false;
-        }
-        if ( mimeType != null ? !mimeType.equals( thumbnail.mimeType ) : thumbnail.mimeType != null )
-        {
-            return false;
-        }
-
-        return true;
+        return Objects.equals( binaryReference, other.binaryReference ) &&
+            Objects.equals( mimeType, other.mimeType ) &&
+            Objects.equals( size, other.size );
     }
 
     @Override
     public int hashCode()
     {
-        int result = binaryReference != null ? binaryReference.hashCode() : 0;
-        result = 31 * result + ( mimeType != null ? mimeType.hashCode() : 0 );
-        result = 31 * result + (int) ( size ^ ( size >>> 32 ) );
-        return result;
-    }
-
-    @Override
-    public String toString()
-    {
-        return Objects.toStringHelper( this ).
-            add( "mimeType", mimeType ).
-            add( "binaryReference", binaryReference ).
-            add( "size", size ).
-            toString();
+        return Objects.hash( binaryReference, mimeType, size );
     }
 
     public static Thumbnail from( final BinaryReference binaryReference, final String mimeType, final long size )

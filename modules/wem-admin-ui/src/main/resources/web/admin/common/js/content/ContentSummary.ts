@@ -1,5 +1,6 @@
 module api.content {
 
+    import Thumbnail = api.thumb.Thumbnail;
     import PropertyIdProvider = api.data.PropertyIdProvider;
 
     export class ContentSummary extends ContentIdBaseItem {
@@ -308,7 +309,7 @@ module api.content {
             this.children = json.hasChildren;
             this.type = new api.schema.content.ContentTypeName(json.type);
             this.iconUrl = json.iconUrl;
-            this.thumbnail = json.thumbnail ? new ThumbnailBuilder().fromJson(json.thumbnail).build() : null;
+            this.thumbnail = json.thumbnail ? Thumbnail.create().fromJson(json.thumbnail).build() : null;
             this.modifier = json.modifier;
             this.owner = json.owner;
             this.page = json.isPage;
