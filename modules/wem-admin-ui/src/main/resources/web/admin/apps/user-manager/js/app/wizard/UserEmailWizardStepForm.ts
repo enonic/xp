@@ -14,10 +14,14 @@ module app.wizard {
 
         private label: LabelEl;
 
-        constructor() {
+        private userStoreKey: api.security.UserStoreKey;
+
+        constructor(userStoreKey: api.security.UserStoreKey) {
             super();
 
+            this.userStoreKey = userStoreKey;
             this.email = new EmailInput();
+            this.email.setUserStoreKey(this.userStoreKey);
 
             var label = new DivEl("input-label"),
                 wrapper = new DivEl("wrapper required");

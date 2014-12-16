@@ -13,6 +13,8 @@ module api.ui.text {
         private status: string;
         private checkTimeout: number;
 
+        private userStoreKey: api.security.UserStoreKey;
+
         constructor() {
             super("div", "email-input");
 
@@ -49,6 +51,11 @@ module api.ui.text {
             return this;
         }
 
+        setUserStoreKey(userStoreKey: api.security.UserStoreKey): EmailInput {
+            this.userStoreKey = userStoreKey;
+            return this;
+        }
+
         getName(): string {
             return this.input.getName();
         }
@@ -70,7 +77,7 @@ module api.ui.text {
             if (!StringHelper.isEmpty(email) && isValid) {
                 status = 'checking';
 
-                new CheckEmailAvailabilityRequest(email).sendAndParse().then((available: boolean) => {
+                new CheckEmailAvailabilityRequest(email).setUserStoreKey(this.userStoreKey).sendAndParse().then((available: boolean) => {
                     this.updateStatus((available || email === this.originEmail) ? 'available' : 'notavailable');
                 }).fail((reason) => {
                     this.updateStatus('error');

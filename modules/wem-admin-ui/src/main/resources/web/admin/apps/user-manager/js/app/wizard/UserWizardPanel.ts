@@ -23,7 +23,7 @@ module app.wizard {
 
         constructor(params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
 
-            this.userEmailWizardStepForm = new UserEmailWizardStepForm();
+            this.userEmailWizardStepForm = new UserEmailWizardStepForm(params.userStore);
             this.userPasswordWizardStepForm = new UserPasswordWizardStepForm();
             this.userMembershipsWizardStepForm = new UserMembershipsWizardStepForm();
             this.userStore = params.userStore;
@@ -116,7 +116,8 @@ module app.wizard {
                     ConfirmationDialog.get().
                         setQuestion("Received Principal from server differs from what you have. Would you like to load changes from server?").
                         setYesCallback(() => this.doLayoutPersistedItem(persistedPrincipal.clone())).
-                        setNoCallback(() => {/* Do nothing */}).
+                        setNoCallback(() => {/* Do nothing */
+                        }).
                         show();
                 }
 
@@ -172,13 +173,15 @@ module app.wizard {
                 email = this.userEmailWizardStepForm.getEmail(),
                 login = this.principalWizardHeader.getName(),
                 password = this.userPasswordWizardStepForm.getPassword(),
-                memberships = this.userMembershipsWizardStepForm.getMemberships().map((el) => { return el.getKey(); });
+                memberships = this.userMembershipsWizardStepForm.getMemberships().map((el) => {
+                    return el.getKey();
+                });
             return new CreateUserRequest().setKey(key).
-                                           setDisplayName(name).
-                                           setEmail(email).
-                                           setLogin(login).
-                                           setPassword(password).
-                                           setMemberships(memberships);
+                setDisplayName(name).
+                setEmail(email).
+                setLogin(login).
+                setPassword(password).
+                setMemberships(memberships);
         }
 
         updatePersistedItem(): wemQ.Promise<Principal> {
@@ -201,12 +204,24 @@ module app.wizard {
                 displayName = user.getDisplayName(),
                 email = user.getEmail(),
                 login = user.getLogin(),
-                oldMemberships = this.getPersistedItem().asUser().getMemberships().map((el) => { return el.getKey(); }),
-                oldMembershipsIds = oldMemberships.map((el) => { return el.getId(); }),
-                newMemberships = user.getMemberships().map((el) => { return el.getKey(); }),
-                newMembershipsIds = newMemberships.map((el) => { return el.getId(); }),
-                addMemberships = newMemberships.filter((el) => { return oldMembershipsIds.indexOf(el.getId()) < 0; }),
-                removeMemberships = oldMemberships.filter((el) => { return newMembershipsIds.indexOf(el.getId()) < 0; });
+                oldMemberships = this.getPersistedItem().asUser().getMemberships().map((el) => {
+                    return el.getKey();
+                }),
+                oldMembershipsIds = oldMemberships.map((el) => {
+                    return el.getId();
+                }),
+                newMemberships = user.getMemberships().map((el) => {
+                    return el.getKey();
+                }),
+                newMembershipsIds = newMemberships.map((el) => {
+                    return el.getId();
+                }),
+                addMemberships = newMemberships.filter((el) => {
+                    return oldMembershipsIds.indexOf(el.getId()) < 0;
+                }),
+                removeMemberships = oldMemberships.filter((el) => {
+                    return newMembershipsIds.indexOf(el.getId()) < 0;
+                });
 
             return new UpdateUserRequest().
                 setKey(key).
@@ -231,12 +246,20 @@ module app.wizard {
             var persistedPrincipal = this.getPersistedItem().asUser();
             var viewedPrincipal = this.assembleViewedPrincipal().asUser();
             // Group/User order can be different for viewed and persisted principal
-            viewedPrincipal.getMemberships().sort((a,b) => { return a.getKey().getId().localeCompare(b.getKey().getId()); });
-            persistedPrincipal.getMemberships().sort((a,b) => { return a.getKey().getId().localeCompare(b.getKey().getId()); });
+            viewedPrincipal.getMemberships().sort((a, b) => {
+                return a.getKey().getId().localeCompare(b.getKey().getId());
+            });
+            persistedPrincipal.getMemberships().sort((a, b) => {
+                return a.getKey().getId().localeCompare(b.getKey().getId());
+            });
 
             // #hack - The newly added members will have different modifiedData
-            var viewedMembershipsKeys = viewedPrincipal.getMemberships().map((el) => { return el.getKey() }),
-                persistedMembershipsKeys = persistedPrincipal.getMemberships().map((el) => { return el.getKey() });
+            var viewedMembershipsKeys = viewedPrincipal.getMemberships().map((el) => {
+                    return el.getKey()
+                }),
+                persistedMembershipsKeys = persistedPrincipal.getMemberships().map((el) => {
+                    return el.getKey()
+                });
 
             if (api.ObjectHelper.arrayEquals(viewedMembershipsKeys, persistedMembershipsKeys)) {
                 viewedPrincipal.setMemberships(persistedPrincipal.getMemberships());

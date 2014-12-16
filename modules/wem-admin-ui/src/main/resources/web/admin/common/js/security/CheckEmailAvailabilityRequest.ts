@@ -24,7 +24,7 @@ module api.security {
         getParams(): Object {
             return {
                 email: this.email,
-                userstoreKey: this.userStoreKey ? this.userStoreKey.toString() : undefined
+                userStoreKey: this.userStoreKey ? this.userStoreKey.toString() : undefined
             };
         }
 
