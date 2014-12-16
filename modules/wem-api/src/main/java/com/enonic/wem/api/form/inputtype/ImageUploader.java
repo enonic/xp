@@ -6,10 +6,10 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 
-final class Image
+final class ImageUploader
     extends InputType
 {
-    Image()
+    ImageUploader()
     {
     }
 

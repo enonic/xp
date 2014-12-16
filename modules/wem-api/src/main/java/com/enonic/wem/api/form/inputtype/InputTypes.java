@@ -29,7 +29,7 @@ public final class InputTypes
 
     public static final InputType HTML_AREA = new HtmlArea();
 
-    public static final InputType IMAGE = new Image();
+    public static final InputType IMAGE_UPLOADER = new ImageUploader();
 
     public static final InputType IMAGE_SELECTOR = new ImageSelector();
 
@@ -67,7 +67,7 @@ public final class InputTypes
         add( DOUBLE ).
         add( GEO_POINT ).
         add( HTML_AREA ).
-        add( IMAGE ).
+        add( IMAGE_UPLOADER ).
         add( IMAGE_SELECTOR ).
         add( MONEY ).
         add( PHONE ).

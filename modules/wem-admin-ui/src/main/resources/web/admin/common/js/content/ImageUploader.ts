@@ -55,14 +55,14 @@ module api.content {
             return [jsonString];
         }
 
-        private createImageResult(url: string): api.dom.DivEl {
+        private createImageResult(value: string): api.dom.DivEl {
             var container = new api.dom.DivEl();
 
             var src: string;
-            if (url && (url.indexOf('/') == -1)) {
-                src = api.util.UriHelper.getRestUri(url ? 'blob/' + url + '?mimeType=image/png' : 'common/images/x-user-photo.png');
+            if (value && (value.indexOf('/') == -1)) {
+                src = api.util.UriHelper.getRestUri('blob/' + value + '?mimeType=image/png');
             } else {
-                src = url;
+                src = value;
             }
 
             var image = new api.dom.ImgEl(src);

@@ -43,5 +43,51 @@ module api.ui.uploader {
         getUploadItemValue(item: UploadItem): string {
             return item.getBlobKey().toString();
         }
+
+        setValue(value: string): FileUploader {
+            super.setValue(value);
+
+            var results = this.getResultContainer();
+            results.removeChildren();
+
+            this.parseValues(value).forEach((val) => {
+                if (val) {
+                    results.appendChild(this.createBinaryResult(val));
+                }
+            });
+
+            return this;
+
+            return this;
+        }
+
+        private parseValues(jsonString: string): string[] {
+            try {
+                var o = JSON.parse(jsonString);
+
+                // Handle non-exception-throwing cases:
+                // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
+                // but... JSON.parse(null) returns 'null', and typeof null === "object",
+                if (o && typeof o === "object" && o.length) {
+                    return o;
+                }
+            } catch (e) { }
+
+            // Value is not JSON so just return it
+            return [jsonString];
+        }
+
+        private createBinaryResult(value: string): api.dom.AEl {
+            var url;
+            if (value && (value.indexOf('/') == -1)) {
+                url = api.util.UriHelper.getRestUri('blob/' + value + '?mimeType=application/octet-stream');
+            } else {
+                url = value;
+            }
+            var link = new api.dom.AEl().setUrl(url, "_blank");
+            link.setHtml(value);
+
+            return link;
+        }
     }
 }
