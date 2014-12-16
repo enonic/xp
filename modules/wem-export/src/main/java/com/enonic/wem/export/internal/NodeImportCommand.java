@@ -71,8 +71,13 @@ public class NodeImportCommand
     {
         final Stream<Path> children = getChildPaths( parentPath );
 
-        children.filter( ( path ) -> !( path.endsWith( Paths.get( NodeExportPathResolver.SYSTEM_FOLDER_NAME ) ) ) ).
+        children.filter( this::isNodeFolder ).
             forEach( ( child ) -> processNodeBasePath( child, ProcessNodeSettings.create() ) );
+    }
+
+    private boolean isNodeFolder( final Path path )
+    {
+        return !( path.endsWith( Paths.get( NodeExportPathResolver.SYSTEM_FOLDER_NAME ) ) );
     }
 
     private void importWithManualOrder( final Path nodeBasePath )

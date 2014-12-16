@@ -70,10 +70,10 @@ public class NodeImportCommandTest
     public void import_nodes()
         throws Exception
     {
-        createNodeXmlFile( "/myExport/mynode", false );
-        createNodeXmlFile( "/myExport/mynode/mychild", false );
-        createNodeXmlFile( "/myExport/mynode/mychild/mychildchild", false );
-        createNodeXmlFile( "/myExport/mynode/mychild/mychildchild/mychildchildchild", false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild", "mychildchild" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild", "mychildchild", "mychildchildchild" ), false );
 
         final NodeImportResult nodeImportResult = NodeImportCommand.create().
             nodeService( this.importNodeService ).
@@ -97,10 +97,10 @@ public class NodeImportCommandTest
     public void import_nodes_into_child()
         throws Exception
     {
-        createNodeXmlFile( "/myExport/mynode", false );
-        createNodeXmlFile( "/myExport/mynode/mychild", false );
-        createNodeXmlFile( "/myExport/mynode/mychild/mychildchild", false );
-        createNodeXmlFile( "/myExport/mynode/mychild/mychildchild/mychildchildchild", false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild", "mychildchild" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild", "mychildchild", "mychildchildchild" ), false );
 
         final NodePath importRoot = NodePath.newNodePath( NodePath.ROOT, "my-import-here" ).build();
 
@@ -149,7 +149,7 @@ public class NodeImportCommandTest
     public void expect_order_file_if_manual()
         throws Exception
     {
-        createNodeXmlFile( "/myExport/mynode/_", true );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "_" ), false );
 
         NodeImportCommand.create().
             nodeService( this.importNodeService ).
@@ -166,16 +166,17 @@ public class NodeImportCommandTest
     public void import_nodes_ordered()
         throws Exception
     {
-        createNodeXmlFile( "/myExport/mynode", true );
-        createNodeXmlFile( "/myExport/mynode/mychild1", false );
-        createNodeXmlFile( "/myExport/mynode/mychild1/mychildchild", true );
-        createNodeXmlFile( "/myExport/mynode/mychild1/mychildchild/mychildchildchild1", false );
-        createNodeXmlFile( "/myExport/mynode/mychild1/mychildchild/mychildchildchild2", false );
-        createNodeXmlFile( "/myExport/mynode/mychild1/mychildchild/mychildchildchild3", false );
-        createNodeXmlFile( "/myExport/mynode/mychild2", false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild1" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild1", "mychildchild" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild1", "mychildchild", "mychildchildchild1" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild1", "mychildchild", "mychildchildchild2" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild1", "mychildchild", "mychildchildchild3" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild2" ), false );
 
-        createOrderFile( "/myExport/mynode", "mychild2", "mychild1" );
-        createOrderFile( "/myExport/mynode/mychild1/mychildchild", "mychildchildchild1", "mychildchildchild2", "mychildchildchild3" );
+        createOrderFile( Paths.get( "myExport", "mynode" ), "mychild2", "mychild1" );
+        createOrderFile( Paths.get( "myExport", "mynode", "mychild1", "mychildchild" ), "mychildchildchild1", "mychildchildchild2",
+                         "mychildchildchild3" );
 
         final NodeImportResult nodeImportResult = NodeImportCommand.create().
             nodeService( this.importNodeService ).
@@ -202,12 +203,12 @@ public class NodeImportCommandTest
     public void ordered_not_in_list_not_imported()
         throws Exception
     {
-        createNodeXmlFile( "/myExport/mynode", true );
-        createNodeXmlFile( "/myExport/mynode/mychild1", false );
-        createNodeXmlFile( "/myExport/mynode/mychild2", false );
-        createNodeXmlFile( "/myExport/mynode/mychild3", false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode" ), true );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild1" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild2" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", "mychild3" ), false );
 
-        createOrderFile( "/myExport/mynode", "mychild2", "mychild1" );
+        createOrderFile( Paths.get( "myExport", "mynode" ), "mychild2", "mychild1" );
 
         final NodeImportResult nodeImportResult = NodeImportCommand.create().
             nodeService( this.importNodeService ).
@@ -233,7 +234,7 @@ public class NodeImportCommandTest
     public void import_with_binaries_missing_file()
         throws Exception
     {
-        createNodeXmlFileWithBinaries( "/myExport/mynode" );
+        createNodeXmlFileWithBinaries( Paths.get( "myExport", "mynode" ) );
 
         NodeImportCommand.create().
             nodeService( this.importNodeService ).
@@ -250,7 +251,7 @@ public class NodeImportCommandTest
     public void import_with_binary()
         throws Exception
     {
-        createNodeXmlFileWithBinaries( "/myExport/mynode" );
+        createNodeXmlFileWithBinaries( Paths.get( "myExport", "mynode" ) );
         createBinaryFile( "/myExport/mynode", "image.jpg", "this-is-the-source".getBytes() );
 
         final NodeImportResult importedNode = NodeImportCommand.create().
@@ -271,13 +272,13 @@ public class NodeImportCommandTest
         assertNotNull( attachedBinary.getBlobKey() );
     }
 
-    private void createOrderFile( final String exportPath, final String... childNodeNames )
+    private void createOrderFile( final Path exportPath, final String... childNodeNames )
         throws Exception
     {
         final String lineSeparator = System.getProperty( "line.separator" );
 
         final Path nodeFileDir = Files.createDirectories(
-            Paths.get( temporaryFolder.getRoot().getPath(), exportPath, NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
+            Paths.get( temporaryFolder.getRoot().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
 
         StringBuilder builder = new StringBuilder();
 
@@ -302,22 +303,22 @@ public class NodeImportCommandTest
         Files.write( Paths.get( nodeFileDir.toString(), fileName ), bytes );
     }
 
-    private void createNodeXmlFile( final String exportPath, boolean ordered )
+    private void createNodeXmlFile( final Path exportPath, boolean ordered )
         throws Exception
     {
         final Path nodeFileDir = Files.createDirectories(
-            Paths.get( temporaryFolder.getRoot().getPath(), exportPath, NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
+            Paths.get( temporaryFolder.getRoot().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
 
         assert nodeFileDir != null;
         Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),
                      readFromFile( ordered ? "node_manual_ordered.xml" : "node_unordered.xml" ).getBytes() );
     }
 
-    private void createNodeXmlFileWithBinaries( final String path )
+    private void createNodeXmlFileWithBinaries( final Path path )
         throws Exception
     {
-        final Path nodeFileDir =
-            Files.createDirectories( Paths.get( temporaryFolder.getRoot().getPath(), path, NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
+        final Path nodeFileDir = Files.createDirectories(
+            Paths.get( temporaryFolder.getRoot().getPath(), path.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
 
         assert nodeFileDir != null;
         Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),
