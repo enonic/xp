@@ -1,12 +1,12 @@
 module app.wizard.action {
 
-    export class DeletePrincipalAction extends api.ui.Action {
+    export class DeleteUserItemAction extends api.ui.Action {
 
-        constructor(wizardPanel: api.app.wizard.WizardPanel<api.security.Principal>) {
+        constructor(wizardPanel: api.app.wizard.WizardPanel<api.Equitable>) {
             super("Delete", "mod+del", true);
             this.onExecuted(() => {
                 api.ui.dialog.ConfirmationDialog.get()
-                    .setQuestion("Are you sure you want to delete this user?")
+                    .setQuestion("Are you sure you want to delete this item?")
                     .setNoCallback(null)
                     .setYesCallback(() => {
                         wizardPanel.close();

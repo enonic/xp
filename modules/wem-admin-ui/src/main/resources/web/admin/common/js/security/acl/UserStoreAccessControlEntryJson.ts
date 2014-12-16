@@ -4,7 +4,7 @@ module api.security.acl {
 
         access: string;
 
-        principalKey: string;
+        principal: PrincipalJson;
 
     }
 }

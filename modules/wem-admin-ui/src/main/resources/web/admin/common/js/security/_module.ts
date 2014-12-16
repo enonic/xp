@@ -33,3 +33,4 @@
 ///<reference path="PrincipalNamedEvent.ts"/>
 ///<reference path="CreateUserStoreRequest.ts"/>
 ///<reference path="UpdateUserStoreRequest.ts"/>
+///<reference path="UserStoreNamedEvent.ts"/>

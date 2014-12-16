@@ -75,7 +75,7 @@ module app.wizard {
             var wizardParams = new app.wizard.PrincipalWizardPanelParams().
                 setPrincipalType(this.principalType).
                 setPrincipalPath(this.principalPath).
-                setUserStore(this.userStore).
+                setUserStoreKey(this.userStore).
                 setAppBarTabId(this.appBarTabId);
 
             this.resolvePrincipalWizardPanel(deferred, wizardParams);
@@ -88,10 +88,10 @@ module app.wizard {
             var deferred = wemQ.defer<PrincipalWizardPanel>();
 
             var wizardParams = new PrincipalWizardPanelParams().
-                setAppBarTabId(this.appBarTabId).
+
                 setPrincipalType(this.principalType).
                 setPrincipalPath(this.principalPath).
-                setUserStore(this.userStore).
+                setUserStoreKey(this.userStore).
                 setPersistedPrincipal(this.principalToEdit);
 
             this.resolvePrincipalWizardPanel(deferred, wizardParams);
@@ -99,26 +99,25 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private resolvePrincipalWizardPanel(deferred: wemQ.Deferred<PrincipalWizardPanel>,
-                                            wizardParams: PrincipalWizardPanelParams) {
+        private resolvePrincipalWizardPanel(deferred: wemQ.Deferred<PrincipalWizardPanel>, wizardParams: PrincipalWizardPanelParams) {
             switch (wizardParams.persistedType) {
             case PrincipalType.ROLE:
-                new RoleWizardPanel(wizardParams, (wizard:PrincipalWizardPanel) => {
+                new RoleWizardPanel(wizardParams, (wizard: PrincipalWizardPanel) => {
                     deferred.resolve(wizard);
                 });
                 break;
             case PrincipalType.USER:
-                new UserWizardPanel(wizardParams, (wizard:PrincipalWizardPanel) => {
+                new UserWizardPanel(wizardParams, (wizard: PrincipalWizardPanel) => {
                     deferred.resolve(wizard);
                 });
                 break;
             case PrincipalType.GROUP:
-                new GroupWizardPanel(wizardParams, (wizard:PrincipalWizardPanel) => {
+                new GroupWizardPanel(wizardParams, (wizard: PrincipalWizardPanel) => {
                     deferred.resolve(wizard);
                 });
                 break;
             default:
-                new PrincipalWizardPanel(wizardParams, (wizard:PrincipalWizardPanel) => {
+                new PrincipalWizardPanel(wizardParams, (wizard: PrincipalWizardPanel) => {
                     deferred.resolve(wizard);
                 });
             }

@@ -23,10 +23,10 @@ module app.wizard {
 
         constructor(params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
 
-            this.userEmailWizardStepForm = new UserEmailWizardStepForm(params.userStore);
+            this.userEmailWizardStepForm = new UserEmailWizardStepForm(params.userStoreKey);
             this.userPasswordWizardStepForm = new UserPasswordWizardStepForm();
             this.userMembershipsWizardStepForm = new UserMembershipsWizardStepForm();
-            this.userStore = params.userStore;
+            this.userStore = params.userStoreKey;
 
             super(params, () => {
                 this.addClass("user-wizard-panel");
@@ -38,9 +38,9 @@ module app.wizard {
             var newWithoutDisplayCameScript = this.isLayingOutNew();
 
             if (newWithoutDisplayCameScript) {
-                this.principalWizardHeader.giveFocus();
-            } else if (!this.principalWizardHeader.giveFocus()) {
-                this.principalWizardHeader.giveFocus();
+                this.wizardHeader.giveFocus();
+            } else if (!this.wizardHeader.giveFocus()) {
+                this.wizardHeader.giveFocus();
             }
 
             this.startRememberFocus();
@@ -95,7 +95,7 @@ module app.wizard {
         postLayoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
-            this.principalWizardHeader.initNames("", "", false);
+            this.wizardHeader.initNames("", "", false);
 
             deferred.resolve(null);
             return deferred.promise;
@@ -105,7 +105,7 @@ module app.wizard {
             if (!this.constructing) {
 
                 var deferred = wemQ.defer<void>();
-                var viewedPrincipal = this.assembleViewedPrincipal();
+                var viewedPrincipal = this.assembleViewedItem();
 
                 if (!this.isPersistedEqualsViewed()) {
 
@@ -148,7 +148,7 @@ module app.wizard {
             }
 
             return wemQ.all(parallelPromises).spread<void>(() => {
-                this.principalWizardHeader.setDisplayName(principal.getDisplayName());
+                this.wizardHeader.setDisplayName(principal.getDisplayName());
                 this.userEmailWizardStepForm.layout(principal);
                 this.userPasswordWizardStepForm.layout(principal);
                 this.userMembershipsWizardStepForm.layout(principal);
@@ -160,18 +160,18 @@ module app.wizard {
         persistNewItem(): wemQ.Promise<Principal> {
             return this.produceCreateUserRequest().sendAndParse().
                 then((principal: Principal) => {
-                    this.principalWizardHeader.disableNameInput();
-                    this.principalWizardHeader.setAutoGenerationEnabled(false);
+                    this.wizardHeader.disableNameInput();
+                    this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('User was created!');
                     return principal;
                 });
         }
 
         produceCreateUserRequest(): CreateUserRequest {
-            var key = PrincipalKey.ofUser(this.userStore, this.principalWizardHeader.getName()),
-                name = this.principalWizardHeader.getDisplayName(),
+            var key = PrincipalKey.ofUser(this.userStore, this.wizardHeader.getName()),
+                name = this.wizardHeader.getDisplayName(),
                 email = this.userEmailWizardStepForm.getEmail(),
-                login = this.principalWizardHeader.getName(),
+                login = this.wizardHeader.getName(),
                 password = this.userPasswordWizardStepForm.getPassword(),
                 memberships = this.userMembershipsWizardStepForm.getMemberships().map((el) => {
                     return el.getKey();
@@ -185,7 +185,7 @@ module app.wizard {
         }
 
         updatePersistedItem(): wemQ.Promise<Principal> {
-            return this.produceUpdateUserRequest(this.assembleViewedPrincipal()).
+            return this.produceUpdateUserRequest(this.assembleViewedItem()).
                 sendAndParse().
                 then((principal: Principal) => {
                     if (!this.getPersistedItem().getDisplayName() && !!principal.getDisplayName()) {
@@ -232,11 +232,11 @@ module app.wizard {
                 removeMemberships(removeMemberships);
         }
 
-        assembleViewedPrincipal(): Principal {
+        assembleViewedItem(): Principal {
             return new UserBuilder(!!this.getPersistedItem() ? this.getPersistedItem().asUser() : null).
-                setDisplayName(this.principalWizardHeader.getDisplayName()).
+                setDisplayName(this.wizardHeader.getDisplayName()).
                 setEmail(this.userEmailWizardStepForm.getEmail()).
-                setLogin(this.principalWizardHeader.getName()).
+                setLogin(this.wizardHeader.getName()).
                 setMemberships(this.userMembershipsWizardStepForm.getMemberships()).
                 // setDisabled().
                 build();
@@ -244,7 +244,7 @@ module app.wizard {
 
         isPersistedEqualsViewed(): boolean {
             var persistedPrincipal = this.getPersistedItem().asUser();
-            var viewedPrincipal = this.assembleViewedPrincipal().asUser();
+            var viewedPrincipal = this.assembleViewedItem().asUser();
             // Group/User order can be different for viewed and persisted principal
             viewedPrincipal.getMemberships().sort((a, b) => {
                 return a.getKey().getId().localeCompare(b.getKey().getId());

@@ -13,12 +13,12 @@ module app.wizard {
 
         private userStore: UserStoreKey;
 
-        constructor(membersWizardStepForm: PrincipalMembersWizardStepForm,
-                    params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
+        constructor(membersWizardStepForm: PrincipalMembersWizardStepForm, params: PrincipalWizardPanelParams,
+                    callback: (wizard: PrincipalWizardPanel) => void) {
 
             this.descriptionWizardStepForm = new PrincipalDescriptionWizardStepForm();
             this.membersWizardStepForm = membersWizardStepForm;
-            this.userStore = params.userStore;
+            this.userStore = params.userStoreKey;
 
             super(params, () => {
                 this.addClass("group-role-wizard-panel");
@@ -42,9 +42,9 @@ module app.wizard {
             var newWithoutDisplayCameScript = this.isLayingOutNew();
 
             if (newWithoutDisplayCameScript) {
-                this.principalWizardHeader.giveFocus();
-            } else if (!this.principalWizardHeader.giveFocus()) {
-                this.principalWizardHeader.giveFocus();
+                this.wizardHeader.giveFocus();
+            } else if (!this.wizardHeader.giveFocus()) {
+                this.wizardHeader.giveFocus();
             }
 
             this.startRememberFocus();
@@ -63,7 +63,7 @@ module app.wizard {
         postLayoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
-            this.principalWizardHeader.initNames("", "", false);
+            this.wizardHeader.initNames("", "", false);
 
             deferred.resolve(null);
             return deferred.promise;
@@ -73,7 +73,7 @@ module app.wizard {
             if (!this.constructing) {
 
                 var deferred = wemQ.defer<void>();
-                var viewedPrincipal = this.assembleViewedPrincipal();
+                var viewedPrincipal = this.assembleViewedItem();
 
                 if (!this.isPersistedEqualsViewed()) {
 
@@ -84,7 +84,8 @@ module app.wizard {
                     ConfirmationDialog.get().
                         setQuestion("Received Principal from server differs from what you have. Would you like to load changes from server?").
                         setYesCallback(() => this.doLayoutPersistedItem(persistedPrincipal.clone())).
-                        setNoCallback(() => {/* Do nothing */}).
+                        setNoCallback(() => {/* Do nothing */
+                        }).
                         show();
                 }
 

@@ -2,23 +2,36 @@ module api.security.acl {
 
     export class UserStoreAccessControlEntry implements api.Equitable {
 
-        private principalKey: PrincipalKey;
+        private principal: Principal;
 
         private access: UserStoreAccess;
 
-        constructor(principalKey: PrincipalKey, access: UserStoreAccess) {
-            api.util.assertNotNull(principalKey, "principalKey not set");
-            api.util.assertNotNull(access, "access not set");
-            this.principalKey = principalKey;
+        constructor(principal: Principal, access?: UserStoreAccess) {
+            api.util.assertNotNull(principal, "principal not set");
+            //    api.util.assertNotNull(access, "access not set");
+            this.principal = principal;
             this.access = access;
         }
 
-        getPrincipalKey(): PrincipalKey {
-            return this.principalKey;
+        getPrincipal(): Principal {
+            return this.principal;
         }
 
         getAccess(): UserStoreAccess {
             return this.access;
+        }
+
+        setAccess(value: string): UserStoreAccessControlEntry {
+            this.access = UserStoreAccess[value];
+            return this;
+        }
+
+        getPrincipalKey(): PrincipalKey {
+            return this.principal.getKey();
+        }
+
+        getPrincipalDisplayName(): string {
+            return this.principal.getDisplayName();
         }
 
         equals(o: api.Equitable): boolean {
@@ -26,23 +39,27 @@ module api.security.acl {
                 return false;
             }
             var other = <UserStoreAccessControlEntry>o;
-            return this.principalKey.equals(other.getPrincipalKey()) &&
+            return this.principal.equals(other.getPrincipal()) &&
                    this.access === other.access;
         }
 
+        getId(): string {
+            return this.principal.getKey().toString();
+        }
+
         toString(): string {
-            return this.getPrincipalKey().toString() + '[' + UserStoreAccess[this.access] + ']';
+            return this.principal.getKey().toString() + '[' + UserStoreAccess[this.access] + ']';
         }
 
         toJson(): api.security.acl.UserStoreAccessControlEntryJson {
             return {
-                "principalKey": this.principalKey.toString(),
+                "principal": this.principal.toJson(),
                 "access": UserStoreAccess[this.access]
             };
         }
 
         static fromJson(json: api.security.acl.UserStoreAccessControlEntryJson): UserStoreAccessControlEntry {
-            return new UserStoreAccessControlEntry(PrincipalKey.fromString(json.principalKey), UserStoreAccess[json.access.toUpperCase()]);
+            return new UserStoreAccessControlEntry(Principal.fromJson(json.principal), UserStoreAccess[json.access.toUpperCase()]);
         }
     }
 

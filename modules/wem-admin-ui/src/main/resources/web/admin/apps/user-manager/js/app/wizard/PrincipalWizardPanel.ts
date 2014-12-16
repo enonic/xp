@@ -15,17 +15,9 @@ module app.wizard {
     import WizardStep = api.app.wizard.WizardStep;
 
 
-    export class PrincipalWizardPanel extends api.app.wizard.WizardPanel<Principal> {
-
-        formIcon: FormIcon;
-
-        principalWizardHeader: WizardHeaderWithDisplayNameAndName;
-
-        wizardActions: app.wizard.action.PrincipalWizardActions;
+    export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
         isPrincipalFormValid: boolean;
-
-        constructing: boolean;
 
         principalType: PrincipalType;
 
@@ -35,43 +27,30 @@ module app.wizard {
 
         constructor(params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
 
-            this.constructing = true;
+
             this.isPrincipalFormValid = false;
             this.principalNamedListeners = [];
 
             this.principalType = params.persistedType;
             this.principalPath = params.persistedPath;
 
-            var iconUrl = api.dom.ImgEl.PLACEHOLDER;
-            this.formIcon = new FormIcon(iconUrl, "Click to upload icon");
-            this.formIcon.addClass("icon icon-xlarge");
-            switch (this.principalType) {
-            case PrincipalType.USER:
-                this.formIcon.addClass("icon-user");
-                break;
-            case PrincipalType.GROUP:
-                this.formIcon.addClass("icon-users");
-                break;
-            case PrincipalType.ROLE:
-                this.formIcon.addClass("icon-shield");
-                break;
-            }
 
             this.wizardActions = new app.wizard.action.PrincipalWizardActions(this);
-            var mainToolbar = new PrincipalWizardToolbar({
+            var duplicateAction = (<app.wizard.action.PrincipalWizardActions>this.wizardActions).getDuplicateAction();
+            this.toolbar = new PrincipalWizardToolbar({
                 saveAction: this.wizardActions.getSaveAction(),
-                duplicateAction: this.wizardActions.getDuplicateAction(),
+                duplicateAction: duplicateAction,
                 deleteAction: this.wizardActions.getDeleteAction(),
                 closeAction: this.wizardActions.getCloseAction()
             });
 
-            this.principalWizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
+            this.wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
 
-            this.principalWizardHeader.setPath(this.principalPath);
+            this.wizardHeader.setPath(this.principalPath);
 
             if (params.persistedPrincipal) {
-                this.principalWizardHeader.disableNameInput();
-                this.principalWizardHeader.setAutoGenerationEnabled(false);
+                this.wizardHeader.disableNameInput();
+                this.wizardHeader.setAutoGenerationEnabled(false);
             } else {
                 this.getPrincipalWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
                     if (event.getPropertyName() === "name") {
@@ -80,18 +59,22 @@ module app.wizard {
                 });
             }
 
-            super({
-                tabId: params.tabId,
-                persistedItem: params.persistedPrincipal,
-                formIcon: this.formIcon,
-                mainToolbar: mainToolbar,
-                header: this.principalWizardHeader,
-                actions: this.wizardActions,
-                livePanel: null,
-                split: false
-            }, () => {
+            super(params, () => {
 
                 this.addClass("principal-wizard-panel");
+
+
+                switch (this.principalType) {
+                case PrincipalType.USER:
+                    this.formIcon.addClass("icon-user");
+                    break;
+                case PrincipalType.GROUP:
+                    this.formIcon.addClass("icon-users");
+                    break;
+                case PrincipalType.ROLE:
+                    this.formIcon.addClass("icon-shield");
+                    break;
+                }
 
                 var responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                     if (this.isVisible()) {
@@ -117,26 +100,28 @@ module app.wizard {
 
                 callback(this);
             });
+
+
         }
 
         getPrincipalWizardHeader(): WizardHeaderWithDisplayNameAndName {
-            return this.principalWizardHeader;
+            return this.wizardHeader;
         }
 
         giveInitialFocus() {
             var newWithoutDisplayCameScript = this.isLayingOutNew();
 
             if (newWithoutDisplayCameScript) {
-                this.principalWizardHeader.giveFocus();
-            } else if (!this.principalWizardHeader.giveFocus()) {
-                this.principalWizardHeader.giveFocus();
+                this.wizardHeader.giveFocus();
+            } else if (!this.wizardHeader.giveFocus()) {
+                this.wizardHeader.giveFocus();
             }
 
             this.startRememberFocus();
         }
 
         saveChanges(): wemQ.Promise<Principal> {
-            if (!this.principalWizardHeader.getName()) {
+            if (!this.wizardHeader.getName()) {
                 var deferred = wemQ.defer<Principal>();
                 api.notify.showError("Name can not be empty");
                 // deferred.resolve(null);
@@ -169,7 +154,7 @@ module app.wizard {
         postLayoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
-            this.principalWizardHeader.initNames("", this.principalPath, false);
+            this.wizardHeader.initNames("", this.principalPath, false);
 
             deferred.resolve(null);
             return deferred.promise;
@@ -182,7 +167,7 @@ module app.wizard {
 
                 var deferred = wemQ.defer<void>();
 
-                viewedPrincipal = this.assembleViewedPrincipal();
+                viewedPrincipal = this.assembleViewedItem();
                 if (!viewedPrincipal.equals(persistedPrincipal)) {
 
                     console.warn("Received Principal from server differs from what's viewed:");
@@ -192,7 +177,8 @@ module app.wizard {
                     ConfirmationDialog.get().
                         setQuestion("Received Principal from server differs from what you have. Would you like to load changes from server?").
                         setYesCallback(() => this.doLayoutPersistedItem(persistedPrincipal.clone())).
-                        setNoCallback(() => {/* Do nothing */}).
+                        setNoCallback(() => {/* Do nothing */
+                        }).
                         show();
                 }
 
@@ -219,7 +205,7 @@ module app.wizard {
         postLayoutPersisted(existing: Principal): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
-            this.principalWizardHeader.initNames(existing.getDisplayName(), existing.getKey().getId(), false);
+            this.wizardHeader.initNames(existing.getDisplayName(), existing.getKey().getId(), false);
 
             deferred.resolve(null);
             return deferred.promise;
@@ -244,24 +230,24 @@ module app.wizard {
             if (persistedPrincipal == undefined) {
                 return true;
             } else {
-                var viewedPrincipal = this.assembleViewedPrincipal();
+                var viewedPrincipal = this.assembleViewedItem();
                 return !viewedPrincipal.equals(this.getPersistedItem());
             }
         }
 
-        assembleViewedPrincipal(): Principal {
+        assembleViewedItem(): Principal {
             var key = this.getPersistedItem().getKey(),
-                displayName = this.principalWizardHeader.getDisplayName(),
+                displayName = this.wizardHeader.getDisplayName(),
                 modifiedTime = this.getPersistedItem().getModifiedTime();
 
             return new Principal(key, displayName, modifiedTime);
         }
 
         resolvePrincipalNameForUpdateRequest(): string {
-            if (api.util.StringHelper.isEmpty(this.principalWizardHeader.getName())) {
+            if (api.util.StringHelper.isEmpty(this.wizardHeader.getName())) {
                 return this.getPersistedItem().getDisplayName();
             } else {
-                return this.principalWizardHeader.getName();
+                return this.wizardHeader.getName();
             }
         }
 

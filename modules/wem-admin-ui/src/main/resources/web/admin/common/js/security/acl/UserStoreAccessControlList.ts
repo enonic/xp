@@ -26,12 +26,12 @@ module api.security.acl {
         }
 
         add(entry: UserStoreAccessControlEntry): void {
-            this.entries[entry.getPrincipalKey().toString()] = entry;
+            this.entries[entry.getPrincipal().getKey().toString()] = entry;
         }
 
         addAll(entries: UserStoreAccessControlEntry[]): void {
             entries.forEach((entry) => {
-                this.entries[entry.getPrincipalKey().toString()] = entry;
+                this.entries[entry.getPrincipal().getKey().toString()] = entry;
             });
         }
 

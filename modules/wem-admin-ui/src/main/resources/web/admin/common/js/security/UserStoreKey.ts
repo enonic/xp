@@ -19,6 +19,10 @@ module api.security {
             return this.id;
         }
 
+        getId(): string {
+            return this.id;
+        }
+
         equals(o: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, UserStoreKey)) {
                 return false;

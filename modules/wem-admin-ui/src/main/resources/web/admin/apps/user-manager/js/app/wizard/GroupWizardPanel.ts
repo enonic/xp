@@ -42,7 +42,7 @@ module app.wizard {
             ];
 
             return wemQ.all(parallelPromises).spread<void>(() => {
-                this.principalWizardHeader.setDisplayName(principal.getDisplayName());
+                this.wizardHeader.setDisplayName(principal.getDisplayName());
                 this.getDescriptionWizardStepForm().layout(principal);
                 this.getMembersWizardStepForm().layout(principal);
 
@@ -51,32 +51,34 @@ module app.wizard {
         }
 
         persistNewItem(): wemQ.Promise<Principal> {
-             return this.produceCreateGroupRequest().sendAndParse().
+            return this.produceCreateGroupRequest().sendAndParse().
                 then((principal: Principal) => {
                     this.getPrincipalWizardHeader().disableNameInput();
-                     this.principalWizardHeader.setAutoGenerationEnabled(false);
+                    this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('Group was created!');
                     return principal;
                 });
         }
 
         produceCreateGroupRequest(): CreateGroupRequest {
-            var key = PrincipalKey.ofGroup(this.getUserStore(), this.principalWizardHeader.getName()),
-                name = this.principalWizardHeader.getDisplayName(),
-                members = this.getMembersWizardStepForm().getMembers().map((el) => { return el.getKey(); });
+            var key = PrincipalKey.ofGroup(this.getUserStore(), this.wizardHeader.getName()),
+                name = this.wizardHeader.getDisplayName(),
+                members = this.getMembersWizardStepForm().getMembers().map((el) => {
+                    return el.getKey();
+                });
             return new CreateGroupRequest().setKey(key).setDisplayName(name).setMembers(members);
         }
 
         updatePersistedItem(): wemQ.Promise<Principal> {
-             return this.produceUpdateGroupRequest(this.assembleViewedPrincipal()).
-                 sendAndParse().
-                 then((principal: Principal) => {
-                     if (!this.getPersistedItem().getDisplayName() && !!principal.getDisplayName()) {
+            return this.produceUpdateGroupRequest(this.assembleViewedItem()).
+                sendAndParse().
+                then((principal: Principal) => {
+                    if (!this.getPersistedItem().getDisplayName() && !!principal.getDisplayName()) {
                         this.notifyPrincipalNamed(principal);
-                     }
-                     api.notify.showFeedback('Group was updated!');
+                    }
+                    api.notify.showFeedback('Group was updated!');
 
-                     return principal;
+                    return principal;
                 });
         }
 
@@ -85,11 +87,19 @@ module app.wizard {
                 key = group.getKey(),
                 displayName = group.getDisplayName(),
                 oldMembers = this.getPersistedItem().asGroup().getMembers(),
-                oldMembersIds = oldMembers.map((el) => { return el.getId(); }),
+                oldMembersIds = oldMembers.map((el) => {
+                    return el.getId();
+                }),
                 newMembers = group.getMembers(),
-                newMembersIds = newMembers.map((el) => { return el.getId(); }),
-                addMembers = newMembers.filter((el) => { return oldMembersIds.indexOf(el.getId()) < 0; }),
-                removeMembers = oldMembers.filter((el) => { return newMembersIds.indexOf(el.getId()) < 0; });
+                newMembersIds = newMembers.map((el) => {
+                    return el.getId();
+                }),
+                addMembers = newMembers.filter((el) => {
+                    return oldMembersIds.indexOf(el.getId()) < 0;
+                }),
+                removeMembers = oldMembers.filter((el) => {
+                    return newMembersIds.indexOf(el.getId()) < 0;
+                });
 
             return new UpdateGroupRequest().
                 setKey(key).
@@ -98,19 +108,25 @@ module app.wizard {
                 removeMembers(removeMembers);
         }
 
-        assembleViewedPrincipal(): Principal {
+        assembleViewedItem(): Principal {
             return new GroupBuilder(this.getPersistedItem().asGroup()).
-                setDisplayName(this.principalWizardHeader.getDisplayName()).
-                setMembers(this.getMembersWizardStepForm().getMembers().map((el) => { return el.getKey(); })).
+                setDisplayName(this.wizardHeader.getDisplayName()).
+                setMembers(this.getMembersWizardStepForm().getMembers().map((el) => {
+                    return el.getKey();
+                })).
                 build();
         }
 
         isPersistedEqualsViewed(): boolean {
             var persistedPrincipal = this.getPersistedItem().asGroup();
-            var viewedPrincipal = this.assembleViewedPrincipal().asGroup();
+            var viewedPrincipal = this.assembleViewedItem().asGroup();
             // Group/User order can be different for viewed and persisted principal
-            viewedPrincipal.getMembers().sort((a,b) => { return a.getId().localeCompare(b.getId()); });
-            persistedPrincipal.getMembers().sort((a,b) => { return a.getId().localeCompare(b.getId()); });
+            viewedPrincipal.getMembers().sort((a, b) => {
+                return a.getId().localeCompare(b.getId());
+            });
+            persistedPrincipal.getMembers().sort((a, b) => {
+                return a.getId().localeCompare(b.getId());
+            });
 
             return viewedPrincipal.equals(persistedPrincipal);
         }

@@ -4,3 +4,8 @@
 ///<reference path='AccessControlListView.ts' />
 ///<reference path='AccessControlEntryViewer.ts' />
 ///<reference path='AccessControlComboBox.ts' />
+///<reference path='UserStoreAccessSelector.ts' />
+///<reference path='UserStoreAccessControlEntryView.ts' />
+///<reference path='UserStoreAccessControlListView.ts' />
+///<reference path='UserStoreAccessControlEntryViewer.ts' />
+///<reference path='UserStoreAccessControlComboBox.ts' />

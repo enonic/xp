@@ -41,7 +41,7 @@ module app.wizard {
             ];
 
             return wemQ.all(parallelPromises).spread<void>(() => {
-                this.principalWizardHeader.setDisplayName(principal.getDisplayName());
+                this.wizardHeader.setDisplayName(principal.getDisplayName());
                 this.getDescriptionWizardStepForm().layout(principal);
                 this.getMembersWizardStepForm().layout(principal);
 
@@ -50,32 +50,34 @@ module app.wizard {
         }
 
         persistNewItem(): wemQ.Promise<Principal> {
-             return this.produceCreateRoleRequest().sendAndParse().
+            return this.produceCreateRoleRequest().sendAndParse().
                 then((principal: Principal) => {
                     this.getPrincipalWizardHeader().disableNameInput();
-                     this.principalWizardHeader.setAutoGenerationEnabled(false);
+                    this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('Role was created!');
                     return principal;
                 });
         }
 
         produceCreateRoleRequest(): CreateRoleRequest {
-            var key = PrincipalKey.ofRole(this.principalWizardHeader.getName()),
-                name = this.principalWizardHeader.getDisplayName(),
-                members = this.getMembersWizardStepForm().getMembers().map((el) => { return el.getKey(); });
+            var key = PrincipalKey.ofRole(this.wizardHeader.getName()),
+                name = this.wizardHeader.getDisplayName(),
+                members = this.getMembersWizardStepForm().getMembers().map((el) => {
+                    return el.getKey();
+                });
             return new CreateRoleRequest().setKey(key).setDisplayName(name).setMembers(members);
         }
 
         updatePersistedItem(): wemQ.Promise<Principal> {
-             return this.produceUpdateRoleRequest(this.assembleViewedPrincipal()).
-                 sendAndParse().
-                 then((principal: Principal) => {
-                     if (!this.getPersistedItem().getDisplayName() && !!principal.getDisplayName()) {
+            return this.produceUpdateRoleRequest(this.assembleViewedItem()).
+                sendAndParse().
+                then((principal: Principal) => {
+                    if (!this.getPersistedItem().getDisplayName() && !!principal.getDisplayName()) {
                         this.notifyPrincipalNamed(principal);
-                     }
-                     api.notify.showFeedback('Role was updated!');
+                    }
+                    api.notify.showFeedback('Role was updated!');
 
-                     return principal;
+                    return principal;
                 });
         }
 
@@ -84,11 +86,19 @@ module app.wizard {
                 key = role.getKey(),
                 displayName = role.getDisplayName(),
                 oldMembers = this.getPersistedItem().asRole().getMembers(),
-                oldMembersIds = oldMembers.map((el) => { return el.getId(); }),
+                oldMembersIds = oldMembers.map((el) => {
+                    return el.getId();
+                }),
                 newMembers = role.getMembers(),
-                newMembersIds = newMembers.map((el) => { return el.getId(); }),
-                addMembers = newMembers.filter((el) => { return oldMembersIds.indexOf(el.getId()) < 0; }),
-                removeMembers = oldMembers.filter((el) => { return newMembersIds.indexOf(el.getId()) < 0; });
+                newMembersIds = newMembers.map((el) => {
+                    return el.getId();
+                }),
+                addMembers = newMembers.filter((el) => {
+                    return oldMembersIds.indexOf(el.getId()) < 0;
+                }),
+                removeMembers = oldMembers.filter((el) => {
+                    return newMembersIds.indexOf(el.getId()) < 0;
+                });
 
             return new UpdateRoleRequest().
                 setKey(key).
@@ -97,19 +107,25 @@ module app.wizard {
                 removeMembers(removeMembers);
         }
 
-        assembleViewedPrincipal(): Principal {
+        assembleViewedItem(): Principal {
             return new RoleBuilder(this.getPersistedItem().asRole()).
-                setDisplayName(this.principalWizardHeader.getDisplayName()).
-                setMembers(this.getMembersWizardStepForm().getMembers().map((el) => { return el.getKey(); })).
+                setDisplayName(this.wizardHeader.getDisplayName()).
+                setMembers(this.getMembersWizardStepForm().getMembers().map((el) => {
+                    return el.getKey();
+                })).
                 build();
         }
 
         isPersistedEqualsViewed(): boolean {
             var persistedPrincipal = this.getPersistedItem().asRole();
-            var viewedPrincipal = this.assembleViewedPrincipal().asRole();
+            var viewedPrincipal = this.assembleViewedItem().asRole();
             // Group/User order can be different for viewed and persisted principal
-            viewedPrincipal.getMembers().sort((a,b) => { return a.getId().localeCompare(b.getId()); });
-            persistedPrincipal.getMembers().sort((a,b) => { return a.getId().localeCompare(b.getId()); });
+            viewedPrincipal.getMembers().sort((a, b) => {
+                return a.getId().localeCompare(b.getId());
+            });
+            persistedPrincipal.getMembers().sort((a, b) => {
+                return a.getId().localeCompare(b.getId());
+            });
 
             return viewedPrincipal.equals(persistedPrincipal);
         }
