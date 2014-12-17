@@ -93,6 +93,13 @@ module api.data {
             return <api.util.BinaryReference>this.value;
         }
 
+        getReference(): api.util.Reference {
+            if (this.isNull()) {
+                return null;
+            }
+            return <api.util.Reference>this.value;
+        }
+
         getLocalTime(): api.util.LocalTime {
             if (this.isNull()) {
                 return null;
