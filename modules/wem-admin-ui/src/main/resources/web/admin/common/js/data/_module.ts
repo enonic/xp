@@ -13,6 +13,7 @@
 ///<reference path='ValueTypeGeoPoint.ts' />
 ///<reference path='ValueTypeBinaryReference.ts' />
 ///<reference path='ValueTypeContentId.ts' />
+///<reference path='ValueTypeLink.ts' />
 ///<reference path='ValueTypes.ts' />
 ///<reference path='Value.ts' />
 ///<reference path='PropertyId.ts' />

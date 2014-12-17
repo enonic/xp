@@ -8,6 +8,7 @@
 ///<reference path='DateHelper.ts' />
 ///<reference path='NumberHelper.ts' />
 ///<reference path='Flow.ts' />
+///<reference path='Link.ts' />
 ///<reference path='DelayedFunctionCall.ts' />
 ///<reference path='GeoPoint.ts' />
 ///<reference path='LocalTime.ts' />
