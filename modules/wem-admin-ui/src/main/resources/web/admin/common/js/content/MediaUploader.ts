@@ -30,27 +30,27 @@ module api.content {
         }
 
         createUploadItem(file): Content {
-
             var builder = new ContentBuilder().
                 setData(new api.data.PropertyTree(this.propertyIdProvider)).
-                setName(ContentName.fromString(file.id)).
+                setId(file.id).
                 setDisplayName(file.name);
             return (<ContentBuilder> builder).build();
         }
 
         updateUploadItem(item: Content, serverResponse): Content {
             if (serverResponse) {
-                return item =
-                       item.newBuilder().fromContentJson(<api.content.json.ContentJson> serverResponse, this.propertyIdProvider).build();
+                // is this the best way to update content ?
+                item = item.newBuilder().fromContentJson(<api.content.json.ContentJson> serverResponse, this.propertyIdProvider).build();
+                return item;
             }
         }
 
         getUploadItemId(item: Content): string {
-            return item.getName().toString();
+            return item.getId();
         }
 
         getUploadItemValue(item: Content): string {
-            return item.getPath().toString();
+            return item.getId();
         }
     }
 }

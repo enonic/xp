@@ -55,10 +55,20 @@ module api.content {
             return [jsonString];
         }
 
-        private createImageResult(src: string): api.dom.DivEl {
+        private createImageResult(value: string): api.dom.DivEl {
             var container = new api.dom.DivEl();
 
-            var image = new api.dom.ImgEl(src);
+            var url;
+            if (value && (value.indexOf('/') == -1)) {
+                url = api.util.UriHelper.getRestUri('content/image/' + value + '?' + api.util.UriHelper.encodeUrlParams({
+                    size: this.getEl().getWidth(),
+                    ts: new Date().getTime()
+                }));
+            } else {
+                url = value;
+            }
+
+            var image = new api.dom.ImgEl(url);
 
             image.onClicked((event: MouseEvent) => {
                 image.toggleClass('selected');

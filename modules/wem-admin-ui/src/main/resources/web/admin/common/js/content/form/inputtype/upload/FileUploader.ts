@@ -35,7 +35,6 @@ module api.content.form.inputtype.upload {
         }
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
-            debugger;
             if (property.hasNonNullValue()) {
                 var imgUrl = new ContentImageUrlResolver().
                     setContentId(this.getContext().contentId).

@@ -226,14 +226,13 @@ module api.ui.uploader {
             throw new Error('Should be overridden by inheritors');
         }
 
-        private findUploadItemById(id: string): ITEM {
+        private findUploadItemIndexById(id: string): number {
             for (var i = 0; i < this.uploadedItems.length; i++) {
-                var item = this.uploadedItems[i];
-                if (this.getUploadItemId(item) == id) {
-                    return item;
+                if (this.getUploadItemId(this.uploadedItems[i]) == id) {
+                    return i;
                 }
             }
-            return undefined;
+            return -1;
         }
 
         private initUploader(elId: string) {
@@ -293,7 +292,10 @@ module api.ui.uploader {
 
                 this.progress.setValue(file.percent);
 
-                this.notifyFileUploadProgress(this.findUploadItemById(file.id), file.percent);
+                var index = this.findUploadItemIndexById(file.id);
+                if (index >= 0) {
+                    this.notifyFileUploadProgress(this.uploadedItems[index], file.percent);
+                }
             });
 
             uploader.bind('FileUploaded', (up, file, response) => {
@@ -301,8 +303,12 @@ module api.ui.uploader {
 
                 if (response && response.status === 200) {
                     try {
-                        var uploadItem = this.updateUploadItem(this.findUploadItemById(file.id), JSON.parse(response.response));
-                        this.notifyFileUploaded(uploadItem);
+                        var index = this.findUploadItemIndexById(file.id);
+                        if (index >= 0) {
+                            var updatedItem = this.updateUploadItem(this.uploadedItems[index], JSON.parse(response.response));
+                            this.uploadedItems[index] = updatedItem;
+                            this.notifyFileUploaded(updatedItem);
+                        }
                     } catch (e) {
                         console.warn("Failed to parse the response", response, e);
                     }
