@@ -84,8 +84,7 @@ class XmlPropertyMapper
             return BinaryReferencePropertyMapper.map( property, objectFactory );
         }
 
-        throw new ExportNodeException( "Unknown property-type: " + property.getType() );
+        throw new IllegalArgumentException(
+            "Xml mapper for value-type: " + property.getType() + " in property " + property.getPath() + " not implemented" );
     }
-
-
 }
