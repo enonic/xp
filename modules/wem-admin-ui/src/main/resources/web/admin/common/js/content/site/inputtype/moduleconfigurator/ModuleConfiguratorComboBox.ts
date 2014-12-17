@@ -13,14 +13,13 @@ module api.content.site.inputtype.moduleconfigurator {
     import SelectedOptionView = api.ui.selector.combobox.SelectedOptionView;
     import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
 
-
     export class ModuleConfiguratorComboBox extends api.ui.selector.combobox.RichComboBox<Module> {
 
         private moduleConfiguratorSelectedOptionsView: ModuleConfiguratorSelectedOptionsView;
 
-        constructor(maxOccurrences: number, moduleConfigProvider: ModuleConfigProvider) {
+        constructor(maxOccurrences: number, moduleConfigProvider: ModuleConfigProvider, formContext: api.content.form.ContentFormContext) {
 
-            this.moduleConfiguratorSelectedOptionsView = new ModuleConfiguratorSelectedOptionsView(moduleConfigProvider);
+            this.moduleConfiguratorSelectedOptionsView = new ModuleConfiguratorSelectedOptionsView(moduleConfigProvider, formContext);
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Module>();
             builder.
                 setMaximumOccurrences(maxOccurrences).
@@ -57,15 +56,18 @@ module api.content.site.inputtype.moduleconfigurator {
 
         private moduleConfigFormDisplayedListeners: {(moduleKey: ModuleKey, formView: FormView) : void}[] = [];
 
-        constructor(moduleConfigProvider: ModuleConfigProvider) {
+        private formContext: api.content.form.ContentFormContext;
+
+        constructor(moduleConfigProvider: ModuleConfigProvider, formContext: api.content.form.ContentFormContext) {
             super();
             this.moduleConfigProvider = moduleConfigProvider;
+            this.formContext = formContext;
         }
 
         createSelectedOption(option: Option<Module>): SelectedOption<Module> {
             var moduleConfig = this.moduleConfigProvider.getConfig(option.displayValue.getModuleKey());
             var moduleConfigData: PropertySet = moduleConfig ? moduleConfig.getConfig() : new PropertyTree().getRoot();
-            var optionView = new ModuleConfiguratorSelectedOptionView(option, moduleConfigData);
+            var optionView = new ModuleConfiguratorSelectedOptionView(option, moduleConfigData, this.formContext);
             optionView.onModuleConfigFormDisplayed((moduleKey: ModuleKey) => {
                 this.notifyModuleConfigFormDisplayed(moduleKey, optionView.getFormView());
             });
@@ -94,11 +96,11 @@ module api.content.site.inputtype.moduleconfigurator {
 
         private selectedOptionToBeRemovedListeners: {(): void;}[];
 
-        constructor(option: Option<Module>, config: PropertySet) {
+        constructor(option: Option<Module>, config: PropertySet, formContext: api.content.form.ContentFormContext) {
             this.selectedOptionToBeRemovedListeners = [];
             this.option = option;
 
-            super(option.displayValue, config);
+            super(option.displayValue, config, formContext);
 
             this.onRemoveClicked((event: MouseEvent) => {
                 this.notifySelectedOptionRemoveRequested();

@@ -25,7 +25,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
         private moduleConfigFormDisplayedListeners: {(moduleKey: ModuleKey) : void}[] = [];
 
-        constructor(mod: Module, config: PropertySet) {
+        constructor(mod: Module, config: PropertySet, formContext: api.content.form.ContentFormContext) {
             super("module-view");
 
             this.removeClickedListeners = [];
@@ -68,17 +68,14 @@ module api.content.site.inputtype.moduleconfigurator {
 
             this.appendChild(header);
 
-            var formContext = new FormContextBuilder().build();
-
             this.formView = new FormView(formContext, this.module.getForm(), this.config);
+            this.formView.addClass("module-form");
+            this.appendChild(this.formView);
             this.formView.layout().then(() => {
                 this.notifyModuleConfigFormDisplayed(this.module.getModuleKey());
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
-
-            this.formView.addClass("module-form");
-            this.appendChild(this.formView);
         }
 
 

@@ -34,10 +34,13 @@ module api.content.site.inputtype.moduleconfigurator {
 
         private _displayValidationErrors: boolean;
 
-        constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
+        private formContext: api.content.form.ContentFormContext;
+
+        constructor(config: api.content.form.inputtype.ContentInputTypeViewContext<any>) {
             super("module-configurator");
             this._displayValidationErrors = false;
             this.context = config;
+            this.formContext = config.formContext;
         }
 
         getValueType(): ValueType {
@@ -136,7 +139,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
         private createComboBox(input: api.form.Input, moduleConfigProvider: ModuleConfigProvider): ModuleConfiguratorComboBox {
 
-            return new ModuleConfiguratorComboBox(input.getOccurrences().getMaximum() || 0, moduleConfigProvider);
+            return new ModuleConfiguratorComboBox(input.getOccurrences().getMaximum() || 0, moduleConfigProvider, this.formContext);
         }
 
         availableSizeChanged() {

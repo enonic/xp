@@ -50,6 +50,7 @@ module api.content.form {
                                    input: api.form.Input): api.form.inputtype.InputTypeViewContext<any> {
 
             return <api.content.form.inputtype.ContentInputTypeViewContext<any>> {
+                formContext: this,
                 input: input,
                 inputConfig: inputTypeConfig,
                 parentDataPath: parentPropertyPath,

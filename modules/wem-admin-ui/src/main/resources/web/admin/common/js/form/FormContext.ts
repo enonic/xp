@@ -19,6 +19,7 @@ module api.form {
                                    input: Input): api.form.inputtype.InputTypeViewContext<any> {
 
             return <api.form.inputtype.InputTypeViewContext<any>> {
+                formContext: this,
                 input: input,
                 inputConfig: inputTypeConfig,
                 parentDataPath: parentPropertyPath
