@@ -27,13 +27,18 @@ module api.ui.uploader {
         }
 
         updateUploadItem(item: UploadItem, serverResponse): UploadItem {
+
             if (serverResponse.items && serverResponse.items.length > 0) {
+
                 var uploadedItem: UploadItem = serverResponse.items[0];
-                return item.
+
+                return UploadItem.create(item).
                     setBlobKey(new api.blob.BlobKey(uploadedItem.getId())).
                     setMimeType(uploadedItem.getMimeType()).
-                    setProgress(100);
+                    setProgress(100).
+                    build();
             }
+            return null;
         }
 
         getUploadItemId(item: UploadItem): string {

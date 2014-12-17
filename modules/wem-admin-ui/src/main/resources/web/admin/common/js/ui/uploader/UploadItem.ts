@@ -72,6 +72,9 @@ module api.ui.uploader {
             return this;
         }
 
+        public static create(source?: UploadItem): UploadItemBuilder {
+            return new UploadItemBuilder(source);
+        }
     }
 
     export class UploadItemBuilder {
@@ -87,6 +90,17 @@ module api.ui.uploader {
         size: number;
 
         progress: number;
+
+        constructor(source?: UploadItem) {
+            if (source) {
+                this.id = source.getId();
+                this.blobKey = source.getBlobKey();
+                this.name = source.getName();
+                this.mimeType = source.getMimeType();
+                this.size = source.getSize();
+                this.progress = source.getProgress();
+            }
+        }
 
         setId(value: string): UploadItemBuilder {
             this.id = value;

@@ -310,8 +310,10 @@ module api.ui.uploader {
                         var index = this.findUploadItemIndexById(file.id);
                         if (index >= 0) {
                             var updatedItem = this.updateUploadItem(this.uploadedItems[index], JSON.parse(response.response));
-                            this.uploadedItems[index] = updatedItem;
-                            this.notifyFileUploaded(updatedItem);
+                            if (updatedItem) {
+                                this.uploadedItems[index] = updatedItem;
+                                this.notifyFileUploaded(updatedItem);
+                            }
                         }
                     } catch (e) {
                         console.warn("Failed to parse the response", response, e);

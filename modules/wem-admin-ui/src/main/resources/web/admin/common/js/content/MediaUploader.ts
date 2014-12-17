@@ -37,11 +37,12 @@ module api.content {
             return (<ContentBuilder> builder).build();
         }
 
-        updateUploadItem(item: Content, serverResponse): Content {
+        updateUploadItem(content: Content, serverResponse: api.content.json.ContentJson): Content {
             if (serverResponse) {
-                // is this the best way to update content ?
-                item = item.newBuilder().fromContentJson(<api.content.json.ContentJson> serverResponse, this.propertyIdProvider).build();
-                return item;
+                return content.newBuilder().fromContentJson(<api.content.json.ContentJson> serverResponse, this.propertyIdProvider).build();
+            }
+            else {
+                return null;
             }
         }
 
