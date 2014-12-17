@@ -5,7 +5,7 @@
 ///<reference path='GroupRoleWizardPanel.ts' />
 ///<reference path='RoleWizardPanel.ts' />
 ///<reference path='GroupWizardPanel.ts' />
-///<reference path='UserStoreWizardPanel.ts' />
+///<reference path='UserStoreWizardPanel2.ts' />
 ///<reference path='PrincipalWizardPanelFactory.ts' />
 ///<reference path='UserStoreWizardPanelFactory.ts' />
 ///<reference path='PrincipalWizardPanelParams.ts' />
