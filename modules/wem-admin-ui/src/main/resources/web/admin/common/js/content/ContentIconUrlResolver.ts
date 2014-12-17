@@ -19,6 +19,9 @@ module api.content {
         resolve(): string {
 
             var url = this.content.getIconUrl();
+            if (!url) {
+                return null;
+            }
             url = this.appendParam("crop", this.crop ? "true" : "false", url);
             return url;
         }
