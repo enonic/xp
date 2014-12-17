@@ -23,8 +23,6 @@ public class CreateNodeParams
 
     private final boolean ensureUniqueName = false;
 
-    private final Attachments attachments;
-
     private final IndexConfigDocument indexConfigDocument;
 
     private final ChildOrder childOrder;
@@ -48,7 +46,6 @@ public class CreateNodeParams
         this.parent = builder.parent;
         this.name = builder.name;
         this.data = builder.data;
-        this.attachments = builder.attachments;
         this.indexConfigDocument = builder.indexConfigDocument;
         this.childOrder = builder.childOrder;
         this.nodeId = builder.nodeId;
@@ -71,7 +68,6 @@ public class CreateNodeParams
             indexConfigDocument( node.getIndexConfigDocument() ).
             permissions( node.getPermissions() ).
             data( node.data() ).
-            attachments( node.attachments() ).
             childOrder( node.getChildOrder() ).
             nodeType( node.getNodeType() ).
             name( node.name().toString() ).
@@ -92,11 +88,6 @@ public class CreateNodeParams
     public PropertyTree getData()
     {
         return data;
-    }
-
-    public Attachments getAttachments()
-    {
-        return attachments;
     }
 
     public IndexConfigDocument getIndexConfigDocument()
@@ -157,8 +148,6 @@ public class CreateNodeParams
 
         private PropertyTree data = new PropertyTree();
 
-        private Attachments attachments = Attachments.empty();
-
         private IndexConfigDocument indexConfigDocument;
 
         private ChildOrder childOrder;
@@ -203,12 +192,6 @@ public class CreateNodeParams
         public Builder data( final PropertyTree data )
         {
             this.data = data;
-            return this;
-        }
-
-        public Builder attachments( final Attachments attachments )
-        {
-            this.attachments = attachments;
             return this;
         }
 
@@ -289,7 +272,6 @@ public class CreateNodeParams
             Objects.equals( parent, that.parent ) &&
             Objects.equals( name, that.name ) &&
             Objects.equals( data, that.data ) &&
-            Objects.equals( attachments, that.attachments ) &&
             Objects.equals( indexConfigDocument, that.indexConfigDocument ) &&
             Objects.equals( childOrder, that.childOrder ) &&
             Objects.equals( permissions, that.permissions ) &&
@@ -301,7 +283,7 @@ public class CreateNodeParams
     @Override
     public int hashCode()
     {
-        return Objects.hash( parent, name, data, attachments, indexConfigDocument, childOrder, nodeId, permissions, inheritPermissions,
+        return Objects.hash( parent, name, data, indexConfigDocument, childOrder, nodeId, permissions, inheritPermissions,
                              nodeType, binaryAttachments );
     }
 }

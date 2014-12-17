@@ -14,8 +14,6 @@ public class EditableNode
 
     public PropertyTree data;
 
-    public Attachments attachments;
-
     public IndexConfigDocument indexConfigDocument;
 
     public Long manualOrderValue;
@@ -31,7 +29,6 @@ public class EditableNode
         this.source = source;
         this.name = source.name();
         this.data = source.data().copy();
-        this.attachments = source.attachments();
         this.indexConfigDocument = source.getIndexConfigDocument();
         this.manualOrderValue = source.getManualOrderValue();
         this.childOrder = source.getChildOrder();
@@ -44,7 +41,6 @@ public class EditableNode
         final Node.Builder builder = Node.newNode( source );
         builder.name( name );
         builder.data( data );
-        builder.attachments( attachments );
         builder.indexConfigDocument( indexConfigDocument );
         builder.manualOrderValue( manualOrderValue );
         builder.childOrder( childOrder );

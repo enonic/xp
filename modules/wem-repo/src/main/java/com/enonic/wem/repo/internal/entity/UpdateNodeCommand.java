@@ -6,7 +6,6 @@ import java.time.Instant;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.AttachedBinaries;
-import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.EditableNode;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
@@ -84,15 +83,12 @@ public final class UpdateNodeCommand
             authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.from( "user:system:admin" );
 
         final NodePath parentPath = editedNode.path().getParentPath();
-        //final AccessControlList paramPerm = editedNode.getPermissions() == null ? AccessControlList.empty() : editedNode.getPermissions();
         final AccessControlList permissions =
             evaluatePermissions( parentPath, editedNode.inheritsPermissions(), editedNode.getPermissions() );
-        final Attachments attachments = synchronizeAttachments( editedNode.attachments(), persistedNode );
 
         final Node.Builder updateNodeBuilder = Node.newNode( editedNode ).
             modifiedTime( now ).
             modifier( modifier ).
-            attachments( attachments ).
             permissions( permissions );
         return updateNodeBuilder.build();
     }
@@ -102,17 +98,6 @@ public final class UpdateNodeCommand
         return new Builder();
     }
 
-    private Attachments synchronizeAttachments( final Attachments attachments, final Node persistedNode )
-    {
-        final Attachments persistedAttachments = persistedNode.attachments();
-
-        if ( attachments == null )
-        {
-            return persistedAttachments;
-        }
-
-        return attachments;
-    }
 
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>

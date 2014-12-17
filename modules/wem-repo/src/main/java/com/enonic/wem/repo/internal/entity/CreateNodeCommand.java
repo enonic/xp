@@ -15,7 +15,6 @@ import com.enonic.wem.api.data.ValueTypes;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.AttachedBinary;
-import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.BinaryAttachment;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
@@ -75,7 +74,6 @@ public final class CreateNodeCommand
             parent( params.getParent() ).
             name( NodeName.from( params.getName() ) ).
             data( params.getData() ).
-            attachments( params.getAttachments() != null ? params.getAttachments() : Attachments.empty() ).
             indexConfigDocument( params.getIndexConfigDocument() ).
             hasChildren( false ).
             childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() ).

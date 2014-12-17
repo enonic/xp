@@ -9,14 +9,6 @@
       "blobKey": "b"
     }
   ],
-  "attachments": [
-    {
-      "attachmentName": "attachment",
-      "blobKey": "1234",
-      "mimeType": "mimetype",
-      "size": 0
-    }
-  ],
   "childOrder": "modifiedtime ASC, displayname DESC",
   "createdTime": "2013-01-02T03:04:05Z",
   "creator": "user:test:creator",

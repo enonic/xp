@@ -17,8 +17,6 @@ import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.AttachedBinary;
-import com.enonic.wem.api.node.Attachment;
-import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
@@ -82,12 +80,6 @@ public class NodeJsonSerializerTest
                 add( "myPath", IndexConfig.FULLTEXT ).
                 build() ).
             data( nodeData ).
-            attachments( Attachments.from( Attachment.
-                newAttachment().
-                name( "attachment" ).
-                blobKey( new BlobKey( "1234" ) ).
-                mimeType( "mimetype" ).
-                build() ) ).
             childOrder( ChildOrder.create().
                 add( FieldOrderExpr.create( IndexPath.from( "modifiedTime" ), OrderExpr.Direction.ASC ) ).
                 add( FieldOrderExpr.create( IndexPath.from( "displayName" ), OrderExpr.Direction.DESC ) ).

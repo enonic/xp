@@ -39,8 +39,6 @@ public final class Node
 
     private final IndexConfigDocument indexConfigDocument;
 
-    private final Attachments attachments;
-
     private final ChildOrder childOrder;
 
     private final Long manualOrderValue;
@@ -54,7 +52,6 @@ public final class Node
     private Node( final Builder builder )
     {
         Preconditions.checkNotNull( builder.permissions, "permissions are required" );
-        Preconditions.checkNotNull( builder.attachments, "attachments are required" );
         Preconditions.checkNotNull( builder.data, "data are required" );
 
         this.id = builder.id;
@@ -67,7 +64,6 @@ public final class Node
         this.modifiedTime = builder.modifiedTime;
         this.hasChildren = builder.hasChildren;
         this.data = builder.data != null ? builder.data : new PropertyTree();
-        this.attachments = builder.attachments == null ? Attachments.empty() : builder.attachments;
         this.childOrder = builder.childOrder;
         this.manualOrderValue = builder.manualOrderValue;
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
@@ -148,11 +144,6 @@ public final class Node
         return this.data;
     }
 
-    public Attachments attachments()
-    {
-        return this.attachments;
-    }
-
     public IndexConfigDocument getIndexConfigDocument()
     {
         return indexConfigDocument;
@@ -224,8 +215,6 @@ public final class Node
 
         private PropertyTree data = new PropertyTree();
 
-        private Attachments attachments = Attachments.empty();
-
         private IndexConfigDocument indexConfigDocument;
 
         private NodeName name;
@@ -273,7 +262,6 @@ public final class Node
             this.hasChildren = node.hasChildren;
             this.data = node.data;
             this.indexConfigDocument = node.indexConfigDocument;
-            this.attachments = node.attachments;
             this.childOrder = node.childOrder;
             this.manualOrderValue = node.manualOrderValue;
             this.permissions = node.permissions;
@@ -359,12 +347,6 @@ public final class Node
             return this;
         }
 
-        public Builder attachments( final Attachments value )
-        {
-            this.attachments = value;
-            return this;
-        }
-
         public Builder childOrder( final ChildOrder childOrder )
         {
             this.childOrder = childOrder;
@@ -433,7 +415,6 @@ public final class Node
             Objects.equals( modifiedTime, node.modifiedTime ) &&
             Objects.equals( manualOrderValue, node.manualOrderValue ) &&
             Objects.equals( childOrder, node.childOrder ) &&
-            Objects.equals( attachments, node.attachments ) &&
             Objects.equals( permissions, node.permissions ) &&
             Objects.equals( data, node.data ) &&
             Objects.equals( attachedBinaries, node.attachedBinaries ) &&
@@ -444,6 +425,6 @@ public final class Node
     public int hashCode()
     {
         return Objects.hash( id, name, parent, nodeType, hasChildren, inheritPermissions, creator, modifier, createdTime, modifiedTime,
-                             manualOrderValue, childOrder, attachments, permissions, data, indexConfigDocument, attachedBinaries );
+                             manualOrderValue, childOrder, permissions, data, indexConfigDocument, attachedBinaries );
     }
 }

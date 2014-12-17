@@ -13,8 +13,6 @@ import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.AttachedBinary;
-import com.enonic.wem.api.node.Attachment;
-import com.enonic.wem.api.node.Attachments;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
@@ -40,9 +38,6 @@ final class NodeJson
 
     @JsonProperty("indexConfigDocument")
     private IndexConfigDocumentJson indexConfigDocument;
-
-    @JsonProperty("attachments")
-    private List<AttachmentJson> attachments;
 
     @JsonProperty("name")
     private String name;
@@ -90,7 +85,6 @@ final class NodeJson
             parent( this.parent != null ? NodePath.newPath( this.parent ).build() : null ).
             data( PropertyTreeJson.fromJson( this.data ) ).
             indexConfigDocument( this.indexConfigDocument.fromJson() ).
-            attachments( fromAttachmentJsonList( this.attachments ) ).
             childOrder( ChildOrder.from( this.childOrder ) ).
             manualOrderValue( this.manualOrderValue ).
             permissions( fromJson( this.permissions ) ).
@@ -106,17 +100,6 @@ final class NodeJson
         for ( final AccessControlEntryJson entryJson : list )
         {
             builder.add( entryJson.fromJson() );
-        }
-
-        return builder.build();
-    }
-
-    private Attachments fromAttachmentJsonList( final List<AttachmentJson> list )
-    {
-        final Attachments.Builder builder = Attachments.builder();
-        for ( final AttachmentJson entry : list )
-        {
-            builder.add( entry.fromJson() );
         }
 
         return builder.build();
@@ -141,7 +124,6 @@ final class NodeJson
         json.modifiedTime = node.getModifiedTime();
         json.data = PropertyTreeJson.toJson( node.data() );
         json.indexConfigDocument = createEntityIndexConfig( node.getIndexConfigDocument() );
-        json.attachments = toAttachmentJsonList( node.attachments() );
         json.name = node.name() != null ? node.name().toString() : null;
         json.parent = node.parent() != null ? node.parent().toString() : null;
         json.path = node.path() != null ? node.path().toString() : null;
@@ -178,22 +160,6 @@ final class NodeJson
             entryJsonList.add( AccessControlEntryJson.toJson( entry ) );
         }
         return entryJsonList;
-    }
-
-    private static List<AttachmentJson> toAttachmentJsonList( final Attachments attachments )
-    {
-        if ( attachments == null )
-        {
-            return null;
-        }
-
-        final List<AttachmentJson> attachmentJsons = Lists.newArrayList();
-        for ( final Attachment attachment : attachments )
-        {
-            attachmentJsons.add( AttachmentJson.toJson( attachment ) );
-        }
-
-        return attachmentJsons;
     }
 
     private static List<AttachedBinaryJson> toNodeAttachedBinaryJsonList( final AttachedBinaries attachedBinaries )
