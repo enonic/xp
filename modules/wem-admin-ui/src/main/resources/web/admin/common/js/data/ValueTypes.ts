@@ -31,6 +31,10 @@ module api.data {
 
         static GEO_POINT = new ValueTypeGeoPoint();
 
+        static REFERENCE = new ValueTypeReference();
+
+        static BINARY_REFERENCE = new ValueTypeBinaryReference();
+
         static ALL: ValueType[] = [
             ValueTypes.DATA,
             ValueTypes.STRING,
@@ -44,7 +48,10 @@ module api.data {
             ValueTypes.LONG,
             ValueTypes.BOOLEAN,
             ValueTypes.DOUBLE,
-            ValueTypes.GEO_POINT];
+            ValueTypes.GEO_POINT,
+            ValueTypes.REFERENCE,
+            ValueTypes.BINARY_REFERENCE
+        ];
 
         public static fromName(name: string): ValueType {
             for (var i = 0; i < ValueTypes.ALL.length; i++) {
