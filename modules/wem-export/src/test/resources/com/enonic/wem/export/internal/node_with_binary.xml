@@ -26,7 +26,6 @@
   </properties>
   <attachedBinaries>
     <attachedBinary>
-      <blobKey>abc</blobKey>
       <binaryReference>image.jpg</binaryReference>
     </attachedBinary>
   </attachedBinaries>

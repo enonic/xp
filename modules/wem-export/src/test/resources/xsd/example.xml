@@ -41,11 +41,9 @@
   </properties>
   <attachedBinaries>
     <attachedBinary>
-      <blobKey>abc</blobKey>
       <binaryReference>my-image.jpg</binaryReference>
     </attachedBinary>
     <attachedBinary>
-      <blobKey>abcd</blobKey>
       <binaryReference>my-image2.jpg</binaryReference>
     </attachedBinary>
   </attachedBinaries>

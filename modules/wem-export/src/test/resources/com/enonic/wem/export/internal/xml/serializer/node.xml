@@ -27,11 +27,9 @@
   </properties>
   <attachedBinaries>
     <attachedBinary>
-      <blobKey>b</blobKey>
       <binaryReference>image2.jpg</binaryReference>
     </attachedBinary>
     <attachedBinary>
-      <blobKey>a</blobKey>
       <binaryReference>image.jpg</binaryReference>
     </attachedBinary>
   </attachedBinaries>

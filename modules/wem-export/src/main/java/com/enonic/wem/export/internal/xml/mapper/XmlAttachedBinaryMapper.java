@@ -10,7 +10,6 @@ public class XmlAttachedBinaryMapper
         final XmlAttachedBinaries.AttachedBinary xmlAttachedBinary = new XmlAttachedBinaries.AttachedBinary();
 
         xmlAttachedBinary.setBinaryReference( attachedBinary.getBinaryReference().toString() );
-        xmlAttachedBinary.setBlobKey( attachedBinary.getBlobKey().toString() );
 
         return xmlAttachedBinary;
     }

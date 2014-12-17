@@ -31,7 +31,6 @@
       <xs:element minOccurs="0" maxOccurs="unbounded" name="attachedBinary">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="blobKey" type="xs:string"/>
             <xs:element name="binaryReference" type="xs:string"/>
           </xs:sequence>
         </xs:complexType>
