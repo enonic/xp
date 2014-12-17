@@ -57,7 +57,7 @@ module app.browse {
                 anyUserStore = userStoresSelected > 0;
 
             this.NEW.setEnabled((directoriesSelected <= 1) && (totalSelection <= 1));
-            this.EDIT.setEnabled(anyUserStore);
+            this.EDIT.setEnabled(anyUserStore || anyPrincipal);
             this.DELETE.setEnabled(anyPrincipal);
             this.DUPLICATE.setEnabled((principalsSelected == 1) && (totalSelection == 1));
             this.SYNCH.setEnabled(anyUserStore);
