@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.expr.DynamicConstraintExpr;
 import com.enonic.wem.api.query.expr.FunctionExpr;
@@ -25,7 +26,7 @@ import static java.util.stream.Collectors.toList;
 
 final class PrincipalQueryNodeQueryTranslator
 {
-    private static final String ALL_TEXT_FIELD_NAME = "_all_text";
+    private static final String ALL_TEXT_FIELD_NAME = NodeIndexPath.ALL_TEXT.getPath();
 
     public static NodeQuery translate( final PrincipalQuery principalQuery )
     {

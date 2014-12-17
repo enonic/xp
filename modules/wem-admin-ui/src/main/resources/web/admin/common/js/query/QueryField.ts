@@ -2,17 +2,19 @@ module api.query {
 
     export class QueryField {
 
-        static DISPLAY_NAME = "displayName";
+        static DISPLAY_NAME: string = "displayName";
 
-        static NAME = "_name";
+        static NAME: string = "_name";
 
-        static ALL = "_all_text";
+        static ALL: string = "_all_text";
 
-        static MODIFIED_TIME = "_modifiedTime"
+        static MODIFIED_TIME: string = "_modifiedTime"
 
-        static MANUAL_ORDER_VALUE = "_manualOrderValue";
+        static MANUAL_ORDER_VALUE: string = "_manualOrderValue";
 
         static WEIGHT_SEPARATOR: string = "^";
+
+        static CONTENT_TYPE: string = "type";
 
         weight: number;
 
