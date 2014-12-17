@@ -241,7 +241,7 @@ module app.wizard {
 
             console.log("ContentWizardPanel.giveInitialFocus");
             var newWithoutDisplayCameScript = this.isLayingOutNew() && !this.contentType.hasContentDisplayNameScript();
-            var displayNameEmpty = api.util.StringHelper.isEmpty(this.getPersistedItem().getDisplayName());
+            var displayNameEmpty = this.isLayingOutNew() || api.util.StringHelper.isEmpty(this.getPersistedItem().getDisplayName());
             var editWithEmptyDisplayName = !this.isLayingOutNew() && displayNameEmpty && !this.contentType.hasContentDisplayNameScript();
 
             if (newWithoutDisplayCameScript || editWithEmptyDisplayName) {

@@ -100,33 +100,37 @@ module api.content.site.inputtype.moduleconfigurator {
             var deferred = wemQ.defer<void>();
 
             var moduleConfigFormsToDisplay: string[] = [];
-            propertyArray.forEach((property: Property) => {
 
-                if (property.hasNonNullValue()) {
-                    var moduleConfig = new ModuleConfigBuilder().fromData(property.getSet()).build();
-                    moduleConfigFormsToDisplay.push(moduleConfig.getModuleKey().toString());
+            if (propertyArray.getSize() == 0) {
+                deferred.resolve(null);
+            } else {
+                propertyArray.forEach((property: Property) => {
 
-                    new GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse().
-                        then((requestedModule: Module) => {
+                    if (property.hasNonNullValue()) {
+                        var moduleConfig = new ModuleConfigBuilder().fromData(property.getSet()).build();
+                        moduleConfigFormsToDisplay.push(moduleConfig.getModuleKey().toString());
 
-                            this.comboBox.onModuleConfigFormDisplayed((moduleKey: ModuleKey, formView: FormView) => {
-                                var indexToRemove = moduleConfigFormsToDisplay.indexOf(moduleKey.toString());
-                                if (indexToRemove != -1) {
-                                    moduleConfigFormsToDisplay.splice(indexToRemove, 1);
-                                }
-                                if (moduleConfigFormsToDisplay.length == 0) {
-                                    deferred.resolve(null);
-                                }
+                        new GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse().
+                            then((requestedModule: Module) => {
 
-                                formView.onValidityChanged((event: FormValidityChangedEvent) => {
+                                this.comboBox.onModuleConfigFormDisplayed((moduleKey: ModuleKey, formView: FormView) => {
+                                    var indexToRemove = moduleConfigFormsToDisplay.indexOf(moduleKey.toString());
+                                    if (indexToRemove != -1) {
+                                        moduleConfigFormsToDisplay.splice(indexToRemove, 1);
+                                    }
+                                    if (moduleConfigFormsToDisplay.length == 0) {
+                                        deferred.resolve(null);
+                                    }
 
-                                    this.validate(false);
+                                    formView.onValidityChanged((event: FormValidityChangedEvent) => {
+                                        this.validate(false);
+                                    });
                                 });
+                                this.comboBox.select(requestedModule);
                             });
-                            this.comboBox.select(requestedModule);
-                        });
-                }
-            });
+                    }
+                });
+            }
             return deferred.promise;
         }
 
