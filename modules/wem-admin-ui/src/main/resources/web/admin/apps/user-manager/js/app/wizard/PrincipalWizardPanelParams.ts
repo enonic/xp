@@ -1,8 +1,6 @@
 module app.wizard {
 
-    export class PrincipalWizardPanelParams {
-
-        tabId: api.app.bar.AppBarTabId;
+    export class PrincipalWizardPanelParams extends UserItemWizardPanelParams {
 
         persistedPrincipal: api.security.Principal;
 
@@ -10,12 +8,6 @@ module app.wizard {
 
         persistedPath: string;
 
-        userStore: api.security.UserStoreKey;
-
-        setAppBarTabId(value: api.app.bar.AppBarTabId): PrincipalWizardPanelParams {
-            this.tabId = value;
-            return this;
-        }
 
         setPersistedPrincipal(value: api.security.Principal): PrincipalWizardPanelParams {
             this.persistedPrincipal = value;
@@ -32,9 +24,23 @@ module app.wizard {
             return this;
         }
 
-        setUserStore(value: api.security.UserStoreKey): PrincipalWizardPanelParams {
-            this.userStore = value;
+        setAppBarTabId(value: api.app.bar.AppBarTabId): PrincipalWizardPanelParams {
+            this.tabId = value;
             return this;
+        }
+
+        setUserStoreKey(value: api.security.UserStoreKey): PrincipalWizardPanelParams {
+            this.userStoreKey = value;
+            return this;
+        }
+
+        setPersistedPath(value: string): PrincipalWizardPanelParams {
+            this.persistedPath = value;
+            return this;
+        }
+
+        getPersistedItem() {
+            return this.persistedPrincipal;
         }
     }
 }

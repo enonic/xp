@@ -7,3 +7,4 @@
 ///<reference path="UserStoreAccessControlEntryJson.ts"/>
 ///<reference path="UserStoreAccessControlEntry.ts"/>
 ///<reference path="UserStoreAccessControlList.ts"/>
+///<reference path="UserStoreAccessControlEntryLoader.ts"/>

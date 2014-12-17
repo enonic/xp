@@ -1,6 +1,6 @@
 module api.security {
 
-    export class UserStore {
+    export class UserStore implements api.Equitable {
         private displayName: string;
         private key: UserStoreKey;
         private permissions: api.security.acl.UserStoreAccessControlList;
@@ -21,6 +21,26 @@ module api.security {
 
         getPermissions(): api.security.acl.UserStoreAccessControlList {
             return this.permissions;
+        }
+
+        equals(o: api.Equitable): boolean {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, UserStore)) {
+                return false;
+            }
+
+            var other = <UserStore> o;
+
+            return this.key.equals(other.key) &&
+                   this.displayName === other.displayName &&
+                   this.permissions.equals(other.permissions)
+        }
+
+        clone(): UserStore {
+            return UserStore.create().
+                setDisplayName(this.displayName).
+                setKey(this.key.toString()).
+                setPermissions(this.permissions).
+                build();
         }
 
         static create(): UserStoreBuilder {

@@ -1,11 +1,17 @@
+///<reference path='UserItemWizardPanel.ts' />
+///<reference path='UserItemWizardPanelParams.ts' />
 ///<reference path='PrincipalWizardPanel.ts' />
 ///<reference path='UserWizardPanel.ts' />
 ///<reference path='GroupRoleWizardPanel.ts' />
 ///<reference path='RoleWizardPanel.ts' />
 ///<reference path='GroupWizardPanel.ts' />
+///<reference path='UserStoreWizardPanel.ts' />
 ///<reference path='PrincipalWizardPanelFactory.ts' />
+///<reference path='UserStoreWizardPanelFactory.ts' />
 ///<reference path='PrincipalWizardPanelParams.ts' />
+///<reference path='UserStoreWizardPanelParams.ts' />
 ///<reference path='PrincipalWizardToolbar.ts' />
+///<reference path='UserStoreWizardToolbar.ts' />
 ///<reference path='PrincipalDescriptionWizardStepForm.ts' />
 ///<reference path='PrincipalMembersWizardStepForm.ts' />
 ///<reference path='UserEmailWizardStepForm.ts' />
@@ -13,3 +19,4 @@
 ///<reference path='UserMembershipsWizardStepForm.ts' />
 ///<reference path='RoleMembersWizardStepForm.ts' />
 ///<reference path='GroupMembersWizardStepForm.ts' />
+///<reference path='SecurityWizardStepForm.ts' />
