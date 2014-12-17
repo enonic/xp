@@ -327,6 +327,11 @@ module api.content {
             return this;
         }
 
+        setId(value: string): ContentSummaryBuilder {
+            this.id = value;
+            return this;
+        }
+
         setDraft(value: boolean): ContentSummaryBuilder {
             this.draft = value;
             return this;
