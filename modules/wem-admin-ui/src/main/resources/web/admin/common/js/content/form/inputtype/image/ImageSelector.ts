@@ -7,6 +7,7 @@ module api.content.form.inputtype.image {
     import ValueTypes = api.data.ValueTypes;
     import ContentId = api.content.ContentId;
     import ContentSummary = api.content.ContentSummary;
+    import ContentSummaryLoader = api.content.ContentSummaryLoader;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
     import ComboBox = api.ui.selector.combobox.ComboBox;
@@ -16,6 +17,7 @@ module api.content.form.inputtype.image {
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Option = api.ui.selector.Option;
+    import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
 
     import UploadItem = api.ui.uploader.UploadItem;
     import FileUploadedEvent = api.ui.uploader.FileUploadedEvent;
@@ -35,13 +37,15 @@ module api.content.form.inputtype.image {
 
         private propertyArray: PropertyArray;
 
+        private relationshipTypeName: RelationshipTypeName;
+
         private comboBox: ComboBox<ImageSelectorDisplayValue>;
 
         private uploadButton: api.dom.ButtonEl;
 
         private selectedOptionsView: SelectedOptionsView;
 
-        private contentSummaryLoader: api.content.ContentSummaryLoader;
+        private contentSummaryLoader: ContentSummaryLoader;
 
         private contentRequestsAllowed: boolean;
 
@@ -58,64 +62,15 @@ module api.content.form.inputtype.image {
             this.addClass("input-type-view");
 
             this.config = config;
-            this.contentSummaryLoader = new api.content.ContentSummaryLoader();
-            this.contentSummaryLoader.onLoadingData((event: LoadingDataEvent) => {
-                this.comboBox.setEmptyDropdownText("Searching...");
-            });
-            this.contentSummaryLoader.onLoadedData((event: LoadedDataEvent<ContentSummary>) => {
-                var options = this.createOptions(event.getData());
-
-                this.comboBox.setOptions(options);
-            });
-
 
             // requests aren't allowed until allowed contentTypes are specified
             this.contentRequestsAllowed = false;
 
-            var name = new api.schema.relationshiptype.RelationshipTypeName("default");
+            this.relationshipTypeName = new RelationshipTypeName("default");
 
             if (config.inputConfig.relationshipType != null) {
-                name = new api.schema.relationshiptype.RelationshipTypeName(config.inputConfig.relationshipType);
+                this.relationshipTypeName = new RelationshipTypeName(config.inputConfig.relationshipType);
             }
-            new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(name).sendAndParse()
-                .done((relationshipType: api.schema.relationshiptype.RelationshipType) => {
-                    this.comboBox.setInputIconUrl(relationshipType.getIconUrl());
-                    this.contentSummaryLoader.setAllowedContentTypes(relationshipType.getAllowedToTypes());
-                    this.contentRequestsAllowed = true;
-                    this.loadOptions("");
-                });
-
-            this.uploadDialog = new ImageUploadDialog(config.contentPath);
-            this.uploadDialog.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
-                this.uploadDialog.close();
-
-                event.getUploadItems().forEach((uploadItem: Content) => {
-
-                    var value = ImageSelectorDisplayValue.fromContentSummary(uploadItem);
-
-                    var option = <api.ui.selector.Option<ImageSelectorDisplayValue>>{
-                        value: value.getId(),
-                        displayValue: value
-                    };
-                    this.comboBox.selectOption(option);
-                });
-            });
-            this.uploadDialog.onUploadProgress((event: FileUploadProgressEvent<Content>) => {
-                var selectedOption = this.selectedOptionsView.getById(event.getUploadItem().getId());
-                (<SelectedOptionView>selectedOption.getOptionView()).setProgress(event.getProgress());
-            });
-            this.uploadDialog.onImageUploaded((event: FileUploadedEvent<Content>) => {
-                var createdContent = event.getUploadItem();
-
-                new api.content.ContentCreatedEvent(createdContent.getContentId()).fire();
-
-                var value = ImageSelectorDisplayValue.fromContentSummary(createdContent);
-                this.comboBox.selectOption({
-                    value: value.getId(),
-                    displayValue: value
-                });
-
-            });
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.availableSizeChanged();
@@ -179,14 +134,73 @@ module api.content.form.inputtype.image {
             this.appendChild(comboboxWrapper);
             this.appendChild(this.selectedOptionsView);
 
-            var loadContentPromise = this.doLoadContent(this.propertyArray);
-            return loadContentPromise.then((contents: ContentSummary[]) => {
-                contents.forEach((content: ContentSummary) => {
-                    this.comboBox.selectOption(<Option<ImageSelectorDisplayValue>>{
-                        value: content.getId(),
-                        displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
+
+            this.contentSummaryLoader = new ContentSummaryLoader();
+            this.contentSummaryLoader.onLoadingData((event: LoadingDataEvent) => {
+                this.comboBox.setEmptyDropdownText("Searching...");
+            });
+            this.contentSummaryLoader.onLoadedData((event: LoadedDataEvent<ContentSummary>) => {
+                var options = this.createOptions(event.getData());
+
+                this.comboBox.setOptions(options);
+            });
+
+
+            return new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse()
+                .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
+
+                    this.comboBox.setInputIconUrl(relationshipType.getIconUrl());
+                    this.contentSummaryLoader.setAllowedContentTypes(relationshipType.getAllowedToTypes());
+                    this.contentRequestsAllowed = true;
+                    this.loadOptions("");
+
+                    this.layoutUploadDialog();
+
+                    var loadContentPromise = this.doLoadContent(this.propertyArray);
+                    return loadContentPromise.then((contents: ContentSummary[]) => {
+                        contents.forEach((content: ContentSummary) => {
+                            this.comboBox.selectOption(<Option<ImageSelectorDisplayValue>>{
+                                value: content.getId(),
+                                displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
+                            });
+                        });
+
+                        this.layoutInProgress = false;
                     });
                 });
+        }
+
+        private layoutUploadDialog() {
+            this.uploadDialog = new ImageUploadDialog(this.config.contentPath);
+            this.uploadDialog.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
+                this.uploadDialog.close();
+
+                event.getUploadItems().forEach((uploadItem: Content) => {
+
+                    var value = ImageSelectorDisplayValue.fromContentSummary(uploadItem);
+
+                    var option = <api.ui.selector.Option<ImageSelectorDisplayValue>>{
+                        value: value.getId(),
+                        displayValue: value
+                    };
+                    this.comboBox.selectOption(option);
+                });
+            });
+            this.uploadDialog.onUploadProgress((event: FileUploadProgressEvent<Content>) => {
+                var selectedOption = this.selectedOptionsView.getById(event.getUploadItem().getId());
+                (<SelectedOptionView>selectedOption.getOptionView()).setProgress(event.getProgress());
+            });
+            this.uploadDialog.onImageUploaded((event: FileUploadedEvent<Content>) => {
+                var createdContent = event.getUploadItem();
+
+                new api.content.ContentCreatedEvent(createdContent.getContentId()).fire();
+
+                var value = ImageSelectorDisplayValue.fromContentSummary(createdContent);
+                this.comboBox.selectOption({
+                    value: value.getId(),
+                    displayValue: value
+                });
+
             });
         }
 
