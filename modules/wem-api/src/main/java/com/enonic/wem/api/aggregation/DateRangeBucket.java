@@ -5,14 +5,15 @@ import java.time.Instant;
 public class DateRangeBucket
     extends Bucket
 {
-    private Instant from;
+    private final Instant from;
 
-    private Instant to;
+    private final Instant to;
 
-
-    public DateRangeBucket( final String key, final long docCount )
+    private DateRangeBucket( final Builder builder )
     {
-        super( key, docCount );
+        super( builder );
+        from = builder.from;
+        to = builder.to;
     }
 
     public Instant getFrom()
@@ -20,18 +21,42 @@ public class DateRangeBucket
         return from;
     }
 
-    public void setFrom( final Instant from )
-    {
-        this.from = from;
-    }
-
     public Instant getTo()
     {
         return to;
     }
 
-    public void setTo( final Instant to )
+    public static Builder create()
     {
-        this.to = to;
+        return new Builder();
+    }
+
+    public static final class Builder
+        extends Bucket.Builder<Builder>
+    {
+        private Instant from;
+
+        private Instant to;
+
+        private Builder()
+        {
+        }
+
+        public Builder from( Instant from )
+        {
+            this.from = from;
+            return this;
+        }
+
+        public Builder to( Instant to )
+        {
+            this.to = to;
+            return this;
+        }
+
+        public DateRangeBucket build()
+        {
+            return new DateRangeBucket( this );
+        }
     }
 }

@@ -10,9 +10,9 @@ import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 public class Buckets
     extends AbstractImmutableEntitySet<Bucket>
 {
-    public Buckets( final ImmutableSet<Bucket> buckets )
+    private Buckets( final Builder builder )
     {
-        super( buckets );
+        super( ImmutableSet.copyOf( builder.buckets ) );
     }
 
     public static Builder create()
@@ -32,7 +32,7 @@ public class Buckets
 
         public Buckets build()
         {
-            return new Buckets( ImmutableSet.copyOf( this.buckets ) );
+            return new Buckets( this );
         }
     }
 

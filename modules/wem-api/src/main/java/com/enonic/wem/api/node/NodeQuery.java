@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.query.aggregation.AggregationQueries;
 import com.enonic.wem.api.query.aggregation.AggregationQuery;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
@@ -25,7 +26,7 @@ public class NodeQuery
 
     private final Filters queryFilters;
 
-    private final ImmutableSet<AggregationQuery> aggregationQueries;
+    private final AggregationQueries aggregationQueries;
 
     private final ImmutableSet<OrderExpr> orderBys;
 
@@ -45,7 +46,7 @@ public class NodeQuery
         this.orderBys = query != null ? ImmutableSet.copyOf( query.getOrderSet() ) : ImmutableSet.<OrderExpr>of();
         this.size = builder.size;
         this.from = builder.from;
-        this.aggregationQueries = ImmutableSet.copyOf( builder.aggregationQueries );
+        this.aggregationQueries = AggregationQueries.fromCollection( ImmutableSet.copyOf( builder.aggregationQueries ) );
         this.parent = builder.parent;
         this.path = builder.path;
         this.principals = builder.principals;
@@ -99,7 +100,7 @@ public class NodeQuery
         return principals;
     }
 
-    public ImmutableSet<AggregationQuery> getAggregationQueries()
+    public AggregationQueries getAggregationQueries()
     {
         return aggregationQueries;
     }
@@ -197,9 +198,9 @@ public class NodeQuery
             return this;
         }
 
-        public Builder addAggregationQueries( final Set<AggregationQuery> aggregationQueries )
+        public Builder addAggregationQueries( final AggregationQueries aggregationQueries )
         {
-            this.aggregationQueries.addAll( aggregationQueries );
+            this.aggregationQueries.addAll( aggregationQueries.getSet() );
             return this;
         }
 

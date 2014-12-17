@@ -9,6 +9,11 @@ public class NumericRangeAggregationQuery
         super( builder, builder.ranges );
     }
 
+    public static Builder create( final String name )
+    {
+        return new Builder( name );
+    }
+
     public static class Builder
         extends AbstractRangeAggregationQuery.Builder<Builder, NumericRange>
     {

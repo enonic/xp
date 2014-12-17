@@ -14,7 +14,7 @@ public abstract class AbstractRangeAggregationQuery<R extends Range>
 
     AbstractRangeAggregationQuery( final Builder builder, final Collection<R> ranges )
     {
-        super( builder.name );
+        super( builder );
         this.ranges = ImmutableSet.copyOf( ranges );
         this.fieldName = builder.fieldName;
     }
@@ -27,16 +27,6 @@ public abstract class AbstractRangeAggregationQuery<R extends Range>
     public String getFieldName()
     {
         return fieldName;
-    }
-
-    public static DateRangeAggregationQuery.Builder dateRangeQuery( final String name )
-    {
-        return new DateRangeAggregationQuery.Builder( name );
-    }
-
-    public static NumericRangeAggregationQuery.Builder numericRangeQuery( final String name )
-    {
-        return new NumericRangeAggregationQuery.Builder( name );
     }
 
     public abstract static class Builder<T extends Builder, R extends Range>

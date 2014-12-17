@@ -11,32 +11,51 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.query.aggregation.AbstractHistogramAggregationQuery;
 import com.enonic.wem.api.query.aggregation.AbstractRangeAggregationQuery;
+import com.enonic.wem.api.query.aggregation.AggregationQueries;
 import com.enonic.wem.api.query.aggregation.AggregationQuery;
 import com.enonic.wem.api.query.aggregation.TermsAggregationQuery;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 public class AggregationBuilderFactory
 {
-    public static Set<AggregationBuilder> create( final Collection<AggregationQuery> aggregationQueries )
+    public static Set<AggregationBuilder> create( final AggregationQueries aggregationQueries )
     {
+        return doCreate( aggregationQueries );
+    }
 
+    private static Set<AggregationBuilder> doCreate( final AggregationQueries aggregationQueries )
+    {
         Set<AggregationBuilder> aggregationBuilders = Sets.newHashSet();
 
         for ( final AggregationQuery aggregationQuery : aggregationQueries )
         {
+            final AggregationBuilder aggregationBuilder;
+
             if ( aggregationQuery instanceof TermsAggregationQuery )
             {
-                aggregationBuilders.add( createTerms( (TermsAggregationQuery) aggregationQuery ) );
+                aggregationBuilder = createTerms( (TermsAggregationQuery) aggregationQuery );
             }
             else if ( aggregationQuery instanceof AbstractRangeAggregationQuery )
             {
-                aggregationBuilders.add( RangeAggregationBuilderFactory.create( (AbstractRangeAggregationQuery) aggregationQuery ) );
+                aggregationBuilder = RangeAggregationBuilderFactory.create( (AbstractRangeAggregationQuery) aggregationQuery );
             }
             else if ( aggregationQuery instanceof AbstractHistogramAggregationQuery )
             {
-                aggregationBuilders.add(
-                    HistogramAggregationQueryBuilderFactory.create( (AbstractHistogramAggregationQuery) aggregationQuery ) );
+                aggregationBuilder = HistogramAggregationQueryBuilderFactory.create( (AbstractHistogramAggregationQuery) aggregationQuery );
             }
+            else
+            {
+                throw new IllegalArgumentException( "Unexpected aggregation type: " + aggregationQuery.getClass() );
+            }
+
+            final Set<AggregationBuilder> subAggregations = doCreate( aggregationQuery.getSubQueries() );
+
+            for ( final AggregationBuilder subAggregation : subAggregations )
+            {
+                aggregationBuilder.subAggregation( subAggregation );
+            }
+
+            aggregationBuilders.add( aggregationBuilder );
         }
 
         return aggregationBuilders;

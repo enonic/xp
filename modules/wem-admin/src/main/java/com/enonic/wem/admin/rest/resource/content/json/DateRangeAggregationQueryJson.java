@@ -19,7 +19,7 @@ public class DateRangeAggregationQueryJson
                                           @JsonProperty("fieldName") final String fieldName, //
                                           @JsonProperty("ranges") final List<DateRangeJson> dateRanges )
     {
-        final DateRangeAggregationQuery.Builder builder = DateRangeAggregationQuery.dateRangeQuery( name ).
+        final DateRangeAggregationQuery.Builder builder = DateRangeAggregationQuery.create( name ).
             fieldName( fieldName );
 
         for ( final DateRangeJson dateRangeJson : dateRanges )

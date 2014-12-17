@@ -20,7 +20,7 @@ public class TermsAggregationQueryJson
                                       @JsonProperty("orderByDirection") final String orderByDirection, //
                                       @JsonProperty("orderByType") final String orderByType )
     {
-        final TermsAggregationQuery.Builder builder = TermsAggregationQuery.newTermsAggregation( name ).
+        final TermsAggregationQuery.Builder builder = TermsAggregationQuery.create( name ).
             fieldName( fieldName ).
             size( size );
 

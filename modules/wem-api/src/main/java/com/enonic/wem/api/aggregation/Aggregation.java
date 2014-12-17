@@ -1,12 +1,26 @@
 package com.enonic.wem.api.aggregation;
 
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
 public abstract class Aggregation
 {
     private final String name;
 
-    public Aggregation( final Builder builder )
+    private final Aggregations subAggregations;
+
+    @SuppressWarnings("unchecked")
+    protected Aggregation( final Builder builder )
     {
         this.name = builder.name;
+        this.subAggregations = Aggregations.from( ImmutableSet.copyOf( builder.subAggregations ) );
+    }
+
+    public Aggregations getSubAggregations()
+    {
+        return subAggregations;
     }
 
     public String getName()
@@ -19,14 +33,30 @@ public abstract class Aggregation
         return new BucketAggregation.Builder( name );
     }
 
-
-    public static class Builder<T extends Builder>
+    public static abstract class Builder<T extends Builder>
     {
         public Builder( final String name )
         {
             this.name = name;
         }
 
-        private String name;
+        private final String name;
+
+        private final Set<Aggregation> subAggregations = Sets.newHashSet();
+
+        @SuppressWarnings("unchecked")
+        public T addSubAggregation( final Aggregation aggregation )
+        {
+            this.subAggregations.add( aggregation );
+            return (T) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public T addAggregations( final Aggregations aggregations )
+        {
+            this.subAggregations.addAll( aggregations.getSet() );
+            return (T) this;
+        }
+
     }
 }

@@ -13,9 +13,9 @@ public class TermsAggregationQuery
 
     private final Type orderType;
 
-    public TermsAggregationQuery( final Builder builder )
+    private TermsAggregationQuery( final Builder builder )
     {
-        super( builder.name );
+        super( builder );
         this.fieldName = builder.fieldName;
         this.size = builder.size;
         this.orderDirection = builder.direction;
@@ -42,8 +42,13 @@ public class TermsAggregationQuery
         return orderType;
     }
 
+    public static Builder create( final String name )
+    {
+        return new Builder( name );
+    }
+
     public static class Builder
-        extends AggregationQuery.Builder
+        extends AggregationQuery.Builder<Builder>
     {
         private Direction direction = Direction.ASC;
 
@@ -86,8 +91,6 @@ public class TermsAggregationQuery
             this.type = type;
             return this;
         }
-
-
     }
 
     public enum Direction

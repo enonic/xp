@@ -11,6 +11,21 @@ import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 public class Aggregations
     extends AbstractImmutableEntitySet<Aggregation>
 {
+    private Aggregations( final ImmutableSet<Aggregation> set )
+    {
+        super( set );
+    }
+
+    public static Aggregations empty()
+    {
+        final ImmutableSet<Aggregation> empty = ImmutableSet.of();
+        return new Aggregations( empty );
+    }
+
+    public static Aggregations from( final ImmutableSet<Aggregation> aggregations )
+    {
+        return new Aggregations( aggregations );
+    }
 
     public Aggregation get( final String name )
     {
@@ -29,18 +44,6 @@ public class Aggregations
         return null;
     }
 
-    public static Aggregations empty()
-    {
-        final ImmutableSet<Aggregation> empty = ImmutableSet.of();
-        return new Aggregations( empty );
-    }
-
-    public Aggregations( final ImmutableSet<Aggregation> set )
-    {
-        super( set );
-    }
-
-
     public static Builder create()
     {
         return new Builder();
@@ -48,8 +51,7 @@ public class Aggregations
 
     public static class Builder
     {
-        private Set<Aggregation> aggregations = Sets.newLinkedHashSet();
-
+        private final Set<Aggregation> aggregations = Sets.newLinkedHashSet();
 
         public Builder add( final Aggregation aggregation )
         {

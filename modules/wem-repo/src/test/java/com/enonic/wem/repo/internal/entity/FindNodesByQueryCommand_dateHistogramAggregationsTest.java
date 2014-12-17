@@ -15,7 +15,7 @@ import com.enonic.wem.api.query.aggregation.DateHistogramAggregationQuery;
 
 import static org.junit.Assert.*;
 
-public class FindContentByQueryCommand_dateHistogramAggregationsTest
+public class FindNodesByQueryCommand_dateHistogramAggregationsTest
     extends AbstractNodeTest
 {
 

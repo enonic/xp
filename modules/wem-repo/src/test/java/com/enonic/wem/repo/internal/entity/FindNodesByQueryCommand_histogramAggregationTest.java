@@ -17,7 +17,7 @@ import com.enonic.wem.api.query.aggregation.HistogramAggregationQuery;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;
 
-public class FindContentByQueryCommand_histogramAggregationTest
+public class FindNodesByQueryCommand_histogramAggregationTest
     extends AbstractNodeTest
 {
     @Test

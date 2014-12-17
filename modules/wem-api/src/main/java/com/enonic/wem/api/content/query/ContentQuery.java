@@ -5,6 +5,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.query.aggregation.AggregationQueries;
 import com.enonic.wem.api.query.aggregation.AggregationQuery;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.filter.Filter;
@@ -20,7 +21,7 @@ public class ContentQuery
 
     private final ContentTypeNames contentTypeNames;
 
-    private final ImmutableSet<AggregationQuery> aggregationQueries;
+    private final AggregationQueries aggregationQueries;
 
     private final Filters queryFilters;
 
@@ -34,7 +35,7 @@ public class ContentQuery
         this.contentTypeNames = builder.contentTypeNamesBuilder.build();
         this.from = builder.from;
         this.size = builder.size;
-        this.aggregationQueries = ImmutableSet.copyOf( builder.aggregationQueries );
+        this.aggregationQueries = AggregationQueries.fromCollection( ImmutableSet.copyOf( builder.aggregationQueries ) );
         this.queryFilters = builder.queryFilters.build();
     }
 
@@ -63,7 +64,7 @@ public class ContentQuery
         return size;
     }
 
-    public ImmutableSet<AggregationQuery> getAggregationQueries()
+    public AggregationQueries getAggregationQueries()
     {
         return aggregationQueries;
     }

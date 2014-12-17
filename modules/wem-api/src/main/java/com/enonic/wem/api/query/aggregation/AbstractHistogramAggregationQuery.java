@@ -11,7 +11,7 @@ public abstract class AbstractHistogramAggregationQuery<T>
 
     AbstractHistogramAggregationQuery( final Builder builder, final T interval )
     {
-        super( builder.name );
+        super( builder );
         this.fieldName = builder.fieldName;
         this.interval = interval;
         this.minDocCount = builder.minDocCount;
