@@ -68,6 +68,8 @@ module app.browse.filter {
                 if (event instanceof RefreshEvent) {
                     this.resetFacets(true, true).then(() => {
                         new ContentBrowseRefreshEvent().fire();
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
                     }).done();
                 } else { // it's SearchEvent, usual reset with grid reload
                     this.reset();
@@ -127,9 +129,8 @@ module app.browse.filter {
 
                     aggregationGroupView.forEach((aggregationGroupView: AggregationGroupView) => {
                         aggregationGroupView.initialize();
-                    })
-                }
-            ).catch((reason: any) => {
+                    });
+                }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
         }
