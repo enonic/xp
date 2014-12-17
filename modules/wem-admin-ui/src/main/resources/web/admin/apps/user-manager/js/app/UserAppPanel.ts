@@ -30,7 +30,7 @@ module app {
             switch (action) {
             case 'edit':
                 var id = path.getElement(1);
-                if (id) {
+                if (id && this.isValidPrincipalKey(id)) {
                     new api.security.GetPrincipalByKeyRequest(api.security.PrincipalKey.fromString(id)).sendAndParse().
                         done((principal: api.security.Principal) => {
                             new app.browse.EditPrincipalEvent([
@@ -40,6 +40,8 @@ module app {
                                     build()
                             ]).fire();
                         });
+                } else {
+                    new api.app.bar.event.ShowBrowsePanelEvent().fire();
                 }
                 break;
             case 'view':
@@ -51,6 +53,15 @@ module app {
             default:
                 new api.app.bar.event.ShowBrowsePanelEvent().fire();
                 break;
+            }
+        }
+
+        private isValidPrincipalKey(value: string): boolean {
+            try {
+                api.security.PrincipalKey.fromString(value);
+                return true;
+            } catch (e) {
+                return false;
             }
         }
 
