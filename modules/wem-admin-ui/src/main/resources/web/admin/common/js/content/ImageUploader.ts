@@ -23,6 +23,11 @@ module api.content {
             this.addClass('image-uploader');
         }
 
+        /**
+         *
+         * @param value supposed to be a serialized array of or a single content id
+         * @returns {api.content.ImageUploader}
+         */
         setValue(value: string): ImageUploader {
             super.setValue(value);
 
@@ -58,17 +63,13 @@ module api.content {
         private createImageResult(value: string): api.dom.DivEl {
             var container = new api.dom.DivEl();
 
-            var url;
-            if (value && (value.indexOf('/') == -1)) {
-                url = api.util.UriHelper.getRestUri('content/image/' + value + '?' + api.util.UriHelper.encodeUrlParams({
-                    size: this.getEl().getWidth(),
-                    ts: new Date().getTime()
-                }));
-            } else {
-                url = value;
-            }
+            var imgUrl = new ContentImageUrlResolver().
+                setContentId(new api.content.ContentId(value)).
+                setSize(this.getEl().getWidth()).
+                setTimestamp(new Date()).
+                resolve();
 
-            var image = new api.dom.ImgEl(url);
+            var image = new api.dom.ImgEl(imgUrl);
 
             image.onClicked((event: MouseEvent) => {
                 image.toggleClass('selected');

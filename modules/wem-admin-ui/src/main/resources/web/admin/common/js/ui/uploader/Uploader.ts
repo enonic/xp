@@ -215,13 +215,17 @@ module api.ui.uploader {
         }
 
         /**
-         * Called to get id from upload items
+         * Called to get id from upload items to differentiate them
          * @param item
          */
         getUploadItemId(item: ITEM): string {
             throw new Error('Should be overridden by inheritors');
         }
 
+        /**
+         * Called to get values of uploaded items to be used as input value
+         * @param item
+         */
         getUploadItemValue(item: ITEM): string {
             throw new Error('Should be overridden by inheritors');
         }

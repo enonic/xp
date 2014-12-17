@@ -44,14 +44,7 @@ module api.content.form.inputtype.upload {
                     sendAndParse().
                     then((content: api.content.Content) => {
 
-                        var imgUrl = new ContentImageUrlResolver().
-                            setContentId(this.getContext().contentId).
-                            setSize(494).
-                            setTimestamp(content.getModifiedTime()).
-                            resolve();
-
-                        this.imageUploader.setValue(imgUrl);
-
+                        this.imageUploader.setValue(content.getId());
                     }).catch((reason: any) => {
                         api.DefaultErrorHandler.handle(reason);
                     }).done();
