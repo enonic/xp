@@ -114,6 +114,13 @@ module api.data {
             return <api.content.ContentId>this.value;
         }
 
+        getLink(): api.util.Link {
+            if (this.isNull()) {
+                return null;
+            }
+            return <api.util.Link>this.value;
+        }
+
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Value)) {
