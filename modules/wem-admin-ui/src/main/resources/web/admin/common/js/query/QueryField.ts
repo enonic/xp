@@ -6,7 +6,7 @@ module api.query {
 
         static NAME: string = "_name";
 
-        static ALL: string = "_all_text";
+        static ALL: string = "_alltext";
 
         static MODIFIED_TIME: string = "_modifiedTime"
 
