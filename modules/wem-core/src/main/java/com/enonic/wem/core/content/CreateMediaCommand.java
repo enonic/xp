@@ -44,11 +44,8 @@ final class CreateMediaCommand
 
         Preconditions.checkNotNull( params.getMimeType(), "Unable to resolve media type" );
 
-        final ContentTypeName type = ContentTypeFromMimeTypeResolver.resolve( params.getMimeType() );
-        if ( type == null )
-        {
-            throw new IllegalArgumentException( "Could not resolve a ContentType from MIME type: " + params.getMimeType() );
-        }
+        final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( params.getMimeType() );
+        final ContentTypeName type = resolvedTypeFromMimeType != null ? resolvedTypeFromMimeType : ContentTypeName.unknownMedia();
 
         final String nameOfContent = Name.ensureValidName( params.getName() );
 

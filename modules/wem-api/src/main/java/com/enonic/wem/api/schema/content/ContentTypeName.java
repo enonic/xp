@@ -50,6 +50,8 @@ public final class ContentTypeName
 
     private static final ContentTypeName MEDIA_EXECUTABLE = new ContentTypeName( "executable" );
 
+    private static final ContentTypeName MEDIA_UNKNOWN = new ContentTypeName( "unknown" );
+
     private ContentTypeName( final String localName )
     {
         super( ModuleKey.SYSTEM, localName );
@@ -155,6 +157,11 @@ public final class ContentTypeName
         return MEDIA_CODE;
     }
 
+    public static ContentTypeName unknownMedia()
+    {
+        return MEDIA_UNKNOWN;
+    }
+
     public static ContentTypeName executableMedia()
     {
         return MEDIA_EXECUTABLE;
@@ -213,7 +220,8 @@ public final class ContentTypeName
             MEDIA_SPREADSHEET.equals( this ) ||
             MEDIA_PRESENTATION.equals( this ) ||
             MEDIA_VECTOR.equals( this ) ||
-            MEDIA_TEXT.equals( this );
+            MEDIA_TEXT.equals( this ) ||
+            MEDIA_UNKNOWN.equals( this );
     }
 
     public boolean isTextMedia()
@@ -274,6 +282,11 @@ public final class ContentTypeName
     public boolean isExecutableMedia()
     {
         return MEDIA_EXECUTABLE.equals( this );
+    }
+
+    public boolean isUnknownMedia()
+    {
+        return MEDIA_UNKNOWN.equals( this );
     }
 
     @Override

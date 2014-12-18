@@ -93,9 +93,14 @@ public final class CoreContentTypesProvider
         createSystemType( ContentTypeName.executableMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
+    private static final ContentType MEDIA_UNKNOWN =
+        createSystemType( ContentTypeName.unknownMedia() ).superType( ContentTypeName.media() ).
+            setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
+
     private static final ContentType[] SYSTEM_TYPES =
         {UNSTRUCTURED, STRUCTURED, FOLDER, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE, MEDIA_VECTOR,
-            MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE, SITE, TEMPLATE_FOLDER,
+            MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE, MEDIA_UNKNOWN, SITE,
+            TEMPLATE_FOLDER,
             PAGE_TEMPLATE};
 
 
