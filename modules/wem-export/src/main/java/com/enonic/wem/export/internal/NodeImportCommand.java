@@ -46,7 +46,6 @@ public class NodeImportCommand
 
     private static final Long IMPORT_NODE_ORDER_SPACE = (long) Integer.MAX_VALUE;
 
-
     private NodeImportCommand( final Builder builder )
     {
         this.nodeService = builder.nodeService;
@@ -104,15 +103,22 @@ public class NodeImportCommand
 
     private void processNodeBasePath( final Path nodeBasePath, final ProcessNodeSettings.Builder processNodeSettings )
     {
-        final Node node = processNodeXmlFile( nodeBasePath, processNodeSettings );
+        try
+        {
+            final Node node = processNodeXmlFile( nodeBasePath, processNodeSettings );
 
-        if ( !node.getChildOrder().isManualOrder() )
-        {
-            importFromDirectoryLayout( nodeBasePath );
+            if ( !node.getChildOrder().isManualOrder() )
+            {
+                importFromDirectoryLayout( nodeBasePath );
+            }
+            else
+            {
+                importWithManualOrder( nodeBasePath );
+            }
         }
-        else
+        catch ( Exception e )
         {
-            importWithManualOrder( nodeBasePath );
+            result.addError( e );
         }
     }
 
@@ -153,9 +159,9 @@ public class NodeImportCommand
 
         for ( final XmlAttachedBinaries.AttachedBinary attachedBinary : attachedBinaries.getAttachedBinary() )
         {
-            final String binaryReference = attachedBinary.getBinaryReference();
+            final String binaryReferenceString = attachedBinary.getBinaryReference();
 
-            final Path binaryFilePath = NodeImportPathResolver.resolveBinaryFilePath( nodeBasePath, binaryReference );
+            final Path binaryFilePath = NodeImportPathResolver.resolveBinaryFilePath( nodeBasePath, binaryReferenceString );
 
             final ByteSource binarySource = this.exportReader.getSource( binaryFilePath );
 
@@ -164,7 +170,10 @@ public class NodeImportCommand
                 throw new ImportNodeException( "Missing binary file, expected file: " + binaryFilePath );
             }
 
-            builder.add( new BinaryAttachment( BinaryReference.from( binaryReference ), binarySource ) );
+            final BinaryReference binaryReference = BinaryReference.from( binaryReferenceString );
+            builder.add( new BinaryAttachment( binaryReference, binarySource ) );
+
+            result.addBinary( nodeBasePath.toString(), binaryReference );
         }
 
         return builder.build();

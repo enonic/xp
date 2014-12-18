@@ -145,13 +145,13 @@ public class NodeImportCommandTest
             execute();
     }
 
-    @Test(expected = ImportNodeException.class)
+    @Test
     public void expect_order_file_if_manual()
         throws Exception
     {
         createNodeXmlFile( Paths.get( "myExport", "mynode", "_" ), false );
 
-        NodeImportCommand.create().
+        final NodeImportResult result = NodeImportCommand.create().
             nodeService( this.importNodeService ).
             exportReader( new FileExportReader() ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
@@ -160,7 +160,32 @@ public class NodeImportCommandTest
             exportName( "myExport" ).
             build().
             execute();
+
+        assertEquals( 1, result.getImportErrors().size() );
+        assertEquals( 0, result.getImportedNodes().getSize() );
     }
+
+    @Test
+    public void continue_on_error()
+        throws Exception
+    {
+        createNodeXmlFile( Paths.get( "myExport", "mynode" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode2" ), true );
+
+        final NodeImportResult result = NodeImportCommand.create().
+            nodeService( this.importNodeService ).
+            exportReader( new FileExportReader() ).
+            xmlNodeSerializer( new XmlNodeSerializer() ).
+            importRoot( NodePath.ROOT ).
+            exportHome( this.temporaryFolder.getRoot().toPath() ).
+            exportName( "myExport" ).
+            build().
+            execute();
+
+        assertEquals( 1, result.getImportErrors().size() );
+        assertEquals( 2, result.getImportedNodes().getSize() );
+    }
+
 
     @Test
     public void import_nodes_ordered()
@@ -230,13 +255,13 @@ public class NodeImportCommandTest
         assertNull( mychild3 );
     }
 
-    @Test(expected = ImportNodeException.class)
+    @Test
     public void import_with_binaries_missing_file()
         throws Exception
     {
         createNodeXmlFileWithBinaries( Paths.get( "myExport", "mynode" ) );
 
-        NodeImportCommand.create().
+        final NodeImportResult result = NodeImportCommand.create().
             nodeService( this.importNodeService ).
             exportReader( new FileExportReader() ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
@@ -245,6 +270,9 @@ public class NodeImportCommandTest
             exportName( "myExport" ).
             build().
             execute();
+
+        assertEquals( 1, result.getImportErrors().size() );
+        assertEquals( 0, result.getImportedNodes().getSize() );
     }
 
     @Test
@@ -254,7 +282,7 @@ public class NodeImportCommandTest
         createNodeXmlFileWithBinaries( Paths.get( "myExport", "mynode" ) );
         createBinaryFile( Paths.get( "myExport", "mynode" ), "image.jpg", "this-is-the-source".getBytes() );
 
-        final NodeImportResult importedNode = NodeImportCommand.create().
+        NodeImportCommand.create().
             nodeService( this.importNodeService ).
             exportReader( new FileExportReader() ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
