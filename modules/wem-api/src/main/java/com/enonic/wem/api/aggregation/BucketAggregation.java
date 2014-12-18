@@ -8,7 +8,7 @@ public class BucketAggregation
     private BucketAggregation( final Builder builder )
     {
         super( builder );
-        this.buckets = builder.buckets == null ? Buckets.create().build() : builder.buckets;
+        this.buckets = builder.buckets;
     }
 
     public Buckets getBuckets()
