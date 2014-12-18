@@ -17,7 +17,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wem-core</artifactId>
+      <artifactId>wem-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -29,6 +29,10 @@
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>jaxrs-api</artifactId>
       <version>3.0.8.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
