@@ -16,10 +16,11 @@ public final class NashornStatusInfoBuilder
     public void build( final ObjectNode json )
     {
         json.put( "scriptEngine", NashornDiag.getScriptEngine() );
-        json.put( "newScriptObject", NashornDiag.newScriptObject() );
-        json.put( "newScriptArray", NashornDiag.newScriptArray() );
-        json.put( "getCurrentGlobal", NashornDiag.getCurrentGlobal() );
-        json.put( "findGlobalObject", NashornDiag.findGlobalObject() );
-        json.put( "setCurrentGlobal", NashornDiag.setCurrentGlobal() );
+        // json.put( "newScriptObject", NashornDiag.newScriptObject() );
+        // json.put( "newScriptArray", NashornDiag.newScriptArray() );
+        // json.put( "getCurrentGlobal", NashornDiag.getCurrentGlobal() );
+        // json.put( "findGlobalObject", NashornDiag.findGlobalObject() );
+        // json.put( "setCurrentGlobal", NashornDiag.setCurrentGlobal() );
+        json.set( "contextDiag", NashornDiag.getOtherInfo() );
     }
 }
