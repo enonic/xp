@@ -44,6 +44,45 @@ final class ContentTypeFromMimeTypeResolver
         MAP.put( "video/x-matroska", ContentTypeName.videoMedia() );
         MAP.put( "video/x-ms-wmv", ContentTypeName.videoMedia() );
         MAP.put( "video/x-flv", ContentTypeName.videoMedia() );
+        MAP.put( "application/ogg", ContentTypeName.videoMedia() );
+
+        // Archive
+        MAP.put( "application/zip", ContentTypeName.archiveMedia() );
+        MAP.put( "application/gzip", ContentTypeName.archiveMedia() );
+
+        // Text
+        MAP.put( "text/plain", ContentTypeName.textMedia() );
+        MAP.put( "text/csv", ContentTypeName.textMedia() );
+
+        // Code
+        MAP.put( "application/xml", ContentTypeName.codeMedia() );
+        MAP.put( "application/xml-dtd", ContentTypeName.codeMedia() );
+        MAP.put( "application/json", ContentTypeName.codeMedia() );
+        MAP.put( "application/xhtml+xml", ContentTypeName.codeMedia() );
+        MAP.put( "application/javascript", ContentTypeName.codeMedia() );
+        MAP.put( "application/ecmascript", ContentTypeName.codeMedia() );
+        MAP.put( "text/xml", ContentTypeName.codeMedia() );
+        MAP.put( "text/html", ContentTypeName.codeMedia() );
+        MAP.put( "text/css", ContentTypeName.codeMedia() );
+        MAP.put( "text/javascript", ContentTypeName.codeMedia() );
+        MAP.put( "application/soap+xml", ContentTypeName.codeMedia() );
+
+        // Data
+        MAP.put( "text/rtf", ContentTypeName.textMedia() );
+
+        // Document
+        // TODO
+
+        // Executable
+        // TODO
+
+        // Presentation
+        // TODO
+
+        // Vector
+        MAP.put( "application/postscript", ContentTypeName.vectorMedia() );
+
+
     }
 
     static ContentTypeName resolve( final String mimeType )
