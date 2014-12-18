@@ -71,16 +71,18 @@ final class ContentTypeFromMimeTypeResolver
         MAP.put( "text/rtf", ContentTypeName.textMedia() );
 
         // Document
-        // TODO
+        MAP.put( "application/pdf", ContentTypeName.documentMedia() );
+        MAP.put( "application/postscript", ContentTypeName.documentMedia() );
+        MAP.put( "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ContentTypeName.documentMedia() );
 
         // Executable
         // TODO
 
         // Presentation
-        // TODO
+        MAP.put( "application/vnd.openxmlformats-officedocument.presentationml.presentation", ContentTypeName.presentationMedia() );
 
         // Vector
-        MAP.put( "application/postscript", ContentTypeName.vectorMedia() );
+        // TODO:
 
 
     }
