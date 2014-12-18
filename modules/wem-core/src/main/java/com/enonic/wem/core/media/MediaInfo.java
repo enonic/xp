@@ -1,15 +1,10 @@
 package com.enonic.wem.core.media;
 
-
-import java.util.Map;
-
-import org.apache.tika.mime.MediaType;
-
 import com.google.common.collect.ImmutableMap;
 
 public class MediaInfo
 {
-    private MediaType mediaType;
+    private String mediaType;
 
     private ImmutableMap<String, String> metadata;
 
@@ -17,15 +12,9 @@ public class MediaInfo
     {
         this.mediaType = builder.mediaType;
         this.metadata = builder.metadata.build();
-
-        System.out.println( "MediaInfo: " );
-        for ( Map.Entry entry : this.metadata.entrySet() )
-        {
-            System.out.println( entry.getKey() + " : " + entry.getValue() );
-        }
     }
 
-    public MediaType getMediaType()
+    public String getMediaType()
     {
         return mediaType;
     }
@@ -42,11 +31,11 @@ public class MediaInfo
 
     public static class Builder
     {
-        private MediaType mediaType;
+        private String mediaType;
 
         private ImmutableMap.Builder<String, String> metadata = ImmutableMap.builder();
 
-        public Builder mediaType( final MediaType value )
+        public Builder mediaType( final String value )
         {
             this.mediaType = value;
             return this;

@@ -1,25 +1,40 @@
 package com.enonic.wem.core.media;
 
-import java.io.File;
+import java.util.Map;
 
 import org.apache.tika.detect.DefaultDetector;
-import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.parser.DefaultParser;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
+import com.google.common.io.Resources;
+
+import static org.junit.Assert.*;
 
 public class MediaInfoServiceTest
 {
+    private MediaInfoService service;
+
+    @Before
+    public void setup()
+    {
+        this.service = new MediaInfoService();
+        this.service.setDetector( new DefaultDetector() );
+        this.service.setParser( new DefaultParser() );
+    }
+
     @Test
     public void todo()
     {
-        ByteSource inputStream = Files.asByteSource( new File( this.getClass().getResource( "NikonD100.jpg" ).getFile() ) );
-        MediaInfoService service = new MediaInfoService();
-        service.setDetector( new DefaultDetector() );
-        service.setParser( new AutoDetectParser() );
+        final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "NikonD100.jpg" ) );
+        final MediaInfo mediaInfo = this.service.parseMediaInfo( byteSource );
 
-        MediaInfo mediaInfo = service.parseMediaInfo( inputStream );
-        System.out.println( mediaInfo );
+        assertEquals( "image/jpeg", mediaInfo.getMediaType() );
+
+        for ( final Map.Entry<String, String> entry : mediaInfo.getMetadata().entrySet() )
+        {
+            System.out.println( entry.getKey() + " = " + entry.getValue() );
+        }
     }
 }

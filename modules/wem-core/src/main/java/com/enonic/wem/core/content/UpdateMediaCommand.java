@@ -43,7 +43,7 @@ final class UpdateMediaCommand
         final MediaInfo mediaInfo = mediaInfoService.parseMediaInfo( params.getByteSource() );
         if ( params.getMimeType() == null )
         {
-            params.mimeType( mediaInfo.getMediaType().getType() );
+            params.mimeType( mediaInfo.getMediaType() );
         }
 
         final ContentTypeName type = ContentTypeFromMimeTypeResolver.resolve( params.getMimeType() );

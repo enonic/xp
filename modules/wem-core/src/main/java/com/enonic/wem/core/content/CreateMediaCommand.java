@@ -39,7 +39,7 @@ final class CreateMediaCommand
         final MediaInfo mediaInfo = mediaInfoService.parseMediaInfo( params.getByteSource() );
         if ( params.getMimeType() == null && mediaInfo.getMediaType() != null )
         {
-            params.mimeType( mediaInfo.getMediaType().getType() );
+            params.mimeType( mediaInfo.getMediaType() );
         }
 
         Preconditions.checkNotNull( params.getMimeType(), "Unable to resolve media type" );
