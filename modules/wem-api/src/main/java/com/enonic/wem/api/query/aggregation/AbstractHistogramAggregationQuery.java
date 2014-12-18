@@ -1,7 +1,7 @@
 package com.enonic.wem.api.query.aggregation;
 
 public abstract class AbstractHistogramAggregationQuery<T>
-    extends AggregationQuery
+    extends BucketAggregationQuery
 {
     private final String fieldName;
 
@@ -33,7 +33,7 @@ public abstract class AbstractHistogramAggregationQuery<T>
     }
 
     public abstract static class Builder<B extends Builder, T>
-        extends AggregationQuery.Builder
+        extends BucketAggregationQuery.Builder<Builder>
     {
         private String fieldName;
 

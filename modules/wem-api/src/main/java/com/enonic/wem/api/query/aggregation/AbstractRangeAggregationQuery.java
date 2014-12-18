@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 public abstract class AbstractRangeAggregationQuery<R extends Range>
-    extends AggregationQuery
+    extends BucketAggregationQuery
 {
     private final String fieldName;
 
@@ -30,7 +30,7 @@ public abstract class AbstractRangeAggregationQuery<R extends Range>
     }
 
     public abstract static class Builder<T extends Builder, R extends Range>
-        extends AggregationQuery.Builder
+        extends BucketAggregationQuery.Builder<Builder>
     {
         private String fieldName;
 

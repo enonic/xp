@@ -3,7 +3,7 @@ package com.enonic.wem.repo.internal.elasticsearch;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
@@ -44,7 +44,7 @@ public class SearchRequestBuilderFactory
             searchRequestBuilder.addSort( sortBuilder );
         }
 
-        for ( final AggregationBuilder aggregationBuilder : query.getAggregations() )
+        for ( final AbstractAggregationBuilder aggregationBuilder : query.getAggregations() )
         {
             searchRequestBuilder.addAggregation( aggregationBuilder );
         }

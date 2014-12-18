@@ -9,6 +9,7 @@ import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.metrics.stats.Stats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import com.enonic.wem.api.aggregation.Bucket;
 import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.aggregation.Buckets;
 import com.enonic.wem.api.aggregation.DateRangeBucket;
+import com.enonic.wem.api.aggregation.StatsAggregation;
 
 public class AggregationsFactory
 {
@@ -54,6 +56,10 @@ public class AggregationsFactory
             {
                 aggregationsBuilder.add( createHistogramBuckets( (Histogram) aggregation ) );
             }
+            else if ( aggregation instanceof Stats )
+            {
+                aggregationsBuilder.add( createStatsMetrics( (Stats) aggregation ) );
+            }
             else
             {
                 throw new IllegalArgumentException( "Aggregation translator for " + aggregation.getClass().getName() + " not implemented" );
@@ -61,6 +67,17 @@ public class AggregationsFactory
         }
 
         return aggregationsBuilder.build();
+    }
+
+    private static StatsAggregation createStatsMetrics( final Stats stats )
+    {
+        return StatsAggregation.create( stats.getName() ).
+            avg( stats.getAvg() ).
+            count( stats.getCount() ).
+            max( stats.getMax() ).
+            min( stats.getMin() ).
+            sum( stats.getSum() ).
+            build();
     }
 
     private static BucketAggregation createTermsAggregationBuckets( final Terms termsAggregation )

@@ -1,7 +1,7 @@
 package com.enonic.wem.api.query.aggregation;
 
 public class TermsAggregationQuery
-    extends AggregationQuery
+    extends BucketAggregationQuery
 {
     public final static int TERM_DEFAULT_SIZE = 10;
 
@@ -48,7 +48,7 @@ public class TermsAggregationQuery
     }
 
     public static class Builder
-        extends AggregationQuery.Builder<Builder>
+        extends BucketAggregationQuery.Builder<Builder>
     {
         private Direction direction = Direction.ASC;
 

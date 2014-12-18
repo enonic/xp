@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 
 import com.google.common.base.Joiner;
@@ -33,7 +33,7 @@ public class ElasticsearchQuery
 
     private final boolean explain;
 
-    private final ImmutableSet<AggregationBuilder> aggregations;
+    private final ImmutableSet<AbstractAggregationBuilder> aggregations;
 
     private final ReturnFields returnFields;
 
@@ -56,7 +56,7 @@ public class ElasticsearchQuery
         return explain;
     }
 
-    public ImmutableSet<AggregationBuilder> getAggregations()
+    public ImmutableSet<AbstractAggregationBuilder> getAggregations()
     {
         return aggregations;
     }
@@ -158,7 +158,7 @@ public class ElasticsearchQuery
 
         private final boolean explain = false;
 
-        private Set<AggregationBuilder> aggregations = Sets.newHashSet();
+        private Set<AbstractAggregationBuilder> aggregations = Sets.newHashSet();
 
         private ReturnFields returnFields = ReturnFields.empty();
 
@@ -210,7 +210,7 @@ public class ElasticsearchQuery
             return this;
         }
 
-        public Builder setAggregations( final Set<AggregationBuilder> aggregations )
+        public Builder setAggregations( final Set<AbstractAggregationBuilder> aggregations )
         {
             this.aggregations = aggregations;
             return this;

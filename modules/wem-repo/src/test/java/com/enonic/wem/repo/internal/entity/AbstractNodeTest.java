@@ -126,7 +126,7 @@ public abstract class AbstractNodeTest
             execute();
     }
 
-    FindNodesByQueryResult doFindByQuery( final NodeQuery query )
+    public FindNodesByQueryResult doFindByQuery( final NodeQuery query )
     {
         return FindNodesByQueryCommand.create().
             query( query ).

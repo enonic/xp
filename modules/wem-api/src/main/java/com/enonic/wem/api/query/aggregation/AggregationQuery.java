@@ -12,7 +12,6 @@ public abstract class AggregationQuery
     AggregationQuery( final Builder builder )
     {
         this.name = builder.name;
-        this.subQueries = AggregationQueries.fromCollection( builder.aggregationQueries );
     }
 
     public String getName()
@@ -20,18 +19,9 @@ public abstract class AggregationQuery
         return name;
     }
 
-    private final AggregationQueries subQueries;
-
-    public AggregationQueries getSubQueries()
-    {
-        return subQueries;
-    }
-
     public static class Builder<T extends Builder>
     {
         private String name;
-
-        private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
 
         public Builder( final String name )
         {
@@ -45,12 +35,6 @@ public abstract class AggregationQuery
             return (T) this;
         }
 
-        @SuppressWarnings("unchecked")
-        public T addSubQuery( final AggregationQuery aggregationQuery )
-        {
-            this.aggregationQueries.add( aggregationQuery );
-            return (T) this;
-        }
 
     }
 
