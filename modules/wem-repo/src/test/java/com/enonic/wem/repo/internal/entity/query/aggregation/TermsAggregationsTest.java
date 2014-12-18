@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.entity;
+package com.enonic.wem.repo.internal.entity.query.aggregation;
 
 import java.util.Iterator;
 
@@ -15,15 +15,16 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.aggregation.TermsAggregationQuery;
+import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-public class FindNodesByQueryCommand_termsAggregationsTest
+public class TermsAggregationsTest
     extends AbstractNodeTest
 {
     @Test
-    public void aggregation_terms_asc()
+    public void order_doccount_desc()
         throws Exception
     {
         create_c1_c2_c3_with_2_3_1_category_hits();
@@ -53,6 +54,115 @@ public class FindNodesByQueryCommand_termsAggregationsTest
         next = iterator.next();
         assertEquals( "c1", next.getKey() );
         assertEquals( 2, next.getDocCount() );
+
+        next = iterator.next();
+        assertEquals( "c3", next.getKey() );
+        assertEquals( 1, next.getDocCount() );
+    }
+
+    @Test
+    public void order_doccount_asc()
+        throws Exception
+    {
+        create_c1_c2_c3_with_2_3_1_category_hits();
+
+        final NodeQuery query = NodeQuery.create().
+            addAggregationQuery( TermsAggregationQuery.create( "category" ).
+                fieldName( "category" ).
+                orderDirection( TermsAggregationQuery.Direction.ASC ).
+                orderType( TermsAggregationQuery.Type.DOC_COUNT ).
+                build() ).
+            build();
+
+        FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getAggregations().getSize() );
+        final Aggregation agg = result.getAggregations().get( "category" );
+        assertTrue( agg instanceof BucketAggregation );
+        final BucketAggregation categoryAgg = (BucketAggregation) agg;
+        assertEquals( 3, categoryAgg.getBuckets().getSize() );
+
+        final Iterator<Bucket> iterator = categoryAgg.getBuckets().iterator();
+
+        Bucket next = iterator.next();
+        assertEquals( "c3", next.getKey() );
+        assertEquals( 1, next.getDocCount() );
+
+        next = iterator.next();
+        assertEquals( "c1", next.getKey() );
+        assertEquals( 2, next.getDocCount() );
+
+        next = iterator.next();
+        assertEquals( "c2", next.getKey() );
+        assertEquals( 3, next.getDocCount() );
+    }
+
+
+    @Test
+    public void size()
+        throws Exception
+    {
+        create_c1_c2_c3_with_2_3_1_category_hits();
+
+        final NodeQuery query = NodeQuery.create().
+            addAggregationQuery( TermsAggregationQuery.create( "category" ).
+                fieldName( "category" ).
+                orderDirection( TermsAggregationQuery.Direction.DESC ).
+                orderType( TermsAggregationQuery.Type.DOC_COUNT ).
+                size( 2 ).
+                build() ).
+            build();
+
+        FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getAggregations().getSize() );
+        final Aggregation agg = result.getAggregations().get( "category" );
+        assertTrue( agg instanceof BucketAggregation );
+        final BucketAggregation categoryAgg = (BucketAggregation) agg;
+        assertEquals( 2, categoryAgg.getBuckets().getSize() );
+
+        final Iterator<Bucket> iterator = categoryAgg.getBuckets().iterator();
+
+        Bucket next = iterator.next();
+        assertEquals( "c2", next.getKey() );
+        assertEquals( 3, next.getDocCount() );
+
+        next = iterator.next();
+        assertEquals( "c1", next.getKey() );
+        assertEquals( 2, next.getDocCount() );
+    }
+
+    @Test
+    public void order_by_term()
+        throws Exception
+    {
+        create_c1_c2_c3_with_2_3_1_category_hits();
+
+        final NodeQuery query = NodeQuery.create().
+            addAggregationQuery( TermsAggregationQuery.create( "category" ).
+                fieldName( "category" ).
+                orderDirection( TermsAggregationQuery.Direction.ASC ).
+                orderType( TermsAggregationQuery.Type.TERM ).
+                build() ).
+            build();
+
+        FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getAggregations().getSize() );
+        final Aggregation agg = result.getAggregations().get( "category" );
+        assertTrue( agg instanceof BucketAggregation );
+        final BucketAggregation categoryAgg = (BucketAggregation) agg;
+        assertEquals( 3, categoryAgg.getBuckets().getSize() );
+
+        final Iterator<Bucket> iterator = categoryAgg.getBuckets().iterator();
+
+        Bucket next = iterator.next();
+        assertEquals( "c1", next.getKey() );
+        assertEquals( 2, next.getDocCount() );
+
+        next = iterator.next();
+        assertEquals( "c2", next.getKey() );
+        assertEquals( 3, next.getDocCount() );
 
         next = iterator.next();
         assertEquals( "c3", next.getKey() );
@@ -125,115 +235,6 @@ public class FindNodesByQueryCommand_termsAggregationsTest
         nextSub = subQueryIterator.next();
         assertEquals( "d3", nextSub.getKey() );
         assertEquals( third, nextSub.getDocCount() );
-    }
-
-    @Test
-    public void aggregation_terms_desc()
-        throws Exception
-    {
-        create_c1_c2_c3_with_2_3_1_category_hits();
-
-        final NodeQuery query = NodeQuery.create().
-            addAggregationQuery( TermsAggregationQuery.create( "category" ).
-                fieldName( "category" ).
-                orderDirection( TermsAggregationQuery.Direction.ASC ).
-                orderType( TermsAggregationQuery.Type.DOC_COUNT ).
-                build() ).
-            build();
-
-        FindNodesByQueryResult result = doFindByQuery( query );
-
-        assertEquals( 1, result.getAggregations().getSize() );
-        final Aggregation agg = result.getAggregations().get( "category" );
-        assertTrue( agg instanceof BucketAggregation );
-        final BucketAggregation categoryAgg = (BucketAggregation) agg;
-        assertEquals( 3, categoryAgg.getBuckets().getSize() );
-
-        final Iterator<Bucket> iterator = categoryAgg.getBuckets().iterator();
-
-        Bucket next = iterator.next();
-        assertEquals( "c3", next.getKey() );
-        assertEquals( 1, next.getDocCount() );
-
-        next = iterator.next();
-        assertEquals( "c1", next.getKey() );
-        assertEquals( 2, next.getDocCount() );
-
-        next = iterator.next();
-        assertEquals( "c2", next.getKey() );
-        assertEquals( 3, next.getDocCount() );
-    }
-
-
-    @Test
-    public void aggregation_terms_size()
-        throws Exception
-    {
-        create_c1_c2_c3_with_2_3_1_category_hits();
-
-        final NodeQuery query = NodeQuery.create().
-            addAggregationQuery( TermsAggregationQuery.create( "category" ).
-                fieldName( "category" ).
-                orderDirection( TermsAggregationQuery.Direction.DESC ).
-                orderType( TermsAggregationQuery.Type.DOC_COUNT ).
-                size( 2 ).
-                build() ).
-            build();
-
-        FindNodesByQueryResult result = doFindByQuery( query );
-
-        assertEquals( 1, result.getAggregations().getSize() );
-        final Aggregation agg = result.getAggregations().get( "category" );
-        assertTrue( agg instanceof BucketAggregation );
-        final BucketAggregation categoryAgg = (BucketAggregation) agg;
-        assertEquals( 2, categoryAgg.getBuckets().getSize() );
-
-        final Iterator<Bucket> iterator = categoryAgg.getBuckets().iterator();
-
-        Bucket next = iterator.next();
-        assertEquals( "c2", next.getKey() );
-        assertEquals( 3, next.getDocCount() );
-
-        next = iterator.next();
-        assertEquals( "c1", next.getKey() );
-        assertEquals( 2, next.getDocCount() );
-    }
-
-    @Test
-    public void aggregation_terms_order_by_term()
-        throws Exception
-    {
-        create_c1_c2_c3_with_2_3_1_category_hits();
-
-        final NodeQuery query = NodeQuery.create().
-            addAggregationQuery( TermsAggregationQuery.create( "category" ).
-                fieldName( "category" ).
-                orderDirection( TermsAggregationQuery.Direction.ASC ).
-                orderType( TermsAggregationQuery.Type.TERM ).
-                build() ).
-            build();
-
-        FindNodesByQueryResult result = doFindByQuery( query );
-
-        assertEquals( 1, result.getAggregations().getSize() );
-        final Aggregation agg = result.getAggregations().get( "category" );
-        assertTrue( agg instanceof BucketAggregation );
-        final BucketAggregation categoryAgg = (BucketAggregation) agg;
-        assertEquals( 3, categoryAgg.getBuckets().getSize() );
-
-        final Iterator<Bucket> iterator = categoryAgg.getBuckets().iterator();
-
-        Bucket next = iterator.next();
-        assertEquals( "c1", next.getKey() );
-        assertEquals( 2, next.getDocCount() );
-
-        next = iterator.next();
-        assertEquals( "c2", next.getKey() );
-        assertEquals( 3, next.getDocCount() );
-
-        next = iterator.next();
-        assertEquals( "c3", next.getKey() );
-        assertEquals( 1, next.getDocCount() );
     }
 
 

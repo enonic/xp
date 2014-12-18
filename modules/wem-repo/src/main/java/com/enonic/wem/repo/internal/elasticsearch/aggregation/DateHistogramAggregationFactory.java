@@ -6,11 +6,11 @@ import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
 
 import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.aggregation.Buckets;
+import com.enonic.wem.api.aggregation.DateHistogramBucket;
 
 class DateHistogramAggregationFactory
     extends AggregationsFactory
 {
-
     static BucketAggregation create( final DateHistogram dateHistogram )
     {
         return BucketAggregation.bucketAggregation( dateHistogram.getName() ).
@@ -24,10 +24,16 @@ class DateHistogramAggregationFactory
 
         for ( final DateHistogram.Bucket bucket : buckets )
         {
-            createAndAddBucket( bucketsBuilder, bucket );
+            final DateHistogramBucket.Builder builder = DateHistogramBucket.create().
+                key( bucket.getKey() ).
+                docCount( bucket.getDocCount() ).
+                keyAsInstant( bucket.getKeyAsDate() != null ? bucket.getKeyAsDate().toDate().toInstant() : null );
+
+            doAddSubAggregations( bucket, builder );
+
+            bucketsBuilder.add( builder.build() );
         }
 
         return bucketsBuilder.build();
     }
-
 }

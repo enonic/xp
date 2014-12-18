@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.entity;
+package com.enonic.wem.repo.internal.entity.query.aggregation;
 
 import java.time.Instant;
 
@@ -12,10 +12,11 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.aggregation.DateHistogramAggregationQuery;
+import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 
 import static org.junit.Assert.*;
 
-public class FindNodesByQueryCommand_dateHistogramAggregationsTest
+public class DateHistogramAggregationsTest
     extends AbstractNodeTest
 {
 
