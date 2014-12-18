@@ -33,6 +33,8 @@ public final class InputTypes
 
     public static final InputType IMAGE_SELECTOR = new ImageSelector();
 
+    public static final InputType FILE_UPLOADER = new FileUploader();
+
     public static final InputType MONEY = new Money();
 
     public static final InputType PHONE = new Phone();

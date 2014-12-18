@@ -49,6 +49,11 @@ public class ContentTypeForms
             build() ).
         build();
 
+    public static final Form MEDIA_DEFAULT = Form.newForm().
+        addFormItem( Input.newInput().name( "media" ).
+            inputType( InputTypes.FILE_UPLOADER ).build() ).
+        build();
+
     private final static LinkedHashMap<ContentTypeName, Form> formByName = new LinkedHashMap<>();
 
     static
