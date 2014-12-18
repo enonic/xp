@@ -19,6 +19,8 @@ module app.browse {
     import UserStore = api.security.UserStore;
     import PrincipalType = api.security.PrincipalType;
     import UserStoreKey = api.security.UserStoreKey;
+    import UserItemBrowseSearchEvent = app.browse.filter.PrincipalBrowseSearchEvent;
+    import UserItemBrowseResetEvent = app.browse.filter.PrincipalBrowseResetEvent;
 
 
     export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
@@ -54,6 +56,23 @@ module app.browse {
                     setLoadBufferSize(20). // rows count
                     prependClasses("user-tree-grid")
             );
+
+            UserItemBrowseSearchEvent.on((event) => {
+                var principals = event.getPrincipals();
+
+                var items = event.getPrincipals().map((principal: Principal) => {
+                    return new app.browse.UserTreeGridItemBuilder().
+                        setPrincipal(principal).
+                        setType(UserTreeGridItemType.PRINCIPAL).
+                        build();
+                });
+                this.filter(items);
+                this.notifyLoaded();
+            });
+
+            UserItemBrowseResetEvent.on((event) => {
+                this.resetFilter();
+            });
 
         }
 

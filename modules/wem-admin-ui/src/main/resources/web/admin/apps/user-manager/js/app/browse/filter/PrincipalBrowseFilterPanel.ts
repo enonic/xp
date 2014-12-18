@@ -1,47 +1,46 @@
 module app.browse.filter {
 
-    import PrincipalQuery = api.security.query.PrincipalQuery;
     import AggregationGroupView = api.aggregation.AggregationGroupView;
-
-    //import RefreshEvent = api.app.browse.filter.RefreshEvent;
-    //import SearchEvent = api.app.browse.filter.SearchEvent;
-
+    import SearchInputValues = api.query.SearchInputValues;
+    import Principal = api.security.Principal;
+    import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
+    import PrincipalType = api.security.PrincipalType;
 
     export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
-        static PRINCIPAL_TYPE_AGGREGATION_NAME: string = "type";
-        static LAST_MODIFIED_AGGREGATION_NAME: string = "lastModified";
-        static PRINCIPAL_TYPE_AGGREGATION_DISPLAY_NAME: string = "Type";
-        static LAST_MODIFIED_AGGREGATION_DISPLAY_NAME: string = "Last Modified";
-        static USERSTORE_AGGREGATION_NAME: string = "userStore";
-        static USERSTORE_AGGREGATION_DISPLAY_NAME: string = "Userstore";
-        private principalFilterPanel: app.browse.filter.PrincipalBrowseFilterPanel;
 
         constructor() {
 
-            var contentTypeAggregation: api.aggregation.PrincipalAggregationGroupView = new api.aggregation.PrincipalAggregationGroupView(
-                PrincipalBrowseFilterPanel.PRINCIPAL_TYPE_AGGREGATION_NAME,
-                PrincipalBrowseFilterPanel.PRINCIPAL_TYPE_AGGREGATION_DISPLAY_NAME);
-            var userStoreAggregation: AggregationGroupView = new AggregationGroupView(
-                PrincipalBrowseFilterPanel.USERSTORE_AGGREGATION_NAME,
-                PrincipalBrowseFilterPanel.USERSTORE_AGGREGATION_DISPLAY_NAME);
-
-            var lastModifiedAggregation: AggregationGroupView = new AggregationGroupView(
-                PrincipalBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME,
-                PrincipalBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_DISPLAY_NAME);
-
-            super(null, [contentTypeAggregation, userStoreAggregation, lastModifiedAggregation]);
-
-
-            // this.initAggregationGroupView([contentTypeAggregation,userStoreAggregation, lastModifiedAggregation]);
+            super(null);
 
             this.onReset(()=> {
-                // this.resetFacets();
+                this.resetFacets();
             });
 
-            // this.onRefresh(this.searchFacets);
+            this.onRefresh(this.searchFacets);
 
-            //  this.onSearch(this.searchFacets);
+            this.onSearch(this.searchFacets);
+        }
+
+        private resetFacets() {
+
+            new PrincipalBrowseResetEvent().fire();
+        }
+
+        private searchFacets(event: api.app.browse.filter.SearchEvent) {
+            var searchText = event.getSearchInputValues().getTextSearchFieldValue();
+            if (!searchText) {
+                this.resetFacets();
+                return;
+            }
+            new FindPrincipalsRequest().
+                setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE]).
+                setSearchQuery(searchText).
+                sendAndParse().then((principals: Principal[]) => {
+                    new PrincipalBrowseSearchEvent(principals).fire();
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
         }
 
 

@@ -47,7 +47,6 @@
 ///<reference path='security/_module.ts' />
 ///<reference path='security/acl/_module.ts' />
 ///<reference path='security/auth/_module.ts' />
-///<reference path='security/query/_module.ts' />
 
 ///<reference path='ui/responsive/_module.ts' />
 
