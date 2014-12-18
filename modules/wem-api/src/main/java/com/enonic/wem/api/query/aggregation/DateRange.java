@@ -2,7 +2,7 @@ package com.enonic.wem.api.query.aggregation;
 
 import java.time.Instant;
 
-public class DateRange
+public final class DateRange
     extends Range
 {
     private final Object from;

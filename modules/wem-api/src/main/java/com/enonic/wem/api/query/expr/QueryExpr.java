@@ -47,6 +47,10 @@ public final class QueryExpr
         return new QueryExpr( constraint, Arrays.asList( orderSet ) );
     }
 
+    public static QueryExpr from( final ConstraintExpr constraint, final Iterable<OrderExpr> orderSet )
+    {
+        return new QueryExpr( constraint, orderSet );
+    }
 
     public ConstraintExpr getConstraint()
     {

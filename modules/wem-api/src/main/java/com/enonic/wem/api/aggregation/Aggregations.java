@@ -1,6 +1,5 @@
 package com.enonic.wem.api.aggregation;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -27,21 +26,21 @@ public class Aggregations
         return new Aggregations( aggregations );
     }
 
+    public static Aggregations from( final Iterable<Aggregation> aggregations )
+    {
+        return from( ImmutableSet.copyOf( aggregations ) );
+    }
+
+    public static Aggregations from( final Aggregation... aggregations )
+    {
+        return from( ImmutableSet.copyOf( aggregations ) );
+    }
+
     public Aggregation get( final String name )
     {
-        final Iterator<Aggregation> aggregations = this.iterator();
-
-        while ( aggregations.hasNext() )
-        {
-            final Aggregation next = aggregations.next();
-
-            if ( name.equals( next.getName() ) )
-            {
-                return next;
-            }
-        }
-
-        return null;
+        return this.stream().
+            filter( ( agg ) -> name.equals( agg.getName() ) ).
+            findFirst().orElse( null );
     }
 
     public static Builder create()

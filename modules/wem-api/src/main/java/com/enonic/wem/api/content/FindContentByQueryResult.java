@@ -2,7 +2,7 @@ package com.enonic.wem.api.content;
 
 import com.enonic.wem.api.aggregation.Aggregations;
 
-public class FindContentByQueryResult
+public final class FindContentByQueryResult
 {
     private Contents contents;
 

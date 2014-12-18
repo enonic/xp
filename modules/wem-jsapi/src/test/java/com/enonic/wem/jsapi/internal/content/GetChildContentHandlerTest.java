@@ -36,7 +36,7 @@ public class GetChildContentHandlerTest
         final Contents contents = ContentFixtures.newContents();
 
         final FindContentByParentResult findResult =
-            FindContentByParentResult.create().hits( 20 ).totalHits( 20 ).contents( contents ).build();
+            FindContentByParentResult.create().hits( contents.getSize() ).totalHits( 20 ).contents( contents ).build();
         Mockito.when( this.contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn( findResult );
 
         execute( "getChildrenById" );
@@ -49,7 +49,7 @@ public class GetChildContentHandlerTest
         final Contents contents = ContentFixtures.newContents();
 
         final FindContentByParentResult findResult =
-            FindContentByParentResult.create().hits( 20 ).totalHits( 20 ).contents( contents ).build();
+            FindContentByParentResult.create().hits( contents.getSize() ).totalHits( 20 ).contents( contents ).build();
         Mockito.when( this.contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn( findResult );
 
         execute( "getChildrenByPath" );
@@ -84,7 +84,7 @@ public class GetChildContentHandlerTest
         final Contents contents = ContentFixtures.newContents();
 
         final FindContentByParentResult findResult =
-            FindContentByParentResult.create().hits( 20 ).totalHits( 20 ).contents( contents ).build();
+            FindContentByParentResult.create().hits( contents.getSize() ).totalHits( 20 ).contents( contents ).build();
 
         final FindContentByParentParams expectedFindParams = FindContentByParentParams.create().
             parentPath( ContentPath.from( "/a/b/mycontent" ) ).

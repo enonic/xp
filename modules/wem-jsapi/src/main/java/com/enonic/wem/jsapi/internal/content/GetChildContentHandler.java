@@ -33,8 +33,8 @@ public final class GetChildContentHandler
     public Object execute( final CommandRequest req )
     {
         final String key = req.param( "key" ).required().value( String.class );
-        final Integer start = req.param( "start" ).value( Integer.class, 0 );
-        final Integer count = req.param( "count" ).value( Integer.class, DEFAULT_COUNT );
+        final int start = req.param( "start" ).value( Integer.class, 0 );
+        final int count = req.param( "count" ).value( Integer.class, DEFAULT_COUNT );
         final String sortExpr = req.param( "sort" ).value( String.class, "" );
 
         final FindContentByParentParams.Builder findContentByParent = FindContentByParentParams.create();

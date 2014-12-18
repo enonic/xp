@@ -16,8 +16,6 @@ public class StatsAggregationQuery
     public static class Builder
         extends MetricAggregationQuery.Builder<Builder>
     {
-        private String fieldName;
-
         public Builder( final String name )
         {
             super( name );

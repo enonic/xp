@@ -237,4 +237,9 @@ final class QueryGrammar
     {
         return parseOrderList().from( tokenizer(), Scanners.SQL_DELIMITER );
     }
+
+    public Parser<ConstraintExpr> constraintExpressionsGrammar()
+    {
+        return parseConstraint().from( tokenizer(), Scanners.SQL_DELIMITER );
+    }
 }

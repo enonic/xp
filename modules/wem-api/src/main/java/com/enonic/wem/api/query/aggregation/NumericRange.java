@@ -1,6 +1,6 @@
 package com.enonic.wem.api.query.aggregation;
 
-public class NumericRange
+public final class NumericRange
     extends Range
 {
     private final Double from;

@@ -1,5 +1,6 @@
 package com.enonic.wem.jsapi.internal.mapper;
 
+import com.enonic.wem.api.aggregation.Aggregations;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.script.serializer.MapGenerator;
@@ -12,10 +13,20 @@ public final class ContentsResultMapper
 
     private final long total;
 
+    private final Aggregations aggregations;
+
     public ContentsResultMapper( final Contents contents, final long total )
     {
         this.contents = contents;
         this.total = total;
+        this.aggregations = null;
+    }
+
+    public ContentsResultMapper( final Contents contents, final long total, final Aggregations aggregations )
+    {
+        this.contents = contents;
+        this.total = total;
+        this.aggregations = aggregations == null ? null : aggregations;
     }
 
     @Override
@@ -23,6 +34,7 @@ public final class ContentsResultMapper
     {
         gen.value( "total", this.total );
         serialize( gen, this.contents );
+        serialize( gen, aggregations );
     }
 
     private void serialize( final MapGenerator gen, final Contents contents )
@@ -37,4 +49,13 @@ public final class ContentsResultMapper
         gen.end();
     }
 
+    private void serialize( final MapGenerator gen, final Aggregations aggregations )
+    {
+        if ( aggregations != null )
+        {
+            gen.map( "aggregations" );
+            new AggregationMapper( aggregations ).serialize( gen );
+            gen.end();
+        }
+    }
 }

@@ -2,6 +2,7 @@ package com.enonic.wem.api.query.aggregation;
 
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 public abstract class BucketAggregationQuery
@@ -34,6 +35,12 @@ public abstract class BucketAggregationQuery
         public T addSubQuery( final AggregationQuery aggregationQuery )
         {
             this.aggregationQueries.add( aggregationQuery );
+            return (T) this;
+        }
+
+        public T addSubQueries( final Iterable<AggregationQuery> aggregationQueries )
+        {
+            Iterables.addAll( this.aggregationQueries, aggregationQueries );
             return (T) this;
         }
     }

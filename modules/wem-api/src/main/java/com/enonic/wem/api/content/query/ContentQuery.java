@@ -3,6 +3,7 @@ package com.enonic.wem.api.content.query;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.query.aggregation.AggregationQueries;
@@ -121,6 +122,12 @@ public class ContentQuery
         public Builder aggregationQuery( final AggregationQuery aggregationQuery )
         {
             this.aggregationQueries.add( aggregationQuery );
+            return this;
+        }
+
+        public Builder aggregationQueries( final Iterable<AggregationQuery> aggregationQueries )
+        {
+            Iterables.addAll( this.aggregationQueries, aggregationQueries );
             return this;
         }
 
