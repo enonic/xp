@@ -1,11 +1,9 @@
-package com.enonic.wem.repo.internal.elasticsearch.aggregation;
+package com.enonic.wem.repo.internal.elasticsearch.aggregation.query;
 
 import java.util.Set;
 
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 
 import com.google.common.collect.Sets;
 
@@ -16,9 +14,8 @@ import com.enonic.wem.api.query.aggregation.AggregationQuery;
 import com.enonic.wem.api.query.aggregation.BucketAggregationQuery;
 import com.enonic.wem.api.query.aggregation.StatsAggregationQuery;
 import com.enonic.wem.api.query.aggregation.TermsAggregationQuery;
-import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
-public class AggregationBuilderFactory
+public class AggregationQueryBuilderFactory
 {
     public static Set<AbstractAggregationBuilder> create( final AggregationQueries aggregationQueries )
     {
@@ -35,11 +32,11 @@ public class AggregationBuilderFactory
 
             if ( aggregationQuery instanceof TermsAggregationQuery )
             {
-                aggregationBuilder = createTerms( (TermsAggregationQuery) aggregationQuery );
+                aggregationBuilder = TermsAggregationQueryBuilderFactory.create( (TermsAggregationQuery) aggregationQuery );
             }
             else if ( aggregationQuery instanceof AbstractRangeAggregationQuery )
             {
-                aggregationBuilder = RangeAggregationBuilderFactory.create( (AbstractRangeAggregationQuery) aggregationQuery );
+                aggregationBuilder = RangeAggregationQueryBuilderFactory.create( (AbstractRangeAggregationQuery) aggregationQuery );
             }
             else if ( aggregationQuery instanceof AbstractHistogramAggregationQuery )
             {
@@ -70,32 +67,8 @@ public class AggregationBuilderFactory
             final Set<AbstractAggregationBuilder> subAggregations =
                 doCreate( ( (BucketAggregationQuery) aggregationQuery ).getSubQueries() );
 
-            for ( final AbstractAggregationBuilder subAggregation : subAggregations )
-            {
-                ( (AggregationBuilder) aggregationBuilder ).subAggregation( subAggregation );
-            }
+            subAggregations.forEach( ( (AggregationBuilder) aggregationBuilder )::subAggregation );
         }
-    }
-
-    private static AggregationBuilder createTerms( final TermsAggregationQuery aggregationQuery )
-    {
-        final String fieldName = IndexQueryFieldNameResolver.resolveStringFieldName( aggregationQuery.getFieldName() );
-
-        final TermsBuilder termsBuilder = new TermsBuilder( aggregationQuery.getName() ).
-            minDocCount( 0 ).
-            field( fieldName ).
-            size( aggregationQuery.getSize() );
-
-        if ( aggregationQuery.getOrderType() == TermsAggregationQuery.Type.TERM )
-        {
-            termsBuilder.order( Terms.Order.term( aggregationQuery.getOrderDirection().equals( TermsAggregationQuery.Direction.ASC ) ) );
-        }
-        else
-        {
-            termsBuilder.order( Terms.Order.count( aggregationQuery.getOrderDirection().equals( TermsAggregationQuery.Direction.ASC ) ) );
-        }
-
-        return termsBuilder;
     }
 
 

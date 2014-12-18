@@ -7,7 +7,7 @@ import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.security.PrincipalKeys;
-import com.enonic.wem.repo.internal.elasticsearch.aggregation.AggregationBuilderFactory;
+import com.enonic.wem.repo.internal.elasticsearch.aggregation.query.AggregationQueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.FilterBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
@@ -26,7 +26,7 @@ public class NodeQueryTranslator
             index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
             indexType( indexContext.getWorkspace().getName() ).
             query( queryWithQueryFilters ).
-            setAggregations( AggregationBuilderFactory.create( nodeQuery.getAggregationQueries() ) ).
+            setAggregations( AggregationQueryBuilderFactory.create( nodeQuery.getAggregationQueries() ) ).
             sortBuilders( SortQueryBuilderFactory.create( nodeQuery.getOrderBys() ) ).
             filter( FilterBuilderFactory.create( nodeQuery.getPostFilters() ) ).
             from( nodeQuery.getFrom() ).

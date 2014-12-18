@@ -26,7 +26,7 @@ public class DateRangeAggregationTest
     extends AbstractNodeTest
 {
     @Test
-    public void intervals()
+    public void ranges()
         throws Exception
     {
         createNode( Instant.parse( "2014-12-10T10:00:00Z" ), "n1", NodePath.ROOT );

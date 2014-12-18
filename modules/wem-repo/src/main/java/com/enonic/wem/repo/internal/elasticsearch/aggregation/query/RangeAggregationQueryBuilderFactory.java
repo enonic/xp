@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch.aggregation;
+package com.enonic.wem.repo.internal.elasticsearch.aggregation.query;
 
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.RangeBuilder;
@@ -13,9 +13,9 @@ import com.enonic.wem.api.query.aggregation.NumericRange;
 import com.enonic.wem.api.query.aggregation.NumericRangeAggregationQuery;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
-public class RangeAggregationBuilderFactory
+class RangeAggregationQueryBuilderFactory
 {
-    public static AggregationBuilder create( final AbstractRangeAggregationQuery aggregationQuery )
+    static AggregationBuilder create( final AbstractRangeAggregationQuery aggregationQuery )
     {
         if ( aggregationQuery instanceof DateRangeAggregationQuery )
         {
@@ -73,6 +73,11 @@ public class RangeAggregationBuilderFactory
             else
             {
                 rangeBuilder.addRange( range.getKey(), range.getFrom(), range.getTo() );
+            }
+
+            if ( Strings.isNullOrEmpty( range.getKey() ) )
+            {
+                rangeBuilder.format( range.getKey() );
             }
         }
 

@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch.aggregation;
+package com.enonic.wem.repo.internal.elasticsearch.aggregation.query;
 
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
@@ -13,7 +13,7 @@ import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 class HistogramAggregationQueryBuilderFactory
 {
-    public static AggregationBuilder create( final AbstractHistogramAggregationQuery histogramAggregationQuery )
+    static AggregationBuilder create( final AbstractHistogramAggregationQuery histogramAggregationQuery )
     {
         if ( histogramAggregationQuery instanceof DateHistogramAggregationQuery )
         {

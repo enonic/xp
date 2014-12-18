@@ -7,11 +7,14 @@ public class NumericRange
 
     private final Double to;
 
-    public NumericRange( final Builder builder )
+    private final String key;
+
+    private NumericRange( final Builder builder )
     {
         super( builder );
         this.from = builder.from;
         this.to = builder.to;
+        this.key = builder.key;
     }
 
     public Double getFrom()
@@ -22,6 +25,12 @@ public class NumericRange
     public Double getTo()
     {
         return to;
+    }
+
+    @Override
+    public String getKey()
+    {
+        return key;
     }
 
     public static Builder create()
@@ -36,6 +45,8 @@ public class NumericRange
 
         private Double to;
 
+        private String key;
+
         public Builder from( final Double from )
         {
             this.from = from;
@@ -45,6 +56,12 @@ public class NumericRange
         public Builder to( final Double to )
         {
             this.to = to;
+            return this;
+        }
+
+        public Builder key( final String key )
+        {
+            this.key = key;
             return this;
         }
 
