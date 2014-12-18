@@ -2,8 +2,10 @@ package com.enonic.wem.api.content;
 
 import java.text.MessageFormat;
 
+import com.enonic.wem.api.exception.NotFoundException;
+
 public final class ContentAlreadyExistException
-    extends RuntimeException
+    extends NotFoundException
 {
     private final ContentPath path;
 
