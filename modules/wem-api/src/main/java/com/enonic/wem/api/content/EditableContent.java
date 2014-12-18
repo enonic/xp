@@ -9,7 +9,7 @@ import com.enonic.wem.api.thumb.Thumbnail;
 
 public class EditableContent
 {
-    private final Content source;
+    public final Content source;
 
     public String displayName;
 
