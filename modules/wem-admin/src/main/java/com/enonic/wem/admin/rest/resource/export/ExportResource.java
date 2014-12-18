@@ -8,7 +8,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
+import com.enonic.wem.api.export.ExportNodesParams;
 import com.enonic.wem.api.export.ExportService;
+import com.enonic.wem.api.export.ImportNodesParams;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.node.NodePath;
@@ -23,12 +25,13 @@ public class ExportResource
 
     @GET
     @Path("export")
-    public Response exportNodes( @QueryParam("path") final String path )
+    public Response exportNodes( @QueryParam("path") final String path, @QueryParam("name") final String name )
         throws Exception
     {
-        final NodePath nodePath = NodePath.newPath( path ).build();
-
-        final NodeExportResult result = this.exportService.exportNodes( nodePath );
+        final NodeExportResult result = this.exportService.exportNodes( ExportNodesParams.create().
+            exportRoot( NodePath.newPath( path ).build() ).
+            exportName( name ).
+            build() );
 
         final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
         return Response.temporaryRedirect( new URI( uri ) ).build();
@@ -36,12 +39,13 @@ public class ExportResource
 
     @GET
     @Path("import")
-    public Response importNodes( @QueryParam("importName") final String importName, @QueryParam("importRoot") final String importPath )
+    public Response importNodes( @QueryParam("exportName") final String exportName, @QueryParam("importRoot") final String importRoot )
         throws Exception
     {
-        final NodePath importRoot = NodePath.newPath( importPath ).build();
-
-        final NodeImportResult nodeImportResult = this.exportService.importNodes( importName, importRoot );
+        final NodeImportResult nodeImportResult = this.exportService.importNodes( ImportNodesParams.create().
+            exportName( exportName ).
+            importRootPath( NodePath.newPath( importRoot ).build() ).
+            build() );
 
         final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
         return Response.temporaryRedirect( new URI( uri ) ).build();

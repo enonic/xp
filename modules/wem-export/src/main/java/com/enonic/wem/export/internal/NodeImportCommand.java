@@ -40,7 +40,7 @@ public class NodeImportCommand
 
     private final boolean dryRun;
 
-    private final NodeImportResult.Builder nodeImportResult;
+    private final NodeImportResult.Builder result = NodeImportResult.create();
 
     private static final Long IMPORT_NODE_ORDER_START_VALUE = 0l;
 
@@ -55,7 +55,6 @@ public class NodeImportCommand
         this.xmlNodeSerializer = builder.xmlNodeSerializer;
         this.importRoot = builder.importRoot;
         this.dryRun = builder.dryRun;
-        this.nodeImportResult = NodeImportResult.create();
     }
 
     public NodeImportResult execute()
@@ -64,7 +63,7 @@ public class NodeImportCommand
 
         importFromDirectoryLayout( this.exportRootPath );
 
-        return this.nodeImportResult.build();
+        return this.result.build();
     }
 
     private void importFromDirectoryLayout( final Path parentPath )
@@ -136,7 +135,7 @@ public class NodeImportCommand
 
         final Node createdNode = this.nodeService.create( createNodeParams );
 
-        nodeImportResult.add( createdNode.path() );
+        result.add( createdNode.path() );
 
         return createdNode;
     }

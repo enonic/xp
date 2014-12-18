@@ -151,7 +151,7 @@ public class BatchedNodeExportCommandTest
             build().
             execute();
 
-        assertEquals( 2, result.size() );
+        assertEquals( 2, result.getExportedNodes().getSize() );
 
         assertFileExists( "/myExport/child1_1_1/_/node.xml" );
         assertFileExists( "/myExport/child1_1_2/_/node.xml" );
@@ -175,7 +175,7 @@ public class BatchedNodeExportCommandTest
             attachBinary( binaryRef2, ByteSource.wrap( "this-is-the-binary-data-for-image2".getBytes() ) ).
             build() );
 
-        BatchedNodeExportCommand.create().
+        final NodeExportResult result = BatchedNodeExportCommand.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             exportRootNode( NodePath.ROOT ).
@@ -184,6 +184,9 @@ public class BatchedNodeExportCommandTest
             exportName( "myExport" ).
             build().
             execute();
+
+        assertEquals( 1, result.getExportedNodes().getSize() );
+        assertEquals( 2, result.getExportedBinaries().size() );
 
         assertFileExists( "/myExport/my-node/_/node.xml" );
         assertFileExists( "/myExport/my-node/_/bin/image1.jpg" );

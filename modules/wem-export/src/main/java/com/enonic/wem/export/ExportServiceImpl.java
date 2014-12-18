@@ -7,11 +7,14 @@ import java.time.format.DateTimeFormatter;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Strings;
+
+import com.enonic.wem.api.export.ExportNodesParams;
 import com.enonic.wem.api.export.ExportService;
+import com.enonic.wem.api.export.ImportNodesParams;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.home.HomeDir;
-import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.export.internal.BatchedNodeExportCommand;
 import com.enonic.wem.export.internal.NodeImportCommand;
@@ -23,36 +26,45 @@ import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 public class ExportServiceImpl
     implements ExportService
 {
+
+    public static final String NODE_EXPORT_NAME_PREFIX = "node_";
+
+    public static final String EXPORT_LOCATION_ROOT = "exports";
+
     private NodeService nodeService;
 
     private final XmlNodeSerializer xmlNodeSerializer = new XmlNodeSerializer();
 
     @Override
-    public NodeExportResult exportNodes( final NodePath nodePath )
+    public NodeExportResult exportNodes( final ExportNodesParams params )
     {
         return BatchedNodeExportCommand.create().
             xmlNodeSerializer( xmlNodeSerializer ).
-            exportRootNode( nodePath ).
+            exportRootNode( params.getExportRoot() ).
             nodeService( this.nodeService ).
-
             nodeExportWriter( new FileExportWriter() ).
-            exportHomePath( Paths.get( HomeDir.get().toString(), "exports" ) ).
-            exportName( "node_" + LocalDateTime.now().format( DateTimeFormatter.ISO_LOCAL_DATE_TIME ) ).
+            exportHomePath( Paths.get( HomeDir.get().toString(), EXPORT_LOCATION_ROOT ) ).
+            exportName( Strings.isNullOrEmpty( params.getExportName() ) ? generateExportName() : params.getExportName() ).
             build().
             execute();
     }
 
+    private String generateExportName()
+    {
+        return NODE_EXPORT_NAME_PREFIX + LocalDateTime.now().format( DateTimeFormatter.ISO_LOCAL_DATE_TIME );
+    }
+
     @Override
-    public NodeImportResult importNodes( final String exportName, final NodePath importRootPath )
+    public NodeImportResult importNodes( final ImportNodesParams params )
     {
 
         return NodeImportCommand.create().
             xmlNodeSerializer( this.xmlNodeSerializer ).
             nodeService( this.nodeService ).
             exportReader( new FileExportReader() ).
-            exportHome( Paths.get( HomeDir.get().toString(), "exports" ) ).
-            exportName( exportName ).
-            importRoot( importRootPath ).
+            exportHome( Paths.get( HomeDir.get().toString(), EXPORT_LOCATION_ROOT ) ).
+            exportName( params.getExportName() ).
+            importRoot( params.getImportRootPath() ).
             build().
             execute();
     }

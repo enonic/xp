@@ -4,6 +4,7 @@ import java.nio.file.Path;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.api.export.ExportError;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.FindNodesByParentParams;
@@ -35,7 +36,11 @@ public class BatchedNodeExportCommand
 
     private final Path exportTargetPath;
 
+    private final boolean dryRun;
+
     private final static String LINE_SEPARATOR = System.getProperty( "line.separator" );
+
+    private final NodeExportResult.Builder result = NodeExportResult.create();
 
     private BatchedNodeExportCommand( final Builder builder )
     {
@@ -45,18 +50,17 @@ public class BatchedNodeExportCommand
         this.exportWriter = builder.exportWriter;
         this.xmlNodeSerializer = builder.xmlNodeSerializer;
         this.exportTargetPath = NodeExportPathResolver.resolveExportTargetPath( builder.exportHomePath, builder.exportName );
+        this.dryRun = builder.dryRun;
     }
 
     public NodeExportResult execute()
     {
-        final NodeExportResult.Builder resultBuilder = NodeExportResult.create();
+        doExportChildNodes( this.exportRootNode );
 
-        doExportChildNodes( this.exportRootNode, resultBuilder );
-
-        return resultBuilder.build();
+        return result.build();
     }
 
-    private void doExportChildNodes( final NodePath parentPath, final NodeExportResult.Builder resultBuilder )
+    private void doExportChildNodes( final NodePath parentPath )
     {
         final Node parentNode = nodeService.getByPath( parentPath );
 
@@ -68,7 +72,7 @@ public class BatchedNodeExportCommand
 
         for ( int i = 1; i <= batches; i++ )
         {
-            final FindNodesByParentResult childrenBatch = exportBatch( parentPath, resultBuilder, currentFrom );
+            final FindNodesByParentResult childrenBatch = exportBatch( parentPath, currentFrom );
 
             allCurrentLevelChildren.addAll( childrenBatch.getNodes() );
             currentFrom += this.batchSize;
@@ -77,8 +81,7 @@ public class BatchedNodeExportCommand
         writeNodeOrderList( parentNode, allCurrentLevelChildren.build() );
     }
 
-    private FindNodesByParentResult exportBatch( final NodePath nodePath, final NodeExportResult.Builder resultBuilder,
-                                                 final int currentFrom )
+    private FindNodesByParentResult exportBatch( final NodePath nodePath, final int currentFrom )
     {
         final FindNodesByParentResult childrenBatch = nodeService.findByParent( FindNodesByParentParams.create().
             parentPath( nodePath ).
@@ -88,16 +91,23 @@ public class BatchedNodeExportCommand
 
         for ( final Node child : childrenBatch.getNodes() )
         {
-            exportNode( resultBuilder, child );
+            try
+            {
+                exportNode( child );
+            }
+            catch ( Exception e )
+            {
+                result.addError( new ExportError( e.toString() ) );
+            }
         }
         return childrenBatch;
     }
 
-    private void exportNode( final NodeExportResult.Builder resultBuilder, final Node child )
+    private void exportNode( final Node child )
     {
         writeNode( child );
-        resultBuilder.add( child.id() );
-        doExportChildNodes( child.path(), resultBuilder );
+        result.addNodePath( child.path() );
+        doExportChildNodes( child.path() );
     }
 
     private void writeNode( final Node node )
@@ -110,7 +120,10 @@ public class BatchedNodeExportCommand
 
         final Path nodeDataFolder = getNodeDataFolder( node );
 
-        exportWriter.writeElement( NodeExportPathResolver.resolveNodeXmlPath( nodeDataFolder ), serializedNode );
+        if ( !dryRun )
+        {
+            exportWriter.writeElement( NodeExportPathResolver.resolveNodeXmlPath( nodeDataFolder ), serializedNode );
+        }
 
         exportNodeBinaries( relativeNode, nodeDataFolder );
     }
@@ -121,7 +134,13 @@ public class BatchedNodeExportCommand
         {
             final BinaryReference reference = attachedBinary.getBinaryReference();
             final ByteSource byteSource = this.nodeService.getBinary( relativeNode.id(), reference );
-            this.exportWriter.writeSource( NodeExportPathResolver.resolveBinaryPath( nodeDataFolder, reference ), byteSource );
+
+            if ( !dryRun )
+            {
+                this.exportWriter.writeSource( NodeExportPathResolver.resolveBinaryPath( nodeDataFolder, reference ), byteSource );
+            }
+
+            result.addBinary( relativeNode.path(), reference );
         }
     }
 
@@ -140,7 +159,11 @@ public class BatchedNodeExportCommand
         }
 
         final Path nodeOrderListPath = NodeExportPathResolver.resolveOrderListPath( getNodeDataFolder( parent ) );
-        exportWriter.writeElement( nodeOrderListPath, builder.toString() );
+
+        if ( !dryRun )
+        {
+            exportWriter.writeElement( nodeOrderListPath, builder.toString() );
+        }
     }
 
     private double getNumberOfBatches( final NodePath nodePath )
@@ -188,6 +211,8 @@ public class BatchedNodeExportCommand
 
         private String exportName;
 
+        private boolean dryRun;
+
         private Builder()
         {
         }
@@ -231,6 +256,12 @@ public class BatchedNodeExportCommand
         public Builder xmlNodeSerializer( XmlNodeSerializer xmlNodeSerializer )
         {
             this.xmlNodeSerializer = xmlNodeSerializer;
+            return this;
+        }
+
+        public Builder dryRun( final boolean dryRun )
+        {
+            this.dryRun = dryRun;
             return this;
         }
 

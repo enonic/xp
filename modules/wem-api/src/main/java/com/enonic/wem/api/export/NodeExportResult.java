@@ -1,31 +1,57 @@
 package com.enonic.wem.api.export;
 
+import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeIds;
+import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodePaths;
+import com.enonic.wem.api.util.BinaryReference;
 
 public class NodeExportResult
 {
-    private final NodeIds exportedNodes;
+    private final boolean dryRun;
+
+    private final NodePaths exportedNodes;
+
+    private final List<ExportError> exportErrors;
+
+    private final List<String> exportedBinaries;
 
     private NodeExportResult( final Builder builder )
     {
-        exportedNodes = NodeIds.from( builder.nodeIds );
+        dryRun = builder.dryRun;
+        exportedNodes = NodePaths.from( builder.nodePaths );
+        exportErrors = builder.exportErrors;
+        exportedBinaries = builder.exportedBinaries;
     }
 
-    public NodeIds getExportedNodes()
+    public boolean isDryRun()
+    {
+        return dryRun;
+    }
+
+    public NodePaths getExportedNodes()
     {
         return exportedNodes;
+    }
+
+    public List<ExportError> getExportErrors()
+    {
+        return exportErrors;
+    }
+
+    public List<String> getExportedBinaries()
+    {
+        return exportedBinaries;
     }
 
     public static Builder create()
     {
         return new Builder();
     }
-
 
     public int size()
     {
@@ -35,15 +61,39 @@ public class NodeExportResult
 
     public static final class Builder
     {
-        private final Set<NodeId> nodeIds = Sets.newLinkedHashSet();
+        private boolean dryRun;
+
+        private List<ExportError> exportErrors = Lists.newArrayList();
+
+        private List<String> exportedBinaries = Lists.newArrayList();
+
+        private Set<NodePath> nodePaths = Sets.newHashSet();
 
         private Builder()
         {
         }
 
-        public Builder add( NodeId nodeId )
+        public Builder dryRun( boolean dryRun )
         {
-            this.nodeIds.add( nodeId );
+            this.dryRun = dryRun;
+            return this;
+        }
+
+        public Builder addBinary( final NodePath nodePath, final BinaryReference binaryReference )
+        {
+            this.exportedBinaries.add( nodePath.toString() + "[" + binaryReference.toString() + "]" );
+            return this;
+        }
+
+        public Builder addNodePath( final NodePath nodePath )
+        {
+            this.nodePaths.add( nodePath );
+            return this;
+        }
+
+        public Builder addError( final ExportError error )
+        {
+            this.exportErrors.add( error );
             return this;
         }
 
@@ -52,4 +102,5 @@ public class NodeExportResult
             return new NodeExportResult( this );
         }
     }
+
 }

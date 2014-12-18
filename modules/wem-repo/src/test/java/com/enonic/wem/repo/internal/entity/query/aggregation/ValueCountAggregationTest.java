@@ -25,7 +25,6 @@ import static junit.framework.Assert.assertTrue;
 public class ValueCountAggregationTest
     extends AbstractNodeTest
 {
-
     @Test
     public void terms_stats_aggregation()
         throws Exception
