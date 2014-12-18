@@ -14,7 +14,7 @@ class DateRangeTest
         Instant now = Instant.now()
 
         when:
-        final DateRange fromRange = Range.newDateRange().key( "myKey" ).from( now ).build()
+        final DateRange fromRange = DateRange.create().key( "myKey" ).from( now ).build()
 
         then:
         fromRange.getKey() == "myKey"

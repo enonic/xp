@@ -22,22 +22,22 @@ import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-public class StatsAggregationQueryTest
+public class StatsAggregationTest
     extends AbstractNodeTest
 {
     @Test
-    public void nested_term_aggregation()
+    public void terms_stats_aggregation()
         throws Exception
     {
-        createNode( "c1", 2d, "n1", NodePath.ROOT );
-        createNode( "c1", 4d, "n2", NodePath.ROOT );
-        createNode( "c1", 6d, "n3", NodePath.ROOT );
-        createNode( "c1", 8d, "n4", NodePath.ROOT );
+        createNode( "c1", 2.0, "n1", NodePath.ROOT );
+        createNode( "c1", 4.0, "n2", NodePath.ROOT );
+        createNode( "c1", 6.0, "n3", NodePath.ROOT );
+        createNode( "c1", 8.0, "n4", NodePath.ROOT );
 
-        createNode( "c2", 2d, "n5", NodePath.ROOT );
-        createNode( "c2", 4d, "n6", NodePath.ROOT );
+        createNode( "c2", 2.0, "n5", NodePath.ROOT );
+        createNode( "c2", 4.0, "n6", NodePath.ROOT );
 
-        createNode( "c3", 2d, "n7", NodePath.ROOT );
+        createNode( "c3", 2.0, "n7", NodePath.ROOT );
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( TermsAggregationQuery.create( "category" ).
@@ -81,7 +81,6 @@ public class StatsAggregationQueryTest
         assertEquals( stats.getSum(), sum );
         assertEquals( stats.getCount(), count );
     }
-
 
     private Node createNode( final String categoryValue, final Double otherValue, final String name, final NodePath parent )
     {

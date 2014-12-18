@@ -108,7 +108,6 @@ public class AggregationsFactory
             build();
     }
 
-
     private static Buckets createFromTerms( final Collection<Terms.Bucket> buckets )
     {
         final Buckets.Builder bucketsBuilder = new Buckets.Builder();

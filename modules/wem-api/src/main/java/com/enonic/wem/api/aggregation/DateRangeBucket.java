@@ -42,13 +42,13 @@ public class DateRangeBucket
         {
         }
 
-        public Builder from( Instant from )
+        public Builder from( final Instant from )
         {
             this.from = from;
             return this;
         }
 
-        public Builder to( Instant to )
+        public Builder to( final Instant to )
         {
             this.to = to;
             return this;

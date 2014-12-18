@@ -4,6 +4,8 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.RangeBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRangeBuilder;
 
+import com.google.common.base.Strings;
+
 import com.enonic.wem.api.query.aggregation.AbstractRangeAggregationQuery;
 import com.enonic.wem.api.query.aggregation.DateRange;
 import com.enonic.wem.api.query.aggregation.DateRangeAggregationQuery;
@@ -37,6 +39,11 @@ public class RangeAggregationBuilderFactory
 
         final DateRangeBuilder dateRangeBuilder = new DateRangeBuilder( query.getName() ).
             field( fieldName );
+
+        if ( !Strings.isNullOrEmpty( query.getFormat() ) )
+        {
+            dateRangeBuilder.format( query.getFormat() );
+        }
 
         for ( final DateRange dateRange : query.getRanges() )
         {

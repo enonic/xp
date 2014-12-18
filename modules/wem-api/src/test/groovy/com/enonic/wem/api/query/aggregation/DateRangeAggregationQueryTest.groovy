@@ -18,11 +18,11 @@ class DateRangeAggregationQueryTest
         when:
         DateRangeAggregationQuery query = DateRangeAggregationQuery.create( "dateRangeQuery" ).
             fieldName( "myFieldName" ).
-            range( Range.newDateRange().
+            addRange( DateRange.create().
                        from( past ).
                        key( "myRange2" ).
                        build() ).
-            range( Range.newDateRange().
+            addRange( DateRange.create().
                        key( "myRange1" ).
                        to( future ).build() ).
             build();

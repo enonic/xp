@@ -41,7 +41,7 @@ public abstract class AbstractRangeAggregationQuery<R extends Range>
             super( name );
         }
 
-        public T range( final R range )
+        public T addRange( final R range )
         {
             ranges.add( range );
             return (T) this;

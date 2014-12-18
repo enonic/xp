@@ -15,7 +15,7 @@ public class DateRangeJson
                           @JsonProperty("key") final String key )
     {
 
-        this.dateRange = DateRange.newDateRange().from( from ).to( to ).key( key ).build();
+        this.dateRange = DateRange.create().from( from ).to( to ).key( key ).build();
     }
 
 

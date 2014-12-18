@@ -24,7 +24,7 @@ public class DateRangeAggregationQueryJson
 
         for ( final DateRangeJson dateRangeJson : dateRanges )
         {
-            builder.range( dateRangeJson.getDateRange() );
+            builder.addRange( dateRangeJson.getDateRange() );
         }
 
         this.dateRangeAggregationQuery = builder.build();

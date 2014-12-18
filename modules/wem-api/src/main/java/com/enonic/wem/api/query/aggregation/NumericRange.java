@@ -24,6 +24,11 @@ public class NumericRange
         return to;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public static class Builder
         extends Range.Builder<Builder>
     {

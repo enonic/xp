@@ -1,9 +1,5 @@
 package com.enonic.wem.api.query.aggregation;
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-
 public abstract class AggregationQuery
 {
     private String name;
