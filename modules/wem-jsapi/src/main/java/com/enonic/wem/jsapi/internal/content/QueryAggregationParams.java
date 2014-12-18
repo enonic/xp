@@ -17,8 +17,8 @@ import com.enonic.wem.api.query.aggregation.DateRangeAggregationQuery;
 import com.enonic.wem.api.query.aggregation.HistogramAggregationQuery;
 import com.enonic.wem.api.query.aggregation.NumericRange;
 import com.enonic.wem.api.query.aggregation.NumericRangeAggregationQuery;
-import com.enonic.wem.api.query.aggregation.StatsAggregationQuery;
 import com.enonic.wem.api.query.aggregation.TermsAggregationQuery;
+import com.enonic.wem.api.query.aggregation.metric.StatsAggregationQuery;
 
 import static com.enonic.wem.api.query.aggregation.HistogramAggregationQuery.Order.COUNT_ASC;
 import static com.enonic.wem.api.query.aggregation.HistogramAggregationQuery.Order.COUNT_DESC;

@@ -1,4 +1,6 @@
-package com.enonic.wem.api.query.aggregation;
+package com.enonic.wem.api.query.aggregation.metric;
+
+import com.enonic.wem.api.query.aggregation.MetricAggregationQuery;
 
 public class StatsAggregationQuery
     extends MetricAggregationQuery

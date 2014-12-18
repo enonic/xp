@@ -9,7 +9,10 @@ import org.elasticsearch.search.aggregations.bucket.range.Range;
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;
 import org.elasticsearch.search.aggregations.bucket.range.geodistance.GeoDistance;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.metrics.max.Max;
+import org.elasticsearch.search.aggregations.metrics.min.Min;
 import org.elasticsearch.search.aggregations.metrics.stats.Stats;
+import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 
 import com.enonic.wem.api.aggregation.Aggregations;
 import com.enonic.wem.api.aggregation.Bucket;
@@ -60,7 +63,19 @@ public class AggregationsFactory
             }
             else if ( aggregation instanceof Stats )
             {
-                aggregationsBuilder.add( StatsMetricAggregationFactory.create( (Stats) aggregation ) );
+                aggregationsBuilder.add( StatsAggregationFactory.create( (Stats) aggregation ) );
+            }
+            else if ( aggregation instanceof ValueCount )
+            {
+                aggregationsBuilder.add( ValueCountAggregationFactory.create( (ValueCount) aggregation ) );
+            }
+            else if ( aggregation instanceof Min )
+            {
+                aggregationsBuilder.add( MinAggregationFactory.create( (Min) aggregation ) );
+            }
+            else if ( aggregation instanceof Max )
+            {
+                aggregationsBuilder.add( MaxAggregationFactory.create( (Max) aggregation ) );
             }
             else
             {

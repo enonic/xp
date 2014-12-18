@@ -4,7 +4,7 @@ import org.elasticsearch.search.aggregations.metrics.stats.Stats;
 
 import com.enonic.wem.api.aggregation.StatsAggregation;
 
-class StatsMetricAggregationFactory
+class StatsAggregationFactory
     extends AggregationsFactory
 {
 

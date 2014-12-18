@@ -12,7 +12,7 @@ import com.enonic.wem.api.query.aggregation.AbstractRangeAggregationQuery;
 import com.enonic.wem.api.query.aggregation.AggregationQueries;
 import com.enonic.wem.api.query.aggregation.AggregationQuery;
 import com.enonic.wem.api.query.aggregation.BucketAggregationQuery;
-import com.enonic.wem.api.query.aggregation.StatsAggregationQuery;
+import com.enonic.wem.api.query.aggregation.MetricAggregationQuery;
 import com.enonic.wem.api.query.aggregation.TermsAggregationQuery;
 
 public class AggregationQueryBuilderFactory
@@ -42,9 +42,9 @@ public class AggregationQueryBuilderFactory
             {
                 aggregationBuilder = HistogramAggregationQueryBuilderFactory.create( (AbstractHistogramAggregationQuery) aggregationQuery );
             }
-            else if ( aggregationQuery instanceof StatsAggregationQuery )
+            else if ( aggregationQuery instanceof MetricAggregationQuery )
             {
-                aggregationBuilder = StatsAggregationQueryBuilderFactory.create( (StatsAggregationQuery) aggregationQuery );
+                aggregationBuilder = MetricAggregationQueryBuilderFactory.create( (MetricAggregationQuery) aggregationQuery );
             }
             else
             {
