@@ -7,6 +7,7 @@ import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.range.Range;
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;
+import org.elasticsearch.search.aggregations.bucket.range.geodistance.GeoDistance;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.stats.Stats;
 
@@ -36,6 +37,10 @@ public class AggregationsFactory
             if ( aggregation instanceof Terms )
             {
                 aggregationsBuilder.add( TermsAggregationFactory.create( (Terms) aggregation ) );
+            }
+            else if ( aggregation instanceof GeoDistance )
+            {
+                aggregationsBuilder.add( GeoDistanceAggregationFactory.create( (GeoDistance) aggregation ) );
             }
             else if ( aggregation instanceof DateRange )
             {

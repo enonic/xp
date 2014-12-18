@@ -15,14 +15,9 @@ public class Buckets
         super( ImmutableSet.copyOf( builder.buckets ) );
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
     public static class Builder
     {
-        private Set<Bucket> buckets = Sets.newLinkedHashSet();
+        private final Set<Bucket> buckets = Sets.newLinkedHashSet();
 
         public Builder add( final Bucket bucket )
         {

@@ -9,6 +9,7 @@ import com.google.common.base.Strings;
 import com.enonic.wem.api.query.aggregation.AbstractRangeAggregationQuery;
 import com.enonic.wem.api.query.aggregation.DateRange;
 import com.enonic.wem.api.query.aggregation.DateRangeAggregationQuery;
+import com.enonic.wem.api.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.wem.api.query.aggregation.NumericRange;
 import com.enonic.wem.api.query.aggregation.NumericRangeAggregationQuery;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
@@ -25,12 +26,15 @@ class RangeAggregationQueryBuilderFactory
         {
             return createNumericRange( (NumericRangeAggregationQuery) aggregationQuery );
         }
+        else if ( aggregationQuery instanceof GeoDistanceAggregationQuery )
+        {
+            return GeoDistanceAggregationQueryBuilderFactory.create( (GeoDistanceAggregationQuery) aggregationQuery );
+        }
         else
         {
             throw new UnsupportedOperationException(
                 "Range aggreagations of type  " + aggregationQuery.getClass().getName() + " not implemented" );
         }
-
     }
 
     private static AggregationBuilder createDateRage( final DateRangeAggregationQuery query )
