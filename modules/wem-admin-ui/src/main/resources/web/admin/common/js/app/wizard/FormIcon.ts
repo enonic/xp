@@ -93,7 +93,7 @@ module api.app.wizard {
                 this.progress.setValue(file.percent);
             });
 
-            uploader.bind('FileUploaded', (up, file, response) => {
+            uploader.bind('FileUploaded', (up, file: api.ui.uploader.PluploadFile, response) => {
                 console.log('uploader file uploaded', up, file, response);
 
                 var responseObj;
@@ -103,12 +103,7 @@ module api.app.wizard {
                     if (responseObj.items && responseObj.items.length > 0) {
                         var uploadedFile = responseObj.items[0];
 
-                        var uploadItem: api.ui.uploader.UploadItem = new api.ui.uploader.UploadItemBuilder().
-                            setBlobKey(new api.blob.BlobKey(uploadedFile.id)).
-                            setName(uploadedFile.name).
-                            setMimeType(uploadedFile.mimeType).
-                            setSize(uploadedFile.size).
-                            build();
+                        var uploadItem = new api.ui.uploader.UploadItem<any>(file);
                         this.notifyUploadFinished(uploadItem);
                     }
                 }
@@ -156,7 +151,7 @@ module api.app.wizard {
             });
         }
 
-        private notifyUploadFinished(uploadItem: api.ui.uploader.UploadItem) {
+        private notifyUploadFinished(uploadItem: api.ui.uploader.UploadItem<any>) {
             this.uploadFinishedListeners.forEach((listener: (event: UploadFinishedEvent)=>void) => {
                 listener.call(this, new UploadFinishedEvent(uploadItem));
             });

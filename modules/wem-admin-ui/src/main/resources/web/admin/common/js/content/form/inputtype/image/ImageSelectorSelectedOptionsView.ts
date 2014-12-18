@@ -10,7 +10,7 @@ module api.content.form.inputtype.image {
     import ValueChangedEvent = api.form.inputtype.ValueChangedEvent;
     import LoadMask = api.ui.mask.LoadMask;
 
-    export class SelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<ImageSelectorDisplayValue> {
+    export class ImageSelectorSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<ImageSelectorDisplayValue> {
 
         private numberOfOptionsPerRow: number = 3;
 
@@ -69,7 +69,7 @@ module api.content.form.inputtype.image {
 
         createSelectedOption(option: Option<ImageSelectorDisplayValue>): SelectedOption<ImageSelectorDisplayValue> {
 
-            return new SelectedOption<ImageSelectorDisplayValue>(new SelectedOptionView(option), this.count());
+            return new SelectedOption<ImageSelectorDisplayValue>(new ImageSelectorSelectedOptionView(option), this.count());
         }
 
         addOption(option: Option<ImageSelectorDisplayValue>): boolean {
@@ -94,7 +94,7 @@ module api.content.form.inputtype.image {
             var selectedOption: SelectedOption<ImageSelectorDisplayValue> = this.createSelectedOption(option);
             this.getSelectedOptions().push(selectedOption);
 
-            var optionView: SelectedOptionView = <SelectedOptionView>selectedOption.getOptionView();
+            var optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView();
             optionView.updateProportions(this.calculateOptionHeight());
 
             optionView.onClicked((event: MouseEvent) => {
@@ -137,7 +137,7 @@ module api.content.form.inputtype.image {
             optionView.getCheckbox().onFocus((event: FocusEvent) => this.showImageSelectorDialog(selectedOption));
 //            optionView.getCheckbox().onBlur((event: FocusEvent) => this.hideImageSelectorDialog());
 
-            optionView.onChecked((view: SelectedOptionView, checked: boolean) => {
+            optionView.onChecked((view: ImageSelectorSelectedOptionView, checked: boolean) => {
                 if (checked) {
                     this.selection.push(selectedOption);
                 } else {
@@ -179,7 +179,7 @@ module api.content.form.inputtype.image {
             this.hideImageSelectorDialog();
 
             if (index > -1) {
-                (<SelectedOptionView>this.getByIndex(index).getOptionView()).getCheckbox().giveFocus();
+                (<ImageSelectorSelectedOptionView>this.getByIndex(index).getOptionView()).getCheckbox().giveFocus();
             }
         }
 
@@ -190,7 +190,7 @@ module api.content.form.inputtype.image {
 
             var selectedOptions = this.getSelectedOptions();
             for (var i = 0; i < selectedOptions.length; i++) {
-                var view = <SelectedOptionView>selectedOptions[i].getOptionView();
+                var view = <ImageSelectorSelectedOptionView>selectedOptions[i].getOptionView();
                 var passedSelectedOption = i >= option.getIndex();
                 if ((this.isLastInRow(i) || this.isLast(i)) && passedSelectedOption) {
                     this.dialog.insertAfterEl(view);
@@ -214,7 +214,7 @@ module api.content.form.inputtype.image {
         updateLayout() {
             var optionHeight = this.calculateOptionHeight();
             this.getSelectedOptions().forEach((selectedOption: SelectedOption<ImageSelectorDisplayValue>) => {
-                (<SelectedOptionView>selectedOption.getOptionView()).updateProportions(optionHeight);
+                (<ImageSelectorSelectedOptionView>selectedOption.getOptionView()).updateProportions(optionHeight);
             });
             if (this.dialog.isVisible()) {
                 this.updateDialogLayout(optionHeight);

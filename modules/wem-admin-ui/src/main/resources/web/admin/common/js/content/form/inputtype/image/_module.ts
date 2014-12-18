@@ -1,5 +1,5 @@
-///<reference path='SelectedOptionView.ts' />
-///<reference path='SelectedOptionsView.ts' />
+///<reference path='ImageSelectorSelectedOptionView.ts' />
+///<reference path='ImageSelectorSelectedOptionsView.ts' />
 ///<reference path='ImageSelectorDialog.ts' />
 ///<reference path='ImageSelector.ts' />
 ///<reference path='UploadDialogCancelAction.ts' />

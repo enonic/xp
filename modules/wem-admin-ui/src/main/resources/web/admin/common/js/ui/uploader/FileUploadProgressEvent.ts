@@ -1,22 +1,16 @@
 module api.ui.uploader {
 
-    export class FileUploadProgressEvent<ITEM> {
+    export class FileUploadProgressEvent<MODEL> {
 
-        private uploadItem: ITEM;
+        private uploadItem: UploadItem<MODEL>;
 
-        private progress: number;
-
-        constructor(uploadItem: ITEM, progress: number) {
+        constructor(uploadItem: UploadItem<MODEL>) {
             this.uploadItem = uploadItem;
-            this.progress = progress;
         }
 
-        getUploadItem(): ITEM {
+        getUploadItem(): UploadItem<MODEL> {
             return this.uploadItem;
         }
 
-        getProgress(): number {
-            return this.progress;
-        }
     }
 }

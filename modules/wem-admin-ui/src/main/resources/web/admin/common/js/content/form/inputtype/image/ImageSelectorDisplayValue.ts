@@ -1,39 +1,41 @@
 module api.content.form.inputtype.image {
 
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
+    import ContentSummary = api.content.ContentSummary;
+    import UploadItem = api.ui.uploader.UploadItem;
 
     export class ImageSelectorDisplayValue {
 
-        private uploadItem: api.ui.uploader.UploadItem;
+        private uploadItem: api.ui.uploader.UploadItem<ContentSummary>;
 
-        private content: api.content.ContentSummary;
+        private content: ContentSummary;
 
         constructor() {
         }
 
-        static fromUploadItem(item: api.ui.uploader.UploadItem): ImageSelectorDisplayValue {
+        static fromUploadItem(item: UploadItem<ContentSummary>): ImageSelectorDisplayValue {
             return new ImageSelectorDisplayValue().setUploadItem(item);
         }
 
-        static fromContentSummary(content: api.content.ContentSummary, item?: api.ui.uploader.UploadItem) {
-            return new ImageSelectorDisplayValue().setContentSummary(content).setUploadItem(item);
+        static fromContentSummary(content: ContentSummary) {
+            return new ImageSelectorDisplayValue().setContentSummary(content);
         }
 
-        private setUploadItem(item: api.ui.uploader.UploadItem): ImageSelectorDisplayValue {
+        setUploadItem(item: UploadItem<ContentSummary>): ImageSelectorDisplayValue {
             this.uploadItem = item;
             return this;
         }
 
-        private setContentSummary(contentSummary: api.content.ContentSummary): ImageSelectorDisplayValue {
+        setContentSummary(contentSummary: ContentSummary): ImageSelectorDisplayValue {
             this.content = contentSummary;
             return this;
         }
 
-        getUploadItem(): api.ui.uploader.UploadItem {
+        getUploadItem(): UploadItem<ContentSummary> {
             return this.uploadItem;
         }
 
-        getContentSummary(): api.content.ContentSummary {
+        getContentSummary(): ContentSummary {
             return this.content;
         }
 

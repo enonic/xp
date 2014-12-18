@@ -67,7 +67,7 @@ module app.create {
             });
             aside.appendChild(this.mediaUploader);
             this.mediaUploader.onFileUploaded((event: FileUploadedEvent<api.content.Content>) => {
-                this.closeAndFireNewMediaEvent(event.getUploadItem());
+                this.closeAndFireNewMediaEvent(event.getUploadItem().getModel());
             });
 
             var recentTitle = new api.dom.H1El();

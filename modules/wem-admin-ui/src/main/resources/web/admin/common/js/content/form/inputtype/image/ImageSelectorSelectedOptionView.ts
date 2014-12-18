@@ -2,7 +2,7 @@ module api.content.form.inputtype.image {
 
     import LoadMask = api.ui.mask.LoadMask;
 
-    export class SelectedOptionView extends api.ui.selector.combobox.BaseSelectedOptionView<ImageSelectorDisplayValue> {
+    export class ImageSelectorSelectedOptionView extends api.ui.selector.combobox.BaseSelectedOptionView<ImageSelectorDisplayValue> {
 
         private static IMAGE_SIZE: number = 270;
 
@@ -14,9 +14,11 @@ module api.content.form.inputtype.image {
 
         private progress: api.ui.ProgressBar;
 
+        private error: api.dom.DivEl;
+
         private loadMask: LoadMask;
 
-        private selectionChangeListeners: {(option: SelectedOptionView, checked: boolean): void;}[] = [];
+        private selectionChangeListeners: {(option: ImageSelectorSelectedOptionView, checked: boolean): void;}[] = [];
 
         constructor(option: api.ui.selector.Option<ImageSelectorDisplayValue>) {
             super(option);
@@ -31,7 +33,7 @@ module api.content.form.inputtype.image {
                 if (this.isVisible()) {
                     this.showSpinner();
                 }
-                this.icon.setSrc(content.getImageUrl() + "?thumbnail=false&size=" + SelectedOptionView.IMAGE_SIZE);
+                this.icon.setSrc(content.getImageUrl() + "?thumbnail=false&size=" + ImageSelectorSelectedOptionView.IMAGE_SIZE);
                 this.label.getEl().setInnerHtml(content.getLabel());
             } else {
                 this.showProgress();
@@ -57,6 +59,9 @@ module api.content.form.inputtype.image {
 
             this.progress = new api.ui.ProgressBar();
             this.appendChild(this.progress);
+
+            this.error = new api.dom.DivEl("error");
+            this.appendChild(this.error);
 
             this.loadMask = new LoadMask(this);
             this.appendChild(this.loadMask);
@@ -90,7 +95,7 @@ module api.content.form.inputtype.image {
             });
             this.icon.onLoaded((event: UIEvent) => {
                 if (this.getOption().displayValue.getContentSummary()) {
-                    this.removeSpinner();
+                    this.showResult();
                 }
             });
         }
@@ -109,9 +114,15 @@ module api.content.form.inputtype.image {
             this.loadMask.show();
         }
 
-        private removeSpinner() {
+        private showResult() {
             this.loadMask.hide();
             this.icon.getEl().setVisibility('visible');
+            this.check.show();
+        }
+
+        showError(text: string) {
+            this.progress.hide();
+            this.error.setHtml(text).show();
             this.check.show();
         }
 
@@ -124,7 +135,12 @@ module api.content.form.inputtype.image {
             } else {
                 this.icon.getEl().setMarginTop('0px');
             }
-            this.progress.getEl().setMarginTop((contentHeight - this.progress.getEl().getHeight()) / 2 + 'px');
+            this.centerVertically(this.progress, contentHeight);
+            this.centerVertically(this.error, contentHeight);
+        }
+
+        private centerVertically(el: api.dom.Element, contentHeight: number) {
+            el.getEl().setMarginTop((contentHeight - this.progress.getEl().getHeight()) / 2 + 'px');
         }
 
         getIcon(): api.dom.ImgEl {
@@ -145,11 +161,11 @@ module api.content.form.inputtype.image {
             });
         }
 
-        onChecked(listener: {(option: SelectedOptionView, checked: boolean): void;}) {
+        onChecked(listener: {(option: ImageSelectorSelectedOptionView, checked: boolean): void;}) {
             this.selectionChangeListeners.push(listener);
         }
 
-        unChecked(listener: {(option: SelectedOptionView, checked: boolean): void;}) {
+        unChecked(listener: {(option: ImageSelectorSelectedOptionView, checked: boolean): void;}) {
             this.selectionChangeListeners = this.selectionChangeListeners.filter(function (curr) {
                 return curr != listener;
             });
