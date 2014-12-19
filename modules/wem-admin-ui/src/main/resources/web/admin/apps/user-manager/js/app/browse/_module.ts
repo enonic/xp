@@ -13,4 +13,3 @@
 ///<reference path='PrincipalDuplicatedEvent.ts'/>
 ///<reference path='PrincipalSynchronizedEvent.ts'/>
 ///<reference path='NewPrincipalEvent.ts'/>
-///<reference path='PrincipalDeletedEvent.ts'/>

@@ -1,7 +1,6 @@
 module app.wizard {
 
     import Principal = api.security.Principal;
-    import UserStoreKey = api.security.UserStoreKey;
 
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
     import WizardStep = api.app.wizard.WizardStep;
@@ -11,14 +10,11 @@ module app.wizard {
         private descriptionWizardStepForm: PrincipalDescriptionWizardStepForm;
         private membersWizardStepForm: PrincipalMembersWizardStepForm;
 
-        private userStore: UserStoreKey;
-
-        constructor(membersWizardStepForm: PrincipalMembersWizardStepForm, params: PrincipalWizardPanelParams,
-                    callback: (wizard: PrincipalWizardPanel) => void) {
+        constructor(membersWizardStepForm: PrincipalMembersWizardStepForm,
+                    params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
 
             this.descriptionWizardStepForm = new PrincipalDescriptionWizardStepForm();
             this.membersWizardStepForm = membersWizardStepForm;
-            this.userStore = params.userStoreKey;
 
             super(params, () => {
                 this.addClass("group-role-wizard-panel");
@@ -32,10 +28,6 @@ module app.wizard {
 
         getMembersWizardStepForm(): PrincipalMembersWizardStepForm {
             return this.membersWizardStepForm;
-        }
-
-        getUserStore(): UserStoreKey {
-            return this.userStore;
         }
 
         giveInitialFocus() {

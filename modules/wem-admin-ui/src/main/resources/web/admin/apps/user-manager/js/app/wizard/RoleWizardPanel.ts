@@ -8,6 +8,10 @@ module app.wizard {
     import Principal = api.security.Principal;
     import PrincipalKey = api.security.PrincipalKey;
 
+    import UserTreeGridItem = app.browse.UserTreeGridItem;
+    import UserTreeGridItemBuilder = app.browse.UserTreeGridItemBuilder;
+    import UserTreeGridItemType = app.browse.UserTreeGridItemType;
+
     import WizardStep = api.app.wizard.WizardStep;
 
     export class RoleWizardPanel extends GroupRoleWizardPanel {
@@ -55,6 +59,8 @@ module app.wizard {
                     this.getPrincipalWizardHeader().disableNameInput();
                     this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('Role was created!');
+                    new api.security.UserItemCreatedEvent(principal, this.getUserStore()).fire();
+
                     return principal;
                 });
         }
@@ -76,6 +82,7 @@ module app.wizard {
                         this.notifyPrincipalNamed(principal);
                     }
                     api.notify.showFeedback('Role was updated!');
+                    new api.security.UserItemUpdatedEvent(principal, this.getUserStore()).fire();
 
                     return principal;
                 });

@@ -8,7 +8,7 @@ module app.browse.action {
             super("New", "mod+alt+n");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var principals: app.browse.UserTreeGridItem[] = grid.getSelectedDataList();
+                var principals: UserTreeGridItem[] = grid.getSelectedDataList();
                 new NewPrincipalEvent(principals).fire();
             });
         }

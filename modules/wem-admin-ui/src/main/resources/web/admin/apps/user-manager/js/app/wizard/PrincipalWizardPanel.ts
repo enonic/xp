@@ -4,6 +4,7 @@ module app.wizard {
     import PrincipalKey = api.security.PrincipalKey;
     import PrincipalType = api.security.PrincipalType;
     import PrincipalNamedEvent = api.security.PrincipalNamedEvent;
+    import UserStore = api.security.UserStore;
     import UserStoreKey = api.security.UserStoreKey;
 
     import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
@@ -25,6 +26,8 @@ module app.wizard {
 
         principalNamedListeners: {(event: PrincipalNamedEvent): void}[];
 
+        private userStore: UserStore;
+
         constructor(params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
 
 
@@ -34,6 +37,7 @@ module app.wizard {
             this.principalType = params.persistedType;
             this.principalPath = params.persistedPath;
 
+            this.userStore = params.userStore;
 
             this.wizardActions = new app.wizard.action.PrincipalWizardActions(this);
             var duplicateAction = (<app.wizard.action.PrincipalWizardActions>this.wizardActions).getDuplicateAction();
@@ -102,6 +106,14 @@ module app.wizard {
             });
 
 
+        }
+
+        getUserStore(): UserStore {
+            return this.userStore;
+        }
+
+        getUserStoreKey(): UserStoreKey {
+            return !!this.userStore ? this.userStore.getKey() : null;
         }
 
         getPrincipalWizardHeader(): WizardHeaderWithDisplayNameAndName {

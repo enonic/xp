@@ -13,10 +13,13 @@ module app.browse.action {
                     .setNoCallback(null)
                     .setYesCallback(() => {
                         var principals = grid.getSelectedDataList().map((userItem: UserTreeGridItem) => {
-                            return userItem.getPrincipal().getKey();
+                            return userItem.getPrincipal();
+                        });
+                        var principalsKeys = principals.map((principal: api.security.Principal) => {
+                            return principal.getKey();
                         });
                         new api.security.DeletePrincipalRequest()
-                            .setKeys(principals)
+                            .setKeys(principalsKeys)
                             .send()
                             .done((jsonResponse: api.rest.JsonResponse<any>) => {
                                 var json = jsonResponse.getJson();
@@ -25,7 +28,7 @@ module app.browse.action {
                                     var key = json.results[0].principalKey;
 
                                     api.notify.showFeedback('Principal [' + key + '] deleted!');
-                                    new app.browse.PrincipalDeletedEvent(principals).fire();
+                                    new api.security.UserItemDeletedEvent(principals).fire();
                                 }
                             });
                     }).open();

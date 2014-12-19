@@ -8,6 +8,7 @@ module app.wizard {
 
         persistedPath: string;
 
+        userStore: api.security.UserStore;
 
         setPersistedPrincipal(value: api.security.Principal): PrincipalWizardPanelParams {
             this.persistedPrincipal = value;
@@ -29,8 +30,8 @@ module app.wizard {
             return this;
         }
 
-        setUserStoreKey(value: api.security.UserStoreKey): PrincipalWizardPanelParams {
-            this.userStoreKey = value;
+        setUserStore(value: api.security.UserStore): PrincipalWizardPanelParams {
+            this.userStore = value;
             return this;
         }
 

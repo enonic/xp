@@ -200,6 +200,8 @@ module app.wizard {
                     this.wizardHeader.disableNameInput();
                     this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('UserStore was created!');
+                    new api.security.UserItemCreatedEvent(null, userStore).fire();
+
                     return userStore;
                 });
         }
@@ -212,6 +214,7 @@ module app.wizard {
                         this.notifyUserStoreNamed(userStore);
                     }
                     api.notify.showFeedback('UserStore was updated!');
+                    new api.security.UserItemUpdatedEvent(null, userStore).fire();
 
                     return userStore;
                 });

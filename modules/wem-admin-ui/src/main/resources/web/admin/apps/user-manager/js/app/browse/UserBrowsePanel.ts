@@ -30,6 +30,25 @@ module app.browse {
                 filterPanel: this.userFilterPanel
             });
 
+            api.security.UserItemCreatedEvent.on((event) => {
+                this.userTreeGrid.appendUserNode(event.getPrincipal(), event.getUserStore());
+                this.setFilterPanelRefreshNeeded(true);
+            });
+
+            api.security.UserItemUpdatedEvent.on((event) => {
+                this.userTreeGrid.updateUserNode(event.getPrincipal(), event.getUserStore());
+            });
+
+            api.security.UserItemDeletedEvent.on((event) => {
+                this.setFilterPanelRefreshNeeded(true);
+                /*
+                 Deleting content won't trigger browsePanel.onShow event,
+                 because we are left on the same panel. We need to refresh manually.
+                 */
+                this.userTreeGrid.deleteUserNodes(event.getPrincipals());
+                this.refreshFilter();
+            });
+
             this.userTreeGrid.onSelectionChanged((currentSelection: TreeNode<UserTreeGridItem>[], fullSelection: TreeNode<UserTreeGridItem>[]) => {
                 this.browseActions.updateActionsEnabledState(<any[]>fullSelection.map((elem) => {
                     return elem.getData();

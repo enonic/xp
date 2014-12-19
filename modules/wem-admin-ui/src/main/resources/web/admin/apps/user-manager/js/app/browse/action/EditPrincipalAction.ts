@@ -8,8 +8,8 @@ module app.browse.action {
             super("Edit", "f4");
             this.setEnabled(false);
             this.onExecuted(() => {
-                var principals: app.browse.UserTreeGridItem[] = grid.getSelectedDataList();
-                new app.browse.EditPrincipalEvent(principals).fire();
+                var principals: UserTreeGridItem[] = grid.getSelectedDataList();
+                new EditPrincipalEvent(principals).fire();
             });
         }
     }
