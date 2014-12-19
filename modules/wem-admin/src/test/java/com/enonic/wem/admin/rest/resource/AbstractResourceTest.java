@@ -24,7 +24,7 @@ import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.session.SessionKey;
 import com.enonic.wem.api.session.SimpleSession;
-import com.enonic.wem.servlet.ServletRequestHolder;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 

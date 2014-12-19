@@ -9,8 +9,8 @@ import javax.ws.rs.core.Response;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.core.initializer.StartupInitializer;
-import com.enonic.wem.servlet.ServletRequestUrlHelper;
-import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Path(ResourceConstants.REST_ROOT + "tools")
 public final class ToolsResource

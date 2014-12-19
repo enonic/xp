@@ -5,7 +5,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.wem.servlet.internal.JaxRsServlet;
-import com.enonic.wem.servlet.mock.MockServletConfig;
+import com.enonic.xp.web.mock.MockServletConfig;
 
 public abstract class BaseResourceTest
 {

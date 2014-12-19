@@ -24,7 +24,7 @@ import com.enonic.wem.api.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.relationship.UpdateRelationshipParams;
 import com.enonic.wem.api.relationship.editor.RelationshipEditors;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "relationship")
 @Produces(MediaType.APPLICATION_JSON)

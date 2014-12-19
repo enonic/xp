@@ -18,7 +18,7 @@ import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.RequestContext;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 
-import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Provider
 @Consumes(MediaType.MULTIPART_FORM_DATA)

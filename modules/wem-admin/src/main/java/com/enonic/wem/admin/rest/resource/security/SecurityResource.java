@@ -53,7 +53,7 @@ import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
-import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 import static com.enonic.wem.api.security.PrincipalQuery.newQuery;
 import static java.util.stream.Collectors.toList;

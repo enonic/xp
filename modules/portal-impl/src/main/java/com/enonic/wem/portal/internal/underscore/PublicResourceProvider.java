@@ -1,7 +1,7 @@
 package com.enonic.wem.portal.internal.underscore;
 
 import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.servlet.jaxrs.ResourceProvider;
+import com.enonic.xp.web.jaxrs.ResourceProvider;
 
 public final class PublicResourceProvider
     implements ResourceProvider<PublicResource>

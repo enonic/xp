@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.wem.admin.json.JsonSerializable;
 import com.enonic.wem.admin.json.ObjectMapperHelper;
-import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 
 @Provider

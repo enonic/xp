@@ -17,7 +17,7 @@ import com.enonic.wem.api.schema.metadata.MetadataSchema;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaService;
 import com.enonic.wem.api.schema.metadata.MetadataSchemas;
-import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "schema/metadata")
 @Produces(MediaType.APPLICATION_JSON)

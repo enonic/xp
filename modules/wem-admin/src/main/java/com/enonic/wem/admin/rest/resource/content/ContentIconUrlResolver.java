@@ -8,7 +8,7 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public final class ContentIconUrlResolver
 {

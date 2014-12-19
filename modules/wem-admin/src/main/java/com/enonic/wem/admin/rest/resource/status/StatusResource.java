@@ -7,7 +7,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.Version;
-import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "status")
 public final class StatusResource

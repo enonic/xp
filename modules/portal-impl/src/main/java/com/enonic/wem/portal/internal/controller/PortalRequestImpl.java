@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.wem.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public final class PortalRequestImpl
     implements PortalRequest

@@ -6,7 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.samskivert.mustache.Template;
 
-import com.enonic.wem.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 final class AppHtmlHandler
 {

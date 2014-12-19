@@ -35,7 +35,10 @@
     <module>modules/wem-core</module>
     <module>modules/wem-export</module>
     <module>modules/wem-script</module>
-    <module>modules/wem-servlet</module>
+
+    <module>modules/web-api</module>
+    <module>modules/web-impl</module>
+    <module>modules/web-vhost</module>
 
     <module>modules/wem-admin</module>
     <module>modules/wem-admin-ui</module>

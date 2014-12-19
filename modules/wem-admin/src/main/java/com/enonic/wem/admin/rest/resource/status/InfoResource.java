@@ -18,7 +18,7 @@ import com.enonic.wem.admin.status.MemoryStatusInfoBuilder;
 import com.enonic.wem.admin.status.OSStatusInfoBuilder;
 import com.enonic.wem.admin.status.PropertiesStatusInfoBuilder;
 import com.enonic.wem.admin.status.StatusInfoBuilder;
-import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path("status")
 public final class InfoResource

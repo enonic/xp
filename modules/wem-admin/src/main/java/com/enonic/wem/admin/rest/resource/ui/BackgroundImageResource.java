@@ -7,7 +7,7 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
-import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "ui")
 public final class BackgroundImageResource

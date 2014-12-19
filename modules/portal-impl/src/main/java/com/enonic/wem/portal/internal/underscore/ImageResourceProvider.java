@@ -3,7 +3,7 @@ package com.enonic.wem.portal.internal.underscore;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.core.image.filter.ImageFilterBuilder;
-import com.enonic.wem.servlet.jaxrs.ResourceProvider;
+import com.enonic.xp.web.jaxrs.ResourceProvider;
 
 public final class ImageResourceProvider
     implements ResourceProvider<ImageResource>

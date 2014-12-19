@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rest.resource.schema;
 import com.google.common.hash.Hashing;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public abstract class IconUrlResolver
 {

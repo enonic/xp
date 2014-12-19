@@ -24,7 +24,7 @@ import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobService;
-import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 

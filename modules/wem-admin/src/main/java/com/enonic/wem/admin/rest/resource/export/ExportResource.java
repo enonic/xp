@@ -14,8 +14,8 @@ import com.enonic.wem.api.export.ImportNodesParams;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.servlet.ServletRequestUrlHelper;
-import com.enonic.wem.servlet.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Path(ResourceConstants.REST_ROOT + "export")
 public class ExportResource

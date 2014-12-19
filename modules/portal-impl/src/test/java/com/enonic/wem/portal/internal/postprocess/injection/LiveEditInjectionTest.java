@@ -13,7 +13,7 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
-import com.enonic.wem.servlet.ServletRequestHolder;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 
