@@ -1,139 +1,76 @@
 module api.ui.uploader {
 
-    export class UploadItem {
+    export class UploadItem<MODEL> {
 
-        private id: string;
+        private file: PluploadFile;
+        private model: MODEL;
 
-        private blobKey: api.blob.BlobKey;
-
-        private name: string;
-
-        private mimeType: string;
-
-        private size: number;
-
-        private progress: number = 0;
-
-        constructor(builder: UploadItemBuilder) {
-            this.id = builder.id;
-            this.blobKey = builder.blobKey;
-            this.name = builder.name;
-            this.mimeType = builder.mimeType;
-            this.size = builder.size;
-            this.progress = builder.progress;
+        constructor(file: PluploadFile) {
+            this.file = file;
         }
 
         getId(): string {
-            return this.id;
+            return this.file.id;
         }
 
-        getBlobKey(): api.blob.BlobKey {
-            return this.blobKey;
+        setId(id: string): UploadItem<MODEL> {
+            this.file.id = id;
+            return this;
         }
 
-        setBlobKey(key: api.blob.BlobKey): UploadItem {
-            this.blobKey = key;
+        getModel(): MODEL {
+            return this.model;
+        }
+
+        setModel(model: MODEL): UploadItem<MODEL> {
+            this.model = model;
             return this;
         }
 
         getName(): string {
-            return this.name;
+            return this.file.name;
         }
 
-        setName(name: string): UploadItem {
-            this.name = name;
+        setName(name: string): UploadItem<MODEL> {
+            this.file.name = name;
             return this;
         }
 
         getMimeType(): string {
-            return this.mimeType;
+            return this.file.type;
         }
 
-        setMimeType(type: string): UploadItem {
-            this.mimeType = type;
+        setMimeType(type: string): UploadItem<MODEL> {
+            this.file.type = type;
             return this;
         }
 
         getSize(): number {
-            return this.size;
+            return this.file.size;
         }
 
-        setSize(size: number): UploadItem {
-            this.size = size;
+        setSize(size: number): UploadItem<MODEL> {
+            this.file.size = size;
             return this;
         }
 
         getProgress(): number {
-            return this.progress;
+            return this.file.percent;
         }
 
-        setProgress(progress: number): UploadItem {
-            this.progress = progress;
+        setProgress(progress: number): UploadItem<MODEL> {
+            this.file.percent = progress;
             return this;
         }
 
-        public static create(source?: UploadItem): UploadItemBuilder {
-            return new UploadItemBuilder(source);
-        }
-    }
-
-    export class UploadItemBuilder {
-
-        id: string;
-
-        blobKey: api.blob.BlobKey;
-
-        name: string;
-
-        mimeType: string;
-
-        size: number;
-
-        progress: number;
-
-        constructor(source?: UploadItem) {
-            if (source) {
-                this.id = source.getId();
-                this.blobKey = source.getBlobKey();
-                this.name = source.getName();
-                this.mimeType = source.getMimeType();
-                this.size = source.getSize();
-                this.progress = source.getProgress();
-            }
+        getStatus(): PluploadStatus {
+            return this.file.status;
         }
 
-        setId(value: string): UploadItemBuilder {
-            this.id = value;
+        setStatus(status: PluploadStatus): UploadItem<MODEL> {
+            this.file.status = status;
             return this;
         }
 
-        setBlobKey(value: api.blob.BlobKey): UploadItemBuilder {
-            this.blobKey = value;
-            return this;
-        }
-
-        setName(value: string): UploadItemBuilder {
-            this.name = value;
-            return this;
-        }
-
-        setMimeType(value: string): UploadItemBuilder {
-            this.mimeType = value;
-            return this;
-        }
-
-        setSize(value: number): UploadItemBuilder {
-            this.size = value;
-            return this;
-        }
-
-        setProgress(value: number): UploadItemBuilder {
-            this.progress = value;
-            return this;
-        }
-
-        build(): UploadItem {
-            return new UploadItem(this);
-        }
     }
 }

@@ -2,14 +2,14 @@ module api.ui.uploader {
 
     export class FileUploadStartedEvent<ITEM> {
 
-        private uploadedItems: ITEM[];
+        private uploadItems: UploadItem<ITEM>[];
 
-        constructor(uploadItems: ITEM[]) {
-            this.uploadedItems = uploadItems;
+        constructor(uploadItems: UploadItem<ITEM>[]) {
+            this.uploadItems = uploadItems;
         }
 
-        getUploadItems(): ITEM[] {
-            return this.uploadedItems;
+        getUploadItems(): UploadItem<ITEM>[] {
+            return this.uploadItems;
         }
     }
 }

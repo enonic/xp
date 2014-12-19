@@ -24,6 +24,7 @@ module api.content.form.inputtype.image {
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import FileUploadProgressEvent = api.ui.uploader.FileUploadProgressEvent;
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
+    import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 
     export interface ImageSelectorConfig {
         relationshipType: string
@@ -43,7 +44,7 @@ module api.content.form.inputtype.image {
 
         private uploadButton: api.dom.ButtonEl;
 
-        private selectedOptionsView: SelectedOptionsView;
+        private selectedOptionsView: ImageSelectorSelectedOptionsView;
 
         private contentSummaryLoader: ContentSummaryLoader;
 
@@ -172,12 +173,12 @@ module api.content.form.inputtype.image {
 
         private layoutUploadDialog() {
             this.uploadDialog = new ImageUploadDialog(this.config.contentPath);
+
             this.uploadDialog.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
                 this.uploadDialog.close();
-
-                event.getUploadItems().forEach((uploadItem: Content) => {
-
-                    var value = ImageSelectorDisplayValue.fromContentSummary(uploadItem);
+                debugger;
+                event.getUploadItems().forEach((uploadItem: UploadItem<Content>) => {
+                    var value = ImageSelectorDisplayValue.fromUploadItem(uploadItem);
 
                     var option = <api.ui.selector.Option<ImageSelectorDisplayValue>>{
                         value: value.getId(),
@@ -186,22 +187,36 @@ module api.content.form.inputtype.image {
                     this.comboBox.selectOption(option);
                 });
             });
+
             this.uploadDialog.onUploadProgress((event: FileUploadProgressEvent<Content>) => {
-                var selectedOption = this.selectedOptionsView.getById(event.getUploadItem().getId());
-                (<SelectedOptionView>selectedOption.getOptionView()).setProgress(event.getProgress());
+                var item = event.getUploadItem();
+                debugger;
+
+                var selectedOption = this.selectedOptionsView.getById(item.getId());
+                (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).setProgress(item.getProgress());
             });
+
             this.uploadDialog.onImageUploaded((event: FileUploadedEvent<Content>) => {
-                var createdContent = event.getUploadItem();
+                var item = event.getUploadItem();
+                var createdContent = item.getModel();
+                debugger;
 
                 new api.content.ContentCreatedEvent(createdContent.getContentId()).fire();
 
-                var value = ImageSelectorDisplayValue.fromContentSummary(createdContent);
-                this.comboBox.selectOption({
-                    value: value.getId(),
-                    displayValue: value
-                });
+                var selectedOption = this.selectedOptionsView.getById(item.getId());
+                var option = selectedOption.getOption();
+                option.displayValue.setContentSummary(createdContent);
 
+                selectedOption.getOptionView().setOption(option);
             });
+
+            this.uploadDialog.onUploadFailed((event: FileUploadFailedEvent<Content>) => {
+                var item = event.getUploadItem();
+                debugger;
+
+                var selectedOption = this.selectedOptionsView.getById(item.getId());
+                (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).showError("Upload failed");
+            })
         }
 
         private doLoadContent(propertyArray: PropertyArray): wemQ.Promise<ContentSummary[]> {
@@ -246,7 +261,7 @@ module api.content.form.inputtype.image {
 
         private createComboBox(input: api.form.Input): ComboBox<ImageSelectorDisplayValue> {
 
-            this.selectedOptionsView = new SelectedOptionsView();
+            this.selectedOptionsView = new ImageSelectorSelectedOptionsView();
             this.selectedOptionsView.onEditSelectedOptions((options: SelectedOption<ImageSelectorDisplayValue>[]) => {
                 options.forEach((option: SelectedOption<ImageSelectorDisplayValue>) => {
                     this.notifyEditContentRequested(option.getOption().displayValue.getContentSummary());

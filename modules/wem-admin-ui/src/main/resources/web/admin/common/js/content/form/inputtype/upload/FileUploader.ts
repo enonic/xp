@@ -14,6 +14,9 @@ module api.content.form.inputtype.upload {
             var input = config.input;
 
             this.fileUploader = new api.content.MediaUploader({
+                params: {
+                    content: config.contentId.toString()
+                },
                 operation: api.content.MediaUploaderOperation.update,
                 name: input.getName(),
                 maximumOccurrences: 1
@@ -36,10 +39,7 @@ module api.content.form.inputtype.upload {
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
             if (property.hasNonNullValue()) {
-                var imgUrl = new ContentImageUrlResolver().
-                    setContentId(this.getContext().contentId).
-                    setSize(494).resolve();
-                this.fileUploader.setValue(imgUrl);
+                this.fileUploader.setValue(property.getString());
             }
 
             this.fileUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {

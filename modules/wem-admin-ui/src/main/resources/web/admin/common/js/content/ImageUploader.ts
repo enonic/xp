@@ -23,44 +23,7 @@ module api.content {
             this.addClass('image-uploader');
         }
 
-        /**
-         *
-         * @param value supposed to be a serialized array of or a single content id
-         * @returns {api.content.ImageUploader}
-         */
-        setValue(value: string): ImageUploader {
-            super.setValue(value);
-
-            var results = this.getResultContainer();
-            results.removeChildren();
-            this.images.length = 0;
-
-            this.parseValues(value).forEach((val) => {
-                if (val) {
-                    results.appendChild(this.createImageResult(val));
-                }
-            });
-
-            return this;
-        }
-
-        private parseValues(jsonString: string): string[] {
-            try {
-                var o = JSON.parse(jsonString);
-
-                // Handle non-exception-throwing cases:
-                // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
-                // but... JSON.parse(null) returns 'null', and typeof null === "object",
-                if (o && typeof o === "object" && o.length) {
-                    return o;
-                }
-            } catch (e) { }
-
-            // Value is not JSON so just return it
-            return [jsonString];
-        }
-
-        private createImageResult(value: string): api.dom.DivEl {
+        createResultItem(value: string): api.dom.DivEl {
             var container = new api.dom.DivEl();
 
             var imgUrl = new ContentImageUrlResolver().

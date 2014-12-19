@@ -29,29 +29,65 @@ module api.content {
             this.propertyIdProvider = api.Client.get().getPropertyIdProvider();
         }
 
-        createUploadItem(file): Content {
-            var builder = new ContentBuilder().
-                setData(new api.data.PropertyTree(this.propertyIdProvider)).
-                setId(file.id).
-                setDisplayName(file.name);
-            return (<ContentBuilder> builder).build();
-        }
 
-        updateUploadItem(content: Content, serverResponse: api.content.json.ContentJson): Content {
+        createModel(serverResponse: api.content.json.ContentJson): Content {
             if (serverResponse) {
-                return content.newBuilder().fromContentJson(<api.content.json.ContentJson> serverResponse, this.propertyIdProvider).build();
+                return new api.content.ContentBuilder().
+                    fromContentJson(<api.content.json.ContentJson> serverResponse, this.propertyIdProvider).
+                    build();
             }
             else {
                 return null;
             }
         }
 
-        getUploadItemId(item: Content): string {
+        getModelValue(item: Content): string {
             return item.getId();
         }
 
-        getUploadItemValue(item: Content): string {
-            return item.getId();
+        setValue(value: string): MediaUploader {
+            super.setValue(value);
+
+            var results = this.getResultContainer();
+            results.removeChildren();
+
+            this.parseValues(value).forEach((val) => {
+                if (val) {
+                    results.appendChild(this.createResultItem(val));
+                }
+            });
+
+            return this;
+        }
+
+        private parseValues(jsonString: string): string[] {
+            try {
+                var o = JSON.parse(jsonString);
+
+                // Handle non-exception-throwing cases:
+                // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
+                // but... JSON.parse(null) returns 'null', and typeof null === "object",
+                if (o && typeof o === "object" && o.length) {
+                    return o;
+                }
+            } catch (e) { }
+
+            // Value is not JSON so just return it
+            return [jsonString];
+        }
+
+        createResultItem(value: string): api.dom.Element {
+            var url;
+            if (value && (value.indexOf('/') == -1)) {
+                //TODO: what is the correct url to use?
+                url = api.util.UriHelper.getRestUri('content/media/' + value);
+            } else {
+                url = value;
+            }
+            var link = new api.dom.AEl().setUrl(url, "_blank");
+            link.setHtml(value);
+
+            return link;
         }
     }
 }

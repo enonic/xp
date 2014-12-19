@@ -1,6 +1,6 @@
 module api.ui.uploader {
 
-    export class FileUploadedEvent<ITEM> {
+    export class FileUploadFailedEvent<ITEM> {
 
         private uploadItem: UploadItem<ITEM>;
 

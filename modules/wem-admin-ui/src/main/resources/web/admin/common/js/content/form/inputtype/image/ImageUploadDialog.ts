@@ -5,6 +5,7 @@ module api.content.form.inputtype.image {
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import FileUploadProgressEvent = api.ui.uploader.FileUploadProgressEvent;
     import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
+    import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 
     export class ImageUploadDialog extends api.ui.dialog.ModalDialog {
 
@@ -96,5 +97,12 @@ module api.content.form.inputtype.image {
             this.imageUploader.unUploadReset(listener);
         }
 
+        onUploadFailed(listener: (event: FileUploadFailedEvent<Content>) => void) {
+            this.imageUploader.onUploadFailed(listener);
+        }
+
+        unUploadFailed(listener: (event: FileUploadFailedEvent<Content>) => void) {
+            this.imageUploader.unUploadFailed(listener);
+        }
     }
 }

@@ -84,11 +84,19 @@
         left: 3px;
       }
 
-      > .progress-bar {
+      > .progress-bar,
+      > .error {
         position: absolute;
         width: 100%;
         top: 0;
         left: 0;
+      }
+
+      > .error {
+        text-align: center;
+        color: @admin-white;
+        font-weight: bold;
+        background-color: @admin-input-red;
       }
 
       &:hover > .label {
