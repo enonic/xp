@@ -83,7 +83,10 @@ final class UpdateContentCommand
             proxyProcessor.processEdit( contentBeforeChange.getType(), params, params.getCreateAttachments() );
         if ( processUpdateResult != null )
         {
-            editedContent = editContent( processUpdateResult.editor, editedContent );
+            if ( processUpdateResult.editor != null )
+            {
+                editedContent = editContent( processUpdateResult.editor, editedContent );
+            }
             this.params.createAttachments( processUpdateResult.createAttachments );
         }
 

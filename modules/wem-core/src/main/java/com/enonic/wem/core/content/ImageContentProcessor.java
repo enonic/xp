@@ -127,7 +127,15 @@ public final class ImageContentProcessor
             processedCreateAttachments = createAttachments;
         }
 
-        final ContentEditor editor = editable -> applyMetadata( editable.data.getRoot(), mediaInfo );
+        final ContentEditor editor;
+        if ( mediaInfo != null )
+        {
+            editor = editable -> applyMetadata( editable.data.getRoot(), mediaInfo );
+        }
+        else
+        {
+            editor = null;
+        }
         return new ProcessUpdateResult( processedCreateAttachments, editor );
     }
 
