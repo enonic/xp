@@ -228,7 +228,10 @@ module app.create {
         private createListItems(contentTypes: ContentTypeSummary[]): NewContentDialogListItem[] {
             var contentTypesByName: {[name: string]: ContentTypeSummary} = {};
             contentTypes.forEach((contentType: ContentTypeSummary) => {
-                contentTypesByName[contentType.getName()] = contentType;
+                // filter media type descendants out
+                if (!contentType.getContentTypeName().isDescendantOfMedia()) {
+                    contentTypesByName[contentType.getName()] = contentType;
+                }
             });
 
             var items: NewContentDialogListItem[] = [];
