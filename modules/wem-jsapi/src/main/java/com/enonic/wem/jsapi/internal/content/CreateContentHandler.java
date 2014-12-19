@@ -17,7 +17,7 @@ import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
-import com.enonic.wem.jsapi.internal.mapper.ContentMapper;
+import com.enonic.wem.script.mapper.ContentMapper;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
 

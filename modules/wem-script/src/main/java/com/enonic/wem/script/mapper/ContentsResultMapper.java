@@ -1,4 +1,4 @@
-package com.enonic.wem.jsapi.internal.mapper;
+package com.enonic.wem.script.mapper;
 
 import com.enonic.wem.api.aggregation.Aggregations;
 import com.enonic.wem.api.content.Content;

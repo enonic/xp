@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.jsapi.internal.mapper.ContentsResultMapper;
+import com.enonic.wem.script.mapper.ContentsResultMapper;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
 

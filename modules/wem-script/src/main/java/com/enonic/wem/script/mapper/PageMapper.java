@@ -1,4 +1,4 @@
-package com.enonic.wem.jsapi.internal.mapper;
+package com.enonic.wem.script.mapper;
 
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageRegions;

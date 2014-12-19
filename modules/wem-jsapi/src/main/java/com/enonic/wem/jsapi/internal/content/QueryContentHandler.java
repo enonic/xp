@@ -17,7 +17,7 @@ import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.QueryExpr;
 import com.enonic.wem.api.query.parser.QueryParser;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.jsapi.internal.mapper.ContentsResultMapper;
+import com.enonic.wem.script.mapper.ContentsResultMapper;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
 

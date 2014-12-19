@@ -1,4 +1,4 @@
-package com.enonic.wem.jsapi.internal.mapper;
+package com.enonic.wem.script.mapper;
 
 import java.util.List;
 import java.util.Map;
