@@ -688,9 +688,7 @@ module api.ui.treegrid {
                 this.fetchData(parentNode)
                     .then((dataList: DATA[]) => {
                         parentNode.setChildren(this.dataToTreeNodes(dataList, parentNode));
-                        var rootList = root.treeToList();
-                        var nodeList = parentNode.treeToList();
-                        this.initData(rootList);
+                        this.initData(root.treeToList());
                         var node = root.findNode(this.getDataId(data));
                         if (node) {
                             if (!stashedParentNode) {
@@ -730,9 +728,10 @@ module api.ui.treegrid {
         }
 
         deleteNodes(dataList: DATA[]): void {
-            var root = this.root.getCurrentRoot();
-            var updated: TreeNode<DATA>[] = [];
-            var deleted: TreeNode<DATA>[] = [];
+            var root = this.root.getCurrentRoot(),
+                updated: TreeNode<DATA>[] = [],
+                deleted: TreeNode<DATA>[] = [];
+
             dataList.forEach((data: DATA) => {
                 var node = root.findNode(this.getDataId(data));
                 if (node && node.getParent()) {
@@ -780,25 +779,18 @@ module api.ui.treegrid {
         expandNode(node?: TreeNode<DATA>) {
             node = node || this.root.getCurrentRoot();
 
-            var rootList: TreeNode<DATA>[],
-                nodeList: TreeNode<DATA>[];
-
             if (node) {
                 node.setExpanded(true);
 
                 if (node.hasChildren()) {
-                    rootList = this.root.getCurrentRoot().treeToList();
-                    nodeList = node.treeToList();
-                    this.initData(rootList);
-                    this.updateExpanded(node, nodeList, rootList);
+                    this.initData(this.root.getCurrentRoot().treeToList());
+                    this.updateExpanded();
                 } else {
                     this.fetchData(node)
                         .then((dataList: DATA[]) => {
                             node.setChildren(this.dataToTreeNodes(dataList, node));
-                            rootList = this.root.getCurrentRoot().treeToList();
-                            nodeList = node.treeToList();
-                            this.initData(rootList);
-                            this.updateExpanded(node, nodeList, rootList);
+                            this.initData(this.root.getCurrentRoot().treeToList());
+                            this.updateExpanded();
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         }).finally(() => {
@@ -807,30 +799,9 @@ module api.ui.treegrid {
             }
         }
 
-        private updateExpanded(node: TreeNode<DATA>, nodeList: TreeNode<DATA>[], rootList: TreeNode<DATA>[]) {
-            var nodeRow = node.getData() ? this.gridData.getRowById(node.getId()) : -1,
-                expandedRows = [],
-                animatedRows = [];
-
-            nodeList.forEach((elem, index) => {
-                if (index > 0) {
-                    expandedRows.push(this.gridData.getRowById(elem.getId()));
-                }
-            });
-
-            rootList.forEach((elem) => {
-                var row = this.gridData.getRowById(elem.getId());
-                if (row > nodeRow && expandedRows.indexOf(row) < 0) {
-                    animatedRows.push(row);
-                }
-            });
-
-//            this.animateExpand(expandedRows, animatedRows);
-
-//            setTimeout(() => {
+        private updateExpanded() {
             this.resetAndRender();
             this.active = true;
-//            }, 350); // timeout is required for the animation
         }
 
         private updateSelectedNode(node: TreeNode<DATA>) {
@@ -841,103 +812,15 @@ module api.ui.treegrid {
         }
 
         private collapseNode(node: TreeNode<DATA>) {
-            var nodeRow = this.gridData.getRowById(node.getId()),
-                animatedRows = [],
-                collapsedRows = [];
-
-            node.treeToList().forEach((elem, index) => {
-                if (index > 0) {
-                    collapsedRows.push(this.gridData.getRowById(elem.getId()));
-                }
-            });
-
-            this.root.getCurrentRoot().treeToList().forEach((elem) => {
-                var row = this.gridData.getRowById(elem.getId());
-                if (row > nodeRow && collapsedRows.indexOf(row) < 0) {
-                    animatedRows.push(row);
-                }
-            });
-
             node.setExpanded(false);
-
-//            this.animateCollapse(collapsedRows, animatedRows);
 
             // Save the selected collapsed rows in cache
             this.root.stashSelection();
 
-//            setTimeout(() => {
             this.gridData.refresh();
             this.resetAndRender();
             this.triggerSelectionChangedListeners();
             this.active = true;
-//            }, 350); // timeout is required for the animation
-        }
-
-        private animateCollapse(collapsedRows: number[], animatedRows: number[]) {
-            // get children
-            var gridClasses = (" " + this.grid.getEl().getClass()).replace(/\s/g, "."),
-                children = Element.elementsFromRequest(".tree-grid " + gridClasses + " .grid-canvas .slick-row", false),
-                rowHeight = this.grid.getOptions().rowHeight;
-
-            // Sort needed: rows may not match actual dom structure.
-            var children = children.sort((a, b) => {
-                var left = a.getEl().getOffsetTop(),
-                    right = b.getEl().getOffsetTop();
-                return left > right ? 1 : (left < right) ? -1 : 0;
-            });
-
-            collapsedRows.forEach((row) => {
-                var elem = children[row].getEl();
-                elem.setZindex(-1);
-                elem.setMarginTop(-rowHeight * collapsedRows.length + "px");
-            });
-
-            animatedRows.forEach((row) => {
-                var elem = children[row].getEl();
-                elem.setMarginTop(-rowHeight * collapsedRows.length + "px");
-            });
-        }
-
-        private animateExpand(expandedRows: number[], animated: number[]) {
-            // get children
-            var gridClasses = (" " + this.grid.getEl().getClass()).replace(/\s/g, "."),
-                children = Element.elementsFromRequest(".tree-grid " + gridClasses + " .grid-canvas .slick-row", false),
-                rowHeight = this.grid.getOptions().rowHeight;
-
-            var children = children.sort((a, b) => {
-                var left = a.getEl().getOffsetTop(),
-                    right = b.getEl().getOffsetTop();
-                return left > right ? 1 : (left < right) ? -1 : 0;
-            });
-
-            this.getEl().addClass("quick");
-
-            expandedRows.forEach((row) => {
-                var elem = children[row].getEl();
-                elem.setZindex(-1);
-                elem.setMarginTop(-rowHeight * expandedRows.length + "px");
-            });
-
-            animated.forEach((row) => {
-                var elem = children[row].getEl();
-                elem.setMarginTop(-rowHeight * expandedRows.length + "px");
-            });
-
-            setTimeout(() => {
-                this.getEl().removeClass("quick");
-
-                expandedRows.forEach((row) => {
-                    var elem = children[row].getEl();
-                    elem.setZindex(-1);
-                    elem.setMarginTop(0 + "px");
-                });
-
-                animated.forEach((row) => {
-                    var elem = children[row].getEl();
-                    elem.setMarginTop(0 + "px");
-                });
-            }, 30);
-
         }
 
         notifyLoaded(): void {
@@ -1030,15 +913,7 @@ module api.ui.treegrid {
             return !!this.stash;
         }
 
-        private resetZIndexes() {
-            var children = Element.elementsFromRequest(".tree-grid .grid-canvas .slick-row", false);
-            children.forEach((child) => {
-                child.getEl().setZindex(1);
-            });
-        }
-
         resetAndRender() {
-//            this.resetZIndexes();
             this.grid.invalidate();
             this.grid.renderGrid();
         }
