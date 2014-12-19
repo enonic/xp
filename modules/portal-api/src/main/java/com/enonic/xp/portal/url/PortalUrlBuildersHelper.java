@@ -41,6 +41,7 @@ public final class PortalUrlBuildersHelper
 
     public static PageUrlBuilder apply( final PageUrlBuilder builder, final Multimap<String, String> params )
     {
+        builder.contentPath( systemParam( params, "_path" ) );
         builder.params( params );
         return builder;
     }
