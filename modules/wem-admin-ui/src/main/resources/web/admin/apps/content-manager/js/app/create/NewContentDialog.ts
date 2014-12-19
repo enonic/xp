@@ -227,13 +227,15 @@ module app.create {
 
         private createListItems(contentTypes: ContentTypeSummary[]): NewContentDialogListItem[] {
             var contentTypesByName: {[name: string]: ContentTypeSummary} = {};
-            contentTypes.forEach((contentType: ContentTypeSummary) => {
-                contentTypesByName[contentType.getName()] = contentType;
-            });
-
             var items: NewContentDialogListItem[] = [];
+
             contentTypes.forEach((contentType: ContentTypeSummary) => {
-                items.push(NewContentDialogListItem.fromContentType(contentType))
+                // filter media type descendants out
+                var contentTypeName = contentType.getContentTypeName();
+                if (!contentTypeName.isMedia() && !contentTypeName.isDescendantOfMedia()) {
+                    contentTypesByName[contentType.getName()] = contentType;
+                    items.push(NewContentDialogListItem.fromContentType(contentType))
+                }
             });
 
             items.sort(this.compareListItems);
