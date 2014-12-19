@@ -8,6 +8,10 @@ module app.wizard {
     import Principal = api.security.Principal;
     import PrincipalKey = api.security.PrincipalKey;
 
+    import UserTreeGridItem = app.browse.UserTreeGridItem;
+    import UserTreeGridItemBuilder = app.browse.UserTreeGridItemBuilder;
+    import UserTreeGridItemType = app.browse.UserTreeGridItemType;
+
     import WizardStep = api.app.wizard.WizardStep;
 
     export class GroupWizardPanel extends GroupRoleWizardPanel {
@@ -56,12 +60,14 @@ module app.wizard {
                     this.getPrincipalWizardHeader().disableNameInput();
                     this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('Group was created!');
+                    new api.security.UserItemCreatedEvent(principal, this.getUserStore()).fire();
+
                     return principal;
                 });
         }
 
         produceCreateGroupRequest(): CreateGroupRequest {
-            var key = PrincipalKey.ofGroup(this.getUserStore(), this.wizardHeader.getName()),
+            var key = PrincipalKey.ofGroup(this.getUserStoreKey(), this.wizardHeader.getName()),
                 name = this.wizardHeader.getDisplayName(),
                 members = this.getMembersWizardStepForm().getMembers().map((el) => {
                     return el.getKey();
@@ -77,6 +83,7 @@ module app.wizard {
                         this.notifyPrincipalNamed(principal);
                     }
                     api.notify.showFeedback('Group was updated!');
+                    new api.security.UserItemUpdatedEvent(principal, this.getUserStore()).fire();
 
                     return principal;
                 });

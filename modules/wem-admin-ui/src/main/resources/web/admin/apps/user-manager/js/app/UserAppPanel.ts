@@ -181,7 +181,7 @@ module app {
                         setAppBarTabId(tabId).
                         setPrincipalType(principalType).
                         setPrincipalPath(userItem.getPrincipal() ? userItem.getPrincipal().getKey().toPath(true) : null).
-                        setUserStore(userItem.getUserStore() ? userItem.getUserStore().getKey() : null).
+                        setUserStore(userItem.getUserStore()).
                         createForNew().then((wizard: app.wizard.PrincipalWizardPanel) => {
 
                             this.handleWizardCreated(wizard, tabName);

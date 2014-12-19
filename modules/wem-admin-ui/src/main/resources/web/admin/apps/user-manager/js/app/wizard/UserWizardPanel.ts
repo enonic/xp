@@ -19,14 +19,11 @@ module app.wizard {
         private userPasswordWizardStepForm: UserPasswordWizardStepForm;
         private userMembershipsWizardStepForm: UserMembershipsWizardStepForm;
 
-        private userStore: UserStoreKey;
-
         constructor(params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
 
-            this.userEmailWizardStepForm = new UserEmailWizardStepForm(params.userStoreKey);
+            this.userEmailWizardStepForm = new UserEmailWizardStepForm(params.userStore ? params.userStore.getKey()  : null);
             this.userPasswordWizardStepForm = new UserPasswordWizardStepForm();
             this.userMembershipsWizardStepForm = new UserMembershipsWizardStepForm();
-            this.userStore = params.userStoreKey;
 
             super(params, () => {
                 this.addClass("user-wizard-panel");
@@ -163,12 +160,14 @@ module app.wizard {
                     this.wizardHeader.disableNameInput();
                     this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('User was created!');
+                    new api.security.UserItemCreatedEvent(principal, this.getUserStore()).fire();
+
                     return principal;
                 });
         }
 
         produceCreateUserRequest(): CreateUserRequest {
-            var key = PrincipalKey.ofUser(this.userStore, this.wizardHeader.getName()),
+            var key = PrincipalKey.ofUser(this.getUserStoreKey(), this.wizardHeader.getName()),
                 name = this.wizardHeader.getDisplayName(),
                 email = this.userEmailWizardStepForm.getEmail(),
                 login = this.wizardHeader.getName(),
@@ -193,6 +192,7 @@ module app.wizard {
                     }
                     this.userEmailWizardStepForm.layout(principal);
                     api.notify.showFeedback('User was updated!');
+                    new api.security.UserItemUpdatedEvent(principal, this.getUserStore()).fire();
 
                     return principal;
                 });

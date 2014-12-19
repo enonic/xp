@@ -1,6 +1,5 @@
 module api.security {
 
-    import PrincipalKey = api.security.PrincipalKey;
     import Role = api.security.Role;
     import Group = api.security.Group;
     import User = api.security.User;

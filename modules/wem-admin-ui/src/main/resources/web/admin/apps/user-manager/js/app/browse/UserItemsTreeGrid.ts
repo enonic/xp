@@ -6,6 +6,7 @@ module app.browse {
     import TreeGrid = api.ui.treegrid.TreeGrid;
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
+    import UserTreeGridItem = app.browse.UserTreeGridItem;
     import UserTreeGridItemBuilder = app.browse.UserTreeGridItemBuilder;
     import UserTreeGridItemType = app.browse.UserTreeGridItemType;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
@@ -13,7 +14,6 @@ module app.browse {
     import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
     import UserStoreListResult = api.security.UserStoreListResult;
     import UserStoreJson = api.security.UserStoreJson;
-    import UserTreeGridItem = app.browse.UserTreeGridItem;
     import Principal = api.security.Principal;
     import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
     import UserStore = api.security.UserStore;
@@ -69,6 +69,87 @@ module app.browse {
 
         getTreeGridActions(): UserTreeGridActions {
             return this.treeGridActions;
+        }
+
+        private resolveUserTreeGridItemType(principal: Principal) {
+            if (!principal) {
+                return UserTreeGridItemType.USER_STORE;
+            } else {
+                switch (principal.getType()) {
+                case PrincipalType.USER:
+                    return UserTreeGridItemType.USERS;
+                case PrincipalType.GROUP:
+                    return UserTreeGridItemType.GROUPS;
+                case PrincipalType.ROLE:
+                    return UserTreeGridItemType.ROLES;
+                default:
+                    return UserTreeGridItemType.PRINCIPAL;
+                }
+            }
+        }
+
+        updateUserNode(principal: api.security.Principal, userStore: api.security.UserStore) {
+            var userTreeGridItem,
+                builder = new UserTreeGridItemBuilder();
+
+            if (!principal) { // UserStore type
+                userTreeGridItem = builder.setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build();
+            } else {         // Principal type
+                userTreeGridItem = builder.setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
+            }
+
+            var nodeList = this.getRoot().getCurrentRoot().treeToList();
+
+            nodeList.forEach((node) => {
+                if (node.getDataId() === userTreeGridItem.getDataId()) {
+                    node.setData(userTreeGridItem);
+                    node.clearViewers();
+                }
+            });
+
+            this.initData(nodeList);
+            this.resetAndRender();
+        }
+
+        appendUserNode(principal: api.security.Principal, userStore: api.security.UserStore, nextToSelection?: boolean) {
+            if (!principal) { // UserStore type
+
+                var userTreeGridItem = new UserTreeGridItemBuilder().
+                    setUserStore(userStore).
+                    setType(UserTreeGridItemType.USER_STORE).
+                    build();
+
+                // Remove roles from the end to add them lately
+                var children = this.getRoot().getDefaultRoot().getChildren(),
+                    roles = children.pop();
+
+                this.appendNode(userTreeGridItem, true, false);
+
+                children.push(roles);
+
+                if (!this.getRoot().isFiltered()) {
+                    this.initData(this.getRoot().getDefaultRoot().treeToList());
+                    this.resetAndRender();
+                }
+
+            } else { // Principal type
+
+                var userTreeGridItem = new UserTreeGridItemBuilder().
+                    setPrincipal(principal).
+                    setType(UserTreeGridItemType.PRINCIPAL).
+                    build();
+
+                this.appendNode(userTreeGridItem, false, false);
+
+            }
+        }
+
+        deleteUserNodes(principals: api.security.Principal[]) {
+            var userTreeGridItems = principals.map((principal) => {
+                return new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
+            });
+
+            this.deleteNodes(userTreeGridItems);
         }
 
         getDataId(item: app.browse.UserTreeGridItem): string {

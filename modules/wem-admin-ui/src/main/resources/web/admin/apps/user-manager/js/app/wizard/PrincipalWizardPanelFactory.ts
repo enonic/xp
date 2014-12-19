@@ -3,7 +3,7 @@ module app.wizard {
     import Principal = api.security.Principal;
     import PrincipalKey = api.security.PrincipalKey;
     import PrincipalType = api.security.PrincipalType;
-    import UserStoreKey = api.security.UserStoreKey;
+    import UserStore = api.security.UserStore;
 
     export class PrincipalWizardPanelFactory {
 
@@ -19,7 +19,7 @@ module app.wizard {
 
         private principalPath: string;
 
-        private userStore: UserStoreKey;
+        private userStore: UserStore;
 
         setPrincipalToEdit(value: PrincipalKey): PrincipalWizardPanelFactory {
             this.principalKey = value;
@@ -36,7 +36,7 @@ module app.wizard {
             return this;
         }
 
-        setUserStore(value: UserStoreKey): PrincipalWizardPanelFactory {
+        setUserStore(value: UserStore): PrincipalWizardPanelFactory {
             this.userStore = value;
             return this;
         }
@@ -75,7 +75,7 @@ module app.wizard {
             var wizardParams = new app.wizard.PrincipalWizardPanelParams().
                 setPrincipalType(this.principalType).
                 setPrincipalPath(this.principalPath).
-                setUserStoreKey(this.userStore).
+                setUserStore(this.userStore).
                 setAppBarTabId(this.appBarTabId);
 
             this.resolvePrincipalWizardPanel(deferred, wizardParams);
@@ -91,7 +91,7 @@ module app.wizard {
 
                 setPrincipalType(this.principalType).
                 setPrincipalPath(this.principalPath).
-                setUserStoreKey(this.userStore).
+                setUserStore(this.userStore).
                 setPersistedPrincipal(this.principalToEdit);
 
             this.resolvePrincipalWizardPanel(deferred, wizardParams);

@@ -34,3 +34,6 @@
 ///<reference path="CreateUserStoreRequest.ts"/>
 ///<reference path="UpdateUserStoreRequest.ts"/>
 ///<reference path="UserStoreNamedEvent.ts"/>
+///<reference path="UserItemCreatedEvent.ts"/>
+///<reference path="UserItemUpdatedEvent.ts"/>
+///<reference path="UserItemDeletedEvent.ts"/>

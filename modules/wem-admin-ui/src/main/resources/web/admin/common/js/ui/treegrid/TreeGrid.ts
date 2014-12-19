@@ -667,9 +667,9 @@ module api.ui.treegrid {
          * @param nextToSelection - by default node is appended as child to selection or root, set this to true to append to the same level
          * @param stashedParentNode
          */
-        appendNode(data: DATA, nextToSelection?: boolean, stashedParentNode?: TreeNode<DATA>): void {
+        appendNode(data: DATA, nextToSelection?: boolean, prepend: boolean = true, stashedParentNode?: TreeNode<DATA>): void {
             if (!stashedParentNode && this.stash) {
-                this.appendNode(data, nextToSelection, this.stash);
+                this.appendNode(data, nextToSelection, prepend, this.stash);
             }
             var root = stashedParentNode || this.root.getCurrentRoot();
 
@@ -704,14 +704,13 @@ module api.ui.treegrid {
                                         this.updateSelectedNode(node);
                                     }
                                 });
-
                             }
                         }
                     }).catch((reason: any) => {
                         api.DefaultErrorHandler.handle(reason);
                     });
             } else {
-                parentNode.addChild(this.dataToTreeNode(data, root), true);
+                parentNode.addChild(this.dataToTreeNode(data, root), prepend);
 
                 var node = root.findNode(this.getDataId(data));
                 if (node) {
@@ -1038,7 +1037,7 @@ module api.ui.treegrid {
             });
         }
 
-        private resetAndRender() {
+        resetAndRender() {
 //            this.resetZIndexes();
             this.grid.invalidate();
             this.grid.renderGrid();
