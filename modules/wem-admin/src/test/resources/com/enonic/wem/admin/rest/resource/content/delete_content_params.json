@@ -1,3 +1,6 @@
 {
-    "contentPaths": ["one", "two"]
+    "contentPaths": [
+        "/one",
+        "/two"
+    ]
 }

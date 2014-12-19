@@ -24,7 +24,8 @@ public class ContentPathTest
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{ContentPath.from( "myContent" ), ContentPath.from( "/myPath/myContent2" )};
+                return new Object[]{ContentPath.from( "myPath/myContent" ), ContentPath.from( "myContent" ),
+                    ContentPath.from( "/myPath/myContent2" )};
             }
 
             @Override
@@ -46,8 +47,9 @@ public class ContentPathTest
     public void test_toString()
         throws Exception
     {
-        System.out.println( ContentPath.newPath().elements( "parent", "child" ).build().toString() );
-        System.out.println( ContentPath.newPath().build().toString() );
+        assertEquals( "/parent/child", ContentPath.newPath().elements( "parent", "child" ).build().toString() );
+        assertEquals( "/", ContentPath.newPath().build().toString() );
+        assertEquals( "", ContentPath.newPath().absolute( false ).build().toString() );
     }
 
     @Test
@@ -55,7 +57,7 @@ public class ContentPathTest
         throws Exception
     {
         assertEquals( ContentPath.from( "/" ), ContentPath.from( "/first" ).getParentPath() );
-        assertEquals( ContentPath.from( "first" ), ContentPath.newPath().elements( "first", "second" ).build().getParentPath() );
+        assertEquals( ContentPath.from( "/first" ), ContentPath.newPath().elements( "first", "second" ).build().getParentPath() );
         assertEquals( newPath().elements( "first", "second" ).build(),
                       newPath().elements( "first", "second", "third" ).build().getParentPath() );
     }
@@ -64,6 +66,7 @@ public class ContentPathTest
     public void isRoot()
         throws Exception
     {
+        assertEquals( true, ContentPath.ROOT.isRoot() );
         assertEquals( true, ContentPath.from( "/" ).isRoot() );
     }
 
@@ -80,7 +83,7 @@ public class ContentPathTest
         throws Exception
     {
         assertEquals( ContentPath.from( "a" ), ContentPath.from( "a" ) );
-        assertEquals( newPath().elements( "a", "b" ).build(), ContentPath.from( "a/b" ) );
+        assertEquals( newPath().elements( "a", "b" ).build(), ContentPath.from( "/a/b" ) );
     }
 
     @Test
@@ -103,6 +106,44 @@ public class ContentPathTest
         assertEquals( "parent", ContentPath.from( "/parent" ).getName() );
         assertEquals( "child", ContentPath.from( "/parent/child" ).getName() );
         assertEquals( null, ContentPath.from( "/" ).getName() );
+    }
+
+    @Test
+    public void isAbsolute()
+        throws Exception
+    {
+        assertEquals( true, ContentPath.from( "/parent" ).isAbsolute() );
+        assertEquals( false, ContentPath.from( "parent" ).isAbsolute() );
+    }
+
+    @Test
+    public void isRelative()
+        throws Exception
+    {
+        assertEquals( true, ContentPath.from( "parent" ).isRelative() );
+        assertEquals( false, ContentPath.from( "/parent" ).isRelative() );
+    }
+
+    @Test
+    public void asRelative()
+    {
+        ContentPath samePath = ContentPath.from( "same" );
+        assertSame( samePath, samePath.asRelative() );
+
+        ContentPath absolute = ContentPath.from( "/absolute" );
+        assertEquals( true, absolute.asRelative().isRelative() );
+        assertEquals( "absolute", absolute.asRelative().toString() );
+    }
+
+    @Test
+    public void asAbsolute()
+    {
+        ContentPath samePath = ContentPath.from( "/same" );
+        assertSame( samePath, samePath.asAbsolute() );
+
+        ContentPath relative = ContentPath.from( "relative" );
+        assertEquals( true, relative.asAbsolute().isAbsolute() );
+        assertEquals( "/relative", relative.asAbsolute().toString() );
     }
 
 }

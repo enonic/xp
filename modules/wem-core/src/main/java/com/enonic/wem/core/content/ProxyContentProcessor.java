@@ -15,7 +15,7 @@ class ProxyContentProcessor
         imageHandler = new ImageContentProcessor( mediaInfo );
     }
 
-    CreateContentParams processCreateMedia( final CreateContentParams params )
+    CreateContentParams processCreate( final CreateContentParams params )
     {
         if ( params.getType().isImageMedia() )
         {

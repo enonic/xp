@@ -55,7 +55,10 @@ public final class ImageContentProcessor
 
         final PropertySet rootSet = params.getData().getRoot();
         final PropertySet metadataSet = rootSet.addSet( "metadata" );
-        applyMetadata( metadataSet, mediaInfo );
+        if ( mediaInfo != null )
+        {
+            applyMetadata( metadataSet, mediaInfo );
+        }
 
         final CreateAttachments.Builder builder = CreateAttachments.builder();
         builder.add( sourceAttachment );

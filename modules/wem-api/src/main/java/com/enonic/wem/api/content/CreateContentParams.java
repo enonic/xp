@@ -199,6 +199,8 @@ public final class CreateContentParams
 
     public void validate()
     {
+        Preconditions.checkNotNull( parentContentPath, "parentContentPath cannot be null" );
+        Preconditions.checkArgument( parentContentPath.isAbsolute(), "parentContentPath must be absolute: " + parentContentPath );
         Preconditions.checkNotNull( data, "data cannot be null" );
         Preconditions.checkArgument( draft || this.parentContentPath != null, "parentContentPath cannot be null" );
         Preconditions.checkNotNull( displayName, "displayName cannot be null" );

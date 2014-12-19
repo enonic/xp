@@ -1,11 +1,16 @@
 package com.enonic.wem.core.media;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.tika.detect.Detector;
+import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.io.ByteSource;
@@ -20,27 +25,9 @@ public final class MediaInfoService
 
     public MediaInfo parseMediaInfo( final ByteSource byteSource )
     {
-        try
-        {
-            return doParseMediaInfo( byteSource );
-        }
-        catch ( final Exception e )
-        {
-            throw Exceptions.unchecked( e );
-        }
-    }
-
-    private MediaInfo doParseMediaInfo( final ByteSource byteSource )
-        throws Exception
-    {
-        final ParseContext context = new ParseContext();
-        final ContentHandler handler = new DefaultHandler();
-        final Metadata metadata = new Metadata();
         final MediaInfo.Builder builder = MediaInfo.create();
 
-        // Parse metadata
-        final AutoDetectParser autoDetectParser = new AutoDetectParser( this.detector, this.parser );
-        autoDetectParser.parse( byteSource.openStream(), handler, metadata, context );
+        final Metadata metadata = parseMetadata( byteSource );
 
         // Get the detected media-type
         builder.mediaType( metadata.get( Metadata.CONTENT_TYPE ) );
@@ -54,6 +41,26 @@ public final class MediaInfoService
         }
 
         return builder.build();
+    }
+
+    private Metadata parseMetadata( final ByteSource byteSource )
+    {
+        final ParseContext context = new ParseContext();
+        final ContentHandler handler = new DefaultHandler();
+        final Metadata metadata = new Metadata();
+
+        // Parse metadata
+        try (final InputStream stream = byteSource.openStream())
+        {
+            final AutoDetectParser autoDetectParser = new AutoDetectParser( this.detector, this.parser );
+            autoDetectParser.parse( stream, handler, metadata, context );
+        }
+        catch ( IOException | SAXException | TikaException e )
+        {
+            throw Exceptions.unchecked( e );
+        }
+
+        return metadata;
     }
 
     public void setParser( final Parser parser )

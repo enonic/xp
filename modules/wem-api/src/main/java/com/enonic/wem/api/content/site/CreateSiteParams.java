@@ -1,6 +1,8 @@
 package com.enonic.wem.api.content.site;
 
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 
@@ -21,6 +23,7 @@ public final class CreateSiteParams
     public CreateSiteParams parent( final ContentPath parentContentPath )
     {
         this.parentContentPath = parentContentPath;
+        Preconditions.checkArgument( parentContentPath.isAbsolute(), "parentContentPath must be absolute: " + parentContentPath );
         return this;
     }
 

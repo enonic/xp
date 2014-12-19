@@ -1,7 +1,7 @@
 var assert = Java.type('org.junit.Assert');
 
 var contentsResult = execute('content.findByParent', {
-    parentPath: '123',
+    parentPath: '/123',
     from: 0,
     size: 10
 });

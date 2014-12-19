@@ -57,7 +57,7 @@ final class CreateContentCommand
             params.form( contentType.form() );
         }
 
-        final CreateContentParams handledParams = new ProxyContentProcessor( mediaInfo ).processCreateMedia( params );
+        final CreateContentParams handledParams = new ProxyContentProcessor( mediaInfo ).processCreate( params );
 
         final CreateNodeParams createNodeParams = translator.toCreateNode( handledParams );
 

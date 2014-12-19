@@ -23,6 +23,7 @@ import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.core.media.MediaInfo;
 
 import static com.enonic.wem.api.content.Content.newContent;
 
@@ -39,6 +40,8 @@ public class UpdateContentCommandTest
     private final ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
 
     private final EventPublisher eventPublisher = Mockito.mock( EventPublisher.class );
+
+    private final MediaInfo mediaInfo = MediaInfo.create().mediaType( "image/jpg" ).build();
 
     @Test(expected = ContentNotFoundException.class)
     public void given_content_not_found_when_handle_then_NOT_FOUND_is_returned()
@@ -62,6 +65,7 @@ public class UpdateContentCommandTest
             blobService( this.blobService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
+            mediaInfo( this.mediaInfo ).
             build();
 
         Mockito.when( nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
@@ -93,6 +97,7 @@ public class UpdateContentCommandTest
             blobService( this.blobService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
+            mediaInfo( this.mediaInfo ).
             build();
 
         final Node mockNode = Node.newNode().build();

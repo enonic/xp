@@ -121,7 +121,7 @@ public class PageResourceTest
 
         return Content.newContent().
             id( ContentId.from( id ) ).
-            path( ContentPath.from( name ) ).
+            path( ContentPath.from( "/" + name ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
             displayName( "My Content" ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).

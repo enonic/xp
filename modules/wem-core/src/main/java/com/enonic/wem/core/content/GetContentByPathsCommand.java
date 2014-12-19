@@ -21,6 +21,10 @@ final class GetContentByPathsCommand
     {
         super( builder );
         this.contentPaths = builder.contentPaths;
+        for ( final ContentPath path : builder.contentPaths )
+        {
+            Preconditions.checkArgument( path.isAbsolute(), "contentPath must be absolute: " + path );
+        }
     }
 
     Contents execute()

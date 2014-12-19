@@ -12,9 +12,11 @@ import com.google.common.collect.Lists;
 
 public final class ContentPath
 {
-    public static final ContentPath ROOT = newPath().build();
+    public static final ContentPath ROOT = newPath().absolute( true ).build();
 
     private static final String ELEMENT_DIVIDER = "/";
+
+    private final boolean absolute;
 
     private final ImmutableList<String> elements;
 
@@ -23,10 +25,11 @@ public final class ContentPath
     private ContentPath( final Builder builder )
     {
         Preconditions.checkNotNull( builder.elements );
+        this.absolute = builder.absolute;
 
         if ( builder.elements.isEmpty() )
         {
-            refString = ELEMENT_DIVIDER;
+            refString = this.absolute ? ELEMENT_DIVIDER : "";
             this.elements = ImmutableList.of();
         }
         else
@@ -34,7 +37,7 @@ public final class ContentPath
             final ImmutableList.Builder<String> elementsBuilder = ImmutableList.builder();
             elementsBuilder.addAll( builder.elements );
             this.elements = elementsBuilder.build();
-            this.refString = ELEMENT_DIVIDER + Joiner.on( ELEMENT_DIVIDER ).join( elements );
+            this.refString = ( this.absolute ? ELEMENT_DIVIDER : "" ) + Joiner.on( ELEMENT_DIVIDER ).join( elements );
         }
 
     }
@@ -62,19 +65,37 @@ public final class ContentPath
         }
 
         final LinkedList<String> parentElements = newListOfParentElements();
-        return newPath().elements( parentElements ).build();
+        return newPath().absolute( absolute ).elements( parentElements ).build();
     }
 
-    public ContentPath withName( final String name )
+    public boolean isAbsolute()
     {
-        Preconditions.checkNotNull( name, "name not given" );
-        final LinkedList<String> newElements = newListOfParentElements();
-        return newPath().elements( newElements ).addElement( name ).build();
+        return absolute;
     }
 
-    public String getRelativePath()
+    public boolean isRelative()
     {
-        return Joiner.on( ELEMENT_DIVIDER ).join( elements );
+        return !absolute;
+    }
+
+    public ContentPath asRelative()
+    {
+        if ( isRelative() )
+        {
+            return this;
+        }
+
+        return new ContentPath.Builder( this ).absolute( false ).build();
+    }
+
+    public ContentPath asAbsolute()
+    {
+        if ( isAbsolute() )
+        {
+            return this;
+        }
+
+        return new ContentPath.Builder( this ).absolute( true ).build();
     }
 
     public boolean hasName()
@@ -148,18 +169,20 @@ public final class ContentPath
     public static ContentPath from( final String path )
     {
         final Iterable<String> pathElements = Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().split( path );
-        return newPath().elements( pathElements ).build();
+        boolean absolute = path.startsWith( ELEMENT_DIVIDER );
+        return newPath().elements( pathElements ).absolute( absolute ).build();
     }
 
     public static ContentPath from( final ContentPath parent, final String name )
     {
-        return newPath().elements( parent.elements ).addElement( name ).build();
+        return newPath().elements( parent.elements ).absolute( parent.isAbsolute() ).addElement( name ).build();
     }
 
     public static ContentPath from( final ContentPath parent, final ContentPath relative )
     {
         final Builder builder = newPath().elements( parent.elements );
         builder.addElements( relative.elements );
+        builder.absolute( parent.isAbsolute() );
         return builder.build();
     }
 
@@ -173,9 +196,23 @@ public final class ContentPath
     {
         private LinkedList<String> elements;
 
+        private boolean absolute = true;
+
         private Builder()
         {
             this.elements = Lists.newLinkedList();
+        }
+
+        private Builder( ContentPath source )
+        {
+            this.elements = Lists.newLinkedList( source.elements );
+            this.absolute = source.absolute;
+        }
+
+        public Builder absolute( final boolean value )
+        {
+            this.absolute = value;
+            return this;
         }
 
         public Builder elements( final String... pathElements )
