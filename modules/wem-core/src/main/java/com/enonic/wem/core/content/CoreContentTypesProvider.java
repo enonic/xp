@@ -9,7 +9,6 @@ import org.apache.commons.lang.WordUtils;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeProvider;

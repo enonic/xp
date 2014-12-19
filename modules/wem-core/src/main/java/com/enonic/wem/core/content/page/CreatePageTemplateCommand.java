@@ -5,7 +5,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.ContentTypeForms;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
@@ -17,6 +16,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.core.content.ContentServiceImpl;
+import com.enonic.wem.core.content.ContentTypeForms;
 
 class CreatePageTemplateCommand
 {

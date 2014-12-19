@@ -1,6 +1,9 @@
 package com.enonic.wem.core.media;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+
+import com.enonic.wem.api.form.FormItemName;
 
 public class MediaInfo
 {
@@ -12,6 +15,7 @@ public class MediaInfo
     {
         this.mediaType = builder.mediaType;
         this.metadata = builder.metadata.build();
+        Preconditions.checkNotNull( this.metadata, "metadata cannot be null" );
     }
 
     public String getMediaType()
@@ -43,7 +47,7 @@ public class MediaInfo
 
         public Builder addMetadata( final String name, final String value )
         {
-            this.metadata.put( name, value );
+            this.metadata.put( FormItemName.safeName( name ), value );
             return this;
         }
 

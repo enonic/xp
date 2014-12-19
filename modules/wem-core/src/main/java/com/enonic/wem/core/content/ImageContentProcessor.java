@@ -23,6 +23,8 @@ import com.enonic.wem.core.media.MediaInfo;
 
 public final class ImageContentProcessor
 {
+    private static final String METADATA_PROPERTY_NAME = "metadata";
+
     private MediaInfo mediaInfo;
 
     private static final Scale[] scales =
@@ -54,7 +56,7 @@ public final class ImageContentProcessor
         }
 
         final PropertySet rootSet = params.getData().getRoot();
-        final PropertySet metadataSet = rootSet.addSet( "metadata" );
+        final PropertySet metadataSet = rootSet.addSet( METADATA_PROPERTY_NAME );
         if ( mediaInfo != null )
         {
             applyMetadata( metadataSet, mediaInfo );
@@ -66,14 +68,6 @@ public final class ImageContentProcessor
 
         params.createAttachments( builder.build() );
         return params;
-    }
-
-    private void applyMetadata( final PropertySet parent, MediaInfo mediaInfo )
-    {
-        for ( Map.Entry<String, String> entry : mediaInfo.getMetadata().entrySet() )
-        {
-            parent.addString( entry.getKey(), entry.getValue() );
-        }
     }
 
     private CreateAttachments scaleImages( final BufferedImage sourceImage, final CreateAttachment sourceAttachment )
@@ -130,13 +124,33 @@ public final class ImageContentProcessor
         final ContentEditor editor;
         if ( mediaInfo != null )
         {
-            editor = editable -> applyMetadata( editable.data.getRoot(), mediaInfo );
+            editor = editable -> {
+
+                final PropertySet metadataSet;
+                if ( editable.data.hasProperty( METADATA_PROPERTY_NAME ) )
+                {
+                    metadataSet = editable.data.getSet( METADATA_PROPERTY_NAME );
+                }
+                else
+                {
+                    metadataSet = editable.data.addSet( METADATA_PROPERTY_NAME );
+                }
+                applyMetadata( metadataSet, mediaInfo );
+            };
         }
         else
         {
             editor = null;
         }
         return new ProcessUpdateResult( processedCreateAttachments, editor );
+    }
+
+    private void applyMetadata( final PropertySet parent, MediaInfo mediaInfo )
+    {
+        for ( Map.Entry<String, String> entry : mediaInfo.getMetadata().entrySet() )
+        {
+            parent.addString( entry.getKey(), entry.getValue() );
+        }
     }
 
     private static class Scale
@@ -151,5 +165,4 @@ public final class ImageContentProcessor
             this.size = size;
         }
     }
-
 }

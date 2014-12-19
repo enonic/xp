@@ -25,7 +25,7 @@ public class MediaInfoServiceTest
     }
 
     @Test
-    public void todo()
+    public void createImmutableTextLine_generation()
     {
         final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "NikonD100.jpg" ) );
         final MediaInfo mediaInfo = this.service.parseMediaInfo( byteSource );
@@ -34,7 +34,7 @@ public class MediaInfoServiceTest
 
         for ( final Map.Entry<String, String> entry : mediaInfo.getMetadata().entrySet() )
         {
-            System.out.println( entry.getKey() + " = " + entry.getValue() );
+            System.out.println( "addFormItem( createImmutableTextLine( \"" + entry.getKey() + "\" ).occurrences( 0, 1 ).build() )." );
         }
     }
 }
