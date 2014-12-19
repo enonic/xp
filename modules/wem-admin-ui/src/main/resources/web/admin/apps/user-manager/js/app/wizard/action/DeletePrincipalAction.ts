@@ -9,8 +9,30 @@ module app.wizard.action {
                     .setQuestion("Are you sure you want to delete this item?")
                     .setNoCallback(null)
                     .setYesCallback(() => {
+
                         wizardPanel.close();
-                        // Delete user request
+
+                        var persistedItem = wizardPanel.getPersistedItem(),
+                            isPrincipal = (wizardPanel instanceof PrincipalWizardPanel) && !!persistedItem;
+
+                        if (isPrincipal) {
+                            var principal = <api.security.Principal>persistedItem,
+                                principalKey = principal.getKey();
+
+                            new api.security.DeletePrincipalRequest()
+                                .setKeys([principalKey])
+                                .send()
+                                .done((jsonResponse: api.rest.JsonResponse<any>) => {
+                                    var json = jsonResponse.getJson();
+
+                                    if (json.results && json.results.length > 0) {
+                                        var key = json.results[0].principalKey;
+
+                                        api.notify.showFeedback('Principal [' + key + '] deleted!');
+                                        new api.security.UserItemDeletedEvent([principal]).fire();
+                                    }
+                                });
+                        }
                     }).open();
             });
         }
