@@ -13,10 +13,10 @@
         <xsl:value-of select="portal:url('_path=a','b=2')"/>
       </value>
       <value>
-        <xsl:value-of select="portal:pageUrl('a=1')"/>
+        <xsl:value-of select="portal:pageUrl('_path=some/path','a=1')"/>
       </value>
       <value>
-        <xsl:value-of select="portal:pageUrl('a=1','b=2')"/>
+        <xsl:value-of select="portal:pageUrl('_path=some/path','a=1','b=2')"/>
       </value>
       <value>
         <xsl:value-of select="portal:imageUrl('_id=123')"/>
