@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
@@ -17,10 +18,20 @@ import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.region.Region;
+import com.enonic.wem.api.content.site.ModuleConfig;
+import com.enonic.wem.api.content.site.ModuleConfigs;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.security.PrincipalKey;
+
+import static com.enonic.wem.api.content.page.region.RegionDescriptor.newRegionDescriptor;
+import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegionDescriptors;
+import static com.enonic.wem.api.form.Input.newInput;
 
 public final class ContentFixtures
 {
@@ -160,5 +171,38 @@ public final class ContentFixtures
         final LayoutRegions.Builder builder = LayoutRegions.newLayoutRegions();
         builder.add( newBottomRegion() );
         return builder.build();
+    }
+
+    public static Site newSite()
+    {
+        final PropertyTree moduleConfigConfig = new PropertyTree();
+        moduleConfigConfig.setLong( "Field", 42l );
+
+        final ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
+            module( ModuleKey.from( "mymodule" ) ).
+            config( moduleConfigConfig ).
+            build();
+        return Site.newSite().
+            moduleConfigs( ModuleConfigs.from( moduleConfig ) ).
+            name( "my-content" ).
+            parentPath( ContentPath.ROOT ).
+            build();
+    }
+
+    public static PageDescriptor newPageDescriptor()
+    {
+        Form pageForm = Form.newForm().
+            addFormItem( newInput().name( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
+            build();
+
+        return PageDescriptor.newPageDescriptor().
+            displayName( "Landing page" ).
+            config( pageForm ).
+            regions( newRegionDescriptors().
+                add( newRegionDescriptor().name( "header" ).build() ).
+                add( newRegionDescriptor().name( "main" ).build() ).
+                add( newRegionDescriptor().name( "footer" ).build() ).
+                build() ).key( PageDescriptorKey.from( "mymodule:landing-page" ) ).
+            build();
     }
 }

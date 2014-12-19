@@ -10,7 +10,75 @@
   "displayName": "My Content",
   "hasChildren": false,
   "draft": false,
-  "data": "{}",
-  "metadata": "{}",
-  "page": "{}"
+  "data": {
+    "a": [1],
+    "b": ["2"],
+    "c": [
+      {
+        "d": [true]
+      },
+      {
+        "d": [true],
+        "e": [
+          "3",
+          "4",
+          "5"
+        ],
+        "f": [2]
+      }
+    ]
+  },
+  "metadata": {
+    "mymodule:myschema": {
+      "a": ["1"]
+    }
+  },
+  "page": {
+    "template": null,
+    "controller": "mymodule:mycontroller",
+    "config": {
+      "a": ["1"]
+    },
+    "regions": [
+      {
+        "name": "top",
+        "components": [
+          {
+            "name": "mypart",
+            "path": "top/0",
+            "type": "part",
+            "descriptor": "mymodule:mypart",
+            "config": {
+              "a": ["1"]
+            }
+          },
+          {
+            "name": "mylayout",
+            "path": "top/1",
+            "type": "layout",
+            "descriptor": "mymodule:mylayout",
+            "config": {
+              "a": ["1"]
+            },
+            "regions": [
+              {
+                "name": "bottom",
+                "components": [
+                  {
+                    "name": "mypart",
+                    "path": "top/1/bottom/0",
+                    "type": "part",
+                    "descriptor": "mymodule:mypart",
+                    "config": {
+                      "a": ["1"]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
 }

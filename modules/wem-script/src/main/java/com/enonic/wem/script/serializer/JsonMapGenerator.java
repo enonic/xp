@@ -1,5 +1,6 @@
 package com.enonic.wem.script.serializer;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
@@ -10,7 +11,6 @@ import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
 
 import com.enonic.wem.script.internal.serializer.MapGeneratorBase;
 
@@ -53,8 +53,13 @@ public final class JsonMapGenerator
         ( (ArrayNode) array ).add( toValue( value ) );
     }
 
-    private ValueNode toValue( final Object value )
+    private JsonNode toValue( final Object value )
     {
+        if ( value instanceof JsonNode )
+        {
+            return (JsonNode) value;
+        }
+
         if ( value instanceof Integer )
         {
             return IntNode.valueOf( (Integer) value );
