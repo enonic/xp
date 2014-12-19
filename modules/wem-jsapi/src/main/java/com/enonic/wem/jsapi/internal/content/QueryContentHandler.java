@@ -41,7 +41,7 @@ public final class QueryContentHandler
         final String query = req.param( "query" ).value( String.class, "" ).trim();
         final String sort = req.param( "sort" ).value( String.class, "" ).trim();
         final Map<String, Object> aggregationsMap = req.param( "aggregations" ).map();
-        final ContentTypeNames contentTypeNames = getContentTypeNames( req.getParams().get( "contentType" ) );
+        final ContentTypeNames contentTypeNames = getContentTypeNames( req.getParams().get( "contentTypes" ) );
 
         final List<OrderExpr> orderExpressions = QueryParser.parseOrderExpressions( sort );
         final ConstraintExpr constraintExpr = QueryParser.parseCostraintExpression( query );
