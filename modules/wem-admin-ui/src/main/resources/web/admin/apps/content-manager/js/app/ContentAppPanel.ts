@@ -150,6 +150,8 @@ module app {
             var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
             var newMediaContent = newMediaEvent.getContent();
 
+            new api.content.ContentCreatedEvent(newMediaContent.getContentId()).fire();
+
             if (tabMenuItem != null) {
                 this.selectPanel(tabMenuItem);
             } else {
