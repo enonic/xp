@@ -24,6 +24,7 @@ public final class MediaTypes
         put( "css", MediaType.CSS_UTF_8 );
         put( "html", MediaType.HTML_UTF_8 );
         put( "xml", MediaType.XML_UTF_8 );
+        put( "svg", MediaType.SVG_UTF_8 );
     }
 
     public MediaType fromExt( final String ext )
