@@ -22,10 +22,10 @@ import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.wem.portal.internal.base.BaseResource;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
+import com.enonic.xp.portal.RenderMode;
 
 public abstract class RenderBaseResource
     extends BaseResource
@@ -95,7 +95,7 @@ public abstract class RenderBaseResource
         }
         else
         {
-            final ContentPath contentPath = ContentPath.from( contentSelector );
+            final ContentPath contentPath = ContentPath.from( contentSelector ).asAbsolute();
             final Content content = getContentByPath( contentPath );
             if ( content != null )
             {
