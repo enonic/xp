@@ -224,7 +224,9 @@ module app.wizard {
         hasUnsavedChanges(): boolean {
             var persistedUserStore: UserStore = this.getPersistedItem();
             if (persistedUserStore == undefined) {
-                return true;
+                return this.wizardHeader.getName() !== "" ||
+                    this.wizardHeader.getDisplayName() !== "" ||
+                    this.permissionsWizardStepForm.getPermissions().getEntries().length !== 0;
             } else {
                 var viewedUserStore = this.assembleViewedUserStore();
                 return !viewedUserStore.equals(this.getPersistedItem());

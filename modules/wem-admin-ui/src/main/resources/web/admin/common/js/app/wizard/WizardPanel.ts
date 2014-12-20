@@ -339,8 +339,7 @@ module api.app.wizard {
             if (this.hasUnsavedChanges()) {
                 this.askUserForSaveChangesBeforeClosing();
                 return false;
-            }
-            else {
+            } else {
                 return true;
             }
         }
