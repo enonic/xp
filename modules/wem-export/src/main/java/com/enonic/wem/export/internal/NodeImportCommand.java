@@ -1,12 +1,7 @@
 package com.enonic.wem.export.internal;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
-
-import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.export.ImportNodeException;
 import com.enonic.wem.api.export.NodeImportResult;
@@ -18,10 +13,9 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.util.BinaryReference;
+import com.enonic.wem.api.vfs.VirtualFile;
 import com.enonic.wem.export.internal.builder.CreateNodeParamsFactory;
 import com.enonic.wem.export.internal.reader.ExportReader;
-import com.enonic.wem.export.internal.reader.NodeImportPathResolver;
-import com.enonic.wem.export.internal.writer.NodeExportPathResolver;
 import com.enonic.wem.export.internal.xml.XmlAttachedBinaries;
 import com.enonic.wem.export.internal.xml.XmlNode;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
@@ -32,11 +26,11 @@ public class NodeImportCommand
 
     private final NodeService nodeService;
 
-    private final ExportReader exportReader;
-
     private final XmlNodeSerializer xmlNodeSerializer;
 
-    private final Path exportRootPath;
+    private final VirtualFile exportRoot;
+
+    private final ExportReader exportReader = new ExportReader();
 
     private final boolean dryRun;
 
@@ -49,8 +43,7 @@ public class NodeImportCommand
     private NodeImportCommand( final Builder builder )
     {
         this.nodeService = builder.nodeService;
-        this.exportReader = builder.exportReader;
-        this.exportRootPath = NodeExportPathResolver.resolveExportTargetPath( builder.exportHome, builder.exportName );
+        this.exportRoot = builder.exportRoot;
         this.xmlNodeSerializer = builder.xmlNodeSerializer;
         this.importRoot = builder.importRoot;
         this.dryRun = builder.dryRun;
@@ -60,60 +53,67 @@ public class NodeImportCommand
     {
         verifyImportRoot();
 
-        importFromDirectoryLayout( this.exportRootPath );
+        importFromDirectoryLayout( this.exportRoot );
 
         return this.result.build();
     }
 
-    private void importFromDirectoryLayout( final Path parentPath )
+    private void importFromDirectoryLayout( final VirtualFile parentFolder )
     {
-        final Stream<Path> children = getChildPaths( parentPath );
+        final Stream<VirtualFile> children = this.exportReader.getChildren( parentFolder );
 
-        children.filter( this::isNodeFolder ).
-            forEach( ( child ) -> processNodeBasePath( child, ProcessNodeSettings.create() ) );
+        children.forEach( ( child ) -> {
+            processNodeFolder( child, ProcessNodeSettings.create() );
+        } );
     }
 
-    private boolean isNodeFolder( final Path path )
+    private void importFromManualOrder( final VirtualFile nodeFolder )
     {
-        return !( path.endsWith( Paths.get( NodeExportPathResolver.SYSTEM_FOLDER_NAME ) ) );
-    }
+        final List<String> childNames;
 
-    private void importWithManualOrder( final Path nodeBasePath )
-    {
-        final List<String> childNames = processManualOrderFile( nodeBasePath );
+        try
+        {
+            childNames = processBinarySource( nodeFolder );
+        }
+        catch ( Exception e )
+        {
+            result.addError( "Not able to import nodes by manual order, using default ordering", e );
+            importFromDirectoryLayout( nodeFolder );
+            return;
+        }
 
         long currentManualOrderValue = IMPORT_NODE_ORDER_START_VALUE;
 
         for ( final String childName : childNames )
         {
-            final Path childNodePath = NodeImportPathResolver.resolveChildNodePath( nodeBasePath, childName );
+            final VirtualFile child = nodeFolder.resolve( childName );
 
             final ProcessNodeSettings.Builder processNodeSettings = ProcessNodeSettings.create().
                 insertManualStrategy( InsertManualStrategy.MANUAL ).
                 manualOrderValue( currentManualOrderValue );
 
-            if ( childNodePath != null )
+            if ( child != null )
             {
-                processNodeBasePath( childNodePath, processNodeSettings );
+                processNodeFolder( child, processNodeSettings );
             }
 
             currentManualOrderValue -= IMPORT_NODE_ORDER_SPACE;
         }
     }
 
-    private void processNodeBasePath( final Path nodeBasePath, final ProcessNodeSettings.Builder processNodeSettings )
+    private void processNodeFolder( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )
     {
         try
         {
-            final Node node = processNodeXmlFile( nodeBasePath, processNodeSettings );
+            final Node node = processNodeSource( nodeFolder, processNodeSettings );
 
             if ( !node.getChildOrder().isManualOrder() )
             {
-                importFromDirectoryLayout( nodeBasePath );
+                importFromDirectoryLayout( nodeFolder );
             }
             else
             {
-                importWithManualOrder( nodeBasePath );
+                importFromManualOrder( nodeFolder );
             }
         }
         catch ( Exception e )
@@ -122,14 +122,15 @@ public class NodeImportCommand
         }
     }
 
-    private Node processNodeXmlFile( final Path nodeBasePath, final ProcessNodeSettings.Builder processNodeSettings )
+    private Node processNodeSource( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )
     {
-        final XmlNode xmlNode = getXmlNodeFromPath( nodeBasePath );
+        final VirtualFile nodeSource = this.exportReader.getNodeSource( nodeFolder );
 
-        final NodePath importNodePath =
-            NodeImportPathResolver.resolveImportedNodePath( nodeBasePath, this.exportRootPath, this.importRoot );
+        final XmlNode xmlNode = this.xmlNodeSerializer.parse( nodeSource.getByteSource() );
 
-        final BinaryAttachments binaryAttachments = resolveBinaryAttachments( nodeBasePath, xmlNode );
+        final NodePath importNodePath = NodeImportPathResolver.resolveNodeImportPath( nodeFolder, this.exportRoot, this.importRoot );
+
+        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, xmlNode );
 
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create().
             processNodeSettings( processNodeSettings.build() ).
@@ -146,7 +147,14 @@ public class NodeImportCommand
         return createdNode;
     }
 
-    private BinaryAttachments resolveBinaryAttachments( final Path nodeBasePath, final XmlNode xmlNode )
+    private List<String> processBinarySource( final VirtualFile nodeFolder )
+        throws Exception
+    {
+        final VirtualFile orderFile = this.exportReader.getOrderSource( nodeFolder );
+        return orderFile.getCharSource().readLines();
+    }
+
+    private BinaryAttachments processBinaryAttachments( final VirtualFile nodeFile, final XmlNode xmlNode )
     {
         final XmlAttachedBinaries attachedBinaries = xmlNode.getAttachedBinaries();
 
@@ -159,51 +167,29 @@ public class NodeImportCommand
 
         for ( final XmlAttachedBinaries.AttachedBinary attachedBinary : attachedBinaries.getAttachedBinary() )
         {
-            final String binaryReferenceString = attachedBinary.getBinaryReference();
-
-            final Path binaryFilePath = NodeImportPathResolver.resolveBinaryFilePath( nodeBasePath, binaryReferenceString );
-
-            final ByteSource binarySource = this.exportReader.getSource( binaryFilePath );
-
-            if ( binarySource == null )
-            {
-                throw new ImportNodeException( "Missing binary file, expected file: " + binaryFilePath );
-            }
-
-            final BinaryReference binaryReference = BinaryReference.from( binaryReferenceString );
-            builder.add( new BinaryAttachment( binaryReference, binarySource ) );
-
-            result.addBinary( nodeBasePath.toString(), binaryReference );
+            addBinary( nodeFile, builder, attachedBinary );
         }
 
         return builder.build();
     }
 
-    private List<String> processManualOrderFile( final Path nodeBasePath )
+    private void addBinary( final VirtualFile nodeFile, final BinaryAttachments.Builder builder,
+                            final XmlAttachedBinaries.AttachedBinary attachedBinary )
     {
-        final Path orderFilePath = NodeImportPathResolver.resolveOrderFilePath( nodeBasePath );
+        final String binaryReferenceString = attachedBinary.getBinaryReference();
 
-        if ( !this.exportReader.getFile( orderFilePath ).exists() )
+        try
         {
-            throw new ImportNodeException( "Parent has manual ordering of children, expected file " + orderFilePath );
+            final VirtualFile binary = exportReader.getBinarySource( nodeFile, binaryReferenceString );
+            final BinaryReference binaryReference = BinaryReference.from( binaryReferenceString );
+            builder.add( new BinaryAttachment( binaryReference, binary.getByteSource() ) );
+
+            result.addBinary( binary.getUrl(), binaryReference );
         }
-
-        return this.exportReader.readLines( orderFilePath );
-    }
-
-    private XmlNode getXmlNodeFromPath( final Path nodeBasePath )
-    {
-        final Path nodeXmlFilePath = NodeImportPathResolver.resolveNodeXmlFilePath( nodeBasePath );
-
-        final File nodeXmlFile = this.exportReader.getFile( nodeXmlFilePath );
-
-        if ( !nodeXmlFile.exists() )
+        catch ( Exception e )
         {
-            throw new ImportNodeException( "Node file not found: " + nodeXmlFilePath );
+            result.addError( "Error processing binary, skip", e );
         }
-
-        final String serializedNode = this.exportReader.readItem( nodeXmlFilePath );
-        return this.xmlNodeSerializer.parse( serializedNode );
     }
 
     private void verifyImportRoot()
@@ -221,12 +207,6 @@ public class NodeImportCommand
         }
     }
 
-
-    private Stream<Path> getChildPaths( final Path path )
-    {
-        return this.exportReader.getChildrenPaths( path );
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -238,13 +218,9 @@ public class NodeImportCommand
 
         private NodeService nodeService;
 
-        private ExportReader exportReader;
-
         private XmlNodeSerializer xmlNodeSerializer;
 
-        private Path exportHome;
-
-        private String exportName;
+        private VirtualFile exportRoot;
 
         private boolean dryRun = false;
 
@@ -258,27 +234,15 @@ public class NodeImportCommand
             return this;
         }
 
-        public Builder exportHome( Path basePath )
+        public Builder exportRoot( VirtualFile exportRoot )
         {
-            this.exportHome = basePath;
-            return this;
-        }
-
-        public Builder exportName( final String exportName )
-        {
-            this.exportName = exportName;
+            this.exportRoot = exportRoot;
             return this;
         }
 
         public Builder nodeService( NodeService nodeService )
         {
             this.nodeService = nodeService;
-            return this;
-        }
-
-        public Builder exportReader( ExportReader exportReader )
-        {
-            this.exportReader = exportReader;
             return this;
         }
 

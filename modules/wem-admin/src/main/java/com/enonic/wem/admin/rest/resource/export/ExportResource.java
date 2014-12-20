@@ -1,6 +1,7 @@
 package com.enonic.wem.admin.rest.resource.export;
 
 import java.net.URI;
+import java.nio.file.Paths;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,6 +15,7 @@ import com.enonic.wem.api.export.ImportNodesParams;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.vfs.VirtualFiles;
 import com.enonic.xp.web.jaxrs.JaxRsComponent;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
@@ -39,12 +41,12 @@ public class ExportResource
 
     @GET
     @Path("import")
-    public Response importNodes( @QueryParam("exportName") final String exportName, @QueryParam("importRoot") final String importRoot )
+    public Response importNodes( @QueryParam("exportPath") final String exportName, @QueryParam("importRoot") final String importRoot )
         throws Exception
     {
         final NodeImportResult nodeImportResult = this.exportService.importNodes( ImportNodesParams.create().
-            exportName( exportName ).
             importRootPath( NodePath.newPath( importRoot ).build() ).
+            exportRoot( VirtualFiles.from( Paths.get( exportName ) ) ).
             build() );
 
         final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );

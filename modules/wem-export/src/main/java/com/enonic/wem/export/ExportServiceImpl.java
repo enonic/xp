@@ -18,7 +18,6 @@ import com.enonic.wem.api.home.HomeDir;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.export.internal.BatchedNodeExportCommand;
 import com.enonic.wem.export.internal.NodeImportCommand;
-import com.enonic.wem.export.internal.reader.FileExportReader;
 import com.enonic.wem.export.internal.writer.FileExportWriter;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
@@ -26,10 +25,9 @@ import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 public class ExportServiceImpl
     implements ExportService
 {
+    private static final String NODE_EXPORT_NAME_PREFIX = "node_";
 
-    public static final String NODE_EXPORT_NAME_PREFIX = "node_";
-
-    public static final String EXPORT_LOCATION_ROOT = "exports";
+    private static final String EXPORT_LOCATION_ROOT = "exports";
 
     private NodeService nodeService;
 
@@ -57,13 +55,10 @@ public class ExportServiceImpl
     @Override
     public NodeImportResult importNodes( final ImportNodesParams params )
     {
-
         return NodeImportCommand.create().
             xmlNodeSerializer( this.xmlNodeSerializer ).
             nodeService( this.nodeService ).
-            exportReader( new FileExportReader() ).
-            exportHome( Paths.get( HomeDir.get().toString(), EXPORT_LOCATION_ROOT ) ).
-            exportName( params.getExportName() ).
+            exportRoot( params.getExportRoot() ).
             importRoot( params.getImportRootPath() ).
             build().
             execute();

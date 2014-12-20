@@ -1,17 +1,22 @@
 package com.enonic.wem.export.internal.xml.serializer;
 
-import java.io.StringReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
 
+import com.google.common.io.ByteSource;
+
+import com.enonic.wem.api.export.ExportNodeException;
+import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.xml.XmlException;
 import com.enonic.wem.export.internal.xml.ObjectFactory;
 import com.enonic.wem.export.internal.xml.XmlNode;
+import com.enonic.wem.export.internal.xml.XmlNodeElem;
 
 public final class XmlNodeSerializer
 {
@@ -47,19 +52,34 @@ public final class XmlNodeSerializer
         }
     }
 
-    public XmlNode parse( final String text )
+    public XmlNode parse( final ByteSource byteSource )
+
     {
-        try
+        try (InputStream inputStream = byteSource.openStream())
         {
             final Unmarshaller unmarshaller = this.context.createUnmarshaller();
-            final StringReader reader = new StringReader( text );
-            return unmarshaller.unmarshal( new StreamSource( reader ), XmlNode.class ).getValue();
+            final Object unmarshal = unmarshaller.unmarshal( inputStream );
+
+            if ( unmarshal instanceof XmlNodeElem )
+            {
+                return ( (XmlNodeElem) unmarshal ).getValue();
+            }
+            else
+            {
+                throw new ExportNodeException( "Expected XmlNodeElem, found " + unmarshal.getClass() );
+            }
+
         }
         catch ( final JAXBException e )
         {
             throw handleException( e );
         }
+        catch ( final IOException e )
+        {
+            throw Exceptions.unchecked( e );
+        }
     }
+
 
     private static XmlException handleException( final Exception cause )
     {

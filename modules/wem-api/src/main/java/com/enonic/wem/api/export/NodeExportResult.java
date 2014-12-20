@@ -9,10 +9,13 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePaths;
 import com.enonic.wem.api.util.BinaryReference;
+import com.enonic.wem.api.vfs.VirtualFile;
 
 public class NodeExportResult
 {
     private final boolean dryRun;
+
+    private final VirtualFile exportRoot;
 
     private final NodePaths exportedNodes;
 
@@ -26,6 +29,7 @@ public class NodeExportResult
         exportedNodes = NodePaths.from( builder.nodePaths );
         exportErrors = builder.exportErrors;
         exportedBinaries = builder.exportedBinaries;
+        this.exportRoot = builder.exportRoot;
     }
 
     public boolean isDryRun()
@@ -63,11 +67,13 @@ public class NodeExportResult
     {
         private boolean dryRun;
 
-        private List<ExportError> exportErrors = Lists.newArrayList();
+        private final List<ExportError> exportErrors = Lists.newArrayList();
 
-        private List<String> exportedBinaries = Lists.newArrayList();
+        private final List<String> exportedBinaries = Lists.newArrayList();
 
-        private Set<NodePath> nodePaths = Sets.newHashSet();
+        private final Set<NodePath> nodePaths = Sets.newHashSet();
+
+        private VirtualFile exportRoot;
 
         private Builder()
         {
@@ -94,6 +100,12 @@ public class NodeExportResult
         public Builder addError( final ExportError error )
         {
             this.exportErrors.add( error );
+            return this;
+        }
+
+        public Builder exportRoot( final VirtualFile exportRoot )
+        {
+            this.exportRoot = exportRoot;
             return this;
         }
 

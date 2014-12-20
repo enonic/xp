@@ -33,6 +33,7 @@ public class DateHistogramAggregationsTest
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( DateHistogramAggregationQuery.create( "hour" ).
+                format( "Y-MM-DD" ).
                 fieldName( "instant" ).
                 interval( "1h" ).
                 build() ).

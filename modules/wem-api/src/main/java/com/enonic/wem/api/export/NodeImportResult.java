@@ -1,5 +1,6 @@
 package com.enonic.wem.api.export;
 
+import java.net.URL;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -55,11 +56,11 @@ public class NodeImportResult
 
     public static final class Builder
     {
-        private NodePaths.Builder importedNodes = NodePaths.create();
+        private final NodePaths.Builder importedNodes = NodePaths.create();
 
-        private List<String> exportedBinaries = Lists.newArrayList();
+        private final List<String> exportedBinaries = Lists.newArrayList();
 
-        private List<ImportError> importErrors = Lists.newArrayList();
+        private final List<ImportError> importErrors = Lists.newArrayList();
 
         private Builder()
         {
@@ -71,17 +72,24 @@ public class NodeImportResult
             return this;
         }
 
-        public Builder addBinary( final String path, final BinaryReference binaryReference )
+        public Builder addBinary( final URL url, final BinaryReference binaryReference )
         {
-            this.exportedBinaries.add( path + " [" + binaryReference + "]" );
+            this.exportedBinaries.add( url.toString() + " [" + binaryReference + "]" );
             return this;
         }
 
         public Builder addError( final Exception e )
         {
-            this.importErrors.add( new ImportError( e ) );
+            this.importErrors.add( new ImportError( e, null ) );
             return this;
         }
+
+        public Builder addError( final String message, final Exception e )
+        {
+            this.importErrors.add( new ImportError( e, message ) );
+            return this;
+        }
+
 
         public NodeImportResult build()
         {
@@ -91,11 +99,25 @@ public class NodeImportResult
 
     public static class ImportError
     {
-        private Exception exception;
+        private final Exception exception;
 
-        public ImportError( final Exception exception )
+        private final String message;
+
+        public ImportError( final Exception exception, final String message )
         {
             this.exception = exception;
+            this.message = message;
+        }
+
+        public Exception getException()
+        {
+            return exception;
+        }
+
+        public String getMessage()
+        {
+            return message;
         }
     }
+
 }
