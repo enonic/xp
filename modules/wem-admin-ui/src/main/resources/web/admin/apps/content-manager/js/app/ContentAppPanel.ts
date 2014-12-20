@@ -71,10 +71,6 @@ module app {
                 this.handleNewContent(event);
             });
 
-            app.create.NewMediaEvent.on((event) => {
-                this.handleNewMedia(event);
-            });
-
             app.browse.ViewContentEvent.on((event) => {
                 this.handleView(event);
             });
@@ -144,35 +140,6 @@ module app {
             }
         }
 
-        private handleNewMedia(newMediaEvent: app.create.NewMediaEvent) {
-
-            var tabId = AppBarTabId.forEdit(newMediaEvent.getContent().getId());
-            var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
-            var newMediaContent = newMediaEvent.getContent();
-
-            if (tabMenuItem != null) {
-                this.selectPanel(tabMenuItem);
-            } else {
-                this.mask.show();
-                var contentWizardPanelFactory = new app.wizard.ContentWizardPanelFactory().
-                    setAppBarTabId(tabId).
-                    setParentContent(newMediaEvent.getParentContent()).
-                    setContentToEdit(newMediaContent.getContentId());
-
-                contentWizardPanelFactory.createForEdit().then((wizard: app.wizard.ContentWizardPanel) => {
-                    tabMenuItem = new AppBarTabMenuItemBuilder().setLabel(newMediaContent.getDisplayName()).
-                        setTabId(tabId).
-                        setCloseAction(wizard.getCloseAction()).
-                        build();
-
-                    this.addWizardPanel(tabMenuItem, wizard);
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).finally(() => {
-                    this.mask.hide();
-                }).done();
-            }
-        }
 
         private handleEdit(event: app.browse.EditContentEvent) {
 

@@ -5,6 +5,10 @@ module api.ui.uploader {
         private file: PluploadFile;
         private model: MODEL;
 
+        private failedListeners: {(): void}[] = [];
+        private uploadListeners: {(model: MODEL): void}[] = [];
+        private progressListeners: {(progress: number): void}[] = [];
+
         constructor(file: PluploadFile) {
             this.file = file;
         }
@@ -24,6 +28,11 @@ module api.ui.uploader {
 
         setModel(model: MODEL): UploadItem<MODEL> {
             this.model = model;
+            if (model) {
+                this.notifyUploaded(model);
+            } else {
+                this.notifyFailed();
+            }
             return this;
         }
 
@@ -60,6 +69,7 @@ module api.ui.uploader {
 
         setProgress(progress: number): UploadItem<MODEL> {
             this.file.percent = progress;
+            this.notifyProgress(progress);
             return this;
         }
 
@@ -70,6 +80,58 @@ module api.ui.uploader {
         setStatus(status: PluploadStatus): UploadItem<MODEL> {
             this.file.status = status;
             return this;
+        }
+
+        isUploaded(): boolean {
+            return !!this.model
+        }
+
+        onProgress(listener: (progress: number) => void) {
+            this.progressListeners.push(listener);
+        }
+
+        unProgress(listener: (progress: number) => void) {
+            this.progressListeners = this.progressListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        private notifyProgress(progress: number) {
+            this.progressListeners.forEach((listener) => {
+                listener(progress);
+            })
+        }
+
+        onUploaded(listener: (model: MODEL) => void) {
+            this.uploadListeners.push(listener);
+        }
+
+        unUploaded(listener: (model: MODEL) => void) {
+            this.uploadListeners = this.uploadListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        private notifyUploaded(model: MODEL) {
+            this.uploadListeners.forEach((listener) => {
+                listener(model);
+            })
+        }
+
+        onFailed(listener: () => void) {
+            this.failedListeners.push(listener);
+        }
+
+        unFailed(listener: () => void) {
+            this.failedListeners = this.failedListeners.filter((curr) => {
+                return curr !== listener;
+            })
+        }
+
+        private notifyFailed() {
+            this.failedListeners.forEach((listener) => {
+                listener();
+            })
         }
 
     }

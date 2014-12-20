@@ -1,38 +1,70 @@
 module api.content {
 
+    import UploadItem = api.ui.uploader.UploadItem;
+
     export class ContentSummaryAndCompareStatus {
+
+        private uploadItem: UploadItem<ContentSummary>;
 
         private contentSummary: ContentSummary;
 
-        private compareContentResult: CompareContentResult;
+        private compareStatus: CompareStatus;
 
-        constructor(contentSummary: ContentSummary, compareContentResult: CompareContentResult) {
-            this.contentSummary = contentSummary;
-            this.compareContentResult = compareContentResult;
+        constructor() {
         }
 
-        getContentId(): ContentId {
-            return this.contentSummary.getContentId();
+        public static fromContentSummary(contentSummary: ContentSummary) {
+            return new ContentSummaryAndCompareStatus().setContentSummary(contentSummary);
+        }
+
+        public static fromContentAndCompareStatus(contentSummary: ContentSummary, compareStatus: CompareStatus) {
+            return new ContentSummaryAndCompareStatus().setContentSummary(contentSummary).setCompareStatus(compareStatus);
+        }
+
+        public static fromUploadItem(item: UploadItem<ContentSummary>): ContentSummaryAndCompareStatus {
+            return new ContentSummaryAndCompareStatus().setUploadItem(item);
         }
 
         getContentSummary(): ContentSummary {
             return this.contentSummary;
         }
 
-        setContentSummary(contentSummary: ContentSummary): void {
+        setContentSummary(contentSummary: ContentSummary): ContentSummaryAndCompareStatus {
             this.contentSummary = contentSummary;
+            return this;
         }
 
-        getCompareContentResult(): CompareContentResult {
-            return this.compareContentResult;
+        getCompareStatus(): CompareStatus {
+            return this.compareStatus;
         }
 
-        getCompareStatus(): string {
-            return this.getCompareStatus();
+        setCompareStatus(status: CompareStatus): ContentSummaryAndCompareStatus {
+            this.compareStatus = status;
+            return this;
+        }
+
+        getUploadItem(): UploadItem<ContentSummary> {
+            return this.uploadItem;
+        }
+
+        setUploadItem(item: UploadItem<ContentSummary>): ContentSummaryAndCompareStatus {
+            this.uploadItem = item;
+            if (item.isUploaded()) {
+                this.contentSummary = item.getModel();
+            } else {
+                item.onUploaded((contentSummary: ContentSummary) => {
+                    this.contentSummary = contentSummary;
+                });
+            }
+            return this;
+        }
+
+        getContentId(): ContentId {
+            return this.contentSummary ? this.contentSummary.getContentId() : null;
         }
 
         getId(): string {
-            return !!this.contentSummary ? this.contentSummary.getId() : "";
+            return !!this.contentSummary ? this.contentSummary.getId() : this.getUploadItem().getId();
         }
 
         hasChildren(): boolean {

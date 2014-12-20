@@ -325,7 +325,9 @@ module api.ui.uploader {
             uploader.bind('Error', (up, response) => {
                 console.log('uploader error', up, response);
 
-                this.notifyUploadFailed(new UploadItem<MODEL>(response.file))
+                var uploadItem = this.findUploadItemById(response.file.id);
+                uploadItem.setModel(null);
+                this.notifyUploadFailed(uploadItem);
             });
 
             uploader.bind('UploadComplete', (up, files) => {

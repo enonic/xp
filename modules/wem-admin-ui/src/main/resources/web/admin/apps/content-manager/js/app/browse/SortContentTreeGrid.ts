@@ -167,7 +167,7 @@ module app.browse {
                     var meta = data.getMetadata();
                     parentNode.setMaxChildren(meta.getTotalHits());
                     if (from + meta.getHits() < meta.getTotalHits()) {
-                        contents.push(new ContentSummaryAndCompareStatus(null, null));
+                        contents.push(new ContentSummaryAndCompareStatus());
                     }
                     return contents;
                 });

@@ -88,6 +88,10 @@ module api.ui.treegrid {
             this.data = data;
         }
 
+        setDataId(dataId: string) {
+            this.dataId = dataId;
+        }
+
         setViewer(name: string, viewer: api.ui.Viewer<any>) {
             this.viewersByName[name] = viewer;
         }

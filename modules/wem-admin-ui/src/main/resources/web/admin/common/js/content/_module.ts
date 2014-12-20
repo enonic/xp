@@ -50,6 +50,7 @@
 ///<reference path='Workspace.ts' />
 ///<reference path='ContentSummaryAndCompareStatus.ts' />
 ///<reference path='ContentSummaryAndCompareStatusFetcher.ts' />
+///<reference path='ContentSummaryAndCompareStatusViewer.ts' />
 ///<reference path='ContentVersion.ts' />
 ///<reference path='ContentVersionViewer.ts' />
 ///<reference path='GetActiveContentVersionsRequest.ts' />
