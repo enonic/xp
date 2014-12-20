@@ -41,12 +41,13 @@ public class ExportResource
 
     @GET
     @Path("import")
-    public Response importNodes( @QueryParam("exportPath") final String exportName, @QueryParam("importRoot") final String importRoot )
+    public Response importNodes( @QueryParam("exportRootPath") final String exportRootPath,
+                                 @QueryParam("importRoot") final String importRoot )
         throws Exception
     {
         final NodeImportResult nodeImportResult = this.exportService.importNodes( ImportNodesParams.create().
             importRootPath( NodePath.newPath( importRoot ).build() ).
-            exportRoot( VirtualFiles.from( Paths.get( exportName ) ) ).
+            exportRoot( VirtualFiles.from( Paths.get( exportRootPath ) ) ).
             build() );
 
         final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
