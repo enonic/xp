@@ -65,7 +65,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
     {
         final Content content = createPage( "id", "site/somepath/content", "mymodule:ctype", true );
 
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ) ) ).
+        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( content );
 
         Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
@@ -78,7 +78,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
     protected final void setupNonPageContent()
         throws Exception
     {
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ) ) ).
+        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( createPage( "id", "site/somepath/content", "mymodule:ctype", false ) );
 
         Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
