@@ -14,8 +14,6 @@ public interface ScriptValue
 
     public boolean isFunction();
 
-    public boolean isUndefined();
-
     public Object getValue();
 
     public <T> T getValue( Class<T> type );

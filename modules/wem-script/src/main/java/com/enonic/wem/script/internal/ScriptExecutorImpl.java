@@ -9,7 +9,7 @@ import javax.script.ScriptEngine;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptValue;
-import com.enonic.wem.script.internal.bean.ScriptValueImpl;
+import com.enonic.wem.script.internal.bean.ScriptValueFactoryImpl;
 import com.enonic.wem.script.internal.error.ErrorHelper;
 import com.enonic.wem.script.internal.function.CallFunction;
 import com.enonic.wem.script.internal.function.ExecuteFunction;
@@ -87,7 +87,7 @@ final class ScriptExecutorImpl
     @Override
     public ScriptValue newScriptValue( final Object value )
     {
-        return new ScriptValueImpl( value, this::invokeMethod );
+        return new ScriptValueFactoryImpl( this::invokeMethod ).newValue( value );
     }
 
     private void doExecute()
