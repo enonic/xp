@@ -582,9 +582,9 @@ module api.ui.treegrid {
             this.notifyLoaded();
         }
 
-        updateNode(data: DATA): void {
+        updateNode(data: DATA, oldDataId?: string): void {
 
-            var dataId = this.getDataId(data),
+            var dataId = oldDataId || this.getDataId(data),
                 nodesToUpdate = [],
                 nodeToUpdate = this.root.getCurrentRoot().findNode(dataId),
                 stashedNodeToUpdate;
@@ -610,6 +610,7 @@ module api.ui.treegrid {
                 .then((data: DATA) => {
                     nodesToUpdate.forEach((node) => {
                         node.setData(data);
+                        node.setDataId(this.getDataId(data));
                         node.clearViewers();
                         if (node.isVisible()) {
                             var selected = this.grid.isRowSelected(this.gridData.getRowById(node.getId()));

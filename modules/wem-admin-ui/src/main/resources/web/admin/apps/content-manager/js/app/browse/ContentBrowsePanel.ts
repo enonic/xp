@@ -2,6 +2,7 @@ module app.browse {
 
     import TreeNode = api.ui.treegrid.TreeNode;
     import BrowseItem = api.app.browse.BrowseItem;
+    import UploadItem = api.ui.uploader.UploadItem;
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
@@ -43,46 +44,6 @@ module app.browse {
                 filterPanel: this.contentFilterPanel
             });
 
-            api.content.ContentDeletedEvent.on((event) => {
-                this.setFilterPanelRefreshNeeded(true);
-                /*
-                 Deleting content won't trigger browsePanel.onShow event,
-                 because we are left on the same panel. We need to refresh manually.
-                 */
-                this.contentTreeGridPanel.deleteNodes(event.getContents().map((elem) => {
-                    return new api.content.ContentSummaryAndCompareStatus(elem, null);
-                }));
-                this.refreshFilter();
-            });
-
-            api.content.ContentCreatedEvent.on((event) => {
-                this.contentTreeGridPanel.appendContentNode(event.getContentId());
-                this.setFilterPanelRefreshNeeded(true);
-            });
-
-            api.content.ContentDuplicatedEvent.on((event) => {
-                this.contentTreeGridPanel.appendContentNode(event.getContent().getContentId(), event.isNextToSource());
-                this.setFilterPanelRefreshNeeded(true);
-                window.setTimeout(() => {
-                    this.refreshFilter();
-                }, 1000);
-            });
-
-            api.content.ContentUpdatedEvent.on((event) => {
-                this.contentTreeGridPanel.updateContentNode(event.getContentId());
-            });
-
-            api.content.ContentPublishedEvent.on((event) => {
-                this.contentTreeGridPanel.updateContentNode(event.getContentId());
-            });
-
-            api.content.ContentChildOrderUpdatedEvent.on((event) => {
-                this.contentTreeGridPanel.updateContentNode(event.getContentId());
-                var updatedNode = this.contentTreeGridPanel.getRoot().getCurrentRoot()
-                    .findNode(event.getContentId().toString());
-                this.contentTreeGridPanel.sortNodeChildren(updatedNode);
-            });
-
             var showMask = () => {
                 this.contentTreeGridPanelMask.show();
             };
@@ -99,11 +60,6 @@ module app.browse {
                 app.Router.setHash("browse");
             });
 
-            ToggleSearchPanelEvent.on(() => {
-                console.log("Toggling searchpanel event");
-                this.toggleFilterPanel();
-            });
-
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
                     this.browseActions.TOGGLE_SEARCH_PANEL.setVisible(true);
@@ -111,6 +67,8 @@ module app.browse {
                     this.browseActions.TOGGLE_SEARCH_PANEL.setVisible(false);
                 }
             });
+
+            this.handleGlobalEvents();
         }
 
         treeNodesToBrowseItems(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummary>[] {
@@ -137,6 +95,83 @@ module app.browse {
             });
 
             return browseItems;
+        }
+
+
+        private handleGlobalEvents() {
+            api.content.ContentDeletedEvent.on((event) => {
+                this.handleContentDeleted(event);
+            });
+
+            api.content.ContentCreatedEvent.on((event) => {
+                this.handleContentCreated(event);
+            });
+
+            api.content.ContentDuplicatedEvent.on((event) => {
+                this.handleContentDuplicated(event);
+            });
+
+            api.content.ContentUpdatedEvent.on((event) => {
+                this.contentTreeGridPanel.updateContentNode(event.getContentId());
+            });
+
+            api.content.ContentPublishedEvent.on((event) => {
+                this.contentTreeGridPanel.updateContentNode(event.getContentId());
+            });
+
+            api.content.ContentChildOrderUpdatedEvent.on((event) => {
+                this.handleChildOrderUpdated(event);
+            });
+
+            ToggleSearchPanelEvent.on(() => {
+                this.toggleFilterPanel();
+            });
+
+            app.create.NewMediaUploadEvent.on((event) => {
+                this.handleNewMediaUpload(event);
+            });
+        }
+
+        private handleContentDeleted(event: api.content.ContentDeletedEvent) {
+            this.setFilterPanelRefreshNeeded(true);
+            /*
+             Deleting content won't trigger browsePanel.onShow event,
+             because we are left on the same panel. We need to refresh manually.
+             */
+            this.contentTreeGridPanel.deleteNodes(event.getContents().map((elem) => {
+                return api.content.ContentSummaryAndCompareStatus.fromContentSummary(elem);
+            }));
+            this.refreshFilter();
+        }
+
+        private handleContentCreated(event: api.content.ContentCreatedEvent) {
+            this.contentTreeGridPanel.appendContentNode(event.getContentId());
+            this.setFilterPanelRefreshNeeded(true);
+        }
+
+        private handleContentDuplicated(event: api.content.ContentDuplicatedEvent) {
+            this.contentTreeGridPanel.appendContentNode(event.getContent().getContentId(), event.isNextToSource());
+            this.setFilterPanelRefreshNeeded(true);
+            window.setTimeout(() => {
+                this.refreshFilter();
+            }, 1000);
+        }
+
+        private handleChildOrderUpdated(event: api.content.ContentChildOrderUpdatedEvent) {
+            this.contentTreeGridPanel.updateContentNode(event.getContentId());
+            var updatedNode = this.contentTreeGridPanel.getRoot().getCurrentRoot()
+                .findNode(event.getContentId().toString());
+            this.contentTreeGridPanel.sortNodeChildren(updatedNode);
+        }
+
+        private handleNewMediaUpload(event: app.create.NewMediaUploadEvent) {
+
+            var parentContent = event.getParentContent();   // do we need it ?
+
+            event.getUploadItems().forEach((item: UploadItem<ContentSummary>) => {
+                this.contentTreeGridPanel.appendUploadNode(item);
+            });
+
         }
     }
 

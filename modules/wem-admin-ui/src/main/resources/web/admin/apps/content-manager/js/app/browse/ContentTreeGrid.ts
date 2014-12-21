@@ -15,7 +15,7 @@ module app.browse {
     import ContentResponse = api.content.ContentResponse;
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
-    import ContentSummaryViewer = api.content.ContentSummaryViewer;
+    import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
     import CompareContentRequest = api.content.CompareContentRequest;
     import CompareContentResults = api.content.CompareContentResults;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -143,7 +143,7 @@ module app.browse {
                         compareResults);
                     var metadata = contentQueryResult.getMetadata();
                     if (metadata.getTotalHits() > metadata.getHits()) {
-                        contents.push(new ContentSummaryAndCompareStatus(null, null));
+                        contents.push(new ContentSummaryAndCompareStatus());
                     }
                     this.filter(contents);
                     this.getRoot().getCurrentRoot().setMaxChildren(metadata.getTotalHits());
@@ -192,47 +192,52 @@ module app.browse {
 
         private statusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
 
-            if (!node.getData().getContentSummary()) {
-                return "";
+            var data = node.getData();
+            var status;
+
+            if (!!data.getContentSummary()) {   // default node
+                var compareStatus: CompareStatus = CompareStatus[CompareStatus[value]];
+
+                switch (compareStatus) {
+                case CompareStatus.NEW:
+                    status = "New";
+                    break;
+                case CompareStatus.NEWER:
+                    status = "Modified";
+                    break;
+                case CompareStatus.OLDER:
+                    status = "Behind";
+                    break;
+                case CompareStatus.UNKNOWN:
+                    status = "Unknown";
+                    break;
+                case CompareStatus.DELETED:
+                    status = "Deleted";
+                    break;
+                case CompareStatus.EQUAL:
+                    status = "Online";
+                    break;
+                default:
+                    status = "Unknown"
+                }
+
+            } else if (!!data.getUploadItem()) {   // uploading node
+                status = new api.ui.ProgressBar(data.getUploadItem().getProgress()).toString();
             }
 
-            var compareLabel: string = api.content.CompareStatus[value];
-
-            var compareStatus: CompareStatus = CompareStatus[compareLabel];
-
-            switch (compareStatus) {
-            case CompareStatus.NEW:
-                return "New";
-                break;
-            case CompareStatus.NEWER:
-                return "Modified";
-                break;
-            case CompareStatus.OLDER:
-                return "Behind";
-                break;
-            case CompareStatus.UNKNOWN:
-                return "Unknown";
-                break;
-            case CompareStatus.DELETED:
-                return "Deleted";
-                break;
-            case CompareStatus.EQUAL:
-                return "Online";
-                break;
-            default:
-                return "Unknown"
-            }
+            return status;
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-            if (!!node.getData().getContentSummary()) {  // default node
+            var data = node.getData();
+            if (!!data.getContentSummary() || !!data.getUploadItem()) {  // default node or upload node
 
-                var viewer: ContentSummaryViewer = <ContentSummaryViewer>node.getViewer("name");
+                var viewer = <ContentSummaryAndCompareStatusViewer> node.getViewer("name");
                 if (!viewer) {
-                    viewer = new ContentSummaryViewer();
-                    viewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
+                    viewer = new ContentSummaryAndCompareStatusViewer();
                     node.setViewer("name", viewer);
                 }
+                viewer.setObject(node.getData(), node.calcLevel() > 1);
                 return viewer.toString();
 
             } else { // `load more` node
@@ -275,7 +280,7 @@ module app.browse {
                         var meta = data.getMetadata();
                         parentNode.setMaxChildren(meta.getTotalHits());
                         if (from + meta.getHits() < meta.getTotalHits()) {
-                            contents.push(new ContentSummaryAndCompareStatus(null, null));
+                            contents.push(new ContentSummaryAndCompareStatus());
                         }
                         return contents;
                     });
@@ -296,7 +301,7 @@ module app.browse {
                                     compareResults));
                                 var meta = contentQueryResult.getMetadata();
                                 if (from + meta.getHits() < meta.getTotalHits()) {
-                                    list.push(new ContentSummaryAndCompareStatus(null, null));
+                                    list.push(new ContentSummaryAndCompareStatus());
                                 }
                                 parentNode.setMaxChildren(meta.getTotalHits());
                                 return list;
@@ -318,7 +323,7 @@ module app.browse {
             var treeNode = root.findNode(contentId.toString());
             if (treeNode) {
                 var content = treeNode.getData();
-                this.updateNode(new ContentSummaryAndCompareStatus(content.getContentSummary(), null));
+                this.updateNode(ContentSummaryAndCompareStatus.fromContentSummary(content.getContentSummary()));
             }
         }
 
@@ -330,6 +335,24 @@ module app.browse {
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 });
+        }
+
+        appendUploadNode(item: api.ui.uploader.UploadItem<ContentSummary>, nextToSelection?: boolean) {
+
+            var data = ContentSummaryAndCompareStatus.fromUploadItem(item);
+            this.appendNode(data, nextToSelection);
+
+            item.onProgress((progress: number) => {
+                this.resetAndRender();
+            });
+            item.onUploaded((model: ContentSummary) => {
+                this.updateNode(data, item.getId());
+                api.notify.showSuccess("Upload [" + item.getName() + "] finished");
+            });
+            item.onFailed(() => {
+                this.deleteNode(data);
+                api.notify.showError("Upload [" + item.getName() + "] failed");
+            })
         }
 
         refreshNodeData(parentNode: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {

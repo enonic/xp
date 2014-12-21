@@ -10,7 +10,8 @@ module app.create {
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import ContentType = api.schema.content.ContentType;
-    import FileUploadedEvent = api.ui.uploader.FileUploadedEvent;
+    import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
+    import UploadItem = api.ui.uploader.UploadItem;
 
     export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -63,11 +64,14 @@ module app.create {
                 name: 'new-content-uploader',
                 showButtons: false,
                 showResult: false,
+                allowMultiSelection: true,
                 deferred: true  // wait till the window is shown
             });
             aside.appendChild(this.mediaUploader);
-            this.mediaUploader.onFileUploaded((event: FileUploadedEvent<api.content.Content>) => {
-                this.closeAndFireNewMediaEvent(event.getUploadItem().getModel());
+            this.mediaUploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
+
+                new NewMediaUploadEvent(event.getUploadItems(), this.parentContent).fire();
+                this.close();
             });
 
             var recentTitle = new api.dom.H1El();
@@ -112,14 +116,6 @@ module app.create {
         private closeAndFireEventFromContentType(item: NewContentDialogListItem) {
             this.close();
             new NewContentEvent(item.getContentType(), this.parentContent).fire();
-        }
-
-        private closeAndFireNewMediaEvent(newMediaContent: Content) {
-
-            this.close();
-
-            new NewMediaEvent(newMediaContent, this.parentContent).fire();
-
         }
 
         private filterList() {
