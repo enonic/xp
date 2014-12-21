@@ -7,6 +7,9 @@ module app {
     import UserItemsTreeGrid = app.browse.UserItemsTreeGrid;
     import UserTreeGridItemType = app.browse.UserTreeGridItemType;
     import PrincipalType = api.security.PrincipalType;
+    import PrincipalKey = api.security.PrincipalKey;
+    import UserStore = api.security.UserStore;
+    import GetUserStoreByKeyRequest = api.security.GetUserStoreByKeyRequest;
     import UserItemWizardPanel = app.wizard.UserItemWizardPanel;
 
     export class UserAppPanel extends api.app.BrowseAndWizardBasedAppPanel<UserTreeGridItem> {
@@ -145,22 +148,38 @@ module app {
 
         private handleNew(event: app.browse.NewPrincipalEvent) {
             var userItem: UserTreeGridItem = event.getPrincipals()[0],
+                userStoreDeferred = wemQ.defer<UserStore>(),
+                userStoreRequest,
                 principalType,
+                principalPath = "",
                 tabName;
 
             if (userItem) {
+                userStoreDeferred.resolve(userItem.getUserStore());
+                userStoreRequest = userStoreDeferred.promise;
+
                 switch (userItem.getType()) {
                 case UserTreeGridItemType.USERS:
                     principalType = PrincipalType.USER;
+                    principalPath = PrincipalKey.ofUser(userItem.getUserStore().getKey(), "none").toPath(true);
                     tabName = "User";
                     break;
                 case UserTreeGridItemType.GROUPS:
                     principalType = PrincipalType.GROUP;
+                    principalPath = PrincipalKey.ofGroup(userItem.getUserStore().getKey(), "none").toPath(true);
                     tabName = "Group";
                     break;
                 case UserTreeGridItemType.ROLES:
                     principalType = PrincipalType.ROLE;
+                    principalPath = PrincipalKey.ofRole("none").toPath(true);
                     tabName = "Role";
+                    break;
+                case UserTreeGridItemType.PRINCIPAL:
+                    principalType = userItem.getPrincipal().getType();
+                    principalPath = userItem.getPrincipal().getKey().toPath(true);
+                    tabName = PrincipalType[principalType];
+                    tabName = tabName[0] + tabName.slice(0).toUpperCase();
+                    userStoreRequest = new GetUserStoreByKeyRequest(userItem.getPrincipal().getKey().getUserStore()).sendAndParse();
                     break;
                 case UserTreeGridItemType.USER_STORE:
                     tabName = "User Store";
@@ -177,23 +196,25 @@ module app {
             } else {
                 this.mask.show();
                 if (userItem && userItem.getType() !== UserTreeGridItemType.USER_STORE) {
-                    new app.wizard.PrincipalWizardPanelFactory().
-                        setAppBarTabId(tabId).
-                        setPrincipalType(principalType).
-                        setPrincipalPath(userItem.getPrincipal() ? userItem.getPrincipal().getKey().toPath(true) : null).
-                        setUserStore(userItem.getUserStore()).
-                        createForNew().then((wizard: app.wizard.PrincipalWizardPanel) => {
 
-                            this.handleWizardCreated(wizard, tabName);
-                            wizard.onPrincipalNamed((event: api.security.PrincipalNamedEvent) => {
-                                this.handlePrincipalNamedEvent(event);
-                            });
+                    userStoreRequest.then((userStore: UserStore) => {
+                        return new app.wizard.PrincipalWizardPanelFactory().
+                            setAppBarTabId(tabId).
+                            setPrincipalType(principalType).
+                            setPrincipalPath(principalPath).
+                            setUserStore(userStore).
+                            createForNew();
+                    }).then((wizard: app.wizard.PrincipalWizardPanel) => {
+                        this.handleWizardCreated(wizard, tabName);
+                        wizard.onPrincipalNamed((event: api.security.PrincipalNamedEvent) => {
+                            this.handlePrincipalNamedEvent(event);
+                        });
 
-                        }).catch((reason: any) => {
-                            api.DefaultErrorHandler.handle(reason);
-                        }).finally(() => {
-                            this.mask.hide();
-                        }).done();
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    }).finally(() => {
+                        this.mask.hide();
+                    }).done();
                 } else {
                     new app.wizard.UserStoreWizardPanelFactory().
                         setAppBarTabId(tabId).createForNew().then((wizard: app.wizard.UserStoreWizardPanel) => {

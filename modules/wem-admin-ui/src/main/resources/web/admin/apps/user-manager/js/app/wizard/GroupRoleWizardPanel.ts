@@ -91,7 +91,9 @@ module app.wizard {
         hasUnsavedChanges(): boolean {
             var persistedPrincipal = this.getPersistedItem();
             if (persistedPrincipal == undefined) {
-                return true;
+                return this.wizardHeader.getName() !== "" ||
+                    this.wizardHeader.getDisplayName() !== "" ||
+                    this.membersWizardStepForm.getMembers().length !== 0;
             } else {
                 return !this.isPersistedEqualsViewed();
             }

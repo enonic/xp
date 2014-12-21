@@ -30,7 +30,6 @@ module app.wizard {
 
         constructor(params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
 
-
             this.isPrincipalFormValid = false;
             this.principalNamedListeners = [];
 
@@ -49,7 +48,6 @@ module app.wizard {
             });
 
             this.wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
-
             this.wizardHeader.setPath(this.principalPath);
 
             if (params.persistedPrincipal) {
