@@ -1,7 +1,11 @@
 package com.enonic.wem.script.internal.bean;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import jdk.nashorn.api.scripting.JSObject;
@@ -14,6 +18,8 @@ import com.enonic.wem.script.ScriptValue;
 public final class ScriptValueImpl
     implements ScriptValue
 {
+    private final static ScriptValueImpl UNDEFINED = new ScriptValueImpl( null, null );
+
     private final Object value;
 
     private final JSObject jsObject;
@@ -75,7 +81,7 @@ public final class ScriptValueImpl
     {
         if ( !isObject() )
         {
-            return null;
+            return Collections.emptySet();
         }
 
         return this.jsObject.keySet();
@@ -92,7 +98,7 @@ public final class ScriptValueImpl
     {
         if ( !isObject() )
         {
-            return null;
+            return UNDEFINED;
         }
 
         return new ScriptValueImpl( this.jsObject.getMember( key ), this.invoker );
@@ -103,7 +109,7 @@ public final class ScriptValueImpl
     {
         if ( !isArray() )
         {
-            return null;
+            return Collections.emptyList();
         }
 
         return this.jsObject.values().stream().map( this::newScriptObject ).collect( Collectors.toList() );
@@ -119,7 +125,7 @@ public final class ScriptValueImpl
     {
         if ( !isFunction() )
         {
-            return null;
+            return UNDEFINED;
         }
 
         final Object result = this.invoker.invoke( this.jsObject, args );
@@ -130,5 +136,44 @@ public final class ScriptValueImpl
     public <T> T getValue( final Class<T> type )
     {
         return Converters.convert( this.value, type );
+    }
+
+    @Override
+    public <T> List<T> getArray( final Class<T> type )
+    {
+        if ( !isArray() )
+        {
+            return Collections.emptyList();
+        }
+
+        return this.jsObject.values().stream().map( new Function<Object, T>()
+        {
+            @Override
+            public T apply( final Object o )
+            {
+                return convertValue( type, o );
+            }
+        } ).filter( Objects::nonNull ).collect( Collectors.toList() );
+    }
+
+    private <T> T convertValue( final Class<T> type, final Object value )
+    {
+        if ( value == null )
+        {
+            return null;
+        }
+
+        return Converters.convert( value, type );
+    }
+
+    @Override
+    public Map<String, Object> getMap()
+    {
+        if ( !isObject() )
+        {
+            return Collections.emptyMap();
+        }
+
+        return JsObjectConverter.toMap( this.jsObject );
     }
 }

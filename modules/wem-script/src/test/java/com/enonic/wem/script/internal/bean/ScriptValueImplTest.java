@@ -2,6 +2,8 @@ package com.enonic.wem.script.internal.bean;
 
 import org.junit.Test;
 
+import com.google.common.base.Joiner;
+
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.script.AbstractScriptTest;
 import com.enonic.wem.script.ScriptExports;
@@ -9,13 +11,13 @@ import com.enonic.wem.script.ScriptValue;
 
 import static org.junit.Assert.*;
 
-public class ScriptObjectImplTest
+public class ScriptValueImplTest
     extends AbstractScriptTest
 {
-    private ScriptValue evalObject( final String name )
+    private ScriptValue evalValue( final String name )
         throws Exception
     {
-        final ScriptExports exports = runTestScript( "object/object-test.js" );
+        final ScriptExports exports = runTestScript( "value/value-test.js" );
         return exports.executeMethod( name );
     }
 
@@ -23,7 +25,7 @@ public class ScriptObjectImplTest
     public void testUndefined()
         throws Exception
     {
-        final ScriptValue obj = evalObject( "testUndefined" );
+        final ScriptValue obj = evalValue( "testUndefined" );
 
         assertEquals( false, obj.isArray() );
         assertEquals( false, obj.isFunction() );
@@ -31,19 +33,21 @@ public class ScriptObjectImplTest
         assertEquals( true, obj.isUndefined() );
         assertEquals( false, obj.isValue() );
         assertEquals( null, obj.getValue() );
-        assertEquals( null, obj.getKeys() );
+        assertEquals( 0, obj.getKeys().size() );
         assertEquals( false, obj.hasMember( "a" ) );
-        assertEquals( null, obj.getMember( "a" ) );
-        assertEquals( null, obj.getArray() );
-        assertEquals( null, obj.call( "a" ) );
+        assertEquals( true, obj.getMember( "a" ).isUndefined() );
+        assertEquals( 0, obj.getArray().size() );
+        assertEquals( true, obj.call( "a" ).isUndefined() );
         assertEquals( null, obj.getValue( String.class ) );
+        assertEquals( 0, obj.getArray( String.class ).size() );
+        assertEquals( 0, obj.getMap().size() );
     }
 
     @Test
     public void testValue()
         throws Exception
     {
-        final ScriptValue obj = evalObject( "testValue" );
+        final ScriptValue obj = evalValue( "testValue" );
 
         assertEquals( false, obj.isArray() );
         assertEquals( false, obj.isFunction() );
@@ -51,19 +55,21 @@ public class ScriptObjectImplTest
         assertEquals( false, obj.isUndefined() );
         assertEquals( true, obj.isValue() );
         assertEquals( 1, obj.getValue() );
-        assertEquals( null, obj.getKeys() );
+        assertEquals( 0, obj.getKeys().size() );
         assertEquals( false, obj.hasMember( "a" ) );
-        assertEquals( null, obj.getMember( "a" ) );
-        assertEquals( null, obj.getArray() );
-        assertEquals( null, obj.call( "a" ) );
+        assertEquals( true, obj.getMember( "a" ).isUndefined() );
+        assertEquals( 0, obj.getArray().size() );
+        assertEquals( true, obj.call( "a" ).isUndefined() );
         assertEquals( "1", obj.getValue( String.class ) );
+        assertEquals( 0, obj.getArray( String.class ).size() );
+        assertEquals( 0, obj.getMap().size() );
     }
 
     @Test
     public void testArray()
         throws Exception
     {
-        final ScriptValue obj = evalObject( "testArray" );
+        final ScriptValue obj = evalValue( "testArray" );
 
         assertEquals( true, obj.isArray() );
         assertEquals( false, obj.isFunction() );
@@ -71,20 +77,22 @@ public class ScriptObjectImplTest
         assertEquals( false, obj.isUndefined() );
         assertEquals( false, obj.isValue() );
         assertEquals( null, obj.getValue() );
-        assertEquals( null, obj.getKeys() );
+        assertEquals( 0, obj.getKeys().size() );
         assertEquals( false, obj.hasMember( "a" ) );
-        assertEquals( null, obj.getMember( "a" ) );
+        assertEquals( true, obj.getMember( "a" ).isUndefined() );
         assertEquals( 2, obj.getArray().size() );
         assertEquals( 1, obj.getArray().get( 0 ).getValue() );
-        assertEquals( null, obj.call( "a" ) );
+        assertEquals( true, obj.call( "a" ).isUndefined() );
         assertEquals( null, obj.getValue( String.class ) );
+        assertEquals( "[1, 2]", obj.getArray( String.class ).toString() );
+        assertEquals( 0, obj.getMap().size() );
     }
 
     @Test
     public void testObject()
         throws Exception
     {
-        final ScriptValue obj = evalObject( "testObject" );
+        final ScriptValue obj = evalValue( "testObject" );
 
         assertEquals( false, obj.isArray() );
         assertEquals( false, obj.isFunction() );
@@ -95,16 +103,18 @@ public class ScriptObjectImplTest
         assertEquals( 2, obj.getKeys().size() );
         assertEquals( true, obj.hasMember( "a" ) );
         assertEquals( 1, obj.getMember( "a" ).getValue() );
-        assertEquals( null, obj.getArray() );
-        assertEquals( null, obj.call( "a" ) );
+        assertEquals( 0, obj.getArray().size() );
+        assertEquals( true, obj.call( "a" ).isUndefined() );
         assertEquals( null, obj.getValue( String.class ) );
+        assertEquals( 0, obj.getArray( String.class ).size() );
+        assertEquals( "a=1,b=2", Joiner.on( "," ).withKeyValueSeparator( "=" ).join( obj.getMap() ) );
     }
 
     @Test
     public void testFunction()
         throws Exception
     {
-        final ScriptValue obj = evalObject( "testFunction" );
+        final ScriptValue obj = evalValue( "testFunction" );
 
         assertEquals( false, obj.isArray() );
         assertEquals( true, obj.isFunction() );
@@ -112,19 +122,21 @@ public class ScriptObjectImplTest
         assertEquals( false, obj.isUndefined() );
         assertEquals( false, obj.isValue() );
         assertEquals( null, obj.getValue() );
-        assertEquals( null, obj.getKeys() );
+        assertEquals( 0, obj.getKeys().size() );
         assertEquals( false, obj.hasMember( "a" ) );
-        assertEquals( null, obj.getMember( "a" ) );
-        assertEquals( null, obj.getArray() );
+        assertEquals( true, obj.getMember( "a" ).isUndefined() );
+        assertEquals( 0, obj.getArray().size() );
         assertEquals( "a", obj.call( "a" ).getValue() );
         assertEquals( null, obj.getValue( String.class ) );
+        assertEquals( 0, obj.getArray( String.class ).size() );
+        assertEquals( 0, obj.getMap().size() );
     }
 
     @Test
     public void testFunction_error()
         throws Exception
     {
-        final ScriptValue obj = evalObject( "testFunctionError" );
+        final ScriptValue obj = evalValue( "testFunctionError" );
 
         try
         {

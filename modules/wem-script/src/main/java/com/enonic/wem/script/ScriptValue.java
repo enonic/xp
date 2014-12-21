@@ -1,6 +1,7 @@
 package com.enonic.wem.script;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface ScriptValue
@@ -26,6 +27,10 @@ public interface ScriptValue
     public ScriptValue getMember( String key );
 
     public List<ScriptValue> getArray();
+
+    public <T> List<T> getArray( Class<T> type );
+
+    public Map<String, Object> getMap();
 
     public ScriptValue call( Object... args );
 }
