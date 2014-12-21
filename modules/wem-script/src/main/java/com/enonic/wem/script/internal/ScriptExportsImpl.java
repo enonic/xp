@@ -2,16 +2,16 @@ package com.enonic.wem.script.internal;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptExports;
-import com.enonic.wem.script.ScriptObject;
+import com.enonic.wem.script.ScriptValue;
 
 final class ScriptExportsImpl
     implements ScriptExports
 {
     private final ResourceKey script;
 
-    private final ScriptObject value;
+    private final ScriptValue value;
 
-    public ScriptExportsImpl( final ResourceKey script, final ScriptObject value )
+    public ScriptExportsImpl( final ResourceKey script, final ScriptValue value )
     {
         this.script = script;
         this.value = value;
@@ -24,7 +24,7 @@ final class ScriptExportsImpl
     }
 
     @Override
-    public ScriptObject getValue()
+    public ScriptValue getValue()
     {
         return this.value;
     }
@@ -35,16 +35,16 @@ final class ScriptExportsImpl
         return getMethod( name ) != null;
     }
 
-    private ScriptObject getMethod( final String name )
+    private ScriptValue getMethod( final String name )
     {
-        final ScriptObject func = this.value.getMember( name );
+        final ScriptValue func = this.value.getMember( name );
         return ( ( func != null ) && func.isFunction() ) ? func : null;
     }
 
     @Override
-    public ScriptObject executeMethod( final String name, final Object... args )
+    public ScriptValue executeMethod( final String name, final Object... args )
     {
-        final ScriptObject method = getMethod( name );
+        final ScriptValue method = getMethod( name );
         if ( method == null )
         {
             return null;

@@ -9,10 +9,10 @@ import jdk.nashorn.api.scripting.ScriptUtils;
 import jdk.nashorn.internal.runtime.Undefined;
 
 import com.enonic.wem.api.convert.Converters;
-import com.enonic.wem.script.ScriptObject;
+import com.enonic.wem.script.ScriptValue;
 
-public final class ScriptObjectImpl
-    implements ScriptObject
+public final class ScriptValueImpl
+    implements ScriptValue
 {
     private final Object value;
 
@@ -20,7 +20,7 @@ public final class ScriptObjectImpl
 
     private final ScriptMethodInvoker invoker;
 
-    public ScriptObjectImpl( final Object value, final ScriptMethodInvoker invoker )
+    public ScriptValueImpl( final Object value, final ScriptMethodInvoker invoker )
     {
         this.invoker = invoker;
 
@@ -88,18 +88,18 @@ public final class ScriptObjectImpl
     }
 
     @Override
-    public ScriptObject getMember( final String key )
+    public ScriptValue getMember( final String key )
     {
         if ( !isObject() )
         {
             return null;
         }
 
-        return new ScriptObjectImpl( this.jsObject.getMember( key ), this.invoker );
+        return new ScriptValueImpl( this.jsObject.getMember( key ), this.invoker );
     }
 
     @Override
-    public List<ScriptObject> getArray()
+    public List<ScriptValue> getArray()
     {
         if ( !isArray() )
         {
@@ -109,13 +109,13 @@ public final class ScriptObjectImpl
         return this.jsObject.values().stream().map( this::newScriptObject ).collect( Collectors.toList() );
     }
 
-    private ScriptObject newScriptObject( final Object value )
+    private ScriptValue newScriptObject( final Object value )
     {
-        return new ScriptObjectImpl( value, this.invoker );
+        return new ScriptValueImpl( value, this.invoker );
     }
 
     @Override
-    public ScriptObject call( final Object... args )
+    public ScriptValue call( final Object... args )
     {
         if ( !isFunction() )
         {
@@ -123,7 +123,7 @@ public final class ScriptObjectImpl
         }
 
         final Object result = this.invoker.invoke( this.jsObject, args );
-        return new ScriptObjectImpl( result, this.invoker );
+        return new ScriptValueImpl( result, this.invoker );
     }
 
     @Override

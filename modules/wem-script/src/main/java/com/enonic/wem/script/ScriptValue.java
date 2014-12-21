@@ -3,8 +3,7 @@ package com.enonic.wem.script;
 import java.util.List;
 import java.util.Set;
 
-// TODO: Rename to ScriptValue
-public interface ScriptObject
+public interface ScriptValue
 {
     public boolean isArray();
 
@@ -24,9 +23,9 @@ public interface ScriptObject
 
     public boolean hasMember( String key );
 
-    public ScriptObject getMember( String key );
+    public ScriptValue getMember( String key );
 
-    public List<ScriptObject> getArray();
+    public List<ScriptValue> getArray();
 
-    public ScriptObject call( Object... args );
+    public ScriptValue call( Object... args );
 }

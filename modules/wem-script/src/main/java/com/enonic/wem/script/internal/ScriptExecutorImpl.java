@@ -8,8 +8,8 @@ import javax.script.ScriptEngine;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.ScriptObject;
-import com.enonic.wem.script.internal.bean.ScriptObjectImpl;
+import com.enonic.wem.script.ScriptValue;
+import com.enonic.wem.script.internal.bean.ScriptValueImpl;
 import com.enonic.wem.script.internal.error.ErrorHelper;
 import com.enonic.wem.script.internal.function.CallFunction;
 import com.enonic.wem.script.internal.function.ExecuteFunction;
@@ -85,9 +85,9 @@ final class ScriptExecutorImpl
     }
 
     @Override
-    public ScriptObject newScriptValue( final Object value )
+    public ScriptValue newScriptValue( final Object value )
     {
-        return new ScriptObjectImpl( value, this::invokeMethod );
+        return new ScriptValueImpl( value, this::invokeMethod );
     }
 
     private void doExecute()

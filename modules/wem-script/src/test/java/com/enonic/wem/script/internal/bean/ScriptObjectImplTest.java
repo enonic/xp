@@ -5,14 +5,14 @@ import org.junit.Test;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.script.AbstractScriptTest;
 import com.enonic.wem.script.ScriptExports;
-import com.enonic.wem.script.ScriptObject;
+import com.enonic.wem.script.ScriptValue;
 
 import static org.junit.Assert.*;
 
 public class ScriptObjectImplTest
     extends AbstractScriptTest
 {
-    private ScriptObject evalObject( final String name )
+    private ScriptValue evalObject( final String name )
         throws Exception
     {
         final ScriptExports exports = runTestScript( "object/object-test.js" );
@@ -23,7 +23,7 @@ public class ScriptObjectImplTest
     public void testUndefined()
         throws Exception
     {
-        final ScriptObject obj = evalObject( "testUndefined" );
+        final ScriptValue obj = evalObject( "testUndefined" );
 
         assertEquals( false, obj.isArray() );
         assertEquals( false, obj.isFunction() );
@@ -43,7 +43,7 @@ public class ScriptObjectImplTest
     public void testValue()
         throws Exception
     {
-        final ScriptObject obj = evalObject( "testValue" );
+        final ScriptValue obj = evalObject( "testValue" );
 
         assertEquals( false, obj.isArray() );
         assertEquals( false, obj.isFunction() );
@@ -63,7 +63,7 @@ public class ScriptObjectImplTest
     public void testArray()
         throws Exception
     {
-        final ScriptObject obj = evalObject( "testArray" );
+        final ScriptValue obj = evalObject( "testArray" );
 
         assertEquals( true, obj.isArray() );
         assertEquals( false, obj.isFunction() );
@@ -84,7 +84,7 @@ public class ScriptObjectImplTest
     public void testObject()
         throws Exception
     {
-        final ScriptObject obj = evalObject( "testObject" );
+        final ScriptValue obj = evalObject( "testObject" );
 
         assertEquals( false, obj.isArray() );
         assertEquals( false, obj.isFunction() );
@@ -104,7 +104,7 @@ public class ScriptObjectImplTest
     public void testFunction()
         throws Exception
     {
-        final ScriptObject obj = evalObject( "testFunction" );
+        final ScriptValue obj = evalObject( "testFunction" );
 
         assertEquals( false, obj.isArray() );
         assertEquals( true, obj.isFunction() );
@@ -124,7 +124,7 @@ public class ScriptObjectImplTest
     public void testFunction_error()
         throws Exception
     {
-        final ScriptObject obj = evalObject( "testFunctionError" );
+        final ScriptValue obj = evalObject( "testFunctionError" );
 
         try
         {

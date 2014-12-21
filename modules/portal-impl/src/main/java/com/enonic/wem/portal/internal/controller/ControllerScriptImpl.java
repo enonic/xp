@@ -6,7 +6,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptExports;
-import com.enonic.wem.script.ScriptObject;
+import com.enonic.wem.script.ScriptValue;
 
 final class ControllerScriptImpl
     implements ControllerScript
@@ -49,11 +49,11 @@ final class ControllerScriptImpl
             return;
         }
 
-        final ScriptObject result = this.scriptExports.executeMethod( methodName, request );
+        final ScriptValue result = this.scriptExports.executeMethod( methodName, request );
         populateResponse( context.getResponse(), result );
     }
 
-    private void populateResponse( final PortalResponse response, final ScriptObject result )
+    private void populateResponse( final PortalResponse response, final ScriptValue result )
     {
         response.setStatus( PortalResponse.STATUS_METHOD_NOT_ALLOWED );
 
@@ -83,7 +83,7 @@ final class ControllerScriptImpl
         response.setBody( value );
     }
 
-    private void populateHeaders( final PortalResponse response, final ScriptObject value )
+    private void populateHeaders( final PortalResponse response, final ScriptValue value )
     {
         if ( !value.isObject() )
         {

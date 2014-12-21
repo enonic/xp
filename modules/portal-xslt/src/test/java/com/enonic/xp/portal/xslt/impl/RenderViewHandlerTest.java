@@ -10,7 +10,7 @@ import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.api.xml.DomHelper;
 import com.enonic.wem.script.AbstractScriptTest;
 import com.enonic.wem.script.ScriptExports;
-import com.enonic.wem.script.ScriptObject;
+import com.enonic.wem.script.ScriptValue;
 
 import static org.junit.Assert.*;
 
@@ -23,7 +23,7 @@ public class RenderViewHandlerTest
         addHandler( new RenderViewHandler() );
     }
 
-    private ScriptObject execute( final String method )
+    private ScriptValue execute( final String method )
         throws Exception
     {
         final ScriptExports exports = runTestScript( "xslt-test.js" );

@@ -15,7 +15,7 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptExports;
-import com.enonic.wem.script.ScriptObject;
+import com.enonic.wem.script.ScriptValue;
 import com.enonic.wem.script.ScriptService;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.internal.invoker.CommandInvokerImpl;
@@ -52,7 +52,7 @@ public final class ScriptServiceImpl
         executor.setScript( script );
 
         final Object exports = executor.executeMain();
-        final ScriptObject value = executor.newScriptValue( exports );
+        final ScriptValue value = executor.newScriptValue( exports );
         return new ScriptExportsImpl( script, value );
     }
 
