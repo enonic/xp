@@ -208,7 +208,7 @@ module api.ui.grid {
                 index = rows.indexOf(row);
             if (index < 0) {
                 rows.push(row);
-                rows.sort();
+                rows.sort((a, b) => { return a - b; });
             } else {
                 rows.splice(index, 1);
             }
@@ -252,7 +252,7 @@ module api.ui.grid {
 
         moveSelectedUp() {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected: number[] = this.getSelectedRows().sort();
+                var selected: number[] = this.getSelectedRows().sort((a, b) => { return a - b; });
                 var row = selected.length >= 1
                     ? selected[0] - 1
                     : -1;
@@ -277,7 +277,7 @@ module api.ui.grid {
 
         moveSelectedDown() {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected: number[] = this.getSelectedRows().sort();
+                var selected: number[] = this.getSelectedRows().sort((a, b) => { return a - b; });
                 var row = selected.length >= 1
                     ? Math.min(selected[selected.length - 1] + 1, this.slickGrid.getDataLength() - 1)
                     : 0;
@@ -292,12 +292,12 @@ module api.ui.grid {
 
         addSelectedUp() {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected: number[] = this.getSelectedRows().sort();
+                var selected: number[] = this.getSelectedRows().sort((a, b) => { return a - b; });
 
                 if (selected.length > 0 && (selected[0] - 1) >= 0) {
                     var row = selected[0] - 1;
                     selected.push(row);
-                    selected = selected.sort();
+                    selected = selected.sort((a, b) => { return a - b; });
                     this.setSelectedRows(selected);
                     return row;
                 }
@@ -308,7 +308,7 @@ module api.ui.grid {
 
         addSelectedDown(): number {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected: number[] = this.getSelectedRows().sort();
+                var selected: number[] = this.getSelectedRows().sort((a, b) => { return a - b; });
 
                 if (selected.length > 0 && (selected[selected.length - 1] + 1) < this.slickGrid.getDataLength()) {
                     var row = selected[selected.length - 1] + 1;
