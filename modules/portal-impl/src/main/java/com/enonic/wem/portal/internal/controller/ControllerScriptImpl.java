@@ -1,12 +1,12 @@
 package com.enonic.wem.portal.internal.controller;
 
+import com.enonic.wem.portal.internal.postprocess.PostProcessor;
+import com.enonic.wem.script.ScriptExports;
+import com.enonic.wem.script.ScriptValue;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.wem.portal.internal.postprocess.PostProcessor;
-import com.enonic.wem.script.ScriptExports;
-import com.enonic.wem.script.ScriptValue;
 
 final class ControllerScriptImpl
     implements ControllerScript
@@ -62,29 +62,36 @@ final class ControllerScriptImpl
             return;
         }
 
-        populateStatus( response, result.getMember( "status" ).getValue( Integer.class ) );
-        populateContentType( response, result.getMember( "contentType" ).getValue( String.class ) );
-        populateBody( response, result.getMember( "body" ).getValue() );
+        populateStatus( response, result.getMember( "status" ) );
+        populateContentType( response, result.getMember( "contentType" ) );
+        populateBody( response, result.getMember( "body" ) );
         populateHeaders( response, result.getMember( "headers" ) );
     }
 
-    private void populateStatus( final PortalResponse response, final Integer value )
+    private void populateStatus( final PortalResponse response, final ScriptValue value )
     {
-        response.setStatus( value != null ? value : PortalResponse.STATUS_OK );
+        final Integer status = ( value != null ) ? value.getValue( Integer.class ) : null;
+        response.setStatus( status != null ? status : PortalResponse.STATUS_OK );
     }
 
-    private void populateContentType( final PortalResponse response, final String value )
+    private void populateContentType( final PortalResponse response, final ScriptValue value )
     {
-        response.setContentType( value != null ? value : "text/html" );
+        final String type = ( value != null ) ? value.getValue( String.class ) : null;
+        response.setContentType( type != null ? type : "text/html" );
     }
 
-    private void populateBody( final PortalResponse response, final Object value )
+    private void populateBody( final PortalResponse response, final ScriptValue value )
     {
-        response.setBody( value );
+        response.setBody( value != null ? value.getValue() : null );
     }
 
     private void populateHeaders( final PortalResponse response, final ScriptValue value )
     {
+        if ( value == null )
+        {
+            return;
+        }
+
         if ( !value.isObject() )
         {
             return;
