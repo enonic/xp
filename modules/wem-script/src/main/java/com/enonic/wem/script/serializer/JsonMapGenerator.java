@@ -12,8 +12,6 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
-import com.enonic.wem.script.internal.serializer.MapGeneratorBase;
-
 public final class JsonMapGenerator
     extends MapGeneratorBase
 {

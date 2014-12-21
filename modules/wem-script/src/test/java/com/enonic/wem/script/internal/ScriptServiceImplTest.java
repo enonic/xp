@@ -6,6 +6,7 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.script.AbstractScriptTest;
 import com.enonic.wem.script.ScriptExports;
+import com.enonic.wem.script.serializer.MapSerializable;
 
 import static org.junit.Assert.*;
 
@@ -31,6 +32,18 @@ public class ScriptServiceImplTest
         assertSame( script, exports.getScript() );
         assertTrue( exports.hasMethod( "hello" ) );
         assertEquals( "Hello World!", exports.executeMethod( "hello", "World" ).getValue() );
+    }
+
+    @Test
+    public void testExecuteExported_objectArg()
+    {
+        final ResourceKey script = ResourceKey.from( "mymodule:/export-test.js" );
+        final ScriptExports exports = runTestScript( script );
+        assertNotNull( exports );
+        assertSame( script, exports.getScript() );
+        assertTrue( exports.hasMethod( "helloObject" ) );
+        assertEquals( "Hello World!",
+                      exports.executeMethod( "helloObject", (MapSerializable) gen -> gen.value( "name", "World" ) ).getValue() );
     }
 
     @Test

@@ -3,19 +3,15 @@ package com.enonic.wem.script.internal;
 import java.util.Map;
 
 import javax.script.Bindings;
+import javax.script.Invocable;
 import javax.script.ScriptEngine;
-
-import com.google.common.collect.Maps;
-
-import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptObject;
-import com.enonic.wem.script.internal.bean.JsObjectConverter;
-import com.enonic.wem.script.internal.bean.ScriptObjectFactory;
-import com.enonic.wem.script.internal.bean.ScriptObjectFactoryImpl;
+import com.enonic.wem.script.internal.bean.ScriptObjectImpl;
 import com.enonic.wem.script.internal.error.ErrorHelper;
+import com.enonic.wem.script.internal.function.CallFunction;
 import com.enonic.wem.script.internal.function.ExecuteFunction;
 import com.enonic.wem.script.internal.function.RequireFunction;
 import com.enonic.wem.script.internal.function.ResolveFunction;
@@ -25,88 +21,84 @@ import com.enonic.wem.script.internal.logger.ScriptLogger;
 final class ScriptExecutorImpl
     implements ScriptExecutor
 {
-    private final ScriptEngine engine;
+    private ScriptEngine engine;
 
-    private final CommandInvoker invoker;
+    private CommandInvoker invoker;
 
-    private final Map<String, Object> globals;
+    private ResourceKey script;
 
-    private final ScriptObjectFactory scriptObjectFactory;
+    private Map<String, Object> globalMap;
 
-    // private final Global global;
+    private Bindings bindings;
 
-    public ScriptExecutorImpl( final ScriptEngine engine, final CommandInvoker invoker )
+    public void setEngine( final ScriptEngine engine )
     {
         this.engine = engine;
+    }
+
+    public void setInvoker( final CommandInvoker invoker )
+    {
         this.invoker = invoker;
-        this.globals = Maps.newHashMap();
-        this.scriptObjectFactory = new ScriptObjectFactoryImpl( this );
-
-        /*
-        try
-        {
-            this.global = ( (ScriptObjectMirror) engine.eval( "this" ) ).to( Global.class );
-        }
-        catch ( final Exception e )
-        {
-            throw new Error( e );
-        }
-        */
     }
 
-    private Bindings createBindings()
+    public void setScript( final ResourceKey script )
     {
-        return this.engine.createBindings();
+        this.script = script;
+    }
+
+    public void setGlobalMap( final Map<String, Object> globalMap )
+    {
+        this.globalMap = globalMap;
     }
 
     @Override
-    public void addGlobalBinding( final String key, final Object value )
+    public Object executeMain()
     {
-        this.globals.put( key, value );
-    }
+        this.bindings = this.engine.createBindings();
+        final Bindings exports = this.engine.createBindings();
+        this.bindings.put( "exports", exports );
 
-    private void doExecute( final Bindings bindings, final ResourceKey script )
-    {
-        try
+        new ScriptLogger( this.script ).register( this.bindings );
+        new ResolveFunction( this.script ).register( this.bindings );
+        new ExecuteFunction( this.script, this.invoker ).register( this.bindings );
+        new RequireFunction( this.script, this ).register( this.bindings );
+        new CallFunction().register( this.bindings );
+
+        if ( this.globalMap != null )
         {
-            final Resource resource = Resource.from( script );
-            final String source = resource.readString();
-
-            bindings.put( ScriptEngine.FILENAME, script.toString() );
-            this.engine.eval( source, bindings );
+            this.bindings.putAll( this.globalMap );
         }
-        catch ( final Exception e )
-        {
-            throw ErrorHelper.handleError( e );
-        }
-    }
 
-    @Override
-    public Bindings executeRequire( final ResourceKey script )
-    {
-        final Bindings bindings = createBindings();
-        bindings.putAll( this.globals );
-
-        final Bindings exports = createBindings();
-        bindings.put( "exports", exports );
-
-        new ScriptLogger( script ).register( bindings );
-        new ResolveFunction( script ).register( bindings );
-        new ExecuteFunction( script, this.invoker ).register( bindings );
-        new RequireFunction( script, this ).register( bindings );
-
-        doExecute( bindings, script );
+        doExecute();
         return exports;
     }
 
     @Override
-    public ScriptObject invokeMethod( final Object scope, final JSObject func, final Object... args )
+    public Object executeRequire( final ResourceKey script )
+    {
+        final ScriptExecutorImpl executor = new ScriptExecutorImpl();
+        executor.engine = this.engine;
+        executor.globalMap = this.globalMap;
+        executor.invoker = this.invoker;
+        executor.script = script;
+        return executor.executeMain();
+    }
+
+    @Override
+    public ScriptObject newScriptValue( final Object value )
+    {
+        return new ScriptObjectImpl( value, this::invokeMethod );
+    }
+
+    private void doExecute()
     {
         try
         {
-            final Object[] converted = convertToJsObject( args );
-            final Object result = func.call( scope, converted );
-            return this.scriptObjectFactory.create( result );
+            final Resource resource = Resource.from( this.script );
+            final String source = resource.readString();
+
+            this.bindings.put( ScriptEngine.FILENAME, this.script.toString() );
+            this.engine.eval( source, this.bindings );
         }
         catch ( final Exception e )
         {
@@ -114,25 +106,15 @@ final class ScriptExecutorImpl
         }
     }
 
-    private Object[] convertToJsObject( final Object[] value )
+    private Object invokeMethod( final Object func, final Object... args )
     {
-        return JsObjectConverter.toJsArray( value );
-
-        /*
-        if ( Context.getGlobal() != null )
-        {
-            return JsObjectConverter.toJsArray( value );
-        }
-
         try
         {
-            Context.setGlobal( this.global );
-            return JsObjectConverter.toJsArray( value );
+            return ( (Invocable) this.engine ).invokeMethod( this.bindings, "__call", func, args );
         }
-        finally
+        catch ( final Exception e )
         {
-            Context.setGlobal( null );
+            throw ErrorHelper.handleError( e );
         }
-        */
     }
 }

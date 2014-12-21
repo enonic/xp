@@ -2,15 +2,13 @@ package com.enonic.wem.script.internal.function;
 
 import javax.script.Bindings;
 
-import jdk.nashorn.api.scripting.AbstractJSObject;
-
 import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.wem.script.internal.bean.JsObjectConverter;
 import com.enonic.wem.script.internal.invoker.CommandInvoker;
 import com.enonic.wem.script.internal.invoker.CommandRequestImpl;
-import com.enonic.wem.script.internal.bean.JsObjectConverter;
 
 public final class ExecuteFunction
-    extends AbstractJSObject
+    extends AbstractFunction
 {
     private final ResourceKey script;
 
@@ -20,18 +18,6 @@ public final class ExecuteFunction
     {
         this.script = script;
         this.invoker = invoker;
-    }
-
-    @Override
-    public boolean isFunction()
-    {
-        return true;
-    }
-
-    @Override
-    public boolean isStrictFunction()
-    {
-        return true;
     }
 
     @Override
@@ -52,6 +38,7 @@ public final class ExecuteFunction
         return this.invoker.invoke( request );
     }
 
+    @Override
     public void register( final Bindings bindings )
     {
         bindings.put( "execute", this );

@@ -2,30 +2,16 @@ package com.enonic.wem.script.internal.function;
 
 import javax.script.Bindings;
 
-import jdk.nashorn.api.scripting.AbstractJSObject;
-
 import com.enonic.wem.api.resource.ResourceKey;
 
 public final class ResolveFunction
-    extends AbstractJSObject
+    extends AbstractFunction
 {
     private final ResourceKey script;
 
     public ResolveFunction( final ResourceKey script )
     {
         this.script = script;
-    }
-
-    @Override
-    public boolean isFunction()
-    {
-        return true;
-    }
-
-    @Override
-    public boolean isStrictFunction()
-    {
-        return true;
     }
 
     @Override
@@ -52,6 +38,7 @@ public final class ResolveFunction
         }
     }
 
+    @Override
     public void register( final Bindings bindings )
     {
         bindings.put( "resolve", this );

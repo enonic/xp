@@ -1,6 +1,7 @@
 package com.enonic.wem.script.internal;
 
-import javax.script.Bindings;
+import java.util.Map;
+
 import javax.script.ScriptEngine;
 
 import org.osgi.service.component.annotations.Component;
@@ -8,10 +9,13 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import com.google.common.collect.Maps;
+
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptExports;
+import com.enonic.wem.script.ScriptObject;
 import com.enonic.wem.script.ScriptService;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.internal.invoker.CommandInvokerImpl;
@@ -20,27 +24,36 @@ import com.enonic.wem.script.internal.invoker.CommandInvokerImpl;
 public final class ScriptServiceImpl
     implements ScriptService
 {
+    private final ScriptEngine engine;
+
     private final CommandInvokerImpl invoker;
 
-    private final ScriptExecutor executor;
+    private final Map<String, Object> globalMap;
 
     public ScriptServiceImpl()
     {
+        this.engine = new NashornScriptEngineFactory().getScriptEngine();
         this.invoker = new CommandInvokerImpl();
-        final ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
-        this.executor = new ScriptExecutorImpl( engine, this.invoker );
+        this.globalMap = Maps.newHashMap();
     }
 
-    public void addGlobalBinding( String key, Object value )
+    public void addGlobalVariable( final String key, final Object value )
     {
-        this.executor.addGlobalBinding( key, value );
+        this.globalMap.put( key, value );
     }
 
     @Override
     public ScriptExports execute( final ResourceKey script )
     {
-        final Bindings exports = this.executor.executeRequire( script );
-        return new ScriptExportsImpl( script, this.executor, exports );
+        final ScriptExecutorImpl executor = new ScriptExecutorImpl();
+        executor.setEngine( this.engine );
+        executor.setInvoker( this.invoker );
+        executor.setGlobalMap( this.globalMap );
+        executor.setScript( script );
+
+        final Object exports = executor.executeMain();
+        final ScriptObject value = executor.newScriptValue( exports );
+        return new ScriptExportsImpl( script, value );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)

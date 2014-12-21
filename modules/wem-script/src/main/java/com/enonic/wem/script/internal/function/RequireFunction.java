@@ -2,14 +2,12 @@ package com.enonic.wem.script.internal.function;
 
 import javax.script.Bindings;
 
-import jdk.nashorn.api.scripting.AbstractJSObject;
-
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.internal.ScriptExecutor;
 
 public final class RequireFunction
-    extends AbstractJSObject
+    extends AbstractFunction
 {
     private final static String SCRIPT_SUFFIX = ".js";
 
@@ -21,18 +19,6 @@ public final class RequireFunction
     {
         this.script = script;
         this.executor = executor;
-    }
-
-    @Override
-    public boolean isFunction()
-    {
-        return true;
-    }
-
-    @Override
-    public boolean isStrictFunction()
-    {
-        return true;
     }
 
     @Override
@@ -75,6 +61,7 @@ public final class RequireFunction
         return this.script.resolve( "/lib/" + name );
     }
 
+    @Override
     public void register( final Bindings bindings )
     {
         bindings.put( "require", this );

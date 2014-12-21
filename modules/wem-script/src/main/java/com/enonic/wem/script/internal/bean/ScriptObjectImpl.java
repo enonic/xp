@@ -10,7 +10,6 @@ import jdk.nashorn.internal.runtime.Undefined;
 
 import com.enonic.wem.api.convert.Converters;
 import com.enonic.wem.script.ScriptObject;
-import com.enonic.wem.script.internal.error.ErrorHelper;
 
 public final class ScriptObjectImpl
     implements ScriptObject
@@ -19,8 +18,12 @@ public final class ScriptObjectImpl
 
     private final JSObject jsObject;
 
-    public ScriptObjectImpl( final Object value )
+    private final ScriptMethodInvoker invoker;
+
+    public ScriptObjectImpl( final Object value, final ScriptMethodInvoker invoker )
     {
+        this.invoker = invoker;
+
         Object unwrapped = ScriptUtils.unwrap( value );
         if ( unwrapped instanceof Undefined )
         {
@@ -92,7 +95,7 @@ public final class ScriptObjectImpl
             return null;
         }
 
-        return new ScriptObjectImpl( this.jsObject.getMember( key ) );
+        return new ScriptObjectImpl( this.jsObject.getMember( key ), this.invoker );
     }
 
     @Override
@@ -108,7 +111,7 @@ public final class ScriptObjectImpl
 
     private ScriptObject newScriptObject( final Object value )
     {
-        return new ScriptObjectImpl( value );
+        return new ScriptObjectImpl( value, this.invoker );
     }
 
     @Override
@@ -119,15 +122,8 @@ public final class ScriptObjectImpl
             return null;
         }
 
-        try
-        {
-            final Object result = this.jsObject.call( this.jsObject, JsObjectConverter.toJsArray( args ) );
-            return new ScriptObjectImpl( result );
-        }
-        catch ( final Exception e )
-        {
-            throw ErrorHelper.handleError( e );
-        }
+        final Object result = this.invoker.invoke( this.jsObject, args );
+        return new ScriptObjectImpl( result, this.invoker );
     }
 
     @Override

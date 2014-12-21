@@ -1,4 +1,4 @@
-package com.enonic.wem.script.internal.serializer;
+package com.enonic.wem.script.serializer;
 
 import java.util.Stack;
 

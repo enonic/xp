@@ -3,6 +3,7 @@ package com.enonic.wem.script;
 import java.util.List;
 import java.util.Set;
 
+// TODO: Rename to ScriptValue
 public interface ScriptObject
 {
     public boolean isArray();
