@@ -47,9 +47,11 @@ module api.app.bar {
             var items: api.ui.tab.TabMenuItem[] = this.getNavigationItems();
             var item;
             for (var i = 0; i < items.length; i++) {
-                item = <AppBarTabMenuItem>items[i];
-                if (item.getTabId().equals(tabId)) {
-                    return item;
+                if (item) {
+                    item = <AppBarTabMenuItem>items[i];
+                    if (item.getTabId().equals(tabId)) {
+                        return item;
+                    }
                 }
             }
             return null;
