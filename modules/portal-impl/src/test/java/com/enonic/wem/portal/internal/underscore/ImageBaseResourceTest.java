@@ -12,6 +12,7 @@ import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.Media;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.data.PropertyTree;
@@ -82,7 +83,7 @@ public abstract class ImageBaseResourceTest
         final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         data.addString( "media", attachments[0].getName() );
 
-        return Content.newContent().
+        return Media.create().
             id( ContentId.from( id ) ).
             path( contentPath ).
             createdTime( Instant.now() ).

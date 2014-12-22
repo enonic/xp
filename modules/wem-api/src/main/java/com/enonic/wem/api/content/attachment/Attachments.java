@@ -2,7 +2,6 @@ package com.enonic.wem.api.content.attachment;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -23,14 +22,31 @@ public final class Attachments
         this.attachmentByName = Maps.uniqueIndex( list, new ToNameFunction() );
     }
 
-    public Attachment getAttachment( final String name )
+    public Attachment byName( final String name )
     {
         return attachmentByName.get( name );
     }
 
-    public boolean hasAttachment( final String name )
+    public Attachment byLabel( final String name )
+    {
+        for ( final Attachment attachment : this )
+        {
+            if ( name.equals( attachment.getLabel() ) )
+            {
+                return attachment;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasByName( final String name )
     {
         return attachmentByName.containsKey( name );
+    }
+
+    public boolean hasByLabel( final String label )
+    {
+        return byLabel( label ) != null;
     }
 
     public Attachments add( final Attachment... attachments )
@@ -47,13 +63,6 @@ public final class Attachments
         listBuilder.addAll( this.list );
         listBuilder.addAll( attachments );
         return new Attachments( listBuilder.build() );
-    }
-
-    public Attachments remove( final String attachmentName )
-    {
-        final Map<String, Attachment> tmp = Maps.newHashMap( this.attachmentByName );
-        tmp.remove( attachmentName );
-        return new Attachments( ImmutableList.copyOf( tmp.values() ) );
     }
 
     public static Attachments empty()
@@ -84,6 +93,16 @@ public final class Attachments
         public String apply( final Attachment value )
         {
             return value.getName();
+        }
+    }
+
+    private final static class ToLabelFunction
+        implements Function<Attachment, String>
+    {
+        @Override
+        public String apply( final Attachment value )
+        {
+            return value.getLabel();
         }
     }
 

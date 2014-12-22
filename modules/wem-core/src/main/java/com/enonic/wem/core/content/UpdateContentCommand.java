@@ -27,13 +27,9 @@ import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.thumb.Thumbnail;
 import com.enonic.wem.core.media.MediaInfo;
 
-import static com.enonic.wem.api.content.Content.newContent;
-
 final class UpdateContentCommand
     extends AbstractContentCommand
 {
-    private static final String THUMBNAIL_MIME_TYPE = "image/png";
-
     private final static Logger LOG = LoggerFactory.getLogger( UpdateContentCommand.class );
 
     private final UpdateContentParams params;
@@ -77,7 +73,7 @@ final class UpdateContentCommand
 
         validateEditedContent( editedContent );
 
-        editedContent = newContent( editedContent ).modifier( this.params.getModifier() ).build();
+        editedContent = Content.newContent( editedContent ).modifier( this.params.getModifier() ).build();
 
         final ProcessUpdateResult processUpdateResult =
             proxyProcessor.processEdit( contentBeforeChange.getType(), params, params.getCreateAttachments() );
@@ -95,7 +91,7 @@ final class UpdateContentCommand
             final Thumbnail mediaThumbnail = resolveMediaThumbnail( editedContent );
             if ( mediaThumbnail != null )
             {
-                editedContent = newContent( editedContent ).thumbnail( mediaThumbnail ).build();
+                editedContent = Content.newContent( editedContent ).thumbnail( mediaThumbnail ).build();
             }
         }
 
@@ -147,7 +143,7 @@ final class UpdateContentCommand
 
         if ( contentType.getSuperType().isMedia() )
         {
-            /*Attachment mediaAttachment = this.params.getAttachment( content.getName().toString() );
+            /*Attachment mediaAttachment = this.params.byName( content.getName().toString() );
 
             if ( mediaAttachment == null )
             {

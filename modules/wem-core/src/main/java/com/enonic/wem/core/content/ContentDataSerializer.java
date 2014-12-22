@@ -11,8 +11,6 @@ import com.enonic.wem.api.content.attachment.AttachmentNames;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
-import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
@@ -27,8 +25,6 @@ public class ContentDataSerializer
     private static final FormDataSerializer FORM_SERIALIZER = new FormDataSerializer( ContentPropertyNames.FORM );
 
     private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE );
-
-    private static final SiteDataSerializer SITE_SERIALIZER = new SiteDataSerializer( ContentPropertyNames.SITE );
 
     public void toData( final Content content, final PropertySet contentAsData, final CreateAttachments createAttachments )
     {
@@ -66,20 +62,7 @@ public class ContentDataSerializer
     public Content.Builder fromData( final PropertySet contentAsSet )
     {
         final ContentTypeName contentTypeName = ContentTypeName.from( contentAsSet.getString( ContentPropertyNames.TYPE ) );
-        final Content.Builder builder;
-        if ( contentTypeName.isPageTemplate() )
-        {
-            builder = PageTemplate.newPageTemplate();
-        }
-        else if ( contentTypeName.isSite() )
-        {
-            builder = Site.newSite();
-        }
-        else
-        {
-            builder = Content.newContent();
-        }
-        builder.type( contentTypeName );
+        final Content.Builder builder = Content.newContent( contentTypeName );
 
         builder.displayName( contentAsSet.getString( ContentPropertyNames.DISPLAY_NAME ) );
         builder.draft( contentAsSet.getBoolean( ContentPropertyNames.DRAFT ) );
@@ -106,7 +89,7 @@ public class ContentDataSerializer
         final Attachments attachments = dataToAttachments( contentAsSet.getSets( ContentPropertyNames.ATTACHMENT ) );
         builder.attachments( attachments );
 
-        final Attachment thumbnailAttachment = attachments.getAttachment( AttachmentNames.THUMBNAIL );
+        final Attachment thumbnailAttachment = attachments.byName( AttachmentNames.THUMBNAIL );
         if ( thumbnailAttachment != null )
         {
             final BinaryReference thumbnailBinaryRef = thumbnailAttachment.getBinaryReference();

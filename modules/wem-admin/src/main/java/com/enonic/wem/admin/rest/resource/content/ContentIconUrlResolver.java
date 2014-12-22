@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rest.resource.content;
 import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ImageMediaHelper;
+import com.enonic.wem.api.content.Media;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -32,9 +32,9 @@ public final class ContentIconUrlResolver
             return ServletRequestUrlHelper.createUri(
                 "/admin/rest/content/icon/" + content.getId() + "?ts=" + content.getModifiedTime().toEpochMilli() );
         }
-        else if ( content.getType().isImageMedia() )
+        else if ( content instanceof Media )
         {
-            final Attachment attachment = ImageMediaHelper.getImageAttachment( content );
+            final Attachment attachment = ( (Media) content ).getMediaAttachment();
             if ( attachment != null )
             {
                 return ServletRequestUrlHelper.createUri(

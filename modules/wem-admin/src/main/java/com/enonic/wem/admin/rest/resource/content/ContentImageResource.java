@@ -17,7 +17,7 @@ import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.ImageMediaHelper;
+import com.enonic.wem.api.content.Media;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -58,9 +58,9 @@ public final class ContentImageResource
 
         ResolvedImage resolvedImage;
 
-        if ( content.getType().isImageMedia() )
+        if ( content instanceof Media )
         {
-            resolvedImage = resolveResponseFromContentImageAttachment( content, size );
+            resolvedImage = resolveResponseFromContentImageAttachment( (Media) content, size );
             if ( resolvedImage.isOK() )
             {
                 final CacheControl cacheControl = new CacheControl();
@@ -81,12 +81,12 @@ public final class ContentImageResource
     }
 
 
-    private ResolvedImage resolveResponseFromContentImageAttachment( final Content content, final int size )
+    private ResolvedImage resolveResponseFromContentImageAttachment( final Media media, final int size )
     {
-        final Attachment attachment = ImageMediaHelper.getImageAttachment( content );
+        final Attachment attachment = media.getMediaAttachment();
         if ( attachment != null )
         {
-            final ByteSource binary = contentService.getBinary( content.getId(), attachment.getBinaryReference() );
+            final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );
             if ( binary != null )
             {
                 final BufferedImage contentImage = helper.readImage( binary, size, ScaleMax );

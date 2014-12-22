@@ -172,7 +172,7 @@ public class ContentNodeTranslator
 
         if ( contentType.getSuperType().isMedia() )
         {
-            Attachment mediaAttachment = params.getAttachment( params.getName().toString() );
+            Attachment mediaAttachment = params.byName( params.getName().toString() );
             if ( mediaAttachment == null )
             {
                 mediaAttachment = params.getAttachments().first();

@@ -53,6 +53,13 @@
   </service>
 
   <service auto-export="interfaces">
+    <bean class="com.enonic.wem.admin.rest.resource.content.ContentMediaResource">
+      <property name="contentService" ref="contentService"/>
+      <property name="contentTypeService" ref="contentTypeService"/>
+    </bean>
+  </service>
+
+  <service auto-export="interfaces">
     <bean class="com.enonic.wem.admin.rest.resource.content.ContentImageResource">
       <property name="contentService" ref="contentService"/>
       <property name="contentTypeService" ref="contentTypeService"/>
@@ -62,7 +69,6 @@
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.admin.rest.resource.content.ContentIconResource">
       <property name="contentService" ref="contentService"/>
-      <property name="blobService" ref="blobService"/>
     </bean>
   </service>
 

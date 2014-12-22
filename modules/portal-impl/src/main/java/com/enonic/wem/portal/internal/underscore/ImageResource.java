@@ -23,7 +23,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.ImageMediaHelper;
+import com.enonic.wem.api.content.Media;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.image.ImageHelper;
@@ -91,9 +91,9 @@ public final class ImageResource
     public Response getById( @PathParam("imageId") final String id )
     {
         final ContentId imageContentId = ContentId.from( id );
-        final Content imageContent = getContent( imageContentId );
+        final Media imageContent = getImage( imageContentId );
 
-        final Attachment attachment = ImageMediaHelper.getImageAttachment( imageContent );
+        final Attachment attachment = imageContent.getMediaAttachment();
         if ( attachment == null )
         {
             throw notFound( "Attachment [%s] not found", imageContent.getName().toString() );
@@ -117,8 +117,8 @@ public final class ImageResource
     @Path("{fileName}")
     public Response getByName( @PathParam("fileName") final String attachmentName )
     {
-        final Content content = getContent( this.contentPath );
-        final Attachment attachment = content.getAttachments().getAttachment( attachmentName );
+        final Content content = getImage( this.contentPath );
+        final Attachment attachment = content.getAttachments().byName( attachmentName );
 
         final ByteSource binary = contentService.getBinary( content.getId(), attachment.getBinaryReference() );
         if ( binary == null )
@@ -154,26 +154,46 @@ public final class ImageResource
         }
     }
 
-    private Content getContent( final ContentId contentId )
+    private Media getImage( final ContentId contentId )
     {
         final Content content = this.contentService.getById( contentId );
-        if ( content != null )
+        if ( content == null )
         {
-            return content;
+            throw notFound( "Content with id [%s] not found", contentId.toString() );
         }
 
-        throw notFound( "Content with id [%s] not found", contentId.toString() );
+        if ( !( content instanceof Media ) )
+        {
+            throw notFound( "Content with id [%s] is not an Image", contentId.toString() );
+        }
+
+        final Media media = (Media) content;
+        if ( !media.isImage() )
+        {
+            throw notFound( "Content with id [%s] is not an Image", contentId.toString() );
+        }
+        return media;
     }
 
-    private Content getContent( final ContentPath contentPath )
+    private Content getImage( final ContentPath contentPath )
     {
         final Content content = this.contentService.getByPath( contentPath );
-        if ( content != null )
+        if ( content == null )
         {
-            return content;
+            throw notFound( "Content with path [%s] not found", contentPath.toString() );
         }
 
-        throw notFound( "Content with path [%s] not found", contentPath.toString() );
+        if ( !( content instanceof Media ) )
+        {
+            throw notFound( "Content with path [%s] is not an Image", contentPath.toString() );
+        }
+
+        final Media media = (Media) content;
+        if ( !media.isImage() )
+        {
+            throw notFound( "Content with path [%s] is not an Image", contentPath.toString() );
+        }
+        return media;
     }
 
     private BufferedImage toBufferedImage( final ByteSource byteSource )

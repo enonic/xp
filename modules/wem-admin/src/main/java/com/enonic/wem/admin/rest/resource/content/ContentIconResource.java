@@ -18,11 +18,10 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter;
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.ImageMediaHelper;
+import com.enonic.wem.api.content.Media;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.thumb.Thumbnail;
 import com.enonic.xp.web.jaxrs.JaxRsComponent;
@@ -37,8 +36,6 @@ public final class ContentIconResource
     implements JaxRsComponent
 {
     private static final ContentImageHelper helper = new ContentImageHelper();
-
-    private BlobService blobService;
 
     private ContentService contentService;
 
@@ -62,7 +59,7 @@ public final class ContentIconResource
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
 
-        ResolvedImage resolvedImage = resolveResponseFromContentThumbnail( content, size, crop );
+        ResolvedImage resolvedImage = resolveResponseFromThumbnail( content, size, crop );
         if ( resolvedImage.isOK() )
         {
             final boolean cacheForever = StringUtils.isNotEmpty( timestamp );
@@ -77,19 +74,23 @@ public final class ContentIconResource
                 return resolvedImage.toResponse();
             }
         }
-        else if ( content.getType().isImageMedia() )
+        else
         {
-            resolvedImage = resolveResponseFromContentImageAttachment( content, size );
-            if ( resolvedImage.isOK() )
+            if ( content instanceof Media )
             {
-                return resolvedImage.toResponse();
+                final Media media = (Media) content;
+                resolvedImage = resolveResponseFromImageAttachment( media, size );
+                if ( resolvedImage.isOK() )
+                {
+                    return resolvedImage.toResponse();
+                }
             }
         }
 
         throw new WebApplicationException( Response.Status.NOT_FOUND );
     }
 
-    private ResolvedImage resolveResponseFromContentThumbnail( final Content content, final int size, final boolean crop )
+    private ResolvedImage resolveResponseFromThumbnail( final Content content, final int size, final boolean crop )
     {
         final Thumbnail contentThumbnail = content.getThumbnail();
 
@@ -106,12 +107,12 @@ public final class ContentIconResource
         return ResolvedImage.unresolved();
     }
 
-    private ResolvedImage resolveResponseFromContentImageAttachment( final Content content, final int size )
+    private ResolvedImage resolveResponseFromImageAttachment( final Media media, final int size )
     {
-        final Attachment attachment = ImageMediaHelper.getImageAttachment( content );
+        final Attachment attachment = media.getMediaAttachment();
         if ( attachment != null )
         {
-            final ByteSource binary = contentService.getBinary( content.getId(), attachment.getBinaryReference() );
+            final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );
             if ( binary != null )
             {
                 final BufferedImage contentImage = helper.readImage( binary, size, ScaleSquareFilter );
@@ -119,11 +120,6 @@ public final class ContentIconResource
             }
         }
         return ResolvedImage.unresolved();
-    }
-
-    public void setBlobService( final BlobService blobService )
-    {
-        this.blobService = blobService;
     }
 
     public void setContentService( final ContentService contentService )

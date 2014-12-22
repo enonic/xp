@@ -73,6 +73,11 @@ public final class PageTemplate
         return new Builder();
     }
 
+    public static PageTemplate.Builder newPageTemplate( final PageTemplate source )
+    {
+        return new Builder( source );
+    }
+
     public static PageTemplate.Builder copyOf( final PageTemplate pageTemplate )
     {
         return new Builder( pageTemplate );
@@ -88,7 +93,7 @@ public final class PageTemplate
             super();
         }
 
-        private Builder( final PageTemplate source )
+        public Builder( final PageTemplate source )
         {
             super( source );
         }

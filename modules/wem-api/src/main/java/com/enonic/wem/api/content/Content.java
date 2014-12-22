@@ -110,16 +110,6 @@ public class Content
         this.inheritPermissions = builder.inheritPermissions;
     }
 
-    public static Builder newContent()
-    {
-        return new Builder();
-    }
-
-    public static Builder newContent( final Content content )
-    {
-        return new Builder( content );
-    }
-
     public ContentPath getParentPath()
     {
         return parentPath;
@@ -332,6 +322,59 @@ public class Content
                              hasChildren, inheritPermissions, childOrder, thumbnail, form, permissions, attachments, data, metadata, page );
     }
 
+    public static Builder newContent( final ContentTypeName type )
+    {
+        if ( type.isPageTemplate() )
+        {
+            final PageTemplate.Builder builder = PageTemplate.newPageTemplate();
+            builder.type( type );
+            return builder;
+        }
+        else if ( type.isSite() )
+        {
+            Site.Builder builder = Site.newSite();
+            builder.type( type );
+            return builder;
+        }
+        else if ( type.isDescendantOfMedia() )
+        {
+            Media.Builder builder = Media.create();
+            builder.type( type );
+            return builder;
+        }
+        else
+        {
+            Builder builder = Content.newContent();
+            builder.type( type );
+            return builder;
+        }
+    }
+
+    public static Builder newContent()
+    {
+        return new Builder();
+    }
+
+    public static Builder newContent( final Content source )
+    {
+        if ( source instanceof PageTemplate )
+        {
+            return new PageTemplate.Builder( (PageTemplate) source );
+        }
+        else if ( source instanceof Site )
+        {
+            return new Site.Builder( (Site) source );
+        }
+        else if ( source instanceof Media )
+        {
+            return new Media.Builder( (Media) source );
+        }
+        else
+        {
+            return new Builder( source );
+        }
+    }
+
     public static class Builder<BUILDER extends Builder, C extends Content>
     {
         protected ContentId id;
@@ -376,7 +419,7 @@ public class Content
 
         protected boolean inheritPermissions;
 
-        public Builder()
+        protected Builder()
         {
             this.data = new PropertyTree();
             this.attachments = Attachments.empty();
@@ -384,7 +427,7 @@ public class Content
             this.inheritPermissions = true;
         }
 
-        public Builder( final Content source )
+        protected Builder( final Content source )
         {
 
             this.id = source.id;
@@ -449,6 +492,10 @@ public class Content
 
         public Builder<BUILDER, C> type( final ContentTypeName type )
         {
+            if ( type.isDescendantOfMedia() && !( this instanceof Media.Builder ) )
+            {
+                throw new IllegalArgumentException( "Please create Builder via Media when creating a Media" );
+            }
             this.type = type;
             return this;
         }
@@ -469,7 +516,7 @@ public class Content
         {
             this.attachments = attachments;
 
-            final Attachment thumbnailAttachment = attachments.getAttachment( AttachmentNames.THUMBNAIL );
+            final Attachment thumbnailAttachment = attachments.byName( AttachmentNames.THUMBNAIL );
             if ( thumbnailAttachment != null )
             {
                 thumbnail( Thumbnail.from( thumbnailAttachment.getBinaryReference(), thumbnailAttachment.getMimeType(),
