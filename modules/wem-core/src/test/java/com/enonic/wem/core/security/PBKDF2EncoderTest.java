@@ -20,29 +20,25 @@ public class PBKDF2EncoderTest
     public void encode_validate()
         throws Exception
     {
+        final String encodedPwd = encoder.encodePassword( "fiskepudding" );
 
-        final String encodedPwd = encoder.encodePassword( "runar" );
-
-        System.out.println( encodedPwd );
-
-        assertTrue( encoder.validate( "runar", encodedPwd ) );
-        assertFalse( encoder.validate( "Runar", encodedPwd ) );
-        assertFalse( encoder.validate( "runa1", encodedPwd ) );
-        assertFalse( encoder.validate( "runar ", encodedPwd ) );
+        assertTrue( encoder.validate( "fiskepudding", encodedPwd ) );
+        assertFalse( encoder.validate( "Fiskepudding", encodedPwd ) );
+        assertFalse( encoder.validate( "fiskepudding1", encodedPwd ) );
+        assertFalse( encoder.validate( "fiskepudding ", encodedPwd ) );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void unknown_format()
         throws Exception
     {
-        assertTrue( encoder.validate( "runar", this.encoder.getType() + ":fisk" ) );
+        assertTrue( encoder.validate( "fiskepudding", this.encoder.getType() + ":fisk" ) );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void unknown_type()
         throws Exception
     {
-        assertTrue( encoder.validate( "runar", "fisk" + ":ost:balle" ) );
+        assertTrue( encoder.validate( "fiskepudding", "fisk" + ":ost:bolle" ) );
     }
-
 }
