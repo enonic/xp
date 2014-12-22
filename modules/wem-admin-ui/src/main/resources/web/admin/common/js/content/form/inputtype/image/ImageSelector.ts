@@ -176,7 +176,7 @@ module api.content.form.inputtype.image {
 
             this.uploadDialog.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
                 this.uploadDialog.close();
-                debugger;
+
                 event.getUploadItems().forEach((uploadItem: UploadItem<Content>) => {
                     var value = ImageSelectorDisplayValue.fromUploadItem(uploadItem);
 
@@ -190,7 +190,6 @@ module api.content.form.inputtype.image {
 
             this.uploadDialog.onUploadProgress((event: FileUploadProgressEvent<Content>) => {
                 var item = event.getUploadItem();
-                debugger;
 
                 var selectedOption = this.selectedOptionsView.getById(item.getId());
                 (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).setProgress(item.getProgress());
@@ -199,7 +198,6 @@ module api.content.form.inputtype.image {
             this.uploadDialog.onImageUploaded((event: FileUploadedEvent<Content>) => {
                 var item = event.getUploadItem();
                 var createdContent = item.getModel();
-                debugger;
 
                 new api.content.ContentCreatedEvent(createdContent.getContentId()).fire();
 
@@ -212,7 +210,6 @@ module api.content.form.inputtype.image {
 
             this.uploadDialog.onUploadFailed((event: FileUploadFailedEvent<Content>) => {
                 var item = event.getUploadItem();
-                debugger;
 
                 var selectedOption = this.selectedOptionsView.getById(item.getId());
                 (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).showError("Upload failed");
