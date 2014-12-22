@@ -82,7 +82,24 @@ final class ControllerScriptImpl
 
     private void populateBody( final PortalResponse response, final ScriptValue value )
     {
-        response.setBody( value != null ? value.getValue() : null );
+        if ( ( value == null ) || value.isFunction() )
+        {
+            return;
+        }
+
+        if ( value.isArray() )
+        {
+            response.setBody( value.getValue( String.class ) );
+            return;
+        }
+
+        if ( value.isObject() )
+        {
+            response.setBody( value.getMap() );
+            return;
+        }
+
+        response.setBody( value.getValue() );
     }
 
     private void populateHeaders( final PortalResponse response, final ScriptValue value )
