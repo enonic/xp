@@ -12,7 +12,7 @@
     &:extend(.icon);
     .icon-grid4;
 
-    float: left;
+    float: right;
     width: 24px;
     height: 24px;
     padding: 0;
@@ -55,80 +55,5 @@
       color: rgba(255,255,255,0.5);
     }
   }
-
-  .user-button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 44px;
-    width: 44px;
-    margin: 0 0 0 8px;
-    padding: 0;
-    border: 0;
-    background-color: transparent;
-    background-size: 44px;
-    cursor: pointer;
-  }
 }
 
-.user-info-popup {
-  z-index: @z-index-user-info-popup;
-  position: absolute;
-  top: 44px;
-  right: 12px;
-  width: 250px;
-  padding: 5px;
-  background: white;
-  display: none;
-
-  .box-shadow(0px 0px 4px @admin-shadow-gray);
-
-  img {
-    width: 100px;
-    height: 100px;
-  }
-
-  .title {
-    padding: 5px;
-    background: #333;
-    color: white;
-    font-weight: bold;
-    font-size: 16px;
-  }
-
-  .user-name {
-    margin: 5px;
-    color: #333;
-    font-weight: bold;
-    font-size: 18px;
-  }
-
-  button {
-    width: 100%;
-    margin: 5px 0;
-    padding: 3px;
-    border: none;
-    cursor: pointer;
-    background: #B51A00;
-    color: white;
-    font-weight: bold;
-  }
-
-  .content {
-    .column {
-      float: left;
-      margin-left: 10px;
-      margin-right: 10px;
-      width: 100px;
-
-      * {
-        display: block;
-      }
-
-      a {
-        text-decoration: none;
-        color: blue;
-      }
-    }
-  }
-}
