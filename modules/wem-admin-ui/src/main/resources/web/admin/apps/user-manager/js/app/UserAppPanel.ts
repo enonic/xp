@@ -179,7 +179,10 @@ module app {
                     principalPath = userItem.getPrincipal().getKey().toPath(true);
                     tabName = PrincipalType[principalType];
                     tabName = tabName[0] + tabName.slice(0).toUpperCase();
-                    userStoreRequest = new GetUserStoreByKeyRequest(userItem.getPrincipal().getKey().getUserStore()).sendAndParse();
+                    // Roles does not have a userstore link
+                    if (userItem.getPrincipal().getType() !== PrincipalType.ROLE) {
+                        userStoreRequest = new GetUserStoreByKeyRequest(userItem.getPrincipal().getKey().getUserStore()).sendAndParse();
+                    }
                     break;
                 case UserTreeGridItemType.USER_STORE:
                     tabName = "User Store";
@@ -246,7 +249,7 @@ module app {
                     this.mask.show();
                     var tabId = this.getTabIdForUserItem(userItem);
 
-                    if (userItem.getType() !== UserTreeGridItemType.USER_STORE) {
+                    if (userItem.getType() == UserTreeGridItemType.PRINCIPAL) {
                         new app.wizard.PrincipalWizardPanelFactory().
                             setAppBarTabId(tabId).
                             setPrincipalType(userItem.getPrincipal().getType()).
@@ -261,7 +264,7 @@ module app {
                             }).finally(() => {
                                 this.mask.hide();
                             }).done();
-                    } else {
+                    } else if (userItem.getType() == UserTreeGridItemType.USER_STORE) {
 
                         new app.wizard.UserStoreWizardPanelFactory().
                             setAppBarTabId(tabId).

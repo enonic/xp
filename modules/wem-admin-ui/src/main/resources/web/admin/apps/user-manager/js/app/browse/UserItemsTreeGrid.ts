@@ -185,6 +185,7 @@ module app.browse {
 
             var deferred = wemQ.defer<UserTreeGridItem[]>();
             var level = parentNode ? parentNode.calcLevel() : 0;
+
             if (level === 0) {
                 // at root level, fetch user stores, and add 'Roles' folder
                 new ListUserStoresRequest().sendAndParse().then((userStores: UserStore[]) => {
