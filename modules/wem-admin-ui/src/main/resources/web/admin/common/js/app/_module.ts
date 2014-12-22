@@ -4,7 +4,6 @@
 ///<reference path='Application.ts'/>
 ///<reference path='AppLauncherEventType.ts' />
 ///<reference path='AppLauncherEvent.ts' />
-///<reference path='UserInfoPopup.ts' />
 ///<reference path='AppPanel.ts' />
 ///<reference path='BrowseAndWizardBasedAppPanel.ts' />
 ///<reference path='AppManager.ts'/>

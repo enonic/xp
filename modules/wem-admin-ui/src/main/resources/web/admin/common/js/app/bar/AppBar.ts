@@ -10,10 +10,6 @@ module api.app.bar {
 
         private tabMenu: AppBarTabMenu;
 
-        private userButton: UserButton;
-
-        private userInfoPopup: UserInfoPopup;
-
         private showAppLauncherAction: api.app.bar.action.ShowAppLauncherAction;
 
         constructor(application: Application) {
@@ -33,15 +29,7 @@ module api.app.bar {
             this.homeButton = new HomeButton(this.application.getName(), api.app.bar.action.AppBarActions.SHOW_BROWSE_PANEL);
             this.appendChild(this.homeButton);
 
-            this.userButton = new UserButton();
-            this.appendChild(this.userButton);
-
             this.appendChild(this.tabMenu);
-
-            this.userInfoPopup = new UserInfoPopup();
-            this.userInfoPopup.hide();
-
-            this.userButton.onClicked((event: MouseEvent) => this.userInfoPopup.toggle());
 
             this.setBackgroundImgUrl(api.util.UriHelper.getRestUri('ui/background.jpg'));
 
@@ -77,8 +65,7 @@ module api.app.bar {
             var homeEl = this.homeButton.getEl();
             var homeElRightEdge = homeEl.getOffset().left + homeEl.getWidthWithMargin();
 
-            var userEl = this.userButton.getEl();
-            var tabAvailableWidth = fullWidth - homeElRightEdge - userEl.getWidthWithMargin();
+            var tabAvailableWidth = fullWidth - homeElRightEdge;
 
             var tabEl = this.tabMenu.getEl();
             tabEl.setWidth('auto').setWidth(tabEl.getWidthWithMargin() > tabAvailableWidth ? tabAvailableWidth + 'px' : 'auto');
@@ -126,20 +113,4 @@ module api.app.bar {
         }
 
     }
-
-    export class UserButton extends api.dom.ButtonEl {
-
-        constructor() {
-            super('user-button');
-
-            var photoUrl = api.util.UriHelper.getAdminUri('common/images/tsi-profil.jpg');
-            this.setIcon(photoUrl);
-        }
-
-        setIcon(photoUrl: string) {
-            this.getEl().setBackgroundImage('url("' + photoUrl + '")');
-        }
-
-    }
-
 }
