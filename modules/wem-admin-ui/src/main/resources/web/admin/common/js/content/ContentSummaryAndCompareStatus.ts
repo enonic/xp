@@ -64,7 +64,9 @@ module api.content {
         }
 
         getId(): string {
-            return !!this.contentSummary ? this.contentSummary.getId() : this.getUploadItem().getId();
+            return (this.contentSummary && this.contentSummary.getId()) ||
+                   (this.getUploadItem() && this.getUploadItem().getId()) ||
+                   "";
         }
 
         hasChildren(): boolean {
