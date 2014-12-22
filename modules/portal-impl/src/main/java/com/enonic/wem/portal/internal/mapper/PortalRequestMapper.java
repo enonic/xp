@@ -30,12 +30,13 @@ public final class PortalRequestMapper
         }
         gen.value( "baseUri", this.request.getBaseUri() );
 
-        serializeParams( gen, this.request.getParams() );
+        serializeMultimap( "params", gen, this.request.getParams() );
+        serializeMultimap( "headers", gen, this.request.getHeaders() );
     }
 
-    private void serializeParams( final MapGenerator gen, final Multimap<String, String> params )
+    private void serializeMultimap( final String name, final MapGenerator gen, final Multimap<String, String> params )
     {
-        gen.map( "params" );
+        gen.map( name );
         for ( String key : params.keySet() )
         {
             final Collection<String> values = params.get( key );
@@ -46,10 +47,7 @@ public final class PortalRequestMapper
             else
             {
                 gen.array( key );
-                for ( String value : values )
-                {
-                    gen.value( value );
-                }
+                values.forEach( gen::value );
                 gen.end();
             }
         }

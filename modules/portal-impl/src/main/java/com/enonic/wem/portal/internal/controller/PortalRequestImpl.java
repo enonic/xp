@@ -19,6 +19,8 @@ public final class PortalRequestImpl
 
     private final Multimap<String, String> params;
 
+    private final Multimap<String, String> headers;
+
     private RenderMode mode;
 
     private Workspace workspace;
@@ -30,6 +32,7 @@ public final class PortalRequestImpl
         this.mode = RenderMode.LIVE;
         this.workspace = DEFAULT_WORKSPACE;
         this.params = HashMultimap.create();
+        this.headers = HashMultimap.create();
     }
 
     @Override
@@ -103,5 +106,29 @@ public final class PortalRequestImpl
         {
             this.params.putAll( entry.getKey(), entry.getValue() );
         }
+    }
+
+    public void addHeader( final String name, final String value )
+    {
+        this.headers.put( name, value );
+    }
+
+    public void addHeaders( final Multimap<String, String> params )
+    {
+        this.headers.putAll( params );
+    }
+
+    public void addHeaders( final Map<String, List<String>> params )
+    {
+        for ( final Map.Entry<String, List<String>> entry : params.entrySet() )
+        {
+            this.headers.putAll( entry.getKey(), entry.getValue() );
+        }
+    }
+
+    @Override
+    public Multimap<String, String> getHeaders()
+    {
+        return this.headers;
     }
 }

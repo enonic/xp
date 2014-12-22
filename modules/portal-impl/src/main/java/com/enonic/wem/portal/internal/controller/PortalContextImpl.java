@@ -156,4 +156,10 @@ public final class PortalContextImpl
     {
         this.pageDescriptor = pageDescriptor;
     }
+
+    @Override
+    public Multimap<String, String> getHeaders()
+    {
+        return this.request.getHeaders();
+    }
 }

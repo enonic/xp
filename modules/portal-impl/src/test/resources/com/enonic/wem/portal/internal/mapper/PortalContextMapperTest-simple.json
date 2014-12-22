@@ -11,6 +11,14 @@
     "param1": "value1",
     "param2": "value2"
   },
+  "headers": {
+    "header3": [
+      "value3-B",
+      "value3-A"
+    ],
+    "header2": "value2",
+    "header1": "value1"
+  },
   "content": {
     "_id": "123456",
     "_name": "mycontent",

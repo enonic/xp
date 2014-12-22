@@ -1,6 +1,7 @@
 package com.enonic.wem.portal.internal.content;
 
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
@@ -54,6 +55,9 @@ public abstract class RenderBaseResource
 
     @javax.ws.rs.core.Context
     protected UriInfo uriInfo;
+
+    @javax.ws.rs.core.Context
+    protected HttpHeaders httpHeaders;
 
     @PathParam("workspace")
     public void setWorkspace( final String value )

@@ -40,6 +40,11 @@ public class PortalContextMapperTest
         request.addParam( "param3", "value3-A" );
         request.addParam( "param3", "value3-B" );
 
+        request.addHeader( "header1", "value1" );
+        request.addHeader( "header2", "value2" );
+        request.addHeader( "header3", "value3-A" );
+        request.addHeader( "header3", "value3-B" );
+
         final PortalContextImpl context = new PortalContextImpl();
         context.setModule( ModuleKey.from( "mymodule" ) );
         context.setRequest( request );
