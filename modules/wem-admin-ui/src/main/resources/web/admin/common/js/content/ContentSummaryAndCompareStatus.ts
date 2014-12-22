@@ -65,7 +65,7 @@ module api.content {
 
         getId(): string {
             return (this.contentSummary && this.contentSummary.getId()) ||
-                   (this.getUploadItem() && this.getUploadItem().getId()) ||
+                   (this.uploadItem && this.uploadItem.getId()) ||
                    "";
         }
 
