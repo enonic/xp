@@ -19,7 +19,7 @@ public final class VirtualFiles
 
     public static VirtualFile from( final Bundle bundle, final String path )
     {
-        return new BundleFile( bundle, path );
+        return new BundleResource( bundle, path );
     }
 
     public static VirtualFile from( final ClassLoader classLoader )

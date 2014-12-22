@@ -18,7 +18,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.wem.api.util.Exceptions;
 
-class BundleFile
+class BundleResource
     implements VirtualFile
 {
     private final static String PATTERN = "*";
@@ -27,7 +27,7 @@ class BundleFile
 
     private final String path;
 
-    public BundleFile( final Bundle bundle, final String path )
+    public BundleResource( final Bundle bundle, final String path )
     {
         this.bundle = bundle;
         this.path = path;
@@ -65,7 +65,7 @@ class BundleFile
 
         while ( entries.hasMoreElements() )
         {
-            files.add( new BundleFile( this.bundle, entries.nextElement().getPath() ) );
+            files.add( new BundleResource( this.bundle, entries.nextElement().getPath() ) );
         }
 
         return files;
@@ -98,7 +98,7 @@ class BundleFile
     {
         final Path absolutePath = Paths.get( this.path, path );
 
-        return new BundleFile( this.bundle, this.bundle.getEntry( absolutePath.toString() ).getPath() );
+        return new BundleResource( this.bundle, this.bundle.getEntry( absolutePath.toString() ).getPath() );
     }
 
     private URI getAsUri()
