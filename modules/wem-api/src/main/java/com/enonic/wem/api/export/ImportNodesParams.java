@@ -5,27 +5,27 @@ import com.enonic.wem.api.vfs.VirtualFile;
 
 public class ImportNodesParams
 {
-    private final NodePath importRootPath;
+    private final NodePath targetPath;
 
     private final boolean dryRun;
 
-    private final VirtualFile exportRoot;
+    private final VirtualFile source;
 
     private ImportNodesParams( final Builder builder )
     {
-        this.importRootPath = builder.importRootPath;
-        this.exportRoot = builder.exportRoot;
+        this.targetPath = builder.targetPath;
+        this.source = builder.source;
         this.dryRun = builder.dryRun;
     }
 
-    public NodePath getImportRootPath()
+    public NodePath getTargetPath()
     {
-        return importRootPath;
+        return targetPath;
     }
 
-    public VirtualFile getExportRoot()
+    public VirtualFile getSource()
     {
-        return exportRoot;
+        return source;
     }
 
     public boolean isDryRun()
@@ -40,19 +40,19 @@ public class ImportNodesParams
 
     public static final class Builder
     {
-        private NodePath importRootPath;
+        private NodePath targetPath;
 
         private boolean dryRun = false;
 
-        private VirtualFile exportRoot;
+        private VirtualFile source;
 
         private Builder()
         {
         }
 
-        public Builder importRootPath( NodePath importRootPath )
+        public Builder targetPath( NodePath targetPath )
         {
-            this.importRootPath = importRootPath;
+            this.targetPath = targetPath;
             return this;
         }
 
@@ -62,9 +62,9 @@ public class ImportNodesParams
             return this;
         }
 
-        public Builder exportRoot( final VirtualFile exportRoot )
+        public Builder source( final VirtualFile source )
         {
-            this.exportRoot = exportRoot;
+            this.source = source;
             return this;
         }
 

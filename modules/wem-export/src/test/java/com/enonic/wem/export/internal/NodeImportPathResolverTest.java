@@ -45,5 +45,7 @@ public class NodeImportPathResolverTest
                                                           VirtualFiles.from( Paths.get( "/var", "folder", "myExport" ) ), NodePath.ROOT );
 
         assertEquals( "/mynode", resolvedPath.toString() );
+
     }
+
 }

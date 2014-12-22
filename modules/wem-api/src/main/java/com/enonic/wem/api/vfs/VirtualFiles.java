@@ -17,9 +17,9 @@ public final class VirtualFiles
         return from( file.toPath() );
     }
 
-    public static VirtualFile from( final Bundle bundle )
+    public static VirtualFile from( final Bundle bundle, final String path )
     {
-        return null;
+        return new BundleFile( bundle, path );
     }
 
     public static VirtualFile from( final ClassLoader classLoader )

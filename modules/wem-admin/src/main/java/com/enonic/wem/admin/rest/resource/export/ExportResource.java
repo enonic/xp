@@ -46,14 +46,15 @@ public class ExportResource
         throws Exception
     {
         final NodeImportResult nodeImportResult = this.exportService.importNodes( ImportNodesParams.create().
-            importRootPath( NodePath.newPath( importRoot ).build() ).
-            exportRoot( VirtualFiles.from( Paths.get( exportRootPath ) ) ).
+            targetPath( NodePath.newPath( importRoot ).build() ).
+            source( VirtualFiles.from( Paths.get( exportRootPath ) ) ).
             build() );
 
         final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
         return Response.temporaryRedirect( new URI( uri ) ).build();
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public void setExportService( final ExportService exportService )
     {
         this.exportService = exportService;

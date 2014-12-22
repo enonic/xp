@@ -58,8 +58,8 @@ public class ExportServiceImpl
         return NodeImportCommand.create().
             xmlNodeSerializer( this.xmlNodeSerializer ).
             nodeService( this.nodeService ).
-            exportRoot( params.getExportRoot() ).
-            importRoot( params.getImportRootPath() ).
+            exportRoot( params.getSource() ).
+            importRoot( params.getTargetPath() ).
             build().
             execute();
     }
