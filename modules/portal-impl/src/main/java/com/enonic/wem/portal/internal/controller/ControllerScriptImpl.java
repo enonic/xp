@@ -1,5 +1,6 @@
 package com.enonic.wem.portal.internal.controller;
 
+import com.enonic.wem.portal.internal.mapper.PortalContextMapper;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptValue;
@@ -49,7 +50,9 @@ final class ControllerScriptImpl
             return;
         }
 
-        final ScriptValue result = this.scriptExports.executeMethod( methodName, request );
+        final PortalContextMapper requestMapper = new PortalContextMapper( context );
+        final ScriptValue result = this.scriptExports.executeMethod( methodName, requestMapper );
+
         populateResponse( context.getResponse(), result );
     }
 

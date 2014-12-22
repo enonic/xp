@@ -1,5 +1,8 @@
 package com.enonic.wem.portal.internal.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -7,15 +10,25 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.thumb.Thumbnail;
-import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 
 public class ControllerScriptImplTest
     extends AbstractControllerTest
 {
+    @Before
+    public void setUp()
+    {
+        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( req.getScheme() ).thenReturn( "http" );
+        Mockito.when( req.getServerName() ).thenReturn( "localhost" );
+        Mockito.when( req.getLocalPort() ).thenReturn( 80 );
+        Mockito.when( req.getContextPath() ).thenReturn( "/" );
+        ServletRequestHolder.setRequest( req );
+    }
+
     @Test
     public void testExecute()
     {
@@ -48,15 +61,13 @@ public class ControllerScriptImplTest
     public void testGetterAccess()
     {
         final Page page = Page.newPage().template( PageTemplateKey.from( "mypagetemplate" ) ).build();
-        final Thumbnail thumbnail = Thumbnail.from( BinaryReference.from( "1234" ), "image/jpg", 1000 );
 
-        final Content content =
-            Content.newContent().name( "test" ).parentPath( ContentPath.ROOT ).page( page ).thumbnail( thumbnail ).build();
+        final Content content = Content.newContent().name( "test" ).parentPath( ContentPath.ROOT ).page( page ).build();
         this.context.setContent( content );
 
         this.request.setMethod( "GET" );
         execute( "mymodule:/service/getters" );
         assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
-        assertEquals( "GET,test,mypagetemplate,1000", this.response.getBody() );
+        assertEquals( "GET,test,mypagetemplate", this.response.getBody() );
     }
 }

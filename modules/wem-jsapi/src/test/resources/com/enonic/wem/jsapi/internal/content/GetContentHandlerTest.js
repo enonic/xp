@@ -30,38 +30,40 @@ var expectedJson = {
             "a": ["1"]
         },
         "controller": "mymodule:mycontroller",
-        "regions": [{
-            "components": [{
-                "config": {
-                    "a": ["1"]
-                },
-                "descriptor": "mymodule:mypart",
-                "name": "mypart",
-                "path": "top/0",
-                "type": "part"
-            }, {
-                "config": {
-                    "a": ["1"]
-                },
-                "descriptor": "mymodule:mylayout",
-                "name": "mylayout",
-                "path": "top/1",
-                "regions": [{
-                    "components": [{
-                        "config": {
-                            "a": ["1"]
-                        },
-                        "descriptor": "mymodule:mypart",
-                        "name": "mypart",
-                        "path": "top/1/bottom/0",
-                        "type": "part"
-                    }],
-                    "name": "bottom"
-                }],
-                "type": "layout"
-            }],
-            "name": "top"
-        }]
+        "regions": {
+            "top": {
+                "components": [{
+                    "config": {
+                        "a": ["1"]
+                    },
+                    "descriptor": "mymodule:mypart",
+                    "name": "mypart",
+                    "path": "top/0",
+                    "type": "part"
+                }, {
+                    "config": {
+                        "a": ["1"]
+                    },
+                    "descriptor": "mymodule:mylayout",
+                    "name": "mylayout",
+                    "path": "top/1",
+                    "regions": {
+                        "bottom": {
+                            "components": [{
+                                "config": {
+                                    "a": ["1"]
+                                },
+                                "descriptor": "mymodule:mypart",
+                                "name": "mypart",
+                                "path": "top/1/bottom/0",
+                                "type": "part"
+                            }]
+                        }
+                    },
+                    "type": "layout"
+                }]
+            }
+        }
     },
     "type": "system:unstructured"
 };

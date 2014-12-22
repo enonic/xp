@@ -23,8 +23,9 @@ public final class RegionMapper
 
     private static void serialize( final MapGenerator gen, final Region value )
     {
-        gen.value( "name", value.getName() );
+        gen.map( value.getName() );
         serializeComponents( gen, value.getComponents() );
+        gen.end();
     }
 
     private static void serializeComponents( final MapGenerator gen, final Iterable<PageComponent> values )

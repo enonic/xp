@@ -36,14 +36,12 @@ public final class PageMapper
 
     private static void serializeRegions( final MapGenerator gen, final PageRegions values )
     {
-        gen.array( "regions" );
+        gen.map( "regions" );
         if ( values != null )
         {
             for ( final Region region : values )
             {
-                gen.map();
                 new RegionMapper( region ).serialize( gen );
-                gen.end();
             }
         }
         gen.end();

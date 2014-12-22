@@ -39,9 +39,8 @@
     "config": {
       "a": ["1"]
     },
-    "regions": [
-      {
-        "name": "top",
+    "regions": {
+      "top": {
         "components": [
           {
             "name": "mypart",
@@ -60,9 +59,8 @@
             "config": {
               "a": ["1"]
             },
-            "regions": [
-              {
-                "name": "bottom",
+            "regions": {
+              "bottom": {
                 "components": [
                   {
                     "name": "mypart",
@@ -75,10 +73,10 @@
                   }
                 ]
               }
-            ]
+            }
           }
         ]
       }
-    ]
+    }
   }
 }

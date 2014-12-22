@@ -50,12 +50,10 @@ public final class PageComponentMapper
 
     private static void serialize( final MapGenerator gen, final LayoutComponent comp )
     {
-        gen.array( "regions" );
+        gen.map( "regions" );
         for ( final Region region : comp.getRegions() )
         {
-            gen.map();
             new RegionMapper( region ).serialize( gen );
-            gen.end();
         }
         gen.end();
     }
