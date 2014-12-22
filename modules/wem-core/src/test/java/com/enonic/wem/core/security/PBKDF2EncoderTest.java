@@ -23,7 +23,10 @@ public class PBKDF2EncoderTest
 
         final String encodedPwd = encoder.encodePassword( "runar" );
 
+        System.out.println( encodedPwd );
+
         assertTrue( encoder.validate( "runar", encodedPwd ) );
+        assertFalse( encoder.validate( "Runar", encodedPwd ) );
         assertFalse( encoder.validate( "runa1", encodedPwd ) );
         assertFalse( encoder.validate( "runar ", encodedPwd ) );
     }

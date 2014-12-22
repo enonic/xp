@@ -27,6 +27,7 @@ import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
 import com.enonic.wem.api.security.User;
 
+import static com.enonic.wem.core.security.PrincipalPropertyNames.AUTHENTICATION_HASH_KEY;
 import static com.enonic.wem.core.security.PrincipalPropertyNames.DISPLAY_NAME_KEY;
 import static com.enonic.wem.core.security.PrincipalPropertyNames.EMAIL_KEY;
 import static com.enonic.wem.core.security.PrincipalPropertyNames.LOGIN_KEY;
@@ -220,6 +221,7 @@ abstract class PrincipalNodeTranslator
     {
         data.setString( EMAIL_KEY, user.getEmail() );
         data.setString( LOGIN_KEY, user.getLogin() );
+        data.setString( AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
     }
 
     private static User createUserFromNode( final Node node )
@@ -233,6 +235,7 @@ abstract class PrincipalNodeTranslator
             login( nodeAsTree.getString( LOGIN_KEY ) ).
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( nodeAsTree.getString( DISPLAY_NAME_KEY ) ).
+            authenticationHash( nodeAsTree.getString( AUTHENTICATION_HASH_KEY ) ).
             modifiedTime( node.getModifiedTime() ).
             build();
     }

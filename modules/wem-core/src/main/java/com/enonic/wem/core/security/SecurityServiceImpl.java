@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
@@ -82,6 +83,8 @@ public final class SecurityServiceImpl
     {
         this.clock = Clock.systemUTC();
     }
+
+    private final PasswordEncoder passwordEncoder = new PBKDF2Encoder();
 
     @Override
     public UserStores getUserStores()
@@ -278,7 +281,12 @@ public final class SecurityServiceImpl
 
     private boolean passwordMatch( final User user, final String password )
     {
-        return "password".equals( password );
+        if ( Strings.isNullOrEmpty( password ) )
+        {
+            return false;
+        }
+
+        return this.passwordEncoder.validate( password, user.getAuthenticationHash() );
     }
 
     private User findByUsername( final UserStoreKey userStore, final String username )
@@ -318,9 +326,37 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public void setPassword( final PrincipalKey key, final String password )
+    public User setPassword( final PrincipalKey key, final String password )
     {
+        Preconditions.checkArgument( key.isUser(), "Expected principal key of type User" );
 
+        return CONTEXT_USER_STORES.callWith( () -> {
+
+            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( key ) ) );
+
+            final User user = PrincipalNodeTranslator.userFromNode( node );
+
+            if ( user == null )
+            {
+                throw new NodeNotFoundException( "setPassword failed, user with key " + key + " not found" );
+            }
+
+            final String authenticationHash = this.passwordEncoder.encodePassword( password );
+
+            final User userToUpdate = User.create( user ).
+                authenticationHash( authenticationHash ).
+                build();
+
+            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate );
+
+            final Node updatedNode = nodeService.update( updateNodeParams );
+            return PrincipalNodeTranslator.userFromNode( updatedNode );
+        } );
+    }
+
+    private final String encodePassword( final String password )
+    {
+        return this.passwordEncoder.encodePassword( password );
     }
 
     @Override
@@ -340,8 +376,9 @@ public final class SecurityServiceImpl
             final Node node = CONTEXT_USER_STORES.callWith( () -> nodeService.create( createNodeParams ) );
             if ( createUser.getPassword() != null )
             {
-                setPassword( user.getKey(), createUser.getPassword() );
+                return setPassword( user.getKey(), createUser.getPassword() );
             }
+
             return PrincipalNodeTranslator.userFromNode( node );
         }
         catch ( NodeAlreadyExistException e )

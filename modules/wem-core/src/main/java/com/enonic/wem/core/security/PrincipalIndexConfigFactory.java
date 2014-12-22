@@ -5,6 +5,7 @@ import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 
+import static com.enonic.wem.core.security.PrincipalPropertyNames.AUTHENTICATION_HASH_KEY;
 import static com.enonic.wem.core.security.PrincipalPropertyNames.DISPLAY_NAME_KEY;
 import static com.enonic.wem.core.security.PrincipalPropertyNames.EMAIL_KEY;
 import static com.enonic.wem.core.security.PrincipalPropertyNames.LOGIN_KEY;
@@ -27,6 +28,7 @@ class PrincipalIndexConfigFactory
             add( LOGIN_KEY, IndexConfig.MINIMAL ).
             add( PRINCIPAL_KEY, IndexConfig.MINIMAL ).
             add( MEMBER_KEY, IndexConfig.MINIMAL ).
+            add( AUTHENTICATION_HASH_KEY, IndexConfig.NONE ).
             defaultConfig( IndexConfig.MINIMAL ).
             build();
     }

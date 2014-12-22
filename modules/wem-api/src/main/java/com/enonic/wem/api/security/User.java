@@ -15,6 +15,8 @@ public final class User
 
     private final String login;
 
+    private final String authenticationHash;
+
     private final boolean loginDisabled;
 
     private User( final Builder builder )
@@ -24,6 +26,7 @@ public final class User
         this.email = builder.email;
         this.login = requireNonNull( builder.login );
         this.loginDisabled = builder.loginDisabled;
+        this.authenticationHash = builder.authenticationHash;
     }
 
     private User()
@@ -32,6 +35,7 @@ public final class User
         this.email = "";
         this.login = "";
         this.loginDisabled = true;
+        this.authenticationHash = "";
     }
 
     public String getEmail()
@@ -42,6 +46,11 @@ public final class User
     public String getLogin()
     {
         return login;
+    }
+
+    public String getAuthenticationHash()
+    {
+        return authenticationHash;
     }
 
     public boolean isDisabled()
@@ -71,6 +80,8 @@ public final class User
 
         private String login;
 
+        private String authenticationHash;
+
         private boolean loginDisabled;
 
         private Builder()
@@ -83,6 +94,7 @@ public final class User
             super( user );
             this.email = user.getEmail();
             this.login = user.getLogin();
+            this.authenticationHash = user.getAuthenticationHash();
             this.loginDisabled = user.isDisabled();
         }
 
@@ -95,6 +107,12 @@ public final class User
         public Builder email( final String value )
         {
             this.email = value;
+            return this;
+        }
+
+        public Builder authenticationHash( final String value )
+        {
+            this.authenticationHash = value;
             return this;
         }
 

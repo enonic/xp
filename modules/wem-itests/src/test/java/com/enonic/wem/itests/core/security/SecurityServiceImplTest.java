@@ -453,6 +453,7 @@ public class SecurityServiceImplTest
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).
+            password( "password" ).
             build();
 
         final User user = securityService.createUser( createUser );
@@ -469,6 +470,30 @@ public class SecurityServiceImplTest
     }
 
     @Test
+    public void testAuthenticateByEmailPwdWrongPwd()
+        throws Exception
+    {
+        final CreateUserParams createUser = CreateUserParams.create().
+            userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            password( "fisk" ).
+            build();
+
+        securityService.createUser( createUser );
+        refresh();
+
+        final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken();
+        authToken.setEmail( "user1@enonic.com" );
+        authToken.setPassword( "password" );
+        authToken.setUserStore( SYSTEM );
+
+        final AuthenticationInfo authInfo = securityService.authenticate( authToken );
+        assertFalse( authInfo.isAuthenticated() );
+    }
+
+    @Test
     public void testAuthenticateByUsernamePwd()
         throws Exception
     {
@@ -477,6 +502,7 @@ public class SecurityServiceImplTest
             displayName( "User 1" ).
             email( "user1@enonic.com" ).
             login( "user1" ).
+            password( "runar" ).
             build();
 
         final User user = securityService.createUser( createUser );
@@ -484,7 +510,7 @@ public class SecurityServiceImplTest
 
         final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
         authToken.setUsername( "user1" );
-        authToken.setPassword( "password" );
+        authToken.setPassword( "runar" );
         authToken.setUserStore( SYSTEM );
 
         final AuthenticationInfo authInfo = securityService.authenticate( authToken );
@@ -624,6 +650,36 @@ public class SecurityServiceImplTest
         assertEquals( CREATE_USERS, updatedPermissions.getEntry( userKey ).getAccess() );
         assertEquals( ADMINISTRATOR, updatedPermissions.getEntry( groupKey1 ).getAccess() );
         assertNull( updatedPermissions.getEntry( groupKey2 ) );
+    }
+
+    @Test
+    public void setPassword()
+        throws Exception
+    {
+        final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "user1" );
+        final CreateUserParams createUser1 = CreateUserParams.create().
+            userKey( userKey1 ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            password( "fisk" ).
+            build();
+
+        final User user = securityService.createUser( createUser1 );
+        refresh();
+
+        final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
+        authToken.setUsername( "user1" );
+        authToken.setPassword( "runar" );
+        authToken.setUserStore( SYSTEM );
+
+        AuthenticationInfo authInfo = securityService.authenticate( authToken );
+        assertFalse( authInfo.isAuthenticated() );
+
+        securityService.setPassword( user.getKey(), "runar" );
+
+        AuthenticationInfo authInfo2 = securityService.authenticate( authToken );
+        assertTrue( authInfo2.isAuthenticated() );
     }
 
     private class CustomAuthenticationToken

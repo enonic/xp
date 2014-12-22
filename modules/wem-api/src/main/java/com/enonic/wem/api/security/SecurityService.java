@@ -23,7 +23,7 @@ public interface SecurityService
 
     AuthenticationInfo authenticate( AuthenticationToken token );
 
-    void setPassword( PrincipalKey key, String password );
+    User setPassword( PrincipalKey key, String password );
 
     /**
      * Creates a user on the specified user store.

@@ -31,6 +31,7 @@ public class UserNodeTranslatorTest
             displayName( "displayname" ).
             email( "rmy@enonic.com" ).
             login( "login" ).
+            authenticationHash( "password" ).
             key( PrincipalKey.ofUser( UserStoreKey.system(), "rmy" ) ).
             modifiedTime( Instant.now( clock ) ).
             build();
@@ -44,7 +45,7 @@ public class UserNodeTranslatorTest
         assertEquals( PrincipalType.USER.toString(), rootDataSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
         assertEquals( "displayname", rootDataSet.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) );
         assertNotNull( rootDataSet );
-        assertEquals( 5, rootDataSet.getTotalSize() );
+        assertEquals( 6, rootDataSet.getTotalSize() );
     }
 
 
@@ -60,6 +61,7 @@ public class UserNodeTranslatorTest
         rootDataSet.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, "displayname" );
         rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, userKey.getType().toString() );
         rootDataSet.setString( PrincipalPropertyNames.USER_STORE_KEY, userKey.getUserStore().toString() );
+        rootDataSet.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, "clear:password" );
 
         final Node node = Node.newNode().
             id( NodeId.from( "id" ) ).
@@ -72,5 +74,6 @@ public class UserNodeTranslatorTest
         assertEquals( "loginkey", user.getLogin() );
         assertEquals( "rmy@enonic.com", user.getEmail() );
         assertEquals( userKey, user.getKey() );
+        assertEquals( "clear:password", user.getAuthenticationHash() );
     }
 }

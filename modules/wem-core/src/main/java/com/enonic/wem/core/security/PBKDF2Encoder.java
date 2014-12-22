@@ -1,11 +1,13 @@
 package com.enonic.wem.core.security;
 
-import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 
 import com.google.common.base.Strings;
 
@@ -14,13 +16,13 @@ import com.enonic.wem.api.util.Exceptions;
 public class PBKDF2Encoder
     implements PasswordEncoder
 {
-    public static final String SEPARATOR = ":";
+    private static final String SEPARATOR = ":";
 
-    public static final String ALGORITHM = "PBKDF2WithHmacSHA1";
+    private static final String ALGORITHM = "PBKDF2WithHmacSHA1";
 
-    public static final int HASH_BYTE_SIZE = 24;
+    private static final int LENGTH = 24;
 
-    public static final int PBKDF2_ITERATIONS = 1000;
+    private static final int ITERATIONS = 1000;
 
     public PBKDF2Encoder()
     {
@@ -35,9 +37,8 @@ public class PBKDF2Encoder
     private String doEncode( final String plainPassword )
     {
         final byte[] salt = createSalt();
-        final byte[] encodedPwd;
 
-        encodedPwd = encodePassword( plainPassword.toCharArray(), salt, PBKDF2_ITERATIONS, HASH_BYTE_SIZE );
+        final byte[] encodedPwd = encodePassword( plainPassword.toCharArray(), salt, LENGTH, ITERATIONS );
 
         final String saltAsString = toHex( salt );
         final String encodedAsString = toHex( encodedPwd );
@@ -47,16 +48,21 @@ public class PBKDF2Encoder
     @Override
     public boolean validate( final String key, final String correctPasswordKey )
     {
-        final ExtractedKey extractedPwd = ExtractedKey.from( correctPasswordKey );
+        final AuthenticationHash authenticationHash = AuthenticationHash.from( correctPasswordKey );
 
-        final String type = extractedPwd.type;
+        if ( authenticationHash == null )
+        {
+            return false;
+        }
+
+        final String type = authenticationHash.type;
         if ( !type.equals( this.getType() ) )
         {
             throw new IllegalArgumentException( "Incorrect type of encryption, expected '" + this.getType() + "', got '" + type + "'" );
         }
 
-        final byte[] correctHash = fromHex( extractedPwd.pwd );
-        final byte[] generatedHash = encodePassword( key.toCharArray(), fromHex( extractedPwd.salt ), PBKDF2_ITERATIONS, HASH_BYTE_SIZE );
+        final byte[] correctHash = fromHex( authenticationHash.pwd );
+        final byte[] generatedHash = encodePassword( key.toCharArray(), fromHex( authenticationHash.salt ), LENGTH, ITERATIONS );
 
         return Arrays.equals( correctHash, generatedHash );
     }
@@ -72,13 +78,13 @@ public class PBKDF2Encoder
         return this.getType() + SEPARATOR + salt + SEPARATOR + encodedPwd;
     }
 
-    private byte[] encodePassword( final char[] password, byte[] salt, final int iterations, final int bytes )
+    private byte[] encodePassword( final char[] password, byte[] salt, final int length, final int iterationCount )
     {
         try
         {
-            PBEKeySpec spec = new PBEKeySpec( password, salt, iterations, bytes * 8 );
-            SecretKeyFactory skf = SecretKeyFactory.getInstance( ALGORITHM );
-            return skf.generateSecret( spec ).getEncoded();
+            PBEKeySpec spec = new PBEKeySpec( password, salt, iterationCount, length * 8 );
+            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance( ALGORITHM );
+            return keyFactory.generateSecret( spec ).getEncoded();
         }
         catch ( Exception e )
         {
@@ -94,32 +100,24 @@ public class PBKDF2Encoder
         return salt;
     }
 
-    private static String toHex( byte[] array )
+    private static String toHex( final byte[] value )
     {
-        BigInteger bi = new BigInteger( 1, array );
-        String hex = bi.toString( 16 );
-        int paddingLength = ( array.length * 2 ) - hex.length();
-        if ( paddingLength > 0 )
+        return new String( Hex.encodeHex( value ) );
+    }
+
+    private static byte[] fromHex( final String value )
+    {
+        try
         {
-            return String.format( "%0" + paddingLength + "d", 0 ) + hex;
+            return Hex.decodeHex( value.toCharArray() );
         }
-        else
+        catch ( DecoderException e )
         {
-            return hex;
+            throw Exceptions.unchecked( e );
         }
     }
 
-    private static byte[] fromHex( String hex )
-    {
-        byte[] binary = new byte[hex.length() / 2];
-        for ( int i = 0; i < binary.length; i++ )
-        {
-            binary[i] = (byte) Integer.parseInt( hex.substring( 2 * i, 2 * i + 2 ), 16 );
-        }
-        return binary;
-    }
-
-    private static class ExtractedKey
+    private static class AuthenticationHash
     {
         private final String salt;
 
@@ -127,14 +125,14 @@ public class PBKDF2Encoder
 
         private final String type;
 
-        private ExtractedKey( final String salt, final String pwd, final String type )
+        private AuthenticationHash( final String salt, final String pwd, final String type )
         {
             this.salt = salt;
             this.pwd = pwd;
             this.type = type;
         }
 
-        public static ExtractedKey from( final String key )
+        public static AuthenticationHash from( final String key )
         {
             if ( Strings.isNullOrEmpty( key ) )
             {
@@ -152,7 +150,7 @@ public class PBKDF2Encoder
             final String salt = elements[1];
             final String pwd = elements[2];
 
-            return new ExtractedKey( salt, pwd, name );
+            return new AuthenticationHash( salt, pwd, name );
         }
     }
 }
