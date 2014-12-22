@@ -264,7 +264,7 @@ module app {
                             }).finally(() => {
                                 this.mask.hide();
                             }).done();
-                    } else if (userItem.getType() == UserTreeGridItemType.USER_STORE) {
+                    } else if (userItem.getType() === UserTreeGridItemType.USER_STORE) {
 
                         new app.wizard.UserStoreWizardPanelFactory().
                             setAppBarTabId(tabId).
