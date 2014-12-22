@@ -88,7 +88,7 @@ module app.wizard {
             var deferred = wemQ.defer<PrincipalWizardPanel>();
 
             var wizardParams = new PrincipalWizardPanelParams().
-
+                setAppBarTabId(this.appBarTabId).
                 setPrincipalType(this.principalType).
                 setPrincipalPath(this.principalPath).
                 setUserStore(this.userStore).

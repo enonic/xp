@@ -48,7 +48,7 @@ module api.app.bar {
             var item;
             for (var i = 0; i < items.length; i++) {
                 item = <AppBarTabMenuItem>items[i];
-                if (!!item && item.getTabId().equals(tabId)) {
+                if (item.getTabId().equals(tabId)) {
                     return item;
                 }
             }
