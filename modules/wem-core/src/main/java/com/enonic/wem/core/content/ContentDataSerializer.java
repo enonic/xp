@@ -61,12 +61,6 @@ public class ContentDataSerializer
         {
             PAGE_SERIALIZER.toData( content.getPage(), contentAsData );
         }
-
-        if ( content instanceof Site )
-        {
-            final Site site = (Site) content;
-            SITE_SERIALIZER.toData( site, contentAsData );
-        }
     }
 
     public Content.Builder fromData( final PropertySet contentAsSet )
