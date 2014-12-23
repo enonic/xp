@@ -6,10 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
@@ -60,14 +56,9 @@ public class ControllerScriptImplTest
     @Test
     public void testGetterAccess()
     {
-        final Page page = Page.newPage().template( PageTemplateKey.from( "mypagetemplate" ) ).build();
-
-        final Content content = Content.newContent().name( "test" ).parentPath( ContentPath.ROOT ).page( page ).build();
-        this.context.setContent( content );
-
         this.request.setMethod( "GET" );
         execute( "mymodule:/service/getters" );
         assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
-        assertEquals( "GET,test,mypagetemplate", this.response.getBody() );
+        assertEquals( "GET,/,live", this.response.getBody() );
     }
 }

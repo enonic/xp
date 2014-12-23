@@ -163,7 +163,11 @@ public final class ContentFixtures
         builder.config( newTinyPropertyTree() );
         builder.descriptor( LayoutDescriptorKey.from( "mymodule:mylayout" ) );
         builder.regions( newLayoutRegions() );
-        return builder.build();
+        final LayoutComponent layout = builder.build();
+
+        final Region parentRegion = Region.newRegion().name( "main" ).build();
+        layout.setParent( parentRegion );
+        return layout;
     }
 
     public static LayoutRegions newLayoutRegions()
@@ -182,11 +186,13 @@ public final class ContentFixtures
             module( ModuleKey.from( "mymodule" ) ).
             config( moduleConfigConfig ).
             build();
-        return Site.newSite().
-            moduleConfigs( ModuleConfigs.from( moduleConfig ) ).
-            name( "my-content" ).
-            parentPath( ContentPath.ROOT ).
-            build();
+
+        final Site.Builder site = Site.newSite();
+        site.id( ContentId.from( "100123" ) );
+        site.moduleConfigs( ModuleConfigs.from( moduleConfig ) );
+        site.name( "my-content" );
+        site.parentPath( ContentPath.ROOT );
+        return site.build();
     }
 
     public static PageDescriptor newPageDescriptor()

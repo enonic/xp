@@ -2,18 +2,18 @@ function getMethod(req) {
     return req.method;
 }
 
-function getContentName(req) {
-    return req.content._name;
+function getBaseUri(req) {
+    return req.baseUri;
 }
 
-function getPageTemplateKey(req) {
-    return req.content.page.template;
+function getRenderMode(req) {
+    return req.mode;
 }
 
 exports.get = function (req) {
     var body = getMethod(req);
-    body += ',' + getContentName(req);
-    body += ',' + getPageTemplateKey(req);
+    body += ',' + getBaseUri(req);
+    body += ',' + getRenderMode(req);
 
     return {
         body: body

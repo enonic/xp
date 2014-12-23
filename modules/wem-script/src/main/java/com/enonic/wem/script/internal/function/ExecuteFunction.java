@@ -1,5 +1,7 @@
 package com.enonic.wem.script.internal.function;
 
+import java.util.Collections;
+
 import javax.script.Bindings;
 
 import com.enonic.wem.api.resource.ResourceKey;
@@ -23,13 +25,13 @@ public final class ExecuteFunction
     @Override
     public Object call( final Object thiz, final Object... args )
     {
-        if ( args.length != 2 )
+        if ( args.length < 1 )
         {
-            throw new IllegalArgumentException( "execute(..) must have two parameters" );
+            throw new IllegalArgumentException( "execute(..) must have at least one parameter" );
         }
 
         final String name = args[0].toString();
-        final Object params = args[1];
+        final Object params = args.length > 1 ? args[1] : Collections.emptyMap();
 
         final CommandRequestImpl request = new CommandRequestImpl();
         request.setName( name );

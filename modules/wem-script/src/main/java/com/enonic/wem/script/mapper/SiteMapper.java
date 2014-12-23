@@ -1,10 +1,8 @@
-package com.enonic.wem.portal.internal.mapper;
+package com.enonic.wem.script.mapper;
 
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.script.mapper.ContentMapper;
-import com.enonic.wem.script.mapper.PropertyTreeMapper;
 import com.enonic.wem.script.serializer.MapGenerator;
 import com.enonic.wem.script.serializer.MapSerializable;
 

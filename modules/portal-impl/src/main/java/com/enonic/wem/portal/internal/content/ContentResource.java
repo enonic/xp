@@ -10,11 +10,11 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.xp.portal.PortalContext;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
+import com.enonic.xp.portal.PortalContext;
 
 @Path("/portal/{mode}/{workspace}/{contentPath:.+}")
 public final class ContentResource
@@ -90,6 +90,7 @@ public final class ContentResource
         jsRequest.setWorkspace( this.workspace );
         jsRequest.setMethod( this.request.getMethod() );
         jsRequest.addParams( this.uriInfo.getQueryParameters() );
+        jsRequest.addHeaders( this.httpHeaders.getRequestHeaders() );
         context.setRequest( jsRequest );
 
         final Renderer<Content, PortalContext> renderer = this.rendererFactory.getRenderer( effectiveContent );

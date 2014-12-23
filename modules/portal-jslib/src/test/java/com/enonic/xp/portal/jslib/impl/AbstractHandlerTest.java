@@ -16,14 +16,16 @@ import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;
 
-public abstract class AbstractUrlHandlerTest
+public abstract class AbstractHandlerTest
     extends AbstractScriptTest
 {
+    protected PortalContext context;
+
     @Before
     public final void setup()
         throws Exception
     {
-        final PortalContext context = Mockito.mock( PortalContext.class );
+        context = Mockito.mock( PortalContext.class );
         Mockito.when( context.getBaseUri() ).thenReturn( "/root" );
         Mockito.when( context.getBaseUri() ).thenReturn( "/root" );
         Mockito.when( context.getMode() ).thenReturn( RenderMode.LIVE );

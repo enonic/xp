@@ -52,6 +52,6 @@ public class PortalContextMapperTest
         context.setSite( ContentFixtures.newSite() );
         context.setPageDescriptor( ContentFixtures.newPageDescriptor() );
 
-        assertJson( "simple", new PortalContextMapper( context ) );
+        assertJson( "simple", new PortalRequestMapper( context ) );
     }
 }

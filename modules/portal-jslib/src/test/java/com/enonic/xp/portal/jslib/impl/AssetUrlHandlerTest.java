@@ -5,7 +5,7 @@ import org.junit.Test;
 import com.enonic.wem.script.command.CommandHandler;
 
 public class AssetUrlHandlerTest
-    extends AbstractUrlHandlerTest
+    extends AbstractHandlerTest
 {
     @Override
     protected CommandHandler createHandler()
