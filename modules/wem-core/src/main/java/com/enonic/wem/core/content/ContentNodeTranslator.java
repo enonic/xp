@@ -54,7 +54,7 @@ public class ContentNodeTranslator
         final PropertyTree contentAsData = new PropertyTree();
         CONTENT_SERIALIZER.toData( params, contentAsData.getRoot() );
 
-        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create();
+        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( params );
 
         final CreateNodeParams.Builder builder = CreateNodeParams.create().
             name( resolveNodeName( params.getName() ) ).
@@ -132,7 +132,7 @@ public class ContentNodeTranslator
         final PropertyTree data = new PropertyTree();
         CONTENT_SERIALIZER.toData( content, data.getRoot(), createAttachments );
 
-        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create();
+        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( content );
 
         return editableNode -> {
 

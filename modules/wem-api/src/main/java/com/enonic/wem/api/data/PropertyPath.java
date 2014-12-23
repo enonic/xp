@@ -56,6 +56,23 @@ public final class PropertyPath
         return new PropertyPath( splitPathIntoElements( path ) );
     }
 
+    public static PropertyPath from( final String parentPath, final String... children )
+    {
+        Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
+        Preconditions.checkNotNull( children, "children cannot be null" );
+
+        final List<Element> elements = Lists.newLinkedList();
+
+        elements.addAll( splitPathIntoElements( parentPath ) );
+
+        for ( final String child : children )
+        {
+            elements.add( Element.from( child ) );
+        }
+
+        return new PropertyPath( ImmutableList.copyOf( elements ) );
+    }
+
     public static PropertyPath from( final Element... pathElements )
     {
         Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
@@ -73,6 +90,7 @@ public final class PropertyPath
     public PropertyPath( final ImmutableList<Element> pathElements )
     {
         Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
+
         this.elements = pathElements;
         this.relative = this.elements.size() <= 0 || !this.elements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER );
         this.refString = toString( this.elements );

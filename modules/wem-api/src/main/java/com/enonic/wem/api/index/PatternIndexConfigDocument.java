@@ -1,8 +1,10 @@
 package com.enonic.wem.api.index;
 
+import java.util.Map;
 import java.util.SortedSet;
 
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.PropertyPath;
@@ -11,6 +13,8 @@ public class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument
 {
     private final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs;
+
+    private final Map<String, PathIndexConfig> pathIndexConfigMap = Maps.newHashMap();
 
     private final IndexConfig defaultConfig;
 
@@ -39,6 +43,13 @@ public class PatternIndexConfigDocument
     @Override
     public IndexConfig getConfigForPath( final PropertyPath dataPath )
     {
+        final PathIndexConfig exactMatch = pathIndexConfigMap.get( dataPath.resetAllIndexesTo( 0 ).toString() );
+
+        if ( exactMatch != null )
+        {
+            return exactMatch.getIndexConfig();
+        }
+
         for ( final PathIndexConfig pathIndexConfig : pathIndexConfigs )
         {
             if ( pathIndexConfig.matches( dataPath ) )
@@ -55,6 +66,8 @@ public class PatternIndexConfigDocument
     {
         private final SortedSet<PathIndexConfig> pathIndexConfigs = Sets.newTreeSet();
 
+        private final Map<String, PathIndexConfig> stringPathIndexConfigMap = Maps.newHashMap();
+
         private IndexConfig defaultConfig = IndexConfig.BY_TYPE;
 
         private Builder()
@@ -63,20 +76,25 @@ public class PatternIndexConfigDocument
 
         public Builder add( final String path, final IndexConfig indexConfig )
         {
-            this.pathIndexConfigs.add( PathIndexConfig.create().
+            final PathIndexConfig pathIndexConfig = PathIndexConfig.create().
+
                 path( PropertyPath.from( path ) ).
                 indexConfig( indexConfig ).
-                build() );
+                build();
+            this.pathIndexConfigs.add( pathIndexConfig );
+            this.stringPathIndexConfigMap.put( path, pathIndexConfig );
 
             return this;
         }
 
         public Builder add( final PropertyPath path, final IndexConfig indexConfig )
         {
-            this.pathIndexConfigs.add( PathIndexConfig.create().
+            final PathIndexConfig pathIndexConfig = PathIndexConfig.create().
                 path( path ).
                 indexConfig( indexConfig ).
-                build() );
+                build();
+            this.pathIndexConfigs.add( pathIndexConfig );
+            this.stringPathIndexConfigMap.put( path.resetAllIndexesTo( 0 ).toString(), pathIndexConfig );
 
             return this;
         }
@@ -84,6 +102,7 @@ public class PatternIndexConfigDocument
         public Builder addPattern( final PathIndexConfig pathIndexConfig )
         {
             this.pathIndexConfigs.add( pathIndexConfig );
+            this.stringPathIndexConfigMap.put( pathIndexConfig.getPath().resetAllIndexesTo( 0 ).toString(), pathIndexConfig );
             return this;
         }
 

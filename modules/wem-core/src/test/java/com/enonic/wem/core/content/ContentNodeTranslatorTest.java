@@ -175,6 +175,7 @@ public class ContentNodeTranslatorTest
         final CreateContentParams mycontent = new CreateContentParams().
             parent( ContentPath.ROOT ).
             contentData( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
+            type( ContentTypeName.from( "mymodule:my-content-type" ) ).
             displayName( "test Name" );
         final CreateNodeParams createNodeParams = translator.toCreateNode( mycontent );
         Assert.assertNotNull( createNodeParams );

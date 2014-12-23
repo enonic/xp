@@ -9,7 +9,6 @@ import static org.junit.Assert.*;
 
 public class PropertyPathTest
 {
-
     @Test
     public void equals()
     {
@@ -90,4 +89,12 @@ public class PropertyPathTest
     {
         assertEquals( "a[5].b[5].c[5].d[5]", PropertyPath.from( "a.b[1].c[2].d[3]" ).resetAllIndexesTo( 5 ).toString() );
     }
+
+
+    @Test
+    public void build_with_strings()
+    {
+        assertEquals( "a.b.c.d.e", PropertyPath.from( "a.b.c", "d", "e" ).toString() );
+    }
+
 }
