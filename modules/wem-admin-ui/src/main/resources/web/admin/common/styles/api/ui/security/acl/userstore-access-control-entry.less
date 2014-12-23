@@ -1,6 +1,8 @@
 .userstore-access-control-entry {
   position: relative;
   padding: 5px 42px 5px 5px;
+  .flexbox();
+  flex-flow: row wrap;
   .clearfix();
 
   &.dirty {
@@ -26,6 +28,7 @@
     float: left;
     margin: 0 10px 0 0;
     min-width: 200px;
+    .flex(1 auto);
   }
 
   .icon-close {
@@ -44,13 +47,17 @@
 
   .access-selector {
     float: left;
-    min-width: 100px;
+    min-width: 150px;
     margin: 0 10px 0 0;
 
     &.expanded {
       .tab-menu-button {
         color: @admin-white;
         background-color: @admin-blue;
+
+        .label {
+          color: @admin-white;
+        }
       }
     }
 
@@ -66,6 +73,7 @@
 
       .label {
         margin: 0;
+        color: @admin-blue;
       }
 
     }
