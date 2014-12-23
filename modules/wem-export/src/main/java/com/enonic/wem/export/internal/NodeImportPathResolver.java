@@ -6,20 +6,30 @@ import java.nio.file.Paths;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.vfs.VirtualFile;
 
-class NodeImportPathResolver
-{
-    public static NodePath resolveNodeImportPath( final VirtualFile parent, final VirtualFile exportRoot, final NodePath importRoot )
-    {
-        final Path parentPath = Paths.get( parent.getUrl().getPath() );
+class NodeImportPathResolver {
+    private static final boolean IS_WINDOWS = System.getProperty("os.name").contains("indow");
 
-        final Path exportRootPath = Paths.get( exportRoot.getUrl().getPath() );
+    public static NodePath resolveNodeImportPath(final VirtualFile parent, final VirtualFile exportRoot, final NodePath importRoot) {
 
-        final Path relativePath = exportRootPath.relativize( parentPath );
+        final Path parentPath = Paths.get(removeLeadingWindowsSlash(parent.getUrl().getPath()));
 
-        final NodePath.Builder builder = NodePath.newPath( importRoot );
+        final Path exportRootPath = Paths.get(removeLeadingWindowsSlash(exportRoot.getUrl().getPath()));
 
-        relativePath.forEach( ( path ) -> builder.addElement( path.toString() ) );
+        final Path relativePath = exportRootPath.relativize(parentPath);
+
+        final NodePath.Builder builder = NodePath.newPath(importRoot);
+
+        relativePath.forEach((path) -> builder.addElement(path.toString()));
 
         return builder.build();
+    }
+
+    private static String removeLeadingWindowsSlash(final String value) {
+
+        if (!IS_WINDOWS) {
+            return value;
+        }
+
+        return value.replaceFirst("^/+([A-Z]:)", "$1");
     }
 }
