@@ -4,11 +4,13 @@ module api.security {
 
         private principal: Principal;
         private userStore: UserStore;
+        private parentOfSameType: boolean;
 
-        constructor(principal: Principal, userStore: UserStore) {
+        constructor(principal: Principal, userStore: UserStore, parentOfSameType?: boolean) {
             super();
             this.principal = principal;
             this.userStore = userStore;
+            this.parentOfSameType = parentOfSameType;
         }
 
         public getPrincipal(): Principal {
@@ -17,6 +19,10 @@ module api.security {
 
         public getUserStore(): UserStore {
             return this.userStore;
+        }
+
+        public isParentOfSameType(): boolean {
+            return this.parentOfSameType;
         }
 
         static on(handler: (event: UserItemCreatedEvent) => void) {

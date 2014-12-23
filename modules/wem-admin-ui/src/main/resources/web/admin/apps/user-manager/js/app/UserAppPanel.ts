@@ -206,6 +206,7 @@ module app {
                             setPrincipalType(principalType).
                             setPrincipalPath(principalPath).
                             setUserStore(userStore).
+                            setParentOfSameType(userItem.getType() === UserTreeGridItemType.PRINCIPAL).
                             createForNew();
                     }).then((wizard: app.wizard.PrincipalWizardPanel) => {
                         this.handleWizardCreated(wizard, tabName);

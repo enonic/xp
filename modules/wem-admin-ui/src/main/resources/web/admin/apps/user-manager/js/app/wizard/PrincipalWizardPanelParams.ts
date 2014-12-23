@@ -10,6 +10,8 @@ module app.wizard {
 
         userStore: api.security.UserStore;
 
+        parentOfSameType: boolean;
+
         setPersistedPrincipal(value: api.security.Principal): PrincipalWizardPanelParams {
             this.persistedPrincipal = value;
             return this;
@@ -35,8 +37,8 @@ module app.wizard {
             return this;
         }
 
-        setPersistedPath(value: string): PrincipalWizardPanelParams {
-            this.persistedPath = value;
+        setParentOfSameType(value: boolean): PrincipalWizardPanelParams {
+            this.parentOfSameType = value;
             return this;
         }
 

@@ -21,6 +21,8 @@ module app.wizard {
 
         private userStore: UserStore;
 
+        private parentOfSameType: boolean;
+
         setPrincipalToEdit(value: PrincipalKey): PrincipalWizardPanelFactory {
             this.principalKey = value;
             return this;
@@ -41,6 +43,10 @@ module app.wizard {
             return this;
         }
 
+        setParentOfSameType(value: boolean): PrincipalWizardPanelFactory {
+            this.parentOfSameType = value;
+            return this;
+        }
 
         setAppBarTabId(value: api.app.bar.AppBarTabId): PrincipalWizardPanelFactory {
             this.appBarTabId = value;
@@ -76,6 +82,7 @@ module app.wizard {
                 setPrincipalType(this.principalType).
                 setPrincipalPath(this.principalPath).
                 setUserStore(this.userStore).
+                setParentOfSameType(this.parentOfSameType).
                 setAppBarTabId(this.appBarTabId);
 
             this.resolvePrincipalWizardPanel(deferred, wizardParams);

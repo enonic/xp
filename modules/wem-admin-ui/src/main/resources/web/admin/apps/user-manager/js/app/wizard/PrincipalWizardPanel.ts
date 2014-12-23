@@ -26,6 +26,8 @@ module app.wizard {
 
         principalNamedListeners: {(event: PrincipalNamedEvent): void}[];
 
+        private parentOfSameType: boolean;
+
         private userStore: UserStore;
 
         constructor(params: PrincipalWizardPanelParams, callback: (wizard: PrincipalWizardPanel) => void) {
@@ -35,6 +37,8 @@ module app.wizard {
 
             this.principalType = params.persistedType;
             this.principalPath = params.persistedPath;
+
+            this.parentOfSameType = params.parentOfSameType;
 
             this.userStore = params.userStore;
 
@@ -104,6 +108,10 @@ module app.wizard {
             });
 
 
+        }
+
+        isParentOfSameType(): boolean {
+            return this.parentOfSameType;
         }
 
         getUserStore(): UserStore {

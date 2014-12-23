@@ -31,7 +31,7 @@ module app.browse {
             });
 
             api.security.UserItemCreatedEvent.on((event) => {
-                this.userTreeGrid.appendUserNode(event.getPrincipal(), event.getUserStore());
+                this.userTreeGrid.appendUserNode(event.getPrincipal(), event.getUserStore(), event.isParentOfSameType());
                 this.setFilterPanelRefreshNeeded(true);
             });
 

@@ -22,15 +22,17 @@ module app.browse.filter {
             this.onSearch(this.searchFacets);
         }
 
-        private resetFacets() {
+        private resetFacets(supressEvent?: boolean) {
 
-            new PrincipalBrowseResetEvent().fire();
+            if (!supressEvent) { // then fire usual reset event with content grid reloading
+                new PrincipalBrowseResetEvent().fire();
+            }
         }
 
         private searchFacets(event: api.app.browse.filter.SearchEvent) {
             var searchText = event.getSearchInputValues().getTextSearchFieldValue();
             if (!searchText) {
-                this.resetFacets();
+                this.resetFacets(true);
                 return;
             }
             new FindPrincipalsRequest().
