@@ -2,23 +2,21 @@ module app.browse {
 
     import GridColumn = api.ui.grid.GridColumn;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
-    import UserTreeGridItemViewer = app.browse.UserTreeGridItemViewer;
     import TreeGrid = api.ui.treegrid.TreeGrid;
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
-    import UserTreeGridItem = app.browse.UserTreeGridItem;
-    import UserTreeGridItemBuilder = app.browse.UserTreeGridItemBuilder;
-    import UserTreeGridItemType = app.browse.UserTreeGridItemType;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
+    import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
+
     import ListUserStoresRequest = api.security.ListUserStoresRequest;
     import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
     import UserStoreListResult = api.security.UserStoreListResult;
     import UserStoreJson = api.security.UserStoreJson;
     import Principal = api.security.Principal;
-    import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
     import UserStore = api.security.UserStore;
     import PrincipalType = api.security.PrincipalType;
     import UserStoreKey = api.security.UserStoreKey;
+
     import UserItemBrowseSearchEvent = app.browse.filter.PrincipalBrowseSearchEvent;
     import UserItemBrowseResetEvent = app.browse.filter.PrincipalBrowseResetEvent;
 
@@ -186,6 +184,16 @@ module app.browse {
             var deferred = wemQ.defer<UserTreeGridItem[]>();
             var level = parentNode ? parentNode.calcLevel() : 0;
 
+            // Creating a role with parent node pointing to another role may cause fetching to fail
+            // We need to select a parent node first
+            if (level !== 0 && parentNode.getData().getPrincipal() &&
+                parentNode.getData().getType() === UserTreeGridItemType.PRINCIPAL &&
+                parentNode.getData().getPrincipal().isRole() && !!parentNode.getParent()) {
+
+                parentNode = parentNode.getParent();
+                level--;
+            }
+
             if (level === 0) {
                 // at root level, fetch user stores, and add 'Roles' folder
                 new ListUserStoresRequest().sendAndParse().then((userStores: UserStore[]) => {
@@ -230,6 +238,13 @@ module app.browse {
                     });
 
             }
+            return deferred.promise;
+        }
+
+        refreshNodeData(parentNode: TreeNode<UserTreeGridItem>): wemQ.Promise<TreeNode<UserTreeGridItem>> {
+            var deferred = Q.defer<TreeNode<UserTreeGridItem>>();
+            deferred.resolve(parentNode);
+
             return deferred.promise;
         }
 
