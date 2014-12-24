@@ -18,6 +18,8 @@ module api.ui.dialog {
 
         private actions: api.ui.Action[] = [];
 
+        private mouseClickListener: {(MouseEvent): void};
+
         constructor(config: ModalDialogConfig) {
             super("modal-dialog");
 
@@ -31,6 +33,21 @@ module api.ui.dialog {
 
             this.buttonRow = new ModalDialogButtonRow();
             this.appendChild(this.buttonRow);
+
+            this.mouseClickListener = (event: MouseEvent) => {
+                if (this.isVisible()) {
+                    for (var element = event.target; element; element = (<any>element).parentNode) {
+                        if (element == this.getHTMLElement()) {
+                            return;
+                        }
+                    }
+                    this.close();
+                }
+            };
+
+            api.dom.Body.get().onMouseDown(this.mouseClickListener);
+
+            this.onRemoved(() => api.dom.Body.get().unMouseDown(this.mouseClickListener));
         }
 
         setCancelAction(action: api.ui.Action) {
