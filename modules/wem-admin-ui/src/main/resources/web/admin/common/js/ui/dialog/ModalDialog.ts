@@ -48,6 +48,7 @@ module api.ui.dialog {
             api.dom.Body.get().onMouseDown(this.mouseClickListener);
 
             this.onRemoved(() => api.dom.Body.get().unMouseDown(this.mouseClickListener));
+            this.onAdded(() => api.dom.Body.get().onMouseDown(this.mouseClickListener));
         }
 
         setCancelAction(action: api.ui.Action) {

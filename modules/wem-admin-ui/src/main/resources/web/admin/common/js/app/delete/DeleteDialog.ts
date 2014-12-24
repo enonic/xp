@@ -24,7 +24,7 @@ module api.app.remove {
 
             this.getCancelAction().onExecuted(()=> {
                 this.close();
-            })
+            });
         }
 
         show() {
