@@ -4,6 +4,8 @@ module api.ui.panel {
 
         private panels: Panel[] = [];
 
+        private headers: api.dom.Element[] = [];
+
         private scrollable: api.dom.Element;
 
         private offset: number = 0;
@@ -26,10 +28,16 @@ module api.ui.panel {
             })
         }
 
-        addPanel(panel: Panel): number {
+        addPanel(panel: Panel, header?: string): number {
             panel.setDoOffset(false);
+            if (header) {
+                var headerEl = new api.dom.LabelEl(header).addClass("panel-header");
+                headerEl.setVisible(false);
+                this.appendChild(headerEl);
+            }
             this.appendChild(panel);
             var index = this.panels.push(panel) - 1;
+            this.headers.push(headerEl);
             if (this.isVisible()) {
                 this.updateLastPanelHeight();
             }
@@ -38,6 +46,10 @@ module api.ui.panel {
 
         getPanels(): Panel[] {
             return this.panels;
+        }
+
+        activateHeader(index: number) {
+            this.headers[index].setVisible(true);
         }
 
         getScrollable(): api.dom.Element {
@@ -117,6 +129,10 @@ module api.ui.panel {
             return this.panels[index];
         }
 
+        getHeaderEl(index: number): api.dom.Element {
+            return this.headers[index];
+        }
+
         getPanelShown(): Panel {
             return this.panelShown;
         }
@@ -151,7 +167,8 @@ module api.ui.panel {
 
             wemjq(this.scrollable.getHTMLElement()).animate({
                 scrollTop: index == 0 ? 0 : this.scrollable.getHTMLElement().scrollTop - this.offset +
-                                            panelToShow.getEl().getOffsetToParent().top
+                                            panelToShow.getEl().getOffsetToParent().top -
+                                            this.getHeaderEl(index).getEl().getHeightWithBorder()
             }, {
                 duration: 500,
                 complete: () => {
