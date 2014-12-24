@@ -177,7 +177,7 @@ module api.ui.treegrid {
                 });
             }
 
-            var keyBindings;
+            var keyBindings = [];
 
             this.onShown(() => {
                 this.grid.resizeCanvas();
@@ -185,24 +185,26 @@ module api.ui.treegrid {
                     var multipleSelectionBindings: KeyBinding[];
 
                     if (!this.gridOptions.isMultipleSelectionDisabled()) {
-                        var multipleSelectionBindings =
-                            [new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
-                                if (this.active) {
-                                    this.scrollToRow(this.grid.addSelectedUp());
-                                }
-                                event.preventDefault();
-                                event.stopImmediatePropagation();
-                            }),
+                        keyBindings =
+                            [
+                                new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
+                                    if (this.active) {
+                                        this.scrollToRow(this.grid.addSelectedUp());
+                                    }
+                                    event.preventDefault();
+                                    event.stopImmediatePropagation();
+                                }),
                                 new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
                                     if (this.active) {
                                         this.scrollToRow(this.grid.addSelectedDown());
                                     }
                                     event.preventDefault();
                                     event.stopImmediatePropagation();
-                                })]
+                                })
+                            ];
                     }
 
-                    keyBindings = [
+                    keyBindings = keyBindings.concat([
                         new KeyBinding('up', () => {
                             if (this.active) {
                                 this.scrollToRow(this.grid.moveSelectedUp());
@@ -247,10 +249,8 @@ module api.ui.treegrid {
                         new KeyBinding('space', () => {
                             this.deselectAll();
                         })
-                    ];
-                    if (multipleSelectionBindings) {
-                        keyBindings = keyBindings.concat(multipleSelectionBindings)
-                    }
+                    ]);
+
                     KeyBindings.get().bindKeys(keyBindings);
                 }
             });
