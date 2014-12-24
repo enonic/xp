@@ -20,93 +20,152 @@
 }
 
 .new-content-dialog {
-  min-width: 800px;
+  width: 540px;
 
   .dialog-header .path {
+    display: none;
     font-size: 16px;
-  }
-
-  .text-input.large {
-    font-size: 13px;
-    border: 2px solid @admin-medium-gray-border;
-    margin-bottom: 20px;
-  }
-
-  .panel {
-    position: static;
-    height: 100%;
-  }
-
-  .list-filter {
-    width: 100%;
-  }
-
-  .dropzone {
-    height: 100px;
-    line-height: 31px;
 
     &:before {
-      margin-top: 15px;
-      display: inline-block;
+      margin-right: 5px;
+      content: 'In:';
+      color: @admin-medium-gray-font;
     }
   }
 
-  .content-types-list {
-    height: 308px;
-    overflow-y: auto;
-    overflow-x: hidden;
+  .dialog-content {
+    position: relative;
 
-    .content-types-list-item {
-      position: relative;
-      cursor: pointer;
-      padding: 5px;
+    .column {
+      height: 100%;
+      float: left;
 
-      .icon-label {
-        left: 23px;
-        padding: 0 5px;
-        line-height: 16px;
-        border-radius: 10px;
-        background: @admin-blue;
-        color: white;
-        font-size: 14px;
-        font-family: @admin-font-family;
+      .content-types-list {
+        height: 308px;
+        overflow-y: auto;
+        overflow-x: hidden;
 
-        &:before {
-          content: "S";
+        .content-types-list-item {
+          position: relative;
+          cursor: pointer;
+          padding: 5px;
+
+          .icon-label {
+            left: 23px;
+            padding: 0 5px;
+            line-height: 16px;
+            border-radius: 10px;
+            background: @admin-blue;
+            color: white;
+            font-size: 14px;
+            font-family: @admin-font-family;
+
+            &:before {
+              content: "S";
+            }
+          }
+
+          &:hover {
+            background-color: #ebebeb;
+          }
         }
       }
+    }
 
-      &:hover {
-        background-color: #ebebeb;
+    section {
+      width: 60%;
+
+      .file-input {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+    }
+
+    aside {
+      margin-left: 5%;
+      padding-left: calc(5% - 1px);
+      border-left: 1px solid @admin-medium-gray-border;
+      width: 30%;
+
+      h1 {
+        font-size: 16px;
+        color: #888;
+        margin: 0px 0px 20px;
+        padding: 0 5px;
+        line-height: 37px;
+      }
+
+      .content-types-list {
+        height: 308px;
+      }
+    }
+
+  }
+
+  .dialog-buttons {
+    position: relative;
+
+    &:before {
+      position: absolute;
+      width: 100%;
+      line-height: 34px;
+      text-align: center;
+      color: @admin-medium-gray-font;
+      content: 'Drop files here to upload';
+    }
+
+    .button-container {
+      position: relative; // to pull buttons above the :before text positioned absolutely
+    }
+  }
+
+  .uploader-container {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    .uploader-mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #fff;
+      .opacity(.9);
+    }
+
+    .uploader {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+
+      .dropzone {
+        width: 100%;
+        height: 100%;
+        border: 0 none;
+        background-color: transparent;
+
+        &:before {
+          display: block;
+          margin: 60px auto;
+          background-color: @admin-blue;
+          width: 400px;
+          height: 400px;
+          line-height: 400px;
+          color: #fff;
+          content: 'Drop files to upload!';
+          font-weight: normal;
+
+          .border-radius(200px);
+          .box-shadow(0 0 10px @admin-shadow-gray);
+          .animation(pulsate, 4s);
+        }
       }
     }
   }
-
-  .column {
-    height: 100%;
-    float: left;
-
-    > h1 {
-      font-size: 14px;
-      color: #888;
-      margin: 20px 0px;
-      line-height: 0.9em;
-      padding-left: 10px;
-      border-bottom: 1px solid #aaa;
-    }
-  }
-
-  section {
-    width: 60%;
-  }
-
-  aside {
-    margin-left: 4%;
-    width: 36%;
-
-    .content-types-list {
-      height: 215px;
-    }
-  }
-
 }

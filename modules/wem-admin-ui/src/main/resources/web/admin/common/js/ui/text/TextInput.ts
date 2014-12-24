@@ -61,6 +61,8 @@ module api.ui.text {
         }
 
         setValue(value: string): TextInput {
+            super.setValue(value);
+
             var oldValue = this.getValue();
             var newValue = this.removeForbiddenChars(value);
 
@@ -80,12 +82,8 @@ module api.ui.text {
         }
 
         setPlaceholder(value: string): TextInput {
-            this.getEl().setAttribute('placeholder', value);
+            super.setPlaceholder(value);
             return this;
-        }
-
-        getPlaceholder(): string {
-            return this.getEl().getAttribute('placeholder');
         }
 
         setForbiddenCharsRe(re: RegExp): TextInput {
@@ -99,7 +97,7 @@ module api.ui.text {
             if (!from) {
                 (<HTMLInputElement>htmlEl).select();
             } else if (!to) {
-                to == this.getValue().length;
+                to = this.getValue().length;
             }
 
             if (htmlEl.createTextRange) {

@@ -115,3 +115,64 @@
     transform: translateX(0);
   }
 }
+
+// pulsate animation
+@-webkit-keyframes pulsate {
+  0%, 100% {
+    -webkit-transform: scale(1);
+  }
+  20% {
+    -webkit-transform: scale(1.03);
+  }
+  50% {
+    -webkit-transform: scale(0.99);
+  }
+  70% {
+    -webkit-transform: scale(1.02);
+  }
+}
+
+@-moz-keyframes pulsate {
+  0%, 100% {
+    -moz-transform: scale(1);
+  }
+  20% {
+    -moz-transform: scale(1.03);
+  }
+  50% {
+    -moz-transform: scale(0.99);
+  }
+  70% {
+    -moz-transform: scale(1.02);
+  }
+}
+
+@-ms-keyframes pulsate {
+  0%, 100% {
+    -ms-transform: scale(1);
+  }
+  20% {
+    -ms-transform: scale(1.03);
+  }
+  50% {
+    -ms-transform: scale(0.99);
+  }
+  70% {
+    -ms-transform: scale(1.02);
+  }
+}
+
+@keyframes pulsate {
+  0%, 100% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1.03);
+  }
+  50% {
+    transform: scale(0.99);
+  }
+  70% {
+    transform: scale(1.02);
+  }
+}

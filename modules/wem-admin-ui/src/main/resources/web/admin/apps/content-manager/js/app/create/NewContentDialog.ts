@@ -27,7 +27,7 @@ module app.create {
         private contentListMask: api.ui.mask.LoadMask;
         private recentListMask: api.ui.mask.LoadMask;
 
-        private input: api.ui.text.TextInput;
+        private input: api.ui.text.FileInput;
 
         private mediaUploader: api.content.MediaUploader;
 
@@ -45,7 +45,7 @@ module app.create {
             var section = new api.dom.SectionEl().setClass("column");
             this.appendChildToContentPanel(section);
 
-            this.input = api.ui.text.TextInput.large("list-filter").setPlaceholder("Search");
+            this.input = new api.ui.text.FileInput('large').setPlaceholder("Search for content type or paste url to file");
             section.appendChild(this.input);
 
             this.contentList = new app.create.NewContentDialogList();
@@ -54,25 +54,7 @@ module app.create {
             var aside = new api.dom.AsideEl("column");
             this.appendChildToContentPanel(aside);
 
-            this.mediaUploaderParams = {
-                parent: ContentPath.ROOT.toString()
-            };
-
-            this.mediaUploader = new api.content.MediaUploader({
-                operation: api.content.MediaUploaderOperation.create,
-                params: this.mediaUploaderParams,
-                name: 'new-content-uploader',
-                showButtons: false,
-                showResult: false,
-                allowMultiSelection: true,
-                deferred: true  // wait till the window is shown
-            });
-            aside.appendChild(this.mediaUploader);
-            this.mediaUploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
-
-                new NewMediaUploadEvent(event.getUploadItems(), this.parentContent).fire();
-                this.close();
-            });
+            this.initMediaUploader();
 
             var recentTitle = new api.dom.H1El();
             recentTitle.setHtml('Recently Used');
@@ -80,8 +62,6 @@ module app.create {
 
             this.recentList = new RecentItemsList();
             aside.appendChild(this.recentList);
-
-            this.setCancelAction(new api.ui.Action("Cancel", "esc"));
 
             api.dom.Body.get().appendChild(this);
 
@@ -93,7 +73,7 @@ module app.create {
 
             this.listItems = [];
 
-            this.input.onValueChanged((event: api.ui.ValueChangedEvent) => {
+            this.input.onInput((event: Event) => {
                 this.filterList();
             });
             this.input.onKeyUp((event: KeyboardEvent) => {
@@ -110,7 +90,67 @@ module app.create {
                 this.closeAndFireEventFromContentType(event.getItem());
             });
 
-            this.getCancelAction().onExecuted(()=> this.close());
+            var cancelAction = new api.ui.Action("Cancel", "esc");
+            cancelAction.onExecuted(() => this.close());
+            this.setCancelAction(cancelAction);
+        }
+
+        private initMediaUploader() {
+            this.mediaUploaderParams = {
+                parent: ContentPath.ROOT.toString()
+            };
+
+            var uploaderContainer = new api.dom.DivEl('uploader-container');
+            this.appendChild(uploaderContainer);
+
+            var uploaderMask = new api.dom.DivEl('uploader-mask');
+            uploaderContainer.appendChild(uploaderMask);
+
+            this.mediaUploader = new api.content.MediaUploader({
+                operation: api.content.MediaUploaderOperation.create,
+                params: this.mediaUploaderParams,
+                name: 'new-content-uploader',
+                showButtons: false,
+                showResult: false,
+                allowMultiSelection: true,
+                deferred: true  // wait till the window is shown
+            });
+            uploaderContainer.appendChild(this.mediaUploader);
+
+            this.mediaUploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
+                this.closeAndFireEventFromMediaUpload(event.getUploadItems());
+            });
+
+            var dragOverEl;
+            // make use of the fact that when dragging
+            // first drag enter occurs on the child element and after that
+            // drag leave occurs on the parent element that we came from
+            // meaning that to know when we left some element
+            // we need to compare it to the one currently dragged over
+            this.onDragEnter((event: DragEvent) => {
+                dragOverEl = <HTMLElement> event.target;
+
+                if (dragOverEl == this.getHTMLElement()) {
+                    uploaderContainer.show();
+                }
+            });
+
+            this.onDragLeave((event: DragEvent) => {
+                var targetEl = <HTMLElement> event.target;
+
+                if (dragOverEl == targetEl) {
+                    uploaderContainer.hide();
+                }
+            });
+
+            this.onDrop((event: DragEvent) => {
+                uploaderContainer.hide();
+            });
+        }
+
+        private closeAndFireEventFromMediaUpload(items: UploadItem<Content>[]) {
+            this.close();
+            new NewMediaUploadEvent(items, this.parentContent).fire();
         }
 
         private closeAndFireEventFromContentType(item: NewContentDialogListItem) {
@@ -171,9 +211,6 @@ module app.create {
             }
             super.show();
 
-            if (this.input.getValue()) {
-                this.input.selectText();
-            }
             this.input.giveFocus();
 
             this.mediaUploader.reset();
@@ -266,7 +303,7 @@ module app.create {
         }
 
         setPath(path: string) {
-            this.pathEl.setHtml(path);
+            this.pathEl.setHtml(path).setVisible(!api.util.StringHelper.isBlank(path));
         }
     }
 
