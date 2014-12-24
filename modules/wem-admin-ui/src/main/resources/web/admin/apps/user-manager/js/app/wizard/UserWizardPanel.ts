@@ -160,7 +160,7 @@ module app.wizard {
                     this.wizardHeader.disableNameInput();
                     this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('User was created!');
-                    new api.security.UserItemCreatedEvent(principal, this.getUserStore()).fire();
+                    new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
 
                     return principal;
                 });

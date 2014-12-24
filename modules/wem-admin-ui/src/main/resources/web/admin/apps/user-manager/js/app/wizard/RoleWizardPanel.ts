@@ -59,7 +59,7 @@ module app.wizard {
                     this.getPrincipalWizardHeader().disableNameInput();
                     this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('Role was created!');
-                    new api.security.UserItemCreatedEvent(principal, this.getUserStore()).fire();
+                    new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
 
                     return principal;
                 });

@@ -128,7 +128,7 @@ module app.browse {
             this.resetAndRender();
         }
 
-        appendUserNode(principal: api.security.Principal, userStore: api.security.UserStore, nextToSelection?: boolean) {
+        appendUserNode(principal: api.security.Principal, userStore: api.security.UserStore, parentOfSameType?: boolean) {
             if (!principal) { // UserStore type
 
                 var userTreeGridItem = new UserTreeGridItemBuilder().
@@ -156,7 +156,7 @@ module app.browse {
                     setType(UserTreeGridItemType.PRINCIPAL).
                     build();
 
-                this.appendNode(userTreeGridItem, false, false);
+                this.appendNode(userTreeGridItem, parentOfSameType, false);
 
             }
         }
