@@ -77,14 +77,8 @@ module api.content {
         }
 
         createResultItem(value: string): api.dom.Element {
-            var url;
-            if (value && (value.indexOf('/') == -1)) {
-                //TODO: what is the correct url to use?
-                url = api.util.UriHelper.getRestUri('content/media/' + value);
-            } else {
-                url = value;
-            }
-            var link = new api.dom.AEl().setUrl(url, "_blank");
+
+            var link = new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri('content/media/' + value), "_blank");
             link.setHtml(value);
 
             return link;

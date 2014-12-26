@@ -71,11 +71,16 @@ public final class ContentMediaResource
             throw new NotFoundWebException( String.format( "Content [%s] is not a media", contentId ) );
         }
 
-        final Media media = (Media) content;
-
-        final Attachment attachment = resolveAttachment( identifier, media );
-        final ByteSource binary = contentService.getBinary( contentId, attachment.getBinaryReference() );
-        return Response.ok( binary.openStream(), attachment.getMimeType() ).build();
+        final Attachment attachment = resolveAttachment( identifier, (Media) content );
+        if ( attachment == null )
+        {
+            throw new NotFoundWebException( String.format( "Content [%s] has no attachments", contentId ) );
+        }
+        else
+        {
+            final ByteSource binary = contentService.getBinary( contentId, attachment.getBinaryReference() );
+            return Response.ok( binary.openStream(), attachment.getMimeType() ).build();
+        }
     }
 
     private Attachment resolveAttachment( final String identifier, final Media media )

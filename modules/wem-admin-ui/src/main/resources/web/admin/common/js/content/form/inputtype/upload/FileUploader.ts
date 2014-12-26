@@ -38,12 +38,13 @@ module api.content.form.inputtype.upload {
         }
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
-            if (property.hasNonNullValue()) {
-                this.fileUploader.setValue(property.getString());
+
+            if (this.getContext().contentId) {
+                this.fileUploader.setValue(this.getContext().contentId.toString());
             }
 
             this.fileUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
-
+                property.setValue(ValueTypes.STRING.newValue(event.getUploadItem().getName()));
             });
 
             this.fileUploader.onUploadReset(() => {
