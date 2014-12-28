@@ -17,20 +17,31 @@ import com.enonic.wem.api.data.PropertyPath;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.core.AbstractSerializerTest;
+import com.enonic.wem.api.support.SerializingTestHelper;
 
 import static org.junit.Assert.*;
 
 public class RelationshipJsonSerializerTest
-    extends AbstractSerializerTest
 {
     private static final Instant NOW = LocalDateTime.of( 2013, 1, 1, 12, 0 ).toInstant( ZoneOffset.UTC );
+
+    private final SerializingTestHelper serializingTestHelper;
+
+    public RelationshipJsonSerializerTest()
+    {
+        serializingTestHelper = new SerializingTestHelper( this, true );
+    }
 
     @Before
     public void before()
     {
 
         //DateTimeUtils.setCurrentMillisFixed( NOW.toEpochMilli() );
+    }
+
+    private String jsonToString( final JsonNode node )
+    {
+        return serializingTestHelper.jsonToString( node );
     }
 
     @Test

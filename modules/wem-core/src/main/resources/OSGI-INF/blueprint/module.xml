@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
-
-  <reference id="moduleService" interface="com.enonic.wem.api.module.ModuleService"/>
-
-</blueprint>

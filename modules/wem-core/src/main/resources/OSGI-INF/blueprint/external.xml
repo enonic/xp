@@ -4,5 +4,9 @@
   <reference id="blobService" interface="com.enonic.wem.api.blob.BlobService"/>
   <reference id="nodeService" interface="com.enonic.wem.api.node.NodeService"/>
   <reference id="repositoryInitializer" interface="com.enonic.wem.api.initializer.RepositoryInitializer"/>
+  <reference id="eventPublisher" interface="com.enonic.wem.api.event.EventPublisher"/>
+  <reference id="moduleService" interface="com.enonic.wem.api.module.ModuleService"/>
+  <reference id="securityService" interface="com.enonic.wem.api.security.SecurityService"/>
+  <reference id="securityInitializer" interface="com.enonic.wem.api.security.SecurityInitializer"/>
 
 </blueprint>
