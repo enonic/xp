@@ -26,10 +26,10 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Media;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.core.image.ImageHelper;
-import com.enonic.wem.core.image.filter.BuilderContext;
-import com.enonic.wem.core.image.filter.ImageFilter;
-import com.enonic.wem.core.image.filter.ImageFilterBuilder;
+import com.enonic.wem.api.image.ImageHelper;
+import com.enonic.wem.api.image.BuilderContext;
+import com.enonic.wem.api.image.ImageFilter;
+import com.enonic.wem.api.image.ImageFilterBuilder;
 import com.enonic.wem.portal.internal.base.BaseResource;
 
 @Path("/portal/{mode}/{workspace}/{contentPath:.+}/_/image")

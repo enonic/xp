@@ -19,9 +19,9 @@ import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.util.BinaryReference;
-import com.enonic.wem.core.image.filter.BuilderContext;
-import com.enonic.wem.core.image.filter.ImageFilter;
-import com.enonic.wem.core.image.filter.ImageFilterBuilder;
+import com.enonic.wem.api.image.BuilderContext;
+import com.enonic.wem.api.image.ImageFilter;
+import com.enonic.wem.api.image.ImageFilterBuilder;
 import com.enonic.wem.portal.internal.base.BaseResourceTest;
 
 public abstract class ImageBaseResourceTest

@@ -11,9 +11,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-core</artifactId>
+  <artifactId>core-image</artifactId>
   <packaging>bundle</packaging>
-  <name>Enonic WEM Core</name>
+  <name>Enonic XP Core :: Image</name>
 
   <dependencies>
     <dependency>
@@ -22,20 +22,17 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>wem-api</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
+      <groupId>com.enonic.osgi.bundles</groupId>
+      <artifactId>jhlabs-filters</artifactId>
+      <version>2.0.235_1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.compendium</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tika</groupId>
-      <artifactId>tika-parsers</artifactId>
-      <version>1.6</version>
     </dependency>
   </dependencies>
 
@@ -46,9 +43,7 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Export-Package>
-              com.enonic.wem.core.*,
-            </Export-Package>
+            <Export-Package/>
             <Import-Package>
               *
             </Import-Package>

@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
+import com.enonic.wem.api.image.filter.ScaleMaxFilter;
 
 final class ThumbnailFactory
 {

@@ -7,10 +7,10 @@ import java.io.InputStream;
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.admin.rest.resource.BaseImageHelper;
+import com.enonic.wem.api.image.filter.ScaleMaxFilter;
+import com.enonic.wem.api.image.filter.ScaleSquareFilter;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.util.ImageHelper;
-import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
-import com.enonic.wem.core.image.filter.effect.ScaleSquareFilter;
 
 final class ContentImageHelper
     extends BaseImageHelper

@@ -34,6 +34,7 @@
     <module>modules/core-blob</module>
     <module>modules/core-repo</module>
     <module>modules/core-security</module>
+    <module>modules/core-image</module>
 
     <module>modules/wem-core</module>
     <module>modules/wem-export</module>

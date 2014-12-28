@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content;
 
-
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,10 +14,10 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertySet;
+import com.enonic.wem.api.image.filter.ScaleWidthFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.util.ImageHelper;
-import com.enonic.wem.core.image.filter.effect.ScaleWidthFilter;
 import com.enonic.wem.core.media.MediaInfo;
 
 public final class ImageContentProcessor

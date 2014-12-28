@@ -15,7 +15,7 @@
 
   <reference id="blobService" interface="com.enonic.wem.api.blob.BlobService"/>
 
-  <reference id="imageFilterBuilder" interface="com.enonic.wem.core.image.filter.ImageFilterBuilder"/>
+  <reference id="imageFilterBuilder" interface="com.enonic.wem.api.image.ImageFilterBuilder"/>
 
   <reference id="pageDescriptorService" interface="com.enonic.wem.api.content.page.PageDescriptorService"/>
 
