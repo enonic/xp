@@ -11,15 +11,22 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-event</artifactId>
+  <artifactId>core-security</artifactId>
   <packaging>bundle</packaging>
-  <name>Enonic WEM Event</name>
+  <name>Enonic XP Core :: Security</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>wem-api</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>wem-api</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>

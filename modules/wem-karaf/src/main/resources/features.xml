@@ -22,11 +22,10 @@
     <bundle start-level="50">mvn:com.enonic.osgi.bundles/jparsec/2.1.0_1</bundle>
 
     <bundle start-level="50">mvn:com.enonic.wem/wem-api/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/wem-event/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/wem-module/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/wem-blob/${project.version}</bundle>
-
-    <bundle start-level="50">mvn:com.enonic.wem/wem-repo/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/core-event/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/core-module/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/core-blob/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/core-repo/${project.version}</bundle>
 
     <bundle start-level="50">mvn:com.enonic.osgi.bundles/jhlabs-filters/2.0.235_1</bundle>
     <bundle start-level="50">mvn:com.enonic.osgi.bundles/jmustache/1.9.0_1</bundle>

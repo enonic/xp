@@ -83,7 +83,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wem-repo</artifactId>
+      <artifactId>core-repo</artifactId>
       <version>${project.version}</version>
     </dependency>
 

@@ -11,9 +11,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-repo</artifactId>
+  <artifactId>core-repo</artifactId>
   <packaging>bundle</packaging>
-  <name>Enonic WEM Repo</name>
+  <name>Enonic XP Core :: Repo</name>
 
   <dependencies>
     <dependency>
