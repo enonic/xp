@@ -4,7 +4,7 @@
   <reference id="tikaParser" interface="org.apache.tika.parser.Parser"/>
   <reference id="tikaDetector" interface="org.apache.tika.detect.Detector"/>
 
-  <bean id="mediaInfoService" class="com.enonic.wem.core.media.MediaInfoService">
+  <bean id="mediaInfoService" class="com.enonic.wem.core.media.MediaInfoServiceImpl">
     <property name="parser" ref="tikaParser"/>
     <property name="detector" ref="tikaDetector"/>
   </bean>

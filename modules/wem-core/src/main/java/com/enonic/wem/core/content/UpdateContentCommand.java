@@ -25,7 +25,7 @@ import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.thumb.Thumbnail;
-import com.enonic.wem.core.media.MediaInfo;
+import com.enonic.wem.api.media.MediaInfo;
 
 final class UpdateContentCommand
     extends AbstractContentCommand

@@ -15,14 +15,18 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.api.media.MediaInfo;
+import com.enonic.wem.api.media.MediaInfoService;
 import com.enonic.wem.api.util.Exceptions;
 
-public final class MediaInfoService
+public final class MediaInfoServiceImpl
+    implements MediaInfoService
 {
     private Parser parser;
 
     private Detector detector;
 
+    @Override
     public MediaInfo parseMediaInfo( final ByteSource byteSource )
     {
         final MediaInfo.Builder builder = MediaInfo.create();

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.media;
+package com.enonic.wem.api.media;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;

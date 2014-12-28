@@ -10,16 +10,18 @@ import org.junit.Test;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 
+import com.enonic.wem.api.media.MediaInfo;
+
 import static org.junit.Assert.*;
 
 public class MediaInfoServiceTest
 {
-    private MediaInfoService service;
+    private MediaInfoServiceImpl service;
 
     @Before
     public void setup()
     {
-        this.service = new MediaInfoService();
+        this.service = new MediaInfoServiceImpl();
         this.service.setDetector( new DefaultDetector() );
         this.service.setParser( new DefaultParser() );
     }

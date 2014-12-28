@@ -52,6 +52,7 @@ import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.exception.SystemException;
+import com.enonic.wem.api.media.MediaInfoService;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeService;
@@ -63,7 +64,6 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.util.BinaryReference;
-import com.enonic.wem.core.media.MediaInfoService;
 
 public class ContentServiceImpl
     implements ContentService

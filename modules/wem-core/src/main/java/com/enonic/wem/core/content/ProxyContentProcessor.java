@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.media.MediaInfo;
+import com.enonic.wem.api.media.MediaInfo;
 
 class ProxyContentProcessor
 {

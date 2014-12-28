@@ -18,7 +18,7 @@ import com.enonic.wem.api.image.filter.ScaleWidthFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.util.ImageHelper;
-import com.enonic.wem.core.media.MediaInfo;
+import com.enonic.wem.api.media.MediaInfo;
 
 public final class ImageContentProcessor
 {

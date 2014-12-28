@@ -8,9 +8,9 @@ import com.enonic.wem.api.content.UpdateMediaParams;
 import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.media.MediaInfo;
+import com.enonic.wem.api.media.MediaInfoService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.media.MediaInfo;
-import com.enonic.wem.core.media.MediaInfoService;
 
 final class UpdateMediaCommand
     extends AbstractContentCommand

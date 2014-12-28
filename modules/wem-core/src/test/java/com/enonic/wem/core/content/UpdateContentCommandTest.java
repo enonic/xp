@@ -23,7 +23,7 @@ import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.core.media.MediaInfo;
+import com.enonic.wem.api.media.MediaInfo;
 
 import static com.enonic.wem.api.content.Content.newContent;
 
