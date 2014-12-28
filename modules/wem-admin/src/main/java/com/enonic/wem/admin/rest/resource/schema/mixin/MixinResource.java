@@ -15,13 +15,12 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.schema.mixin.MixinJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageHelper;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinService;
@@ -117,7 +116,7 @@ public final class MixinResource
 
     private Mixin fetchMixin( final MixinName name )
     {
-        return mixinService.getByName( new GetMixinParams( name ) );
+        return mixinService.getByName( name );
     }
 
     public void setMixinService( final MixinService mixinService )

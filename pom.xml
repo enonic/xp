@@ -36,6 +36,7 @@
     <module>modules/core-security</module>
     <module>modules/core-image</module>
     <module>modules/core-relationship</module>
+    <module>modules/core-schema</module>
 
     <module>modules/wem-core</module>
     <module>modules/wem-export</module>

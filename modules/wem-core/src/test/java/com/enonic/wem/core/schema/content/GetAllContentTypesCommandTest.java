@@ -10,8 +10,8 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
-import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
@@ -83,7 +83,7 @@ public class GetAllContentTypesCommandTest
 
         final Form form = newForm().addFormItem( newMixinReference( mixin ).name( "myMixin" ).build() ).build();
 
-        Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
+        Mockito.when( mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
 
         final ContentType contentType = ContentType.newContentType().
             superType( ContentTypeName.structured() ).
@@ -101,7 +101,7 @@ public class GetAllContentTypesCommandTest
         final ContentTypes result = this.command.params( params ).execute();
 
         // One invocation for each contentType with mixin-reference
-        Mockito.verify( mixinService, Mockito.times( 1 ) ).getByName( Mockito.isA( GetMixinParams.class ) );
+        Mockito.verify( mixinService, Mockito.times( 1 ) ).getByName( Mockito.isA( MixinName.class ) );
         assertEquals( 1, result.getSize() );
         assertNotNull( result.get( 0 ).form().getInput( "inputToBeMixedIn" ) );
         assertNull( result.get( 0 ).form().getFormItem( "myMixin" ) );

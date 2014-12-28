@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinService;
 
 import static com.enonic.wem.api.form.Form.newForm;
@@ -45,7 +45,7 @@ public class MixinReferencesToFormItemsTransformTest
             addFormItem( newMixinReference().name( "my_mixin" ).mixin( "mymodule:my_mixin" ).build() ).
             build();
 
-        Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
+        Mockito.when( mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
 
         // exercise
         Form transformedForm = transformer.transformForm( form );
@@ -73,7 +73,7 @@ public class MixinReferencesToFormItemsTransformTest
             addFormItem( newMixinReference( mixin ).name( "address" ).build() ).
             build();
 
-        Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
+        Mockito.when( mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
 
         // exercise
         Form transformedForm = transformer.transformForm( form );
@@ -109,17 +109,17 @@ public class MixinReferencesToFormItemsTransformTest
                 build() ).
             build();
 
-        Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
+        Mockito.when( mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
 
         // exercise
         Form transformedForm = transformer.transformForm( form );
 
         // verify:
 
-        assertNotNull(transformedForm.getFormItemSet( "home" ) );
-        assertNotNull(transformedForm.getFormItemSet( "cottage" ) );
-        assertNotNull(transformedForm.getFormItemSet( "home.address" ) );
-        assertNotNull(transformedForm.getFormItemSet( "cottage.address" ) );
+        assertNotNull( transformedForm.getFormItemSet( "home" ) );
+        assertNotNull( transformedForm.getFormItemSet( "cottage" ) );
+        assertNotNull( transformedForm.getFormItemSet( "home.address" ) );
+        assertNotNull( transformedForm.getFormItemSet( "cottage.address" ) );
         assertEquals( "home.address.street", transformedForm.getInput( "home.address.street" ).getPath().toString() );
         assertEquals( "home.address.postalNo", transformedForm.getInput( "home.address.postalNo" ).getPath().toString() );
         assertEquals( "home.address.country", transformedForm.getInput( "home.address.country" ).getPath().toString() );
@@ -156,7 +156,7 @@ public class MixinReferencesToFormItemsTransformTest
             addFormItem( MixinReference.newMixinReference( mixin ).name( "home" ).build() ).
             build();
 
-        Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
+        Mockito.when( mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
 
         // exercise
         Form transformedForm = transformer.transformForm( form );

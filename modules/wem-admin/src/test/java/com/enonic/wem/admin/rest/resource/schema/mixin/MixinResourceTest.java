@@ -18,7 +18,6 @@ import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.resource.MockRestResponse;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinService;
@@ -66,7 +65,7 @@ public class MixinResourceTest
             newInput().name( MY_MIXIN_INPUT_NAME_1 ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
-        Mockito.when( mixinService.getByName( Mockito.isA( GetMixinParams.class ) ) ).thenReturn( mixin );
+        Mockito.when( mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
 
         String response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get().getAsString();
 
@@ -77,7 +76,7 @@ public class MixinResourceTest
     public final void test_get_mixin_not_found()
         throws Exception
     {
-        Mockito.when( mixinService.getByName( Mockito.any( GetMixinParams.class ) ) ).thenReturn( null );
+        Mockito.when( mixinService.getByName( Mockito.any( MixinName.class ) ) ).thenReturn( null );
 
         final MockRestResponse response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get();
         Assert.assertEquals( 404, response.getStatus() );
@@ -150,8 +149,7 @@ public class MixinResourceTest
 
     private void setupMixin( final Mixin mixin )
     {
-        final GetMixinParams params = new GetMixinParams( mixin.getName() );
-        Mockito.when( mixinService.getByName( params ) ).thenReturn( mixin );
+        Mockito.when( mixinService.getByName( mixin.getName() ) ).thenReturn( mixin );
     }
 
     private void assertImage( final BufferedImage image, final int size )

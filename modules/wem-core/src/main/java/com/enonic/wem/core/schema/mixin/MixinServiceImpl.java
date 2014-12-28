@@ -1,9 +1,8 @@
 package com.enonic.wem.core.schema.mixin;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.mixin.GetMixinParams;
-import com.enonic.wem.api.schema.mixin.GetMixinsParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
@@ -14,15 +13,9 @@ public class MixinServiceImpl
     private MixinDao mixinDao;
 
     @Override
-    public Mixin getByName( final GetMixinParams params )
+    public Mixin getByName( final MixinName name )
     {
-        return new GetMixinCommand().mixinDao( this.mixinDao ).params( params ).execute();
-    }
-
-    @Override
-    public Mixins getByNames( final GetMixinsParams params )
-    {
-        return new GetMixinsCommand().mixinDao( this.mixinDao ).params( params ).execute();
+        return this.mixinDao.getMixin( name );
     }
 
     @Override

@@ -5,7 +5,7 @@
     <property name="bundleContext" ref="blueprintBundleContext"/>
   </bean>
 
-  <service ref="mixinRegistry" interface="com.enonic.wem.api.schema.mixin.MixinRegistry"/>
+  <service ref="mixinRegistry" interface="com.enonic.wem.core.schema.mixin.MixinRegistry"/>
 
   <bean id="contentTypeRegistry" class="com.enonic.wem.core.schema.content.ContentTypeRegistryImpl" init-method="start" destroy-method="stop">
     <property name="bundleContext" ref="blueprintBundleContext"/>

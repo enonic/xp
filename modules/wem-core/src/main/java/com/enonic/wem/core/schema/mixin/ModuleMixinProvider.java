@@ -1,7 +1,6 @@
 package com.enonic.wem.core.schema.mixin;
 
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.schema.mixin.MixinProvider;
 import com.enonic.wem.api.schema.mixin.Mixins;
 
 public final class ModuleMixinProvider

@@ -3,7 +3,6 @@ package com.enonic.wem.api.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.schema.mixin.GetMixinParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinService;
 
@@ -36,7 +35,7 @@ public class MixinReferencesToFormItemsTransformer
             if ( formItem instanceof MixinReference )
             {
                 final MixinReference mixinReference = (MixinReference) formItem;
-                final Mixin mixin = mixinService.getByName( new GetMixinParams( mixinReference.getMixinName() ) );
+                final Mixin mixin = mixinService.getByName( mixinReference.getMixinName() );
                 if ( mixin != null )
                 {
                     for ( FormItem mixinFormItem : mixin.getFormItems() )
@@ -51,7 +50,7 @@ public class MixinReferencesToFormItemsTransformer
             }
             else if ( formItem instanceof FormItemSet )
             {
-                final FormItemSet.Builder formItemSetBuilder = FormItemSet.newFormItemSet((FormItemSet) formItem);
+                final FormItemSet.Builder formItemSetBuilder = FormItemSet.newFormItemSet( (FormItemSet) formItem );
                 formItemSetBuilder.clearFormItems();
                 formItemSetBuilder.addFormItems( transform( (FormItemSet) formItem ) );
                 formItems.add( formItemSetBuilder.build() );
