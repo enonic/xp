@@ -6,6 +6,7 @@ module api.ui.panel {
         private scrollIndex: number = -1;
         private focusIndex: number = -1;
         private focusVisible: boolean = false;
+        private hiddenHeader: number = 0;
 
         constructor(navigator: Navigator, scrollable?: api.dom.Element, className?: string) {
             super(scrollable, className);
@@ -33,11 +34,12 @@ module api.ui.panel {
 
             var focusVisible = this.isFocusedPanelVisible(scrollTop);
             var scrollIndex = this.getScrolledPanelIndex(scrollTop);
-
             if (this.scrollIndex != scrollIndex || this.focusVisible != focusVisible) {
                 if (focusVisible) {
+//                    alert("focus");
                     this.navigator.selectNavigationItem(this.focusIndex, true);
                 } else {
+//                    alert("index");
                     this.navigator.selectNavigationItem(scrollIndex, true);
                 }
                 this.focusVisible = focusVisible;
@@ -49,10 +51,12 @@ module api.ui.panel {
             if (this.focusIndex < 0) {
                 return false;
             }
+
             var totalHeight = this.getScrollable().getEl().getHeight(),
+                headerHeight = this.getFocusedHeaderHeight(this.focusIndex),
                 panelEl = this.getPanel(this.focusIndex).getEl(),
-                panelTop = panelEl.getOffsetToParent().top - this.getScrollOffset(),
-                panelBottom = panelTop + panelEl.getHeight();
+                panelTop = panelEl.getOffsetToParent().top - this.getScrollOffset() - headerHeight,
+                panelBottom = panelTop + panelEl.getHeight() - headerHeight;
             return panelEl.isVisible() && (( panelTop <= 0 && panelBottom > 0) || (panelTop <= totalHeight && panelBottom > totalHeight));
         }
 
@@ -62,14 +66,11 @@ module api.ui.panel {
                 // select first element if we are in the beginning
                 return 0;
             }
-            /* else if (scrollTop + this.getEl().getHeight() == this.getHTMLElement().scrollHeight) {
-             // select last element if we are in the very end
-             return this.getSize() - 1;
-             }*/
             for (var i = 0; i < this.getSize(); i++) {
                 panelEl = this.getPanel(i).getEl();
+                var headerHeight = this.getFocusedHeaderHeight(i);
                 if (panelEl.isVisible()) {
-                    panelTop = scrollTop + panelEl.getOffsetToParent().top - this.getScrollOffset();
+                    panelTop = scrollTop + panelEl.getOffsetToParent().top - this.getScrollOffset() - headerHeight;
                     panelBottom = panelTop + panelEl.getHeight();
                     if (scrollTop >= panelTop && scrollTop < panelBottom) {
                         return i;
@@ -83,9 +84,10 @@ module api.ui.panel {
             return this.navigator.getSelectedNavigationItem();
         }
 
-        addNavigablePanel(item: NavigationItem, panel: Panel, select?: boolean): number {
+        addNavigablePanel(item: NavigationItem, panel: Panel, header: string, select?: boolean): number {
             this.navigator.addNavigationItem(item);
-            var index = super.addPanel(panel);
+            var panelHeader = select ? null : header;
+            var index = super.addPanel(panel, panelHeader);
             // select corresponding step on focus
             panel.onFocus((event: FocusEvent) => {
                 this.navigator.selectNavigationItem(item.getIndex(), true);
@@ -95,6 +97,17 @@ module api.ui.panel {
                 this.focusIndex = -1;
                 // Update navigation item according to scroll position
                 this.updateScrolledNavigationItem();
+            });
+            panel.onShown((event: api.dom.ElementShownEvent) => {
+                var panel = <Panel>event.getElement();
+                var panelIndex = this.getPanelIndex(panel);
+                if (panelIndex > 0) {
+                    if (this.getPanel(this.hiddenHeader).isVisible()) {
+                        this.activateHeader(panelIndex);
+                    } else {
+                        this.hiddenHeader += 1;
+                    }
+                }
             });
             if (select) {
                 this.selectPanel(item);
@@ -118,6 +131,11 @@ module api.ui.panel {
                 this.navigator.removeNavigationItem(navigationItem);
             }
             return removedPanelIndex;
+        }
+
+        private getFocusedHeaderHeight(curStrip: number): number {
+            return this.getHeader(curStrip + 1) ? this.getHeader(curStrip + 1).getEl().getHeightWithBorder() :
+                   this.getHeader(curStrip).getEl().getHeightWithBorder();
         }
     }
 
