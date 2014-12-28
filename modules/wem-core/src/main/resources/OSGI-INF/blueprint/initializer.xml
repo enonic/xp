@@ -3,11 +3,6 @@
 
   <reference-list id="dataInitializers" interface="com.enonic.wem.api.initializer.DataInitializer" availability="optional"/>
 
-  <bean id="securityInitializer" class="com.enonic.wem.core.security.SecurityInitializer">
-    <property name="securityService" ref="securityService"/>
-    <property name="nodeService" ref="nodeService"/>
-  </bean>
-
   <bean id="startupInitializer" class="com.enonic.wem.core.initializer.StartupInitializerImpl" init-method="start">
     <property name="repositoryInitializer" ref="repositoryInitializer"/>
     <property name="initializers" ref="dataInitializers"/>

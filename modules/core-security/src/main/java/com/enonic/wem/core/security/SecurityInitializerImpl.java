@@ -1,5 +1,7 @@
 package com.enonic.wem.core.security;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +14,7 @@ import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.CreateUserStoreParams;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalRelationship;
+import com.enonic.wem.api.security.SecurityInitializer;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.security.User;
@@ -23,10 +26,11 @@ import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 import static com.enonic.wem.api.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.wem.api.security.acl.UserStoreAccess.USER_STORE_MANAGER;
 
-public final class SecurityInitializer
+@Component(immediate = true)
+public final class SecurityInitializerImpl
+    implements SecurityInitializer
 {
-
-    private final static Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
+    private final static Logger LOG = LoggerFactory.getLogger( SecurityInitializerImpl.class );
 
     public static final PrincipalKey ADMIN_USER_KEY = PrincipalKey.ofUser( UserStoreKey.system(), "admin" );
 
@@ -34,6 +38,7 @@ public final class SecurityInitializer
 
     private NodeService nodeService;
 
+    @Override
     public final void init()
     {
         LOG.info( "Initializing security principals" );
@@ -161,15 +166,16 @@ public final class SecurityInitializer
         }
     }
 
+    @Reference
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
     }
 
+    @Reference
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
     }
 }
-
 

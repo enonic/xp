@@ -1,6 +1,6 @@
 package com.enonic.wem.core.security;
 
-public interface PasswordEncoder
+interface PasswordEncoder
 {
     public String encodePassword( final String plainPassword );
 

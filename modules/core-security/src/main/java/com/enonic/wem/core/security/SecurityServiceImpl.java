@@ -7,6 +7,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -72,6 +75,7 @@ import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 import static com.enonic.wem.api.security.SystemConstants.CONTEXT_USER_STORES;
 import static com.enonic.wem.core.security.PrincipalKeyNodeTranslator.toNodeId;
 
+@Component(immediate = true)
 public final class SecurityServiceImpl
     implements SecurityService
 {
@@ -734,6 +738,7 @@ public final class SecurityServiceImpl
         nodeService.update( updateParams );
     }
 
+    @Reference
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;

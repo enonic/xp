@@ -4,9 +4,9 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.initializer.DataInitializer;
 import com.enonic.wem.api.initializer.RepositoryInitializer;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.security.SecurityInitializer;
 import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.core.content.ContentInitializer;
-import com.enonic.wem.core.security.SecurityInitializer;
 
 public final class StartupInitializerImpl
     implements StartupInitializer

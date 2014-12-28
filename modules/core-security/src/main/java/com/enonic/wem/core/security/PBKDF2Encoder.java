@@ -11,7 +11,7 @@ import com.google.common.base.Strings;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.util.HexEncoder;
 
-public class PBKDF2Encoder
+final class PBKDF2Encoder
     implements PasswordEncoder
 {
     private static final String ALGORITHM = "PBKDF2WithHmacSHA1";
