@@ -6,6 +6,7 @@ module api.ui.panel {
         private scrollIndex: number = -1;
         private focusIndex: number = -1;
         private focusVisible: boolean = false;
+        private hiddenHeader: number = 0;
 
         constructor(navigator: Navigator, scrollable?: api.dom.Element, className?: string) {
             super(scrollable, className);
@@ -62,14 +63,12 @@ module api.ui.panel {
                 // select first element if we are in the beginning
                 return 0;
             }
-            /* else if (scrollTop + this.getEl().getHeight() == this.getHTMLElement().scrollHeight) {
-             // select last element if we are in the very end
-             return this.getSize() - 1;
-             }*/
             for (var i = 0; i < this.getSize(); i++) {
                 panelEl = this.getPanel(i).getEl();
+                var headerEl = this.getHeaderEl(i + 1) ? this.getHeaderEl(i + 1).getEl().getHeightWithBorder() :
+                               this.getHeaderEl(i).getEl().getHeightWithBorder();
                 if (panelEl.isVisible()) {
-                    panelTop = scrollTop + panelEl.getOffsetToParent().top - this.getScrollOffset();
+                    panelTop = scrollTop + panelEl.getOffsetToParent().top - this.getScrollOffset() - headerEl;
                     panelBottom = panelTop + panelEl.getHeight();
                     if (scrollTop >= panelTop && scrollTop < panelBottom) {
                         return i;
@@ -83,9 +82,10 @@ module api.ui.panel {
             return this.navigator.getSelectedNavigationItem();
         }
 
-        addNavigablePanel(item: NavigationItem, panel: Panel, select?: boolean): number {
+        addNavigablePanel(item: NavigationItem, panel: Panel, header: string, select?: boolean): number {
             this.navigator.addNavigationItem(item);
-            var index = super.addPanel(panel);
+            var panelHeader = select ? null : header;
+            var index = super.addPanel(panel, panelHeader);
             // select corresponding step on focus
             panel.onFocus((event: FocusEvent) => {
                 this.navigator.selectNavigationItem(item.getIndex(), true);
@@ -95,6 +95,17 @@ module api.ui.panel {
                 this.focusIndex = -1;
                 // Update navigation item according to scroll position
                 this.updateScrolledNavigationItem();
+            });
+            panel.onShown((event: api.dom.ElementShownEvent) => {
+                var panel = <Panel>event.getElement();
+                var panelIndex = this.getPanelIndex(panel);
+                if (panelIndex > 0) {
+                    if (this.getPanel(this.hiddenHeader).isVisible()) {
+                        this.activateHeader(panelIndex);
+                    } else {
+                        this.hiddenHeader += 1;
+                    }
+                }
             });
             if (select) {
                 this.selectPanel(item);
