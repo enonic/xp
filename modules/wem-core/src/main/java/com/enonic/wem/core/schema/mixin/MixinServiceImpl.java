@@ -5,33 +5,32 @@ import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.mixin.Mixins;
-import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
 public class MixinServiceImpl
     implements MixinService
 {
-    private MixinDao mixinDao;
+    private MixinRegistry registry;
 
     @Override
     public Mixin getByName( final MixinName name )
     {
-        return this.mixinDao.getMixin( name );
+        return this.registry.getMixin( name );
     }
 
     @Override
     public Mixins getAll()
     {
-        return mixinDao.getAllMixins();
+        return this.registry.getAllMixins();
     }
 
     @Override
     public Mixins getByModule( final ModuleKey moduleKey )
     {
-        return mixinDao.getByModule( moduleKey );
+        return this.registry.getMixinsByModule( moduleKey );
     }
 
-    public void setMixinDao( final MixinDao mixinDao )
+    public void setRegistry( final MixinRegistry registry )
     {
-        this.mixinDao = mixinDao;
+        this.registry = registry;
     }
 }
