@@ -29,6 +29,11 @@ public final class AssertHelper
         Assert.assertEquals( expected, actual );
     }
 
+    public void assertEquals( final String message, final Object expected, final Object actual )
+    {
+        Assert.assertEquals( message, expected, actual );
+    }
+
     public void assertJson( final Object expected, final Object actual )
         throws Exception
     {

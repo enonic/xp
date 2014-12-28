@@ -2,7 +2,6 @@ package com.enonic.wem.script.internal.serializer;
 
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -11,7 +10,6 @@ import com.enonic.wem.script.AbstractScriptTest;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.serializer.MapSerializable;
 
-@Ignore
 public class ScriptMapGeneratorTest
     extends AbstractScriptTest
 {

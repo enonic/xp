@@ -4,7 +4,11 @@ import java.util.Map;
 
 import javax.script.Bindings;
 import javax.script.Invocable;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import javax.script.SimpleBindings;
+
+import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
@@ -21,6 +25,14 @@ import com.enonic.wem.script.internal.logger.ScriptLogger;
 final class ScriptExecutorImpl
     implements ScriptExecutor
 {
+    private final static String PRE_SCRIPT = "" + //
+        "'use strict';" + //
+        "(function(exports) {";
+
+    private final static String POST_SCRIPT = "" + //
+        "return exports;" + //
+        "})({});";
+
     private ScriptEngine engine;
 
     private CommandInvoker invoker;
@@ -29,7 +41,9 @@ final class ScriptExecutorImpl
 
     private Map<String, Object> globalMap;
 
-    private Bindings bindings;
+    private Bindings global;
+
+    private Map<ResourceKey, Object> exportsCache;
 
     public void setEngine( final ScriptEngine engine )
     {
@@ -54,34 +68,40 @@ final class ScriptExecutorImpl
     @Override
     public Object executeMain()
     {
-        this.bindings = this.engine.createBindings();
-        final Bindings exports = this.engine.createBindings();
-        this.bindings.put( "exports", exports );
-
-        new ScriptLogger( this.script ).register( this.bindings );
-        new ResolveFunction( this.script ).register( this.bindings );
-        new ExecuteFunction( this.script, this.invoker ).register( this.bindings );
-        new RequireFunction( this.script, this ).register( this.bindings );
-        new CallFunction().register( this.bindings );
+        this.exportsCache = Maps.newHashMap();
+        this.global = this.engine.createBindings();
+        new CallFunction().register( this.global );
 
         if ( this.globalMap != null )
         {
-            this.bindings.putAll( this.globalMap );
+            this.global.putAll( this.globalMap );
         }
 
-        doExecute();
-        return exports;
+        return executeRequire( this.script );
     }
 
     @Override
     public Object executeRequire( final ResourceKey script )
     {
-        final ScriptExecutorImpl executor = new ScriptExecutorImpl();
-        executor.engine = this.engine;
-        executor.globalMap = this.globalMap;
-        executor.invoker = this.invoker;
-        executor.script = script;
-        return executor.executeMain();
+        final Object cached = this.exportsCache.get( script );
+        if ( cached != null )
+        {
+            return cached;
+        }
+
+        final Bindings bindings = new SimpleBindings();
+        new ResolveFunction( script ).register( bindings );
+        new RequireFunction( script, this ).register( bindings );
+        new ScriptLogger( script ).register( bindings );
+        new ExecuteFunction( script, this.invoker ).register( bindings );
+
+        final ScriptContextImpl context = new ScriptContextImpl( script );
+        context.setEngineScope( this.global );
+        context.setGlobalScope( bindings );
+
+        final Object result = doExecute( context, script );
+        this.exportsCache.put( script, result );
+        return result;
     }
 
     @Override
@@ -90,15 +110,14 @@ final class ScriptExecutorImpl
         return new ScriptValueFactoryImpl( this::invokeMethod ).newValue( value );
     }
 
-    private void doExecute()
+    private Object doExecute( final ScriptContext context, final ResourceKey script )
     {
         try
         {
-            final Resource resource = Resource.from( this.script );
-            final String source = resource.readString();
+            final Resource resource = Resource.from( script );
+            final String source = PRE_SCRIPT + resource.readString() + POST_SCRIPT;
 
-            this.bindings.put( ScriptEngine.FILENAME, this.script.toString() );
-            this.engine.eval( source, this.bindings );
+            return this.engine.eval( source, context );
         }
         catch ( final Exception e )
         {
@@ -110,7 +129,7 @@ final class ScriptExecutorImpl
     {
         try
         {
-            return ( (Invocable) this.engine ).invokeMethod( this.bindings, "__call", func, args );
+            return ( (Invocable) this.engine ).invokeMethod( this.global, "__call", func, args );
         }
         catch ( final Exception e )
         {
