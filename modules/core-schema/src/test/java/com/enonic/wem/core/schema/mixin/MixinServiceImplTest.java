@@ -2,74 +2,78 @@ package com.enonic.wem.core.schema.mixin;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleListener;
-import org.osgi.service.component.ComponentContext;
 
+import com.google.common.collect.Lists;
+
+import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 
 import static org.junit.Assert.*;
 
 public class MixinServiceImplTest
 {
-    private MixinRegistryImpl registry;
+    private MixinRegistry registry;
 
     private MixinServiceImpl service;
-
-    private BundleContext bundleContext;
-
-    private ComponentContext componentContext;
-
-    private BundleListener bundleListener;
 
     @Before
     public void setup()
     {
-        this.bundleContext = Mockito.mock( BundleContext.class );
-        this.componentContext = Mockito.mock( ComponentContext.class );
-        Mockito.when( this.componentContext.getBundleContext() ).thenReturn( this.bundleContext );
-
-        this.registry = new MixinRegistryImpl();
+        this.registry = Mockito.mock( MixinRegistry.class );
 
         this.service = new MixinServiceImpl();
         this.service.setRegistry( this.registry );
     }
 
-    private void activate()
-    {
-        this.registry.activate( this.componentContext );
-
-        final ArgumentCaptor<BundleListener> captor = ArgumentCaptor.forClass( BundleListener.class );
-        Mockito.verify( this.bundleContext ).addBundleListener( captor.capture() );
-        this.bundleListener = captor.getValue();
-    }
-
-    private void deactivate()
-    {
-        this.registry.deactivate();
-        Mockito.verify( this.bundleContext ).removeBundleListener( this.bundleListener );
-    }
-
     @Test
     public void testEmpty()
     {
+        Mockito.when( this.registry.getAll() ).thenReturn( Lists.newArrayList() );
+
         final Mixins result = this.service.getAll();
         assertNotNull( result );
         assertEquals( 0, result.getSize() );
     }
 
     @Test
-    public void testLifecycle()
+    public void testGetByName()
     {
-        activate();
-        deactivate();
+        final Mixin mixin = createMixin( "mymodule:test" );
+        Mockito.when( this.registry.get( mixin.getName() ) ).thenReturn( mixin );
+
+        final Mixin result = this.service.getByName( mixin.getName() );
+        assertNotNull( result );
     }
 
     @Test
-    public void testInstallModule()
-        throws Exception
+    public void testGetAll()
     {
+        final Mixin mixin = createMixin( "mymodule:test" );
+        Mockito.when( this.registry.getAll() ).thenReturn( Lists.newArrayList( mixin ) );
+
+        final Mixins result = this.service.getAll();
+        assertNotNull( result );
+        assertEquals( 1, result.getSize() );
+        assertSame( mixin, result.get( 0 ) );
+    }
+
+    @Test
+    public void testGetByModule()
+    {
+        final Mixin mixin1 = createMixin( "mymodule:test" );
+        final Mixin mixin2 = createMixin( "othermodule:test" );
+        Mockito.when( this.registry.getAll() ).thenReturn( Lists.newArrayList( mixin1, mixin2 ) );
+
+        final Mixins result = this.service.getByModule( ModuleKey.from( "mymodule" ) );
+        assertNotNull( result );
+        assertEquals( 1, result.getSize() );
+        assertSame( mixin1, result.get( 0 ) );
+    }
+
+    private Mixin createMixin( final String name )
+    {
+        return Mixin.newMixin().name( name ).build();
     }
 }

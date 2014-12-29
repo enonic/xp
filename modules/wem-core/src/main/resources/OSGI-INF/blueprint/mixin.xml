@@ -3,16 +3,4 @@
 
   <reference id="mixinService" interface="com.enonic.wem.api.schema.mixin.MixinService"/>
 
-  <!--
-  <bean id="mixinRegistry" class="com.enonic.wem.core.schema.mixin.MixinRegistryImpl" init-method="start" destroy-method="stop">
-    <property name="bundleContext" ref="blueprintBundleContext"/>
-  </bean>
-
-  <bean id="mixinService" class="com.enonic.wem.core.schema.mixin.MixinServiceImpl">
-    <property name="registry" ref="mixinRegistry"/>
-  </bean>
-
-  <service ref="mixinService" auto-export="interfaces"/>
-  -->
-
 </blueprint>

@@ -43,8 +43,7 @@ public final class MixinRegistryImpl
         return this.map.values();
     }
 
-    @Override
-    public void addMixins( final Mixins mixins )
+    private void addMixins( final Mixins mixins )
     {
         for ( final Mixin mixin : mixins )
         {
@@ -52,8 +51,7 @@ public final class MixinRegistryImpl
         }
     }
 
-    @Override
-    public void removeMixins( final Mixins mixins )
+    private void removeMixins( final Mixins mixins )
     {
         for ( final Mixin mixin : mixins )
         {
