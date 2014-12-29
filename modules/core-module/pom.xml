@@ -36,6 +36,12 @@
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.compendium</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.googlecode.pojosr</groupId>
+      <artifactId>de.kalpatec.pojosr.framework</artifactId>
+      <version>0.2.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

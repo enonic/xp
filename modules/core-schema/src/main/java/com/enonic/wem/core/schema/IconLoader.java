@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
 
-import org.apache.commons.io.FilenameUtils;
 import org.osgi.framework.Bundle;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
 
@@ -16,8 +14,6 @@ import com.enonic.wem.api.Icon;
 public final class IconLoader
 {
     private static final String ICON_FILE_NAME = "thumb";
-
-    private final ImmutableMap<String, MediaType> extensionsMap = ImmutableMap.of( "jpeg", MediaType.JPEG, "png", MediaType.PNG );
 
     private final Bundle bundle;
 
@@ -34,13 +30,10 @@ public final class IconLoader
             return null;
         }
 
-        final Instant modifiedTime = Instant.ofEpochMilli( this.bundle.getLastModified() );
-        final String ext = FilenameUtils.getExtension( url.getPath() );
-        final MediaType mediaType = this.extensionsMap.get( ext );
-
         try
         {
-            return Icon.from( Resources.toByteArray( url ), mediaType.toString(), modifiedTime );
+            final Instant modifiedTime = Instant.ofEpochMilli( this.bundle.getLastModified() );
+            return Icon.from( Resources.toByteArray( url ), MediaType.PNG.toString(), modifiedTime );
         }
         catch ( final IOException e )
         {
@@ -51,17 +44,7 @@ public final class IconLoader
 
     private URL findIconUrl( final String parentPath )
     {
-        for ( final String ext : this.extensionsMap.keySet() )
-        {
-            final String path = parentPath + "/" + ICON_FILE_NAME + "." + ext;
-            final URL url = this.bundle.getEntry( path );
-
-            if ( url != null )
-            {
-                return url;
-            }
-        }
-
-        return null;
+        final String path = parentPath + "/" + ICON_FILE_NAME + ".png";
+        return this.bundle.getEntry( path );
     }
 }

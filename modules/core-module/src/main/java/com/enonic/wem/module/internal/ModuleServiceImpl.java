@@ -1,9 +1,9 @@
 package com.enonic.wem.module.internal;
 
-import java.util.concurrent.ConcurrentMap;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
@@ -12,21 +12,17 @@ import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
 
+@Component
 public final class ModuleServiceImpl
     implements ModuleService
 {
-    private ConcurrentMap<ModuleKey, Module> modules;
-
-    public ModuleServiceImpl()
-    {
-        this.modules = Maps.newConcurrentMap();
-    }
+    private ModuleRegistry registry;
 
     @Override
     public Module getModule( final ModuleKey key )
         throws ModuleNotFoundException
     {
-        final Module module = this.modules.get( key );
+        final Module module = this.registry.get( key );
         if ( module == null )
         {
             throw new ModuleNotFoundException( key );
@@ -38,9 +34,9 @@ public final class ModuleServiceImpl
     public Modules getModules( final ModuleKeys keys )
     {
         final ImmutableList.Builder<Module> moduleList = ImmutableList.builder();
-        for ( ModuleKey key : keys )
+        for ( final ModuleKey key : keys )
         {
-            final Module module = this.modules.get( key );
+            final Module module = this.registry.get( key );
             if ( module != null )
             {
                 moduleList.add( module );
@@ -52,16 +48,12 @@ public final class ModuleServiceImpl
     @Override
     public Modules getAllModules()
     {
-        return Modules.from( this.modules.values() );
+        return Modules.from( this.registry.getAll() );
     }
 
-    protected void installModule( final Module module )
+    @Reference
+    public void setRegistry( final ModuleRegistry registry )
     {
-        this.modules.put( module.getKey(), module );
-    }
-
-    protected void uninstallModule( final ModuleKey moduleKey )
-    {
-        this.modules.remove( moduleKey );
+        this.registry = registry;
     }
 }
