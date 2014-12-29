@@ -1,29 +1,63 @@
 module api.content {
 
-    export class PublishContentRequest  extends ContentResourceRequest<api.content.json.ContentJson, Content> {
+    export class PublishContentRequest extends ContentResourceRequest<PublishContentResult, any> {
 
-        private id: string;
+        private ids:ContentId[] = [];
 
-        constructor(id: string) {
+        constructor(contentId?:ContentId) {
             super();
-            this.id = id;
-            this.setMethod("POST");
+            super.setMethod("POST");
+            if (contentId) {
+                this.addId(contentId);
+            }
         }
 
-        getParams(): Object {
+        setIds(contentIds:ContentId[]):PublishContentRequest {
+            this.ids = contentIds;
+            return this;
+        }
+
+        addId(contentId:ContentId):PublishContentRequest {
+            this.ids.push(contentId);
+            return this;
+        }
+
+        getParams():Object {
             return {
-                contentId: this.id
+                ids: this.ids.map((el) => { return el.toString(); })
             };
         }
 
-        getRequestPath(): api.rest.Path {
+        getRequestPath():api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "publish");
         }
 
-        sendAndParse(): wemQ.Promise<Content> {
-            return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
-                return this.fromJsonToContent(response.getResult());
-            });
+        static feedback(jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) {
+
+            var result = jsonResponse.getResult(),
+                succeeded = result.successes.length,
+                failed = result.failures.length,
+                total = succeeded + failed;
+
+            switch (total) {
+            case 0:
+                api.notify.showFeedback('Nothing to publish.');
+                break;
+            case 1:
+                if (succeeded === 1) {
+                    api.notify.showSuccess('Content [' + result.successes[0].name + '] published!');
+                } else {
+                    api.notify.showError(result.failures[0].reason);
+                }
+                break;
+            default: // > 1
+                if (succeeded > 0) {
+                    api.notify.showSuccess('[' + succeeded + '] contents published!');
+                }
+                if (failed > 0) {
+                    api.notify.showError('[' + failed + '] contents failed to publish!');
+                }
+            }
         }
     }
 }

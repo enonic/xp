@@ -6,6 +6,7 @@
 ///<reference path='MoveContentAction.ts' />
 ///<reference path='ShowPreviewAction.ts' />
 ///<reference path='SortContentAction.ts' />
+///<reference path='PublishContentAction.ts' />
 ///<reference path='SaveSortedContentAction.ts' />
 ///<reference path='ShowDetailsAction.ts' />
 ///<reference path='ToggleSearchPanelAction.ts' />

@@ -1,0 +1,13 @@
+{
+    "failures": [
+        {
+            "id": "1",
+            "reason": "Content with id [content-id] was not found  in workspace [stage]"
+        },
+        {
+            "id": "2",
+            "reason": "Content with id [content-id] was not found  in workspace [stage]"
+        }
+    ],
+    "successes": []
+}
