@@ -1,22 +1,21 @@
 package com.enonic.wem.api.vfs;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
 import com.enonic.wem.api.util.Exceptions;
 
-public class LocalFile
+final class LocalFile
     implements VirtualFile
 {
     private final Path path;
@@ -24,6 +23,18 @@ public class LocalFile
     public LocalFile( final Path path )
     {
         this.path = path;
+    }
+
+    @Override
+    public String getName()
+    {
+        return this.path.getFileName().toString();
+    }
+
+    @Override
+    public String getPath()
+    {
+        return this.path.toString();
     }
 
     @Override
@@ -54,6 +65,11 @@ public class LocalFile
     @Override
     public List<VirtualFile> getChildren()
     {
+        if ( !isFolder() )
+        {
+            return Lists.newArrayList();
+        }
+
         final List<VirtualFile> virtualFiles = Lists.newArrayList();
 
         try
@@ -62,9 +78,9 @@ public class LocalFile
 
             list.forEach( ( path ) -> virtualFiles.add( VirtualFiles.from( path ) ) );
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
-            Exceptions.unchecked( e );
+            throw Exceptions.unchecked( e );
         }
 
         return virtualFiles;
@@ -73,27 +89,23 @@ public class LocalFile
     @Override
     public CharSource getCharSource()
     {
-        final File file = path.toFile();
-
-        if ( !file.exists() )
+        if ( !isFile() )
         {
             return null;
         }
 
-        return com.google.common.io.Files.asCharSource( file, StandardCharsets.UTF_8 );
+        return com.google.common.io.Files.asCharSource( this.path.toFile(), Charsets.UTF_8 );
     }
 
     @Override
     public ByteSource getByteSource()
     {
-        final File file = path.toFile();
-
-        if ( !file.exists() )
+        if ( !isFile() )
         {
             return null;
         }
 
-        return com.google.common.io.Files.asByteSource( file );
+        return com.google.common.io.Files.asByteSource( this.path.toFile() );
     }
 
     @Override

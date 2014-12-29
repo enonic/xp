@@ -34,6 +34,18 @@ class BundleResource
     }
 
     @Override
+    public String getName()
+    {
+        return null;
+    }
+
+    @Override
+    public String getPath()
+    {
+        return null;
+    }
+
+    @Override
     public URL getUrl()
     {
         return doGetUrl();

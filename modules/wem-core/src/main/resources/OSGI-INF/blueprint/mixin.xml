@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
+  <reference id="mixinService" interface="com.enonic.wem.api.schema.mixin.MixinService"/>
+
+  <!--
   <bean id="mixinRegistry" class="com.enonic.wem.core.schema.mixin.MixinRegistryImpl" init-method="start" destroy-method="stop">
     <property name="bundleContext" ref="blueprintBundleContext"/>
   </bean>
@@ -10,5 +13,6 @@
   </bean>
 
   <service ref="mixinService" auto-export="interfaces"/>
+  -->
 
 </blueprint>

@@ -8,6 +8,10 @@ import com.google.common.io.CharSource;
 
 public interface VirtualFile
 {
+    public String getName();
+
+    public String getPath();
+
     public URL getUrl();
 
     public boolean isFolder();
