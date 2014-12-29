@@ -2,7 +2,7 @@ package com.enonic.wem.api.schema.metadata;
 
 import java.util.function.Supplier;
 
-public interface MetadataProvider
+public interface MetadataSchemaProvider
     extends Supplier<MetadataSchemas>
 {
 }

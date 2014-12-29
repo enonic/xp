@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Icon;
@@ -11,13 +13,14 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.metadata.MetadataProvider;
+import com.enonic.wem.api.schema.metadata.MetadataSchemaProvider;
 import com.enonic.wem.api.schema.metadata.MetadataSchema;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemas;
 
-public final class CoreMetadataSchemasProvider
-    implements MetadataProvider
+@Component(immediate = true)
+public final class BuiltinMetadataSchemaProvider
+    implements MetadataSchemaProvider
 {
     private static MetadataSchemaName MENU_NAME = MetadataSchemaName.from( ModuleKey.SYSTEM, "menu-item" );
 
@@ -31,6 +34,13 @@ public final class CoreMetadataSchemasProvider
         build();
 
     private static final MetadataSchema[] METADATA_SCHEMAS = {MENU};
+
+    private final MetadataSchemas schemas;
+
+    public BuiltinMetadataSchemaProvider()
+    {
+        this.schemas = MetadataSchemas.from( generateSystemMetadataSchemas() );
+    }
 
     private static Form createMenuMetadataForm()
     {
@@ -67,7 +77,7 @@ public final class CoreMetadataSchemasProvider
     @Override
     public MetadataSchemas get()
     {
-        return MetadataSchemas.from( generateSystemMetadataSchemas() );
+        return this.schemas;
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )
@@ -87,5 +97,4 @@ public final class CoreMetadataSchemasProvider
             throw new RuntimeException( "Failed to load icon file: " + filePath, e );
         }
     }
-
 }

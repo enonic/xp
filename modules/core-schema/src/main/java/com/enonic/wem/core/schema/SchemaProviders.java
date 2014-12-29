@@ -9,6 +9,7 @@ import org.osgi.framework.ServiceRegistration;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.schema.metadata.MetadataSchemaProvider;
 import com.enonic.wem.api.schema.mixin.MixinProvider;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeProvider;
 
@@ -34,7 +35,13 @@ public final class SchemaProviders
         registerService( RelationshipTypeProvider.class, provider );
     }
 
+    public void register( final MetadataSchemaProvider provider )
+    {
+        registerService( MetadataSchemaProvider.class, provider );
+    }
+
     private <T> void registerService( final Class<T> type, final T instance )
+
     {
         if ( instance == null )
         {
