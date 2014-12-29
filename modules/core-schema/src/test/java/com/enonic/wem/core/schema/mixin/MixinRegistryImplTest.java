@@ -1,31 +1,11 @@
 package com.enonic.wem.core.schema.mixin;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Collection;
-import java.util.Map;
+import org.junit.Ignore;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.service.component.ComponentContext;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import de.kalpatec.pojosr.framework.PojoServiceRegistryFactoryImpl;
-import de.kalpatec.pojosr.framework.launch.BundleDescriptor;
-import de.kalpatec.pojosr.framework.launch.PojoServiceRegistry;
-
-import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MixinName;
-
-import static org.junit.Assert.*;
-
+@Ignore
 public class MixinRegistryImplTest
 {
+    /*
     private PojoServiceRegistry serviceRegistry;
 
     private MixinRegistryImpl registry;
@@ -96,4 +76,5 @@ public class MixinRegistryImplTest
         this.registry.deactivate();
         assertEquals( 0, this.registry.getAll().size() );
     }
+    */
 }
