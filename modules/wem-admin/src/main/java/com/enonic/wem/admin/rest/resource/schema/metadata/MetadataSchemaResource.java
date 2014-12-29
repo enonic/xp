@@ -27,9 +27,6 @@ public final class MetadataSchemaResource
 
     private MetadataSchemaIconUrlResolver metadataSchemaIconUrlResolver;
 
-    private MetadataSchemaIconResolver metadataSchemaIconResolver;
-
-
     @GET
     public MetadataSchemaJson get( @QueryParam("name") final String name )
     {
@@ -44,6 +41,14 @@ public final class MetadataSchemaResource
         }
 
         return new MetadataSchemaJson( metadataSchema, this.metadataSchemaIconUrlResolver );
+    }
+
+    @GET
+    @Path("list")
+    public MetadataSchemaListJson list()
+    {
+        final MetadataSchemas schemas = metadataSchemaService.getAll();
+        return new MetadataSchemaListJson( schemas, this.metadataSchemaIconUrlResolver );
     }
 
     @GET
@@ -62,7 +67,7 @@ public final class MetadataSchemaResource
     public void setMetadataSchemaService( final MetadataSchemaService metadataSchemaService )
     {
         this.metadataSchemaService = metadataSchemaService;
-        this.metadataSchemaIconResolver = new MetadataSchemaIconResolver( metadataSchemaService );
-        this.metadataSchemaIconUrlResolver = new MetadataSchemaIconUrlResolver( this.metadataSchemaIconResolver );
+        final MetadataSchemaIconResolver metadataSchemaIconResolver = new MetadataSchemaIconResolver( metadataSchemaService );
+        this.metadataSchemaIconUrlResolver = new MetadataSchemaIconUrlResolver( metadataSchemaIconResolver );
     }
 }
