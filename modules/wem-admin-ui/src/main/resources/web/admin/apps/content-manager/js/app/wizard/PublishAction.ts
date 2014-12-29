@@ -8,12 +8,7 @@ module app.wizard {
         }
 
         setToBePublishedAmount(amount: number) {
-            if (amount < 1) {
-                this.setEnabled(false);
-            } else {
-                this.setEnabled(true);
-
-            }
+            this.setEnabled(amount >= 1)
             this.setLabel(PublishAction.BASE_STRING + " (" + amount + ")")
         }
     }

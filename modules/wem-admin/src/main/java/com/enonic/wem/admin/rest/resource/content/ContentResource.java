@@ -254,12 +254,29 @@ public final class ContentResource
 
     @POST
     @Path("publish")
-    public ContentJson publish( final PublishContentJson params )
+    public PublishContentResultJson publish( final PublishContentJson params )
     {
-        final Content publishedContent =
-            contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, params.getContentId() ) );
+        final ContentIds contentIds = ContentIds.from(params.getIds());
 
-        return new ContentJson( publishedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+        final PublishContentResultJson jsonResult = new PublishContentResultJson();
+
+        for (ContentId contentId : contentIds) {
+            try
+            {
+                final Content publishedContent =
+                        contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, contentId ) );
+
+                final String displayName = publishedContent.getDisplayName().toString();
+
+                jsonResult.addSuccess( contentId, displayName );
+            }
+            catch ( ContentNotFoundException e )
+            {
+                jsonResult.addFailure( contentId, e.getMessage() );
+            }
+        }
+
+        return jsonResult;
     }
 
     @POST

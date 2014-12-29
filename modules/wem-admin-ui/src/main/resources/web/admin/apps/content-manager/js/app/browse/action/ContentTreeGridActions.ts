@@ -12,6 +12,7 @@ module app.browse.action {
         public DUPLICATE_CONTENT: Action;
         public MOVE_CONTENT: Action;
         public SORT_CONTENT: Action;
+        public PUBLISH_CONTENT: Action;
         public SHOW_PREVIEW: Action;
         public SHOW_DETAILS: Action;
         public TOGGLE_SEARCH_PANEL: Action;
@@ -30,10 +31,15 @@ module app.browse.action {
             this.DUPLICATE_CONTENT = new DuplicateContentAction(grid);
             this.MOVE_CONTENT = new MoveContentAction(grid);
             this.SORT_CONTENT = new SortContentAction(grid);
+            this.PUBLISH_CONTENT = new PublishContentAction(grid);
 
-            this.actions.push(this.SHOW_NEW_CONTENT_DIALOG_ACTION,
+            this.actions.push(
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION,
                 this.OPEN_CONTENT, this.EDIT_CONTENT,
-                this.DELETE_CONTENT, this.DUPLICATE_CONTENT, this.MOVE_CONTENT, this.SORT_CONTENT);
+                this.DELETE_CONTENT, this.DUPLICATE_CONTENT,
+                this.MOVE_CONTENT, this.SORT_CONTENT,
+                this.PUBLISH_CONTENT
+            );
 
         }
 
@@ -54,6 +60,7 @@ module app.browse.action {
                 this.MOVE_CONTENT.setEnabled(false);
                 this.SORT_CONTENT.setEnabled(false);
                 this.SHOW_PREVIEW.setEnabled(false);
+                this.PUBLISH_CONTENT.setEnabled(false);
                 break;
             case 1:
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(!!contentSummaries[0]);
@@ -64,6 +71,7 @@ module app.browse.action {
                 this.MOVE_CONTENT.setEnabled(false);
                 this.SORT_CONTENT.setEnabled(true);
                 this.SHOW_PREVIEW.setEnabled(!contentSummaries[0] ? false : contentSummaries[0].isPage());
+                this.PUBLISH_CONTENT.setEnabled(true);
                 break;
             default:
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
@@ -74,6 +82,7 @@ module app.browse.action {
                 this.MOVE_CONTENT.setEnabled(true);
                 this.SORT_CONTENT.setEnabled(false);
                 this.SHOW_PREVIEW.setEnabled(false);
+                this.PUBLISH_CONTENT.setEnabled(true);
             }
         }
 

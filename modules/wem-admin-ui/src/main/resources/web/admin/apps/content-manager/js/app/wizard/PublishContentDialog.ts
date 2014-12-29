@@ -2,7 +2,9 @@ module app.wizard {
 
     import TreeNode = api.ui.treegrid.TreeNode;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+    import ContentId = api.content.ContentId;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
+    import PublishContentRequest = api.content.PublishContentRequest;
 
     export class PublishContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -34,20 +36,20 @@ module app.wizard {
             });
 
             this.publishAction.onExecuted(() => {
-                new api.content.PublishContentRequest(this.content.getId()).sendAndParse().done((content: api.content.Content) => {
-                    api.notify.showSuccess('Content [' + content.getDisplayName() + '] published!');
-                    this.close();
-                });
+
+                new PublishContentRequest(new ContentId(this.content.getId())).
+                    send().
+                    done((jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
+
+                        PublishContentRequest.feedback(jsonResponse);
+
+                        this.close();
+                    });
 
             });
 
             OpenPublishDialogEvent.on((event) => {
                 this.content = event.getContent();
-                //this.grid = new CompareContentGrid(event.getContent());
-                //this.grid.selectAll();
-//                this.grid.onSelectionChanged((selectedRows:TreeNode<ContentSummaryAndCompareStatus>[]) => {
-//                    this.publishAction.setToBePublishedAmount(selectedRows.length);
-//                });
                 this.publishList.clear();
                 var req = api.content.CompareContentRequest.fromContentSummaries([this.content]);
                 var res = req.sendAndParse();
