@@ -1,7 +1,13 @@
 package com.enonic.wem.core.schema.mixin;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.junit.Test;
 import org.osgi.framework.Bundle;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
@@ -41,13 +47,28 @@ public class BundleMixinProviderTest
         assertNotNull( values );
         assertEquals( 2, values.getSize() );
 
-        final Mixin mixin1 = values.get( 0 );
+        final List<Mixin> list = sort( values );
+
+        final Mixin mixin1 = list.get( 0 );
         assertEquals( "Address", mixin1.getDisplayName() );
         assertNotNull( mixin1.getIcon() );
 
-        final Mixin mixin2 = values.get( 1 );
+        final Mixin mixin2 = list.get( 1 );
         assertEquals( "Full Name", mixin2.getDisplayName() );
         assertNull( mixin2.getIcon() );
     }
-}
 
+    private List<Mixin> sort( final Mixins value )
+    {
+        final List<Mixin> list = Lists.newArrayList( value );
+        Collections.sort( list, new Comparator<Mixin>()
+        {
+            @Override
+            public int compare( final Mixin o1, final Mixin o2 )
+            {
+                return o1.getName().toString().compareTo( o2.getName().toString() );
+            }
+        } );
+        return list;
+    }
+}
