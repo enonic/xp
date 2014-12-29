@@ -8,5 +8,6 @@
   <reference id="moduleService" interface="com.enonic.wem.api.module.ModuleService"/>
   <reference id="securityService" interface="com.enonic.wem.api.security.SecurityService"/>
   <reference id="securityInitializer" interface="com.enonic.wem.api.security.SecurityInitializer"/>
+  <reference id="contentTypeService" interface="com.enonic.wem.api.schema.content.ContentTypeService"/>
 
 </blueprint>

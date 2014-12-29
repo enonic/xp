@@ -5,18 +5,15 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.GetContentTypesParams;
-import com.enonic.wem.api.schema.mixin.MixinService;
-
 
 final class GetContentTypesCommand
-    extends AbstractContentTypeCommand
+    extends AbstractCommand
 {
-    private GetContentTypesParams params;
+    protected GetContentTypesParams params;
 
-    ContentTypes execute()
+    public ContentTypes execute()
     {
-        params.validate();
-
+        this.params.validate();
         return doExecute();
     }
 
@@ -36,32 +33,14 @@ final class GetContentTypesCommand
     private ContentTypes getContentTypes( final ContentTypeNames contentTypeNames )
     {
         final ContentTypes.Builder contentTypes = ContentTypes.newContentTypes();
-        for ( ContentTypeName contentTypeName : contentTypeNames )
+        for ( final ContentTypeName contentTypeName : contentTypeNames )
         {
-            final ContentType contentType = registry.getContentType( contentTypeName );
+            final ContentType contentType = this.registry.get( contentTypeName );
             if ( contentType != null )
             {
                 contentTypes.add( contentType );
             }
         }
         return contentTypes.build();
-    }
-
-    GetContentTypesCommand params( final GetContentTypesParams params )
-    {
-        this.params = params;
-        return this;
-    }
-
-    GetContentTypesCommand registry( final ContentTypeRegistry registry )
-    {
-        super.registry = registry;
-        return this;
-    }
-
-    GetContentTypesCommand mixinService( final MixinService mixinService )
-    {
-        super.mixinService = mixinService;
-        return this;
     }
 }

@@ -1,22 +1,25 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.core.schema.content;
 
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
+import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeProvider;
 import com.enonic.wem.api.schema.content.ContentTypes;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 
-public final class CoreContentTypesProvider
+@Component(immediate = true)
+public final class BuiltinContentTypeProvider
     implements ContentTypeProvider
 {
     private static final String CONTENT_TYPES_FOLDER = "content-types";
@@ -99,9 +102,14 @@ public final class CoreContentTypesProvider
     private static final ContentType[] SYSTEM_TYPES =
         {UNSTRUCTURED, STRUCTURED, FOLDER, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE, MEDIA_VECTOR,
             MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE, MEDIA_UNKNOWN, SITE,
-            TEMPLATE_FOLDER,
-            PAGE_TEMPLATE};
+            TEMPLATE_FOLDER, PAGE_TEMPLATE};
 
+    private final ContentTypes types;
+
+    public BuiltinContentTypeProvider()
+    {
+        this.types = ContentTypes.from( generateSystemContentTypes() );
+    }
 
     private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
     {
@@ -128,7 +136,7 @@ public final class CoreContentTypesProvider
     @Override
     public ContentTypes get()
     {
-        return ContentTypes.from( generateSystemContentTypes() );
+        return this.types;
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )
@@ -148,5 +156,4 @@ public final class CoreContentTypesProvider
             throw new RuntimeException( "Failed to load icon file: " + filePath, e );
         }
     }
-
 }

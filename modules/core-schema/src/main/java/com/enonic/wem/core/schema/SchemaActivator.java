@@ -9,6 +9,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
 
+import com.enonic.wem.core.schema.content.BundleContentTypeProvider;
 import com.enonic.wem.core.schema.metadata.BundleMetadataSchemaProvider;
 import com.enonic.wem.core.schema.mixin.BundleMixinProvider;
 import com.enonic.wem.core.schema.relationship.BundleRelationshipTypeProvider;
@@ -50,6 +51,7 @@ public final class SchemaActivator
         providers.register( BundleMixinProvider.create( bundle ) );
         providers.register( BundleRelationshipTypeProvider.create( bundle ) );
         providers.register( BundleMetadataSchemaProvider.create( bundle ) );
+        providers.register( BundleContentTypeProvider.create( bundle ) );
 
         return providers;
     }

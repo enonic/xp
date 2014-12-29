@@ -42,7 +42,6 @@ public final class MixinResource
 
     private MixinIconResolver mixinIconResolver;
 
-
     @GET
     public MixinJson get( @QueryParam("name") final String name )
     {
@@ -64,7 +63,6 @@ public final class MixinResource
     public MixinListJson list()
     {
         final Mixins mixins = mixinService.getAll();
-
         return new MixinListJson( mixins, this.mixinIconUrlResolver );
     }
 
@@ -73,7 +71,6 @@ public final class MixinResource
     public MixinListJson getByModule( @QueryParam("moduleKey") final String moduleKey )
     {
         final Mixins mixins = mixinService.getByModule( ModuleKey.from( moduleKey ) );
-
         return new MixinListJson( mixins, this.mixinIconUrlResolver );
     }
 

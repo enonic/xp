@@ -9,13 +9,11 @@ public interface ContentTypeService
 
     ContentTypes getByNames( GetContentTypesParams params );
 
-    ContentTypes getByModule ( ModuleKey moduleKey );
+    ContentTypes getByModule( ModuleKey moduleKey );
 
     ContentTypes getAll( GetAllContentTypesParams params );
 
-    ContentTypes getRoots();
-
     ContentTypes getChildren( GetChildContentTypesParams params );
 
-    ContentTypeValidationResult validate( ValidateContentTypeParams params );
+    ContentTypeValidationResult validate( ContentType type );
 }

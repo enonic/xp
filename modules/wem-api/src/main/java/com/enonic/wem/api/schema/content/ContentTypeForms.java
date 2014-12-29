@@ -1,5 +1,4 @@
-package com.enonic.wem.core.content;
-
+package com.enonic.wem.api.schema.content;
 
 import java.util.LinkedHashMap;
 
@@ -7,7 +6,6 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class ContentTypeForms
 {

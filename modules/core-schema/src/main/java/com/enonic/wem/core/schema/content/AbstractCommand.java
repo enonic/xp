@@ -6,29 +6,27 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.mixin.MixinService;
 
-abstract class AbstractContentTypeCommand
+abstract class AbstractCommand
 {
     protected ContentTypeRegistry registry;
 
     protected MixinService mixinService;
 
-    protected ContentType transformMixinReferences( final ContentType contentType )
+    protected final ContentType transformMixinReferences( final ContentType contentType )
     {
         final ContentTypes contentTypes = doTransformMixinReferences( ContentTypes.from( contentType ) );
-
         return contentTypes.get( 0 );
     }
 
-    protected ContentTypes transformMixinReferences( final ContentTypes contentTypes )
+    protected final ContentTypes transformMixinReferences( final ContentTypes contentTypes )
     {
         return doTransformMixinReferences( contentTypes );
     }
 
-    private ContentTypes doTransformMixinReferences( final ContentTypes contentTypes )
+    private final ContentTypes doTransformMixinReferences( final ContentTypes contentTypes )
     {
-        final MixinReferencesToFormItemsTransformer transformer = new MixinReferencesToFormItemsTransformer( mixinService );
-
-        ContentTypes.Builder transformedContentTypes = ContentTypes.newContentTypes();
+        final MixinReferencesToFormItemsTransformer transformer = new MixinReferencesToFormItemsTransformer( this.mixinService );
+        final ContentTypes.Builder transformedContentTypes = ContentTypes.newContentTypes();
         for ( final ContentType contentType : contentTypes )
         {
             final Form transformedForm = transformer.transformForm( contentType.form() );
@@ -37,5 +35,4 @@ abstract class AbstractContentTypeCommand
         }
         return transformedContentTypes.build();
     }
-
 }

@@ -14,10 +14,10 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageHelper;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.module.ModuleKey;
@@ -60,8 +60,18 @@ public final class ContentTypeResource
 
     @GET
     @Path("all")
-    public ContentTypeSummaryListJson all( @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
+    public ContentTypeSummaryListJson all(
+        @DefaultValue("false") @QueryParam("mixinReferencesToFormItems") final boolean mixinReferencesToFormItems )
     {
+        return list( mixinReferencesToFormItems );
+    }
+
+    @GET
+    @Path("list")
+    public ContentTypeSummaryListJson list(
+        @DefaultValue("false") @QueryParam("mixinReferencesToFormItems") final boolean mixinReferencesToFormItems )
+    {
+
         final GetAllContentTypesParams getAll = new GetAllContentTypesParams().mixinReferencesToFormItems( mixinReferencesToFormItems );
         final ContentTypes contentTypes = contentTypeService.getAll( getAll );
 
