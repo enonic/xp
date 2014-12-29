@@ -13,7 +13,7 @@ public abstract class AbstractSchemaActivatorTest
     extends AbstractBundleTest
 {
     @Test
-    public final void testServices()
+    public final void testProviders()
         throws Exception
     {
         final ComponentContext componentContext = Mockito.mock( ComponentContext.class );

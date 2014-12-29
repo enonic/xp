@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Icon;
@@ -16,7 +18,8 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
 
-public final class CoreRelationshipTypesProvider
+@Component(immediate = true)
+public final class BuiltinRelationshipTypesProvider
     implements RelationshipTypeProvider
 {
     private static final String RELATIONSHIP_TYPES_FOLDER = "relationship-types";
@@ -36,6 +39,13 @@ public final class CoreRelationshipTypesProvider
                                 ContentTypeNames.from( ContentTypeName.imageMedia() ) );
 
     private static final RelationshipType[] RELATIONSHIP_TYPES = {DEFAULT, PARENT, LINK, LIKE, IMAGE};
+
+    private final RelationshipTypes types;
+
+    public BuiltinRelationshipTypesProvider()
+    {
+        this.types = RelationshipTypes.from( generateSystemRelationshipTypes() );
+    }
 
     private static RelationshipType createRelationshipType( final RelationshipTypeName relationshipTypeName, final String displayName,
                                                             final String fromSemantic, final String toSemantic )
@@ -72,7 +82,7 @@ public final class CoreRelationshipTypesProvider
     @Override
     public RelationshipTypes get()
     {
-        return RelationshipTypes.from( generateSystemRelationshipTypes() );
+        return this.types;
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )
@@ -92,5 +102,4 @@ public final class CoreRelationshipTypesProvider
             throw new RuntimeException( "Failed to load icon file: " + filePath, e );
         }
     }
-
 }

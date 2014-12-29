@@ -14,10 +14,8 @@ import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;
 import com.enonic.wem.api.schema.content.ContentTypeProvider;
 import com.enonic.wem.api.schema.metadata.MetadataProvider;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeProvider;
 import com.enonic.wem.core.schema.content.ModuleContentTypeProvider;
 import com.enonic.wem.core.schema.metadata.ModuleMetadataProvider;
-import com.enonic.wem.core.schema.relationship.ModuleRelationshipTypeProvider;
 
 public final class SchemaModuleListener
     implements EventListener
@@ -56,9 +54,6 @@ public final class SchemaModuleListener
 
             final ModuleContentTypeProvider contentTypeProvider = new ModuleContentTypeProvider( module );
             bundleContext.registerService( ContentTypeProvider.class.getName(), contentTypeProvider, null );
-
-            final ModuleRelationshipTypeProvider moduleRelationshipTypeProvider = new ModuleRelationshipTypeProvider( module );
-            bundleContext.registerService( RelationshipTypeProvider.class.getName(), moduleRelationshipTypeProvider, null );
 
             final ModuleMetadataProvider moduleMetadataProvider = new ModuleMetadataProvider( module );
             bundleContext.registerService( MetadataProvider.class.getName(), moduleMetadataProvider, null );
