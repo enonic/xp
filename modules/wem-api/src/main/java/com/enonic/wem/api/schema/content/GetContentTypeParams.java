@@ -8,8 +8,6 @@ public class GetContentTypeParams
 
     private boolean mixinReferencesToFormItems = false;
 
-    private boolean notFoundAsException = false;
-
     public static GetContentTypeParams from( final ContentTypeName contentTypeName )
     {
         return new GetContentTypeParams().contentTypeName( contentTypeName );
@@ -32,18 +30,6 @@ public class GetContentTypeParams
         return this;
     }
 
-    public GetContentTypeParams notFoundAsException()
-    {
-        notFoundAsException = true;
-        return this;
-    }
-
-    public GetContentTypeParams notFoundAsNull()
-    {
-        notFoundAsException = false;
-        return this;
-    }
-
     public boolean isMixinReferencesToFormItems()
     {
         return mixinReferencesToFormItems;
@@ -58,11 +44,6 @@ public class GetContentTypeParams
     public void validate()
     {
         Preconditions.checkNotNull( this.contentTypeName, "contentTypeName cannot be null" );
-    }
-
-    public boolean isNotFoundAsException()
-    {
-        return notFoundAsException;
     }
 
     @Override
@@ -83,10 +64,6 @@ public class GetContentTypeParams
         {
             return false;
         }
-        if ( notFoundAsException != that.notFoundAsException )
-        {
-            return false;
-        }
         if ( !contentTypeName.equals( that.contentTypeName ) )
         {
             return false;
@@ -100,7 +77,6 @@ public class GetContentTypeParams
     {
         int result = contentTypeName.hashCode();
         result = 31 * result + ( mixinReferencesToFormItems ? 1 : 0 );
-        result = 31 * result + ( notFoundAsException ? 1 : 0 );
         return result;
     }
 }

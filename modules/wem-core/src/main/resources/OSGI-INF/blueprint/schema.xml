@@ -6,64 +6,17 @@
     <property name="bundleContext" ref="blueprintBundleContext"/>
   </bean>
 
-  <service ref="contentTypeRegistry" interface="com.enonic.wem.api.schema.content.ContentTypeRegistry"/>
-
-  <bean id="relationshipTypeRegistry" class="com.enonic.wem.core.schema.relationship.RelationshipTypeRegistryImpl" init-method="start"
-        destroy-method="stop">
-    <property name="bundleContext" ref="blueprintBundleContext"/>
-  </bean>
-
-  <service ref="relationshipTypeRegistry" interface="com.enonic.wem.api.schema.relationship.RelationshipTypeRegistry"/>
-
-  <bean id="metadataRegistry" class="com.enonic.wem.core.schema.metadata.MetadataRegistryImpl" init-method="start" destroy-method="stop">
-    <property name="bundleContext" ref="blueprintBundleContext"/>
-  </bean>
-
-  <service ref="metadataRegistry" interface="com.enonic.wem.api.schema.metadata.MetadataRegistry"/>
-
-  <service auto-export="interfaces">
-    <bean class="com.enonic.wem.core.schema.metadata.CoreMetadataSchemasProvider"/>
-  </service>
-
-  <service auto-export="interfaces">
-    <bean class="com.enonic.wem.core.schema.relationship.CoreRelationshipTypesProvider"/>
-  </service>
-
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.core.schema.SchemaModuleListener">
       <argument index="0" ref="moduleService"/>
     </bean>
   </service>
 
-  <bean id="relationshipTypeDao" class="com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDaoImpl">
-    <property name="relationshipTypeRegistry" ref="relationshipTypeRegistry"/>
-  </bean>
-
-  <bean id="contentTypeDao" class="com.enonic.wem.core.schema.content.dao.ContentTypeDaoImpl">
-    <property name="contentTypeRegistry" ref="contentTypeRegistry"/>
-  </bean>
-
-  <bean id="relationshipTypeService" class="com.enonic.wem.core.schema.relationship.RelationshipTypeServiceImpl">
-    <property name="relationshipTypeDao" ref="relationshipTypeDao"/>
-  </bean>
-
   <bean id="contentTypeService" class="com.enonic.wem.core.schema.content.ContentTypeServiceImpl">
-    <property name="contentTypeDao" ref="contentTypeDao"/>
+    <property name="registry" ref="contentTypeRegistry"/>
     <property name="mixinService" ref="mixinService"/>
   </bean>
 
   <service ref="contentTypeService" auto-export="interfaces"/>
-
-  <service ref="relationshipTypeService" auto-export="interfaces"/>
-
-  <bean id="metadataSchemaDao" class="com.enonic.wem.core.schema.metadata.dao.MetadataSchemaDaoImpl">
-    <property name="metadataRegistry" ref="metadataRegistry"/>
-  </bean>
-
-  <bean id="metadataSchemaService" class="com.enonic.wem.core.schema.metadata.MetadataSchemaServiceImpl">
-    <property name="metadataSchemaDao" ref="metadataSchemaDao"/>
-  </bean>
-
-  <service ref="metadataSchemaService" auto-export="interfaces"/>
 
 </blueprint>

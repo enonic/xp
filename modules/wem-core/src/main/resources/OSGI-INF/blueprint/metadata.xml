@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <bean id="metadataRegistry" class="com.enonic.wem.core.schema.metadata.MetadataRegistryImpl" init-method="start" destroy-method="stop">
+    <property name="bundleContext" ref="blueprintBundleContext"/>
+  </bean>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.core.schema.metadata.CoreMetadataSchemasProvider"/>
+  </service>
+
+  <bean id="metadataSchemaService" class="com.enonic.wem.core.schema.metadata.MetadataSchemaServiceImpl">
+    <property name="registry" ref="metadataRegistry"/>
+  </bean>
+
+  <service ref="metadataSchemaService" auto-export="interfaces"/>
+
+</blueprint>

@@ -11,12 +11,11 @@ import com.enonic.wem.api.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.schema.content.ValidateContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 public class ContentTypeServiceImpl
     implements ContentTypeService
 {
-    private ContentTypeDao contentTypeDao;
+    private ContentTypeRegistry registry;
 
     private MixinService mixinService;
 
@@ -25,7 +24,7 @@ public class ContentTypeServiceImpl
     {
         return new GetContentTypeCommand().
             params( params ).
-            contentTypeDao( this.contentTypeDao ).
+            registry( this.registry ).
             mixinService( this.mixinService ).
             execute();
     }
@@ -35,7 +34,7 @@ public class ContentTypeServiceImpl
     {
         return new GetContentTypesCommand().
             params( params ).
-            contentTypeDao( this.contentTypeDao ).
+            registry( this.registry ).
             mixinService( this.mixinService ).
             execute();
     }
@@ -43,7 +42,7 @@ public class ContentTypeServiceImpl
     @Override
     public ContentTypes getByModule( final ModuleKey moduleKey )
     {
-        return this.contentTypeDao.getByModule( moduleKey );
+        return this.registry.getContentTypesByModule( moduleKey );
     }
 
     @Override
@@ -51,7 +50,7 @@ public class ContentTypeServiceImpl
     {
         return new GetAllContentTypesCommand().
             params( params ).
-            contentTypeDao( this.contentTypeDao ).
+            registry( this.registry ).
             mixinService( this.mixinService ).
             execute();
     }
@@ -60,7 +59,7 @@ public class ContentTypeServiceImpl
     public ContentTypes getRoots()
     {
         return new GetRootContentTypesCommand().
-            contentTypeDao( this.contentTypeDao ).
+            registry( this.registry ).
             mixinService( this.mixinService ).
             execute();
     }
@@ -70,7 +69,7 @@ public class ContentTypeServiceImpl
     {
         return new GetChildContentTypesCommand().
             params( params ).
-            contentTypeDao( this.contentTypeDao ).
+            registry( this.registry ).
             mixinService( this.mixinService ).
             execute();
     }
@@ -81,9 +80,9 @@ public class ContentTypeServiceImpl
         return new ValidateContentTypeCommand().params( params ).contentTypeService( this ).execute();
     }
 
-    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
+    public void setRegistry( final ContentTypeRegistry registry )
     {
-        this.contentTypeDao = contentTypeDao;
+        this.registry = registry;
     }
 
     public void setMixinService( final MixinService mixinService )

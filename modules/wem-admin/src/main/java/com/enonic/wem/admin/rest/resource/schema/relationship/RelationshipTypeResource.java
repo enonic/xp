@@ -15,13 +15,12 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageHelper;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
@@ -61,8 +60,7 @@ public final class RelationshipTypeResource
 
     public RelationshipType fetchRelationshipType( final RelationshipTypeName name )
     {
-        final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( name );
-        return relationshipTypeService.getByName( params );
+        return relationshipTypeService.getByName( name );
     }
 
     @GET
@@ -76,7 +74,7 @@ public final class RelationshipTypeResource
 
     @GET
     @Path("byModule")
-    public RelationshipTypeListJson getByModule( @QueryParam( "moduleKey" ) final String moduleKey )
+    public RelationshipTypeListJson getByModule( @QueryParam("moduleKey") final String moduleKey )
     {
         final RelationshipTypes relationshipTypes = relationshipTypeService.getByModule( ModuleKey.from( moduleKey ) );
 

@@ -16,7 +16,6 @@ import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.resource.MockRestResponse;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
@@ -53,8 +52,7 @@ public class RelationshipTypeResourceTest
             build();
 
         final RelationshipTypeName name = RelationshipTypeName.from( "mymodule:the_relationship_type" );
-        final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( name );
-        Mockito.when( relationshipTypeService.getByName( params ) ).thenReturn( relationshipType );
+        Mockito.when( relationshipTypeService.getByName( name ) ).thenReturn( relationshipType );
 
         String response =
             request().path( "schema/relationship" ).queryParam( "name", "mymodule:the_relationship_type" ).get().getAsString();
@@ -67,7 +65,7 @@ public class RelationshipTypeResourceTest
     public void testRequestGetRelationshipTypeJson_not_found()
         throws Exception
     {
-        Mockito.when( relationshipTypeService.getByName( Mockito.any( GetRelationshipTypeParams.class ) ) ).thenReturn( null );
+        Mockito.when( relationshipTypeService.getByName( Mockito.any( RelationshipTypeName.class ) ) ).thenReturn( null );
 
         final MockRestResponse response = request().path( "schema/relationship" ).queryParam( "name", "mymodule:relationship_type" ).get();
         Assert.assertEquals( 404, response.getStatus() );
@@ -144,8 +142,7 @@ public class RelationshipTypeResourceTest
 
     private void setupRelationshipType( final RelationshipType relationshipType )
     {
-        final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( relationshipType.getName() );
-        Mockito.when( relationshipTypeService.getByName( params ) ).thenReturn( relationshipType );
+        Mockito.when( relationshipTypeService.getByName( relationshipType.getName() ) ).thenReturn( relationshipType );
     }
 
     private void assertImage( final BufferedImage image, final int size )

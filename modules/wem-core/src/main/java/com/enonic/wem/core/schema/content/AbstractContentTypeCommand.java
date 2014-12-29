@@ -5,11 +5,10 @@ import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 abstract class AbstractContentTypeCommand
 {
-    protected ContentTypeDao contentTypeDao;
+    protected ContentTypeRegistry registry;
 
     protected MixinService mixinService;
 

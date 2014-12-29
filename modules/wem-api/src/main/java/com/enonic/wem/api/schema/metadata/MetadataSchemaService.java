@@ -6,9 +6,7 @@ public interface MetadataSchemaService
 {
     MetadataSchemas getAll();
 
-    MetadataSchema getByName( GetMetadataSchemaParams params );
-
-    MetadataSchemas getByNames( GetMetadataSchemasParams params );
+    MetadataSchema getByName( MetadataSchemaName name );
 
     MetadataSchemas getByModule( ModuleKey moduleKey );
 }

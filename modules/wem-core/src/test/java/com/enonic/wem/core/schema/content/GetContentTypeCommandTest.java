@@ -9,7 +9,6 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static org.junit.Assert.*;
 
@@ -17,7 +16,7 @@ public class GetContentTypeCommandTest
 {
     private GetContentTypeCommand command;
 
-    private ContentTypeDao contentTypeDao;
+    private ContentTypeRegistry registry;
 
     private MixinService mixinService;
 
@@ -26,9 +25,9 @@ public class GetContentTypeCommandTest
         throws Exception
     {
         this.mixinService = Mockito.mock( MixinService.class );
-        this.contentTypeDao = Mockito.mock( ContentTypeDao.class );
+        this.registry = Mockito.mock( ContentTypeRegistry.class );
 
-        command = new GetContentTypeCommand().contentTypeDao( this.contentTypeDao ).mixinService( this.mixinService );
+        command = new GetContentTypeCommand().registry( this.registry ).mixinService( this.mixinService );
     }
 
     @Test
@@ -44,10 +43,10 @@ public class GetContentTypeCommandTest
         final ContentType contentTypeBuilder =
             ContentType.newContentType().superType( ContentTypeName.structured() ).name( contentTypeName ).displayName(
                 displayName ).description( description ).build();
-        Mockito.when( contentTypeDao.getContentType( Mockito.eq( contentTypeName ) ) ).thenReturn( contentTypeBuilder );
+        Mockito.when( registry.getContentType( Mockito.eq( contentTypeName ) ) ).thenReturn( contentTypeBuilder );
 
         final ContentTypes allContentTypes = ContentTypes.from( createContentType( name, displayName, description ) );
-        Mockito.when( contentTypeDao.getAllContentTypes() ).thenReturn( allContentTypes );
+        Mockito.when( registry.getAllContentTypes() ).thenReturn( allContentTypes );
 
         // Exercise:
         GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentTypeName );

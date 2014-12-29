@@ -6,7 +6,7 @@ public interface RelationshipTypeService
 {
     RelationshipTypes getAll();
 
-    RelationshipType getByName( GetRelationshipTypeParams params );
+    RelationshipType getByName( RelationshipTypeName name );
 
     RelationshipTypes getByModule( ModuleKey moduleKey );
 

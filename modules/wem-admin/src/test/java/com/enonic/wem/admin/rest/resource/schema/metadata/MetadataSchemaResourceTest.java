@@ -11,7 +11,6 @@ import junit.framework.Assert;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.resource.MockRestResponse;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.schema.metadata.GetMetadataSchemaParams;
 import com.enonic.wem.api.schema.metadata.MetadataSchema;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaService;
@@ -25,10 +24,6 @@ public class MetadataSchemaResourceTest
     private final static MetadataSchemaName MY_METADATA_SCHEMA_QUALIFIED_NAME_1 = MetadataSchemaName.from( "mymodule:input_text_1" );
 
     private final static String MY_METADATA_SCHEMA_INPUT_NAME_1 = "input_text_1";
-
-    private final static MetadataSchemaName MY_METADATA_SCHEMA_QUALIFIED_NAME_2 = MetadataSchemaName.from( "mymodule:text_area_2" );
-
-    private final static String MY_METADATA_SCHEMA_INPUT_NAME_2 = "text_area_2";
 
     private MetadataSchemaService metadataSchemaService;
 
@@ -53,10 +48,9 @@ public class MetadataSchemaResourceTest
             createdTime( LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC ) ).
             name( MY_METADATA_SCHEMA_QUALIFIED_NAME_1.toString() ).form( Form.newForm().addFormItem(
             newInput().name( MY_METADATA_SCHEMA_INPUT_NAME_1 ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
-                "Help text line 1" ).required( true ).build()
-        ).build() ).build();
+                "Help text line 1" ).required( true ).build() ).build() ).build();
 
-        Mockito.when( metadataSchemaService.getByName( Mockito.isA( GetMetadataSchemaParams.class ) ) ).thenReturn( metadataSchema );
+        Mockito.when( metadataSchemaService.getByName( Mockito.isA( MetadataSchemaName.class ) ) ).thenReturn( metadataSchema );
 
         String response =
             request().path( "schema/metadata" ).queryParam( "name", MY_METADATA_SCHEMA_QUALIFIED_NAME_1.toString() ).get().getAsString();
@@ -68,7 +62,7 @@ public class MetadataSchemaResourceTest
     public final void test_get_metadata_schema_not_found()
         throws Exception
     {
-        Mockito.when( metadataSchemaService.getByName( Mockito.any( GetMetadataSchemaParams.class ) ) ).thenReturn( null );
+        Mockito.when( metadataSchemaService.getByName( Mockito.any( MetadataSchemaName.class ) ) ).thenReturn( null );
 
         final MockRestResponse response =
             request().path( "schema/metadata" ).queryParam( "name", MY_METADATA_SCHEMA_QUALIFIED_NAME_1.toString() ).get();

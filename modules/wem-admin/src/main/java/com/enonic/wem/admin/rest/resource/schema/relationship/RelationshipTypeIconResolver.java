@@ -2,7 +2,6 @@ package com.enonic.wem.admin.rest.resource.schema.relationship;
 
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
@@ -16,10 +15,9 @@ public final class RelationshipTypeIconResolver
         this.relationshipTypeService = relationshipTypeService;
     }
 
-    public Icon resolveIcon( final RelationshipTypeName relationshipTypeName )
+    public Icon resolveIcon( final RelationshipTypeName name )
     {
-        final GetRelationshipTypeParams params = new GetRelationshipTypeParams().name( relationshipTypeName );
-        final RelationshipType relationshipType = relationshipTypeService.getByName( params );
+        final RelationshipType relationshipType = relationshipTypeService.getByName( name );
         return relationshipType == null ? null : relationshipType.getIcon();
     }
 

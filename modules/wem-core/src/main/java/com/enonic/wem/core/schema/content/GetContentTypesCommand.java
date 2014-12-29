@@ -6,7 +6,6 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 
 final class GetContentTypesCommand
@@ -39,7 +38,7 @@ final class GetContentTypesCommand
         final ContentTypes.Builder contentTypes = ContentTypes.newContentTypes();
         for ( ContentTypeName contentTypeName : contentTypeNames )
         {
-            final ContentType contentType = contentTypeDao.getContentType( contentTypeName );
+            final ContentType contentType = registry.getContentType( contentTypeName );
             if ( contentType != null )
             {
                 contentTypes.add( contentType );
@@ -54,9 +53,9 @@ final class GetContentTypesCommand
         return this;
     }
 
-    GetContentTypesCommand contentTypeDao( final ContentTypeDao contentTypeDao )
+    GetContentTypesCommand registry( final ContentTypeRegistry registry )
     {
-        super.contentTypeDao = contentTypeDao;
+        super.registry = registry;
         return this;
     }
 

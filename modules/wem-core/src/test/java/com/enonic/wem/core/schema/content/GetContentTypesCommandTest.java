@@ -10,7 +10,6 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.GetContentTypesParams;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static org.junit.Assert.*;
 
@@ -18,7 +17,7 @@ public class GetContentTypesCommandTest
 {
     private GetContentTypesCommand command;
 
-    private ContentTypeDao contentTypeDao;
+    private ContentTypeRegistry registry;
 
     private MixinService mixinService;
 
@@ -27,10 +26,10 @@ public class GetContentTypesCommandTest
         throws Exception
     {
         this.mixinService = Mockito.mock( MixinService.class );
-        this.contentTypeDao = Mockito.mock( ContentTypeDao.class );
+        this.registry = Mockito.mock( ContentTypeRegistry.class );
 
         command = new GetContentTypesCommand().
-            contentTypeDao( this.contentTypeDao ).
+            registry( this.registry ).
             mixinService( this.mixinService );
     }
 
@@ -41,7 +40,7 @@ public class GetContentTypesCommandTest
         final ContentTypes allContentTypes =
             ContentTypes.from( createContentType( "mymodule:content_type_1", "DisplayName", "Description" ),
                                createContentType( "mymodule:content_type_2", "DisplayName2", "Description2" ) );
-        Mockito.when( contentTypeDao.getAllContentTypes() ).thenReturn( allContentTypes );
+        Mockito.when( registry.getAllContentTypes() ).thenReturn( allContentTypes );
 
         final ContentType contentTypeBuilder1 = ContentType.newContentType().
             superType( ContentTypeName.structured() ).
@@ -49,7 +48,7 @@ public class GetContentTypesCommandTest
             description( "Description" ).
             name( "mymodule:content_type_1" ).
             build();
-        Mockito.when( contentTypeDao.getContentType( Mockito.eq( ContentTypeName.from( "mymodule:content_type_1" ) ) ) ).thenReturn(
+        Mockito.when( registry.getContentType( Mockito.eq( ContentTypeName.from( "mymodule:content_type_1" ) ) ) ).thenReturn(
             contentTypeBuilder1 );
 
         final ContentType contentTypeBuilder2 = ContentType.newContentType().
@@ -58,12 +57,12 @@ public class GetContentTypesCommandTest
             description( "Description2" ).
             name( "mymodule:content_type_2" ).
             build();
-        Mockito.when( contentTypeDao.getContentType( Mockito.eq( ContentTypeName.from( "mymodule:content_type_2" ) ) ) ).thenReturn(
+        Mockito.when( registry.getContentType( Mockito.eq( ContentTypeName.from( "mymodule:content_type_2" ) ) ) ).thenReturn(
             contentTypeBuilder2 );
 
         // Exercise:
-        final GetContentTypesParams params = new GetContentTypesParams().contentTypeNames(
-            ContentTypeNames.from( "mymodule:content_type_1", "mymodule:content_type_2" ) );
+        final GetContentTypesParams params =
+            new GetContentTypesParams().contentTypeNames( ContentTypeNames.from( "mymodule:content_type_1", "mymodule:content_type_2" ) );
         final ContentTypes result = this.command.params( params ).execute();
 
         // Verify

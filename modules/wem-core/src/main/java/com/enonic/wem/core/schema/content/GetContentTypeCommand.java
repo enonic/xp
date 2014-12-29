@@ -1,10 +1,8 @@
 package com.enonic.wem.core.schema.content;
 
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeNotFoundException;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 final class GetContentTypeCommand
     extends AbstractContentTypeCommand
@@ -20,17 +18,10 @@ final class GetContentTypeCommand
 
     private ContentType doExecute()
     {
-        final ContentType contentType = contentTypeDao.getContentType( this.params.getContentTypeName() );
+        final ContentType contentType = registry.getContentType( this.params.getContentTypeName() );
         if ( contentType == null )
         {
-            if ( this.params.isNotFoundAsException() )
-            {
-                throw new ContentTypeNotFoundException( this.params.getContentTypeName() );
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         if ( !this.params.isMixinReferencesToFormItems() )
@@ -49,9 +40,9 @@ final class GetContentTypeCommand
         return this;
     }
 
-    GetContentTypeCommand contentTypeDao( final ContentTypeDao contentTypeDao )
+    GetContentTypeCommand registry( final ContentTypeRegistry registry )
     {
-        super.contentTypeDao = contentTypeDao;
+        super.registry = registry;
         return this;
     }
 

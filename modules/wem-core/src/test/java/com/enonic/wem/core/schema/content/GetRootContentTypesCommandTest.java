@@ -8,7 +8,6 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -16,7 +15,7 @@ public class GetRootContentTypesCommandTest
 {
     private GetRootContentTypesCommand command;
 
-    private ContentTypeDao contentTypeDao;
+    private ContentTypeRegistry registry;
 
     private MixinService mixinService;
 
@@ -25,9 +24,9 @@ public class GetRootContentTypesCommandTest
         throws Exception
     {
         this.mixinService = Mockito.mock( MixinService.class );
-        this.contentTypeDao = Mockito.mock( ContentTypeDao.class );
+        this.registry = Mockito.mock( ContentTypeRegistry.class );
 
-        command = new GetRootContentTypesCommand().contentTypeDao( this.contentTypeDao ).mixinService( this.mixinService );
+        command = new GetRootContentTypesCommand().registry( this.registry ).mixinService( this.mixinService );
     }
 
     @Test
@@ -51,7 +50,7 @@ public class GetRootContentTypesCommandTest
             build();
 
         final ContentTypes allContentTypes = ContentTypes.from( contentType1, contentType2 );
-        Mockito.when( contentTypeDao.getAllContentTypes() ).thenReturn( allContentTypes );
+        Mockito.when( registry.getAllContentTypes() ).thenReturn( allContentTypes );
 
         // exercise
         final ContentTypes contentTypes = this.command.execute();

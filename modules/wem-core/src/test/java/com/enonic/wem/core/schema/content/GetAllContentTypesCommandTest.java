@@ -13,7 +13,6 @@ import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.form.Form.newForm;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -27,16 +26,16 @@ public class GetAllContentTypesCommandTest
 
     private MixinService mixinService;
 
-    private ContentTypeDao contentTypeDao;
+    private ContentTypeRegistry registry;
 
     @Before
     public void setUp()
         throws Exception
     {
         mixinService = Mockito.mock( MixinService.class );
-        contentTypeDao = Mockito.mock( ContentTypeDao.class );
+        registry = Mockito.mock( ContentTypeRegistry.class );
 
-        command = new GetAllContentTypesCommand().mixinService( this.mixinService ).contentTypeDao( this.contentTypeDao );
+        command = new GetAllContentTypesCommand().mixinService( this.mixinService ).registry( this.registry );
     }
 
     @Test
@@ -55,7 +54,7 @@ public class GetAllContentTypesCommandTest
 
         final ContentTypes allContentTypes = ContentTypes.from( createContentType( contentType1Name, displayName1, description1 ),
                                                                 createContentType( contentType2Name, displayName2, description2 ) );
-        Mockito.when( contentTypeDao.getAllContentTypes() ).thenReturn( allContentTypes );
+        Mockito.when( registry.getAllContentTypes() ).thenReturn( allContentTypes );
 
         // exercise
         GetAllContentTypesParams params = new GetAllContentTypesParams();
@@ -94,7 +93,7 @@ public class GetAllContentTypesCommandTest
             build();
 
         final ContentTypes allContentTypes = ContentTypes.from( contentType );
-        Mockito.when( contentTypeDao.getAllContentTypes() ).thenReturn( allContentTypes );
+        Mockito.when( registry.getAllContentTypes() ).thenReturn( allContentTypes );
 
         // Exercise:
         final GetAllContentTypesParams params = new GetAllContentTypesParams().mixinReferencesToFormItems( true );

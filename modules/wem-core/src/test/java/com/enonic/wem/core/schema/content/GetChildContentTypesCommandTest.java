@@ -9,7 +9,6 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.GetChildContentTypesParams;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -17,16 +16,16 @@ public class GetChildContentTypesCommandTest
 {
     private GetChildContentTypesCommand command;
 
-    private ContentTypeDao contentTypeDao;
+    private ContentTypeRegistry registry;
 
     @Before
     public void setUp()
         throws Exception
     {
         final MixinService mixinService = Mockito.mock( MixinService.class );
-        this.contentTypeDao = Mockito.mock( ContentTypeDao.class );
+        this.registry = Mockito.mock( ContentTypeRegistry.class );
 
-        command = new GetChildContentTypesCommand().contentTypeDao( this.contentTypeDao ).mixinService( mixinService );
+        command = new GetChildContentTypesCommand().registry( this.registry ).mixinService( mixinService );
     }
 
     @Test
@@ -72,7 +71,7 @@ public class GetChildContentTypesCommandTest
             build();
 
         final ContentTypes allContentTypes = ContentTypes.from( contentType1, contentType2, contentType3, contentType4, contentType5 );
-        Mockito.when( contentTypeDao.getAllContentTypes() ).thenReturn( allContentTypes );
+        Mockito.when( registry.getAllContentTypes() ).thenReturn( allContentTypes );
 
         // exercise
         GetChildContentTypesParams params = new GetChildContentTypesParams().parentName( contentType5.getName() );

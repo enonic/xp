@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+  <bean id="relationshipTypeRegistry" class="com.enonic.wem.core.schema.relationship.RelationshipTypeRegistryImpl" init-method="start"
+        destroy-method="stop">
+    <property name="bundleContext" ref="blueprintBundleContext"/>
+  </bean>
+
+  <bean id="relationshipTypeService" class="com.enonic.wem.core.schema.relationship.RelationshipTypeServiceImpl">
+    <property name="registry" ref="relationshipTypeRegistry"/>
+  </bean>
+
+  <service ref="relationshipTypeService" auto-export="interfaces"/>
+
+  <service auto-export="interfaces">
+    <bean class="com.enonic.wem.core.schema.relationship.CoreRelationshipTypesProvider"/>
+  </service>
+
+</blueprint>

@@ -1,37 +1,36 @@
 package com.enonic.wem.core.schema.relationship;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.relationship.GetRelationshipTypeParams;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
 public class RelationshipTypeServiceImpl
     implements RelationshipTypeService
 {
-    private RelationshipTypeDao relationshipTypeDao;
+    private RelationshipTypeRegistry registry;
 
     @Override
     public RelationshipTypes getAll()
     {
-        return relationshipTypeDao.getAllRelationshipTypes();
+        return registry.getAllRelationshipTypes();
     }
 
     @Override
-    public RelationshipType getByName( final GetRelationshipTypeParams params )
+    public RelationshipType getByName( final RelationshipTypeName name )
     {
-        return new GetRelationshipTypeCommand().params( params ).relationshipTypeDao( relationshipTypeDao ).execute();
+        return this.registry.getRelationshipType( name );
     }
 
     @Override
     public RelationshipTypes getByModule( final ModuleKey moduleKey )
     {
-        return relationshipTypeDao.getByModule( moduleKey );
+        return this.registry.getRelationshipTypeByModule( moduleKey );
     }
 
-    public void setRelationshipTypeDao( final RelationshipTypeDao relationshipTypeDao )
+    public void setRegistry( final RelationshipTypeRegistry registry )
     {
-        this.relationshipTypeDao = relationshipTypeDao;
+        this.registry = registry;
     }
 }

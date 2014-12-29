@@ -8,11 +8,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.schema.metadata.MetadataSchemaJson;
 import com.enonic.wem.admin.json.schema.metadata.MetadataSchemaListJson;
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.metadata.GetMetadataSchemaParams;
 import com.enonic.wem.api.schema.metadata.MetadataSchema;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
 import com.enonic.wem.api.schema.metadata.MetadataSchemaService;
@@ -48,8 +47,8 @@ public final class MetadataSchemaResource
     }
 
     @GET
-    @Path( "byModule" )
-    public MetadataSchemaListJson getByModule( @QueryParam( "moduleKey" ) final String moduleKey )
+    @Path("byModule")
+    public MetadataSchemaListJson getByModule( @QueryParam("moduleKey") final String moduleKey )
     {
         MetadataSchemas metadataSchemas = metadataSchemaService.getByModule( ModuleKey.from( moduleKey ) );
         return new MetadataSchemaListJson( metadataSchemas, metadataSchemaIconUrlResolver );
@@ -57,10 +56,8 @@ public final class MetadataSchemaResource
 
     public MetadataSchema fetchMetadataSchema( final MetadataSchemaName name )
     {
-        final GetMetadataSchemaParams params = new GetMetadataSchemaParams( name );
-        return metadataSchemaService.getByName( params );
+        return metadataSchemaService.getByName( name );
     }
-
 
     public void setMetadataSchemaService( final MetadataSchemaService metadataSchemaService )
     {

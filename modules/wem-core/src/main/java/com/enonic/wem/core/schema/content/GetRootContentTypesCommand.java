@@ -3,14 +3,13 @@ package com.enonic.wem.core.schema.content;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 final class GetRootContentTypesCommand
     extends AbstractContentTypeCommand
 {
     ContentTypes execute()
     {
-        final ContentTypes allContentTypes = contentTypeDao.getAllContentTypes();
+        final ContentTypes allContentTypes = registry.getAllContentTypes();
         final ContentTypes.Builder builder = ContentTypes.newContentTypes();
 
         for ( ContentType contentType : allContentTypes )
@@ -24,9 +23,9 @@ final class GetRootContentTypesCommand
         return builder.build();
     }
 
-    GetRootContentTypesCommand contentTypeDao( final ContentTypeDao contentTypeDao )
+    GetRootContentTypesCommand registry( final ContentTypeRegistry registry )
     {
-        super.contentTypeDao = contentTypeDao;
+        super.registry = registry;
         return this;
     }
 
