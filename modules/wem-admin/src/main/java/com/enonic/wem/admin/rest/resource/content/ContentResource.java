@@ -46,6 +46,7 @@ import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.DuplicateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.GetContentVersionsJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
+import com.enonic.wem.admin.rest.resource.content.json.PublishContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.ReorderChildJson;
 import com.enonic.wem.admin.rest.resource.content.json.ReorderChildrenJson;
 import com.enonic.wem.admin.rest.resource.content.json.SetChildOrderJson;
@@ -256,7 +257,7 @@ public final class ContentResource
     @Path("publish")
     public PublishContentResultJson publish( final PublishContentJson params )
     {
-        final ContentIds contentIds = ContentIds.from(params.getIds());
+        final ContentIds contentIds = ContentIds.from( params.getIds() );
 
         final PublishContentResultJson jsonResult = new PublishContentResultJson();
 
