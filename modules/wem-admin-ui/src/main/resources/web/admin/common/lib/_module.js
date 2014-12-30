@@ -1,4 +1,5 @@
-// @include plupload/js/plupload.full.js
+// @include plupload/js/moxie.min.js
+// @include plupload/js/plupload.min.js
 // @include jquery-2.0.2.js
 // @include jquery-ui-1.10.3.custom.min.js
 // @include jquery.ui.live-draggable.js
