@@ -128,11 +128,11 @@
   }
 }
 
-.animation (@name, @duration: infinite, @delay: 0s, @ease: ease) {
-  -webkit-animation: @name @duration @delay @ease;
-  -moz-animation: @name @duration @delay @ease;
-  -ms-animation: @name @duration @delay @ease;
-  animation: @name @duration @delay @ease;
+.animation (@name, @duration: 1s, @delay: 0s, @ease: ease, @iteration: infinite) {
+  -webkit-animation: @name @duration @delay @ease @iteration;
+  -moz-animation: @name @duration @delay @ease @iteration;
+  -ms-animation: @name @duration @delay @ease @iteration;
+  animation: @name @duration @delay @ease @iteration;
 }
 
 .default-slick-cell-styling(@padding: 8px) {

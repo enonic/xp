@@ -9,7 +9,7 @@ module app.create {
 
         private static INSTANCE = new RecentItems();
 
-        private maximum = 5;
+        private maximum = 7;
 
         private cookieKey = 'app.browse.RecentItemsList';
 

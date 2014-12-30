@@ -60,7 +60,7 @@ module api.ui.uploader {
         private uploadResetListeners: {():void }[] = [];
 
         constructor(config: UploaderConfig) {
-            super("div", "file-uploader");
+            super("div", "uploader");
 
             this.config = config;
             // init defaults

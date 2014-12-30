@@ -142,8 +142,13 @@ module api.ui.dialog {
 
         private defaultButton: DialogButton;
 
+        private buttonContainer: api.dom.DivEl;
+
         constructor() {
             super("dialog-buttons");
+
+            this.buttonContainer = new api.dom.DivEl('button-container');
+            this.appendChild(this.buttonContainer);
         }
 
         addAction(action: api.ui.Action, useDefault?: boolean, prepend?: boolean): DialogButton {
@@ -152,9 +157,9 @@ module api.ui.dialog {
                 this.defaultButton = button;
             }
             if (prepend) {
-                this.prependChild(button);
+                this.buttonContainer.prependChild(button);
             } else {
-                this.appendChild(button);
+                this.buttonContainer.appendChild(button);
             }
 
             action.onPropertyChanged(() => {

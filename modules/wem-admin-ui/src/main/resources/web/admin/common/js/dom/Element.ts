@@ -860,59 +860,59 @@ module api.dom {
             this.getEl().removeEventListener("scroll", listener);
         }
 
-        onDrag(listener: (event: Event) => void) {
+        onDrag(listener: (event: DragEvent) => void) {
             this.getEl().addEventListener("drag", listener);
         }
 
-        unDrag(listener: (event: Event) => void) {
+        unDrag(listener: (event: DragEvent) => void) {
             this.getEl().removeEventListener("drag", listener);
         }
 
-        onDragStart(listener: (event: Event) => void) {
+        onDragStart(listener: (event: DragEvent) => void) {
             this.getEl().addEventListener("dragstart", listener);
         }
 
-        unDragStart(listener: (event: Event) => void) {
+        unDragStart(listener: (event: DragEvent) => void) {
             this.getEl().removeEventListener("dragstart", listener);
         }
 
-        onDragEnter(listener: (event: Event) => void) {
+        onDragEnter(listener: (event: DragEvent) => void) {
             this.getEl().addEventListener("dragenter", listener);
         }
 
-        unDragEnter(listener: (event: Event) => void) {
+        unDragEnter(listener: (event: DragEvent) => void) {
             this.getEl().removeEventListener("dragenter", listener);
         }
 
-        onDragOver(listener: (event: Event) => void) {
+        onDragOver(listener: (event: DragEvent) => void) {
             this.getEl().addEventListener("dragover", listener);
         }
 
-        unDragOver(listener: (event: Event) => void) {
+        unDragOver(listener: (event: DragEvent) => void) {
             this.getEl().removeEventListener("dragover", listener);
         }
 
-        onDragLeave(listener: (event: Event) => void) {
+        onDragLeave(listener: (event: DragEvent) => void) {
             this.getEl().addEventListener("dragleave", listener);
         }
 
-        unDragLeave(listener: (event: Event) => void) {
+        unDragLeave(listener: (event: DragEvent) => void) {
             this.getEl().removeEventListener("dragleave", listener);
         }
 
-        onDrop(listener: (event: Event) => void) {
+        onDrop(listener: (event: DragEvent) => void) {
             this.getEl().addEventListener("drop", listener);
         }
 
-        unDrop(listener: (event: Event) => void) {
+        unDrop(listener: (event: DragEvent) => void) {
             this.getEl().removeEventListener("drop", listener);
         }
 
-        onDragEnd(listener: (event: Event) => void) {
+        onDragEnd(listener: (event: DragEvent) => void) {
             this.getEl().addEventListener("dragend", listener);
         }
 
-        unDragEnd(listener: (event: Event) => void) {
+        unDragEnd(listener: (event: DragEvent) => void) {
             this.getEl().removeEventListener("dragend", listener);
         }
 
