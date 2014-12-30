@@ -213,7 +213,8 @@ module api.app.wizard {
 
             this.steps = steps;
             steps.forEach((step: api.app.wizard.WizardStep, index: number) => {
-                this.stepsPanel.addNavigablePanel(step.getTabBarItem(), step.getStepForm(), index == 0);
+
+                this.stepsPanel.addNavigablePanel(step.getTabBarItem(), step.getStepForm(), step.getTabBarItem().getLabel(), index == 0);
             });
         }
 
