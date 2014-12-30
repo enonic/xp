@@ -539,11 +539,9 @@ public class ContentResourceTest
     public void delete_content_success()
         throws Exception
     {
-        Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn(
-            newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() );
 
         Mockito.when( contentService.delete( Mockito.isA( DeleteContentParams.class ) ) ).thenReturn(
-            newContent().parentPath( ContentPath.ROOT ).name( "two" ).build() );
+            newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() );
 
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
@@ -693,36 +691,20 @@ public class ContentResourceTest
     }
 
     @Test
-    public void publish()
-        throws Exception
+    public void publish_content_success()
+            throws Exception
     {
-        final String contentIdString = "1";
-
-        final Content aContent = createContent( contentIdString, "my_a_content", "mymodule:my_type" );
-
-        final PropertyTree aContentData = aContent.getData();
-
-        aContentData.setString( "myArray[0]", "arrayValue1" );
-        aContentData.setString( "myArray[1]", "arrayValue2" );
-
-        aContentData.setDouble( "mySetWithArray.myArray[0]", 3.14159 );
-        aContentData.setDouble( "mySetWithArray.myArray[1]", 1.333 );
-
-        final PushContentParams pushContentParams =
-            new PushContentParams( ContentConstants.WORKSPACE_PROD, ContentId.from( contentIdString ) );
-
-        Mockito.when( contentService.push( pushContentParams ) ).
-            thenReturn( aContent );
+        Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn(
+                newContent().parentPath( ContentPath.ROOT ).name("content").displayName( "My Content" ).build() );
 
         String jsonString = request().path( "content/publish" ).
-            entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
+                entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+                post().getAsString();
 
         assertJson( "publish_content_success.json", jsonString );
     }
 
-
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void publish_not_found()
         throws Exception
     {
@@ -733,9 +715,11 @@ public class ContentResourceTest
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).
             thenThrow( e );
 
-        request().path( "content/publish" ).
+        String jsonString = request().path( "content/publish" ).
             entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
+
+        assertJson( "publish_content_failure.json", jsonString );
 
     }
 

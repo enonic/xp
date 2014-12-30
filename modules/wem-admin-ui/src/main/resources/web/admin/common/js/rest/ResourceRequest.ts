@@ -41,7 +41,6 @@ module api.rest {
                 setMethod(this.method).
                 setParams(this.getParams()).
                 setPath(this.getRequestPath());
-
             return jsonRequest.send();
         }
 

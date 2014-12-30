@@ -1,24 +1,18 @@
 package com.enonic.wem.admin.rest.resource.content.json;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.enonic.wem.api.content.ContentId;
+import java.util.Set;
 
 public class PublishContentJson
 {
-    private final ContentId contentId;
+    public Set<String> ids;
 
-    @JsonCreator
-    PublishContentJson( @JsonProperty("contentId") final String contentIdString )
+    public Set<String> getIds()
     {
-        this.contentId = ContentId.from( contentIdString );
+        return ids;
     }
 
-    @SuppressWarnings( "UnusedDeclaration" )
-    public ContentId getContentId()
+    public void setIds( final Set<String> ids )
     {
-        return contentId;
+        this.ids = ids;
     }
-
 }

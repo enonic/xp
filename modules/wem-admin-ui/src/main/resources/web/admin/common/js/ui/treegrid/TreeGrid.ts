@@ -182,7 +182,6 @@ module api.ui.treegrid {
             this.onShown(() => {
                 this.grid.resizeCanvas();
                 if (builder.isHotkeysEnabled()) {
-                    var multipleSelectionBindings: KeyBinding[];
 
                     if (!this.gridOptions.isMultipleSelectionDisabled()) {
                         keyBindings =
@@ -608,6 +607,7 @@ module api.ui.treegrid {
 
             this.fetch(nodesToUpdate[0])
                 .then((data: DATA) => {
+                    console.log("=====");
                     nodesToUpdate.forEach((node) => {
                         node.setData(data);
                         node.setDataId(this.getDataId(data));
@@ -616,7 +616,7 @@ module api.ui.treegrid {
                             var selected = this.grid.isRowSelected(this.gridData.getRowById(node.getId()));
                             this.gridData.updateItem(node.getId(), node);
                             if (selected) {
-                                this.grid.selectRow(this.gridData.getRowById(node.getId()));
+                                this.grid.addSelectedRow(this.gridData.getRowById(node.getId()));
                             }
                         }
                     });

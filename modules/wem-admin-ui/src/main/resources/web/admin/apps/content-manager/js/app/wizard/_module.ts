@@ -10,9 +10,6 @@
 ///<reference path='ShowContentFormEvent.ts' />
 ///<reference path='ShowLiveEditEvent.ts' />
 ///<reference path='ShowSplitEditEvent.ts' />
-///<reference path='OpenPublishDialogEvent.ts' />
-///<reference path='PublishContentEvent.ts' />
-///<reference path='PublishContentDialog.ts' />
 ///<reference path='CompareContentGrid.ts' />
 ///<reference path='PublishAction.ts' />
 ///<reference path='ScheduleAction.ts' />
