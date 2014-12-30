@@ -10,6 +10,8 @@ import javax.script.SimpleBindings;
 
 import com.google.common.collect.Maps;
 
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptValue;
@@ -26,12 +28,13 @@ final class ScriptExecutorImpl
     implements ScriptExecutor
 {
     private final static String PRE_SCRIPT = "" + //
+        "(function(log,execute,require,resolve) {" + //
         "'use strict';" + //
-        "(function(exports) {";
+        "var exports = {};";
 
     private final static String POST_SCRIPT = "" + //
         "return exports;" + //
-        "})({});";
+        "});";
 
     private ScriptEngine engine;
 
@@ -89,19 +92,32 @@ final class ScriptExecutorImpl
             return cached;
         }
 
-        final Bindings bindings = new SimpleBindings();
-        new ResolveFunction( script ).register( bindings );
-        new RequireFunction( script, this ).register( bindings );
-        new ScriptLogger( script ).register( bindings );
-        new ExecuteFunction( script, this.invoker ).register( bindings );
-
         final ScriptContextImpl context = new ScriptContextImpl( script );
         context.setEngineScope( this.global );
-        context.setGlobalScope( bindings );
+        context.setGlobalScope( new SimpleBindings() );
 
-        final Object result = doExecute( context, script );
+        final ScriptObjectMirror func = (ScriptObjectMirror) doExecute( context, script );
+        final Object result = executeRequire( script, func );
+
         this.exportsCache.put( script, result );
         return result;
+    }
+
+    private Object executeRequire( final ResourceKey script, final ScriptObjectMirror func )
+    {
+        try
+        {
+            final ResolveFunction resolve = new ResolveFunction( script );
+            final RequireFunction require = new RequireFunction( script, this );
+            final ScriptLogger logger = new ScriptLogger( script );
+            final ExecuteFunction execute = new ExecuteFunction( script, this.invoker );
+
+            return func.call( this.global, logger, execute, require, resolve );
+        }
+        catch ( final Exception e )
+        {
+            throw ErrorHelper.handleError( e );
+        }
     }
 
     @Override
