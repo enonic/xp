@@ -202,6 +202,14 @@ module api.ui.grid {
             }
         }
 
+        addSelectedRow(row: number) {
+            var rows = this.getSelectedRows();
+            if (rows.indexOf(row) < 0) {
+                rows.push(row);
+                this.setSelectedRows(rows);
+            }
+        }
+
         toggleRow(row: number): number {
             // Prevent unnecessary render on the same row
             var rows = this.getSelectedRows(),

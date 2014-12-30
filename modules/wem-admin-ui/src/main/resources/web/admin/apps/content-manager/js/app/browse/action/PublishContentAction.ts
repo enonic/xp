@@ -12,7 +12,9 @@ module app.browse.action {
             this.onExecuted(() => {
                 new PublishContentRequest().setIds(grid.getSelectedDataList().map((el) => {
                     return new api.content.ContentId(el.getContentSummary().getId());
-                })).send().done(PublishContentRequest.feedback);
+                })).send().done((jsonResponse: api.rest.JsonResponse<api.content.PublishContentResult>) => {
+                    PublishContentRequest.feedback(jsonResponse);
+                });
             });
         }
     }

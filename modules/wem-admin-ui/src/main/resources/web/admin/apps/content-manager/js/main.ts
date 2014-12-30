@@ -58,7 +58,6 @@ function startApplication() {
         }
     });
 
-    var publishDialog = new app.wizard.PublishContentDialog();
     var sortDialog = new app.browse.SortContentDialog();
     var editPermissionsDialog = new app.wizard.EditPermissionsDialog();
     application.setLoaded(true);

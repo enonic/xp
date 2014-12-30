@@ -74,24 +74,6 @@ module api.app.browse {
                 this.browseItemPanel.setItems(browseItems);
             });
 
-            this.treeGrid.onDataChanged((event: api.ui.treegrid.DataChangedEvent<Object>) => {
-                var selectedNodes = this.treeGrid.getSelectedNodes();
-                if (event.getType() == api.ui.treegrid.DataChangedEvent.UPDATED && selectedNodes.length > 0) {
-                    // check if any of the selected nodes were updated
-                    var changedNodes = event.getTreeNodes();
-                    for (var i = 0; i < changedNodes.length; i++) {
-                        for (var j = 0; j < selectedNodes.length; j++) {
-                            if (changedNodes[i].getDataId() == selectedNodes[j].getDataId()) {
-                                // one of the selected nodes was updated, reflect this in the item panel
-                                var browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(changedNodes);
-                                this.browseItemPanel.setItems(browseItems);
-                                break;
-                            }
-                        }
-                    }
-                }
-            });
-
             this.onRendered((event) => {
                 this.appendChild(this.filterAndGridAndDetailSplitPanel);
             });
