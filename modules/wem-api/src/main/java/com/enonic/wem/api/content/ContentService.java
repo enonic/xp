@@ -31,6 +31,8 @@ public interface ContentService
 
     Content duplicate( DuplicateContentParams params );
 
+    Content move( MoveContentParams params );
+
     Content setChildOrder( SetContentChildOrderParams params );
 
     ReorderChildContentsResult reorderChildren( ReorderChildContentsParams params );

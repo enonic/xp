@@ -29,6 +29,8 @@ public interface NodeService
 
     Node duplicate( NodeId nodeId );
 
+    Node move( NodeId nodeId, NodePath parentNodePath );
+
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
