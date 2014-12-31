@@ -351,7 +351,6 @@ module app.browse {
             });
             item.onFailed(() => {
                 this.deleteNode(data);
-                api.notify.showError("Upload [" + item.getName() + "] failed");
             })
         }
 

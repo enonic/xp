@@ -44,12 +44,14 @@ module api.ui.uploader {
         private uploadedItems: UploadItem<MODEL>[] = [];
 
         private input: api.ui.text.TextInput;
+
+        private dropzoneContainer: api.dom.DivEl;
         private dropzone: api.dom.DivEl;
 
         private progress: api.ui.ProgressBar;
         private cancelBtn: Button;
 
-        private result: api.dom.DivEl;
+        private resultContainer: api.dom.DivEl;
         private resetBtn: CloseButton;
 
         private uploadStartedListeners: {(event: FileUploadStartedEvent<MODEL>):void }[] = [];
@@ -91,17 +93,19 @@ module api.ui.uploader {
                 this.input.setPlaceholder("Paste URL to image here");
                 this.appendChild(this.input);
             }
-
+            // need the container to constrain plupload created dropzone
+            this.dropzoneContainer = new api.dom.DivEl('dropzone-container');
             this.dropzone = new api.dom.DivEl("dropzone");
             // id needed for plupload to init, adding timestamp in case of multiple occurrences on page
             this.dropzone.setId('image-uploader-dropzone-' + new Date().getTime());
-            this.appendChild(this.dropzone);
+            this.dropzoneContainer.appendChild(this.dropzone);
+            this.appendChild(this.dropzoneContainer);
 
             this.progress = new api.ui.ProgressBar();
             this.appendChild(this.progress);
 
-            this.result = new api.dom.DivEl('result');
-            this.appendChild(this.result);
+            this.resultContainer = new api.dom.DivEl('result-container');
+            this.appendChild(this.resultContainer);
 
             this.cancelBtn = new Button("Cancel");
             this.cancelBtn.setVisible(this.config.showButtons);
@@ -194,7 +198,7 @@ module api.ui.uploader {
             if (this.input) {
                 this.input.setVisible(visible);
             }
-            this.dropzone.setVisible(visible);
+            this.dropzoneContainer.setVisible(visible);
         }
 
         private setProgressVisible(visible: boolean = true) {
@@ -213,7 +217,7 @@ module api.ui.uploader {
                 this.setProgressVisible(false);
             }
 
-            this.result.setVisible(visible);
+            this.resultContainer.setVisible(visible);
             this.resetBtn.setVisible(visible && this.config.showButtons);
         }
 
@@ -243,19 +247,19 @@ module api.ui.uploader {
         private initUploader(elId: string) {
 
             if (!plupload) {
-                throw new Error("FileUploader: plupload not found, check if it is included in page.");
+                throw new Error("Uploader: plupload not found, check if it is included in page.");
             }
 
             var uploader = new plupload.Uploader({
                 multipart_params: this.config.params,
-                runtimes: 'gears,html5,flash,silverlight,browserplus',
+                runtimes: 'html5,flash,silverlight,html4',
                 multi_selection: this.config.allowMultiSelection,
                 browse_button: this.config.allowBrowse ? elId : undefined,
                 url: this.config.url,
                 multipart: true,
                 drop_element: elId,
-                flash_swf_url: api.util.UriHelper.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
-                silverlight_xap_url: api.util.UriHelper.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
+                flash_swf_url: api.util.UriHelper.getAdminUri('common/js/lib/plupload/js/Moxie.swf'),
+                silverlight_xap_url: api.util.UriHelper.getAdminUri('common/js/lib/plupload/js/Moxie.xap'),
                 filters: this.config.allowTypes
             });
 
@@ -309,11 +313,11 @@ module api.ui.uploader {
 
                 if (response && response.status === 200) {
                     try {
-                        var item = this.findUploadItemById(file.id);
-                        if (item) {
+                        var uploadItem = this.findUploadItemById(file.id);
+                        if (uploadItem) {
                             var model: MODEL = this.createModel(JSON.parse(response.response));
-                            item.setModel(model);
-                            this.notifyFileUploaded(item);
+                            uploadItem.setModel(model);
+                            this.notifyFileUploaded(uploadItem);
                         }
                     } catch (e) {
                         console.warn("Failed to parse the response", response, e);
@@ -325,9 +329,19 @@ module api.ui.uploader {
             uploader.bind('Error', (up, response) => {
                 console.log('uploader error', up, response);
 
+                try {
+                    var responseObj = JSON.parse(response.response);
+                    var error = new api.rest.RequestError(responseObj.status, responseObj.cause, responseObj.message);
+                    api.DefaultErrorHandler.handle(error);
+                } catch (e) {
+                    console.warn("Failed to parse the response", response, e);
+                }
+
                 var uploadItem = this.findUploadItemById(response.file.id);
-                uploadItem.setModel(null);
-                this.notifyUploadFailed(uploadItem);
+                if (uploadItem) {
+                    uploadItem.setModel(null);
+                    this.notifyUploadFailed(uploadItem);
+                }
             });
 
             uploader.bind('UploadComplete', (up, files) => {
@@ -355,7 +369,7 @@ module api.ui.uploader {
         }
 
         getResultContainer(): api.dom.DivEl {
-            return this.result;
+            return this.resultContainer;
         }
 
         onUploadStarted(listener: (event: FileUploadStartedEvent<MODEL>) => void) {
