@@ -99,7 +99,7 @@ module app.wizard.page {
 
         private liveEditPage: LiveEditPageProxy;
 
-        private selectedPageComponentView: PageComponentView<PageComponent>;
+        private selectedItemView: api.liveedit.ItemView;
 
         constructor(config: LiveFormPanelConfig) {
             super("live-form-panel");
@@ -174,8 +174,8 @@ module app.wizard.page {
             this.liveEditListen();
         }
 
-        getSelectedPageComponentView(): PageComponentView<PageComponent> {
-            return this.selectedPageComponentView;
+        getSelectedItemView(): api.liveedit.ItemView {
+            return this.selectedItemView;
         }
 
         remove() {
@@ -271,12 +271,12 @@ module app.wizard.page {
         private liveEditListen() {
 
             this.liveEditPage.onPageSelected((event: PageSelectEvent) => {
-
+                this.selectedItemView = event.getPageView();
                 this.inspectPage();
             });
 
             this.liveEditPage.onRegionSelected((event: RegionSelectEvent) => {
-
+                this.selectedItemView = event.getRegionView();
                 this.inspectRegion(event.getRegionView());
             });
 
@@ -308,7 +308,7 @@ module app.wizard.page {
                     this.contextWindow.slideIn();
                 }
                 this.contextWindow.clearSelection();
-                this.selectedPageComponentView = null;
+                this.selectedItemView = null;
             });
 
             this.liveEditPage.onPageComponentRemoved((event: PageComponentRemoveEvent) => {
@@ -431,7 +431,7 @@ module app.wizard.page {
         private inspectPageComponent(pageComponentView: PageComponentView<PageComponent>) {
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
 
-            this.selectedPageComponentView = pageComponentView;
+            this.selectedItemView = pageComponentView;
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, ImageComponentView)) {
                 this.imageInspectionPanel.setImageComponent(<ImageComponentView>pageComponentView);

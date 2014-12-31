@@ -1,5 +1,9 @@
 module app.wizard.page.contextwindow {
 
+    import PageComponentView = api.liveedit.PageComponentView;
+    import PageComponent = api.content.page.PageComponent;
+    import PageView = api.liveedit.PageView;
+
     export class ContextWindowController {
 
         private contextWindow: ContextWindow;
@@ -38,9 +42,15 @@ module app.wizard.page.contextwindow {
             });
 
             this.contextWindow.onSaveRequested(() => {
-                console.log('doing save and reload selected component');
 
-                liveFormPanel.saveAndReloadOnlyPageComponent(liveFormPanel.getSelectedPageComponentView());
+                var itemView = liveFormPanel.getSelectedItemView();
+                if (itemView) {
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageComponentView)) {
+                        liveFormPanel.saveAndReloadOnlyPageComponent(<PageComponentView<PageComponent>> itemView);
+                    } else if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageView)) {
+                        liveFormPanel.saveAndReloadPage();
+                    }
+                }
             })
         }
     }
