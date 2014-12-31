@@ -178,6 +178,12 @@ class NodeServiceMock
     }
 
     @Override
+    public Node move( final NodeId nodeId, final NodePath parentNodePath )
+    {
+        return null;
+    }
+
+    @Override
     public FindNodesByParentResult findByParent( final FindNodesByParentParams params )
     {
         final MockNodeTree<NodePath> parentNode = this.nodeTree.find( params.getParentPath() );

@@ -18,6 +18,7 @@ import com.enonic.wem.api.content.CompareContentResult;
 import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.CompareContentsParams;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
@@ -37,6 +38,7 @@ import com.enonic.wem.api.content.FindContentVersionsResult;
 import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
+import com.enonic.wem.api.content.MoveContentParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.ReorderChildContentsParams;
@@ -55,6 +57,7 @@ import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.media.MediaInfoService;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.ReorderChildNodeParams;
 import com.enonic.wem.api.node.ReorderChildNodesParams;
@@ -346,7 +349,8 @@ public class ContentServiceImpl
             final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
             throw new SystemException( e,
                                        "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " +
-                                           path );
+                                           path
+            );
         }
     }
 
@@ -366,7 +370,8 @@ public class ContentServiceImpl
             final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
             throw new SystemException( e,
                                        "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " +
-                                           path );
+                                           path
+            );
         }
     }
 
@@ -385,6 +390,17 @@ public class ContentServiceImpl
         final Node createdNode = nodeService.duplicate( NodeId.from( params.getContentId() ) );
 
         return contentNodeTranslator.fromNode( createdNode );
+    }
+
+    @Override
+    public Content move( final MoveContentParams params )
+    {
+        final Node movedNode = nodeService.move( NodeId.from( params.getContentId() ),
+                                                 NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
+                                                     params.getParentContentPath().toString() ).build()
+        );
+
+        return contentNodeTranslator.fromNode( movedNode );
     }
 
     @Override

@@ -19,7 +19,9 @@
 ///<reference path='ContentTreeGrid.ts' />
 ///<reference path='SortContentEvent.ts' />
 ///<reference path='OpenSortDialogEvent.ts' />
+///<reference path='OpenMoveDialogEvent.ts' />
 ///<reference path='SortContentDialog.ts' />
+///<reference path='MoveContentDialog.ts' />
 ///<reference path='SortContentTreeGrid.ts' />
 ///<reference path='SortContentTabMenu.ts' />
 ///<reference path='SortContentTabMenuItem.ts' />
