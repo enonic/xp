@@ -12,14 +12,14 @@ module app.wizard.page.contextwindow {
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import BaseInspectionPanel = app.wizard.page.contextwindow.inspect.BaseInspectionPanel;
-    import InspectionPanel = app.wizard.page.contextwindow.inspect.InspectionPanel;
+    import InspectionsPanel = app.wizard.page.contextwindow.inspect.InspectionsPanel;
     import InsertablesPanel = app.wizard.page.contextwindow.insert.InsertablesPanel;
 
     export interface ContextWindowConfig {
 
         liveFormPanel:LiveFormPanel;
 
-        inspectionPanel:InspectionPanel;
+        inspectionPanel:InspectionsPanel;
 
         emulatorPanel:EmulatorPanel;
 
@@ -30,7 +30,7 @@ module app.wizard.page.contextwindow {
 
         private insertablesPanel: InsertablesPanel;
 
-        private inspectionPanel: InspectionPanel;
+        private inspectionsPanel: InspectionsPanel;
 
         private emulatorPanel: EmulatorPanel;
 
@@ -56,7 +56,7 @@ module app.wizard.page.contextwindow {
             super();
 
             this.liveFormPanel = config.liveFormPanel;
-            this.inspectionPanel = config.inspectionPanel;
+            this.inspectionsPanel = config.inspectionPanel;
             this.emulatorPanel = config.emulatorPanel;
             this.insertablesPanel = config.insertablesPanel;
 
@@ -74,7 +74,7 @@ module app.wizard.page.contextwindow {
 
             this.appendChild(this.splitter);
             this.addItem("Insert", this.insertablesPanel);
-            this.addItem("Settings", this.inspectionPanel);
+            this.addItem("Settings", this.inspectionsPanel);
             this.addItem("Emulator", this.emulatorPanel);
 
             this.onRendered(() => this.initializeResizable());
@@ -156,12 +156,12 @@ module app.wizard.page.contextwindow {
         }
 
         public showInspectionPanel(panel: BaseInspectionPanel) {
-            this.inspectionPanel.showInspectionPanel(panel);
-            this.selectPanel(this.inspectionPanel);
+            this.inspectionsPanel.showInspectionPanel(panel);
+            this.selectPanel(this.inspectionsPanel);
         }
 
         public clearSelection() {
-            this.inspectionPanel.clearSelection();
+            this.inspectionsPanel.clearSelection();
             this.selectPanel(this.insertablesPanel);
         }
 
@@ -195,5 +195,14 @@ module app.wizard.page.contextwindow {
                 return listener == currentListener;
             });
         }
+
+        onSaveRequested(listener: () => void) {
+            this.inspectionsPanel.onSaveRequested(listener);
+        }
+
+        unSaveRequested(listener: () => void) {
+            this.inspectionsPanel.unSaveRequested(listener);
+        }
+
     }
 }

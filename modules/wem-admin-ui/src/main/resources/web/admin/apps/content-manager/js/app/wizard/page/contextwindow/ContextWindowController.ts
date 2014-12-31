@@ -6,7 +6,7 @@ module app.wizard.page.contextwindow {
 
         private contextWindowToggler: ContextWindowToggler;
 
-        constructor(contextWindow: ContextWindow, contextWindowToggler: ContextWindowToggler) {
+        constructor(liveFormPanel: LiveFormPanel, contextWindow: ContextWindow, contextWindowToggler: ContextWindowToggler) {
             this.contextWindow = contextWindow;
             this.contextWindowToggler = contextWindowToggler;
 
@@ -36,6 +36,12 @@ module app.wizard.page.contextwindow {
                     this.contextWindow.slideOut();
                 }
             });
+
+            this.contextWindow.onSaveRequested(() => {
+                console.log('doing save and reload selected component');
+
+                liveFormPanel.saveAndReloadOnlyPageComponent(liveFormPanel.getSelectedPageComponentView());
+            })
         }
     }
 

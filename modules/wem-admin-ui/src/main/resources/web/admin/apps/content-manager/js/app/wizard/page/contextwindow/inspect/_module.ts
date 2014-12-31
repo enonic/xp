@@ -17,5 +17,5 @@
 ///<reference path='PageInspectionPanel.ts' />
 ///<reference path='PageControllerChangedEvent.ts' />
 
-///<reference path='InspectionPanel.ts' />
+///<reference path='InspectionsPanel.ts' />
 

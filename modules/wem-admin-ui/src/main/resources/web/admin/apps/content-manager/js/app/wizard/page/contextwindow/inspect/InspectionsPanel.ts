@@ -11,7 +11,7 @@ module app.wizard.page.contextwindow.inspect {
     import PartComponent = api.content.page.part.PartComponent;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
 
-    export interface InspectionPanelConfig {
+    export interface InspectionsPanelConfig {
 
         contentInspectionPanel: ContentInspectionPanel;
         pageInspectionPanel: PageInspectionPanel;
@@ -21,7 +21,10 @@ module app.wizard.page.contextwindow.inspect {
         layoutInspectionPanel: LayoutInspectionPanel;
     }
 
-    export class InspectionPanel extends api.ui.panel.DeckPanel {
+    export class InspectionsPanel extends api.ui.panel.Panel {
+
+        private deck: api.ui.panel.DeckPanel;
+        private buttons: api.dom.DivEl;
 
         private noSelectionPanel: NoSelectionInspectionPanel;
         private imageInspectionPanel: ImageInspectionPanel;
@@ -31,8 +34,12 @@ module app.wizard.page.contextwindow.inspect {
         private pageInspectionPanel: PageInspectionPanel;
         private regionInspectionPanel: RegionInspectionPanel;
 
-        constructor(config: InspectionPanelConfig) {
-            super();
+        private saveRequestListeners: {() : void}[] = [];
+
+        constructor(config: InspectionsPanelConfig) {
+            super('inspections-panel');
+
+            this.deck = new api.ui.panel.DeckPanel();
 
             this.noSelectionPanel = new NoSelectionInspectionPanel();
             this.imageInspectionPanel = config.imageInspectionPanel;
@@ -42,23 +49,52 @@ module app.wizard.page.contextwindow.inspect {
             this.pageInspectionPanel = config.pageInspectionPanel;
             this.regionInspectionPanel = config.regionInspectionPanel;
 
-            this.addPanel(this.imageInspectionPanel);
-            this.addPanel(this.partInspectionPanel);
-            this.addPanel(this.layoutInspectionPanel);
-            this.addPanel(this.contentInspectionPanel);
-            this.addPanel(this.regionInspectionPanel);
-            this.addPanel(this.pageInspectionPanel);
-            this.addPanel(this.noSelectionPanel);
+            this.deck.addPanel(this.imageInspectionPanel);
+            this.deck.addPanel(this.partInspectionPanel);
+            this.deck.addPanel(this.layoutInspectionPanel);
+            this.deck.addPanel(this.contentInspectionPanel);
+            this.deck.addPanel(this.regionInspectionPanel);
+            this.deck.addPanel(this.pageInspectionPanel);
+            this.deck.addPanel(this.noSelectionPanel);
 
-            this.showPanel(this.pageInspectionPanel);
+            this.deck.showPanel(this.pageInspectionPanel);
+            this.appendChild(this.deck);
+
+            this.buttons = new api.dom.DivEl('button-bar');
+            var saveButton = new api.ui.button.Button('Save');
+            saveButton.onClicked((event: MouseEvent) => {
+                this.notifySaveRequested();
+            });
+            this.buttons.appendChild(saveButton);
+            this.appendChild(this.buttons);
+
         }
 
         public showInspectionPanel(panel: api.ui.panel.Panel) {
-            this.showPanel(panel);
+            this.deck.showPanel(panel);
+            var showButtons = !(api.ObjectHelper.iFrameSafeInstanceOf(panel, RegionInspectionPanel) ||
+                                api.ObjectHelper.iFrameSafeInstanceOf(panel, NoSelectionInspectionPanel));
+            this.buttons.setVisible(showButtons);
         }
 
         public clearSelection() {
             this.showInspectionPanel(this.noSelectionPanel);
+        }
+
+        onSaveRequested(listener: () => void) {
+            this.saveRequestListeners.push(listener);
+        }
+
+        unSaveRequested(listener: () => void) {
+            this.saveRequestListeners = this.saveRequestListeners.filter((curr) => {
+                return listener !== curr;
+            });
+        }
+
+        private notifySaveRequested() {
+            this.saveRequestListeners.forEach((listener) => {
+                listener();
+            })
         }
     }
 }
