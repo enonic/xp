@@ -39,7 +39,7 @@ module api.content.form.inputtype.upload {
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
             if (property.hasNonNullValue()) {
-
+                //TODO: should we pass Content.getId() instead of ContentId in property to spare this request ?
                 new api.content.GetContentByIdRequest(this.getContext().contentId).
                     sendAndParse().
                     then((content: api.content.Content) => {
@@ -51,6 +51,7 @@ module api.content.form.inputtype.upload {
             }
 
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
+                property.setValue(ValueTypes.STRING.newValue(event.getUploadItem().getModel().getContentId().toString()));
             });
 
             this.imageUploader.onUploadReset(() => {
