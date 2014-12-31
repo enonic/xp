@@ -21,8 +21,8 @@ module app.wizard.page {
     import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
     import GetLayoutDescriptorsByModulesRequest = api.content.page.layout.GetLayoutDescriptorsByModulesRequest;
 
-    import InspectionPanelConfig = app.wizard.page.contextwindow.inspect.InspectionPanelConfig;
-    import InspectionPanel = app.wizard.page.contextwindow.inspect.InspectionPanel;
+    import InspectionsPanelConfig = app.wizard.page.contextwindow.inspect.InspectionsPanelConfig;
+    import InspectionsPanel = app.wizard.page.contextwindow.inspect.InspectionsPanel;
     import ContentInspectionPanel = app.wizard.page.contextwindow.inspect.ContentInspectionPanel;
     import PageInspectionPanel = app.wizard.page.contextwindow.inspect.PageInspectionPanel;
     import RegionInspectionPanel = app.wizard.page.contextwindow.inspect.RegionInspectionPanel;
@@ -87,7 +87,7 @@ module app.wizard.page {
 
         private emulatorPanel: EmulatorPanel;
         private insertablesPanel: InsertablesPanel;
-        private inspectionPanel: InspectionPanel;
+        private inspectionsPanel: InspectionsPanel;
         private contentInspectionPanel: ContentInspectionPanel;
         private pageInspectionPanel: PageInspectionPanel;
         private regionInspectionPanel: RegionInspectionPanel;
@@ -98,6 +98,8 @@ module app.wizard.page {
         private contentWizardPanel: ContentWizardPanel;
 
         private liveEditPage: LiveEditPageProxy;
+
+        private selectedItemView: api.liveedit.ItemView;
 
         constructor(config: LiveFormPanelConfig) {
             super("live-form-panel");
@@ -129,7 +131,7 @@ module app.wizard.page {
                 this.saveAndReloadOnlyPageComponent(layoutView);
             });
 
-            this.inspectionPanel = new InspectionPanel(<InspectionPanelConfig>{
+            this.inspectionsPanel = new InspectionsPanel(<InspectionsPanelConfig>{
                 contentInspectionPanel: this.contentInspectionPanel,
                 pageInspectionPanel: this.pageInspectionPanel,
                 regionInspectionPanel: this.regionInspectionPanel,
@@ -156,17 +158,24 @@ module app.wizard.page {
 
             this.contextWindow = new ContextWindow(<ContextWindowConfig>{
                 liveFormPanel: this,
-                inspectionPanel: this.inspectionPanel,
+                inspectionPanel: this.inspectionsPanel,
                 emulatorPanel: this.emulatorPanel,
                 insertablesPanel: this.insertablesPanel
             });
 
             this.appendChild(this.contextWindow);
 
-            this.contextWindowController = new app.wizard.page.contextwindow.ContextWindowController(this.contextWindow,
-                this.contentWizardPanel.getContextWindowToggler());
+            this.contextWindowController = new app.wizard.page.contextwindow.ContextWindowController(
+                this,
+                this.contextWindow,
+                this.contentWizardPanel.getContextWindowToggler()
+            );
 
             this.liveEditListen();
+        }
+
+        getSelectedItemView(): api.liveedit.ItemView {
+            return this.selectedItemView;
         }
 
         remove() {
@@ -217,7 +226,7 @@ module app.wizard.page {
             }
         }
 
-        private saveAndReloadPage() {
+        saveAndReloadPage() {
             this.pageSkipReload = true;
             this.contentWizardPanel.saveChanges().
                 then(() => {
@@ -228,7 +237,7 @@ module app.wizard.page {
                 done();
         }
 
-        private saveAndReloadOnlyPageComponent(pageComponentView: PageComponentView<PageComponent>) {
+        saveAndReloadOnlyPageComponent(pageComponentView: PageComponentView<PageComponent>) {
 
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
 
@@ -262,12 +271,12 @@ module app.wizard.page {
         private liveEditListen() {
 
             this.liveEditPage.onPageSelected((event: PageSelectEvent) => {
-
+                this.selectedItemView = event.getPageView();
                 this.inspectPage();
             });
 
             this.liveEditPage.onRegionSelected((event: RegionSelectEvent) => {
-
+                this.selectedItemView = event.getRegionView();
                 this.inspectRegion(event.getRegionView());
             });
 
@@ -299,6 +308,7 @@ module app.wizard.page {
                     this.contextWindow.slideIn();
                 }
                 this.contextWindow.clearSelection();
+                this.selectedItemView = null;
             });
 
             this.liveEditPage.onPageComponentRemoved((event: PageComponentRemoveEvent) => {
@@ -420,6 +430,8 @@ module app.wizard.page {
 
         private inspectPageComponent(pageComponentView: PageComponentView<PageComponent>) {
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
+
+            this.selectedItemView = pageComponentView;
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(pageComponentView, ImageComponentView)) {
                 this.imageInspectionPanel.setImageComponent(<ImageComponentView>pageComponentView);
