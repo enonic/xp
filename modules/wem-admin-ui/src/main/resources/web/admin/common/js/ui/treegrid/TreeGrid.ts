@@ -607,7 +607,6 @@ module api.ui.treegrid {
 
             this.fetch(nodesToUpdate[0])
                 .then((data: DATA) => {
-                    console.log("=====");
                     nodesToUpdate.forEach((node) => {
                         node.setData(data);
                         node.setDataId(this.getDataId(data));
