@@ -128,11 +128,12 @@ module app.create {
             // meaning that to know when we left some element
             // we need to compare it to the one currently dragged over
             this.onDragEnter((event: DragEvent) => {
-                dragOverEl = <HTMLElement> event.target;
+                var target = <HTMLElement> event.target;
 
-                if (dragOverEl == this.getHTMLElement()) {
+                if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
                     uploaderContainer.show();
                 }
+                dragOverEl = target;
             });
 
             this.onDragLeave((event: DragEvent) => {
