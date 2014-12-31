@@ -90,6 +90,10 @@ module app {
             app.browse.SortContentEvent.on((event) => {
                 this.handleSort(event);
             });
+
+            app.browse.MoveContentEvent.on((event) => {
+                this.handleMove(event);
+            });
         }
 
         private handleUpdated(event: ContentUpdatedEvent) {
@@ -224,7 +228,12 @@ module app {
 
             var contents: ContentSummary[] = event.getModels();
             new app.browse.OpenSortDialogEvent(contents[0]).fire();
+        }
 
+        private handleMove(event: app.browse.MoveContentEvent) {
+
+            var contents: ContentSummary[] = event.getModels();
+            new app.browse.OpenMoveDialogEvent(contents[0]).fire();
         }
 
         private handleContentNamedEvent(event: ContentNamedEvent) {

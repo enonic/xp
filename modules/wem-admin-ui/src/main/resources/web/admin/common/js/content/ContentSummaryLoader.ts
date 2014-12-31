@@ -59,7 +59,7 @@ module api.content {
 
     }
 
-    class ContentSummaryRequest extends api.rest.ResourceRequest<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary[]> {
+    export class ContentSummaryRequest extends api.rest.ResourceRequest<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary[]> {
 
         private contentQuery: query.ContentQuery;
 
