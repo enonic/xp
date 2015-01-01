@@ -16,6 +16,8 @@ var expectedJson = {
     "displayName": "My Content",
     "draft": true,
     "hasChildren": false,
+    "isPageTemplate": false,
+    "isSite": false,
     "metadata": {
         "test:": {
             "a": [1]

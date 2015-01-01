@@ -36,6 +36,8 @@ public final class ContentMapper
         gen.value( "displayName", value.getDisplayName() );
         gen.value( "hasChildren", value.hasChildren() );
         gen.value( "draft", value.isDraft() );
+        gen.value( "isPageTemplate", value.isPageTemplate() );
+        gen.value( "isSite", value.isSite() );
 
         serializeData( gen, value.getData() );
         serializeMetaData( gen, value.getAllMetadata() );

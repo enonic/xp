@@ -12,6 +12,8 @@ var expectedJson = {
     },
     "draft": false,
     "hasChildren": false,
+    "isPageTemplate": false,
+    "isSite": true,
     "metadata": {},
     "moduleConfigs": {
         "mymodule": {

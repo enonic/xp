@@ -10,6 +10,8 @@
   "displayName": "My Content",
   "hasChildren": false,
   "draft": false,
+  "isPageTemplate": false,
+  "isSite": false,
   "data": {
     "a": [1],
     "b": ["2"],

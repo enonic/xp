@@ -11,6 +11,8 @@ var expectedJson = {
         "displayName": "My Content",
         "draft": false,
         "hasChildren": false,
+        "isPageTemplate": false,
+        "isSite": false,
         "metadata": {},
         "page": {},
         "type": "system:unstructured"
@@ -26,6 +28,8 @@ var expectedJson = {
         "displayName": "Other Content",
         "draft": false,
         "hasChildren": false,
+        "isPageTemplate": false,
+        "isSite": false,
         "metadata": {},
         "page": {},
         "type": "system:unstructured"
@@ -41,6 +45,8 @@ var expectedJson = {
         "displayName": "Another Content",
         "draft": false,
         "hasChildren": false,
+        "isPageTemplate": false,
+        "isSite": false,
         "metadata": {},
         "page": {},
         "type": "system:unstructured"
