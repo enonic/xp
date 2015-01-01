@@ -18,18 +18,17 @@ import com.google.common.base.Throwables;
 import com.google.common.io.ByteSource;
 import com.google.common.primitives.Ints;
 
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Media;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.api.image.ImageHelper;
 import com.enonic.wem.api.image.BuilderContext;
 import com.enonic.wem.api.image.ImageFilter;
 import com.enonic.wem.api.image.ImageFilterBuilder;
+import com.enonic.wem.api.image.ImageHelper;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.portal.internal.base.BaseResource;
 
 @Path("/portal/{mode}/{workspace}/{contentPath:.+}/_/image")
@@ -41,8 +40,6 @@ public final class ImageResource
     private final static int DEFAULT_QUALITY = 85;
 
     protected ImageFilterBuilder imageFilterBuilder;
-
-    protected BlobService blobService;
 
     protected ContentService contentService;
 
@@ -78,7 +75,7 @@ public final class ImageResource
     @PathParam("contentPath")
     public void setContentPath( final String value )
     {
-        this.contentPath = ContentPath.from( value );
+        this.contentPath = ContentPath.from( value ).asAbsolute();
     }
 
     private String getFormat( final String fileName )

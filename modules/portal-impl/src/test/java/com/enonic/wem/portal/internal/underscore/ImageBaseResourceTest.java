@@ -8,7 +8,6 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
@@ -16,20 +15,18 @@ import com.enonic.wem.api.content.Media;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.image.BuilderContext;
 import com.enonic.wem.api.image.ImageFilter;
 import com.enonic.wem.api.image.ImageFilterBuilder;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.portal.internal.base.BaseResourceTest;
 
 public abstract class ImageBaseResourceTest
     extends BaseResourceTest
 {
     private ImageFilterBuilder imageFilterBuilder;
-
-    private BlobService blobService;
 
     ContentService contentService;
 
@@ -38,12 +35,10 @@ public abstract class ImageBaseResourceTest
         throws Exception
     {
         this.imageFilterBuilder = Mockito.mock( ImageFilterBuilder.class );
-        this.blobService = Mockito.mock( BlobService.class );
         this.contentService = Mockito.mock( ContentService.class );
 
         final ImageResourceProvider provider = new ImageResourceProvider();
         provider.setImageFilterBuilder( this.imageFilterBuilder );
-        provider.setBlobService( this.blobService );
         provider.setContentService( this.contentService );
 
         this.servlet.addComponent( provider );
