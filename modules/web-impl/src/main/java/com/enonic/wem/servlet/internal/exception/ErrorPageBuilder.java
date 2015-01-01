@@ -211,10 +211,12 @@ final class ErrorPageBuilder
         }
 
         final ResourceProblemException problem = ( (ResourceProblemException) this.cause ).getInnerError();
-
-        html.open( "h2" );
-        html.escapedText( "In " + problem.getResource().toString() + " at line " + problem.getLineNumber() );
-        html.close();
+        if ( problem.getResource() != null )
+        {
+            html.open( "h2" );
+            html.escapedText( "In " + problem.getResource().toString() + " at line " + problem.getLineNumber() );
+            html.close();
+        }
 
         html.open( "div" ).attribute( "id", "source-code" );
         buildLineInfo( html, findSourceLines( problem ) );
