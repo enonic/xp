@@ -478,7 +478,7 @@ public class Content
 
         public Builder<BUILDER, C> path( final ContentPath path )
         {
-            this.parentPath = path.getParentPath();
+            this.parentPath = path.getParentPath() != null ? path.getParentPath().asAbsolute() : null;
             Preconditions.checkArgument( path.elementCount() > 0, "No content can be \"root content\": " + path.toString() );
             this.name = ContentName.from( path.getElement( path.elementCount() - 1 ) );
             return this;

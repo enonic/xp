@@ -21,8 +21,7 @@ public class ContentTest
     @Test(expected = IllegalArgumentException.class)
     public void given_path_isRoot_then_IllegalArgumentException_is_thrown()
     {
-        Content content = Content.newContent().path( ContentPath.ROOT ).build();
-        assertEquals( false, content.isRoot() );
+        Content.newContent().path( ContentPath.ROOT ).build();
     }
 
     @Test
