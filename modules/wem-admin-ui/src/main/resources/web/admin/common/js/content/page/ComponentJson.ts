@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export interface PageComponentJson {
+    export interface ComponentJson {
 
         name:string;
     }

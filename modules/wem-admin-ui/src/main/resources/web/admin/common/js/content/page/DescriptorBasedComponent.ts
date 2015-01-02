@@ -2,7 +2,7 @@ module api.content.page {
 
     import PropertyTree = api.data.PropertyTree;
 
-    export class DescriptorBasedPageComponent extends Component implements api.Equitable, api.Cloneable {
+    export class DescriptorBasedComponent extends Component implements api.Equitable, api.Cloneable {
 
         private descriptorKey: DescriptorKey;
 
@@ -43,7 +43,7 @@ module api.content.page {
             this.descriptorKey = null;
         }
 
-        toPageComponentJson(): DescriptorBasedPageComponentJson {
+        toPageComponentJson(): DescriptorBasedComponentJson {
 
             return {
                 "name": this.getName().toString(),
@@ -54,14 +54,14 @@ module api.content.page {
 
         equals(o: api.Equitable): boolean {
 
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, DescriptorBasedPageComponent)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, DescriptorBasedComponent)) {
                 return false;
             }
 
             if (!super.equals(o)) {
                 return false;
             }
-            var other = <DescriptorBasedPageComponent>o;
+            var other = <DescriptorBasedComponent>o;
 
             if (!api.ObjectHelper.equals(this.descriptorKey, other.descriptorKey)) {
                 return false;
@@ -74,18 +74,18 @@ module api.content.page {
             return true;
         }
 
-        clone(generateNewPropertyIds: boolean = false): DescriptorBasedPageComponent {
+        clone(generateNewPropertyIds: boolean = false): DescriptorBasedComponent {
             throw new Error("Must be implemented by inheritors");
         }
     }
 
-    export class DescriptorBasedPageComponentBuilder<DESCRIPTOR_BASED_COMPONENT extends DescriptorBasedPageComponent> extends ComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
+    export class DescriptorBasedPageComponentBuilder<DESCRIPTOR_BASED_COMPONENT extends DescriptorBasedComponent> extends ComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
 
         descriptor: DescriptorKey;
 
         config: PropertyTree;
 
-        constructor(source?: DescriptorBasedPageComponent, generateNewPropertyIds: boolean = false) {
+        constructor(source?: DescriptorBasedComponent, generateNewPropertyIds: boolean = false) {
             super(source);
             if( source ) {
                 this.descriptor = source.getDescriptor();

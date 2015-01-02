@@ -5,7 +5,7 @@ module api.content.page {
 
     export class ComponentFactory {
 
-        public static createFromJson(json: api.content.page.PageComponentTypeWrapperJson, region: Region,
+        public static createFromJson(json: api.content.page.ComponentTypeWrapperJson, region: Region,
                                      propertyIdProvider: PropertyIdProvider): api.content.page.Component {
 
             if (json.PartComponent) {

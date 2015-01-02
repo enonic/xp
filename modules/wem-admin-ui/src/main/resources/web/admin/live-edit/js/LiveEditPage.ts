@@ -8,7 +8,7 @@ module LiveEdit {
     import ComponentType = api.content.page.ComponentType;
     import ComponentName = api.content.page.ComponentName;
     import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedPageComponentBuilder;
-    import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
+    import DescriptorBasedComponent = api.content.page.DescriptorBasedComponent;
     import PageComponentView = api.liveedit.PageComponentView;
     import PageView = api.liveedit.PageView;
     import PageViewBuilder = api.liveedit.PageViewBuilder;
@@ -223,7 +223,7 @@ module LiveEdit {
             builder.setName(componentName);
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedPageComponentBuilder)) {
-                (<DescriptorBasedPageComponentBuilder<DescriptorBasedPageComponent>>builder).setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                (<DescriptorBasedPageComponentBuilder<DescriptorBasedComponent>>builder).setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider()));
             }
             var precedingPageComponent: Component = null;
             if (precedingComponentView) {

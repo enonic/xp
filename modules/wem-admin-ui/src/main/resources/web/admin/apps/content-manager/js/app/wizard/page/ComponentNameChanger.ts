@@ -1,7 +1,7 @@
 module app.wizard.page {
 
     import Descriptor = api.content.page.Descriptor;
-    import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
+    import DescriptorBasedComponent = api.content.page.DescriptorBasedComponent;
     import Component = api.content.page.Component;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import LayoutRegions = api.content.page.layout.LayoutRegions;

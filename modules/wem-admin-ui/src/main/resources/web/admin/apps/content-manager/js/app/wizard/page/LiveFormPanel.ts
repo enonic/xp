@@ -123,7 +123,7 @@ module app.wizard.page {
             this.layoutInspectionPanel.onLayoutDescriptorChanged((event: LayoutDescriptorChangedEvent) => {
 
                 var layoutView = event.getLayoutComponentView();
-                var command = new PageComponentSetDescriptorCommand().
+                var command = new ComponentSetDescriptorCommand().
                     setPageComponentView(layoutView).
                     setPageRegions(this.pageModel.getRegions()).
                     setDescriptor(event.getDescriptor());
@@ -387,7 +387,7 @@ module app.wizard.page {
 
             this.liveEditPage.onPageComponentSetDescriptor((event: ComponentSetDescriptorEvent) => {
 
-                var command = new PageComponentSetDescriptorCommand().
+                var command = new ComponentSetDescriptorCommand().
                     setPageComponentView(event.getPageComponentView()).
                     setPageRegions(this.pageModel.getRegions()).
                     setDescriptor(event.getDescriptor());

@@ -1,17 +1,16 @@
 module app.wizard.page.contextwindow.inspect {
 
     import FormView = api.form.FormView;
-    import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
+    import DescriptorBasedComponent = api.content.page.DescriptorBasedComponent;
     import DescriptorKey = api.content.page.DescriptorKey;
     import Descriptor = api.content.page.Descriptor;
 
     export interface DescriptorBasedPageComponentInspectionPanelConfig {
 
         iconClass: string;
-
     }
 
-    export class DescriptorBasedPageComponentInspectionPanel<COMPONENT extends DescriptorBasedPageComponent, DESCRIPTOR extends Descriptor> extends ComponentInspectionPanel<COMPONENT> {
+    export class DescriptorBasedComponentInspectionPanel<COMPONENT extends DescriptorBasedComponent, DESCRIPTOR extends Descriptor> extends ComponentInspectionPanel<COMPONENT> {
 
         private formView: FormView;
 
@@ -30,7 +29,7 @@ module app.wizard.page.contextwindow.inspect {
             }
         }
 
-        setupComponentForm(component: DescriptorBasedPageComponent, descriptor: Descriptor) {
+        setupComponentForm(component: DescriptorBasedComponent, descriptor: Descriptor) {
             if (this.formView) {
                 this.removeChild(this.formView);
                 this.formView = null;

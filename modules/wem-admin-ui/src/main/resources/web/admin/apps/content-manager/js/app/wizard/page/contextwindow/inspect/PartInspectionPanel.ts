@@ -2,14 +2,13 @@ module app.wizard.page.contextwindow.inspect {
 
     import SiteModel = api.content.site.SiteModel;
     import PartDescriptor = api.content.page.part.PartDescriptor;
-    import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
     import GetPartDescriptorByKeyRequest = api.content.page.part.GetPartDescriptorByKeyRequest;
     import PartComponent = api.content.page.part.PartComponent;
     import DescriptorKey = api.content.page.DescriptorKey;
     import PartComponentView = api.liveedit.part.PartComponentView;
     import LiveEditModel = api.liveedit.LiveEditModel;
 
-    export class PartInspectionPanel extends DescriptorBasedPageComponentInspectionPanel<PartComponent, PartDescriptor> {
+    export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel<PartComponent, PartDescriptor> {
 
         private liveEditModel: LiveEditModel;
 

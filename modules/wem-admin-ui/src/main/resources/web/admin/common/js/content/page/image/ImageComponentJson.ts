@@ -1,6 +1,6 @@
 module api.content.page.image {
 
-    export interface ImageComponentJson extends api.content.page.PageComponentJson {
+    export interface ImageComponentJson extends api.content.page.ComponentJson {
 
         image:string;
 

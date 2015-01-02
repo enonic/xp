@@ -4,7 +4,7 @@ module api.content.page.layout {
     import PropertyIdProvider = api.data.PropertyIdProvider;
     import PropertyTree = api.data.PropertyTree;
 
-    export class LayoutComponent extends api.content.page.DescriptorBasedPageComponent implements api.Equitable, api.Cloneable {
+    export class LayoutComponent extends api.content.page.DescriptorBasedComponent implements api.Equitable, api.Cloneable {
 
         private regions: LayoutRegions;
 
@@ -32,11 +32,11 @@ module api.content.page.layout {
             this.regions = value;
         }
 
-        public toJson(): api.content.page.PageComponentTypeWrapperJson {
+        public toJson(): api.content.page.ComponentTypeWrapperJson {
             var json: LayoutComponentJson = <LayoutComponentJson>super.toPageComponentJson();
             json.regions = this.regions.toJson();
 
-            return <api.content.page.PageComponentTypeWrapperJson> {
+            return <api.content.page.ComponentTypeWrapperJson> {
                 LayoutComponent: json
             };
         }

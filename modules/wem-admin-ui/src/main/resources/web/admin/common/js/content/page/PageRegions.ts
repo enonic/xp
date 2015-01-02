@@ -72,7 +72,7 @@ module api.content.page {
                     setParent(null).
                     build();
 
-                regionJson.components.forEach((componentJson: api.content.page.PageComponentTypeWrapperJson) => {
+                regionJson.components.forEach((componentJson: api.content.page.ComponentTypeWrapperJson) => {
                     var pageComponent = ComponentFactory.createFromJson(componentJson, region, propertyIdProvider);
                     region.addComponent(pageComponent);
                 });

@@ -3,15 +3,15 @@ module api.liveedit {
     import Event = api.event.Event;
     import Descriptor = api.content.page.Descriptor;
     import ItemView = api.liveedit.ItemView;
-    import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
+    import DescriptorBasedComponent = api.content.page.DescriptorBasedComponent;
 
     export class ComponentSetDescriptorEvent extends api.event.Event {
 
         private descriptor: Descriptor;
 
-        private pageItemView: PageComponentView<DescriptorBasedPageComponent>;
+        private pageItemView: PageComponentView<DescriptorBasedComponent>;
 
-        constructor(descriptor: Descriptor, itemView: PageComponentView<DescriptorBasedPageComponent>) {
+        constructor(descriptor: Descriptor, itemView: PageComponentView<DescriptorBasedComponent>) {
             super();
             this.descriptor = descriptor;
             this.pageItemView = itemView;
@@ -21,7 +21,7 @@ module api.liveedit {
             return this.descriptor;
         }
 
-        getPageComponentView(): PageComponentView<DescriptorBasedPageComponent> {
+        getPageComponentView(): PageComponentView<DescriptorBasedComponent> {
             return this.pageItemView;
         }
 

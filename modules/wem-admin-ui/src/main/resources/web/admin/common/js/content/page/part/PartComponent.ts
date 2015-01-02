@@ -4,16 +4,16 @@ module api.content.page.part {
     import PropertyTree = api.data.PropertyTree;
     import PropertyIdProvider = api.data.PropertyIdProvider;
 
-    export class PartComponent extends api.content.page.DescriptorBasedPageComponent implements api.Equitable, api.Cloneable {
+    export class PartComponent extends api.content.page.DescriptorBasedComponent implements api.Equitable, api.Cloneable {
 
         constructor(builder: PartComponentBuilder) {
             super(builder);
         }
 
-        toJson(): api.content.page.PageComponentTypeWrapperJson {
+        toJson(): api.content.page.ComponentTypeWrapperJson {
             var json: PartComponentJson = <PartComponentJson>super.toPageComponentJson();
 
-            return <api.content.page.PageComponentTypeWrapperJson> {
+            return <api.content.page.ComponentTypeWrapperJson> {
                 PartComponent: json
             };
         }

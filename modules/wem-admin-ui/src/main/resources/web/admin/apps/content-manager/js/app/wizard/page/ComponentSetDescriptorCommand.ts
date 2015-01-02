@@ -1,7 +1,7 @@
 module app.wizard.page {
 
     import Descriptor = api.content.page.Descriptor;
-    import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
+    import DescriptorBasedComponent = api.content.page.DescriptorBasedComponent;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import LayoutRegions = api.content.page.layout.LayoutRegions;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
@@ -10,25 +10,25 @@ module app.wizard.page {
     import PageRegions = api.content.page.PageRegions;
     import PageComponentView = api.liveedit.PageComponentView;
 
-    export class PageComponentSetDescriptorCommand {
+    export class ComponentSetDescriptorCommand {
 
-        private pageComponentView: PageComponentView<DescriptorBasedPageComponent>;
+        private pageComponentView: PageComponentView<DescriptorBasedComponent>;
 
         private pageRegions: PageRegions;
 
         private descriptor: Descriptor;
 
-        setPageComponentView(value: PageComponentView<DescriptorBasedPageComponent>): PageComponentSetDescriptorCommand {
+        setPageComponentView(value: PageComponentView<DescriptorBasedComponent>): ComponentSetDescriptorCommand {
             this.pageComponentView = value;
             return this;
         }
 
-        setPageRegions(value: PageRegions): PageComponentSetDescriptorCommand {
+        setPageRegions(value: PageRegions): ComponentSetDescriptorCommand {
             this.pageRegions = value;
             return this;
         }
 
-        setDescriptor(value: Descriptor): PageComponentSetDescriptorCommand {
+        setDescriptor(value: Descriptor): ComponentSetDescriptorCommand {
             this.descriptor = value;
             return this;
         }

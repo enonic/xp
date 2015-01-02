@@ -1,6 +1,6 @@
 ///<reference path='BaseInspectionPanel.ts' />
 ///<reference path='ComponentInspectionPanel.ts' />
-///<reference path='DescriptorBasedPageComponentInspectionPanel.ts' />
+///<reference path='DescriptorBasedComponentInspectionPanel.ts' />
 ///<reference path='NoSelectionInspectionPanel.ts' />
 ///<reference path='ImageInspectionPanel.ts' />
 ///<reference path='PartInspectionPanel.ts' />

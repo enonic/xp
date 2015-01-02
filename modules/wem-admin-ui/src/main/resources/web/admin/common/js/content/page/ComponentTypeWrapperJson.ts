@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export interface PageComponentTypeWrapperJson {
+    export interface ComponentTypeWrapperJson {
 
         ImageComponent?:api.content.page.image.ImageComponentJson;
 

@@ -4,7 +4,6 @@ module app.wizard.page.contextwindow.inspect {
     import SiteModel = api.content.site.SiteModel;
     import LiveEditModel = api.liveedit.LiveEditModel;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
-    import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
     import DescriptorKey = api.content.page.DescriptorKey;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import GetLayoutDescriptorByKeyRequest = api.content.page.layout.GetLayoutDescriptorByKeyRequest;
@@ -17,7 +16,7 @@ module app.wizard.page.contextwindow.inspect {
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
 
-    export class LayoutInspectionPanel extends DescriptorBasedPageComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
+    export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
 
         private layoutView: LayoutComponentView;
 
