@@ -15,7 +15,7 @@ module app.wizard.page {
 
         private pageRegions: PageRegions;
 
-        private pageComponentView: ComponentView<Component>;
+        private componentView: ComponentView<Component>;
 
         setPageRegions(value: PageRegions): ComponentNameChanger {
             this.pageRegions = value;
@@ -23,15 +23,15 @@ module app.wizard.page {
         }
 
         setComponentView(value: ComponentView<Component>): ComponentNameChanger {
-            this.pageComponentView = value;
+            this.componentView = value;
             return this;
         }
 
         changeTo(name: string) {
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
-            api.util.assertNotNull(this.pageComponentView, "pageComponentView cannot be null");
+            api.util.assertNotNull(this.componentView, "componentView cannot be null");
 
-            var component = this.pageComponentView.getComponent();
+            var component = this.componentView.getComponent();
 
             var componentName = new ComponentName(name);
             component.setName(componentName);

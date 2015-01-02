@@ -203,7 +203,7 @@ module api.liveedit {
             return null;
         }
 
-        getPageComponentViewByElement(element: HTMLElement): ComponentView<Component> {
+        getComponentViewByElement(element: HTMLElement): ComponentView<Component> {
             api.util.assertNotNull(element, "element cannot be null");
 
             var itemId = ItemView.parseItemId(element);
@@ -224,9 +224,9 @@ module api.liveedit {
             // logging...
             var extra = "";
             if (api.ObjectHelper.iFrameSafeInstanceOf(view, ComponentView)) {
-                var pageComponentView = <ComponentView<Component>>view;
-                if (pageComponentView.hasComponentPath()) {
-                    extra = pageComponentView.getComponentPath().toString();
+                var componentView = <ComponentView<Component>>view;
+                if (componentView.hasComponentPath()) {
+                    extra = componentView.getComponentPath().toString();
                 }
             }
             else if (api.ObjectHelper.iFrameSafeInstanceOf(view, RegionView)) {
@@ -271,7 +271,7 @@ module api.liveedit {
                                 setRegion(region).
                                 setElement(element));
                             this.addRegion(regionView);
-                            regionView.parsePageComponentViews();
+                            regionView.parseComponentViews();
                         }
                     }
                     else {

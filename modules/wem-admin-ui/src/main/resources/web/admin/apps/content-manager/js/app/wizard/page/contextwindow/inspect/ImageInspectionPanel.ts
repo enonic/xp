@@ -44,7 +44,7 @@ module app.wizard.page.contextwindow.inspect {
             }).done();
         }
 
-        getPageComponentView(): ImageComponentView {
+        getComponentView(): ImageComponentView {
             return this.imageView;
         }
 

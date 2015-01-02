@@ -46,7 +46,7 @@ module app.wizard.page.contextwindow {
                 var itemView = liveFormPanel.getSelectedItemView();
                 if (itemView) {
                     if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
-                        liveFormPanel.saveAndReloadOnlyPageComponent(<ComponentView<Component>> itemView);
+                        liveFormPanel.saveAndReloadOnlyComponent(<ComponentView<Component>> itemView);
                     } else if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageView)) {
                         liveFormPanel.saveAndReloadPage();
                     }

@@ -12,14 +12,14 @@ module app.wizard.page {
 
     export class ComponentSetDescriptorCommand {
 
-        private pageComponentView: ComponentView<DescriptorBasedComponent>;
+        private componentView: ComponentView<DescriptorBasedComponent>;
 
         private pageRegions: PageRegions;
 
         private descriptor: Descriptor;
 
-        setPageComponentView(value: ComponentView<DescriptorBasedComponent>): ComponentSetDescriptorCommand {
-            this.pageComponentView = value;
+        setComponentView(value: ComponentView<DescriptorBasedComponent>): ComponentSetDescriptorCommand {
+            this.componentView = value;
             return this;
         }
 
@@ -34,18 +34,18 @@ module app.wizard.page {
         }
 
         execute(): void {
-            api.util.assertNotNull(this.pageComponentView, "itemView cannot be null");
+            api.util.assertNotNull(this.componentView, "componentView cannot be null");
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
             api.util.assertNotNull(this.descriptor, "descriptor cannot be null");
 
-            var component = this.pageComponentView.getComponent();
+            var component = this.componentView.getComponent();
             if (!component || !this.descriptor) {
                 return;
             }
 
             new ComponentNameChanger().
                 setPageRegions(this.pageRegions).
-                setComponentView(this.pageComponentView).
+                setComponentView(this.componentView).
                 changeTo(this.descriptor.getDisplayName());
 
             var newPath = component.getPath();

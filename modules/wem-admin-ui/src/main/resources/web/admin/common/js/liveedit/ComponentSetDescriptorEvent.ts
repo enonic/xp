@@ -9,20 +9,20 @@ module api.liveedit {
 
         private descriptor: Descriptor;
 
-        private pageItemView: ComponentView<DescriptorBasedComponent>;
+        private componentView: ComponentView<DescriptorBasedComponent>;
 
-        constructor(descriptor: Descriptor, itemView: ComponentView<DescriptorBasedComponent>) {
+        constructor(descriptor: Descriptor, componentView: ComponentView<DescriptorBasedComponent>) {
             super();
             this.descriptor = descriptor;
-            this.pageItemView = itemView;
+            this.componentView = componentView;
         }
 
         getDescriptor(): Descriptor {
             return this.descriptor;
         }
 
-        getPageComponentView(): ComponentView<DescriptorBasedComponent> {
-            return this.pageItemView;
+        getComponentView(): ComponentView<DescriptorBasedComponent> {
+            return this.componentView;
         }
 
         static on(handler: (event: ComponentSetDescriptorEvent) => void, contextWindow: Window = window) {

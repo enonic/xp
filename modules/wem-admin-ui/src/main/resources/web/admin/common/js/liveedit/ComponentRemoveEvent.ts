@@ -4,15 +4,15 @@ module api.liveedit {
 
     export class ComponentRemoveEvent extends api.event.Event {
 
-        private pageComponentView: ComponentView<Component>;
+        private componentView: ComponentView<Component>;
 
-        constructor(pageComponentView: ComponentView<Component>) {
+        constructor(componentView: ComponentView<Component>) {
             super();
-            this.pageComponentView = pageComponentView;
+            this.componentView = componentView;
         }
 
-        getPageComponentView(): ComponentView<Component> {
-            return this.pageComponentView;
+        getComponentView(): ComponentView<Component> {
+            return this.componentView;
         }
 
         static on(handler: (event: ComponentRemoveEvent) => void, contextWindow: Window = window) {

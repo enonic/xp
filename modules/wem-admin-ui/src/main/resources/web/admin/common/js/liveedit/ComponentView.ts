@@ -102,13 +102,13 @@ module api.liveedit {
                     setElement(builder.element).
                     setParentView(builder.parentRegionView).
                     setParentElement(builder.parentElement).
-                    setContextMenuActions(this.createPageComponentContextMenuActions(builder.contextMenuActions)).
+                    setContextMenuActions(this.createComponentContextMenuActions(builder.contextMenuActions)).
                     setContextMenuTitle(new ComponentViewContextMenuTitle(builder.component, builder.type))
             );
 
             this.parentRegionView = builder.parentRegionView;
             this.setComponent(builder.component);
-            this.parentRegionView.registerPageComponentView(this, builder.positionIndex);
+            this.parentRegionView.registerComponentView(this, builder.positionIndex);
 
             // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
             //this.setDraggable(true);
@@ -117,7 +117,7 @@ module api.liveedit {
             //this.onDragEnd(this.handleDragEnd.bind(this));
         }
 
-        private createPageComponentContextMenuActions(actions: api.ui.Action[]): api.ui.Action[] {
+        private createComponentContextMenuActions(actions: api.ui.Action[]): api.ui.Action[] {
             var actions = actions || [];
             actions.push(new api.ui.Action("Parent").onExecuted(() => {
                 var parentView: ItemView = this.getParentItemView();
@@ -135,13 +135,13 @@ module api.liveedit {
             }));
             actions.push(new api.ui.Action("Remove").onExecuted(() => {
                 this.deselect();
-                this.getParentItemView().removePageComponentView(this);
+                this.getParentItemView().removeComponentView(this);
 
                 new ComponentRemoveEvent(this).fire();
             }));
             actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
-                var duplicatedPageComponent = <COMPONENT> this.getComponent().duplicateComponent();
-                var duplicatedView = this.duplicate(duplicatedPageComponent);
+                var duplicatedComponent = <COMPONENT> this.getComponent().duplicateComponent();
+                var duplicatedView = this.duplicate(duplicatedComponent);
                 this.deselect();
                 duplicatedView.markAsEmpty();
                 duplicatedView.select();
@@ -268,7 +268,7 @@ module api.liveedit {
             var precedingComponent: Component = null;
             if (precedingComponentView) {
                 precedingComponent = precedingComponentView.getComponent();
-                precedingComponentIndex = precedingComponentView.getParentItemView().getPageComponentViewIndex(precedingComponentView);
+                precedingComponentIndex = precedingComponentView.getParentItemView().getComponentViewIndex(precedingComponentView);
             }
 
             var indexInNewParent = -1;
@@ -280,7 +280,7 @@ module api.liveedit {
 
             // Unregister from previous region...
             // View
-            this.parentRegionView.unregisterPageComponentView(this);
+            this.parentRegionView.unregisterComponentView(this);
             // Data
             this.component.removeFromParent();
             // Element
@@ -292,7 +292,7 @@ module api.liveedit {
             // Data
             toRegionView.getRegion().addComponentAfter(this.component, precedingComponent);
             // View
-            toRegionView.registerPageComponentView(this, indexInNewParent);
+            toRegionView.registerComponentView(this, indexInNewParent);
             this.parentRegionView = toRegionView;
         }
 

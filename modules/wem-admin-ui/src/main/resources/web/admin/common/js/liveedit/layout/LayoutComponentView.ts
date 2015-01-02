@@ -101,7 +101,7 @@ module api.liveedit.layout {
                             setRegion(region).
                             setElement(childElement));
                         this.addRegion(regionView);
-                        regionView.parsePageComponentViews();
+                        regionView.parseComponentViews();
                     }
                     else {
                         this.doParseRegions(childElement);

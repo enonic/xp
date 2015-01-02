@@ -7,7 +7,7 @@ module LiveEdit {
     import Region = api.content.page.region.Region;
     import ComponentType = api.content.page.ComponentType;
     import ComponentName = api.content.page.ComponentName;
-    import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedComponentBuilder;
+    import DescriptorBasedComponentBuilder = api.content.page.DescriptorBasedComponentBuilder;
     import DescriptorBasedComponent = api.content.page.DescriptorBasedComponent;
     import ComponentView = api.liveedit.ComponentView;
     import PageView = api.liveedit.PageView;
@@ -191,20 +191,20 @@ module LiveEdit {
             return this.pageView.getItemViewByElement(htmlElement);
         }
 
-        getPageComponentViewByElement(htmlElement: HTMLElement): ComponentView<Component> {
-            return this.pageView.getPageComponentViewByElement(htmlElement);
+        getComponentViewByElement(htmlElement: HTMLElement): ComponentView<Component> {
+            return this.pageView.getComponentViewByElement(htmlElement);
         }
 
         getRegionViewByElement(htmlElement: HTMLElement): RegionView {
             return this.pageView.getRegionViewByElement(htmlElement);
         }
 
-        addPageComponentView(pageComponentView: ComponentView<Component>, toRegion: RegionView, atIndex: number) {
+        addComponentView(componentView: ComponentView<Component>, toRegion: RegionView, atIndex: number) {
 
-            toRegion.addPageComponentView(pageComponentView, atIndex);
+            toRegion.addComponentView(componentView, atIndex);
 
-            new ComponentAddedEvent().setPageComponentView(pageComponentView).fire();
-            pageComponentView.select();
+            new ComponentAddedEvent().setComponentView(componentView).fire();
+            componentView.select();
         }
 
         hasSelectedView(): boolean {
@@ -222,15 +222,15 @@ module LiveEdit {
             var builder = type.newComponentBuilder();
             builder.setName(componentName);
 
-            if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedPageComponentBuilder)) {
-                (<DescriptorBasedPageComponentBuilder<DescriptorBasedComponent>>builder).setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider()));
+            if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedComponentBuilder)) {
+                (<DescriptorBasedComponentBuilder<DescriptorBasedComponent>>builder).setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider()));
             }
-            var precedingPageComponent: Component = null;
+            var precedingComponent: Component = null;
             if (precedingComponentView) {
-                precedingPageComponent = precedingComponentView.getComponent();
+                precedingComponent = precedingComponentView.getComponent();
             }
             var component = builder.build();
-            region.addComponentAfter(component, precedingPageComponent);
+            region.addComponentAfter(component, precedingComponent);
             return component;
         }
     }

@@ -26,7 +26,7 @@ public final class ComponentPath
         this.refString = toString( this );
     }
 
-    public static ComponentPath from( final RegionPath parentPath, final int pageComponentIndex )
+    public static ComponentPath from( final RegionPath parentPath, final int componentIndex )
     {
         final ImmutableList.Builder<RegionAndComponent> builder = new ImmutableList.Builder<>();
         if ( parentPath.getParentComponentPath() != null )
@@ -36,7 +36,7 @@ public final class ComponentPath
                 builder.add( regionAndComponent );
             }
         }
-        builder.add( RegionAndComponent.from( parentPath.getRegionName(), pageComponentIndex ) );
+        builder.add( RegionAndComponent.from( parentPath.getRegionName(), componentIndex ) );
         return new ComponentPath( builder.build() );
     }
 
@@ -126,9 +126,9 @@ public final class ComponentPath
             this.refString = toString( this );
         }
 
-        public static RegionAndComponent from( final String regionName, final int pageComponentIndex )
+        public static RegionAndComponent from( final String regionName, final int componentIndex )
         {
-            return new RegionAndComponent( new RegionName( regionName ), new ComponentIndex( pageComponentIndex ) );
+            return new RegionAndComponent( new RegionName( regionName ), new ComponentIndex( componentIndex ) );
         }
 
         public static RegionAndComponent from( final String str )

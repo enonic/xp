@@ -5,15 +5,15 @@ module api.liveedit {
 
     export class ComponentAddedEvent extends api.event.Event {
 
-        private pageComponentView: ComponentView<Component>;
+        private componentView: ComponentView<Component>;
 
-        setPageComponentView(pageComponentView: ComponentView<Component>): ComponentAddedEvent {
-            this.pageComponentView = pageComponentView;
+        setComponentView(componentView: ComponentView<Component>): ComponentAddedEvent {
+            this.componentView = componentView;
             return this;
         }
 
-        getPageComponentView(): ComponentView<Component> {
-            return this.pageComponentView;
+        getComponentView(): ComponentView<Component> {
+            return this.componentView;
         }
 
         static on(handler: (event: ComponentAddedEvent) => void, contextWindow: Window = window) {

@@ -5,15 +5,15 @@ module api.liveedit {
 
     export class DraggingComponentViewCanceledEvent extends Event {
 
-        private pageComponentView: ComponentView<Component>;
+        private componentView: ComponentView<Component>;
 
-        constructor(pageComponentView: ComponentView<Component>) {
+        constructor(componentView: ComponentView<Component>) {
             super();
-            this.pageComponentView = pageComponentView;
+            this.componentView = componentView;
         }
 
-        getPageComponentView(): ComponentView<Component> {
-            return this.pageComponentView;
+        getComponentView(): ComponentView<Component> {
+            return this.componentView;
         }
 
         static on(handler: (event: DraggingComponentViewCompletedEvent) => void, contextWindow: Window = window) {

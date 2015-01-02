@@ -21,7 +21,7 @@ module app.wizard.page {
             return this;
         }
 
-        setPageComponentView(value: ImageComponentView): ImageComponentSetImageCommand {
+        setComponentView(value: ImageComponentView): ImageComponentSetImageCommand {
             this.imageView = value;
             return this;
         }
@@ -43,7 +43,7 @@ module app.wizard.page {
 
         execute(): void {
             api.util.assertNotNull(this.defaultModels, "defaultModels cannot be null");
-            api.util.assertNotNull(this.imageView, "itemView cannot be null");
+            api.util.assertNotNull(this.imageView, "imageView cannot be null");
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
             api.util.assertNotNull(this.image, "image cannot be null");
 

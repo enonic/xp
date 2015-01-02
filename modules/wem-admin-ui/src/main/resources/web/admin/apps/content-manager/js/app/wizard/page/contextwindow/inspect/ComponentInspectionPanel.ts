@@ -47,7 +47,7 @@ module app.wizard.page.contextwindow.inspect {
             this.nameInput.setValue(component.getName().toString());
         }
 
-        getPageComponentView(): ComponentView<Component> {
+        getComponentView(): ComponentView<Component> {
             throw new Error("Must be implemented by inheritors");
         }
 

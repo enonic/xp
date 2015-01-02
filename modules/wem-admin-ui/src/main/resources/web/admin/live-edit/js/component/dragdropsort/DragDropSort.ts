@@ -113,13 +113,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         console.log((_messageCounter++) + " DragDropSort.handleSortStart");
 
-        var draggedPageComponentView = getPageComponentView(ui.item);
+        var draggedComponentView = getComponentView(ui.item);
         var draggingOverRegionView: RegionView = getRegionView(ui.placeholder.parent());
         api.util.assertState(!!draggingOverRegionView, "draggingOverRegionView should not have been null");
 
         updateScrollSensitivity(event.target);
 
-        if (!draggedPageComponentView) {
+        if (!draggedComponentView) {
             api.util.assertState(!!_newItemItemType, "_newItemItemType should not have been null");
 
             var dropZoneBuilder = new RegionViewDropZoneBuilder().
@@ -140,17 +140,17 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             draggingOverRegionView.refreshPlaceholder();
         }
         else {
-            draggedPageComponentView.hideContextMenu();
-            draggedPageComponentView.setMoving(true);
+            draggedComponentView.hideContextMenu();
+            draggedComponentView.setMoving(true);
 
-            var parentRegionOfDraggedComponent = draggedPageComponentView.getParentItemView();
+            var parentRegionOfDraggedComponent = draggedComponentView.getParentItemView();
             parentRegionOfDraggedComponent.refreshPlaceholder();
 
             var dropZoneBuilder = new RegionViewDropZoneBuilder().
                 setRegionView(draggingOverRegionView).
-                setPageComponentView(draggedPageComponentView);
+                setComponentView(draggedComponentView);
 
-            if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedPageComponentView.getType())) {
+            if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedComponentView.getType())) {
                 api.ui.DragHelper.setDropAllowed(false);
                 dropZoneBuilder.setText("Layout within layout not allowed");
                 dropZoneBuilder.setDropAllowed(false);
@@ -176,16 +176,16 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         var draggingOverRegionView: RegionView = getRegionView(ui.placeholder.parent());
         api.util.assertState(!!draggingOverRegionView, "draggingOverRegionView not expected to be null");
 
-        var draggedPageComponentView = getPageComponentView(ui.item);
-        if (!draggedPageComponentView) {
+        var draggedComponentView = getComponentView(ui.item);
+        if (!draggedComponentView) {
             return;
         }
 
         var dropZoneBuilder = new RegionViewDropZoneBuilder().
             setRegionView(draggingOverRegionView).
-            setPageComponentView(draggedPageComponentView);
+            setComponentView(draggedComponentView);
 
-        if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedPageComponentView.getType())) {
+        if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedComponentView.getType())) {
             api.ui.DragHelper.setDropAllowed(false);
             dropZoneBuilder.setText("Layout within layout not allowed");
             dropZoneBuilder.setDropAllowed(false);
@@ -236,9 +236,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         }
         draggingOverRegionView.refreshPlaceholder();
 
-        var draggedPageComponentView = getPageComponentView(ui.item);
-        if (draggedPageComponentView) {
-            if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedPageComponentView.getType())) {
+        var draggedComponentView = getComponentView(ui.item);
+        if (draggedComponentView) {
+            if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedComponentView.getType())) {
                 api.ui.DragHelper.setDropAllowed(false);
             }
             else {
@@ -261,30 +261,30 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         var droppedInRegionView: RegionView = getRegionView(ui.item.parent());
         api.util.assertState(!!droppedInRegionView, "droppedInRegionView not expected to be null");
 
-        var droppedPageComponentView = getPageComponentView(ui.item);
+        var droppedComponentView = getComponentView(ui.item);
 
-        if (!droppedPageComponentView) {
+        if (!droppedComponentView) {
             if (isDraggingLayoutOverLayout(droppedInRegionView, _newItemItemType)) {
                 ui.item.remove();
-                new DraggingComponentViewCanceledEvent(droppedPageComponentView).fire();
+                new DraggingComponentViewCanceledEvent(droppedComponentView).fire();
                 return;
             }
         } else {
-            if (isDraggingLayoutOverLayout(droppedInRegionView,  droppedPageComponentView.getType())) {
+            if (isDraggingLayoutOverLayout(droppedInRegionView,  droppedComponentView.getType())) {
                 ui.item.remove();
-                new DraggingComponentViewCanceledEvent(droppedPageComponentView).fire();
+                new DraggingComponentViewCanceledEvent(droppedComponentView).fire();
                 return;
             }
         }
 
         // Skip moving when ComponentView is already moved (happens when moving from one sortable/region to another, then one event is fired for each sortable)
-        if (!droppedPageComponentView.isMoving()) {
+        if (!droppedComponentView.isMoving()) {
             return;
         }
 
-        if (droppedPageComponentView.hasComponentPath()) {
-            var precedingComponentView = resolvePrecedingComponentView(droppedPageComponentView.getHTMLElement());
-            droppedPageComponentView.moveToRegion(droppedInRegionView, precedingComponentView);
+        if (droppedComponentView.hasComponentPath()) {
+            var precedingComponentView = resolvePrecedingComponentView(droppedComponentView.getHTMLElement());
+            droppedComponentView.moveToRegion(droppedInRegionView, precedingComponentView);
         }
 
         droppedInRegionView.refreshPlaceholder();
@@ -309,17 +309,17 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             }
 
             var precedingComponentView = resolvePrecedingComponentView(droppedElement.get(0));
-            var newPageComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toPageComponentType(),
+            var newComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toPageComponentType(),
                 precedingComponentView);
-            var pageComponentIndex = droppedElement.index();
-            var newPageComponentView = itemType.createView(new CreateItemViewConfig<RegionView,Component>().
+            var componentIndex = droppedElement.index();
+            var newComponentView = itemType.createView(new CreateItemViewConfig<RegionView,Component>().
                 setParentView(regionView).
-                setData(newPageComponent).
-                setPositionIndex(pageComponentIndex));
+                setData(newComponent).
+                setPositionIndex(componentIndex));
 
             droppedElement.remove();
 
-            liveEditPage.addPageComponentView(newPageComponentView, regionView, pageComponentIndex);
+            liveEditPage.addComponentView(newComponentView, regionView, componentIndex);
         }
     }
 
@@ -348,20 +348,20 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         _newItemItemType = null;
         _isDragging = false;
 
-        var pageComponentView = getPageComponentView(ui.item);
-        if (!pageComponentView) {
+        var componentView = getComponentView(ui.item);
+        if (!componentView) {
             new ItemFromContextWindowDroppedEvent().fire();
             return;
         }
 
         var droppedInRegionView: RegionView = getRegionView(ui.item.parent());
-        if (isDraggingLayoutOverLayout(droppedInRegionView, pageComponentView.getType())) {
+        if (isDraggingLayoutOverLayout(droppedInRegionView, componentView.getType())) {
             ui.item.remove();
         }
 
-        pageComponentView.select();
+        componentView.select();
 
-        new DraggingComponentViewCompletedEvent(pageComponentView).fire();
+        new DraggingComponentViewCompletedEvent(componentView).fire();
     }
 
     function isItemDraggedFromContextWindow(item: JQuery): boolean {
@@ -391,19 +391,19 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         return sortableItemsSelector.toString();
     }
 
-    function resolvePrecedingComponentView(pageComponentViewAsHTMLElement: HTMLElement): ComponentView<Component> {
+    function resolvePrecedingComponentView(componentViewAsHTMLElement: HTMLElement): ComponentView<Component> {
 
-        var preceodingComponentView: ComponentView<Component> = null;
-        var precedingComponentViewId = ComponentView.findPrecedingComponentItemViewId(pageComponentViewAsHTMLElement);
+        var precedingComponentView: ComponentView<Component> = null;
+        var precedingComponentViewId = ComponentView.findPrecedingComponentItemViewId(componentViewAsHTMLElement);
         if (precedingComponentViewId) {
-            preceodingComponentView =
+            precedingComponentView =
             <ComponentView<Component>>LiveEdit.LiveEditPage.get().getByItemId(precedingComponentViewId);
         }
-        return preceodingComponentView;
+        return precedingComponentView;
     }
 
-    function getPageComponentView(jq: JQuery) {
-        return LiveEdit.LiveEditPage.get().getPageComponentViewByElement(jq.get(0));
+    function getComponentView(jq: JQuery) {
+        return LiveEdit.LiveEditPage.get().getComponentViewByElement(jq.get(0));
     }
 
     function getRegionView(jq: JQuery) {
