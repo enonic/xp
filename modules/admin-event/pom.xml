@@ -18,7 +18,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wem-servlet</artifactId>
+      <artifactId>web-impl</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
