@@ -2,7 +2,7 @@ module api.liveedit {
 
     import Component = api.content.page.Component;
 
-    export class PageComponentItemType extends ItemType {
+    export class ComponentItemType extends ItemType {
 
         constructor(shortName: string, config: ItemTypeConfigJson) {
             super(shortName, config);

@@ -5,7 +5,7 @@ module api.liveedit {
 
     export class ComponentViewContextMenuTitle<PAGE_COMPONENT extends Component> extends ItemViewContextMenuTitle {
 
-        constructor(pageComponent: PAGE_COMPONENT, type: PageComponentItemType) {
+        constructor(pageComponent: PAGE_COMPONENT, type: ComponentItemType) {
             pageComponent.onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() == Component.PROPERTY_NAME) {
                     this.setMainName((<ComponentName> event.getNewValue()).toString());

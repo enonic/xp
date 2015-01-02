@@ -4,10 +4,10 @@ module api.liveedit.image {
     import ItemType = api.liveedit.ItemType;
     import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
     import PageComponentView = api.liveedit.PageComponentView;
-    import PageComponentItemType = api.liveedit.PageComponentItemType;
+    import ComponentItemType = api.liveedit.ComponentItemType;
     import RegionView = api.liveedit.RegionView;
 
-    export class ImageItemType extends PageComponentItemType {
+    export class ImageItemType extends ComponentItemType {
 
         private static INSTANCE = new ImageItemType();
 

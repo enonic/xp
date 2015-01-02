@@ -17,7 +17,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import RegionViewDropZoneBuilder = api.liveedit.RegionViewDropZoneBuilder;
     import PageComponentView = api.liveedit.PageComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
-    import PageComponentItemType = api.liveedit.PageComponentItemType;
+    import ComponentItemType = api.liveedit.ComponentItemType;
     import RegionItemType = api.liveedit.RegionItemType;
     import TextItemType = api.liveedit.text.TextItemType;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
@@ -301,7 +301,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var droppedElement = wemjq(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
             var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(droppedElement.get(0));
             var regionView = liveEditPage.getRegionViewByElement(regionHTMLElement);
-            var itemType: PageComponentItemType = <PageComponentItemType>ItemType.byShortName(droppedElement.data('live-edit-type'));
+            var itemType: ComponentItemType = <ComponentItemType>ItemType.byShortName(droppedElement.data('live-edit-type'));
 
             if (isDraggingLayoutOverLayout(regionView, itemType)) {
                 regionView.refreshPlaceholder();

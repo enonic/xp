@@ -10,7 +10,7 @@ module api.liveedit {
 
         itemViewProducer: ItemViewIdProducer;
 
-        type: PageComponentItemType;
+        type: ComponentItemType;
 
         parentRegionView: RegionView;
 
@@ -37,7 +37,7 @@ module api.liveedit {
             return this;
         }
 
-        setType(value: PageComponentItemType): PageComponentViewBuilder<PAGE_COMPONENT> {
+        setType(value: ComponentItemType): PageComponentViewBuilder<PAGE_COMPONENT> {
             this.type = value;
             return this;
         }
@@ -178,8 +178,8 @@ module api.liveedit {
             }
         }
 
-        getType(): PageComponentItemType {
-            return <PageComponentItemType>super.getType();
+        getType(): ComponentItemType {
+            return <ComponentItemType>super.getType();
         }
 
         setPageComponent(pageComponent: PAGE_COMPONENT) {

@@ -2,11 +2,11 @@ module api.liveedit.part {
 
     import ItemType = api.liveedit.ItemType;
     import PageComponentView = api.liveedit.PageComponentView;
-    import PageComponentItemType = api.liveedit.PageComponentItemType;
+    import ComponentItemType = api.liveedit.ComponentItemType;
     import RegionView = api.liveedit.RegionView;
     import PartComponent = api.content.page.part.PartComponent;
 
-    export class PartItemType extends PageComponentItemType {
+    export class PartItemType extends ComponentItemType {
 
         private static INSTANCE = new PartItemType();
 

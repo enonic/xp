@@ -1,11 +1,11 @@
 module api.liveedit.text {
 
     import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
-    import PageComponentItemType = api.liveedit.PageComponentItemType;
+    import ComponentItemType = api.liveedit.ComponentItemType;
     import RegionView = api.liveedit.RegionView;
     import TextComponent = api.content.page.text.TextComponent;
 
-    export class TextItemType extends PageComponentItemType {
+    export class TextItemType extends ComponentItemType {
 
         private static INSTANCE = new TextItemType();
 

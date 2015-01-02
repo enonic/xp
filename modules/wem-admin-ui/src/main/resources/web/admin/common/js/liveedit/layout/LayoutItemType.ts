@@ -5,9 +5,9 @@ module api.liveedit.layout {
     import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
     import PageComponentView = api.liveedit.PageComponentView;
     import RegionView = api.liveedit.RegionView;
-    import PageComponentItemType = api.liveedit.PageComponentItemType;
+    import ComponentItemType = api.liveedit.ComponentItemType;
 
-    export class LayoutItemType extends PageComponentItemType {
+    export class LayoutItemType extends ComponentItemType {
 
         private static INSTANCE = new LayoutItemType();
 
