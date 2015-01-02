@@ -32,7 +32,7 @@ module api.content.page.part {
         }
     }
 
-    export class PartComponentBuilder extends api.content.page.DescriptorBasedPageComponentBuilder<PartComponent> {
+    export class PartComponentBuilder extends api.content.page.DescriptorBasedComponentBuilder<PartComponent> {
 
         constructor(source?: PartComponent, generateNewPropertyIds: boolean = false) {
 

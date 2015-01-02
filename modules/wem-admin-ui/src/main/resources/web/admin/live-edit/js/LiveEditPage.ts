@@ -7,7 +7,7 @@ module LiveEdit {
     import Region = api.content.page.region.Region;
     import ComponentType = api.content.page.ComponentType;
     import ComponentName = api.content.page.ComponentName;
-    import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedPageComponentBuilder;
+    import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedComponentBuilder;
     import DescriptorBasedComponent = api.content.page.DescriptorBasedComponent;
     import PageComponentView = api.liveedit.PageComponentView;
     import PageView = api.liveedit.PageView;

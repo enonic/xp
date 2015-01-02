@@ -8,7 +8,7 @@ module api.content.page {
 
         private config: PropertyTree;
 
-        constructor(builder?: DescriptorBasedPageComponentBuilder<any>) {
+        constructor(builder?: DescriptorBasedComponentBuilder<any>) {
 
             super(builder);
 
@@ -79,7 +79,7 @@ module api.content.page {
         }
     }
 
-    export class DescriptorBasedPageComponentBuilder<DESCRIPTOR_BASED_COMPONENT extends DescriptorBasedComponent> extends ComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
+    export class DescriptorBasedComponentBuilder<DESCRIPTOR_BASED_COMPONENT extends DescriptorBasedComponent> extends ComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
 
         descriptor: DescriptorKey;
 
