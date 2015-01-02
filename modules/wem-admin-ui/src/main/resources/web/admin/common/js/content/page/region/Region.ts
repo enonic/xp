@@ -104,7 +104,7 @@ module api.content.page.region {
 
             var componentIndex = component.getIndex();
             if (componentIndex == -1) {
-                throw new Error("PageComponent [" + component.getPath().toString() + "] to remove does not exist in region: " +
+                throw new Error("Component [" + component.getPath().toString() + "] to remove does not exist in region: " +
                                 this.getPath().toString());
             }
             this.pageComponents.splice(componentIndex, 1);
@@ -123,7 +123,7 @@ module api.content.page.region {
         getComponentByIndex(index: number): api.content.page.Component {
             var pageComponent = this.pageComponents[index];
             api.util.assertState(pageComponent.getIndex() == index,
-                    "Index of PageComponent is not as expected. Expected [" + index + "], was: " + pageComponent.getIndex());
+                    "Index of Component is not as expected. Expected [" + index + "], was: " + pageComponent.getIndex());
             return  pageComponent;
         }
 

@@ -35,8 +35,8 @@ public abstract class AbstractRegions
 
     public Component getComponent( final ComponentPath path )
     {
-        Preconditions.checkNotNull( path, "no path for PageComponent given" );
-        Preconditions.checkArgument( path.numberOfLevels() > 0, "empty path for PageComponent given" );
+        Preconditions.checkNotNull( path, "no path for Component given" );
+        Preconditions.checkArgument( path.numberOfLevels() > 0, "empty path for Component given" );
 
         final ComponentPath.RegionAndComponent first = path.getFirstLevel();
         final Region region = getRegion( first.getRegionName() );

@@ -49,7 +49,7 @@ module app.wizard.page {
                 changeTo(this.descriptor.getDisplayName());
 
             var newPath = pageComponent.getPath();
-            api.util.assertNotNull(newPath, "Did not expect new path for PageComponent to be null");
+            api.util.assertNotNull(newPath, "Did not expect new path for Component to be null");
 
             pageComponent.setDescriptor(this.descriptor.getKey());
 

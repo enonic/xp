@@ -42,45 +42,6 @@ module api.content.page {
             return this.regionByName[name];
         }
 
-        getRegionByPath(path: RegionPath): region.Region {
-
-            if (!path.hasParentComponentPath()) {
-                return this.getRegionByName(path.getRegionName());
-            }
-            else {
-
-                var layout = this.getLayoutComponent(path.getParentComponentPath());
-                return layout.getLayoutRegions().getRegionByName(path.getRegionName())
-            }
-        }
-
-        getImageComponent(path: ComponentPath): image.ImageComponent {
-
-            var component = this.getComponent(path);
-            if (component == null) {
-                return null;
-            }
-            api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(component, image.ImageComponent),
-                    "PageComponent [" + component.getPath().toString() + "] not an ImageComponent: " +
-                    api.ClassHelper.getClassName(component));
-
-            return <image.ImageComponent>component;
-        }
-
-        getLayoutComponent(path: ComponentPath): layout.LayoutComponent {
-
-            var component = this.getComponent(path);
-            if (component == null) {
-                return null;
-            }
-            api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(component, layout.LayoutComponent),
-                    "PageComponent [" + component.getPath().toString() + "] not an LayoutComponent: " +
-                    api.ClassHelper.getClassName(component));
-
-            return <layout.LayoutComponent>component;
-        }
-
-
         getComponent(path: ComponentPath): Component {
 
             var first: ComponentPathRegionAndComponent = path.getFirstLevel();
