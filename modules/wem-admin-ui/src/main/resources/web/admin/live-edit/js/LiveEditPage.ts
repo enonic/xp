@@ -21,9 +21,9 @@ module LiveEdit {
     import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
-    import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
+    import ComponentRemoveEvent = api.liveedit.ComponentRemoveEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
-    import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
+    import ComponentResetEvent = api.liveedit.ComponentResetEvent;
     import TextComponentStartEditingEvent = api.liveedit.text.TextComponentStartEditingEvent;
     import TextComponentEditedEvent = api.liveedit.text.TextComponentEditedEvent;
     import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
@@ -124,7 +124,7 @@ module LiveEdit {
                     LiveEdit.component.dragdropsort.DragDropSort.cancelDragDrop('');
                 }
             });
-            PageComponentResetEvent.on((event: PageComponentResetEvent) => {
+            ComponentResetEvent.on((event: ComponentResetEvent) => {
                 this.highlighter.highlightItemView(event.getComponentView());
                 this.shader.shadeItemView(event.getComponentView());
             });
@@ -136,7 +136,7 @@ module LiveEdit {
             DraggingPageComponentViewCompletedEvent.on(() => {
                 this.cursor.reset();
             });
-            PageComponentRemoveEvent.on((event: PageComponentRemoveEvent) => {
+            ComponentRemoveEvent.on((event: ComponentRemoveEvent) => {
                 this.highlighter.hide();
                 this.shader.hide();
             });

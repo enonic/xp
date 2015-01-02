@@ -1,6 +1,6 @@
 module api.liveedit.layout {
 
-    import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
+    import ComponentSetDescriptorEvent = api.liveedit.ComponentSetDescriptorEvent;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import PageItemType = api.liveedit.PageItemType;
     import SiteModel = api.content.site.SiteModel;
@@ -28,7 +28,7 @@ module api.liveedit.layout {
             this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.layout.LayoutDescriptor>) => {
                 this.layoutComponentView.showLoadingSpinner();
                 var descriptor: api.content.page.Descriptor = event.getOption().displayValue;
-                new PageComponentSetDescriptorEvent(descriptor, layoutView).fire();
+                new ComponentSetDescriptorEvent(descriptor, layoutView).fire();
             });
 
             layoutView.liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {

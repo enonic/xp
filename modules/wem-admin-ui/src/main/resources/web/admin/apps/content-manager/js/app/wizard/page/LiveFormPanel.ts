@@ -51,9 +51,9 @@ module app.wizard.page {
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
-    import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
-    import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
-    import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
+    import ComponentRemoveEvent = api.liveedit.ComponentRemoveEvent;
+    import ComponentResetEvent = api.liveedit.ComponentResetEvent;
+    import ComponentSetDescriptorEvent = api.liveedit.ComponentSetDescriptorEvent;
     import ComponentDuplicateEvent = api.liveedit.ComponentDuplicateEvent;
 
     import Panel = api.ui.panel.Panel;
@@ -311,7 +311,7 @@ module app.wizard.page {
                 this.selectedItemView = null;
             });
 
-            this.liveEditPage.onPageComponentRemoved((event: PageComponentRemoveEvent) => {
+            this.liveEditPage.onPageComponentRemoved((event: ComponentRemoveEvent) => {
 
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
                 if ((this.contextWindow.isFloating() || toggler.isActive()) && !this.contextWindow.isShown()) {
@@ -325,7 +325,7 @@ module app.wizard.page {
                 this.contextWindow.clearSelection();
             });
 
-            this.liveEditPage.onPageComponentReset((event: PageComponentResetEvent) => {
+            this.liveEditPage.onPageComponentReset((event: ComponentResetEvent) => {
 
                 if (!this.pageModel.hasTemplate()) {
                     this.pageModel.initializePageFromDefault(this);
@@ -385,7 +385,7 @@ module app.wizard.page {
                 this.saveAndReloadOnlyPageComponent(event.getImageComponentView());
             });
 
-            this.liveEditPage.onPageComponentSetDescriptor((event: PageComponentSetDescriptorEvent) => {
+            this.liveEditPage.onPageComponentSetDescriptor((event: ComponentSetDescriptorEvent) => {
 
                 var command = new PageComponentSetDescriptorCommand().
                     setPageComponentView(event.getPageComponentView()).

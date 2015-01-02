@@ -40,10 +40,10 @@
 ///<reference path='PageSelectEvent.ts' />
 ///<reference path='RegionSelectEvent.ts' />
 ///<reference path='ComponentAddedEvent.ts' />
-///<reference path='PageComponentRemoveEvent.ts' />
-///<reference path='PageComponentResetEvent.ts' />
+///<reference path='ComponentRemoveEvent.ts' />
+///<reference path='ComponentResetEvent.ts' />
 ///<reference path='ComponentDuplicateEvent.ts' />
-///<reference path='PageComponentSetDescriptorEvent.ts' />
+///<reference path='ComponentSetDescriptorEvent.ts' />
 ///<reference path='ComponentLoadedEvent.ts' />
 ///<reference path='Position.ts' />
 ///<reference path='TextComponentSetTextEvent.ts' />

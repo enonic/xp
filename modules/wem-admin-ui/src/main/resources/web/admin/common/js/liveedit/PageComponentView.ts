@@ -131,13 +131,13 @@ module api.liveedit {
                 this.displayPlaceholder();
                 this.select();
 
-                new PageComponentResetEvent(this).fire();
+                new ComponentResetEvent(this).fire();
             }));
             actions.push(new api.ui.Action("Remove").onExecuted(() => {
                 this.deselect();
                 this.getParentItemView().removePageComponentView(this);
 
-                new PageComponentRemoveEvent(this).fire();
+                new ComponentRemoveEvent(this).fire();
             }));
             actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
                 var duplicatedPageComponent = <PAGE_COMPONENT> this.getPageComponent().duplicateComponent();

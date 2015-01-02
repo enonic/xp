@@ -21,10 +21,10 @@ module app.wizard.page {
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
-    import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
-    import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
+    import ComponentRemoveEvent = api.liveedit.ComponentRemoveEvent;
+    import ComponentResetEvent = api.liveedit.ComponentResetEvent;
     import ComponentDuplicateEvent = api.liveedit.ComponentDuplicateEvent;
-    import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
+    import ComponentSetDescriptorEvent = api.liveedit.ComponentSetDescriptorEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import RepeatNextItemViewIdProducer = api.liveedit.RepeatNextItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
@@ -75,11 +75,11 @@ module app.wizard.page {
 
         private imageComponentSetImageListeners: {(event: ImageComponentSetImageEvent): void;}[] = [];
 
-        private pageComponentSetDescriptorListeners: {(event: PageComponentSetDescriptorEvent): void;}[] = [];
+        private pageComponentSetDescriptorListeners: {(event: ComponentSetDescriptorEvent): void;}[] = [];
 
-        private pageComponentRemovedListeners: {(event: PageComponentRemoveEvent): void;}[] = [];
+        private pageComponentRemovedListeners: {(event: ComponentRemoveEvent): void;}[] = [];
 
-        private pageComponentResetListeners: {(event: PageComponentResetEvent): void;}[] = [];
+        private pageComponentResetListeners: {(event: ComponentResetEvent): void;}[] = [];
 
         private pageComponentDuplicatedListeners: {(event: ComponentDuplicateEvent): void;}[] = [];
 
@@ -277,9 +277,9 @@ module app.wizard.page {
 
             ComponentAddedEvent.on(this.notifyPageComponentAdded.bind(this), this.liveEditWindow);
 
-            PageComponentRemoveEvent.on(this.notifyPageComponentRemoved.bind(this), this.liveEditWindow);
+            ComponentRemoveEvent.on(this.notifyPageComponentRemoved.bind(this), this.liveEditWindow);
 
-            PageComponentResetEvent.on(this.notifyPageComponentReset.bind(this), this.liveEditWindow);
+            ComponentResetEvent.on(this.notifyPageComponentReset.bind(this), this.liveEditWindow);
 
             ComponentDuplicateEvent.on(this.notifyPageComponentDuplicated.bind(this), this.liveEditWindow);
 
@@ -291,7 +291,7 @@ module app.wizard.page {
                 }
             }, this.liveEditWindow);
 
-            PageComponentSetDescriptorEvent.on(this.notifyPageComponentSetDescriptor.bind(this), this.liveEditWindow);
+            ComponentSetDescriptorEvent.on(this.notifyPageComponentSetDescriptor.bind(this), this.liveEditWindow);
         }
 
         onLoaded(listener: {(): void;}) {
@@ -434,39 +434,39 @@ module app.wizard.page {
             this.imageComponentSetImageListeners.forEach((listener) => listener(event));
         }
 
-        onPageComponentSetDescriptor(listener: {(event: PageComponentSetDescriptorEvent): void;}) {
+        onPageComponentSetDescriptor(listener: {(event: ComponentSetDescriptorEvent): void;}) {
             this.pageComponentSetDescriptorListeners.push(listener);
         }
 
-        unPageComponentSetDescriptor(listener: {(event: PageComponentSetDescriptorEvent): void;}) {
+        unPageComponentSetDescriptor(listener: {(event: ComponentSetDescriptorEvent): void;}) {
             this.pageComponentSetDescriptorListeners = this.pageComponentSetDescriptorListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyPageComponentSetDescriptor(event: PageComponentSetDescriptorEvent) {
+        private notifyPageComponentSetDescriptor(event: ComponentSetDescriptorEvent) {
             this.pageComponentSetDescriptorListeners.forEach((listener) => listener(event));
         }
 
-        onPageComponentReset(listener: {(event: PageComponentResetEvent): void;}) {
+        onPageComponentReset(listener: {(event: ComponentResetEvent): void;}) {
             this.pageComponentResetListeners.push(listener);
         }
 
-        unPageComponentReset(listener: {(event: PageComponentResetEvent): void;}) {
+        unPageComponentReset(listener: {(event: ComponentResetEvent): void;}) {
             this.pageComponentResetListeners = this.pageComponentResetListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyPageComponentReset(event: PageComponentResetEvent) {
+        private notifyPageComponentReset(event: ComponentResetEvent) {
             this.pageComponentResetListeners.forEach((listener) => listener(event));
         }
 
-        onPageComponentRemoved(listener: {(event: PageComponentRemoveEvent): void;}) {
+        onPageComponentRemoved(listener: {(event: ComponentRemoveEvent): void;}) {
             this.pageComponentRemovedListeners.push(listener);
         }
 
-        unPageComponentRemoved(listener: {(event: PageComponentRemoveEvent): void;}) {
+        unPageComponentRemoved(listener: {(event: ComponentRemoveEvent): void;}) {
             this.pageComponentRemovedListeners = this.pageComponentRemovedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyPageComponentRemoved(event: PageComponentRemoveEvent) {
+        private notifyPageComponentRemoved(event: ComponentRemoveEvent) {
             this.pageComponentRemovedListeners.forEach((listener) => listener(event));
         }
 

@@ -2,7 +2,7 @@ module api.liveedit {
 
     import Component = api.content.page.Component;
 
-    export class PageComponentRemoveEvent extends api.event.Event {
+    export class ComponentRemoveEvent extends api.event.Event {
 
         private pageComponentView: PageComponentView<Component>;
 
@@ -15,11 +15,11 @@ module api.liveedit {
             return this.pageComponentView;
         }
 
-        static on(handler: (event: PageComponentRemoveEvent) => void, contextWindow: Window = window) {
+        static on(handler: (event: ComponentRemoveEvent) => void, contextWindow: Window = window) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
 
-        static un(handler?: (event: PageComponentRemoveEvent) => void, contextWindow: Window = window) {
+        static un(handler?: (event: ComponentRemoveEvent) => void, contextWindow: Window = window) {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
     }

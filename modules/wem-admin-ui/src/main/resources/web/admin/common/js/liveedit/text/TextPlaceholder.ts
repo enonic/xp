@@ -1,6 +1,5 @@
 module api.liveedit.text {
 
-    import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import PageItemType = api.liveedit.PageItemType;
 

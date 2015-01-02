@@ -5,7 +5,7 @@ module api.liveedit {
     import ItemView = api.liveedit.ItemView;
     import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
 
-    export class PageComponentSetDescriptorEvent extends api.event.Event {
+    export class ComponentSetDescriptorEvent extends api.event.Event {
 
         private descriptor: Descriptor;
 
@@ -25,11 +25,11 @@ module api.liveedit {
             return this.pageItemView;
         }
 
-        static on(handler: (event: PageComponentSetDescriptorEvent) => void, contextWindow: Window = window) {
+        static on(handler: (event: ComponentSetDescriptorEvent) => void, contextWindow: Window = window) {
             Event.bind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
 
-        static un(handler?: (event: PageComponentSetDescriptorEvent) => void, contextWindow: Window = window) {
+        static un(handler?: (event: ComponentSetDescriptorEvent) => void, contextWindow: Window = window) {
             Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
     }
