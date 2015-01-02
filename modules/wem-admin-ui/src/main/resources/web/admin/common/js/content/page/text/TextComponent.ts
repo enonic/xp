@@ -23,7 +23,7 @@ module api.content.page.text {
 
         toJson(): api.content.page.ComponentTypeWrapperJson {
 
-            var json: TextComponentJson = <TextComponentJson>super.toPageComponentJson();
+            var json: TextComponentJson = <TextComponentJson>super.toComponentJson();
             json.text = this.text != null ? this.text : null;
 
             return <api.content.page.ComponentTypeWrapperJson> {

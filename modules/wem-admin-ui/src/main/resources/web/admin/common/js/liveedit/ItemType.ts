@@ -25,12 +25,12 @@ module api.liveedit {
         }
 
 
-        isPageComponentType(): boolean {
+        isComponentType(): boolean {
             return false
         }
 
-        toPageComponentType(): api.content.page.ComponentType {
-            api.util.assert(this.isPageComponentType(), "Not support when ItemType is not a ComponentType");
+        toComponentType(): api.content.page.ComponentType {
+            api.util.assert(this.isComponentType(), "Not support when ItemType is not a ComponentType");
             return api.content.page.ComponentType.byShortName(this.shortName);
         }
 

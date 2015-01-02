@@ -29,7 +29,7 @@ module api.liveedit.layout {
             });
         }
 
-        isPageComponentType(): boolean {
+        isComponentType(): boolean {
             return true
         }
 

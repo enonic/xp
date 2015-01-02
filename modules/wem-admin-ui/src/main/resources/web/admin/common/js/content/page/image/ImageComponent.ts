@@ -57,7 +57,7 @@ module api.content.page.image {
 
         toJson(): api.content.page.ComponentTypeWrapperJson {
 
-            var json: ImageComponentJson = <ImageComponentJson>super.toPageComponentJson();
+            var json: ImageComponentJson = <ImageComponentJson>super.toComponentJson();
             json.image = this.image != null ? this.image.toString() : null;
             json.config = this.config != null ? this.config.toJson() : null;
 

@@ -89,7 +89,7 @@ module api.content.page {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
         }
 
-        toPageComponentJson(): ComponentJson {
+        toComponentJson(): ComponentJson {
 
             return {
                 "name": this.name.toString()

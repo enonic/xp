@@ -43,7 +43,7 @@ module api.content.page {
             this.descriptorKey = null;
         }
 
-        toPageComponentJson(): DescriptorBasedComponentJson {
+        toComponentJson(): DescriptorBasedComponentJson {
 
             return {
                 "name": this.getName().toString(),

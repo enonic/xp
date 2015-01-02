@@ -39,7 +39,7 @@ module api.liveedit.image {
                 setPositionIndex(config.positionIndex));
         }
 
-        isPageComponentType(): boolean {
+        isComponentType(): boolean {
             return true
         }
     }

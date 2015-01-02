@@ -38,7 +38,7 @@ module api.liveedit.text {
                 setPositionIndex(config.positionIndex));
         }
 
-        isPageComponentType(): boolean {
+        isComponentType(): boolean {
             return true
         }
     }

@@ -11,7 +11,7 @@ module api.content.page.part {
         }
 
         toJson(): api.content.page.ComponentTypeWrapperJson {
-            var json: PartComponentJson = <PartComponentJson>super.toPageComponentJson();
+            var json: PartComponentJson = <PartComponentJson>super.toComponentJson();
 
             return <api.content.page.ComponentTypeWrapperJson> {
                 PartComponent: json

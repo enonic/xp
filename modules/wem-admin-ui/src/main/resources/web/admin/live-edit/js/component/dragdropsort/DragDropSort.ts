@@ -309,7 +309,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             }
 
             var precedingComponentView = resolvePrecedingComponentView(droppedElement.get(0));
-            var newComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toPageComponentType(),
+            var newComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toComponentType(),
                 precedingComponentView);
             var componentIndex = droppedElement.index();
             var newComponentView = itemType.createView(new CreateItemViewConfig<RegionView,Component>().

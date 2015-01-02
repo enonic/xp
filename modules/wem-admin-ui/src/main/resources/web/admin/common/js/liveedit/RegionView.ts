@@ -373,7 +373,7 @@ module api.liveedit {
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
                 if (itemType) {
-                    api.util.assert(itemType.isPageComponentType(),
+                    api.util.assert(itemType.isComponentType(),
                             "Expected ItemView beneath a Region to be a Component: " + itemType.getShortName());
 
                     var component = region.getComponentByIndex(componentCount++);

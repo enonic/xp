@@ -33,7 +33,7 @@ module api.content.page.layout {
         }
 
         public toJson(): api.content.page.ComponentTypeWrapperJson {
-            var json: LayoutComponentJson = <LayoutComponentJson>super.toPageComponentJson();
+            var json: LayoutComponentJson = <LayoutComponentJson>super.toComponentJson();
             json.regions = this.regions.toJson();
 
             return <api.content.page.ComponentTypeWrapperJson> {

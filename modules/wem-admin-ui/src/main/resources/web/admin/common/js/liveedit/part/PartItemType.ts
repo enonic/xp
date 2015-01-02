@@ -28,7 +28,7 @@ module api.liveedit.part {
             });
         }
 
-        isPageComponentType(): boolean {
+        isComponentType(): boolean {
             return true
         }
 
