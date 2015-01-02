@@ -16,7 +16,7 @@ module app.wizard.page {
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import LayoutDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.LayoutDescriptorChangedEvent;
 
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
 
     import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
     import GetLayoutDescriptorsByModulesRequest = api.content.page.layout.GetLayoutDescriptorsByModulesRequest;
@@ -237,7 +237,7 @@ module app.wizard.page {
                 done();
         }
 
-        saveAndReloadOnlyPageComponent(pageComponentView: PageComponentView<PageComponent>) {
+        saveAndReloadOnlyPageComponent(pageComponentView: PageComponentView<Component>) {
 
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
 
@@ -296,7 +296,7 @@ module app.wizard.page {
                 }
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageComponentView)) {
-                    this.inspectPageComponent(<PageComponentView<PageComponent>>itemView);
+                    this.inspectPageComponent(<PageComponentView<Component>>itemView);
                 }
             });
 
@@ -330,7 +330,7 @@ module app.wizard.page {
                 if (!this.pageModel.hasTemplate()) {
                     this.pageModel.initializePageFromDefault(this);
                 }
-                var component: PageComponent = event.getComponentView().getPageComponent();
+                var component: Component = event.getComponentView().getPageComponent();
                 if (component) {
                     component.reset();
                 }
@@ -428,7 +428,7 @@ module app.wizard.page {
             this.contextWindow.showInspectionPanel(this.regionInspectionPanel);
         }
 
-        private inspectPageComponent(pageComponentView: PageComponentView<PageComponent>) {
+        private inspectPageComponent(pageComponentView: PageComponentView<Component>) {
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
 
             this.selectedItemView = pageComponentView;

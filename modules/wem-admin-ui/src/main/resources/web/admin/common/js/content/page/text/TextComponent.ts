@@ -2,7 +2,7 @@ module api.content.page.text {
 
     import Region = api.content.page.region.Region;
 
-    export class TextComponent extends api.content.page.PageComponent implements api.Equitable, api.Cloneable {
+    export class TextComponent extends api.content.page.Component implements api.Equitable, api.Cloneable {
 
         private text: string;
 

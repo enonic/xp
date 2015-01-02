@@ -2,7 +2,7 @@ module api.content.page {
 
     import Region = api.content.page.region.Region;
 
-    export class PageComponent implements api.Equitable, api.Cloneable {
+    export class Component implements api.Equitable, api.Cloneable {
 
         public static PROPERTY_NAME = 'name';
 
@@ -45,7 +45,7 @@ module api.content.page {
             var oldValue = this.name;
             this.name = newValue;
             if (!newValue.equals(oldValue)) {
-                this.notifyPropertyChanged(PageComponent.PROPERTY_NAME, oldValue, newValue);
+                this.notifyPropertyChanged(Component.PROPERTY_NAME, oldValue, newValue);
             }
         }
 
@@ -57,7 +57,7 @@ module api.content.page {
             return this.parent;
         }
 
-        duplicateComponent(): PageComponent {
+        duplicateComponent(): Component {
 
             var region = this.getParent();
             return region.duplicateComponent(this);
@@ -98,11 +98,11 @@ module api.content.page {
 
         equals(o: api.Equitable): boolean {
 
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PageComponent)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Component)) {
                 return false;
             }
 
-            var other = <PageComponent>o;
+            var other = <Component>o;
 
             if (!api.ObjectHelper.equals(this.name, other.name)) {
                 return false;
@@ -111,18 +111,18 @@ module api.content.page {
             return true;
         }
 
-        clone(generateNewPropertyIds: boolean = false): PageComponent {
+        clone(generateNewPropertyIds: boolean = false): Component {
             throw new Error("Must be implemented by inheritors");
         }
     }
 
-    export class PageComponentBuilder<COMPONENT extends PageComponent> {
+    export class PageComponentBuilder<COMPONENT extends Component> {
 
         name: ComponentName;
 
         parent: Region;
 
-        constructor(source?: PageComponent) {
+        constructor(source?: Component) {
             if (source) {
                 this.name = source.getName();
                 this.parent = source.getParent();

@@ -43,7 +43,7 @@ module app.wizard.page {
                 return;
             }
 
-            new PageComponentNameChanger().
+            new ComponentNameChanger().
                 setPageRegions(this.pageRegions).
                 setComponentView(this.pageComponentView).
                 changeTo(this.descriptor.getDisplayName());

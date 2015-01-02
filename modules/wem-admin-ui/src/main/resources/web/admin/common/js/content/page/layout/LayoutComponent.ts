@@ -20,7 +20,7 @@ module api.content.page.layout {
             }
         }
 
-        public getComponent(path: ComponentPath): api.content.page.PageComponent {
+        public getComponent(path: ComponentPath): api.content.page.Component {
             return this.regions.getComponent(path);
         }
 

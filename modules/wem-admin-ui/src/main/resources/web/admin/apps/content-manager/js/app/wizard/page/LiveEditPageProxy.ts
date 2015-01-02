@@ -5,7 +5,7 @@ module app.wizard.page {
     import PageModel = api.content.page.PageModel;
     import SiteModel = api.content.site.SiteModel;
     import LiveEditModel = api.liveedit.LiveEditModel;
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
     import ImageUploadDialog = api.content.form.inputtype.image.ImageUploadDialog;
 
     import PageComponentView = api.liveedit.PageComponentView;
@@ -196,7 +196,7 @@ module app.wizard.page {
             this.notifyLoaded();
         }
 
-        public loadComponent(pageComponentView: PageComponentView<PageComponent>, componentUrl: string): wemQ.Promise<string> {
+        public loadComponent(pageComponentView: PageComponentView<Component>, componentUrl: string): wemQ.Promise<string> {
 
             var deferred = wemQ.defer<string>();
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
@@ -211,12 +211,12 @@ module app.wizard.page {
                     var repeatNextItemViewIdProducer = new RepeatNextItemViewIdProducer(pageComponentView.getItemId(),
                         pageComponentView.getItemViewIdProducer());
 
-                    var createViewConfig = new CreateItemViewConfig<RegionView,PageComponent>().
+                    var createViewConfig = new CreateItemViewConfig<RegionView,Component>().
                         setItemViewProducer(repeatNextItemViewIdProducer).
                         setParentView(pageComponentView.getParentItemView()).
                         setData(pageComponentView.getPageComponent()).
                         setElement(newElement);
-                    var newPageComponentView: PageComponentView<PageComponent> = pageComponentView.getType().
+                    var newPageComponentView: PageComponentView<Component> = pageComponentView.getType().
                         createView(createViewConfig);
 
                     pageComponentView.replaceWith(newPageComponentView);

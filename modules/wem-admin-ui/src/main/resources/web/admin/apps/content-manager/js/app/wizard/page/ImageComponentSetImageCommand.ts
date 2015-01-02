@@ -50,7 +50,7 @@ module app.wizard.page {
             var imageComponent = this.imageView.getPageComponent();
             imageComponent.setImage(this.image);
 
-            new PageComponentNameChanger().
+            new ComponentNameChanger().
                 setPageRegions(this.pageRegions).
                 setComponentView(this.imageView).
                 changeTo(this.imageName);

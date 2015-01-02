@@ -1,6 +1,6 @@
 module api.liveedit {
 
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
 
     export class PageComponentItemType extends ItemType {
 
@@ -8,7 +8,7 @@ module api.liveedit {
             super(shortName, config);
         }
 
-        createView(config: CreateItemViewConfig<RegionView,PageComponent>): PageComponentView<PageComponent> {
+        createView(config: CreateItemViewConfig<RegionView,Component>): PageComponentView<Component> {
             throw new Error("Must be implemented by inheritors");
         }
     }

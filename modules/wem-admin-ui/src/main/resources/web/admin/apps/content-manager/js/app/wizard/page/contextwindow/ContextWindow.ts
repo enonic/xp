@@ -5,7 +5,6 @@ module app.wizard.page.contextwindow {
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
-    import PageComponent = api.content.page.PageComponent;
     import Region = api.content.page.region.Region;
     import ImageComponent = api.content.page.image.ImageComponent;
     import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;

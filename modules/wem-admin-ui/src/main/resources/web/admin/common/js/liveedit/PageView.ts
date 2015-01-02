@@ -5,7 +5,7 @@ module api.liveedit {
     import PageModel = api.content.page.PageModel;
     import Site = api.content.site.Site;
     import PageRegions = api.content.page.PageRegions;
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
     import Region = api.content.page.region.Region;
 
     export class PageViewBuilder {
@@ -203,7 +203,7 @@ module api.liveedit {
             return null;
         }
 
-        getPageComponentViewByElement(element: HTMLElement): PageComponentView<PageComponent> {
+        getPageComponentViewByElement(element: HTMLElement): PageComponentView<Component> {
             api.util.assertNotNull(element, "element cannot be null");
 
             var itemId = ItemView.parseItemId(element);
@@ -214,7 +214,7 @@ module api.liveedit {
             var itemView = this.getItemViewById(itemId);
             api.util.assertNotNull(itemView, "ItemView not found: " + itemId.toString());
             if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageComponentView)) {
-                return <PageComponentView<PageComponent>>itemView;
+                return <PageComponentView<Component>>itemView;
             }
             return null;
         }
@@ -224,7 +224,7 @@ module api.liveedit {
             // logging...
             var extra = "";
             if (api.ObjectHelper.iFrameSafeInstanceOf(view, PageComponentView)) {
-                var pageComponentView = <PageComponentView<PageComponent>>view;
+                var pageComponentView = <PageComponentView<Component>>view;
                 if (pageComponentView.hasComponentPath()) {
                     extra = pageComponentView.getComponentPath().toString();
                 }

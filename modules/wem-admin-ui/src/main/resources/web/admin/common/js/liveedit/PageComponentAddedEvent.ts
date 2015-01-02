@@ -2,18 +2,18 @@ module api.liveedit {
 
     import PageComponentType = api.content.page.PageComponentType;
     import RegionPath = api.content.page.RegionPath;
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
 
     export class PageComponentAddedEvent extends api.event.Event {
 
-        private pageComponentView: PageComponentView<PageComponent>;
+        private pageComponentView: PageComponentView<Component>;
 
-        setPageComponentView(pageComponentView: PageComponentView<PageComponent>): PageComponentAddedEvent {
+        setPageComponentView(pageComponentView: PageComponentView<Component>): PageComponentAddedEvent {
             this.pageComponentView = pageComponentView;
             return this;
         }
 
-        getPageComponentView(): PageComponentView<PageComponent> {
+        getPageComponentView(): PageComponentView<Component> {
             return this.pageComponentView;
         }
 

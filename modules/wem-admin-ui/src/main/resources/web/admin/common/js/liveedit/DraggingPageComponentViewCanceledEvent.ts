@@ -1,18 +1,18 @@
 module api.liveedit {
 
     import Event = api.event.Event;
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
 
     export class DraggingPageComponentViewCanceledEvent extends Event {
 
-        private pageComponentView: PageComponentView<PageComponent>;
+        private pageComponentView: PageComponentView<Component>;
 
-        constructor(pageComponentView: PageComponentView<PageComponent>) {
+        constructor(pageComponentView: PageComponentView<Component>) {
             super();
             this.pageComponentView = pageComponentView;
         }
 
-        getPageComponentView(): PageComponentView<PageComponent> {
+        getPageComponentView(): PageComponentView<Component> {
             return this.pageComponentView;
         }
 

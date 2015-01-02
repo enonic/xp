@@ -1,6 +1,6 @@
 module api.liveedit {
 
-    import PageComponent = api.content.page.PageComponent;
+    import PageComponent = api.content.page.Component;
 
     export interface ElementDimensions {
         top: number;

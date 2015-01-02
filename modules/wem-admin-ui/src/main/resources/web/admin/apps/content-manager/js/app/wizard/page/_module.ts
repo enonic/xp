@@ -1,7 +1,7 @@
 ///<reference path='DefaultModels.ts' />
 ///<reference path='DefaultModelsFactory.ts' />
 
-///<reference path='PageComponentNameChanger.ts' />
+///<reference path='ComponentNameChanger.ts' />
 ///<reference path='PageComponentSetDescriptorCommand.ts' />
 ///<reference path='ImageComponentSetImageCommand.ts' />
 

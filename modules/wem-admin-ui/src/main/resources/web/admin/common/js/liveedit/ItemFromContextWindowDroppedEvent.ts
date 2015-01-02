@@ -1,7 +1,6 @@
 module api.liveedit {
 
     import Event = api.event.Event;
-    import PageComponent = api.content.page.PageComponent;
 
     export class ItemFromContextWindowDroppedEvent extends Event {
 

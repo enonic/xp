@@ -1,6 +1,6 @@
 module app.wizard.page.contextwindow.inspect {
 
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
     import ComponentName = api.content.page.ComponentName;
     import PageComponentView = api.liveedit.PageComponentView;
 
@@ -10,7 +10,7 @@ module app.wizard.page.contextwindow.inspect {
 
     }
 
-    export class PageComponentInspectionPanel<COMPONENT extends PageComponent> extends BaseInspectionPanel {
+    export class PageComponentInspectionPanel<COMPONENT extends Component> extends BaseInspectionPanel {
 
         private namesAndIcon: api.app.NamesAndIconView;
 
@@ -48,7 +48,7 @@ module app.wizard.page.contextwindow.inspect {
             this.nameInput.setValue(component.getName().toString());
         }
 
-        getPageComponentView(): PageComponentView<PageComponent> {
+        getPageComponentView(): PageComponentView<Component> {
             throw new Error("Must be implemented by inheritors");
         }
 

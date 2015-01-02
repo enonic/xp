@@ -1,6 +1,6 @@
 module api.liveedit.layout {
 
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
     import Region = api.content.page.region.Region;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import PageComponentView = api.liveedit.PageComponentView;

@@ -99,7 +99,7 @@ module api.content.page.layout {
             }
 
             var result: RegionBuilder = new RegionBuilder(toRegion);
-            fromRegion.getComponents().forEach((component: PageComponent) => {
+            fromRegion.getComponents().forEach((component: Component) => {
                 result.addComponent(component)
             });
             return result.build();

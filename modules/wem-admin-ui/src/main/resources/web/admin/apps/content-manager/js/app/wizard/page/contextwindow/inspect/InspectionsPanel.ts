@@ -6,7 +6,6 @@ module app.wizard.page.contextwindow.inspect {
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
     import Region = api.content.page.region.Region;
-    import PageComponent = api.content.page.PageComponent
     import ImageComponent = api.content.page.image.ImageComponent
     import PartComponent = api.content.page.part.PartComponent;
     import LayoutComponent = api.content.page.layout.LayoutComponent;

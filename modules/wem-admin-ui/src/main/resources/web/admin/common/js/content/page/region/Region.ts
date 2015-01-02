@@ -4,7 +4,7 @@ module api.content.page.region {
 
         private name: string;
 
-        private pageComponents: api.content.page.PageComponent[] = [];
+        private pageComponents: api.content.page.Component[] = [];
 
         private parent: api.content.page.layout.LayoutComponent;
 
@@ -12,14 +12,14 @@ module api.content.page.region {
             this.name = builder.name;
             this.parent = builder.parent;
             this.pageComponents = builder.pageComponents;
-            this.pageComponents.forEach((pageComponent: PageComponent, index: number) => {
+            this.pageComponents.forEach((pageComponent: Component, index: number) => {
                 this.checkIllegalLayoutComponentWithinLayoutComponent(pageComponent, this.parent);
                 pageComponent.setParent(this);
                 pageComponent.setIndex(index);
             });
         }
 
-        private checkIllegalLayoutComponentWithinLayoutComponent(pageComponent: PageComponent,
+        private checkIllegalLayoutComponentWithinLayoutComponent(pageComponent: Component,
                                                                  parent: api.content.page.layout.LayoutComponent) {
             var hasParentLayoutComponent = !parent ? false : true;
             if (hasParentLayoutComponent && api.ObjectHelper.iFrameSafeInstanceOf(pageComponent, api.content.page.layout.LayoutComponent)) {
@@ -52,7 +52,7 @@ module api.content.page.region {
             return wantedName;
         }
 
-        duplicateComponent(source: PageComponent): PageComponent {
+        duplicateComponent(source: Component): Component {
 
             var duplicateName = source.getName();
 
@@ -63,7 +63,7 @@ module api.content.page.region {
             return duplicatedComponent;
         }
 
-        addComponent(pageComponent: PageComponent) {
+        addComponent(pageComponent: Component) {
             this.checkIllegalLayoutComponentWithinLayoutComponent(pageComponent, this.parent);
             this.pageComponents.push(pageComponent);
             pageComponent.setParent(this);
@@ -73,7 +73,7 @@ module api.content.page.region {
         /*
          *  Add component after target component. Component will only be added if target component is found.
          */
-        addComponentAfter(component: api.content.page.PageComponent, precedingComponent: PageComponent) {
+        addComponentAfter(component: api.content.page.Component, precedingComponent: Component) {
 
             var precedingIndex = -1;
             if (precedingComponent != null) {
@@ -92,12 +92,12 @@ module api.content.page.region {
             this.pageComponents.splice(index, 0, component);
 
             // Update indexes
-            this.pageComponents.forEach((curr: PageComponent, index: number) => {
+            this.pageComponents.forEach((curr: Component, index: number) => {
                 curr.setIndex(index);
             });
         }
 
-        removeComponent(component: api.content.page.PageComponent): api.content.page.PageComponent {
+        removeComponent(component: api.content.page.Component): api.content.page.Component {
             if (!component) {
                 return null;
             }
@@ -110,17 +110,17 @@ module api.content.page.region {
             this.pageComponents.splice(componentIndex, 1);
 
             // Update indexes
-            this.pageComponents.forEach((curr: PageComponent, index: number) => {
+            this.pageComponents.forEach((curr: Component, index: number) => {
                 curr.setIndex(index);
             });
             return component;
         }
 
-        getComponents(): api.content.page.PageComponent[] {
+        getComponents(): api.content.page.Component[] {
             return this.pageComponents;
         }
 
-        getComponentByIndex(index: number): api.content.page.PageComponent {
+        getComponentByIndex(index: number): api.content.page.Component {
             var pageComponent = this.pageComponents[index];
             api.util.assertState(pageComponent.getIndex() == index,
                     "Index of PageComponent is not as expected. Expected [" + index + "], was: " + pageComponent.getIndex());
@@ -139,7 +139,7 @@ module api.content.page.region {
 
             var componentJsons: api.content.page.PageComponentTypeWrapperJson[] = [];
 
-            this.pageComponents.forEach((component: api.content.page.PageComponent) => {
+            this.pageComponents.forEach((component: api.content.page.Component) => {
                 componentJsons.push(component.toJson());
             });
 
@@ -177,7 +177,7 @@ module api.content.page.region {
 
         name: string;
 
-        pageComponents: api.content.page.PageComponent[] = [];
+        pageComponents: api.content.page.Component[] = [];
 
         parent: api.content.page.layout.LayoutComponent;
 
@@ -185,7 +185,7 @@ module api.content.page.region {
             if (source) {
                 this.name = source.getName();
                 this.parent = source.getParent(); //TODO; Should clone have same parent at all times?
-                source.getComponents().forEach((component: api.content.page.PageComponent) => {
+                source.getComponents().forEach((component: api.content.page.Component) => {
                     this.pageComponents.push(component.clone(generateNewPropertyIds));
                 });
             }
@@ -201,7 +201,7 @@ module api.content.page.region {
             return this;
         }
 
-        public addComponent(value: api.content.page.PageComponent): RegionBuilder {
+        public addComponent(value: api.content.page.Component): RegionBuilder {
             this.pageComponents.push(value);
             return this;
         }

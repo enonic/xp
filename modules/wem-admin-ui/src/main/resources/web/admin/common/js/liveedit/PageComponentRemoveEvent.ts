@@ -1,17 +1,17 @@
 module api.liveedit {
 
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
 
     export class PageComponentRemoveEvent extends api.event.Event {
 
-        private pageComponentView: PageComponentView<PageComponent>;
+        private pageComponentView: PageComponentView<Component>;
 
-        constructor(pageComponentView: PageComponentView<PageComponent>) {
+        constructor(pageComponentView: PageComponentView<Component>) {
             super();
             this.pageComponentView = pageComponentView;
         }
 
-        getPageComponentView(): PageComponentView<PageComponent> {
+        getPageComponentView(): PageComponentView<Component> {
             return this.pageComponentView;
         }
 

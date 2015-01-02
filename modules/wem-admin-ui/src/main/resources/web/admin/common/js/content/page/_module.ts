@@ -26,7 +26,7 @@
 
 ///<reference path='ComponentName.ts' />
 ///<reference path='ComponentPath.ts' />
-///<reference path='PageComponent.ts' />
+///<reference path='Component.ts' />
 ///<reference path='PageComponentType.ts' />
 ///<reference path='PageComponentFactory.ts' />
 ///<reference path='DescriptorBasedPageComponent.ts' />

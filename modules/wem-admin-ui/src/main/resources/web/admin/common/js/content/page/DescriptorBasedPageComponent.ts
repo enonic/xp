@@ -2,7 +2,7 @@ module api.content.page {
 
     import PropertyTree = api.data.PropertyTree;
 
-    export class DescriptorBasedPageComponent extends PageComponent implements api.Equitable, api.Cloneable {
+    export class DescriptorBasedPageComponent extends Component implements api.Equitable, api.Cloneable {
 
         private descriptorKey: DescriptorKey;
 

@@ -81,7 +81,7 @@ module api.content.page {
         }
 
 
-        getComponent(path: ComponentPath): PageComponent {
+        getComponent(path: ComponentPath): Component {
 
             var first: ComponentPathRegionAndComponent = path.getFirstLevel();
             var region = this.getRegionByName(first.getRegionName());

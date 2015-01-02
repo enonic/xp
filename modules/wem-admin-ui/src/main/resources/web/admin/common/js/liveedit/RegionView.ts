@@ -2,7 +2,7 @@ module api.liveedit {
 
     import Region = api.content.page.region.Region;
     import RegionPath = api.content.page.RegionPath;
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
 
     export class RegionViewBuilder {
 
@@ -48,7 +48,7 @@ module api.liveedit {
 
         private region: Region;
 
-        private pageComponentViews: PageComponentView<PageComponent>[];
+        private pageComponentViews: PageComponentView<Component>[];
 
         private placeholder: RegionPlaceholder;
 
@@ -151,7 +151,7 @@ module api.liveedit {
                 var pageComponents = region.getComponents();
                 var pageComponentViews = this.getPageComponentViews();
 
-                pageComponentViews.forEach((view: PageComponentView<PageComponent>, index: number) => {
+                pageComponentViews.forEach((view: PageComponentView<Component>, index: number) => {
                     var pageComponent = pageComponents[index];
                     view.setPageComponent(pageComponent);
                 });
@@ -183,7 +183,7 @@ module api.liveedit {
             return new RegionComponentViewer();
         }
 
-        registerPageComponentView(pageComponentView: PageComponentView<PageComponent>, index: number) {
+        registerPageComponentView(pageComponentView: PageComponentView<Component>, index: number) {
             if (index >= 0) {
                 this.pageComponentViews.splice(index, 0, pageComponentView);
             }
@@ -201,7 +201,7 @@ module api.liveedit {
                 // Check if removed ItemView is a child, and remove it if so
                 if (api.ObjectHelper.iFrameSafeInstanceOf(event.getView(), PageComponentView)) {
 
-                    var removedPageComponentView: PageComponentView<PageComponent> = <PageComponentView<PageComponent>>event.getView();
+                    var removedPageComponentView: PageComponentView<Component> = <PageComponentView<Component>>event.getView();
                     var childIndex = this.getPageComponentViewIndex(removedPageComponentView);
                     if (childIndex > -1) {
                         this.pageComponentViews.splice(childIndex, 1);
@@ -211,7 +211,7 @@ module api.liveedit {
             });
         }
 
-        unregisterPageComponentView(pageComponentView: PageComponentView<PageComponent>) {
+        unregisterPageComponentView(pageComponentView: PageComponentView<Component>) {
 
             var indexToRemove = this.getPageComponentViewIndex(pageComponentView);
             if (indexToRemove >= 0) {
@@ -226,7 +226,7 @@ module api.liveedit {
             }
         }
 
-        addPageComponentView(pageComponentView: PageComponentView<PageComponent>, positionIndex: number) {
+        addPageComponentView(pageComponentView: PageComponentView<Component>, positionIndex: number) {
 
             this.placeholder.hide();
 
@@ -237,16 +237,16 @@ module api.liveedit {
             this.insertChild(pageComponentView, positionIndex);
         }
 
-        getPageComponentViews(): PageComponentView<PageComponent>[] {
+        getPageComponentViews(): PageComponentView<Component>[] {
             return this.pageComponentViews;
         }
 
-        getPageComponentViewIndex(view: PageComponentView<PageComponent>): number {
+        getPageComponentViewIndex(view: PageComponentView<Component>): number {
 
             return this.pageComponentViews.indexOf(view);
         }
 
-        removePageComponentView(pageComponentView: PageComponentView<PageComponent>) {
+        removePageComponentView(pageComponentView: PageComponentView<Component>) {
 
             pageComponentView.remove();
             this.unregisterPageComponentView(pageComponentView);
@@ -273,7 +273,7 @@ module api.liveedit {
 
         countNonMovingPageComponentViews(): number {
             var count = 0;
-            this.pageComponentViews.forEach((view: PageComponentView<PageComponent>)=> {
+            this.pageComponentViews.forEach((view: PageComponentView<Component>)=> {
                 if (!view.isMoving()) {
                     count++
                 }
@@ -304,7 +304,7 @@ module api.liveedit {
         }
 
         empty() {
-            this.pageComponentViews.forEach((pageComponentView: PageComponentView<PageComponent>) => {
+            this.pageComponentViews.forEach((pageComponentView: PageComponentView<Component>) => {
                 this.removePageComponentView(pageComponentView);
             });
 
@@ -317,7 +317,7 @@ module api.liveedit {
 
             var array: ItemView[] = [];
             array.push(this);
-            this.pageComponentViews.forEach((pageComponentView: PageComponentView<PageComponent>) => {
+            this.pageComponentViews.forEach((pageComponentView: PageComponentView<Component>) => {
                 var itemViews = pageComponentView.toItemViewArray();
                 array = array.concat(itemViews);
             });
@@ -374,7 +374,7 @@ module api.liveedit {
                 var itemType = ItemType.fromElement(childElement);
                 if (itemType) {
                     api.util.assert(itemType.isPageComponentType(),
-                            "Expected ItemView beneath a Region to be a PageComponent: " + itemType.getShortName());
+                            "Expected ItemView beneath a Region to be a Component: " + itemType.getShortName());
 
                     var pageComponent = region.getComponentByIndex(pageComponentCount++);
                     itemType.createView(new CreateItemViewConfig().

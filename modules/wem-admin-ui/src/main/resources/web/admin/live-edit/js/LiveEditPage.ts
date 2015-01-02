@@ -1,7 +1,7 @@
 module LiveEdit {
 
     import PropertyTree = api.data.PropertyTree;
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
     import Page = api.content.page.Page;
     import PageRegions = api.content.page.PageRegions;
     import Region = api.content.page.region.Region;
@@ -191,7 +191,7 @@ module LiveEdit {
             return this.pageView.getItemViewByElement(htmlElement);
         }
 
-        getPageComponentViewByElement(htmlElement: HTMLElement): PageComponentView<PageComponent> {
+        getPageComponentViewByElement(htmlElement: HTMLElement): PageComponentView<Component> {
             return this.pageView.getPageComponentViewByElement(htmlElement);
         }
 
@@ -199,7 +199,7 @@ module LiveEdit {
             return this.pageView.getRegionViewByElement(htmlElement);
         }
 
-        addPageComponentView(pageComponentView: PageComponentView<PageComponent>, toRegion: RegionView, atIndex: number) {
+        addPageComponentView(pageComponentView: PageComponentView<Component>, toRegion: RegionView, atIndex: number) {
 
             toRegion.addPageComponentView(pageComponentView, atIndex);
 
@@ -215,7 +215,7 @@ module LiveEdit {
             this.pageView.deselectSelectedView();
         }
 
-        createComponent(region: Region, type: PageComponentType, precedingComponentView: PageComponentView<PageComponent>): PageComponent {
+        createComponent(region: Region, type: PageComponentType, precedingComponentView: PageComponentView<Component>): Component {
 
             var componentName = new ComponentName(api.util.StringHelper.capitalize(api.util.StringHelper.removeWhitespaces(type.getShortName())));
 
@@ -225,7 +225,7 @@ module LiveEdit {
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedPageComponentBuilder)) {
                 (<DescriptorBasedPageComponentBuilder<DescriptorBasedPageComponent>>builder).setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider()));
             }
-            var precedingPageComponent: PageComponent = null;
+            var precedingPageComponent: Component = null;
             if (precedingComponentView) {
                 precedingPageComponent = precedingComponentView.getPageComponent();
             }

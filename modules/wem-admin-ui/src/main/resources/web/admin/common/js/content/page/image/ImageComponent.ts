@@ -9,7 +9,7 @@ module api.content.page.image {
     import PropertyTree = api.data.PropertyTree;
     import PropertyIdProvider = api.data.PropertyIdProvider;
 
-    export class ImageComponent extends api.content.page.PageComponent implements api.Equitable, api.Cloneable {
+    export class ImageComponent extends api.content.page.Component implements api.Equitable, api.Cloneable {
 
         private image: api.content.ContentId;
 

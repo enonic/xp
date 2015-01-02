@@ -2,7 +2,7 @@ module app.wizard.page {
 
     import Descriptor = api.content.page.Descriptor;
     import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import LayoutRegions = api.content.page.layout.LayoutRegions;
     import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
@@ -11,18 +11,18 @@ module app.wizard.page {
     import PageRegions = api.content.page.PageRegions;
     import PageComponentView = api.liveedit.PageComponentView;
 
-    export class PageComponentNameChanger {
+    export class ComponentNameChanger {
 
         private pageRegions: PageRegions;
 
-        private pageComponentView: PageComponentView<PageComponent>;
+        private pageComponentView: PageComponentView<Component>;
 
-        setPageRegions(value: PageRegions): PageComponentNameChanger {
+        setPageRegions(value: PageRegions): ComponentNameChanger {
             this.pageRegions = value;
             return this;
         }
 
-        setComponentView(value: PageComponentView<PageComponent>): PageComponentNameChanger {
+        setComponentView(value: PageComponentView<Component>): ComponentNameChanger {
             this.pageComponentView = value;
             return this;
         }
@@ -31,10 +31,10 @@ module app.wizard.page {
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
             api.util.assertNotNull(this.pageComponentView, "pageComponentView cannot be null");
 
-            var pageComponent = this.pageComponentView.getPageComponent();
+            var component = this.pageComponentView.getPageComponent();
 
             var componentName = new ComponentName(name);
-            pageComponent.setName(componentName);
+            component.setName(componentName);
         }
     }
 }

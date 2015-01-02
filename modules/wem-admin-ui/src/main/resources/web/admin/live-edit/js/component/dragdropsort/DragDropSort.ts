@@ -6,7 +6,7 @@
 
 module LiveEdit.component.dragdropsort.DragDropSort {
 
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
     import ComponentName = api.content.page.ComponentName;
     import ItemViewId = api.liveedit.ItemViewId;
     import ItemType = api.liveedit.ItemType;
@@ -312,7 +312,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var newPageComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toPageComponentType(),
                 precedingComponentView);
             var pageComponentIndex = droppedElement.index();
-            var newPageComponentView = itemType.createView(new CreateItemViewConfig<RegionView,PageComponent>().
+            var newPageComponentView = itemType.createView(new CreateItemViewConfig<RegionView,Component>().
                 setParentView(regionView).
                 setData(newPageComponent).
                 setPositionIndex(pageComponentIndex));
@@ -391,13 +391,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         return sortableItemsSelector.toString();
     }
 
-    function resolvePrecedingComponentView(pageComponentViewAsHTMLElement: HTMLElement): PageComponentView<PageComponent> {
+    function resolvePrecedingComponentView(pageComponentViewAsHTMLElement: HTMLElement): PageComponentView<Component> {
 
-        var preceodingComponentView: PageComponentView<PageComponent> = null;
+        var preceodingComponentView: PageComponentView<Component> = null;
         var precedingComponentViewId = PageComponentView.findPrecedingComponentItemViewId(pageComponentViewAsHTMLElement);
         if (precedingComponentViewId) {
             preceodingComponentView =
-            <PageComponentView<PageComponent>>LiveEdit.LiveEditPage.get().getByItemId(precedingComponentViewId);
+            <PageComponentView<Component>>LiveEdit.LiveEditPage.get().getByItemId(precedingComponentViewId);
         }
         return preceodingComponentView;
     }

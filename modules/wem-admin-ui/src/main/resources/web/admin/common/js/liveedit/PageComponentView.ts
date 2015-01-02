@@ -1,10 +1,10 @@
 module api.liveedit {
 
-    import PageComponent = api.content.page.PageComponent;
+    import Component = api.content.page.Component;
     import ComponentPath = api.content.page.ComponentPath;
     import ComponentName = api.content.page.ComponentName;
 
-    export class PageComponentViewBuilder<PAGE_COMPONENT extends PageComponent> {
+    export class PageComponentViewBuilder<PAGE_COMPONENT extends Component> {
 
         placeholder: PageComponentPlaceholder;
 
@@ -73,7 +73,7 @@ module api.liveedit {
         }
     }
 
-    export class PageComponentView<PAGE_COMPONENT extends PageComponent> extends ItemView {
+    export class PageComponentView<PAGE_COMPONENT extends Component> extends ItemView {
 
         private placeholder: PageComponentPlaceholder;
 
@@ -255,17 +255,17 @@ module api.liveedit {
             throw new Error("Must be implemented by inheritors");
         }
 
-        replaceWith(replacement: PageComponentView<PageComponent>) {
+        replaceWith(replacement: PageComponentView<Component>) {
             super.replaceWith(replacement);
             this.notifyItemViewRemoved(new ItemViewRemovedEvent(this));
             this.notifyItemViewAdded(new ItemViewAddedEvent(replacement));
         }
 
-        moveToRegion(toRegionView: RegionView, precedingComponentView: PageComponentView<PageComponent>) {
+        moveToRegion(toRegionView: RegionView, precedingComponentView: PageComponentView<Component>) {
 
             this.moving = false;
             var precedingComponentIndex: number = -1;
-            var precedingComponent: PageComponent = null;
+            var precedingComponent: Component = null;
             if (precedingComponentView) {
                 precedingComponent = precedingComponentView.getPageComponent();
                 precedingComponentIndex = precedingComponentView.getParentItemView().getPageComponentViewIndex(precedingComponentView);
