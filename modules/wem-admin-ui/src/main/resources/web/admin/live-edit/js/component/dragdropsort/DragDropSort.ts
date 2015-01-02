@@ -15,7 +15,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import RegionView = api.liveedit.RegionView;
     import RegionViewDropZone = api.liveedit.RegionViewDropZone;
     import RegionViewDropZoneBuilder = api.liveedit.RegionViewDropZoneBuilder;
-    import PageComponentView = api.liveedit.PageComponentView;
+    import ComponentView = api.liveedit.ComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import ComponentItemType = api.liveedit.ComponentItemType;
     import RegionItemType = api.liveedit.RegionItemType;
@@ -277,7 +277,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             }
         }
 
-        // Skip moving when PageComponentView is already moved (happens when moving from one sortable/region to another, then one event is fired for each sortable)
+        // Skip moving when ComponentView is already moved (happens when moving from one sortable/region to another, then one event is fired for each sortable)
         if (!droppedPageComponentView.isMoving()) {
             return;
         }
@@ -299,7 +299,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var liveEditPage = LiveEdit.LiveEditPage.get();
 
             var droppedElement = wemjq(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
-            var regionHTMLElement = PageComponentView.findParentRegionViewHTMLElement(droppedElement.get(0));
+            var regionHTMLElement = ComponentView.findParentRegionViewHTMLElement(droppedElement.get(0));
             var regionView = liveEditPage.getRegionViewByElement(regionHTMLElement);
             var itemType: ComponentItemType = <ComponentItemType>ItemType.byShortName(droppedElement.data('live-edit-type'));
 
@@ -391,13 +391,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         return sortableItemsSelector.toString();
     }
 
-    function resolvePrecedingComponentView(pageComponentViewAsHTMLElement: HTMLElement): PageComponentView<Component> {
+    function resolvePrecedingComponentView(pageComponentViewAsHTMLElement: HTMLElement): ComponentView<Component> {
 
-        var preceodingComponentView: PageComponentView<Component> = null;
-        var precedingComponentViewId = PageComponentView.findPrecedingComponentItemViewId(pageComponentViewAsHTMLElement);
+        var preceodingComponentView: ComponentView<Component> = null;
+        var precedingComponentViewId = ComponentView.findPrecedingComponentItemViewId(pageComponentViewAsHTMLElement);
         if (precedingComponentViewId) {
             preceodingComponentView =
-            <PageComponentView<Component>>LiveEdit.LiveEditPage.get().getByItemId(precedingComponentViewId);
+            <ComponentView<Component>>LiveEdit.LiveEditPage.get().getByItemId(precedingComponentViewId);
         }
         return preceodingComponentView;
     }

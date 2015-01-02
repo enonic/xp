@@ -3,7 +3,6 @@ module api.liveedit.layout {
     import LayoutComponent = api.content.page.layout.LayoutComponent;
     import ItemType = api.liveedit.ItemType;
     import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
-    import PageComponentView = api.liveedit.PageComponentView;
     import RegionView = api.liveedit.RegionView;
     import ComponentItemType = api.liveedit.ComponentItemType;
 

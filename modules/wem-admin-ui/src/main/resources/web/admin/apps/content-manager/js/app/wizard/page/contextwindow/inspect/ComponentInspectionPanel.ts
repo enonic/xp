@@ -2,7 +2,7 @@ module app.wizard.page.contextwindow.inspect {
 
     import Component = api.content.page.Component;
     import ComponentName = api.content.page.ComponentName;
-    import PageComponentView = api.liveedit.PageComponentView;
+    import ComponentView = api.liveedit.ComponentView;
 
     export interface ComponentInspectionPanelConfig {
 
@@ -47,7 +47,7 @@ module app.wizard.page.contextwindow.inspect {
             this.nameInput.setValue(component.getName().toString());
         }
 
-        getPageComponentView(): PageComponentView<Component> {
+        getPageComponentView(): ComponentView<Component> {
             throw new Error("Must be implemented by inheritors");
         }
 

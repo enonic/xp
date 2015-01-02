@@ -6,22 +6,22 @@ module api.liveedit {
 
     export class ComponentDuplicateEvent extends api.event.Event {
 
-        private originalPageComponentView: PageComponentView<Component>;
+        private originalPageComponentView: ComponentView<Component>;
 
-        private duplicatedPageComponentView: PageComponentView<Component>;
+        private duplicatedPageComponentView: ComponentView<Component>;
 
-        constructor(originalPageComponentView: PageComponentView<Component>,
-                    duplicatedPageComponentView: PageComponentView<Component>) {
+        constructor(originalPageComponentView: ComponentView<Component>,
+                    duplicatedPageComponentView: ComponentView<Component>) {
             super();
             this.originalPageComponentView = originalPageComponentView;
             this.duplicatedPageComponentView = duplicatedPageComponentView;
         }
 
-        getOriginalPageComponentView(): PageComponentView<Component> {
+        getOriginalPageComponentView(): ComponentView<Component> {
             return this.originalPageComponentView
         }
 
-        getDuplicatedPageComponentView(): PageComponentView<Component> {
+        getDuplicatedPageComponentView(): ComponentView<Component> {
             return this.duplicatedPageComponentView;
         }
 

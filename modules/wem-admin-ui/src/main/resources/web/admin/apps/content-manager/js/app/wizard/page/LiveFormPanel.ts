@@ -37,7 +37,7 @@ module app.wizard.page {
     import RenderingMode = api.rendering.RenderingMode;
 
     import RegionView = api.liveedit.RegionView;
-    import PageComponentView = api.liveedit.PageComponentView;
+    import ComponentView = api.liveedit.ComponentView;
     import ImageComponentView = api.liveedit.image.ImageComponentView;
     import PartComponentView = api.liveedit.part.PartComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
@@ -237,7 +237,7 @@ module app.wizard.page {
                 done();
         }
 
-        saveAndReloadOnlyPageComponent(pageComponentView: PageComponentView<Component>) {
+        saveAndReloadOnlyPageComponent(pageComponentView: ComponentView<Component>) {
 
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
 
@@ -295,8 +295,8 @@ module app.wizard.page {
                     }
                 }
 
-                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageComponentView)) {
-                    this.inspectPageComponent(<PageComponentView<Component>>itemView);
+                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
+                    this.inspectPageComponent(<ComponentView<Component>>itemView);
                 }
             });
 
@@ -428,7 +428,7 @@ module app.wizard.page {
             this.contextWindow.showInspectionPanel(this.regionInspectionPanel);
         }
 
-        private inspectPageComponent(pageComponentView: PageComponentView<Component>) {
+        private inspectPageComponent(pageComponentView: ComponentView<Component>) {
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
 
             this.selectedItemView = pageComponentView;
@@ -449,7 +449,7 @@ module app.wizard.page {
 
             }
             else {
-                throw new Error("PageComponentView cannot be selected: " + api.ClassHelper.getClassName(pageComponentView));
+                throw new Error("ComponentView cannot be selected: " + api.ClassHelper.getClassName(pageComponentView));
             }
         }
     }

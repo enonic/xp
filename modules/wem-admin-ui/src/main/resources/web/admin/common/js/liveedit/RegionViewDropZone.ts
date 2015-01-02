@@ -12,7 +12,7 @@ module api.liveedit {
 
         regionView: RegionView;
 
-        pageComponentView: PageComponentView<Component>;
+        pageComponentView: ComponentView<Component>;
 
         setItemType(value: ItemType): RegionViewDropZoneBuilder {
             this.itemType = value;
@@ -34,7 +34,7 @@ module api.liveedit {
             return this;
         }
 
-        setPageComponentView(value: PageComponentView<Component>): RegionViewDropZoneBuilder {
+        setPageComponentView(value: ComponentView<Component>): RegionViewDropZoneBuilder {
             this.pageComponentView = value;
             this.itemType = value.getType();
             return this;
@@ -55,7 +55,7 @@ module api.liveedit {
 
         private regionView: RegionView;
 
-        private pageComponentView: PageComponentView<Component>;
+        private pageComponentView: ComponentView<Component>;
 
         constructor(builder: RegionViewDropZoneBuilder) {
             super("region-view-drop-zone");

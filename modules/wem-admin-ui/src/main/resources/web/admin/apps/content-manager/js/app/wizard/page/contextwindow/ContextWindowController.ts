@@ -1,6 +1,6 @@
 module app.wizard.page.contextwindow {
 
-    import PageComponentView = api.liveedit.PageComponentView;
+    import ComponentView = api.liveedit.ComponentView;
     import Component = api.content.page.Component;
     import PageView = api.liveedit.PageView;
 
@@ -45,8 +45,8 @@ module app.wizard.page.contextwindow {
 
                 var itemView = liveFormPanel.getSelectedItemView();
                 if (itemView) {
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageComponentView)) {
-                        liveFormPanel.saveAndReloadOnlyPageComponent(<PageComponentView<Component>> itemView);
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
+                        liveFormPanel.saveAndReloadOnlyPageComponent(<ComponentView<Component>> itemView);
                     } else if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageView)) {
                         liveFormPanel.saveAndReloadPage();
                     }

@@ -26,7 +26,7 @@
 ///<reference path='RegionComponentViewer.ts' />
 ///<reference path='RegionPlaceholder.ts' />
 ///<reference path='ComponentPlaceholder.ts' />
-///<reference path='PageComponentView.ts' />
+///<reference path='ComponentView.ts' />
 ///<reference path='PagePlaceholder.ts' />
 ///<reference path='PageView.ts' />
 ///<reference path='ContentView.ts' />

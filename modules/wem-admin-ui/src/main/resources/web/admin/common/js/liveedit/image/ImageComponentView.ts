@@ -1,11 +1,11 @@
 module api.liveedit.image {
 
-    import PageComponentView = api.liveedit.PageComponentView;
+    import ComponentView = api.liveedit.ComponentView;
     import ContentView = api.liveedit.ContentView;
     import RegionView = api.liveedit.RegionView;
     import ImageComponent = api.content.page.image.ImageComponent;
 
-    export class ImageComponentViewBuilder extends PageComponentViewBuilder<ImageComponent> {
+    export class ImageComponentViewBuilder extends ComponentViewBuilder<ImageComponent> {
 
         constructor() {
             super();
@@ -13,7 +13,7 @@ module api.liveedit.image {
         }
     }
 
-    export class ImageComponentView extends PageComponentView<ImageComponent> {
+    export class ImageComponentView extends ComponentView<ImageComponent> {
 
         private imageComponent: ImageComponent;
 

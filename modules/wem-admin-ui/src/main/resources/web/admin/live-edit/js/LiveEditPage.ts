@@ -9,7 +9,7 @@ module LiveEdit {
     import ComponentName = api.content.page.ComponentName;
     import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedComponentBuilder;
     import DescriptorBasedComponent = api.content.page.DescriptorBasedComponent;
-    import PageComponentView = api.liveedit.PageComponentView;
+    import ComponentView = api.liveedit.ComponentView;
     import PageView = api.liveedit.PageView;
     import PageViewBuilder = api.liveedit.PageViewBuilder;
     import ItemView = api.liveedit.ItemView;
@@ -191,7 +191,7 @@ module LiveEdit {
             return this.pageView.getItemViewByElement(htmlElement);
         }
 
-        getPageComponentViewByElement(htmlElement: HTMLElement): PageComponentView<Component> {
+        getPageComponentViewByElement(htmlElement: HTMLElement): ComponentView<Component> {
             return this.pageView.getPageComponentViewByElement(htmlElement);
         }
 
@@ -199,7 +199,7 @@ module LiveEdit {
             return this.pageView.getRegionViewByElement(htmlElement);
         }
 
-        addPageComponentView(pageComponentView: PageComponentView<Component>, toRegion: RegionView, atIndex: number) {
+        addPageComponentView(pageComponentView: ComponentView<Component>, toRegion: RegionView, atIndex: number) {
 
             toRegion.addPageComponentView(pageComponentView, atIndex);
 
@@ -215,7 +215,7 @@ module LiveEdit {
             this.pageView.deselectSelectedView();
         }
 
-        createComponent(region: Region, type: ComponentType, precedingComponentView: PageComponentView<Component>): Component {
+        createComponent(region: Region, type: ComponentType, precedingComponentView: ComponentView<Component>): Component {
 
             var componentName = new ComponentName(api.util.StringHelper.capitalize(api.util.StringHelper.removeWhitespaces(type.getShortName())));
 

@@ -3,11 +3,11 @@ module api.liveedit.layout {
     import Component = api.content.page.Component;
     import Region = api.content.page.region.Region;
     import LayoutComponent = api.content.page.layout.LayoutComponent;
-    import PageComponentView = api.liveedit.PageComponentView;
+    import ComponentView = api.liveedit.ComponentView;
     import RegionView = api.liveedit.RegionView;
     import ItemView = api.liveedit.ItemView;
 
-    export class LayoutComponentViewBuilder extends PageComponentViewBuilder<LayoutComponent> {
+    export class LayoutComponentViewBuilder extends ComponentViewBuilder<LayoutComponent> {
 
         constructor() {
             super();
@@ -15,7 +15,7 @@ module api.liveedit.layout {
         }
     }
 
-    export class LayoutComponentView extends PageComponentView<LayoutComponent> {
+    export class LayoutComponentView extends ComponentView<LayoutComponent> {
 
         private layoutComponent: LayoutComponent;
 

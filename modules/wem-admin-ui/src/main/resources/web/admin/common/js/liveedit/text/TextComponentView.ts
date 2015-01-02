@@ -1,18 +1,18 @@
 module api.liveedit.text {
 
-    import PageComponentView = api.liveedit.PageComponentView;
+    import ComponentView = api.liveedit.ComponentView;
     import RegionView = api.liveedit.RegionView;
     import TextComponent = api.content.page.text.TextComponent;
 
 
-    export class TextComponentViewBuilder extends PageComponentViewBuilder<TextComponent> {
+    export class TextComponentViewBuilder extends ComponentViewBuilder<TextComponent> {
         constructor() {
             super();
             this.setType(TextItemType.get());
         }
     }
 
-    export class TextComponentView extends PageComponentView<TextComponent> implements api.ui.text.TextEditorEditableArea {
+    export class TextComponentView extends ComponentView<TextComponent> implements api.ui.text.TextEditorEditableArea {
 
         private textComponent: TextComponent;
 

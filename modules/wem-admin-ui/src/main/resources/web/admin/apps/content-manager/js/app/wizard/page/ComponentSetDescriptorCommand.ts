@@ -8,17 +8,17 @@ module app.wizard.page {
     import ComponentPathRegionAndComponent = api.content.page.ComponentPathRegionAndComponent;
     import ComponentName = api.content.page.ComponentName;
     import PageRegions = api.content.page.PageRegions;
-    import PageComponentView = api.liveedit.PageComponentView;
+    import ComponentView = api.liveedit.ComponentView;
 
     export class ComponentSetDescriptorCommand {
 
-        private pageComponentView: PageComponentView<DescriptorBasedComponent>;
+        private pageComponentView: ComponentView<DescriptorBasedComponent>;
 
         private pageRegions: PageRegions;
 
         private descriptor: Descriptor;
 
-        setPageComponentView(value: PageComponentView<DescriptorBasedComponent>): ComponentSetDescriptorCommand {
+        setPageComponentView(value: ComponentView<DescriptorBasedComponent>): ComponentSetDescriptorCommand {
             this.pageComponentView = value;
             return this;
         }

@@ -4,7 +4,7 @@ module api.liveedit {
     import ComponentPath = api.content.page.ComponentPath;
     import ComponentName = api.content.page.ComponentName;
 
-    export class PageComponentViewBuilder<PAGE_COMPONENT extends Component> {
+    export class ComponentViewBuilder<PAGE_COMPONENT extends Component> {
 
         placeholder: ComponentPlaceholder;
 
@@ -24,7 +24,7 @@ module api.liveedit {
 
         contextMenuActions: api.ui.Action[];
 
-        setPlaceholder(value: ComponentPlaceholder): PageComponentViewBuilder<PAGE_COMPONENT> {
+        setPlaceholder(value: ComponentPlaceholder): ComponentViewBuilder<PAGE_COMPONENT> {
             this.placeholder = value;
             return this;
         }
@@ -32,48 +32,48 @@ module api.liveedit {
         /**
          * Optional. The ItemViewIdProducer of parentRegionView will be used if not set.
          */
-        setItemViewProducer(value: ItemViewIdProducer): PageComponentViewBuilder<PAGE_COMPONENT> {
+        setItemViewProducer(value: ItemViewIdProducer): ComponentViewBuilder<PAGE_COMPONENT> {
             this.itemViewProducer = value;
             return this;
         }
 
-        setType(value: ComponentItemType): PageComponentViewBuilder<PAGE_COMPONENT> {
+        setType(value: ComponentItemType): ComponentViewBuilder<PAGE_COMPONENT> {
             this.type = value;
             return this;
         }
 
-        setParentRegionView(value: RegionView): PageComponentViewBuilder<PAGE_COMPONENT> {
+        setParentRegionView(value: RegionView): ComponentViewBuilder<PAGE_COMPONENT> {
             this.parentRegionView = value;
             return this;
         }
 
-        setParentElement(value: api.dom.Element): PageComponentViewBuilder<PAGE_COMPONENT> {
+        setParentElement(value: api.dom.Element): ComponentViewBuilder<PAGE_COMPONENT> {
             this.parentElement = value;
             return this;
         }
 
-        setPageComponent(value: PAGE_COMPONENT): PageComponentViewBuilder<PAGE_COMPONENT> {
+        setPageComponent(value: PAGE_COMPONENT): ComponentViewBuilder<PAGE_COMPONENT> {
             this.pageComponent = value;
             return this;
         }
 
-        setElement(value: api.dom.Element): PageComponentViewBuilder<PAGE_COMPONENT> {
+        setElement(value: api.dom.Element): ComponentViewBuilder<PAGE_COMPONENT> {
             this.element = value;
             return this;
         }
 
-        setPositionIndex(value: number): PageComponentViewBuilder<PAGE_COMPONENT> {
+        setPositionIndex(value: number): ComponentViewBuilder<PAGE_COMPONENT> {
             this.positionIndex = value;
             return this;
         }
 
-        setContextMenuActions(actions: api.ui.Action[]): PageComponentViewBuilder<PAGE_COMPONENT> {
+        setContextMenuActions(actions: api.ui.Action[]): ComponentViewBuilder<PAGE_COMPONENT> {
             this.contextMenuActions = actions;
             return this;
         }
     }
 
-    export class PageComponentView<PAGE_COMPONENT extends Component> extends ItemView {
+    export class ComponentView<PAGE_COMPONENT extends Component> extends ItemView {
 
         private placeholder: ComponentPlaceholder;
 
@@ -87,7 +87,7 @@ module api.liveedit {
 
         private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
 
-        constructor(builder: PageComponentViewBuilder<PAGE_COMPONENT>) {
+        constructor(builder: ComponentViewBuilder<PAGE_COMPONENT>) {
 
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
@@ -158,7 +158,7 @@ module api.liveedit {
             if (event.target === this.getHTMLElement()) {
                 event.dataTransfer.effectAllowed = "move";
                 //event.dataTransfer.setData('text/plain', 'This text may be dragged');
-                console.log("PageComponentView[" + this.getItemId().toNumber() + "].handleDragStart", event, this.getHTMLElement());
+                console.log("ComponentView[" + this.getItemId().toNumber() + "].handleDragStart", event, this.getHTMLElement());
                 this.hideTooltip();
             }
         }
@@ -166,14 +166,14 @@ module api.liveedit {
         // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
         private handleDrag(event: DragEvent) {
             if (event.target === this.getHTMLElement()) {
-                console.log("PageComponentView[" + this.getItemId().toNumber() + "].handleDrag", event, this.getHTMLElement());
+                console.log("ComponentView[" + this.getItemId().toNumber() + "].handleDrag", event, this.getHTMLElement());
             }
         }
 
         // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
         private handleDragEnd(event: DragEvent) {
             if (event.target === this.getHTMLElement()) {
-                console.log("PageComponentView[" + this.getItemId().toNumber() + "].handleDragEnd", event, this.getHTMLElement());
+                console.log("ComponentView[" + this.getItemId().toNumber() + "].handleDragEnd", event, this.getHTMLElement());
                 //this.hideTooltip();
             }
         }
@@ -251,17 +251,17 @@ module api.liveedit {
             this.placeholder.showRenderingError(url, errorMessage);
         }
 
-        duplicate(duplicate: PAGE_COMPONENT): PageComponentView<PAGE_COMPONENT> {
+        duplicate(duplicate: PAGE_COMPONENT): ComponentView<PAGE_COMPONENT> {
             throw new Error("Must be implemented by inheritors");
         }
 
-        replaceWith(replacement: PageComponentView<Component>) {
+        replaceWith(replacement: ComponentView<Component>) {
             super.replaceWith(replacement);
             this.notifyItemViewRemoved(new ItemViewRemovedEvent(this));
             this.notifyItemViewAdded(new ItemViewAddedEvent(replacement));
         }
 
-        moveToRegion(toRegionView: RegionView, precedingComponentView: PageComponentView<Component>) {
+        moveToRegion(toRegionView: RegionView, precedingComponentView: ComponentView<Component>) {
 
             this.moving = false;
             var precedingComponentIndex: number = -1;

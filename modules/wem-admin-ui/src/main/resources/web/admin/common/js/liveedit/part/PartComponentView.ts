@@ -1,11 +1,11 @@
 module api.liveedit.part {
 
-    import PageComponentView = api.liveedit.PageComponentView;
+    import ComponentView = api.liveedit.ComponentView;
     import ContentView = api.liveedit.ContentView;
     import RegionView = api.liveedit.RegionView;
     import PartComponent = api.content.page.part.PartComponent;
 
-    export class PartComponentViewBuilder extends PageComponentViewBuilder<PartComponent> {
+    export class PartComponentViewBuilder extends ComponentViewBuilder<PartComponent> {
 
         constructor() {
             super();
@@ -13,7 +13,7 @@ module api.liveedit.part {
         }
     }
 
-    export class PartComponentView extends PageComponentView<PartComponent> {
+    export class PartComponentView extends ComponentView<PartComponent> {
 
         private contentViews: ContentView[];
 

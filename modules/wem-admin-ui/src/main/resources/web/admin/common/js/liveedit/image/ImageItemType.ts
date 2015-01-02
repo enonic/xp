@@ -3,7 +3,6 @@ module api.liveedit.image {
     import ImageComponent = api.content.page.image.ImageComponent;
     import ItemType = api.liveedit.ItemType;
     import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
-    import PageComponentView = api.liveedit.PageComponentView;
     import ComponentItemType = api.liveedit.ComponentItemType;
     import RegionView = api.liveedit.RegionView;
 

@@ -9,20 +9,20 @@ module app.wizard.page {
     import ComponentPathRegionAndComponent = api.content.page.ComponentPathRegionAndComponent;
     import ComponentName = api.content.page.ComponentName;
     import PageRegions = api.content.page.PageRegions;
-    import PageComponentView = api.liveedit.PageComponentView;
+    import ComponentView = api.liveedit.ComponentView;
 
     export class ComponentNameChanger {
 
         private pageRegions: PageRegions;
 
-        private pageComponentView: PageComponentView<Component>;
+        private pageComponentView: ComponentView<Component>;
 
         setPageRegions(value: PageRegions): ComponentNameChanger {
             this.pageRegions = value;
             return this;
         }
 
-        setComponentView(value: PageComponentView<Component>): ComponentNameChanger {
+        setComponentView(value: ComponentView<Component>): ComponentNameChanger {
             this.pageComponentView = value;
             return this;
         }

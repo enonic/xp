@@ -8,7 +8,7 @@ module api.liveedit {
             super(shortName, config);
         }
 
-        createView(config: CreateItemViewConfig<RegionView,Component>): PageComponentView<Component> {
+        createView(config: CreateItemViewConfig<RegionView,Component>): ComponentView<Component> {
             throw new Error("Must be implemented by inheritors");
         }
     }

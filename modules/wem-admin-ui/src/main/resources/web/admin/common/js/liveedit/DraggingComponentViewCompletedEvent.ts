@@ -5,15 +5,15 @@ module api.liveedit {
 
     export class DraggingComponentViewCompletedEvent extends Event {
 
-        private pageComponentView: PageComponentView<Component>;
+        private pageComponentView: ComponentView<Component>;
 
-        constructor(pageComponentView: PageComponentView<Component>) {
+        constructor(pageComponentView: ComponentView<Component>) {
             super();
             api.util.assertNotNull(pageComponentView, "pageComponentView cannot be null");
             this.pageComponentView = pageComponentView;
         }
 
-        getPageComponentView(): PageComponentView<Component> {
+        getPageComponentView(): ComponentView<Component> {
             return this.pageComponentView;
         }
 
