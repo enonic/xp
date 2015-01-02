@@ -31,10 +31,16 @@
         <xsl:value-of select="portal:assetUrl('_path=a','b=2')"/>
       </value>
       <value>
-        <xsl:value-of select="portal:attachmentUrl('a=1')"/>
+        <xsl:value-of select="portal:attachmentUrl('_name=myattachment.pdf')"/>
       </value>
       <value>
-        <xsl:value-of select="portal:attachmentUrl('a=1','b=2')"/>
+        <xsl:value-of select="portal:attachmentUrl('_name=myattachment.pdf','a=1')"/>
+      </value>
+      <value>
+        <xsl:value-of select="portal:attachmentUrl('_id=123','_name=myattachment.pdf')"/>
+      </value>
+      <value>
+        <xsl:value-of select="portal:attachmentUrl('_id=123','_label=source')"/>
       </value>
       <value>
         <xsl:value-of select="portal:serviceUrl('_service=a')"/>

@@ -48,6 +48,9 @@ public final class PortalUrlBuildersHelper
 
     public static AttachmentUrlBuilder apply( final AttachmentUrlBuilder builder, final Multimap<String, String> params )
     {
+        builder.mediaId( systemParam( params, "_id" ) );
+        builder.name( systemParam( params, "_name" ) );
+        builder.label( systemParam( params, "_label" ) );
         builder.params( params );
         return builder;
     }

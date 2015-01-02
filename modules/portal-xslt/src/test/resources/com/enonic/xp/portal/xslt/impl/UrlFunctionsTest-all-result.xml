@@ -7,8 +7,10 @@
   <value>/root/portal/live/stage/some/path/_/image/a?b=2</value>
   <value>/root/portal/live/stage/some/path/_/public/mymodule/a</value>
   <value>/root/portal/live/stage/some/path/_/public/mymodule/a?b=2</value>
-  <value>/root/portal/live/stage/some/path/_/attachment?a=1</value>
-  <value>/root/portal/live/stage/some/path/_/attachment?a=1&amp;b=2</value>
+  <value>/root/portal/live/stage/some/path/_/attachment/myattachment.pdf</value>
+  <value>/root/portal/live/stage/some/path/_/attachment/myattachment.pdf?a=1</value>
+  <value>/root/portal/live/stage/some/path/_/attachment/id/123/myattachment.pdf</value>
+  <value>/root/portal/live/stage/some/path/_/attachment/id/123/source</value>
   <value>/root/portal/live/stage/some/path/_/service/mymodule/a</value>
   <value>/root/portal/live/stage/some/path/_/service/mymodule/a?b=2</value>
   <value>/root/portal/live/stage/some/path/_/component/a</value>
