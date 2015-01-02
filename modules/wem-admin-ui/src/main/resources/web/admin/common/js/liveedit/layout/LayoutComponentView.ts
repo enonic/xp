@@ -25,7 +25,7 @@ module api.liveedit.layout {
             this.regionViews = [];
             this.liveEditModel = builder.parentRegionView.liveEditModel;
             super(builder.setPlaceholder(new LayoutPlaceholder(this)));
-            this.layoutComponent = builder.pageComponent;
+            this.layoutComponent = builder.component;
 
             if (this.conditionedForEmpty()) {
                 this.displayPlaceholder();
@@ -86,7 +86,7 @@ module api.liveedit.layout {
 
         private doParseRegions(parentElement?: api.dom.Element) {
 
-            var layoutComponent = this.getPageComponent();
+            var layoutComponent = this.getComponent();
             var regions: Region[] = layoutComponent.getLayoutRegions().getRegions();
             var children = parentElement ? parentElement.getChildren() : this.getChildren();
             var regionIndex = 0;

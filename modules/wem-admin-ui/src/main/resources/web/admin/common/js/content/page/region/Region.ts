@@ -12,19 +12,19 @@ module api.content.page.region {
             this.name = builder.name;
             this.parent = builder.parent;
             this.pageComponents = builder.pageComponents;
-            this.pageComponents.forEach((pageComponent: Component, index: number) => {
-                this.checkIllegalLayoutComponentWithinLayoutComponent(pageComponent, this.parent);
-                pageComponent.setParent(this);
-                pageComponent.setIndex(index);
+            this.pageComponents.forEach((component: Component, index: number) => {
+                this.checkIllegalLayoutComponentWithinLayoutComponent(component, this.parent);
+                component.setParent(this);
+                component.setIndex(index);
             });
         }
 
-        private checkIllegalLayoutComponentWithinLayoutComponent(pageComponent: Component,
+        private checkIllegalLayoutComponentWithinLayoutComponent(component: Component,
                                                                  parent: api.content.page.layout.LayoutComponent) {
             var hasParentLayoutComponent = !parent ? false : true;
-            if (hasParentLayoutComponent && api.ObjectHelper.iFrameSafeInstanceOf(pageComponent, api.content.page.layout.LayoutComponent)) {
+            if (hasParentLayoutComponent && api.ObjectHelper.iFrameSafeInstanceOf(component, api.content.page.layout.LayoutComponent)) {
                 throw new Error("Not allowed to have a LayoutComponent within a LayoutComponent: " +
-                                pageComponent.getPath().toString());
+                                component.getPath().toString());
             }
         }
 
@@ -63,11 +63,11 @@ module api.content.page.region {
             return duplicatedComponent;
         }
 
-        addComponent(pageComponent: Component) {
-            this.checkIllegalLayoutComponentWithinLayoutComponent(pageComponent, this.parent);
-            this.pageComponents.push(pageComponent);
-            pageComponent.setParent(this);
-            pageComponent.setIndex(this.pageComponents.length - 1);
+        addComponent(component: Component) {
+            this.checkIllegalLayoutComponentWithinLayoutComponent(component, this.parent);
+            this.pageComponents.push(component);
+            component.setParent(this);
+            component.setIndex(this.pageComponents.length - 1);
         }
 
         /*
@@ -121,17 +121,17 @@ module api.content.page.region {
         }
 
         getComponentByIndex(index: number): api.content.page.Component {
-            var pageComponent = this.pageComponents[index];
-            api.util.assertState(pageComponent.getIndex() == index,
-                    "Index of Component is not as expected. Expected [" + index + "], was: " + pageComponent.getIndex());
-            return  pageComponent;
+            var component = this.pageComponents[index];
+            api.util.assertState(component.getIndex() == index,
+                    "Index of Component is not as expected. Expected [" + index + "], was: " + component.getIndex());
+            return  component;
         }
 
         removePageComponents() {
             while (this.pageComponents.length > 0) {
-                var pageComponent = this.pageComponents.pop();
-                pageComponent.setParent(null);
-                pageComponent.setIndex(-1);
+                var component = this.pageComponents.pop();
+                component.setParent(null);
+                component.setIndex(-1);
             }
         }
 

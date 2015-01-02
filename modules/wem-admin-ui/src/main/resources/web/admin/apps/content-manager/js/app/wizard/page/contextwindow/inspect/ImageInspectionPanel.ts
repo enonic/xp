@@ -25,9 +25,9 @@ module app.wizard.page.contextwindow.inspect {
         }
 
         setImageComponent(imageView: ImageComponentView) {
-            this.setComponent(imageView.getPageComponent());
+            this.setComponent(imageView.getComponent());
             this.imageView = imageView;
-            this.imageComponent = imageView.getPageComponent();
+            this.imageComponent = imageView.getComponent();
 
             if (this.formView) {
                 this.removeChild(this.formView);

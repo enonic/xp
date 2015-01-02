@@ -26,12 +26,12 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
     protected ControllerScriptFactory controllerScriptFactory;
 
-    public final RenderResult render( final R pageComponent, final PortalContext context )
+    public final RenderResult render( final R component, final PortalContext context )
     {
-        final Descriptor descriptor = resolveDescriptor( pageComponent );
+        final Descriptor descriptor = resolveDescriptor( component );
         if ( descriptor == null )
         {
-            return renderEmptyComponent( pageComponent, context );
+            return renderEmptyComponent( component, context );
         }
 
         // create controller
@@ -41,7 +41,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         final Component previousComponent = context.getComponent();
         try
         {
-            context.setComponent( pageComponent );
+            context.setComponent( component );
             controllerScript.execute( context );
             return new PortalResponseSerializer( context.getResponse() ).serialize();
         }
@@ -51,28 +51,28 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         }
     }
 
-    private RenderResult renderEmptyComponent( final DescriptorBasedComponent pageComponent, final PortalContext context )
+    private RenderResult renderEmptyComponent( final DescriptorBasedComponent component, final PortalContext context )
     {
         final RenderMode renderMode = getRenderingMode( context );
         switch ( renderMode )
         {
             case EDIT:
-                return renderEmptyComponentEditMode( pageComponent );
+                return renderEmptyComponentEditMode( component );
 
             case PREVIEW:
                 return renderEmptyComponentPreviewMode();
 
             case LIVE:
-                throw new DescriptorNotFoundException( pageComponent.getDescriptor() );
+                throw new DescriptorNotFoundException( component.getDescriptor() );
 
             default:
-                throw new DescriptorNotFoundException( pageComponent.getDescriptor() );
+                throw new DescriptorNotFoundException( component.getDescriptor() );
         }
     }
 
-    private RenderResult renderEmptyComponentEditMode( final DescriptorBasedComponent pageComponent )
+    private RenderResult renderEmptyComponentEditMode( final DescriptorBasedComponent component )
     {
-        final String html = MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, pageComponent.getType().toString() );
+        final String html = MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, component.getType().toString() );
 
         return RenderResult.newRenderResult().
             type( "text/html" ).
@@ -90,9 +90,9 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
             build();
     }
 
-    private Descriptor resolveDescriptor( final DescriptorBasedComponent pageComponent )
+    private Descriptor resolveDescriptor( final DescriptorBasedComponent component )
     {
-        final DescriptorKey descriptorKey = pageComponent.getDescriptor();
+        final DescriptorKey descriptorKey = component.getDescriptor();
         return descriptorKey == null ? null : getComponentDescriptor( descriptorKey );
     }
 

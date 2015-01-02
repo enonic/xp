@@ -91,7 +91,7 @@ module app.wizard.page.contextwindow.inspect {
         setLayoutComponent(layoutView: LayoutComponentView) {
 
             this.layoutView = layoutView;
-            this.layoutComponent = <LayoutComponent>layoutView.getPageComponent();
+            this.layoutComponent = <LayoutComponent>layoutView.getComponent();
             if (this.layoutComponent.hasDescriptor()) {
                 new GetLayoutDescriptorByKeyRequest(this.layoutComponent.getDescriptor()).sendAndParse().then((descriptor: LayoutDescriptor) => {
                     this.setComponent(this.layoutComponent);

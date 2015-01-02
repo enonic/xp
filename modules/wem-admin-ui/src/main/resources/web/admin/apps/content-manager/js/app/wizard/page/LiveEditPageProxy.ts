@@ -214,7 +214,7 @@ module app.wizard.page {
                     var createViewConfig = new CreateItemViewConfig<RegionView,Component>().
                         setItemViewProducer(repeatNextItemViewIdProducer).
                         setParentView(pageComponentView.getParentItemView()).
-                        setData(pageComponentView.getPageComponent()).
+                        setData(pageComponentView.getComponent()).
                         setElement(newElement);
                     var newPageComponentView: ComponentView<Component> = pageComponentView.getType().
                         createView(createViewConfig);

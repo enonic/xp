@@ -321,7 +321,7 @@ module app.wizard.page {
                 if (!this.pageModel.hasTemplate()) {
                     this.pageModel.initializePageFromDefault(this);
                 }
-                event.getPageComponentView().getPageComponent().removeFromParent();
+                event.getPageComponentView().getComponent().removeFromParent();
                 this.contextWindow.clearSelection();
             });
 
@@ -330,7 +330,7 @@ module app.wizard.page {
                 if (!this.pageModel.hasTemplate()) {
                     this.pageModel.initializePageFromDefault(this);
                 }
-                var component: Component = event.getComponentView().getPageComponent();
+                var component: Component = event.getComponentView().getComponent();
                 if (component) {
                     component.reset();
                 }

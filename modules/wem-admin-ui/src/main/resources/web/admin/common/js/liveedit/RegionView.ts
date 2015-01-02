@@ -152,8 +152,8 @@ module api.liveedit {
                 var pageComponentViews = this.getPageComponentViews();
 
                 pageComponentViews.forEach((view: ComponentView<Component>, index: number) => {
-                    var pageComponent = pageComponents[index];
-                    view.setPageComponent(pageComponent);
+                    var component = pageComponents[index];
+                    view.setPageComponent(component);
                 });
             }
         }
@@ -376,10 +376,10 @@ module api.liveedit {
                     api.util.assert(itemType.isPageComponentType(),
                             "Expected ItemView beneath a Region to be a Component: " + itemType.getShortName());
 
-                    var pageComponent = region.getComponentByIndex(pageComponentCount++);
+                    var component = region.getComponentByIndex(pageComponentCount++);
                     itemType.createView(new CreateItemViewConfig().
                         setParentView(this).
-                        setData(pageComponent).
+                        setData(component).
                         setElement(childElement).
                         setParentElement(parentElement ? parentElement : this));
                 }

@@ -23,7 +23,7 @@ module api.liveedit.part {
             this.contentViews = [];
             this.liveEditModel = builder.parentRegionView.liveEditModel;
             super(builder.setPlaceholder(new PartPlaceholder(this)));
-            this.partComponent = builder.pageComponent;
+            this.partComponent = builder.component;
 
             if (this.conditionedForEmpty()) {
                 this.displayPlaceholder();

@@ -38,8 +38,8 @@ module app.wizard.page {
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
             api.util.assertNotNull(this.descriptor, "descriptor cannot be null");
 
-            var pageComponent = this.pageComponentView.getPageComponent();
-            if (!pageComponent || !this.descriptor) {
+            var component = this.pageComponentView.getComponent();
+            if (!component || !this.descriptor) {
                 return;
             }
 
@@ -48,16 +48,16 @@ module app.wizard.page {
                 setComponentView(this.pageComponentView).
                 changeTo(this.descriptor.getDisplayName());
 
-            var newPath = pageComponent.getPath();
+            var newPath = component.getPath();
             api.util.assertNotNull(newPath, "Did not expect new path for Component to be null");
 
-            pageComponent.setDescriptor(this.descriptor.getKey());
+            component.setDescriptor(this.descriptor.getKey());
 
             var isLayoutDescriptor = api.ObjectHelper.iFrameSafeInstanceOf(this.descriptor, LayoutDescriptor);
 
             if (isLayoutDescriptor) {
                 var layoutDescriptor = <LayoutDescriptor> this.descriptor;
-                var layoutComponent = <LayoutComponent>pageComponent;
+                var layoutComponent = <LayoutComponent>component;
                 this.addLayoutRegions(layoutComponent, layoutDescriptor);
             }
         }

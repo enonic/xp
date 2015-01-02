@@ -16,7 +16,7 @@ module api.liveedit {
 
         parentElement: api.dom.Element;
 
-        pageComponent: PAGE_COMPONENT;
+        component: PAGE_COMPONENT;
 
         element: api.dom.Element;
 
@@ -53,7 +53,7 @@ module api.liveedit {
         }
 
         setPageComponent(value: PAGE_COMPONENT): ComponentViewBuilder<PAGE_COMPONENT> {
-            this.pageComponent = value;
+            this.component = value;
             return this;
         }
 
@@ -73,13 +73,13 @@ module api.liveedit {
         }
     }
 
-    export class ComponentView<PAGE_COMPONENT extends Component> extends ItemView {
+    export class ComponentView<COMPONENT extends Component> extends ItemView {
 
         private placeholder: ComponentPlaceholder;
 
         private parentRegionView: RegionView;
 
-        private pageComponent: PAGE_COMPONENT;
+        private component: COMPONENT;
 
         private moving: boolean;
 
@@ -87,7 +87,7 @@ module api.liveedit {
 
         private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
 
-        constructor(builder: ComponentViewBuilder<PAGE_COMPONENT>) {
+        constructor(builder: ComponentViewBuilder<COMPONENT>) {
 
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
@@ -103,11 +103,11 @@ module api.liveedit {
                     setParentView(builder.parentRegionView).
                     setParentElement(builder.parentElement).
                     setContextMenuActions(this.createPageComponentContextMenuActions(builder.contextMenuActions)).
-                    setContextMenuTitle(new ComponentViewContextMenuTitle(builder.pageComponent, builder.type))
+                    setContextMenuTitle(new ComponentViewContextMenuTitle(builder.component, builder.type))
             );
 
             this.parentRegionView = builder.parentRegionView;
-            this.setPageComponent(builder.pageComponent);
+            this.setPageComponent(builder.component);
             this.parentRegionView.registerPageComponentView(this, builder.positionIndex);
 
             // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
@@ -140,7 +140,7 @@ module api.liveedit {
                 new ComponentRemoveEvent(this).fire();
             }));
             actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
-                var duplicatedPageComponent = <PAGE_COMPONENT> this.getPageComponent().duplicateComponent();
+                var duplicatedPageComponent = <COMPONENT> this.getComponent().duplicateComponent();
                 var duplicatedView = this.duplicate(duplicatedPageComponent);
                 this.deselect();
                 duplicatedView.markAsEmpty();
@@ -182,31 +182,31 @@ module api.liveedit {
             return <ComponentItemType>super.getType();
         }
 
-        setPageComponent(pageComponent: PAGE_COMPONENT) {
-            this.pageComponent = pageComponent;
-            if (pageComponent) {
-                this.setTooltipObject(pageComponent);
+        setPageComponent(component: COMPONENT) {
+            this.component = component;
+            if (component) {
+                this.setTooltipObject(component);
             }
         }
 
-        getPageComponent(): PAGE_COMPONENT {
-            return this.pageComponent;
+        getComponent(): COMPONENT {
+            return this.component;
         }
 
         hasComponentPath(): boolean {
-            return !this.pageComponent ? false : true;
+            return !this.component ? false : true;
         }
 
         getComponentPath(): ComponentPath {
 
-            if (!this.pageComponent) {
+            if (!this.component) {
                 return null;
             }
-            return this.pageComponent.getPath();
+            return this.component.getPath();
         }
 
         getName(): string {
-            return this.pageComponent && this.pageComponent.getName() ? this.pageComponent.getName().toString() : null;
+            return this.component && this.component.getName() ? this.component.getName().toString() : null;
         }
 
         getParentItemView(): RegionView {
@@ -251,7 +251,7 @@ module api.liveedit {
             this.placeholder.showRenderingError(url, errorMessage);
         }
 
-        duplicate(duplicate: PAGE_COMPONENT): ComponentView<PAGE_COMPONENT> {
+        duplicate(duplicate: COMPONENT): ComponentView<COMPONENT> {
             throw new Error("Must be implemented by inheritors");
         }
 
@@ -267,7 +267,7 @@ module api.liveedit {
             var precedingComponentIndex: number = -1;
             var precedingComponent: Component = null;
             if (precedingComponentView) {
-                precedingComponent = precedingComponentView.getPageComponent();
+                precedingComponent = precedingComponentView.getComponent();
                 precedingComponentIndex = precedingComponentView.getParentItemView().getPageComponentViewIndex(precedingComponentView);
             }
 
@@ -276,13 +276,13 @@ module api.liveedit {
                 indexInNewParent = precedingComponentIndex + 1;
             }
 
-            this.getPageComponent().setName(this.getPageComponent().getName());
+            this.getComponent().setName(this.getComponent().getName());
 
             // Unregister from previous region...
             // View
             this.parentRegionView.unregisterPageComponentView(this);
             // Data
-            this.pageComponent.removeFromParent();
+            this.component.removeFromParent();
             // Element
             this.unregisterFromParentElement();
 
@@ -290,7 +290,7 @@ module api.liveedit {
             // Register Element only, since it's already added in DOM.
             toRegionView.registerChildElement(this);
             // Data
-            toRegionView.getRegion().addComponentAfter(this.pageComponent, precedingComponent);
+            toRegionView.getRegion().addComponentAfter(this.component, precedingComponent);
             // View
             toRegionView.registerPageComponentView(this, indexInNewParent);
             this.parentRegionView = toRegionView;

@@ -73,8 +73,8 @@ module api.content.page {
                     build();
 
                 regionJson.components.forEach((componentJson: api.content.page.ComponentTypeWrapperJson) => {
-                    var pageComponent = ComponentFactory.createFromJson(componentJson, region, propertyIdProvider);
-                    region.addComponent(pageComponent);
+                    var component = ComponentFactory.createFromJson(componentJson, region, propertyIdProvider);
+                    region.addComponent(component);
                 });
 
                 this.addRegion(region);

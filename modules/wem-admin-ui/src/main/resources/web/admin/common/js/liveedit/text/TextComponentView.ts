@@ -27,7 +27,7 @@ module api.liveedit.text {
             super(builder.
                 setContextMenuActions(this.createTextContextMenuActions()).
                 setPlaceholder(this.textPlaceholder));
-            this.textComponent = builder.pageComponent;
+            this.textComponent = builder.component;
 
             if (this.conditionedForEmpty()) {
                 this.markAsEmpty();

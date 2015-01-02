@@ -23,7 +23,7 @@ module app.wizard.page.contextwindow.inspect {
         }
 
         setPartComponent(partView: PartComponentView) {
-            var component = <PartComponent>partView.getPageComponent();
+            var component = <PartComponent>partView.getComponent();
             this.setComponent(component);
             if (component.hasDescriptor()) {
                 new GetPartDescriptorByKeyRequest(component.getDescriptor()).sendAndParse().then((descriptor: PartDescriptor) => {

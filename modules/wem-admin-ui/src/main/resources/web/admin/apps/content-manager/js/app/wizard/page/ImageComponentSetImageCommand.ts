@@ -47,7 +47,7 @@ module app.wizard.page {
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
             api.util.assertNotNull(this.image, "image cannot be null");
 
-            var imageComponent = this.imageView.getPageComponent();
+            var imageComponent = this.imageView.getComponent();
             imageComponent.setImage(this.image);
 
             new ComponentNameChanger().

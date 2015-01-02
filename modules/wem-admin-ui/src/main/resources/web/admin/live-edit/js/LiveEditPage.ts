@@ -227,7 +227,7 @@ module LiveEdit {
             }
             var precedingPageComponent: Component = null;
             if (precedingComponentView) {
-                precedingPageComponent = precedingComponentView.getPageComponent();
+                precedingPageComponent = precedingComponentView.getComponent();
             }
             var component = builder.build();
             region.addComponentAfter(component, precedingPageComponent);

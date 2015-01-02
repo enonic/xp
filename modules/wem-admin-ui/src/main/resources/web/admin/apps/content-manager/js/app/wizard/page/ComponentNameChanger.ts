@@ -31,7 +31,7 @@ module app.wizard.page {
             api.util.assertNotNull(this.pageRegions, "pageRegions cannot be null");
             api.util.assertNotNull(this.pageComponentView, "pageComponentView cannot be null");
 
-            var component = this.pageComponentView.getPageComponent();
+            var component = this.pageComponentView.getComponent();
 
             var componentName = new ComponentName(name);
             component.setName(componentName);
