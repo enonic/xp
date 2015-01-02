@@ -6,12 +6,10 @@ import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.ComponentType;
 import com.enonic.wem.api.content.page.DescriptorBasedComponent;
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.PropertyTree;
 
 public final class PartComponent
     extends DescriptorBasedComponent<DescriptorKey>
-    implements RegionPlaceableComponent
 {
     public PartComponent( final Builder builder )
     {

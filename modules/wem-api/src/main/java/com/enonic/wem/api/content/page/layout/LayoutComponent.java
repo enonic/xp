@@ -9,13 +9,11 @@ import com.enonic.wem.api.content.page.ComponentType;
 import com.enonic.wem.api.content.page.DescriptorBasedComponent;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.PropertyTree;
 
 @SuppressWarnings("UnusedDeclaration")
 public final class LayoutComponent
     extends DescriptorBasedComponent<DescriptorKey>
-    implements RegionPlaceableComponent
 {
     private LayoutRegions regions;
 
