@@ -3,7 +3,7 @@ module api.liveedit {
     import Component = api.content.page.Component;
     import ComponentName = api.content.page.ComponentName;
 
-    export class PageComponentViewContextMenuTitle<PAGE_COMPONENT extends Component> extends ItemViewContextMenuTitle {
+    export class ComponentViewContextMenuTitle<PAGE_COMPONENT extends Component> extends ItemViewContextMenuTitle {
 
         constructor(pageComponent: PAGE_COMPONENT, type: PageComponentItemType) {
             pageComponent.onPropertyChanged((event: api.PropertyChangedEvent) => {

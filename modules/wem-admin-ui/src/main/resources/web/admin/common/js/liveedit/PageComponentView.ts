@@ -103,7 +103,7 @@ module api.liveedit {
                     setParentView(builder.parentRegionView).
                     setParentElement(builder.parentElement).
                     setContextMenuActions(this.createPageComponentContextMenuActions(builder.contextMenuActions)).
-                    setContextMenuTitle(new PageComponentViewContextMenuTitle(builder.pageComponent, builder.type))
+                    setContextMenuTitle(new ComponentViewContextMenuTitle(builder.pageComponent, builder.type))
             );
 
             this.parentRegionView = builder.parentRegionView;
