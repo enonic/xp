@@ -5,7 +5,7 @@ module api.liveedit.image {
     import PageItemType = api.liveedit.PageItemType;
     import ContentTypeName = api.schema.content.ContentTypeName;
 
-    export class ImagePlaceholder extends api.liveedit.PageComponentPlaceholder {
+    export class ImagePlaceholder extends api.liveedit.ComponentPlaceholder {
 
         private imageComponentView: ImageComponentView;
 

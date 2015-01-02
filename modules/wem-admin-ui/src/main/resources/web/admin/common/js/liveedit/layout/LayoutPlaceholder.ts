@@ -5,7 +5,7 @@ module api.liveedit.layout {
     import PageItemType = api.liveedit.PageItemType;
     import SiteModel = api.content.site.SiteModel;
 
-    export class LayoutPlaceholder extends PageComponentPlaceholder {
+    export class LayoutPlaceholder extends ComponentPlaceholder {
 
         private comboBox: api.content.page.layout.LayoutDescriptorComboBox;
 

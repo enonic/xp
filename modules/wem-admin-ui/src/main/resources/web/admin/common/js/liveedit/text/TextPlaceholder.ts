@@ -3,7 +3,7 @@ module api.liveedit.text {
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
     import PageItemType = api.liveedit.PageItemType;
 
-    export class TextPlaceholder extends PageComponentPlaceholder {
+    export class TextPlaceholder extends ComponentPlaceholder {
 
         constructor(layoutView: TextComponentView) {
             super();

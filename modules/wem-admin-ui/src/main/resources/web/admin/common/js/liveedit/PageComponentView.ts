@@ -6,7 +6,7 @@ module api.liveedit {
 
     export class PageComponentViewBuilder<PAGE_COMPONENT extends Component> {
 
-        placeholder: PageComponentPlaceholder;
+        placeholder: ComponentPlaceholder;
 
         itemViewProducer: ItemViewIdProducer;
 
@@ -24,7 +24,7 @@ module api.liveedit {
 
         contextMenuActions: api.ui.Action[];
 
-        setPlaceholder(value: PageComponentPlaceholder): PageComponentViewBuilder<PAGE_COMPONENT> {
+        setPlaceholder(value: ComponentPlaceholder): PageComponentViewBuilder<PAGE_COMPONENT> {
             this.placeholder = value;
             return this;
         }
@@ -75,7 +75,7 @@ module api.liveedit {
 
     export class PageComponentView<PAGE_COMPONENT extends Component> extends ItemView {
 
-        private placeholder: PageComponentPlaceholder;
+        private placeholder: ComponentPlaceholder;
 
         private parentRegionView: RegionView;
 

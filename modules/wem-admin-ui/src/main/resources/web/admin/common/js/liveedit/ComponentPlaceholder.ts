@@ -1,6 +1,6 @@
 module api.liveedit {
 
-    export class PageComponentPlaceholder extends api.dom.DivEl {
+    export class ComponentPlaceholder extends api.dom.DivEl {
 
         showRenderingError(url: string, errorMessage:string = "Error rendering component") {
 
