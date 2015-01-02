@@ -6,5 +6,5 @@ exports.createUrl = function () {
         }
     });
 
-    assert.assertEquals('/root/portal/live/stage/some/path?a=1&b=1&b=2', result);
+    assert.assertEquals('/root/portal/live/stage/some/path/_/attachment?a=1&b=1&b=2', result);
 };
