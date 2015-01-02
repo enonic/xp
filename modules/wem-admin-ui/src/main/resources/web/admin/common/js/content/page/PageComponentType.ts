@@ -15,7 +15,7 @@ module api.content.page {
             return this.shortName;
         }
 
-        newComponentBuilder(): PageComponentBuilder<Component> {
+        newComponentBuilder(): ComponentBuilder<Component> {
             throw new Error("Must be implemented by inheritors");
         }
 

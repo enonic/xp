@@ -14,7 +14,7 @@ module api.content.page {
 
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
-        constructor(builder?: PageComponentBuilder<any>) {
+        constructor(builder?: ComponentBuilder<any>) {
             if (builder != undefined) {
                 this.name = builder.name;
                 this.parent = builder.parent;
@@ -116,7 +116,7 @@ module api.content.page {
         }
     }
 
-    export class PageComponentBuilder<COMPONENT extends Component> {
+    export class ComponentBuilder<COMPONENT extends Component> {
 
         name: ComponentName;
 
@@ -129,12 +129,12 @@ module api.content.page {
             }
         }
 
-        public setName(value: ComponentName): PageComponentBuilder<COMPONENT> {
+        public setName(value: ComponentName): ComponentBuilder<COMPONENT> {
             this.name = value;
             return this;
         }
 
-        public setParent(value: Region): PageComponentBuilder<COMPONENT> {
+        public setParent(value: Region): ComponentBuilder<COMPONENT> {
             this.parent = value;
             return this;
         }

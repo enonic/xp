@@ -55,7 +55,7 @@ module api.content.page.text {
         }
     }
 
-    export class TextComponentBuilder extends api.content.page.PageComponentBuilder<TextComponent> {
+    export class TextComponentBuilder extends api.content.page.ComponentBuilder<TextComponent> {
 
         text: string;
 

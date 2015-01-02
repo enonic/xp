@@ -94,7 +94,7 @@ module api.content.page.image {
         }
     }
 
-    export class ImageComponentBuilder extends api.content.page.PageComponentBuilder<ImageComponent> {
+    export class ImageComponentBuilder extends api.content.page.ComponentBuilder<ImageComponent> {
 
         image: api.content.ContentId;
 

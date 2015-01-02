@@ -79,7 +79,7 @@ module api.content.page {
         }
     }
 
-    export class DescriptorBasedPageComponentBuilder<DESCRIPTOR_BASED_COMPONENT extends DescriptorBasedPageComponent> extends PageComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
+    export class DescriptorBasedPageComponentBuilder<DESCRIPTOR_BASED_COMPONENT extends DescriptorBasedPageComponent> extends ComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
 
         descriptor: DescriptorKey;
 
@@ -93,12 +93,12 @@ module api.content.page {
             }
         }
 
-        public setDescriptor(value: DescriptorKey): PageComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
+        public setDescriptor(value: DescriptorKey): ComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
             this.descriptor = value;
             return this;
         }
 
-        public setConfig(value: PropertyTree): PageComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
+        public setConfig(value: PropertyTree): ComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
             this.config = value;
             return this;
         }
