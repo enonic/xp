@@ -3,7 +3,7 @@ module api.content.page {
     import Region = api.content.page.region.Region;
     import PropertyIdProvider = api.data.PropertyIdProvider;
 
-    export class PageComponentFactory {
+    export class ComponentFactory {
 
         public static createFromJson(json: api.content.page.PageComponentTypeWrapperJson, region: Region,
                                      propertyIdProvider: PropertyIdProvider): api.content.page.Component {
