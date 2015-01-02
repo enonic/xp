@@ -153,7 +153,7 @@ module api.liveedit {
 
                 pageComponentViews.forEach((view: ComponentView<Component>, index: number) => {
                     var component = pageComponents[index];
-                    view.setPageComponent(component);
+                    view.setComponent(component);
                 });
             }
         }

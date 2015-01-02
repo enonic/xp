@@ -4,7 +4,7 @@ module api.liveedit {
     import ComponentPath = api.content.page.ComponentPath;
     import ComponentName = api.content.page.ComponentName;
 
-    export class ComponentViewBuilder<PAGE_COMPONENT extends Component> {
+    export class ComponentViewBuilder<COMPONENT extends Component> {
 
         placeholder: ComponentPlaceholder;
 
@@ -16,7 +16,7 @@ module api.liveedit {
 
         parentElement: api.dom.Element;
 
-        component: PAGE_COMPONENT;
+        component: COMPONENT;
 
         element: api.dom.Element;
 
@@ -24,7 +24,7 @@ module api.liveedit {
 
         contextMenuActions: api.ui.Action[];
 
-        setPlaceholder(value: ComponentPlaceholder): ComponentViewBuilder<PAGE_COMPONENT> {
+        setPlaceholder(value: ComponentPlaceholder): ComponentViewBuilder<COMPONENT> {
             this.placeholder = value;
             return this;
         }
@@ -32,42 +32,42 @@ module api.liveedit {
         /**
          * Optional. The ItemViewIdProducer of parentRegionView will be used if not set.
          */
-        setItemViewProducer(value: ItemViewIdProducer): ComponentViewBuilder<PAGE_COMPONENT> {
+        setItemViewProducer(value: ItemViewIdProducer): ComponentViewBuilder<COMPONENT> {
             this.itemViewProducer = value;
             return this;
         }
 
-        setType(value: ComponentItemType): ComponentViewBuilder<PAGE_COMPONENT> {
+        setType(value: ComponentItemType): ComponentViewBuilder<COMPONENT> {
             this.type = value;
             return this;
         }
 
-        setParentRegionView(value: RegionView): ComponentViewBuilder<PAGE_COMPONENT> {
+        setParentRegionView(value: RegionView): ComponentViewBuilder<COMPONENT> {
             this.parentRegionView = value;
             return this;
         }
 
-        setParentElement(value: api.dom.Element): ComponentViewBuilder<PAGE_COMPONENT> {
+        setParentElement(value: api.dom.Element): ComponentViewBuilder<COMPONENT> {
             this.parentElement = value;
             return this;
         }
 
-        setPageComponent(value: PAGE_COMPONENT): ComponentViewBuilder<PAGE_COMPONENT> {
+        setComponent(value: COMPONENT): ComponentViewBuilder<COMPONENT> {
             this.component = value;
             return this;
         }
 
-        setElement(value: api.dom.Element): ComponentViewBuilder<PAGE_COMPONENT> {
+        setElement(value: api.dom.Element): ComponentViewBuilder<COMPONENT> {
             this.element = value;
             return this;
         }
 
-        setPositionIndex(value: number): ComponentViewBuilder<PAGE_COMPONENT> {
+        setPositionIndex(value: number): ComponentViewBuilder<COMPONENT> {
             this.positionIndex = value;
             return this;
         }
 
-        setContextMenuActions(actions: api.ui.Action[]): ComponentViewBuilder<PAGE_COMPONENT> {
+        setContextMenuActions(actions: api.ui.Action[]): ComponentViewBuilder<COMPONENT> {
             this.contextMenuActions = actions;
             return this;
         }
@@ -107,7 +107,7 @@ module api.liveedit {
             );
 
             this.parentRegionView = builder.parentRegionView;
-            this.setPageComponent(builder.component);
+            this.setComponent(builder.component);
             this.parentRegionView.registerPageComponentView(this, builder.positionIndex);
 
             // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
@@ -182,7 +182,7 @@ module api.liveedit {
             return <ComponentItemType>super.getType();
         }
 
-        setPageComponent(component: COMPONENT) {
+        setComponent(component: COMPONENT) {
             this.component = component;
             if (component) {
                 this.setTooltipObject(component);

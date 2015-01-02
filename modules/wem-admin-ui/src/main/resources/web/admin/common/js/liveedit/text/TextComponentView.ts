@@ -60,7 +60,7 @@ module api.liveedit.text {
             var duplicatedView = new TextComponentView(new TextComponentViewBuilder().
                 setParentRegionView(this.getParentItemView()).
                 setParentElement(this.getParentElement()).
-                setPageComponent(duplicate));
+                setComponent(duplicate));
             duplicatedView.insertAfterEl(this);
             duplicatedView.displayPlaceholder();
             return duplicatedView;

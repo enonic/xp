@@ -35,7 +35,7 @@ module api.liveedit.image {
                 setParentRegionView(config.parentView).
                 setParentElement(config.parentElement).
                 setElement(config.element).
-                setPageComponent(config.data).
+                setComponent(config.data).
                 setPositionIndex(config.positionIndex));
         }
 

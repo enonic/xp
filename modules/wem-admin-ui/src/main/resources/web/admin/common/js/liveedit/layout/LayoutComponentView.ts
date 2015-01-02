@@ -34,8 +34,8 @@ module api.liveedit.layout {
             this.parseRegions();
         }
 
-        setPageComponent(layoutComponent: LayoutComponent) {
-            super.setPageComponent(layoutComponent);
+        setComponent(layoutComponent: LayoutComponent) {
+            super.setComponent(layoutComponent);
             var regions = layoutComponent.getLayoutRegions().getRegions();
             this.regionViews.forEach((regionView: RegionView, index: number) => {
                 var region = regions[index];
@@ -59,7 +59,7 @@ module api.liveedit.layout {
             var duplicatedView = new LayoutComponentView(new LayoutComponentViewBuilder().
                 setParentRegionView(this.getParentItemView()).
                 setParentElement(this.getParentElement()).
-                setPageComponent(duplicate));
+                setComponent(duplicate));
             duplicatedView.insertAfterEl(this);
             return duplicatedView;
         }

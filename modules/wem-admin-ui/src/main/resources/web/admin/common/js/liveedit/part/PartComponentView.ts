@@ -51,7 +51,7 @@ module api.liveedit.part {
             var duplicatedView = new PartComponentView(new PartComponentViewBuilder().
                 setParentRegionView(this.getParentItemView()).
                 setParentElement(this.getParentElement()).
-                setPageComponent(duplicate));
+                setComponent(duplicate));
             duplicatedView.insertAfterEl(this);
             return duplicatedView;
         }
