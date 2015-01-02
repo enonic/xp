@@ -29,7 +29,7 @@ module app.wizard.page.contextwindow.inspect {
         private layoutDescriptorChangedListeners: {(event: LayoutDescriptorChangedEvent): void;}[] = [];
 
         constructor() {
-            super(<ComponentInspectionPanelConfig>{
+            super(<DescriptorBasedComponentInspectionPanelConfig>{
                 iconClass: "live-edit-font-icon-layout icon-xlarge"
             });
 

@@ -5,16 +5,15 @@ module app.wizard.page.contextwindow.inspect {
     import DescriptorKey = api.content.page.DescriptorKey;
     import Descriptor = api.content.page.Descriptor;
 
-    export interface DescriptorBasedPageComponentInspectionPanelConfig {
+    export interface DescriptorBasedComponentInspectionPanelConfig extends ComponentInspectionPanelConfig{
 
-        iconClass: string;
     }
 
     export class DescriptorBasedComponentInspectionPanel<COMPONENT extends DescriptorBasedComponent, DESCRIPTOR extends Descriptor> extends ComponentInspectionPanel<COMPONENT> {
 
         private formView: FormView;
 
-        constructor(config: DescriptorBasedPageComponentInspectionPanelConfig) {
+        constructor(config: DescriptorBasedComponentInspectionPanelConfig) {
             super(config);
 
             this.formView = null;
