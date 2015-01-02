@@ -3,9 +3,7 @@ package com.enonic.wem.api.content.page;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 
@@ -28,7 +26,7 @@ public class DescriptorsTest
             displayName( "Landing page" ).
             config( pageForm ).
             regions( newRegionDescriptors().build() ).
-            key( PageDescriptorKey.from( "module:landing-page" ) ).
+            key( DescriptorKey.from( "module:landing-page" ) ).
             build();
 
         assertEquals( "Landing page", pageDescriptor.getDisplayName() );
@@ -46,7 +44,7 @@ public class DescriptorsTest
             name( "news-part" ).
             displayName( "News part" ).
             config( partForm ).
-            key( PartDescriptorKey.from( "module:new-part" ) ).
+            key( DescriptorKey.from( "module:new-part" ) ).
             build();
 
         assertEquals( "News part", partDescriptor.getDisplayName() );
@@ -64,7 +62,7 @@ public class DescriptorsTest
             displayName( "Fancy layout" ).
             config( layoutForm ).
             regions( newRegionDescriptors().build() ).
-            key( LayoutDescriptorKey.from( "module:fancy-layout" ) ).
+            key( DescriptorKey.from( "module:fancy-layout" ) ).
             build();
 
         assertEquals( "Fancy layout", layoutDescriptor.getDisplayName() );

@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 import com.google.common.collect.Collections2;
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptors;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleService;
@@ -26,9 +26,9 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
     protected ModuleService moduleService;
 
-    protected final PartDescriptor getDescriptor( final PartDescriptorKey key )
+    protected final PartDescriptor getDescriptor( final DescriptorKey key )
     {
-        final ResourceKey resourceKey = key.toResourceKey();
+        final ResourceKey resourceKey = PartDescriptor.toResourceKey( key );
         final Resource resource = Resource.from( resourceKey );
 
         final String descriptorXml = resource.readString();
@@ -79,7 +79,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
                 continue;
             }
             final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
-            final PartDescriptorKey key = PartDescriptorKey.from( module.getKey(), descriptorName );
+            final DescriptorKey key = DescriptorKey.from( module.getKey(), descriptorName );
             final PartDescriptor partDescriptor = getDescriptor( key );
             if ( partDescriptor != null )
             {

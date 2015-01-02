@@ -2,8 +2,8 @@ package com.enonic.wem.api.xml.serializer;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.Form;
@@ -76,7 +76,7 @@ public class XmlPageDescriptorSerializerTest
                 add( newRegionDescriptor().name( "main" ).build() ).
                 add( newRegionDescriptor().name( "footer" ).build() ).
                 build() ).
-            key( PageDescriptorKey.from( "module:mypage" ) ).
+            key( DescriptorKey.from( "module:mypage" ) ).
             build();
 
         final XmlPageDescriptor xml = XmlPageDescriptorMapper.toXml( pageDescriptor );
@@ -91,7 +91,7 @@ public class XmlPageDescriptorSerializerTest
     {
         final String xml = readFromFile( "page-descriptor.xml" );
         final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
-        builder.key( PageDescriptorKey.from( "module:mypage" ) );
+        builder.key( DescriptorKey.from( "module:mypage" ) );
         builder.regions( RegionDescriptors.newRegionDescriptors().build() );
 
         final XmlPageDescriptor xmlObject = XmlSerializers.pageDescriptor().parse( xml );

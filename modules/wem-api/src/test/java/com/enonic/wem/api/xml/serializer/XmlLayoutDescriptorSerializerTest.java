@@ -2,8 +2,8 @@ package com.enonic.wem.api.xml.serializer;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.xml.mapper.XmlLayoutDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;
@@ -35,7 +35,7 @@ public class XmlLayoutDescriptorSerializerTest
                 add( newRegionDescriptor().name( "left" ).build() ).
                 add( newRegionDescriptor().name( "right" ).build() ).
                 build() ).
-            key( LayoutDescriptorKey.from( "module:mylayout" ) ).
+            key( DescriptorKey.from( "module:mylayout" ) ).
             build();
 
         XmlLayoutDescriptor xml = XmlLayoutDescriptorMapper.toXml( layoutDescriptor );
@@ -50,7 +50,7 @@ public class XmlLayoutDescriptorSerializerTest
     {
         final String xml = readFromFile( "layout-descriptor.xml" );
         final LayoutDescriptor.Builder builder = LayoutDescriptor.newLayoutDescriptor();
-        builder.key( LayoutDescriptorKey.from( "module:mylayout" ) );
+        builder.key( DescriptorKey.from( "module:mylayout" ) );
         builder.name( "mylayout" );
 
         XmlLayoutDescriptor xmlObject = XmlSerializers.layoutDescriptor().parse( xml );

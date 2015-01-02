@@ -3,9 +3,7 @@ package com.enonic.wem.api.content.page;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.data.PropertyTree;
 
 import static com.enonic.wem.api.content.page.Page.newPage;
@@ -39,7 +37,7 @@ public class ComponentsTest
 
         PartComponent partComponent = newPartComponent().
             name( "my-part" ).
-            descriptor( PartDescriptorKey.from( "mainmodule:partTemplateName" ) ).
+            descriptor( DescriptorKey.from( "mainmodule:partTemplateName" ) ).
             config( partConfig ).
             build();
 
@@ -56,7 +54,7 @@ public class ComponentsTest
 
         LayoutComponent layoutComponent = newLayoutComponent().
             name( "my-template" ).
-            descriptor( LayoutDescriptorKey.from( "mainmodule:layoutTemplateName" ) ).
+            descriptor( DescriptorKey.from( "mainmodule:layoutTemplateName" ) ).
             config( layoutConfig ).
             build();
 

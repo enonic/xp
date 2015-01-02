@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.wem.admin.json.content.page.DescriptorBasedComponentJson;
 import com.enonic.wem.admin.json.content.page.region.RegionJson;
 import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.data.PropertyArrayJson;
 import com.enonic.wem.api.data.PropertyTreeJson;
 
@@ -30,7 +30,7 @@ public class LayoutComponentJson
     {
         super( newLayoutComponent().
             name( ComponentName.from( name ) ).
-            descriptor( descriptor != null ? LayoutDescriptorKey.from( descriptor ) : null ).
+            descriptor( descriptor != null ? DescriptorKey.from( descriptor ) : null ).
             config( config != null ? PropertyTreeJson.fromJson( config ) : null ).
             regions( regions != null ? new LayoutRegionsJson( regions ).getLayoutRegions() : null ).
             build() );

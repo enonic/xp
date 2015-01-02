@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.page.part;
 
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.content.page.part.PartDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
@@ -13,7 +13,7 @@ public final class PartDescriptorServiceImpl
 {
     private ModuleService moduleService;
 
-    public PartDescriptor getByKey( final PartDescriptorKey key )
+    public PartDescriptor getByKey( final DescriptorKey key )
     {
         return new GetPartDescriptorCommand().moduleService( this.moduleService ).key( key ).execute();
     }

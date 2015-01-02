@@ -4,14 +4,13 @@ package com.enonic.wem.core.content.page;
 import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorNotFoundException;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptorNotFoundException;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.module.ModuleKey;
@@ -53,8 +52,8 @@ class GetComponentByNameCommand
     {
         try
         {
-            final PartDescriptorKey partDescriptorKey = PartDescriptorKey.from( this.module, descriptorName );
-            return partDescriptorService.getByKey( partDescriptorKey );
+            final DescriptorKey descriptorKey = DescriptorKey.from( this.module, descriptorName );
+            return partDescriptorService.getByKey( descriptorKey );
         }
         catch ( PartDescriptorNotFoundException e )
         {
@@ -66,8 +65,8 @@ class GetComponentByNameCommand
     {
         try
         {
-            final LayoutDescriptorKey partDescriptorKey = LayoutDescriptorKey.from( this.module, descriptorName );
-            return layoutDescriptorService.getByKey( partDescriptorKey );
+            final DescriptorKey descriptorKey = DescriptorKey.from( this.module, descriptorName );
+            return layoutDescriptorService.getByKey( descriptorKey );
         }
         catch ( LayoutDescriptorNotFoundException e )
         {

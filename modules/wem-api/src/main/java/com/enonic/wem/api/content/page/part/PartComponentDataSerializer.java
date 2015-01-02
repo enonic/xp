@@ -25,7 +25,7 @@ public class PartComponentDataSerializer
     @Override
     protected DescriptorKey toDescriptorKey( final String s )
     {
-        return PartDescriptorKey.from( s );
+        return DescriptorKey.from( s );
     }
 
 }

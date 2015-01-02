@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.page;
 
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.region.Region;
@@ -53,7 +53,7 @@ public class PageDataSerializer
         final Page.Builder page = Page.newPage();
         if ( asData.isNotNull( CONTROLLER ) )
         {
-            page.controller( PageDescriptorKey.from( asData.getString( CONTROLLER ) ) );
+            page.controller( DescriptorKey.from( asData.getString( CONTROLLER ) ) );
         }
         if ( asData.isNotNull( PAGE_TEMPLATE ) )
         {

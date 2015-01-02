@@ -31,7 +31,7 @@ public final class PageTemplate
         return getPage().getConfig();
     }
 
-    public PageDescriptorKey getController()
+    public DescriptorKey getController()
     {
         if ( this.getPage() == null )
         {
@@ -105,7 +105,7 @@ public final class PageTemplate
             return this;
         }
 
-        public Builder controller( final PageDescriptorKey descriptorKey )
+        public Builder controller( final DescriptorKey descriptorKey )
         {
             if ( this.page == null )
             {

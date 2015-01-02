@@ -9,7 +9,7 @@ public final class CreatePageParams
 {
     private ContentId content;
 
-    private PageDescriptorKey controller;
+    private DescriptorKey controller;
 
     private PageTemplateKey pageTemplate;
 
@@ -23,7 +23,7 @@ public final class CreatePageParams
         return this;
     }
 
-    public CreatePageParams controller( PageDescriptorKey value )
+    public CreatePageParams controller( DescriptorKey value )
     {
         this.controller = value;
         return this;
@@ -57,7 +57,7 @@ public final class CreatePageParams
         return pageTemplate;
     }
 
-    public PageDescriptorKey getController()
+    public DescriptorKey getController()
     {
         return controller;
     }

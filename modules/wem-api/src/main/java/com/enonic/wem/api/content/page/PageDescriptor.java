@@ -9,7 +9,7 @@ import com.enonic.wem.api.resource.ResourceKey;
 
 public final class PageDescriptor
 {
-    private final PageDescriptorKey key;
+    private final DescriptorKey key;
 
     private final String displayName;
 
@@ -28,7 +28,7 @@ public final class PageDescriptor
         this.config = builder.config != null ? builder.config : Form.newForm().build();
     }
 
-    public PageDescriptorKey getKey()
+    public DescriptorKey getKey()
     {
         return key;
     }
@@ -58,6 +58,11 @@ public final class PageDescriptor
         return regions;
     }
 
+    public static ResourceKey toResourceKey( final DescriptorKey key )
+    {
+        return ResourceKey.from( key.getModuleKey(), "page/" + key.getName().toString() + "/page.xml" );
+    }
+    
     public static PageDescriptor.Builder newPageDescriptor()
     {
         return new Builder();
@@ -65,7 +70,7 @@ public final class PageDescriptor
 
     public static class Builder
     {
-        private PageDescriptorKey key;
+        private DescriptorKey key;
 
         private String displayName;
 
@@ -77,7 +82,7 @@ public final class PageDescriptor
         {
         }
 
-        public Builder key( final PageDescriptorKey value )
+        public Builder key( final DescriptorKey value )
         {
             this.key = value;
             return this;

@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.content.page.DescriptorBasedComponentJson;
 import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.data.PropertyArrayJson;
 import com.enonic.wem.api.data.PropertyTreeJson;
 
@@ -32,7 +32,7 @@ public class PartComponentJson
     {
         super( newPartComponent().
             name( ComponentName.from( name ) ).
-            descriptor( descriptor != null ? PartDescriptorKey.from( descriptor ) : null ).
+            descriptor( descriptor != null ? DescriptorKey.from( descriptor ) : null ).
             config( config != null ? PropertyTreeJson.fromJson( config ) : null ).
             build() );
 

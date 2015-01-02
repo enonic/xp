@@ -11,8 +11,8 @@ import javax.ws.rs.core.MediaType;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.content.page.layout.LayoutDescriptorJson;
 import com.enonic.wem.admin.json.content.page.layout.LayoutDescriptorsJson;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
@@ -28,7 +28,7 @@ public final class LayoutDescriptorResource
     @GET
     public LayoutDescriptorJson getByKey( @QueryParam("key") final String layoutDescriptorKey )
     {
-        final LayoutDescriptorKey key = LayoutDescriptorKey.from( layoutDescriptorKey );
+        final DescriptorKey key = DescriptorKey.from( layoutDescriptorKey );
         final LayoutDescriptor descriptor = layoutDescriptorService.getByKey( key );
         return new LayoutDescriptorJson( descriptor );
     }

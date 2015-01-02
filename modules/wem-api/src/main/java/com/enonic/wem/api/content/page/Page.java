@@ -15,7 +15,7 @@ import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 public final class Page
     implements com.enonic.wem.api.rendering.Component
 {
-    private final PageDescriptorKey controller;
+    private final DescriptorKey controller;
 
     private final PageTemplateKey template;
 
@@ -37,7 +37,7 @@ public final class Page
         return controller != null;
     }
 
-    public PageDescriptorKey getController()
+    public DescriptorKey getController()
     {
         return controller;
     }
@@ -140,7 +140,7 @@ public final class Page
 
     static class PageProperties
     {
-        PageDescriptorKey controller;
+        DescriptorKey controller;
 
         PageTemplateKey template;
 
@@ -161,7 +161,7 @@ public final class Page
             this.config = source.config != null ? source.config.copy() : null;
         }
 
-        public PageProperties controller( PageDescriptorKey value )
+        public PageProperties controller( DescriptorKey value )
         {
             this.controller = value;
             return this;
@@ -193,7 +193,7 @@ public final class Page
             this.original = original;
         }
 
-        public PageEditBuilder controller( PageDescriptorKey value )
+        public PageEditBuilder controller( DescriptorKey value )
         {
             changes.recordChange( newPossibleChange( "controller" ).from( this.original.getTemplate() ).to( value ).build() );
             this.controller = value;
@@ -258,7 +258,7 @@ public final class Page
             return this;
         }
 
-        public Builder controller( final PageDescriptorKey value )
+        public Builder controller( final DescriptorKey value )
         {
             this.controller = value;
             return this;

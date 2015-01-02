@@ -6,7 +6,7 @@ import com.enonic.wem.api.exception.NotFoundException;
 public class PageDescriptorNotFoundException
     extends NotFoundException
 {
-    public PageDescriptorNotFoundException( final PageDescriptorKey key, final Throwable cause )
+    public PageDescriptorNotFoundException( final DescriptorKey key, final Throwable cause )
     {
         super( cause, "PageDescriptor [" + key.toString() + "] not found" );
     }

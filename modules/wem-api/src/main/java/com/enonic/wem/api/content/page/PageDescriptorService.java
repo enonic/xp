@@ -5,7 +5,7 @@ import com.enonic.wem.api.module.ModuleKeys;
 
 public interface PageDescriptorService
 {
-    PageDescriptor getByKey( final PageDescriptorKey key );
+    PageDescriptor getByKey( final DescriptorKey key );
 
     PageDescriptors getByModule( final ModuleKey moduleKey );
 

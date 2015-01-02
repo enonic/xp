@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
 public final class LayoutDescriptors
@@ -16,7 +17,7 @@ public final class LayoutDescriptors
 {
     private final ImmutableMap<ComponentDescriptorName, LayoutDescriptor> descriptorsByName;
 
-    private final ImmutableMap<LayoutDescriptorKey, LayoutDescriptor> descriptorsByKey;
+    private final ImmutableMap<DescriptorKey, LayoutDescriptor> descriptorsByKey;
 
     private LayoutDescriptors( final ImmutableList<LayoutDescriptor> list )
     {
@@ -25,7 +26,7 @@ public final class LayoutDescriptors
         this.descriptorsByKey = Maps.uniqueIndex( list, new ToKeyFunction() );
     }
 
-    public LayoutDescriptor getDescriptor( final LayoutDescriptorKey key )
+    public LayoutDescriptor getDescriptor( final DescriptorKey key )
     {
         return this.descriptorsByKey.get( key );
     }
@@ -67,10 +68,10 @@ public final class LayoutDescriptors
     }
 
     private final static class ToKeyFunction
-        implements Function<LayoutDescriptor, LayoutDescriptorKey>
+        implements Function<LayoutDescriptor, DescriptorKey>
     {
         @Override
-        public LayoutDescriptorKey apply( final LayoutDescriptor value )
+        public DescriptorKey apply( final LayoutDescriptor value )
         {
             return value.getKey();
         }

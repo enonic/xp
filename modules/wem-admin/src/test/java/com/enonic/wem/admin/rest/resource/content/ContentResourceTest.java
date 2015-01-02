@@ -36,11 +36,11 @@ import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.ValidateContentData;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
@@ -258,7 +258,7 @@ public class ContentResourceTest
 
         PartComponent component = PartComponent.newPartComponent().
             name( "my-component" ).
-            descriptor( PartDescriptorKey.from( "mainmodule:partTemplateName" ) ).
+            descriptor( DescriptorKey.from( "mainmodule:partTemplateName" ) ).
             config( componentConfig ).
             build();
 

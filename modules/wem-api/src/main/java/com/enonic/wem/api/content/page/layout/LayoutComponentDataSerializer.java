@@ -43,7 +43,7 @@ public class LayoutComponentDataSerializer
     @Override
     protected DescriptorKey toDescriptorKey( final String s )
     {
-        return LayoutDescriptorKey.from( s );
+        return DescriptorKey.from( s );
     }
 
 }

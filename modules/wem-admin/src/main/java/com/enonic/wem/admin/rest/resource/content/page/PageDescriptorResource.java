@@ -12,8 +12,8 @@ import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.content.page.PageDescriptorJson;
 import com.enonic.wem.admin.json.content.page.PageDescriptorListJson;
 import com.enonic.wem.admin.rest.resource.content.page.part.GetByModulesParams;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
@@ -30,7 +30,7 @@ public final class PageDescriptorResource
     @GET
     public PageDescriptorJson getByKey( @QueryParam("key") final String pageDescriptorKey )
     {
-        final PageDescriptorKey key = PageDescriptorKey.from( pageDescriptorKey );
+        final DescriptorKey key = DescriptorKey.from( pageDescriptorKey );
         final PageDescriptor descriptor = pageDescriptorService.getByKey( key );
         final PageDescriptorJson json = new PageDescriptorJson( descriptor );
         return json;

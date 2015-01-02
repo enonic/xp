@@ -7,13 +7,14 @@ import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.ComponentPath;
 import com.enonic.wem.api.content.page.ComponentType;
 import com.enonic.wem.api.content.page.DescriptorBasedComponent;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.PropertyTree;
 
 @SuppressWarnings("UnusedDeclaration")
 public final class LayoutComponent
-    extends DescriptorBasedComponent<LayoutDescriptorKey>
+    extends DescriptorBasedComponent<DescriptorKey>
     implements RegionPlaceableComponent
 {
     private LayoutRegions regions;
@@ -110,7 +111,7 @@ public final class LayoutComponent
     }
 
     public static class Builder
-        extends DescriptorBasedComponent.Builder<LayoutDescriptorKey>
+        extends DescriptorBasedComponent.Builder<DescriptorKey>
     {
         private LayoutRegions regions;
 
@@ -139,11 +140,11 @@ public final class LayoutComponent
 
         public Builder descriptor( String value )
         {
-            this.descrpitor = LayoutDescriptorKey.from( value );
+            this.descrpitor = DescriptorKey.from( value );
             return this;
         }
 
-        public Builder descriptor( LayoutDescriptorKey value )
+        public Builder descriptor( DescriptorKey value )
         {
             this.descrpitor = value;
             return this;

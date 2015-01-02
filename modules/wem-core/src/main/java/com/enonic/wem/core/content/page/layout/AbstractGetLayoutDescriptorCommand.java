@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 import com.google.common.collect.Collections2;
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleService;
@@ -26,9 +26,9 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
     protected ModuleService moduleService;
 
-    protected final LayoutDescriptor getDescriptor( final LayoutDescriptorKey key )
+    protected final LayoutDescriptor getDescriptor( final DescriptorKey key )
     {
-        final ResourceKey resourceKey = key.toResourceKey();
+        final ResourceKey resourceKey = LayoutDescriptor.toResourceKey( key );
         final Resource resource = Resource.from( resourceKey );
 
         final String descriptorXml = resource.readString();
@@ -78,7 +78,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
                 continue;
             }
             final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
-            final LayoutDescriptorKey key = LayoutDescriptorKey.from( module.getKey(), descriptorName );
+            final DescriptorKey key = DescriptorKey.from( module.getKey(), descriptorName );
             final LayoutDescriptor layoutDescriptor = getDescriptor( key );
             if ( layoutDescriptor != null )
             {

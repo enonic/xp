@@ -5,8 +5,8 @@ import java.time.LocalDate;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.data.PropertyTree;
@@ -64,7 +64,7 @@ public class ContentTest
         newContent().
             path( MY_CONTENT_PATH ).
             page( Page.newPage().
-                controller( PageDescriptorKey.from( "abc:abc" ) ).
+                controller( DescriptorKey.from( "abc:abc" ) ).
                 template( PageTemplateKey.from( "123" ) ).
                 config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
                 regions( PageRegions.newPageRegions().build() ).

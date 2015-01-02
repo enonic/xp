@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.page
 
-import com.enonic.wem.api.content.page.PageDescriptorKey
+import com.enonic.wem.api.content.page.DescriptorKey
+import com.enonic.wem.api.content.page.PageDescriptor
 
 abstract class AbstractPageDescriptorServiceTest
     extends AbstractDescriptorServiceTest
@@ -12,15 +13,15 @@ abstract class AbstractPageDescriptorServiceTest
         this.service = new PageDescriptorServiceImpl()
     }
 
-    def PageDescriptorKey[] createDescriptor( final String... keys )
+    def DescriptorKey[] createDescriptor( final String... keys )
     {
         def descriptorKeys = [];
         for ( key in keys )
         {
-            def descriptorKey = PageDescriptorKey.from( key )
+            def descriptorKey = DescriptorKey.from( key )
             def descriptorXml = "<page-component><display-name>" + descriptorKey.getName().toString() + "</display-name></page-component>";
 
-            createFile( descriptorKey.toResourceKey(), descriptorXml );
+            createFile( PageDescriptor.toResourceKey(descriptorKey), descriptorXml );
             descriptorKeys.add( descriptorKey );
         }
 

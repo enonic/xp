@@ -10,8 +10,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.wem.admin.json.content.page.region.PageRegionsJson;
 import com.enonic.wem.admin.json.content.page.region.RegionJson;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageEditor;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.UpdatePageParams;
@@ -38,7 +38,7 @@ public class UpdatePageJson
                 public Page.PageEditBuilder edit( final Page toBeEdited )
                 {
                     return editPage( toBeEdited ).
-                        controller( pageDescriptorKey != null ? PageDescriptorKey.from( pageDescriptorKey ) : null ).
+                        controller( pageDescriptorKey != null ? DescriptorKey.from( pageDescriptorKey ) : null ).
                         template( pageTemplateKey != null ? PageTemplateKey.from( pageTemplateKey ) : null ).
                         regions( regions != null ? new PageRegionsJson( regions ).getPageRegions() : null ).
                         config( config != null ? PropertyTreeJson.fromJson( config ) : null );

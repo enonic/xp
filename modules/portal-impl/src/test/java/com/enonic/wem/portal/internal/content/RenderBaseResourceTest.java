@@ -8,9 +8,9 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -91,7 +91,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         Mockito.when( this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "my-page" ) ) ) ).thenReturn(
             createPageTemplate() );
 
-        Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( PageDescriptorKey.class ) ) ).thenReturn( createDescriptor() );
+        Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( DescriptorKey.class ) ) ).thenReturn( createDescriptor() );
 
     }
 
@@ -166,7 +166,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
             regions( pageRegions ).
             config( pageTemplateConfig );
 
-        builder.controller( PageDescriptorKey.from( "mainmodule:landing-page" ) );
+        builder.controller( DescriptorKey.from( "mainmodule:landing-page" ) );
 
         builder.displayName( "Main page emplate" );
         builder.displayName( "Main page emplate" );
@@ -181,7 +181,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
     {
         final ModuleKey module = ModuleKey.from( "mainmodule" );
         final ComponentDescriptorName name = new ComponentDescriptorName( "mypage" );
-        final PageDescriptorKey key = PageDescriptorKey.from( module, name );
+        final DescriptorKey key = DescriptorKey.from( module, name );
 
         final String xml = "<?xml version=\"1.0\"?>\n" +
             "<page-component>\n" +

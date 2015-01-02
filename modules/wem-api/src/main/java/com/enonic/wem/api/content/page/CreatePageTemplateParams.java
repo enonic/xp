@@ -14,7 +14,7 @@ public class CreatePageTemplateParams
 
     private String displayName;
 
-    private PageDescriptorKey controller;
+    private DescriptorKey controller;
 
     private ContentTypeNames supports;
 
@@ -46,7 +46,7 @@ public class CreatePageTemplateParams
         return this;
     }
 
-    public CreatePageTemplateParams controller( final PageDescriptorKey controller )
+    public CreatePageTemplateParams controller( final DescriptorKey controller )
     {
         this.controller = controller;
         return this;
@@ -85,7 +85,7 @@ public class CreatePageTemplateParams
         return displayName;
     }
 
-    public PageDescriptorKey getController()
+    public DescriptorKey getController()
     {
         return controller;
     }

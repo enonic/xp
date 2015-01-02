@@ -11,7 +11,7 @@ import com.enonic.wem.admin.json.content.page.region.PageRegionsJson;
 import com.enonic.wem.admin.json.content.page.region.RegionJson;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.CreatePageParams;
-import com.enonic.wem.api.content.page.PageDescriptorKey;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.data.PropertyArrayJson;
 import com.enonic.wem.api.data.PropertyTreeJson;
@@ -28,7 +28,7 @@ public class CreatePageJson
     {
         this.createPage = new CreatePageParams().
             content( ContentId.from( contentId ) ).
-            controller( pageDescriptorKey != null ? PageDescriptorKey.from( pageDescriptorKey ) : null ).
+            controller( pageDescriptorKey != null ? DescriptorKey.from( pageDescriptorKey ) : null ).
             pageTemplate( pageTemplateKey != null ? PageTemplateKey.from( pageTemplateKey ) : null ).
             config( config != null ? PropertyTreeJson.fromJson( config ) : null ).
             regions( regions != null ? new PageRegionsJson( regions ).getPageRegions() : null );

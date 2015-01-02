@@ -1,14 +1,14 @@
 package com.enonic.wem.core.content.page.layout;
 
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorNotFoundException;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 
 final class GetLayoutDescriptorCommand
     extends AbstractGetLayoutDescriptorCommand<GetLayoutDescriptorCommand>
 {
-    private LayoutDescriptorKey key;
+    private DescriptorKey key;
 
     public LayoutDescriptor execute()
     {
@@ -22,7 +22,7 @@ final class GetLayoutDescriptorCommand
         }
     }
 
-    public GetLayoutDescriptorCommand key( final LayoutDescriptorKey key )
+    public GetLayoutDescriptorCommand key( final DescriptorKey key )
     {
         this.key = key;
         return this;

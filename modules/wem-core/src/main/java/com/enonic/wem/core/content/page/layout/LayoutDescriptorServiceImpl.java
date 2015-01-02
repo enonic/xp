@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.page.layout;
 
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
@@ -13,7 +13,7 @@ public final class LayoutDescriptorServiceImpl
 {
     private ModuleService moduleService;
 
-    public LayoutDescriptor getByKey( final LayoutDescriptorKey key )
+    public LayoutDescriptor getByKey( final DescriptorKey key )
     {
         return new GetLayoutDescriptorCommand().key( key ).moduleService( this.moduleService ).execute();
     }

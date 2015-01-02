@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.page.part
 
-import com.enonic.wem.api.content.page.part.PartDescriptorKey
+import com.enonic.wem.api.content.page.DescriptorKey
 import com.enonic.wem.core.content.page.AbstractDescriptorServiceTest
 
 abstract class AbstractPartDescriptorServiceTest
@@ -15,12 +15,12 @@ abstract class AbstractPartDescriptorServiceTest
         this.service.resourceService = this.resourceService
     }
 
-    def PartDescriptorKey[] createDescriptor( final String... keys )
+    def DescriptorKey[] createDescriptor( final String... keys )
     {
         def descriptorKeys = [];
         for ( key in keys )
         {
-            def descriptorKey = PartDescriptorKey.from( key )
+            def descriptorKey = DescriptorKey.from( key )
             def descriptorXml = "<part-component><display-name>" + descriptorKey.getName().toString() + "</display-name></part-component>";
 
             createFile( descriptorKey.toResourceKey(), descriptorXml );

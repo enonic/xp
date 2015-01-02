@@ -2,19 +2,12 @@ package com.enonic.wem.api.content.page;
 
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.resource.ResourceKey;
 
-public abstract class DescriptorKey
+public final class DescriptorKey
 {
-    public enum DescriptorType
-    {
-        IMAGE,
-        LAYOUT,
-        PAGE,
-        PART
-    }
-
     protected static final String SEPARATOR = ":";
 
     private final ModuleKey moduleKey;
@@ -23,11 +16,8 @@ public abstract class DescriptorKey
 
     private final String refString;
 
-    private final DescriptorType descriptorType;
-
-    protected DescriptorKey( final ModuleKey moduleKey, final ComponentDescriptorName name, final DescriptorType descriptorType )
+    public DescriptorKey( final ModuleKey moduleKey, final ComponentDescriptorName name )
     {
-        this.descriptorType = descriptorType;
         this.moduleKey = moduleKey;
         this.name = name;
         this.refString = moduleKey.toString() + SEPARATOR + name.toString();
@@ -43,12 +33,6 @@ public abstract class DescriptorKey
         return name;
     }
 
-    public DescriptorType getDescriptorType()
-    {
-        return descriptorType;
-    }
-
-    public abstract ResourceKey toResourceKey();
 
     @Override
     public boolean equals( final Object o )
@@ -75,5 +59,22 @@ public abstract class DescriptorKey
     public String toString()
     {
         return refString;
+    }
+
+    public static DescriptorKey from( final String s )
+    {
+        final String moduleKey = StringUtils.substringBefore( s, SEPARATOR );
+        final String descriptorName = StringUtils.substringAfter( s, SEPARATOR );
+        return new DescriptorKey( ModuleKey.from( moduleKey ), new ComponentDescriptorName( descriptorName ) );
+    }
+
+    public static DescriptorKey from( final ModuleKey moduleKey, final ComponentDescriptorName descriptorName )
+    {
+        return new DescriptorKey( moduleKey, descriptorName );
+    }
+
+    public static DescriptorKey from( final ModuleKey moduleKey, final String descriptorName )
+    {
+        return new DescriptorKey( moduleKey, new ComponentDescriptorName( descriptorName ) );
     }
 }

@@ -7,7 +7,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.page.CreatePageParams;
-import com.enonic.wem.api.content.page.PageDescriptorKey;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -30,7 +30,7 @@ class CreatePageTemplateCommand
 
     private String displayName;
 
-    private PageDescriptorKey controller;
+    private DescriptorKey controller;
 
     private ContentTypeNames supports;
 
@@ -68,7 +68,7 @@ class CreatePageTemplateCommand
         return this;
     }
 
-    public CreatePageTemplateCommand controller( final PageDescriptorKey controller )
+    public CreatePageTemplateCommand controller( final DescriptorKey controller )
     {
         this.controller = controller;
         return this;

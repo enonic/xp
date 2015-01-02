@@ -9,12 +9,11 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.ComponentService;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.PropertyTree;
@@ -95,7 +94,7 @@ public class ComponentInstructionTest
     {
         return PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "my-page" ) ).
-            controller( PageDescriptorKey.from( "mymodule:mypagetemplate" ) ).
+            controller( DescriptorKey.from( "mymodule:mypagetemplate" ) ).
             name( "my-page-template" ).
             parentPath( ContentPath.ROOT ).
             build();
@@ -105,7 +104,7 @@ public class ComponentInstructionTest
     {
         return newPartComponent().
             name( "myPartComponent" ).
-            descriptor( PartDescriptorKey.from( "mymodule:myparttemplate" ) ).
+            descriptor( DescriptorKey.from( "mymodule:myparttemplate" ) ).
             build();
     }
 
@@ -118,7 +117,7 @@ public class ComponentInstructionTest
             name( "myRegion" ).
             add( newPartComponent().
                 name( "myPartComponent" ).
-                descriptor( PartDescriptorKey.from( "mymodule:myparttemplate" ) ).
+                descriptor( DescriptorKey.from( "mymodule:myparttemplate" ) ).
                 build() ).
             build();
 

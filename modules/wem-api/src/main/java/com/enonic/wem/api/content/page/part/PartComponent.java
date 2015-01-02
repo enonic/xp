@@ -5,11 +5,12 @@ import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.ComponentType;
 import com.enonic.wem.api.content.page.DescriptorBasedComponent;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.PropertyTree;
 
 public final class PartComponent
-    extends DescriptorBasedComponent<PartDescriptorKey>
+    extends DescriptorBasedComponent<DescriptorKey>
     implements RegionPlaceableComponent
 {
     public PartComponent( final Builder builder )
@@ -54,7 +55,7 @@ public final class PartComponent
     }
 
     public static class Builder
-        extends DescriptorBasedComponent.Builder<PartDescriptorKey>
+        extends DescriptorBasedComponent.Builder<DescriptorKey>
     {
         private Builder()
         {
@@ -78,7 +79,7 @@ public final class PartComponent
             return this;
         }
 
-        public Builder descriptor( PartDescriptorKey value )
+        public Builder descriptor( DescriptorKey value )
         {
             this.descrpitor = value;
             return this;
@@ -86,7 +87,7 @@ public final class PartComponent
 
         public Builder descriptor( String value )
         {
-            this.descrpitor = PartDescriptorKey.from( value );
+            this.descrpitor = DescriptorKey.from( value );
             return this;
         }
 

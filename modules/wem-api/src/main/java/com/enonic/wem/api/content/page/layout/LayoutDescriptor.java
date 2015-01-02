@@ -3,11 +3,12 @@ package com.enonic.wem.api.content.page.layout;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.page.Descriptor;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.region.RegionDescriptors;
 import com.enonic.wem.api.resource.ResourceKey;
 
 public class LayoutDescriptor
-    extends Descriptor<LayoutDescriptorKey>
+    extends Descriptor<DescriptorKey>
 {
     private final RegionDescriptors regions;
 
@@ -26,7 +27,7 @@ public class LayoutDescriptor
     @Override
     public ResourceKey getComponentPath()
     {
-        final LayoutDescriptorKey key = this.getKey();
+        final DescriptorKey key = this.getKey();
         return ResourceKey.from( key.getModuleKey(), "layout/" + key.getName().toString() );
     }
 
@@ -35,8 +36,13 @@ public class LayoutDescriptor
         return new Builder();
     }
 
+    public static ResourceKey toResourceKey( final DescriptorKey key )
+    {
+        return ResourceKey.from( key.getModuleKey(), "layout/" + key.getName().toString() + "/layout.xml" );
+    }
+
     public static class Builder
-        extends BaseDescriptorBuilder<Builder, LayoutDescriptorKey>
+        extends BaseDescriptorBuilder<Builder, DescriptorKey>
     {
         private RegionDescriptors regions;
 

@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
 public final class PartDescriptors
@@ -16,7 +17,7 @@ public final class PartDescriptors
 {
     private final ImmutableMap<ComponentDescriptorName, PartDescriptor> descriptorsByName;
 
-    private final ImmutableMap<PartDescriptorKey, PartDescriptor> descriptorsByKey;
+    private final ImmutableMap<DescriptorKey, PartDescriptor> descriptorsByKey;
 
     private PartDescriptors( final ImmutableList<PartDescriptor> list )
     {
@@ -25,7 +26,7 @@ public final class PartDescriptors
         this.descriptorsByKey = Maps.uniqueIndex( list, new ToKeyFunction() );
     }
 
-    public PartDescriptor getDescriptor( final PartDescriptorKey key )
+    public PartDescriptor getDescriptor( final DescriptorKey key )
     {
         return this.descriptorsByKey.get( key );
     }
@@ -67,10 +68,10 @@ public final class PartDescriptors
     }
 
     private final static class ToKeyFunction
-        implements Function<PartDescriptor, PartDescriptorKey>
+        implements Function<PartDescriptor, DescriptorKey>
     {
         @Override
-        public PartDescriptorKey apply( final PartDescriptor value )
+        public DescriptorKey apply( final PartDescriptor value )
         {
             return value.getKey();
         }

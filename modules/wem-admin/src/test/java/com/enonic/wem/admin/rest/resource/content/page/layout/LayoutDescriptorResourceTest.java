@@ -6,8 +6,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
 import com.enonic.wem.api.form.Form;
@@ -38,7 +38,7 @@ public class LayoutDescriptorResourceTest
     public void test_get_by_key()
         throws Exception
     {
-        final LayoutDescriptorKey key = LayoutDescriptorKey.from( "module:fancy-layout" );
+        final DescriptorKey key = DescriptorKey.from( "module:fancy-layout" );
         final Form layoutForm = Form.newForm().
             addFormItem( newInput().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
@@ -78,7 +78,7 @@ public class LayoutDescriptorResourceTest
                 add( newRegionDescriptor().name( "left" ).build() ).
                 add( newRegionDescriptor().name( "right" ).build() ).
                 build() ).
-            key( LayoutDescriptorKey.from( "module:fancy-layout" ) ).
+            key( DescriptorKey.from( "module:fancy-layout" ) ).
             build();
 
         final LayoutDescriptor layoutDescriptor2 = LayoutDescriptor.newLayoutDescriptor().
@@ -89,7 +89,7 @@ public class LayoutDescriptorResourceTest
                 add( newRegionDescriptor().name( "top" ).build() ).
                 add( newRegionDescriptor().name( "bottom" ).build() ).
                 build() ).
-            key( LayoutDescriptorKey.from( "module:putty-layout" ) ).
+            key( DescriptorKey.from( "module:putty-layout" ) ).
             build();
 
         final LayoutDescriptors layoutDescriptors = LayoutDescriptors.from( layoutDescriptor1, layoutDescriptor2 );

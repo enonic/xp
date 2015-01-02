@@ -3,7 +3,6 @@ package com.enonic.wem.portal.internal.content.page;
 import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 
 public final class LayoutRenderer
@@ -20,7 +19,7 @@ public final class LayoutRenderer
     @Override
     protected Descriptor getComponentDescriptor( final DescriptorKey descriptorKey )
     {
-        return layoutDescriptorService.getByKey( (LayoutDescriptorKey) descriptorKey );
+        return layoutDescriptorService.getByKey( descriptorKey );
     }
 
     public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )

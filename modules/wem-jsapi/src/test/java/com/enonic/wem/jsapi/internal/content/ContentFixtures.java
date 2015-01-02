@@ -8,14 +8,12 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.page.Component;
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutRegions;
 import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
@@ -107,7 +105,7 @@ public final class ContentFixtures
     {
         final Page.Builder builder = Page.newPage();
         builder.config( newTinyPropertyTree() );
-        builder.controller( PageDescriptorKey.from( "mymodule:mycontroller" ) );
+        builder.controller( DescriptorKey.from( "mymodule:mycontroller" ) );
         builder.regions( newPageRegions() );
         return builder.build();
     }
@@ -141,7 +139,7 @@ public final class ContentFixtures
         final PartComponent.Builder builder = PartComponent.newPartComponent();
         builder.name( "mypart" );
         builder.config( newTinyPropertyTree() );
-        builder.descriptor( PartDescriptorKey.from( "mymodule:mypart" ) );
+        builder.descriptor( DescriptorKey.from( "mymodule:mypart" ) );
         return builder.build();
     }
 
@@ -150,7 +148,7 @@ public final class ContentFixtures
         final LayoutComponent.Builder builder = LayoutComponent.newLayoutComponent();
         builder.name( "mylayout" );
         builder.config( newTinyPropertyTree() );
-        builder.descriptor( LayoutDescriptorKey.from( "mymodule:mylayout" ) );
+        builder.descriptor( DescriptorKey.from( "mymodule:mylayout" ) );
         builder.regions( newLayoutRegions() );
         return builder.build();
     }
