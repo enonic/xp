@@ -13,7 +13,7 @@ public abstract class AbstractPageComponent
 {
     private ComponentName name;
 
-    private Region parent = null;
+    private Region region = null;
 
     protected AbstractPageComponent( final Builder properties )
     {
@@ -31,13 +31,13 @@ public abstract class AbstractPageComponent
 
     public ComponentPath getPath()
     {
-        return ComponentPath.from( parent.getRegionPath(), parent.getIndex( this ) );
+        return ComponentPath.from( region.getRegionPath(), region.getIndex( this ) );
     }
 
     @Override
-    public void setParent( final Region region )
+    public void setRegion( final Region region )
     {
-        this.parent = region;
+        this.region = region;
     }
 
     @Override

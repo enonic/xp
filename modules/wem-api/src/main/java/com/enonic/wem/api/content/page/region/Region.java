@@ -31,7 +31,7 @@ public final class Region
             {
                 throw new IllegalArgumentException( "Having a LayoutComponent within a LayoutComponent is not allowed" );
             }
-            pageComponent.setParent( this );
+            pageComponent.setRegion( this );
         }
     }
 

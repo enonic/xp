@@ -166,7 +166,7 @@ public final class ContentFixtures
         final LayoutComponent layout = builder.build();
 
         final Region parentRegion = Region.newRegion().name( "main" ).build();
-        layout.setParent( parentRegion );
+        layout.setRegion( parentRegion );
         return layout;
     }
 
