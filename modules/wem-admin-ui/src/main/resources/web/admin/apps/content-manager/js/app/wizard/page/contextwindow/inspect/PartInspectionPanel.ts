@@ -14,7 +14,7 @@ module app.wizard.page.contextwindow.inspect {
         private liveEditModel: LiveEditModel;
 
         constructor() {
-            super(<PageComponentInspectionPanelConfig>{
+            super(<ComponentInspectionPanelConfig>{
                 iconClass: "live-edit-font-icon-part icon-xlarge"
             });
         }

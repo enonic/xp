@@ -4,13 +4,12 @@ module app.wizard.page.contextwindow.inspect {
     import ComponentName = api.content.page.ComponentName;
     import PageComponentView = api.liveedit.PageComponentView;
 
-    export interface PageComponentInspectionPanelConfig {
+    export interface ComponentInspectionPanelConfig {
 
         iconClass: string;
-
     }
 
-    export class PageComponentInspectionPanel<COMPONENT extends Component> extends BaseInspectionPanel {
+    export class ComponentInspectionPanel<COMPONENT extends Component> extends BaseInspectionPanel {
 
         private namesAndIcon: api.app.NamesAndIconView;
 
@@ -18,7 +17,7 @@ module app.wizard.page.contextwindow.inspect {
 
         private nameInput: api.ui.text.TextInput;
 
-        constructor(config: PageComponentInspectionPanelConfig) {
+        constructor(config: ComponentInspectionPanelConfig) {
             super();
 
             this.namesAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().

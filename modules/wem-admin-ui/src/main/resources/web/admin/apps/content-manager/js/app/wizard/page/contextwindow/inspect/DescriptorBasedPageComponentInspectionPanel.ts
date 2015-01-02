@@ -11,7 +11,7 @@ module app.wizard.page.contextwindow.inspect {
 
     }
 
-    export class DescriptorBasedPageComponentInspectionPanel<COMPONENT extends DescriptorBasedPageComponent, DESCRIPTOR extends Descriptor> extends PageComponentInspectionPanel<COMPONENT> {
+    export class DescriptorBasedPageComponentInspectionPanel<COMPONENT extends DescriptorBasedPageComponent, DESCRIPTOR extends Descriptor> extends ComponentInspectionPanel<COMPONENT> {
 
         private formView: FormView;
 

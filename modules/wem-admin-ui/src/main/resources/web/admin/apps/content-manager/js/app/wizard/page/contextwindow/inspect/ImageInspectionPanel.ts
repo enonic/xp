@@ -6,7 +6,7 @@ module app.wizard.page.contextwindow.inspect {
     import ImageComponentView = api.liveedit.image.ImageComponentView;
     import PropertyTree = api.data.PropertyTree;
 
-    export class ImageInspectionPanel extends PageComponentInspectionPanel<ImageComponent> {
+    export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponent> {
 
         private imageComponent: ImageComponent;
 
@@ -15,7 +15,7 @@ module app.wizard.page.contextwindow.inspect {
         private formView: api.form.FormView;
 
         constructor() {
-            super(<PageComponentInspectionPanelConfig>{
+            super(<ComponentInspectionPanelConfig>{
                 iconClass: "live-edit-font-icon-image icon-xlarge"
             });
         }
