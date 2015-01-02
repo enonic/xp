@@ -23,7 +23,7 @@ module app.wizard.page {
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
-    import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
+    import ComponentDuplicateEvent = api.liveedit.ComponentDuplicateEvent;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import RepeatNextItemViewIdProducer = api.liveedit.RepeatNextItemViewIdProducer;
@@ -81,7 +81,7 @@ module app.wizard.page {
 
         private pageComponentResetListeners: {(event: PageComponentResetEvent): void;}[] = [];
 
-        private pageComponentDuplicatedListeners: {(event: PageComponentDuplicateEvent): void;}[] = [];
+        private pageComponentDuplicatedListeners: {(event: ComponentDuplicateEvent): void;}[] = [];
 
         private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
 
@@ -281,7 +281,7 @@ module app.wizard.page {
 
             PageComponentResetEvent.on(this.notifyPageComponentReset.bind(this), this.liveEditWindow);
 
-            PageComponentDuplicateEvent.on(this.notifyPageComponentDuplicated.bind(this), this.liveEditWindow);
+            ComponentDuplicateEvent.on(this.notifyPageComponentDuplicated.bind(this), this.liveEditWindow);
 
             ImageComponentSetImageEvent.on((event: ImageComponentSetImageEvent) => {
                 if (!event.getErrorMessage()) {
@@ -470,15 +470,15 @@ module app.wizard.page {
             this.pageComponentRemovedListeners.forEach((listener) => listener(event));
         }
 
-        onPageComponentDuplicated(listener: {(event: PageComponentDuplicateEvent): void;}) {
+        onPageComponentDuplicated(listener: {(event: ComponentDuplicateEvent): void;}) {
             this.pageComponentDuplicatedListeners.push(listener);
         }
 
-        unPageComponentDuplicated(listener: {(event: PageComponentDuplicateEvent): void;}) {
+        unPageComponentDuplicated(listener: {(event: ComponentDuplicateEvent): void;}) {
             this.pageComponentDuplicatedListeners = this.pageComponentDuplicatedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyPageComponentDuplicated(event: PageComponentDuplicateEvent) {
+        private notifyPageComponentDuplicated(event: ComponentDuplicateEvent) {
             this.pageComponentDuplicatedListeners.forEach((listener) => listener(event));
         }
     }

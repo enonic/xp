@@ -147,7 +147,7 @@ module api.liveedit {
                 duplicatedView.select();
                 duplicatedView.showLoadingSpinner();
 
-                new PageComponentDuplicateEvent(this, duplicatedView).fire();
+                new ComponentDuplicateEvent(this, duplicatedView).fire();
             }));
             return actions;
         }

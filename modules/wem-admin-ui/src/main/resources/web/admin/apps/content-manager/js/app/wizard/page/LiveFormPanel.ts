@@ -54,7 +54,7 @@ module app.wizard.page {
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
-    import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
+    import ComponentDuplicateEvent = api.liveedit.ComponentDuplicateEvent;
 
     import Panel = api.ui.panel.Panel;
 
@@ -399,7 +399,7 @@ module app.wizard.page {
                 this.saveAndReloadOnlyPageComponent(event.getPageComponentView());
             });
 
-            this.liveEditPage.onPageComponentDuplicated((event: PageComponentDuplicateEvent) => {
+            this.liveEditPage.onPageComponentDuplicated((event: ComponentDuplicateEvent) => {
 
                 this.saveAndReloadOnlyPageComponent(event.getDuplicatedPageComponentView());
             });

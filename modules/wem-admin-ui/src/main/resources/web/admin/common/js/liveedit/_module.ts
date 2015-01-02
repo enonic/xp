@@ -42,7 +42,7 @@
 ///<reference path='ComponentAddedEvent.ts' />
 ///<reference path='PageComponentRemoveEvent.ts' />
 ///<reference path='PageComponentResetEvent.ts' />
-///<reference path='PageComponentDuplicateEvent.ts' />
+///<reference path='ComponentDuplicateEvent.ts' />
 ///<reference path='PageComponentSetDescriptorEvent.ts' />
 ///<reference path='ComponentLoadedEvent.ts' />
 ///<reference path='Position.ts' />
