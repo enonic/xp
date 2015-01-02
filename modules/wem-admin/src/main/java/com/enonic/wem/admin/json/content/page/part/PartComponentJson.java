@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.admin.json.content.page.AbstractDescriptorBasedPageComponentJson;
+import com.enonic.wem.admin.json.content.page.DescriptorBasedComponentJson;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
@@ -16,7 +16,7 @@ import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponen
 
 @SuppressWarnings("UnusedDeclaration")
 public class PartComponentJson
-    extends AbstractDescriptorBasedPageComponentJson<PartComponent>
+    extends DescriptorBasedComponentJson<PartComponent>
 {
     private final PartComponent part;
 

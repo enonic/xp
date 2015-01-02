@@ -2,18 +2,18 @@ package com.enonic.wem.api.content.page.layout;
 
 import java.util.Objects;
 
-import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponent;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.ComponentPath;
-import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentType;
+import com.enonic.wem.api.content.page.ComponentType;
+import com.enonic.wem.api.content.page.DescriptorBasedComponent;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.PropertyTree;
 
 @SuppressWarnings("UnusedDeclaration")
 public final class LayoutComponent
-    extends AbstractDescriptorBasedPageComponent<LayoutDescriptorKey>
+    extends DescriptorBasedComponent<LayoutDescriptorKey>
     implements RegionPlaceableComponent
 {
     private LayoutRegions regions;
@@ -46,14 +46,13 @@ public final class LayoutComponent
         return new Builder( source );
     }
 
-    @Override
-    public PageComponent copy()
+    public Component copy()
     {
         return newLayoutComponent( this ).build();
     }
 
     @Override
-    public PageComponentType getType()
+    public ComponentType getType()
     {
         return LayoutComponentType.INSTANCE;
     }
@@ -73,7 +72,7 @@ public final class LayoutComponent
         return regions;
     }
 
-    public PageComponent getComponent( final ComponentPath path )
+    public Component getComponent( final ComponentPath path )
     {
         return regions.getComponent( path );
     }
@@ -111,7 +110,7 @@ public final class LayoutComponent
     }
 
     public static class Builder
-        extends AbstractDescriptorBasedPageComponent.Builder<LayoutDescriptorKey>
+        extends DescriptorBasedComponent.Builder<LayoutDescriptorKey>
     {
         private LayoutRegions regions;
 

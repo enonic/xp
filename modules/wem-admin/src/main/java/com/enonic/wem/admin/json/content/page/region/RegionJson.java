@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.admin.json.content.page.AbstractPageComponentJson;
-import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.admin.json.content.page.PageComponentJsonSerializer;
+import com.enonic.wem.admin.json.content.page.ComponentJson;
+import com.enonic.wem.admin.json.content.page.ComponentJsonSerializer;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.region.Region;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -18,15 +18,14 @@ public class RegionJson
 {
     private final Region region;
 
-    private final List<AbstractPageComponentJson> components = new ArrayList<>();
+    private final List<ComponentJson> components = new ArrayList<>();
 
     @JsonCreator
-    public RegionJson( @JsonProperty("name") final String name,
-                       @JsonProperty("components") final List<AbstractPageComponentJson> componentJsons )
+    public RegionJson( @JsonProperty("name") final String name, @JsonProperty("components") final List<ComponentJson> componentJsons )
     {
         final Region.Builder builder = Region.newRegion();
         builder.name( name );
-        for ( final AbstractPageComponentJson componentJson : componentJsons )
+        for ( final ComponentJson componentJson : componentJsons )
         {
             builder.add( componentJson.getComponent() );
         }
@@ -36,9 +35,9 @@ public class RegionJson
     public RegionJson( final Region region )
     {
         this.region = region;
-        for ( final PageComponent component : region.getComponents() )
+        for ( final Component component : region.getComponents() )
         {
-            this.components.add( PageComponentJsonSerializer.toJson( component ) );
+            this.components.add( ComponentJsonSerializer.toJson( component ) );
         }
     }
 
@@ -47,7 +46,7 @@ public class RegionJson
         return region.getName();
     }
 
-    public List<AbstractPageComponentJson> getComponents()
+    public List<ComponentJson> getComponents()
     {
         return this.components;
     }

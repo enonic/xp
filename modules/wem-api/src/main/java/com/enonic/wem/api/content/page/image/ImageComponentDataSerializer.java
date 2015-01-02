@@ -2,16 +2,16 @@ package com.enonic.wem.api.content.page.image;
 
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.page.AbstractPageComponentDataSerializer;
+import com.enonic.wem.api.content.page.ComponentDataSerializer;
 import com.enonic.wem.api.data.PropertySet;
 
 public class ImageComponentDataSerializer
-    extends AbstractPageComponentDataSerializer<ImageComponent, ImageComponent>
+    extends ComponentDataSerializer<ImageComponent, ImageComponent>
 {
     public void toData( final ImageComponent component, final PropertySet parent )
     {
         final PropertySet asData = parent.addSet( ImageComponent.class.getSimpleName() );
-        applyPageComponentToData( component, asData );
+        applyComponentToData( component, asData );
         if ( component.getImage() != null )
         {
             asData.addString( "image", component.getImage().toString() );
@@ -25,7 +25,7 @@ public class ImageComponentDataSerializer
     public ImageComponent fromData( final PropertySet asData )
     {
         ImageComponent.Builder component = ImageComponent.newImageComponent();
-        applyPageComponentFromData( component, asData );
+        applyComponentFromData( component, asData );
         if ( asData.isNotNull( "image" ) )
         {
             component.image( ContentId.from( asData.getString( "image" ) ) );

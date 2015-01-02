@@ -1,15 +1,13 @@
 package com.enonic.xp.portal.jslib.impl;
 
-import org.osgi.service.component.annotations.Component;
-
-import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
-import com.enonic.wem.script.mapper.PageComponentMapper;
+import com.enonic.wem.script.mapper.ComponentMapper;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 
-@Component(immediate = true)
+@org.osgi.service.component.annotations.Component(immediate = true)
 public final class GetComponentHandler
     implements CommandHandler
 {
@@ -23,13 +21,13 @@ public final class GetComponentHandler
     public Object execute( final CommandRequest req )
     {
         final PortalContext context = PortalContextAccessor.get();
-        final PageComponent pageComponent = context.getComponent();
-        return pageComponent != null ? convert( pageComponent ) : null;
+        final Component component = context.getComponent();
+        return component != null ? convert( component ) : null;
     }
 
-    private Object convert( final PageComponent component )
+    private Object convert( final Component component )
     {
-        return component == null ? null : new PageComponentMapper( component );
+        return component == null ? null : new ComponentMapper( component );
     }
 
 }

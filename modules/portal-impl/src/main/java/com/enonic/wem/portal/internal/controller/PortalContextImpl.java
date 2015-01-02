@@ -3,7 +3,7 @@ package com.enonic.wem.portal.internal.controller;
 import com.google.common.collect.Multimap;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
@@ -27,7 +27,7 @@ public final class PortalContextImpl
 
     private PageTemplate pageTemplate;
 
-    private PageComponent component;
+    private Component component;
 
     private ModuleKey module;
 
@@ -98,13 +98,13 @@ public final class PortalContextImpl
     }
 
     @Override
-    public PageComponent getComponent()
+    public Component getComponent()
     {
         return component;
     }
 
     @Override
-    public void setComponent( final PageComponent component )
+    public void setComponent( final Component component )
     {
         this.component = component;
     }

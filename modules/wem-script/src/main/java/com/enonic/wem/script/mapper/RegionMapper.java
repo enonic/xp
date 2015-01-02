@@ -1,6 +1,6 @@
 package com.enonic.wem.script.mapper;
 
-import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.script.serializer.MapGenerator;
 import com.enonic.wem.script.serializer.MapSerializable;
@@ -28,13 +28,13 @@ public final class RegionMapper
         gen.end();
     }
 
-    private static void serializeComponents( final MapGenerator gen, final Iterable<PageComponent> values )
+    private static void serializeComponents( final MapGenerator gen, final Iterable<Component> values )
     {
         gen.array( "components" );
-        for ( final PageComponent component : values )
+        for ( final Component component : values )
         {
             gen.map();
-            new PageComponentMapper( component ).serialize( gen );
+            new ComponentMapper( component ).serialize( gen );
             gen.end();
         }
         gen.end();

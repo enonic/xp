@@ -1,9 +1,9 @@
 package com.enonic.wem.api.content.page.part;
 
-import com.enonic.wem.api.content.page.PageComponentType;
+import com.enonic.wem.api.content.page.ComponentType;
 
 public final class PartComponentType
-    extends PageComponentType
+    extends ComponentType
 {
     public final static PartComponentType INSTANCE = new PartComponentType();
 

@@ -1,15 +1,15 @@
 package com.enonic.wem.api.content.page.part;
 
 
-import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponent;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.ComponentName;
-import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentType;
+import com.enonic.wem.api.content.page.ComponentType;
+import com.enonic.wem.api.content.page.DescriptorBasedComponent;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.PropertyTree;
 
 public final class PartComponent
-    extends AbstractDescriptorBasedPageComponent<PartDescriptorKey>
+    extends DescriptorBasedComponent<PartDescriptorKey>
     implements RegionPlaceableComponent
 {
     public PartComponent( final Builder builder )
@@ -27,14 +27,13 @@ public final class PartComponent
         return new Builder( source );
     }
 
-    @Override
-    public PageComponent copy()
+    public Component copy()
     {
         return newPartComponent( this ).build();
     }
 
     @Override
-    public PageComponentType getType()
+    public ComponentType getType()
     {
         return PartComponentType.INSTANCE;
     }
@@ -55,7 +54,7 @@ public final class PartComponent
     }
 
     public static class Builder
-        extends AbstractDescriptorBasedPageComponent.Builder<PartDescriptorKey>
+        extends DescriptorBasedComponent.Builder<PartDescriptorKey>
     {
         private Builder()
         {

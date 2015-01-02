@@ -9,13 +9,13 @@ import com.enonic.wem.api.content.page.layout.LayoutComponentType;
 import com.enonic.wem.api.content.page.part.PartComponentType;
 import com.enonic.wem.api.content.page.text.TextComponentType;
 
-public final class PageComponentTypes
+public final class ComponentTypes
 {
-    private final static PageComponentTypes INSTANCE = new PageComponentTypes();
+    private final static ComponentTypes INSTANCE = new ComponentTypes();
 
-    private final LinkedHashMap<String, PageComponentType> bySimpleClassName;
+    private final LinkedHashMap<String, ComponentType> bySimpleClassName;
 
-    private PageComponentTypes()
+    private ComponentTypes()
     {
         this.bySimpleClassName = Maps.newLinkedHashMap();
         register( LayoutComponentType.INSTANCE );
@@ -24,12 +24,12 @@ public final class PageComponentTypes
         register( TextComponentType.INSTANCE );
     }
 
-    private void register( final PageComponentType type )
+    private void register( final ComponentType type )
     {
         this.bySimpleClassName.put( type.getComponentClass().getSimpleName(), type );
     }
 
-    public static PageComponentType bySimpleClassName( final String simpleClassName )
+    public static ComponentType bySimpleClassName( final String simpleClassName )
     {
         return INSTANCE.bySimpleClassName.get( simpleClassName );
     }

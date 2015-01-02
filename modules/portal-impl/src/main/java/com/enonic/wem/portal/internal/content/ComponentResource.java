@@ -7,9 +7,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.ComponentPath;
 import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.module.ModuleKey;
@@ -77,13 +77,13 @@ public final class ComponentResource
             effectiveContent = content;
         }
 
-        final PageComponent component = effectiveContent.getPage().getRegions().getComponent( componentPath );
+        final Component component = effectiveContent.getPage().getRegions().getComponent( componentPath );
         if ( component == null )
         {
             throw notFound( "Pate component for [%s] not found", componentPath );
         }
 
-        final Renderer<PageComponent, PortalContext> renderer = this.rendererFactory.getRenderer( component );
+        final Renderer<Component, PortalContext> renderer = this.rendererFactory.getRenderer( component );
 
         final ModuleKey moduleKey = pageTemplate.getController().getModuleKey();
         final PortalContextImpl context = createContext( effectiveContent, component, site, moduleKey );
@@ -92,7 +92,7 @@ public final class ComponentResource
         return toResponse( result );
     }
 
-    private PortalContextImpl createContext( final Content content, final PageComponent component, final Site site,
+    private PortalContextImpl createContext( final Content content, final Component component, final Site site,
                                              final ModuleKey moduleKey )
     {
         final PortalContextImpl context = new PortalContextImpl();

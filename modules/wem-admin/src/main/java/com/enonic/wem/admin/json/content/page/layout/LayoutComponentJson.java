@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.admin.json.content.page.AbstractDescriptorBasedPageComponentJson;
+import com.enonic.wem.admin.json.content.page.DescriptorBasedComponentJson;
 import com.enonic.wem.admin.json.content.page.region.RegionJson;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
@@ -17,7 +17,7 @@ import static com.enonic.wem.api.content.page.layout.LayoutComponent.newLayoutCo
 
 @SuppressWarnings("UnusedDeclaration")
 public class LayoutComponentJson
-    extends AbstractDescriptorBasedPageComponentJson<LayoutComponent>
+    extends DescriptorBasedComponentJson<LayoutComponent>
 {
     private final LayoutComponent layout;
 

@@ -9,27 +9,27 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.support.serializer.AbstractDataListSerializer;
 
-public class PageComponentsDataSerializer
-    extends AbstractDataListSerializer<Collection<PageComponent>, List<PageComponent>>
+public class ComponentsDataSerializer
+    extends AbstractDataListSerializer<Collection<Component>, List<Component>>
 {
-    public void toData( final Collection<PageComponent> components, final PropertySet parent )
+    public void toData( final Collection<Component> components, final PropertySet parent )
     {
-        for ( final PageComponent component : components )
+        for ( final Component component : components )
         {
             final PropertySet componentAsSet = parent.addSet( "component" );
-            final PageComponentType type = component.getType();
+            final ComponentType type = component.getType();
             componentAsSet.setString( "type", type.getComponentClass().getSimpleName() );
             type.getDataSerializer().toData( component, componentAsSet );
         }
     }
 
-    public List<PageComponent> fromData( final Iterable<Property> componentProperties )
+    public List<Component> fromData( final Iterable<Property> componentProperties )
     {
-        final List<PageComponent> componentList = new ArrayList<>();
+        final List<Component> componentList = new ArrayList<>();
         for ( final Property componentAsProperty : componentProperties )
         {
             final PropertySet componentWrapper = componentAsProperty.getSet();
-            final PageComponentType type = PageComponentTypes.bySimpleClassName( componentWrapper.getString( "type" ) );
+            final ComponentType type = ComponentTypes.bySimpleClassName( componentWrapper.getString( "type" ) );
             final PropertySet componentSet = componentWrapper.getSet( type.getComponentClass().getSimpleName() );
             componentList.add( type.getDataSerializer().fromData( componentSet ) );
         }

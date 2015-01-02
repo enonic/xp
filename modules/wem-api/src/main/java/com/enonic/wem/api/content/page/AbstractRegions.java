@@ -33,14 +33,14 @@ public abstract class AbstractRegions
         return null;
     }
 
-    public PageComponent getComponent( final ComponentPath path )
+    public Component getComponent( final ComponentPath path )
     {
         Preconditions.checkNotNull( path, "no path for PageComponent given" );
         Preconditions.checkArgument( path.numberOfLevels() > 0, "empty path for PageComponent given" );
 
         final ComponentPath.RegionAndComponent first = path.getFirstLevel();
         final Region region = getRegion( first.getRegionName() );
-        final PageComponent component = region.getComponent( first.getPageComponentIndex() );
+        final Component component = region.getComponent( first.getComponentIndex() );
 
         if ( path.numberOfLevels() == 1 )
         {

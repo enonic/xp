@@ -6,14 +6,14 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 
 public final class Region
 {
     private final String name;
 
-    private final ImmutableList<PageComponent> pageComponents;
+    private final ImmutableList<Component> components;
 
     private LayoutComponent parent;
 
@@ -22,16 +22,16 @@ public final class Region
         Preconditions.checkNotNull( builder.name, "name cannot be null" );
         this.name = builder.name;
         this.parent = builder.parent;
-        this.pageComponents = builder.components.build();
+        this.components = builder.components.build();
 
-        for ( final PageComponent pageComponent : this.pageComponents )
+        for ( final Component component : this.components )
         {
-            boolean layoutComponentWithinLayoutComponent = this.parent != null && pageComponent instanceof LayoutComponent;
+            boolean layoutComponentWithinLayoutComponent = this.parent != null && component instanceof LayoutComponent;
             if ( layoutComponentWithinLayoutComponent )
             {
                 throw new IllegalArgumentException( "Having a LayoutComponent within a LayoutComponent is not allowed" );
             }
-            pageComponent.setRegion( this );
+            component.setRegion( this );
         }
     }
 
@@ -58,9 +58,9 @@ public final class Region
     public void setParent( LayoutComponent parent )
     {
         this.parent = parent;
-        for ( final PageComponent pageComponent : this.pageComponents )
+        for ( final Component component : this.components )
         {
-            boolean layoutComponentWithinLayoutComponent = this.parent != null && pageComponent instanceof LayoutComponent;
+            boolean layoutComponentWithinLayoutComponent = this.parent != null && component instanceof LayoutComponent;
             if ( layoutComponentWithinLayoutComponent )
             {
                 throw new IllegalArgumentException( "Having a LayoutComponent within a LayoutComponent is not allowed" );
@@ -68,11 +68,11 @@ public final class Region
         }
     }
 
-    public int getIndex( final PageComponent pageComponent )
+    public int getIndex( final Component component )
     {
-        for ( int i = 0; i < pageComponents.size(); i++ )
+        for ( int i = 0; i < components.size(); i++ )
         {
-            if ( pageComponent == pageComponents.get( i ) )
+            if ( component == components.get( i ) )
             {
                 return i;
             }
@@ -85,23 +85,23 @@ public final class Region
         return RegionPath.from( parent != null ? parent.getPath() : null, name );
     }
 
-    public PageComponent getComponent( final int index )
+    public Component getComponent( final int index )
     {
-        if ( index >= this.pageComponents.size() )
+        if ( index >= this.components.size() )
         {
             return null;
         }
-        return this.pageComponents.get( index );
+        return this.components.get( index );
     }
 
     public int numberOfComponents()
     {
-        return this.pageComponents.size();
+        return this.components.size();
     }
 
-    public ImmutableList<PageComponent> getComponents()
+    public ImmutableList<Component> getComponents()
     {
-        return pageComponents;
+        return components;
     }
 
     @Override
@@ -118,13 +118,13 @@ public final class Region
 
         final Region region = (Region) o;
 
-        return Objects.equals( name, region.name ) && Objects.equals( pageComponents, region.pageComponents );
+        return Objects.equals( name, region.name ) && Objects.equals( components, region.components );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, pageComponents );
+        return Objects.hash( name, components );
     }
 
     public static class Builder
@@ -133,7 +133,7 @@ public final class Region
 
         private LayoutComponent parent;
 
-        private ImmutableList.Builder<PageComponent> components = new ImmutableList.Builder<>();
+        private ImmutableList.Builder<Component> components = new ImmutableList.Builder<>();
 
         public Builder()
         {
@@ -143,7 +143,7 @@ public final class Region
         public Builder( final Region source )
         {
             this.name = source.name;
-            for ( final PageComponent component : source.pageComponents )
+            for ( final Component component : source.components )
             {
                 this.components.add( component.copy() );
             }
@@ -162,7 +162,7 @@ public final class Region
             return this;
         }
 
-        public Builder add( final PageComponent component )
+        public Builder add( final Component component )
         {
             this.components.add( component );
             return this;

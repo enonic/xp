@@ -6,15 +6,14 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.PropertyTree;
 
-public abstract class AbstractDescriptorBasedPageComponent<DESCRIPTOR_KEY extends DescriptorKey>
-    extends AbstractPageComponent
-    implements DescriptorBasedPageComponent
+public abstract class DescriptorBasedComponent<DESCRIPTOR_KEY extends DescriptorKey>
+    extends Component
 {
     private final DESCRIPTOR_KEY descriptor;
 
     private final PropertyTree config;
 
-    protected AbstractDescriptorBasedPageComponent( final Builder<DESCRIPTOR_KEY> builder )
+    protected DescriptorBasedComponent( final Builder<DESCRIPTOR_KEY> builder )
     {
         super( builder );
         this.descriptor = builder.descrpitor;
@@ -44,7 +43,7 @@ public abstract class AbstractDescriptorBasedPageComponent<DESCRIPTOR_KEY extend
         {
             return true;
         }
-        if ( !( o instanceof AbstractDescriptorBasedPageComponent ) )
+        if ( !( o instanceof DescriptorBasedComponent ) )
         {
             return false;
         }
@@ -53,7 +52,7 @@ public abstract class AbstractDescriptorBasedPageComponent<DESCRIPTOR_KEY extend
             return false;
         }
 
-        final AbstractDescriptorBasedPageComponent that = (AbstractDescriptorBasedPageComponent) o;
+        final DescriptorBasedComponent that = (DescriptorBasedComponent) o;
 
         return Objects.equals( descriptor, that.descriptor ) && Objects.equals( config, that.config );
     }
@@ -65,7 +64,7 @@ public abstract class AbstractDescriptorBasedPageComponent<DESCRIPTOR_KEY extend
     }
 
     public static class Builder<DESCRIPTOR_KEY extends DescriptorKey>
-        extends AbstractPageComponent.Builder
+        extends Component.Builder
     {
         protected DESCRIPTOR_KEY descrpitor;
 
@@ -76,7 +75,7 @@ public abstract class AbstractDescriptorBasedPageComponent<DESCRIPTOR_KEY extend
             this.config = new PropertyTree();
         }
 
-        protected Builder( final AbstractDescriptorBasedPageComponent source )
+        protected Builder( final DescriptorBasedComponent source )
         {
             super( source );
             this.config = source.getConfig().copy();

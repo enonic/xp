@@ -3,13 +3,12 @@ package com.enonic.wem.api.content.page.text;
 
 import java.util.Objects;
 
-import com.enonic.wem.api.content.page.AbstractPageComponent;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.ComponentName;
-import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentType;
+import com.enonic.wem.api.content.page.ComponentType;
 
 public class TextComponent
-    extends AbstractPageComponent
+    extends Component
 {
     private String text;
 
@@ -29,13 +28,12 @@ public class TextComponent
         return new Builder( source );
     }
 
-    @Override
-    public PageComponent copy()
+    public Component copy()
     {
         return newTextComponent( this ).build();
     }
 
-    public PageComponentType getType()
+    public ComponentType getType()
     {
         return TextComponentType.INSTANCE;
     }
@@ -78,7 +76,7 @@ public class TextComponent
     }
 
     public static class Builder
-        extends AbstractPageComponent.Builder
+        extends Component.Builder
 
     {
         private String text;

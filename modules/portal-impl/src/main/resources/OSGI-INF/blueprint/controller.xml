@@ -24,7 +24,7 @@
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.portal.internal.postprocess.instruction.ComponentInstruction">
       <property name="rendererFactory" ref="rendererFactory"/>
-      <property name="pageComponentService" ref="pageComponentService"/>
+      <property name="componentService" ref="componentService"/>
     </bean>
   </service>
 

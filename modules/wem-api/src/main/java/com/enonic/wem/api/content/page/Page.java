@@ -7,14 +7,13 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.rendering.Component;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.EditBuilder;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class Page
-    implements Component
+    implements com.enonic.wem.api.rendering.Component
 {
     private final PageDescriptorKey controller;
 
@@ -79,7 +78,7 @@ public final class Page
         return config;
     }
 
-    public PageComponent getComponent( final ComponentPath path )
+    public Component getComponent( final ComponentPath path )
     {
         return regions.getComponent( path );
     }

@@ -7,8 +7,8 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.Metadata;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
@@ -136,7 +136,7 @@ public final class ContentFixtures
         return builder.build();
     }
 
-    public static PageComponent newPartComponent()
+    public static Component newPartComponent()
     {
         final PartComponent.Builder builder = PartComponent.newPartComponent();
         builder.name( "mypart" );

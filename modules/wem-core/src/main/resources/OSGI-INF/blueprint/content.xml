@@ -48,11 +48,11 @@
 
   <service ref="pageTemplateService" auto-export="interfaces"/>
 
-  <bean id="pageComponentService" class="com.enonic.wem.core.content.page.PageComponentServiceImpl">
+  <bean id="componentService" class="com.enonic.wem.core.content.page.ComponentServiceImpl">
     <property name="partDescriptorService" ref="partDescriptorService"/>
     <property name="layoutDescriptorService" ref="layoutDescriptorService"/>
   </bean>
 
-  <service ref="pageComponentService" auto-export="interfaces"/>
+  <service ref="componentService" auto-export="interfaces"/>
 
 </blueprint>

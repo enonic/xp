@@ -1,18 +1,18 @@
 package com.enonic.wem.script.mapper;
 
-import com.enonic.wem.api.content.page.DescriptorBasedPageComponent;
-import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.Component;
+import com.enonic.wem.api.content.page.DescriptorBasedComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.script.serializer.MapGenerator;
 import com.enonic.wem.script.serializer.MapSerializable;
 
-public final class PageComponentMapper
+public final class ComponentMapper
     implements MapSerializable
 {
-    private final PageComponent value;
+    private final Component value;
 
-    public PageComponentMapper( final PageComponent value )
+    public ComponentMapper( final Component value )
     {
         this.value = value;
     }
@@ -23,15 +23,15 @@ public final class PageComponentMapper
         serialize( gen, this.value );
     }
 
-    private static void serialize( final MapGenerator gen, final PageComponent value )
+    private static void serialize( final MapGenerator gen, final Component value )
     {
         gen.value( "name", value.getName() );
         gen.value( "path", value.getPath() );
         gen.value( "type", value.getType() );
 
-        if ( value instanceof DescriptorBasedPageComponent )
+        if ( value instanceof DescriptorBasedComponent )
         {
-            serialize( gen, (DescriptorBasedPageComponent) value );
+            serialize( gen, (DescriptorBasedComponent) value );
         }
 
         if ( value instanceof LayoutComponent )
@@ -40,7 +40,7 @@ public final class PageComponentMapper
         }
     }
 
-    private static void serialize( final MapGenerator gen, final DescriptorBasedPageComponent comp )
+    private static void serialize( final MapGenerator gen, final DescriptorBasedComponent comp )
     {
         gen.value( "descriptor", comp.getDescriptor() );
         gen.map( "config" );

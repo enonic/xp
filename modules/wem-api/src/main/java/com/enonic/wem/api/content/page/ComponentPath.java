@@ -51,8 +51,8 @@ public final class ComponentPath
         for ( int i = 0; i < valueList.size() - 1; i += 2 )
         {
             final RegionName regionName = RegionName.fromString( valueList.get( i ) );
-            final PageComponentIndex pageComponentIndex = PageComponentIndex.fromString( valueList.get( i + 1 ) );
-            builder.add( new RegionAndComponent( regionName, pageComponentIndex ) );
+            final ComponentIndex componentIndex = ComponentIndex.fromString( valueList.get( i + 1 ) );
+            builder.add( new RegionAndComponent( regionName, componentIndex ) );
 
         }
         return new ComponentPath( builder.build() );
@@ -60,7 +60,7 @@ public final class ComponentPath
 
     public int getComponentIndex()
     {
-        return getLastLevel().getPageComponentIndex();
+        return getLastLevel().getComponentIndex();
     }
 
     int numberOfLevels()
@@ -115,20 +115,20 @@ public final class ComponentPath
 
         private final RegionName regionName;
 
-        private final PageComponentIndex pageComponentIndex;
+        private final ComponentIndex componentIndex;
 
         private final String refString;
 
-        public RegionAndComponent( final RegionName regionName, final PageComponentIndex pageComponentIndex )
+        public RegionAndComponent( final RegionName regionName, final ComponentIndex componentIndex )
         {
             this.regionName = regionName;
-            this.pageComponentIndex = pageComponentIndex;
+            this.componentIndex = componentIndex;
             this.refString = toString( this );
         }
 
         public static RegionAndComponent from( final String regionName, final int pageComponentIndex )
         {
-            return new RegionAndComponent( new RegionName( regionName ), new PageComponentIndex( pageComponentIndex ) );
+            return new RegionAndComponent( new RegionName( regionName ), new ComponentIndex( pageComponentIndex ) );
         }
 
         public static RegionAndComponent from( final String str )
@@ -136,8 +136,8 @@ public final class ComponentPath
             final Iterable<String> values = Splitter.on( DIVIDER ).omitEmptyStrings().split( str );
             final Iterator<String> iterator = values.iterator();
             final RegionName regionName = RegionName.fromString( iterator.next() );
-            final PageComponentIndex pageComponentIndex = PageComponentIndex.fromString( iterator.next() );
-            return new RegionAndComponent( regionName, pageComponentIndex );
+            final ComponentIndex componentIndex = ComponentIndex.fromString( iterator.next() );
+            return new RegionAndComponent( regionName, componentIndex );
         }
 
         public String getRegionName()
@@ -145,14 +145,14 @@ public final class ComponentPath
             return regionName.name;
         }
 
-        public int getPageComponentIndex()
+        public int getComponentIndex()
         {
-            return pageComponentIndex.index;
+            return componentIndex.index;
         }
 
         private String toString( final RegionAndComponent regionAndComponent )
         {
-            return regionAndComponent.regionName + DIVIDER + regionAndComponent.pageComponentIndex;
+            return regionAndComponent.regionName + DIVIDER + regionAndComponent.componentIndex;
         }
 
         public String toString()
@@ -181,21 +181,21 @@ public final class ComponentPath
         }
     }
 
-    public static class PageComponentIndex
+    public static class ComponentIndex
     {
         private final int index;
 
         private final String refString;
 
-        public PageComponentIndex( final int index )
+        public ComponentIndex( final int index )
         {
             this.index = index;
             this.refString = String.valueOf( this.index );
         }
 
-        public static PageComponentIndex fromString( final String str )
+        public static ComponentIndex fromString( final String str )
         {
-            return new PageComponentIndex( Integer.valueOf( str ) );
+            return new ComponentIndex( Integer.valueOf( str ) );
         }
 
         public String toString()

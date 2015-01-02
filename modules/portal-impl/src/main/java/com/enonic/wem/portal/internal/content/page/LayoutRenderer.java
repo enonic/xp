@@ -7,7 +7,7 @@ import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
 
 public final class LayoutRenderer
-    extends DescriptorBasedPageComponentRenderer<LayoutComponent>
+    extends DescriptorBasedComponentRenderer<LayoutComponent>
 {
     protected LayoutDescriptorService layoutDescriptorService;
 

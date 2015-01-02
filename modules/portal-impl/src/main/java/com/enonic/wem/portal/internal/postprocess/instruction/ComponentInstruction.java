@@ -8,11 +8,11 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.ComponentPath;
+import com.enonic.wem.api.content.page.ComponentService;
 import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentService;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.module.ModuleKey;
@@ -32,7 +32,7 @@ public final class ComponentInstruction
 
     private RendererFactory rendererFactory;
 
-    private PageComponentService pageComponentService;
+    private ComponentService componentService;
 
     @Reference
     public void setRendererFactory( final RendererFactory rendererFactory )
@@ -41,9 +41,9 @@ public final class ComponentInstruction
     }
 
     @Reference
-    public void setPageComponentService( final PageComponentService pageComponentService )
+    public void setComponentService( final ComponentService componentService )
     {
-        this.pageComponentService = pageComponentService;
+        this.componentService = componentService;
     }
 
     @Override
@@ -66,7 +66,7 @@ public final class ComponentInstruction
 
     private String renderComponent( final PortalContext context, final String componentSelector )
     {
-        final PageComponent component;
+        final Component component;
         if ( !componentSelector.startsWith( MODULE_COMPONENT_PREFIX ) )
         {
             final ComponentPath componentPath = ComponentPath.from( componentSelector );
@@ -77,14 +77,14 @@ public final class ComponentInstruction
             final String name = substringAfter( componentSelector, MODULE_COMPONENT_PREFIX );
             final ComponentName componentName = new ComponentName( name );
             final ModuleKey currentModule = context.getPageTemplate().getController().getModuleKey();
-            component = pageComponentService.getByName( currentModule, componentName );
+            component = componentService.getByName( currentModule, componentName );
         }
-        return renderPageComponent( context, component );
+        return renderComponent( context, component );
     }
 
-    private String renderPageComponent( final PortalContext context, final PageComponent component )
+    private String renderComponent( final PortalContext context, final Component component )
     {
-        final Renderer<PageComponent, PortalContext> renderer = this.rendererFactory.getRenderer( component );
+        final Renderer<Component, PortalContext> renderer = this.rendererFactory.getRenderer( component );
         if ( renderer == null )
         {
             throw new RenderException( "No Renderer found for: " + component.getClass().getSimpleName() );
@@ -94,7 +94,7 @@ public final class ComponentInstruction
         return result.getAsString();
     }
 
-    private PageComponent resolveComponent( final PortalContext context, final ComponentPath path )
+    private Component resolveComponent( final PortalContext context, final ComponentPath path )
     {
         final Content content = context.getContent();
         if ( content == null )
@@ -113,7 +113,7 @@ public final class ComponentInstruction
             pageRegions = context.getPageTemplate().getRegions();
         }
 
-        PageComponent component = pageRegions.getComponent( path );
+        Component component = pageRegions.getComponent( path );
         if ( component == null )
         {
             // TODO: Hack: See if component still exist in page template

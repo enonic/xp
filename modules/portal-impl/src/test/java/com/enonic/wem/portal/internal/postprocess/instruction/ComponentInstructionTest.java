@@ -6,10 +6,10 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.ComponentName;
+import com.enonic.wem.api.content.page.ComponentService;
 import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentService;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -45,10 +45,10 @@ public class ComponentInstructionTest
         throws Exception
     {
         RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
-        PageComponentService pageComponentService = Mockito.mock( PageComponentService.class );
+        ComponentService componentService = Mockito.mock( ComponentService.class );
         ComponentInstruction instruction = new ComponentInstruction();
         instruction.setRendererFactory( rendererFactory );
-        instruction.setPageComponentService( pageComponentService );
+        instruction.setComponentService( componentService );
 
         PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );
@@ -68,13 +68,13 @@ public class ComponentInstructionTest
         throws Exception
     {
         RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
-        PageComponentService pageComponentService = Mockito.mock( PageComponentService.class );
+        ComponentService componentService = Mockito.mock( ComponentService.class );
 
-        PageComponent component = createPartComponent();
-        doReturn( component ).when( pageComponentService ).getByName( isA( ModuleKey.class ), isA( ComponentName.class ) );
+        Component component = createPartComponent();
+        doReturn( component ).when( componentService ).getByName( isA( ModuleKey.class ), isA( ComponentName.class ) );
         ComponentInstruction instruction = new ComponentInstruction();
         instruction.setRendererFactory( rendererFactory );
-        instruction.setPageComponentService( pageComponentService );
+        instruction.setComponentService( componentService );
 
         PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );
@@ -101,7 +101,7 @@ public class ComponentInstructionTest
             build();
     }
 
-    private PageComponent createPartComponent()
+    private Component createPartComponent()
     {
         return newPartComponent().
             name( "myPartComponent" ).

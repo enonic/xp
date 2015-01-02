@@ -1,7 +1,7 @@
 package com.enonic.xp.portal;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.site.Site;
@@ -21,9 +21,9 @@ public interface PortalContext
 
     public PageTemplate getPageTemplate();
 
-    public PageComponent getComponent();
+    public Component getComponent();
 
-    public void setComponent( PageComponent component );
+    public void setComponent( Component component );
 
     public ModuleKey getModule();
 

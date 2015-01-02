@@ -4,15 +4,15 @@ import com.enonic.wem.admin.json.content.page.image.ImageComponentJson;
 import com.enonic.wem.admin.json.content.page.layout.LayoutComponentJson;
 import com.enonic.wem.admin.json.content.page.part.PartComponentJson;
 import com.enonic.wem.admin.json.content.page.text.TextComponentJson;
-import com.enonic.wem.api.content.page.PageComponent;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.api.content.page.text.TextComponent;
 
-public final class PageComponentJsonSerializer
+public final class ComponentJsonSerializer
 {
-    public static AbstractPageComponentJson toJson( final PageComponent component )
+    public static ComponentJson toJson( final Component component )
     {
         if ( component instanceof LayoutComponent )
         {

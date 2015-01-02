@@ -1,9 +1,9 @@
 package com.enonic.wem.api.content.page.text;
 
-import com.enonic.wem.api.content.page.PageComponentType;
+import com.enonic.wem.api.content.page.ComponentType;
 
 public final class TextComponentType
-    extends PageComponentType
+    extends ComponentType
 {
     public final static TextComponentType INSTANCE = new TextComponentType();
 

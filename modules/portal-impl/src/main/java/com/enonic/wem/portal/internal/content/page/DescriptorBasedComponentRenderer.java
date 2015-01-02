@@ -3,20 +3,20 @@ package com.enonic.wem.portal.internal.content.page;
 
 import java.text.MessageFormat;
 
-import com.enonic.wem.api.content.page.AbstractDescriptorBasedPageComponent;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.Descriptor;
+import com.enonic.wem.api.content.page.DescriptorBasedComponent;
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.wem.portal.internal.controller.ControllerScript;
 import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
+import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 
-public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDescriptorBasedPageComponent>
+public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBasedComponent>
     implements Renderer<R, PortalContext>
 {
     private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
@@ -38,7 +38,7 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
         final ControllerScript controllerScript = this.controllerScriptFactory.newController( descriptor.getComponentPath() );
 
         // render
-        final PageComponent previousComponent = context.getComponent();
+        final Component previousComponent = context.getComponent();
         try
         {
             context.setComponent( pageComponent );
@@ -51,7 +51,7 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
         }
     }
 
-    private RenderResult renderEmptyComponent( final AbstractDescriptorBasedPageComponent pageComponent, final PortalContext context )
+    private RenderResult renderEmptyComponent( final DescriptorBasedComponent pageComponent, final PortalContext context )
     {
         final RenderMode renderMode = getRenderingMode( context );
         switch ( renderMode )
@@ -70,7 +70,7 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
         }
     }
 
-    private RenderResult renderEmptyComponentEditMode( final AbstractDescriptorBasedPageComponent pageComponent )
+    private RenderResult renderEmptyComponentEditMode( final DescriptorBasedComponent pageComponent )
     {
         final String html = MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, pageComponent.getType().toString() );
 
@@ -90,7 +90,7 @@ public abstract class DescriptorBasedPageComponentRenderer<R extends AbstractDes
             build();
     }
 
-    private Descriptor resolveDescriptor( final AbstractDescriptorBasedPageComponent pageComponent )
+    private Descriptor resolveDescriptor( final DescriptorBasedComponent pageComponent )
     {
         final DescriptorKey descriptorKey = pageComponent.getDescriptor();
         return descriptorKey == null ? null : getComponentDescriptor( descriptorKey );

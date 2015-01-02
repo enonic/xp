@@ -3,17 +3,17 @@ package com.enonic.wem.admin.json.content.page;
 
 import java.util.List;
 
-import com.enonic.wem.api.content.page.DescriptorBasedPageComponent;
+import com.enonic.wem.api.content.page.DescriptorBasedComponent;
 import com.enonic.wem.api.data.PropertyArrayJson;
 import com.enonic.wem.api.data.PropertyTreeJson;
 
 @SuppressWarnings("UnusedDeclaration")
-public abstract class AbstractDescriptorBasedPageComponentJson<COMPONENT extends DescriptorBasedPageComponent>
-    extends AbstractPageComponentJson<COMPONENT>
+public abstract class DescriptorBasedComponentJson<COMPONENT extends DescriptorBasedComponent>
+    extends ComponentJson<COMPONENT>
 {
     private final List<PropertyArrayJson> config;
 
-    protected AbstractDescriptorBasedPageComponentJson( final COMPONENT component )
+    protected DescriptorBasedComponentJson( final COMPONENT component )
     {
         super( component );
         this.config = component.getConfig() != null ? PropertyTreeJson.toJson( component.getConfig() ) : null;

@@ -1,8 +1,8 @@
 package com.enonic.wem.api.content.page.region;
 
 
-import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentsDataSerializer;
+import com.enonic.wem.api.content.page.Component;
+import com.enonic.wem.api.content.page.ComponentsDataSerializer;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 
@@ -15,7 +15,7 @@ public class RegionDataSerializer
 
     private final String propertyName;
 
-    private final PageComponentsDataSerializer componentsSerializer = new PageComponentsDataSerializer();
+    private final ComponentsDataSerializer componentsSerializer = new ComponentsDataSerializer();
 
     public RegionDataSerializer()
     {
@@ -35,7 +35,7 @@ public class RegionDataSerializer
         final Region.Builder region = newRegion();
         region.name( asData.getString( NAME ) );
 
-        for ( PageComponent component : componentsSerializer.fromData( asData.getProperties( "component" ) ) )
+        for ( Component component : componentsSerializer.fromData( asData.getProperties( "component" ) ) )
         {
             region.add( component );
         }

@@ -1,12 +1,12 @@
 package com.enonic.wem.api.content.page;
 
-public abstract class PageComponentType
+public abstract class ComponentType
 {
     private final String shortName;
     
     private final Class componentClass;
 
-    public PageComponentType( final String shortName, final Class componentClass )
+    public ComponentType( final String shortName, final Class componentClass )
     {
         this.shortName = shortName;
         this.componentClass = componentClass;
@@ -22,5 +22,5 @@ public abstract class PageComponentType
         return componentClass;
     }
 
-    public abstract AbstractPageComponentDataSerializer getDataSerializer();
+    public abstract ComponentDataSerializer getDataSerializer();
 }

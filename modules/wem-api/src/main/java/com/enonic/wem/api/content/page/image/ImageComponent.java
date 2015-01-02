@@ -6,15 +6,14 @@ import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.page.AbstractPageComponent;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.ComponentName;
-import com.enonic.wem.api.content.page.PageComponent;
-import com.enonic.wem.api.content.page.PageComponentType;
+import com.enonic.wem.api.content.page.ComponentType;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.PropertyTree;
 
 public class ImageComponent
-    extends AbstractPageComponent
+    extends Component
     implements RegionPlaceableComponent
 {
     private static final String CAPTION = "caption";
@@ -40,14 +39,13 @@ public class ImageComponent
         return new Builder( source );
     }
 
-    @Override
-    public PageComponent copy()
+    public Component copy()
     {
         return newImageComponent( this ).build();
     }
 
     @Override
-    public PageComponentType getType()
+    public ComponentType getType()
     {
         return ImageComponentType.INSTANCE;
     }
@@ -109,7 +107,7 @@ public class ImageComponent
     }
 
     public static class Builder
-        extends AbstractPageComponent.Builder
+        extends Component.Builder
     {
         private ContentId image;
 

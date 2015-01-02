@@ -1,9 +1,9 @@
 package com.enonic.wem.core.content.page;
 
 
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.ComponentName;
-import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
@@ -16,7 +16,7 @@ import com.enonic.wem.api.content.page.part.PartDescriptorNotFoundException;
 import com.enonic.wem.api.content.page.part.PartDescriptorService;
 import com.enonic.wem.api.module.ModuleKey;
 
-class GetPageComponentByNameCommand
+class GetComponentByNameCommand
 {
     private ModuleKey module;
 
@@ -26,7 +26,7 @@ class GetPageComponentByNameCommand
 
     private LayoutDescriptorService layoutDescriptorService;
 
-    public PageComponent execute()
+    public Component execute()
     {
         final ComponentDescriptorName componentDescriptorName = new ComponentDescriptorName( name.toString() );
 
@@ -75,25 +75,25 @@ class GetPageComponentByNameCommand
         }
     }
 
-    public GetPageComponentByNameCommand module( final ModuleKey module )
+    public GetComponentByNameCommand module( final ModuleKey module )
     {
         this.module = module;
         return this;
     }
 
-    public GetPageComponentByNameCommand name( final ComponentName name )
+    public GetComponentByNameCommand name( final ComponentName name )
     {
         this.name = name;
         return this;
     }
 
-    public GetPageComponentByNameCommand partDescriptorService( final PartDescriptorService partDescriptorService )
+    public GetComponentByNameCommand partDescriptorService( final PartDescriptorService partDescriptorService )
     {
         this.partDescriptorService = partDescriptorService;
         return this;
     }
 
-    public GetPageComponentByNameCommand layoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+    public GetComponentByNameCommand layoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
     {
         this.layoutDescriptorService = layoutDescriptorService;
         return this;

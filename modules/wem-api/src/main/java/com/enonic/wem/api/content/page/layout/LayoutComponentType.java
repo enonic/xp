@@ -1,9 +1,9 @@
 package com.enonic.wem.api.content.page.layout;
 
-import com.enonic.wem.api.content.page.PageComponentType;
+import com.enonic.wem.api.content.page.ComponentType;
 
 public final class LayoutComponentType
-    extends PageComponentType
+    extends ComponentType
 {
     public final static LayoutComponentType INSTANCE = new LayoutComponentType();
 
