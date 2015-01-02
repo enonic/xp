@@ -19,7 +19,7 @@ module LiveEdit {
     import TextComponentView = api.liveedit.text.TextComponentView;
     import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
     import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
-    import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
+    import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
@@ -203,7 +203,7 @@ module LiveEdit {
 
             toRegion.addPageComponentView(pageComponentView, atIndex);
 
-            new PageComponentAddedEvent().setPageComponentView(pageComponentView).fire();
+            new ComponentAddedEvent().setPageComponentView(pageComponentView).fire();
             pageComponentView.select();
         }
 

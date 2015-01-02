@@ -39,7 +39,7 @@
 ///<reference path='ItemFromContextWindowDroppedEvent.ts' />
 ///<reference path='PageSelectEvent.ts' />
 ///<reference path='RegionSelectEvent.ts' />
-///<reference path='PageComponentAddedEvent.ts' />
+///<reference path='ComponentAddedEvent.ts' />
 ///<reference path='PageComponentRemoveEvent.ts' />
 ///<reference path='PageComponentResetEvent.ts' />
 ///<reference path='PageComponentDuplicateEvent.ts' />

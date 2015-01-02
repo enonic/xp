@@ -50,7 +50,7 @@ module app.wizard.page {
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
-    import PageComponentAddedEvent = api.liveedit.PageComponentAddedEvent;
+    import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import PageComponentRemoveEvent = api.liveedit.PageComponentRemoveEvent;
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
@@ -362,7 +362,7 @@ module app.wizard.page {
                 }
             });
 
-            this.liveEditPage.onPageComponentAdded((event: PageComponentAddedEvent) => {
+            this.liveEditPage.onPageComponentAdded((event: ComponentAddedEvent) => {
 
                 if (!this.pageModel.hasTemplate()) {
                     this.pageModel.initializePageFromDefault(this);
