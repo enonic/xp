@@ -44,6 +44,6 @@
 ///<reference path='PageComponentResetEvent.ts' />
 ///<reference path='PageComponentDuplicateEvent.ts' />
 ///<reference path='PageComponentSetDescriptorEvent.ts' />
-///<reference path='PageComponentLoadedEvent.ts' />
+///<reference path='ComponentLoadedEvent.ts' />
 ///<reference path='Position.ts' />
 ///<reference path='TextComponentSetTextEvent.ts' />

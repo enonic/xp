@@ -25,7 +25,7 @@ module app.wizard.page {
     import PageComponentResetEvent = api.liveedit.PageComponentResetEvent;
     import PageComponentDuplicateEvent = api.liveedit.PageComponentDuplicateEvent;
     import PageComponentSetDescriptorEvent = api.liveedit.PageComponentSetDescriptorEvent;
-    import PageComponentLoadedEvent = api.liveedit.PageComponentLoadedEvent;
+    import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import RepeatNextItemViewIdProducer = api.liveedit.RepeatNextItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
     import RegionView = api.liveedit.RegionView;
@@ -221,7 +221,7 @@ module app.wizard.page {
 
                     pageComponentView.replaceWith(newPageComponentView);
 
-                    new PageComponentLoadedEvent(newPageComponentView).fire(this.liveEditWindow);
+                    new ComponentLoadedEvent(newPageComponentView).fire(this.liveEditWindow);
 
                     newPageComponentView.select();
 

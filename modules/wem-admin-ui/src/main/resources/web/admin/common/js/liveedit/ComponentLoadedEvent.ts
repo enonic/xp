@@ -2,7 +2,7 @@ module api.liveedit {
 
     import Event = api.event.Event;
 
-    export class PageComponentLoadedEvent extends Event {
+    export class ComponentLoadedEvent extends Event {
 
         private itemView: ItemView;
 
@@ -15,11 +15,11 @@ module api.liveedit {
             return this.itemView;
         }
 
-        static on(handler: (event: PageComponentLoadedEvent) => void, contextWindow: Window = window) {
+        static on(handler: (event: ComponentLoadedEvent) => void, contextWindow: Window = window) {
             Event.bind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
 
-        static un(handler?: (event: PageComponentLoadedEvent) => void, contextWindow: Window = window) {
+        static un(handler?: (event: ComponentLoadedEvent) => void, contextWindow: Window = window) {
             Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
     }
