@@ -12,9 +12,9 @@ module app.wizard.page {
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
-    import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
-    import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
-    import DraggingPageComponentViewCanceledEvent = api.liveedit.DraggingPageComponentViewCanceledEvent;
+    import DraggingComponentViewStartedEvent = api.liveedit.DraggingComponentViewStartedEvent;
+    import DraggingComponentViewCompletedEvent = api.liveedit.DraggingComponentViewCompletedEvent;
+    import DraggingComponentViewCanceledEvent = api.liveedit.DraggingComponentViewCanceledEvent;
     import ItemFromContextWindowDroppedEvent = api.liveedit.ItemFromContextWindowDroppedEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
@@ -55,11 +55,11 @@ module app.wizard.page {
 
         private loadedListeners: {(): void;}[] = [];
 
-        private draggingPageComponentViewStartedListeners: {(event: DraggingPageComponentViewStartedEvent): void;}[] = [];
+        private draggingPageComponentViewStartedListeners: {(event: DraggingComponentViewStartedEvent): void;}[] = [];
 
-        private draggingPageComponentViewCompletedListeners: {(event: DraggingPageComponentViewCompletedEvent): void;}[] = [];
+        private draggingPageComponentViewCompletedListeners: {(event: DraggingComponentViewCompletedEvent): void;}[] = [];
 
-        private draggingPageComponentViewCanceledListeners: {(event: DraggingPageComponentViewCanceledEvent): void;}[] = [];
+        private draggingPageComponentViewCanceledListeners: {(event: DraggingComponentViewCanceledEvent): void;}[] = [];
 
         private itemFromContextWindowDroppedListeners: {(event: ItemFromContextWindowDroppedEvent): void;}[] = [];
 
@@ -257,11 +257,11 @@ module app.wizard.page {
                 imageUploadDialog.open();
             }, this.liveEditWindow);
 
-            DraggingPageComponentViewStartedEvent.on(this.notifyDraggingPageComponentViewStarted.bind(this), this.liveEditWindow);
+            DraggingComponentViewStartedEvent.on(this.notifyDraggingPageComponentViewStarted.bind(this), this.liveEditWindow);
 
-            DraggingPageComponentViewCompletedEvent.on(this.notifyDraggingPageComponentViewCompleted.bind(this), this.liveEditWindow);
+            DraggingComponentViewCompletedEvent.on(this.notifyDraggingPageComponentViewCompleted.bind(this), this.liveEditWindow);
 
-            DraggingPageComponentViewCanceledEvent.on(this.notifyDraggingPageComponentViewCanceled.bind(this), this.liveEditWindow);
+            DraggingComponentViewCanceledEvent.on(this.notifyDraggingPageComponentViewCanceled.bind(this), this.liveEditWindow);
 
             ItemFromContextWindowDroppedEvent.on(this.notifyItemFromContextWindowDropped.bind(this), this.liveEditWindow);
 
@@ -310,42 +310,42 @@ module app.wizard.page {
             });
         }
 
-        onDraggingPageComponentViewStartedEvent(listener: (event: DraggingPageComponentViewStartedEvent) => void) {
+        onDraggingPageComponentViewStartedEvent(listener: (event: DraggingComponentViewStartedEvent) => void) {
             this.draggingPageComponentViewStartedListeners.push(listener);
         }
 
-        unDraggingPageComponentViewStartedEvent(listener: (event: DraggingPageComponentViewStartedEvent) => void) {
+        unDraggingPageComponentViewStartedEvent(listener: (event: DraggingComponentViewStartedEvent) => void) {
             this.draggingPageComponentViewStartedListeners =
             this.draggingPageComponentViewStartedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyDraggingPageComponentViewStarted(event: DraggingPageComponentViewStartedEvent) {
+        private notifyDraggingPageComponentViewStarted(event: DraggingComponentViewStartedEvent) {
             this.draggingPageComponentViewStartedListeners.forEach((listener) => listener(event));
         }
 
-        onDraggingPageComponentViewCompleted(listener: {(event: DraggingPageComponentViewCompletedEvent): void;}) {
+        onDraggingPageComponentViewCompleted(listener: {(event: DraggingComponentViewCompletedEvent): void;}) {
             this.draggingPageComponentViewCompletedListeners.push(listener);
         }
 
-        unDraggingPageComponentViewCompleted(listener: {(event: DraggingPageComponentViewCompletedEvent): void;}) {
+        unDraggingPageComponentViewCompleted(listener: {(event: DraggingComponentViewCompletedEvent): void;}) {
             this.draggingPageComponentViewCompletedListeners =
             this.draggingPageComponentViewCompletedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyDraggingPageComponentViewCompleted(event: DraggingPageComponentViewCompletedEvent) {
+        private notifyDraggingPageComponentViewCompleted(event: DraggingComponentViewCompletedEvent) {
             this.draggingPageComponentViewCompletedListeners.forEach((listener) => listener(event));
         }
 
-        onDraggingPageComponentViewCanceled(listener: {(event: DraggingPageComponentViewCanceledEvent): void;}) {
+        onDraggingPageComponentViewCanceled(listener: {(event: DraggingComponentViewCanceledEvent): void;}) {
             this.draggingPageComponentViewCanceledListeners.push(listener);
         }
 
-        unDraggingPageComponentViewCanceled(listener: {(event: DraggingPageComponentViewCanceledEvent): void;}) {
+        unDraggingPageComponentViewCanceled(listener: {(event: DraggingComponentViewCanceledEvent): void;}) {
             this.draggingPageComponentViewCanceledListeners =
             this.draggingPageComponentViewCanceledListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyDraggingPageComponentViewCanceled(event: DraggingPageComponentViewCanceledEvent) {
+        private notifyDraggingPageComponentViewCanceled(event: DraggingComponentViewCanceledEvent) {
             this.draggingPageComponentViewCanceledListeners.forEach((listener) => listener(event));
         }
 

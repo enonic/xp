@@ -42,9 +42,9 @@ module app.wizard.page {
     import PartComponentView = api.liveedit.part.PartComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import TextComponentView = api.liveedit.text.TextComponentView;
-    import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
-    import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
-    import DraggingPageComponentViewCanceledEvent = api.liveedit.DraggingPageComponentViewCanceledEvent;
+    import DraggingComponentViewStartedEvent = api.liveedit.DraggingComponentViewStartedEvent;
+    import DraggingComponentViewCompletedEvent = api.liveedit.DraggingComponentViewCompletedEvent;
+    import DraggingComponentViewCanceledEvent = api.liveedit.DraggingComponentViewCanceledEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
@@ -336,14 +336,14 @@ module app.wizard.page {
                 }
             });
 
-            this.liveEditPage.onDraggingPageComponentViewStartedEvent((event: DraggingPageComponentViewStartedEvent) => {
+            this.liveEditPage.onDraggingPageComponentViewStartedEvent((event: DraggingComponentViewStartedEvent) => {
 
                 if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
                     this.contextWindow.slideOut();
                 }
             });
 
-            this.liveEditPage.onDraggingPageComponentViewCompleted((event: DraggingPageComponentViewCompletedEvent) => {
+            this.liveEditPage.onDraggingPageComponentViewCompleted((event: DraggingComponentViewCompletedEvent) => {
 
                 var pageComponentView = event.getPageComponentView();
                 if (!pageComponentView.isEmpty()) {
@@ -355,7 +355,7 @@ module app.wizard.page {
                 }
             });
 
-            this.liveEditPage.onDraggingPageComponentViewCanceled((event: DraggingPageComponentViewCanceledEvent) => {
+            this.liveEditPage.onDraggingPageComponentViewCanceled((event: DraggingComponentViewCanceledEvent) => {
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
                 if (this.contextWindow.isFloating() && !this.contextWindow.isShown() && toggler.isActive()) {
                     this.contextWindow.slideIn();

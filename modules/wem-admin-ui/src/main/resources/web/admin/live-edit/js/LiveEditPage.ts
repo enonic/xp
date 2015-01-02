@@ -17,8 +17,8 @@ module LiveEdit {
     import ItemViewId = api.liveedit.ItemViewId;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import TextComponentView = api.liveedit.text.TextComponentView;
-    import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
-    import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
+    import DraggingComponentViewStartedEvent = api.liveedit.DraggingComponentViewStartedEvent;
+    import DraggingComponentViewCompletedEvent = api.liveedit.DraggingComponentViewCompletedEvent;
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import ComponentRemoveEvent = api.liveedit.ComponentRemoveEvent;
@@ -128,12 +128,12 @@ module LiveEdit {
                 this.highlighter.highlightItemView(event.getComponentView());
                 this.shader.shadeItemView(event.getComponentView());
             });
-            DraggingPageComponentViewStartedEvent.on(() => {
+            DraggingComponentViewStartedEvent.on(() => {
                 this.highlighter.hide();
                 this.shader.hide();
                 this.cursor.hide();
             });
-            DraggingPageComponentViewCompletedEvent.on(() => {
+            DraggingComponentViewCompletedEvent.on(() => {
                 this.cursor.reset();
             });
             ComponentRemoveEvent.on((event: ComponentRemoveEvent) => {

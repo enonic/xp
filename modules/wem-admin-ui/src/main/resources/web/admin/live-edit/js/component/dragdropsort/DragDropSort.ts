@@ -21,9 +21,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import RegionItemType = api.liveedit.RegionItemType;
     import TextItemType = api.liveedit.text.TextItemType;
     import LayoutItemType = api.liveedit.layout.LayoutItemType;
-    import DraggingPageComponentViewStartedEvent = api.liveedit.DraggingPageComponentViewStartedEvent;
-    import DraggingPageComponentViewCompletedEvent = api.liveedit.DraggingPageComponentViewCompletedEvent;
-    import DraggingPageComponentViewCanceledEvent = api.liveedit.DraggingPageComponentViewCanceledEvent;
+    import DraggingComponentViewStartedEvent = api.liveedit.DraggingComponentViewStartedEvent;
+    import DraggingComponentViewCompletedEvent = api.liveedit.DraggingComponentViewCompletedEvent;
+    import DraggingComponentViewCanceledEvent = api.liveedit.DraggingComponentViewCanceledEvent;
     import ItemFromContextWindowDroppedEvent = api.liveedit.ItemFromContextWindowDroppedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
@@ -166,7 +166,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         _isDragging = true;
 
-        new DraggingPageComponentViewStartedEvent().fire();
+        new DraggingComponentViewStartedEvent().fire();
     }
 
     function handleDragOver(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
@@ -266,13 +266,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         if (!droppedPageComponentView) {
             if (isDraggingLayoutOverLayout(droppedInRegionView, _newItemItemType)) {
                 ui.item.remove();
-                new DraggingPageComponentViewCanceledEvent(droppedPageComponentView).fire();
+                new DraggingComponentViewCanceledEvent(droppedPageComponentView).fire();
                 return;
             }
         } else {
             if (isDraggingLayoutOverLayout(droppedInRegionView,  droppedPageComponentView.getType())) {
                 ui.item.remove();
-                new DraggingPageComponentViewCanceledEvent(droppedPageComponentView).fire();
+                new DraggingComponentViewCanceledEvent(droppedPageComponentView).fire();
                 return;
             }
         }
@@ -361,7 +361,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         pageComponentView.select();
 
-        new DraggingPageComponentViewCompletedEvent(pageComponentView).fire();
+        new DraggingComponentViewCompletedEvent(pageComponentView).fire();
     }
 
     function isItemDraggedFromContextWindow(item: JQuery): boolean {
