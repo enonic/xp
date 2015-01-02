@@ -5,7 +5,7 @@ module LiveEdit {
     import Page = api.content.page.Page;
     import PageRegions = api.content.page.PageRegions;
     import Region = api.content.page.region.Region;
-    import PageComponentType = api.content.page.PageComponentType;
+    import ComponentType = api.content.page.ComponentType;
     import ComponentName = api.content.page.ComponentName;
     import DescriptorBasedPageComponentBuilder = api.content.page.DescriptorBasedPageComponentBuilder;
     import DescriptorBasedPageComponent = api.content.page.DescriptorBasedPageComponent;
@@ -215,7 +215,7 @@ module LiveEdit {
             this.pageView.deselectSelectedView();
         }
 
-        createComponent(region: Region, type: PageComponentType, precedingComponentView: PageComponentView<Component>): Component {
+        createComponent(region: Region, type: ComponentType, precedingComponentView: PageComponentView<Component>): Component {
 
             var componentName = new ComponentName(api.util.StringHelper.capitalize(api.util.StringHelper.removeWhitespaces(type.getShortName())));
 

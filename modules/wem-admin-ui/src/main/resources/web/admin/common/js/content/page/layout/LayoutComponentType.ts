@@ -1,8 +1,8 @@
 module api.content.page.layout {
 
-    import PageComponentType = api.content.page.PageComponentType;
+    import ComponentType = api.content.page.ComponentType;
 
-    export class LayoutComponentType extends PageComponentType {
+    export class LayoutComponentType extends ComponentType {
 
         constructor() {
             super("layout");

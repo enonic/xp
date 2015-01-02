@@ -1,8 +1,8 @@
 module api.content.page.part {
 
-    import PageComponentType = api.content.page.PageComponentType;
+    import ComponentType = api.content.page.ComponentType;
 
-    export class PartComponentType extends PageComponentType {
+    export class PartComponentType extends ComponentType {
 
         constructor() {
             super("part");

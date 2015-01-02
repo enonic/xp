@@ -1,8 +1,8 @@
 module api.content.page.text {
 
-    import PageComponentType = api.content.page.PageComponentType;
+    import ComponentType = api.content.page.ComponentType;
 
-    export class TextComponentType extends PageComponentType {
+    export class TextComponentType extends ComponentType {
 
         constructor() {
             super("text");

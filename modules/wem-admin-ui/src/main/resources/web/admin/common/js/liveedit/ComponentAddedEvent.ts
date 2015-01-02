@@ -1,6 +1,5 @@
 module api.liveedit {
 
-    import PageComponentType = api.content.page.PageComponentType;
     import RegionPath = api.content.page.RegionPath;
     import Component = api.content.page.Component;
 

@@ -1,8 +1,8 @@
 module api.content.page.image {
 
-    import PageComponentType = api.content.page.PageComponentType;
+    import ComponentType = api.content.page.ComponentType;
 
-    export class ImageComponentType extends PageComponentType {
+    export class ImageComponentType extends ComponentType {
 
         constructor() {
             super("image");
