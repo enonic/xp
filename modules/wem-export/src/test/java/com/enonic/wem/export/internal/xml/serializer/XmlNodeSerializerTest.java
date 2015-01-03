@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.TimeZone;
 
 import org.junit.Test;
 
@@ -28,14 +29,48 @@ import com.enonic.wem.export.internal.xml.mapper.XmlNodeMapper;
 public class XmlNodeSerializerTest
     extends BaseXmlSerializerTest
 {
+    private final TimeZone defaultTimezone = TimeZone.getDefault();
+
     @Test
     public void test_all_propertytypes_to_xml()
         throws Exception
     {
         final Instant instant = Instant.parse( "2014-11-28T14:16:00Z" );
 
-        final LocalDateTime localDateTime = LocalDateTime.of( 2014, 11, 28, 21, 0, 0, 0 );
+        final Node node = doCreateNode( instant );
 
+        final XmlNode xml = XmlNodeMapper.toXml( node );
+
+        XmlNodeSerializer serializer = new XmlNodeSerializer();
+
+        final String result = serializer.serialize( xml );
+
+        assertXml( "node.xml", result );
+    }
+
+    @Test
+    public void test_all_propertytypes_to_xml_another_timezone()
+        throws Exception
+    {
+        TimeZone.setDefault( TimeZone.getTimeZone( "GMT-12:00" ) );
+
+        final Instant instant = Instant.parse( "2014-11-28T14:16:00Z" );
+
+        final Node node = doCreateNode( instant );
+
+        final XmlNode xml = XmlNodeMapper.toXml( node );
+
+        XmlNodeSerializer serializer = new XmlNodeSerializer();
+
+        final String result = serializer.serialize( xml );
+
+        assertXml( "node.xml", result );
+
+        TimeZone.setDefault( defaultTimezone );
+    }
+
+    private Node doCreateNode( final Instant instant )
+    {
         final PropertyTree propertyTree = new PropertyTree();
 
         propertyTree.addString( "myString", "myStringValue" );
@@ -48,7 +83,7 @@ public class XmlNodeSerializerTest
         propertyTree.addInstant( "myInstant", instant );
         propertyTree.addLocalTime( "myLocalTime", LocalTime.of( 21, 42, 0 ) );
         propertyTree.addLocalDate( "myLocalDate", LocalDate.of( 2014, 11, 28 ) );
-        propertyTree.addLocalDateTime( "myLocalDateTime", localDateTime );
+        propertyTree.addLocalDateTime( "myLocalDateTime", LocalDateTime.of( 2014, 11, 28, 21, 0, 0, 0 ) );
         // Links and ref
         propertyTree.addReference( "myRef", Reference.from( "abcd" ) );
         propertyTree.addLink( "myLink", Link.from( "/root/parent/child" ) );
@@ -65,7 +100,7 @@ public class XmlNodeSerializerTest
         mySubSubset.setString( "myString", "myStringValue" );
         mySubSubset.setBoolean( "myBoolean", true );
 
-        final Node node = Node.newNode().
+        return Node.newNode().
             id( NodeId.from( "abc" ) ).
             name( NodeName.from( "my-node-name" ) ).
             parent( NodePath.ROOT ).
@@ -77,13 +112,5 @@ public class XmlNodeSerializerTest
                 add( new AttachedBinary( BinaryReference.from( "image2.jpg" ), new BlobKey( "b" ) ) ).
                 build() ).
             build();
-
-        final XmlNode xml = XmlNodeMapper.toXml( node );
-
-        XmlNodeSerializer serializer = new XmlNodeSerializer();
-
-        final String result = serializer.serialize( xml );
-
-        assertXml( "node.xml", result );
     }
 }

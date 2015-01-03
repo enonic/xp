@@ -9,6 +9,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -88,9 +89,8 @@ public class XmlDateTimeConverter
     public static XMLGregorianCalendar toXMLGregorianCalendar( final LocalDate localDate )
     {
         Instant instant = localDate.atStartOfDay().atZone( ZoneId.of( "UTC" ) ).toInstant();
-        Date date = Date.from( instant );
 
-        return toXMLGregorianCalendar( date );
+        return doGetXmlGregCalFromInstant( instant );
     }
 
     public static java.util.Date toDate( XMLGregorianCalendar calendar )
@@ -107,6 +107,7 @@ public class XmlDateTimeConverter
     {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime( date );
+        calendar.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
 
         try
         {
@@ -122,6 +123,7 @@ public class XmlDateTimeConverter
     {
         GregorianCalendar c = new GregorianCalendar();
         c.setTime( Date.from( instant ) );
+        c.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
 
         try
         {
