@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.content.ContentConstants;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeService;
@@ -22,7 +23,14 @@ public class ContentInitializer
         {
             LOG.info( "Content root-node not found, creating" );
 
+            PropertyTree data = new PropertyTree();
+            data.setString( ContentPropertyNames.TYPE, "system:folder" );
+            data.setString( ContentPropertyNames.DISPLAY_NAME, "Content" );
+            data.addSet( ContentPropertyNames.DATA );
+            data.addSet( ContentPropertyNames.FORM );
+
             final Node root = nodeService.create( CreateNodeParams.create().
+                data( data ).
                 name( ContentConstants.CONTENT_ROOT_NAME ).
                 parent( ContentConstants.CONTENT_ROOT_PARENT ).
                 permissions( ContentConstants.CONTENT_ROOT_DEFAULT_ACL ).

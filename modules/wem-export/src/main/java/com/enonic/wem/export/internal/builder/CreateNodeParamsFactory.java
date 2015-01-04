@@ -43,7 +43,7 @@ public class CreateNodeParamsFactory
             nodeType( NodeType.from( xmlNode.getNodeType() ) ).
             data( PropertyTreeXmlBuilder.build( xmlNode.getProperties() ) ).
             indexConfigDocument( IndexConfigDocumentXmlBuilder.build( xmlNode.getIndexConfigs() ) ).
-            setAttachedBinaries( binaryAttachments );
+            setBinaryAttachments( binaryAttachments );
 
         setInsertManualSettings( builder );
 

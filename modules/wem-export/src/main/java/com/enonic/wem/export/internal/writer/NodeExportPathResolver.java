@@ -21,14 +21,24 @@ public class NodeExportPathResolver
         return Paths.get( basePath.toString(), exportName );
     }
 
-    public static Path resolveNodeBasePath( final Path rootPath, final NodePath nodePath, final NodePath exportNodePathRoot )
+    public static Path resolveNodeBasePath( final Path exportFilePath, final NodePath nodePath, final NodePath exportRootNodePath )
     {
         final Path fullNodePath = Paths.get( nodePath.toString() );
-        final Path exportBasePath = Paths.get( exportNodePathRoot.toString() );
+
+        final Path exportBasePath;
+
+        if ( exportRootNodePath.equals( NodePath.ROOT ) )
+        {
+            exportBasePath = Paths.get( NodePath.ROOT.toString() );
+        }
+        else
+        {
+            exportBasePath = Paths.get( exportRootNodePath.getParentPath().toString() );
+        }
 
         final Path relativePath = exportBasePath.relativize( fullNodePath );
 
-        return Paths.get( rootPath.toString(), relativePath.toString() );
+        return Paths.get( exportFilePath.toString(), relativePath.toString() );
     }
 
     public static Path resolveNodeDataFolder( final Path basePath )

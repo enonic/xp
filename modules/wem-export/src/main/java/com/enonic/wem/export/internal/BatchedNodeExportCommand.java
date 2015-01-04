@@ -24,7 +24,7 @@ public class BatchedNodeExportCommand
 {
     private final static int DEFAULT_BATCH_SIZE = 100;
 
-    private final NodePath exportRootNode;
+    private final NodePath exportRootPath;
 
     private final int batchSize;
 
@@ -44,7 +44,7 @@ public class BatchedNodeExportCommand
 
     private BatchedNodeExportCommand( final Builder builder )
     {
-        this.exportRootNode = builder.exportRootNode;
+        this.exportRootPath = builder.exportRootPath;
         this.batchSize = builder.batchSize;
         this.nodeService = builder.nodeService;
         this.exportWriter = builder.exportWriter;
@@ -55,7 +55,19 @@ public class BatchedNodeExportCommand
 
     public NodeExportResult execute()
     {
-        doExportChildNodes( this.exportRootNode );
+        if ( this.exportRootPath.isRoot() )
+        {
+            doExportChildNodes( this.exportRootPath );
+        }
+        else
+        {
+            final Node rootNode = this.nodeService.getByPath( this.exportRootPath );
+
+            if ( rootNode != null )
+            {
+                exportNode( rootNode );
+            }
+        }
 
         return result.build();
     }
@@ -103,29 +115,47 @@ public class BatchedNodeExportCommand
         return childrenBatch;
     }
 
-    private void exportNode( final Node child )
+    private void exportNode( final Node node )
     {
-        writeNode( child );
-        result.addNodePath( child.path() );
-        doExportChildNodes( child.path() );
+        writeNode( node );
+        result.addNodePath( node.path() );
+        doExportChildNodes( node.path() );
     }
 
     private void writeNode( final Node node )
     {
-        final Node relativeNode = Node.newNode( node ).parent( node.parent().removeFromBeginning( this.exportRootNode ) ).build();
+        final NodePath newParentPath = resolveNewParentPath( node );
+
+        final Node relativeNode = Node.newNode( node ).parent( newParentPath ).build();
 
         final XmlNode xmlNode = XmlNodeMapper.toXml( relativeNode );
 
         final String serializedNode = this.xmlNodeSerializer.serialize( xmlNode );
 
-        final Path nodeDataFolder = getNodeDataFolder( node );
+        final Path nodeDataFolder = resolveNodeDataFolder( node );
 
         if ( !dryRun )
         {
-            exportWriter.writeElement( NodeExportPathResolver.resolveNodeXmlPath( nodeDataFolder ), serializedNode );
+            final Path nodeXmlPath = NodeExportPathResolver.resolveNodeXmlPath( nodeDataFolder );
+            exportWriter.writeElement( nodeXmlPath, serializedNode );
         }
 
         exportNodeBinaries( relativeNode, nodeDataFolder );
+    }
+
+    private NodePath resolveNewParentPath( final Node node )
+    {
+        final NodePath newParentPath;
+
+        if ( node.path().equals( this.exportRootPath ) )
+        {
+            newParentPath = NodePath.ROOT;
+        }
+        else
+        {
+            newParentPath = node.parent().removeFromBeginning( this.exportRootPath );
+        }
+        return newParentPath;
     }
 
     private void exportNodeBinaries( final Node relativeNode, final Path nodeDataFolder )
@@ -158,7 +188,7 @@ public class BatchedNodeExportCommand
             builder.append( node.name().toString() ).append( LINE_SEPARATOR );
         }
 
-        final Path nodeOrderListPath = NodeExportPathResolver.resolveOrderListPath( getNodeDataFolder( parent ) );
+        final Path nodeOrderListPath = NodeExportPathResolver.resolveOrderListPath( resolveNodeDataFolder( parent ) );
 
         if ( !dryRun )
         {
@@ -183,9 +213,9 @@ public class BatchedNodeExportCommand
         return Math.ceil( totalHits / this.batchSize );
     }
 
-    private Path getNodeDataFolder( final Node node )
+    private Path resolveNodeDataFolder( final Node node )
     {
-        final Path nodeBasePath = NodeExportPathResolver.resolveNodeBasePath( this.exportTargetPath, node.path(), exportRootNode );
+        final Path nodeBasePath = NodeExportPathResolver.resolveNodeBasePath( this.exportTargetPath, node.path(), exportRootPath );
         return NodeExportPathResolver.resolveNodeDataFolder( nodeBasePath );
     }
 
@@ -197,7 +227,7 @@ public class BatchedNodeExportCommand
 
     public static final class Builder
     {
-        private NodePath exportRootNode;
+        private NodePath exportRootPath;
 
         private int batchSize = DEFAULT_BATCH_SIZE;
 
@@ -219,7 +249,7 @@ public class BatchedNodeExportCommand
 
         public Builder exportRootNode( NodePath exportRootNode )
         {
-            this.exportRootNode = exportRootNode;
+            this.exportRootPath = exportRootNode;
             return this;
         }
 

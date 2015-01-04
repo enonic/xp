@@ -64,8 +64,46 @@ public class NodeImportCommandTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 1, result.importedNodes.getSize() );
+        assertEquals( 1, result.addedNodes.getSize() );
     }
+
+
+    @Test
+    public void import_update_node()
+        throws Exception
+    {
+        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.getRoot().getPath(), "myExport", "mynode", "_" ) );
+        assert nodeFileDir != null;
+
+        final byte[] nodeXmlFile = readFromFile( "node_unordered.xml" ).getBytes();
+
+        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
+
+        final NodeServiceMock importNodeService = new NodeServiceMock();
+        final NodeImportResult result = NodeImportCommand.create().
+            nodeService( importNodeService ).
+            xmlNodeSerializer( new XmlNodeSerializer() ).
+            importRoot( NodePath.ROOT ).
+            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            build().
+            execute();
+
+        assertEquals( 0, result.getImportErrors().size() );
+        assertEquals( 1, result.addedNodes.getSize() );
+
+        final NodeImportResult updateResult = NodeImportCommand.create().
+            nodeService( importNodeService ).
+            xmlNodeSerializer( new XmlNodeSerializer() ).
+            importRoot( NodePath.ROOT ).
+            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            build().
+            execute();
+
+        assertEquals( 0, updateResult.getImportErrors().size() );
+        assertEquals( 0, updateResult.addedNodes.getSize() );
+        assertEquals( 1, updateResult.updateNodes.getSize() );
+    }
+
 
     @Test
     public void import_nodes()
@@ -85,7 +123,7 @@ public class NodeImportCommandTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 4, result.importedNodes.getSize() );
+        assertEquals( 4, result.addedNodes.getSize() );
 
         final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
         final Node mychild = assertNodeExists( mynode.path(), "mychild" );
@@ -118,7 +156,7 @@ public class NodeImportCommandTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 4, result.importedNodes.getSize() );
+        assertEquals( 4, result.addedNodes.getSize() );
 
         final Node mynode = assertNodeExists( importRoot, "mynode" );
         final Node mychild = assertNodeExists( mynode.path(), "mychild" );
@@ -157,7 +195,7 @@ public class NodeImportCommandTest
             execute();
 
         assertEquals( 1, result.getImportErrors().size() );
-        assertEquals( 0, result.getImportedNodes().getSize() );
+        assertEquals( 0, result.getAddedNodes().getSize() );
     }
 
     @Ignore
@@ -179,7 +217,7 @@ public class NodeImportCommandTest
             build().
             execute();
 
-        assertEquals( 5, result.getImportedNodes().getSize() );
+        assertEquals( 5, result.getAddedNodes().getSize() );
         assertEquals( 1, result.getImportErrors().size() );
     }
 
@@ -208,7 +246,7 @@ public class NodeImportCommandTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 7, result.importedNodes.getSize() );
+        assertEquals( 7, result.addedNodes.getSize() );
 
         final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
         final Node mychild = assertNodeExists( mynode.path(), "mychild1" );
@@ -239,7 +277,7 @@ public class NodeImportCommandTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 3, result.importedNodes.getSize() );
+        assertEquals( 3, result.addedNodes.getSize() );
 
         final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
         assertNodeExists( mynode.path(), "mychild1" );
@@ -264,7 +302,7 @@ public class NodeImportCommandTest
             execute();
 
         assertEquals( 1, result.getImportErrors().size() );
-        assertEquals( 1, result.getImportedNodes().getSize() );
+        assertEquals( 1, result.getAddedNodes().getSize() );
     }
 
     @Test

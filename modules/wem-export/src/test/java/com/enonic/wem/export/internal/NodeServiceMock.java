@@ -16,6 +16,7 @@ import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.BinaryAttachment;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.EditableNode;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -103,7 +104,24 @@ class NodeServiceMock
     @Override
     public Node update( final UpdateNodeParams params )
     {
-        return null;
+        final Node persistedNode = nodeIdMap.get( params.getId() );
+        final EditableNode editableNode = new EditableNode( persistedNode );
+        params.getEditor().edit( editableNode );
+
+        final Node editedNode = editableNode.build();
+        if ( editedNode.equals( persistedNode ) )
+        {
+            return persistedNode;
+        }
+
+        final Instant now = Instant.now();
+
+        final Node.Builder updateNodeBuilder = Node.newNode( editedNode ).
+            modifiedTime( now ).
+            modifier( persistedNode.getModifier() ).
+            permissions( persistedNode.getPermissions() );
+
+        return updateNodeBuilder.build();
     }
 
     @Override

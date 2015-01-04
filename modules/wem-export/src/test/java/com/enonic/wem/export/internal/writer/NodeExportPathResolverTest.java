@@ -11,8 +11,22 @@ import static org.junit.Assert.*;
 
 public class NodeExportPathResolverTest
 {
+
     @Test
-    public void node_root_contains()
+    public void export_root()
+        throws Exception
+    {
+        final Path rootPath = Paths.get( "/exports" );
+        final NodePath nodePath = createNodePath( "/content" );
+        final NodePath exportRootPath = NodePath.ROOT;
+
+        final Path relativePath = NodeExportPathResolver.resolveNodeBasePath( rootPath, nodePath, exportRootPath );
+
+        assertEquals( Paths.get( "/exports", "content" ), relativePath );
+    }
+
+    @Test
+    public void node_contains_export_root_path()
         throws Exception
     {
         final Path rootPath = Paths.get( "/exports" );
@@ -21,11 +35,11 @@ public class NodeExportPathResolverTest
 
         final Path relativePath = NodeExportPathResolver.resolveNodeBasePath( rootPath, nodePath, exportRootPath );
 
-        assertEquals( Paths.get( "/exports", "my-article", "image-archive" ), relativePath );
+        assertEquals( Paths.get( "/exports", "content", "my-article", "image-archive" ), relativePath );
     }
 
     @Test
-    public void node_root_full()
+    public void node_contains_full_export_root_path()
         throws Exception
     {
         final Path rootPath = Paths.get( "/exports" );
@@ -34,7 +48,7 @@ public class NodeExportPathResolverTest
 
         final Path relativePath = NodeExportPathResolver.resolveNodeBasePath( rootPath, nodePath, exportRootPath );
 
-        assertEquals( Paths.get( "/exports" ), relativePath );
+        assertEquals( Paths.get( "/exports", "image-archive" ), relativePath );
     }
 
     @Test(expected = IllegalArgumentException.class)

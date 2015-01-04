@@ -74,6 +74,12 @@ public class UpdateNodeParams
             return this;
         }
 
+        public Builder setBinaryAttachments( final BinaryAttachments binaryAttachments )
+        {
+            this.binaryAttachments = binaryAttachments.getSet();
+            return this;
+        }
+
         public UpdateNodeParams build()
         {
             this.validate();

@@ -12,9 +12,11 @@ import com.enonic.wem.api.node.InsertManualStrategy;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.vfs.VirtualFile;
 import com.enonic.wem.export.internal.builder.CreateNodeParamsFactory;
+import com.enonic.wem.export.internal.builder.UpdateNodeParamsFactory;
 import com.enonic.wem.export.internal.reader.ExportReader;
 import com.enonic.wem.export.internal.xml.XmlAttachedBinaries;
 import com.enonic.wem.export.internal.xml.XmlNode;
@@ -130,6 +132,39 @@ public class NodeImportCommand
 
         final NodePath importNodePath = NodeImportPathResolver.resolveNodeImportPath( nodeFolder, this.exportRoot, this.importRoot );
 
+        final Node existingNode = this.nodeService.getByPath( importNodePath );
+
+        if ( existingNode != null )
+        {
+            return updateNode( nodeFolder, xmlNode, existingNode );
+        }
+        else
+        {
+            return createNode( nodeFolder, processNodeSettings, xmlNode, importNodePath );
+        }
+    }
+
+    private Node updateNode( final VirtualFile nodeFolder, final XmlNode xmlNode, final Node existingNode )
+    {
+        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, xmlNode );
+
+        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create().
+            xmlNode( xmlNode ).
+            binaryAttachments( binaryAttachments ).
+            existingNode( existingNode ).
+            build().
+            execute();
+
+        final Node updatedNode = this.nodeService.update( updateNodeParams );
+
+        result.updated( updatedNode.path() );
+
+        return updatedNode;
+    }
+
+    private Node createNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings, final XmlNode xmlNode,
+                             final NodePath importNodePath )
+    {
         final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, xmlNode );
 
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create().
@@ -142,7 +177,7 @@ public class NodeImportCommand
 
         final Node createdNode = this.nodeService.create( createNodeParams );
 
-        result.add( createdNode.path() );
+        result.added( createdNode.path() );
 
         return createdNode;
     }

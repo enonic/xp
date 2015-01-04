@@ -11,7 +11,9 @@ import com.enonic.wem.api.util.BinaryReference;
 
 public class NodeImportResult
 {
-    public final NodePaths importedNodes;
+    public final NodePaths addedNodes;
+
+    public final NodePaths updateNodes;
 
     private List<ImportError> importErrors = Lists.newArrayList();
 
@@ -19,7 +21,8 @@ public class NodeImportResult
 
     private NodeImportResult( final Builder builder )
     {
-        importedNodes = builder.importedNodes.build();
+        addedNodes = builder.addedNodes.build();
+        updateNodes = builder.updatedNodes.build();
         this.importErrors = builder.importErrors;
         this.exportedBinaries = builder.exportedBinaries;
     }
@@ -44,9 +47,9 @@ public class NodeImportResult
         this.exportedBinaries = exportedBinaries;
     }
 
-    public NodePaths getImportedNodes()
+    public NodePaths getAddedNodes()
     {
-        return importedNodes;
+        return addedNodes;
     }
 
     public static Builder create()
@@ -56,7 +59,9 @@ public class NodeImportResult
 
     public static final class Builder
     {
-        private final NodePaths.Builder importedNodes = NodePaths.create();
+        private final NodePaths.Builder addedNodes = NodePaths.create();
+
+        private final NodePaths.Builder updatedNodes = NodePaths.create();
 
         private final List<String> exportedBinaries = Lists.newArrayList();
 
@@ -66,9 +71,15 @@ public class NodeImportResult
         {
         }
 
-        public Builder add( NodePath nodePath )
+        public Builder added( NodePath nodePath )
         {
-            this.importedNodes.addNodePath( nodePath );
+            this.addedNodes.addNodePath( nodePath );
+            return this;
+        }
+
+        public Builder updated( final NodePath nodePath )
+        {
+            this.updatedNodes.addNodePath( nodePath );
             return this;
         }
 

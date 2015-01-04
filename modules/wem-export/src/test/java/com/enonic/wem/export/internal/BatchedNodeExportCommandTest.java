@@ -130,7 +130,7 @@ public class BatchedNodeExportCommandTest
 
 
     @Test
-    public void relative_path_from_export_root_node()
+    public void export_from_child_of_child()
         throws Exception
     {
         final Node root = createNode( "mynode", NodePath.ROOT );
@@ -151,10 +151,42 @@ public class BatchedNodeExportCommandTest
             build().
             execute();
 
-        assertEquals( 2, result.getExportedNodes().getSize() );
+        assertEquals( 3, result.getExportedNodes().getSize() );
 
-        assertFileExists( "/myExport/child1_1_1/_/node.xml" );
-        assertFileExists( "/myExport/child1_1_2/_/node.xml" );
+        assertFileExists( "/myExport/child1_1/_/node.xml" );
+        assertFileExists( "/myExport/child1_1/child1_1_1/_/node.xml" );
+        assertFileExists( "/myExport/child1_1/child1_1_2/_/node.xml" );
+    }
+
+    @Test
+    public void include_export_root_and_nested_children()
+        throws Exception
+    {
+        final Node root = createNode( "mynode", NodePath.ROOT );
+        final Node child1 = createNode( "child1", root.path() );
+        createNode( "child2", root.path() );
+        final Node child1_1 = createNode( "child1_1", child1.path() );
+        createNode( "child1_1_1", child1_1.path() );
+        createNode( "child1_1_2", child1_1.path() );
+
+        this.nodeService.create( CreateNodeParams.from( root ).build() );
+
+        final NodeExportResult result = BatchedNodeExportCommand.create().
+            nodeService( this.nodeService ).
+            nodeExportWriter( new FileExportWriter() ).
+            exportRootNode( NodePath.newPath( "/mynode/child1" ).build() ).
+            xmlNodeSerializer( new XmlNodeSerializer() ).
+            exportHomePath( this.temporaryFolder.getRoot().toPath() ).
+            exportName( "myExport" ).
+            build().
+            execute();
+
+        assertEquals( 4, result.getExportedNodes().getSize() );
+
+        assertFileExists( "/myExport/child1/_/node.xml" );
+        assertFileExists( "/myExport/child1/child1_1/_/node.xml" );
+        assertFileExists( "/myExport/child1/child1_1/child1_1_1/_/node.xml" );
+        assertFileExists( "/myExport/child1/child1_1/child1_1_2/_/node.xml" );
     }
 
     @Test
@@ -204,9 +236,33 @@ public class BatchedNodeExportCommandTest
         return this.nodeService.create( CreateNodeParams.from( node ).build() );
     }
 
-    private void assertFileExists( final String node1Path )
+    private void assertFileExists( final String path )
     {
-        assertTrue( new File( this.temporaryFolder.getRoot().getPath() + node1Path ).exists() );
+        assertTrue( "file " + path + " not found", new File( this.temporaryFolder.getRoot().getPath() + path ).exists() );
+    }
+
+    private void printPaths()
+    {
+        final File file = this.temporaryFolder.getRoot();
+
+        doPrintPaths( file );
+    }
+
+    private void doPrintPaths( final File file )
+    {
+        if ( file.isDirectory() )
+        {
+            final File[] children = file.listFiles();
+
+            for ( final File child : children )
+            {
+                doPrintPaths( child );
+            }
+        }
+        else
+        {
+            System.out.println( file.toPath() );
+        }
     }
 
 }
