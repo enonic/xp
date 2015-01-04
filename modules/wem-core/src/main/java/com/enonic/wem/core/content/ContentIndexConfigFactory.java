@@ -9,6 +9,7 @@ import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
+import static com.enonic.wem.core.content.ContentPropertyNames.ATTACHMENT;
 import static com.enonic.wem.core.content.ContentPropertyNames.DATA;
 import static com.enonic.wem.core.content.ContentPropertyNames.DRAFT;
 import static com.enonic.wem.core.content.ContentPropertyNames.FORM;
@@ -29,6 +30,7 @@ class ContentIndexConfigFactory
             add( FORM, IndexConfig.NONE ).
             add( DATA, IndexConfig.BY_TYPE ).
             add( TYPE, IndexConfig.MINIMAL ).
+            add( ATTACHMENT, IndexConfig.NONE ).
             defaultConfig( IndexConfig.BY_TYPE );
 
         final ContentTypeName typeName = params.getType();
