@@ -8,10 +8,10 @@
     <htmlPart name="myHtmlPart">&amp;lt;h1&amp;gt;This is the title&amp;lt;/h1&amp;gt;&amp;lt;h2&amp;gt;This is the subheading&amp;lt;/h2&amp;gt;</htmlPart>
     <xml name="myXml">&amp;lt;car&amp;gt;&amp;lt;color&amp;gt;Arctic Grey&amp;lt;color&amp;gt;&amp;lt;car&amp;gt;</xml>
     <geoPoint name="myGeoPoint">8.0,4.0</geoPoint>
-    <dateTime name="myInstant">2014-11-28T15:16:00.000+01:00</dateTime>
+    <dateTime name="myInstant">2014-11-28T14:16:00.000Z</dateTime>
     <localTime name="myLocalTime">21:42:00.000Z</localTime>
-    <localDate name="myLocalDate">2014-11-28+01:00</localDate>
-    <dateTime name="myLocalDateTime">2014-11-28T22:00:00.000+01:00</dateTime>
+    <localDate name="myLocalDate">2014-11-28Z</localDate>
+    <dateTime name="myLocalDateTime">2014-11-28T21:00:00.000Z</dateTime>
     <reference name="myRef">abcd</reference>
     <link name="myLink">/root/parent/child</link>
     <binaryReference name="myBinaryRef1">image.jpg</binaryReference>
