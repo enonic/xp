@@ -1,7 +1,7 @@
 package com.enonic.wem.portal.internal.content.page;
 
-import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
+import com.enonic.wem.api.content.page.region.Descriptor;
 import com.enonic.wem.api.content.page.region.LayoutComponent;
 import com.enonic.wem.api.content.page.region.LayoutDescriptorService;
 

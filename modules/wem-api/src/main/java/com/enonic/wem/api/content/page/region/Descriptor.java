@@ -1,7 +1,8 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.api.content.page.region;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.resource.ResourceKey;
 
@@ -9,7 +10,7 @@ public abstract class Descriptor<KEY extends DescriptorKey>
 {
     private final KEY key;
 
-    private final ComponentDescriptorName name;
+    private final String name;
 
     private final String displayName;
 
@@ -32,7 +33,7 @@ public abstract class Descriptor<KEY extends DescriptorKey>
         return key;
     }
 
-    public ComponentDescriptorName getName()
+    public String getName()
     {
         return name;
     }
@@ -53,7 +54,7 @@ public abstract class Descriptor<KEY extends DescriptorKey>
     {
         protected KEY key;
 
-        protected ComponentDescriptorName name;
+        protected String name;
 
         protected String displayName;
 
@@ -65,15 +66,10 @@ public abstract class Descriptor<KEY extends DescriptorKey>
             return typecastToBuilder( this );
         }
 
-        public T name( final ComponentDescriptorName name )
+        public T name( final String name )
         {
             this.name = name;
             return typecastToBuilder( this );
-        }
-
-        public T name( final String name )
-        {
-            return this.name( new ComponentDescriptorName( name ) );
         }
 
         public T displayName( final String displayName )

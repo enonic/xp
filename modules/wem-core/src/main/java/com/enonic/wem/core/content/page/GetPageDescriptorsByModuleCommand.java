@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptors;
@@ -52,8 +51,7 @@ final class GetPageDescriptorsByModuleCommand
 
         for ( final String componentName : componentNames )
         {
-            final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
-            final DescriptorKey key = DescriptorKey.from( module.getKey(), descriptorName );
+            final DescriptorKey key = DescriptorKey.from( module.getKey(), componentName );
             final PageDescriptor pageDescriptor = getDescriptor( key );
             if ( pageDescriptor != null )
             {

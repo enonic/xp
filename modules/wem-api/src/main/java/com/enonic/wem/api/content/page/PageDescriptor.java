@@ -33,7 +33,7 @@ public final class PageDescriptor
         return key;
     }
 
-    public ComponentDescriptorName getName()
+    public String getName()
     {
         return this.key.getName();
     }

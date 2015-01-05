@@ -2,7 +2,6 @@ package com.enonic.wem.api.content.page.region;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.resource.ResourceKey;
 

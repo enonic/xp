@@ -8,14 +8,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
 public final class LayoutDescriptors
     extends AbstractImmutableEntityList<LayoutDescriptor>
 {
-    private final ImmutableMap<ComponentDescriptorName, LayoutDescriptor> descriptorsByName;
+    private final ImmutableMap<String, LayoutDescriptor> descriptorsByName;
 
     private final ImmutableMap<DescriptorKey, LayoutDescriptor> descriptorsByKey;
 
@@ -31,7 +30,7 @@ public final class LayoutDescriptors
         return this.descriptorsByKey.get( key );
     }
 
-    public LayoutDescriptor getDescriptor( final ComponentDescriptorName name )
+    public LayoutDescriptor getDescriptor( final String name )
     {
         return this.descriptorsByName.get( name );
     }
@@ -58,10 +57,10 @@ public final class LayoutDescriptors
     }
 
     private final static class ToNameFunction
-        implements Function<LayoutDescriptor, ComponentDescriptorName>
+        implements Function<LayoutDescriptor, String>
     {
         @Override
-        public ComponentDescriptorName apply( final LayoutDescriptor value )
+        public String apply( final LayoutDescriptor value )
         {
             return value.getName();
         }

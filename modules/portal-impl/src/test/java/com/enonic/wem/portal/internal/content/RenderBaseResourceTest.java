@@ -6,7 +6,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
@@ -180,7 +179,7 @@ public abstract class RenderBaseResourceTest<T extends RenderBaseResourceProvide
         throws Exception
     {
         final ModuleKey module = ModuleKey.from( "mainmodule" );
-        final ComponentDescriptorName name = new ComponentDescriptorName( "mypage" );
+        final String name = "mypage";
         final DescriptorKey key = DescriptorKey.from( module, name );
 
         final String xml = "<?xml version=\"1.0\"?>\n" +

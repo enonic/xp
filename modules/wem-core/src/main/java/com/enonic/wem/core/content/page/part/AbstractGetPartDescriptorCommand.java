@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import com.google.common.collect.Collections2;
 
-import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.region.PartDescriptor;
 import com.enonic.wem.api.content.page.region.PartDescriptors;
@@ -78,8 +77,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
             {
                 continue;
             }
-            final ComponentDescriptorName descriptorName = new ComponentDescriptorName( componentName );
-            final DescriptorKey key = DescriptorKey.from( module.getKey(), descriptorName );
+            final DescriptorKey key = DescriptorKey.from( module.getKey(), componentName );
             final PartDescriptor partDescriptor = getDescriptor( key );
             if ( partDescriptor != null )
             {

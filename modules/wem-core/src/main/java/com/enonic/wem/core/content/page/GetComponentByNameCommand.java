@@ -1,7 +1,6 @@
 package com.enonic.wem.core.content.page;
 
 
-import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.region.Component;
 import com.enonic.wem.api.content.page.region.ComponentName;
@@ -27,7 +26,7 @@ class GetComponentByNameCommand
 
     public Component execute()
     {
-        final ComponentDescriptorName componentDescriptorName = new ComponentDescriptorName( name.toString() );
+        final String componentDescriptorName = name.toString();
 
         final PartDescriptor partDescriptor = getPartDescriptor( componentDescriptorName );
         if ( partDescriptor != null )
@@ -48,7 +47,7 @@ class GetComponentByNameCommand
         return null;
     }
 
-    private PartDescriptor getPartDescriptor( final ComponentDescriptorName descriptorName )
+    private PartDescriptor getPartDescriptor( final String descriptorName )
     {
         try
         {
@@ -61,7 +60,7 @@ class GetComponentByNameCommand
         }
     }
 
-    private LayoutDescriptor getLayoutDescriptor( final ComponentDescriptorName descriptorName )
+    private LayoutDescriptor getLayoutDescriptor( final String descriptorName )
     {
         try
         {

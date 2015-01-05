@@ -8,14 +8,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
 public final class PartDescriptors
     extends AbstractImmutableEntityList<PartDescriptor>
 {
-    private final ImmutableMap<ComponentDescriptorName, PartDescriptor> descriptorsByName;
+    private final ImmutableMap<String, PartDescriptor> descriptorsByName;
 
     private final ImmutableMap<DescriptorKey, PartDescriptor> descriptorsByKey;
 
@@ -31,7 +30,7 @@ public final class PartDescriptors
         return this.descriptorsByKey.get( key );
     }
 
-    public PartDescriptor getDescriptor( final ComponentDescriptorName name )
+    public PartDescriptor getDescriptor( final String name )
     {
         return this.descriptorsByName.get( name );
     }
@@ -58,10 +57,10 @@ public final class PartDescriptors
     }
 
     private final static class ToNameFunction
-        implements Function<PartDescriptor, ComponentDescriptorName>
+        implements Function<PartDescriptor, String>
     {
         @Override
-        public ComponentDescriptorName apply( final PartDescriptor value )
+        public String apply( final PartDescriptor value )
         {
             return value.getName();
         }

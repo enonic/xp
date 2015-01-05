@@ -1,7 +1,6 @@
 package com.enonic.wem.api.content.page.region;
 
 
-import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.resource.ResourceKey;
 
