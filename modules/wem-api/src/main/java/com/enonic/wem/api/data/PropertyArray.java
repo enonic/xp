@@ -24,7 +24,6 @@ public final class PropertyArray
 
     PropertyArray( final PropertyTree tree, final PropertySet parent, final String name, final ValueType valueType )
     {
-        Preconditions.checkNotNull( tree, "tree cannot be null" );
         Preconditions.checkNotNull( parent, "parent cannot be null" );
         Preconditions.checkNotNull( name, "name cannot be null" );
         Preconditions.checkNotNull( valueType, "valueType cannot be null" );
@@ -185,7 +184,7 @@ public final class PropertyArray
     Property addValue( final Value value )
     {
         checkType( value.getType() );
-        final Property property = new Property( name, this.array.size(), value, tree.nextId(), parent );
+        final Property property = new Property( name, this.array.size(), value, tree != null ? tree.nextId() : null, parent );
         this.array.addLast( property );
         return property;
     }
@@ -193,7 +192,7 @@ public final class PropertyArray
     Property setValue( final int index, final Value value )
     {
         checkType( value.getType() );
-        final Property property = new Property( name, index, value, tree.nextId(), parent );
+        final Property property = new Property( name, index, value, tree != null ? tree.nextId() : null, parent );
         if ( get( index ) != null )
         {
             this.array.set( index, property );
@@ -224,7 +223,10 @@ public final class PropertyArray
     public void remove( final int index )
     {
         final Property property = array.get( index );
-        tree.unregisterProperty( property.getId() );
+        if ( tree != null )
+        {
+            tree.unregisterProperty( property.getId() );
+        }
         array.remove( index );
     }
 
@@ -233,7 +235,10 @@ public final class PropertyArray
         for ( int index = array.size() - 1; index >= 0; index-- )
         {
             final Property property = array.get( index );
-            tree.unregisterProperty( property.getId() );
+            if ( tree != null )
+            {
+                tree.unregisterProperty( property.getId() );
+            }
             array.remove( index );
         }
     }

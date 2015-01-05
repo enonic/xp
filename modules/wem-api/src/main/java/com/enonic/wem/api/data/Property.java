@@ -9,6 +9,8 @@ import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
@@ -24,7 +26,7 @@ public final class Property
 
     private Value value;
 
-    private final PropertyId id;
+    private PropertyId id;
 
     Property( final String name, final int index, final Value value, final PropertyId id, final PropertySet parent )
     {
@@ -37,11 +39,20 @@ public final class Property
         if ( value.isSet() )
         {
             value.asData().setProperty( this );
-            if ( value.asData() == parent.getTree().getRoot() )
+            if ( parent.getTree() != null )
             {
-                throw new IllegalArgumentException( "Given PropertySet is already the root PropertySet of the PropertyTree" );
+                if ( value.asData() == parent.getTree().getRoot() )
+                {
+                    throw new IllegalArgumentException( "Given PropertySet is already the root PropertySet of the PropertyTree" );
+                }
             }
         }
+    }
+
+    void setId( final PropertyId id )
+    {
+        Preconditions.checkState( this.id == null, "id already set" );
+        this.id = id;
     }
 
     void detach()

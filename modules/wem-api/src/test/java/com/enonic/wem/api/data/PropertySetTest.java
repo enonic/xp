@@ -140,12 +140,45 @@ public class PropertySetTest
     }
 
     @Test
-    public void when_toTree_xx()
+    public void creating_detached_PropertySet()
     {
-        PropertyTree sourceTree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        PropertySet mySet = sourceTree.addSet( "mySet" );
-        PropertySet otherSet = mySet.addSet( "otherSet" );
+        PropertySet set = new PropertySet();
 
-        mySet.toTree();
+        Property aProperty = set.addString( "myString", "a" );
+        Property bProperty = set.addString( "myString", "b" );
+
+        assertNull( aProperty.getId() );
+        assertNull( bProperty.getId() );
+
+        assertEquals( "a", aProperty.getString() );
+        assertEquals( "b", bProperty.getString() );
+
+        assertEquals( "a", set.getPropertyArray( "myString" ).get( 0 ).getString() );
+        assertEquals( "b", set.getPropertyArray( "myString" ).get( 1 ).getString() );
+
+    }
+
+    @Test
+    public void attaching_detached_PropertySet()
+    {
+        PropertySet set = new PropertySet();
+        Property aProperty = set.addString( "myString", "a" );
+        Property bProperty = set.addString( "myString", "b" );
+        PropertySet innerSet = new PropertySet();
+        Property innerStringProperty = innerSet.addString( "myInnerString", "a" );
+        Property innerSetProperty = set.addSet( "innerSet", innerSet );
+
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        tree.addSet( "mySet", set );
+
+        assertNotNull( aProperty.getId() );
+        assertNotNull( bProperty.getId() );
+        assertNotNull( innerSetProperty.getId() );
+        assertNotNull( innerStringProperty.getId() );
+
+        assertSame( aProperty, tree.getProperty( aProperty.getId() ) );
+        assertSame( bProperty, tree.getProperty( bProperty.getId() ) );
+        assertSame( innerSetProperty, tree.getProperty( innerSetProperty.getId() ) );
+        assertSame( innerStringProperty, tree.getProperty( innerStringProperty.getId() ) );
     }
 }

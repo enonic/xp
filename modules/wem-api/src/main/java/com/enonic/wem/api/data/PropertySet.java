@@ -21,7 +21,7 @@ import com.enonic.wem.api.util.Reference;
 
 public final class PropertySet
 {
-    private PropertyTree propertyTree;
+    private PropertyTree tree;
 
     private Property property;
 
@@ -32,14 +32,19 @@ public final class PropertySet
      */
     private boolean ifNotNull = false;
 
-    PropertySet( final PropertyTree propertyTree )
+    public PropertySet()
     {
-        this.propertyTree = propertyTree;
+        // Creating a detached PropertySet (i.e. no tree set)
+    }
+
+    PropertySet( final PropertyTree tree )
+    {
+        this.tree = tree;
     }
 
     private PropertySet( final PropertySet source, final PropertyTree tree )
     {
-        this.propertyTree = tree;
+        this.tree = tree;
         for ( final PropertyArray array : source.propertyArrayByName.values() )
         {
             this.propertyArrayByName.put( array.getName(), array.copy( tree, this ) );
@@ -48,7 +53,7 @@ public final class PropertySet
 
     public PropertyTree getTree()
     {
-        return this.propertyTree;
+        return this.tree;
     }
 
     Property getProperty()
@@ -166,6 +171,10 @@ public final class PropertySet
 
     public int countAncestors()
     {
+        if ( this.property == null )
+        {
+            throw new UnsupportedOperationException( "The PropertySet must be attached to a Property before this method can be invoked" );
+        }
         return this.property.countAncestors();
     }
 
@@ -190,23 +199,35 @@ public final class PropertySet
      */
     public PropertySet newSet()
     {
-        return new PropertySet( propertyTree );
+        return new PropertySet( tree );
     }
 
     void setPropertyTree( final PropertyTree propertyTree )
     {
-        if ( this.propertyTree != null && propertyTree != this.propertyTree )
+        if ( this.tree != null && propertyTree != this.tree )
         {
             throw new IllegalArgumentException(
                 "PropertySet already belongs to a ValueTree. Detach it from existing PropertyTree before adding it to another: " +
-                    this.propertyTree );
+                    this.tree );
         }
-        this.propertyTree = propertyTree;
+        this.tree = propertyTree;
+
+        final PropertyVisitor propertyVisitor = new PropertyVisitor()
+        {
+            @Override
+            public void visit( final Property property )
+            {
+                property.setId( propertyTree.nextId() );
+                propertyTree.registerProperty( property );
+            }
+        };
+        propertyVisitor.visitPropertiesWithSet( true );
+        propertyVisitor.traverse( this );
     }
 
     public PropertySet detach()
     {
-        this.propertyTree = null;
+        this.tree = null;
         for ( final PropertyArray propertyArray : propertyArrayByName.values() )
         {
             propertyArray.detach();
@@ -230,7 +251,7 @@ public final class PropertySet
 
         for ( final Property property : array.getProperties() )
         {
-            this.propertyTree.registerProperty( property );
+            this.tree.registerProperty( property );
         }
     }
 
@@ -239,11 +260,16 @@ public final class PropertySet
 
         final PropertyArray array = getOrCreatePropertyArray( property.getName(), property.getType() );
         array.addProperty( property );
-        propertyTree.registerProperty( property );
-        if ( property.getValue().isPropertySet() )
+
+        if ( tree != null )
         {
-            final PropertySet set = property.getSet();
-            set.setPropertyTree( propertyTree );
+            tree.registerProperty( property );
+
+            if ( property.getValue().isPropertySet() )
+            {
+                final PropertySet set = property.getSet();
+                set.setPropertyTree( tree );
+            }
         }
     }
 
@@ -257,11 +283,15 @@ public final class PropertySet
 
         final PropertyArray array = getOrCreatePropertyArray( name, value.getType() );
         final Property property = array.addValue( value );
-        propertyTree.registerProperty( property );
-        if ( value.getObject() instanceof PropertySet )
+
+        if ( tree != null )
         {
-            final PropertySet set = (PropertySet) value.getObject();
-            set.setPropertyTree( propertyTree );
+            tree.registerProperty( property );
+            if ( value.getObject() instanceof PropertySet )
+            {
+                final PropertySet set = (PropertySet) value.getObject();
+                set.setPropertyTree( tree );
+            }
         }
         return property;
     }
@@ -295,7 +325,10 @@ public final class PropertySet
 
         final PropertyArray array = getOrCreatePropertyArray( name, value.getType() );
         final Property property = array.setValue( index, value );
-        propertyTree.registerProperty( property );
+        if ( tree != null )
+        {
+            tree.registerProperty( property );
+        }
         return property;
     }
 
@@ -304,7 +337,7 @@ public final class PropertySet
         final Property existingProperty = getProperty( name, index );
         if ( existingProperty == null )
         {
-            final PropertySet set = new PropertySet( propertyTree );
+            final PropertySet set = tree != null ? new PropertySet( tree ) : new PropertySet();
             setProperty( name, index, Value.newData( set ) );
             return set;
         }
@@ -319,7 +352,7 @@ public final class PropertySet
         PropertyArray array = this.propertyArrayByName.get( name );
         if ( array == null )
         {
-            array = new PropertyArray( propertyTree, this, name, type );
+            array = new PropertyArray( tree, this, name, type );
             this.propertyArrayByName.put( name, array );
         }
         return array;
@@ -611,7 +644,7 @@ public final class PropertySet
      */
     public PropertySet addSet( final String name )
     {
-        final PropertySet propertySet = new PropertySet( propertyTree );
+        final PropertySet propertySet = tree != null ? new PropertySet( tree ) : new PropertySet();
         addSet( name, propertySet );
         return propertySet;
     }
