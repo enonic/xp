@@ -35,8 +35,6 @@ public final class DispatcherServlet
     protected void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
-        System.out.println( this.handlers );
-
         try
         {
             doService( req, res );
