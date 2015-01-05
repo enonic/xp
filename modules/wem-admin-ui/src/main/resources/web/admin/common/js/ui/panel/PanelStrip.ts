@@ -4,11 +4,13 @@ module api.ui.panel {
 
         private panels: Panel[] = [];
 
-        private headers: api.dom.Element[] = [];
+        private headers: api.dom.H2El[] = [];
 
         private scrollable: api.dom.Element;
 
         private offset: number = 0;
+
+        private hiddenHeader: number = 0;
 
         private panelShown: Panel = null;
 
@@ -31,11 +33,25 @@ module api.ui.panel {
         addPanel(panel: Panel, header?: string): number {
             panel.setDoOffset(false);
             if (header) {
-                var headerEl = new api.dom.H2El("wizard-step-header");
+                var headerEl = new api.dom.H2El("panel-strip-panel-header");
                 headerEl.getEl().setInnerHtml(header);
                 headerEl.setVisible(false);
                 this.appendChild(headerEl);
             }
+
+            panel.onShown((event: api.dom.ElementShownEvent) => {
+                var panel = <Panel>event.getElement();
+                var panelIndex = this.getPanelIndex(panel);
+                if (panelIndex > 0) {
+                    if (this.panels[this.hiddenHeader].isVisible()) {
+                        this.headers[index].setVisible(true);
+                    } else {
+                        this.hiddenHeader += 1;
+                    }
+                }
+            });
+
+
             this.appendChild(panel);
             var index = this.panels.push(panel) - 1;
             this.headers.push(headerEl);
@@ -47,10 +63,6 @@ module api.ui.panel {
 
         getPanels(): Panel[] {
             return this.panels;
-        }
-
-        activateHeader(index: number) {
-            this.headers[index].setVisible(true);
         }
 
         getScrollable(): api.dom.Element {
@@ -130,7 +142,7 @@ module api.ui.panel {
             return this.panels[index];
         }
 
-        getHeader(index: number): api.dom.Element {
+        getHeader(index: number): api.dom.H2El {
             return this.headers[index];
         }
 
@@ -169,7 +181,7 @@ module api.ui.panel {
             wemjq(this.scrollable.getHTMLElement()).animate({
                 scrollTop: index == 0 ? 0 : this.scrollable.getHTMLElement().scrollTop - this.offset +
                                             panelToShow.getEl().getOffsetToParent().top -
-                                            this.getHeader(index).getEl().getHeightWithBorder()
+                                            this.headers[index].getEl().getHeightWithBorder()
             }, {
                 duration: 500,
                 complete: () => {
