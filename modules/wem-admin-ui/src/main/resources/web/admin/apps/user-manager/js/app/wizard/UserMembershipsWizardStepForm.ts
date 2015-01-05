@@ -5,6 +5,7 @@ module app.wizard {
     import PrincipalKey = api.security.PrincipalKey;
     import PrincipalType = api.security.PrincipalType;
     import PrincipalLoader = api.security.PrincipalLoader;
+    import RoleKeys = api.security.RoleKeys;
 
     import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 
@@ -34,7 +35,8 @@ module app.wizard {
             this.rolesLoaded = false;
 
             var groupsLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP]);
-            var rolesLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.ROLE]);
+            var rolesLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.ROLE]).
+                skipPrincipals([RoleKeys.EVERYONE, RoleKeys.OWNER]);
 
             this.groups = new PrincipalComboBox(groupsLoader);
             this.roles = new PrincipalComboBox(rolesLoader);

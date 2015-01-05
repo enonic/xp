@@ -7,6 +7,7 @@ module app.wizard {
 
     import Principal = api.security.Principal;
     import PrincipalKey = api.security.PrincipalKey;
+    import RoleKeys = api.security.RoleKeys;
 
     import UserTreeGridItem = app.browse.UserTreeGridItem;
     import UserTreeGridItemBuilder = app.browse.UserTreeGridItemBuilder;
@@ -24,13 +25,17 @@ module app.wizard {
             });
         }
 
-        createSteps(): wemQ.Promise<any[]> {
+        createSteps(principal?: Principal): wemQ.Promise<any[]> {
             var deferred = wemQ.defer<WizardStep[]>();
 
             var steps: WizardStep[] = [];
 
             steps.push(new WizardStep("Role", this.getDescriptionWizardStepForm()));
-            steps.push(new WizardStep("Grants", this.getMembersWizardStepForm()));
+
+            var principalKey: PrincipalKey = principal ? principal.getKey() : undefined;
+            if (!RoleKeys.EVERYONE.equals(principalKey) && !RoleKeys.OWNER.equals(principalKey)) {
+                steps.push(new WizardStep("Grants", this.getMembersWizardStepForm()));
+            }
 
             this.setSteps(steps);
 
@@ -40,8 +45,7 @@ module app.wizard {
 
         doLayoutPersistedItem(principal: Principal): wemQ.Promise<void> {
             var parallelPromises: wemQ.Promise<any>[] = [
-                // Load attachments?
-                this.createSteps()
+                this.createSteps(principal)
             ];
 
             return wemQ.all(parallelPromises).spread<void>(() => {

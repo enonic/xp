@@ -5,6 +5,7 @@ module api.security {
         private allowedTypes: PrincipalType[];
         private searchQuery: string;
         private userStoreKey: UserStoreKey;
+        private filterPredicate: (principal: Principal) => boolean;
 
         constructor() {
             super();
@@ -25,9 +26,13 @@ module api.security {
         sendAndParse(): wemQ.Promise<Principal[]> {
             return this.send().
                 then((response: api.rest.JsonResponse<PrincipalListJson>) => {
-                    return response.getResult().principals.map((principalJson: PrincipalJson) => {
+                    var principals: Principal[] = response.getResult().principals.map((principalJson: PrincipalJson) => {
                         return this.fromJsonToPrincipal(principalJson);
                     });
+                    if (this.filterPredicate) {
+                        principals = principals.filter(this.filterPredicate);
+                    }
+                    return principals;
                 });
         }
 
@@ -50,6 +55,10 @@ module api.security {
         setSearchQuery(query: string): FindPrincipalsRequest {
             this.searchQuery = query;
             return this;
+        }
+
+        setResultFilter(filterPredicate: (principal: Principal) => boolean) {
+            this.filterPredicate = filterPredicate;
         }
     }
 }

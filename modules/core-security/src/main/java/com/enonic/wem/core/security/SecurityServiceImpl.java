@@ -13,6 +13,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
@@ -54,6 +55,7 @@ import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.security.UpdateGroupParams;
@@ -79,6 +81,8 @@ import static com.enonic.wem.core.security.PrincipalKeyNodeTranslator.toNodeId;
 public final class SecurityServiceImpl
     implements SecurityService
 {
+    private static final ImmutableSet<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP = ImmutableSet.of( RoleKeys.OWNER, RoleKeys.EVERYONE );
+
     private NodeService nodeService;
 
     private Clock clock;
@@ -139,6 +143,11 @@ public final class SecurityServiceImpl
     @Override
     public void addRelationship( final PrincipalRelationship relationship )
     {
+        final PrincipalKey from = relationship.getFrom();
+        if ( FORBIDDEN_FROM_RELATIONSHIP.contains( from ) )
+        {
+            throw new IllegalArgumentException( "Invalid 'from' value in relationship: " + from.toString() );
+        }
         CONTEXT_USER_STORES.callWith( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.addRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
@@ -280,7 +289,9 @@ public final class SecurityServiceImpl
     private AuthenticationInfo createAuthInfo( final User user )
     {
         final PrincipalKeys principals = resolveMemberships( user.getKey() );
-        return AuthenticationInfo.create().principals( principals ).principal( PrincipalKey.ofAnonymous() ).user( user ).build();
+        return AuthenticationInfo.create().principals( principals ).
+            principals( PrincipalKey.ofAnonymous(), RoleKeys.EVERYONE ).
+            user( user ).build();
     }
 
     private boolean passwordMatch( final User user, final String password )
@@ -356,11 +367,6 @@ public final class SecurityServiceImpl
             final Node updatedNode = nodeService.update( updateNodeParams );
             return PrincipalNodeTranslator.userFromNode( updatedNode );
         } );
-    }
-
-    private final String encodePassword( final String password )
-    {
-        return this.passwordEncoder.encodePassword( password );
     }
 
     @Override

@@ -24,7 +24,7 @@ module app.wizard {
             });
         }
 
-        createSteps(): wemQ.Promise<any[]> {
+        createSteps(principal?: Principal): wemQ.Promise<any[]> {
             var deferred = wemQ.defer<WizardStep[]>();
 
             var steps: WizardStep[] = [];

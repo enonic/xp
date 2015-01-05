@@ -58,7 +58,7 @@ public class AuthenticationInfoTest
         final PrincipalKey role1 = PrincipalKey.from( "role:administrators" );
         final AuthenticationInfo info = AuthenticationInfo.create().
             user( user ).
-            principal( group1 ).
+            principals( group1 ).
             principals( PrincipalKeys.from( group2, role1 ) ).
             build();
 

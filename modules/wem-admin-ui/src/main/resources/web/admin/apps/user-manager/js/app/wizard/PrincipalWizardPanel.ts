@@ -1,7 +1,6 @@
 module app.wizard {
 
     import Principal = api.security.Principal;
-    import PrincipalKey = api.security.PrincipalKey;
     import PrincipalType = api.security.PrincipalType;
     import PrincipalNamedEvent = api.security.PrincipalNamedEvent;
     import UserStore = api.security.UserStore;
@@ -151,7 +150,7 @@ module app.wizard {
 
         }
 
-        createSteps(): wemQ.Promise<any[]> {
+        createSteps(principal?: Principal): wemQ.Promise<any[]> {
             throw new Error("Must be implemented by inheritors");
         }
 

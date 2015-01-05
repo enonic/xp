@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.User;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -59,7 +60,7 @@ public final class AuthenticationInfo
 
     public static AuthenticationInfo failed()
     {
-        return new Builder( false ).build();
+        return new Builder( false ).principals( PrincipalKey.ofAnonymous(), RoleKeys.EVERYONE ).build();
     }
 
     public static class Builder
@@ -82,15 +83,18 @@ public final class AuthenticationInfo
             return this;
         }
 
-        public Builder principal( final PrincipalKey principal )
-        {
-            this.principals.add( principal );
-            return this;
-        }
-
         public Builder principals( final Iterable<PrincipalKey> principals )
         {
             this.principals.addAll( principals );
+            return this;
+        }
+
+        public Builder principals( final PrincipalKey... principals )
+        {
+            for ( PrincipalKey principal : principals )
+            {
+                this.principals.add( principal );
+            }
             return this;
         }
 

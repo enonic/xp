@@ -23,7 +23,8 @@ module app.wizard {
             super();
 
             loadedHandler = loadedHandler || (() => {});
-            var loader = new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER]);
+            var loader = new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER]).
+                skipPrincipals([PrincipalKey.ofAnonymous()]);
 
             this.principals = new PrincipalComboBox(loader);
             var handler = () => { this.selectMembers(); loadedHandler(); this.principals.unLoaded(handler); };
@@ -54,7 +55,7 @@ module app.wizard {
 
         private selectMembers(): void {
             if (!!this.principal) {
-                var principalKeys = this.getPrincipalMembers().map((key:PrincipalKey) => {
+                var principalKeys = this.getPrincipalMembers().map((key: PrincipalKey) => {
                     return key.getId();
                 });
                 var selected = this.principals.getDisplayValues().filter((principal: Principal) => {

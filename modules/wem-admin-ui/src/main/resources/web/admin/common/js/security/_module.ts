@@ -1,6 +1,7 @@
 ///<reference path="PrincipalType.ts"/>
 ///<reference path="UserStoreKey.ts"/>
 ///<reference path="PrincipalKey.ts"/>
+///<reference path="RoleKeys.ts"/>
 ///<reference path="Principal.ts"/>
 ///<reference path="PrincipalJson.ts"/>
 ///<reference path="UserJson.ts"/>
