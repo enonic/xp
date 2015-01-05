@@ -6,14 +6,14 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.PropertyTree;
 
-public abstract class DescriptorBasedComponent<DESCRIPTOR_KEY extends DescriptorKey>
+public abstract class DescriptorBasedComponent
     extends Component
 {
-    private final DESCRIPTOR_KEY descriptor;
+    private final DescriptorKey descriptor;
 
     private final PropertyTree config;
 
-    protected DescriptorBasedComponent( final Builder<DESCRIPTOR_KEY> builder )
+    protected DescriptorBasedComponent( final Builder builder )
     {
         super( builder );
         this.descriptor = builder.descrpitor;
@@ -21,7 +21,7 @@ public abstract class DescriptorBasedComponent<DESCRIPTOR_KEY extends Descriptor
         this.config = builder.config;
     }
 
-    public DESCRIPTOR_KEY getDescriptor()
+    public DescriptorKey getDescriptor()
     {
         return descriptor;
     }
@@ -63,10 +63,10 @@ public abstract class DescriptorBasedComponent<DESCRIPTOR_KEY extends Descriptor
         return Objects.hash( super.hashCode(), config, descriptor );
     }
 
-    public static class Builder<DESCRIPTOR_KEY extends DescriptorKey>
+    public static class Builder
         extends Component.Builder
     {
-        protected DESCRIPTOR_KEY descrpitor;
+        protected DescriptorKey descrpitor;
 
         protected PropertyTree config;
 
@@ -79,8 +79,7 @@ public abstract class DescriptorBasedComponent<DESCRIPTOR_KEY extends Descriptor
         {
             super( source );
             this.config = source.getConfig().copy();
-            //noinspection unchecked
-            this.descrpitor = (DESCRIPTOR_KEY) source.getDescriptor();
+            this.descrpitor = source.getDescriptor();
         }
 
         public Builder name( ComponentName value )
@@ -89,7 +88,7 @@ public abstract class DescriptorBasedComponent<DESCRIPTOR_KEY extends Descriptor
             return this;
         }
 
-        public Builder<DESCRIPTOR_KEY> descriptor( DESCRIPTOR_KEY value )
+        public Builder descriptor( DescriptorKey value )
         {
             this.descrpitor = value;
             return this;

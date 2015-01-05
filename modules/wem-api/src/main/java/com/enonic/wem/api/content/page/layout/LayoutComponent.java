@@ -13,7 +13,7 @@ import com.enonic.wem.api.data.PropertyTree;
 
 @SuppressWarnings("UnusedDeclaration")
 public final class LayoutComponent
-    extends DescriptorBasedComponent<DescriptorKey>
+    extends DescriptorBasedComponent
 {
     private LayoutRegions regions;
 
@@ -109,7 +109,7 @@ public final class LayoutComponent
     }
 
     public static class Builder
-        extends DescriptorBasedComponent.Builder<DescriptorKey>
+        extends DescriptorBasedComponent.Builder
     {
         private LayoutRegions regions;
 

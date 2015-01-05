@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.data.PropertyTree;
 
 public final class PartComponent
-    extends DescriptorBasedComponent<DescriptorKey>
+    extends DescriptorBasedComponent
 {
     public PartComponent( final Builder builder )
     {
@@ -53,7 +53,7 @@ public final class PartComponent
     }
 
     public static class Builder
-        extends DescriptorBasedComponent.Builder<DescriptorKey>
+        extends DescriptorBasedComponent.Builder
     {
         private Builder()
         {
