@@ -14,15 +14,13 @@ public final class ContentIconUrlResolver
 {
     private ContentTypeService contentTypeService;
 
-    private ContentTypeIconResolver contentTypeIconResolver;
-
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
     public ContentIconUrlResolver( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
-        this.contentTypeIconResolver = new ContentTypeIconResolver( contentTypeService );
-        this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( this.contentTypeIconResolver );
+        final ContentTypeIconResolver contentTypeIconResolver = new ContentTypeIconResolver( contentTypeService );
+        this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( contentTypeIconResolver );
     }
 
     public String resolve( final Content content )
@@ -34,17 +32,18 @@ public final class ContentIconUrlResolver
         }
         else if ( content instanceof Media )
         {
-            final Attachment attachment = ( (Media) content ).getMediaAttachment();
-            if ( attachment != null )
+            final Media media = (Media) content;
+            if ( media.isImage() )
             {
-                return ServletRequestUrlHelper.createUri(
-                    "/admin/rest/content/icon/" + content.getId() + "?ts=" + content.getModifiedTime().toEpochMilli() );
+                final Attachment attachment = ( (Media) content ).getMediaAttachment();
+                if ( attachment != null )
+                {
+                    return ServletRequestUrlHelper.createUri(
+                        "/admin/rest/content/icon/" + content.getId() + "?ts=" + content.getModifiedTime().toEpochMilli() );
+                }
             }
-            else
-            {
-                return this.contentTypeIconUrlResolver.resolve(
-                    this.contentTypeService.getByName( GetContentTypeParams.from( ContentTypeName.imageMedia() ) ) );
-            }
+            return this.contentTypeIconUrlResolver.resolve(
+                this.contentTypeService.getByName( GetContentTypeParams.from( ContentTypeName.imageMedia() ) ) );
         }
         return this.contentTypeIconUrlResolver.resolve( content.getType() );
     }

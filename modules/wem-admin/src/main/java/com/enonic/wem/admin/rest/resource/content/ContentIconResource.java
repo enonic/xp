@@ -79,10 +79,13 @@ public final class ContentIconResource
             if ( content instanceof Media )
             {
                 final Media media = (Media) content;
-                resolvedImage = resolveResponseFromImageAttachment( media, size );
-                if ( resolvedImage.isOK() )
+                if ( media.isImage() )
                 {
-                    return resolvedImage.toResponse();
+                    resolvedImage = resolveResponseFromImageAttachment( media, size );
+                    if ( resolvedImage.isOK() )
+                    {
+                        return resolvedImage.toResponse();
+                    }
                 }
             }
         }
