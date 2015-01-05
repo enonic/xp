@@ -58,11 +58,7 @@ public class PrincipalTest
     @Test
     public void testAnonymous()
     {
-        final User anonymous = User.anonymous();
-
-        assertTrue( anonymous.getKey().isAnonymous() );
-        assertEquals( "anonymous", anonymous.getDisplayName() );
-        assertEquals( PrincipalKey.ofAnonymous(), anonymous.getKey() );
+        assertTrue( PrincipalKey.ofAnonymous().isAnonymous() );
     }
 
     @Test

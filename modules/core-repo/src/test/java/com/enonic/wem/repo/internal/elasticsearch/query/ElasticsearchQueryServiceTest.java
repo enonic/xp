@@ -10,7 +10,6 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
-import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
@@ -73,7 +72,7 @@ public class ElasticsearchQueryServiceTest
             name( "my-node" ).
             parent( NodePath.ROOT ).
             permissions( AccessControlList.of( AccessControlEntry.create().
-                principal( User.anonymous().getKey() ).
+                principal( PrincipalKey.ofAnonymous() ).
                 allow( Permission.READ ).
                 build() ) ).
             build() );

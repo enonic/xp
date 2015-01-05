@@ -14,10 +14,10 @@ import com.enonic.wem.api.security.CreateUserParams;
 import com.enonic.wem.api.security.CreateUserStoreParams;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalRelationship;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SecurityInitializer;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.SystemConstants;
-import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
@@ -45,12 +45,10 @@ public final class SecurityInitializerImpl
 
         initializeUserStores();
 
-        final User anonymous = User.anonymous();
         final CreateUserParams createUser = CreateUserParams.create().
-            userKey( anonymous.getKey() ).
-            displayName( anonymous.getDisplayName() ).
-            login( anonymous.getLogin() ).
-            email( anonymous.getEmail() ).
+            userKey( PrincipalKey.ofAnonymous() ).
+            displayName( "Anonymous User" ).
+            login( "anonymous" ).
             build();
         addUser( createUser );
 
@@ -65,26 +63,37 @@ public final class SecurityInitializerImpl
         initializeRoleFolder();
 
         final CreateRoleParams createEnterpriseAdmin = CreateRoleParams.create().
-            roleKey( PrincipalKey.ofEnterpriseAdmin() ).
+            roleKey( RoleKeys.ENTERPRISE_ADMIN ).
             displayName( "Enterprise Administrator" ).
             build();
         addRole( createEnterpriseAdmin );
 
         final CreateRoleParams createUserManager = CreateRoleParams.create().
-            roleKey( PrincipalKey.ofRole( "um" ) ).
+            roleKey( RoleKeys.USER_MANAGER ).
             displayName( "User Manager" ).
             build();
         addRole( createUserManager );
 
         final CreateRoleParams createContentManager = CreateRoleParams.create().
-            roleKey( PrincipalKey.ofRole( "cm" ) ).
+            roleKey( RoleKeys.CONTENT_MANAGER ).
             displayName( "Content Manager" ).
             build();
         addRole( createContentManager );
 
-        addMember( PrincipalKey.ofEnterpriseAdmin(), createAdmin.getKey() );
-    }
+        addMember( RoleKeys.ENTERPRISE_ADMIN, createAdmin.getKey() );
 
+        final CreateRoleParams createOwnerRole = CreateRoleParams.create().
+            roleKey( RoleKeys.OWNER ).
+            displayName( "Owner" ).
+            build();
+        addRole( createOwnerRole );
+
+        final CreateRoleParams createEveryoneRole = CreateRoleParams.create().
+            roleKey( RoleKeys.EVERYONE ).
+            displayName( "Everyone" ).
+            build();
+        addRole( createEveryoneRole );
+    }
 
     private void initializeUserStores()
     {
@@ -94,7 +103,7 @@ public final class SecurityInitializerImpl
             LOG.info( "Initializing user store " + SystemConstants.SYSTEM_USERSTORE.getKey() );
 
             final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
-                UserStoreAccessControlEntry.create().principal( PrincipalKey.ofEnterpriseAdmin() ).access( ADMINISTRATOR ).build(),
+                UserStoreAccessControlEntry.create().principal( RoleKeys.ENTERPRISE_ADMIN ).access( ADMINISTRATOR ).build(),
                 UserStoreAccessControlEntry.create().principal( ADMIN_USER_KEY ).access( USER_STORE_MANAGER ).build() );
 
             final CreateUserStoreParams createParams = CreateUserStoreParams.create().

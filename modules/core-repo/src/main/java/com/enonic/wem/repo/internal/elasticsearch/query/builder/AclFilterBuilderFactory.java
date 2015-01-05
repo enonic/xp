@@ -6,7 +6,6 @@ import com.enonic.wem.api.query.filter.Filter;
 import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.PrincipalKeys;
-import com.enonic.wem.api.security.User;
 
 public class AclFilterBuilderFactory
 {
@@ -32,7 +31,7 @@ public class AclFilterBuilderFactory
     {
         return ValueFilter.create().
             fieldName( NodeIndexPath.PERMISSIONS_READ.toString() ).
-            addValue( Value.newString( User.anonymous().getKey().toString() ) ).
+            addValue( Value.newString( PrincipalKey.ofAnonymous().toString() ) ).
             build();
     }
 }

@@ -15,7 +15,7 @@ import com.enonic.wem.api.node.Nodes;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpressions;
-import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
@@ -30,7 +30,7 @@ abstract class AbstractNodeCommand
         OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) );
 
     static final AccessControlEntry ENTERPRISE_ADMIN_FULL_PERMISSIONS = AccessControlEntry.create().
-        principal( PrincipalKey.ofEnterpriseAdmin() ).allowAll().build();
+        principal( RoleKeys.ENTERPRISE_ADMIN ).allowAll().build();
 
     final IndexService indexService;
 

@@ -19,8 +19,6 @@ public final class PrincipalKey
 
     private static final PrincipalKey ANONYMOUS_PRINCIPAL = new PrincipalKey();
 
-    private static final PrincipalKey ENTERPRISE_ADMIN = PrincipalKey.ofRole( "ea" );
-
     public final static String ROLES_NODE_NAME = "roles";
 
     public final static String GROUPS_NODE_NAME = "groups";
@@ -93,11 +91,6 @@ public final class PrincipalKey
     public boolean isAnonymous()
     {
         return this.equals( ANONYMOUS_PRINCIPAL );
-    }
-
-    public boolean isEnterpriseAdmin()
-    {
-        return this.equals( ENTERPRISE_ADMIN );
     }
 
     public NodePath toPath()
@@ -190,11 +183,6 @@ public final class PrincipalKey
     public static PrincipalKey ofAnonymous()
     {
         return ANONYMOUS_PRINCIPAL;
-    }
-
-    public static PrincipalKey ofEnterpriseAdmin()
-    {
-        return ENTERPRISE_ADMIN;
     }
 
     public static PrincipalKey ofUser( final UserStoreKey userStore, final String userId )

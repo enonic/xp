@@ -1,7 +1,5 @@
 package com.enonic.wem.api.security;
 
-import java.time.Instant;
-
 import com.google.common.base.Preconditions;
 
 import static java.util.Objects.requireNonNull;
@@ -9,8 +7,6 @@ import static java.util.Objects.requireNonNull;
 public final class User
     extends Principal
 {
-    private final static User ANONYMOUS = new User();
-
     private final String email;
 
     private final String login;
@@ -27,15 +23,6 @@ public final class User
         this.login = requireNonNull( builder.login );
         this.loginDisabled = builder.loginDisabled;
         this.authenticationHash = builder.authenticationHash;
-    }
-
-    private User()
-    {
-        super( PrincipalKey.ofAnonymous(), "anonymous", Instant.ofEpochSecond( 0 ) );
-        this.email = "";
-        this.login = "";
-        this.loginDisabled = true;
-        this.authenticationHash = "";
     }
 
     public String getEmail()
@@ -66,11 +53,6 @@ public final class User
     public static Builder create( final User user )
     {
         return new Builder( user );
-    }
-
-    public static User anonymous()
-    {
-        return ANONYMOUS;
     }
 
     public static class Builder
