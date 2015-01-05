@@ -6,6 +6,7 @@ import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.ValueTypes;
+import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -64,13 +65,24 @@ public class DuplicateNodeCommand
 
         for ( final Node node : findNodesByParentResult.getNodes() )
         {
-            final Node newChildNode = this.doCreateNode( CreateNodeParams.from( node ).
-                parent( newParent.path() ).
-                build(), blobService );
+            final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).
+                parent( newParent.path() );
+
+            attachBinaries( node, paramsBuilder );
+
+            final Node newChildNode = this.doCreateNode( paramsBuilder.build(), blobService );
 
             builder.add( node.id(), newChildNode.id() );
 
             storeChildNodes( node, newChildNode, builder );
+        }
+    }
+
+    private void attachBinaries( final Node node, final CreateNodeParams.Builder paramsBuilder )
+    {
+        for ( final AttachedBinary attachedBinary : node.getAttachedBinaries() )
+        {
+            paramsBuilder.attachBinary( attachedBinary.getBinaryReference(), blobService.getByteSource( attachedBinary.getBlobKey() ) );
         }
     }
 
