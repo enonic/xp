@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.parser.DefaultParser;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.io.ByteSource;
@@ -38,5 +39,21 @@ public class MediaInfoServiceTest
         {
             System.out.println( "addFormItem( createImmutableTextLine( \"" + entry.getKey() + "\" ).occurrences( 0, 1 ).build() )." );
         }
+    }
+
+    @Test
+    @Ignore
+    public void multiple_colorSpace_entries()
+    {
+        final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "Multiple-colorSpace-entries.jpg" ) );
+        final MediaInfo mediaInfo = this.service.parseMediaInfo( byteSource );
+    }
+
+    @Test
+    @Ignore
+    public void multiple_FNumber_entries()
+    {
+        final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "Multiple-FNumber-entries.JPG" ) );
+        final MediaInfo mediaInfo = this.service.parseMediaInfo( byteSource );
     }
 }
