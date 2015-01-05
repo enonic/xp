@@ -195,14 +195,15 @@ public final class PropertyArray
         final Property property = new Property( name, index, value, tree != null ? tree.nextId() : null, parent );
         if ( get( index ) != null )
         {
-            this.array.set( index, property );
+            existing.setValue( value );
+            return existing;
         }
         else
         {
-            this.array.add( index, property );
+            final Property newProperty = new Property( name, index, value, tree.nextId(), parent );
+            this.array.add( index, newProperty );
+            return newProperty;
         }
-
-        return property;
     }
 
     public int size()

@@ -189,9 +189,7 @@ public class PropertyTreeTest
         newTree.addSet( "mySet", set );
 
         assertEquals( "myString", newTree.getString( "mySet.myProp" ) );
-
     }
-
 
     @Test(expected = IllegalArgumentException.class)
     public void adding_root_PropertySet_must_throw_IllegalArgumentException()
@@ -205,6 +203,17 @@ public class PropertyTreeTest
     {
         PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         tree.setSet( "myProp", tree.getRoot() );
+    }
+
+    @Test
+    public void setting_property_should_not_add_new_in_propertyByIdMap()
+        throws Exception
+    {
+        PropertyTree tree = new PropertyTree();
+        tree.setString( "myProperty", "a" );
+        tree.setString( "myProperty", "b" );
+
+        assertEquals( 1, tree.getTotalSize() );
     }
 
     @Test

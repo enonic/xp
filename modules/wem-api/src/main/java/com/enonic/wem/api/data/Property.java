@@ -63,6 +63,11 @@ public final class Property
         }
     }
 
+    public void setValue( final Value value )
+    {
+        this.value = value;
+    }
+
     public PropertySet getParent()
     {
         return parent;

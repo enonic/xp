@@ -11,6 +11,7 @@ import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
@@ -112,6 +113,22 @@ public abstract class AbstractNodeTest
             build().
             execute();
     }
+
+    Node getNodeByPath( final NodePath nodePath )
+    {
+        return GetNodeByPathCommand.create().
+            versionService( this.versionService ).
+            indexService( this.indexService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            workspaceService( this.workspaceService ).
+            queryService( this.queryService ).
+            nodePath( nodePath ).
+            resolveHasChild( false ).
+            build().
+            execute();
+    }
+
 
     FindNodesByParentResult findByParent( final FindNodesByParentParams params )
     {

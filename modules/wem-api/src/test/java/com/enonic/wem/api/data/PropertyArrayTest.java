@@ -106,7 +106,5 @@ public class PropertyArrayTest
         PropertyArray array = tree.getRoot().getPropertyArray( "myString" );
         assertEquals( 1, array.size() );
         assertEquals( "b", array.get( 0 ).getString() );
-
     }
-
 }

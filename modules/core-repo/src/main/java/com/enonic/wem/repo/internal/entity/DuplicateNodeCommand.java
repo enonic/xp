@@ -3,12 +3,16 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.blob.BlobService;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.data.ValueTypes;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 
 public class DuplicateNodeCommand
@@ -31,18 +35,26 @@ public class DuplicateNodeCommand
 
         final String newNodeName = resolveNewNodeName( existingNode );
 
-        final CreateNodeParams builder = CreateNodeParams.from( existingNode ).
+        final CreateNodeParams createNodeParams = CreateNodeParams.from( existingNode ).
             name( newNodeName ).
             build();
 
-        final Node duplicatedNode = doCreateNode( builder, this.blobService );
+        final Node duplicatedNode = doCreateNode( createNodeParams, this.blobService );
 
-        storeChildNodes( existingNode, duplicatedNode );
+        final NodeReferenceUpdatesHolder.Builder builder = NodeReferenceUpdatesHolder.create();
+
+        builder.add( existingNode.id(), duplicatedNode.id() );
+
+        storeChildNodes( existingNode, duplicatedNode, builder );
+
+        final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
+        updateNodeReferences( duplicatedNode, nodesToBeUpdated );
+        updateChildReferences( duplicatedNode, nodesToBeUpdated );
 
         return duplicatedNode;
     }
 
-    private void storeChildNodes( final Node originalParent, final Node newParent )
+    private void storeChildNodes( final Node originalParent, final Node newParent, final NodeReferenceUpdatesHolder.Builder builder )
     {
         final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( originalParent.path() ).
@@ -56,7 +68,48 @@ public class DuplicateNodeCommand
                 parent( newParent.path() ).
                 build(), blobService );
 
-            storeChildNodes( node, newChildNode );
+            builder.add( node.id(), newChildNode.id() );
+
+            storeChildNodes( node, newChildNode, builder );
+        }
+    }
+
+    private void updateChildReferences( final Node duplicatedParent, final NodeReferenceUpdatesHolder nodeReferenceUpdatesHolder )
+    {
+        final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
+            parentPath( duplicatedParent.path() ).
+            from( 0 ).
+            size( QueryService.GET_ALL_SIZE_FLAG ).
+            build() );
+
+        for ( final Node node : findNodesByParentResult.getNodes() )
+        {
+            updateNodeReferences( node, nodeReferenceUpdatesHolder );
+            updateChildReferences( node, nodeReferenceUpdatesHolder );
+        }
+    }
+
+    private void updateNodeReferences( final Node node, final NodeReferenceUpdatesHolder nodeReferenceUpdatesHolder )
+    {
+        final PropertyTree data = node.data();
+
+        boolean changes = false;
+
+        for ( final Property property : node.data().getByValueType( ValueTypes.REFERENCE ) )
+        {
+            if ( nodeReferenceUpdatesHolder.mustUpdate( property.getReference() ) )
+            {
+                changes = true;
+                data.setReference( property.getPath(), nodeReferenceUpdatesHolder.getNewReference( property.getReference() ) );
+            }
+        }
+
+        if ( changes )
+        {
+            doUpdateNode( UpdateNodeParams.create().
+                id( node.id() ).
+                editor( toBeEdited -> toBeEdited.data = data ).
+                build(), this.blobService );
         }
     }
 
@@ -88,7 +141,6 @@ public class DuplicateNodeCommand
     {
         return new Builder();
     }
-
 
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>

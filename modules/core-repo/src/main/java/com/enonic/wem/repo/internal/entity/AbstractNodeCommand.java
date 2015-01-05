@@ -12,11 +12,10 @@ import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpressions;
-import com.enonic.wem.api.security.RoleKeys;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexService;
@@ -28,9 +27,6 @@ abstract class AbstractNodeCommand
 {
     static final OrderExpressions DEFAULT_ORDER_EXPRESSIONS =
         OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) );
-
-    static final AccessControlEntry ENTERPRISE_ADMIN_FULL_PERMISSIONS = AccessControlEntry.create().
-        principal( RoleKeys.ENTERPRISE_ADMIN ).allowAll().build();
 
     final IndexService indexService;
 
@@ -111,6 +107,20 @@ abstract class AbstractNodeCommand
     Node doCreateNode( final CreateNodeParams params, final BlobService blobService )
     {
         return CreateNodeCommand.create().
+            params( params ).
+            indexService( this.indexService ).
+            versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
+            blobService( blobService ).
+            build().
+            execute();
+    }
+
+    Node doUpdateNode( final UpdateNodeParams params, final BlobService blobService )
+    {
+        return UpdateNodeCommand.create().
             params( params ).
             indexService( this.indexService ).
             versionService( this.versionService ).
