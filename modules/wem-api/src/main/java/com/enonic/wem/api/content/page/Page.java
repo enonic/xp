@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.page.region.Component;
+import com.enonic.wem.api.content.page.region.ComponentPath;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.support.Changes;

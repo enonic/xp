@@ -25,9 +25,9 @@
 
   <reference id="pageDescriptorService" interface="com.enonic.wem.api.content.page.PageDescriptorService"/>
 
-  <reference id="partDescriptorService" interface="com.enonic.wem.api.content.page.part.PartDescriptorService"/>
+  <reference id="partDescriptorService" interface="com.enonic.wem.api.content.page.region.PartDescriptorService"/>
 
-  <reference id="layoutDescriptorService" interface="com.enonic.wem.api.content.page.layout.LayoutDescriptorService"/>
+  <reference id="layoutDescriptorService" interface="com.enonic.wem.api.content.page.region.LayoutDescriptorService"/>
 
   <reference id="metadataSchemaService" interface="com.enonic.wem.api.schema.metadata.MetadataSchemaService"/>
 

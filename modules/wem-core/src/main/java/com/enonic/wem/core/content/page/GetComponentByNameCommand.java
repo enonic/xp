@@ -1,18 +1,18 @@
 package com.enonic.wem.core.content.page;
 
 
-import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
-import com.enonic.wem.api.content.page.ComponentName;
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorNotFoundException;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
-import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.part.PartDescriptor;
-import com.enonic.wem.api.content.page.part.PartDescriptorNotFoundException;
-import com.enonic.wem.api.content.page.part.PartDescriptorService;
+import com.enonic.wem.api.content.page.region.Component;
+import com.enonic.wem.api.content.page.region.ComponentName;
+import com.enonic.wem.api.content.page.region.LayoutComponent;
+import com.enonic.wem.api.content.page.region.LayoutDescriptor;
+import com.enonic.wem.api.content.page.region.LayoutDescriptorNotFoundException;
+import com.enonic.wem.api.content.page.region.LayoutDescriptorService;
+import com.enonic.wem.api.content.page.region.PartComponent;
+import com.enonic.wem.api.content.page.region.PartDescriptor;
+import com.enonic.wem.api.content.page.region.PartDescriptorNotFoundException;
+import com.enonic.wem.api.content.page.region.PartDescriptorService;
 import com.enonic.wem.api.module.ModuleKey;
 
 class GetComponentByNameCommand

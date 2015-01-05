@@ -7,9 +7,9 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
+import com.enonic.wem.api.content.page.region.LayoutDescriptor;
+import com.enonic.wem.api.content.page.region.LayoutDescriptorService;
+import com.enonic.wem.api.content.page.region.LayoutDescriptors;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKeys;

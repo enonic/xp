@@ -3,7 +3,7 @@ package com.enonic.wem.api.xml.serializer;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.part.PartDescriptor;
+import com.enonic.wem.api.content.page.region.PartDescriptor;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.xml.mapper.XmlPartDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlPartDescriptor;

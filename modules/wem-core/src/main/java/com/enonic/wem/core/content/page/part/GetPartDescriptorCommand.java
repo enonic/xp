@@ -1,8 +1,8 @@
 package com.enonic.wem.core.content.page.part;
 
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.part.PartDescriptor;
-import com.enonic.wem.api.content.page.part.PartDescriptorNotFoundException;
+import com.enonic.wem.api.content.page.region.PartDescriptor;
+import com.enonic.wem.api.content.page.region.PartDescriptorNotFoundException;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 
 final class GetPartDescriptorCommand

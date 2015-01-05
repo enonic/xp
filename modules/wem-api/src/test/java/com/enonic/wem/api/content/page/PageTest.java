@@ -2,7 +2,7 @@ package com.enonic.wem.api.content.page;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.part.PartComponent;
+import com.enonic.wem.api.content.page.region.PartComponent;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.support.AbstractEqualsTest;

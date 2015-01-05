@@ -7,14 +7,17 @@ import org.junit.Test;
 
 import com.google.common.collect.UnmodifiableIterator;
 
-import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutRegions;
+import com.enonic.wem.api.content.page.region.Component;
+import com.enonic.wem.api.content.page.region.ComponentName;
+import com.enonic.wem.api.content.page.region.ComponentPath;
+import com.enonic.wem.api.content.page.region.LayoutComponent;
+import com.enonic.wem.api.content.page.region.LayoutRegions;
 import com.enonic.wem.api.content.page.region.Region;
 
 import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
-import static com.enonic.wem.api.content.page.layout.LayoutComponent.newLayoutComponent;
-import static com.enonic.wem.api.content.page.layout.LayoutRegions.newLayoutRegions;
-import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
+import static com.enonic.wem.api.content.page.region.LayoutComponent.newLayoutComponent;
+import static com.enonic.wem.api.content.page.region.LayoutRegions.newLayoutRegions;
+import static com.enonic.wem.api.content.page.region.PartComponent.newPartComponent;
 import static com.enonic.wem.api.content.page.region.Region.newRegion;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;

@@ -5,7 +5,7 @@ import org.junit.Test;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.part.PartComponent;
+import com.enonic.wem.api.content.page.region.PartComponent;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.PropertyIdProvider;
 import com.enonic.wem.api.data.PropertyTree;

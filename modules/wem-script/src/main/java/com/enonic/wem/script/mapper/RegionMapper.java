@@ -1,6 +1,6 @@
 package com.enonic.wem.script.mapper;
 
-import com.enonic.wem.api.content.page.Component;
+import com.enonic.wem.api.content.page.region.Component;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.script.serializer.MapGenerator;
 import com.enonic.wem.script.serializer.MapSerializable;

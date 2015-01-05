@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.page.layout;
 
-import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
+import com.enonic.wem.api.content.page.region.LayoutDescriptors;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 

@@ -6,9 +6,6 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.content.page.Component;
-import com.enonic.wem.api.content.page.layout.LayoutComponent;
-
 public final class Region
 {
     private final String name;

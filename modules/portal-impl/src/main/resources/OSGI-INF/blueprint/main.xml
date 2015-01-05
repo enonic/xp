@@ -3,11 +3,11 @@
 
   <reference id="scriptService" interface="com.enonic.wem.script.ScriptService"/>
 
-  <reference id="partDescriptorService" interface="com.enonic.wem.api.content.page.part.PartDescriptorService"/>
+  <reference id="partDescriptorService" interface="com.enonic.wem.api.content.page.region.PartDescriptorService"/>
 
-  <reference id="layoutDescriptorService" interface="com.enonic.wem.api.content.page.layout.LayoutDescriptorService"/>
+  <reference id="layoutDescriptorService" interface="com.enonic.wem.api.content.page.region.LayoutDescriptorService"/>
 
-  <reference id="componentService" interface="com.enonic.wem.api.content.page.ComponentService"/>
+  <reference id="componentService" interface="com.enonic.wem.api.content.page.region.ComponentService"/>
 
   <reference id="contentService" interface="com.enonic.wem.api.content.ContentService"/>
 

@@ -3,12 +3,12 @@ package com.enonic.wem.portal.internal.content.page;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.text.TextComponent;
-import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.RenderMode;
+import com.enonic.wem.api.content.page.region.TextComponent;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 
 import static org.junit.Assert.*;
 

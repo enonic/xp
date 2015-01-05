@@ -1,6 +1,8 @@
 package com.enonic.wem.api.content.page;
 
 
+import com.enonic.wem.api.content.page.region.AbstractRegions;
+
 public final class PageRegions
     extends AbstractRegions
 {

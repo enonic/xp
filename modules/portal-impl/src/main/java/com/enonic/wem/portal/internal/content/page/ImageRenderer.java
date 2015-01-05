@@ -1,14 +1,14 @@
 package com.enonic.wem.portal.internal.content.page;
 
 
-import com.enonic.wem.api.content.page.image.ImageComponent;
+import com.enonic.wem.api.content.page.region.ImageComponent;
+import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
+import com.enonic.wem.portal.internal.rendering.RenderResult;
+import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
-import com.enonic.wem.portal.internal.rendering.RenderResult;
-import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.xp.portal.url.ImageUrlBuilder;
 import com.enonic.xp.portal.url.PortalUrlBuilders;
 

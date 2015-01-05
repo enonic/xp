@@ -1,10 +1,10 @@
 package com.enonic.wem.core.content.page;
 
-import com.enonic.wem.api.content.page.Component;
-import com.enonic.wem.api.content.page.ComponentName;
-import com.enonic.wem.api.content.page.ComponentService;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
-import com.enonic.wem.api.content.page.part.PartDescriptorService;
+import com.enonic.wem.api.content.page.region.Component;
+import com.enonic.wem.api.content.page.region.ComponentName;
+import com.enonic.wem.api.content.page.region.ComponentService;
+import com.enonic.wem.api.content.page.region.LayoutDescriptorService;
+import com.enonic.wem.api.content.page.region.PartDescriptorService;
 import com.enonic.wem.api.module.ModuleKey;
 
 public final class ComponentServiceImpl

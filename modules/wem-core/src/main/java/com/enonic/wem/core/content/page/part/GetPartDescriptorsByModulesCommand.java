@@ -1,6 +1,6 @@
 package com.enonic.wem.core.content.page.part;
 
-import com.enonic.wem.api.content.page.part.PartDescriptors;
+import com.enonic.wem.api.content.page.region.PartDescriptors;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.Modules;
 

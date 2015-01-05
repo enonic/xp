@@ -1,8 +1,8 @@
 package com.enonic.wem.core.content.page.layout;
 
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorNotFoundException;
+import com.enonic.wem.api.content.page.region.LayoutDescriptor;
+import com.enonic.wem.api.content.page.region.LayoutDescriptorNotFoundException;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 
 final class GetLayoutDescriptorCommand

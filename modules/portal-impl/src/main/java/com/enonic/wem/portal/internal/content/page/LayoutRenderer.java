@@ -2,8 +2,8 @@ package com.enonic.wem.portal.internal.content.page;
 
 import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorService;
+import com.enonic.wem.api.content.page.region.LayoutComponent;
+import com.enonic.wem.api.content.page.region.LayoutDescriptorService;
 
 public final class LayoutRenderer
     extends DescriptorBasedComponentRenderer<LayoutComponent>

@@ -1,9 +1,9 @@
 package com.enonic.wem.core.content.page.part;
 
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.part.PartDescriptor;
-import com.enonic.wem.api.content.page.part.PartDescriptorService;
-import com.enonic.wem.api.content.page.part.PartDescriptors;
+import com.enonic.wem.api.content.page.region.PartDescriptor;
+import com.enonic.wem.api.content.page.region.PartDescriptorService;
+import com.enonic.wem.api.content.page.region.PartDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleService;

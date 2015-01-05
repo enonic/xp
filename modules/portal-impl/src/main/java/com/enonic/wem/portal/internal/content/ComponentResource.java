@@ -7,10 +7,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.page.Component;
-import com.enonic.wem.api.content.page.ComponentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.region.Component;
+import com.enonic.wem.api.content.page.region.ComponentPath;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;

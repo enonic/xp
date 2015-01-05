@@ -1,6 +1,6 @@
 package com.enonic.wem.api.xml.mapper;
 
-import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
+import com.enonic.wem.api.content.page.region.LayoutDescriptor;
 import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;
 
 public final class XmlLayoutDescriptorMapper

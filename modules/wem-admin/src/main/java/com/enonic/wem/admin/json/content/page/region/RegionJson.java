@@ -8,9 +8,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.admin.json.content.page.ComponentJson;
-import com.enonic.wem.admin.json.content.page.ComponentJsonSerializer;
-import com.enonic.wem.api.content.page.Component;
+import com.enonic.wem.api.content.page.region.Component;
 import com.enonic.wem.api.content.page.region.Region;
 
 @SuppressWarnings("UnusedDeclaration")

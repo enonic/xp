@@ -8,13 +8,13 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.page.Component;
-import com.enonic.wem.api.content.page.ComponentName;
-import com.enonic.wem.api.content.page.ComponentPath;
-import com.enonic.wem.api.content.page.ComponentService;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.region.Component;
+import com.enonic.wem.api.content.page.region.ComponentName;
+import com.enonic.wem.api.content.page.region.ComponentPath;
+import com.enonic.wem.api.content.page.region.ComponentService;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.portal.internal.rendering.RenderException;
 import com.enonic.wem.portal.internal.rendering.RenderResult;

@@ -3,9 +3,9 @@ package com.enonic.wem.portal.internal.controller;
 import com.google.common.collect.Multimap;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.region.Component;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.workspace.Workspace;

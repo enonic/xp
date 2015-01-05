@@ -1,7 +1,5 @@
 package com.enonic.wem.api.content.page.region;
 
-import com.enonic.wem.api.content.page.ComponentPath;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;

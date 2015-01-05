@@ -9,8 +9,8 @@ import com.google.common.collect.Collections2;
 
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptors;
+import com.enonic.wem.api.content.page.region.LayoutDescriptor;
+import com.enonic.wem.api.content.page.region.LayoutDescriptors;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;

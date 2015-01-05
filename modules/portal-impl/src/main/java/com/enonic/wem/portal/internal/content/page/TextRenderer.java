@@ -2,14 +2,14 @@ package com.enonic.wem.portal.internal.content.page;
 
 import java.text.MessageFormat;
 
-import com.enonic.wem.api.content.page.text.TextComponent;
+import com.enonic.wem.api.content.page.region.TextComponent;
+import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
+import com.enonic.wem.portal.internal.rendering.RenderResult;
+import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
-import com.enonic.wem.portal.internal.rendering.RenderResult;
-import com.enonic.wem.portal.internal.rendering.Renderer;
 
 public final class TextRenderer
     implements Renderer<TextComponent, PortalContext>

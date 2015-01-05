@@ -3,7 +3,7 @@ package com.enonic.wem.api.xml.serializer;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
+import com.enonic.wem.api.content.page.region.LayoutDescriptor;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.xml.mapper.XmlLayoutDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;

@@ -3,10 +3,10 @@ package com.enonic.wem.portal.internal.content.page;
 
 import java.text.MessageFormat;
 
-import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.Descriptor;
-import com.enonic.wem.api.content.page.DescriptorBasedComponent;
 import com.enonic.wem.api.content.page.DescriptorKey;
+import com.enonic.wem.api.content.page.region.Component;
+import com.enonic.wem.api.content.page.region.DescriptorBasedComponent;
 import com.enonic.wem.portal.internal.controller.ControllerScript;
 import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;

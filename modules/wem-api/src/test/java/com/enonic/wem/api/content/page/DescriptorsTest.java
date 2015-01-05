@@ -2,8 +2,8 @@ package com.enonic.wem.api.content.page;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.part.PartDescriptor;
+import com.enonic.wem.api.content.page.region.LayoutDescriptor;
+import com.enonic.wem.api.content.page.region.PartDescriptor;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 

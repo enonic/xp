@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.jslib.impl;
 
-import com.enonic.wem.api.content.page.Component;
+import com.enonic.wem.api.content.page.region.Component;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
 import com.enonic.wem.script.mapper.ComponentMapper;
