@@ -6,7 +6,6 @@ module api.ui.panel {
         private scrollIndex: number = -1;
         private focusIndex: number = -1;
         private focusVisible: boolean = false;
-        private hiddenHeader: number = 0;
 
         constructor(navigator: Navigator, scrollable?: api.dom.Element, className?: string) {
             super(scrollable, className);
@@ -96,17 +95,7 @@ module api.ui.panel {
                 // Update navigation item according to scroll position
                 this.updateScrolledNavigationItem();
             });
-            panel.onShown((event: api.dom.ElementShownEvent) => {
-                var panel = <Panel>event.getElement();
-                var panelIndex = this.getPanelIndex(panel);
-                if (panelIndex > 0) {
-                    if (this.getPanel(this.hiddenHeader).isVisible()) {
-                        this.activateHeader(panelIndex);
-                    } else {
-                        this.hiddenHeader += 1;
-                    }
-                }
-            });
+
             if (select) {
                 this.selectPanel(item);
             }
