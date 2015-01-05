@@ -26,6 +26,7 @@ module api.ui.uploader {
         name: string;
         url?: string;
         allowBrowse?: boolean;
+        allowDrop?: boolean;
         allowTypes?: {title: string; extensions: string}[];
         allowMultiSelection?: boolean;
         showInput?: boolean;
@@ -33,7 +34,7 @@ module api.ui.uploader {
         showResult?: boolean;
         maximumOccurrences?: number;
         deferred?: boolean;
-        params?: {};
+        params?: {[key:string]: any};
     }
 
     export class Uploader<MODEL> extends api.dom.FormInputEl {
@@ -46,7 +47,7 @@ module api.ui.uploader {
         private input: api.ui.text.TextInput;
 
         private dropzoneContainer: api.dom.DivEl;
-        private dropzone: api.dom.DivEl;
+        private dropzone: api.dom.AEl;
 
         private progress: api.ui.ProgressBar;
         private cancelBtn: Button;
@@ -64,29 +65,8 @@ module api.ui.uploader {
         constructor(config: UploaderConfig) {
             super("div", "uploader");
 
-            this.config = config;
             // init defaults
-            if (this.config.showResult == undefined) {
-                this.config.showResult = true;
-            }
-            if (this.config.allowMultiSelection == undefined) {
-                this.config.allowMultiSelection = false;
-            }
-            if (this.config.showButtons == undefined) {
-                this.config.showButtons = true;
-            }
-            if (this.config.maximumOccurrences == undefined) {
-                this.config.maximumOccurrences = 0;
-            }
-            if (this.config.allowBrowse == undefined) {
-                this.config.allowBrowse = true;
-            }
-            if (this.config.allowTypes == undefined) {
-                this.config.allowTypes = [];
-            }
-            if (this.config.deferred == undefined) {
-                this.config.deferred = false;
-            }
+            this.initConfig(config);
 
             if (config.showInput) {
                 this.input = api.ui.text.TextInput.middle();
@@ -95,7 +75,7 @@ module api.ui.uploader {
             }
             // need the container to constrain plupload created dropzone
             this.dropzoneContainer = new api.dom.DivEl('dropzone-container');
-            this.dropzone = new api.dom.DivEl("dropzone");
+            this.dropzone = new api.dom.AEl("dropzone");
             // id needed for plupload to init, adding timestamp in case of multiple occurrences on page
             this.dropzone.setId('image-uploader-dropzone-' + new Date().getTime());
             this.dropzoneContainer.appendChild(this.dropzone);
@@ -153,6 +133,35 @@ module api.ui.uploader {
             });
         }
 
+        private initConfig(config: UploaderConfig) {
+            this.config = config;
+
+            if (this.config.showResult == undefined) {
+                this.config.showResult = true;
+            }
+            if (this.config.allowMultiSelection == undefined) {
+                this.config.allowMultiSelection = false;
+            }
+            if (this.config.showButtons == undefined) {
+                this.config.showButtons = true;
+            }
+            if (this.config.maximumOccurrences == undefined) {
+                this.config.maximumOccurrences = 0;
+            }
+            if (this.config.allowBrowse == undefined) {
+                this.config.allowBrowse = true;
+            }
+            if (this.config.allowDrop == undefined) {
+                this.config.allowDrop = true;
+            }
+            if (this.config.allowTypes == undefined) {
+                this.config.allowTypes = [];
+            }
+            if (this.config.deferred == undefined) {
+                this.config.deferred = false;
+            }
+        }
+
         getName(): string {
             return this.config.name;
         }
@@ -177,15 +186,17 @@ module api.ui.uploader {
             return this;
         }
 
-        stop() {
+        stop(): Uploader<MODEL> {
             if (this.uploader) {
                 this.uploader.stop();
             }
+            return this;
         }
 
-        reset() {
+        reset(): Uploader<MODEL> {
             this.setValue(null);
             this.notifyUploadReset();
+            return this;
         }
 
         private setDropzoneVisible(visible: boolean = true) {
@@ -234,6 +245,19 @@ module api.ui.uploader {
             throw new Error('Should be overridden by inheritors');
         }
 
+        setParams(params: {[key: string]: any}): Uploader<MODEL> {
+            if (this.uploader) {
+                this.uploader.setOption('multipart_params', params);
+            } else {
+                this.config.params = params;
+            }
+            return this;
+        }
+
+        getParams(): {[key: string]: any} {
+            return this.uploader ? this.uploader.getOption('multipart_params') : this.config.params;
+        }
+
         private findUploadItemById(id: string): UploadItem<MODEL> {
             for (var i = 0; i < this.uploadedItems.length; i++) {
                 var uploadItem = this.uploadedItems[i];
@@ -257,7 +281,7 @@ module api.ui.uploader {
                 browse_button: this.config.allowBrowse ? elId : undefined,
                 url: this.config.url,
                 multipart: true,
-                drop_element: elId,
+                drop_element: this.config.allowDrop ? elId : undefined,
                 flash_swf_url: api.util.UriHelper.getAdminUri('common/js/lib/plupload/js/Moxie.swf'),
                 silverlight_xap_url: api.util.UriHelper.getAdminUri('common/js/lib/plupload/js/Moxie.xap'),
                 filters: this.config.allowTypes

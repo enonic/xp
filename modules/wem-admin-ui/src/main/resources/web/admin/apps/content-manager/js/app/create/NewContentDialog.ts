@@ -17,8 +17,6 @@ module app.create {
 
         private parentContent: api.content.Content;
 
-        private mediaUploaderParams: {parent: string};
-
         private contentDialogTitle: NewContentDialogTitle;
 
         private recentList: RecentItemsList;
@@ -27,14 +25,14 @@ module app.create {
         private contentListMask: api.ui.mask.LoadMask;
         private recentListMask: api.ui.mask.LoadMask;
 
-        private input: api.ui.text.FileInput;
+        private fileInput: api.ui.text.FileInput;
 
         private mediaUploader: api.content.MediaUploader;
 
         private listItems: NewContentDialogListItem[];
 
         constructor() {
-            this.contentDialogTitle = new NewContentDialogTitle("What do you want to create?", "");
+            this.contentDialogTitle = new NewContentDialogTitle("Create Content", "");
 
             super({
                 title: this.contentDialogTitle
@@ -45,11 +43,16 @@ module app.create {
             var section = new api.dom.SectionEl().setClass("column");
             this.appendChildToContentPanel(section);
 
-            this.input = new api.ui.text.FileInput('large').setPlaceholder("Search for content type or paste url to file");
-            section.appendChild(this.input);
+            this.fileInput = new api.ui.text.FileInput('large').setPlaceholder("Search for content types").setUploaderParams({
+                parent: ContentPath.ROOT.toString()
+            });
+            this.fileInput.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
+                this.closeAndFireEventFromMediaUpload(event.getUploadItems());
+            });
 
             this.contentList = new app.create.NewContentDialogList();
-            section.appendChild(this.contentList);
+
+            section.appendChildren(this.fileInput, this.contentList);
 
             var aside = new api.dom.AsideEl("column");
             this.appendChildToContentPanel(aside);
@@ -58,10 +61,10 @@ module app.create {
 
             var recentTitle = new api.dom.H1El();
             recentTitle.setHtml('Recently Used');
-            aside.appendChild(recentTitle);
 
             this.recentList = new RecentItemsList();
-            aside.appendChild(this.recentList);
+
+            aside.appendChildren(recentTitle, this.recentList);
 
             api.dom.Body.get().appendChild(this);
 
@@ -73,10 +76,10 @@ module app.create {
 
             this.listItems = [];
 
-            this.input.onInput((event: Event) => {
+            this.fileInput.onInput((event: Event) => {
                 this.filterList();
             });
-            this.input.onKeyUp((event: KeyboardEvent) => {
+            this.fileInput.onKeyUp((event: KeyboardEvent) => {
                 if (event.keyCode === 27) {
                     this.getCancelAction().execute();
                 }
@@ -96,9 +99,6 @@ module app.create {
         }
 
         private initMediaUploader() {
-            this.mediaUploaderParams = {
-                parent: ContentPath.ROOT.toString()
-            };
 
             var uploaderContainer = new api.dom.DivEl('uploader-container');
             this.appendChild(uploaderContainer);
@@ -108,7 +108,9 @@ module app.create {
 
             this.mediaUploader = new api.content.MediaUploader({
                 operation: api.content.MediaUploaderOperation.create,
-                params: this.mediaUploaderParams,
+                params: {
+                    parent: ContentPath.ROOT.toString()
+                },
                 name: 'new-content-uploader',
                 showButtons: false,
                 showResult: false,
@@ -160,7 +162,7 @@ module app.create {
         }
 
         private filterList() {
-            var inputValue = this.input.getValue();
+            var inputValue = this.fileInput.getValue();
 
             var filteredItems = this.listItems.filter((item: NewContentDialogListItem) => {
                 return (!inputValue || (item.getDisplayName().indexOf(inputValue) != -1) || (item.getName().indexOf(inputValue) != -1));
@@ -201,7 +203,13 @@ module app.create {
 
         setParentContent(parent: api.content.Content) {
             this.parentContent = parent;
-            this.mediaUploaderParams.parent = parent ? parent.getPath().toString() : api.content.ContentPath.ROOT.toString();
+
+            var params: {[key: string]: any} = {
+                parent: parent ? parent.getPath().toString() : api.content.ContentPath.ROOT.toString()
+            };
+
+            this.mediaUploader.setParams(params);
+            this.fileInput.setUploaderParams(params)
         }
 
         show() {
@@ -212,7 +220,7 @@ module app.create {
             }
             super.show();
 
-            this.input.giveFocus();
+            this.fileInput.reset().giveFocus();
 
             this.mediaUploader.reset();
 

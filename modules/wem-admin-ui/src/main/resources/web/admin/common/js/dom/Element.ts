@@ -339,7 +339,7 @@ module api.dom {
             return this.insertChild(child, this.children.length);
         }
 
-        appendChildren<T extends Element>(children: T[]): Element {
+        appendChildren<T extends Element>(...children: T[]): Element {
             children.forEach((child: T) => {
                 this.appendChild(child);
             });

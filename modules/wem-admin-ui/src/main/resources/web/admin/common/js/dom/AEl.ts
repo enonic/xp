@@ -4,6 +4,8 @@ module api.dom {
 
         constructor(className?: string) {
             super(new NewElementBuilder().setTagName("a").setClassName(className));
+
+            this.setUrl('#');
         }
 
         public setUrl(value: string, target?: string): AEl {

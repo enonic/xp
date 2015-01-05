@@ -60,7 +60,7 @@ module api.content {
             var flipVertical = new Button().addClass("icon-flip2");
             var palette = new Button().addClass("icon-palette");
 
-            toolbar.appendChildren([crop, rotateLeft, rotateRight, flipHorizontal, flipVertical, palette]);
+            toolbar.appendChildren(crop, rotateLeft, rotateRight, flipHorizontal, flipVertical, palette);
 
             return container;
         }

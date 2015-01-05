@@ -6,7 +6,7 @@ module LiveEdit.ui {
 
     export class Shader {
 
-        private static CLS_NAME:string = 'live-edit-shader';
+        private static CLS_NAME: string = 'live-edit-shader';
 
         private pageShader: Element;
         private northShader: Element;
@@ -25,7 +25,7 @@ module LiveEdit.ui {
 
             this.shaders = [this.pageShader, this.northShader, this.eastShader, this.southShader, this.westShader];
 
-            api.dom.Body.get().appendChildren(this.shaders);
+            api.dom.Body.get().appendChildren.apply(this.shaders);
 
             this.shaders.forEach((shader: Element) => {
                 shader.onClicked((event: MouseEvent) => this.handleClick(event));
@@ -54,7 +54,7 @@ module LiveEdit.ui {
             new ShaderClickedEvent().fire();
         }
 
-        private resizeToPage():void {
+        private resizeToPage(): void {
             this.pageShader.getEl().setTopPx(0).setRightPx(0).setBottomPx(0).setLeftPx(0);
             this.pageShader.show();
         }
@@ -79,7 +79,7 @@ module LiveEdit.ui {
 
             this.eastShader.getEl().
                 setTopPx(y).
-                setLeftPx(x+w).
+                setLeftPx(x + w).
                 setWidthPx(documentWidth - (x + w)).
                 setHeightPx(h);
             this.eastShader.show();
@@ -99,7 +99,7 @@ module LiveEdit.ui {
             this.westShader.show();
         }
 
-        hide():void {
+        hide(): void {
             this.shaders.forEach((shader: Element) => shader.hide());
         }
     }
