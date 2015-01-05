@@ -328,18 +328,16 @@ public final class PropertySet
         }
 
         final PropertyArray array = getOrCreatePropertyArray( name, value.getType() );
-        final Property property = array.setValue( index, value );
 
         final Property existingProperty = array.get( index );
 
         final Property property = array.setValue( index, value );
 
-        if ( existingProperty == null && tree != null)
+        if ( existingProperty == null && tree != null )
         {
-                tree.registerProperty( property );
-            propertyTree.registerProperty( property );
+            tree.registerProperty( property );
         }
-        
+
         return property;
     }
 

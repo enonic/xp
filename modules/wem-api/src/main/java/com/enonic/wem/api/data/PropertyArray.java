@@ -192,7 +192,8 @@ public final class PropertyArray
     Property setValue( final int index, final Value value )
     {
         checkType( value.getType() );
-        final Property property = new Property( name, index, value, tree != null ? tree.nextId() : null, parent );
+
+        final Property existing = get( index );
         if ( get( index ) != null )
         {
             existing.setValue( value );
