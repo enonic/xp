@@ -25,6 +25,7 @@ final class ContentTypeFromMimeTypeResolver
         // Audio
         MAP.put( "audio/basic", ContentTypeName.audioMedia() );
         MAP.put( "audio/L24", ContentTypeName.audioMedia() );
+        MAP.put( "audio/mp3", ContentTypeName.audioMedia() );
         MAP.put( "audio/mp4", ContentTypeName.audioMedia() );
         MAP.put( "audio/mpeg", ContentTypeName.audioMedia() );
         MAP.put( "audio/ogg", ContentTypeName.audioMedia() );
