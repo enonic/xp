@@ -1,4 +1,4 @@
-package com.enonic.wem.servlet.internal;
+package com.enonic.wem.servlet.internal.jaxrs;
 
 import java.util.Set;
 

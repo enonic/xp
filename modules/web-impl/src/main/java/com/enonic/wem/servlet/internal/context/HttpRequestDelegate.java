@@ -1,4 +1,4 @@
-package com.enonic.wem.servlet.internal;
+package com.enonic.wem.servlet.internal.context;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;

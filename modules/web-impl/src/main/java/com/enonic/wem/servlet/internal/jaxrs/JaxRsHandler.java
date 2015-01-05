@@ -1,28 +1,24 @@
-package com.enonic.wem.servlet.internal;
+package com.enonic.wem.servlet.internal.jaxrs;
 
-import java.io.IOException;
-
-import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletContext;
 
 import org.jboss.resteasy.core.SynchronousDispatcher;
 import org.jboss.resteasy.plugins.server.servlet.ServletBootstrap;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.wem.servlet.internal.exception.ExceptionFeature;
+import com.enonic.xp.web.WebContext;
+import com.enonic.xp.web.WebHandler;
 import com.enonic.xp.web.jaxrs.JaxRsComponent;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-@Component(immediate = true, service = Servlet.class, property = {"alias=/*"})
-public final class JaxRsServlet
-    extends HttpServlet
+@Component(immediate = true)
+public final class JaxRsHandler
+    implements WebHandler
 {
     private final JaxRsDispatcher dispatcher;
 
@@ -30,79 +26,71 @@ public final class JaxRsServlet
 
     private boolean needsRefresh;
 
-    public JaxRsServlet()
+    public JaxRsHandler()
     {
         this.dispatcher = new JaxRsDispatcher();
         this.app = new JaxRsApplication();
         this.app.addComponent( new ExceptionFeature() );
-        this.needsRefresh = false;
+        this.needsRefresh = true;
     }
 
     @Override
-    public void init( final ServletConfig config )
-        throws ServletException
+    public int getOrder()
     {
-        super.init( config );
-        initDispatcher();
+        return MAX_ORDER;
     }
 
-    private void initDispatcher()
-        throws ServletException
+    @Override
+    public boolean handle( final WebContext context )
+        throws Exception
     {
-        final ServletBootstrap bootstrap = new ServletBootstrap( getServletConfig() );
-        final RequestFactoryImpl requestFactory = new RequestFactoryImpl( getServletContext() );
+        refreshIfNeeded( context.getServletContext() );
+        this.dispatcher.service( context.getMethod(), context.getRequest(), context.getResponse(), true );
+        return true;
+    }
+
+    private void initDispatcher( final ServletContext context )
+        throws Exception
+    {
+        final ServletConfigImpl config = new ServletConfigImpl( "jaxrs", context );
+
+        final ServletBootstrap bootstrap = new ServletBootstrap( config );
+        final RequestFactoryImpl requestFactory = new RequestFactoryImpl( context );
         final ResponseFactoryImpl responseFactory = new ResponseFactoryImpl();
 
-        this.dispatcher.init( getServletContext(), bootstrap, requestFactory, responseFactory );
+        this.dispatcher.init( context, bootstrap, requestFactory, responseFactory );
 
         final SynchronousDispatcher synchronousDispatcher = (SynchronousDispatcher) this.dispatcher.getDispatcher();
         requestFactory.setDispatcher( synchronousDispatcher );
         responseFactory.setDispatcher( synchronousDispatcher );
-        synchronousDispatcher.getDefaultContextObjects().put( ServletConfig.class, getServletConfig() );
+        synchronousDispatcher.getDefaultContextObjects().put( ServletConfig.class, config );
 
         this.dispatcher.apply( this.app );
     }
 
-    @Override
+    @Deactivate
     public void destroy()
     {
         this.dispatcher.destroy();
     }
 
-    private void refreshIfNeeded()
-        throws ServletException
+    private void refreshIfNeeded( final ServletContext context )
+        throws Exception
     {
         if ( !this.needsRefresh )
         {
             return;
         }
 
-        refresh();
+        refresh( context );
     }
 
-    private synchronized void refresh()
-        throws ServletException
+    private synchronized void refresh( final ServletContext context )
+        throws Exception
     {
         destroy();
-        initDispatcher();
+        initDispatcher( context );
         this.needsRefresh = false;
-    }
-
-    @Override
-    protected void service( final HttpServletRequest req, final HttpServletResponse resp )
-        throws ServletException, IOException
-    {
-        refreshIfNeeded();
-
-        try
-        {
-            ServletRequestHolder.setRequest( req );
-            this.dispatcher.service( req.getMethod(), req, resp, true );
-        }
-        finally
-        {
-            ServletRequestHolder.setRequest( null );
-        }
     }
 
     @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)

@@ -1,4 +1,4 @@
-package com.enonic.wem.servlet.internal;
+package com.enonic.wem.servlet.internal.jaxrs;
 
 import javax.servlet.http.HttpServletResponse;
 

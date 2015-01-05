@@ -4,20 +4,19 @@ import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.enonic.wem.servlet.internal.JaxRsServlet;
-import com.enonic.xp.web.mock.MockServletConfig;
+import com.enonic.wem.servlet.internal.dispatch.WebContextImpl;
+import com.enonic.wem.servlet.internal.jaxrs.JaxRsHandler;
 
 public abstract class BaseResourceTest
 {
-    protected JaxRsServlet servlet;
+    protected JaxRsHandler servlet;
 
     @Before
     public final void setup()
         throws Exception
     {
-        this.servlet = new JaxRsServlet();
+        this.servlet = new JaxRsHandler();
         configure();
-        this.servlet.init( new MockServletConfig() );
     }
 
     protected abstract void configure()
@@ -42,8 +41,12 @@ public abstract class BaseResourceTest
     protected final MockHttpServletResponse executeRequest( final MockHttpServletRequest request )
         throws Exception
     {
+        final WebContextImpl context = new WebContextImpl();
+        context.setRequest( request );
+
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        this.servlet.service( request, response );
+        context.setResponse( response );
+        this.servlet.handle( context );
         return response;
     }
 }

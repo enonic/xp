@@ -1,4 +1,4 @@
-package com.enonic.wem.servlet.internal;
+package com.enonic.wem.servlet.internal.jaxrs;
 
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
