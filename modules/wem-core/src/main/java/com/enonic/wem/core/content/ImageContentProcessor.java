@@ -3,6 +3,7 @@ package com.enonic.wem.core.content;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
@@ -15,10 +16,10 @@ import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.image.filter.ScaleWidthFilter;
+import com.enonic.wem.api.media.MediaInfo;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.util.ImageHelper;
-import com.enonic.wem.api.media.MediaInfo;
 
 public final class ImageContentProcessor
 {
@@ -146,9 +147,12 @@ public final class ImageContentProcessor
 
     private void applyMetadata( final PropertySet parent, MediaInfo mediaInfo )
     {
-        for ( Map.Entry<String, String> entry : mediaInfo.getMetadata().entrySet() )
+        for ( Map.Entry<String, Collection<String>> entry : mediaInfo.getMetadata().asMap().entrySet() )
         {
-            parent.addString( entry.getKey(), entry.getValue() );
+            for ( String value : entry.getValue() )
+            {
+                parent.addString( entry.getKey(), value );
+            }
         }
     }
 

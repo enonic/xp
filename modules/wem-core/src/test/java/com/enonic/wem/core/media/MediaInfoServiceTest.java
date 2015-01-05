@@ -1,11 +1,11 @@
 package com.enonic.wem.core.media;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.parser.DefaultParser;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.io.ByteSource;
@@ -35,14 +35,13 @@ public class MediaInfoServiceTest
 
         assertEquals( "image/jpeg", mediaInfo.getMediaType() );
 
-        for ( final Map.Entry<String, String> entry : mediaInfo.getMetadata().entrySet() )
+        for ( Map.Entry<String, Collection<String>> entry : mediaInfo.getMetadata().asMap().entrySet() )
         {
             System.out.println( "addFormItem( createImmutableTextLine( \"" + entry.getKey() + "\" ).occurrences( 0, 1 ).build() )." );
         }
     }
 
     @Test
-    @Ignore
     public void multiple_colorSpace_entries()
     {
         final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "Multiple-colorSpace-entries.jpg" ) );
@@ -50,7 +49,6 @@ public class MediaInfoServiceTest
     }
 
     @Test
-    @Ignore
     public void multiple_FNumber_entries()
     {
         final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "Multiple-FNumber-entries.JPG" ) );

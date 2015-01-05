@@ -1,7 +1,8 @@
 package com.enonic.wem.api.media;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 
 import com.enonic.wem.api.form.FormItemName;
 
@@ -9,7 +10,7 @@ public class MediaInfo
 {
     private String mediaType;
 
-    private ImmutableMap<String, String> metadata;
+    private ImmutableMultimap<String, String> metadata;
 
     private MediaInfo( final Builder builder )
     {
@@ -23,7 +24,7 @@ public class MediaInfo
         return mediaType;
     }
 
-    public ImmutableMap<String, String> getMetadata()
+    public Multimap<String, String> getMetadata()
     {
         return metadata;
     }
@@ -37,7 +38,7 @@ public class MediaInfo
     {
         private String mediaType;
 
-        private ImmutableMap.Builder<String, String> metadata = ImmutableMap.builder();
+        private ImmutableMultimap.Builder<String, String> metadata = ImmutableMultimap.builder();
 
         public Builder mediaType( final String value )
         {
