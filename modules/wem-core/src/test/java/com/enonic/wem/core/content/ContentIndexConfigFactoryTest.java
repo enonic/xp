@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 public class ContentIndexConfigFactoryTest
 {
     @Test
-    public void testName()
+    public void media_indexing()
         throws Exception
     {
         final PropertyTree data = new PropertyTree();

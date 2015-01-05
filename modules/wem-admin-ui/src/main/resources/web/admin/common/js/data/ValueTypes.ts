@@ -21,8 +21,6 @@ module api.data {
 
         static DATE_TIME = new ValueTypeDateTime();
 
-        static CONTENT_ID = new ValueTypeContentId();
-
         static LONG = new ValueTypeLong();
 
         static BOOLEAN = new ValueTypeBoolean();
@@ -44,7 +42,6 @@ module api.data {
             ValueTypes.LOCAL_TIME,
             ValueTypes.LOCAL_DATE_TIME,
             ValueTypes.DATE_TIME,
-            ValueTypes.CONTENT_ID,
             ValueTypes.LONG,
             ValueTypes.BOOLEAN,
             ValueTypes.DOUBLE,

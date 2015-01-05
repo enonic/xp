@@ -89,7 +89,7 @@ module api.content.form.inputtype.image {
         }
 
         getValueType(): ValueType {
-            return ValueTypes.CONTENT_ID;
+            return ValueTypes.REFERENCE;
         }
 
         newInitialValue(): Value {
@@ -303,7 +303,10 @@ module api.content.form.inputtype.image {
                     if (!contentId) {
                         return;
                     }
-                    var value = new Value(contentId, ValueTypes.CONTENT_ID);
+
+                    var reference = api.util.Reference.from(contentId);
+
+                    var value = new Value(reference, ValueTypes.REFERENCE);
 
                     if (comboBox.countSelectedOptions() == 1) { // overwrite initial value
                         this.propertyArray.set(0, value);

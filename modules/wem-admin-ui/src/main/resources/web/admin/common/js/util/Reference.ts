@@ -2,14 +2,18 @@ module api.util {
 
     export class Reference implements api.Equitable {
 
-        private nodeId: string;
+        private referenceId: string;
 
         constructor(value: string) {
-            this.nodeId = value;
+            this.referenceId = value;
+        }
+
+        static from(value: api.content.ContentId): Reference {
+            return new Reference(value.toString());
         }
 
         getNodeId(): string {
-            return this.nodeId;
+            return this.referenceId;
         }
 
         equals(o: Equitable): boolean {
@@ -20,13 +24,13 @@ module api.util {
 
             var other = <Reference>o;
 
-            if (!api.ObjectHelper.stringEquals(this.nodeId, other.nodeId)) {
+            if (!api.ObjectHelper.stringEquals(this.referenceId, other.referenceId)) {
                 return false;
             }
         }
 
         toString(): string {
-            return this.nodeId;
+            return this.referenceId;
         }
     }
 }

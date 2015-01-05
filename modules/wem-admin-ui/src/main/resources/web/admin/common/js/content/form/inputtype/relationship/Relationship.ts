@@ -39,7 +39,7 @@ module api.content.form.inputtype.relationship {
         }
 
         getValueType(): ValueType {
-            return ValueTypes.CONTENT_ID;
+            return ValueTypes.REFERENCE;
         }
 
         newInitialValue(): Value {
@@ -78,7 +78,9 @@ module api.content.form.inputtype.relationship {
 
                             this.contentComboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
 
-                                var value = new Value(event.getOption().displayValue.getContentId(), ValueTypes.CONTENT_ID);
+                                var reference = api.util.Reference.from(event.getOption().displayValue.getContentId());
+
+                                var value = new Value(reference, ValueTypes.REFERENCE);
                                 if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
                                     this.propertyArray.set(0, value);
                                 }

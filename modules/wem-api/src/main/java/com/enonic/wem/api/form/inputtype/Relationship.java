@@ -41,7 +41,7 @@ final class Relationship
     @Override
     public Value newValue( final String value )
     {
-        return Value.newContentId( ValueTypes.CONTENT_ID.convert( value ) );
+        return Value.newReference( ValueTypes.REFERENCE.convert( value ) );
     }
 
     @Override

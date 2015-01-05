@@ -9,7 +9,6 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
@@ -31,8 +30,6 @@ public final class ValueTypes
     public static final ValueType<LocalTime> LOCAL_TIME = new ValueType.LocalTime();
 
     public static final ValueType<Instant> DATE_TIME = new ValueType.DateTime();
-
-    public static final ValueType<ContentId> CONTENT_ID = new ValueType.ContentId();
 
     public static final ValueType<Long> LONG = new ValueType.Long();
 
@@ -60,7 +57,6 @@ public final class ValueTypes
         register( LOCAL_TIME );
         register( LOCAL_DATE_TIME );
         register( DATE_TIME );
-        register( CONTENT_ID );
         register( LONG );
         register( DOUBLE );
         register( GEO_POINT );

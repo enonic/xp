@@ -1,10 +1,10 @@
 package com.enonic.wem.api.form.inputtype;
 
 
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
+import com.enonic.wem.api.util.Reference;
 
 final class FileUploader
     extends InputType
@@ -24,7 +24,7 @@ final class FileUploader
     @Override
     public Value newValue( final String value )
     {
-        return Value.newContentId( ContentId.from( value ) );
+        return Value.newReference( Reference.from( value ) );
     }
 
     @Override

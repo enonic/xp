@@ -112,18 +112,6 @@ public abstract class Value
     }
 
     /**
-     * Attempts to return value as com.enonic.wem.api.content.ContentId, using best effort converting if value is not of type com.enonic.wem.api.content.ContentId.
-     */
-    public com.enonic.wem.api.content.ContentId asContentId()
-    {
-        if ( object == null )
-        {
-            return null;
-        }
-        return ValueTypes.CONTENT_ID.convert( object );
-    }
-
-    /**
      * Attempts to return value as Long, using best effort converting if value is not of type Long.
      */
     public java.lang.Long asLong()
@@ -340,12 +328,6 @@ public abstract class Value
         return new GeoPoint( value );
     }
 
-    public static Value newContentId( final com.enonic.wem.api.content.ContentId value )
-    {
-        return new ContentId( value );
-    }
-
-
     public static Value newReference( final com.enonic.wem.api.util.Reference value )
     {
         return new Reference( value );
@@ -549,32 +531,6 @@ public abstract class Value
         }
     }
 
-    static class ContentId
-        extends Value
-    {
-        ContentId( final com.enonic.wem.api.content.ContentId value )
-        {
-            super( ValueTypes.CONTENT_ID, value );
-        }
-
-        ContentId( final ContentId source )
-        {
-            super( ValueTypes.CONTENT_ID, source.getObject() );
-        }
-
-        @Override
-        Value copy( final PropertyTree tree )
-        {
-            return new ContentId( this );
-        }
-
-        @Override
-        Object toJsonValue()
-        {
-            return asString();
-        }
-    }
-
     static class Reference
         extends Value
     {
@@ -604,7 +560,6 @@ public abstract class Value
     static class BinaryReference
         extends Value
     {
-
         BinaryReference( final com.enonic.wem.api.util.BinaryReference value )
         {
             super( ValueTypes.BINARY_REFERENCE, value );
@@ -626,9 +581,7 @@ public abstract class Value
         {
             return asString();
         }
-
     }
-
 
     static class Link
         extends Value

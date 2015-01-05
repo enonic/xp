@@ -14,7 +14,6 @@ import java.util.UUID;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
@@ -876,28 +875,6 @@ public final class PropertyTree
     public Iterable<GeoPoint> getGeoPoints( final String name )
     {
         return this.root.getGeoPoints( name );
-    }
-
-    // getting content id
-
-    public ContentId getContentId( final String name, final int index )
-    {
-        return this.root.getContentId( name, index );
-    }
-
-    public ContentId getContentId( final PropertyPath path )
-    {
-        return this.root.getContentId( path );
-    }
-
-    public ContentId getContentId( final String path )
-    {
-        return this.root.getContentId( path );
-    }
-
-    public Iterable<ContentId> getContentIds( final String name )
-    {
-        return this.root.getContentIds( name );
     }
 
     // getting reference

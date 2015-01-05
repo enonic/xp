@@ -14,7 +14,6 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
@@ -1252,38 +1251,6 @@ public final class PropertySet
             if ( !property.hasNullValue() )
             {
                 stringsBuilder.add( property.getGeoPoint() );
-            }
-        }
-        return stringsBuilder.build();
-    }
-
-    // getting content id
-
-    public ContentId getContentId( final String name, final int index )
-    {
-        final Property property = this.getProperty( name, index );
-        return property != null ? property.getValue().asContentId() : null;
-    }
-
-    public ContentId getContentId( final PropertyPath path )
-    {
-        final Property property = this.getProperty( path );
-        return property != null ? property.getValue().asContentId() : null;
-    }
-
-    public ContentId getContentId( final String path )
-    {
-        return getContentId( PropertyPath.from( path ) );
-    }
-
-    public Iterable<ContentId> getContentIds( final String name )
-    {
-        final ImmutableList.Builder<ContentId> stringsBuilder = new ImmutableList.Builder<>();
-        for ( final Property property : getProperties( name ) )
-        {
-            if ( !property.hasNullValue() )
-            {
-                stringsBuilder.add( property.getContentId() );
             }
         }
         return stringsBuilder.build();

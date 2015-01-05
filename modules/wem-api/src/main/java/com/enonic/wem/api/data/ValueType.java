@@ -290,21 +290,6 @@ public abstract class ValueType<T>
         }
     }
 
-    static class ContentId
-        extends ValueType<com.enonic.wem.api.content.ContentId>
-    {
-        ContentId()
-        {
-            super( "ContentId", JavaTypeConverters.CONTENT_ID );
-        }
-
-        @Override
-        Value fromJsonValue( final Object object )
-        {
-            return new Value.ContentId( convertNullSafe( object ) );
-        }
-    }
-
     static class Reference
         extends ValueType<com.enonic.wem.api.util.Reference>
     {

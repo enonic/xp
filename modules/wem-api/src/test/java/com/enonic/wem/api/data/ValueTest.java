@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.util.GeoPoint;
+import com.enonic.wem.api.util.Reference;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -19,7 +19,7 @@ public class ValueTest
         assertEquals( "<div>abc</div>", Value.newHtmlPart( "<div>abc</div>" ).toString() );
         assertEquals( "<xml></xml>", Value.newXml( "<xml></xml>" ).toString() );
         assertEquals( "false", Value.newBoolean( false ).toString() );
-        assertEquals( "abc", Value.newContentId( ContentId.from( "abc" ) ).toString() );
+        assertEquals( "abc", Value.newReference( Reference.from( "abc" ) ).toString() );
         assertEquals( "1.1,-1.1", Value.newGeoPoint( GeoPoint.from( "1.1,-1.1" ) ).toString() );
         assertEquals( "1.1", Value.newDouble( 1.1 ).toString() );
         assertEquals( "1", Value.newLong( 1L ).toString() );

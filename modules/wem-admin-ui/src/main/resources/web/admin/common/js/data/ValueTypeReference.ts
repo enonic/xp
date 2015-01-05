@@ -7,9 +7,11 @@ module api.data {
         }
 
         isValid(value: any): boolean {
+
             if (!(typeof value === 'object')) {
                 return false;
             }
+
             if (!api.ObjectHelper.iFrameSafeInstanceOf(value, api.util.Reference)) {
                 return false;
             }

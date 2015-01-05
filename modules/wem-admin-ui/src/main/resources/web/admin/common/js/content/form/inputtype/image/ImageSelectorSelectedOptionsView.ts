@@ -305,7 +305,7 @@ module api.content.form.inputtype.image {
 
         getValues(): Value[] {
             return this.getSelectedOptions().map((selectedOption: SelectedOption<ImageSelectorDisplayValue>) => {
-                return ValueTypes.CONTENT_ID.newValue(selectedOption.getOption().value);
+                return ValueTypes.REFERENCE.newValue(selectedOption.getOption().value);
             });
         }
 
