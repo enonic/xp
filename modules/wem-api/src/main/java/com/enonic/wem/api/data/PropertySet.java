@@ -210,19 +210,23 @@ public final class PropertySet
                 "PropertySet already belongs to a ValueTree. Detach it from existing PropertyTree before adding it to another: " +
                     this.tree );
         }
+        final boolean treeWasNotSet = this.tree == null;
         this.tree = propertyTree;
 
-        final PropertyVisitor propertyVisitor = new PropertyVisitor()
+        if ( treeWasNotSet )
         {
-            @Override
-            public void visit( final Property property )
+            final PropertyVisitor propertyVisitor = new PropertyVisitor()
             {
-                property.setId( propertyTree.nextId() );
-                propertyTree.registerProperty( property );
-            }
-        };
-        propertyVisitor.visitPropertiesWithSet( true );
-        propertyVisitor.traverse( this );
+                @Override
+                public void visit( final Property property )
+                {
+                    property.setId( propertyTree.nextId() );
+                    propertyTree.registerProperty( property );
+                }
+            };
+            propertyVisitor.visitPropertiesWithSet( true );
+            propertyVisitor.traverse( this );
+        }
     }
 
     public PropertySet detach()
