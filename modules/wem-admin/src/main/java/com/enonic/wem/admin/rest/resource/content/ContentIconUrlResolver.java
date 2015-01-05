@@ -5,7 +5,7 @@ import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconUrlResol
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Media;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
@@ -42,8 +42,8 @@ public final class ContentIconUrlResolver
                         "/admin/rest/content/icon/" + content.getId() + "?ts=" + content.getModifiedTime().toEpochMilli() );
                 }
             }
-            return this.contentTypeIconUrlResolver.resolve(
-                this.contentTypeService.getByName( GetContentTypeParams.from( ContentTypeName.imageMedia() ) ) );
+            final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( media.getType() ) );
+            return this.contentTypeIconUrlResolver.resolve( contentType );
         }
         return this.contentTypeIconUrlResolver.resolve( content.getType() );
     }
