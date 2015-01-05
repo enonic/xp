@@ -41,7 +41,9 @@ module api.ui.dialog {
                             return;
                         }
                     }
-                    this.close();
+                    if (this.cancelAction) {
+                        this.cancelAction.execute();
+                    }
                 }
             };
 
