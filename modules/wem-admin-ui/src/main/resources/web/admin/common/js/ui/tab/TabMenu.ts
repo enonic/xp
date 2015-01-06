@@ -82,6 +82,10 @@ module api.ui.tab {
             return this;
         }
 
+        getTabMenuButtonEl(): TabMenuButton {
+            return this.tabMenuButton;
+        }
+
         getMenuEl(): api.dom.UlEl {
             return this.menuEl;
         }
@@ -101,7 +105,6 @@ module api.ui.tab {
         }
 
         showMenu() {
-            new ShowTabMenuEvent(this).fire();
             this.menuEl.show();
             this.menuVisible = true;
             this.addClass('expanded');
