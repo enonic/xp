@@ -140,18 +140,15 @@ module app.wizard.page.contextwindow {
         }
 
         slideOut() {
-            this.getEl().addClass("hidden");
-            this.getEl().setRight(-this.getEl().getWidthWithBorder() + "px");
+            this.getEl().addClass("hidden").setRight(-this.getEl().getWidthWithBorder() + "px");
             this.shown = false;
             this.updateFrameSize();
         }
 
         slideIn() {
-            this.getEl().removeClass("hidden");
-            this.getEl().setRight("0px");
+            this.getEl().removeClass("hidden").setRight("0px");
             this.shown = true;
             this.updateFrameSize();
-            this.getDeck().show();
         }
 
         public showInspectionPanel(panel: BaseInspectionPanel) {
@@ -193,14 +190,6 @@ module app.wizard.page.contextwindow {
             this.displayModeChangedListeners.filter((currentListener: () => void) => {
                 return listener == currentListener;
             });
-        }
-
-        onSaveRequested(listener: () => void) {
-            this.inspectionsPanel.onSaveRequested(listener);
-        }
-
-        unSaveRequested(listener: () => void) {
-            this.inspectionsPanel.unSaveRequested(listener);
         }
 
     }

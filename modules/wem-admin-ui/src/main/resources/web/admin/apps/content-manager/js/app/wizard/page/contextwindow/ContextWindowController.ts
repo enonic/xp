@@ -10,7 +10,7 @@ module app.wizard.page.contextwindow {
 
         private contextWindowToggler: ContextWindowToggler;
 
-        constructor(liveFormPanel: LiveFormPanel, contextWindow: ContextWindow, contextWindowToggler: ContextWindowToggler) {
+        constructor(contextWindow: ContextWindow, contextWindowToggler: ContextWindowToggler) {
             this.contextWindow = contextWindow;
             this.contextWindowToggler = contextWindowToggler;
 
@@ -40,18 +40,6 @@ module app.wizard.page.contextwindow {
                     this.contextWindow.slideOut();
                 }
             });
-
-            this.contextWindow.onSaveRequested(() => {
-
-                var itemView = liveFormPanel.getSelectedItemView();
-                if (itemView) {
-                    if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
-                        liveFormPanel.saveAndReloadOnlyComponent(<ComponentView<Component>> itemView);
-                    } else if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageView)) {
-                        liveFormPanel.saveAndReloadPage();
-                    }
-                }
-            })
         }
     }
 

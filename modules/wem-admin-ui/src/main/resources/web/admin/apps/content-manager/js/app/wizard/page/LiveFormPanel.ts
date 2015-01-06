@@ -38,6 +38,7 @@ module app.wizard.page {
 
     import RegionView = api.liveedit.RegionView;
     import ComponentView = api.liveedit.ComponentView;
+    import PageView = api.liveedit.PageView;
     import ImageComponentView = api.liveedit.image.ImageComponentView;
     import PartComponentView = api.liveedit.part.PartComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
@@ -131,13 +132,26 @@ module app.wizard.page {
                 this.saveAndReloadOnlyComponent(layoutView);
             });
 
+            var saveAction = new api.ui.Action('Apply');
+            saveAction.onExecuted(() => {
+                var itemView = this.getSelectedItemView();
+                if (itemView) {
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
+                        this.saveAndReloadOnlyComponent(<ComponentView<Component>> itemView);
+                    } else if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageView)) {
+                        this.saveAndReloadPage();
+                    }
+                }
+            });
+
             this.inspectionsPanel = new InspectionsPanel(<InspectionsPanelConfig>{
                 contentInspectionPanel: this.contentInspectionPanel,
                 pageInspectionPanel: this.pageInspectionPanel,
                 regionInspectionPanel: this.regionInspectionPanel,
                 imageInspectionPanel: this.imageInspectionPanel,
                 partInspectionPanel: this.partInspectionPanel,
-                layoutInspectionPanel: this.layoutInspectionPanel
+                layoutInspectionPanel: this.layoutInspectionPanel,
+                saveAction: saveAction
             });
 
             this.emulatorPanel = new EmulatorPanel({
@@ -166,7 +180,6 @@ module app.wizard.page {
             this.appendChild(this.contextWindow);
 
             this.contextWindowController = new app.wizard.page.contextwindow.ContextWindowController(
-                this,
                 this.contextWindow,
                 this.contentWizardPanel.getContextWindowToggler()
             );
@@ -271,19 +284,17 @@ module app.wizard.page {
         private liveEditListen() {
 
             this.liveEditPage.onPageSelected((event: PageSelectEvent) => {
-                this.selectedItemView = event.getPageView();
                 this.inspectPage();
             });
 
             this.liveEditPage.onRegionSelected((event: RegionSelectEvent) => {
-                this.selectedItemView = event.getRegionView();
                 this.inspectRegion(event.getRegionView());
             });
 
             this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
 
                 var itemView = event.getItemView();
-
+                debugger;
                 if (itemView.isEmpty() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView)) {
                     if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
                         this.contextWindow.slideOut();
@@ -295,12 +306,19 @@ module app.wizard.page {
                     }
                 }
 
+                if (this.getSelectedItemView()) {
+                    // deselect old item silently because new one has already been selected
+                    this.getSelectedItemView().deselect(true);
+                }
+                this.selectedItemView = itemView;
+
                 if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
                     this.inspectComponent(<ComponentView<Component>>itemView);
                 }
             });
 
             this.liveEditPage.onDeselect((event: ItemViewDeselectEvent) => {
+                debugger;
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
                 if (!toggler.isActive() && this.contextWindow.isShown()) {
                     this.contextWindow.slideOut();
@@ -430,8 +448,6 @@ module app.wizard.page {
 
         private inspectComponent(componentView: ComponentView<Component>) {
             api.util.assertNotNull(componentView, "componentView cannot be null");
-
-            this.selectedItemView = componentView;
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, ImageComponentView)) {
                 this.imageInspectionPanel.setImageComponent(<ImageComponentView>componentView);

@@ -422,11 +422,13 @@ module api.liveedit {
             new ItemViewSelectedEvent(this, clickPosition).fire();
         }
 
-        deselect() {
+        deselect(silent?: boolean) {
             this.getEl().removeAttribute("data-live-edit-selected");
             this.hideContextMenu();
 
-            new ItemViewDeselectEvent(this).fire();
+            if (!silent) {
+                new ItemViewDeselectEvent(this).fire();
+            }
         }
 
         getName(): string {
