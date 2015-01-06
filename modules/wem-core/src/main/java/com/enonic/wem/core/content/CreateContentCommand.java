@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.media.MediaInfo;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeAlreadyExistException;
@@ -19,7 +20,6 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.media.MediaInfo;
 
 final class CreateContentCommand
     extends AbstractContentCommand
@@ -46,6 +46,12 @@ final class CreateContentCommand
 
     private Content doExecute()
     {
+        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
+        if ( contentType.isAbstract() )
+        {
+            throw new IllegalArgumentException( "Cannot create content with an abstract type [" + params.getType().toString() + "]" );
+        }
+
         if ( !params.isDraft() )
         {
             validateContentData( params );
@@ -53,7 +59,6 @@ final class CreateContentCommand
 
         if ( params.getForm() == null )
         {
-            final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
             params.form( contentType.form() );
         }
 

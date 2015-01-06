@@ -1,15 +1,12 @@
 package com.enonic.wem.api.content;
 
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -35,8 +32,6 @@ public final class CreateContentParams
     private boolean draft;
 
     private CreateAttachments createAttachments = CreateAttachments.empty();
-
-    private Set<OrderExpr> orderExpressions = Sets.newLinkedHashSet();
 
     private AccessControlList permissions;
 
@@ -114,12 +109,6 @@ public final class CreateContentParams
         return this;
     }
 
-    public CreateContentParams addOrderExpression( final OrderExpr orderExpression )
-    {
-        this.orderExpressions.add( orderExpression );
-        return this;
-    }
-
     public CreateContentParams permissions( final AccessControlList permissions )
     {
         this.permissions = permissions;
@@ -182,11 +171,6 @@ public final class CreateContentParams
         return draft;
     }
 
-    public Set<OrderExpr> getOrderExpressions()
-    {
-        return orderExpressions;
-    }
-
     public AccessControlList getPermissions()
     {
         return permissions;
@@ -205,5 +189,6 @@ public final class CreateContentParams
         Preconditions.checkArgument( draft || this.parentContentPath != null, "parentContentPath cannot be null" );
         Preconditions.checkNotNull( displayName, "displayName cannot be null" );
         Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
+        Preconditions.checkNotNull( type, "type cannot be null" );
     }
 }

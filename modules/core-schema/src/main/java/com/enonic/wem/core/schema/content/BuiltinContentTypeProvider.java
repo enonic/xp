@@ -45,7 +45,7 @@ public final class BuiltinContentTypeProvider
         setFinal( true ).setAbstract( false ).build();
 
     private static final ContentType PAGE_TEMPLATE =
-        createSystemType( ContentTypeName.pageTemplate() ).allowChildContent( false ).setFinal( false ).setAbstract( true ).form(
+        createSystemType( ContentTypeName.pageTemplate() ).allowChildContent( false ).setFinal( false ).setAbstract( false ).form(
             ContentTypeForms.PAGE_TEMPLATE ).build();
 
     private static final ContentType SHORTCUT = createSystemType( ContentTypeName.shortcut() ).
