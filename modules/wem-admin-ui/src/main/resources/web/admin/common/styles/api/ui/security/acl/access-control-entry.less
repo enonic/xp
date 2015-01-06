@@ -1,6 +1,7 @@
 .access-control-entry {
   position: relative;
-  padding: 5px 42px 5px 5px;
+  min-height: 34px;
+  padding: 6px 42px 6px 5px;
   .flexbox();
   flex-flow: row wrap;
   .clearfix();
@@ -61,7 +62,8 @@
 
     .tab-menu-button {
       text-align: left;
-      padding: 6px 5px;
+      margin: 2px 0 0;
+      padding: 4px 5px;
       color: @admin-dark-gray-font;
       background-color: transparent;
 
@@ -77,7 +79,11 @@
     }
 
     ul {
-      padding: 40px 4px 4px;
+      padding: 38px 4px 4px;
+
+      li {
+        padding: 4px 5px;
+      }
     }
 
   }
