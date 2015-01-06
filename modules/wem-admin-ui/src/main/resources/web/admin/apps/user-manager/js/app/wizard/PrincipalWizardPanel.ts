@@ -58,7 +58,10 @@ module app.wizard {
                 this.wizardHeader.setAutoGenerationEnabled(false);
             } else {
                 this.getPrincipalWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                    if (event.getPropertyName() === "name") {
+                    var updateStatus = event.getPropertyName() === "name" ||
+                        (this.getPrincipalWizardHeader().isAutoGenerationEnabled() && event.getPropertyName() === "displayName");
+
+                    if (updateStatus) {
                         this.wizardActions.getSaveAction().setEnabled(!!event.getNewValue());
                     }
                 });
@@ -67,7 +70,6 @@ module app.wizard {
             super(params, () => {
 
                 this.addClass("principal-wizard-panel");
-
 
                 switch (this.principalType) {
                 case PrincipalType.USER:

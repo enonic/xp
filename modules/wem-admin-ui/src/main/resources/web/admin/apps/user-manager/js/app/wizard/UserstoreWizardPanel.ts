@@ -60,7 +60,10 @@ module app.wizard {
                 this.wizardHeader.setAutoGenerationEnabled(false);
             } else {
                 this.getUserStoreWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                    if (event.getPropertyName() === "name") {
+                    var updateStatus = event.getPropertyName() === "name" ||
+                        (this.getUserStoreWizardHeader().isAutoGenerationEnabled() && event.getPropertyName() === "displayName");
+
+                    if (updateStatus) {
                         this.wizardActions.getSaveAction().setEnabled(!!event.getNewValue());
                     }
                 });

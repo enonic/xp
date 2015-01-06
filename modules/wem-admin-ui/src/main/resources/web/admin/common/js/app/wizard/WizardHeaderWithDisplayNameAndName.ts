@@ -114,6 +114,10 @@ module api.app.wizard {
             }
         }
 
+        isAutoGenerationEnabled(): boolean {
+            return this.autoGenerationEnabled;
+        }
+
         setAutoGenerationEnabled(value: boolean) {
             this.autoGenerationEnabled = value;
         }
