@@ -97,7 +97,7 @@ public final class ImageContentProcessor
     public ProcessUpdateResult processUpdate( final UpdateContentParams params, final CreateAttachments createAttachments )
     {
         final CreateAttachments processedCreateAttachments;
-        if ( createAttachments.getSize() == 1 )
+        if ( createAttachments != null && createAttachments.getSize() == 1 )
         {
             final CreateAttachment sourceAttachment = createAttachments.first();
             final BufferedImage sourceImage;

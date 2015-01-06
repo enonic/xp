@@ -63,19 +63,20 @@ public final class UpdateNodeCommand
             return persistedNode;
         }
 
-        final Node updatedNode = createUpdatedNode( persistedNode, Node.newNode( editedNode ).
+        final Node updatedNode = createUpdatedNode( Node.newNode( editedNode ).
             attachedBinaries( updatedBinaries ).
             build() );
 
         doStoreNode( updatedNode );
 
-        return NodeHasChildResolver.create().
+        final Node nodeWithHashChildrenSet = NodeHasChildResolver.create().
             queryService( this.queryService ).
             build().
             resolve( updatedNode );
+        return nodeWithHashChildrenSet;
     }
 
-    private Node createUpdatedNode( final Node persistedNode, final Node editedNode )
+    private Node createUpdatedNode( final Node editedNode )
     {
         final Instant now = Instant.now();
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();

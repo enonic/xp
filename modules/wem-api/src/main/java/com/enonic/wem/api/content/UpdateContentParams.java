@@ -13,7 +13,7 @@ public final class UpdateContentParams
 
     private PrincipalKey modifier;
 
-    private CreateAttachments createAttachments = CreateAttachments.empty();
+    private CreateAttachments createAttachments = null;
 
     public UpdateContentParams editor( final ContentEditor editor )
     {
@@ -43,7 +43,6 @@ public final class UpdateContentParams
     {
         Preconditions.checkNotNull( contentId, "contentId cannot be null" );
         Preconditions.checkNotNull( editor, "editor cannot be null" );
-        Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
     }
 
     public ContentEditor getEditor()

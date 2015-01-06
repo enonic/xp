@@ -206,7 +206,6 @@ public final class ContentResource
     public ContentJson update( final UpdateContentJson json )
     {
         final UpdateContentParams updateParams = json.getUpdateContentParams();
-        //TODO: empty attachments from UpdateContentParams reset content attachments on update
 
         final Content updatedContent = contentService.update( updateParams );
         if ( json.getContentName().equals( updatedContent.getName() ) )

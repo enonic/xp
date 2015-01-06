@@ -80,9 +80,12 @@ public class ContentNodeTranslator
             id( NodeId.from( content.getId() ) ).
             editor( toNodeEditor( content, createAttachments ) );
 
-        for ( final CreateAttachment createAttachment : createAttachments )
+        if ( createAttachments != null )
         {
-            builder.attachBinary( createAttachment.getBinaryReference(), createAttachment.getByteSource() );
+            for ( final CreateAttachment createAttachment : createAttachments )
+            {
+                builder.attachBinary( createAttachment.getBinaryReference(), createAttachment.getByteSource() );
+            }
         }
         return builder.build();
     }

@@ -47,6 +47,10 @@ public class ContentDataSerializer
         {
             createAttachmentsToData( createAttachments, contentAsData );
         }
+        else
+        {
+            attachmentsToData( content.getAttachments(), contentAsData );
+        }
 
         if ( content.getForm() != null )
         {
@@ -144,7 +148,7 @@ public class ContentDataSerializer
         return attachments.build();
     }
 
-    void createAttachmentsToData( final CreateAttachments createAttachments, final PropertySet contentAsData )
+    private void createAttachmentsToData( final CreateAttachments createAttachments, final PropertySet contentAsData )
     {
         for ( final CreateAttachment createAttachment : createAttachments )
         {
@@ -164,4 +168,17 @@ public class ContentDataSerializer
             }
         }
     }
+
+    private void attachmentsToData( final Attachments attachments, final PropertySet contentAsData )
+    {
+        for ( final Attachment attachment : attachments )
+        {
+            final PropertySet attachmentSet = contentAsData.addSet( ContentPropertyNames.ATTACHMENT );
+            attachmentSet.addString( "name", attachment.getName() );
+            attachmentSet.addString( "label", attachment.getLabel() );
+            attachmentSet.addBinaryReference( "binary", attachment.getBinaryReference() );
+            attachmentSet.addString( "mimeType", attachment.getMimeType() );
+            attachmentSet.addLong( "size", attachment.getSize() );
+        }
+    }   
 }
