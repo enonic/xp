@@ -66,6 +66,26 @@ module api.ui.security.acl {
             return undefined;
         }
 
+        showMenu() {
+
+            var menu = this.getMenuEl(),
+                button = this.getTabMenuButtonEl(),
+                entry = menu.getParentElement().getParentElement(),
+                list = entry.getParentElement(),
+                offset = entry.getEl().getOffsetTopRelativeToParent() -
+                    (list.getEl().getOffsetTopRelativeToParent() + list.getEl().getPaddingTop() + list.getEl().getScrollTop()),
+                height = menu.getEl().getHeightWithoutPadding() - button.getEl().getHeight() + 2; // 2 is a valid deviation
+
+
+            if (offset > height) {
+                menu.addClass("upward");
+            } else {
+                menu.removeClass("upward");
+            }
+
+            super.showMenu();
+        }
+
         onValueChanged(listener: (event: api.ui.ValueChangedEvent)=>void) {
             this.valueChangedListeners.push(listener);
         }

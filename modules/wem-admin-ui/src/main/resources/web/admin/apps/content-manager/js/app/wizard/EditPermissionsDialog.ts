@@ -86,21 +86,6 @@ module app.wizard {
 
                 this.open();
             });
-
-            api.ui.tab.ShowTabMenuEvent.on((event) => {
-                var menu = event.getTabMenu().getMenuEl(),
-                    entry = menu.getParentElement().getParentElement(),
-                    list = entry.getParentElement(),
-                    offset = entry.getEl().getOffsetTopRelativeToParent() -
-                        (list.getEl().getOffsetTopRelativeToParent() + list.getEl().getPaddingTop() + list.getEl().getScrollTop()),
-                    height = menu.getEl().getHeightWithoutPadding() - entry.getEl().getHeight() / 2;
-
-                menu.removeClass("upward");
-                if (offset > height) {
-                    menu.addClass("upward");
-                }
-            });
-
         }
 
         private applyPermissions() {
