@@ -201,7 +201,7 @@ public final class PropertyArray
         }
         else
         {
-            final Property newProperty = new Property( name, index, value, tree.nextId(), parent );
+            final Property newProperty = new Property( name, index, value, tree != null ? tree.nextId() : null, parent );
             this.array.add( index, newProperty );
             return newProperty;
         }
