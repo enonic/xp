@@ -101,8 +101,8 @@ module api.liveedit.text {
             this.addPlaceholder();
         }
 
-        deselect() {
-            super.deselect();
+        deselect(silent?: boolean) {
+            super.deselect(silent);
 
             if (!this.isEmpty() && api.util.StringHelper.isBlank(this.getEl().getText())) {
                 this.markAsEmpty();

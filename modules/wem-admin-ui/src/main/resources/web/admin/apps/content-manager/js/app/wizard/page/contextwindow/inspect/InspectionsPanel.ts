@@ -11,13 +11,13 @@ module app.wizard.page.contextwindow.inspect {
     import LayoutComponent = api.content.page.layout.LayoutComponent;
 
     export interface InspectionsPanelConfig {
-
         contentInspectionPanel: ContentInspectionPanel;
         pageInspectionPanel: PageInspectionPanel;
         regionInspectionPanel: RegionInspectionPanel;
         imageInspectionPanel: ImageInspectionPanel;
         partInspectionPanel: PartInspectionPanel;
         layoutInspectionPanel: LayoutInspectionPanel;
+        saveAction: api.ui.Action;
     }
 
     export class InspectionsPanel extends api.ui.panel.Panel {
@@ -57,15 +57,12 @@ module app.wizard.page.contextwindow.inspect {
             this.deck.addPanel(this.noSelectionPanel);
 
             this.deck.showPanel(this.pageInspectionPanel);
-            this.appendChild(this.deck);
 
             this.buttons = new api.dom.DivEl('button-bar');
-            var saveButton = new api.ui.button.Button('Save');
-            saveButton.onClicked((event: MouseEvent) => {
-                this.notifySaveRequested();
-            });
+            var saveButton = new api.ui.button.ActionButton(config.saveAction);
             this.buttons.appendChild(saveButton);
-            this.appendChild(this.buttons);
+
+            this.appendChildren(this.deck, this.buttons);
 
         }
 
@@ -80,20 +77,5 @@ module app.wizard.page.contextwindow.inspect {
             this.showInspectionPanel(this.noSelectionPanel);
         }
 
-        onSaveRequested(listener: () => void) {
-            this.saveRequestListeners.push(listener);
-        }
-
-        unSaveRequested(listener: () => void) {
-            this.saveRequestListeners = this.saveRequestListeners.filter((curr) => {
-                return listener !== curr;
-            });
-        }
-
-        private notifySaveRequested() {
-            this.saveRequestListeners.forEach((listener) => {
-                listener();
-            })
-        }
     }
 }

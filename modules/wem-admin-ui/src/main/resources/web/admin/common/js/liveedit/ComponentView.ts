@@ -232,8 +232,8 @@ module api.liveedit {
             this.placeholder.select();
         }
 
-        deselect() {
-            super.deselect();
+        deselect(silent?: boolean) {
+            super.deselect(silent);
             if (this.isEmpty()) {
                 this.placeholder.deselect();
             }
