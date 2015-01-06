@@ -178,8 +178,12 @@ module app.create {
             var parentContentIsPageTemplate = this.parentContent && this.parentContent.getType().isPageTemplate();
 
             return items.filter((item: NewContentDialogListItem) => {
-                var contentTypeName = item.getContentType().getContentTypeName();
-                if (parentContentIsPageTemplate) {
+                var contentType = item.getContentType();
+                var contentTypeName = contentType.getContentTypeName();
+                if (contentType.isAbstract()) {
+                    return false;
+                }
+                else if (parentContentIsPageTemplate) {
                     return false; // children not allowed for page-template
                 }
                 else if (isRootContent && (contentTypeName.isTemplateFolder() || contentTypeName.isPageTemplate())) {
