@@ -6,6 +6,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
+import com.enonic.wem.api.content.page.EditablePage;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageNotFoundException;
 import com.enonic.wem.api.content.page.UpdatePageParams;
@@ -41,12 +42,12 @@ final class UpdatePageCommand
             throw new PageNotFoundException( this.params.getContent() );
         }
 
-        Page.PageEditBuilder editBuilder = this.params.getEditor().edit( content.getPage() );
+        final EditablePage editablePage = new EditablePage( content.getPage() );
+        this.params.getEditor().edit( editablePage );
+        final Page editedPage = editablePage.build();
 
-        if ( editBuilder.isChanges() )
+        if ( !editedPage.equals( content.getPage() ) )
         {
-            final Page editedPage = editBuilder.build();
-
             final UpdateContentParams params = new UpdateContentParams().
                 contentId( this.params.getContent() ).
                 editor( edit -> edit.page = editedPage );

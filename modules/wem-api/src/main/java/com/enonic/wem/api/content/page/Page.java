@@ -9,10 +9,6 @@ import com.enonic.wem.api.content.page.region.Component;
 import com.enonic.wem.api.content.page.region.ComponentPath;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.support.Changes;
-import com.enonic.wem.api.support.EditBuilder;
-
-import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class Page
     implements com.enonic.wem.api.rendering.Component
@@ -25,13 +21,13 @@ public final class Page
 
     private final PropertyTree config;
 
-    private Page( final PageProperties properties )
+    private Page( final Builder builder )
     {
-        Preconditions.checkNotNull( properties.config, "config cannot be null" );
-        this.controller = properties.controller;
-        this.template = properties.template;
-        this.config = properties.config;
-        this.regions = properties.regions;
+        Preconditions.checkNotNull( builder.config, "config cannot be null" );
+        this.controller = builder.controller;
+        this.template = builder.template;
+        this.config = builder.config;
+        this.regions = builder.regions;
     }
 
     public boolean hasController()
@@ -140,118 +136,27 @@ public final class Page
         return newPage( this ).build();
     }
 
-    static class PageProperties
-    {
-        DescriptorKey controller;
-
-        PageTemplateKey template;
-
-        PageRegions regions;
-
-        PropertyTree config;
-
-        PageProperties()
-        {
-            // nothing
-        }
-
-        PageProperties( final Page source )
-        {
-            this.template = source.template;
-            this.controller = source.controller;
-            this.regions = source.regions != null ? source.regions.copy() : null;
-            this.config = source.config != null ? source.config.copy() : null;
-        }
-
-        public PageProperties controller( DescriptorKey value )
-        {
-            this.controller = value;
-            return this;
-        }
-
-        public PageProperties template( PageTemplateKey value )
-        {
-            this.template = value;
-            return this;
-        }
-    }
-
-    public static PageEditBuilder editPage( final Page toBeEdited )
-    {
-        return new PageEditBuilder( toBeEdited );
-    }
-
-    public static class PageEditBuilder
-        extends PageProperties
-        implements EditBuilder<Page>
-    {
-        private final Page original;
-
-        private final Changes.Builder changes = new Changes.Builder();
-
-        public PageEditBuilder( final Page original )
-        {
-            super( original );
-            this.original = original;
-        }
-
-        public PageEditBuilder controller( DescriptorKey value )
-        {
-            changes.recordChange( newPossibleChange( "controller" ).from( this.original.getTemplate() ).to( value ).build() );
-            this.controller = value;
-            return this;
-        }
-
-        public PageEditBuilder template( PageTemplateKey value )
-        {
-            changes.recordChange( newPossibleChange( "template" ).from( this.original.getTemplate() ).to( value ).build() );
-            this.template = value;
-            return this;
-        }
-
-        public PageEditBuilder regions( final PageRegions value )
-        {
-            changes.recordChange( newPossibleChange( "regions" ).from( this.original.getRegions() ).to( value ).build() );
-            this.regions = value;
-            return this;
-        }
-
-        public PageEditBuilder config( PropertyTree value )
-        {
-            changes.recordChange( newPossibleChange( "config" ).from( original.getConfig() ).to( value ).build() );
-            config = value;
-            return this;
-        }
-
-        public boolean isChanges()
-        {
-            return this.changes.isChanges();
-        }
-
-        public Changes getChanges()
-        {
-            return this.changes.build();
-        }
-
-
-        public Page build()
-        {
-            return new Page( this );
-        }
-
-    }
-
     public static class Builder
-        extends PageProperties
     {
+        private DescriptorKey controller;
+
+        private PageTemplateKey template;
+
+        private PageRegions regions;
+
+        private PropertyTree config;
+
         private Builder()
         {
             this.config = new PropertyTree();
         }
 
-        private Builder( final Page page )
+        private Builder( final Page source )
         {
-            super( page );
+            this.template = source.template;
+            this.controller = source.controller;
+            this.regions = source.regions != null ? source.regions.copy() : null;
+            this.config = source.config != null ? source.config.copy() : null;
         }
 
         public Builder regions( final PageRegions value )
