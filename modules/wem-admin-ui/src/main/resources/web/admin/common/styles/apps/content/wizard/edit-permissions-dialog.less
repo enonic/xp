@@ -18,12 +18,18 @@
   }
 
   .principal-combobox {
-    height: 307px;
+    height: 320px;
 
     .access-control-list {
-      height: 260px;
+      height: 277px;
       overflow-y: auto;
       overflow-x: hidden;
+      padding: 5px 0;
+
+      .access-control-entry .access-selector ul.upward {
+        padding: 4px 4px 38px;
+        margin-top: -142px;
+      }
     }
 
     &.disabled {
@@ -32,7 +38,7 @@
       }
 
       .access-control-list {
-        height: 307px;
+        height: 320px;
       }
 
       .access-control-entry {

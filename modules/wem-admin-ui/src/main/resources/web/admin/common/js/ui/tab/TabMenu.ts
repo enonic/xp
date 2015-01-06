@@ -40,13 +40,19 @@ module api.ui.tab {
             this.menuEl = new api.dom.UlEl();
             this.appendChild(this.menuEl);
 
-            api.dom.Body.get().onClicked((event: MouseEvent) => this.hideMenuOnOutsideClick(event));
+            api.dom.Body.get().onClicked((event: MouseEvent) => new HideTabMenuEvent(this).fire());
+            HideTabMenuEvent.on((event) => {
+                if (event.getTabMenu() !== this) {
+                    this.hideMenu();
+                }
+            });
 
             this.onClicked((e: MouseEvent) => {
                 if (this.enabled) {
                     // menu itself was clicked so do nothing
                     e.preventDefault();
                     e.stopPropagation();
+                    new HideTabMenuEvent(this).fire();
                 }
             });
         }
@@ -95,6 +101,7 @@ module api.ui.tab {
         }
 
         showMenu() {
+            new ShowTabMenuEvent(this).fire();
             this.menuEl.show();
             this.menuVisible = true;
             this.addClass('expanded');
@@ -314,13 +321,6 @@ module api.ui.tab {
             this.navigationItemDeselectedListeners.forEach((listener: (event: NavigatorEvent)=>void) => {
                 listener.call(this, new NavigatorEvent(tab));
             });
-        }
-
-        private hideMenuOnOutsideClick(evt: Event): void {
-            if (!this.getEl().contains(<HTMLElement> evt.target)) {
-                // click outside menu
-                this.hideMenu();
-            }
         }
     }
 }

@@ -8,3 +8,5 @@
 ///<reference path='TabMenuItemClosedEvent.ts' />
 ///<reference path='TabMenuItemLabelChangedEvent.ts' />
 ///<reference path='TabMenuItemSelectedEvent.ts' />
+///<reference path='HideTabMenuEvent.ts' />
+///<reference path='ShowTabMenuEvent.ts' />
