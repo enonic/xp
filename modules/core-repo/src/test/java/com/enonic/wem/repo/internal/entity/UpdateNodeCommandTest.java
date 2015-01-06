@@ -127,6 +127,36 @@ public class UpdateNodeCommandTest
         assertEquals( 1, updatedNode.getAttachedBinaries().getSize() );
     }
 
+    @Test
+    public void keep_existing_binaries_also_when_new_Property_but_equal_BinaryReference()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
+        data.setBinaryReference( "my-image", binaryRef );
+
+        final CreateNodeParams params = CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            data( data ).
+            attachBinary( binaryRef, ByteSource.wrap( "my-car-image-source".getBytes() ) ).
+            build();
+
+        final Node node = createNode( params );
+
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+            editor( toBeEdited -> {
+                toBeEdited.data.removeProperties( "my-image" );
+                toBeEdited.data.setBinaryReference( "my-image", binaryRef );
+            } ).
+            id( node.id() ).
+            build();
+
+        final Node updatedNode = updateNode( updateNodeParams );
+
+        assertEquals( 1, updatedNode.getAttachedBinaries().getSize() );
+    }
+
     @Test(expected = NodeBinaryReferenceException.class)
     public void try_add_new_without_source()
         throws Exception

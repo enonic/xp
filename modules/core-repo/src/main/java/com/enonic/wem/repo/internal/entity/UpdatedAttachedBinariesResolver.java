@@ -1,6 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
 import java.io.IOException;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,6 +14,8 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.ValueTypes;
 import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.AttachedBinary;
@@ -45,13 +48,13 @@ class UpdatedAttachedBinariesResolver
         blobService = builder.blobService;
         binaryAttachments = builder.binaryAttachments;
 
-        final Set<Property> referencesInEditedNode = getEditedNodeReferences();
+        final Set<BinaryReference> referencesInEditedNode = new ReferenceResolver().resolve( this.editableNode.data );
 
         final BinaryReferences.Builder referenceBuilder = BinaryReferences.create();
 
-        for ( final Property property : referencesInEditedNode )
+        for ( final BinaryReference binaryReference : referencesInEditedNode )
         {
-            referenceBuilder.add( property.getBinaryReference() );
+            referenceBuilder.add( binaryReference );
         }
 
         this.currentBinaryReferences = referenceBuilder.build();
@@ -59,18 +62,18 @@ class UpdatedAttachedBinariesResolver
 
     AttachedBinaries resolve()
     {
-        final Set<Property> referencesInEditedNode = getEditedNodeReferences();
+        final Set<BinaryReference> referencesInEditedNode = new ReferenceResolver().resolve( this.editableNode.data );
 
-        final Set<Property> referencesInPersistedNode = getPersistedNodeReferences();
+        final Set<BinaryReference> referencesInPersistedNode = new ReferenceResolver().resolve( this.persistedNode.data() );
 
-        final Sets.SetView<Property> changedBinaryReferences = Sets.difference( referencesInEditedNode, referencesInPersistedNode );
+        final Sets.SetView<BinaryReference> changedBinaryReferences = Sets.difference( referencesInEditedNode, referencesInPersistedNode );
 
         if ( changedBinaryReferences.isEmpty() && this.binaryAttachments.isEmpty() )
         {
             return persistedNode.getAttachedBinaries();
         }
 
-        final Map<BinaryReference, AttachedBinary> resolvedAttachedBinaries = Maps.newHashMap();
+        final Map<BinaryReference, AttachedBinary> resolvedAttachedBinaries = Maps.newLinkedHashMap();
 
         processExistingBinaries( resolvedAttachedBinaries, referencesInEditedNode, referencesInPersistedNode );
 
@@ -81,12 +84,10 @@ class UpdatedAttachedBinariesResolver
         return AttachedBinaries.fromCollection( resolvedAttachedBinaries.values() );
     }
 
-    private void verifyAllNewGivenAsBinaryAttachment( final Sets.SetView<Property> changedBinaryReferences )
+    private void verifyAllNewGivenAsBinaryAttachment( final Sets.SetView<BinaryReference> changedBinaryReferences )
     {
-        for ( final Property property : changedBinaryReferences )
+        for ( final BinaryReference binaryReference : changedBinaryReferences )
         {
-            final BinaryReference binaryReference = property.getBinaryReference();
-
             final boolean attachmentGivenOrExistsOnNodeAlready = this.binaryAttachments.get( binaryReference ) != null ||
                 persistedNode.getAttachedBinaries().getByBinaryReference( binaryReference ) != null;
 
@@ -112,30 +113,21 @@ class UpdatedAttachedBinariesResolver
         }
     }
 
-    private Set<Property> getPersistedNodeReferences()
+    private void processExistingBinaries( final Map<BinaryReference, AttachedBinary> resolved,
+                                          final Set<BinaryReference> referencesInEditedNode,
+                                          final Set<BinaryReference> referencesInPersistedNode )
     {
-        return persistedNode.data().getByValueType( ValueTypes.BINARY_REFERENCE );
-    }
-
-    private Set<Property> getEditedNodeReferences()
-    {
-        return this.editableNode.data.getByValueType( ValueTypes.BINARY_REFERENCE );
-    }
-
-    private void processExistingBinaries( final Map<BinaryReference, AttachedBinary> resolved, final Set<Property> referencesInEditedNode,
-                                          final Set<Property> referencesInPersistedNode )
-    {
-        final Sets.SetView<Property> unchangedReferences = Sets.intersection( referencesInPersistedNode, referencesInEditedNode );
+        final Sets.SetView<BinaryReference> unchangedReferences = Sets.intersection( referencesInPersistedNode, referencesInEditedNode );
 
         final AttachedBinaries attachedBinaries = persistedNode.getAttachedBinaries();
 
-        for ( final Property property : unchangedReferences )
+        for ( final BinaryReference unchangedReference : unchangedReferences )
         {
-            final AttachedBinary existingAttachedBinary = attachedBinaries.getByBinaryReference( property.getBinaryReference() );
+            final AttachedBinary existingAttachedBinary = attachedBinaries.getByBinaryReference( unchangedReference );
 
             if ( existingAttachedBinary != null )
             {
-                resolved.put( property.getBinaryReference(), existingAttachedBinary );
+                resolved.put( unchangedReference, existingAttachedBinary );
             }
         }
     }
@@ -199,6 +191,30 @@ class UpdatedAttachedBinariesResolver
         UpdatedAttachedBinariesResolver build()
         {
             return new UpdatedAttachedBinariesResolver( this );
+        }
+    }
+
+    private class ReferenceResolver
+        extends PropertyVisitor
+    {
+        private Set<BinaryReference> binaryReferences = new LinkedHashSet<>();
+
+        private ReferenceResolver()
+        {
+            visitPropertiesWithSet( false );
+            restrictType( ValueTypes.BINARY_REFERENCE );
+        }
+
+        @Override
+        public void visit( final Property property )
+        {
+            binaryReferences.add( property.getBinaryReference() );
+        }
+
+        public Set<BinaryReference> resolve( final PropertyTree tree )
+        {
+            this.traverse( tree );
+            return binaryReferences;
         }
     }
 }
