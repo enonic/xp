@@ -1,8 +1,12 @@
 package com.enonic.wem.export.internal;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.data.ValueTypes;
 import com.enonic.wem.api.export.ImportNodeException;
 import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.node.BinaryAttachment;
@@ -16,9 +20,9 @@ import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.vfs.VirtualFile;
 import com.enonic.wem.export.internal.builder.CreateNodeParamsFactory;
+import com.enonic.wem.export.internal.builder.PropertyTreeXmlBuilder;
 import com.enonic.wem.export.internal.builder.UpdateNodeParamsFactory;
 import com.enonic.wem.export.internal.reader.ExportReader;
-import com.enonic.wem.export.internal.xml.XmlAttachedBinaries;
 import com.enonic.wem.export.internal.xml.XmlNode;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
@@ -191,32 +195,32 @@ public class NodeImportCommand
 
     private BinaryAttachments processBinaryAttachments( final VirtualFile nodeFile, final XmlNode xmlNode )
     {
-        final XmlAttachedBinaries attachedBinaries = xmlNode.getAttachedBinaries();
+        final PropertyTree data = PropertyTreeXmlBuilder.build( xmlNode.getProperties() );
 
-        if ( attachedBinaries == null )
+        final Set<Property> binaryReferences = data.getByValueType( ValueTypes.BINARY_REFERENCE );
+
+        if ( binaryReferences.isEmpty() )
         {
             return BinaryAttachments.empty();
         }
 
         final BinaryAttachments.Builder builder = BinaryAttachments.create();
 
-        for ( final XmlAttachedBinaries.AttachedBinary attachedBinary : attachedBinaries.getAttachedBinary() )
+        for ( final Property binaryReference : binaryReferences )
         {
-            addBinary( nodeFile, builder, attachedBinary );
+            addBinary( nodeFile, builder, binaryReference );
         }
 
         return builder.build();
     }
 
-    private void addBinary( final VirtualFile nodeFile, final BinaryAttachments.Builder builder,
-                            final XmlAttachedBinaries.AttachedBinary attachedBinary )
+    private void addBinary( final VirtualFile nodeFile, final BinaryAttachments.Builder builder, final Property binaryRefProperty )
     {
-        final String binaryReferenceString = attachedBinary.getBinaryReference();
+        final BinaryReference binaryReference = binaryRefProperty.getBinaryReference();
 
         try
         {
-            final VirtualFile binary = exportReader.getBinarySource( nodeFile, binaryReferenceString );
-            final BinaryReference binaryReference = BinaryReference.from( binaryReferenceString );
+            final VirtualFile binary = exportReader.getBinarySource( nodeFile, binaryReference.toString() );
             builder.add( new BinaryAttachment( binaryReference, binary.getByteSource() ) );
 
             result.addBinary( binary.getUrl(), binaryReference );

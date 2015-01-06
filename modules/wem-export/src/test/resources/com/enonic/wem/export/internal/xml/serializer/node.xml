@@ -25,14 +25,6 @@
       </property-set>
     </property-set>
   </properties>
-  <attachedBinaries>
-    <attachedBinary>
-      <binaryReference>image2.jpg</binaryReference>
-    </attachedBinary>
-    <attachedBinary>
-      <binaryReference>image.jpg</binaryReference>
-    </attachedBinary>
-  </attachedBinaries>
   <indexConfigs>
     <defaultConfig>
       <decideByType>true</decideByType>

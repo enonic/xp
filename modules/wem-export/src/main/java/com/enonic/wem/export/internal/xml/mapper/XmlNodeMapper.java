@@ -30,7 +30,6 @@ public class XmlNodeMapper
             xml.setProperties( XmlPropertyTreeMapper.toXml( node.data() ) );
         }
 
-        xml.setAttachedBinaries( XmlAttachedBinariesMapper.toXml( node.getAttachedBinaries() ) );
         xml.setIndexConfigs( XmlIndexConfigsMapper.toXml( node.getIndexConfigDocument() ) );
 
         return xml;

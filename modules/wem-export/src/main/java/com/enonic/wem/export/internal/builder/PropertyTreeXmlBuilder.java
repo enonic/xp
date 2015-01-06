@@ -29,9 +29,9 @@ import com.enonic.wem.export.internal.xml.XmlXmlProperty;
 import com.enonic.wem.export.internal.xml.util.XmlDateTimeConverter;
 import com.enonic.wem.export.internal.xml.util.XmlStringEscaper;
 
-class PropertyTreeXmlBuilder
+public class PropertyTreeXmlBuilder
 {
-    static PropertyTree build( final XmlPropertyTree xmlPropertyTree )
+    public static PropertyTree build( final XmlPropertyTree xmlPropertyTree )
     {
         final PropertyTree propertyTree = new PropertyTree();
 
