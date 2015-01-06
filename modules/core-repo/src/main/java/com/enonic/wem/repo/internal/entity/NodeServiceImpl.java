@@ -266,6 +266,21 @@ public class NodeServiceImpl
             execute();
     }
 
+    @Override
+    public Node move( final NodeId nodeId, final NodePath parentNodePath )
+    {
+        return MoveNodeCommand.create().
+            id( nodeId ).
+            parentNodePath( parentNodePath ).
+            queryService( this.queryService ).
+            nodeDao( this.nodeDao ).
+            workspaceService( this.workspaceService ).
+            indexService( this.indexService ).
+            versionService( this.versionService ).
+            build().
+            execute();
+    }
+
 
     @Override
     public NodeComparison compare( final NodeId nodeId, final Workspace target )

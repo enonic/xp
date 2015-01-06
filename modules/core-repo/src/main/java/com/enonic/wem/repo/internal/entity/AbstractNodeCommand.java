@@ -10,6 +10,7 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeIndexPath;
+import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.Nodes;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
@@ -60,6 +61,21 @@ abstract class AbstractNodeCommand
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
+            build().
+            execute();
+    }
+
+    Node doMoveNode( final NodePath newParentPath, final NodeName nodeName, final NodeId nodeId )
+    {
+        return MoveNodeCommand.create().
+            id( nodeId ).
+            parentNodePath( newParentPath ).
+            nodeName( nodeName ).
+            queryService( this.queryService ).
+            nodeDao( this.nodeDao ).
+            workspaceService( this.workspaceService ).
+            indexService( this.indexService ).
+            versionService( this.versionService ).
             build().
             execute();
     }

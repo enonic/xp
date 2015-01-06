@@ -61,7 +61,7 @@ module app.browse.action {
                 this.EDIT_CONTENT.setEnabled(!contentSummaries[0] ? false : contentSummaries[0].isEditable());
                 this.DELETE_CONTENT.setEnabled(!contentSummaries[0] ? false : contentSummaries[0].isDeletable());
                 this.DUPLICATE_CONTENT.setEnabled(true);
-                this.MOVE_CONTENT.setEnabled(false);
+                this.MOVE_CONTENT.setEnabled(true);
                 this.SORT_CONTENT.setEnabled(true);
                 this.SHOW_PREVIEW.setEnabled(!contentSummaries[0] ? false : contentSummaries[0].isPage());
                 break;
@@ -71,7 +71,7 @@ module app.browse.action {
                 this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
                 this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
                 this.DUPLICATE_CONTENT.setEnabled(false);
-                this.MOVE_CONTENT.setEnabled(true);
+                this.MOVE_CONTENT.setEnabled(false);
                 this.SORT_CONTENT.setEnabled(false);
                 this.SHOW_PREVIEW.setEnabled(false);
             }

@@ -119,6 +119,10 @@ module app.browse {
                 this.contentTreeGridPanel.updateContentNode(event.getContentId());
             });
 
+            api.content.ContentMovedEvent.on((event) => {
+                this.contentTreeGridPanel.reload();
+            });
+
             api.content.ContentChildOrderUpdatedEvent.on((event) => {
                 this.handleChildOrderUpdated(event);
             });
