@@ -29,8 +29,6 @@
 
   <reference id="layoutDescriptorService" interface="com.enonic.wem.api.content.page.region.LayoutDescriptorService"/>
 
-  <reference id="metadataSchemaService" interface="com.enonic.wem.api.schema.metadata.MetadataSchemaService"/>
-
   <reference id="nodeService" interface="com.enonic.wem.api.node.NodeService"/>
 
   <reference id="exportService" interface="com.enonic.wem.api.export.ExportService"/>
@@ -158,12 +156,6 @@
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.admin.rest.resource.content.page.layout.LayoutDescriptorResource">
       <property name="layoutDescriptorService" ref="layoutDescriptorService"/>
-    </bean>
-  </service>
-
-  <service auto-export="interfaces">
-    <bean class="com.enonic.wem.admin.rest.resource.schema.metadata.MetadataSchemaResource">
-      <property name="metadataSchemaService" ref="metadataSchemaService"/>
     </bean>
   </service>
 

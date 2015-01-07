@@ -104,7 +104,6 @@
 ///<reference path='schema/content/inputtype/_module.ts' />
 ///<reference path='schema/mixin/_module.ts'/>
 ///<reference path='schema/relationshiptype/_module.ts' />
-///<reference path='schema/metadata/_module.ts'/>
 
 ///<reference path='thumb/_module.ts' />
 ///<reference path='content/json/_module.ts' />
