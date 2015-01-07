@@ -60,7 +60,6 @@ import com.enonic.wem.api.node.ReorderChildNodeParams;
 import com.enonic.wem.api.node.ReorderChildNodesParams;
 import com.enonic.wem.api.node.ReorderChildNodesResult;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
-import com.enonic.wem.api.schema.content.ContentTypeForms;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
@@ -103,8 +102,6 @@ public class ContentServiceImpl
     @Override
     public Site create( final CreateSiteParams params )
     {
-        // TODO: validate that PageTemplates are only created below  Site/templates
-
         final PropertyTree data = new PropertyTree();
         data.setString( "description", params.getDescription() );
 
@@ -115,7 +112,6 @@ public class ContentServiceImpl
             parent( params.getParentContentPath() ).
             name( params.getName() ).
             displayName( params.getDisplayName() ).
-            form( ContentTypeForms.SITE ).
             contentData( data ).draft( params.isDraft() );
 
         final Site site = (Site) CreateContentCommand.create().

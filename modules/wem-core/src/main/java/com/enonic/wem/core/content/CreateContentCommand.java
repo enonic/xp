@@ -57,11 +57,6 @@ final class CreateContentCommand
             validateContentData( params );
         }
 
-        if ( params.getForm() == null )
-        {
-            params.form( contentType.form() );
-        }
-
         final CreateContentParams handledParams = new ProxyContentProcessor( mediaInfo ).processCreate( params );
 
         final CreateNodeParams createNodeParams = translator.toCreateNode( handledParams );

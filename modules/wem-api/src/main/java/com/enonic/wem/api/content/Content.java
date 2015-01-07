@@ -39,8 +39,6 @@ public class Content
 
     private final ContentId id;
 
-    private final Form form;
-
     private final PropertyTree data;
 
     private final Attachments attachments;
@@ -93,7 +91,6 @@ public class Content
         this.parentPath = builder.parentPath;
         this.path = ContentPath.from( builder.parentPath, builder.name.toString() );
         this.id = builder.id;
-        this.form = builder.form;
         this.data = builder.data;
         this.attachments = builder.attachments;
         this.metadata = builder.metadata;
@@ -168,11 +165,6 @@ public class Content
     public PrincipalKey getOwner()
     {
         return owner;
-    }
-
-    public Form getForm()
-    {
-        return form;
     }
 
     public PropertyTree getData()
@@ -307,7 +299,6 @@ public class Content
             Objects.equals( inheritPermissions, other.inheritPermissions ) &&
             Objects.equals( childOrder, other.childOrder ) &&
             Objects.equals( thumbnail, other.thumbnail ) &&
-            Objects.equals( form, other.form ) &&
             Objects.equals( permissions, other.permissions ) &&
             Objects.equals( attachments, other.attachments ) &&
             Objects.equals( data, other.data ) &&
@@ -319,7 +310,7 @@ public class Content
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, displayName, type, draft, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inheritPermissions, childOrder, thumbnail, form, permissions, attachments, data, metadata, page );
+                             hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, metadata, page );
     }
 
     public static Builder newContent( final ContentTypeName type )
@@ -435,7 +426,6 @@ public class Content
             this.parentPath = source.parentPath;
             this.name = source.name;
             this.type = source.type;
-            this.form = source.form != null ? source.form.copy() : null;
             this.data = source.data != null ? source.data.copy() : null;
             this.attachments = source.attachments;
             this.metadata = source.metadata != null ? source.metadata.copy() : null;
@@ -497,12 +487,6 @@ public class Content
                 throw new IllegalArgumentException( "Please create Builder via Media when creating a Media" );
             }
             this.type = type;
-            return this;
-        }
-
-        public Builder<BUILDER, C> form( final Form form )
-        {
-            this.form = form;
             return this;
         }
 

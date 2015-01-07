@@ -33,7 +33,6 @@ public class EditableContent
     {
         this.source = source;
         this.displayName = source.getDisplayName();
-        this.form = source.getForm();
         this.data = source.getData().copy();
         this.metadata = source.getAllMetadata();
         this.page = page != null ? page.copy() : null;
@@ -47,7 +46,6 @@ public class EditableContent
     {
         final Content.Builder builder = Content.newContent( this.source );
         builder.displayName( displayName );
-        builder.form( form );
         builder.data( data );
         builder.metadata( metadata );
         builder.page( page );

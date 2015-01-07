@@ -47,7 +47,6 @@
   "deletable": true,
   "displayName": "My Content",
   "editable": true,
-  "form": null,
   "hasChildren": false,
   "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
   "id": "aaa",

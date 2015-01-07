@@ -542,7 +542,6 @@ module app.wizard {
 
             var updateContentRequest = new UpdateContentRequest(this.getPersistedItem().getId()).
                 setDraft(this.persistAsDraft).
-                setForm(persistedContent.getForm()).
                 setContentName(viewedContent.getName()).
                 setDisplayName(viewedContent.getDisplayName()).
                 setData(viewedContent.getContentData()).

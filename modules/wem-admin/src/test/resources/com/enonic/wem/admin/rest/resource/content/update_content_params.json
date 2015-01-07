@@ -1,9 +1,6 @@
 {
     "contentId": "content-id",
     "contentName": "content-name",
-    "form": {
-        "formItems": []
-    },
     "data": [],
     "metadata": [],
     "displayName": "Content One"

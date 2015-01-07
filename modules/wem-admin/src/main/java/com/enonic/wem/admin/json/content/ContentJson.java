@@ -13,7 +13,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.data.PropertyArrayJson;
 import com.enonic.wem.api.data.PropertyTreeJson;
-import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
@@ -28,8 +27,6 @@ public final class ContentJson
     private final List<AttachmentJson> attachments;
 
     private final List<MetadataJson> metadata;
-
-    private final FormJson form;
 
     private final PageJson pageJson;
 
@@ -51,7 +48,6 @@ public final class ContentJson
             this.metadata.add( new MetadataJson( item ) );
         }
 
-        this.form = FormJson.resolveJson( content.getForm(), mixinReferencesToFormItemsTransformer );
         this.pageJson = content.hasPage() ? new PageJson( content.getPage() ) : null;
 
         final Principals principals = contentPrincipalsResolver.resolveAccessControlListPrincipals( content.getPermissions() );
@@ -87,11 +83,6 @@ public final class ContentJson
     public List<AccessControlEntryJson> getPermissions()
     {
         return this.accessControlList;
-    }
-
-    public FormJson getForm()
-    {
-        return form;
     }
 
     public PageJson getPage()

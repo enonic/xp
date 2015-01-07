@@ -6,15 +6,12 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 
 public final class CreateContentParams
 {
-    private Form form;
-
     private PropertyTree data;
 
     private List<Metadata> metadata;
@@ -46,12 +43,6 @@ public final class CreateContentParams
     public CreateContentParams parent( final ContentPath parentContentPath )
     {
         this.parentContentPath = parentContentPath;
-        return this;
-    }
-
-    public CreateContentParams form( final Form value )
-    {
-        this.form = value;
         return this;
     }
 
@@ -129,11 +120,6 @@ public final class CreateContentParams
     public ContentTypeName getType()
     {
         return type;
-    }
-
-    public Form getForm()
-    {
-        return form;
     }
 
     public PropertyTree getData()

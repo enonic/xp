@@ -17,7 +17,6 @@ import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.data.PropertyArrayJson;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.PropertyTreeJson;
-import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public final class CreateContentJson
@@ -29,7 +28,7 @@ public final class CreateContentJson
     @JsonCreator
     CreateContentJson( @JsonProperty("draft") final String draft, @JsonProperty("name") final String name,
                        @JsonProperty("displayName") final String displayName, @JsonProperty("parent") final String parent,
-                       @JsonProperty("contentType") final String contentType, @JsonProperty("form") final FormJson formJson,
+                       @JsonProperty("contentType") final String contentType,
                        @JsonProperty("data") final List<PropertyArrayJson> dataJsonList,
                        @JsonProperty("metadata") final List<MetadataJson> metadataJsonList )
     {
@@ -40,7 +39,6 @@ public final class CreateContentJson
         this.createContent.displayName( displayName );
         this.createContent.parent( ContentPath.from( parent ) );
         this.createContent.type( ContentTypeName.from( contentType ) );
-        this.createContent.form( formJson != null ? formJson.getForm() : null );
 
         final PropertyTree contentData = PropertyTreeJson.fromJson( dataJsonList );
         this.createContent.contentData( contentData );

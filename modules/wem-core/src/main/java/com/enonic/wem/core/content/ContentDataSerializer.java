@@ -18,12 +18,9 @@ import com.enonic.wem.api.thumb.Thumbnail;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.content.page.PageDataSerializer;
-import com.enonic.wem.core.form.FormDataSerializer;
 
 public class ContentDataSerializer
 {
-    private static final FormDataSerializer FORM_SERIALIZER = new FormDataSerializer( ContentPropertyNames.FORM );
-
     private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE );
 
     public void toData( final Content content, final PropertySet contentAsData, final CreateAttachments createAttachments )
@@ -52,11 +49,6 @@ public class ContentDataSerializer
             attachmentsToData( content.getAttachments(), contentAsData );
         }
 
-        if ( content.getForm() != null )
-        {
-            FORM_SERIALIZER.toData( content.getForm(), contentAsData );
-        }
-
         if ( content.hasPage() )
         {
             PAGE_SERIALIZER.toData( content.getPage(), contentAsData );
@@ -83,7 +75,6 @@ public class ContentDataSerializer
             builder.metadata( metadatasBuilder.build() );
         }
 
-        builder.form( FORM_SERIALIZER.fromData( contentAsSet.getSet( ContentPropertyNames.FORM ) ) );
         if ( contentAsSet.hasProperty( ContentPropertyNames.PAGE ) )
         {
             builder.page( PAGE_SERIALIZER.fromData( contentAsSet.getSet( ContentPropertyNames.PAGE ) ) );
@@ -124,11 +115,6 @@ public class ContentDataSerializer
         if ( params.getCreateAttachments() != null )
         {
             createAttachmentsToData( params.getCreateAttachments(), contentAsData );
-        }
-
-        if ( params.getForm() != null )
-        {
-            FORM_SERIALIZER.toData( params.getForm(), contentAsData );
         }
     }
 

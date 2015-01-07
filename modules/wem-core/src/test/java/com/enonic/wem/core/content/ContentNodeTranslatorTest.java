@@ -125,8 +125,7 @@ public class ContentNodeTranslatorTest
             name( "mycontent" ).
             parent( ContentPath.ROOT ).
             contentData( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
-            type( ContentTypeName.from( "mymodule:my-content-type" ) ).
-            form( form );
+            type( ContentTypeName.from( "mymodule:my-content-type" ) );
 
         final CreateNodeParams createNode = translator.toCreateNode( mycontent );
 
