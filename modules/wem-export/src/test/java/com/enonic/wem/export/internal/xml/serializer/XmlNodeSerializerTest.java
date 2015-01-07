@@ -100,6 +100,11 @@ public class XmlNodeSerializerTest
         mySubSubset.setString( "myString", "myStringValue" );
         mySubSubset.setBoolean( "myBoolean", true );
 
+        // Nullable values
+        propertyTree.addString( "myString", null );
+        propertyTree.addHtmlPart( "myHtmlPart", null );
+        propertyTree.addXml( "myXml", null );
+
         return Node.newNode().
             id( NodeId.from( "abc" ) ).
             name( NodeName.from( "my-node-name" ) ).

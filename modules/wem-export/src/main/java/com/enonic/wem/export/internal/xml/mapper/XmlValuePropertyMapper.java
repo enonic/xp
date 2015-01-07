@@ -13,7 +13,15 @@ class XmlValuePropertyMapper
     {
         XmlXmlProperty prop = new XmlXmlProperty();
         prop.setName( property.getName() );
-        prop.setValue( XmlStringEscaper.escapeContent( property.getString() ) );
+
+        if ( property.hasNullValue() )
+        {
+            prop.setIsNull( true );
+        }
+        else
+        {
+            prop.setValue( XmlStringEscaper.escapeContent( property.getString() ) );
+        }
 
         return objectFactory.createXmlPropertyTreeXml( prop );
     }

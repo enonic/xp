@@ -13,7 +13,15 @@ class HtmlPartPropertyMapper
     {
         XmlHtmlPartProperty prop = new XmlHtmlPartProperty();
         prop.setName( property.getName() );
-        prop.setValue( XmlStringEscaper.escapeContent( property.getString() ) );
+
+        if ( property.hasNullValue() )
+        {
+            prop.setIsNull( true );
+        }
+        else
+        {
+            prop.setValue( XmlStringEscaper.escapeContent( property.getString() ) );
+        }
 
         return objectFactory.createXmlPropertyTreeHtmlPart( prop );
     }

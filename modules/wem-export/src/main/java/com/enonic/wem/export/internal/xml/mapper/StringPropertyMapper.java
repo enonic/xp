@@ -12,7 +12,15 @@ class StringPropertyMapper
     {
         XmlStringProperty prop = new XmlStringProperty();
         prop.setName( property.getName() );
-        prop.setValue( property.getString() );
+
+        if ( property.hasNullValue() )
+        {
+            prop.setIsNull( true );
+        }
+        else
+        {
+            prop.setValue( property.getString() );
+        }
 
         return objectFactory.createXmlPropertyTreeString( prop );
     }
