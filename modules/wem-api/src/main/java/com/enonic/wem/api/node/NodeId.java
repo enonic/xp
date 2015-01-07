@@ -10,15 +10,20 @@ public class NodeId
 {
     private final String value;
 
+    private static final String VALID_NODE_ID_PATTERN = "([a-z0-9A-Z_\\-\\.:])*";
+
     public NodeId()
     {
         this.value = UUID.randomUUID().toString();
     }
 
-    private NodeId( final String string )
+    private NodeId( final String value )
     {
-        Preconditions.checkNotNull( string, "string cannot be null" );
-        this.value = string;
+        Preconditions.checkNotNull( value, "id cannot be null" );
+        Preconditions.checkArgument( !value.trim().isEmpty(), "id cannot be empty" );
+        Preconditions.checkArgument( value.matches( "^" + VALID_NODE_ID_PATTERN + "$" ), "NodeId  " + value );
+
+        this.value = value;
     }
 
     @Override

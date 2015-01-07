@@ -1,6 +1,7 @@
 package com.enonic.wem.api.export;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -55,6 +56,17 @@ public class NodeImportResult
     public static Builder create()
     {
         return new Builder();
+    }
+
+    @Override
+    public String toString()
+    {
+        return "NodeImportResult{" +
+            "addedNodes=" + addedNodes +
+            ", updateNodes=" + updateNodes +
+            ", importErrors=" + Arrays.toString( importErrors.toArray() ) +
+            ", exportedBinaries=" + Arrays.toString( exportedBinaries.toArray() ) +
+            '}';
     }
 
     public static final class Builder
@@ -129,6 +141,16 @@ public class NodeImportResult
         {
             return message;
         }
+
+        @Override
+        public String toString()
+        {
+            return "ImportError{" +
+                "exception=" + exception +
+                ", message='" + message + '\'' +
+                '}';
+        }
     }
+
 
 }

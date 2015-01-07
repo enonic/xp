@@ -15,7 +15,7 @@ import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.media.MediaInfo;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeAlreadyExistException;
+import com.enonic.wem.api.node.NodeAlreadyExistAtPathException;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
@@ -72,7 +72,7 @@ final class CreateContentCommand
             createdNode = nodeService.create( createNodeParams );
             eventPublisher.publish( new ContentCreatedEvent( ContentId.from( createdNode.id().toString() ) ) );
         }
-        catch ( NodeAlreadyExistException e )
+        catch ( NodeAlreadyExistAtPathException e )
         {
             throw new ContentAlreadyExistException( ContentPath.from( params.getParent(), params.getName().toString() ) );
         }

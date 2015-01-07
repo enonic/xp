@@ -1,5 +1,6 @@
 package com.enonic.wem.api.export;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -62,6 +63,17 @@ public class NodeExportResult
         return exportedNodes.getSize();
     }
 
+    @Override
+    public String toString()
+    {
+        return "NodeExportResult{" +
+            "dryRun=" + dryRun +
+            ", exportRoot=" + exportRoot +
+            ", exportedNodes=" + exportedNodes +
+            ", exportErrors=" + Arrays.toString( exportErrors.toArray() ) +
+            ", exportedBinaries=" + Arrays.toString( exportedBinaries.toArray() ) +
+            '}';
+    }
 
     public static final class Builder
     {

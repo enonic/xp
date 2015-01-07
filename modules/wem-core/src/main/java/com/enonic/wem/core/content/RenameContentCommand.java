@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.RenameContentParams;
-import com.enonic.wem.api.node.NodeAlreadyExistException;
+import com.enonic.wem.api.node.NodeAlreadyExistAtPathException;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.RenameNodeParams;
@@ -31,7 +31,7 @@ final class RenameContentCommand
         {
             return doExecute();
         }
-        catch ( final NodeAlreadyExistException e )
+        catch ( final NodeAlreadyExistAtPathException e )
         {
             final ContentPath path = translateNodePathToContentPath( e.getNode() );
             throw new ContentAlreadyExistException( path );

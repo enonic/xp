@@ -8,6 +8,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.export.ExportNodesParams;
 import com.enonic.wem.api.export.ExportService;
@@ -25,6 +28,8 @@ public class ExportResource
 {
     private ExportService exportService;
 
+    private Logger LOG = LoggerFactory.getLogger( ExportResource.class );
+
     @GET
     @Path("export")
     public Response exportNodes( @QueryParam("path") final String path, @QueryParam("name") final String name )
@@ -34,6 +39,8 @@ public class ExportResource
             exportRoot( NodePath.newPath( path ).build() ).
             exportName( name ).
             build() );
+
+        LOG.info( result.toString() );
 
         final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
         return Response.temporaryRedirect( new URI( uri ) ).build();
@@ -45,10 +52,12 @@ public class ExportResource
                                  @QueryParam("importRoot") final String importRoot )
         throws Exception
     {
-        final NodeImportResult nodeImportResult = this.exportService.importNodes( ImportNodesParams.create().
+        final NodeImportResult result = this.exportService.importNodes( ImportNodesParams.create().
             targetPath( NodePath.newPath( importRoot ).build() ).
             source( VirtualFiles.from( Paths.get( exportRootPath ) ) ).
             build() );
+
+        LOG.info( result.toString() );
 
         final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
         return Response.temporaryRedirect( new URI( uri ) ).build();

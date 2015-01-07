@@ -5,7 +5,7 @@ import java.time.Instant;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeAlreadyExistException;
+import com.enonic.wem.api.node.NodeAlreadyExistAtPathException;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
@@ -56,7 +56,7 @@ public final class RenameNodeCommand
 
         if ( ( existingNodeAtTargetPath != null ) && !nodeToBeRenamed.id().equals( existingNodeAtTargetPath.id() ) )
         {
-            throw new NodeAlreadyExistException( targetPath );
+            throw new NodeAlreadyExistAtPathException( targetPath );
         }
 
         return parentPath;

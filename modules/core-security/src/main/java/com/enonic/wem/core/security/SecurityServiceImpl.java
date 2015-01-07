@@ -25,7 +25,7 @@ import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeAlreadyExistException;
+import com.enonic.wem.api.node.NodeAlreadyExistAtPathException;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
@@ -391,7 +391,7 @@ public final class SecurityServiceImpl
 
             return PrincipalNodeTranslator.userFromNode( node );
         }
-        catch ( NodeAlreadyExistException e )
+        catch ( NodeAlreadyExistAtPathException e )
         {
             throw new PrincipalAlreadyExistsException( createUser.getKey() );
         }
@@ -454,7 +454,7 @@ public final class SecurityServiceImpl
 
             return PrincipalNodeTranslator.groupFromNode( node );
         }
-        catch ( NodeAlreadyExistException e )
+        catch ( NodeAlreadyExistAtPathException e )
         {
             throw new PrincipalAlreadyExistsException( createGroup.getKey() );
         }
@@ -517,7 +517,7 @@ public final class SecurityServiceImpl
 
             return PrincipalNodeTranslator.roleFromNode( node );
         }
-        catch ( NodeAlreadyExistException e )
+        catch ( NodeAlreadyExistAtPathException e )
         {
             throw new PrincipalAlreadyExistsException( createRole.getKey() );
         }

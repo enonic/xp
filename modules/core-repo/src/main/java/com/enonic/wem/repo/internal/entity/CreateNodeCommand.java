@@ -21,9 +21,10 @@ import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.InsertManualStrategy;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeAlreadyExistException;
+import com.enonic.wem.api.node.NodeAlreadyExistAtPathException;
 import com.enonic.wem.api.node.NodeBinaryReferenceException;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIdExistsException;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
@@ -238,13 +239,23 @@ public final class CreateNodeCommand
 
     private void verifyNotExistsAlready()
     {
+        if ( this.params.getNodeId() != null )
+        {
+            final Node existingNode = doGetById( this.params.getNodeId(), false );
+
+            if ( existingNode != null )
+            {
+                throw new NodeIdExistsException( existingNode.id() );
+            }
+        }
+
         NodePath nodePath = NodePath.newNodePath( params.getParent(), params.getName() ).build();
 
         Node existingNode = doGetByPath( nodePath, false );
 
         if ( existingNode != null )
         {
-            throw new NodeAlreadyExistException( nodePath );
+            throw new NodeAlreadyExistAtPathException( nodePath );
         }
     }
 
