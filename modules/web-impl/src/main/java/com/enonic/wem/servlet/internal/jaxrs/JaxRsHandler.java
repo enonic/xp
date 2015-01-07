@@ -31,6 +31,7 @@ public final class JaxRsHandler
         this.dispatcher = new JaxRsDispatcher();
         this.app = new JaxRsApplication();
         this.app.addComponent( new ExceptionFeature() );
+        this.app.addComponent( new JaxRsSecurityFeature() );
         this.needsRefresh = true;
     }
 
