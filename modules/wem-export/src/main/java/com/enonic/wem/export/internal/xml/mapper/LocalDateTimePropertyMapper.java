@@ -4,18 +4,18 @@ import javax.xml.bind.JAXBElement;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.export.internal.xml.ObjectFactory;
-import com.enonic.wem.export.internal.xml.XmlDateTimeProperty;
+import com.enonic.wem.export.internal.xml.XmlLocalDateTimeProperty;
 import com.enonic.wem.export.internal.xml.util.XmlDateTimeConverter;
 
 class LocalDateTimePropertyMapper
 {
-    static JAXBElement<XmlDateTimeProperty> map( final Property property, final ObjectFactory objectFactory )
+    static JAXBElement<XmlLocalDateTimeProperty> map( final Property property, final ObjectFactory objectFactory )
     {
-        XmlDateTimeProperty prop = new XmlDateTimeProperty();
+        XmlLocalDateTimeProperty prop = new XmlLocalDateTimeProperty();
         prop.setName( property.getName() );
         prop.setValue( XmlDateTimeConverter.toXMLGregorianCalendar( property.getLocalDateTime() ) );
 
-        return objectFactory.createXmlPropertyTreeDateTime( prop );
+        return objectFactory.createXmlPropertyTreeLocalDateTime( prop );
     }
 
 }

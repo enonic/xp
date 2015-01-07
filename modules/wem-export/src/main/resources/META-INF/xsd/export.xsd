@@ -34,13 +34,14 @@
         </xs:appinfo>
       </xs:annotation>
       <xs:choice>
+        <xs:element name="localDateTime" type="localDateTimeProperty"/>
         <xs:element name="string" type="stringProperty"/>
         <xs:element name="double" type="doubleProperty"/>
         <xs:element name="long" type="longProperty"/>
         <xs:element name="geoPoint" type="geoPointProperty"/>
         <xs:element name="boolean" type="booleanProperty"/>
         <xs:element name="dateTime" type="dateTimeProperty"/>
-        <xs:element name="localDateTime" type="dateTimeProperty"/>
+        <xs:element name="dummy" type="dateTimeProperty"/>
         <xs:element name="localDate" type="dateProperty"/>
         <xs:element name="localTime" type="timeProperty"/>
         <xs:element name="binaryReference" type="binaryReferenceProperty"/>
@@ -169,6 +170,14 @@
   <xs:complexType name="referenceProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="localDateTimeProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:dateTime">
         <xs:attributeGroup ref="property"/>
       </xs:extension>
     </xs:simpleContent>

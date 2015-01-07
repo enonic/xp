@@ -14,7 +14,7 @@
     <dateTime name="myInstant">2014-11-28T14:16:00.000Z</dateTime>
     <localTime name="myLocalTime">21:42:00.000Z</localTime>
     <localDate name="myLocalDate">2014-11-28Z</localDate>
-    <dateTime name="myLocalDateTime">2014-11-28T21:00:00.000Z</dateTime>
+    <localDateTime name="myLocalDateTime">2014-11-28T21:00:00.000Z</localDateTime>
     <reference name="myRef">abcd</reference>
     <link name="myLink">/root/parent/child</link>
     <binaryReference name="myBinaryRef1">image.jpg</binaryReference>
