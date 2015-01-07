@@ -3,7 +3,6 @@ package com.enonic.wem.api.content;
 
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.thumb.Thumbnail;
 
@@ -12,8 +11,6 @@ public class EditableContent
     public final Content source;
 
     public String displayName;
-
-    public Form form;
 
     public PropertyTree data;
 

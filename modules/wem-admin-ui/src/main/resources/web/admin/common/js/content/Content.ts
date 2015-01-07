@@ -117,8 +117,6 @@ module api.content {
 
         attachments: api.content.attachment.Attachments;
 
-        form: api.form.Form;
-
         metadata: Metadata[];
 
         pageObj: api.content.page.Page;
@@ -172,11 +170,6 @@ module api.content {
 
         setAttachments(value: api.content.attachment.Attachments): ContentBuilder {
             this.attachments = value;
-            return this;
-        }
-
-        setForm(value: api.form.Form): ContentBuilder {
-            this.form = value;
             return this;
         }
 

@@ -18,7 +18,6 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.data.PropertyArrayJson;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.PropertyTreeJson;
-import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.security.PrincipalKey;
 
 public final class UpdateContentJson
@@ -32,7 +31,7 @@ public final class UpdateContentJson
     @JsonCreator
     UpdateContentJson( @JsonProperty("contentId") final String contentId, @JsonProperty("contentName") final String contentName,
                        @JsonProperty("data") final List<PropertyArrayJson> propertyArrayJsonList,
-                       @JsonProperty("metadata") final List<MetadataJson> metadataJsonList, @JsonProperty("form") final FormJson form,
+                       @JsonProperty("metadata") final List<MetadataJson> metadataJsonList,
                        @JsonProperty("displayName") final String displayName, @JsonProperty("draft") final String draft )
     {
         this.contentName = ContentName.from( contentName );
@@ -44,7 +43,6 @@ public final class UpdateContentJson
             contentId( ContentId.from( contentId ) ).
             modifier( PrincipalKey.ofAnonymous() ).
             editor( edit -> {
-                edit.form = form.getForm();
                 edit.data = contentData;
                 edit.metadata = metadatas;
                 edit.draft = Boolean.valueOf( draft );

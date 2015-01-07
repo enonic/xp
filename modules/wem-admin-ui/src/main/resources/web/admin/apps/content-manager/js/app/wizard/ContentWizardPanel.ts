@@ -509,7 +509,6 @@ module app.wizard {
                     setParent(parentPath).
                     setContentType(this.contentType.getContentTypeName()).
                     setDisplayName(this.contentWizardHeader.getDisplayName()).
-                    setForm(this.contentType.getForm()).
                     setData(data).
                     setMetadata([]);
             }

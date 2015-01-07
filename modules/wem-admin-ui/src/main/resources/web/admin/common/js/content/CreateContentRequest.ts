@@ -10,8 +10,6 @@ module api.content {
 
         private contentType: api.schema.content.ContentTypeName;
 
-        private form: api.form.Form;
-
         private data: api.data.PropertyTree;
 
         private metadata: Metadata[] = [];
@@ -43,11 +41,6 @@ module api.content {
             return this;
         }
 
-        setForm(form: api.form.Form): CreateContentRequest {
-            this.form = form;
-            return this;
-        }
-
         setData(data: api.data.PropertyTree): CreateContentRequest {
             this.data = data;
             return this;
@@ -69,7 +62,6 @@ module api.content {
                 name: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.name.toString(),
                 parent: this.parent.toString(),
                 contentType: this.contentType.toString(),
-                form: this.form ? this.form.toJson() : undefined,
                 data: this.data.toJson(),
                 metadata: this.metadataToJson(),
                 displayName: this.displayName
