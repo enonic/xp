@@ -294,7 +294,6 @@ module app.wizard.page {
             this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
 
                 var itemView = event.getItemView();
-                debugger;
                 if (itemView.isEmpty() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView)) {
                     if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
                         this.contextWindow.slideOut();
@@ -318,7 +317,6 @@ module app.wizard.page {
             });
 
             this.liveEditPage.onDeselect((event: ItemViewDeselectEvent) => {
-                debugger;
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
                 if (!toggler.isActive() && this.contextWindow.isShown()) {
                     this.contextWindow.slideOut();
