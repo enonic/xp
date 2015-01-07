@@ -10,6 +10,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleBuilder;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleVersion;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.support.SerializingTestHelper;
 import com.enonic.wem.api.xml.XmlException;
 
@@ -61,6 +62,7 @@ public class ModuleXmlBuilderTest
             vendorName( "Enonic" ).
             vendorUrl( "https://www.enonic.com" ).
             config( config ).
+            metaSteps( MixinNames.from( "mymodule:my-meta-mixin", "system:menu-item" ) ).
             build();
     }
 }

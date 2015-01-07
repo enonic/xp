@@ -1,14 +1,11 @@
 package com.enonic.wem.api.schema.content;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 
@@ -18,57 +15,6 @@ public final class ContentTypeNames
     private ContentTypeNames( final ImmutableSortedSet<ContentTypeName> set )
     {
         super( set );
-    }
-
-    public ContentTypeName getFirst()
-    {
-        return this.set.isEmpty() ? null : this.set.iterator().next();
-    }
-
-    public ContentTypeNames add( final String... contentTypeNames )
-    {
-        return add( parseQualifiedNames( contentTypeNames ) );
-    }
-
-    public ContentTypeNames add( final ContentTypeName... contentTypeNames )
-    {
-        return add( ImmutableSortedSet.copyOf( contentTypeNames ) );
-    }
-
-    public ContentTypeNames add( final Iterable<ContentTypeName> contentTypeNames )
-    {
-        return add( ImmutableSortedSet.copyOf( contentTypeNames ) );
-    }
-
-    private ContentTypeNames add( final ImmutableSortedSet<ContentTypeName> contentTypeNames )
-    {
-        final HashSet<ContentTypeName> tmp = Sets.newHashSet();
-        tmp.addAll( this.set );
-        tmp.addAll( contentTypeNames );
-        return new ContentTypeNames( ImmutableSortedSet.copyOf( tmp ) );
-    }
-
-    public ContentTypeNames remove( final String... contentTypeNames )
-    {
-        return remove( parseQualifiedNames( contentTypeNames ) );
-    }
-
-    public ContentTypeNames remove( final ContentTypeName... contentTypeNames )
-    {
-        return remove( ImmutableSortedSet.copyOf( contentTypeNames ) );
-    }
-
-    public ContentTypeNames remove( final Iterable<ContentTypeName> contentTypeNames )
-    {
-        return remove( ImmutableSortedSet.copyOf( contentTypeNames ) );
-    }
-
-    private ContentTypeNames remove( final ImmutableSortedSet<ContentTypeName> contentTypeNames )
-    {
-        final HashSet<ContentTypeName> tmp = Sets.newHashSet();
-        tmp.addAll( this.set );
-        tmp.removeAll( contentTypeNames );
-        return new ContentTypeNames( ImmutableSortedSet.copyOf( tmp ) );
     }
 
     public static ContentTypeNames empty()
@@ -104,18 +50,6 @@ public final class ContentTypeNames
         return ImmutableSortedSet.copyOf( contentTypeNameList );
     }
 
-    public Set<String> getAsStringSet()
-    {
-        Set<String> contentTypeNamesAsStrings = Sets.newHashSet();
-
-        for ( ContentTypeName contentTypeName : this.getSet() )
-        {
-            contentTypeNamesAsStrings.add( contentTypeName.toString() );
-        }
-
-        return contentTypeNamesAsStrings;
-    }
-
     private final static class ParseFunction
         implements Function<String, ContentTypeName>
     {
@@ -134,6 +68,10 @@ public final class ContentTypeNames
     public static class Builder
     {
         private ImmutableSortedSet.Builder<ContentTypeName> set = ImmutableSortedSet.naturalOrder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( final ContentTypeName value )
         {

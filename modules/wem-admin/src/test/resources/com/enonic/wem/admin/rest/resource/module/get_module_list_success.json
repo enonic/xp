@@ -29,7 +29,7 @@
             "editable": false,
             "key": "testmodule",
             "maxSystemVersion": "5.1",
-            "metadataSchemaNames": [ ],
+          "metaSteps": [],
             "minSystemVersion": "5.0",
             "modifiedTime": "2012-01-01T00:00:00Z",
             "state": "started",

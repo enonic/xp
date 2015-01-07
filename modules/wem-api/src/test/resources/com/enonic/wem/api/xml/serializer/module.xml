@@ -10,18 +10,15 @@
     <url>http://www.enonic.com</url>
   </vendor>
 
+  <content>
+    <meta-step mixin="system:menu-item"/>
+    <meta-step mixin="mymodule:my-meta-mixin"/>
+  </content>
+
   <config>
     <mixin-reference name="test">
       <reference>mymodule-1.0.0:other</reference>
     </mixin-reference>
   </config>
-
-  <metadata-schemas>
-    <metadata-schema name="menu">
-      <form>
-        <input type="Boolean" name="show"/>
-      </form>
-    </metadata-schema>
-  </metadata-schemas>
 
 </module>

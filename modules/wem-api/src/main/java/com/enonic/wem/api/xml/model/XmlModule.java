@@ -26,11 +26,11 @@ public final class XmlModule
     @XmlElement
     private XmlVendor vendor;
 
+    @XmlElement(name = "content")
+    private XmlModuleMetaSteps metaSteps;
+
     @XmlElement
     private XmlForm config;
-
-    @XmlElement(name = "metadata-schemas")
-    private XmlMetadataSchemas metadataSchemas;
 
     public String getName()
     {
@@ -92,13 +92,13 @@ public final class XmlModule
         this.config = value;
     }
 
-    public XmlMetadataSchemas getMetadataSchemas()
+    public XmlModuleMetaSteps getMetaSteps()
     {
-        return metadataSchemas;
+        return metaSteps;
     }
 
-    public void setMetadataSchemas( XmlMetadataSchemas value )
+    public void setMetaSteps( XmlModuleMetaSteps value )
     {
-        this.metadataSchemas = value;
+        this.metaSteps = value;
     }
 }

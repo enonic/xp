@@ -79,7 +79,7 @@ public class ContentQuery
     {
         private QueryExpr queryExpr;
 
-        private ContentTypeNames.Builder contentTypeNamesBuilder = new ContentTypeNames.Builder();
+        private ContentTypeNames.Builder contentTypeNamesBuilder = ContentTypeNames.newContentTypeNames();
 
         private int from = 0;
 

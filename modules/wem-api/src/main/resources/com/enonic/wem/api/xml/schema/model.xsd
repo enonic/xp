@@ -2,10 +2,8 @@
     <xs:element name="content-type" type="contentType"/>
     <xs:element name="image-component" type="imageDescriptor"/>
     <xs:element name="layout-component" type="layoutDescriptor"/>
-    <xs:element name="metadata" type="metadataSchema"/>
     <xs:element name="mixin" type="mixin"/>
     <xs:element name="module" type="module"/>
-    <xs:element name="node" type="node"/>
     <xs:element name="page-component" type="pageDescriptor"/>
     <xs:element name="part-component" type="partDescriptor"/>
     <xs:element name="relationship-type" type="relationshipType"/>
@@ -16,8 +14,8 @@
             <xs:element minOccurs="0" name="display-name" type="xs:string"/>
             <xs:element minOccurs="0" name="url" type="xs:string"/>
             <xs:element minOccurs="0" name="vendor" type="vendor"/>
+          <xs:element minOccurs="0" name="content" type="metaSteps"/>
             <xs:element minOccurs="0" name="config" type="form"/>
-            <xs:element minOccurs="0" name="metadata-schemas" type="metadata-schemas"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType final="extension restriction" name="vendor">
@@ -26,6 +24,16 @@
             <xs:element name="url" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
+  <xs:complexType final="extension restriction" name="metaSteps">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0"
+                  name="meta-step" type="metaStep"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="metaStep">
+    <xs:sequence/>
+    <xs:attribute name="mixin" type="xs:string" use="required"/>
+  </xs:complexType>
     <xs:complexType final="extension restriction" name="form">
         <xs:complexContent>
             <xs:extension base="formItems">
@@ -101,18 +109,6 @@
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType final="extension restriction" name="metadata-schemas">
-        <xs:sequence>
-            <xs:element maxOccurs="unbounded" minOccurs="0"
-                name="metadata-schema" type="metadataSchema"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType final="extension restriction" name="metadataSchema">
-        <xs:sequence>
-            <xs:element minOccurs="0" name="form" type="form"/>
-        </xs:sequence>
-        <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
     <xs:complexType final="extension restriction" name="contentType">
         <xs:sequence>
@@ -200,24 +196,5 @@
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
-    </xs:complexType>
-    <xs:complexType final="extension restriction" name="node">
-        <xs:sequence>
-            <xs:element minOccurs="0" name="id" type="xs:string"/>
-            <xs:element minOccurs="0" name="creator" type="xs:string"/>
-            <xs:element minOccurs="0" name="modifier" type="xs:string"/>
-            <xs:element minOccurs="0" name="name" type="xs:string"/>
-            <xs:element minOccurs="0" name="parent" type="xs:string"/>
-            <xs:element minOccurs="0" name="createdTime" type="xs:dateTime"/>
-            <xs:element minOccurs="0" name="modifiedTime" type="xs:dateTime"/>
-            <xs:element minOccurs="0" name="childOrder" type="xs:string"/>
-            <xs:element minOccurs="0" name="propertyTree" type="propertyTree"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="propertyTree">
-        <xs:sequence/>
-    </xs:complexType>
-    <xs:complexType name="xmlProperty">
-        <xs:sequence/>
     </xs:complexType>
 </xs:schema>

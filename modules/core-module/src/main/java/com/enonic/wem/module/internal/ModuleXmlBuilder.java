@@ -1,18 +1,22 @@
 package com.enonic.wem.module.internal;
 
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.wem.api.module.ModuleBuilder;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaNames;
+import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.xml.mapper.XmlFormMapper;
 import com.enonic.wem.api.xml.model.XmlForm;
-import com.enonic.wem.api.xml.model.XmlMetadataSchema;
 import com.enonic.wem.api.xml.model.XmlModule;
+import com.enonic.wem.api.xml.model.XmlModuleMetaStep;
 import com.enonic.wem.api.xml.model.XmlVendor;
 import com.enonic.wem.api.xml.serializer.XmlSerializers;
 
 final class ModuleXmlBuilder
 {
+    private final static String SEPARATOR = ":";
+
     public void toModule( final String xml, final ModuleBuilder builder, final ModuleKey moduleKey )
     {
         final XmlModule object = XmlSerializers.module().parse( xml );
@@ -31,15 +35,17 @@ final class ModuleXmlBuilder
             builder.vendorName( vendor.getName() );
         }
 
-        if ( xml.getMetadataSchemas() != null )
+        if ( xml.getMetaSteps() != null )
         {
-            MetadataSchemaNames metadataSchemaNames = MetadataSchemaNames.empty();
-            for ( XmlMetadataSchema xmlMetadataSchema : xml.getMetadataSchemas().getMetadataSchema() )
+            final ImmutableList.Builder<MixinName> metaStepMixinNames = ImmutableList.builder();
+            for ( XmlModuleMetaStep xmlMetaStep : xml.getMetaSteps().getMetaSteps() )
             {
-                MetadataSchemaName metadataSchemaName = MetadataSchemaName.from( moduleKey, xmlMetadataSchema.getName() );
-                metadataSchemaNames = metadataSchemaNames.add( metadataSchemaName );
+                final String mixinName = xmlMetaStep.getMixinName();
+                final MixinName metadataSchemaName =
+                    mixinName.contains( SEPARATOR ) ? MixinName.from( mixinName ) : MixinName.from( moduleKey, mixinName );
+                metaStepMixinNames.add( metadataSchemaName );
             }
-            builder.metadataSchemaNames( metadataSchemaNames );
+            builder.metaSteps( MixinNames.from( metaStepMixinNames.build() ) );
         }
 
         final XmlForm config = xml.getConfig();

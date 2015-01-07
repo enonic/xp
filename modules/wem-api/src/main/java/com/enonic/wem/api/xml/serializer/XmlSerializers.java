@@ -2,7 +2,6 @@ package com.enonic.wem.api.xml.serializer;
 
 import com.enonic.wem.api.xml.model.XmlContentType;
 import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;
-import com.enonic.wem.api.xml.model.XmlMetadataSchema;
 import com.enonic.wem.api.xml.model.XmlMixin;
 import com.enonic.wem.api.xml.model.XmlModule;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
@@ -18,8 +17,6 @@ public final class XmlSerializers
     private final static XmlSerializer<XmlMixin> MIXIN = XmlSerializer.create( XmlMixin.class );
 
     private final static XmlSerializer<XmlRelationshipType> RELATIONSHIP_TYPE = XmlSerializer.create( XmlRelationshipType.class );
-
-    private final static XmlSerializer<XmlMetadataSchema> METADATA_SCHEMA = XmlSerializer.create( XmlMetadataSchema.class );
 
     private final static XmlSerializer<XmlLayoutDescriptor> LAYOUT_DESCRIPTOR = XmlSerializer.create( XmlLayoutDescriptor.class );
 
@@ -45,11 +42,6 @@ public final class XmlSerializers
     public static XmlSerializer<XmlRelationshipType> relationshipType()
     {
         return RELATIONSHIP_TYPE;
-    }
-
-    public static XmlSerializer<XmlMetadataSchema> metadataSchema()
-    {
-        return METADATA_SCHEMA;
     }
 
     public static XmlSerializer<XmlPageDescriptor> pageDescriptor()

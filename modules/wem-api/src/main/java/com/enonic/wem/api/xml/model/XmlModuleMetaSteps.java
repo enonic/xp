@@ -10,14 +10,14 @@ import javax.xml.bind.annotation.XmlType;
 import com.google.common.collect.Lists;
 
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "metadata-schemas")
-public final class XmlMetadataSchemas
+@XmlType(name = "metaSteps")
+public final class XmlModuleMetaSteps
 {
-    @XmlElement(name = "metadata-schema")
-    private List<XmlMetadataSchema> metadataSchema = Lists.newArrayList();
+    @XmlElement(name = "meta-step")
+    private List<XmlModuleMetaStep> metaSteps = Lists.newArrayList();
 
-    public List<XmlMetadataSchema> getMetadataSchema()
+    public List<XmlModuleMetaStep> getMetaSteps()
     {
-        return this.metadataSchema;
+        return this.metaSteps;
     }
 }
