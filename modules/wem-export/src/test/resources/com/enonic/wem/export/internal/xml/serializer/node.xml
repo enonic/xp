@@ -1,7 +1,7 @@
 <node xmlns="urn:enonic:xp:export:1.0">
   <childOrder>_manualordervalue DESC</childOrder>
   <nodeType>content</nodeType>
-  <properties>
+  <data>
     <string name="myString">myStringValue</string>
     <boolean name="myBoolean">true</boolean>
     <double name="myDouble">123.1</double>
@@ -24,7 +24,7 @@
         <boolean name="myBoolean">true</boolean>
       </property-set>
     </property-set>
-  </properties>
+  </data>
   <indexConfigs>
     <defaultConfig>
       <decideByType>true</decideByType>

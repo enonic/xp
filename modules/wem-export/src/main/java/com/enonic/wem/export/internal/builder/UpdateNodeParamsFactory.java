@@ -26,7 +26,7 @@ public class UpdateNodeParamsFactory
             id( this.existingNode.id() ).
             setBinaryAttachments( binaryAttachments ).
             editor( editableNode -> {
-                editableNode.data = PropertyTreeXmlBuilder.build( xmlNode.getProperties() );
+                editableNode.data = PropertyTreeXmlBuilder.build( xmlNode.getData() );
             } );
 
         return builder.build();

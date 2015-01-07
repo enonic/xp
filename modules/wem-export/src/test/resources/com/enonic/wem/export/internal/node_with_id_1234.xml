@@ -2,7 +2,7 @@
   <id>1234</id>
   <childOrder>_name DESC</childOrder>
   <nodeType>content</nodeType>
-  <properties>
+  <data>
     <string name="myString">myStringValue</string>
     <boolean name="myBoolean">true</boolean>
     <double name="myDouble">123.1</double>
@@ -23,7 +23,7 @@
         <boolean name="myBoolean">true</boolean>
       </property-set>
     </property-set>
-  </properties>
+  </data>
   <indexConfigs>
     <analyzer>myAnalyzer</analyzer>
     <defaultConfig>

@@ -4,7 +4,7 @@
 
   <childOrder>_manualordervalue DESC</childOrder>
   <nodeType>content</nodeType>
-  <properties>
+  <data>
     <string name="test">value</string>
     <double name="test">3232.23</double>
     <long name="test">1234567891011121314</long>
@@ -38,7 +38,7 @@
         <string name="test">value</string>
       </property-set>
     </property-set>
-  </properties>
+  </data>
   <indexConfigs>
     <analyzer>myAnalyzer</analyzer>
     <defaultConfig>

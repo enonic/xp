@@ -31,7 +31,7 @@ public class XmlNodeMapper
 
         if ( node.data() != null )
         {
-            xml.setProperties( XmlPropertyTreeMapper.toXml( node.data() ) );
+            xml.setData( XmlPropertyTreeMapper.toXml( node.data() ) );
         }
 
         xml.setIndexConfigs( XmlIndexConfigsMapper.toXml( node.getIndexConfigDocument() ) );

@@ -199,7 +199,7 @@ public class NodeImportCommand
 
     private BinaryAttachments processBinaryAttachments( final VirtualFile nodeFile, final XmlNode xmlNode )
     {
-        final PropertyTree data = PropertyTreeXmlBuilder.build( xmlNode.getProperties() );
+        final PropertyTree data = PropertyTreeXmlBuilder.build( xmlNode.getData() );
 
         final Set<Property> binaryReferences = data.getByValueType( ValueTypes.BINARY_REFERENCE );
 
