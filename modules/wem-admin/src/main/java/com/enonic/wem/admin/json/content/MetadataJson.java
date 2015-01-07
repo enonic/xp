@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.data.PropertyArrayJson;
 import com.enonic.wem.api.data.PropertyTreeJson;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 public class MetadataJson
 {
@@ -43,6 +43,6 @@ public class MetadataJson
     @JsonIgnore
     public Metadata getMetadata()
     {
-        return new Metadata( MetadataSchemaName.from( name ), PropertyTreeJson.fromJson( data ) );
+        return new Metadata( MixinName.from( name ), PropertyTreeJson.fromJson( data ) );
     }
 }

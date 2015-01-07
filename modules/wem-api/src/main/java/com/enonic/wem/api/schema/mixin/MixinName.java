@@ -3,11 +3,12 @@ package com.enonic.wem.api.schema.mixin;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleBasedName;
+import com.enonic.wem.api.module.ModuleKey;
 
 public final class MixinName
     extends ModuleBasedName
+    implements Comparable<MixinName>
 {
     private MixinName( final ModuleKey moduleKey, final String localName )
     {
@@ -25,4 +26,11 @@ public final class MixinName
         final String localName = StringUtils.substringAfter( mixinName, SEPARATOR );
         return new MixinName( ModuleKey.from( moduleKey ), localName );
     }
+
+    @Override
+    public int compareTo( final MixinName that )
+    {
+        return this.toString().compareTo( that.toString() );
+    }
+
 }

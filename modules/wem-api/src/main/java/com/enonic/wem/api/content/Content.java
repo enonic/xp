@@ -16,7 +16,7 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.thumb.Thumbnail;
@@ -190,17 +190,17 @@ public class Content
         return getMetadata( name ) != null;
     }
 
-    public boolean hasMetadata( final MetadataSchemaName name )
+    public boolean hasMetadata( final MixinName name )
     {
         return getMetadata( name ) != null;
     }
 
     public PropertyTree getMetadata( final String name )
     {
-        return getMetadata( MetadataSchemaName.from( name ) );
+        return getMetadata( MixinName.from( name ) );
     }
 
-    public PropertyTree getMetadata( final MetadataSchemaName name )
+    public PropertyTree getMetadata( final MixinName name )
     {
         for ( Metadata item : this.metadata )
         {

@@ -10,7 +10,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaNames;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 
 final class ModuleImpl
     implements Module
@@ -31,7 +31,7 @@ final class ModuleImpl
 
     protected Bundle bundle;
 
-    protected MetadataSchemaNames metadata;
+    protected MixinNames metaSteps;
 
     public ModuleKey getKey()
     {
@@ -89,9 +89,9 @@ final class ModuleImpl
     }
 
     @Override
-    public MetadataSchemaNames getMetadataSchemaNames()
+    public MixinNames getMetaSteps()
     {
-        return metadata;
+        return metaSteps;
     }
 
     @Override
@@ -139,6 +139,7 @@ final class ModuleImpl
             add( "url", url ).
             add( "vendorName", vendorName ).
             add( "vendorUrl", vendorUrl ).
+            add( "metaSteps", metaSteps ).
             add( "config", config ).
             omitNullValues().
             toString();

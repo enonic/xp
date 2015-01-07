@@ -13,7 +13,7 @@ import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.thumb.Thumbnail;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.Exceptions;
@@ -78,8 +78,7 @@ public class ContentDataSerializer
             final Metadatas.Builder metadatasBuilder = Metadatas.builder();
             for ( final String metadataName : metadataSet.getPropertyNames() )
             {
-                metadatasBuilder.add(
-                    new Metadata( MetadataSchemaName.from( metadataName ), metadataSet.getSet( metadataName ).toTree() ) );
+                metadatasBuilder.add( new Metadata( MixinName.from( metadataName ), metadataSet.getSet( metadataName ).toTree() ) );
             }
             builder.metadata( metadatasBuilder.build() );
         }

@@ -6,7 +6,7 @@ import java.util.Set;
 import org.osgi.framework.Bundle;
 
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaNames;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 
 public interface Module
 {
@@ -34,5 +34,5 @@ public interface Module
 
     public Bundle getBundle();
 
-    public MetadataSchemaNames getMetadataSchemaNames();
+    public MixinNames getMetaSteps();
 }

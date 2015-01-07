@@ -17,7 +17,7 @@ import com.enonic.wem.api.content.page.region.PartComponent;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.security.PrincipalKey;
 
 public final class ContentFixtures
@@ -35,7 +35,7 @@ public final class ContentFixtures
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.data( newPropertyTree() );
 
-        builder.addMetadata( new Metadata( MetadataSchemaName.from( "mymodule:myschema" ), newTinyPropertyTree() ) );
+        builder.addMetadata( new Metadata( MixinName.from( "mymodule:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
 
         return builder.build();

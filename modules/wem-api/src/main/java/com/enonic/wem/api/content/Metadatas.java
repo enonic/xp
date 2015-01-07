@@ -11,14 +11,14 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaNames;
+import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 
 public final class Metadatas
     extends AbstractImmutableEntitySet<Metadata>
 {
-    private final ImmutableMap<MetadataSchemaName, Metadata> map;
+    private final ImmutableMap<MixinName, Metadata> map;
 
     private Metadatas( final Set<Metadata> set )
     {
@@ -26,13 +26,13 @@ public final class Metadatas
         this.map = Maps.uniqueIndex( set, new ToNameFunction() );
     }
 
-    public MetadataSchemaNames getNames()
+    public MixinNames getNames()
     {
-        final Collection<MetadataSchemaName> names = Collections2.transform( this.set, new ToNameFunction() );
-        return MetadataSchemaNames.from( names );
+        final Collection<MixinName> names = Collections2.transform( this.set, new ToNameFunction() );
+        return MixinNames.from( names );
     }
 
-    public Metadata getMetadata( final MetadataSchemaName name )
+    public Metadata getMetadata( final MixinName name )
     {
         return this.map.get( name );
     }
@@ -62,10 +62,10 @@ public final class Metadatas
     }
 
     private final static class ToNameFunction
-        implements Function<Metadata, MetadataSchemaName>
+        implements Function<Metadata, MixinName>
     {
         @Override
-        public MetadataSchemaName apply( final Metadata value )
+        public MixinName apply( final Metadata value )
         {
             return value.getName();
         }

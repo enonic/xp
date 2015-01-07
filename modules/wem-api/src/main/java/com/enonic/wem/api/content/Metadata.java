@@ -5,15 +5,15 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 public final class Metadata
 {
-    private MetadataSchemaName name;
+    private MixinName name;
 
     private PropertyTree data;
 
-    public Metadata( final MetadataSchemaName name, final PropertyTree data )
+    public Metadata( final MixinName name, final PropertyTree data )
     {
         Preconditions.checkNotNull( name, "name cannot be null" );
         Preconditions.checkNotNull( data, "data cannot be null" );
@@ -31,12 +31,12 @@ public final class Metadata
         this.data = data;
     }
 
-    public MetadataSchemaName getName()
+    public MixinName getName()
     {
         return name;
     }
 
-    public void setName( final MetadataSchemaName name )
+    public void setName( final MixinName name )
     {
         this.name = name;
     }

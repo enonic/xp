@@ -38,9 +38,9 @@ module app.wizard {
 
     import Module = api.module.Module;
     import ModuleKey = api.module.ModuleKey;
-    import MetadataSchema = api.schema.metadata.MetadataSchema;
-    import MetadataSchemaName = api.schema.metadata.MetadataSchemaName;
-    import GetMetadataSchemaRequest = api.schema.metadata.GetMetadataSchemaRequest;
+    import Mixin = api.schema.mixin.Mixin;
+    import MixinName = api.schema.mixin.MixinName;
+    import GetMixinByQualifiedNameRequest = api.schema.mixin.GetMixinByQualifiedNameRequest;
 
     export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -256,37 +256,37 @@ module app.wizard {
             this.startRememberFocus();
         }
 
-        private createSteps(): wemQ.Promise<MetadataSchema[]> {
+        private createSteps(): wemQ.Promise<Mixin[]> {
 
             var moduleKeys = this.site ? this.site.getModuleKeys() : [];
             var modulePromises = moduleKeys.map((key: ModuleKey) => new api.module.GetModuleRequest(key).sendAndParse());
             return wemQ.all(modulePromises).
                 then((modules: Module[]) => {
-                    var schemaNames: string[] = [];
+                    var mixinNames: string[] = [];
                     modules.forEach((mdl: Module) => {
-                        var moduleSchemaNames = mdl.getMetadataSchemaDependencies().map((name: MetadataSchemaName) => name.toString()),
-                            uniqNames = moduleSchemaNames.filter((name: string) => schemaNames.indexOf(name) < 0);
-                        Array.prototype.push.apply(schemaNames, uniqNames);
+                        var moduleStepMixinNames = mdl.getMetaSteps().map((name: MixinName) => name.toString()),
+                            uniqNames = moduleStepMixinNames.filter((name: string) => mixinNames.indexOf(name) < 0);
+                        Array.prototype.push.apply(mixinNames, uniqNames);
                     });
 
-                    var metadataSchemaPromises = schemaNames.map((name: string) => new GetMetadataSchemaRequest(new MetadataSchemaName(name)).sendAndParse());
-                    return wemQ.all(metadataSchemaPromises);
-                }).then((schemas: MetadataSchema[]) => {
+                    var metadataMixinPromises = mixinNames.map((name: string) => new GetMixinByQualifiedNameRequest(new MixinName(name)).sendAndParse());
+                    return wemQ.all(metadataMixinPromises);
+                }).then((mixins: Mixin[]) => {
                     var steps: WizardStep[] = [];
 
                     steps.push(new WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
-                    schemas.forEach((schema: MetadataSchema, index: number) => {
-                        if (!this.metadataStepFormByName[schema.getMetadataSchemaName().toString()]) {
+                    mixins.forEach((mixin: Mixin, index: number) => {
+                        if (!this.metadataStepFormByName[mixin.getMixinName().toString()]) {
                             var stepForm = new ContentWizardStepForm();
-                            this.metadataStepFormByName[schema.getMetadataSchemaName().toString()] = stepForm;
-                            steps.splice(index + 1, 0, new WizardStep(schema.getDisplayName(), stepForm));
+                            this.metadataStepFormByName[mixin.getMixinName().toString()] = stepForm;
+                            steps.splice(index + 1, 0, new WizardStep(mixin.getDisplayName(), stepForm));
                         }
                     });
                     steps.push(new WizardStep("Security", this.securityWizardStepForm));
 
                     this.setSteps(steps);
 
-                    return schemas;
+                    return mixins;
                 });
         }
 
@@ -381,7 +381,7 @@ module app.wizard {
             var parallelPromises: wemQ.Promise<any>[] = [this.createSteps()];
 
             return wemQ.all(parallelPromises).
-                spread<void>((schemas: MetadataSchema[]) => {
+                spread<void>((schemas: Mixin[]) => {
 
                 var formContext = new ContentFormContextBuilder().
                     setSite(this.site).
@@ -418,14 +418,16 @@ module app.wizard {
 
                 this.securityWizardStepForm.layout(content);
 
-                schemas.forEach((schema: MetadataSchema, index: number) => {
-                    var metadata = content.getMetadata(schema.getMetadataSchemaName());
+                schemas.forEach((schema: Mixin, index: number) => {
+                    var metadata = content.getMetadata(schema.getMixinName());
                     if (!metadata) {
-                        metadata = new Metadata(schema.getMetadataSchemaName(), new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                        metadata = new Metadata(schema.getMixinName(), new PropertyTree(api.Client.get().getPropertyIdProvider()));
                         content.getAllMetadata().push(metadata);
                     }
-                    var metadataFormView = this.metadataStepFormByName[schema.getMetadataSchemaName().toString()];
-                    formViewLayoutPromises.push(metadataFormView.layout(formContext, metadata.getData(), schema.getForm()));
+                    var metadataFormView = this.metadataStepFormByName[schema.getMixinName().toString()];
+                    var metadataForm = new api.form.FormBuilder().addFormItems(schema.getFormItems()).build();
+
+                    formViewLayoutPromises.push(metadataFormView.layout(formContext, metadata.getData(), metadataForm));
                 });
 
                 return wemQ.all(formViewLayoutPromises).spread<void>(() => {
@@ -593,7 +595,7 @@ module app.wizard {
             var metadata: Metadata[] = [];
             for (var key in this.metadataStepFormByName) {
                 if (this.metadataStepFormByName.hasOwnProperty(key)) {
-                    metadata.push(new Metadata(new MetadataSchemaName(key), this.metadataStepFormByName[key].getData()));
+                    metadata.push(new Metadata(new MixinName(key), this.metadataStepFormByName[key].getData()));
                 }
             }
 

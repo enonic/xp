@@ -1,22 +1,22 @@
 module api.content {
 
-    import MetadataSchemaName = api.schema.metadata.MetadataSchemaName;
+    import MixinName = api.schema.mixin.MixinName;
     import PropertyTree = api.data.PropertyTree;
     import PropertyIdProvider = api.data.PropertyIdProvider;
 
     export class Metadata implements api.Cloneable {
 
-        private name: MetadataSchemaName;
+        private name: MixinName;
 
         private data: PropertyTree;
 
-        constructor(name: MetadataSchemaName, data: PropertyTree) {
+        constructor(name: MixinName, data: PropertyTree) {
             this.name = name;
             this.data = data;
         }
 
         static fromJson(metadataJson: api.content.json.MetadataJson, propertyIdProvider: PropertyIdProvider): Metadata {
-            return new Metadata(new MetadataSchemaName(metadataJson.name), PropertyTree.fromJson(metadataJson.data, propertyIdProvider));
+            return new Metadata(new MixinName(metadataJson.name), PropertyTree.fromJson(metadataJson.data, propertyIdProvider));
         }
 
         toJson(): api.content.json.MetadataJson {
@@ -30,7 +30,7 @@ module api.content {
             return new Metadata(this.name, this.data.copy());
         }
 
-        getName(): MetadataSchemaName {
+        getName(): MixinName {
             return this.name;
         }
 

@@ -61,7 +61,7 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.schema.content.validator.MaximumOccurrencesValidationError;
 import com.enonic.wem.api.schema.content.validator.MissingRequiredValueValidationError;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.SecurityService;
@@ -826,7 +826,7 @@ public class ContentResourceTest
             modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
-            addMetadata( new Metadata( MetadataSchemaName.from( "myModule:myField" ), metadata ) ).
+            addMetadata( new Metadata( MixinName.from( "myModule:myField" ), metadata ) ).
             build();
     }
 

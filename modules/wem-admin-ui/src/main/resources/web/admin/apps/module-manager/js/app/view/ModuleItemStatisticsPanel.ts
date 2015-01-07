@@ -3,8 +3,6 @@ module app.view {
     import ModuleBrowseActions = app.browse.ModuleBrowseActions;
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import Mixin = api.schema.mixin.Mixin;
-    import MetadataSchema = api.schema.metadata.MetadataSchema;
-    import MetadataSchemaName = api.schema.metadata.MetadataSchemaName;
     import RelationshipType = api.schema.relationshiptype.RelationshipType;
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
     import PageDescriptor = api.content.page.PageDescriptor;
@@ -73,20 +71,16 @@ module app.view {
             var schemaPromises = [
                 new api.schema.content.GetContentTypesByModuleRequest(moduleKey).sendAndParse(),
                 new api.schema.mixin.GetMixinsByModuleRequest(moduleKey).sendAndParse(),
-                new api.schema.metadata.GetMetadataSchemasByModuleRequest(moduleKey).sendAndParse(),
                 new api.schema.relationshiptype.GetRelationshipTypesByModuleRequest(moduleKey).sendAndParse()
             ];
             
             wemQ.all(schemaPromises).
-                spread((contentTypes: ContentTypeSummary[], mixins: Mixin[], metadataSchemas: MetadataSchema[], relationshipTypes: RelationshipType[]) => {
+                spread((contentTypes: ContentTypeSummary[], mixins: Mixin[], relationshipTypes: RelationshipType[]) => {
                     var contentTypeNames = contentTypes.map((contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName());
                     schemasGroup.addDataArray("Content Types", contentTypeNames);
 
                     var mixinsNames = mixins.map((mixin: Mixin) => mixin.getMixinName().getLocalName());
                     schemasGroup.addDataArray("Mixins", mixinsNames);
-
-                    var metadataSchemaNames = metadataSchemas.map((metadataSchema: MetadataSchema) => metadataSchema.getMetadataSchemaName().getLocalName());
-                    schemasGroup.addDataArray("MetadataSchemas", metadataSchemaNames);
 
                     var relationshipTypeNames = relationshipTypes.map((relationshipType: RelationshipType) => relationshipType.getRelationshiptypeName().getLocalName());
                     schemasGroup.addDataArray("RelationshipTypes", relationshipTypeNames);

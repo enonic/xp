@@ -22,7 +22,7 @@ module api.module {
 
         private contentTypeDependencies: api.schema.content.ContentTypeName[] = [];
 
-        private metadataSchemaDependencies: api.schema.metadata.MetadataSchemaName[] = [];
+        private metaSteps: api.schema.mixin.MixinName[] = [];
 
         private minSystemVersion: string;
 
@@ -40,7 +40,7 @@ module api.module {
             this.config = builder.config;
             this.moduleDependencies = builder.moduleDependencies;
             this.contentTypeDependencies = builder.contentTypeDependencies;
-            this.metadataSchemaDependencies = builder.metadataSchemaDependencies;
+            this.metaSteps = builder.metaSteps;
             this.minSystemVersion = builder.minSystemVersion;
             this.maxSystemVersion = builder.maxSystemVersion;
         }
@@ -101,8 +101,8 @@ module api.module {
             return this.contentTypeDependencies;
         }
 
-        getMetadataSchemaDependencies(): api.schema.metadata.MetadataSchemaName[] {
-            return this.metadataSchemaDependencies;
+        getMetaSteps(): api.schema.mixin.MixinName[] {
+            return this.metaSteps;
         }
 
         static fromJson(json: api.module.json.ModuleJson): Module {
@@ -132,7 +132,8 @@ module api.module {
                    this.version == other.version &&
                    api.ObjectHelper.arrayEquals(this.moduleDependencies, other.moduleDependencies) &&
                    api.ObjectHelper.arrayEquals(this.contentTypeDependencies, other.contentTypeDependencies) &&
-                   api.ObjectHelper.arrayEquals(this.metadataSchemaDependencies, other.metadataSchemaDependencies) &&
+                                                                                                             api.ObjectHelper.arrayEquals(this.metaSteps,
+                                                                                                                 other.metaSteps) &&
                    this.minSystemVersion == other.minSystemVersion &&
                    this.maxSystemVersion == other.maxSystemVersion;
         }
@@ -160,7 +161,7 @@ module api.module {
 
         contentTypeDependencies: api.schema.content.ContentTypeName[];
 
-        metadataSchemaDependencies: api.schema.metadata.MetadataSchemaName[];
+        metaSteps: api.schema.mixin.MixinName[];
 
         minSystemVersion: string;
 
@@ -170,7 +171,7 @@ module api.module {
         constructor(source?: Module) {
             this.moduleDependencies = [];
             this.contentTypeDependencies = [];
-            this.metadataSchemaDependencies = [];
+            this.metaSteps = [];
             if (source) {
                 super(source);
                 this.moduleKey = source.getModuleKey();
@@ -183,7 +184,7 @@ module api.module {
                 this.config = source.getForm();
                 this.moduleDependencies = source.getModuleDependencies();
                 this.contentTypeDependencies = source.getContentTypeDependencies();
-                this.metadataSchemaDependencies = source.getMetadataSchemaDependencies();
+                this.metaSteps = source.getMetaSteps();
                 this.minSystemVersion = source.getMinSystemVersion();
                 this.maxSystemVersion = source.getMaxSystemVersion();
             }
@@ -217,9 +218,9 @@ module api.module {
                 });
             }
 
-            if (json.metadataSchemaNames != null) {
-                json.metadataSchemaNames.forEach((dependency: string) => {
-                    this.metadataSchemaDependencies.push(new api.schema.metadata.MetadataSchemaName(dependency));
+            if (json.metaSteps != null) {
+                json.metaSteps.forEach((dependency: string) => {
+                    this.metaSteps.push(new api.schema.mixin.MixinName(dependency));
                 });
             }
 

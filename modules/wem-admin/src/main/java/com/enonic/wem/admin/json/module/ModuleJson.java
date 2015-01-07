@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.api.form.FormJson;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 public class ModuleJson
     implements ItemJson
@@ -19,7 +19,22 @@ public class ModuleJson
 
     private final FormJson config;
 
-    private final ImmutableList<String> metadataSchemaNames;
+    private final ImmutableList<String> metaStepMixinNames;
+
+    public ModuleJson( final Module module )
+    {
+        this.module = module;
+        this.config = module.getConfig() != null ? new FormJson( module.getConfig() ) : null;
+        ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
+        if ( this.module.getMetaSteps() != null )
+        {
+            for ( MixinName mixinName : this.module.getMetaSteps() )
+            {
+                mixinNamesBuilder.add( mixinName.toString() );
+            }
+        }
+        this.metaStepMixinNames = mixinNamesBuilder.build();
+    }
 
     public String getKey()
     {
@@ -76,9 +91,9 @@ public class ModuleJson
         return config;
     }
 
-    public List<String> getMetadataSchemaNames()
+    public List<String> getMetaSteps()
     {
-        return metadataSchemaNames;
+        return metaStepMixinNames;
     }
 
     @Override
@@ -93,18 +108,4 @@ public class ModuleJson
         return false;
     }
 
-    public ModuleJson( final Module module )
-    {
-        this.module = module;
-        this.config = module.getConfig() != null ? new FormJson( module.getConfig() ) : null;
-        ImmutableList.Builder<String> metadataSchemaNamesBuilder = new ImmutableList.Builder<>();
-        if ( this.module.getMetadataSchemaNames() != null )
-        {
-            for ( MetadataSchemaName metadataSchemaName : this.module.getMetadataSchemaNames() )
-            {
-                metadataSchemaNamesBuilder.add( metadataSchemaName.getLocalName() );
-            }
-        }
-        this.metadataSchemaNames = metadataSchemaNamesBuilder.build();
-    }
 }

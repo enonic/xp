@@ -43,7 +43,7 @@ module api.content {
             return this.attachments;
         }
 
-        getMetadata(name: api.schema.metadata.MetadataSchemaName): Metadata {
+        getMetadata(name: api.schema.mixin.MixinName): Metadata {
             return this.metadata.filter((item: Metadata) => item.getName().equals(name))[0];
         }
 

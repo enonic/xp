@@ -16,10 +16,10 @@ import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaName;
-import com.enonic.wem.script.mapper.ContentMapper;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
+import com.enonic.wem.script.mapper.ContentMapper;
 
 @Component(immediate = true)
 public final class CreateContentHandler
@@ -158,7 +158,7 @@ public final class CreateContentHandler
     {
         if ( value instanceof Map )
         {
-            return new Metadata( MetadataSchemaName.from( name ), propertyTree( (Map) value ) );
+            return new Metadata( MixinName.from( name ), propertyTree( (Map) value ) );
         }
 
         return null;

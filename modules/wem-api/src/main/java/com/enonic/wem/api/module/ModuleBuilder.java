@@ -3,7 +3,7 @@ package com.enonic.wem.api.module;
 import org.osgi.framework.Bundle;
 
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.schema.metadata.MetadataSchemaNames;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 
 public final class ModuleBuilder
 {
@@ -62,9 +62,9 @@ public final class ModuleBuilder
         return this;
     }
 
-    public ModuleBuilder metadataSchemaNames( final MetadataSchemaNames metadataSchemaNames )
+    public ModuleBuilder metaSteps( final MixinNames metaStepMixins )
     {
-        this.module.metadata = metadataSchemaNames;
+        this.module.metaSteps = metaStepMixins;
         return this;
     }
 
