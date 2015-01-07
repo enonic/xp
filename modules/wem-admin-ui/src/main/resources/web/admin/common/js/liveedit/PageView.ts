@@ -259,8 +259,8 @@ module api.liveedit {
             var regions: Region[] = this.liveEditModel.getPageModel().getRegions().getRegions();
             var children = parentElement ? parentElement.getChildren() : this.getChildren();
             var regionIndex = 0;
-            children.forEach((element: api.dom.Element) => {
-                var itemType = ItemType.fromElement(element);
+            children.forEach((childElement: api.dom.Element) => {
+                var itemType = ItemType.fromElement(childElement);
                 if (itemType) {
                     if (RegionItemType.get().equals(itemType)) {
                         var region = regions[regionIndex++];
@@ -269,14 +269,17 @@ module api.liveedit {
                                 setLiveEditModel(this.liveEditModel).
                                 setParentView(this).
                                 setRegion(region).
-                                setElement(element));
+                                setElement(childElement));
                             this.addRegion(regionView);
                             regionView.parseComponentViews();
                         }
                     }
                     else {
-                        this.doParseItemViews(parentElement);
+                        this.doParseItemViews(childElement);
                     }
+                }
+                else {
+                    this.doParseItemViews(childElement);
                 }
             });
         }
