@@ -6,6 +6,7 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.BinaryAttachments;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.InsertManualStrategy;
+import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeType;
 import com.enonic.wem.export.internal.ProcessNodeSettings;
@@ -21,12 +22,15 @@ public class CreateNodeParamsFactory
 
     private final BinaryAttachments binaryAttachments;
 
+    private final boolean importNodeIds;
+
     private CreateNodeParamsFactory( Builder builder )
     {
-        xmlNode = builder.xmlNode;
-        nodeImportPath = builder.importPath;
-        processNodeSettings = builder.processNodeSettings;
-        binaryAttachments = builder.binaryAttachments;
+        this.xmlNode = builder.xmlNode;
+        this.nodeImportPath = builder.importPath;
+        this.processNodeSettings = builder.processNodeSettings;
+        this.binaryAttachments = builder.binaryAttachments;
+        this.importNodeIds = builder.importNodeIds;
     }
 
     public CreateNodeParams execute()
@@ -44,6 +48,11 @@ public class CreateNodeParamsFactory
             data( PropertyTreeXmlBuilder.build( xmlNode.getProperties() ) ).
             indexConfigDocument( IndexConfigDocumentXmlBuilder.build( xmlNode.getIndexConfigs() ) ).
             setBinaryAttachments( binaryAttachments );
+
+        if ( importNodeIds && !Strings.isNullOrEmpty( xmlNode.getId() ) )
+        {
+            builder.setNodeId( NodeId.from( xmlNode.getId() ) );
+        }
 
         setInsertManualSettings( builder );
 
@@ -91,6 +100,8 @@ public class CreateNodeParamsFactory
 
         private BinaryAttachments binaryAttachments;
 
+        private boolean importNodeIds = true;
+
         private Builder()
         {
         }
@@ -116,6 +127,12 @@ public class CreateNodeParamsFactory
         public Builder binaryAttachments( final BinaryAttachments binaryAttachments )
         {
             this.binaryAttachments = binaryAttachments;
+            return this;
+        }
+
+        public Builder importNodeIds( final boolean importNodeIds )
+        {
+            this.importNodeIds = importNodeIds;
             return this;
         }
 

@@ -39,7 +39,7 @@ public class XmlNodeSerializerTest
 
         final Node node = doCreateNode( instant );
 
-        final XmlNode xml = XmlNodeMapper.toXml( node );
+        final XmlNode xml = XmlNodeMapper.toXml( node, false );
 
         XmlNodeSerializer serializer = new XmlNodeSerializer();
 
@@ -58,7 +58,7 @@ public class XmlNodeSerializerTest
 
         final Node node = doCreateNode( instant );
 
-        final XmlNode xml = XmlNodeMapper.toXml( node );
+        final XmlNode xml = XmlNodeMapper.toXml( node, false );
 
         XmlNodeSerializer serializer = new XmlNodeSerializer();
 

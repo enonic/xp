@@ -38,6 +38,8 @@ public class BatchedNodeExportCommand
 
     private final boolean dryRun;
 
+    private final boolean exportNodeIds;
+
     private final static String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     private final NodeExportResult.Builder result = NodeExportResult.create();
@@ -51,6 +53,7 @@ public class BatchedNodeExportCommand
         this.xmlNodeSerializer = builder.xmlNodeSerializer;
         this.exportTargetPath = NodeExportPathResolver.resolveExportTargetPath( builder.exportHomePath, builder.exportName );
         this.dryRun = builder.dryRun;
+        this.exportNodeIds = builder.exportNodeIds;
     }
 
     public NodeExportResult execute()
@@ -128,7 +131,7 @@ public class BatchedNodeExportCommand
 
         final Node relativeNode = Node.newNode( node ).parent( newParentPath ).build();
 
-        final XmlNode xmlNode = XmlNodeMapper.toXml( relativeNode );
+        final XmlNode xmlNode = XmlNodeMapper.toXml( relativeNode, this.exportNodeIds );
 
         final String serializedNode = this.xmlNodeSerializer.serialize( xmlNode );
 
@@ -241,7 +244,9 @@ public class BatchedNodeExportCommand
 
         private String exportName;
 
-        private boolean dryRun;
+        private boolean dryRun = false;
+
+        private boolean exportNodeIds = true;
 
         private Builder()
         {
@@ -292,6 +297,12 @@ public class BatchedNodeExportCommand
         public Builder dryRun( final boolean dryRun )
         {
             this.dryRun = dryRun;
+            return this;
+        }
+
+        public Builder exportNodeIds( final boolean exportNodeIds )
+        {
+            this.exportNodeIds = exportNodeIds;
             return this;
         }
 

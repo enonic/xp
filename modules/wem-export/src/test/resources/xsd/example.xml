@@ -39,14 +39,6 @@
       </property-set>
     </property-set>
   </properties>
-  <attachedBinaries>
-    <attachedBinary>
-      <binaryReference>my-image.jpg</binaryReference>
-    </attachedBinary>
-    <attachedBinary>
-      <binaryReference>my-image2.jpg</binaryReference>
-    </attachedBinary>
-  </attachedBinaries>
   <indexConfigs>
     <analyzer>myAnalyzer</analyzer>
     <defaultConfig>

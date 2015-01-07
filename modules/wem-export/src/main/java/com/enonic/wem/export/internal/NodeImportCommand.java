@@ -46,6 +46,8 @@ public class NodeImportCommand
 
     private static final Long IMPORT_NODE_ORDER_SPACE = (long) Integer.MAX_VALUE;
 
+    private final boolean importNodeIds;
+
     private NodeImportCommand( final Builder builder )
     {
         this.nodeService = builder.nodeService;
@@ -53,6 +55,7 @@ public class NodeImportCommand
         this.xmlNodeSerializer = builder.xmlNodeSerializer;
         this.importRoot = builder.importRoot;
         this.dryRun = builder.dryRun;
+        this.importNodeIds = builder.importNodeIds;
     }
 
     public NodeImportResult execute()
@@ -176,6 +179,7 @@ public class NodeImportCommand
             xmlNode( xmlNode ).
             importPath( importNodePath ).
             binaryAttachments( binaryAttachments ).
+            importNodeIds( this.importNodeIds ).
             build().
             execute();
 
@@ -263,6 +267,8 @@ public class NodeImportCommand
 
         private boolean dryRun = false;
 
+        private boolean importNodeIds = true;
+
         private Builder()
         {
         }
@@ -294,6 +300,12 @@ public class NodeImportCommand
         public Builder dryRun( final boolean dryRun )
         {
             this.dryRun = dryRun;
+            return this;
+        }
+
+        public Builder importNodeIds( final boolean importNodeIds )
+        {
+            this.importNodeIds = importNodeIds;
             return this;
         }
 

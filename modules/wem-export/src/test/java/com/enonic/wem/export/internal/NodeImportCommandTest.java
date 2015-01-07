@@ -20,6 +20,7 @@ import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.util.BinaryReference;
@@ -54,7 +55,6 @@ public class NodeImportCommandTest
 
         Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
 
-        final NodeServiceMock importNodeService = new NodeServiceMock();
         final NodeImportResult result = NodeImportCommand.create().
             nodeService( importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
@@ -67,6 +67,31 @@ public class NodeImportCommandTest
         assertEquals( 1, result.addedNodes.getSize() );
     }
 
+    @Test
+    public void import_node_with_id()
+        throws Exception
+    {
+        final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.getRoot().getPath(), "myExport", "mynode", "_" ) );
+        assert nodeFileDir != null;
+
+        final byte[] nodeXmlFile = readFromFile( "node_with_id_1234.xml" ).getBytes();
+
+        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
+
+        final NodeImportResult result = NodeImportCommand.create().
+            nodeService( importNodeService ).
+            xmlNodeSerializer( new XmlNodeSerializer() ).
+            importRoot( NodePath.ROOT ).
+            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            build().
+            execute();
+
+        assertEquals( 0, result.getImportErrors().size() );
+        assertEquals( 1, result.addedNodes.getSize() );
+
+        final Node node1234 = importNodeService.getById( NodeId.from( "1234" ) );
+        assertNotNull( node1234 );
+    }
 
     @Test
     public void import_update_node()
@@ -328,6 +353,7 @@ public class NodeImportCommandTest
         assertNotNull( attachedBinary );
         assertNotNull( attachedBinary.getBlobKey() );
     }
+
 
     private void createOrderFile( final Path exportPath, final String... childNodeNames )
         throws Exception

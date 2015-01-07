@@ -18,24 +18,12 @@
 
   <xs:complexType name="node">
     <xs:all>
+      <xs:element minOccurs="0" maxOccurs="1" name="id" type="xs:string"/>
       <xs:element minOccurs="0" maxOccurs="1" name="childOrder" type="xs:string"/>
       <xs:element minOccurs="0" maxOccurs="1" name="nodeType" type="xs:string"/>
       <xs:element name="properties" type="propertyTree"/>
-      <xs:element minOccurs="0" maxOccurs="1" name="attachedBinaries" type="attachedBinaries"/>
       <xs:element minOccurs="0" maxOccurs="1" name="indexConfigs" type="indexConfigs"/>
     </xs:all>
-  </xs:complexType>
-
-  <xs:complexType name="attachedBinaries">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="attachedBinary">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="binaryReference" type="xs:string"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="propertyTree">

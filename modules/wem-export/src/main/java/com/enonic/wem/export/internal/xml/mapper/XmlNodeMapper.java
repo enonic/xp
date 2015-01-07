@@ -6,11 +6,11 @@ import com.enonic.wem.export.internal.xml.XmlNode;
 
 public class XmlNodeMapper
 {
-    public static XmlNode toXml( final Node node )
+    public static XmlNode toXml( final Node node, final boolean exportNodeIds )
     {
         try
         {
-            return doSerializeNode( node );
+            return doSerializeNode( node, exportNodeIds );
         }
         catch ( Exception e )
         {
@@ -18,10 +18,14 @@ public class XmlNodeMapper
         }
     }
 
-    private static XmlNode doSerializeNode( final Node node )
+    private static XmlNode doSerializeNode( final Node node, final boolean exportNodeIds )
     {
         final XmlNode xml = new XmlNode();
 
+        if ( exportNodeIds )
+        {
+            xml.setId( node.id().toString() );
+        }
         xml.setChildOrder( getAsStringOrNull( node.getChildOrder() ) );
         xml.setNodeType( node.getNodeType().getName() );
 
