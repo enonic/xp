@@ -2,13 +2,13 @@ package com.enonic.wem.repo.internal.workspace.compare.query;
 
 import com.enonic.wem.api.workspace.Workspace;
 
-public class CompareWorkspacesQuery
+public class WorkspaceDiffQuery
 {
     private final Workspace source;
 
     private final Workspace target;
 
-    private CompareWorkspacesQuery( final Builder builder )
+    private WorkspaceDiffQuery( final Builder builder )
     {
         source = builder.source;
         target = builder.target;
@@ -47,9 +47,9 @@ public class CompareWorkspacesQuery
             return this;
         }
 
-        public CompareWorkspacesQuery build()
+        public WorkspaceDiffQuery build()
         {
-            return new CompareWorkspacesQuery( this );
+            return new WorkspaceDiffQuery( this );
         }
     }
 }

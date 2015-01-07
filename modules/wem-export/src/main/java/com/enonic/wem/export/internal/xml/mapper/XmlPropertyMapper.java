@@ -1,7 +1,5 @@
 package com.enonic.wem.export.internal.xml.mapper;
 
-import javax.xml.bind.JAXBElement;
-
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.ValueType;
 import com.enonic.wem.api.data.ValueTypes;
@@ -11,7 +9,7 @@ import com.enonic.wem.export.internal.xml.ObjectFactory;
 class XmlPropertyMapper
 {
 
-    public static JAXBElement toXml( final Property property, ObjectFactory objectFactory )
+    public static Object toXml( final Property property, ObjectFactory objectFactory )
     {
         try
         {
@@ -23,65 +21,65 @@ class XmlPropertyMapper
         }
     }
 
-    private static JAXBElement doSerializeProperty( final Property property, final ObjectFactory objectFactory )
+    private static Object doSerializeProperty( final Property property, final ObjectFactory objectFactory )
     {
         final ValueType type = property.getValue().getType();
 
         if ( type.equals( ValueTypes.BOOLEAN ) )
         {
-            return BooleanPropertyMapper.map( property, objectFactory );
+            return BooleanPropertyMapper.map( property );
         }
         else if ( type.equals( ValueTypes.STRING ) )
         {
-            return StringPropertyMapper.map( property, objectFactory );
+            return StringPropertyMapper.map( property );
         }
         else if ( type.equals( ValueTypes.DOUBLE ) )
         {
-            return DoublePropertyMapper.map( property, objectFactory );
+            return DoublePropertyMapper.map( property );
         }
         else if ( type.equals( ValueTypes.LONG ) )
         {
-            return LongPropertyMapper.map( property, objectFactory );
+            return LongPropertyMapper.map( property );
         }
         else if ( type.equals( ValueTypes.DATE_TIME ) )
         {
-            return DateTimePropertyMapper.map( property, objectFactory );
+            return DateTimePropertyMapper.map( property );
         }
         else if ( type.equals( ValueTypes.LOCAL_DATE_TIME ) )
         {
-            return LocalDateTimePropertyMapper.map( property, objectFactory );
+            return LocalDateTimePropertyMapper.map( property );
         }
         else if ( type.equals( ValueTypes.LOCAL_DATE ) )
         {
-            return DatePropertyMapper.map( property, objectFactory );
+            return DatePropertyMapper.map( property );
         }
         else if ( type.equals( ValueTypes.LOCAL_TIME ) )
         {
-            return TimePropertyMapper.map( property, objectFactory );
+            return TimePropertyMapper.map( property );
         }
         else if ( type.equals( ValueTypes.GEO_POINT ) )
         {
-            return GeoPointPropertyMapper.map( property, objectFactory );
+            return GeoPointPropertyMapper.map( property );
         }
         else if ( type.equals( ValueTypes.HTML_PART ) )
         {
-            return HtmlPartPropertyMapper.map( property, objectFactory );
+            return HtmlPartPropertyMapper.map( property );
         }
         else if ( type.equals( ValueTypes.XML ) )
         {
-            return XmlValuePropertyMapper.map( property, objectFactory );
+            return XmlValuePropertyMapper.map( property );
         }
         else if ( type.equals( ValueTypes.REFERENCE ) )
         {
-            return ReferencePropertyMapper.map( property, objectFactory );
+            return ReferencePropertyMapper.map( property );
         }
         else if ( type.equals( ValueTypes.LINK ) )
         {
-            return LinkPropertyMapper.map( property, objectFactory );
+            return LinkPropertyMapper.map( property );
         }
         else if ( type.equals( ValueTypes.BINARY_REFERENCE ) )
         {
-            return BinaryReferencePropertyMapper.map( property, objectFactory );
+            return BinaryReferencePropertyMapper.map( property );
         }
 
         throw new IllegalArgumentException(

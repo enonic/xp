@@ -41,7 +41,6 @@
         <xs:element name="geoPoint" type="geoPointProperty"/>
         <xs:element name="boolean" type="booleanProperty"/>
         <xs:element name="dateTime" type="dateTimeProperty"/>
-        <xs:element name="dummy" type="dateTimeProperty"/>
         <xs:element name="localDate" type="dateProperty"/>
         <xs:element name="localTime" type="timeProperty"/>
         <xs:element name="binaryReference" type="binaryReferenceProperty"/>

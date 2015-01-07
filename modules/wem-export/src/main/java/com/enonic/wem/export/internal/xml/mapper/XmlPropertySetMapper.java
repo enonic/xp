@@ -1,8 +1,6 @@
 package com.enonic.wem.export.internal.xml.mapper;
 
 
-import javax.xml.bind.JAXBElement;
-
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.ValueTypes;
@@ -13,15 +11,14 @@ import com.enonic.wem.export.internal.xml.XmlPropertySet;
 class XmlPropertySetMapper
 {
 
-    public static JAXBElement<XmlPropertySet> toXml( final Property property, final ObjectFactory objectFactory )
+    public static Object toXml( final Property property, final ObjectFactory objectFactory )
     {
         try
         {
             final XmlPropertySet xmlPropertySet = doSerializePropertySet( property.getSet(), objectFactory );
             xmlPropertySet.setName( property.getName() );
 
-            return new ObjectFactory().createXmlPropertyTreePropertySet( xmlPropertySet );
-
+            return xmlPropertySet;
         }
         catch ( Exception e )
         {

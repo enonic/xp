@@ -2,9 +2,6 @@ package com.enonic.wem.export.internal.builder;
 
 import java.util.List;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBIntrospector;
-
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.util.BinaryReference;
@@ -40,19 +37,17 @@ public class PropertyTreeXmlBuilder
             return propertyTree;
         }
 
-        final List<JAXBElement<?>> list = xmlPropertyTree.getList();
+        final List<Object> list = xmlPropertyTree.getList();
 
         doParsePropertyElementList( propertyTree.getRoot(), list );
 
         return propertyTree;
     }
 
-    private static void doParsePropertyElementList( final PropertySet propertySet, final List<JAXBElement<?>> list )
+    private static void doParsePropertyElementList( final PropertySet propertySet, final List<Object> list )
     {
-        for ( final JAXBElement propertyElement : list )
+        for ( final Object propertyValue : list )
         {
-            final Object propertyValue = JAXBIntrospector.getValue( propertyElement );
-
             if ( propertyValue instanceof XmlPropertySet )
             {
                 addPropertySet( (XmlPropertySet) propertyValue, propertySet );
