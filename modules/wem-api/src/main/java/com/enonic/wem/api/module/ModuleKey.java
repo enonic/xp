@@ -3,6 +3,8 @@ package com.enonic.wem.api.module;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
+import com.google.common.base.Preconditions;
+
 public final class ModuleKey
 {
     private static final String SYSTEM_MODULE_NAME = "system";
@@ -13,6 +15,8 @@ public final class ModuleKey
 
     private ModuleKey( final String name )
     {
+        Preconditions.checkNotNull( name, "ModuleKey cannot be null" );
+        Preconditions.checkArgument( !name.trim().isEmpty(), "ModuleKey cannot be blank" );
         this.name = name;
     }
 

@@ -23,6 +23,9 @@ public final class Page
 
     private Page( final Builder builder )
     {
+        Preconditions.checkArgument( !( builder.controller != null && builder.template != null ),
+                                     "A Page cannot have both have a controller and a template set" );
+
         Preconditions.checkNotNull( builder.config, "config cannot be null" );
         this.controller = builder.controller;
         this.template = builder.template;

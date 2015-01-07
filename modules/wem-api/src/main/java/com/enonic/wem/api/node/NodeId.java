@@ -19,8 +19,8 @@ public class NodeId
 
     private NodeId( final String value )
     {
-        Preconditions.checkNotNull( value, "id cannot be null" );
-        Preconditions.checkArgument( !value.trim().isEmpty(), "id cannot be empty" );
+        Preconditions.checkNotNull( value, "NodeId cannot be null" );
+        Preconditions.checkArgument( !value.trim().isEmpty(), "NodeId cannot be blank" );
         Preconditions.checkArgument( value.matches( "^" + VALID_NODE_ID_PATTERN + "$" ), "NodeId  " + value );
 
         this.value = value;
