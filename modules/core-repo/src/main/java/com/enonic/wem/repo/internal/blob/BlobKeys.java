@@ -1,10 +1,12 @@
-package com.enonic.wem.api.blob;
+package com.enonic.wem.repo.internal.blob;
 
 import java.util.Iterator;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+
+import com.enonic.wem.api.blob.BlobKey;
 
 public class BlobKeys
     implements Iterable<BlobKey>

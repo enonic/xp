@@ -7,9 +7,9 @@ import java.io.InputStream;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.blob.BlobKeyCreator;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.repo.internal.blob.Blob;
+import com.enonic.wem.repo.internal.blob.BlobKeyCreator;
 
 public final class MemoryBlob
     implements Blob

@@ -1,4 +1,4 @@
-package com.enonic.wem.api.blob;
+package com.enonic.wem.repo.internal.blob;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 
 import com.google.common.io.ByteStreams;
 
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.util.Exceptions;
 
 public final class BlobKeyCreator
