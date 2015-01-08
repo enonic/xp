@@ -13,14 +13,11 @@ public final class VirtualHostConfigImpl
 {
     private boolean enabled;
 
-    private boolean requireMapping;
-
     private VirtualHostMappings mappings;
 
     public VirtualHostConfigImpl()
     {
         this.enabled = false;
-        this.requireMapping = false;
         this.mappings = new VirtualHostMappings();
     }
 
@@ -28,12 +25,6 @@ public final class VirtualHostConfigImpl
     public boolean isEnabled()
     {
         return this.enabled;
-    }
-
-    @Override
-    public boolean isRequireMapping()
-    {
-        return this.requireMapping;
     }
 
     @Override
@@ -47,7 +38,6 @@ public final class VirtualHostConfigImpl
     {
         final VirtualHostConfigMap configMap = new VirtualHostConfigMap( config );
         this.enabled = configMap.isEnabled();
-        this.requireMapping = configMap.isRequireMapping();
         this.mappings = configMap.buildMappings();
     }
 }

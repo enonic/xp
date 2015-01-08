@@ -6,7 +6,5 @@ public interface VirtualHostConfig
 {
     public boolean isEnabled();
 
-    public boolean isRequireMapping();
-
     public VirtualHostMappings getMappings();
 }

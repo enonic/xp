@@ -27,11 +27,6 @@ final class VirtualHostConfigMap
         return getBoolean( "enabled", false );
     }
 
-    public boolean isRequireMapping()
-    {
-        return getBoolean( "requireMapping", false );
-    }
-
     public VirtualHostMappings buildMappings()
     {
         final VirtualHostMappings mappings = new VirtualHostMappings();

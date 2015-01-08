@@ -65,18 +65,6 @@ public class VirtualHostHandlerTest
     }
 
     @Test
-    public void testNoMapping_requireMapping()
-        throws Exception
-    {
-        Mockito.when( this.config.isEnabled() ).thenReturn( true );
-        Mockito.when( this.config.isRequireMapping() ).thenReturn( true );
-        this.handler.handle( this.req, this.res, this.chain );
-
-        Mockito.verify( this.chain, Mockito.times( 0 ) ).handle( this.req, this.res );
-        Assert.assertEquals( 404, this.res.getStatus() );
-    }
-
-    @Test
     public void testMapping_notFound()
         throws Exception
     {

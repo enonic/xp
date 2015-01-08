@@ -38,7 +38,7 @@ public final class VirtualHostHandler
         final VirtualHostMapping mapping = this.config.getMappings().resolve( req );
         if ( mapping == null )
         {
-            handleNoMapping( req, res, chain );
+            chain.handle( req, res );
             return;
         }
 
@@ -47,18 +47,6 @@ public final class VirtualHostHandler
 
         final RequestDispatcher dispatcher = req.getRequestDispatcher( targetPath );
         dispatcher.forward( req, res );
-    }
-
-    private void handleNoMapping( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
-        throws Exception
-    {
-        if ( !this.config.isRequireMapping() )
-        {
-            chain.handle( req, res );
-            return;
-        }
-
-        res.setStatus( HttpServletResponse.SC_NOT_FOUND );
     }
 
     @Reference
