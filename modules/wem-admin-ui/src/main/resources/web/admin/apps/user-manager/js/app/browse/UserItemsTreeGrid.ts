@@ -204,7 +204,9 @@ module app.browse {
                     gridItems.push(new UserTreeGridItemBuilder().setType(UserTreeGridItemType.ROLES).build());
 
                     deferred.resolve(gridItems);
-                });
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
 
             } else if (parentNode.getData().getType() === UserTreeGridItemType.ROLES) {
                 // fetch roles, if parent node 'Roles' was selected
@@ -214,7 +216,9 @@ module app.browse {
                             gridItems.push(new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build());
                         });
                         deferred.resolve(gridItems);
-                    });
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    }).done();
 
             } else if (level === 1) {
                 // add parent folders 'Users' and 'Groups' to the selected UserStore
@@ -235,7 +239,9 @@ module app.browse {
                             gridItems.push(new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build());
                         });
                         deferred.resolve(gridItems);
-                    });
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    }).done();
 
             }
             return deferred.promise;

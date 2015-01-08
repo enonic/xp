@@ -31,13 +31,16 @@ module api.rest {
             request.timeout = 10000;
             request.onreadystatechange = () => {
 
-                if (request.readyState == 4) {
+                if (request.readyState === 4) {
 
-                    if (request.status == 204) {
+                    if (request.status === 204) {
                         deferred.resolve(new JsonResponse<RAW_JSON_TYPE>(null));
                     }
                     else if (request.status >= 200 && request.status < 300) {
                         deferred.resolve(new JsonResponse<RAW_JSON_TYPE>(request.response));
+                    }
+                    else if (request.status === 403) {
+                        deferred.reject(new api.AccessDeniedException('Access denied'));
                     }
                     else {
                         try {
@@ -51,7 +54,7 @@ module api.rest {
                 }
             };
 
-            if ("POST" == this.method.toUpperCase()) {
+            if ("POST" === this.method.toUpperCase()) {
                 this.preparePOSTRequest(request);
                 var paramString = JSON.stringify(this.params);
                 request.send(paramString);

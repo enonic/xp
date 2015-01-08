@@ -20,6 +20,7 @@
 ///<reference path='Comparator.ts' />
 ///<reference path='Name.ts' />
 ///<reference path='Exception.ts' />
+///<reference path='AccessDeniedException.ts' />
 ///<reference path='DefaultErrorHandler.ts' />
 ///<reference path='PropertyChangedEvent.ts' />
 ///<reference path='Client.ts' />
