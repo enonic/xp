@@ -4,11 +4,11 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-public class WorkspaceDiffResult
+public class NodeVersionDiffResult
 {
     private final NodeIds nodesWithDifferences;
 
-    private WorkspaceDiffResult( final NodeIds nodesWithDifferences )
+    private NodeVersionDiffResult( final NodeIds nodesWithDifferences )
     {
         this.nodesWithDifferences = nodesWithDifferences;
     }
@@ -33,9 +33,9 @@ public class WorkspaceDiffResult
             return this;
         }
 
-        public WorkspaceDiffResult build()
+        public NodeVersionDiffResult build()
         {
-            return new WorkspaceDiffResult( NodeIds.from( nodeIds ) );
+            return new NodeVersionDiffResult( NodeIds.from( nodeIds ) );
         }
 
     }

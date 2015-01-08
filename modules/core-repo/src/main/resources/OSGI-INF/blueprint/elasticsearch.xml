@@ -7,7 +7,7 @@
     <property name="client" ref="elasticClient"/>
   </bean>
 
-  <bean id="versionService" class="com.enonic.wem.repo.internal.elasticsearch.ElasticsearchVersionService">
+  <bean id="versionService" class="com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService">
     <property name="elasticsearchDao" ref="elasticsearchDao"/>
   </bean>
 

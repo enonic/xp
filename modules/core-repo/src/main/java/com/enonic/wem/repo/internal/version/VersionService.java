@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.version;
 
+import com.enonic.wem.api.node.NodeVersionDiffQuery;
+import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.NodeVersion;
@@ -12,5 +14,7 @@ public interface VersionService
     public NodeVersion getVersion( final NodeVersionId versionId, final RepositoryId repositoryId );
 
     public FindNodeVersionsResult findVersions( final GetVersionsQuery query, final RepositoryId repositoryId );
+
+    public NodeVersionDiffResult diff( final NodeVersionDiffQuery query, final RepositoryId repositoryId );
 
 }

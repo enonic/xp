@@ -40,6 +40,11 @@ public class ContentConstants
         repositoryId( CONTENT_REPO.getId() ).
         build();
 
+    public static final Context CONTEXT_PROD = ContextBuilder.create().
+        workspace( WORKSPACE_PROD ).
+        repositoryId( CONTENT_REPO.getId() ).
+        build();
+
     public static final String CONTENT_ROOT_NAME = "content";
 
     public static final NodePath CONTENT_ROOT_PARENT = NodePath.ROOT;

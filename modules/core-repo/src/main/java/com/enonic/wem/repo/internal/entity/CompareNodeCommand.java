@@ -13,8 +13,6 @@ import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.version.VersionService;
-import com.enonic.wem.repo.internal.workspace.compare.DiffStatusParams;
-import com.enonic.wem.repo.internal.workspace.compare.DiffStatusResolver;
 
 public class CompareNodeCommand
 {

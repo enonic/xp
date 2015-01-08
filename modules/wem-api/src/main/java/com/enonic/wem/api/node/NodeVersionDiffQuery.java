@@ -1,8 +1,8 @@
-package com.enonic.wem.repo.internal.workspace.compare.query;
+package com.enonic.wem.api.node;
 
 import com.enonic.wem.api.workspace.Workspace;
 
-public class WorkspaceDiffQuery
+public class NodeVersionDiffQuery
 {
     private final static int DEFAULT_SIZE = 10;
 
@@ -14,7 +14,7 @@ public class WorkspaceDiffQuery
 
     private final int from;
 
-    private WorkspaceDiffQuery( Builder builder )
+    private NodeVersionDiffQuery( Builder builder )
     {
         source = builder.source;
         target = builder.target;
@@ -86,9 +86,9 @@ public class WorkspaceDiffQuery
             return this;
         }
 
-        public WorkspaceDiffQuery build()
+        public NodeVersionDiffQuery build()
         {
-            return new WorkspaceDiffQuery( this );
+            return new NodeVersionDiffQuery( this );
         }
     }
 }

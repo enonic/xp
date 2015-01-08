@@ -23,6 +23,8 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePaths;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.node.NodeVersionDiffQuery;
+import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.Nodes;
 import com.enonic.wem.api.node.RenameNodeParams;
@@ -329,6 +331,16 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             indexService( this.indexService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public NodeVersionDiffResult diff( final NodeVersionDiffQuery query )
+    {
+        return NodeVersionDiffCommand.create().
+            versionService( this.versionService ).
+            query( query ).
             build().
             execute();
     }

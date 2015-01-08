@@ -1,39 +1,34 @@
-package com.enonic.wem.repo.internal.elasticsearch.workspace;
+package com.enonic.wem.repo.internal.elasticsearch.version;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.HasChildQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
 
-import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.WorkspaceDiffResult;
-import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.api.node.NodeVersionDiffQuery;
+import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.repo.internal.elasticsearch.workspace.WorkspaceIndexPath;
 import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
-import com.enonic.wem.repo.internal.workspace.compare.query.WorkspaceDiffQuery;
+import com.enonic.wem.repo.internal.version.VersionIndexPath;
 
-public class WorkspaceDiffCommand
+class NodeVersionDiffCommand
+    extends AbstractVersionsCommand
 {
-    private final WorkspaceDiffQuery query;
+    private final NodeVersionDiffQuery query;
 
-    private final ElasticsearchDao elasticsearchDao;
-
-    private final RepositoryId repositoryId;
-
-    private WorkspaceDiffCommand( Builder builder )
+    private NodeVersionDiffCommand( final Builder builder )
     {
+        super( builder );
         query = builder.query;
-        elasticsearchDao = builder.elasticsearchDao;
-        repositoryId = builder.repositoryId;
     }
 
-    public WorkspaceDiffResult execute()
+    NodeVersionDiffResult execute()
     {
         final String indexType = IndexType.WORKSPACE.getName();
 
@@ -47,22 +42,22 @@ public class WorkspaceDiffCommand
 
         final ElasticsearchQuery esQuery = ElasticsearchQuery.create().
             index( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
-            indexType( IndexType.NODE.getName() ).
+            indexType( IndexType.VERSION.getName() ).
             query( new BoolQueryBuilder().
                 should( source ).
                 should( target ) ).
-            setReturnFields( ReturnFields.from( IndexPath.from( "nodeid" ) ) ).
+            setReturnFields( ReturnFields.from( VersionIndexPath.NODE_ID, VersionIndexPath.VERSION_ID, VersionIndexPath.TIMESTAMP ) ).
             size( query.getSize() ).
             from( query.getFrom() ).
             build();
 
         final SearchResult searchResult = elasticsearchDao.find( esQuery );
 
-        final WorkspaceDiffResult.Builder builder = WorkspaceDiffResult.create();
+        final NodeVersionDiffResult.Builder builder = NodeVersionDiffResult.create();
 
         for ( final SearchResultEntry entry : searchResult.getResults() )
         {
-            builder.add( NodeId.from( entry.getField( "nodeid" ).getValue().toString() ) );
+            builder.add( NodeId.from( entry.getField( VersionIndexPath.NODE_ID.toString() ).getValue().toString() ) );
         }
 
         return builder.build();
@@ -75,48 +70,32 @@ public class WorkspaceDiffCommand
 
     private TermQueryBuilder createWsConstraint( final Workspace ws )
     {
-        return new TermQueryBuilder( "workspace", ws );
+        return new TermQueryBuilder( WorkspaceIndexPath.WORKSPACE_ID.toString(), ws );
     }
 
-    public static Builder create()
+    static Builder create()
     {
         return new Builder();
     }
 
-
-    public static final class Builder
+    static final class Builder
+        extends AbstractVersionsCommand.Builder<Builder>
     {
-        private WorkspaceDiffQuery query;
-
-        private ElasticsearchDao elasticsearchDao;
-
-        private RepositoryId repositoryId;
+        private NodeVersionDiffQuery query;
 
         private Builder()
         {
         }
 
-        public Builder query( WorkspaceDiffQuery query )
+        Builder query( NodeVersionDiffQuery query )
         {
             this.query = query;
             return this;
         }
 
-        public Builder elasticsearchDao( ElasticsearchDao elasticsearchDao )
+        NodeVersionDiffCommand build()
         {
-            this.elasticsearchDao = elasticsearchDao;
-            return this;
-        }
-
-        public Builder repositoryId( final RepositoryId repositoryId )
-        {
-            this.repositoryId = repositoryId;
-            return this;
-        }
-
-        public WorkspaceDiffCommand build()
-        {
-            return new WorkspaceDiffCommand( this );
+            return new NodeVersionDiffCommand( this );
         }
     }
 }

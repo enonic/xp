@@ -63,8 +63,6 @@ public class GetActiveNodeVersionsCommand
 
         private NodeId nodeId;
 
-        private VersionService versionService;
-
         public Builder()
         {
             super();
@@ -79,12 +77,6 @@ public class GetActiveNodeVersionsCommand
         public Builder nodeId( NodeId nodeId )
         {
             this.nodeId = nodeId;
-            return this;
-        }
-
-        public Builder versionService( final VersionService versionService )
-        {
-            this.versionService = versionService;
             return this;
         }
 

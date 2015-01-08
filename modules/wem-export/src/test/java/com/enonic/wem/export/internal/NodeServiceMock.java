@@ -34,6 +34,8 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePaths;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.node.NodeVersionDiffQuery;
+import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.Nodes;
 import com.enonic.wem.api.node.RenameNodeParams;
@@ -127,13 +129,13 @@ class NodeServiceMock
     @Override
     public Node rename( final RenameNodeParams params )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
     public Node push( final NodeId id, final Workspace target )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
@@ -174,7 +176,7 @@ class NodeServiceMock
     @Override
     public Nodes getByIds( final NodeIds ids )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
@@ -186,13 +188,13 @@ class NodeServiceMock
     @Override
     public Nodes getByPaths( final NodePaths paths )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
     public Node duplicate( final NodeId nodeId )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
@@ -229,51 +231,57 @@ class NodeServiceMock
     }
 
     @Override
+    public NodeVersionDiffResult diff( final NodeVersionDiffQuery query )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
     public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
     public NodeComparison compare( final NodeId id, final Workspace target )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
     public NodeComparisons compare( final NodeIds ids, final Workspace target )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
     public FindNodeVersionsResult findVersions( final GetNodeVersionsParams params )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
     public GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
     public Node setChildOrder( final SetNodeChildOrderParams params )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
     public ReorderChildNodesResult reorderChildren( final ReorderChildNodesParams params )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
     public Node getByVersionId( final NodeVersionId nodeVersionid )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
@@ -285,7 +293,7 @@ class NodeServiceMock
     @Override
     public void snapshot()
     {
-
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override

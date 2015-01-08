@@ -1,12 +1,10 @@
 package com.enonic.wem.repo.internal.elasticsearch.workspace;
 
 import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.WorkspaceDiffResult;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
 import com.enonic.wem.repo.internal.workspace.WorkspaceService;
-import com.enonic.wem.repo.internal.workspace.compare.query.WorkspaceDiffQuery;
 
 public class ElasticsearchWorkspaceService
     implements WorkspaceService
@@ -33,17 +31,6 @@ public class ElasticsearchWorkspaceService
             repository( context.getRepositoryId() ).
             workspace( context.getWorkspace() ).
             nodeId( nodeId ).
-            build().
-            execute();
-    }
-
-    @Override
-    public WorkspaceDiffResult diff( final WorkspaceDiffQuery query, final WorkspaceContext context )
-    {
-        return WorkspaceDiffCommand.create().
-            elasticsearchDao( this.elasticsearchDao ).
-            query( query ).
-            repositoryId( context.getRepositoryId() ).
             build().
             execute();
     }

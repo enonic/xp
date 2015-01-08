@@ -1,8 +1,8 @@
-package com.enonic.wem.repo.internal.workspace.compare;
+package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.api.node.NodeVersion;
 
-public class DiffStatusParams
+class DiffStatusParams
 {
     private final NodeVersion source;
 

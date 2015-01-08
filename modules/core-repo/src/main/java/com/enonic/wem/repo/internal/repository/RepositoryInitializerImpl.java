@@ -46,8 +46,6 @@ public final class RepositoryInitializerImpl
         indexService.applyMapping( storageIndexName, IndexType.VERSION.getName(),
                                    RepositoryIndexMappingProvider.getVersionMapping( repository ) );
 
-        indexService.applyMapping( storageIndexName, "node", RepositoryIndexMappingProvider.getNodeMapping( repository ) );
-
         indexService.applyMapping( searchIndexName, IndexType._DEFAULT_.getName(),
                                    RepositoryIndexMappingProvider.getSearchMappings( repository ) );
 

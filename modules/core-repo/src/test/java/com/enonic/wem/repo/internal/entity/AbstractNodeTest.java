@@ -17,7 +17,7 @@ import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchVersionService;
+import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
 import com.enonic.wem.repo.internal.elasticsearch.workspace.ElasticsearchWorkspaceService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
