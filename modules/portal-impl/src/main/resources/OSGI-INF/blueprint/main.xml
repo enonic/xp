@@ -13,7 +13,7 @@
 
   <reference id="moduleService" interface="com.enonic.wem.api.module.ModuleService"/>
 
-  <reference id="blobService" interface="com.enonic.wem.api.blob.BlobService"/>
+  <reference id="blobService" interface="com.enonic.wem.repo.internal.blob.BlobService"/>
 
   <reference id="imageFilterBuilder" interface="com.enonic.wem.api.image.ImageFilterBuilder"/>
 

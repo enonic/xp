@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.blob;
 
-import java.io.InputStream;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
@@ -11,7 +10,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -22,12 +20,7 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.admin.json.JsonResult;
 import com.enonic.wem.admin.rest.multipart.MultipartForm;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
-import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.xp.web.jaxrs.JaxRsComponent;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Path(ResourceConstants.REST_ROOT + "blob")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,7 +28,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class BlobResource
     implements JaxRsComponent
 {
-    private BlobService blobService;
+    //private BlobService blobService;
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -64,17 +57,22 @@ public final class BlobResource
     public Response getUploadedContent( @PathParam("id") final String id, @QueryParam("mimeType") String mimeType )
         throws Exception
     {
+        throw new UnsupportedOperationException( "This is not allowed anymore, rewrite" );
+       /*
         if ( isNullOrEmpty( mimeType ) )
         {
             throw new WebApplicationException( Response.Status.BAD_REQUEST );
         }
         final Blob blob = blobService.get( new BlobKey( id ) );
         return Response.ok( blob.getStream(), mimeType ).build();
+        */
     }
 
     private void upload( final List<UploadItem> items, final FileItem file )
         throws Exception
     {
+        throw new UnsupportedOperationException( "This is not allowed anymore, rewrite" );
+       /*
         if ( file.isFormField() )
         {
             return;
@@ -95,10 +93,7 @@ public final class BlobResource
 
             items.add( item );
         }
+        */
     }
 
-    public void setBlobService( final BlobService blobService )
-    {
-        this.blobService = blobService;
-    }
 }

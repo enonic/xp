@@ -8,7 +8,6 @@ import java.time.ZoneOffset;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -34,8 +33,6 @@ public class UpdateContentCommandTest
     private final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
 
     private final NodeService nodeService = Mockito.mock( NodeService.class );
-
-    private final BlobService blobService = Mockito.mock( BlobService.class );
 
     private final ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
 

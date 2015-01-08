@@ -11,7 +11,7 @@
 
   <reference id="mixinService" interface="com.enonic.wem.api.schema.mixin.MixinService"/>
 
-  <reference id="blobService" interface="com.enonic.wem.api.blob.BlobService"/>
+  <reference id="blobService" interface="com.enonic.wem.repo.internal.blob.BlobService"/>
 
   <reference id="moduleService" interface="com.enonic.wem.api.module.ModuleService"/>
 

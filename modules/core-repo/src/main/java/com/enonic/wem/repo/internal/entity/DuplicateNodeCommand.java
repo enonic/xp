@@ -2,7 +2,6 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.ValueTypes;
@@ -14,6 +13,7 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.UpdateNodeParams;
+import com.enonic.wem.repo.internal.blob.BlobService;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 
 public class DuplicateNodeCommand

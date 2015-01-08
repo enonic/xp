@@ -2,7 +2,6 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.ApplyNodePermissionsParams;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -34,6 +33,7 @@ import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.repo.internal.blob.BlobService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexService;
 import com.enonic.wem.repo.internal.index.query.QueryService;

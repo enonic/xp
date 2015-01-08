@@ -3,7 +3,6 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
 
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.EditableNode;
@@ -14,6 +13,7 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.util.Exceptions;
+import com.enonic.wem.repo.internal.blob.BlobService;
 
 public final class UpdateNodeCommand
     extends AbstractNodeCommand

@@ -1,8 +1,11 @@
-package com.enonic.wem.api.blob;
+package com.enonic.wem.repo.internal.blob;
 
 import java.io.InputStream;
 
 import com.google.common.io.ByteSource;
+
+import com.enonic.wem.api.blob.Blob;
+import com.enonic.wem.api.blob.BlobKey;
 
 public interface BlobService
 {

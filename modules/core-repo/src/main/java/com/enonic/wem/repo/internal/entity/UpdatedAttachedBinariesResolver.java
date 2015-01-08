@@ -12,7 +12,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.PropertyVisitor;
@@ -26,6 +25,7 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeBinaryReferenceException;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.BinaryReferences;
+import com.enonic.wem.repo.internal.blob.BlobService;
 
 class UpdatedAttachedBinariesResolver
 {

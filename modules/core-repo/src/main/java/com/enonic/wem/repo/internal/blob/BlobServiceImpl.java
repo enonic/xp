@@ -9,7 +9,6 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 
 @Component

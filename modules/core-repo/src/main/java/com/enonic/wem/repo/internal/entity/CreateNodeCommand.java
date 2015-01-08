@@ -7,7 +7,6 @@ import java.util.Set;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyTree;
@@ -32,6 +31,7 @@ import com.enonic.wem.api.node.NodeType;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.wem.repo.internal.blob.BlobService;
 
 public final class CreateNodeCommand
     extends AbstractNodeCommand

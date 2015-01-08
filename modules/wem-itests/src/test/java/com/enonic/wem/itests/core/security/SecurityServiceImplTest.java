@@ -3,7 +3,6 @@ package com.enonic.wem.itests.core.security;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.repository.Repository;
@@ -34,6 +33,7 @@ import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 import com.enonic.wem.core.security.SecurityServiceImpl;
 import com.enonic.wem.itests.core.elasticsearch.AbstractElasticsearchIntegrationTest;
+import com.enonic.wem.repo.internal.blob.BlobService;
 import com.enonic.wem.repo.internal.blob.memory.MockBlobService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
