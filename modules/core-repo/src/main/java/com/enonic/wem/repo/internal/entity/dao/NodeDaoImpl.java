@@ -7,13 +7,13 @@ import java.nio.charset.StandardCharsets;
 
 import com.google.common.io.ByteStreams;
 
-import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.NodeVersionIds;
 import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.repo.internal.blob.Blob;
 import com.enonic.wem.repo.internal.blob.BlobService;
 import com.enonic.wem.repo.internal.entity.json.NodeJsonSerializer;
 
