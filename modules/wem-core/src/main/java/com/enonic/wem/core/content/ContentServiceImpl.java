@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ApplyContentPermissionsParams;
 import com.enonic.wem.api.content.CompareContentParams;
 import com.enonic.wem.api.content.CompareContentResult;
@@ -83,8 +82,6 @@ public class ContentServiceImpl
 
     private NodeService nodeService;
 
-    private BlobService blobService;
-
     private ContentNodeTranslator contentNodeTranslator;
 
     private EventPublisher eventPublisher;
@@ -120,7 +117,6 @@ public class ContentServiceImpl
         final Site site = (Site) CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             params( createContentParams ).
@@ -154,7 +150,6 @@ public class ContentServiceImpl
         final Content content = CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             params( params ).
@@ -183,7 +178,6 @@ public class ContentServiceImpl
             params( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
@@ -197,7 +191,6 @@ public class ContentServiceImpl
         return UpdateContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             build().
@@ -210,7 +203,6 @@ public class ContentServiceImpl
         return UpdateMediaCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
@@ -224,7 +216,6 @@ public class ContentServiceImpl
         return DeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             params( params ).
             build().
@@ -239,7 +230,6 @@ public class ContentServiceImpl
         return PushContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             contentId( params.getContentId() ).
@@ -259,7 +249,6 @@ public class ContentServiceImpl
         return GetContentByIdCommand.create( id ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             build().
@@ -282,7 +271,6 @@ public class ContentServiceImpl
         return GetContentByIdsCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             build().
@@ -295,7 +283,6 @@ public class ContentServiceImpl
         return GetContentByPathCommand.create( path ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             build().
@@ -308,7 +295,6 @@ public class ContentServiceImpl
         return GetContentByPathsCommand.create( paths ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             build().
@@ -319,10 +305,8 @@ public class ContentServiceImpl
     public FindContentByParentResult findByParent( final FindContentByParentParams params )
     {
         return FindContentByParentCommand.create( params ).
-            //    queryService( this.queryService ).
-                nodeService( this.nodeService ).
+            nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             build().
@@ -345,8 +329,7 @@ public class ContentServiceImpl
             final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
             throw new SystemException( e,
                                        "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " +
-                                           path
-            );
+                                           path );
         }
     }
 
@@ -366,8 +349,7 @@ public class ContentServiceImpl
             final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
             throw new SystemException( e,
                                        "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " +
-                                           path
-            );
+                                           path );
         }
     }
 
@@ -393,8 +375,7 @@ public class ContentServiceImpl
     {
         final Node movedNode = nodeService.move( NodeId.from( params.getContentId() ),
                                                  NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
-                                                     params.getParentContentPath().toString() ).build()
-        );
+                                                     params.getParentContentPath().toString() ).build() );
 
         return contentNodeTranslator.fromNode( movedNode );
     }
@@ -405,7 +386,6 @@ public class ContentServiceImpl
         return RenameContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             build().
@@ -419,7 +399,6 @@ public class ContentServiceImpl
             params( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             build().
@@ -454,7 +433,6 @@ public class ContentServiceImpl
         return FindContentVersionsCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             contentId( params.getContentId() ).
@@ -471,7 +449,6 @@ public class ContentServiceImpl
         return GetActiveContentVersionsCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             contentId( params.getContentId() ).
@@ -521,7 +498,6 @@ public class ContentServiceImpl
         final ApplyContentPermissionsCommand applyPermissionsCommand = ApplyContentPermissionsCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
-            blobService( this.blobService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             build();
@@ -543,11 +519,6 @@ public class ContentServiceImpl
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
-    }
-
-    public void setBlobService( final BlobService blobService )
-    {
-        this.blobService = blobService;
     }
 
     public void setContentNodeTranslator( final ContentNodeTranslator contentNodeTranslator )

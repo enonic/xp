@@ -2,7 +2,6 @@ package com.enonic.wem.core.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ValidateContentData;
@@ -21,13 +20,10 @@ abstract class AbstractContentCommand
 
     final ContentTypeService contentTypeService;
 
-    final BlobService blobService;
-
     final EventPublisher eventPublisher;
 
     AbstractContentCommand( final Builder builder )
     {
-        this.blobService = builder.blobService;
         this.contentTypeService = builder.contentTypeService;
         this.nodeService = builder.nodeService;
         this.translator = builder.translator;
@@ -54,8 +50,6 @@ abstract class AbstractContentCommand
 
         private ContentTypeService contentTypeService;
 
-        private BlobService blobService;
-
         private ContentNodeTranslator translator;
 
         private EventPublisher eventPublisher;
@@ -70,7 +64,6 @@ abstract class AbstractContentCommand
             this.translator = source.translator;
             this.nodeService = source.nodeService;
             this.contentTypeService = source.contentTypeService;
-            this.blobService = source.blobService;
             this.eventPublisher = source.eventPublisher;
         }
 
@@ -96,13 +89,6 @@ abstract class AbstractContentCommand
         }
 
         @SuppressWarnings("unchecked")
-        public B blobService( final BlobService blobService )
-        {
-            this.blobService = blobService;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
         public B eventPublisher( final EventPublisher eventPublisher )
         {
             this.eventPublisher = eventPublisher;
@@ -113,7 +99,6 @@ abstract class AbstractContentCommand
         {
             Preconditions.checkNotNull( nodeService );
             Preconditions.checkNotNull( contentTypeService );
-            Preconditions.checkNotNull( blobService );
             Preconditions.checkNotNull( translator );
             Preconditions.checkNotNull( eventPublisher );
         }

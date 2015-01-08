@@ -16,6 +16,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.event.EventPublisher;
+import com.enonic.wem.api.media.MediaInfo;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeNotFoundException;
@@ -23,7 +24,6 @@ import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.media.MediaInfo;
 
 import static com.enonic.wem.api.content.Content.newContent;
 
@@ -62,7 +62,6 @@ public class UpdateContentCommandTest
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
-            blobService( this.blobService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfo( this.mediaInfo ).
@@ -94,7 +93,6 @@ public class UpdateContentCommandTest
         UpdateContentCommand command = UpdateContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
-            blobService( this.blobService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfo( this.mediaInfo ).

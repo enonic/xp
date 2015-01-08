@@ -1,22 +1,17 @@
 package com.enonic.wem.core.content;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentEditor;
 import com.enonic.wem.api.content.ContentUpdatedEvent;
 import com.enonic.wem.api.content.EditableContent;
 import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.media.MediaInfo;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -25,7 +20,6 @@ import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.thumb.Thumbnail;
-import com.enonic.wem.api.media.MediaInfo;
 
 final class UpdateContentCommand
     extends AbstractContentCommand
@@ -155,26 +149,6 @@ final class UpdateContentCommand
             }*/
         }
         return null;
-    }
-
-    private Thumbnail createThumbnail( final Attachment attachment )
-    {
-        final Blob originalImage = blobService.get( /* TODO: attachment.getBlobKey()*/ null );
-        final ByteSource source = ThumbnailFactory.resolve( originalImage );
-        final Blob thumbnailBlob;
-        try (final InputStream stream = source.openStream())
-        {
-            thumbnailBlob = blobService.create( stream );
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Failed to create blob for thumbnail attachment: " + attachment.getName() +
-                                            ( attachment.getExtension() == null || attachment.getExtension().equals( "" )
-                                                ? ""
-                                                : "." + attachment.getExtension() ), e );
-        }
-
-        return null; //Thumbnail.from( thumbnailBlob.getKey(), THUMBNAIL_MIME_TYPE, thumbnailBlob.getLength() );
     }
 
     private ContentType getContentType( final ContentTypeName contentTypeName )

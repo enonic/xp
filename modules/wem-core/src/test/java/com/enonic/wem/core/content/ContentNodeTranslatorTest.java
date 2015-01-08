@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
@@ -52,14 +51,12 @@ public class ContentNodeTranslatorTest
     public void before()
     {
         final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
-        final BlobService blobService = Mockito.mock( BlobService.class );
 
         final ContentType contentType =
             ContentType.newContentType().superType( ContentTypeName.structured() ).name( "mymodule:my-content-type" ).build();
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         translator = new ContentNodeTranslator();
-        translator.setBlobService( blobService );
         translator.setContentTypeService( contentTypeService );
     }
 

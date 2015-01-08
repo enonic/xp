@@ -1,15 +1,8 @@
 package com.enonic.wem.core.content;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.io.ByteSource;
-
 import com.enonic.wem.api.Name;
-import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
@@ -17,7 +10,6 @@ import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertyTree;
@@ -34,15 +26,12 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.thumb.Thumbnail;
 
 public class ContentNodeTranslator
 {
     private final ContentDataSerializer CONTENT_SERIALIZER = new ContentDataSerializer();
 
     private ContentTypeService contentTypeService;
-
-    private BlobService blobService;
 
     public CreateNodeParams toCreateNode( final CreateContentParams params )
     {
@@ -165,48 +154,6 @@ public class ContentNodeTranslator
         return NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements( parentContentPath.toString() ).build();
     }
 
-    /*private Thumbnail resolveThumbnailAttachment( final CreateContentParams params )
-    {
-        final ContentType contentType = getContentType( params.getType() );
-        if ( contentType.getSuperType() == null )
-        {
-            return null;
-        }
-
-        if ( contentType.getSuperType().isMedia() )
-        {
-            Attachment mediaAttachment = params.byName( params.getName().toString() );
-            if ( mediaAttachment == null )
-            {
-                mediaAttachment = params.getAttachments().first();
-            }
-            if ( mediaAttachment != null )
-            {
-                return createThumbnail( mediaAttachment );
-            }
-        }
-        return null;
-    }*/
-
-    private Thumbnail createThumbnail( final Attachment origin )
-    {
-        final Blob originalImage = blobService.get( /* TODO: origin.getBlobKey()*/ null );
-        final ByteSource source = ThumbnailFactory.resolve( originalImage );
-        final Blob thumbnailBlob;
-        try (final InputStream stream = source.openStream())
-        {
-            thumbnailBlob = blobService.create( stream );
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Failed to create thumbnail blob for attachment: " + origin.getNameWithoutExtension() +
-                                            ( origin.getExtension() == null || origin.getExtension().equals( "" )
-                                                ? ""
-                                                : "." + origin.getExtension() ), e );
-        }
-        return null; // TODO: Thumbnail.from( thumbnailBlob.getKey(), THUMBNAIL_MIME_TYPE, thumbnailBlob.getLength() );
-    }
-
     private ContentType getContentType( final ContentTypeName contentTypeName )
     {
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
@@ -217,8 +164,4 @@ public class ContentNodeTranslator
         this.contentTypeService = contentTypeService;
     }
 
-    public void setBlobService( final BlobService blobService )
-    {
-        this.blobService = blobService;
-    }
 }
