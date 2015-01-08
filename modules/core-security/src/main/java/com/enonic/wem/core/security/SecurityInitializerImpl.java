@@ -93,6 +93,14 @@ public final class SecurityInitializerImpl
             displayName( "Everyone" ).
             build();
         addRole( createEveryoneRole );
+
+        final CreateRoleParams createAdminLoginRole = CreateRoleParams.create().
+            roleKey( RoleKeys.ADMIN_LOGIN ).
+            displayName( "Admin console login" ).
+            build();
+        addRole( createAdminLoginRole );
+
+        addMember( RoleKeys.ADMIN_LOGIN, createAdmin.getKey() );
     }
 
     private void initializeUserStores()

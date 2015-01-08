@@ -16,4 +16,6 @@ public final class RoleKeys
 
     public static final PrincipalKey EVERYONE = PrincipalKey.ofRole( "everyone" );
 
+    public static final PrincipalKey ADMIN_LOGIN = PrincipalKey.ofRole( "admin-login" );
+
 }
