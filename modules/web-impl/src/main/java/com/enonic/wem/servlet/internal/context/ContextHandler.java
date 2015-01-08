@@ -1,37 +1,40 @@
 package com.enonic.wem.servlet.internal.context;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.osgi.service.component.annotations.Component;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.xp.web.WebContext;
-import com.enonic.xp.web.WebHandler;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.handler.OncePerRequestHandler;
 
-@Component(immediate = true)
+@Component(immediate = true, service = WebHandler.class)
 public final class ContextHandler
-    implements WebHandler
+    extends OncePerRequestHandler
 {
-    @Override
-    public int getOrder()
+    public ContextHandler()
     {
-        return MIN_ORDER;
+        setOrder( MIN_ORDER );
     }
 
     @Override
-    public boolean handle( final WebContext context )
+    protected boolean canHandle( final HttpServletRequest req )
+    {
+        return true;
+    }
+
+    @Override
+    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        final Context current = ContextAccessor.current();
-
-        final HttpServletRequest req = context.getRequest();
+        final Context context = ContextAccessor.current();
         final HttpSession session = req.getSession( true );
 
-        current.getLocalScope().setSession( new SessionWrapper( session ) );
-        context.setRequest( new HttpRequestDelegate( req ) );
-
-        return false;
+        context.getLocalScope().setSession( new SessionWrapper( session ) );
+        chain.handle( new HttpRequestDelegate( req ), res );
     }
 }

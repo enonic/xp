@@ -2,6 +2,8 @@ package com.enonic.wem.servlet.internal.jaxrs;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.resteasy.core.SynchronousDispatcher;
 import org.jboss.resteasy.plugins.server.servlet.ServletBootstrap;
@@ -12,13 +14,14 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.wem.servlet.internal.exception.ExceptionFeature;
-import com.enonic.xp.web.WebContext;
-import com.enonic.xp.web.WebHandler;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.jaxrs.JaxRsComponent;
+import com.enonic.xp.web.handler.BaseWebHandler;
 
-@Component(immediate = true)
+@Component(immediate = true, service = WebHandler.class)
 public final class JaxRsHandler
-    implements WebHandler
+    extends BaseWebHandler
 {
     private final JaxRsDispatcher dispatcher;
 
@@ -28,6 +31,7 @@ public final class JaxRsHandler
 
     public JaxRsHandler()
     {
+        setOrder( MAX_ORDER );
         this.dispatcher = new JaxRsDispatcher();
         this.app = new JaxRsApplication();
         this.app.addComponent( new ExceptionFeature() );
@@ -36,18 +40,17 @@ public final class JaxRsHandler
     }
 
     @Override
-    public int getOrder()
+    protected boolean canHandle( final HttpServletRequest req )
     {
-        return MAX_ORDER;
+        return true;
     }
 
     @Override
-    public boolean handle( final WebContext context )
+    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        refreshIfNeeded( context.getServletContext() );
-        this.dispatcher.service( context.getMethod(), context.getRequest(), context.getResponse(), true );
-        return true;
+        refreshIfNeeded( req.getServletContext() );
+        this.dispatcher.service( req.getMethod(), req, res, true );
     }
 
     private void initDispatcher( final ServletContext context )

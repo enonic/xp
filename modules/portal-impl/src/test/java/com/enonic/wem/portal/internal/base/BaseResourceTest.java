@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.enonic.wem.servlet.internal.dispatch.WebContextImpl;
 import com.enonic.wem.servlet.internal.jaxrs.JaxRsHandler;
 
 public abstract class BaseResourceTest
@@ -41,12 +40,8 @@ public abstract class BaseResourceTest
     protected final MockHttpServletResponse executeRequest( final MockHttpServletRequest request )
         throws Exception
     {
-        final WebContextImpl context = new WebContextImpl();
-        context.setRequest( request );
-
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        context.setResponse( response );
-        this.servlet.handle( context );
+        this.servlet.handle( request, response, null );
         return response;
     }
 }

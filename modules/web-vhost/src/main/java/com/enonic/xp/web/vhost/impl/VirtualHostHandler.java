@@ -1,29 +1,32 @@
 package com.enonic.xp.web.vhost.impl;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.web.WebContext;
-import com.enonic.xp.web.WebHandler;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.handler.OncePerRequestHandler;
 
-@Component(immediate = true)
+@Component(immediate = true, service = WebHandler.class)
 public final class VirtualHostHandler
-    implements WebHandler
+    extends OncePerRequestHandler
 {
-    private final static Logger LOG = LoggerFactory.getLogger( VirtualHostHandler.class );
-
-    @Override
-    public int getOrder()
+    public VirtualHostHandler()
     {
-        return MIN_ORDER + 10;
+        setOrder( MIN_ORDER + 10 );
     }
 
     @Override
-    public boolean handle( final WebContext context )
+    protected boolean canHandle( final HttpServletRequest req )
+    {
+        return false;
+    }
+
+    @Override
+    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        LOG.info( "Executing virtual-host handler for " + context.getPath() );
-        return false;
     }
 }

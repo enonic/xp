@@ -1,7 +1,6 @@
-package com.enonic.wem.servlet.internal.dispatch;
+package com.enonic.xp.web.impl;
 
 import java.io.IOException;
-import java.util.Set;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -14,21 +13,17 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import com.google.common.collect.Sets;
-
-import com.enonic.xp.web.WebContext;
-import com.enonic.xp.web.WebHandler;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
+import com.enonic.xp.web.handler.WebHandler;
 
 @Component(immediate = true, service = Servlet.class, property = "alias=/*")
 public final class DispatcherServlet
     extends HttpServlet
 {
-    private final Set<WebHandler> handlers;
+    private final WebHandlerRegistry registry;
 
     public DispatcherServlet()
     {
-        this.handlers = Sets.newTreeSet( new WebHandlerComparator() );
+        this.registry = new WebHandlerRegistry();
     }
 
     @Override
@@ -45,59 +40,25 @@ public final class DispatcherServlet
         }
         catch ( final Exception e )
         {
-            throw new IOException( e );
-        }
-        finally
-        {
-            ServletRequestHolder.setRequest( null );
+            throw new ServletException( e );
         }
     }
 
     private void doService( final HttpServletRequest req, final HttpServletResponse res )
         throws Exception
     {
-        final WebContextImpl context = new WebContextImpl();
-        context.setRequest( req );
-        context.setResponse( res );
-
-        final boolean result = doHandle( context );
-        if ( result )
-        {
-            return;
-        }
-
-        res.sendError( HttpServletResponse.SC_NOT_FOUND );
-    }
-
-    private boolean doHandle( final WebContext context )
-        throws Exception
-    {
-        for ( final WebHandler handler : this.handlers )
-        {
-            final boolean result = handler.handle( context );
-            if ( result )
-            {
-                return true;
-            }
-        }
-
-        return false;
+        final WebHandlerChainImpl chain = new WebHandlerChainImpl( this.registry.getList() );
+        chain.handle( req, res );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addHandler( final WebHandler handler )
     {
-        synchronized ( this.handlers )
-        {
-            this.handlers.add( handler );
-        }
+        this.registry.add( handler );
     }
 
     public void removeHandler( final WebHandler handler )
     {
-        synchronized ( this.handlers )
-        {
-            this.handlers.remove( handler );
-        }
+        this.registry.remove( handler );
     }
 }

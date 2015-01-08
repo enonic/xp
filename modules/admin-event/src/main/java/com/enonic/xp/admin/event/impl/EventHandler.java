@@ -5,6 +5,9 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.eclipse.jetty.websocket.api.UpgradeRequest;
 import org.eclipse.jetty.websocket.api.UpgradeResponse;
 import org.eclipse.jetty.websocket.api.WebSocketBehavior;
@@ -18,12 +21,14 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.web.WebContext;
-import com.enonic.xp.web.WebHandler;
+import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.handler.BaseWebHandler;
 
-@Component(immediate = true)
+@Component(immediate = true, service = {WebHandler.class, WebSocketManager.class})
 public final class EventHandler
-    implements WebSocketCreator, WebSocketManager, WebHandler
+    extends BaseWebHandler
+    implements WebSocketCreator, WebSocketManager
 {
     private final static Logger LOG = LoggerFactory.getLogger( EventHandler.class );
 
@@ -32,6 +37,11 @@ public final class EventHandler
     private WebSocketServletFactory factory;
 
     private final Set<EventWebSocket> sockets = new CopyOnWriteArraySet<>();
+
+    public EventHandler()
+    {
+        setOrder( 0 );
+    }
 
     @Activate
     public void init()
@@ -57,32 +67,21 @@ public final class EventHandler
     }
 
     @Override
-    public int getOrder()
+    protected boolean canHandle( final HttpServletRequest req )
     {
-        return 0;
+        return req.getPathInfo().equals( "/admin/event" );
     }
 
     @Override
-    public boolean handle( final WebContext context )
+    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        if ( !context.isGet() )
+        if ( !this.factory.isUpgradeRequest( req, res ) )
         {
-            return false;
+            return;
         }
 
-        if ( !context.getPath().equals( "/admin/event" ) )
-        {
-            return false;
-        }
-
-        if ( !this.factory.isUpgradeRequest( context.getRequest(), context.getResponse() ) )
-        {
-            return false;
-        }
-
-        this.factory.acceptWebSocket( context.getRequest(), context.getResponse() );
-        return true;
+        this.factory.acceptWebSocket( req, res );
     }
 
     @Override
