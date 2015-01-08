@@ -50,7 +50,7 @@ module app.browse {
             var compareStatusColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
                 setName("CompareStatus").
                 setId("compareStatus").
-                setField("compareContentResult.compareStatus").
+                setField("compareStatus").
                 setFormatter(this.statusFormatter).
                 setCssClass("status").
                 setMinWidth(75).
