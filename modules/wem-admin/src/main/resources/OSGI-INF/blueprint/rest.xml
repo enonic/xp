@@ -11,8 +11,6 @@
 
   <reference id="mixinService" interface="com.enonic.wem.api.schema.mixin.MixinService"/>
 
-  <reference id="blobService" interface="com.enonic.wem.repo.internal.blob.BlobService"/>
-
   <reference id="moduleService" interface="com.enonic.wem.api.module.ModuleService"/>
 
   <reference id="relationshipService" interface="com.enonic.wem.api.relationship.RelationshipService"/>
@@ -70,11 +68,6 @@
     </bean>
   </service>
 
-  <service auto-export="interfaces">
-    <bean class="com.enonic.wem.admin.rest.resource.blob.BlobResource">
-      <property name="blobService" ref="blobService"/>
-    </bean>
-  </service>
 
   <service auto-export="interfaces">
     <bean class="com.enonic.wem.admin.rest.resource.module.ModuleResource">

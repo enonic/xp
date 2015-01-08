@@ -31,7 +31,6 @@
 
     <module>modules/core-event</module>
     <module>modules/core-module</module>
-    <module>modules/core-blob</module>
     <module>modules/core-repo</module>
     <module>modules/core-security</module>
     <module>modules/core-image</module>

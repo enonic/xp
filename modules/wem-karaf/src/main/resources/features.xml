@@ -24,7 +24,6 @@
     <bundle start-level="50">mvn:com.enonic.wem/wem-api/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/core-event/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/core-module/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/core-blob/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/core-repo/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/core-security/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/core-image/${project.version}</bundle>

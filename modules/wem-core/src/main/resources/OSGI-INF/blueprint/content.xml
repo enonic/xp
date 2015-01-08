@@ -2,14 +2,12 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
   <bean id="contentNodeTranslator" class="com.enonic.wem.core.content.ContentNodeTranslator">
-    <property name="blobService" ref="blobService"/>
     <property name="contentTypeService" ref="contentTypeService"/>
   </bean>
 
   <bean id="contentService" class="com.enonic.wem.core.content.ContentServiceImpl">
     <property name="contentTypeService" ref="contentTypeService"/>
     <property name="nodeService" ref="nodeService"/>
-    <property name="blobService" ref="blobService"/>
     <property name="contentNodeTranslator" ref="contentNodeTranslator"/>
     <property name="eventPublisher" ref="eventPublisher"/>
     <property name="mediaInfoService" ref="mediaInfoService"/>
