@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.content.page;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -8,9 +9,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.json.content.page.PageDescriptorJson;
 import com.enonic.wem.admin.json.content.page.PageDescriptorListJson;
+import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.content.page.part.GetByModulesParams;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.PageDescriptor;
@@ -22,6 +23,7 @@ import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("admin-login")
 public final class PageDescriptorResource
     implements JaxRsComponent
 {

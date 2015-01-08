@@ -2,6 +2,7 @@ package com.enonic.wem.admin.rest.resource.content;
 
 import java.awt.image.BufferedImage;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -30,6 +31,7 @@ import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.Imag
 
 @Path(ResourceConstants.REST_ROOT + "content/image")
 @Produces("image/*")
+@RolesAllowed("admin-login")
 public final class ContentImageResource
     implements JaxRsComponent
 {

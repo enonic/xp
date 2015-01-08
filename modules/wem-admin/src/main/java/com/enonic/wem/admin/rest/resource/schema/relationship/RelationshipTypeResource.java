@@ -2,6 +2,7 @@ package com.enonic.wem.admin.rest.resource.schema.relationship;
 
 import java.awt.image.BufferedImage;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -29,6 +30,7 @@ import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "schema/relationship")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("admin-login")
 public final class RelationshipTypeResource
     implements JaxRsComponent
 {

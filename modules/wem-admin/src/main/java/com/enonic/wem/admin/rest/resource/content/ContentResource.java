@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -103,6 +104,7 @@ import com.enonic.xp.web.jaxrs.JaxRsComponent;
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("admin-login")
 public final class ContentResource
     implements JaxRsComponent
 {

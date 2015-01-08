@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.content.page.layout;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -20,6 +21,7 @@ import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/layout/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("admin-login")
 public final class LayoutDescriptorResource
     implements JaxRsComponent
 {

@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.module;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -24,6 +25,7 @@ import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "module")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("admin-login")
 public final class ModuleResource
     implements JaxRsComponent
 {

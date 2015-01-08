@@ -2,6 +2,7 @@ package com.enonic.wem.admin.rest.resource.schema.content;
 
 import java.awt.image.BufferedImage;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -31,6 +32,7 @@ import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "schema/content")
 @Produces("application/json")
+@RolesAllowed("admin-login")
 public final class ContentTypeResource
     implements JaxRsComponent
 {

@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -29,6 +30,7 @@ import com.enonic.xp.web.jaxrs.JaxRsComponent;
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content/media")
 @Produces("application/octet-stream")
+@RolesAllowed("admin-login")
 public final class ContentMediaResource
     implements JaxRsComponent
 {

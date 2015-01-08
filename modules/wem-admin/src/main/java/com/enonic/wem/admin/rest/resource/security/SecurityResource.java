@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -63,6 +64,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "security")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("admin-login")
 public final class SecurityResource
     implements JaxRsComponent
 {

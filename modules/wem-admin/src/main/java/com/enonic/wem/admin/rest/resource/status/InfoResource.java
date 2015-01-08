@@ -3,6 +3,7 @@ package com.enonic.wem.admin.rest.resource.status;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -21,6 +22,7 @@ import com.enonic.wem.admin.status.StatusInfoBuilder;
 import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path("status")
+@RolesAllowed("admin-login")
 public final class InfoResource
     implements JaxRsComponent
 {

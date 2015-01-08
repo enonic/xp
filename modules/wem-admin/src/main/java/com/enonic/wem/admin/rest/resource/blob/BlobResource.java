@@ -3,6 +3,7 @@ package com.enonic.wem.admin.rest.resource.blob;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -30,6 +31,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Path(ResourceConstants.REST_ROOT + "blob")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("admin-login")
 public final class BlobResource
     implements JaxRsComponent
 {

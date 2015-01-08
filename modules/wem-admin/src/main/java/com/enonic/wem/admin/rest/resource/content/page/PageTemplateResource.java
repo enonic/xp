@@ -2,6 +2,7 @@ package com.enonic.wem.admin.rest.resource.content.page;
 
 import java.io.IOException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -32,6 +33,7 @@ import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @javax.ws.rs.Path(ResourceConstants.REST_ROOT + "content/page/template")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("admin-login")
 public final class PageTemplateResource
     implements JaxRsComponent
 {

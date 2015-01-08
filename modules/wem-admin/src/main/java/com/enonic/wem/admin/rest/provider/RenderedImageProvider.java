@@ -7,6 +7,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 
+import javax.annotation.security.RolesAllowed;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.ws.rs.Consumes;
@@ -22,6 +23,7 @@ import com.enonic.xp.web.jaxrs.JaxRsComponent;
 @Provider
 @Produces("image/*")
 @Consumes({"image/*", "application/octet-stream"})
+@RolesAllowed("admin-login")
 public final class RenderedImageProvider
     implements MessageBodyWriter<RenderedImage>, JaxRsComponent
 {
