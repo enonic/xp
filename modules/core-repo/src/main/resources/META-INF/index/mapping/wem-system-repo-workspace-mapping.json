@@ -11,13 +11,11 @@
         "_timestamp": {
             "enabled": true
         },
+        "_parent": {
+            "type": "node"
+        },
         "properties": {
-            "nodeid": {
-                "type": "string",
-                "store": "true",
-                "index": "not_analyzed"
-            },
-            "blobkey": {
+            "versionid": {
                 "type": "string",
                 "store": "true",
                 "index": "not_analyzed"

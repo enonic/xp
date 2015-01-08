@@ -1,5 +1,5 @@
 {
-  "workspace": {
+  "node": {
     "_all": {
       "enabled": false
     },
@@ -11,16 +11,18 @@
     "_timestamp": {
       "enabled": true
     },
-    "_parent": {
-      "type": "node"
-    },
     "properties": {
-      "versionid": {
+      "nodeid": {
         "type": "string",
         "store": "true",
         "index": "not_analyzed"
       },
-      "workspace": {
+      "nodetype": {
+        "type": "string",
+        "store": "true",
+        "index": "not_analyzed"
+      },
+      "latestversion": {
         "type": "string",
         "store": "true",
         "index": "not_analyzed"

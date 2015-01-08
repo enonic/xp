@@ -26,17 +26,17 @@ import com.enonic.wem.repo.internal.repository.RepositoryInitializerImpl;
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
 {
-    NodeDaoImpl nodeDao;
+    protected NodeDaoImpl nodeDao;
 
-    ElasticsearchVersionService versionService;
+    protected ElasticsearchVersionService versionService;
 
-    ElasticsearchWorkspaceService workspaceService;
+    protected ElasticsearchWorkspaceService workspaceService;
 
-    ElasticsearchIndexService indexService;
+    protected ElasticsearchIndexService indexService;
 
-    ElasticsearchQueryService queryService;
+    protected ElasticsearchQueryService queryService;
 
-    BlobService blobService;
+    protected BlobService blobService;
 
     @Before
     public void setUp()

@@ -13,6 +13,8 @@ public class RepositoryIndexMappingProvider
 
     private final static String VERSION = "-version";
 
+    private final static String NODE = "-node";
+
     private final static String SEARCH = "-search";
 
     public static String getWorkspaceMapping( final Repository repository )
@@ -24,6 +26,12 @@ public class RepositoryIndexMappingProvider
     {
         return doGet( repository, PREFIX + repository.getId().toString() + VERSION + STORAGE_MAPPING_FILE_PATTERN );
     }
+
+    public static String getNodeMapping( final Repository repository )
+    {
+        return doGet( repository, PREFIX + repository.getId().toString() + NODE + STORAGE_MAPPING_FILE_PATTERN );
+    }
+
 
     public static String getSearchMappings( final Repository repository )
     {

@@ -42,7 +42,7 @@ public class PushNodeCommand
 
         this.workspaceService.store( StoreWorkspaceDocument.create().
             nodeVersionId( currentVersion ).
-            id( this.id ).
+            node( currentNode ).
             build(), WorkspaceContext.from( this.target, context.getRepositoryId() ) );
 
         this.indexService.store( currentNode, currentVersion, IndexContext.create().

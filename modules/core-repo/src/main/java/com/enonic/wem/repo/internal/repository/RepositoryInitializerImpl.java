@@ -8,12 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.initializer.RepositoryInitializer;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.repo.internal.elasticsearch.ClusterHealthStatus;
 import com.enonic.wem.repo.internal.elasticsearch.ClusterStatusCode;
 import com.enonic.wem.repo.internal.index.IndexService;
 import com.enonic.wem.repo.internal.index.IndexType;
-import com.enonic.wem.api.initializer.RepositoryInitializer;
 
 public final class RepositoryInitializerImpl
     implements RepositoryInitializer
@@ -45,6 +45,8 @@ public final class RepositoryInitializerImpl
 
         indexService.applyMapping( storageIndexName, IndexType.VERSION.getName(),
                                    RepositoryIndexMappingProvider.getVersionMapping( repository ) );
+
+        indexService.applyMapping( storageIndexName, "node", RepositoryIndexMappingProvider.getNodeMapping( repository ) );
 
         indexService.applyMapping( searchIndexName, IndexType._DEFAULT_.getName(),
                                    RepositoryIndexMappingProvider.getSearchMappings( repository ) );

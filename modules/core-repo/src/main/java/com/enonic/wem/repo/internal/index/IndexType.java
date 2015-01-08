@@ -5,8 +5,7 @@ public enum IndexType
     _DEFAULT_,
     WORKSPACE,
     VERSION,
-    SEARCH,
-    ENTITY;
+    NODE;
 
     public String getName()
     {

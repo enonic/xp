@@ -1,26 +1,18 @@
 {
-  "workspace": {
+  "node": {
     "_all": {
       "enabled": false
     },
     "_source": {
-      "enabled": true
+      "enabled": false
     },
     "date_detection": false,
     "numeric_detection": false,
     "_timestamp": {
       "enabled": true
     },
-    "_parent": {
-      "type": "node"
-    },
     "properties": {
-      "versionid": {
-        "type": "string",
-        "store": "true",
-        "index": "not_analyzed"
-      },
-      "workspace": {
+      "nodeid": {
         "type": "string",
         "store": "true",
         "index": "not_analyzed"

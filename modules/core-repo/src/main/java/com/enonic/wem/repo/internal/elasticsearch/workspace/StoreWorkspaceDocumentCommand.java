@@ -4,6 +4,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Requests;
 
 import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.repo.internal.elasticsearch.xcontent.NodeXContentBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.WorkspaceXContentBuilderFactory;
 import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
@@ -31,13 +32,23 @@ public class StoreWorkspaceDocumentCommand
 
     void execute()
     {
-        final WorkspaceDocumentId workspaceDocumentId = new WorkspaceDocumentId( document.getNodeId(), this.workspace );
+        final WorkspaceDocumentId workspaceDocumentId = new WorkspaceDocumentId( document.getNode().id(), this.workspace );
+
+        final IndexRequest nodeIndexRequest = Requests.indexRequest().
+            index( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
+            type( IndexType.NODE.getName() ).
+            id( document.getNode().id() + "_" + document.getNodeVersionId() ).
+            source( NodeXContentBuilderFactory.create( document.getNode(), document.getNodeVersionId() ) ).
+            refresh( DEFAULT_REFRESH );
+
+        elasticsearchDao.store( nodeIndexRequest );
 
         final IndexRequest publish = Requests.indexRequest().
             index( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
             type( IndexType.WORKSPACE.getName() ).
             source( WorkspaceXContentBuilderFactory.create( document, this.workspace ) ).
             id( workspaceDocumentId.toString() ).
+            parent( document.getNode().id() + "_" + document.getNodeVersionId() ).
             refresh( DEFAULT_REFRESH );
 
         elasticsearchDao.store( publish );

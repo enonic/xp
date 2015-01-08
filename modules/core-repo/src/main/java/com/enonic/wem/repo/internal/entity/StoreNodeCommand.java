@@ -2,17 +2,17 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
 import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeVersionId;
 
 public class StoreNodeCommand
     extends AbstractNodeCommand
 {
-    private Node node;
+    private final Node node;
 
     private StoreNodeCommand( final Builder builder )
     {
@@ -32,7 +32,7 @@ public class StoreNodeCommand
             build(), context.getRepositoryId() );
 
         this.workspaceService.store( StoreWorkspaceDocument.create().
-            id( node.id() ).
+            node( node ).
             nodeVersionId( updatedNodeVersionId ).
             build(), WorkspaceContext.from( context ) );
 
