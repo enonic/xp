@@ -43,6 +43,7 @@ function startApplication() {
 
     if (userLoggedIn) {
         homeMainContainer.showAppSelector();
+        serverEventsListener.start();
     } else {
         homeMainContainer.showLogin();
     }
