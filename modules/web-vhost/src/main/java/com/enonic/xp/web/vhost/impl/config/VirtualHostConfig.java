@@ -1,6 +1,6 @@
 package com.enonic.xp.web.vhost.impl.config;
 
-import java.util.List;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
 
 public interface VirtualHostConfig
 {
@@ -8,5 +8,5 @@ public interface VirtualHostConfig
 
     public boolean isRequireMapping();
 
-    public List<VirtualHostMapping> getMappings();
+    public VirtualHostMappings getMappings();
 }

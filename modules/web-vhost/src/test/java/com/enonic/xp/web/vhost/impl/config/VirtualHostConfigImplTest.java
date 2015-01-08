@@ -8,9 +8,12 @@ import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import junit.framework.Assert;
+
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 public class VirtualHostConfigImplTest
 {
@@ -27,9 +30,10 @@ public class VirtualHostConfigImplTest
     {
         Assert.assertEquals( false, this.config.isEnabled() );
         Assert.assertEquals( false, this.config.isRequireMapping() );
-
         Assert.assertNotNull( this.config.getMappings() );
-        Assert.assertEquals( 0, this.config.getMappings().size() );
+
+        final List<VirtualHostMapping> mappings = Lists.newArrayList( this.config.getMappings() );
+        Assert.assertEquals( 0, mappings.size() );
     }
 
     @Test
@@ -40,9 +44,10 @@ public class VirtualHostConfigImplTest
 
         Assert.assertEquals( false, this.config.isEnabled() );
         Assert.assertEquals( false, this.config.isRequireMapping() );
-
         Assert.assertNotNull( this.config.getMappings() );
-        Assert.assertEquals( 0, this.config.getMappings().size() );
+
+        final List<VirtualHostMapping> mappings = Lists.newArrayList( this.config.getMappings() );
+        Assert.assertEquals( 0, mappings.size() );
     }
 
     @Test
@@ -54,7 +59,7 @@ public class VirtualHostConfigImplTest
         Assert.assertEquals( true, this.config.isEnabled() );
         Assert.assertEquals( true, this.config.isRequireMapping() );
 
-        final List<VirtualHostMapping> mappings = this.config.getMappings();
+        final List<VirtualHostMapping> mappings = Lists.newArrayList( this.config.getMappings() );
 
         Assert.assertNotNull( mappings );
         Assert.assertEquals( 1, mappings.size() );
@@ -71,14 +76,14 @@ public class VirtualHostConfigImplTest
         Assert.assertEquals( true, this.config.isEnabled() );
         Assert.assertEquals( true, this.config.isRequireMapping() );
 
-        final List<VirtualHostMapping> mappings = this.config.getMappings();
+        final List<VirtualHostMapping> mappings = Lists.newArrayList( this.config.getMappings() );
 
         Assert.assertNotNull( mappings );
         Assert.assertEquals( 3, mappings.size() );
 
-        assertMapping( mappings.get( 0 ), "a", "localhost", "/status/a", "/full/path/status/a" );
-        assertMapping( mappings.get( 1 ), "b", "enonic.com", "/status/b", "/full/path/status/b" );
-        assertMapping( mappings.get( 2 ), "c", "foo.no", "/status/c", "/full/path/status/c" );
+        assertMapping( mappings.get( 2 ), "a", "localhost", "/status/a", "/full/path/status/a" );
+        assertMapping( mappings.get( 0 ), "b", "enonic.com", "/status/b", "/full/path/status/b" );
+        assertMapping( mappings.get( 1 ), "c", "foo.no", "/status/c", "/full/path/status/c" );
     }
 
     private void loadConfig( final String name )

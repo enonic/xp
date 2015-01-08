@@ -1,12 +1,11 @@
 package com.enonic.xp.web.vhost.impl.config;
 
-import java.util.List;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
-import com.google.common.collect.ImmutableList;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.web.vhost")
 public final class VirtualHostConfigImpl
@@ -16,13 +15,13 @@ public final class VirtualHostConfigImpl
 
     private boolean requireMapping;
 
-    private ImmutableList<VirtualHostMapping> mappings;
+    private VirtualHostMappings mappings;
 
     public VirtualHostConfigImpl()
     {
         this.enabled = false;
         this.requireMapping = false;
-        this.mappings = ImmutableList.of();
+        this.mappings = new VirtualHostMappings();
     }
 
     @Override
@@ -38,7 +37,7 @@ public final class VirtualHostConfigImpl
     }
 
     @Override
-    public List<VirtualHostMapping> getMappings()
+    public VirtualHostMappings getMappings()
     {
         return this.mappings;
     }

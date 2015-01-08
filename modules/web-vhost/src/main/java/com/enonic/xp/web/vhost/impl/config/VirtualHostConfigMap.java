@@ -6,8 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
+
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
 
 final class VirtualHostConfigMap
 {
@@ -30,20 +32,20 @@ final class VirtualHostConfigMap
         return getBoolean( "requireMapping", false );
     }
 
-    public ImmutableList<VirtualHostMapping> buildMappings()
+    public VirtualHostMappings buildMappings()
     {
-        final ImmutableList.Builder<VirtualHostMapping> builder = ImmutableList.builder();
+        final VirtualHostMappings mappings = new VirtualHostMappings();
         for ( final String name : findMappingNames() )
         {
-            builder.add( buildMapping( name ) );
+            mappings.add( buildMapping( name ) );
         }
 
-        return builder.build();
+        return mappings;
     }
 
     private VirtualHostMapping buildMapping( final String name )
     {
-        final VirtualHostMappingImpl mapping = new VirtualHostMappingImpl( name );
+        final VirtualHostMapping mapping = new VirtualHostMapping( name );
 
         final String prefix = "mapping." + name + ".";
         mapping.setHost( getString( prefix + "host" ) );
