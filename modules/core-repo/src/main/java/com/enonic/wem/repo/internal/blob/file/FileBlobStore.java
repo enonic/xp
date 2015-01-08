@@ -1,4 +1,4 @@
-package com.enonic.wem.internal.blob.file;
+package com.enonic.wem.repo.internal.blob.file;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,9 +17,9 @@ import com.google.common.io.Files;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.blob.BlobKeyCreator;
 import com.enonic.wem.api.home.HomeDir;
-import com.enonic.wem.internal.blob.BlobRecord;
-import com.enonic.wem.internal.blob.BlobStore;
-import com.enonic.wem.internal.blob.BlobStoreException;
+import com.enonic.wem.repo.internal.blob.BlobRecord;
+import com.enonic.wem.repo.internal.blob.BlobStore;
+import com.enonic.wem.repo.internal.blob.BlobStoreException;
 
 public final class FileBlobStore
     implements BlobStore
