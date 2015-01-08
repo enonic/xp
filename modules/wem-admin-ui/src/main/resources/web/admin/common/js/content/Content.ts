@@ -145,7 +145,7 @@ module api.content {
             this.data = PropertyTree.fromJson(json.data, propertyIdProvider);
             this.attachments = new api.content.attachment.AttachmentsBuilder().fromJson(json.attachments).build();
             this.metadata = [];
-            json.metadata.forEach((metadataJson: api.content.json.MetadataJson) => {
+            json.meta.forEach((metadataJson: api.content.json.MetadataJson) => {
                 this.metadata.push(Metadata.fromJson(metadataJson, propertyIdProvider));
             });
 

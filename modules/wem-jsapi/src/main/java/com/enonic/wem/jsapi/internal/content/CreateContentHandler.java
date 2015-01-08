@@ -50,7 +50,7 @@ public final class CreateContentHandler
         params.draft( req.param( "draft" ).value( Boolean.class ) );
         params.type( contentTypeName( req.param( "contentType" ).value( String.class ) ) );
         params.contentData( propertyTree( req.param( "data" ).map() ) );
-        params.metadata( metaDataList( req.param( "metadata" ).map() ) );
+        params.metadata( metaDataList( req.param( "meta" ).map() ) );
         return params;
     }
 

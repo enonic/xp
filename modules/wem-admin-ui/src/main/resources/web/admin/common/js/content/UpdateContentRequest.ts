@@ -10,7 +10,7 @@ module api.content {
 
         private data: api.data.PropertyTree;
 
-        private metadata: Metadata[];
+        private meta: Metadata[];
 
         private displayName: string;
 
@@ -45,7 +45,7 @@ module api.content {
         }
 
         setMetadata(metadata: Metadata[]): UpdateContentRequest {
-            this.metadata = metadata;
+            this.meta = metadata;
             return this;
         }
 
@@ -65,7 +65,7 @@ module api.content {
                 draft: this.draft,
                 contentName: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.name.toString(),
                 data: this.data.toJson(),
-                metadata: (this.metadata || []).map((metadata: Metadata) => metadata.toJson()),
+                meta: (this.meta || []).map((metadata: Metadata) => metadata.toJson()),
                 displayName: this.displayName,
                 thumbnail: this.thumbnail ? this.thumbnail.toJson() : undefined
             };

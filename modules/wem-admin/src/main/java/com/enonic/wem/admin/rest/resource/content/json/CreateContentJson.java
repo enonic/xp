@@ -30,7 +30,7 @@ public final class CreateContentJson
                        @JsonProperty("displayName") final String displayName, @JsonProperty("parent") final String parent,
                        @JsonProperty("contentType") final String contentType,
                        @JsonProperty("data") final List<PropertyArrayJson> dataJsonList,
-                       @JsonProperty("metadata") final List<MetadataJson> metadataJsonList )
+                       @JsonProperty("meta") final List<MetadataJson> metadataJsonList )
     {
 
         this.createContent = new CreateContentParams();

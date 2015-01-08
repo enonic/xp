@@ -72,7 +72,7 @@ var expectedJson = {
         "hasChildren": false,
         "isPageTemplate": false,
         "isSite": false,
-        "metadata": {},
+        "meta": {},
         "page": {},
         "type": "system:unstructured"
     }, {
@@ -89,7 +89,7 @@ var expectedJson = {
         "hasChildren": false,
         "isPageTemplate": false,
         "isSite": false,
-        "metadata": {},
+        "meta": {},
         "page": {},
         "type": "system:unstructured"
     }, {
@@ -106,7 +106,7 @@ var expectedJson = {
         "hasChildren": false,
         "isPageTemplate": false,
         "isSite": false,
-        "metadata": {},
+        "meta": {},
         "page": {},
         "type": "system:unstructured"
     }],

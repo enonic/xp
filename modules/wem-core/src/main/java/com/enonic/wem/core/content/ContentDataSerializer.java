@@ -33,7 +33,7 @@ public class ContentDataSerializer
 
         if ( content.hasMetadata() )
         {
-            final PropertySet metadataSet = contentAsData.addSet( ContentPropertyNames.METADATA );
+            final PropertySet metadataSet = contentAsData.addSet( ContentPropertyNames.META_STEPS );
             for ( final Metadata metadata : content.getAllMetadata() )
             {
                 metadataSet.addSet( metadata.getName().toString(), metadata.getData().getRoot().copy( contentAsData.getTree() ) );
@@ -64,7 +64,7 @@ public class ContentDataSerializer
         builder.draft( false );
         builder.data( contentAsSet.getSet( ContentPropertyNames.DATA ).toTree() );
 
-        final PropertySet metadataSet = contentAsSet.getSet( ContentPropertyNames.METADATA );
+        final PropertySet metadataSet = contentAsSet.getSet( ContentPropertyNames.META_STEPS );
         if ( metadataSet != null )
         {
             final Metadatas.Builder metadatasBuilder = Metadatas.builder();
@@ -105,10 +105,10 @@ public class ContentDataSerializer
 
         if ( params.getMetadata() != null && !params.getMetadata().isEmpty() )
         {
-            final PropertySet metadataSet = contentAsData.addSet( ContentPropertyNames.METADATA );
+            final PropertySet metaSet = contentAsData.addSet( ContentPropertyNames.META_STEPS );
             for ( final Metadata metadata : params.getMetadata() )
             {
-                metadataSet.addSet( metadata.getName().toString(), metadata.getData().getRoot().copy( metadataSet.getTree() ) );
+                metaSet.addSet( metadata.getName().toString(), metadata.getData().getRoot().copy( metaSet.getTree() ) );
             }
         }
 

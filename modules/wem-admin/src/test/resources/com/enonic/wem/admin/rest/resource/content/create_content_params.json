@@ -4,7 +4,7 @@
     "parent": "parent-path:/",
     "contentType": "mymodule::my-type",
     "data": [],
-    "metadata": [],
+  "meta": [],
     "displayName": "Content One",
     "attachments": []
 }

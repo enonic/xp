@@ -18,7 +18,7 @@ var expectedJson = {
     "hasChildren": false,
     "isPageTemplate": false,
     "isSite": false,
-    "metadata": {
+    "meta": {
         "test:": {
             "a": [1]
         }
@@ -45,7 +45,7 @@ exports.createContent = function () {
                 }
             }
         },
-        metadata: {
+        meta: {
             test: {
                 a: 1
             }

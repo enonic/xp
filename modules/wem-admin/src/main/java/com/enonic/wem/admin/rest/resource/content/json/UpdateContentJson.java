@@ -31,7 +31,7 @@ public final class UpdateContentJson
     @JsonCreator
     UpdateContentJson( @JsonProperty("contentId") final String contentId, @JsonProperty("contentName") final String contentName,
                        @JsonProperty("data") final List<PropertyArrayJson> propertyArrayJsonList,
-                       @JsonProperty("metadata") final List<MetadataJson> metadataJsonList,
+                       @JsonProperty("meta") final List<MetadataJson> metadataJsonList,
                        @JsonProperty("displayName") final String displayName, @JsonProperty("draft") final String draft )
     {
         this.contentName = ContentName.from( contentName );

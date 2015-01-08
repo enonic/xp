@@ -75,7 +75,7 @@ public final class ContentJson
         return attachments;
     }
 
-    public List<MetadataJson> getMetadata()
+    public List<MetadataJson> getMeta()
     {
         return this.metadata;
     }

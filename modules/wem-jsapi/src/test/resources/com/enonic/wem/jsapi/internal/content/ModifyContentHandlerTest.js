@@ -21,7 +21,7 @@ var expectedJson = {
     "displayName": "Modified",
     "draft": false,
     "hasChildren": false,
-    "metadata": {
+    "meta": {
         "mymodule:myschema": {
             "a": ["1"]
         },
@@ -38,7 +38,7 @@ function editor(c) {
     c.data.a++;
     c.data.z = '99';
 
-    c.metadata['mymodule:other'] = {
+    c.meta['mymodule:other'] = {
         name: 'test'
     };
 

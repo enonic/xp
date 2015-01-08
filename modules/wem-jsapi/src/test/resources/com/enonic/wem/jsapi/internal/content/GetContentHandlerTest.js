@@ -22,7 +22,7 @@ var expectedJson = {
     "hasChildren": false,
     "isPageTemplate": false,
     "isSite": false,
-    "metadata": {
+    "meta": {
         "mymodule:myschema": {
             "a": ["1"]
         }

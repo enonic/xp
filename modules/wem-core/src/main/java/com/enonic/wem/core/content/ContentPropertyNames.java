@@ -18,7 +18,8 @@ class ContentPropertyNames
 
     public static final String METADATA = "metadata";
 
+    public static final String META_STEPS = "meta";
+
     public static final String ATTACHMENT = "attachment";
 
-    public static final String THUMBNAIL = "thumbnail";
 }

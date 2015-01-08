@@ -14,7 +14,7 @@ var expectedJson = {
     "hasChildren": false,
     "isPageTemplate": false,
     "isSite": true,
-    "metadata": {},
+    "meta": {},
     "moduleConfigs": {
         "mymodule": {
             "Field": [42]

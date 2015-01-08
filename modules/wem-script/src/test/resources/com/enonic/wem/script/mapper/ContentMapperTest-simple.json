@@ -30,7 +30,7 @@
       }
     ]
   },
-  "metadata": {
+  "meta": {
     "mymodule:myschema": {
       "a": ["1"]
     }
