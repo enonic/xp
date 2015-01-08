@@ -81,9 +81,9 @@ public class VirtualHostConfigImplTest
         Assert.assertNotNull( mappings );
         Assert.assertEquals( 3, mappings.size() );
 
-        assertMapping( mappings.get( 2 ), "a", "localhost", "/status/a", "/full/path/status/a" );
+        assertMapping( mappings.get( 1 ), "a", "localhost", "/status/a", "/full/path/status/a" );
         assertMapping( mappings.get( 0 ), "b", "enonic.com", "/status/b", "/full/path/status/b" );
-        assertMapping( mappings.get( 1 ), "c", "foo.no", "/status/c", "/full/path/status/c" );
+        assertMapping( mappings.get( 2 ), "c", "localhost", "/status/c", "/full/path/status/c" );
     }
 
     private void loadConfig( final String name )

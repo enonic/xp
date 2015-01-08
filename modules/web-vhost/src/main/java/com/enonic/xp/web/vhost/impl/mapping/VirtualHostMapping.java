@@ -22,6 +22,7 @@ public final class VirtualHostMapping
         this.name = name;
     }
 
+    @Override
     public String getName()
     {
         return this.name;
@@ -80,15 +81,13 @@ public final class VirtualHostMapping
 
     private String getFullSourcePath( final HttpServletRequest req )
     {
-        final String contextPath = req.getContextPath();
+        String path = req.getContextPath();
         if ( this.source != null )
         {
-            return contextPath + "/" + this.source;
+            path += this.source;
         }
-        else
-        {
-            return contextPath;
-        }
+
+        return path;
     }
 
     public String getFullTargetPath( final HttpServletRequest req )
