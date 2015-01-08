@@ -21,9 +21,10 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
-import com.enonic.xp.web.handler.BaseWebHandler;
 
 @Component(immediate = true, service = {WebHandler.class, WebSocketManager.class})
 public final class EventHandler
@@ -78,6 +79,12 @@ public final class EventHandler
     {
         if ( !this.factory.isUpgradeRequest( req, res ) )
         {
+            return;
+        }
+
+        if ( !req.isUserInRole( RoleKeys.ADMIN_LOGIN.getId() ) )
+        {
+            res.setStatus( HttpServletResponse.SC_FORBIDDEN );
             return;
         }
 
