@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
@@ -57,7 +58,7 @@ public class AuthResourceTest
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).build();
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
         Mockito.when( securityService.authenticate( Mockito.any( AuthenticationToken.class ) ) ).
             thenReturn( authInfo );
 
@@ -79,7 +80,7 @@ public class AuthResourceTest
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).build();
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
         Mockito.when( securityService.authenticate( Mockito.any( AuthenticationToken.class ) ) ).
             thenReturn( authInfo );
 
@@ -101,7 +102,7 @@ public class AuthResourceTest
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).build();
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
         Mockito.when( securityService.authenticate( Mockito.any( AuthenticationToken.class ) ) ).
             thenReturn( authInfo );
 
@@ -117,6 +118,28 @@ public class AuthResourceTest
         throws Exception
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.failed();
+        Mockito.when( securityService.authenticate( Mockito.any( AuthenticationToken.class ) ) ).
+            thenReturn( authInfo );
+
+        String jsonString = request().path( "auth/login" ).
+            entity( "{\"user\":\"user1\",\"password\":\"password\",\"rememberMe\":false}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "login_failed.json", jsonString );
+    }
+
+    @Test
+    public void testLoginUserWithoutLoginAdminRoleFail()
+        throws Exception
+    {
+        final User user = User.create().
+            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            displayName( "User 1" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).build();
         Mockito.when( securityService.authenticate( Mockito.any( AuthenticationToken.class ) ) ).
             thenReturn( authInfo );
 

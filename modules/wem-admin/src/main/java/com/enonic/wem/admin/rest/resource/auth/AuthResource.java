@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
@@ -46,7 +47,6 @@ public final class AuthResource
             usernameAuthToken.setRememberMe( login.isRememberMe() );
 
             authInfo = securityService.authenticate( usernameAuthToken );
-
         }
         else
         {
@@ -55,6 +55,12 @@ public final class AuthResource
 
         if ( authInfo.isAuthenticated() )
         {
+            if ( !authInfo.hasRole( RoleKeys.ADMIN_LOGIN ) )
+            {
+                logout();
+                return new LoginResultJson( AuthenticationInfo.failed() );
+            }
+
             final Session session = ContextAccessor.current().getLocalScope().getSession();
             if ( session != null )
             {
