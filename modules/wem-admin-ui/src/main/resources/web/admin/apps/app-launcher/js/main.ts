@@ -22,10 +22,15 @@ function startApplication() {
 
     var loginForm = new app.login.LoginForm(new app.login.AuthenticatorImpl());
 
+    var serverEventsListener = new api.app.ServerEventsListener(applications);
     loginForm.onUserAuthenticated((user: api.security.User) => {
         console.log('User logged in', user.getDisplayName(), user.getKey().toString());
         api.util.CookieHelper.setCookie('dummy.userIsLoggedIn', 'true');
         homeMainContainer.showAppSelector();
+        serverEventsListener.start();
+    });
+    app.home.LogOutEvent.on(() => {
+        serverEventsListener.stop();
     });
 
     var homeMainContainer = new app.home.HomeMainContainerBuilder().
@@ -47,7 +52,6 @@ function startApplication() {
     var router = new app.launcher.AppRouter(applications, appLauncher);
     appLauncher.setRouter(router);
 
-    var serverEventsListener = new api.app.ServerEventsListener(applications);
     var managerInstance = api.app.AppManager.instance();
     serverEventsListener.onConnectionLost(() => {
         managerInstance.notifyConnectionLost();
@@ -55,7 +59,6 @@ function startApplication() {
     serverEventsListener.onConnectionRestored(() => {
         managerInstance.notifyConnectionRestored();
     });
-    serverEventsListener.start();
 }
 
 function getApplication(id: string): api.app.Application {

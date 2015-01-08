@@ -14,6 +14,7 @@ module api.app {
         private connectionRestoredListeners: {():void}[] = [];
         private connected: boolean = false;
         private disconnectTimeoutHandle: number;
+        private keepConnected: boolean = false;
 
         constructor(reconnectIntervalSeconds: number = 5) {
             this.ws = null;
@@ -26,25 +27,35 @@ module api.app {
                 return;
             }
             var wsUrl = api.util.UriHelper.joinPath(this.getWebSocketUriPrefix(), api.util.UriHelper.getAdminUri('event'));
+            this.keepConnected = true;
+            this.doConnect(wsUrl);
+        }
 
+        private doConnect(wsUrl: string) {
             this.ws = new WebSocket(wsUrl, 'text');
 
             this.ws.addEventListener('close', (ev: CloseEvent) => {
                 this.disconnectTimeoutHandle = setTimeout(() => {
                     if (this.connected) {
-                        this.notifyConnectionLost();
+                        if (this.keepConnected) {
+                            this.notifyConnectionLost();
+                        }
                         this.connected = !this.connected;
                     }
                 }, this.reconnectInterval + 1000);
 
                 // attempt to reconnect
-                setTimeout(()=> {
-                    this.connect();
-                }, this.reconnectInterval);
+                if (this.keepConnected) {
+                    setTimeout(()=> {
+                        if (this.keepConnected) {
+                            this.doConnect(wsUrl);
+                        }
+                    }, this.reconnectInterval);
+                }
             });
 
             this.ws.addEventListener('error', (ev: ErrorEvent) => {
-                console.log('Unable to connect to server web socket on ' + wsUrl, ev);
+                // console.log('Unable to connect to server web socket on ' + wsUrl, ev);
             });
 
             this.ws.addEventListener('message', (remoteEvent: any) => {
@@ -55,12 +66,18 @@ module api.app {
 
             this.ws.addEventListener('open', (event: Event) => {
                 clearInterval(this.disconnectTimeoutHandle);
-
                 if (!this.connected) {
                     this.notifyConnectionRestored();
                     this.connected = !this.connected;
                 }
             });
+        }
+
+        public disconnect() {
+            this.keepConnected = false;
+            if (this.ws) {
+                this.ws.close();
+            }
         }
 
         public isConnected(): boolean {

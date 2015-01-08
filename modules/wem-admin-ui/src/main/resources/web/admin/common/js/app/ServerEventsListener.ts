@@ -15,6 +15,10 @@ module api.app {
             this.serverEventsConnection.connect();
         }
 
+        stop() {
+            this.serverEventsConnection.disconnect();
+        }
+
         onConnectionLost(listener: () => void) {
             this.serverEventsConnection.onConnectionLost(listener);
         }
