@@ -45,6 +45,7 @@ import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.DuplicateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.GetContentVersionsJson;
+import com.enonic.wem.admin.rest.resource.content.json.MoveContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.ReorderChildJson;
@@ -74,6 +75,7 @@ import com.enonic.wem.api.content.FindContentVersionsParams;
 import com.enonic.wem.api.content.FindContentVersionsResult;
 import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
+import com.enonic.wem.api.content.MoveContentParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.ReorderChildContentsParams;
@@ -199,6 +201,40 @@ public final class ContentResource
         final Content duplicatedContent = contentService.duplicate( new DuplicateContentParams( params.getContentId() ) );
 
         return new ContentJson( duplicatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+    }
+
+    @POST
+    @Path("move")
+    public ContentJson move( final MoveContentJson params )
+    {
+        final Content contentForMove = this.contentService.getById( params.getContentId() );
+
+        if ( contentForMove.inheritsPermissions() )
+        {
+            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+            final PrincipalKey modifier =
+                authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
+
+            UpdateContentParams updateContentParams = new UpdateContentParams().
+                contentId( params.getContentId() ).
+                modifier( modifier ).
+                editor( edit -> {
+                    edit.inheritPermissions = false;
+                    edit.permissions = contentForMove.getPermissions();
+                } );
+
+            final Content updatedContent = contentService.update( updateContentParams );
+
+            contentService.applyPermissions( ApplyContentPermissionsParams.create().
+                contentId( params.getContentId() ).
+                overwriteChildPermissions( false ).
+                modifier( modifier ).
+                build() );
+        }
+
+        final Content movedContent = contentService.move( new MoveContentParams( params.getContentId(), params.getParentContentPath() ) );
+
+        return new ContentJson( movedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
     }
 
     @POST
