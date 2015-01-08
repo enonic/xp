@@ -1,4 +1,4 @@
-package com.enonic.wem.api.mock.memory;
+package com.enonic.wem.repo.internal.blob.memory;
 
 import java.io.IOException;
 import java.io.InputStream;

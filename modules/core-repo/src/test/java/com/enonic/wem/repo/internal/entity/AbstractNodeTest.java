@@ -4,7 +4,6 @@ import org.junit.Before;
 
 import com.enonic.wem.api.blob.BlobService;
 import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.api.mock.memory.MockBlobService;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -14,6 +13,7 @@ import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.repo.internal.blob.memory.MockBlobService;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
