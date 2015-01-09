@@ -62,6 +62,8 @@ module app.wizard {
 
         private contentWizardStepForm: ContentWizardStepForm;
 
+        private settingsWizardStepForm: SettingsWizardStepForm;
+
         private securityWizardStepForm: SecurityWizardStepForm;
 
         private metadataStepFormByName: {[name: string]: ContentWizardStepForm;};
@@ -164,10 +166,10 @@ module app.wizard {
             });
             this.metadataStepFormByName = {};
 
+            this.settingsWizardStepForm = new SettingsWizardStepForm();
             this.securityWizardStepForm = new SecurityWizardStepForm();
-            ContentPermissionsAppliedEvent.on((event) => {
-                this.contentPermissionsUpdated(event.getContent());
-            });
+
+            ContentPermissionsAppliedEvent.on((event) => this.contentPermissionsUpdated(event.getContent()));
 
             var isSiteOrWithinSite = this.site || this.createSite;
             var hasPageTemplate = this.defaultModels && this.defaultModels.hasPageTemplate();
@@ -282,6 +284,7 @@ module app.wizard {
                             steps.splice(index + 1, 0, new WizardStep(mixin.getDisplayName(), stepForm));
                         }
                     });
+                    steps.push(new WizardStep("Settings", this.settingsWizardStepForm));
                     steps.push(new WizardStep("Security", this.securityWizardStepForm));
 
                     this.setSteps(steps);
@@ -416,6 +419,7 @@ module app.wizard {
                 // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
                 this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
 
+                this.settingsWizardStepForm.layout(content);
                 this.securityWizardStepForm.layout(content);
 
                 schemas.forEach((schema: Mixin, index: number) => {

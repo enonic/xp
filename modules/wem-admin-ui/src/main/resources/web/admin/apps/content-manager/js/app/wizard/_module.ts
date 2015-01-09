@@ -1,4 +1,5 @@
 ///<reference path='ContentWizardStepForm.ts' />
+///<reference path='SettingsWizardStepForm.ts' />
 ///<reference path='SecurityWizardStepForm.ts' />
 ///<reference path='ContentWizardToolbar.ts' />
 ///<reference path='DisplayNameScriptExecutor.ts' />

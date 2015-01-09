@@ -8,14 +8,14 @@ module app.wizard {
 
     import DivEl = api.dom.DivEl;
     import LabelEl = api.dom.LabelEl;
-    import AEl = api.dom.AEl;
+    import Button = api.ui.button.Button;
 
     export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private label: LabelEl;
         private inheritance: DivEl;
         private accessListView: AccessControlListView;
-        private editLink: AEl;
+        private editLink: Button;
 
         private content: Content;
 
@@ -33,8 +33,8 @@ module app.wizard {
             this.accessListView = new AccessControlListView();
             this.accessListView.setItemsEditable(false);
 
-            this.editLink = new AEl("edit-permissions");
-            this.editLink.setHtml("Edit Permissions");
+            this.editLink = new Button("Edit Permissions");
+            this.editLink.addClass("edit-permissions");
 
             var formView = new DivEl("form-view"),
                 inputView = new DivEl("input-view valid"),
@@ -42,14 +42,11 @@ module app.wizard {
                 inputOccurrenceView = new DivEl("input-occurrence-view single-occurrence"),
                 inputWrapper = new DivEl("input-wrapper");
 
-            inputWrapper.appendChild(this.inheritance);
-            inputWrapper.appendChild(this.accessListView);
-            inputWrapper.appendChild(this.editLink);
+            inputWrapper.appendChildren(this.inheritance, this.accessListView, this.editLink);
 
             inputOccurrenceView.appendChild(inputWrapper);
             inputTypeView.appendChild(inputOccurrenceView);
-            inputView.appendChild(label);
-            inputView.appendChild(inputTypeView);
+            inputView.appendChildren(label, inputTypeView);
             formView.appendChild(inputView);
 
             this.appendChild(formView);

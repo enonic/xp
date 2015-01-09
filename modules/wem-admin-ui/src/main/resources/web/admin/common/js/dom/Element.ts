@@ -350,20 +350,20 @@ module api.dom {
             return this.insertChild(child, 0);
         }
 
-        insertAfterEl(existing: Element) {
+        insertAfterEl(existing: Element): Element {
             api.util.assertNotNull(existing, 'Existing element cannot be null');
             this.el.insertAfterEl(existing.el);
             var parent = existing.parentElement;
             var index = existing.getSiblingIndex() + 1;
-            this.insert(this, parent, index);
+            return this.insert(this, parent, index);
         }
 
-        insertBeforeEl(existingEl: Element) {
+        insertBeforeEl(existingEl: Element): Element {
             api.util.assertNotNull(existingEl, 'Existing element cannot be null');
             this.el.insertBeforeEl(existingEl.el);
             var parent = existingEl.getParentElement();
             var index = parent.getChildren().indexOf(existingEl);
-            this.insert(this, parent, index);
+            return this.insert(this, parent, index);
         }
 
         replaceWith(replacement: Element) {
@@ -404,7 +404,7 @@ module api.dom {
             parent.insert(this, wrapperElement, childPos);
         }
 
-        private insert(child: Element, parent: Element, index: number) {
+        private insert(child: Element, parent: Element, index: number): Element {
             api.util.assertNotNull(child, 'Child element cannot be null');
             api.util.assertNotNull(parent, 'Parent element cannot be null');
             child.parentElement = parent;
@@ -413,22 +413,24 @@ module api.dom {
                 child.init();
             }
             child.notifyAdded();
+            return this;
         }
 
         hasChild(child: Element) {
             return this.children.indexOf(child) > -1;
         }
 
-        removeChild(child: Element) {
+        removeChild(child: Element): Element {
             api.util.assertNotNull(child, "child cannot be null");
 
             this.removeFromChildren(child);
             child.getEl().remove();
             child.parentElement = null;
             child.notifyRemoved();
+            return this;
         }
 
-        removeChildren() {
+        removeChildren(): Element {
             // iterate through copy of children array
             // because original array is changed when any child is deleted
             this.children.slice(0).forEach((child: Element) => {
@@ -437,15 +439,17 @@ module api.dom {
 
             // remove text nodes etc
             this.el.setInnerHtml('');
+            return this;
         }
 
-        remove() {
+        remove(): Element {
             if (this.parentElement) {
                 this.parentElement.removeChild(this);
             } else {
                 this.getEl().remove();
                 this.notifyRemoved();
             }
+            return this;
         }
 
         /**
