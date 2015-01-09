@@ -25,7 +25,8 @@ module LiveEdit.ui {
 
             this.shaders = [this.pageShader, this.northShader, this.eastShader, this.southShader, this.westShader];
 
-            api.dom.Body.get().appendChildren.apply(this.shaders);
+            var body = api.dom.Body.get();
+            body.appendChildren.apply(body, this.shaders);
 
             this.shaders.forEach((shader: Element) => {
                 shader.onClicked((event: MouseEvent) => this.handleClick(event));
