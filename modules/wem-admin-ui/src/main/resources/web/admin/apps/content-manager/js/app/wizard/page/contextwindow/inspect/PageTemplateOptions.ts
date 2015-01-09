@@ -3,6 +3,7 @@ module app.wizard.page.contextwindow.inspect {
     import ContentId = api.content.ContentId;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import GetPageTemplatesByCanRenderRequest = api.content.page.GetPageTemplatesByCanRenderRequest;
+    import PageModel = api.content.page.PageModel;
     import PageTemplate = api.content.page.PageTemplate;
     import PageTemplateLoader = api.content.page.PageTemplateLoader;
     import Option = api.ui.selector.Option;
@@ -14,14 +15,18 @@ module app.wizard.page.contextwindow.inspect {
 
         private contentType: ContentTypeName;
 
-        private static defaultPageTemplateOption: Option<PageTemplateOption> = {value: "__auto__", displayValue: new PageTemplateOption(null)};
+        private pageModel: PageModel;
 
-        constructor(siteId: ContentId, contentType: ContentTypeName) {
+        private defaultPageTemplateOption: Option<PageTemplateOption>;
+
+        constructor(siteId: ContentId, contentType: ContentTypeName, pageModel: PageModel) {
             this.siteId = siteId;
             this.contentType = contentType;
+            this.pageModel = pageModel;
+            this.defaultPageTemplateOption = {value: "__auto__", displayValue: new PageTemplateOption(null, pageModel)};
         }
 
-        static getDefault(): Option<PageTemplateOption> {
+        getDefault(): Option<PageTemplateOption> {
             return this.defaultPageTemplateOption;
         }
 
@@ -30,16 +35,14 @@ module app.wizard.page.contextwindow.inspect {
             var deferred = wemQ.defer<Option<PageTemplateOption>[]>();
 
             var options: Option<PageTemplateOption>[] = [];
-            options.push(PageTemplateOptions.defaultPageTemplateOption);
+            options.push(this.defaultPageTemplateOption);
 
             var loader = new PageTemplateLoader(new GetPageTemplatesByCanRenderRequest(this.siteId,
                 this.contentType));
 
             loader.onLoadedData((event: LoadedDataEvent<PageTemplate>) => {
 
-                var pageTemplates: PageTemplate[] = event.getData();
-
-                pageTemplates.forEach((pageTemplate: PageTemplate, index: number) => {
+                event.getData().forEach((pageTemplate: PageTemplate) => {
 
                     var indices: string[] = [];
                     indices.push(pageTemplate.getName().toString());
@@ -48,7 +51,7 @@ module app.wizard.page.contextwindow.inspect {
 
                     var option = {
                         value: pageTemplate.getId().toString(),
-                        displayValue: new PageTemplateOption(pageTemplate),
+                        displayValue: new PageTemplateOption(pageTemplate, this.pageModel),
                         indices: indices
                     };
                     options.push(option);

@@ -4,10 +4,6 @@ module app.wizard.page.contextwindow.inspect {
 
         private namesAndIconView: api.app.NamesAndIconView;
 
-        private defaultPageTemplateIconUrl: string;
-
-        private pageTemplateIconUrl: string;
-
         constructor() {
             super();
 
@@ -26,9 +22,10 @@ module app.wizard.page.contextwindow.inspect {
                     setIconClass("icon-newspaper icon-large");
             }
             else {
+                var defaultPageTemplateDisplayName = option.getPageModel().getDefaultPageTemplate().getDisplayName();
                 this.namesAndIconView.
                     setMainName("Automatic").
-                    setSubName("Page Template automatically chosen").
+                    setSubName("(" + defaultPageTemplateDisplayName + ")").
                     setIconClass("icon-wand icon-large");
             }
         }

@@ -27,6 +27,10 @@ module api.content.page {
             this.defaultPageTemplate = defaultPageTemplate;
         }
 
+        getDefaultPageTemplate(): PageTemplate {
+            return this.defaultPageTemplate;
+        }
+
         initialize(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 

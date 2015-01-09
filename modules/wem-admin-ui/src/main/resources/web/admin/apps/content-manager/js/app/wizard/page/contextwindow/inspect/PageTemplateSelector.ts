@@ -46,7 +46,7 @@ module app.wizard.page.contextwindow.inspect {
 
         setModel(pageModel: PageModel) {
 
-            var pageTemplateOptions = new PageTemplateOptions(this.siteId, this.contentType);
+            var pageTemplateOptions = new PageTemplateOptions(this.siteId, this.contentType, pageModel);
             pageTemplateOptions.getOptions().
                 then((options: Option<PageTemplateOption>[]) => {
 
@@ -58,13 +58,13 @@ module app.wizard.page.contextwindow.inspect {
                         this.selectTemplate(pageModel.getTemplateKey());
                     }
                     else {
-                        this.pageTemplateDropdown.selectOption(PageTemplateOptions.getDefault(), true);
+                        this.pageTemplateDropdown.selectOption(pageTemplateOptions.getDefault(), true);
                     }
 
 
                     this.pageTemplateDropdown.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
                         var pageTemplate = event.getOption().displayValue.getPageTemplate();
-                        if( pageTemplate ) {
+                        if (pageTemplate) {
                             pageModel.setTemplate(pageTemplate, null, this);
                         }
                         else {
@@ -78,7 +78,7 @@ module app.wizard.page.contextwindow.inspect {
                             if (pageTemplateKey) {
                                 this.selectTemplate(pageTemplateKey);
                             } else {
-                                this.pageTemplateDropdown.selectOption(PageTemplateOptions.getDefault());
+                                this.pageTemplateDropdown.selectOption(pageTemplateOptions.getDefault());
                             }
                         }
                     });
