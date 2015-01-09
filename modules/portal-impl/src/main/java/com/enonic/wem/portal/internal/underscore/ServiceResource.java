@@ -5,6 +5,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -12,7 +13,6 @@ import javax.ws.rs.core.UriInfo;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.wem.portal.internal.base.BaseResource;
 import com.enonic.wem.portal.internal.controller.ControllerScript;
 import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
@@ -20,6 +20,7 @@ import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
+import com.enonic.xp.portal.RenderMode;
 
 @Path("/portal/{mode}/{workspace}/{contentPath:.+}/_/service/{module}/{service}")
 public final class ServiceResource
@@ -38,6 +39,8 @@ public final class ServiceResource
 
     @Context
     protected UriInfo uriInfo;
+
+    private Form form;
 
     @PathParam("service")
     protected String serviceName;
@@ -61,8 +64,9 @@ public final class ServiceResource
     }
 
     @POST
-    public Response handlePost()
+    public Response handlePost( final Form form )
     {
+        this.form = form;
         return doHandle();
     }
 
@@ -74,6 +78,10 @@ public final class ServiceResource
         jsRequest.setMode( this.mode );
         jsRequest.setMethod( this.request.getMethod() );
         jsRequest.addParams( this.uriInfo.getQueryParameters() );
+        if ( this.form != null )
+        {
+            jsRequest.addFormParams( this.form.asMap() );
+        }
         context.setRequest( jsRequest );
 
         final ResourceKey scriptDir = ResourceKey.from( this.moduleKey, "service/" + this.serviceName );

@@ -11,6 +11,7 @@
     "param1": "value1",
     "param2": "value2"
   },
+  "formParams": {},
   "headers": {
     "header3": [
       "value3-B",

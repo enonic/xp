@@ -18,7 +18,7 @@ public final class PostProcessorImpl
     public void processResponse( final PortalContext context )
     {
         final PortalResponse response = context.getResponse();
-        if ( !response.isPostProcess() )
+        if ( !response.isPostProcess() || !"GET".equals( context.getRequest().getMethod() ) )
         {
             return;
         }

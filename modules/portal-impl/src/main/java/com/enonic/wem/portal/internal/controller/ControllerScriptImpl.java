@@ -1,5 +1,7 @@
 package com.enonic.wem.portal.internal.controller;
 
+import javax.ws.rs.core.Response;
+
 import com.enonic.wem.portal.internal.mapper.PortalRequestMapper;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptExports;
@@ -69,6 +71,7 @@ final class ControllerScriptImpl
         populateContentType( response, result.getMember( "contentType" ) );
         populateBody( response, result.getMember( "body" ) );
         populateHeaders( response, result.getMember( "headers" ) );
+        setRedirect( response, result.getMember( "redirect" ) );
     }
 
     private void populateStatus( final PortalResponse response, final ScriptValue value )
@@ -81,6 +84,18 @@ final class ControllerScriptImpl
     {
         final String type = ( value != null ) ? value.getValue( String.class ) : null;
         response.setContentType( type != null ? type : "text/html" );
+    }
+
+    private void setRedirect( final PortalResponse response, final ScriptValue value )
+    {
+        final String redirect = ( value != null ) ? value.getValue( String.class ) : null;
+        if ( redirect == null )
+        {
+            return;
+        }
+
+        response.setStatus( Response.Status.SEE_OTHER.getStatusCode() );
+        response.addHeader( "Location", redirect );
     }
 
     private void populateBody( final PortalResponse response, final ScriptValue value )

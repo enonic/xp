@@ -4,6 +4,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.content.Content;
@@ -26,6 +27,8 @@ public final class ComponentResource
     @PathParam("component")
     protected String componentSelector;
 
+    private Form form;
+
     @GET
     public Response handleGet()
     {
@@ -33,8 +36,9 @@ public final class ComponentResource
     }
 
     @POST
-    public Response handlePost()
+    public Response handlePost( final Form form )
     {
+        this.form = form;
         return doHandle();
     }
 
@@ -92,8 +96,7 @@ public final class ComponentResource
         return toResponse( result );
     }
 
-    private PortalContextImpl createContext( final Content content, final Component component, final Site site,
-                                             final ModuleKey moduleKey )
+    private PortalContextImpl createContext( final Content content, final Component component, final Site site, final ModuleKey moduleKey )
     {
         final PortalContextImpl context = new PortalContextImpl();
         context.setContent( content );
@@ -107,6 +110,10 @@ public final class ComponentResource
         jsRequest.setWorkspace( this.workspace );
         jsRequest.setMethod( this.request.getMethod() );
         jsRequest.addParams( this.uriInfo.getQueryParameters() );
+        if ( this.form != null )
+        {
+            jsRequest.addFormParams( this.form.asMap() );
+        }
         jsRequest.addHeaders( this.httpHeaders.getRequestHeaders() );
         context.setRequest( jsRequest );
 

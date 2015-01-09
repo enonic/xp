@@ -3,6 +3,7 @@ package com.enonic.wem.portal.internal.content;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.content.Content;
@@ -20,6 +21,8 @@ import com.enonic.xp.portal.PortalContext;
 public final class ContentResource
     extends RenderBaseResource
 {
+    private Form form;
+
     @GET
     public Response handleGet()
     {
@@ -27,8 +30,9 @@ public final class ContentResource
     }
 
     @POST
-    public Response handlePost()
+    public Response handlePost( final Form form )
     {
+        this.form = form;
         return doHandle();
     }
 
@@ -90,6 +94,10 @@ public final class ContentResource
         jsRequest.setWorkspace( this.workspace );
         jsRequest.setMethod( this.request.getMethod() );
         jsRequest.addParams( this.uriInfo.getQueryParameters() );
+        if ( this.form != null )
+        {
+            jsRequest.addFormParams( this.form.asMap() );
+        }
         jsRequest.addHeaders( this.httpHeaders.getRequestHeaders() );
         context.setRequest( jsRequest );
 

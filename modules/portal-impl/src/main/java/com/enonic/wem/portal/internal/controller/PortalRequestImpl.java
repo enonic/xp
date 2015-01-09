@@ -19,6 +19,8 @@ public final class PortalRequestImpl
 
     private final Multimap<String, String> params;
 
+    private final Multimap<String, String> formParams;
+
     private final Multimap<String, String> headers;
 
     private RenderMode mode;
@@ -32,6 +34,7 @@ public final class PortalRequestImpl
         this.mode = RenderMode.LIVE;
         this.workspace = DEFAULT_WORKSPACE;
         this.params = HashMultimap.create();
+        this.formParams = HashMultimap.create();
         this.headers = HashMultimap.create();
     }
 
@@ -51,6 +54,12 @@ public final class PortalRequestImpl
     public Multimap<String, String> getParams()
     {
         return this.params;
+    }
+
+    @Override
+    public Multimap<String, String> getFormParams()
+    {
+        return this.formParams;
     }
 
     @Override
@@ -105,6 +114,24 @@ public final class PortalRequestImpl
         for ( final Map.Entry<String, List<String>> entry : params.entrySet() )
         {
             this.params.putAll( entry.getKey(), entry.getValue() );
+        }
+    }
+
+    public void addFormParam( final String name, final String value )
+    {
+        this.formParams.put( name, value );
+    }
+
+    public void addFormParams( final Multimap<String, String> params )
+    {
+        this.formParams.putAll( params );
+    }
+
+    public void addFormParams( final Map<String, List<String>> params )
+    {
+        for ( final Map.Entry<String, List<String>> entry : params.entrySet() )
+        {
+            this.formParams.putAll( entry.getKey(), entry.getValue() );
         }
     }
 

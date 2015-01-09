@@ -31,6 +31,7 @@ public final class PortalRequestMapper
         gen.value( "baseUri", this.request.getBaseUri() );
 
         serializeMultimap( "params", gen, this.request.getParams() );
+        serializeMultimap( "formParams", gen, this.request.getFormParams() );
         serializeMultimap( "headers", gen, this.request.getHeaders() );
     }
 

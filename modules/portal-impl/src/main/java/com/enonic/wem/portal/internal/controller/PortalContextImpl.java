@@ -139,6 +139,12 @@ public final class PortalContextImpl
     }
 
     @Override
+    public Multimap<String, String> getFormParams()
+    {
+        return this.request.getFormParams();
+    }
+
+    @Override
     public String getBaseUri()
     {
         return this.request.getBaseUri();
