@@ -27,7 +27,7 @@ module app.wizard.page.contextwindow.inspect {
             }
             else {
                 this.namesAndIconView.
-                    setMainName("Auto").
+                    setMainName("Automatic").
                     setSubName("Page Template automatically chosen").
                     setIconClass("icon-wand icon-large");
             }
