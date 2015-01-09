@@ -150,12 +150,6 @@ public final class PortalContextImpl
         return this.request.getFormParams();
     }
 
-    @Override
-    public String getBaseUri()
-    {
-        return this.request.getBaseUri();
-    }
-
     private PageDescriptor pageDescriptor;
 
     @Override
@@ -173,5 +167,11 @@ public final class PortalContextImpl
     public Multimap<String, String> getHeaders()
     {
         return this.request.getHeaders();
+    }
+
+    @Override
+    public String rewriteUri( final String uri )
+    {
+        return this.request.rewriteUri( uri );
     }
 }

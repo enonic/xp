@@ -20,5 +20,5 @@ public interface PortalRequest
 
     public RenderMode getMode();
 
-    public String getBaseUri();
+    public String rewriteUri( String uri );
 }

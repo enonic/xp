@@ -61,7 +61,7 @@ public final class LiveEditInjection
     private String injectUsingTemplate( final PortalContext context, final Template template )
     {
         final Map<String, String> map = Maps.newHashMap();
-        map.put( "adminUrl", context.getRequest().getBaseUri() + "/admin" );
+        map.put( "adminUrl", context.rewriteUri( "/admin" ) );
 
         final StringWriter out = new StringWriter();
         template.execute( map, out );

@@ -77,12 +77,6 @@ public final class PortalRequestImpl
         return this.mode;
     }
 
-    @Override
-    public String getBaseUri()
-    {
-        return ServletRequestUrlHelper.createUri( "" );
-    }
-
     public void setUri( final String uri )
     {
         this.uri = uri;
@@ -171,5 +165,11 @@ public final class PortalRequestImpl
     public Multimap<String, String> getHeaders()
     {
         return this.headers;
+    }
+
+    @Override
+    public String rewriteUri( final String uri )
+    {
+        return ServletRequestUrlHelper.rewriteUri( uri );
     }
 }

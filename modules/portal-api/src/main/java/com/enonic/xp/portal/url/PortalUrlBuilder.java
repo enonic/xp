@@ -12,6 +12,7 @@ import com.google.common.net.UrlEscapers;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -152,7 +153,8 @@ public abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
         buildUrl( str, params );
         appendParams( str, params.entries() );
 
-        return str.toString();
+        final String uri = str.toString();
+        return ServletRequestUrlHelper.rewriteUri( uri );
     }
 
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )

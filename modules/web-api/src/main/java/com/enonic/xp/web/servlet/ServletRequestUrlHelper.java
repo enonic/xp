@@ -4,6 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.base.Strings;
 
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
+
 public final class ServletRequestUrlHelper
 {
     private ServletRequestUrlHelper()
@@ -11,6 +14,11 @@ public final class ServletRequestUrlHelper
     }
 
     public static String createUri( final String path )
+    {
+        return createUri( ServletRequestHolder.getRequest(), path );
+    }
+
+    private static String createUri( final HttpServletRequest req, final String path )
     {
         final StringBuilder str = new StringBuilder();
 
@@ -24,7 +32,7 @@ public final class ServletRequestUrlHelper
             str.append( path );
         }
 
-        return str.toString();
+        return rewriteUri( req, str.toString() );
     }
 
     public static String createUriWithHost( final String path )
@@ -32,18 +40,63 @@ public final class ServletRequestUrlHelper
         return createUriWithHost( ServletRequestHolder.getRequest(), path );
     }
 
-    public static String createUriWithHost( final HttpServletRequest req, final String path )
+    private static String createUriWithHost( final HttpServletRequest req, final String path )
     {
+        final String scheme = req.getScheme();
+        final int port = req.getServerPort();
+
         final StringBuilder str = new StringBuilder();
-        str.append( req.getScheme() ).append( "://" );
+        str.append( scheme ).append( "://" );
         str.append( req.getServerName() );
 
-        if ( req.getServerPort() != 80 )
+        if ( needPortNumber( scheme, port ) )
         {
-            str.append( ":" ).append( req.getServerPort() );
+            str.append( ":" ).append( port );
         }
 
         str.append( createUri( path ) );
         return str.toString();
+    }
+
+    private static boolean needPortNumber( final String scheme, final int port )
+    {
+        final boolean isHttp = scheme.equals( "http" ) && ( port == 80 );
+        final boolean isHttps = scheme.equals( "https" ) && ( port == 443 );
+        return !( isHttp || isHttps );
+    }
+
+    public static String rewriteUri( final String uri )
+    {
+        return rewriteUri( ServletRequestHolder.getRequest(), uri );
+    }
+
+    private static String rewriteUri( final HttpServletRequest req, final String uri )
+    {
+        if ( req == null )
+        {
+            return uri;
+        }
+
+        final VirtualHost vhost = VirtualHostHelper.getVirtualHost( req );
+        if ( vhost == null )
+        {
+            return uri;
+        }
+
+        final String targetPath = vhost.getTarget();
+        if ( uri.startsWith( targetPath ) )
+        {
+            final String result = uri.substring( targetPath.length() );
+            if ( result.startsWith( "/" ) )
+            {
+                return result;
+            }
+            else
+            {
+                return "/" + result;
+            }
+        }
+
+        return uri;
     }
 }
