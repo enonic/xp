@@ -33,7 +33,8 @@ import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.internal.blob.BlobService;
+import com.enonic.wem.repo.internal.blob.BlobStore;
+import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexService;
 import com.enonic.wem.repo.internal.index.query.QueryService;
@@ -53,7 +54,7 @@ public class NodeServiceImpl
 
     private QueryService queryService;
 
-    private BlobService blobService;
+    private BlobStore binaryBlobStore = new FileBlobStore( NodeConstants.binaryBlobStoreDir );
 
     @Override
     public Node getById( final NodeId id )
@@ -176,7 +177,7 @@ public class NodeServiceImpl
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
-            blobService( this.blobService ).
+            binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();
     }
@@ -191,7 +192,7 @@ public class NodeServiceImpl
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            blobService( this.blobService ).
+            binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();
     }
@@ -263,7 +264,6 @@ public class NodeServiceImpl
             workspaceService( this.workspaceService ).
             indexService( this.indexService ).
             versionService( this.versionService ).
-            blobService( this.blobService ).
             build().
             execute();
     }
@@ -414,7 +414,7 @@ public class NodeServiceImpl
             queryService( this.queryService ).
             versionService( this.versionService ).
             workspaceService( this.workspaceService ).
-            blobService( this.blobService ).
+            binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();
     }
@@ -442,10 +442,5 @@ public class NodeServiceImpl
     public void setQueryService( final QueryService queryService )
     {
         this.queryService = queryService;
-    }
-
-    public void setBlobService( final BlobService blobService )
-    {
-        this.blobService = blobService;
     }
 }

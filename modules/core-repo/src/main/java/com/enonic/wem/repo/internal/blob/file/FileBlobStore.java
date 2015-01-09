@@ -30,9 +30,9 @@ public final class FileBlobStore
 
     private final File dir;
 
-    public FileBlobStore()
+    public FileBlobStore( final String dirName )
     {
-        this.dir = new File( HomeDir.get().toFile(), "repo/blob" );
+        this.dir = new File( HomeDir.get().toFile(), "repo/blob/" + dirName );
         mkdirs( this.dir, true );
     }
 

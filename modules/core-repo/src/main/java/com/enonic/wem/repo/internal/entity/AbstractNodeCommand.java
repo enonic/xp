@@ -17,7 +17,7 @@ import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.repo.internal.blob.BlobService;
+import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexService;
 import com.enonic.wem.repo.internal.index.query.QueryService;
@@ -120,7 +120,7 @@ abstract class AbstractNodeCommand
     }
 
 
-    Node doCreateNode( final CreateNodeParams params, final BlobService blobService )
+    Node doCreateNode( final CreateNodeParams params, final BlobStore binaryBlobStore )
     {
         return CreateNodeCommand.create().
             params( params ).
@@ -129,12 +129,12 @@ abstract class AbstractNodeCommand
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
-            blobService( blobService ).
+            binaryBlobStore( binaryBlobStore ).
             build().
             execute();
     }
 
-    Node doUpdateNode( final UpdateNodeParams params, final BlobService blobService )
+    Node doUpdateNode( final UpdateNodeParams params, final BlobStore binaryBlobStore )
     {
         return UpdateNodeCommand.create().
             params( params ).
@@ -143,7 +143,7 @@ abstract class AbstractNodeCommand
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
-            blobService( blobService ).
+            binaryBlobStore( binaryBlobStore ).
             build().
             execute();
     }
@@ -223,7 +223,6 @@ abstract class AbstractNodeCommand
             return (B) this;
         }
 
-
         @SuppressWarnings("unchecked")
         public B nodeDao( final NodeDao nodeDao )
         {
@@ -238,8 +237,5 @@ abstract class AbstractNodeCommand
             Preconditions.checkNotNull( nodeDao, "nodeDao not set" );
             Preconditions.checkNotNull( workspaceService, "workspaceService not set" );
         }
-
-
     }
-
 }

@@ -13,7 +13,7 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.repo.internal.blob.BlobService;
+import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 
 public class DuplicateNodeCommand
@@ -21,13 +21,13 @@ public class DuplicateNodeCommand
 {
     private final NodeId nodeId;
 
-    private final BlobService blobService;
+    private final BlobStore binaryBlobStore;
 
     private DuplicateNodeCommand( final Builder builder )
     {
         super( builder );
         this.nodeId = builder.id;
-        this.blobService = builder.blobService;
+        this.binaryBlobStore = builder.binaryBlobStore;
     }
 
     public Node execute()
@@ -40,7 +40,7 @@ public class DuplicateNodeCommand
             name( newNodeName ).
             build();
 
-        final Node duplicatedNode = doCreateNode( createNodeParams, this.blobService );
+        final Node duplicatedNode = doCreateNode( createNodeParams, this.binaryBlobStore );
 
         final NodeReferenceUpdatesHolder.Builder builder = NodeReferenceUpdatesHolder.create();
 
@@ -70,7 +70,7 @@ public class DuplicateNodeCommand
 
             attachBinaries( node, paramsBuilder );
 
-            final Node newChildNode = this.doCreateNode( paramsBuilder.build(), blobService );
+            final Node newChildNode = this.doCreateNode( paramsBuilder.build(), this.binaryBlobStore );
 
             builder.add( node.id(), newChildNode.id() );
 
@@ -82,7 +82,7 @@ public class DuplicateNodeCommand
     {
         for ( final AttachedBinary attachedBinary : node.getAttachedBinaries() )
         {
-            paramsBuilder.attachBinary( attachedBinary.getBinaryReference(), blobService.getByteSource( attachedBinary.getBlobKey() ) );
+            paramsBuilder.attachBinary( attachedBinary.getBinaryReference(), binaryBlobStore.getByteSource( attachedBinary.getBlobKey() ) );
         }
     }
 
@@ -121,7 +121,7 @@ public class DuplicateNodeCommand
             doUpdateNode( UpdateNodeParams.create().
                 id( node.id() ).
                 editor( toBeEdited -> toBeEdited.data = data ).
-                build(), this.blobService );
+                build(), this.binaryBlobStore );
         }
     }
 
@@ -159,7 +159,7 @@ public class DuplicateNodeCommand
     {
         private NodeId id;
 
-        private BlobService blobService;
+        private BlobStore binaryBlobStore;
 
         Builder()
         {
@@ -178,9 +178,9 @@ public class DuplicateNodeCommand
             return new DuplicateNodeCommand( this );
         }
 
-        public Builder blobService( final BlobService blobService )
+        public Builder binaryBlobStore( final BlobStore blobStore )
         {
-            this.blobService = blobService;
+            this.binaryBlobStore = blobStore;
             return this;
         }
 
@@ -188,7 +188,6 @@ public class DuplicateNodeCommand
         {
             super.validate();
             Preconditions.checkNotNull( id );
-            Preconditions.checkNotNull( blobService );
         }
     }
 

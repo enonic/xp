@@ -13,21 +13,20 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.repo.internal.blob.BlobService;
+import com.enonic.wem.repo.internal.blob.BlobStore;
 
 public final class UpdateNodeCommand
     extends AbstractNodeCommand
 {
     private final UpdateNodeParams params;
 
-    private final BlobService blobService;
+    private final BlobStore binaryBlobStore;
 
     private UpdateNodeCommand( final Builder builder )
     {
         super( builder );
-
         this.params = builder.params;
-        this.blobService = builder.blobService;
+        this.binaryBlobStore = builder.binaryBlobStore;
     }
 
     public Node execute()
@@ -53,7 +52,7 @@ public final class UpdateNodeCommand
             editableNode( editableNode ).
             persistedNode( persistedNode ).
             binaryAttachments( this.params.getBinaryAttachments() ).
-            blobService( this.blobService ).
+            binaryBlobStore( this.binaryBlobStore ).
             build().
             resolve();
 
@@ -105,7 +104,7 @@ public final class UpdateNodeCommand
     {
         private UpdateNodeParams params;
 
-        private BlobService blobService;
+        private BlobStore binaryBlobStore;
 
         private Builder()
         {
@@ -118,9 +117,9 @@ public final class UpdateNodeCommand
             return this;
         }
 
-        public Builder blobService( final BlobService blobService )
+        public Builder binaryBlobStore( final BlobStore blobStore )
         {
-            this.blobService = blobService;
+            this.binaryBlobStore = blobStore;
             return this;
         }
 

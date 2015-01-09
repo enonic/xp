@@ -21,7 +21,7 @@ public final class BlobServiceImpl
     {
         if ( this.blobStore == null )
         {
-            this.blobStore = new FileBlobStore();
+            this.blobStore = new FileBlobStore( "repo" );
         }
     }
 

@@ -9,14 +9,14 @@ import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.util.BinaryReference;
-import com.enonic.wem.repo.internal.blob.BlobService;
+import com.enonic.wem.repo.internal.blob.BlobStore;
 
 public class GetBinaryCommand
     extends AbstractNodeCommand
 {
     private final BinaryReference binaryReference;
 
-    private final BlobService blobService;
+    private final BlobStore binaryBlobStore;
 
     private final PropertyPath propertyPath;
 
@@ -28,7 +28,7 @@ public class GetBinaryCommand
         this.binaryReference = builder.binaryReference;
         this.propertyPath = builder.propertyPath;
         this.nodeId = builder.nodeId;
-        this.blobService = builder.blobService;
+        this.binaryBlobStore = builder.binaryBlobStore;
     }
 
     public ByteSource execute()
@@ -75,7 +75,7 @@ public class GetBinaryCommand
     {
         final BlobKey blobKey = attachedBinary.getBlobKey();
 
-        return blobService.getByteSource( blobKey );
+        return this.binaryBlobStore.getByteSource( blobKey );
     }
 
     public static Builder create()
@@ -92,7 +92,7 @@ public class GetBinaryCommand
 
         private NodeId nodeId;
 
-        private BlobService blobService;
+        private BlobStore binaryBlobStore;
 
         public Builder binaryReference( final BinaryReference binaryReference )
         {
@@ -112,9 +112,9 @@ public class GetBinaryCommand
             return this;
         }
 
-        public Builder blobService( final BlobService blobService )
+        public Builder binaryBlobStore( final BlobStore blobStore )
         {
-            this.blobService = blobService;
+            this.binaryBlobStore = blobStore;
             return this;
         }
 
@@ -122,7 +122,7 @@ public class GetBinaryCommand
         {
             super.validate();
 
-            Preconditions.checkNotNull( blobService, "blobService not set" );
+            Preconditions.checkNotNull( binaryBlobStore, "binaryBlobStore not set" );
             Preconditions.checkNotNull( nodeId, "nodeId not set" );
 
             Preconditions.checkArgument( propertyPath != null || binaryReference != null,

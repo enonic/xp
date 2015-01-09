@@ -14,7 +14,9 @@ import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.NodeVersionIds;
 import com.enonic.wem.api.node.Nodes;
 import com.enonic.wem.repo.internal.blob.Blob;
-import com.enonic.wem.repo.internal.blob.BlobService;
+import com.enonic.wem.repo.internal.blob.BlobStore;
+import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
+import com.enonic.wem.repo.internal.entity.NodeConstants;
 import com.enonic.wem.repo.internal.entity.json.NodeJsonSerializer;
 
 public class NodeDaoImpl
@@ -22,7 +24,7 @@ public class NodeDaoImpl
 {
     private final NodeJsonSerializer nodeJsonSerializer = NodeJsonSerializer.create( false );
 
-    private BlobService blobService;
+    private final BlobStore nodeBlobStore = new FileBlobStore( NodeConstants.nodeBlobStoreDir );
 
     @Override
     public NodeVersionId store( final Node node )
@@ -39,7 +41,7 @@ public class NodeDaoImpl
         try (final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
             serializedNode.getBytes( StandardCharsets.UTF_8 ) ))
         {
-            return blobService.create( byteArrayInputStream );
+            return nodeBlobStore.addRecord( byteArrayInputStream );
         }
         catch ( IOException e )
         {
@@ -58,7 +60,7 @@ public class NodeDaoImpl
     {
         final BlobKey blobKey = new BlobKey( nodeVersionId.toString() );
 
-        return getNodeFromBlob( blobService.get( blobKey ) );
+        return getNodeFromBlob( nodeBlobStore.getRecord( blobKey ) );
     }
 
     private Nodes doGetFromVersionIds( final NodeVersionIds nodeVersionIds )
@@ -67,7 +69,7 @@ public class NodeDaoImpl
 
         for ( final NodeVersionId nodeVersionId : nodeVersionIds )
         {
-            final Blob blob = blobService.get( new BlobKey( nodeVersionId.toString() ) );
+            final Blob blob = nodeBlobStore.getRecord( new BlobKey( nodeVersionId.toString() ) );
 
             if ( blob == null )
             {
@@ -97,10 +99,5 @@ public class NodeDaoImpl
         {
             throw new RuntimeException( "Failed to load blob with key: " + blob.getKey(), e );
         }
-    }
-
-    public void setBlobService( final BlobService blobService )
-    {
-        this.blobService = blobService;
     }
 }

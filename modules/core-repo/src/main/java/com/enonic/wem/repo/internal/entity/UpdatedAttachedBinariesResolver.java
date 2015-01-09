@@ -25,7 +25,7 @@ import com.enonic.wem.api.node.NodeBinaryReferenceException;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.BinaryReferences;
 import com.enonic.wem.repo.internal.blob.Blob;
-import com.enonic.wem.repo.internal.blob.BlobService;
+import com.enonic.wem.repo.internal.blob.BlobStore;
 
 class UpdatedAttachedBinariesResolver
 {
@@ -33,7 +33,7 @@ class UpdatedAttachedBinariesResolver
 
     private final EditableNode editableNode;
 
-    private final BlobService blobService;
+    private final BlobStore blobStore;
 
     private final BinaryAttachments binaryAttachments;
 
@@ -45,7 +45,7 @@ class UpdatedAttachedBinariesResolver
     {
         persistedNode = builder.persistedNode;
         editableNode = builder.editableNode;
-        blobService = builder.blobService;
+        blobStore = builder.blobStore;
         binaryAttachments = builder.binaryAttachments;
 
         final Set<BinaryReference> referencesInEditedNode = new ReferenceResolver().resolve( this.editableNode.data );
@@ -136,7 +136,7 @@ class UpdatedAttachedBinariesResolver
     {
         try
         {
-            final Blob blob = this.blobService.create( newBinaryAttachment.getByteSource().openStream() );
+            final Blob blob = this.blobStore.addRecord( newBinaryAttachment.getByteSource().openStream() );
             resolved.put( newBinaryAttachment.getReference(), new AttachedBinary( newBinaryAttachment.getReference(), blob.getKey() ) );
         }
         catch ( IOException e )
@@ -156,7 +156,7 @@ class UpdatedAttachedBinariesResolver
 
         private EditableNode editableNode;
 
-        private BlobService blobService;
+        private BlobStore blobStore;
 
         private BinaryAttachments binaryAttachments;
 
@@ -176,9 +176,9 @@ class UpdatedAttachedBinariesResolver
             return this;
         }
 
-        Builder blobService( BlobService blobService )
+        Builder binaryBlobStore( BlobStore blobStore )
         {
-            this.blobService = blobService;
+            this.blobStore = blobStore;
             return this;
         }
 

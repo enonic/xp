@@ -84,12 +84,12 @@ public class UpdateNodeCommandTest
         final ByteSource binary = GetBinaryCommand.create().
             nodeId( updatedNode.id() ).
             binaryReference( binaryRef ).
-            blobService( this.blobService ).
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
             queryService( this.queryService ).
             versionService( this.versionService ).
+            binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();
 
@@ -278,12 +278,12 @@ public class UpdateNodeCommandTest
     {
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
-            blobService( this.blobService ).
             queryService( this.queryService ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
+            binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();
     }

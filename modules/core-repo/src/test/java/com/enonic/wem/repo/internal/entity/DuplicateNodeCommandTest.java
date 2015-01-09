@@ -35,7 +35,6 @@ public class DuplicateNodeCommandTest
             nodeDao( nodeDao ).
             queryService( queryService ).
             workspaceService( workspaceService ).
-            blobService( this.blobService ).
             build().
             execute();
 
@@ -66,7 +65,6 @@ public class DuplicateNodeCommandTest
             nodeDao( nodeDao ).
             queryService( queryService ).
             workspaceService( workspaceService ).
-            blobService( this.blobService ).
             build().
             execute();
 
@@ -110,7 +108,6 @@ public class DuplicateNodeCommandTest
             nodeDao( nodeDao ).
             queryService( queryService ).
             workspaceService( workspaceService ).
-            blobService( this.blobService ).
             build().
             execute();
 
@@ -151,7 +148,6 @@ public class DuplicateNodeCommandTest
             nodeDao( nodeDao ).
             queryService( queryService ).
             workspaceService( workspaceService ).
-            blobService( this.blobService ).
             build().
             execute();
 
@@ -210,7 +206,6 @@ public class DuplicateNodeCommandTest
             nodeDao( nodeDao ).
             queryService( queryService ).
             workspaceService( workspaceService ).
-            blobService( this.blobService ).
             build().
             execute();
 
@@ -255,7 +250,6 @@ public class DuplicateNodeCommandTest
             nodeDao( nodeDao ).
             queryService( queryService ).
             workspaceService( workspaceService ).
-            blobService( this.blobService ).
             build().
             execute();
 

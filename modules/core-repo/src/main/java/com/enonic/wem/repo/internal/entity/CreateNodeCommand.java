@@ -31,20 +31,20 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.repo.internal.blob.Blob;
-import com.enonic.wem.repo.internal.blob.BlobService;
+import com.enonic.wem.repo.internal.blob.BlobStore;
 
 public final class CreateNodeCommand
     extends AbstractNodeCommand
 {
     private final CreateNodeParams params;
 
-    private final BlobService blobService;
+    private final BlobStore binaryBlobStore;
 
     private CreateNodeCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.blobService = builder.blobService;
+        this.binaryBlobStore = builder.binaryBlobStore;
     }
 
     public Node execute()
@@ -110,7 +110,7 @@ public final class CreateNodeCommand
 
             try
             {
-                final Blob blob = this.blobService.create( binaryAttachment.getByteSource().openStream() );
+                final Blob blob = this.binaryBlobStore.addRecord( binaryAttachment.getByteSource().openStream() );
                 builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey() ) );
             }
             catch ( IOException e )
@@ -269,7 +269,7 @@ public final class CreateNodeCommand
     {
         private CreateNodeParams params;
 
-        private BlobService blobService;
+        private BlobStore binaryBlobStore;
 
         Builder()
         {
@@ -282,9 +282,9 @@ public final class CreateNodeCommand
             return this;
         }
 
-        public Builder blobService( final BlobService blobService )
+        public Builder binaryBlobStore( final BlobStore blobStore )
         {
-            this.blobService = blobService;
+            this.binaryBlobStore = blobStore;
             return this;
         }
 
@@ -293,7 +293,6 @@ public final class CreateNodeCommand
             super.validate();
             Preconditions.checkNotNull( params );
         }
-
 
         public CreateNodeCommand build()
         {

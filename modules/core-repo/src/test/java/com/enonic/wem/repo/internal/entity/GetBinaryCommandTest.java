@@ -39,9 +39,9 @@ public class GetBinaryCommandTest
             versionService( this.versionService ).
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
-            blobService( this.blobService ).
             indexService( this.indexService ).
             queryService( this.queryService ).
+            binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();
 
@@ -70,9 +70,9 @@ public class GetBinaryCommandTest
             versionService( this.versionService ).
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
-            blobService( this.blobService ).
             indexService( this.indexService ).
             queryService( this.queryService ).
+            binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();
 

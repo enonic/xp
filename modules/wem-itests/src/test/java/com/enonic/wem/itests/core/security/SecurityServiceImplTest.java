@@ -1,7 +1,9 @@
 package com.enonic.wem.itests.core.security;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.NodePath;
@@ -33,8 +35,6 @@ import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 import com.enonic.wem.core.security.SecurityServiceImpl;
 import com.enonic.wem.itests.core.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.wem.repo.internal.blob.BlobService;
-import com.enonic.wem.repo.internal.blob.memory.MockBlobService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
@@ -67,6 +67,9 @@ public class SecurityServiceImplTest
 
     private ElasticsearchQueryService queryService;
 
+    @Rule
+    public TemporaryFolder WEM_HOME = new TemporaryFolder();
+
     @Override
     @Before
     public void setUp()
@@ -74,10 +77,9 @@ public class SecurityServiceImplTest
     {
         super.setUp();
 
-        final BlobService blobService = new MockBlobService();
+        System.setProperty( "wem.home", WEM_HOME.getRoot().getPath() );
 
         this.nodeDao = new NodeDaoImpl();
-        nodeDao.setBlobService( blobService );
 
         this.versionService = new ElasticsearchVersionService();
         this.versionService.setElasticsearchDao( elasticsearchDao );

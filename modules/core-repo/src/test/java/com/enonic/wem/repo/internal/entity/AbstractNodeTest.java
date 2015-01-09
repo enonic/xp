@@ -1,6 +1,8 @@
 package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -12,8 +14,8 @@ import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.repo.internal.blob.BlobService;
-import com.enonic.wem.repo.internal.blob.memory.MockBlobService;
+import com.enonic.wem.repo.internal.blob.BlobStore;
+import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
@@ -36,7 +38,10 @@ public abstract class AbstractNodeTest
 
     protected ElasticsearchQueryService queryService;
 
-    protected BlobService blobService;
+    @Rule
+    public TemporaryFolder WEM_HOME = new TemporaryFolder();
+
+    public BlobStore binaryBlobStore;
 
     @Before
     public void setUp()
@@ -44,10 +49,11 @@ public abstract class AbstractNodeTest
     {
         super.setUp();
 
-        blobService = new MockBlobService();
+        System.setProperty( "wem.home", WEM_HOME.getRoot().getPath() );
+
+        this.binaryBlobStore = new FileBlobStore( "test" );
 
         this.nodeDao = new NodeDaoImpl();
-        nodeDao.setBlobService( blobService );
 
         this.versionService = new ElasticsearchVersionService();
         this.versionService.setElasticsearchDao( elasticsearchDao );
@@ -89,7 +95,7 @@ public abstract class AbstractNodeTest
             indexService( this.indexService ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            blobService( this.blobService ).
+            binaryBlobStore( this.binaryBlobStore ).
             params( createNodeParams ).
             build().
             execute();
