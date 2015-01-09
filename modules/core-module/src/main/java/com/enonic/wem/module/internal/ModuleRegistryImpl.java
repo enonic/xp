@@ -73,6 +73,15 @@ public final class ModuleRegistryImpl
     public void bundleChanged( final BundleEvent event )
     {
         final Bundle bundle = event.getBundle();
+
+        // we cannot check if the bundle is a module when it is uninstalled
+        if ( event.getType() == BundleEvent.UNINSTALLED )
+        {
+            removeBundle( bundle );
+            publishModuleChangeEvent( event );
+            return;
+        }
+
         if ( !isModule( bundle ) )
         {
             return;
@@ -80,10 +89,6 @@ public final class ModuleRegistryImpl
 
         switch ( event.getType() )
         {
-            case BundleEvent.UNINSTALLED:
-                removeBundle( bundle );
-                break;
-
             case BundleEvent.INSTALLED:
             case BundleEvent.UPDATED:
                 addBundle( bundle );
@@ -95,6 +100,10 @@ public final class ModuleRegistryImpl
 
     private boolean isModule( final Bundle bundle )
     {
+        if ( bundle.getState() == Bundle.UNINSTALLED )
+        {
+            return false;
+        }
         return ( bundle.getEntry( MODULE_XML ) != null );
     }
 
