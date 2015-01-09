@@ -8,6 +8,8 @@ module api.content.page {
 
         private defaultPageTemplate: PageTemplate;
 
+        private defaultPageTemplateController: PageDescriptor;
+
         private initialized: boolean = false;
 
         private controller: PageDescriptor;
@@ -29,6 +31,10 @@ module api.content.page {
 
         getDefaultPageTemplate(): PageTemplate {
             return this.defaultPageTemplate;
+        }
+
+        getDefaultPageTemplateController(): PageDescriptor {
+            return this.defaultPageTemplateController;
         }
 
         initialize(): wemQ.Promise<void> {
@@ -65,6 +71,10 @@ module api.content.page {
                     else {
                         if (this.defaultPageTemplate) {
                             this.setDefaultTemplate(this);
+                            pageDescriptorPromise = this.loadPageDescriptor(this.defaultPageTemplate.getController());
+                            pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
+                                this.defaultPageTemplateController = pageDescriptor;
+                            });
                         }
                     }
                 }

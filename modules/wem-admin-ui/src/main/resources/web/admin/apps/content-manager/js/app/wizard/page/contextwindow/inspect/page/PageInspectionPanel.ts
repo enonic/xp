@@ -24,6 +24,8 @@ module app.wizard.page.contextwindow.inspect.page {
 
     export class PageInspectionPanel extends app.wizard.page.contextwindow.inspect.BaseInspectionPanel {
 
+        private liveEditModel: LiveEditModel;
+
         private siteModel: SiteModel;
 
         private pageModel: PageModel;
@@ -32,15 +34,11 @@ module app.wizard.page.contextwindow.inspect.page {
 
         private pageTemplateSelector: PageTemplateSelector;
 
-        private pageTemplateSelectorForm: api.ui.form.Form;
+        private pageTemplateForm: PageTemplateForm;
 
-        private configForm: FormView;
+        private pageControllerForm: PageControllerForm;
 
-        private pageControllerSelectorForm: api.ui.form.Form;
-
-        private pageControllerDropdown: PageDescriptorDropdown;
-
-        private getPageDescriptorsByModulesRequest: GetPageDescriptorsByModulesRequest;
+        private pageControllerSelector: PageControllerSelector;
 
         constructor() {
             super();
@@ -48,163 +46,73 @@ module app.wizard.page.contextwindow.inspect.page {
 
         setModel(liveEditModel: LiveEditModel) {
 
+            this.liveEditModel = liveEditModel;
             this.pageModel = liveEditModel.getPageModel();
             this.siteModel = liveEditModel.getSiteModel();
             this.contentType = liveEditModel.getContent().getType();
 
-            this.refreshPageTemplateForm();
-            this.refreshPageControllerForm();
+            this.pageTemplateSelector = new PageTemplateSelector();
+            this.pageTemplateForm = new PageTemplateForm(this.pageTemplateSelector);
+            this.pageTemplateForm.hide();
+            this.appendChild(this.pageTemplateForm);
 
-            this.pageTemplateSelector.setModel(this.pageModel);
+            this.pageControllerSelector = new PageControllerSelector();
+            this.pageControllerForm = new PageControllerForm(this.pageControllerSelector);
+            this.pageControllerForm.hide();
+            this.appendChild(this.pageControllerForm);
 
             if (this.pageModel.isPageTemplate()) {
-                if (this.pageModel.hasController()) {
 
-                    this.pageControllerDropdown.onLoadedData(() => {
-                        this.selectController(this.pageModel.getController());
-                        this.pageControllerSelectorForm.show();
-                    });
-                }
-                else if (this.pageModel.hasTemplate()) {
-                    this.pageTemplateSelectorForm.show();
-                }
-                else {
-                    this.pageControllerSelectorForm.show();
-                }
+                new PageTemplateInspectionHandler().
+                    setPageInspectionPanel(this).
+                    setPageControllerForm(this.pageControllerForm).
+                    setPageTemplateForm(this.pageTemplateForm).
+                    setModel(liveEditModel);
             }
             else {
-                if (this.pageModel.hasController()) {
-
-                    this.pageControllerDropdown.onLoadedData(() => {
-                        this.selectController(this.pageModel.getController());
-                        this.refreshConfigForm(this.pageModel.getController(), this.pageModel.getConfig());
-                        this.pageControllerSelectorForm.show();
-                    });
-                }
-                else if (this.pageModel.hasTemplate() || this.pageModel.isUsingDefaultTemplate()) {
-                    this.pageTemplateSelectorForm.show();
-                }
-                else {
-                    this.pageControllerSelectorForm.show();
-                }
-            }
-
-            this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
-                if (event.getPropertyName() == "controller" && this !== event.getSource()) {
-
-                    this.pageControllerSelectorForm.show();
-
-                    var controller = this.pageModel.getController();
-                    this.selectController(controller);
-                }
-                else if (event.getPropertyName() == "template" && this !== event.getSource()) {
-
-                    if (this.pageModel.hasTemplate()) {
-                        this.pageTemplateSelectorForm.show();
-                        
-                        var controllerKey = this.pageModel.getTemplate().getController();
-                        new GetPageDescriptorByKeyRequest(controllerKey).sendAndParse().
-                            then((pageDescriptor: PageDescriptor) => {
-                                this.refreshConfigForm(pageDescriptor, this.pageModel.getConfig());
-                            }).catch((reason: any) => api.DefaultErrorHandler.handle(reason)).done();
-                    }
-                    else {
-
-                        if (this.configForm) {
-                            this.configForm.remove();
-                            this.configForm = null;
-                        }
-                    }
-                }
-            });
-        }
-
-        private selectController(controller: PageDescriptor) {
-
-            var controllerKey = controller ? controller.getKey() : null;
-            if (!controllerKey) {
-                // TODO: ??
-            }
-            else {
-                var optionToSelect = this.pageControllerDropdown.getOptionByValue(controllerKey.toString());
-                if (optionToSelect) {
-                    this.pageControllerDropdown.selectOption(optionToSelect, true);
-                }
-
-                this.refreshConfigForm(controller, this.pageModel.getConfig());
+                new ContentInspectionHandler().
+                    setPageInspectionPanel(this).
+                    setPageControllerForm(this.pageControllerForm).
+                    setPageTemplateForm(this.pageTemplateForm).
+                    setModel(liveEditModel);
             }
         }
+    }
 
-        private refreshPageTemplateForm() {
+    class BaseInspectionHandler {
 
-            if (this.pageTemplateSelectorForm) {
-                this.pageControllerSelectorForm.remove();
-                this.pageControllerSelectorForm = null;
-            }
+        pageInspectionPanel: PageInspectionPanel;
 
-            this.pageTemplateSelectorForm = this.buildPageTemplateForm();
-            this.pageTemplateSelectorForm.hide();
-            this.appendChild(this.pageTemplateSelectorForm);
+        configForm: FormView;
+
+        pageControllerForm: PageControllerForm;
+
+        pageTemplateForm: PageTemplateForm;
+
+        setPageInspectionPanel(value: PageInspectionPanel): BaseInspectionHandler {
+            this.pageInspectionPanel = value;
+            return this;
         }
 
-        private buildPageTemplateForm(): api.ui.form.Form {
-
-            var form = new api.ui.form.Form('form-view');
-            this.pageTemplateSelector = new PageTemplateSelector({
-                form: form,
-                contentType: this.contentType,
-                siteId: this.siteModel.getSiteId()
-            });
-
-            return form;
+        setPageControllerForm(value: PageControllerForm): BaseInspectionHandler {
+            this.pageControllerForm = value;
+            return this;
         }
 
-        private refreshPageControllerForm() {
-
-            if (this.pageControllerSelectorForm) {
-                this.pageControllerSelectorForm.remove();
-                this.pageControllerSelectorForm = null;
-            }
-
-            this.pageControllerSelectorForm = this.buildPageControllerForm();
-            this.pageControllerSelectorForm.hide();
-            this.appendChild(this.pageControllerSelectorForm);
+        setPageTemplateForm(value: PageTemplateForm): BaseInspectionHandler {
+            this.pageTemplateForm = value;
+            return this;
         }
 
-        private buildPageControllerForm(): api.ui.form.Form {
-
-            var moduleKeys = this.siteModel.getModuleKeys();
-            this.getPageDescriptorsByModulesRequest = new GetPageDescriptorsByModulesRequest(moduleKeys);
-            var loader = new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(this.getPageDescriptorsByModulesRequest);
-
-            this.pageControllerDropdown = new PageDescriptorDropdown('page-controller', {
-                loader: loader
-            });
-            this.pageControllerDropdown.onOptionSelected((event: OptionSelectedEvent<PageDescriptor>) => {
-                var pageDescriptor = event.getOption().displayValue;
-                this.pageModel.setController(pageDescriptor, this);
-
-                this.refreshConfigForm(pageDescriptor, this.pageModel.getConfig());
-            });
-
-            this.siteModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_MODULE_CONFIGS) {
-                    this.getPageDescriptorsByModulesRequest.setModuleKeys(this.siteModel.getModuleKeys());
-                    loader.load();
-                }
-            });
-
-            var form = new api.ui.form.Form('form-view');
-            var fieldSet = new api.ui.form.Fieldset();
-            fieldSet.add(new api.ui.form.FormItemBuilder(this.pageControllerDropdown).setLabel("Page Controller").build());
-            form.add(fieldSet);
-            return form;
+        setModel(liveEditModel: LiveEditModel) {
+            throw new Error("Must be implemented by inheritors");
         }
 
-        private refreshConfigForm(pageDescriptor: PageDescriptor, config: PropertyTree) {
+        refreshConfigForm(pageDescriptor: PageDescriptor, config: PropertyTree) {
 
             if (this.configForm) {
                 this.configForm.remove();
+                this.configForm = null;
             }
 
             if (!pageDescriptor) {
@@ -212,10 +120,111 @@ module app.wizard.page.contextwindow.inspect.page {
             }
 
             this.configForm = new FormView(new FormContextBuilder().build(), pageDescriptor.getConfig(), config.getRoot());
-            this.appendChild(this.configForm);
+            this.pageInspectionPanel.appendChild(this.configForm);
             this.configForm.layout().catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
+        }
+    }
+
+    class PageTemplateInspectionHandler extends BaseInspectionHandler {
+
+        setModel(liveEditModel: LiveEditModel) {
+
+            var pageModel = liveEditModel.getPageModel();
+
+            this.pageControllerForm.getSelector().setModel(liveEditModel);
+
+            if (pageModel.hasTemplate()) {
+                this.pageTemplateForm.show();
+            }
+            else {
+                this.pageControllerForm.show();
+            }
+
+            this.refreshConfigForm(pageModel.getController(), pageModel.getConfig());
+
+
+            pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
+                if (event.getPropertyName() == "controller" && this !== event.getSource()) {
+
+                    this.pageControllerForm.show();
+
+                    var controller = pageModel.getController();
+                    if (controller) {
+                        this.refreshConfigForm(controller, pageModel.getConfig());
+                    }
+                }
+            });
+        }
+    }
+
+    class ContentInspectionHandler extends BaseInspectionHandler {
+
+        setModel(liveEditModel: LiveEditModel) {
+
+            var pageModel = liveEditModel.getPageModel();
+
+            if (pageModel.hasTemplate()) {
+
+                this.pageTemplateForm.getSelector().setModel(liveEditModel);
+                this.pageTemplateForm.show();
+
+                this.showPageConfig(pageModel);
+            }
+            else if (pageModel.isUsingDefaultTemplate()) {
+
+                this.pageTemplateForm.getSelector().setModel(liveEditModel);
+                this.pageTemplateForm.show();
+
+                this.showDefaultPageTemplateConfig(pageModel);
+            }
+            else {
+
+                this.pageControllerForm.getSelector().setModel(liveEditModel);
+                this.pageControllerForm.show();
+
+                this.refreshConfigForm(pageModel.getController(), pageModel.getConfig());
+            }
+
+            pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
+                if (event.getPropertyName() == "controller" && this !== event.getSource()) {
+
+                    this.pageControllerForm.show();
+
+                    var controller = pageModel.getController();
+                    if (controller) {
+                        this.refreshConfigForm(controller, pageModel.getConfig());
+                    }
+                }
+                else if (event.getPropertyName() == "template" && this !== event.getSource()) {
+
+                    if (pageModel.hasTemplate()) {
+                        this.pageTemplateForm.show();
+                        this.showPageConfig(pageModel);
+                    }
+                    else {
+                        this.showDefaultPageTemplateConfig(pageModel);
+                    }
+                }
+            });
+        }
+
+        private showPageConfig(pageModel: PageModel) {
+
+            var controllerKey = pageModel.getTemplate().getController();
+            new GetPageDescriptorByKeyRequest(controllerKey).sendAndParse().
+                then((pageDescriptor: PageDescriptor) => {
+
+                    this.refreshConfigForm(pageDescriptor, pageModel.getConfig());
+                }).catch((reason: any) => api.DefaultErrorHandler.handle(reason)).done();
+        }
+
+        private showDefaultPageTemplateConfig(pageModel: PageModel) {
+
+            var controller = pageModel.getDefaultPageTemplateController();
+            var config = pageModel.getDefaultPageTemplate().getConfig().copy();
+            this.refreshConfigForm(controller, config);
         }
     }
 }

@@ -3,11 +3,11 @@ module api.content.page {
     import Dropdown = api.ui.selector.dropdown.Dropdown;
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import Option = api.ui.selector.Option;
 
     export interface PageDescriptorDropdownConfig {
 
         loader: api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>
-
     }
 
     export class PageDescriptorDropdown extends Dropdown<PageDescriptor> {
@@ -25,16 +25,19 @@ module api.content.page {
             this.loader = config.loader;
             this.loader.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
                 event.getData().forEach((descriptor: PageDescriptor) => {
-                    this.addOption({
+                    var option = <Option<PageDescriptor>>{
                         value: descriptor.getKey().toString(),
                         displayValue: descriptor,
                         indices: [descriptor.getDisplayName(), descriptor.getName().toString()]
-                    });
+                    };
+                    this.addOption(option);
                 });
                 this.notifyLoadedData(event);
             });
+        }
 
-            config.loader.load();
+        load() {
+            this.loader.load();
         }
 
         onLoadedData(listener: (event: LoadedDataEvent<PageDescriptor>) => void) {

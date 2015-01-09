@@ -1,0 +1,76 @@
+module app.wizard.page.contextwindow.inspect.page {
+
+    import PropertyChangedEvent = api.PropertyChangedEvent;
+    import LiveEditModel = api.liveedit.LiveEditModel;
+    import SiteModel = api.content.site.SiteModel;
+    import PageModel = api.content.page.PageModel;
+    import PageDescriptor = api.content.page.PageDescriptor;
+    import DescriptorKey = api.content.page.DescriptorKey;
+    import PageDescriptorsJson = api.content.page.PageDescriptorsJson;
+    import PageDescriptorDropdown = api.content.page.PageDescriptorDropdown;
+    import GetPageDescriptorsByModulesRequest = api.content.page.GetPageDescriptorsByModulesRequest;
+    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+
+    export class PageControllerSelector extends PageDescriptorDropdown {
+
+        private getPageDescriptorsByModulesRequest: GetPageDescriptorsByModulesRequest;
+
+        private pageModel: PageModel;
+
+        private siteModel: SiteModel;
+
+        constructor() {
+
+            this.getPageDescriptorsByModulesRequest = new GetPageDescriptorsByModulesRequest([]);
+
+            super('page-controller', {
+                loader: new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(this.getPageDescriptorsByModulesRequest)
+            });
+
+            this.onOptionSelected((event: OptionSelectedEvent<PageDescriptor>) => {
+                var pageDescriptor = event.getOption().displayValue;
+                this.pageModel.setController(pageDescriptor, this);
+            });
+        }
+
+        setModel(model: LiveEditModel) {
+
+            this.siteModel = model.getSiteModel();
+            this.pageModel = model.getPageModel();
+
+            this.getPageDescriptorsByModulesRequest.setModuleKeys(this.siteModel.getModuleKeys());
+            this.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
+
+                if (this.pageModel.hasController()) {
+                    this.selectController(this.pageModel.getController().getKey());
+                }
+            });
+            this.load();
+
+            this.siteModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
+                if (event.getPropertyName() == SiteModel.PROPERTY_NAME_MODULE_CONFIGS) {
+                    this.getPageDescriptorsByModulesRequest.setModuleKeys(this.siteModel.getModuleKeys());
+                    this.load();
+                }
+            });
+
+            this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
+                if (event.getPropertyName() == "controller" && this !== event.getSource()) {
+                    var descriptorKey = <DescriptorKey>event.getNewValue();
+                    if (descriptorKey) {
+                        this.selectController(descriptorKey);
+                    }
+                }
+            });
+        }
+
+        private selectController(descriptorKey: DescriptorKey) {
+
+            var optionToSelect = this.getOptionByValue(descriptorKey.toString());
+            if (optionToSelect) {
+                this.selectOption(optionToSelect, true);
+            }
+        }
+    }
+}

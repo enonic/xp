@@ -26,6 +26,7 @@ module api.liveedit {
             this.controllerDropdown = new PageDescriptorDropdown('page-controller', {
                 loader: loader
             });
+            this.controllerDropdown.load();
 
             this.controllerDropdown.hide();
 
