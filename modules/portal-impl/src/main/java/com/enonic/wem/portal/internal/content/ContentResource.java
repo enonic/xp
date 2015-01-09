@@ -66,18 +66,10 @@ public final class ContentResource
             pageDescriptor = getPageDescriptor( pageTemplate );
         }
 
-        final Content effectiveContent;
-        if ( !content.hasPage() )
-        {
-            // The Content has no Page, but it has a supporting PageTemplate, so then we use the Page from the PageTemplate instead
-            effectiveContent = Content.newContent( content ).
-                page( pageTemplate.getPage() ).
-                build();
-        }
-        else
-        {
-            effectiveContent = content;
-        }
+        final Page effectivePage = new EffectivePageResolver( content, pageTemplate ).resolve();
+        final Content effectiveContent = Content.newContent( content ).
+            page( effectivePage ).
+            build();
 
         final PortalContextImpl context = new PortalContextImpl();
         context.setContent( effectiveContent );
