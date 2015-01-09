@@ -1,6 +1,6 @@
 .wizard-step-navigator {
-  background-color: @admin-light-gray-bg;
-  color: @admin-medium-gray-font;
+  background-color: @admin-bg-light-gray;
+  color: @admin-font-gray1;
   overflow: hidden;
 
   li {
@@ -9,12 +9,12 @@
     cursor: pointer;
 
     &:hover {
-      color: darken(@admin-medium-gray-font, 10%);
+      color: darken(@admin-font-gray1, 10%);
     }
 
     &.active {
       background-color: white;
-      color: @admin-dark-gray-font;
+      color: @admin-font-gray3;
       padding-bottom: 0;
 
       &:before {
@@ -26,7 +26,7 @@
         margin-top: -10px;
         border-top: 20px solid transparent;
         border-bottom: 20px solid transparent;
-        border-left: 10px solid @admin-light-gray-bg;
+        border-left: 10px solid @admin-bg-light-gray;
         margin-left: -25px;
       }
 
