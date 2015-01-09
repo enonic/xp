@@ -58,6 +58,10 @@ module app.launcher {
                 });
 
                 this.showLauncherScreen();
+
+                if (event.isSessionExpired()) {
+                    new app.home.LogOutEvent().fire();
+                }
             });
 
             app.home.LogOutEvent.on(() => {

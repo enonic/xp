@@ -4,13 +4,20 @@ module api.app.bar.event {
 
         private application: api.app.Application;
 
-        constructor(application: api.app.Application) {
+        private sessionExpired: boolean;
+
+        constructor(application: api.app.Application, sessionExpired?: boolean) {
             super();
             this.application = application;
+            this.sessionExpired = !!sessionExpired;
         }
 
         getApplication(): api.app.Application {
             return this.application;
+        }
+
+        isSessionExpired(): boolean {
+            return this.sessionExpired;
         }
 
         static on(handler: (event: ShowAppLauncherEvent) => void) {
