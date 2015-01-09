@@ -19,6 +19,7 @@ import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
@@ -150,7 +151,7 @@ public final class ContentResource
 
         final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
         createMediaParams.mimeType( mediaFile.getContentType() );
-        createMediaParams.byteSource( Files.asByteSource( mediaFile.getStoreLocation() ) );
+        createMediaParams.byteSource( getFileItemByteSource( mediaFile ) );
         persistedContent = contentService.create( createMediaParams );
 
         return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
@@ -168,7 +169,7 @@ public final class ContentResource
 
         final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
         params.mimeType( mediaFile.getContentType() );
-        params.byteSource( Files.asByteSource( mediaFile.getStoreLocation() ) );
+        params.byteSource( getFileItemByteSource( mediaFile ) );
         persistedContent = contentService.update( params );
 
         return new ContentJson( persistedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
@@ -184,7 +185,7 @@ public final class ContentResource
         final CreateAttachment thumbnailAttachment = CreateAttachment.create().
             name( AttachmentNames.THUMBNAIL ).
             mimeType( mediaFile.getContentType() ).
-            byteSource( Files.asByteSource( mediaFile.getStoreLocation() ) ).
+            byteSource( getFileItemByteSource( mediaFile ) ).
             build();
 
         final UpdateContentParams params = new UpdateContentParams();
@@ -299,11 +300,11 @@ public final class ContentResource
 
         final PublishContentResultJson jsonResult = new PublishContentResultJson();
 
-        for (ContentId contentId : contentIds) {
+        for ( ContentId contentId : contentIds )
+        {
             try
             {
-                final Content publishedContent =
-                        contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, contentId ) );
+                final Content publishedContent = contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, contentId ) );
 
                 final String displayName = publishedContent.getDisplayName().toString();
 
@@ -594,6 +595,18 @@ public final class ContentResource
             attachments.addAll( attachmentJsonList.stream().map( AttachmentJson::getAttachment ).collect( Collectors.toList() ) );
         }
         return attachments;
+    }
+
+    private ByteSource getFileItemByteSource( final DiskFileItem diskFileItem )
+    {
+        if ( diskFileItem.isInMemory() )
+        {
+            return ByteSource.wrap( diskFileItem.get() );
+        }
+        else
+        {
+            return Files.asByteSource( diskFileItem.getStoreLocation() );
+        }
     }
 
     private ContentIconUrlResolver newContentIconUrlResolver()
