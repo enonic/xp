@@ -1,6 +1,8 @@
 package com.enonic.wem.core.content;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.Name;
 import com.enonic.wem.api.content.Content;
@@ -29,6 +31,8 @@ import com.enonic.wem.api.schema.content.GetContentTypeParams;
 
 public class ContentNodeTranslator
 {
+    private final static Logger LOG = LoggerFactory.getLogger( ContentNodeTranslator.class );
+
     private final ContentDataSerializer CONTENT_SERIALIZER = new ContentDataSerializer();
 
     private ContentTypeService contentTypeService;
@@ -85,7 +89,14 @@ public class ContentNodeTranslator
 
         for ( final Node node : nodes )
         {
-            contents.add( doGetFromNode( node ) );
+            try
+            {
+                contents.add( doGetFromNode( node ) );
+            }
+            catch ( final Exception e )
+            {
+                LOG.error( "Failed to translate node [" + node.id().toString() + "] to content", e );
+            }
         }
 
         return contents.build();
