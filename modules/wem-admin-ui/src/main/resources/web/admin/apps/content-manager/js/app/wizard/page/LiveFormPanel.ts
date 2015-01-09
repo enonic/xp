@@ -191,10 +191,11 @@ module app.wizard.page {
             return this.selectedItemView;
         }
 
-        remove() {
+        remove(): LiveFormPanel {
 
             this.liveEditPage.remove();
             super.remove();
+            return this;
         }
 
         public getPage(): Page {

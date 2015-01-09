@@ -154,7 +154,7 @@ module api.liveedit {
 
         }
 
-        remove() {
+        remove(): ItemView {
             if (this.contextMenu) {
                 this.contextMenu.remove();
             }
@@ -162,6 +162,7 @@ module api.liveedit {
                 this.loadMask.remove();
             }
             super.remove();
+            return this;
         }
 
         scrollComponentIntoView(): void {
