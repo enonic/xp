@@ -3,7 +3,6 @@ package com.enonic.wem.admin.rest.resource.export;
 import java.net.URI;
 import java.nio.file.Paths;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -24,7 +23,6 @@ import com.enonic.xp.web.jaxrs.JaxRsComponent;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Path(ResourceConstants.REST_ROOT + "export")
-@RolesAllowed("admin-login")
 public class ExportResource
     implements JaxRsComponent
 {
