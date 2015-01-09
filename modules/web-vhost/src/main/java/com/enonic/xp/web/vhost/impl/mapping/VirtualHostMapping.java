@@ -2,6 +2,8 @@ package com.enonic.xp.web.vhost.impl.mapping;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -9,6 +11,8 @@ import com.enonic.xp.web.vhost.VirtualHost;
 public final class VirtualHostMapping
     implements VirtualHost, Comparable<VirtualHostMapping>
 {
+    private final static String DEFAULT_HOST = "localhost";
+
     private final String name;
 
     private String host;
@@ -20,6 +24,9 @@ public final class VirtualHostMapping
     public VirtualHostMapping( final String name )
     {
         this.name = name;
+        setHost( null );
+        setSource( null );
+        setTarget( null );
     }
 
     @Override
@@ -48,17 +55,17 @@ public final class VirtualHostMapping
 
     public void setHost( final String value )
     {
-        this.host = Strings.isNullOrEmpty( value ) ? null : value;
+        this.host = Strings.isNullOrEmpty( value ) ? DEFAULT_HOST : value;
     }
 
     public void setSource( final String value )
     {
-        this.source = Strings.isNullOrEmpty( value ) ? null : value;
+        this.source = normalizePath( value );
     }
 
     public void setTarget( final String value )
     {
-        this.target = Strings.isNullOrEmpty( value ) ? null : value;
+        this.target = normalizePath( value );
     }
 
     public boolean matches( final HttpServletRequest req )
@@ -75,19 +82,7 @@ public final class VirtualHostMapping
     private boolean matchesSource( final HttpServletRequest req )
     {
         final String actualPath = req.getRequestURI();
-        final String sourcePath = getFullSourcePath( req );
-        return sourcePath.equals( "/" ) || actualPath.equals( sourcePath ) || actualPath.startsWith( sourcePath + "/" );
-    }
-
-    private String getFullSourcePath( final HttpServletRequest req )
-    {
-        String path = req.getContextPath();
-        if ( this.source != null )
-        {
-            path += this.source;
-        }
-
-        return path;
+        return this.source.equals( "/" ) || actualPath.equals( this.source ) || actualPath.startsWith( this.source + "/" );
     }
 
     public String getFullTargetPath( final HttpServletRequest req )
@@ -95,7 +90,7 @@ public final class VirtualHostMapping
         String path = req.getRequestURI();
         if ( !this.source.equals( "/" ) && path.startsWith( this.source ) )
         {
-            path = path.substring( source.length() );
+            path = path.substring( this.source.length() );
         }
 
         return this.target + path;
@@ -131,5 +126,16 @@ public final class VirtualHostMapping
         {
             return compared;
         }
+    }
+
+    private String normalizePath( final String value )
+    {
+        if ( Strings.isNullOrEmpty( value ) )
+        {
+            return "/";
+        }
+
+        final Iterable<String> parts = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
+        return "/" + Joiner.on( '/' ).join( parts );
     }
 }
