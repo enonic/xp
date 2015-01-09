@@ -15,6 +15,8 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 public final class PortalRequestImpl
     implements PortalRequest
 {
+    private String uri;
+
     private String method;
 
     private final Multimap<String, String> params;
@@ -31,11 +33,18 @@ public final class PortalRequestImpl
 
     public PortalRequestImpl()
     {
+        this.uri = "";
         this.mode = RenderMode.LIVE;
         this.workspace = DEFAULT_WORKSPACE;
         this.params = HashMultimap.create();
         this.formParams = HashMultimap.create();
         this.headers = HashMultimap.create();
+    }
+
+    @Override
+    public String getUri()
+    {
+        return this.uri;
     }
 
     @Override
@@ -72,6 +81,11 @@ public final class PortalRequestImpl
     public String getBaseUri()
     {
         return ServletRequestUrlHelper.createUri( "" );
+    }
+
+    public void setUri( final String uri )
+    {
+        this.uri = uri;
     }
 
     public void setMethod( final String method )

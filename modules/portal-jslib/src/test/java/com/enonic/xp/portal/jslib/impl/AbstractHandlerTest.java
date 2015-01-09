@@ -26,8 +26,6 @@ public abstract class AbstractHandlerTest
         throws Exception
     {
         context = Mockito.mock( PortalContext.class );
-        Mockito.when( context.getBaseUri() ).thenReturn( "/root" );
-        Mockito.when( context.getBaseUri() ).thenReturn( "/root" );
         Mockito.when( context.getMode() ).thenReturn( RenderMode.LIVE );
         Mockito.when( context.getWorkspace() ).thenReturn( Workspace.from( "stage" ) );
         Mockito.when( context.getModule() ).thenReturn( ModuleKey.from( "mymodule" ) );

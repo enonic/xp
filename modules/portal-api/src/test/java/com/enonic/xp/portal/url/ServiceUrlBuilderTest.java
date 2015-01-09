@@ -14,6 +14,6 @@ public class ServiceUrlBuilderTest
             service( "myservice" ).
             param( "a", 3 );
 
-        assertEquals( "/root/portal/live/stage/some/path/_/service/mymodule/myservice?a=3", builder.toString() );
+        assertEquals( "/portal/live/stage/some/path/_/service/mymodule/myservice?a=3", builder.toString() );
     }
 }

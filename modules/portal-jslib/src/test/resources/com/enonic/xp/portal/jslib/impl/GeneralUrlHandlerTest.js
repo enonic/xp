@@ -7,5 +7,5 @@ exports.createUrl = function () {
         }
     });
 
-    assert.assertEquals('/root/portal/a/b?a=1&b=1&b=2', result);
+    assert.assertEquals('/portal/a/b?a=1&b=1&b=2', result);
 };

@@ -7,5 +7,5 @@ exports.createUrl = function () {
         }
     });
 
-    assert.assertEquals('/root/portal/live/stage/some/path/_/public/mymodule/styles/my.css?a=1&b=1&b=2', result);
+    assert.assertEquals('/portal/live/stage/some/path/_/public/mymodule/styles/my.css?a=1&b=1&b=2', result);
 };

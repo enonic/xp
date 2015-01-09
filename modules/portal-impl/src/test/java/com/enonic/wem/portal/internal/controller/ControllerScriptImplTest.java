@@ -18,10 +18,6 @@ public class ControllerScriptImplTest
     public void setUp()
     {
         final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( req.getScheme() ).thenReturn( "http" );
-        Mockito.when( req.getServerName() ).thenReturn( "localhost" );
-        Mockito.when( req.getLocalPort() ).thenReturn( 80 );
-        Mockito.when( req.getContextPath() ).thenReturn( "/" );
         ServletRequestHolder.setRequest( req );
     }
 
@@ -59,6 +55,6 @@ public class ControllerScriptImplTest
         this.request.setMethod( "GET" );
         execute( "mymodule:/service/getters" );
         assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
-        assertEquals( "GET,/,live", this.response.getBody() );
+        assertEquals( "GET,live", this.response.getBody() );
     }
 }

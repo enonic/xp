@@ -1,8 +1,8 @@
 {
+  "uri": "/portal/live/prod/a/b",
   "method": "GET",
   "mode": "live",
   "workspace": "stage",
-  "baseUri": "/",
   "params": {
     "param3": [
       "value3-B",

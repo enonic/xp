@@ -13,7 +13,7 @@ public class GeneralUrlBuilderTest
         final GeneralUrlBuilder urlBuilder = builders.generalUrl().
             path( "some/path" );
 
-        assertEquals( "/root/portal/some/path", urlBuilder.toString() );
+        assertEquals( "/portal/some/path", urlBuilder.toString() );
     }
 }
 

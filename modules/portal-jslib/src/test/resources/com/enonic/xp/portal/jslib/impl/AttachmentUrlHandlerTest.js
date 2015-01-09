@@ -7,7 +7,7 @@ exports.createUrl_with_name = function () {
         }
     });
 
-    assert.assertEquals('/root/portal/live/stage/some/path/_/attachment/myattachment.pdf?a=1&b=1&b=2', result);
+    assert.assertEquals('/portal/live/stage/some/path/_/attachment/myattachment.pdf?a=1&b=1&b=2', result);
 };
 
 exports.createUrl_with_label = function () {
@@ -19,7 +19,7 @@ exports.createUrl_with_label = function () {
         }
     });
 
-    assert.assertEquals('/root/portal/live/stage/some/path/_/attachment/source?a=1&b=1&b=2', result);
+    assert.assertEquals('/portal/live/stage/some/path/_/attachment/source?a=1&b=1&b=2', result);
 };
 
 
@@ -33,7 +33,7 @@ exports.createUrl_with_id_and_name = function () {
         }
     });
 
-    assert.assertEquals('/root/portal/live/stage/some/path/_/attachment/id/123/myattachment.pdf?a=1&b=1&b=2', result);
+    assert.assertEquals('/portal/live/stage/some/path/_/attachment/id/123/myattachment.pdf?a=1&b=1&b=2', result);
 };
 
 exports.createUrl_with_id_and_label = function () {
@@ -46,5 +46,5 @@ exports.createUrl_with_id_and_label = function () {
         }
     });
 
-    assert.assertEquals('/root/portal/live/stage/some/path/_/attachment/id/123/source?a=1&b=1&b=2', result);
+    assert.assertEquals('/portal/live/stage/some/path/_/attachment/id/123/source?a=1&b=1&b=2', result);
 };

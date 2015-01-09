@@ -6,6 +6,8 @@ import com.enonic.wem.api.workspace.Workspace;
 
 public interface PortalRequest
 {
+    public String getUri();
+
     public String getMethod();
 
     public Workspace getWorkspace();

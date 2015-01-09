@@ -12,18 +12,7 @@ public final class ServletRequestUrlHelper
 
     public static String createUri( final String path )
     {
-        return createUri( ServletRequestHolder.getRequest(), path );
-    }
-
-    public static String createUri( final HttpServletRequest req, final String path )
-    {
         final StringBuilder str = new StringBuilder();
-
-        final String contextPath = req.getContextPath();
-        if ( !Strings.isNullOrEmpty( contextPath ) )
-        {
-            str.append( contextPath );
-        }
 
         if ( !Strings.isNullOrEmpty( path ) )
         {
@@ -54,7 +43,7 @@ public final class ServletRequestUrlHelper
             str.append( ":" ).append( req.getServerPort() );
         }
 
-        str.append( createUri( req, path ) );
+        str.append( createUri( path ) );
         return str.toString();
     }
 }

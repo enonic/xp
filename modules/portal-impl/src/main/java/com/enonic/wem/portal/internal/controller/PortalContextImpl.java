@@ -37,6 +37,12 @@ public final class PortalContextImpl
     }
 
     @Override
+    public String getUri()
+    {
+        return this.request.getUri();
+    }
+
+    @Override
     public PortalRequest getRequest()
     {
         return this.request;

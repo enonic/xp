@@ -12,7 +12,7 @@ public class PageUrlBuilderTest
     {
         final PageUrlBuilder urlBuilder = builders.pageUrl();
 
-        assertEquals( "/root/portal/live/stage/some/path", urlBuilder.toString() );
+        assertEquals( "/portal/live/stage/some/path", urlBuilder.toString() );
     }
 }
 

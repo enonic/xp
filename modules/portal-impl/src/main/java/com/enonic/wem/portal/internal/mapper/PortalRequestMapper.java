@@ -22,13 +22,13 @@ public final class PortalRequestMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
+        gen.value( "uri", this.request.getUri() );
         gen.value( "method", this.request.getMethod() );
         gen.value( "mode", Objects.toString( this.request.getMode(), null ) );
         if ( this.request.getWorkspace() != null )
         {
             gen.value( "workspace", this.request.getWorkspace().getName() );
         }
-        gen.value( "baseUri", this.request.getBaseUri() );
 
         serializeMultimap( "params", gen, this.request.getParams() );
         serializeMultimap( "formParams", gen, this.request.getFormParams() );

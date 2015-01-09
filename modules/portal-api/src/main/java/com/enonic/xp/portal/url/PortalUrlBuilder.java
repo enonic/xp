@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.net.UrlEscapers;
@@ -15,13 +16,10 @@ import com.enonic.xp.portal.RenderMode;
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.apache.commons.lang.StringUtils.removeEnd;
 import static org.apache.commons.lang.StringUtils.removeStart;
 
 public abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
 {
-    private String baseUri;
-
     private String renderMode;
 
     private String workspace;
@@ -35,15 +33,9 @@ public abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
         this.params = HashMultimap.create();
     }
 
-    public final T baseUri( final String baseUri )
-    {
-        this.baseUri = emptyToNull( baseUri );
-        return typecastThis();
-    }
-
     public final T renderMode( final String value )
     {
-        this.renderMode = emptyToNull( value );
+        this.renderMode = Strings.isNullOrEmpty( value ) ? RenderMode.LIVE.toString() : value;
         return typecastThis();
     }
 
@@ -154,11 +146,6 @@ public abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
     public final String build()
     {
         final StringBuilder str = new StringBuilder();
-        if ( this.baseUri != null )
-        {
-            str.append( removeEnd( this.baseUri, "/" ) );
-        }
-
         appendPart( str, "/portal" );
 
         final Multimap<String, String> params = HashMultimap.create();
