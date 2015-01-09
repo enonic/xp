@@ -12,11 +12,11 @@ module app.wizard.page.contextwindow.inspect {
 
     export interface InspectionsPanelConfig {
         contentInspectionPanel: ContentInspectionPanel;
-        pageInspectionPanel: PageInspectionPanel;
-        regionInspectionPanel: RegionInspectionPanel;
-        imageInspectionPanel: ImageInspectionPanel;
-        partInspectionPanel: PartInspectionPanel;
-        layoutInspectionPanel: LayoutInspectionPanel;
+        pageInspectionPanel: page.PageInspectionPanel;
+        regionInspectionPanel: region.RegionInspectionPanel;
+        imageInspectionPanel: region.ImageInspectionPanel;
+        partInspectionPanel: region.PartInspectionPanel;
+        layoutInspectionPanel: region.LayoutInspectionPanel;
         saveAction: api.ui.Action;
     }
 
@@ -26,12 +26,12 @@ module app.wizard.page.contextwindow.inspect {
         private buttons: api.dom.DivEl;
 
         private noSelectionPanel: NoSelectionInspectionPanel;
-        private imageInspectionPanel: ImageInspectionPanel;
-        private partInspectionPanel: PartInspectionPanel;
-        private layoutInspectionPanel: LayoutInspectionPanel;
+        private imageInspectionPanel: region.ImageInspectionPanel;
+        private partInspectionPanel: region.PartInspectionPanel;
+        private layoutInspectionPanel: region.LayoutInspectionPanel;
         private contentInspectionPanel: ContentInspectionPanel;
-        private pageInspectionPanel: PageInspectionPanel;
-        private regionInspectionPanel: RegionInspectionPanel;
+        private pageInspectionPanel: page.PageInspectionPanel;
+        private regionInspectionPanel: region.RegionInspectionPanel;
 
         private saveRequestListeners: {() : void}[] = [];
 
@@ -68,7 +68,7 @@ module app.wizard.page.contextwindow.inspect {
 
         public showInspectionPanel(panel: api.ui.panel.Panel) {
             this.deck.showPanel(panel);
-            var showButtons = !(api.ObjectHelper.iFrameSafeInstanceOf(panel, RegionInspectionPanel) ||
+            var showButtons = !(api.ObjectHelper.iFrameSafeInstanceOf(panel, region.RegionInspectionPanel) ||
                                 api.ObjectHelper.iFrameSafeInstanceOf(panel, NoSelectionInspectionPanel));
             this.buttons.setVisible(showButtons);
         }

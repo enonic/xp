@@ -1,4 +1,4 @@
-module app.wizard.page.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect.region {
 
     import SiteModel = api.content.site.SiteModel;
     import PartDescriptor = api.content.page.part.PartDescriptor;

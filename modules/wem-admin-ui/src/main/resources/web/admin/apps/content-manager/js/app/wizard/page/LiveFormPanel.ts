@@ -14,7 +14,7 @@ module app.wizard.page {
     import PageDescriptor = api.content.page.PageDescriptor;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
-    import LayoutDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.LayoutDescriptorChangedEvent;
+    import LayoutDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.region.LayoutDescriptorChangedEvent;
 
     import Component = api.content.page.Component;
 
@@ -24,11 +24,11 @@ module app.wizard.page {
     import InspectionsPanelConfig = app.wizard.page.contextwindow.inspect.InspectionsPanelConfig;
     import InspectionsPanel = app.wizard.page.contextwindow.inspect.InspectionsPanel;
     import ContentInspectionPanel = app.wizard.page.contextwindow.inspect.ContentInspectionPanel;
-    import PageInspectionPanel = app.wizard.page.contextwindow.inspect.PageInspectionPanel;
-    import RegionInspectionPanel = app.wizard.page.contextwindow.inspect.RegionInspectionPanel;
-    import ImageInspectionPanel = app.wizard.page.contextwindow.inspect.ImageInspectionPanel;
-    import PartInspectionPanel = app.wizard.page.contextwindow.inspect.PartInspectionPanel;
-    import LayoutInspectionPanel = app.wizard.page.contextwindow.inspect.LayoutInspectionPanel;
+    import PageInspectionPanel = app.wizard.page.contextwindow.inspect.page.PageInspectionPanel;
+    import RegionInspectionPanel = app.wizard.page.contextwindow.inspect.region.RegionInspectionPanel;
+    import ImageInspectionPanel = app.wizard.page.contextwindow.inspect.region.ImageInspectionPanel;
+    import PartInspectionPanel = app.wizard.page.contextwindow.inspect.region.PartInspectionPanel;
+    import LayoutInspectionPanel = app.wizard.page.contextwindow.inspect.region.LayoutInspectionPanel;
     import ContextWindow = app.wizard.page.contextwindow.ContextWindow;
     import ContextWindowConfig = app.wizard.page.contextwindow.ContextWindowConfig;
     import ContextWindowController = app.wizard.page.contextwindow.ContextWindowController;

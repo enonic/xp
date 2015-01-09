@@ -1,4 +1,4 @@
-module app.wizard.page.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect.region {
 
     import Region = api.content.page.region.Region;
 

@@ -1,4 +1,4 @@
-module app.wizard.page.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect.page {
 
     import PropertyChangedEvent = api.PropertyChangedEvent;
     import PropertyTree = api.data.PropertyTree;
@@ -22,7 +22,7 @@ module app.wizard.page.contextwindow.inspect {
     import PageDescriptorsJson = api.content.page.PageDescriptorsJson;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
-    export class PageInspectionPanel extends BaseInspectionPanel {
+    export class PageInspectionPanel extends app.wizard.page.contextwindow.inspect.BaseInspectionPanel {
 
         private siteModel: SiteModel;
 

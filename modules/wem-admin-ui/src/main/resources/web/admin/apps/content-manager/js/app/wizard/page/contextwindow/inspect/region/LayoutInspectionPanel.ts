@@ -1,4 +1,4 @@
-module app.wizard.page.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect.region {
 
     import Content = api.content.Content;
     import SiteModel = api.content.site.SiteModel;

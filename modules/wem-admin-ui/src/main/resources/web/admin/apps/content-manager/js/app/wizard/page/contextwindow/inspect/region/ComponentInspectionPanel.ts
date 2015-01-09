@@ -1,4 +1,4 @@
-module app.wizard.page.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect.region {
 
     import Component = api.content.page.Component;
     import ComponentName = api.content.page.ComponentName;
@@ -9,7 +9,7 @@ module app.wizard.page.contextwindow.inspect {
         iconClass: string;
     }
 
-    export class ComponentInspectionPanel<COMPONENT extends Component> extends BaseInspectionPanel {
+    export class ComponentInspectionPanel<COMPONENT extends Component> extends app.wizard.page.contextwindow.inspect.BaseInspectionPanel {
 
         private namesAndIcon: api.app.NamesAndIconView;
 

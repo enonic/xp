@@ -1,4 +1,4 @@
-module app.wizard.page.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect.page {
 
     import ContentId = api.content.ContentId;
     import ContentTypeName = api.schema.content.ContentTypeName;

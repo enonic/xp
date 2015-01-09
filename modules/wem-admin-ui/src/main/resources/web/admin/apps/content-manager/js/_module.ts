@@ -11,6 +11,8 @@
 ///<reference path='app/wizard/action/_module.ts' />
 ///<reference path='app/wizard/page/contextwindow/insert/_module.ts' />
 ///<reference path='app/wizard/page/contextwindow/inspect/_module.ts' />
+///<reference path='app/wizard/page/contextwindow/inspect/page/_module.ts' />
+///<reference path='app/wizard/page/contextwindow/inspect/region/_module.ts' />
 ///<reference path='app/wizard/page/contextwindow/_module.ts' />
 ///<reference path='app/wizard/page/_module.ts' />
 ///<reference path='app/wizard/_module.ts' />

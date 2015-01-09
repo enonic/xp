@@ -1,4 +1,4 @@
-module app.wizard.page.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect.region {
 
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
     import ImageComponent = api.content.page.image.ImageComponent;

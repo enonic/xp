@@ -1,4 +1,4 @@
-module app.wizard.page.contextwindow.inspect {
+module app.wizard.page.contextwindow.inspect.region {
 
     import FormView = api.form.FormView;
     import DescriptorBasedComponent = api.content.page.DescriptorBasedComponent;
