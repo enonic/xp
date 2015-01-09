@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -34,14 +33,14 @@ public class GetActiveNodeVersionsCommandTest
 
         final Context testContext = ContextBuilder.create().
             workspace( testWorkspace ).
-            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+            repositoryId( TEST_REPO.getId() ).
             build();
 
         final Node node = createAndPushNode( testWorkspace );
 
         ImmutableMap<Workspace, NodeVersion> activeNodeVersions = getVersionsMap( testWorkspace, testContext, node );
 
-        final NodeVersion stageVersion = activeNodeVersions.get( ContentConstants.WORKSPACE_STAGE );
+        final NodeVersion stageVersion = activeNodeVersions.get( WS_STAGE );
         final NodeVersion testVersion = activeNodeVersions.get( testWorkspace );
         assertNotNull( testVersion );
         assertNotNull( stageVersion );
@@ -51,7 +50,7 @@ public class GetActiveNodeVersionsCommandTest
 
         activeNodeVersions = getVersionsMap( testWorkspace, testContext, node );
 
-        final NodeVersion newStageVersion = activeNodeVersions.get( ContentConstants.WORKSPACE_STAGE );
+        final NodeVersion newStageVersion = activeNodeVersions.get( WS_STAGE );
         final NodeVersion newTestVersion = activeNodeVersions.get( testWorkspace );
         assertNotNull( newTestVersion );
         assertNotNull( newStageVersion );
@@ -111,7 +110,7 @@ public class GetActiveNodeVersionsCommandTest
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             nodeId( node.id() ).
-            workspaces( Workspaces.from( ContentConstants.WORKSPACE_STAGE, testWorkspace ) ).
+            workspaces( Workspaces.from( WS_STAGE, testWorkspace ) ).
             build().
             execute() );
     }

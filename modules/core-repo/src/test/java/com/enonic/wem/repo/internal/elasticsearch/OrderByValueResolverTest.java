@@ -8,7 +8,6 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.repository.Repository;
@@ -42,7 +41,7 @@ public class OrderByValueResolverTest
     {
         super.setUp();
 
-        this.repository = ContentConstants.CONTENT_REPO;
+        this.repository = TEST_REPO;
 
         this.indexName = IndexNameResolver.resolveSearchIndexName( repository.getId() );
         this.indexType = "test";

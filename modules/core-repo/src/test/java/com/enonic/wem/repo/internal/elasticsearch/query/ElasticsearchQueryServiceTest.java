@@ -3,7 +3,6 @@ package com.enonic.wem.repo.internal.elasticsearch.query;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
@@ -39,8 +38,8 @@ public class ElasticsearchQueryServiceTest
         throws Exception
     {
         final IndexContext indexContext = IndexContext.create().
-            workspace( ContentConstants.WORKSPACE_STAGE ).
-            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+            workspace( WS_STAGE ).
+            repositoryId( TEST_REPO.getId() ).
             principalsKeys( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ) ).
             build();
 
@@ -63,8 +62,8 @@ public class ElasticsearchQueryServiceTest
         throws Exception
     {
         final IndexContext indexContext = IndexContext.create().
-            workspace( ContentConstants.WORKSPACE_STAGE ).
-            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+            workspace( WS_STAGE ).
+            repositoryId( TEST_REPO.getId() ).
             principalsKeys( PrincipalKeys.empty() ).
             build();
 
@@ -88,8 +87,8 @@ public class ElasticsearchQueryServiceTest
     {
 
         final IndexContext indexContext = IndexContext.create().
-            workspace( ContentConstants.WORKSPACE_STAGE ).
-            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+            workspace( WS_STAGE ).
+            repositoryId( TEST_REPO.getId() ).
             principalsKeys( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ), PrincipalKey.from( "group:system:mygroup" ) ) ).
             build();
 
@@ -112,8 +111,8 @@ public class ElasticsearchQueryServiceTest
         throws Exception
     {
         final IndexContext indexContext = IndexContext.create().
-            workspace( ContentConstants.WORKSPACE_STAGE ).
-            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+            workspace( WS_STAGE ).
+            repositoryId( TEST_REPO.getId() ).
             principalsKeys( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ) ).
             build();
 
@@ -136,8 +135,8 @@ public class ElasticsearchQueryServiceTest
         throws Exception
     {
         final IndexContext indexContext = IndexContext.create().
-            workspace( ContentConstants.WORKSPACE_STAGE ).
-            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+            workspace( WS_STAGE ).
+            repositoryId( TEST_REPO.getId() ).
             principalsKeys( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ) ).
             build();
 
@@ -156,8 +155,8 @@ public class ElasticsearchQueryServiceTest
         throws Exception
     {
         final IndexContext indexContext = IndexContext.create().
-            workspace( ContentConstants.WORKSPACE_STAGE ).
-            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+            workspace( WS_STAGE ).
+            repositoryId( TEST_REPO.getId() ).
             principalsKeys( PrincipalKeys.from( PrincipalKey.ofAnonymous() ) ).
             build();
 

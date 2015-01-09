@@ -3,7 +3,6 @@ package com.enonic.wem.repo.internal.entity;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.CompareStatus;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -23,14 +22,12 @@ public class CompareNodesCommandTest
     public void status_new()
         throws Exception
     {
-        Context stage = ContentConstants.CONTEXT_STAGE;
-
-        final Node createdNode = stage.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = CTX_DEFAULT.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( ContentConstants.WORKSPACE_PROD, createdNode ) );
+        final NodeComparison comparison = CTX_DEFAULT.callWith( () -> doCompare( WS_PROD, createdNode ) );
 
         assertEquals( CompareStatus.Status.NEW, comparison.getCompareStatus().getStatus() );
     }
@@ -39,7 +36,7 @@ public class CompareNodesCommandTest
     public void status_equal()
         throws Exception
     {
-        final Context stage = ContentConstants.CONTEXT_STAGE;
+        final Context stage = CTX_DEFAULT;
         final Workspace prod = Workspace.from( "prod" );
 
         final Node createdNode = stage.callWith( () -> createNode( CreateNodeParams.create().
@@ -58,8 +55,8 @@ public class CompareNodesCommandTest
     public void status_newer()
         throws Exception
     {
-        final Context stage = ContentConstants.CONTEXT_STAGE;
-        final Workspace prodWs = ContentConstants.WORKSPACE_PROD;
+        final Context stage = CTX_DEFAULT;
+        final Workspace prodWs = WS_PROD;
 
         final Node createdNode = stage.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -81,26 +78,24 @@ public class CompareNodesCommandTest
     public void status_older()
         throws Exception
     {
-        final Context stageContext = ContentConstants.CONTEXT_STAGE;
-        final Workspace prodWs = ContentConstants.WORKSPACE_PROD;
 
         final Context prodContext = ContextBuilder.create().
-            workspace( prodWs ).
-            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+            workspace( WS_PROD ).
+            repositoryId( TEST_REPO.getId() ).
             build();
 
-        final Node createdNode = stageContext.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = CTX_DEFAULT.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        stageContext.runWith( () -> doPushNode( prodWs, createdNode ) );
+        CTX_DEFAULT.runWith( () -> doPushNode( WS_PROD, createdNode ) );
         refresh();
 
         prodContext.runWith( () -> doUpdateNode( createdNode ) );
         refresh();
 
-        final NodeComparison comparison = stageContext.callWith( () -> doCompare( prodWs, createdNode ) );
+        final NodeComparison comparison = CTX_DEFAULT.callWith( () -> doCompare( WS_PROD, createdNode ) );
 
         assertEquals( CompareStatus.Status.OLDER, comparison.getCompareStatus().getStatus() );
     }

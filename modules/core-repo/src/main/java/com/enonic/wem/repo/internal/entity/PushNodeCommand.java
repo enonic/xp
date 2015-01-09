@@ -4,8 +4,10 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.index.IndexContext;
@@ -40,6 +42,8 @@ public class PushNodeCommand
 
         final Node currentNode = nodeDao.getByVersionId( currentVersion );
 
+        validate( currentNode, context );
+
         this.workspaceService.store( StoreWorkspaceDocument.create().
             nodeVersionId( currentVersion ).
             node( currentNode ).
@@ -55,6 +59,44 @@ public class PushNodeCommand
             queryService( this.queryService ).
             build().
             resolve( currentNode );
+    }
+
+    public void validate( final Node node, final Context currentContext )
+    {
+        validateParentExists( node, currentContext );
+    }
+
+    private void validateParentExists( final Node node, final Context currentContext )
+    {
+        if ( node.parent().equals( NodePath.ROOT ) )
+        {
+            return;
+        }
+
+        // Check if current node already exists in target
+
+        final Context targetContext = createTargetContext( currentContext );
+
+        final Node targetParent = targetContext.callWith( () -> doGetByPath( node.parent(), false ) );
+
+        if ( targetParent == null )
+        {
+            throw new PushNodeException( "Push node failed, parent not found in target for node '" + node.path() + "'" );
+        }
+    }
+
+    private Context createTargetContext( final Context currentContext )
+    {
+        final ContextBuilder targetContext = ContextBuilder.create().
+            repositoryId( currentContext.getRepositoryId() ).
+            workspace( target );
+
+        if ( currentContext.getAuthInfo() != null )
+        {
+            targetContext.authInfo( currentContext.getAuthInfo() );
+        }
+
+        return targetContext.build();
     }
 
     public static class Builder

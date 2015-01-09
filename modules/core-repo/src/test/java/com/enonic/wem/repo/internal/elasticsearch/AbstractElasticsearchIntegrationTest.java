@@ -11,7 +11,8 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.api.content.ContentConstants;
+import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 
 public abstract class AbstractElasticsearchIntegrationTest
 {
@@ -24,6 +25,10 @@ public abstract class AbstractElasticsearchIntegrationTest
     protected Client client;
 
     private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
+
+    protected static final Repository TEST_REPO = Repository.create().
+        id( RepositoryId.from( "wem-content-repo" ) ).
+        build();
 
     @Before
     public void setUp()
@@ -70,7 +75,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     String getContentRepoSearchDefaultSettings()
     {
-        return RepositoryTestSearchIndexSettingsProvider.getSettings( ContentConstants.CONTENT_REPO );
+        return RepositoryTestSearchIndexSettingsProvider.getSettings( TEST_REPO );
     }
 
     protected Client client()

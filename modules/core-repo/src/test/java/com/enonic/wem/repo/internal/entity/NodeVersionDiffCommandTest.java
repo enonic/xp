@@ -2,8 +2,6 @@ package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
@@ -19,26 +17,18 @@ import static org.junit.Assert.*;
 public class NodeVersionDiffCommandTest
     extends AbstractNodeTest
 {
-    private final static Workspace WS_STAGE = ContentConstants.WORKSPACE_STAGE;
-
-    private final static Workspace WS_PROD = ContentConstants.WORKSPACE_PROD;
-
-    private final Context STAGE = ContentConstants.CONTEXT_STAGE;
-
-    private final Context PROD = ContentConstants.CONTEXT_PROD;
-
     @Test
     public void only_in_source()
         throws Exception
     {
-        final Node node = STAGE.callWith( () -> createNode( CreateNodeParams.create().
+        final Node node = CTX_DEFAULT.callWith( () -> createNode( CreateNodeParams.create().
             name( "mynode" ).
             parent( NodePath.ROOT ).
             build() ) );
 
         assertEquals( 1, getDiff( WS_STAGE, WS_PROD ).getNodesWithDifferences().getSize() );
 
-        STAGE.runWith( () -> doPushNode( WS_PROD, node ) );
+        CTX_DEFAULT.runWith( () -> doPushNode( WS_PROD, node ) );
 
         assertEquals( 0, getDiff( WS_STAGE, WS_PROD ).getNodesWithDifferences().getSize() );
         assertEquals( 0, getDiff( WS_PROD, WS_STAGE ).getNodesWithDifferences().getSize() );
@@ -48,12 +38,12 @@ public class NodeVersionDiffCommandTest
     public void same_version()
         throws Exception
     {
-        final Node node = STAGE.callWith( () -> createNode( CreateNodeParams.create().
+        final Node node = CTX_DEFAULT.callWith( () -> createNode( CreateNodeParams.create().
             name( "mynode" ).
             parent( NodePath.ROOT ).
             build() ) );
 
-        STAGE.runWith( () -> doPushNode( WS_PROD, node ) );
+        CTX_DEFAULT.runWith( () -> doPushNode( WS_PROD, node ) );
 
         assertEquals( 0, getDiff( WS_STAGE, WS_PROD ).getNodesWithDifferences().getSize() );
         assertEquals( 0, getDiff( WS_PROD, WS_STAGE ).getNodesWithDifferences().getSize() );
@@ -63,14 +53,14 @@ public class NodeVersionDiffCommandTest
     public void newer_in_source()
         throws Exception
     {
-        final Node node = STAGE.callWith( () -> createNode( CreateNodeParams.create().
+        final Node node = CTX_DEFAULT.callWith( () -> createNode( CreateNodeParams.create().
             name( "mynode" ).
             parent( NodePath.ROOT ).
             build() ) );
 
-        STAGE.runWith( () -> doPushNode( WS_PROD, node ) );
+        CTX_DEFAULT.runWith( () -> doPushNode( WS_PROD, node ) );
 
-        STAGE.runWith( () -> doUpdateNode( node ) );
+        CTX_DEFAULT.runWith( () -> doUpdateNode( node ) );
 
         assertEquals( 1, getDiff( WS_STAGE, WS_PROD ).getNodesWithDifferences().getSize() );
         assertEquals( 1, getDiff( WS_PROD, WS_STAGE ).getNodesWithDifferences().getSize() );
@@ -80,14 +70,14 @@ public class NodeVersionDiffCommandTest
     public void newer_in_target()
         throws Exception
     {
-        final Node node = STAGE.callWith( () -> createNode( CreateNodeParams.create().
+        final Node node = CTX_DEFAULT.callWith( () -> createNode( CreateNodeParams.create().
             name( "mynode" ).
             parent( NodePath.ROOT ).
             build() ) );
 
-        STAGE.runWith( () -> doPushNode( WS_PROD, node ) );
+        CTX_DEFAULT.runWith( () -> doPushNode( WS_PROD, node ) );
 
-        PROD.runWith( () -> doUpdateNode( node ) );
+        CTX_OTHER.runWith( () -> doUpdateNode( node ) );
 
         assertEquals( 1, getDiff( WS_STAGE, WS_PROD ).getNodesWithDifferences().getSize() );
         assertEquals( 1, getDiff( WS_PROD, WS_STAGE ).getNodesWithDifferences().getSize() );
@@ -98,14 +88,14 @@ public class NodeVersionDiffCommandTest
         return this.versionService.diff( NodeVersionDiffQuery.create().
             target( target ).
             source( source ).
-            build(), ContentConstants.CONTENT_REPO.getId() );
+            build(), TEST_REPO.getId() );
     }
 
     private void printIndexContent()
     {
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( ContentConstants.CONTENT_REPO.getId() ),
+        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( TEST_REPO.getId() ),
                               IndexType.VERSION.getName() );
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( ContentConstants.CONTENT_REPO.getId() ),
+        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( TEST_REPO.getId() ),
                               IndexType.WORKSPACE.getName() );
     }
 

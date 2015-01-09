@@ -4,16 +4,23 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
-import com.enonic.wem.api.content.ContentConstants;
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.context.ContextBuilder;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
+import com.enonic.wem.api.query.expr.FieldOrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
@@ -38,6 +45,28 @@ public abstract class AbstractNodeTest
 
     protected ElasticsearchQueryService queryService;
 
+    protected static final Workspace WS_STAGE = Workspace.create().
+        name( "stage" ).
+        childOrder( ChildOrder.create().
+            add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).build() ).
+        build();
+
+    protected static final Workspace WS_PROD = Workspace.create().
+        name( "prod" ).
+        childOrder( ChildOrder.create().
+            add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).build() ).
+        build();
+
+    protected static final Context CTX_DEFAULT = ContextBuilder.create().
+        workspace( WS_STAGE ).
+        repositoryId( TEST_REPO.getId() ).
+        build();
+
+    protected static final Context CTX_OTHER = ContextBuilder.create().
+        workspace( WS_PROD ).
+        repositoryId( TEST_REPO.getId() ).
+        build();
+
     @Rule
     public TemporaryFolder WEM_HOME = new TemporaryFolder();
 
@@ -50,6 +79,8 @@ public abstract class AbstractNodeTest
         super.setUp();
 
         System.setProperty( "wem.home", WEM_HOME.getRoot().getPath() );
+
+        ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
         this.binaryBlobStore = new FileBlobStore( "test" );
 
@@ -83,7 +114,7 @@ public abstract class AbstractNodeTest
 
     void createContentRepository()
     {
-        createRepository( ContentConstants.CONTENT_REPO );
+        createRepository( TEST_REPO );
     }
 
 
@@ -164,6 +195,6 @@ public abstract class AbstractNodeTest
 
     void printContentRepoIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( ContentConstants.CONTENT_REPO.getId() ), "stage" );
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), "stage" );
     }
 }
