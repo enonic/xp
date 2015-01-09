@@ -99,14 +99,21 @@ module app.wizard.page.contextwindow.inspect {
                 }
                 else if (event.getPropertyName() == "template" && this !== event.getSource()) {
 
-                    this.pageTemplateSelectorForm.show();
-
                     if (this.pageModel.hasTemplate()) {
+                        this.pageTemplateSelectorForm.show();
+                        
                         var controllerKey = this.pageModel.getTemplate().getController();
                         new GetPageDescriptorByKeyRequest(controllerKey).sendAndParse().
                             then((pageDescriptor: PageDescriptor) => {
                                 this.refreshConfigForm(pageDescriptor, this.pageModel.getConfig());
                             }).catch((reason: any) => api.DefaultErrorHandler.handle(reason)).done();
+                    }
+                    else {
+
+                        if (this.configForm) {
+                            this.configForm.remove();
+                            this.configForm = null;
+                        }
                     }
                 }
             });
@@ -132,6 +139,7 @@ module app.wizard.page.contextwindow.inspect {
 
             if (this.pageTemplateSelectorForm) {
                 this.pageControllerSelectorForm.remove();
+                this.pageControllerSelectorForm = null;
             }
 
             this.pageTemplateSelectorForm = this.buildPageTemplateForm();
@@ -155,6 +163,7 @@ module app.wizard.page.contextwindow.inspect {
 
             if (this.pageControllerSelectorForm) {
                 this.pageControllerSelectorForm.remove();
+                this.pageControllerSelectorForm = null;
             }
 
             this.pageControllerSelectorForm = this.buildPageControllerForm();
@@ -195,7 +204,7 @@ module app.wizard.page.contextwindow.inspect {
         private refreshConfigForm(pageDescriptor: PageDescriptor, config: PropertyTree) {
 
             if (this.configForm) {
-                this.removeChild(this.configForm);
+                this.configForm.remove();
             }
 
             if (!pageDescriptor) {
