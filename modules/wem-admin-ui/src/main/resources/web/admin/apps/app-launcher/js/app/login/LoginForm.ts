@@ -2,12 +2,11 @@ module app.login {
 
     import UserStore = api.security.UserStore;
 
-    export class LoginForm extends api.dom.DivEl {
+    export class LoginForm extends api.dom.FormEl {
 
         private messageContainer: api.dom.DivEl;
         private userIdInput: api.ui.text.TextInput;
         private passwordInput: api.ui.text.PasswordInput;
-        private loginButton: api.ui.button.Button;
 
         private authenticator: Authenticator;
         private userStores: {[userStoreId: string]: UserStore;};
@@ -30,18 +29,11 @@ module app.login {
                 this.onInputTyped(event);
             });
 
-            this.loginButton = new api.ui.button.Button(_i18n('Sign in'));
-            this.loginButton.addClass('login-button').addClass('disabled');
-            this.loginButton.onClicked((event: MouseEvent) => {
-                this.loginButtonClick();
-            });
-
             this.messageContainer = new api.dom.DivEl("message-container");
 
             this.appendChild(this.messageContainer);
             this.appendChild(this.userIdInput);
             this.appendChild(this.passwordInput);
-            this.appendChild(this.loginButton);
 
             this.onShown((event) => {
                 this.userIdInput.giveFocus();
@@ -87,12 +79,6 @@ module app.login {
 
         private onInputTyped(event: KeyboardEvent) {
             var fieldsNotEmpty: boolean = (this.userIdInput.getValue() !== '') && (this.passwordInput.getValue() !== '');
-            if (fieldsNotEmpty) {
-                this.loginButton.removeClass('disabled');
-            } else {
-                this.loginButton.addClass('disabled');
-            }
-            this.loginButton.setEnabled(fieldsNotEmpty);
             if (fieldsNotEmpty && event.keyCode == 13) {
                 this.loginButtonClick();
             }
