@@ -9,7 +9,7 @@
     width: 100%;
     height: 40px;
     margin-top: -40px;
-    background-color: @admin-almost-white-bg;
+    background-color: @admin-bg-almost-white;
 
     .button {
       padding: 8px 7px;
@@ -24,18 +24,18 @@
         &:before {
           position: relative;
           left: -9px;
-          color: @admin-medium-gray-font;
+          color: @admin-font-gray1;
         }
       }
 
       span {
-        color: @admin-blue-button;
+        color: @admin-button-blue2;
       }
 
       &:hover:not(:disabled) {
 
         &:before, span {
-          color: @admin-blue-button3;
+          color: @admin-button-blue3;
         }
       }
 
@@ -45,7 +45,7 @@
       }
 
       &:active {
-        background-color: @admin-light-gray-bg;
+        background-color: @admin-bg-light-gray;
       }
     }
   }
@@ -89,16 +89,16 @@
       .transition(margin ease-in 0.3s);
 
       &:hover, &.odd:hover {
-        background-color: @admin-light-gray-bg;
+        background-color: @admin-bg-light-gray;
       }
 
       &.odd {
-        background-color: @admin-almost-white-bg;
+        background-color: @admin-bg-almost-white;
       }
 
       .children-to-load {
         padding-left: 46px;
-        color: @admin-light-gray-font;
+        color: @admin-font-gray2;
         font-size: 13px;
         .ellipsis();
         .noSelect();
@@ -136,7 +136,7 @@
 
       .toggle {
         &:active {
-          color: @admin-blue-button2;
+          color: @admin-button-blue1;
         }
 
         display: inline-block;

@@ -31,8 +31,6 @@ module api.app.bar {
 
             this.appendChild(this.tabMenu);
 
-            this.setBackgroundImgUrl(api.util.UriHelper.getRestUri('ui/background.jpg'));
-
             api.dom.WindowDOM.get().onResized((event: UIEvent) => this.layoutChildren(), this);
             this.onRendered((event) => this.layoutChildren());
 
