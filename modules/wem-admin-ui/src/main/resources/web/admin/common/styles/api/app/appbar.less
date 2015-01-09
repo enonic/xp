@@ -8,6 +8,31 @@
   background-size: cover;
   .box-sizing(border-box);
 
+  .home-icon-button {
+    &:extend(.icon);
+    float: left;
+    margin: 4px;
+    border: 0 none;
+    background-color: transparent;
+    .app-icon {
+      cursor: pointer;
+      font-size: 24px;
+      color: white;
+      &:before {
+        .color-transition;
+      }
+      &:hover {
+        background-color: transparent;
+        &:before {
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+
+    }
+
+  }
+
+
   .launcher-button {
     &:extend(.icon);
     .icon-grid4;
@@ -54,6 +79,12 @@
     &:hover {
       color: rgba(255,255,255,0.5);
     }
+  }
+}
+
+._0-240, ._240-360, ._360-540, ._540-720 {
+  .home-button {
+    display: none;
   }
 }
 

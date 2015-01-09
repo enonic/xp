@@ -8,6 +8,8 @@ module api.app.bar {
 
         private homeButton: api.dom.ButtonEl;
 
+        private appImageButton: api.dom.ButtonEl;
+
         private tabMenu: AppBarTabMenu;
 
         private showAppLauncherAction: api.app.bar.action.ShowAppLauncherAction;
@@ -25,6 +27,9 @@ module api.app.bar {
 
             this.launcherButton = new LauncherButton(this.showAppLauncherAction);
             this.appendChild(this.launcherButton);
+
+            this.appImageButton = new HomeImageButton(this.application, api.app.bar.action.AppBarActions.SHOW_BROWSE_PANEL);
+            this.appendChild(this.appImageButton);
 
             this.homeButton = new HomeButton(this.application.getName(), api.app.bar.action.AppBarActions.SHOW_BROWSE_PANEL);
             this.appendChild(this.homeButton);
@@ -94,6 +99,30 @@ module api.app.bar {
         constructor(action: api.ui.Action) {
             super(action, true);
             this.addClass('launcher-button');
+        }
+
+    }
+
+    export class HomeImageButton extends api.dom.ButtonEl {
+
+        constructor(app: Application, action: api.ui.Action) {
+            super('home-icon-button');
+
+            var imgContainer = new api.dom.DivEl('icon-container');
+
+            if (app.isFullSizeIcon()) {
+                var img = new api.dom.ImgEl(app.getIconUrl());
+                imgContainer.appendChild(img);
+            } else {
+                var icon = new api.dom.IEl("app-icon icon-" + app.getIconUrl());
+                imgContainer.appendChild(icon);
+            }
+
+            this.getEl().setInnerHtml(imgContainer.getHtml());
+
+            this.onClicked((event: MouseEvent) => {
+                action.execute();
+            });
         }
 
     }
