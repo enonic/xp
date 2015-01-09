@@ -78,6 +78,7 @@ import com.enonic.wem.api.content.FindContentVersionsResult;
 import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.content.MoveContentParams;
+import com.enonic.wem.api.content.PushContentException;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.ReorderChildContentsParams;
@@ -306,11 +307,11 @@ public final class ContentResource
             {
                 final Content publishedContent = contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, contentId ) );
 
-                final String displayName = publishedContent.getDisplayName().toString();
+                final String displayName = publishedContent.getDisplayName();
 
                 jsonResult.addSuccess( contentId, displayName );
             }
-            catch ( ContentNotFoundException e )
+            catch ( ContentNotFoundException | PushContentException e )
             {
                 jsonResult.addFailure( contentId, e.getMessage() );
             }

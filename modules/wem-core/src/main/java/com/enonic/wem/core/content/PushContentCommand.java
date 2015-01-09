@@ -5,8 +5,10 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPublishedEvent;
+import com.enonic.wem.api.content.PushContentException;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.PushNodeException;
 import com.enonic.wem.api.workspace.Workspace;
 
 public class PushContentCommand
@@ -27,7 +29,15 @@ public class PushContentCommand
     {
         final NodeId nodeId = NodeId.from( contentId.toString() );
 
-        final Node pushedNode = nodeService.push( nodeId, this.target );
+        final Node pushedNode;
+        try
+        {
+            pushedNode = nodeService.push( nodeId, this.target );
+        }
+        catch ( PushNodeException e )
+        {
+            throw new PushContentException( e.getMessage() );
+        }
 
         eventPublisher.publish( new ContentPublishedEvent( contentId ) );
 

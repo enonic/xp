@@ -17,6 +17,12 @@ public class ContentInitializer
 
     public final void init()
     {
+        ContentConstants.CONTEXT_STAGE.runWith( this::doInitRootNode );
+        ContentConstants.CONTEXT_PROD.runWith( this::doInitRootNode );
+    }
+
+    private void doInitRootNode()
+    {
         final Node rootNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
 
         if ( rootNode == null )

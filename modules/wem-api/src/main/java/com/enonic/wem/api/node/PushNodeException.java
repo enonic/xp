@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.entity;
+package com.enonic.wem.api.node;
 
 public class PushNodeException
     extends RuntimeException

@@ -9,6 +9,7 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.wem.api.node.PushNodeException;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
@@ -81,7 +82,8 @@ public class PushNodeCommand
 
         if ( targetParent == null )
         {
-            throw new PushNodeException( "Push node failed, parent not found in target for node '" + node.path() + "'" );
+            throw new PushNodeException(
+                "Push node failed, parent for node '" + node.path() + "'  not found in target " + target.getName() );
         }
     }
 

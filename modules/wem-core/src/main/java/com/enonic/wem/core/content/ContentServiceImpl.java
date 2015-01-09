@@ -225,8 +225,6 @@ public class ContentServiceImpl
     @Override
     public Content push( final PushContentParams params )
     {
-        params.getContentId();
-
         return PushContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
