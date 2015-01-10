@@ -147,7 +147,16 @@ public final class ContentResource
     {
         final Content persistedContent;
         final CreateMediaParams createMediaParams = new CreateMediaParams();
-        createMediaParams.parent( ContentPath.from( form.get( "parent" ).getString() ) );
+        final String parentParam = form.get( "parent" ).getString();
+        if ( parentParam.startsWith( "/" ) )
+        {
+            createMediaParams.parent( ContentPath.from( parentParam ) );
+        }
+        else
+        {
+            final Content parentContent = contentService.getById( ContentId.from( parentParam ) );
+            createMediaParams.parent( parentContent.getPath() );
+        }
         createMediaParams.name( form.get( "name" ).getString() );
 
         final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
