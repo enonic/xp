@@ -93,7 +93,7 @@ public final class VirtualHostMapping
             path = path.substring( this.source.length() );
         }
 
-        return this.target + path;
+        return normalizePath( this.target + path );
     }
 
     @Override

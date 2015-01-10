@@ -25,10 +25,10 @@ public class ServletRequestUrlHelperTest
     public void createUri()
     {
         final String uri1 = ServletRequestUrlHelper.createUri( null );
-        assertEquals( "", uri1 );
+        assertEquals( "/", uri1 );
 
         final String uri2 = ServletRequestUrlHelper.createUri( "" );
-        assertEquals( "", uri2 );
+        assertEquals( "/", uri2 );
 
         final String uri3 = ServletRequestUrlHelper.createUri( "a/b" );
         assertEquals( "/a/b", uri3 );
@@ -86,9 +86,10 @@ public class ServletRequestUrlHelperTest
         VirtualHostHelper.setVirtualHost( this.req, vhost );
 
         Mockito.when( vhost.getTarget() ).thenReturn( "/" );
+        Mockito.when( vhost.getSource() ).thenReturn( "/admin" );
 
         final String uri1 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
-        assertEquals( "/path/to/page", uri1 );
+        assertEquals( "/admin/path/to/page", uri1 );
 
         Mockito.when( vhost.getTarget() ).thenReturn( "/root/to/site" );
 
@@ -98,6 +99,6 @@ public class ServletRequestUrlHelperTest
         Mockito.when( vhost.getTarget() ).thenReturn( "/path/to" );
 
         final String uri3 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
-        assertEquals( "/page", uri3 );
+        assertEquals( "/admin/page", uri3 );
     }
 }

@@ -2,6 +2,8 @@ package com.enonic.xp.web.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -30,6 +32,10 @@ public final class ServletRequestUrlHelper
             }
 
             str.append( path );
+        }
+        else
+        {
+            str.append( "/" );
         }
 
         return rewriteUri( req, str.toString() );
@@ -87,16 +93,20 @@ public final class ServletRequestUrlHelper
         if ( uri.startsWith( targetPath ) )
         {
             final String result = uri.substring( targetPath.length() );
-            if ( result.startsWith( "/" ) )
-            {
-                return result;
-            }
-            else
-            {
-                return "/" + result;
-            }
+            return normalizePath( vhost.getSource() + "/" + result );
         }
 
-        return uri;
+        return normalizePath( uri );
+    }
+
+    private static String normalizePath( final String value )
+    {
+        if ( Strings.isNullOrEmpty( value ) )
+        {
+            return "/";
+        }
+
+        final Iterable<String> parts = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
+        return "/" + Joiner.on( '/' ).join( parts );
     }
 }
