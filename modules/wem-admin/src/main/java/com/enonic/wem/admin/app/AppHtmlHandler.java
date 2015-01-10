@@ -24,7 +24,7 @@ final class AppHtmlHandler
 
         final Map<String, Object> model = Maps.newHashMap();
         model.put( "app", app );
-        model.put( "baseUri", baseUri );
+        model.put( "baseUri", baseUri.equals( "/" ) ? "" : baseUri );
 
         return this.template.execute( model );
     }
