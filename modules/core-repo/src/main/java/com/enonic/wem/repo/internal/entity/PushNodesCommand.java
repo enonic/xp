@@ -6,27 +6,32 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.api.node.PushNodeException;
+import com.enonic.wem.api.node.NodeVersionIds;
+import com.enonic.wem.api.node.PushNodesResult;
+import com.enonic.wem.api.query.expr.FieldOrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.version.VersionIndexPath;
 import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
 
-public class PushNodeCommand
+public class PushNodesCommand
     extends AbstractNodeCommand
 {
     private final Workspace target;
 
-    private final NodeId id;
+    private final NodeIds ids;
 
-    private PushNodeCommand( final Builder builder )
+    private PushNodesCommand( final Builder builder )
     {
         super( builder );
         this.target = builder.target;
-        this.id = builder.id;
+        this.ids = builder.ids;
     }
 
     public static Builder create()
@@ -35,46 +40,54 @@ public class PushNodeCommand
     }
 
 
-    public Node execute()
+    public PushNodesResult execute()
     {
         final Context context = ContextAccessor.current();
 
-        final NodeVersionId currentVersion = this.queryService.get( id, IndexContext.from( context ) );
+        final NodeVersionIds nodeVersionIds = this.queryService.find( ids, OrderExpressions.from(
+            FieldOrderExpr.create( VersionIndexPath.NODE_PATH, OrderExpr.Direction.ASC ) ), IndexContext.from( context ) );
 
-        final Node currentNode = nodeDao.getByVersionId( currentVersion );
+        final PushNodesResult.Builder builder = PushNodesResult.create();
 
-        validate( currentNode, context );
+        for ( final NodeVersionId nodeVersionId : nodeVersionIds )
+        {
+            final Node node = nodeDao.getByVersionId( nodeVersionId );
 
+            if ( !targetParentExists( node, context ) )
+            {
+                builder.addfailed( node, PushNodesResult.Reason.PARENT_NOT_FOUND );
+            }
+            else
+            {
+                doPushNode( context, node, nodeVersionId );
+                builder.addSuccess( node );
+            }
+        }
+
+        return builder.build();
+    }
+
+    private void doPushNode( final Context context, final Node node, final NodeVersionId nodeVersionId )
+    {
         this.workspaceService.store( StoreWorkspaceDocument.create().
-            nodeVersionId( currentVersion ).
-            node( currentNode ).
+            nodeVersionId( nodeVersionId ).
+            node( node ).
             build(), WorkspaceContext.from( this.target, context.getRepositoryId() ) );
 
-        this.indexService.store( currentNode, currentVersion, IndexContext.create().
+        this.indexService.store( node, nodeVersionId, IndexContext.create().
             workspace( this.target ).
             repositoryId( context.getRepositoryId() ).
             authInfo( context.getAuthInfo() ).
             build() );
-
-        return NodeHasChildResolver.create().
-            queryService( this.queryService ).
-            build().
-            resolve( currentNode );
     }
 
-    public void validate( final Node node, final Context currentContext )
+    boolean targetParentExists( final Node node, final Context currentContext )
     {
-        validateParentExists( node, currentContext );
-    }
 
-    private void validateParentExists( final Node node, final Context currentContext )
-    {
         if ( node.parent().equals( NodePath.ROOT ) )
         {
-            return;
+            return true;
         }
-
-        // Check if current node already exists in target
 
         final Context targetContext = createTargetContext( currentContext );
 
@@ -82,9 +95,10 @@ public class PushNodeCommand
 
         if ( targetParent == null )
         {
-            throw new PushNodeException(
-                "Push node failed, parent for node '" + node.path() + "'  not found in target " + target.getName() );
+            return false;
         }
+
+        return true;
     }
 
     private Context createTargetContext( final Context currentContext )
@@ -106,7 +120,7 @@ public class PushNodeCommand
     {
         private Workspace target;
 
-        private NodeId id;
+        private NodeIds ids;
 
         Builder()
         {
@@ -119,22 +133,22 @@ public class PushNodeCommand
             return this;
         }
 
-        public Builder id( final NodeId nodeId )
+        public Builder ids( final NodeIds nodeIds )
         {
-            this.id = nodeId;
+            this.ids = nodeIds;
             return this;
         }
 
-        public PushNodeCommand build()
+        public PushNodesCommand build()
         {
             validate();
-            return new PushNodeCommand( this );
+            return new PushNodesCommand( this );
         }
 
         protected void validate()
         {
             Preconditions.checkNotNull( target );
-            Preconditions.checkNotNull( id );
+            Preconditions.checkNotNull( ids );
         }
     }
 

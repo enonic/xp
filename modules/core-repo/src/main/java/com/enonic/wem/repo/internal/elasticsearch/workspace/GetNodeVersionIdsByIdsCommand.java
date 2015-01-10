@@ -65,7 +65,7 @@ public class GetNodeVersionIdsByIdsCommand
             from( 0 ).
             size( this.nodeIds.getSize() ).
             addSortBuilder( new FieldSortBuilder( VersionIndexPath.TIMESTAMP.getPath() ).order( SortOrder.DESC ) ).
-            setReturnFields( ReturnFields.from( WorkspaceIndexPath.NODE_ID, WorkspaceIndexPath.VERSION_ID ) ).
+            setReturnFields( ReturnFields.from( WorkspaceIndexPath.NODE_ID, WorkspaceIndexPath.VERSION_ID, WorkspaceIndexPath.NODE_ID ) ).
             build();
 
         final SearchResult searchResult = elasticsearchDao.find( query );

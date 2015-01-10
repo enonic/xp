@@ -1,9 +1,18 @@
 package com.enonic.wem.core.content;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.collect.Sets;
+
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
+import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePaths;
 
@@ -33,6 +42,20 @@ class ContentNodeHelper
     {
         final String contentPath = StringUtils.substringAfter( nodePath.asAbsolute().toString(), CONTENT_ROOT_NODE_NAME + "/" );
         return ContentPath.from( contentPath );
+    }
+
+    public static NodeIds toNodeIds( final ContentIds contentIds )
+    {
+        final Set<NodeId> nodeIds = Sets.newHashSet();
+
+        final Iterator<ContentId> iterator = contentIds.iterator();
+
+        while ( iterator.hasNext() )
+        {
+            nodeIds.add( NodeId.from( iterator.next().toString() ) );
+        }
+
+        return NodeIds.from( nodeIds );
     }
 
 }

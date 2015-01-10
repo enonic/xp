@@ -29,6 +29,7 @@ public class StoreNodeCommand
         this.versionService.store( NodeVersionDocument.create().
             nodeId( node.id() ).
             nodeVersionId( updatedNodeVersionId ).
+            nodePath( node.path() ).
             build(), context.getRepositoryId() );
 
         this.workspaceService.store( StoreWorkspaceDocument.create().

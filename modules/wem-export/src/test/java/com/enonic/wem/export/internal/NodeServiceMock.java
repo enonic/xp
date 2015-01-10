@@ -38,6 +38,7 @@ import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.node.RenameNodeParams;
 import com.enonic.wem.api.node.ReorderChildNodesParams;
 import com.enonic.wem.api.node.ReorderChildNodesResult;
@@ -133,7 +134,7 @@ class NodeServiceMock
     }
 
     @Override
-    public Node push( final NodeId id, final Workspace target )
+    public PushNodesResult push( final NodeIds ids, final Workspace target )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

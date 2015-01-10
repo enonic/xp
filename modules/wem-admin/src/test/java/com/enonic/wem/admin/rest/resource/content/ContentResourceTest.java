@@ -32,6 +32,7 @@ import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.PushContentParams;
+import com.enonic.wem.api.content.PushContentsResult;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
@@ -692,35 +693,28 @@ public class ContentResourceTest
 
     @Test
     public void publish_content_success()
-            throws Exception
-    {
-        Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn(
-                newContent().parentPath( ContentPath.ROOT ).name("content").displayName( "My Content" ).build() );
-
-        String jsonString = request().path( "content/publish" ).
-                entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-                post().getAsString();
-
-        assertJson( "publish_content_success.json", jsonString );
-    }
-
-    @Test
-    public void publish_not_found()
         throws Exception
     {
-
-        final Exception e =
-            new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.WORKSPACE_STAGE );
-
-        Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).
-            thenThrow( e );
+        Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
+            successfull( Contents.from( newContent().
+                id( ContentId.from( "my-content" ) ).
+                parentPath( ContentPath.ROOT ).
+                name( "content" ).
+                displayName( "My Content" ).
+                build() ) ).
+            addFailed( newContent().
+                id( ContentId.from( "my-content2" ) ).
+                parentPath( ContentPath.ROOT ).
+                name( "content" ).
+                displayName( "My Content" ).
+                build(), PushContentsResult.Reason.PARENT_NOT_EXISTS ).
+            build() );
 
         String jsonString = request().path( "content/publish" ).
             entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "publish_content_failure.json", jsonString );
-
+        assertJson( "publish_content_success.json", jsonString );
     }
 
     @Test

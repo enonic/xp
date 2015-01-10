@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.version;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
 
 public class NodeVersionDocument
@@ -11,10 +12,13 @@ public class NodeVersionDocument
 
     private final NodeId nodeId;
 
+    private final NodePath nodePath;
+
     private NodeVersionDocument( final Builder builder )
     {
         this.nodeVersionId = builder.nodeVersionId;
         this.nodeId = builder.nodeId;
+        this.nodePath = builder.nodePath;
     }
 
     public static Builder create()
@@ -32,12 +36,18 @@ public class NodeVersionDocument
         return nodeId;
     }
 
+    public NodePath getNodePath()
+    {
+        return nodePath;
+    }
 
     public static class Builder
     {
         private NodeVersionId nodeVersionId;
 
         private NodeId nodeId;
+
+        private NodePath nodePath;
 
         private Builder()
         {
@@ -52,6 +62,12 @@ public class NodeVersionDocument
         public Builder nodeId( final NodeId nodeId )
         {
             this.nodeId = nodeId;
+            return this;
+        }
+
+        public Builder nodePath( final NodePath nodePath )
+        {
+            this.nodePath = nodePath;
             return this;
         }
 

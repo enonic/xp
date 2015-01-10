@@ -10,4 +10,6 @@ public class VersionIndexPath
 
     public static final IndexPath TIMESTAMP = IndexPath.from( "timestamp" );
 
+    public static final IndexPath NODE_PATH = IndexPath.from( "nodepath" );
+
 }

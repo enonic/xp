@@ -78,8 +78,8 @@ import com.enonic.wem.api.content.FindContentVersionsResult;
 import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.content.MoveContentParams;
-import com.enonic.wem.api.content.PushContentException;
 import com.enonic.wem.api.content.PushContentParams;
+import com.enonic.wem.api.content.PushContentsResult;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.ReorderChildContentsParams;
 import com.enonic.wem.api.content.ReorderChildContentsResult;
@@ -308,25 +308,9 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
 
-        final PublishContentResultJson jsonResult = new PublishContentResultJson();
+        final PushContentsResult result = contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, contentIds ) );
 
-        for ( ContentId contentId : contentIds )
-        {
-            try
-            {
-                final Content publishedContent = contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, contentId ) );
-
-                final String displayName = publishedContent.getDisplayName();
-
-                jsonResult.addSuccess( contentId, displayName );
-            }
-            catch ( ContentNotFoundException | PushContentException e )
-            {
-                jsonResult.addFailure( contentId, e.getMessage() );
-            }
-        }
-
-        return jsonResult;
+        return PublishContentResultJson.from( result );
     }
 
     @POST

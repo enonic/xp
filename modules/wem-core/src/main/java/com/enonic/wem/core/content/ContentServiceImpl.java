@@ -39,6 +39,7 @@ import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.content.MoveContentParams;
 import com.enonic.wem.api.content.PushContentParams;
+import com.enonic.wem.api.content.PushContentsResult;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.ReorderChildContentsParams;
 import com.enonic.wem.api.content.ReorderChildContentsResult;
@@ -223,14 +224,14 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content push( final PushContentParams params )
+    public PushContentsResult push( final PushContentParams params )
     {
         return PushContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
-            contentId( params.getContentId() ).
+            contentIds( params.getContentIds() ).
             target( params.getTarget() ).
             build().
             execute();

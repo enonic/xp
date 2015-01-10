@@ -1,47 +1,93 @@
 package com.enonic.wem.core.content;
 
+import java.util.Set;
+
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPublishedEvent;
-import com.enonic.wem.api.content.PushContentException;
-import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.content.PushContentsResult;
 import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.PushNodeException;
+import com.enonic.wem.api.node.NodeIds;
+import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.workspace.Workspace;
 
 public class PushContentCommand
     extends AbstractContentCommand
 {
-    private final ContentId contentId;
+    private final ContentIds contentIds;
 
     private final Workspace target;
 
     private PushContentCommand( final Builder builder )
     {
         super( builder );
-        this.contentId = builder.contentId;
+        this.contentIds = builder.contentIds;
         this.target = builder.target;
     }
 
-    Content execute()
+    PushContentsResult execute()
     {
-        final NodeId nodeId = NodeId.from( contentId.toString() );
+        final PushNodesResult pushNodesResult =
+            nodeService.push( ContentNodeHelper.toNodeIds( this.contentIds ), ContentConstants.WORKSPACE_PROD );
 
-        final Node pushedNode;
-        try
+        final PushContentsResult result = createResult( pushNodesResult );
+
+        for ( final Content content : result.getSuccessfull() )
         {
-            pushedNode = nodeService.push( nodeId, this.target );
-        }
-        catch ( PushNodeException e )
-        {
-            throw new PushContentException( e.getMessage() );
+            eventPublisher.publish( new ContentPublishedEvent( content.getId() ) );
         }
 
-        eventPublisher.publish( new ContentPublishedEvent( contentId ) );
+        return result;
+    }
 
-        return translator.fromNode( pushedNode );
+    private PushContentsResult createResult( final PushNodesResult pushNodesResult )
+    {
+        final PushContentsResult.Builder builder = PushContentsResult.create();
+
+        builder.successfull( translator.fromNodes( pushNodesResult.getSuccessfull() ) );
+
+        for ( final PushNodesResult.Failed failedNode : pushNodesResult.getFailed() )
+        {
+            final Content content = translator.fromNode( failedNode.getNode() );
+
+            final PushContentsResult.Reason reason;
+
+            switch ( failedNode.getReason() )
+            {
+                case PARENT_NOT_FOUND:
+                {
+                    reason = PushContentsResult.Reason.PARENT_NOT_EXISTS;
+                    break;
+                }
+                default:
+                {
+                    reason = PushContentsResult.Reason.UNKNOWN;
+                }
+
+            }
+
+            builder.addFailed( content, reason );
+
+        }
+
+        return builder.build();
+    }
+
+    private NodeIds getAsNodeIds( final ContentIds contentIds )
+    {
+        final Set<NodeId> nodeIds = Sets.newHashSet();
+
+        for ( final ContentId contentId : contentIds )
+        {
+            nodeIds.add( NodeId.from( contentId.toString() ) );
+        }
+
+        return NodeIds.from( nodeIds );
     }
 
     public static Builder create()
@@ -52,13 +98,13 @@ public class PushContentCommand
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private ContentId contentId;
+        private ContentIds contentIds;
 
         private Workspace target;
 
-        public Builder contentId( final ContentId contentId )
+        public Builder contentIds( final ContentIds contentIds )
         {
-            this.contentId = contentId;
+            this.contentIds = contentIds;
             return this;
         }
 
@@ -72,7 +118,7 @@ public class PushContentCommand
         {
             super.validate();
             Preconditions.checkNotNull( target );
-            Preconditions.checkNotNull( contentId );
+            Preconditions.checkNotNull( contentIds );
         }
 
         public PushContentCommand build()

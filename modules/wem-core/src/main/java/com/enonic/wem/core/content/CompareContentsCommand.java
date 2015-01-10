@@ -1,15 +1,8 @@
 package com.enonic.wem.core.content;
 
-import java.util.Iterator;
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-
 import com.enonic.wem.api.content.CompareContentResults;
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.node.NodeComparisons;
-import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.workspace.Workspace;
@@ -36,26 +29,11 @@ public class CompareContentsCommand
 
     public CompareContentResults execute()
     {
-        final NodeIds nodeIds = getAsNodeIds( this.contentIds );
+        final NodeIds nodeIds = ContentNodeHelper.toNodeIds( this.contentIds );
         final NodeComparisons comparisons = this.nodeService.compare( nodeIds, this.target );
 
         return CompareResultTranslator.translate( comparisons );
     }
-
-    private NodeIds getAsNodeIds( final ContentIds contentIds )
-    {
-        final Set<NodeId> nodeIds = Sets.newHashSet();
-
-        final Iterator<ContentId> iterator = contentIds.iterator();
-
-        while ( iterator.hasNext() )
-        {
-            nodeIds.add( NodeId.from( iterator.next().toString() ) );
-        }
-
-        return NodeIds.from( nodeIds );
-    }
-
 
     public static final class Builder
     {

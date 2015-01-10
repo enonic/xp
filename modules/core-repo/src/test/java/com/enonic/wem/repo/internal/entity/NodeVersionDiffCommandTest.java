@@ -4,9 +4,11 @@ import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
+import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.index.IndexType;
@@ -93,10 +95,8 @@ public class NodeVersionDiffCommandTest
 
     private void printIndexContent()
     {
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( TEST_REPO.getId() ),
-                              IndexType.VERSION.getName() );
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( TEST_REPO.getId() ),
-                              IndexType.WORKSPACE.getName() );
+        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( TEST_REPO.getId() ), IndexType.VERSION.getName() );
+        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( TEST_REPO.getId() ), IndexType.WORKSPACE.getName() );
     }
 
     private Node doUpdateNode( final Node node )
@@ -117,10 +117,10 @@ public class NodeVersionDiffCommandTest
             execute();
     }
 
-    private Node doPushNode( final Workspace workspace, final Node createdNode )
+    private PushNodesResult doPushNode( final Workspace workspace, final Node createdNode )
     {
-        return PushNodeCommand.create().
-            id( createdNode.id() ).
+        return PushNodesCommand.create().
+            ids( NodeIds.from( createdNode.id() ) ).
             target( workspace ).
             indexService( this.indexService ).
             workspaceService( this.workspaceService ).

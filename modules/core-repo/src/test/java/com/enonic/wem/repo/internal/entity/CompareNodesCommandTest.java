@@ -8,7 +8,9 @@ import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeComparison;
+import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.workspace.Workspace;
 
@@ -129,10 +131,10 @@ public class CompareNodesCommandTest
             execute();
     }
 
-    private Node doPushNode( final Workspace workspace, final Node createdNode )
+    private PushNodesResult doPushNode( final Workspace workspace, final Node createdNode )
     {
-        return PushNodeCommand.create().
-            id( createdNode.id() ).
+        return PushNodesCommand.create().
+            ids( NodeIds.from( createdNode.id() ) ).
             target( workspace ).
             indexService( this.indexService ).
             workspaceService( this.workspaceService ).
