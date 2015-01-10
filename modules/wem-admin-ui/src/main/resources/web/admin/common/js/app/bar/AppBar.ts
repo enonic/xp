@@ -1,12 +1,18 @@
 module api.app.bar {
 
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+
+    import AppBarActions = api.app.bar.action.AppBarActions;
+
     export class AppBar extends api.dom.DivEl implements api.ui.ActionContainer {
 
         private application: Application;
 
         private launcherButton: api.dom.ButtonEl;
 
-        private homeButton: api.dom.ButtonEl;
+        private homeButton: HomeButton;
 
         private appImageButton: api.dom.ButtonEl;
 
@@ -28,16 +34,10 @@ module api.app.bar {
             this.launcherButton = new LauncherButton(this.showAppLauncherAction);
             this.appendChild(this.launcherButton);
 
-            this.appImageButton = new HomeImageButton(this.application, api.app.bar.action.AppBarActions.SHOW_BROWSE_PANEL);
-            this.appendChild(this.appImageButton);
-
-            this.homeButton = new HomeButton(this.application.getName(), api.app.bar.action.AppBarActions.SHOW_BROWSE_PANEL);
+            this.homeButton = new HomeButton(this.application, AppBarActions.SHOW_BROWSE_PANEL);
             this.appendChild(this.homeButton);
 
             this.appendChild(this.tabMenu);
-
-            api.dom.WindowDOM.get().onResized((event: UIEvent) => this.layoutChildren(), this);
-            this.onRendered((event) => this.layoutChildren());
 
             this.tabMenu.onNavigationItemAdded((event: api.ui.NavigatorEvent)=> {
                 this.updateAppOpenTabs();
@@ -45,6 +45,8 @@ module api.app.bar {
             this.tabMenu.onNavigationItemRemoved((event: api.ui.NavigatorEvent)=> {
                 this.updateAppOpenTabs();
             });
+
+            ResponsiveManager.onAvailableSizeChanged(this, this.layoutChildren.bind(this));
         }
 
 
@@ -60,9 +62,8 @@ module api.app.bar {
             this.application.setOpenTabs(this.tabMenu.countVisible());
         }
 
+        // TODO: Remove, when the new tab implementation is ready.
         private layoutChildren() {
-            this.updateHomeButtonLabel();
-
             var fullWidth = this.getEl().getWidth();
 
             var homeEl = this.homeButton.getEl();
@@ -80,59 +81,24 @@ module api.app.bar {
                 this.tabMenu.updateMenuPosition();
             }
         }
-
-        private updateHomeButtonLabel() {
-            var fullWidth = this.getEl().getWidth(),
-                homeEl = this.homeButton.getEl(),
-                homeLabel = homeEl.getInnerHtml();
-
-            if (fullWidth > 540 && homeLabel != this.application.getName()) {
-                homeEl.setInnerHtml(this.application.getName());
-            } else if (fullWidth <= 540 && homeLabel != this.application.getShortName()) {
-                homeEl.setInnerHtml(this.application.getShortName());
-            }
-        }
     }
 
     export class LauncherButton extends api.ui.button.ActionButton {
 
         constructor(action: api.ui.Action) {
-            super(action, true);
+            super(action, false);
             this.addClass('launcher-button');
         }
 
     }
 
-    export class HomeImageButton extends api.dom.ButtonEl {
+    export class HomeButton extends api.ui.button.Button {
 
         constructor(app: Application, action: api.ui.Action) {
-            super('home-icon-button');
 
-            var imgContainer = new api.dom.DivEl('icon-container');
+            super(app.getName());
 
-            if (app.isFullSizeIcon()) {
-                var img = new api.dom.ImgEl(app.getIconUrl());
-                imgContainer.appendChild(img);
-            } else {
-                var icon = new api.dom.IEl("app-icon icon-" + app.getIconUrl());
-                imgContainer.appendChild(icon);
-            }
-
-            this.getEl().setInnerHtml(imgContainer.getHtml());
-
-            this.onClicked((event: MouseEvent) => {
-                action.execute();
-            });
-        }
-
-    }
-
-    export class HomeButton extends api.dom.ButtonEl {
-
-        constructor(text: string, action: api.ui.Action) {
-            super('home-button');
-
-            this.getEl().setInnerHtml(text);
+            this.addClass("home-button app-icon icon-" + app.getIconUrl());
 
             this.onClicked((event: MouseEvent) => {
                 action.execute();

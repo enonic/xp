@@ -396,7 +396,6 @@ module api.ui.panel {
             if (!this.isPanelHidden(panelNumber)) {
                 return;
             }
-            console.log("showing panel");
             this.splitterThickness = this.previousSplitterThickness;
             this.splitter.show();
 
@@ -413,7 +412,6 @@ module api.ui.panel {
         }
 
         hidePanel(panelNumber: number) {
-            console.log("hiding panel");
             api.util.assert((panelNumber == 1 || panelNumber == 2), "Panel number must be 1 or 2");
             if (this.isPanelHidden(panelNumber)) {
                 return;
