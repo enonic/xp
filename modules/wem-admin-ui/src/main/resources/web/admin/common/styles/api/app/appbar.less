@@ -1,37 +1,11 @@
 .appbar {
-  text-align: center;
   height: 44px;
   padding: 6px;
-  background-color: @admin-dark-gray;
-  background-position: top center;
-  overflow: hidden;
+  background: @admin-bg-dark-gray top center;
   background-size: cover;
+  text-align: center;
+  overflow: hidden;
   .box-sizing(border-box);
-
-  .home-icon-button {
-    &:extend(.icon);
-    float: left;
-    margin: 4px;
-    border: 0 none;
-    background-color: transparent;
-    .app-icon {
-      cursor: pointer;
-      font-size: 24px;
-      color: white;
-      &:before {
-        .color-transition;
-      }
-      &:hover {
-        background-color: transparent;
-        &:before {
-          color: rgba(255, 255, 255, 0.5);
-        }
-      }
-
-    }
-
-  }
-
 
   .launcher-button {
     &:extend(.icon);
@@ -41,14 +15,15 @@
     width: 24px;
     height: 24px;
     padding: 0;
-    margin: 4px;
+    margin: 4px 4px 4px 24px;
     border: 0 none;
     background-color: transparent;
     color: white;
     font-size:24px;
     cursor: pointer;
+
     &:before {
-      .color-transition;
+      .color-transition();
     }
 
     span {
@@ -66,7 +41,6 @@
   .home-button {
     float: left;
     line-height: 20px;
-    margin: 4px 0;
     padding: 2px 10px;
     border: 0;
     color: @admin-bg-light-gray;
@@ -74,16 +48,40 @@
     font-family: @admin-font-family;
     font-size: 14px;
     cursor: pointer;
-    .color-transition;
+
+    span {
+      padding-left: 10px;
+    }
+
+    &:before {
+      position: relative;
+      top: 4px;
+      font-size: 24px;
+      font-family: 'icomoon';
+    }
+
+    &:before, span {
+      .color-transition();
+    }
 
     &:hover {
-      color: rgba(255,255,255,0.5);
+      background: none;
+      &:before, span {
+        color: rgba(255,255,255,0.5);
+      }
+    }
+  }
+
+  .home-button, .launcher-button {
+    &:focus {
+      .box-shadow(none);
+      border: none;
     }
   }
 }
 
 ._0-240, ._240-360, ._360-540, ._540-720 {
-  .home-button {
+  .home-button span {
     display: none;
   }
 }

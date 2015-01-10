@@ -1,13 +1,13 @@
-@transitionDefaultDuration: 0.3s;
-.color-transition {
-  transition: color @transitionDefaultDuration ease-in-out;
-  -moz-transition: color @transitionDefaultDuration ease-in-out; /* Firefox 4 */
-  -webkit-transition: color @transitionDefaultDuration ease-in-out; /* Safari and Chrome */
-  -o-transition: color @transitionDefaultDuration ease-in-out; /* Opera */
+.color-transition(@duration: 0.2s, @timingFunction: ease-in-out) {
+  transition: color @duration @timingFunction;
+  -moz-transition: color @duration @timingFunction;
+  -webkit-transition: color @duration @timingFunction;
+  -o-transition: color @duration @timingFunction;
 }
-.background-color-transition {
-  transition: background-color @transitionDefaultDuration ease-in-out;
-  -moz-transition: background-color @transitionDefaultDuration ease-in-out; /* Firefox 4 */
-  -webkit-transition: background-color @transitionDefaultDuration ease-in-out; /* Safari and Chrome */
-  -o-transition: background-color @transitionDefaultDuration ease-in-out; /* Opera */
+
+.background-color-transition(@duration: 0.2s, @timingFunction: ease-in-out) {
+  transition: background-color @duration @timingFunction;
+  -moz-transition: background-color @duration @timingFunction;
+  -webkit-transition: background-color @duration @timingFunction;
+  -o-transition: background-color @duration ease-in-out;
 }
