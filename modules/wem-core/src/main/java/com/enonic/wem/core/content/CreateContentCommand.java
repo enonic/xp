@@ -47,6 +47,10 @@ final class CreateContentCommand
     private Content doExecute()
     {
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
+        if ( contentType == null )
+        {
+            throw new IllegalArgumentException( "Content type not found [" + params.getType().toString() + "]" );
+        }
         if ( contentType.isAbstract() )
         {
             throw new IllegalArgumentException( "Cannot create content with an abstract type [" + params.getType().toString() + "]" );
