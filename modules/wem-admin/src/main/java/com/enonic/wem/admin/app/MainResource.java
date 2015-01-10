@@ -6,9 +6,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
@@ -16,9 +14,6 @@ import com.enonic.xp.web.jaxrs.JaxRsComponent;
 public final class MainResource
     implements JaxRsComponent
 {
-    @Context
-    UriInfo uriInfo;
-
     private final AppHtmlHandler appHtmlHandler;
 
     private final ResourceHandler resourceHandler;
@@ -49,7 +44,7 @@ public final class MainResource
     @Produces("text/html")
     public String getAdminApp( @QueryParam("app") @DefaultValue("app-launcher") final String app )
     {
-        return this.appHtmlHandler.render( app, uriInfo );
+        return this.appHtmlHandler.render( app );
     }
 
     public void setResourceLocator( final ResourceLocator resourceLocator )
