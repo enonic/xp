@@ -26,7 +26,7 @@ public final class ContentResource
     @GET
     public Response handleGet()
     {
-        return doHandle();
+        return createContext().callWith( this::doHandle );
     }
 
     @POST

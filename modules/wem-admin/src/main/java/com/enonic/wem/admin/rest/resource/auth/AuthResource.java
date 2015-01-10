@@ -58,7 +58,7 @@ public final class AuthResource
             if ( !authInfo.hasRole( RoleKeys.ADMIN_LOGIN ) )
             {
                 logout();
-                return new LoginResultJson( AuthenticationInfo.failed() );
+                return new LoginResultJson( AuthenticationInfo.unAuthenticated() );
             }
 
             final Session session = ContextAccessor.current().getLocalScope().getSession();
@@ -93,7 +93,7 @@ public final class AuthResource
                 return authInfo;
             }
         }
-        return AuthenticationInfo.failed();
+        return AuthenticationInfo.unAuthenticated();
     }
 
     private AuthenticationInfo loginWithUserStore( final String user, final String password, final UserStoreKey userStoreKey,

@@ -6,6 +6,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
@@ -17,6 +18,9 @@ import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
@@ -81,6 +85,15 @@ public abstract class RenderBaseResource
         }
 
         return site;
+    }
+
+    protected Context createContext()
+    {
+        return ContextBuilder.create().
+            workspace( this.workspace ).
+            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+            authInfo( ContextAccessor.current().getAuthInfo() ).
+            build();
     }
 
     protected final Content getContent( final String contentSelector )

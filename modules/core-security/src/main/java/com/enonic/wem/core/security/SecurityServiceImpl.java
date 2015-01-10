@@ -269,7 +269,7 @@ public final class SecurityServiceImpl
         }
         else
         {
-            return AuthenticationInfo.failed();
+            return AuthenticationInfo.unAuthenticated();
         }
     }
 
@@ -282,7 +282,7 @@ public final class SecurityServiceImpl
         }
         else
         {
-            return AuthenticationInfo.failed();
+            return AuthenticationInfo.unAuthenticated();
         }
     }
 

@@ -117,7 +117,7 @@ public class AuthResourceTest
     public void testLoginFail()
         throws Exception
     {
-        final AuthenticationInfo authInfo = AuthenticationInfo.failed();
+        final AuthenticationInfo authInfo = AuthenticationInfo.unAuthenticated();
         Mockito.when( securityService.authenticate( Mockito.any( AuthenticationToken.class ) ) ).
             thenReturn( authInfo );
 
