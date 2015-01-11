@@ -3,15 +3,12 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
 
-import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.EditableNode;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 
@@ -78,9 +75,6 @@ public final class UpdateNodeCommand
     private Node createUpdatedNode( final Node editedNode )
     {
         final Instant now = Instant.now();
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final PrincipalKey modifier =
-            authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.from( "user:system:admin" );
 
         final NodePath parentPath = editedNode.path().getParentPath();
         final AccessControlList permissions =
@@ -88,7 +82,7 @@ public final class UpdateNodeCommand
 
         final Node.Builder updateNodeBuilder = Node.newNode( editedNode ).
             modifiedTime( now ).
-            modifier( modifier ).
+            modifier( getCurrentPrincipalKey() ).
             permissions( permissions );
         return updateNodeBuilder.build();
     }

@@ -37,6 +37,7 @@ import com.enonic.wem.api.content.FindContentVersionsResult;
 import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
+import com.enonic.wem.api.content.MoveContentException;
 import com.enonic.wem.api.content.MoveContentParams;
 import com.enonic.wem.api.content.PushContentParams;
 import com.enonic.wem.api.content.PushContentsResult;
@@ -55,6 +56,7 @@ import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.media.MediaInfoService;
+import com.enonic.wem.api.node.MoveNodeException;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
@@ -372,11 +374,18 @@ public class ContentServiceImpl
     @Override
     public Content move( final MoveContentParams params )
     {
-        final Node movedNode = nodeService.move( NodeId.from( params.getContentId() ),
-                                                 NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
-                                                     params.getParentContentPath().toString() ).build() );
+        try
+        {
+            final Node movedNode = nodeService.move( NodeId.from( params.getContentId() ),
+                                                     NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
+                                                         params.getParentContentPath().toString() ).build() );
 
-        return contentNodeTranslator.fromNode( movedNode );
+            return contentNodeTranslator.fromNode( movedNode );
+        }
+        catch ( MoveNodeException e )
+        {
+            throw new MoveContentException( e.getMessage() );
+        }
     }
 
     @Override

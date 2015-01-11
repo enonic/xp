@@ -55,7 +55,7 @@ public class NodeServiceImpl
 
     private QueryService queryService;
 
-    private BlobStore binaryBlobStore = new FileBlobStore( NodeConstants.binaryBlobStoreDir );
+    private final BlobStore binaryBlobStore = new FileBlobStore( NodeConstants.binaryBlobStoreDir );
 
     @Override
     public Node getById( final NodeId id )
@@ -274,7 +274,7 @@ public class NodeServiceImpl
     {
         return MoveNodeCommand.create().
             id( nodeId ).
-            parentNodePath( parentNodePath ).
+            newParent( parentNodePath ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).

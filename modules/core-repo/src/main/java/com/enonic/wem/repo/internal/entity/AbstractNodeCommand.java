@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -16,7 +17,9 @@ import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpressions;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexService;
@@ -65,8 +68,8 @@ abstract class AbstractNodeCommand
     {
         return MoveNodeCommand.create().
             id( nodeId ).
-            parentNodePath( newParentPath ).
-            nodeName( nodeName ).
+            newParent( newParentPath ).
+            newNodeName( nodeName ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
@@ -148,6 +151,19 @@ abstract class AbstractNodeCommand
             execute();
     }
 
+    Node doDeleteNode( final NodeId nodeId )
+    {
+        return DeleteNodeByIdCommand.create().
+            indexService( this.indexService ).
+            versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
+            nodeId( nodeId ).
+            build().
+            execute();
+    }
+
     FindNodesByParentResult doFindNodesByParent( final FindNodesByParentParams params )
     {
         return FindNodesByParentCommand.create().
@@ -159,6 +175,13 @@ abstract class AbstractNodeCommand
             indexService( this.indexService ).
             build().
             execute();
+    }
+
+    protected PrincipalKey getCurrentPrincipalKey()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        return authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
     }
 
     protected AccessControlList evaluatePermissions( final NodePath parentPath, final boolean inheritPermissions,
