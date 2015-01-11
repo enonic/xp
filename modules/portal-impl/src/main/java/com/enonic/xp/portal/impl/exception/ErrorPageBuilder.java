@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
-import com.enonic.xp.web.jaxrs.exception.HtmlBuilder;
 
 final class ErrorPageBuilder
 {
