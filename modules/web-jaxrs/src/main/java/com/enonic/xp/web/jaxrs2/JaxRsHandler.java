@@ -18,11 +18,24 @@ public abstract class JaxRsHandler
 
     private boolean needsRefresh;
 
-    public JaxRsHandler( final int order )
+    private String path;
+
+    public JaxRsHandler()
     {
-        setOrder( order );
         this.dispatcher = new JaxRsDispatcher();
         this.needsRefresh = true;
+    }
+
+    protected final void setPath( final String path )
+    {
+        this.path = path;
+        this.dispatcher.setMappingPrefix( this.path );
+    }
+
+    @Override
+    protected final boolean canHandle( final HttpServletRequest req )
+    {
+        return req.getRequestURI().startsWith( this.path );
     }
 
     @Override

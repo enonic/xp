@@ -1,23 +1,22 @@
 package com.enonic.wem.portal.internal.content;
 
-
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
 
-final class EffectivePageResolver
+public final class EffectivePageResolver
 {
     private final Content content;
 
     private final PageTemplate template;
 
-    EffectivePageResolver( final Content content, final PageTemplate template )
+    public EffectivePageResolver( final Content content, final PageTemplate template )
     {
         this.content = content;
         this.template = template;
     }
 
-    Page resolve()
+    public Page resolve()
     {
         if ( !content.hasPage() )
         {
