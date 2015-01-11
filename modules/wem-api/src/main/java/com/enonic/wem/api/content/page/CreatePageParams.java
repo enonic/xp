@@ -75,7 +75,5 @@ public final class CreatePageParams
     public void validate()
     {
         Preconditions.checkNotNull( this.content, "content cannot be null" );
-        Preconditions.checkNotNull( this.config, "config cannot be null" );
-        Preconditions.checkNotNull( this.regions, "regions cannot be null" );
     }
 }

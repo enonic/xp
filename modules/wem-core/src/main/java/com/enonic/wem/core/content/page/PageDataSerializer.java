@@ -13,11 +13,13 @@ import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 public class PageDataSerializer
     extends AbstractDataSetSerializer<Page, Page>
 {
-    public static final String CONTROLLER = "controller";
+    private static final String CONTROLLER = "controller";
 
-    public static final String PAGE_TEMPLATE = "template";
+    private static final String TEMPLATE = "template";
 
-    public static final String PAGE_CONFIG = "config";
+    private static final String CONFIG = "config";
+
+    private static final String REGION = "region";
 
     private final RegionDataSerializer regionDataSerializer = new RegionDataSerializer();
 
@@ -33,7 +35,7 @@ public class PageDataSerializer
         final PropertySet asSet = parent.addSet( propertyName );
 
         asSet.addString( CONTROLLER, page.hasController() ? page.getController().toString() : null );
-        asSet.addString( PAGE_TEMPLATE, page.hasTemplate() ? page.getTemplate().toString() : null );
+        asSet.addString( TEMPLATE, page.hasTemplate() ? page.getTemplate().toString() : null );
 
         if ( page.hasRegions() )
         {
@@ -44,7 +46,7 @@ public class PageDataSerializer
         }
         if ( page.hasConfig() )
         {
-            asSet.addSet( PAGE_CONFIG, page.getConfig().getRoot().copy( asSet.getTree() ) );
+            asSet.addSet( CONFIG, page.getConfig().getRoot().copy( asSet.getTree() ) );
         }
     }
 
@@ -55,19 +57,22 @@ public class PageDataSerializer
         {
             page.controller( DescriptorKey.from( asData.getString( CONTROLLER ) ) );
         }
-        if ( asData.isNotNull( PAGE_TEMPLATE ) )
+        if ( asData.isNotNull( TEMPLATE ) )
         {
-            page.template( PageTemplateKey.from( asData.getString( PAGE_TEMPLATE ) ) );
+            page.template( PageTemplateKey.from( asData.getString( TEMPLATE ) ) );
         }
-        final PageRegions.Builder pageRegionsBuilder = PageRegions.newPageRegions();
-        for ( final Property regionAsProp : asData.getProperties( "region" ) )
+        if ( asData.hasProperty( REGION ) )
         {
-            pageRegionsBuilder.add( regionDataSerializer.fromData( regionAsProp.getSet() ) );
+            final PageRegions.Builder pageRegionsBuilder = PageRegions.newPageRegions();
+            for ( final Property regionAsProp : asData.getProperties( REGION ) )
+            {
+                pageRegionsBuilder.add( regionDataSerializer.fromData( regionAsProp.getSet() ) );
+            }
+            page.regions( pageRegionsBuilder.build() );
         }
-        page.regions( pageRegionsBuilder.build() );
-        if ( asData.hasProperty( PAGE_CONFIG ) )
+        if ( asData.hasProperty( CONFIG ) )
         {
-            page.config( asData.getSet( PAGE_CONFIG ).toTree() );
+            page.config( asData.getSet( CONFIG ).toTree() );
         }
         return page.build();
     }
