@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageRegions;
-import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.region.Component;
 import com.enonic.wem.api.content.page.region.ComponentName;
 import com.enonic.wem.api.content.page.region.ComponentPath;
@@ -103,16 +102,7 @@ public final class ComponentInstruction
         }
 
         final Page page = content.getPage();
-        final PageRegions pageRegions;
-        if ( ( page != null ) && page.hasRegions() )
-        {
-            pageRegions = resolvePageRegions( page, context.getPageTemplate() );
-        }
-        else
-        {
-            pageRegions = context.getPageTemplate().getRegions();
-        }
-
+        final PageRegions pageRegions = page.getRegions();
         Component component = pageRegions.getComponent( path );
         if ( component == null )
         {
@@ -125,17 +115,5 @@ public final class ComponentInstruction
         }
 
         return component;
-    }
-
-    private PageRegions resolvePageRegions( final Page page, final PageTemplate pageTemplate )
-    {
-        if ( page.hasRegions() )
-        {
-            return page.getRegions();
-        }
-        else
-        {
-            return pageTemplate.getRegions();
-        }
     }
 }
