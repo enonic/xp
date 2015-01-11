@@ -7,16 +7,16 @@ import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeIds;
+import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.api.node.NodeVersionIds;
+import com.enonic.wem.api.node.Nodes;
 import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.version.VersionIndexPath;
 import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
 
@@ -44,18 +44,18 @@ public class PushNodesCommand
     {
         final Context context = ContextAccessor.current();
 
-        final NodeVersionIds nodeVersionIds = this.queryService.find( ids, OrderExpressions.from(
-            FieldOrderExpr.create( VersionIndexPath.NODE_PATH, OrderExpr.Direction.ASC ) ), IndexContext.from( context ) );
+        final Nodes nodes =
+            doGetByIds( ids, OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC ) ), false );
 
         final PushNodesResult.Builder builder = PushNodesResult.create();
 
-        for ( final NodeVersionId nodeVersionId : nodeVersionIds )
+        for ( final Node node : nodes )
         {
-            final Node node = nodeDao.getByVersionId( nodeVersionId );
+            final NodeVersionId nodeVersionId = this.queryService.get( node.id(), IndexContext.from( context ) );
 
             if ( !targetParentExists( node, context ) )
             {
-                builder.addfailed( node, PushNodesResult.Reason.PARENT_NOT_FOUND );
+                builder.addFailed( node, PushNodesResult.Reason.PARENT_NOT_FOUND );
             }
             else
             {
@@ -83,7 +83,6 @@ public class PushNodesCommand
 
     boolean targetParentExists( final Node node, final Context currentContext )
     {
-
         if ( node.parent().equals( NodePath.ROOT ) )
         {
             return true;
@@ -151,6 +150,4 @@ public class PushNodesCommand
             Preconditions.checkNotNull( ids );
         }
     }
-
-
 }

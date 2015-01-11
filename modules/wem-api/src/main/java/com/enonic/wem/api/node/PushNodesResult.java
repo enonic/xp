@@ -48,7 +48,7 @@ public class PushNodesResult
             return this;
         }
 
-        public Builder addfailed( final Node failed, final Reason reason )
+        public Builder addFailed( final Node failed, final Reason reason )
         {
             this.failed.add( new Failed( failed, reason ) );
             return this;
