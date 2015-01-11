@@ -7,6 +7,7 @@ module app.wizard.page {
     import ContentId = api.content.ContentId;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import Page = api.content.page.Page;
+    import PageMode = api.content.page.PageMode;
     import PageModel = api.content.page.PageModel;
     import SiteModel = api.content.site.SiteModel;
     import LiveEditModel = api.liveedit.LiveEditModel;
@@ -335,7 +336,7 @@ module app.wizard.page {
                     this.contextWindow.slideIn();
                 }
 
-                if (!this.pageModel.hasTemplate()) {
+                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
                 }
                 event.getComponentView().getComponent().removeFromParent();
@@ -344,12 +345,8 @@ module app.wizard.page {
 
             this.liveEditPage.onComponentReset((event: ComponentResetEvent) => {
 
-                if (!this.pageModel.hasTemplate()) {
+                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
-                }
-                var component: Component = event.getComponentView().getComponent();
-                if (component) {
-                    component.reset();
                 }
             });
 
@@ -381,7 +378,7 @@ module app.wizard.page {
 
             this.liveEditPage.onComponentAdded((event: ComponentAddedEvent) => {
 
-                if (!this.pageModel.hasTemplate()) {
+                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
                 }
             });
@@ -395,7 +392,7 @@ module app.wizard.page {
                     setComponentView(event.getImageComponentView()).
                     setImageName(event.getImageName());
 
-                if (!this.pageModel.hasTemplate()) {
+                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
                 }
                 command.execute();
@@ -409,7 +406,7 @@ module app.wizard.page {
                     setPageRegions(this.pageModel.getRegions()).
                     setDescriptor(event.getDescriptor());
 
-                if (!this.pageModel.hasTemplate()) {
+                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
                 }
                 command.execute();

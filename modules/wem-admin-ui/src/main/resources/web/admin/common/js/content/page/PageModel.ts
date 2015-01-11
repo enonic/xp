@@ -6,9 +6,11 @@ module api.content.page {
 
         private liveEditModel: api.liveedit.LiveEditModel;
 
-        private defaultPageTemplate: PageTemplate;
+        private defaultTemplate: PageTemplate;
 
-        private defaultPageTemplateController: PageDescriptor;
+        private defaultTemplateDescriptor: PageDescriptor;
+
+        private mode: PageMode;
 
         private initialized: boolean = false;
 
@@ -16,127 +18,28 @@ module api.content.page {
 
         private template: PageTemplate;
 
-        private usingDefaultTemplate: boolean = false;
-
         private regions: PageRegions;
 
         private config: PropertyTree;
 
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
-        constructor(liveEditModel: api.liveedit.LiveEditModel, defaultPageTemplate: PageTemplate) {
+        constructor(liveEditModel: api.liveedit.LiveEditModel, defaultTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor) {
             this.liveEditModel = liveEditModel;
-            this.defaultPageTemplate = defaultPageTemplate;
+            this.defaultTemplate = defaultTemplate;
+            this.defaultTemplateDescriptor = defaultTemplateDescriptor;
         }
 
         getDefaultPageTemplate(): PageTemplate {
-            return this.defaultPageTemplate;
+            return this.defaultTemplate;
         }
 
         getDefaultPageTemplateController(): PageDescriptor {
-            return this.defaultPageTemplateController;
+            return this.defaultTemplateDescriptor;
         }
 
-        initialize(): wemQ.Promise<void> {
-            var deferred = wemQ.defer<void>();
-
-            if (!this.initialized) {
-
-                var pageDescriptorPromise: wemQ.Promise<PageDescriptor> = null;
-                var pageTemplatePromise: wemQ.Promise<PageTemplate> = null;
-
-
-                if (this.liveEditModel.getContent().isPageTemplate()) {
-                    var pageDescriptorKey = null;
-                    if (this.liveEditModel.getContent().isPage()) {
-                        pageDescriptorKey = this.liveEditModel.getContent().getPage().getController();
-                        pageDescriptorPromise = this.loadPageDescriptor(pageDescriptorKey);
-                        pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
-                            this.setController(pageDescriptor, this);
-                        });
-                    }
-                    else {
-                        this.setController(null, this);
-                    }
-                }
-                else {
-
-                    if (this.liveEditModel.getContent().isPage()) {
-                        var pageTemplateKey = this.liveEditModel.getContent().getPage().getTemplate();
-                        pageTemplatePromise = this.loadPageTemplate(pageTemplateKey);
-                        pageTemplatePromise.then((pageTemplate: PageTemplate) => {
-                            this.setTemplate(pageTemplate, this.liveEditModel.getContent().getPage(), this);
-                        });
-                    }
-                    else {
-                        if (this.defaultPageTemplate) {
-                            this.setDefaultTemplate(this);
-                            pageDescriptorPromise = this.loadPageDescriptor(this.defaultPageTemplate.getController());
-                            pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
-                                this.defaultPageTemplateController = pageDescriptor;
-                            });
-                        }
-                    }
-                }
-                var promises: wemQ.Promise<any>[] = [];
-                if (pageDescriptorPromise) {
-                    promises.push(pageDescriptorPromise);
-                }
-                if (pageTemplatePromise) {
-                    promises.push(pageTemplatePromise);
-                }
-                wemQ.all(promises).then(() => {
-                    deferred.resolve(null);
-
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).done();
-            }
-
-            return deferred.promise;
-        }
-
-        setController(pageDescriptor: PageDescriptor, eventSource?: any): PageModel {
-
-            var oldControllerKey = this.controller ? this.controller.getKey() : null;
-            this.controller = pageDescriptor;
-            this.usingDefaultTemplate = false;
-
-            if (!this.initialized) {
-                var content = this.liveEditModel.getContent();
-                this.regions = content.isPage() ? content.getPage().getRegions() : new PageRegionsBuilder().build();
-                this.config = content.isPage() ? content.getPage().getConfig() : new PropertyTree(api.Client.get().getPropertyIdProvider());
-                this.initialized = true;
-            }
-            else {
-                var regionDescriptors = pageDescriptor.getRegions();
-                this.regions.changeRegionsTo(regionDescriptors);
-            }
-
-            var newControllerKey = this.controller ? this.controller.getKey() : null;
-            if (!api.ObjectHelper.equals(oldControllerKey, newControllerKey)) {
-                this.notifyPropertyChanged("controller", oldControllerKey, newControllerKey, eventSource);
-            }
-
-            return this;
-        }
-
-        setDefaultTemplate(eventSource?: any): PageModel {
-
-            var oldTemplateKey = this.template ? this.template.getKey() : null;
-            this.template = null;
-            this.usingDefaultTemplate = true;
-
-            // Need to clone config objects from template, otherwise the template gets changed while editing, since DataSet's are mutable
-            this.regions = this.defaultPageTemplate.getRegions().clone();
-            this.config = this.defaultPageTemplate.getConfig().copy();
-
-            if (!api.ObjectHelper.equals(oldTemplateKey, null)) {
-                this.notifyPropertyChanged("template", oldTemplateKey, null, eventSource);
-            }
-            this.initialized = true;
-
-            return this;
+        getMode(): PageMode {
+            return this.mode;
         }
 
         initializePageFromDefault(eventSource?: any) {
@@ -150,35 +53,67 @@ module api.content.page {
             }
 
             if (!skip) {
-                this.setTemplate(this.defaultPageTemplate, this.liveEditModel.getContent().getPage(), eventSource);
+                this.setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor, eventSource);
+                this.setRegions(this.defaultTemplate.getRegions().clone(), eventSource);
+                this.setConfig(this.defaultTemplate.getConfig().copy(), eventSource);
             }
         }
 
-        setTemplate(template: PageTemplate, page: Page, eventSource?: any): PageModel {
-            api.util.assertNotNull(template, "template cannot be null");
-            var oldTemplateKey = this.template ? this.template.getKey() : null;
-            this.template = template;
-            this.usingDefaultTemplate = false;
+        reset(eventSource?: any) {
 
-            if (!this.initialized) {
-                if (page) {
-                    this.regions = page.getRegions();
-                    this.config = page.getConfig();
-                }
-                else {
-                    // Need to clone config objects from template, otherwise the template gets changed while editing, since DataSet's are mutable
-                    this.regions = template.getRegions().clone();
-                    this.config = template.getConfig().copy();
-                }
+            if (this.liveEditModel.getContent().isPageTemplate()) {
+                this.setController(null, eventSource);
+                this.setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider()), eventSource);
+                this.setRegions(new PageRegionsBuilder().build(), eventSource);
             }
             else {
-                new GetPageDescriptorByKeyRequest(this.template.getController()).sendAndParse().
-                    then((pageDescriptor: PageDescriptor) => {
-                        this.regions.changeRegionsTo(pageDescriptor.getRegions());
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    }).done();
+                this.setTemplate(null, this.defaultTemplateDescriptor, eventSource);
+                this.setRegions(null, eventSource);
+                this.setConfig(null, eventSource);
             }
+        }
+
+        setController(controller: PageDescriptor, eventSource?: any): PageModel {
+
+            var oldControllerKey = this.controller ? this.controller.getKey() : null;
+            this.controller = controller;
+
+            if (controller) {
+                this.mode = PageMode.FORCED_CONTROLLER;
+            }
+            else {
+                this.mode = PageMode.NO_CONTROLLER;
+            }
+
+            if (this.regions && controller) {
+                this.regions.changeRegionsTo(controller.getRegions());
+            }
+
+            var newControllerKey = this.controller ? this.controller.getKey() : null;
+            if (!api.ObjectHelper.equals(oldControllerKey, newControllerKey)) {
+                this.notifyPropertyChanged("controller", oldControllerKey, newControllerKey, eventSource);
+            }
+
+            return this;
+        }
+
+        setTemplate(template: PageTemplate, pageDescriptor: PageDescriptor, eventSource?: any): PageModel {
+
+            var oldTemplateKey = this.template ? this.template.getKey() : null;
+
+            if (template) {
+                this.mode = PageMode.FORCED_TEMPLATE;
+            }
+            else {
+                this.mode = PageMode.AUTOMATIC;
+            }
+
+            this.template = template;
+
+            if (this.regions) {
+                this.regions.changeRegionsTo(pageDescriptor.getRegions());
+            }
+
             var newTemplateKey = this.template ? this.template.getKey() : null;
             if (!api.ObjectHelper.equals(oldTemplateKey, newTemplateKey)) {
                 this.notifyPropertyChanged("template", oldTemplateKey, newTemplateKey, eventSource);
@@ -187,46 +122,74 @@ module api.content.page {
             return this;
         }
 
+        setRegions(value: PageRegions, eventOrigin?: any): PageModel {
+            var oldValue = this.regions;
+            this.regions = value;
+            if (!api.ObjectHelper.equals(oldValue, value)) {
+                this.notifyPropertyChanged("regions", oldValue, value, eventOrigin);
+            }
+            return this;
+        }
+
         setConfig(value: PropertyTree, eventOrigin?: any): PageModel {
+
             var oldValue = this.config;
+
             this.config = value;
+            this.config.onPropertyChanged((event: api.data.PropertyChangedEvent) => {
+                if (this.mode == PageMode.AUTOMATIC) {
+                    this.setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor, this);
+                }
+            });
+
             if (!api.ObjectHelper.equals(oldValue, value)) {
                 this.notifyPropertyChanged("config", oldValue, value, eventOrigin);
             }
             return this;
         }
 
+        /**
+         * Automatic:           Content has no Page set. PageTemplate is automatically solved.
+         *                      return: null;
+         *
+         * ForcedTemplate:      Content has a Page set with at Page.template set
+         *
+         * ForcedController:    Content has a Page set with at Page.controller set
+         */
         getPage(): Page {
 
-            if (this.isUsingDefaultTemplate()) {
-                var defaultPage = this.defaultPageTemplate.getPage();
-                var regionsChanges = !this.regions.equals(defaultPage.getRegions());
-                var configChanges = !this.config.equals(defaultPage.getConfig());
+            if (this.mode == PageMode.AUTOMATIC) {
 
-                if (!regionsChanges && !configChanges) {
-                    return null;
-                }
-                else {
-                    var oldTemplateKey = this.template ? this.template.getKey() : null;
-                    this.template = this.defaultPageTemplate;
-                    var newTemplateKey = this.template ? this.template.getKey() : null;
-                    if (!api.ObjectHelper.equals(oldTemplateKey, newTemplateKey)) {
-                        this.notifyPropertyChanged("template", oldTemplateKey, newTemplateKey, this);
-                    }
-                }
+                return null;
+            }
+            else if (this.mode == PageMode.FORCED_TEMPLATE) {
+
+                var regionsUnchanged = this.regions.equals(this.defaultTemplate.getRegions());
+                var regions = regionsUnchanged ? null : this.regions;
+
+                var configUnchanged = this.config.equals(this.defaultTemplate.getConfig());
+                var config = configUnchanged ? null : this.config;
+
+                return new PageBuilder().
+                    setTemplate(this.getTemplateKey()).
+                    setRegions(regions).
+                    setConfig(config).
+                    build();
+            }
+            else if (this.mode == PageMode.FORCED_CONTROLLER) {
+                return new PageBuilder().
+                    setController(this.controller.getKey()).
+                    setRegions(this.regions).
+                    setConfig(this.config).
+                    build();
+            }
+            else if (this.mode == PageMode.NO_CONTROLLER) {
+                return null;
             }
             else {
-                if (!this.hasTemplate() && !this.hasController()) {
-                    return null;
-                }
+                throw new Error("Page mode not supported: " + this.mode);
             }
 
-            return new PageBuilder().
-                setController(this.getControllerKey()).
-                setTemplate(this.getTemplateKey()).
-                setRegions(this.regions).
-                setConfig(this.config).
-                build();
         }
 
         isPageTemplate(): boolean {
@@ -235,10 +198,6 @@ module api.content.page {
 
         hasController(): boolean {
             return !!this.controller;
-        }
-
-        getControllerKey(): DescriptorKey {
-            return this.controller ? this.controller.getKey() : null;
         }
 
         getController(): PageDescriptor {
@@ -250,7 +209,7 @@ module api.content.page {
         }
 
         isUsingDefaultTemplate(): boolean {
-            return this.usingDefaultTemplate;
+            return !this.template;
         }
 
         getTemplateKey(): PageTemplateKey {
@@ -285,14 +244,6 @@ module api.content.page {
             this.propertyChangedListeners.forEach((listener: (event: api.PropertyChangedEvent)=>void) => {
                 listener(event);
             })
-        }
-
-        private loadPageTemplate(key: PageTemplateKey): wemQ.Promise<PageTemplate> {
-            return new GetPageTemplateByKeyRequest(key).sendAndParse();
-        }
-
-        private loadPageDescriptor(key: DescriptorKey): wemQ.Promise<PageDescriptor> {
-            return new GetPageDescriptorByKeyRequest(key).sendAndParse();
         }
     }
 }

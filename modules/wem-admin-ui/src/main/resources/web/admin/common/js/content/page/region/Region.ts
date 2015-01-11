@@ -48,6 +48,10 @@ module api.content.page.region {
             return new api.content.page.RegionPath(parentPath, this.name);
         }
 
+        isEmpty(): boolean {
+            return !this.components || this.components.length == 0;
+        }
+
         ensureUniqueComponentName(wantedName: ComponentName): ComponentName {
             return wantedName;
         }

@@ -3,13 +3,13 @@ module app.wizard.page {
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ContentId = api.content.ContentId;
     import PageTemplate = api.content.page.PageTemplate;
-    import PartDescriptor = api.content.page.part.PartDescriptor;
-    import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
-
-    import DefaultPartDescriptorResolver = api.content.page.part.DefaultPartDescriptorResolver;
-    import DefaultLayoutDescriptorResolver = api.content.page.layout.DefaultLayoutDescriptorResolver;
-
+    import PageDescriptor = api.content.page.PageDescriptor;
+    import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import GetDefaultPageTemplateRequest = api.content.page.GetDefaultPageTemplateRequest;
+    import PartDescriptor = api.content.page.part.PartDescriptor;
+    import DefaultPartDescriptorResolver = api.content.page.part.DefaultPartDescriptorResolver;
+    import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
+    import DefaultLayoutDescriptorResolver = api.content.page.layout.DefaultLayoutDescriptorResolver;
 
     export interface DefaultModelsFactoryConfig {
 
@@ -24,25 +24,36 @@ module app.wizard.page {
 
         static create(config: DefaultModelsFactoryConfig): wemQ.Promise<DefaultModels> {
 
-            var defaultPageTemplatePromise = new GetDefaultPageTemplateRequest(config.siteId, config.contentType).sendAndParse();
-            var defaultPartDescriptorPromise = DefaultPartDescriptorResolver.resolve(config.modules);
-            var defaultLayoutDescriptorPromise = DefaultLayoutDescriptorResolver.resolve(config.modules);
+            return new GetDefaultPageTemplateRequest(config.siteId, config.contentType).sendAndParse().
+                then((defaultPageTemplate: PageTemplate) => {
 
-            var allPromises: wemQ.Promise<any>[] = [
-                defaultPageTemplatePromise,
-                defaultPartDescriptorPromise,
-                defaultLayoutDescriptorPromise];
+                    var defaultPageTemplateDescriptorPromise;
+                    if (defaultPageTemplate) {
+                        defaultPageTemplateDescriptorPromise = new GetPageDescriptorByKeyRequest(defaultPageTemplate.getController()).
+                            sendAndParse();
+                    }
+                    var defaultPartDescriptorPromise = DefaultPartDescriptorResolver.resolve(config.modules);
+                    var defaultLayoutDescriptorPromise = DefaultLayoutDescriptorResolver.resolve(config.modules);
 
-            return wemQ.all(allPromises).
-                spread<DefaultModels>((pageTemplate: PageTemplate, partDescriptor: PartDescriptor, layoutDescriptor: LayoutDescriptor) => {
+                    var allPromises: wemQ.Promise<any>[] = [
+                        defaultPageTemplateDescriptorPromise,
+                        defaultPartDescriptorPromise,
+                        defaultLayoutDescriptorPromise];
 
-                var defaultModelsConfig: DefaultModelsConfig = <DefaultModelsConfig>{
-                    pageTemplate: pageTemplate,
-                    partDescriptor: partDescriptor,
-                    layoutDescriptor: layoutDescriptor
-                };
-                return new DefaultModels(defaultModelsConfig);
-            });
+                    return wemQ.all(allPromises).
+                        spread<DefaultModels>((defaultPageTemplateDescriptor: PageDescriptor, partDescriptor: PartDescriptor,
+                                               layoutDescriptor: LayoutDescriptor) => {
+
+                        var defaultModelsConfig: DefaultModelsConfig = <DefaultModelsConfig>{
+                            pageTemplate: defaultPageTemplate,
+                            pageDescriptor: defaultPageTemplateDescriptor,
+                            partDescriptor: partDescriptor,
+                            layoutDescriptor: layoutDescriptor
+                        };
+                        return new DefaultModels(defaultModelsConfig);
+                    });
+
+                });
         }
     }
 }

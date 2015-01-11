@@ -43,7 +43,7 @@ module api.content.page {
                 contentId: this.contentId.toString(),
                 controller: this.controller ? this.controller.toString() : null,
                 template: this.template ? this.template.toString() : null,
-                config: this.config.toJson(),
+                config: this.config ? this.config.toJson() : null,
                 regions: this.regions != null ? this.regions.toJson() : null
             };
         }

@@ -27,7 +27,7 @@ module api.liveedit.layout {
             super(builder.setPlaceholder(new LayoutPlaceholder(this)));
             this.layoutComponent = builder.component;
 
-            if (this.conditionedForEmpty()) {
+            if (this.isEmpty()) {
                 this.displayPlaceholder();
             }
 
@@ -47,13 +47,10 @@ module api.liveedit.layout {
             return this.regionViews;
         }
 
-        private conditionedForEmpty(): boolean {
-            if (!this.layoutComponent) {
-                return super.isEmpty();
-            }
-            return this.isEmpty() || !this.layoutComponent.getDescriptor();
+        isEmpty(): boolean {
+            return this.layoutComponent.isEmpty();
         }
-
+        
         duplicate(duplicate: LayoutComponent): LayoutComponentView {
 
             var duplicatedView = new LayoutComponentView(new LayoutComponentViewBuilder().

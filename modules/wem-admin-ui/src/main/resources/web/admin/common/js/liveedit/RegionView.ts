@@ -303,6 +303,10 @@ module api.liveedit {
             return foundDropZone;
         }
 
+        isEmpty(): boolean {
+            return this.region.isEmpty();
+        }
+
         empty() {
             this.componentViews.forEach((componentView: ComponentView<Component>) => {
                 this.removeComponentView(componentView);

@@ -18,6 +18,10 @@ module api.content.page.part {
             };
         }
 
+        isEmpty(): boolean {
+            return !this.hasDescriptor();
+        }
+
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PartComponent)) {

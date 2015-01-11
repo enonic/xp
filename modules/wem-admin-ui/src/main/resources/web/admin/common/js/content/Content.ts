@@ -47,6 +47,38 @@ module api.content {
             return this.metadata;
         }
 
+        getPageMode(): api.content.page.PageMode {
+
+            if (api.ObjectHelper.iFrameSafeInstanceOf(this, api.content.page.PageTemplate)) {
+                if (this.isPage()) {
+                    if (this.getPage().hasController()) {
+                        return api.content.page.PageMode.FORCED_CONTROLLER;
+                    }
+                    else {
+                        throw new Error("Illegal state: A PageTemplate's Page must a controller set");
+                    }
+                }
+                else {
+                    return api.content.page.PageMode.NO_CONTROLLER;
+                }
+
+            }
+            else {
+                if (this.isPage()) {
+                    if (this.getPage().hasTemplate()) {
+                        return api.content.page.PageMode.FORCED_TEMPLATE;
+                    }
+                    else {
+                        return api.content.page.PageMode.FORCED_CONTROLLER;
+                    }
+                }
+                else {
+                    return api.content.page.PageMode.AUTOMATIC;
+                }
+            }
+
+        }
+
         getPage(): api.content.page.Page {
             return this.pageObj;
         }

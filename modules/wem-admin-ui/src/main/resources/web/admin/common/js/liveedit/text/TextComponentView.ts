@@ -29,8 +29,7 @@ module api.liveedit.text {
                 setPlaceholder(this.textPlaceholder));
             this.textComponent = builder.component;
 
-            if (this.conditionedForEmpty()) {
-                this.markAsEmpty();
+            if (this.isEmpty()) {
                 this.addPlaceholder();
             }
             this.onKeyDown(this.handleKeyboard.bind(this));
@@ -54,6 +53,10 @@ module api.liveedit.text {
 
         removePlaceholder() {
             this.textPlaceholder.remove();
+        }
+
+        isEmpty(): boolean {
+            return this.textComponent.isEmpty();
         }
 
         duplicate(duplicate: TextComponent): TextComponentView {
@@ -105,7 +108,7 @@ module api.liveedit.text {
             super.deselect(silent);
 
             if (!this.isEmpty() && api.util.StringHelper.isBlank(this.getEl().getText())) {
-                this.markAsEmpty();
+                this.handleEmptyState();
             }
 
             if (this.editing) {
@@ -114,13 +117,6 @@ module api.liveedit.text {
             }
 
             this.getEl().setCursor('');
-        }
-
-        conditionedForEmpty(): boolean {
-            if (!this.textComponent) {
-                return this.isEmpty();
-            }
-            return this.isEmpty() || !this.textComponent.getText();
         }
 
         makeEditable() {
@@ -132,7 +128,6 @@ module api.liveedit.text {
 
         showEditor() {
             if (this.isEmpty()) {
-                this.removeEmptyMark();
                 this.removePlaceholder();
                 this.getEl().setInnerHtml('</br>');
             }

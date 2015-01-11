@@ -25,7 +25,7 @@ module api.liveedit.part {
             super(builder.setPlaceholder(new PartPlaceholder(this)));
             this.partComponent = builder.component;
 
-            if (this.conditionedForEmpty()) {
+            if (this.isEmpty()) {
                 this.displayPlaceholder();
             }
             this.parseContentViews(this);
@@ -39,11 +39,8 @@ module api.liveedit.part {
             return this.contentViews;
         }
 
-        conditionedForEmpty(): boolean {
-            if (!this.partComponent) {
-                return super.isEmpty();
-            }
-            return this.isEmpty() || !this.partComponent.getDescriptor();
+        isEmpty(): boolean {
+            return this.partComponent.isEmpty();
         }
 
         duplicate(duplicate: PartComponent): PartComponentView {

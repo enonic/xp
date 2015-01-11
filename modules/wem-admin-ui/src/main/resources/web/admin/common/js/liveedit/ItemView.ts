@@ -82,6 +82,10 @@ module api.liveedit {
 
         private contextMenu: api.liveedit.ItemViewContextMenu;
 
+        private contextMenuTitle: ItemViewContextMenuTitle;
+
+        private contextMenuActions: api.ui.Action[];
+        
         private tooltipViewer: api.ui.Viewer<any>;
 
         private mouseOver: boolean;
@@ -89,10 +93,6 @@ module api.liveedit {
         private mouseOverViewListeners: {(): void} [];
 
         private mouseOutViewListeners: {(): void} [];
-
-        private contextMenuActions: api.ui.Action[];
-
-        private contextMenuTitle: ItemViewContextMenuTitle;
 
         private debug: boolean;
 
@@ -293,6 +293,14 @@ module api.liveedit {
             }
         }
 
+        isEmpty(): boolean {
+            throw new Error("Must be implemented by inheritors");
+        }
+
+        handleEmptyState() {
+            // Override to execute logic when state of item has become empty.
+        }
+
         handleClick(event: MouseEvent) {
             event.stopPropagation();
             event.preventDefault();
@@ -395,20 +403,6 @@ module api.liveedit {
 
         getParentItemView(): ItemView {
             throw new Error("Must be implemented by inheritors");
-        }
-
-        markAsEmpty() {
-            this.getEl().setData('live-edit-empty-component', 'true');
-            this.addClass("live-edit-empty-component");
-        }
-
-        removeEmptyMark() {
-            this.getEl().removeAttribute('data-live-edit-empty-component');
-            this.removeClass('live-edit-empty-component');
-        }
-
-        isEmpty(): boolean {
-            return this.getEl().hasAttribute('data-live-edit-empty-component');
         }
 
         isSelected(): boolean {

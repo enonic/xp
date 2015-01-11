@@ -51,9 +51,11 @@ module api.content.page.image {
 
         reset() {
             this.image = null;
-            //this.config.                                                                                              Arn Jørund
         }
 
+        isEmpty(): boolean {
+            return !this.image;
+        }
 
         toJson(): api.content.page.ComponentTypeWrapperJson {
 

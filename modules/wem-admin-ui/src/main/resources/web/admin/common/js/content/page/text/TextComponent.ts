@@ -21,6 +21,10 @@ module api.content.page.text {
             this.text = value;
         }
 
+        isEmpty(): boolean {
+            return !this.text;
+        }
+        
         toJson(): api.content.page.ComponentTypeWrapperJson {
 
             var json: TextComponentJson = <TextComponentJson>super.toComponentJson();

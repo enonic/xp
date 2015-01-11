@@ -21,7 +21,7 @@ module api.liveedit.image {
             this.liveEditModel = builder.parentRegionView.liveEditModel;
             super(builder.setPlaceholder(new ImagePlaceholder(this)));
             this.imageComponent = builder.component;
-            if (this.conditionedForEmpty()) {
+            if (this.isEmpty()) {
                 this.displayPlaceholder();
             }
         }
@@ -29,12 +29,9 @@ module api.liveedit.image {
         getImage(): api.dom.ImgEl {
             return <api.dom.ImgEl>this.getChildren().filter((child: api.dom.Element) => (child.getEl().getTagName() == 'IMG'))[0];
         }
-
-        conditionedForEmpty(): boolean {
-            if (!this.imageComponent) {
-                return this.isEmpty();
-            }
-            return this.isEmpty() || !this.imageComponent.getImage();
+        
+        isEmpty(): boolean {
+            return this.imageComponent.isEmpty();
         }
 
         duplicate(duplicate: ImageComponent): ImageComponentView {

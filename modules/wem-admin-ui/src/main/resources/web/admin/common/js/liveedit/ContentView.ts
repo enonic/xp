@@ -27,6 +27,7 @@ module api.liveedit {
 
     }
 
+    // TODO:
     export class ContentView extends ItemView {
 
         private parentPartComponentView: PartComponentView;
@@ -64,6 +65,10 @@ module api.liveedit {
                 // TODO
             }));
             return actions;
+        }
+
+        isEmpty(): boolean {
+            return false;
         }
 
 

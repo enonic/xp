@@ -1,10 +1,13 @@
 module api.liveedit {
 
+    import PropertyTree = api.data.PropertyTree;
     import Content = api.content.Content;
     import Page = api.content.page.Page;
     import PageModel = api.content.page.PageModel;
+    import PageMode = api.content.page.PageMode;
     import Site = api.content.site.Site;
     import PageRegions = api.content.page.PageRegions;
+    import PageRegionsBuilder = api.content.page.PageRegionsBuilder;
     import Component = api.content.page.Component;
     import Region = api.content.page.region.Region;
 
@@ -38,6 +41,8 @@ module api.liveedit {
 
     export class PageView extends ItemView {
 
+        private pageModel: PageModel;
+
         private placeholder: PagePlaceholder;
 
         private regionViews: RegionView[];
@@ -51,6 +56,7 @@ module api.liveedit {
         constructor(builder: PageViewBuilder) {
 
             this.liveEditModel = builder.liveEditModel;
+            this.pageModel = builder.liveEditModel.getPageModel();
             this.regionViews = [];
             this.viewsById = {};
             this.itemViewAddedListeners = [];
@@ -85,27 +91,31 @@ module api.liveedit {
         }
 
         private refreshPlaceholder() {
-            if (this.conditionedForEmpty()) {
+            if (this.isEmpty()) {
                 this.appendChild(this.placeholder);
                 this.placeholder.select();
-                this.markAsEmpty();
+                this.handleEmptyState();
             }
         }
 
-        conditionedForEmpty(): boolean {
+        isEmpty(): boolean {
+            return this.pageModel.getMode() == PageMode.NO_CONTROLLER;
+        }
 
-            if (this.liveEditModel.getContent().isPageTemplate()) {
-                return !this.liveEditModel.getPageModel().hasController();
-            }
-            else {
-                return !this.liveEditModel.getPageModel().hasTemplate() && !this.liveEditModel.getPageModel().isUsingDefaultTemplate();
+        handleEmptyState() {
+            super.handleEmptyState();
+
+            if (!this.hasClass("live-edit-empty-component")) {
+                this.addClass("live-edit-empty-component");
             }
         }
 
         private createPageContextMenuActions() {
             var actions: api.ui.Action[] = [];
-            actions.push(new api.ui.Action('Empty').onExecuted(() => {
-                // TODO
+
+            actions.push(new api.ui.Action('Reset').onExecuted(() => {
+
+                this.pageModel.reset(this);
             }));
             return actions;
         }
@@ -151,7 +161,6 @@ module api.liveedit {
         }
 
         getSelectedView(): ItemView {
-            //console.log("GETTING VIEWS", this.viewsById);
             for (var id in this.viewsById) {
                 if (this.viewsById.hasOwnProperty(id) && this.viewsById[id].isSelected()) {
                     return this.viewsById[id];
@@ -183,7 +192,7 @@ module api.liveedit {
             var itemView = this.getItemViewById(itemId);
             api.util.assertNotNull(itemView, "ItemView not found: " + itemId.toString());
 
-            return  itemView;
+            return itemView;
         }
 
         getRegionViewByElement(element: HTMLElement): RegionView {

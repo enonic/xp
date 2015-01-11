@@ -55,4 +55,5 @@
 ///<reference path='DeletePageRequest.ts' />
 
 ///<reference path='Page.ts' />
+///<reference path='PageMode.ts' />
 ///<reference path='PageModel.ts' />

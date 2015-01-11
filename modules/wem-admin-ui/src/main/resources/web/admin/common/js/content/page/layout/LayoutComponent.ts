@@ -32,6 +32,10 @@ module api.content.page.layout {
             this.regions = value;
         }
 
+        isEmpty(): boolean {
+            return !this.hasDescriptor();
+        }
+
         public toJson(): api.content.page.ComponentTypeWrapperJson {
             var json: LayoutComponentJson = <LayoutComponentJson>super.toComponentJson();
             json.regions = this.regions.toJson();

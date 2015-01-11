@@ -53,6 +53,10 @@ module api.content.page {
 
         }
 
+        isEmpty(): boolean {
+            throw new Error("Must be implemented by inheritors");
+        }
+
         getParent(): Region {
             return this.parent;
         }
