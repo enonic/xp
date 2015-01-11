@@ -47,7 +47,6 @@ module api.data {
 
             var array = this.getOrCreatePropertyArray(name, value.getType());
             var property = array.add(value);
-            this.tree.registerProperty(property);
             return property;
         }
 
