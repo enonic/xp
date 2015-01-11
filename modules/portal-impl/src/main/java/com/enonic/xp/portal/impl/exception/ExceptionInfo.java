@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.exception;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 final class ExceptionInfo
@@ -77,7 +78,7 @@ final class ExceptionInfo
             title( getReasonPhrase() );
 
         final String html = builder.build();
-        return Response.status( this.status ).entity( html ).build();
+        return Response.status( this.status ).entity( html ).type( MediaType.TEXT_HTML_TYPE ).build();
     }
 
     private String getDescription()

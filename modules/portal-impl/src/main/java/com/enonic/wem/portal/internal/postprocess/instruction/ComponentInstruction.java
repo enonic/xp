@@ -24,6 +24,7 @@ import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
+@org.osgi.service.component.annotations.Component(immediate = true)
 public final class ComponentInstruction
     implements PostProcessInstruction
 {
@@ -83,7 +84,7 @@ public final class ComponentInstruction
 
     private String renderComponent( final PortalContext context, final Component component )
     {
-        final Renderer<Component, PortalContext> renderer = this.rendererFactory.getRenderer( component );
+        final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
         if ( renderer == null )
         {
             throw new RenderException( "No Renderer found for: " + component.getClass().getSimpleName() );

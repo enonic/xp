@@ -1,21 +1,24 @@
-package com.enonic.wem.portal.internal.content.page;
+package com.enonic.wem.portal.internal.rendering.page;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.wem.portal.internal.controller.ControllerScript;
 import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
+import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 
-public class PageRenderer
-    implements Renderer<Content, PortalContext>
+@Component(immediate = true, service = Renderer.class)
+public final class PageRenderer
+    implements Renderer<Content>
 {
-
     private ControllerScriptFactory controllerScriptFactory;
 
     private PostProcessor postProcessor;
@@ -70,11 +73,13 @@ public class PageRenderer
         this.postProcessor.processResponse( context );
     }
 
+    @Reference
     public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
     {
         this.controllerScriptFactory = controllerScriptFactory;
     }
 
+    @Reference
     public void setPostProcessor( final PostProcessor postProcessor )
     {
         this.postProcessor = postProcessor;

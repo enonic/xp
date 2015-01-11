@@ -1,5 +1,6 @@
-package com.enonic.wem.portal.internal.content.page;
+package com.enonic.wem.portal.internal.rendering.image;
 
+import org.osgi.service.component.annotations.Component;
 
 import com.enonic.wem.api.content.page.region.ImageComponent;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
@@ -12,8 +13,9 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.url.ImageUrlBuilder;
 import com.enonic.xp.portal.url.PortalUrlBuilders;
 
+@Component(immediate = true, service = Renderer.class)
 public final class ImageRenderer
-    implements Renderer<ImageComponent, PortalContext>
+    implements Renderer<ImageComponent>
 {
     @Override
     public Class<ImageComponent> getType()

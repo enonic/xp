@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.internal.content.page;
+package com.enonic.wem.portal.internal.rendering.base;
 
 
 import com.enonic.wem.api.content.page.DescriptorKey;

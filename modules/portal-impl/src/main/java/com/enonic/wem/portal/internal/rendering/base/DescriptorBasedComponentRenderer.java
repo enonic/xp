@@ -1,5 +1,4 @@
-package com.enonic.wem.portal.internal.content.page;
-
+package com.enonic.wem.portal.internal.rendering.base;
 
 import java.text.MessageFormat;
 
@@ -17,7 +16,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 
 public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBasedComponent>
-    implements Renderer<R, PortalContext>
+    implements Renderer<R>
 {
     private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
         "<div data-live-edit-type=\"{0}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";
@@ -104,8 +103,8 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         return req == null ? RenderMode.LIVE : req.getMode();
     }
 
-    public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
+    public void setControllerScriptFactory( final ControllerScriptFactory value )
     {
-        this.controllerScriptFactory = controllerScriptFactory;
+        this.controllerScriptFactory = value;
     }
 }

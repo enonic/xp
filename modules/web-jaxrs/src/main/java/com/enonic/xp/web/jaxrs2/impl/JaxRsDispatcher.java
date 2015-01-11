@@ -33,6 +33,22 @@ public final class JaxRsDispatcher
     public void init( final ServletContext context )
         throws Exception
     {
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
+
+        try
+        {
+            doInit( context );
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader( oldLoader );
+        }
+    }
+
+    private void doInit( final ServletContext context )
+        throws Exception
+    {
         final ServletConfigImpl config = new ServletConfigImpl( "jaxrs", context );
         config.setInitParameter( ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, this.mappingPrefix );
 

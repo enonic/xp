@@ -1,6 +1,8 @@
-package com.enonic.wem.portal.internal.content.page;
+package com.enonic.wem.portal.internal.rendering.text;
 
 import java.text.MessageFormat;
+
+import org.osgi.service.component.annotations.Component;
 
 import com.enonic.wem.api.content.page.region.TextComponent;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
@@ -11,8 +13,9 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 
+@Component(immediate = true, service = Renderer.class)
 public final class TextRenderer
-    implements Renderer<TextComponent, PortalContext>
+    implements Renderer<TextComponent>
 {
     private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
         "<div data-live-edit-type=\"{0}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";

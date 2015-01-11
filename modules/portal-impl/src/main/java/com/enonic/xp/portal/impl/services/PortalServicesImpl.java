@@ -95,6 +95,7 @@ public final class PortalServicesImpl
         this.imageFilterBuilder = imageFilterBuilder;
     }
 
+    @Reference
     public void setRendererFactory( final RendererFactory rendererFactory )
     {
         this.rendererFactory = rendererFactory;

@@ -7,7 +7,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.portal.internal.content.EffectivePageResolver;
 import com.enonic.xp.portal.impl.resource.underscore.UnderscoreResource;
 
 public final class PageResource

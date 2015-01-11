@@ -2,17 +2,31 @@ package com.enonic.wem.portal.internal.postprocess;
 
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+import com.google.common.collect.Lists;
+
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
+@Component
 public final class PostProcessorImpl
     implements PostProcessor
 {
-    private List<PostProcessInstruction> instructions;
+    private final List<PostProcessInstruction> instructions;
 
-    private List<PostProcessInjection> injections;
+    private final List<PostProcessInjection> injections;
+
+    public PostProcessorImpl()
+    {
+        this.instructions = Lists.newCopyOnWriteArrayList();
+        this.injections = Lists.newCopyOnWriteArrayList();
+    }
 
     @Override
     public void processResponse( final PortalContext context )
@@ -43,13 +57,26 @@ public final class PostProcessorImpl
         context.getResponse().setBody( evaluator.evaluate() );
     }
 
-    public void setInstructions( final List<PostProcessInstruction> instructions )
+    @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)
+    public void addInstruction( final PostProcessInstruction value )
     {
-        this.instructions = instructions;
+        this.instructions.add( value );
     }
 
-    public void setInjections( final List<PostProcessInjection> injections )
+    public void removeInstruction( final PostProcessInstruction value )
     {
-        this.injections = injections;
+        this.instructions.remove( value );
+    }
+
+    @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)
+    public void addInjection( final PostProcessInjection value )
+    {
+        this.injections.add( value );
+    }
+
+    public void removeInjection( final PostProcessInjection value )
+    {
+        this.injections.remove( value );
     }
 }
+

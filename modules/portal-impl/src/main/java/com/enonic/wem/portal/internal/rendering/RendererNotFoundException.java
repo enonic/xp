@@ -1,7 +1,6 @@
 package com.enonic.wem.portal.internal.rendering;
 
-
-public class RendererNotFoundException
+public final class RendererNotFoundException
     extends RuntimeException
 {
     RendererNotFoundException( final Class type )

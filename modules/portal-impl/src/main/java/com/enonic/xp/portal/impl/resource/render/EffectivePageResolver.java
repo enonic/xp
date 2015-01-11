@@ -1,10 +1,10 @@
-package com.enonic.wem.portal.internal.content;
+package com.enonic.xp.portal.impl.resource.render;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
 
-public final class EffectivePageResolver
+final class EffectivePageResolver
 {
     private final Content content;
 

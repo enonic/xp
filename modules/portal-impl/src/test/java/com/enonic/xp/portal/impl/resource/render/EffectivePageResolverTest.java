@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.internal.content;
+package com.enonic.xp.portal.impl.resource.render;
 
 import org.junit.Before;
 import org.junit.Test;

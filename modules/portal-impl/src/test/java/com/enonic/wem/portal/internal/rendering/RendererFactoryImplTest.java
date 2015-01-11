@@ -1,7 +1,5 @@
 package com.enonic.wem.portal.internal.rendering;
 
-import java.util.ArrayList;
-
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
@@ -17,10 +15,8 @@ public class RendererFactoryImplTest
     @Test
     public void given_Renderable_matching_only_on_superType_when_getRenderer_then_Renderer_for_superType_is_returned()
     {
-        ArrayList<Renderer> rendererList = new ArrayList<>();
-        rendererList.add( createRenderer( Content.class ) );
-
-        RendererFactoryImpl factory = new RendererFactoryImpl( rendererList );
+        RendererFactoryImpl factory = new RendererFactoryImpl();
+        factory.addRenderer( createRenderer( Content.class ) );
 
         // exercise
         Renderer renderer = factory.getRenderer( createPageTemplate() );
@@ -33,10 +29,8 @@ public class RendererFactoryImplTest
     @Test
     public void given_Renderable_having_not_matching_Renderer_when_getRenderer_then_Renderer_for_that_type_is_returned()
     {
-        ArrayList<Renderer> rendererList = new ArrayList<>();
-        rendererList.add( createRenderer( Content.class ) );
-
-        RendererFactoryImpl factory = new RendererFactoryImpl( rendererList );
+        RendererFactoryImpl factory = new RendererFactoryImpl();
+        factory.addRenderer( createRenderer( Content.class ) );
 
         // exercise
         Renderer renderer = factory.getRenderer( createContent() );
@@ -49,10 +43,8 @@ public class RendererFactoryImplTest
     @Test(expected = RendererNotFoundException.class)
     public void given_Renderable_matching_no_given_type_when_getRenderer_then_Renderer_for_that_type_is_returned()
     {
-        ArrayList<Renderer> rendererList = new ArrayList<>();
-        rendererList.add( createRenderer( RendererFactoryImplTest.class ) );
-
-        RendererFactoryImpl factory = new RendererFactoryImpl( rendererList );
+        RendererFactoryImpl factory = new RendererFactoryImpl();
+        factory.addRenderer( createRenderer( RendererFactoryImplTest.class ) );
 
         // exercise
         factory.getRenderer( createContent() );

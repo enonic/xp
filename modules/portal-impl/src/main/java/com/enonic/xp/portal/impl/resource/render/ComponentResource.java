@@ -7,7 +7,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.region.ComponentPath;
-import com.enonic.wem.portal.internal.content.EffectivePageResolver;
 
 public final class ComponentResource
     extends RenderResource

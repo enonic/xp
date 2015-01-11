@@ -1,4 +1,4 @@
-package com.enonic.wem.servlet.internal.context;
+package com.enonic.xp.web.impl.context;
 
 import java.util.Enumeration;
 import java.util.Map;

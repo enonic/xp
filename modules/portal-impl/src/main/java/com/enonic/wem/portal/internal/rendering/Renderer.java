@@ -3,9 +3,9 @@ package com.enonic.wem.portal.internal.rendering;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.xp.portal.PortalContext;
 
-public interface Renderer<RENDERABLE extends Renderable, CONTEXT extends PortalContext>
+public interface Renderer<R extends Renderable>
 {
-    Class<RENDERABLE> getType();
+    Class<R> getType();
 
-    RenderResult render( RENDERABLE component, CONTEXT context );
+    RenderResult render( R component, PortalContext context );
 }

@@ -22,16 +22,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-jaxrs</artifactId>
-      <version>3.0.8.Final</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>jaxrs-api</artifactId>
-      <version>3.0.8.Final</version>
-    </dependency>
-    <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.compendium</artifactId>
     </dependency>
@@ -63,17 +53,8 @@
         <configuration>
           <instructions>
             <Import-Package>
-              *;resolution:=optional
+              *
             </Import-Package>
-            <_exportcontents>
-              javax.ws.rs.*;version=2.0,
-              javax.annotation.security.*;version=1.2
-            </_exportcontents>
-            <Embed-Dependency>
-              resteasy-jaxrs,
-              jaxrs-api,
-              javax.annotation-api
-            </Embed-Dependency>
           </instructions>
         </configuration>
       </plugin>

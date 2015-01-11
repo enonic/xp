@@ -11,16 +11,16 @@ import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
-import com.enonic.xp.portal.PortalContext;
 
 import static org.junit.Assert.*;
 
 public class PageResourceTest
     extends RenderBaseResourceTest
 {
-    private Renderer<Renderable, PortalContext> renderer;
+    private Renderer<Renderable> renderer;
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void configure()
         throws Exception
     {
