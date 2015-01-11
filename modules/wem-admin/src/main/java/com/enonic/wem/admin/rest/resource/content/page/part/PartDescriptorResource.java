@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.content.page.region.PartDescriptorJson;
 import com.enonic.wem.admin.json.content.page.region.PartDescriptorsJson;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
@@ -17,13 +18,12 @@ import com.enonic.wem.api.content.page.region.PartDescriptor;
 import com.enonic.wem.api.content.page.region.PartDescriptorService;
 import com.enonic.wem.api.content.page.region.PartDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/part/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("admin-login")
 public final class PartDescriptorResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     private PartDescriptorService partDescriptorService;
 

@@ -6,15 +6,15 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.core.initializer.StartupInitializer;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Path(ResourceConstants.REST_ROOT + "tools")
 public final class ToolsResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     private StartupInitializer startupInitializer;
 

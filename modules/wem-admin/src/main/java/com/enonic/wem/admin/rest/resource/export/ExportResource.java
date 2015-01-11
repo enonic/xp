@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.export.ExportNodesParams;
 import com.enonic.wem.api.export.ExportService;
@@ -19,12 +20,11 @@ import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.vfs.VirtualFiles;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Path(ResourceConstants.REST_ROOT + "export")
 public class ExportResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     private ExportService exportService;
 

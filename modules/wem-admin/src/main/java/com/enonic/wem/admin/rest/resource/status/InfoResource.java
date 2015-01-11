@@ -13,18 +13,18 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.status.GCStatusInfoBuilder;
 import com.enonic.wem.admin.status.JVMStatusInfoBuilder;
 import com.enonic.wem.admin.status.MemoryStatusInfoBuilder;
 import com.enonic.wem.admin.status.OSStatusInfoBuilder;
 import com.enonic.wem.admin.status.PropertiesStatusInfoBuilder;
 import com.enonic.wem.admin.status.StatusInfoBuilder;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path("status")
 @RolesAllowed("admin-login")
 public final class InfoResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     private final List<StatusInfoBuilder> infoBuilders;
 

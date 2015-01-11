@@ -5,13 +5,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.Version;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "status")
 public final class StatusResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     @GET
     @Produces(MediaType.APPLICATION_JSON)

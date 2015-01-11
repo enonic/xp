@@ -8,11 +8,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
+import org.osgi.service.component.annotations.Component;
+
+import com.enonic.wem.admin.AdminResource;
 
 @Path("/")
+@Component(immediate = true)
 public final class MainResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     private final AppHtmlHandler appHtmlHandler;
 

@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -24,7 +25,6 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
 
@@ -33,7 +33,7 @@ import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.Imag
 @Produces("image/*")
 @RolesAllowed("admin-login")
 public final class ContentImageResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     private static final ContentImageHelper helper = new ContentImageHelper();
 

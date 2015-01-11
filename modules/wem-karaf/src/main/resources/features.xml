@@ -43,6 +43,7 @@
     <bundle start-level="50">mvn:com.enonic.wem/web-api/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/web-impl/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/web-vhost/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/web-jaxrs/${project.version}</bundle>
 
     <bundle start-level="50">mvn:com.enonic.wem/wem-export/${project.version}</bundle>
 

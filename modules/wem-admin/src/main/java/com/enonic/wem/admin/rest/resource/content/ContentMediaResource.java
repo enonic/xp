@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.content.Content;
@@ -25,14 +26,13 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.util.ImageHelper;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content/media")
 @Produces("application/octet-stream")
 @RolesAllowed("admin-login")
 public final class ContentMediaResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     private ContentService contentService;
 

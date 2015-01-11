@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
 import com.enonic.wem.admin.json.content.CompareContentResultsJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
@@ -101,14 +102,13 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.workspace.Workspaces;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("admin-login")
 public final class ContentResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     public static final String DEFAULT_SORT_FIELD = "modifiedTime";
 
