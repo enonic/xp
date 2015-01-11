@@ -127,8 +127,8 @@ module api {
             }
 
             for (var keyA  in keysA) {
-                var valueA: Equitable = mapA[keyA];
-                var valueB: Equitable = mapB[keyA];
+                var valueA: Equitable = mapA[keysA[keyA]];
+                var valueB: Equitable = mapB[keysA[keyA]];
 
                 if (!ObjectHelper.equals(valueA, valueB)) {
                     return false;
