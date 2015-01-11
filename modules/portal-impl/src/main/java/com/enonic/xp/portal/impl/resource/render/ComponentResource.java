@@ -45,6 +45,7 @@ public final class ComponentResource
             page( effectivePage ).
             build();
 
+        resource.content = effectiveContent;
         resource.component = effectiveContent.getPage().getRegions().getComponent( componentPath );
         if ( resource.component == null )
         {

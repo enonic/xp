@@ -58,11 +58,17 @@ public final class PageResource
             resource.pageDescriptor = getPageDescriptor( resource.pageTemplate );
         }
 
+        if ( resource.pageDescriptor != null )
+        {
+            resource.moduleKey = resource.pageDescriptor.getKey().getModuleKey();
+        }
+
         final Page effectivePage = new EffectivePageResolver( resource.content, resource.pageTemplate ).resolve();
         final Content effectiveContent = Content.newContent( resource.content ).
             page( effectivePage ).
             build();
 
+        resource.content = effectiveContent;
         resource.renderer = this.services.getRendererFactory().getRenderer( effectiveContent );
         return resource;
     }

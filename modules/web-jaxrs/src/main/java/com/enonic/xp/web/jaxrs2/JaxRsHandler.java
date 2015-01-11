@@ -39,7 +39,7 @@ public abstract class JaxRsHandler
     }
 
     @Override
-    protected final void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
+    protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
         throws Exception
     {
         refreshIfNeeded( req.getServletContext() );
