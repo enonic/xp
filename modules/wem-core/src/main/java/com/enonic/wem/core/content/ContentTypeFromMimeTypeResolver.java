@@ -18,7 +18,6 @@ final class ContentTypeFromMimeTypeResolver
         MAP.put( "image/jpeg", ContentTypeName.imageMedia() );
         MAP.put( "image/pjpeg", ContentTypeName.imageMedia() );
         MAP.put( "image/png", ContentTypeName.imageMedia() );
-        MAP.put( "image/svg+xml", ContentTypeName.imageMedia() );
         MAP.put( "image/tiff", ContentTypeName.imageMedia() );
         MAP.put( "image/vnd.djvu", ContentTypeName.imageMedia() );
 
@@ -83,8 +82,7 @@ final class ContentTypeFromMimeTypeResolver
         MAP.put( "application/vnd.openxmlformats-officedocument.presentationml.presentation", ContentTypeName.presentationMedia() );
 
         // Vector
-        // TODO:
-
+        MAP.put( "image/svg+xml", ContentTypeName.vectorMedia() );
 
     }
 
