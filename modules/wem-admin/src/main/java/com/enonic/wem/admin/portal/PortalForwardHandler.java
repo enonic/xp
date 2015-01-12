@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
@@ -57,6 +59,11 @@ public final class PortalForwardHandler
     private void forwardToPortal( final RenderMode mode, final String path, final HttpServletRequest req, final HttpServletResponse res )
         throws Exception
     {
+        final PortalContext context = new PortalContext();
+        context.setBaseUri( PREFIX );
+        context.setMode( mode );
+
+        PortalContextAccessor.set( req, context );
         final RequestDispatcher dispatcher = req.getRequestDispatcher( "/portal/" + mode.toString() + "/" + path );
         dispatcher.forward( req, res );
     }
