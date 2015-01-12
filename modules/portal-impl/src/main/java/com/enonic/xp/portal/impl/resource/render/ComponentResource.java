@@ -49,7 +49,7 @@ public final class ComponentResource
         resource.component = effectiveContent.getPage().getRegions().getComponent( componentPath );
         if ( resource.component == null )
         {
-            throw notFound( "Pate component for [%s] not found", componentPath );
+            throw notFound( "Page component for [%s] not found", componentPath );
         }
 
         resource.renderer = this.services.getRendererFactory().getRenderer( resource.component );

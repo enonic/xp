@@ -2,11 +2,11 @@ package com.enonic.xp.portal.impl.resource.underscore;
 
 import javax.ws.rs.Path;
 
-import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 import com.enonic.xp.portal.impl.resource.asset.AssetResource;
 import com.enonic.xp.portal.impl.resource.attachment.AttachmentResource;
-import com.enonic.xp.portal.impl.resource.render.ComponentResource;
+import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 import com.enonic.xp.portal.impl.resource.image.ImageResource;
+import com.enonic.xp.portal.impl.resource.render.ComponentResource;
 import com.enonic.xp.portal.impl.resource.service.ServiceResource;
 
 public final class UnderscoreResource
@@ -24,7 +24,7 @@ public final class UnderscoreResource
         return initResource( new ImageResource() );
     }
 
-    @Path("public")
+    @Path("asset")
     public AssetResource asset()
     {
         return initResource( new AssetResource() );

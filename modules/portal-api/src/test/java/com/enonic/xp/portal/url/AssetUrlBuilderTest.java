@@ -13,7 +13,7 @@ public class AssetUrlBuilderTest
         final AssetUrlBuilder builder = this.builders.assetUrl().
             path( "css/my.css" );
 
-        assertEquals( "/portal/live/stage/some/path/_/public/mymodule/css/my.css", builder.toString() );
+        assertEquals( "/portal/live/stage/some/path/_/asset/mymodule/css/my.css", builder.toString() );
     }
 
     @Test
@@ -26,6 +26,6 @@ public class AssetUrlBuilderTest
             contentPath( "a/b" ).
             path( "css/my.css" );
 
-        assertEquals( "/portal/edit/prod/a/b/_/public/othermodule/css/my.css", builder.toString() );
+        assertEquals( "/portal/edit/prod/a/b/_/asset/othermodule/css/my.css", builder.toString() );
     }
 }

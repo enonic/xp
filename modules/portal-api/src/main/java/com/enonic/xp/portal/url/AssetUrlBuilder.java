@@ -35,7 +35,7 @@ public final class AssetUrlBuilder
     {
         super.buildUrl( url, params );
         appendPart( url, "_" );
-        appendPart( url, "public" );
+        appendPart( url, "asset" );
         appendPart( url, this.module );
         appendPart( url, this.path );
     }
