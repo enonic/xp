@@ -222,7 +222,13 @@ module app.wizard.page {
                     this.saveAndReloadPage();
                 }
                 else if (event.getPropertyName() == "template" && this !== event.getSource()) {
-                    this.saveAndReloadPage();
+
+                    if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
+                        this.saveAndReloadPage();
+                    }
+                    else {
+                        // Skip save. Let user continue working instead.
+                    }
                 }
             });
         }

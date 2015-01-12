@@ -2,6 +2,40 @@ module api.content.page {
 
     import PropertyTree = api.data.PropertyTree;
 
+    export class SetTemplate {
+
+        eventSource: any;
+
+        template: PageTemplate;
+
+        descriptor: PageDescriptor;
+
+        regions: PageRegions;
+
+        config: PropertyTree;
+
+        constructor(eventSource: any) {
+            this.eventSource = eventSource;
+        }
+
+        setTemplate(template: PageTemplate, descriptor: PageDescriptor): SetTemplate {
+            this.template = template;
+            this.descriptor = descriptor;
+            return this;
+        }
+
+        setRegions(value: PageRegions): SetTemplate {
+            this.regions = value;
+            return this;
+        }
+
+        setConfig(value: PropertyTree): SetTemplate {
+            this.config = value;
+            return this;
+        }
+
+    }
+
     export class PageModel {
 
         private liveEditModel: api.liveedit.LiveEditModel;
@@ -53,9 +87,8 @@ module api.content.page {
             }
 
             if (!skip) {
-                this.setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor, eventSource);
-                this.setRegions(this.defaultTemplate.getRegions().clone(), eventSource);
-                this.setConfig(this.defaultTemplate.getConfig().copy(), eventSource);
+                var setTemplate = new SetTemplate(eventSource).setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor);
+                this.setTemplate(setTemplate);
             }
         }
 
@@ -67,9 +100,7 @@ module api.content.page {
                 this.setRegions(new PageRegionsBuilder().build(), eventSource);
             }
             else {
-                this.setTemplate(null, this.defaultTemplateDescriptor, eventSource);
-                this.setRegions(null, eventSource);
-                this.setConfig(null, eventSource);
+                this.setAutomaticTemplate(eventSource);
             }
         }
 
@@ -97,26 +128,43 @@ module api.content.page {
             return this;
         }
 
-        setTemplate(template: PageTemplate, pageDescriptor: PageDescriptor, eventSource?: any): PageModel {
+        setAutomaticTemplate(eventSource?: any): PageModel {
+            var setTemplate = new SetTemplate(eventSource);
+            setTemplate.setTemplate(null, this.defaultTemplateDescriptor).
+                setRegions(this.defaultTemplate.getRegions().clone()).
+                setConfig(this.defaultTemplate.getConfig().copy());
+
+            this.setTemplate(setTemplate);
+            return this;
+        }
+
+        setTemplate(setTemplate: SetTemplate): PageModel {
 
             var oldTemplateKey = this.template ? this.template.getKey() : null;
 
-            if (template) {
+            if (setTemplate.template) {
                 this.mode = PageMode.FORCED_TEMPLATE;
             }
             else {
                 this.mode = PageMode.AUTOMATIC;
             }
 
-            this.template = template;
+            this.template = setTemplate.template;
+
+            if (setTemplate.config) {
+                this.setConfig(setTemplate.config);
+            }
+            if (setTemplate.regions) {
+                this.setRegions(setTemplate.regions);
+            }
 
             if (this.regions) {
-                this.regions.changeRegionsTo(pageDescriptor.getRegions());
+                this.regions.changeRegionsTo(setTemplate.descriptor.getRegions());
             }
 
             var newTemplateKey = this.template ? this.template.getKey() : null;
             if (!api.ObjectHelper.equals(oldTemplateKey, newTemplateKey)) {
-                this.notifyPropertyChanged("template", oldTemplateKey, newTemplateKey, eventSource);
+                this.notifyPropertyChanged("template", oldTemplateKey, newTemplateKey, setTemplate.eventSource);
             }
             this.initialized = true;
             return this;
@@ -138,7 +186,8 @@ module api.content.page {
             this.config = value;
             this.config.onPropertyChanged((event: api.data.PropertyChangedEvent) => {
                 if (this.mode == PageMode.AUTOMATIC) {
-                    this.setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor, this);
+                    var setTemplate = new SetTemplate(this).setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor);
+                    this.setTemplate(setTemplate);
                 }
             });
 
@@ -206,10 +255,6 @@ module api.content.page {
 
         hasTemplate(): boolean {
             return !!this.template;
-        }
-
-        isUsingDefaultTemplate(): boolean {
-            return !this.template;
         }
 
         getTemplateKey(): PageTemplateKey {

@@ -5,6 +5,7 @@ module api.liveedit {
     import Descriptor = api.content.page.Descriptor;
     import DescriptorKey = api.content.page.DescriptorKey;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
+    import SetTemplate = api.content.page.SetTemplate;
     import PageModel = api.content.page.PageModel;
     import PageRegionsBuilder = api.content.page.PageRegionsBuilder;
     import PageMode = api.content.page.PageMode;
@@ -74,16 +75,16 @@ module api.liveedit {
                     pageTemplatePromise.then((pageTemplate: PageTemplate) => {
                         pageDescriptorPromise = this.loadPageDescriptor(pageTemplate.getController());
                         pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
-                            pageModel.setTemplate(pageTemplate, pageDescriptor, this);
-                            pageModel.setRegions(pageTemplate.getRegions().clone(), this);
-                            pageModel.setConfig(pageTemplate.getConfig().copy(), this);
+                            var setTemplate = new SetTemplate(this).
+                                setTemplate(pageTemplate, pageDescriptor).
+                                setRegions(pageTemplate.getRegions().clone()).
+                                setConfig(pageTemplate.getConfig().copy());
+                            pageModel.setTemplate(setTemplate);
                         });
                     });
                 }
                 else if (pageMode == PageMode.AUTOMATIC) {
-                    pageModel.setTemplate(null, defaultTemplateDescriptor, this);
-                    pageModel.setRegions(defaultPageTemplate.getRegions().clone(), this);
-                    pageModel.setConfig(defaultPageTemplate.getConfig().copy(), this);
+                    pageModel.setAutomaticTemplate(this);
                 }
                 else {
                     throw new Error("Unsupported PageMode for a Content: " + pageMode);

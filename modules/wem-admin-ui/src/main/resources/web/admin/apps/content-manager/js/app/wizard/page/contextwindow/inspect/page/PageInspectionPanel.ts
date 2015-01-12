@@ -6,6 +6,7 @@ module app.wizard.page.contextwindow.inspect.page {
     import FormView = api.form.FormView;
     import Content = api.content.Content;
     import Page = api.content.page.Page;
+    import SetTemplate = api.content.page.SetTemplate;
     import PageModel = api.content.page.PageModel;
     import PageMode = api.content.page.PageMode;
     import SiteModel = api.content.site.SiteModel;
@@ -71,13 +72,15 @@ module app.wizard.page.contextwindow.inspect.page {
                 if (pageTemplate) {
                     new GetPageDescriptorByKeyRequest(pageTemplate.getController()).sendAndParse().
                         then((pageDescriptor: PageDescriptor) => {
-                            this.pageModel.setTemplate(pageTemplate, pageDescriptor, this);
+                            var setTemplate = new SetTemplate(this).
+                                setTemplate(pageTemplate, pageDescriptor);
+                            this.pageModel.setTemplate(setTemplate);
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         }).done();
                 }
                 else {
-                    this.pageModel.setTemplate(null, this.pageModel.getDefaultPageTemplateController(), this);
+                    this.pageModel.setAutomaticTemplate(this);
                 }
             });
         }
@@ -192,11 +195,11 @@ module app.wizard.page.contextwindow.inspect.page {
                         this.refreshConfigForm(controller, pageModel.getConfig());
                     }
                 }
-                else if (event.getPropertyName() == "template" && this !== event.getSource()) {
+                else if (event.getPropertyName() == "config" && this !== event.getSource()) {
 
                     this.pageTemplateForm.show();
 
-                    if (pageMode == PageMode.AUTOMATIC) {
+                    if (pageModel.getMode() == PageMode.AUTOMATIC) {
                         this.showDefaultPageTemplateConfig(pageModel);
                     }
                     else {
