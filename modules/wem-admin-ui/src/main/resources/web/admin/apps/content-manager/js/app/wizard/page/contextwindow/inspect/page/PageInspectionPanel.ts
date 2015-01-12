@@ -69,10 +69,15 @@ module app.wizard.page.contextwindow.inspect.page {
 
             this.pageTemplateForm.getSelector().onSelection((pageTemplate: PageTemplate) => {
                 if (pageTemplate) {
-                    this.pageModel.setTemplate(pageTemplate, null, this);
+                    new GetPageDescriptorByKeyRequest(pageTemplate.getController()).sendAndParse().
+                        then((pageDescriptor: PageDescriptor) => {
+                            this.pageModel.setTemplate(pageTemplate, pageDescriptor, this);
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).done();
                 }
                 else {
-                    this.pageModel.setTemplate(null, null, this);
+                    this.pageModel.setTemplate(null, this.pageModel.getDefaultPageTemplateController(), this);
                 }
             });
         }
