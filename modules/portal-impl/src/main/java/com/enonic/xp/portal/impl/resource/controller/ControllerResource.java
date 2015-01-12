@@ -51,6 +51,7 @@ public abstract class ControllerResource
         context.setMode( this.mode );
         context.setMethod( this.request.getMethod() );
         context.setBaseUri( this.baseUri );
+        context.setWorkspace( this.workspace );
         setParams( context.getParams(), this.uriInfo.getQueryParameters() );
 
         if ( this.form != null )
