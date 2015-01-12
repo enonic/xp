@@ -12,7 +12,6 @@ import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 
 public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBasedComponent>
@@ -62,7 +61,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
                 return renderEmptyComponentPreviewMode();
 
             case LIVE:
-                throw new DescriptorNotFoundException( component.getDescriptor() );
+                return renderEmptyComponentLiveMode();
 
             default:
                 throw new DescriptorNotFoundException( component.getDescriptor() );
@@ -87,6 +86,12 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
             type( "text/html" ).
             entity( html ).
             build();
+    }
+
+    private RenderResult renderEmptyComponentLiveMode()
+    {
+        // TODO: Should probably be different than preview.
+        return renderEmptyComponentPreviewMode();
     }
 
     private Descriptor resolveDescriptor( final DescriptorBasedComponent component )
