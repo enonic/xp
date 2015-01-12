@@ -17,15 +17,14 @@ public abstract class AbstractUrlBuilderTest
     @Before
     public void setup()
     {
-        final PortalContext context = Mockito.mock( PortalContext.class );
-        Mockito.when( context.getMode() ).thenReturn( RenderMode.LIVE );
-        Mockito.when( context.getWorkspace() ).thenReturn( Workspace.from( "stage" ) );
-        Mockito.when( context.getModule() ).thenReturn( ModuleKey.from( "mymodule" ) );
+        final PortalContext context = new PortalContext();
+        context.setMode( RenderMode.LIVE );
+        context.setWorkspace( Workspace.from( "stage" ) );
+        context.setModule( ModuleKey.from( "mymodule" ) );
 
         final Content content = Content.newContent().id( ContentId.from( "123" ) ).path( "some/path" ).build();
-        Mockito.when( context.getContent() ).thenReturn( content );
+        context.setContent( content );
 
         this.builders = new PortalUrlBuilders( context );
     }
 }
-

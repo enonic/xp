@@ -34,7 +34,7 @@ public class GetSiteHandlerTest
         throws Exception
     {
         final Site site = ContentFixtures.newSite();
-        Mockito.when( context.getSite() ).thenReturn( site );
+        context.setSite( site );
 
         execute( "getCurrentSite" );
     }

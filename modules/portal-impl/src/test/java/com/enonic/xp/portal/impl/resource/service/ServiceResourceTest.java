@@ -10,7 +10,7 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.wem.portal.internal.controller.ControllerScript;
 import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
-import com.enonic.wem.portal.internal.controller.PortalContextImpl;
+import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.resource.base.ModuleBaseResourceTest;
@@ -45,7 +45,7 @@ public class ServiceResourceTest
 
         assertEquals( 200, response.getStatus() );
 
-        final ArgumentCaptor<PortalContextImpl> jsContext = ArgumentCaptor.forClass( PortalContextImpl.class );
+        final ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
         Mockito.verify( this.controllerScript ).execute( jsContext.capture() );
 
         final PortalRequest jsHttpRequest = jsContext.getValue();

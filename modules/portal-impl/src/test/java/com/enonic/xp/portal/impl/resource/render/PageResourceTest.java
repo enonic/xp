@@ -7,10 +7,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.wem.api.rendering.Renderable;
-import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
+import com.enonic.xp.portal.PortalContext;
 
 import static org.junit.Assert.*;
 
@@ -50,7 +50,7 @@ public class PageResourceTest
         MockHttpServletRequest request = newGetRequest( "/live/prod/site/somepath/content" );
         MockHttpServletResponse response = executeRequest( request );
 
-        ArgumentCaptor<PortalContextImpl> jsContext = ArgumentCaptor.forClass( PortalContextImpl.class );
+        ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
         ArgumentCaptor<Renderable> renderable = ArgumentCaptor.forClass( Renderable.class );
         Mockito.verify( this.renderer ).render( renderable.capture(), jsContext.capture() );
 

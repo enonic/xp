@@ -4,15 +4,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.region.TextComponent;
-import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
+import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.RenderMode;
 
 import static org.junit.Assert.*;
 
 public class TextRendererTest
 {
-    private PortalContextImpl context;
+    private PortalContext context;
 
     private TextComponent textComponent;
 
@@ -21,7 +21,7 @@ public class TextRendererTest
     @Before
     public void before()
     {
-        context = new PortalContextImpl();
+        context = new PortalContext();
         context.setMode( RenderMode.LIVE );
     }
 

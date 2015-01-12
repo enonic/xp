@@ -6,7 +6,7 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.region.Component;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.portal.internal.controller.PortalContextImpl;
+import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.impl.resource.controller.ControllerResource;
 
 public abstract class RendererControllerResource
@@ -25,7 +25,7 @@ public abstract class RendererControllerResource
     protected PageDescriptor pageDescriptor;
 
     @Override
-    protected final void configure( final PortalContextImpl context )
+    protected final void configure( final PortalContext context )
     {
         context.setContent( this.content );
         context.setComponent( this.component );

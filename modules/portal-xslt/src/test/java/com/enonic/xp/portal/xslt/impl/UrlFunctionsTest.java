@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.xslt.impl;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -18,13 +17,13 @@ public class UrlFunctionsTest
     public void testAll()
         throws Exception
     {
-        final PortalContext context = Mockito.mock( PortalContext.class );
-        Mockito.when( context.getMode() ).thenReturn( RenderMode.LIVE );
-        Mockito.when( context.getWorkspace() ).thenReturn( Workspace.from( "stage" ) );
-        Mockito.when( context.getModule() ).thenReturn( ModuleKey.from( "mymodule" ) );
+        final PortalContext context = new PortalContext();
+        context.setMode( RenderMode.LIVE );
+        context.setWorkspace( Workspace.from( "stage" ) );
+        context.setModule( ModuleKey.from( "mymodule" ) );
 
         final Content content = Content.newContent().id( ContentId.from( "123" ) ).path( "some/path" ).build();
-        Mockito.when( context.getContent() ).thenReturn( content );
+        context.setContent( content );
         PortalContextAccessor.set( context );
 
         processTemplate( "all" );

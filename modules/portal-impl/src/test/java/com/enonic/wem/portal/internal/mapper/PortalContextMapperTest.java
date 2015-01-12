@@ -3,9 +3,9 @@ package com.enonic.wem.portal.internal.mapper;
 import org.junit.Test;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.script.AbstractMapSerializableTest;
 import com.enonic.wem.script.mapper.ContentFixtures;
+import com.enonic.xp.portal.PortalContext;
 
 public class PortalContextMapperTest
     extends AbstractMapSerializableTest
@@ -14,18 +14,18 @@ public class PortalContextMapperTest
     public void testSimple()
         throws Exception
     {
-        final PortalContextImpl context = new PortalContextImpl();
+        final PortalContext context = new PortalContext();
         context.setUri( "/portal/live/prod/a/b" );
         context.setMethod( "GET" );
-        context.addParam( "param1", "value1" );
-        context.addParam( "param2", "value2" );
-        context.addParam( "param3", "value3-A" );
-        context.addParam( "param3", "value3-B" );
+        context.getParams().put( "param1", "value1" );
+        context.getParams().put( "param2", "value2" );
+        context.getParams().put( "param3", "value3-A" );
+        context.getParams().put( "param3", "value3-B" );
 
-        context.addHeader( "header1", "value1" );
-        context.addHeader( "header2", "value2" );
-        context.addHeader( "header3", "value3-A" );
-        context.addHeader( "header3", "value3-B" );
+        context.getHeaders().put( "header1", "value1" );
+        context.getHeaders().put( "header2", "value2" );
+        context.getHeaders().put( "header3", "value3-A" );
+        context.getHeaders().put( "header3", "value3-B" );
 
         context.setModule( ModuleKey.from( "mymodule" ) );
         context.setContent( ContentFixtures.newContent() );

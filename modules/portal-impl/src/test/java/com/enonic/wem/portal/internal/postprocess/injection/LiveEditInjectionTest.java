@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.portal.internal.controller.PortalContextImpl;
+import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
@@ -18,14 +18,14 @@ import static org.junit.Assert.*;
 
 public class LiveEditInjectionTest
 {
-    private PortalContextImpl context;
+    private PortalContext context;
 
     private LiveEditInjection injection;
 
     @Before
     public void setup()
     {
-        this.context = new PortalContextImpl();
+        this.context = new PortalContext();
         mockCurrentContextHttpRequest();
 
         this.injection = new LiveEditInjection();

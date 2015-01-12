@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.jslib.impl;
 
 import org.junit.Before;
-import org.mockito.Mockito;
 
 import junit.framework.Assert;
 
@@ -25,14 +24,14 @@ public abstract class AbstractHandlerTest
     public final void setup()
         throws Exception
     {
-        context = Mockito.mock( PortalContext.class );
-        Mockito.when( context.getMode() ).thenReturn( RenderMode.LIVE );
-        Mockito.when( context.getWorkspace() ).thenReturn( Workspace.from( "stage" ) );
-        Mockito.when( context.getModule() ).thenReturn( ModuleKey.from( "mymodule" ) );
+        this.context = new PortalContext();
+        this.context.setMode( RenderMode.LIVE );
+        this.context.setWorkspace( Workspace.from( "stage" ) );
+        this.context.setModule( ModuleKey.from( "mymodule" ) );
 
         final Content content = Content.newContent().id( ContentId.from( "123" ) ).path( "some/path" ).build();
-        Mockito.when( context.getContent() ).thenReturn( content );
-        PortalContextAccessor.set( context );
+        this.context.setContent( content );
+        PortalContextAccessor.set( this.context );
 
         addHandler( createHandler() );
     }
