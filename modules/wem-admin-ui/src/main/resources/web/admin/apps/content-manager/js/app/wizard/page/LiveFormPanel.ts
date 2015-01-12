@@ -16,6 +16,8 @@ module app.wizard.page {
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import LayoutDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.region.LayoutDescriptorChangedEvent;
+    import PartDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.region.PartDescriptorChangedEvent;
+    import ImageChangedEvent = app.wizard.page.contextwindow.inspect.region.ImageChangedEvent;
 
     import Component = api.content.page.Component;
 
@@ -133,6 +135,13 @@ module app.wizard.page {
                 this.saveAndReloadOnlyComponent(layoutView);
             });
 
+            this.partInspectionPanel.onPartDescriptorChanged((event: PartDescriptorChangedEvent) => {
+                this.saveAndReloadOnlyComponent(event.getPartComponentView());
+            });
+
+            this.imageInspectionPanel.onImageChanged((event: ImageChangedEvent) => {
+                this.saveAndReloadOnlyComponent(event.getImageComponentView());
+            });
             var saveAction = new api.ui.Action('Apply');
             saveAction.onExecuted(() => {
                 var itemView = this.getSelectedItemView();

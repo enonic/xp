@@ -148,7 +148,7 @@
 
     .form-view {
       .form-element-spacing(@form-field-spacing);
-      margin:-10px;
+      margin: -10px;
     }
 
     //    .icon {
@@ -200,6 +200,50 @@
         .icon {
           width: 32px;
           height: 32px;
+        }
+      }
+    }
+    .dropdown {
+      border: 1px #ffffff solid;
+
+      .selected-option {
+        border: 1px #ffffff solid;
+
+        .option-value {
+          margin-left: 0px;
+        }
+
+        .names-and-icon-view {
+
+          .wrapper {
+            height: 48px;
+            width: 48px;
+
+            .icon {
+              &:before {
+                font-size: 38px;
+              }
+            }
+          }
+
+          .names-view {
+            .main-name {
+              height: auto;
+              font-size: 20px;
+              line-height: 30px;
+            }
+            .ellipsis();
+          }
+        }
+
+      }
+      &:hover {
+        border: 1px @admin-input-blue solid;
+      }
+
+      .option-filter-input {
+        &:focus {
+          border-color: transparent;
         }
       }
     }
