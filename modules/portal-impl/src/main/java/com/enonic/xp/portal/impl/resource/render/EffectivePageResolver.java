@@ -18,7 +18,11 @@ final class EffectivePageResolver
 
     public Page resolve()
     {
-        if ( !content.hasPage() )
+        if ( content instanceof PageTemplate )
+        {
+            return content.getPage();
+        }
+        else if ( !content.hasPage() )
         {
             // The Content has no Page, but it has a supporting PageTemplate, so then we use the Page from the PageTemplate instead
             if ( template.getPage() == null )
