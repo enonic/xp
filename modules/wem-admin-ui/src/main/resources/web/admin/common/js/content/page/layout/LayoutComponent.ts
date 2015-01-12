@@ -89,7 +89,9 @@ module api.content.page.layout {
             }
             var componentName = new api.content.page.ComponentName(json.name);
             this.setName(componentName);
-            this.setConfig(PropertyTree.fromJson(json.config, propertyIdProvider));
+            if (json.config) {
+                this.setConfig(PropertyTree.fromJson(json.config, propertyIdProvider));
+            }
             this.setParent(region);
 
             var layoutComponent = this.build();

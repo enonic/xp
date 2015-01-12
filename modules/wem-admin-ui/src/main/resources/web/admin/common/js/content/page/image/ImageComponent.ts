@@ -17,12 +17,12 @@ module api.content.page.image {
 
         private form: Form;
 
-        constructor(builder?: ImageComponentBuilder) {
+        constructor(builder: ImageComponentBuilder) {
             super(builder);
-            if (builder) {
-                this.image = builder.image;
-                this.config = builder.config;
-            }
+
+            this.image = builder.image;
+            this.config = builder.config;
+
             var formBuilder = new FormBuilder();
             formBuilder.addFormItem(new api.form.InputBuilder().
                 setName("caption").
@@ -106,7 +106,10 @@ module api.content.page.image {
             super(source);
             if (source) {
                 this.image = source.getImage();
-                this.config = source.getConfig().copy(generateNewPropertyIds);
+                this.config = source.getConfig() ? source.getConfig().copy(generateNewPropertyIds) : null;
+            }
+            else {
+                this.config = new PropertyTree(api.Client.get().getPropertyIdProvider());
             }
         }
 
@@ -129,7 +132,10 @@ module api.content.page.image {
             this.setName(new api.content.page.ComponentName(json.name));
 
 
-            this.setConfig(PropertyTree.fromJson(json.config, propertyIdProvider));
+            if (json.config) {
+                this.setConfig(PropertyTree.fromJson(json.config, propertyIdProvider));
+            }
+
             this.setParent(region);
 
             return this;

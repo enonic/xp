@@ -49,7 +49,9 @@ module api.content.page.part {
                 this.setDescriptor(api.content.page.DescriptorKey.fromString(json.descriptor));
             }
             this.setName(new api.content.page.ComponentName(json.name));
-            this.setConfig(PropertyTree.fromJson(json.config, propertyIdProvider));
+            if (json.config) {
+                this.setConfig(PropertyTree.fromJson(json.config, propertyIdProvider));
+            }
             this.setParent(region);
             return this;
         }

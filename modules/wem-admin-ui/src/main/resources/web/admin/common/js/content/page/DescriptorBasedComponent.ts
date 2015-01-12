@@ -8,14 +8,12 @@ module api.content.page {
 
         private config: PropertyTree;
 
-        constructor(builder?: DescriptorBasedComponentBuilder<any>) {
+        constructor(builder: DescriptorBasedComponentBuilder<any>) {
 
             super(builder);
 
-            if (builder != undefined) {
-                this.descriptorKey = builder.descriptor;
-                this.config = builder.config;
-            }
+            this.descriptorKey = builder.descriptor;
+            this.config = builder.config;
         }
 
         hasDescriptor(): boolean {
@@ -87,9 +85,12 @@ module api.content.page {
 
         constructor(source?: DescriptorBasedComponent, generateNewPropertyIds: boolean = false) {
             super(source);
-            if( source ) {
+            if (source) {
                 this.descriptor = source.getDescriptor();
-                this.config = source.getConfig().copy(generateNewPropertyIds);
+                this.config = source.getConfig() ? source.getConfig().copy(generateNewPropertyIds) : null;
+            }
+            else {
+                this.config = new PropertyTree(api.Client.get().getPropertyIdProvider());
             }
         }
 
