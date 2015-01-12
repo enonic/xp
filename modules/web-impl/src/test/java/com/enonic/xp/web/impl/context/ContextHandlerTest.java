@@ -10,7 +10,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.session.Session;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
 public class ContextHandlerTest
@@ -32,8 +31,5 @@ public class ContextHandlerTest
         final ArgumentCaptor<HttpServletRequest> reqArg = ArgumentCaptor.forClass( HttpServletRequest.class );
         Mockito.verify( chain, Mockito.times( 1 ) ).handle( reqArg.capture(), Mockito.eq( res ) );
         Assert.assertEquals( HttpRequestDelegate.class, reqArg.getValue().getClass() );
-
-        final Session session = ContextAccessor.current().getLocalScope().getSession();
-        Assert.assertNotNull( session );
     }
 }

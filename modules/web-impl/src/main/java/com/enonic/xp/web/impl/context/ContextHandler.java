@@ -6,11 +6,12 @@ import javax.servlet.http.HttpSession;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.context.ContextBuilder;
+import com.enonic.xp.web.handler.OncePerRequestHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
-import com.enonic.xp.web.handler.OncePerRequestHandler;
 
 @Component(immediate = true, service = WebHandler.class)
 public final class ContextHandler
@@ -31,10 +32,16 @@ public final class ContextHandler
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        final Context context = ContextAccessor.current();
-        final HttpSession session = req.getSession( true );
+        final Context context = ContextBuilder.create().build();
+        context.getLocalScope().setAttribute( ContentConstants.WORKSPACE_STAGE );
+        context.getLocalScope().setAttribute( ContentConstants.CONTENT_REPO.getId() );
 
+        final HttpSession session = req.getSession( true );
         context.getLocalScope().setSession( new SessionWrapper( session ) );
-        chain.handle( new HttpRequestDelegate( req ), res );
+
+        context.callWith( () -> {
+            chain.handle( new HttpRequestDelegate( req ), res );
+            return null;
+        } );
     }
 }
