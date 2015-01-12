@@ -1,8 +1,8 @@
 module api.liveedit {
 
     import Region = api.content.page.region.Region;
-    import RegionPath = api.content.page.RegionPath;
-    import Component = api.content.page.Component;
+    import RegionPath = api.content.page.region.RegionPath;
+    import Component = api.content.page.region.Component;
 
     export class RegionViewBuilder {
 

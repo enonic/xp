@@ -6,8 +6,8 @@ module app.view {
     import RelationshipType = api.schema.relationshiptype.RelationshipType;
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
     import PageDescriptor = api.content.page.PageDescriptor;
-    import PartDescriptor = api.content.page.part.PartDescriptor;
-    import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
+    import PartDescriptor = api.content.page.region.PartDescriptor;
+    import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
     import ItemDataGroup = api.app.view.ItemDataGroup;
 
     export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.Module> {
@@ -91,8 +91,8 @@ module app.view {
             var descriptorsGroup = new ItemDataGroup("Descriptors", "descriptors");
             var descriptorPromises = [
                 new api.content.page.GetPageDescriptorsByModuleRequest(moduleKey).sendAndParse(),
-                new api.content.page.part.GetPartDescriptorsByModuleRequest(moduleKey).sendAndParse(),
-                new api.content.page.layout.GetLayoutDescriptorsByModuleRequest(moduleKey).sendAndParse()
+                new api.content.page.region.GetPartDescriptorsByModuleRequest(moduleKey).sendAndParse(),
+                new api.content.page.region.GetLayoutDescriptorsByModuleRequest(moduleKey).sendAndParse()
             ];
 
             wemQ.all(descriptorPromises).

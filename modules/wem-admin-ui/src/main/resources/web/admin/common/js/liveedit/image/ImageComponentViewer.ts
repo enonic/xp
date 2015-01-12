@@ -1,6 +1,6 @@
 module api.liveedit.image {
 
-    export class ImageComponentViewer extends api.ui.Viewer<api.content.page.image.ImageComponent> {
+    export class ImageComponentViewer extends api.ui.Viewer<api.content.page.region.ImageComponent> {
 
         private namesAndIconView: api.app.NamesAndIconView;
 
@@ -10,7 +10,7 @@ module api.liveedit.image {
             this.appendChild(this.namesAndIconView);
         }
 
-        setObject(imageComponent: api.content.page.image.ImageComponent) {
+        setObject(imageComponent: api.content.page.region.ImageComponent) {
             super.setObject(imageComponent);
             this.namesAndIconView.setMainName(imageComponent.getName().toString()).
                 setSubName(imageComponent.getPath().toString()).

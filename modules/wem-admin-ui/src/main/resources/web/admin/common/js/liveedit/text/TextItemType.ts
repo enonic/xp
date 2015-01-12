@@ -3,7 +3,7 @@ module api.liveedit.text {
     import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
     import ComponentItemType = api.liveedit.ComponentItemType;
     import RegionView = api.liveedit.RegionView;
-    import TextComponent = api.content.page.text.TextComponent;
+    import TextComponent = api.content.page.region.TextComponent;
 
     export class TextItemType extends ComponentItemType {
 

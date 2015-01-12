@@ -1,7 +1,7 @@
 module api.liveedit {
 
-    import Component = api.content.page.Component;
-    import ComponentName = api.content.page.ComponentName;
+    import Component = api.content.page.region.Component;
+    import ComponentName = api.content.page.region.ComponentName;
 
     export class ComponentViewContextMenuTitle<COMPONENT extends Component> extends ItemViewContextMenuTitle {
 

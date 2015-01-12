@@ -4,8 +4,8 @@ module app.wizard.page {
     import ContentTypeName = api.schema.content.ContentTypeName;
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
-    import PartDescriptor = api.content.page.part.PartDescriptor;
-    import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
+    import PartDescriptor = api.content.page.region.PartDescriptor;
+    import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
 
     export interface DefaultModelsConfig {
 

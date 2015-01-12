@@ -1,7 +1,7 @@
 module app.wizard.page.contextwindow.inspect.region {
 
-    import Component = api.content.page.Component;
-    import ComponentName = api.content.page.ComponentName;
+    import Component = api.content.page.region.Component;
+    import ComponentName = api.content.page.region.ComponentName;
     import ComponentView = api.liveedit.ComponentView;
 
     export interface ComponentInspectionPanelConfig {

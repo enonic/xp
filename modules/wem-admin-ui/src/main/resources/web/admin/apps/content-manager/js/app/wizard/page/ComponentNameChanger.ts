@@ -1,13 +1,13 @@
 module app.wizard.page {
 
     import Descriptor = api.content.page.Descriptor;
-    import DescriptorBasedComponent = api.content.page.DescriptorBasedComponent;
-    import Component = api.content.page.Component;
-    import LayoutComponent = api.content.page.layout.LayoutComponent;
-    import LayoutRegions = api.content.page.layout.LayoutRegions;
-    import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
-    import ComponentPathRegionAndComponent = api.content.page.ComponentPathRegionAndComponent;
-    import ComponentName = api.content.page.ComponentName;
+    import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
+    import Component = api.content.page.region.Component;
+    import LayoutComponent = api.content.page.region.LayoutComponent;
+    import LayoutRegions = api.content.page.region.LayoutRegions;
+    import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
+    import ComponentPathRegionAndComponent = api.content.page.region.ComponentPathRegionAndComponent;
+    import ComponentName = api.content.page.region.ComponentName;
     import PageRegions = api.content.page.PageRegions;
     import ComponentView = api.liveedit.ComponentView;
 

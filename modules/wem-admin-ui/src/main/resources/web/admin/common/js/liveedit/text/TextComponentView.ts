@@ -2,7 +2,7 @@ module api.liveedit.text {
 
     import ComponentView = api.liveedit.ComponentView;
     import RegionView = api.liveedit.RegionView;
-    import TextComponent = api.content.page.text.TextComponent;
+    import TextComponent = api.content.page.region.TextComponent;
 
 
     export class TextComponentViewBuilder extends ComponentViewBuilder<TextComponent> {

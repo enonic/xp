@@ -6,9 +6,9 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private layoutView: LayoutComponentView;
 
-        private descriptor: api.content.page.layout.LayoutDescriptor;
+        private descriptor: api.content.page.region.LayoutDescriptor;
 
-        constructor(layoutView: LayoutComponentView, descriptor: api.content.page.layout.LayoutDescriptor) {
+        constructor(layoutView: LayoutComponentView, descriptor: api.content.page.region.LayoutDescriptor) {
             this.layoutView = layoutView;
             this.descriptor = descriptor;
         }
@@ -17,7 +17,7 @@ module app.wizard.page.contextwindow.inspect.region {
             return this.layoutView;
         }
 
-        getDescriptor(): api.content.page.layout.LayoutDescriptor {
+        getDescriptor(): api.content.page.region.LayoutDescriptor {
             return this.descriptor;
         }
     }

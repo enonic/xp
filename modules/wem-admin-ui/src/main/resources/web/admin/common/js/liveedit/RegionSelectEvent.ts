@@ -1,6 +1,6 @@
 module api.liveedit {
 
-    import RegionPath = api.content.page.RegionPath;
+    import RegionPath = api.content.page.region.RegionPath;
     import RegionView = api.liveedit.RegionView;
 
     export class RegionSelectEvent extends api.event.Event {

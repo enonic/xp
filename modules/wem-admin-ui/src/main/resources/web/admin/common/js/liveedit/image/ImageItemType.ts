@@ -1,6 +1,6 @@
 module api.liveedit.image {
 
-    import ImageComponent = api.content.page.image.ImageComponent;
+    import ImageComponent = api.content.page.region.ImageComponent;
     import ItemType = api.liveedit.ItemType;
     import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
     import ComponentItemType = api.liveedit.ComponentItemType;

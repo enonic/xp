@@ -6,8 +6,8 @@
 
 module LiveEdit.component.dragdropsort.DragDropSort {
 
-    import Component = api.content.page.Component;
-    import ComponentName = api.content.page.ComponentName;
+    import Component = api.content.page.region.Component;
+    import ComponentName = api.content.page.region.ComponentName;
     import ItemViewId = api.liveedit.ItemViewId;
     import ItemType = api.liveedit.ItemType;
     import ItemView = api.liveedit.ItemView;

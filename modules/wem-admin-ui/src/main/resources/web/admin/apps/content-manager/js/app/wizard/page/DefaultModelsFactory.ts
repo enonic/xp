@@ -6,10 +6,10 @@ module app.wizard.page {
     import PageDescriptor = api.content.page.PageDescriptor;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import GetDefaultPageTemplateRequest = api.content.page.GetDefaultPageTemplateRequest;
-    import PartDescriptor = api.content.page.part.PartDescriptor;
-    import DefaultPartDescriptorResolver = api.content.page.part.DefaultPartDescriptorResolver;
-    import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
-    import DefaultLayoutDescriptorResolver = api.content.page.layout.DefaultLayoutDescriptorResolver;
+    import PartDescriptor = api.content.page.region.PartDescriptor;
+    import DefaultPartDescriptorResolver = api.content.page.region.DefaultPartDescriptorResolver;
+    import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
+    import DefaultLayoutDescriptorResolver = api.content.page.region.DefaultLayoutDescriptorResolver;
 
     export interface DefaultModelsFactoryConfig {
 

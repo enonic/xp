@@ -1,7 +1,7 @@
 module app.wizard.page.contextwindow {
 
     import ComponentView = api.liveedit.ComponentView;
-    import Component = api.content.page.Component;
+    import Component = api.content.page.region.Component;
     import PageView = api.liveedit.PageView;
 
     export class ContextWindowController {

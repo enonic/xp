@@ -17,10 +17,10 @@ module app.wizard.page {
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import LayoutDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.region.LayoutDescriptorChangedEvent;
 
-    import Component = api.content.page.Component;
+    import Component = api.content.page.region.Component;
 
-    import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
-    import GetLayoutDescriptorsByModulesRequest = api.content.page.layout.GetLayoutDescriptorsByModulesRequest;
+    import GetPartDescriptorsByModulesRequest = api.content.page.region.GetPartDescriptorsByModulesRequest;
+    import GetLayoutDescriptorsByModulesRequest = api.content.page.region.GetLayoutDescriptorsByModulesRequest;
 
     import InspectionsPanelConfig = app.wizard.page.contextwindow.inspect.InspectionsPanelConfig;
     import InspectionsPanel = app.wizard.page.contextwindow.inspect.InspectionsPanel;

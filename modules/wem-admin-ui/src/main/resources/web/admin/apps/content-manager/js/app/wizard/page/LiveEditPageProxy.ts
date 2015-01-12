@@ -5,7 +5,7 @@ module app.wizard.page {
     import PageModel = api.content.page.PageModel;
     import SiteModel = api.content.site.SiteModel;
     import LiveEditModel = api.liveedit.LiveEditModel;
-    import Component = api.content.page.Component;
+    import Component = api.content.page.region.Component;
     import ImageUploadDialog = api.content.form.inputtype.image.ImageUploadDialog;
     import RenderingMode = api.rendering.RenderingMode;
     import Workspace = api.content.Workspace;

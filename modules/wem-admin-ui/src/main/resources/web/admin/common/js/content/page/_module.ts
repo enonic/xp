@@ -1,7 +1,4 @@
 ///<reference path='DescriptorJson.ts' />
-///<reference path='ComponentJson.ts' />
-///<reference path='DescriptorBasedComponentJson.ts' />
-///<reference path='ComponentTypeWrapperJson.ts' />
 
 ///<reference path='PageDescriptorJson.ts' />
 ///<reference path='PageDescriptorsJson.ts' />
@@ -24,14 +21,6 @@
 ///<reference path='PageTemplateKey.ts' />
 ///<reference path='PageTemplateName.ts' />
 
-///<reference path='ComponentName.ts' />
-///<reference path='ComponentPath.ts' />
-///<reference path='Component.ts' />
-///<reference path='ComponentType.ts' />
-///<reference path='ComponentFactory.ts' />
-///<reference path='DescriptorBasedComponent.ts' />
-
-///<reference path='RegionPath.ts' />
 ///<reference path='AbstractRegions.ts' />
 ///<reference path='PageRegions.ts' />
 

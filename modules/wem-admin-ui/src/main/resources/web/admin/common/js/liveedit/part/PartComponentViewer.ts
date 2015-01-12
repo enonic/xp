@@ -1,6 +1,6 @@
 module api.liveedit.part {
 
-    export class PartComponentViewer extends api.ui.Viewer<api.content.page.part.PartComponent> {
+    export class PartComponentViewer extends api.ui.Viewer<api.content.page.region.PartComponent> {
 
         private namesAndIconView: api.app.NamesAndIconView;
 
@@ -10,7 +10,7 @@ module api.liveedit.part {
             this.appendChild(this.namesAndIconView);
         }
 
-        setObject(partComponent: api.content.page.part.PartComponent) {
+        setObject(partComponent: api.content.page.region.PartComponent) {
             super.setObject(partComponent);
             this.namesAndIconView.setMainName(partComponent.getName().toString()).
                 setSubName(partComponent.getPath().toString()).

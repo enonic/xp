@@ -8,7 +8,7 @@ module api.liveedit {
     import Site = api.content.site.Site;
     import PageRegions = api.content.page.PageRegions;
     import PageRegionsBuilder = api.content.page.PageRegionsBuilder;
-    import Component = api.content.page.Component;
+    import Component = api.content.page.region.Component;
     import Region = api.content.page.region.Region;
 
     export class PageViewBuilder {

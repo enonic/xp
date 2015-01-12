@@ -2,10 +2,10 @@ module api.liveedit.part {
 
     import Descriptor = api.content.page.Descriptor;
     import SiteModel = api.content.site.SiteModel;
-    import PartDescriptor = api.content.page.part.PartDescriptor;
-    import PartDescriptorLoader = api.content.page.part.PartDescriptorLoader;
-    import PartDescriptorComboBox = api.content.page.part.PartDescriptorComboBox;
-    import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
+    import PartDescriptor = api.content.page.region.PartDescriptor;
+    import PartDescriptorLoader = api.content.page.region.PartDescriptorLoader;
+    import PartDescriptorComboBox = api.content.page.region.PartDescriptorComboBox;
+    import GetPartDescriptorsByModulesRequest = api.content.page.region.GetPartDescriptorsByModulesRequest;
     import ComponentSetDescriptorEvent = api.liveedit.ComponentSetDescriptorEvent;
     import PartItemType = api.liveedit.part.PartItemType;
     import PageItemType = api.liveedit.PageItemType;

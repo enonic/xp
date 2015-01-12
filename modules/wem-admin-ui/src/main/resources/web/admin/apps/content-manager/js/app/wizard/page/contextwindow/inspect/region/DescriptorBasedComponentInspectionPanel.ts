@@ -1,7 +1,7 @@
 module app.wizard.page.contextwindow.inspect.region {
 
     import FormView = api.form.FormView;
-    import DescriptorBasedComponent = api.content.page.DescriptorBasedComponent;
+    import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import DescriptorKey = api.content.page.DescriptorKey;
     import Descriptor = api.content.page.Descriptor;
 

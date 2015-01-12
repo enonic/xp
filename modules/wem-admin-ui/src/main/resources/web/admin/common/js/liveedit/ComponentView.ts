@@ -1,8 +1,8 @@
 module api.liveedit {
 
-    import Component = api.content.page.Component;
-    import ComponentPath = api.content.page.ComponentPath;
-    import ComponentName = api.content.page.ComponentName;
+    import Component = api.content.page.region.Component;
+    import ComponentPath = api.content.page.region.ComponentPath;
+    import ComponentName = api.content.page.region.ComponentName;
 
     export class ComponentViewBuilder<COMPONENT extends Component> {
 

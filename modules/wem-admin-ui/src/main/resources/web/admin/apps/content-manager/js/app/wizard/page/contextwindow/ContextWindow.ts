@@ -6,8 +6,8 @@ module app.wizard.page.contextwindow {
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
     import Region = api.content.page.region.Region;
-    import ImageComponent = api.content.page.image.ImageComponent;
-    import ImageComponentBuilder = api.content.page.image.ImageComponentBuilder;
+    import ImageComponent = api.content.page.region.ImageComponent;
+    import ImageComponentBuilder = api.content.page.region.ImageComponentBuilder;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import BaseInspectionPanel = app.wizard.page.contextwindow.inspect.BaseInspectionPanel;

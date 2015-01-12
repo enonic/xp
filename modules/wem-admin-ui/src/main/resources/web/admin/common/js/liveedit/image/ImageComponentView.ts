@@ -3,7 +3,7 @@ module api.liveedit.image {
     import ComponentView = api.liveedit.ComponentView;
     import ContentView = api.liveedit.ContentView;
     import RegionView = api.liveedit.RegionView;
-    import ImageComponent = api.content.page.image.ImageComponent;
+    import ImageComponent = api.content.page.region.ImageComponent;
 
     export class ImageComponentViewBuilder extends ComponentViewBuilder<ImageComponent> {
 

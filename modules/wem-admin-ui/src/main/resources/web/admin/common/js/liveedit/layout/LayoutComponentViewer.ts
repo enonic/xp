@@ -1,6 +1,6 @@
 module api.liveedit.layout {
 
-    export class LayoutComponentViewer extends api.ui.Viewer<api.content.page.layout.LayoutComponent> {
+    export class LayoutComponentViewer extends api.ui.Viewer<api.content.page.region.LayoutComponent> {
 
         private namesAndIconView: api.app.NamesAndIconView;
 
@@ -10,7 +10,7 @@ module api.liveedit.layout {
             this.appendChild(this.namesAndIconView);
         }
 
-        setObject(layoutComponent: api.content.page.layout.LayoutComponent) {
+        setObject(layoutComponent: api.content.page.region.LayoutComponent) {
             super.setObject(layoutComponent);
             this.namesAndIconView.setMainName(layoutComponent.getName().toString()).
                 setSubName(layoutComponent.getPath().toString()).
