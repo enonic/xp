@@ -28,6 +28,7 @@ public abstract class AbstractHandlerTest
         this.context.setMode( RenderMode.LIVE );
         this.context.setWorkspace( Workspace.from( "stage" ) );
         this.context.setModule( ModuleKey.from( "mymodule" ) );
+        this.context.setBaseUri( "/portal" );
 
         final Content content = Content.newContent().id( ContentId.from( "123" ) ).path( "some/path" ).build();
         this.context.setContent( content );

@@ -21,6 +21,7 @@ public class UrlFunctionsTest
         context.setMode( RenderMode.LIVE );
         context.setWorkspace( Workspace.from( "stage" ) );
         context.setModule( ModuleKey.from( "mymodule" ) );
+        context.setBaseUri( "/portal" );
 
         final Content content = Content.newContent().id( ContentId.from( "123" ) ).path( "some/path" ).build();
         context.setContent( content );
