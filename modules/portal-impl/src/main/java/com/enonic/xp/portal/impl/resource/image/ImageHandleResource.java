@@ -93,7 +93,7 @@ public final class ImageHandleResource
 
     private int getImageQuality()
     {
-        return ( this.quality >= 0 ) && ( this.quality <= 100 ) ? this.quality : DEFAULT_QUALITY;
+        return ( this.quality > 0 ) && ( this.quality <= 100 ) ? this.quality : DEFAULT_QUALITY;
     }
 
     private int getBackgrundColor()
