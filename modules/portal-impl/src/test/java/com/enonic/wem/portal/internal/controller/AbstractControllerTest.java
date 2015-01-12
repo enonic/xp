@@ -19,8 +19,6 @@ public abstract class AbstractControllerTest
 
     protected PortalContextImpl context;
 
-    protected PortalRequestImpl request;
-
     protected PortalResponse response;
 
     @Before
@@ -40,9 +38,6 @@ public abstract class AbstractControllerTest
 
         final ResourceKey scriptDir = ResourceKey.from( "mymodule:/service/test" );
         this.controllerScript = factory.newController( scriptDir );
-
-        this.request = new PortalRequestImpl();
-        this.context.setRequest( this.request );
     }
 
     protected final void execute( final String scriptDir )

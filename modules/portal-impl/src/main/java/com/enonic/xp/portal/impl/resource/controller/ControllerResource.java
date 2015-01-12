@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
-import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
 
@@ -45,26 +44,16 @@ public abstract class ControllerResource
         throws Exception
     {
         final PortalContextImpl context = new PortalContextImpl();
-
-        final PortalRequestImpl jsRequest = new PortalRequestImpl();
-        jsRequest.setMode( this.mode );
-        jsRequest.setMethod( this.request.getMethod() );
-        jsRequest.addParams( this.uriInfo.getQueryParameters() );
+        context.setMode( this.mode );
+        context.setMethod( this.request.getMethod() );
+        context.addParams( this.uriInfo.getQueryParameters() );
 
         if ( this.form != null )
         {
-            jsRequest.addFormParams( this.form.asMap() );
+            context.addFormParams( this.form.asMap() );
         }
 
-        context.setRequest( jsRequest );
         configure( context );
-
-        /*
-        final ControllerScript controllerScript = this.services.getControllerScriptFactory().newController( this.scriptDir );
-        controllerScript.execute( context );
-
-        final RenderResult result = new PortalResponseSerializer( context.getResponse() ).serialize();
-        return toResponse( result );*/
 
         final RenderResult result = execute( context );
         return toResponse( result );

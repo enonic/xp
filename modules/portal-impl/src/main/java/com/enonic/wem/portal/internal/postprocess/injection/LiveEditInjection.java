@@ -33,7 +33,7 @@ public final class LiveEditInjection
     @Override
     public String inject( final PortalContext context, final Tag tag )
     {
-        if ( RenderMode.EDIT != context.getRequest().getMode() )
+        if ( RenderMode.EDIT != context.getMode() )
         {
             return null;
         }

@@ -7,7 +7,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.portal.internal.controller.PortalContextImpl;
-import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.xp.portal.PortalResponse;
 
 import static junit.framework.Assert.assertEquals;
@@ -27,12 +26,9 @@ public class PostProcessorImplTest
         resp.setPostProcess( true );
         resp.setBody( html );
 
-        final PortalRequestImpl req = new PortalRequestImpl();
-        req.setMethod( "GET" );
-
         final PortalContextImpl context = new PortalContextImpl();
         context.setResponse( resp );
-        context.setRequest( req );
+        context.setMethod( "GET" );
 
         postProcessor.processResponse( context );
 
@@ -55,12 +51,9 @@ public class PostProcessorImplTest
         resp.setPostProcess( true );
         resp.setBody( html );
 
-        final PortalRequestImpl req = new PortalRequestImpl();
-        req.setMethod( "GET" );
-
         final PortalContextImpl context = new PortalContextImpl();
         context.setResponse( resp );
-        context.setRequest( req );
+        context.setMethod( "GET" );
 
         postProcessor.processResponse( context );
 

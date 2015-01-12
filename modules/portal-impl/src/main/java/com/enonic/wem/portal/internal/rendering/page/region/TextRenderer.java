@@ -78,7 +78,6 @@ public final class TextRenderer
 
     private RenderMode getRenderingMode( final PortalContext context )
     {
-        final PortalRequest req = context.getRequest();
-        return req == null ? RenderMode.LIVE : req.getMode();
+        return context == null ? RenderMode.LIVE : context.getMode();
     }
 }

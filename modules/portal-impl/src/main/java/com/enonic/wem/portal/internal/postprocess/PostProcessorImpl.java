@@ -32,7 +32,7 @@ public final class PostProcessorImpl
     public void processResponse( final PortalContext context )
     {
         final PortalResponse response = context.getResponse();
-        if ( !response.isPostProcess() || !"GET".equals( context.getRequest().getMethod() ) )
+        if ( !response.isPostProcess() || !"GET".equals( context.getMethod() ) )
         {
             return;
         }

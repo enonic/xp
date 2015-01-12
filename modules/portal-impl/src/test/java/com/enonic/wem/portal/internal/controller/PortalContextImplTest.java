@@ -15,12 +15,12 @@ import com.enonic.xp.portal.RenderMode;
 
 import static org.junit.Assert.*;
 
-public class PortalRequestImplTest
+public class PortalContextImplTest
 {
     @Test
     public void setMethod()
     {
-        final PortalRequestImpl request = new PortalRequestImpl();
+        final PortalContextImpl request = new PortalContextImpl();
         assertNull( request.getMethod() );
 
         request.setMethod( "GET" );
@@ -30,7 +30,7 @@ public class PortalRequestImplTest
     @Test
     public void setMode()
     {
-        final PortalRequestImpl request = new PortalRequestImpl();
+        final PortalContextImpl request = new PortalContextImpl();
         assertEquals( RenderMode.LIVE, request.getMode() );
 
         request.setMode( "edit" );
@@ -41,8 +41,8 @@ public class PortalRequestImplTest
     public void setWorkspace()
         throws Exception
     {
-        final PortalRequestImpl request = new PortalRequestImpl();
-        assertEquals( PortalRequestImpl.DEFAULT_WORKSPACE, request.getWorkspace() );
+        final PortalContextImpl request = new PortalContextImpl();
+        assertEquals( PortalContextImpl.DEFAULT_WORKSPACE, request.getWorkspace() );
 
         request.setWorkspace( "another" );
         assertEquals( Workspace.from( "another" ), request.getWorkspace() );
@@ -51,7 +51,7 @@ public class PortalRequestImplTest
     @Test
     public void addParam()
     {
-        final PortalRequestImpl request = new PortalRequestImpl();
+        final PortalContextImpl request = new PortalContextImpl();
         assertNotNull( request.getParams() );
         assertEquals( 0, request.getParams().size() );
 
@@ -65,7 +65,7 @@ public class PortalRequestImplTest
         final Map<String, List<String>> map = Maps.newHashMap();
         map.put( "name", Collections.singletonList( "value" ) );
 
-        final PortalRequestImpl request = new PortalRequestImpl();
+        final PortalContextImpl request = new PortalContextImpl();
         assertNotNull( request.getParams() );
         assertEquals( 0, request.getParams().size() );
 
@@ -79,7 +79,7 @@ public class PortalRequestImplTest
         final Multimap<String, String> map = HashMultimap.create();
         map.put( "name", "value" );
 
-        final PortalRequestImpl request = new PortalRequestImpl();
+        final PortalContextImpl request = new PortalContextImpl();
         assertNotNull( request.getParams() );
         assertEquals( 0, request.getParams().size() );
 

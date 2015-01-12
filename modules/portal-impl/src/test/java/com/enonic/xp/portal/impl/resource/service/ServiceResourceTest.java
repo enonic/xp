@@ -48,7 +48,7 @@ public class ServiceResourceTest
         final ArgumentCaptor<PortalContextImpl> jsContext = ArgumentCaptor.forClass( PortalContextImpl.class );
         Mockito.verify( this.controllerScript ).execute( jsContext.capture() );
 
-        final PortalRequest jsHttpRequest = jsContext.getValue().getRequest();
+        final PortalRequest jsHttpRequest = jsContext.getValue();
         assertNotNull( jsHttpRequest );
         assertEquals( "GET", jsHttpRequest.getMethod() );
         assertEquals( RenderMode.LIVE, jsHttpRequest.getMode() );

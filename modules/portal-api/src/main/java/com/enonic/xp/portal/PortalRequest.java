@@ -12,6 +12,10 @@ public interface PortalRequest
 
     public Workspace getWorkspace();
 
+    // String getContentSelector();
+
+    // public HttpServletRequest getRawRequest();
+
     public Multimap<String, String> getParams();
 
     public Multimap<String, String> getFormParams();

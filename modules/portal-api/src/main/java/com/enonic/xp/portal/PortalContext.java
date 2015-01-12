@@ -11,8 +11,6 @@ import com.enonic.wem.api.module.ModuleKey;
 public interface PortalContext
     extends PortalRequest
 {
-    public PortalRequest getRequest();
-
     public PortalResponse getResponse();
 
     public Content getContent();
