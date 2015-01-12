@@ -50,6 +50,7 @@ public abstract class ControllerResource
         final PortalContext context = new PortalContext();
         context.setMode( this.mode );
         context.setMethod( this.request.getMethod() );
+        context.setBaseUri( "/portal" );
         setParams( context.getParams(), this.uriInfo.getQueryParameters() );
 
         if ( this.form != null )
