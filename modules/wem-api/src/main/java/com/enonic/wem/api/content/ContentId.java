@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content;
 
 import com.enonic.wem.api.support.AbstractId;
+import com.enonic.wem.api.util.Reference;
 
 public class ContentId
     extends AbstractId
@@ -15,5 +16,9 @@ public class ContentId
         return new ContentId( id );
     }
 
+    public static ContentId from( final Reference reference )
+    {
+        return new ContentId( reference.getNodeId().toString() );
+    }
 }
 
