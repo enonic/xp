@@ -17,8 +17,8 @@ public class EditablePage
     {
         this.controller = source.getController();
         this.template = source.getTemplate();
-        this.regions = source.getRegions().copy();
-        this.config = source.getConfig().copy();
+        this.regions = source.hasRegions() ? source.getRegions().copy() : null;
+        this.config = source.hasConfig() ? source.getConfig().copy() : null;
     }
 
     public Page build()

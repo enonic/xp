@@ -31,8 +31,8 @@ public class EditableContent
         this.source = source;
         this.displayName = source.getDisplayName();
         this.data = source.getData().copy();
-        this.metadata = source.getAllMetadata();
-        this.page = page != null ? page.copy() : null;
+        this.metadata = source.getAllMetadata().copy();
+        this.page = source.hasPage() ? source.getPage().copy() : null;
         this.draft = source.isDraft();
         this.thumbnail = source.getThumbnail();
         this.inheritPermissions = source.inheritsPermissions();
