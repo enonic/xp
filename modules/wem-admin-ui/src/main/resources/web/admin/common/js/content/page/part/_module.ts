@@ -14,3 +14,4 @@
 ///<reference path='GetPartDescriptorByKeyRequest.ts' />
 ///<reference path='DefaultPartDescriptorResolver.ts' />
 ///<reference path='PartDescriptorCache.ts' />
+///<reference path='PartDescriptorDropdown.ts' />

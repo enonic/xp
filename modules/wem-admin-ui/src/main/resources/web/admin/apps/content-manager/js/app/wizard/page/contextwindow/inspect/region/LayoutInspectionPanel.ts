@@ -42,8 +42,6 @@ module app.wizard.page.contextwindow.inspect.region {
             this.descriptorSelector = new LayoutDescriptorDropdown("layoutDescriptor", <LayoutDescriptorDropdownConfig>{
                 loader: loader
             });
-            var descriptorLabel = new api.dom.LabelEl("Descriptor", this.descriptorSelector, "descriptor-header");
-            this.appendChild(descriptorLabel);
             loader.load();
             this.descriptorSelector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
 

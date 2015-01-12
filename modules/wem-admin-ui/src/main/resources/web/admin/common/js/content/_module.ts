@@ -42,6 +42,7 @@
 ///<reference path='ContentPublishedEvent.ts' />
 ///<reference path='ContentChildOrderUpdatedEvent.ts' />
 ///<reference path='ContentComboBox.ts' />
+///<reference path='ContentDropdown.ts' />
 ///<reference path='ContentMovedEvent.ts' />
 ///<reference path='ContentMoveComboBox.ts' />
 ///<reference path='ContentQueryRequest.ts' />

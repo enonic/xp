@@ -5,7 +5,7 @@ module app.wizard.page.contextwindow.inspect.region {
     import DescriptorKey = api.content.page.DescriptorKey;
     import Descriptor = api.content.page.Descriptor;
 
-    export interface DescriptorBasedComponentInspectionPanelConfig extends ComponentInspectionPanelConfig{
+    export interface DescriptorBasedComponentInspectionPanelConfig extends ComponentInspectionPanelConfig {
 
     }
 
@@ -23,9 +23,6 @@ module app.wizard.page.contextwindow.inspect.region {
 
             super.setComponent(component);
 
-            if (descriptor) {
-                this.setMainName(descriptor.getDisplayName().toString());
-            }
         }
 
         setupComponentForm(component: DescriptorBasedComponent, descriptor: Descriptor) {

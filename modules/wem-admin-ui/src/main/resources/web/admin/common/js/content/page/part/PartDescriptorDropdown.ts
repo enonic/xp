@@ -1,4 +1,4 @@
-module api.content.page.layout {
+module api.content.page.part {
 
     import Dropdown = api.ui.selector.dropdown.Dropdown;
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
@@ -6,30 +6,30 @@ module api.content.page.layout {
     import DescriptorKey = api.content.page.DescriptorKey;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
-    export interface LayoutDescriptorDropdownConfig {
+    export interface PartDescriptorDropdownConfig {
 
-        loader: LayoutDescriptorLoader
+        loader: PartDescriptorLoader
     }
 
-    export class LayoutDescriptorDropdown extends Dropdown<LayoutDescriptor> {
+    export class PartDescriptorDropdown extends Dropdown<PartDescriptor> {
 
-        constructor(name: string, config: LayoutDescriptorDropdownConfig) {
+        constructor(name: string, config: PartDescriptorDropdownConfig) {
 
-            super(name, <DropdownConfig<LayoutDescriptor>>{
-                optionDisplayValueViewer: new LayoutDescriptorViewer(),
+            super(name, <DropdownConfig<PartDescriptor>>{
+                optionDisplayValueViewer: new PartDescriptorViewer(),
                 dataIdProperty: "value"
             });
 
-            config.loader.onLoadedData((event: LoadedDataEvent<LayoutDescriptor>) => {
+            config.loader.onLoadedData((event: LoadedDataEvent<PartDescriptor>) => {
 
-                var descriptors: LayoutDescriptor[] = event.getData();
-                descriptors.forEach((descriptor: LayoutDescriptor) => {
+                var descriptors: PartDescriptor[] = event.getData();
+                descriptors.forEach((descriptor: PartDescriptor) => {
 
                     var indices: string[] = [];
                     indices.push(descriptor.getDisplayName());
                     indices.push(descriptor.getName().toString());
 
-                    var option = <Option<LayoutDescriptor>>{
+                    var option = <Option<PartDescriptor>>{
                         value: descriptor.getKey().toString(),
                         displayValue: descriptor,
                         indices: indices
