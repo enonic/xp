@@ -199,6 +199,11 @@ public final class PropertySet
      */
     public PropertySet newSet()
     {
+        if ( tree == null )
+        {
+            throw new IllegalStateException(
+                "The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead." );
+        }
         return new PropertySet( tree );
     }
 
