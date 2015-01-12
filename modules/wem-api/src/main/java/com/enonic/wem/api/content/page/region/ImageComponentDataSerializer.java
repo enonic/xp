@@ -30,7 +30,7 @@ public class ImageComponentDataSerializer
         {
             component.image( ContentId.from( asData.getString( "image" ) ) );
         }
-        if ( asData.isNotNull( "config" ) )
+        if ( asData.hasProperty( "config" ) )
         {
             component.config( asData.getSet( "config" ).toTree() );
         }

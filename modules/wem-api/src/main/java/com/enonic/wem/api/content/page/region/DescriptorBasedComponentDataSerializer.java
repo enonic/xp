@@ -12,7 +12,10 @@ public abstract class DescriptorBasedComponentDataSerializer<TO_DATA_INPUT exten
     {
         super.applyComponentToData( component, asData );
         asData.ifNotNull().setString( "template", component.getDescriptor() != null ? component.getDescriptor().toString() : null );
-        asData.addSet( "config", component.getConfig().getRoot().copy( asData.getTree() ) );
+        if ( component.getConfig() != null )
+        {
+            asData.addSet( "config", component.getConfig().getRoot().copy( asData.getTree() ) );
+        }
     }
 
     protected void applyComponentFromData( final DescriptorBasedComponent.Builder component, final PropertySet asData )
@@ -22,8 +25,10 @@ public abstract class DescriptorBasedComponentDataSerializer<TO_DATA_INPUT exten
         {
             component.descriptor( toDescriptorKey( asData.getString( "template" ) ) );
         }
-
-        component.config( asData.getSet( "config" ).toTree() );
+        if ( asData.hasProperty( "config" ) )
+        {
+            component.config( asData.getSet( "config" ).toTree() );
+        }
     }
 
     protected abstract DescriptorKey toDescriptorKey( final String s );
