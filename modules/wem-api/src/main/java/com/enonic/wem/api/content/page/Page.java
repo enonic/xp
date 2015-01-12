@@ -95,26 +95,12 @@ public final class Page
             return false;
         }
 
-        final Page page = (Page) o;
+        final Page other = (Page) o;
 
-        if ( !config.equals( page.config ) )
-        {
-            return false;
-        }
-        if ( controller != null ? !controller.equals( page.controller ) : page.controller != null )
-        {
-            return false;
-        }
-        if ( !regions.equals( page.regions ) )
-        {
-            return false;
-        }
-        if ( template != null ? !template.equals( page.template ) : page.template != null )
-        {
-            return false;
-        }
-
-        return true;
+        return Objects.equals( template, other.template ) &&
+            Objects.equals( controller, other.controller ) &&
+            Objects.equals( config, other.config ) &&
+            Objects.equals( regions, other.regions );
     }
 
     @Override
