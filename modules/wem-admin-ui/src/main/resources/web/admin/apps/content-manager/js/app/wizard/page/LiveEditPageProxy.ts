@@ -7,6 +7,8 @@ module app.wizard.page {
     import LiveEditModel = api.liveedit.LiveEditModel;
     import Component = api.content.page.Component;
     import ImageUploadDialog = api.content.form.inputtype.image.ImageUploadDialog;
+    import RenderingMode = api.rendering.RenderingMode;
+    import Workspace = api.content.Workspace;
 
     import ComponentView = api.liveedit.ComponentView;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
@@ -36,8 +38,6 @@ module app.wizard.page {
     }
 
     export class LiveEditPageProxy {
-
-        private baseUrl: string;
 
         private liveEditModel: LiveEditModel;
 
@@ -87,7 +87,6 @@ module app.wizard.page {
 
         constructor(config: LiveEditPageProxyConfig) {
 
-            this.baseUrl = api.util.UriHelper.getUri("portal/edit/stage/");
             this.liveFormPanel = config.liveFormPanel;
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
@@ -162,9 +161,9 @@ module app.wizard.page {
         }
 
         public load() {
-
             this.loadMask.show();
-            var pageUrl = this.baseUrl + this.liveEditModel.getContent().getContentId().toString();
+            var contentId = this.liveEditModel.getContent().getContentId().toString();
+            var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.STAGE);
             console.log("LiveEditPageProxy.load pageUrl: " + pageUrl);
             this.liveEditIFrame.setSrc(pageUrl);
         }
@@ -174,7 +173,7 @@ module app.wizard.page {
             var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
             if (liveEditWindow && liveEditWindow.wemjq) {
                 // Give loaded page same CONFIG.baseUri as in admin
-                liveEditWindow.CONFIG = { baseUri: CONFIG.baseUri };
+                liveEditWindow.CONFIG = {baseUri: CONFIG.baseUri};
 
                 this.liveEditJQuery = <JQueryStatic>liveEditWindow.wemjq;
                 if (this.liveEditIFrame != liveEditWindow) {
