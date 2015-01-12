@@ -182,7 +182,7 @@ module api.data {
                 return false;
             }
 
-            return false;
+            return true;
         }
 
         copy(destinationPropertySet: PropertySet, generateNewPropertyIds: boolean = false): PropertyArray {
