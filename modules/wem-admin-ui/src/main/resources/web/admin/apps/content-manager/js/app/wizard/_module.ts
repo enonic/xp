@@ -1,3 +1,4 @@
+///<reference path='ContentSettingsModel.ts' />
 ///<reference path='ContentWizardStepForm.ts' />
 ///<reference path='SettingsWizardStepForm.ts' />
 ///<reference path='SecurityWizardStepForm.ts' />

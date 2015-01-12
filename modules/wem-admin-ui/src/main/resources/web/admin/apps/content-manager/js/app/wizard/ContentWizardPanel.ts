@@ -420,6 +420,8 @@ module app.wizard {
                 this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
 
                 this.settingsWizardStepForm.layout(content);
+                this.settingsWizardStepForm.setModel(new ContentSettingsModel(content));
+
                 this.securityWizardStepForm.layout(content);
 
                 schemas.forEach((schema: Mixin, index: number) => {
@@ -553,10 +555,10 @@ module app.wizard {
             /* TODO: CMS-4677 if (this.iconUploadItem) {
              var thumbnail = Thumbnail.create().
              setBinaryReference(this.iconUploadItem.getBlobKey()).
-                    setMimeType(this.iconUploadItem.getMimeType()).
-                    setSize(this.iconUploadItem.getSize()).
-                    build();
-                updateContentRequest.setThumbnail(thumbnail);
+             setMimeType(this.iconUploadItem.getMimeType()).
+             setSize(this.iconUploadItem.getSize()).
+             build();
+             updateContentRequest.setThumbnail(thumbnail);
              }*/
 
             return updateContentRequest;
@@ -602,6 +604,8 @@ module app.wizard {
             }
 
             viewedContentBuilder.setMetadata(metadata);
+
+            this.settingsWizardStepForm.getModel().apply(viewedContentBuilder);
 
             viewedContentBuilder.setPage(this.assembleViewedPage());
             return viewedContentBuilder;
