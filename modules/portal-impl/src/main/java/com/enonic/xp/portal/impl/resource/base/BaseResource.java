@@ -16,11 +16,23 @@ public abstract class BaseResource
 
     protected ContentPath contentPath;
 
+    protected String baseUri;
+
     protected PortalServices services;
 
     public final void setServices( final PortalServices services )
     {
         this.services = services;
+    }
+
+    public final void setMode( final RenderMode mode )
+    {
+        this.mode = mode;
+    }
+
+    public final void setBaseUri( final String baseUri )
+    {
+        this.baseUri = baseUri;
     }
 
     protected final WebApplicationException notFound( final String message, final Object... args )

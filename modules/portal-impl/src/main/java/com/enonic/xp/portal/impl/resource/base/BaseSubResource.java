@@ -15,6 +15,7 @@ public abstract class BaseSubResource
         resource.mode = this.mode;
         resource.contentPath = this.contentPath;
         resource.workspace = this.workspace;
+        resource.baseUri = this.baseUri;
         resource.services = this.services;
         return resource;
     }
