@@ -38,6 +38,12 @@ public final class PortalForwardHandler
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
         throws Exception
     {
+        if ( !req.isUserInRole( "admin-login" ) )
+        {
+            res.sendError( HttpServletResponse.SC_FORBIDDEN );
+            return;
+        }
+
         final String path = req.getRequestURI();
         if ( path.startsWith( EDIT_PREFIX ) )
         {
@@ -53,7 +59,7 @@ public final class PortalForwardHandler
             return;
         }
 
-        chain.handle( req, res );
+        res.sendError( HttpServletResponse.SC_NOT_FOUND );
     }
 
     private void forwardToPortal( final RenderMode mode, final String path, final HttpServletRequest req, final HttpServletResponse res )
