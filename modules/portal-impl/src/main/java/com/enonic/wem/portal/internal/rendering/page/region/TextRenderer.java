@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.internal.rendering.text;
+package com.enonic.wem.portal.internal.rendering.page.region;
 
 import java.text.MessageFormat;
 

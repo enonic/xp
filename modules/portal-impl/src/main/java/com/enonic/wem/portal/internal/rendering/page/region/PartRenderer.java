@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.internal.rendering.part;
+package com.enonic.wem.portal.internal.rendering.page.region;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -9,7 +9,6 @@ import com.enonic.wem.api.content.page.region.PartComponent;
 import com.enonic.wem.api.content.page.region.PartDescriptorService;
 import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
 import com.enonic.wem.portal.internal.rendering.Renderer;
-import com.enonic.wem.portal.internal.rendering.base.DescriptorBasedComponentRenderer;
 
 @Component(immediate = true, service = Renderer.class)
 public final class PartRenderer

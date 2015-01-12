@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.internal.rendering.image;
+package com.enonic.wem.portal.internal.rendering.page.region;
 
 import org.osgi.service.component.annotations.Component;
 

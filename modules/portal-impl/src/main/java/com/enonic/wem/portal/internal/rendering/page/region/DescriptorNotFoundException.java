@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.internal.rendering.base;
+package com.enonic.wem.portal.internal.rendering.page.region;
 
 
 import com.enonic.wem.api.content.page.DescriptorKey;
