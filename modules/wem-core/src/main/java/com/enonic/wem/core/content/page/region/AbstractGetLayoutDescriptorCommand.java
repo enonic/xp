@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.page.layout;
+package com.enonic.wem.core.content.page.region;
 
 import java.util.Collection;
 import java.util.Set;

@@ -2,6 +2,7 @@ package com.enonic.wem.core.content.page.layout
 
 import com.enonic.wem.api.content.page.DescriptorKey
 import com.enonic.wem.core.content.page.AbstractDescriptorServiceTest
+import com.enonic.wem.core.content.page.region.LayoutDescriptorServiceImpl
 
 abstract class AbstractLayoutDescriptorServiceTest
     extends AbstractDescriptorServiceTest

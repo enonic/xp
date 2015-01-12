@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.page.part;
+package com.enonic.wem.core.content.page.region;
 
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.region.PartDescriptor;
