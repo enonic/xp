@@ -18,7 +18,7 @@ module api.content.page {
         }
 
         addRegion(region: Region) {
-            this.regionByName[name] = region;
+            this.regionByName[region.getName()] = region;
         }
 
         removeRegions(regions: Region[]) {
