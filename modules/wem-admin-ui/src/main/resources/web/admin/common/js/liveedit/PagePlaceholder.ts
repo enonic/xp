@@ -2,6 +2,7 @@ module api.liveedit {
 
     import GetPageDescriptorsByModulesRequest = api.content.page.GetPageDescriptorsByModulesRequest;
     import PageDescriptor = api.content.page.PageDescriptor;
+    import SetController = api.content.page.SetController;
     import SiteModel = api.content.site.SiteModel;
     import PageController = api.content.page.inputtype.pagecontroller.PageController;
     import PageDescriptorDropdown = api.content.page.PageDescriptorDropdown;
@@ -32,7 +33,9 @@ module api.liveedit {
 
             this.controllerDropdown.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.PageDescriptor>) => {
 
-                this.pageView.liveEditModel.getPageModel().setController(event.getOption().displayValue, this);
+                var setController = new SetController(this).
+                    setDescriptor(event.getOption().displayValue);
+                this.pageView.liveEditModel.getPageModel().setController(setController);
             });
 
             this.appendChild(this.controllerDropdown);

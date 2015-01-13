@@ -7,6 +7,7 @@ module api.liveedit {
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import SetTemplate = api.content.page.SetTemplate;
     import PageModel = api.content.page.PageModel;
+    import SetController = api.content.page.SetController;
     import PageRegionsBuilder = api.content.page.PageRegionsBuilder;
     import PageMode = api.content.page.PageMode;
     import PageTemplate = api.content.page.PageTemplate;
@@ -51,18 +52,24 @@ module api.liveedit {
 
                 if (pageMode == PageMode.FORCED_CONTROLLER) {
 
-                    pageDescriptorPromise = this.loadPageDescriptor(this.content.getPage().getController());
+                    var pageDescriptorKey = this.content.getPage().getController();
+                    pageDescriptorPromise = this.loadPageDescriptor(pageDescriptorKey);
                     pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
-                        pageModel.setController(pageDescriptor, this);
-                        pageModel.setRegions(this.content.getPage().getRegions().clone(), this);
-                        pageModel.setConfig(this.content.getPage().getConfig().copy(), this);
+
+                        var setController = new SetController(this).
+                            setDescriptor(pageDescriptor).
+                            setConfig(this.content.getPage().getConfig().copy()).
+                            setRegions(this.content.getPage().getRegions().clone());
+                        pageModel.setController(setController);
                     });
                 }
                 else if (pageMode == PageMode.NO_CONTROLLER) {
 
-                    pageModel.setController(null, this);
-                    pageModel.setRegions(new PageRegionsBuilder().build(), this);
-                    pageModel.setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider()), this);
+                    var setController = new SetController(this).
+                        setDescriptor(null).
+                        setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider())).
+                        setRegions(new PageRegionsBuilder().build());
+                    pageModel.setController(setController);
                 }
                 else {
                     throw new Error("Unsupported PageMode for a PageTemplate: " + pageMode);
@@ -71,9 +78,12 @@ module api.liveedit {
             else {
                 if (pageMode == PageMode.FORCED_TEMPLATE) {
 
-                    pageTemplatePromise = this.loadPageTemplate(this.content.getPage().getTemplate());
+                    var pageTemplateKey = this.content.getPage().getTemplate();
+                    pageTemplatePromise = this.loadPageTemplate(pageTemplateKey);
                     pageTemplatePromise.then((pageTemplate: PageTemplate) => {
-                        pageDescriptorPromise = this.loadPageDescriptor(pageTemplate.getController());
+
+                        var pageDescriptorKey = pageTemplate.getController();
+                        pageDescriptorPromise = this.loadPageDescriptor(pageDescriptorKey);
                         pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
 
                             var config = this.content.getPage().hasConfig() ?

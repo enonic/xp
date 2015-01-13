@@ -2,6 +2,36 @@ module api.content.page {
 
     import PropertyTree = api.data.PropertyTree;
 
+    export class SetController {
+
+        eventSource: any;
+
+        descriptor: PageDescriptor;
+
+        regions: PageRegions;
+
+        config: PropertyTree;
+
+        constructor(eventSource: any) {
+            this.eventSource = eventSource;
+        }
+
+        setDescriptor(value: PageDescriptor): SetController {
+            this.descriptor = value;
+            return this;
+        }
+
+        setRegions(value: PageRegions): SetController {
+            this.regions = value;
+            return this;
+        }
+
+        setConfig(value: PropertyTree): SetController {
+            this.config = value;
+            return this;
+        }
+    }
+
     export class SetTemplate {
 
         eventSource: any;
@@ -95,34 +125,43 @@ module api.content.page {
         reset(eventSource?: any) {
 
             if (this.liveEditModel.getContent().isPageTemplate()) {
-                this.setController(null, eventSource);
-                this.setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider()), eventSource);
-                this.setRegions(new PageRegionsBuilder().build(), eventSource);
+                var setController = new SetController(eventSource).
+                    setDescriptor(null).
+                    setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider())).
+                    setRegions(new PageRegionsBuilder().build());
+                this.setController(setController);
             }
             else {
                 this.setAutomaticTemplate(eventSource);
             }
         }
 
-        setController(controller: PageDescriptor, eventSource?: any): PageModel {
+        setController(setController: SetController): PageModel {
 
             var oldControllerKey = this.controller ? this.controller.getKey() : null;
-            this.controller = controller;
+            this.controller = setController.descriptor;
 
-            if (controller) {
+            if (setController.descriptor) {
                 this.mode = PageMode.FORCED_CONTROLLER;
             }
             else {
                 this.mode = PageMode.NO_CONTROLLER;
             }
 
-            if (this.regions && controller) {
-                this.regions.changeRegionsTo(controller.getRegions());
+            if (setController.config) {
+                this.setConfig(setController.config);
+            }
+            if (setController.regions) {
+                this.setRegions(setController.regions);
+            }
+
+            if (this.regions && setController.descriptor) {
+                this.regions.changeRegionsTo(setController.descriptor.getRegions());
             }
 
             var newControllerKey = this.controller ? this.controller.getKey() : null;
             if (!api.ObjectHelper.equals(oldControllerKey, newControllerKey)) {
-                this.notifyPropertyChanged("controller", oldControllerKey, newControllerKey, eventSource);
+                this.notifyPropertyChanged("controller", oldControllerKey, newControllerKey, setController.eventSource);
             }
 
             return this;

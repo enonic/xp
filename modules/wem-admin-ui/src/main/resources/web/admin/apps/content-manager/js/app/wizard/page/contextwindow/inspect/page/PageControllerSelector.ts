@@ -4,6 +4,7 @@ module app.wizard.page.contextwindow.inspect.page {
     import LiveEditModel = api.liveedit.LiveEditModel;
     import SiteModel = api.content.site.SiteModel;
     import PageModel = api.content.page.PageModel;
+    import SetController = api.content.page.SetController;
     import PageDescriptor = api.content.page.PageDescriptor;
     import DescriptorKey = api.content.page.DescriptorKey;
     import PageDescriptorsJson = api.content.page.PageDescriptorsJson;
@@ -30,7 +31,8 @@ module app.wizard.page.contextwindow.inspect.page {
 
             this.onOptionSelected((event: OptionSelectedEvent<PageDescriptor>) => {
                 var pageDescriptor = event.getOption().displayValue;
-                this.pageModel.setController(pageDescriptor, this);
+                var setController = new SetController(this).setDescriptor(pageDescriptor);
+                this.pageModel.setController(setController);
             });
         }
 
