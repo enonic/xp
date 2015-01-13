@@ -75,10 +75,20 @@ module api.liveedit {
                     pageTemplatePromise.then((pageTemplate: PageTemplate) => {
                         pageDescriptorPromise = this.loadPageDescriptor(pageTemplate.getController());
                         pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
+
+                            var config = this.content.getPage().hasConfig() ?
+                                         this.content.getPage().getConfig().copy() :
+                                         pageTemplate.getConfig().copy();
+
+                            var regions = this.content.getPage().hasRegions() ?
+                                          this.content.getPage().getRegions().clone() :
+                                          pageTemplate.getRegions().clone();
+
+
                             var setTemplate = new SetTemplate(this).
                                 setTemplate(pageTemplate, pageDescriptor).
-                                setRegions(pageTemplate.getRegions().clone()).
-                                setConfig(pageTemplate.getConfig().copy());
+                                setRegions(regions).
+                                setConfig(config);
                             pageModel.setTemplate(setTemplate);
                         });
                     });
