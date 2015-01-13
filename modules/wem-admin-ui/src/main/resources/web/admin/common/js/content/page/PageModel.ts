@@ -128,7 +128,7 @@ module api.content.page {
                 var setController = new SetController(eventSource).
                     setDescriptor(null).
                     setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider())).
-                    setRegions(new PageRegionsBuilder().build());
+                    setRegions(null);
                 this.setController(setController);
             }
             else {
