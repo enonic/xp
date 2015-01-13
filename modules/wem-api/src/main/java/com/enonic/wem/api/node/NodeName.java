@@ -15,7 +15,6 @@ public class NodeName
     private static String checkNodeNameRestrictions( final String name )
     {
         Preconditions.checkArgument( !"_".equals( name ), "name cannot be _" );
-
         return name;
     }
 

@@ -84,6 +84,18 @@
         }
       },
       {
+        "template_node_properties": {
+          "match": "_*",
+          "mapping": {
+            "type": "string",
+            "store": "no",
+            "index": "analyzed",
+            "analyzer": "keywordlowercase",
+            "include_in_all": false
+          }
+        }
+      },
+      {
         "template_metadata_strings": {
           "match": "*",
           "mapping": {

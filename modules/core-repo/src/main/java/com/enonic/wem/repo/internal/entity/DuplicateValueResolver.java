@@ -1,9 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.Name;
 import com.enonic.wem.api.node.NodeName;
 
 public abstract class DuplicateValueResolver
@@ -21,7 +19,6 @@ public abstract class DuplicateValueResolver
 
     public static String name( final String existingName )
     {
-        Preconditions.checkArgument( existingName.matches( Name.VALID_NAME_PATTERN ) );
         return doResolve( existingName, NAME_SEPARATOR );
     }
 

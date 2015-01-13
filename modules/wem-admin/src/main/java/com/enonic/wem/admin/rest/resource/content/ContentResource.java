@@ -144,10 +144,11 @@ public final class ContentResource
     @Path("createMedia")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public ContentJson createMedia( final MultipartForm form )
+        throws Exception
     {
         final Content persistedContent;
         final CreateMediaParams createMediaParams = new CreateMediaParams();
-        final String parentParam = form.get( "parent" ).getString();
+        final String parentParam = form.getAsString( "parent" );
         if ( parentParam.startsWith( "/" ) )
         {
             createMediaParams.parent( ContentPath.from( parentParam ) );
@@ -157,7 +158,7 @@ public final class ContentResource
             final Content parentContent = contentService.getById( ContentId.from( parentParam ) );
             createMediaParams.parent( parentContent.getPath() );
         }
-        createMediaParams.name( form.get( "name" ).getString() );
+        createMediaParams.name( form.getAsString( "name" ) );
 
         final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
         createMediaParams.mimeType( mediaFile.getContentType() );
@@ -174,8 +175,8 @@ public final class ContentResource
     {
         final Content persistedContent;
         final UpdateMediaParams params = new UpdateMediaParams();
-        params.content( ContentId.from( form.get( "content" ).getString() ) );
-        params.name( form.get( "name" ).getString() );
+        params.content( ContentId.from( form.getAsString( "content" ) ) );
+        params.name( form.getAsString( "name" ) );
 
         final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
         params.mimeType( mediaFile.getContentType() );
@@ -199,7 +200,7 @@ public final class ContentResource
             build();
 
         final UpdateContentParams params = new UpdateContentParams();
-        params.contentId( ContentId.from( form.get( "id" ).getString() ) );
+        params.contentId( ContentId.from( form.getAsString( "id" ) ) );
         params.createAttachments( CreateAttachments.from( thumbnailAttachment ) );
 
         final Content persistedContent = contentService.update( params );

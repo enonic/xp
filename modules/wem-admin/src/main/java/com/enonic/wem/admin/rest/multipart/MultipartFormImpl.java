@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 
 final class MultipartFormImpl
@@ -27,6 +28,12 @@ final class MultipartFormImpl
     public FileItem get( final String name )
     {
         return this.map.get( name );
+    }
+
+    @Override
+    public String getAsString( final String name )
+    {
+        return this.map.get( name ) != null ? new String( this.map.get( name ).get(), Charsets.UTF_8 ) : null;
     }
 
     @Override

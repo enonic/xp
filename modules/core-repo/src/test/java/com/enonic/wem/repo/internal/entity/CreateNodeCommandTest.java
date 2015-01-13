@@ -148,4 +148,22 @@ public class CreateNodeCommandTest
             data( data ).
             build() );
     }
+
+    @Test
+    public void norwegian_characters_in_name()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            name( "parent with Æ ø Å å" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node childNode = createNode( CreateNodeParams.create().
+            name( "test øøå" ).
+            parent( node.path() ).
+            build() );
+
+        assertNotNull( getNodeByPath( childNode.path() ) );
+    }
+
 }

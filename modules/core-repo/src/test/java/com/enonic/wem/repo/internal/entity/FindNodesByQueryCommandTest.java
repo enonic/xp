@@ -2,8 +2,11 @@ package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexPath;
+import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;
@@ -141,6 +144,99 @@ public class FindNodesByQueryCommandTest
 
         assertEquals( 1, result.getNodes().getSize() );
         assertNotNull( result.getNodes().getNodeById( node.id() ) );
+    }
+
+
+    @Test
+    public void norwegian_characters()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "myProperty", "æ" );
+        final PropertySet userdata = data.addSet( "data" );
+        userdata.addString( "displayName", "ø å" );
+
+        final Node node = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( "content_default" ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build() );
+
+        refresh();
+
+        printContentRepoIndex();
+
+        final NodeQuery query = NodeQuery.create().
+            query( QueryExpr.from( new DynamicConstraintExpr(
+                FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.ALL_TEXT.getPath() ), ValueExpr.string( "æ" ),
+                                   ValueExpr.string( "OR" ) ) ) ) ).
+            build();
+
+        final FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getNodes().getSize() );
+        assertNotNull( result.getNodes().getNodeById( node.id() ) );
+
+        final NodeQuery query2 = NodeQuery.create().
+            query( QueryExpr.from( new DynamicConstraintExpr(
+                FunctionExpr.from( "fulltext", ValueExpr.string( "data.displayName" ), ValueExpr.string( "ø å" ),
+                                   ValueExpr.string( "OR" ) ) ) ) ).
+            build();
+
+        final FindNodesByQueryResult result2 = doFindByQuery( query2 );
+
+        assertEquals( 1, result2.getNodes().getSize() );
+        assertNotNull( result2.getNodes().getNodeById( node.id() ) );
+    }
+
+    @Test
+    public void norwegian_characters_check_asciifolding()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "myProperty", "æ" );
+        final PropertySet userdata = data.addSet( "data" );
+        userdata.addString( "displayName", "ø å" );
+
+        final Node node = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( "content_default" ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build() );
+
+        refresh();
+
+        printContentRepoIndex();
+
+        final NodeQuery query = NodeQuery.create().
+            query( QueryExpr.from( new DynamicConstraintExpr(
+                FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.ALL_TEXT.getPath() ), ValueExpr.string( "ae" ),
+                                   ValueExpr.string( "OR" ) ) ) ) ).
+            build();
+
+        final FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getNodes().getSize() );
+        assertNotNull( result.getNodes().getNodeById( node.id() ) );
+
+        final NodeQuery query2 = NodeQuery.create().
+            query( QueryExpr.from( new DynamicConstraintExpr(
+                FunctionExpr.from( "fulltext", ValueExpr.string( "data.displayName" ), ValueExpr.string( "o a" ),
+                                   ValueExpr.string( "OR" ) ) ) ) ).
+            build();
+
+        final FindNodesByQueryResult result2 = doFindByQuery( query2 );
+
+        assertEquals( 1, result2.getNodes().getSize() );
+        assertNotNull( result2.getNodes().getNodeById( node.id() ) );
     }
 
 }

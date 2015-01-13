@@ -2,8 +2,8 @@ package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.support.AbstractEqualsTest;
 import com.enonic.wem.api.node.NodeName;
+import com.enonic.wem.api.support.AbstractEqualsTest;
 
 import static org.junit.Assert.*;
 
@@ -16,7 +16,7 @@ public class NodeNameTest
         assertEquals( "name", NodeName.from( "name" ).toString() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testBigName()
         throws Exception
     {

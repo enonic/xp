@@ -42,12 +42,5 @@ module api.content {
             }
         }
 
-        public static ensureValidContentName(possibleInvalidName: string): string {
-            if (!possibleInvalidName) {
-                return "";
-            }
-
-            return Name.ensureValidName(possibleInvalidName);
-        }
     }
 }

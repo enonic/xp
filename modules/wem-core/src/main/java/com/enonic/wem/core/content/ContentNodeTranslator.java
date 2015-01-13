@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.api.Name;
+import com.enonic.wem.api.NamePrettyfier;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
@@ -41,7 +41,7 @@ public class ContentNodeTranslator
     {
         if ( params.getName() == null || StringUtils.isEmpty( params.getName().toString() ) )
         {
-            params.name( Name.ensureValidName( params.getDisplayName() ) );
+            params.name( NamePrettyfier.create( params.getDisplayName() ) );
         }
 
         final PropertyTree contentAsData = new PropertyTree();

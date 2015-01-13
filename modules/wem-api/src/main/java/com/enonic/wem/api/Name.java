@@ -1,39 +1,44 @@
 package com.enonic.wem.api;
 
 
-import java.util.Objects;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.Arrays;
 
 import com.google.common.base.Preconditions;
 
 public class Name
 {
-    public static final String VALID_NAME_PATTERN = "[_a-z0-9]([a-z0-9_\\-\\.])*";
-
     private final String value;
 
     public Name( final String name )
     {
-        Preconditions.checkNotNull( name, "name cannot be null" );
-        Preconditions.checkArgument( !name.trim().isEmpty(), "name cannot be empty" );
-        Preconditions.checkArgument( name.matches( "^" + VALID_NAME_PATTERN + "$" ),
-                                     "A name can only start with lower case latin letters or digit, and further consist of the same, digits or the following special chars: _-.: " +
-                                         name );
+        doValidateName( name );
+
         this.value = name;
     }
 
-    public static String ensureValidName( String possibleInvalidName )
+    private static void doValidateName( final String name )
     {
-        if ( StringUtils.isEmpty( possibleInvalidName ) )
-        {
-            return "";
-        }
-        String generated =
-            possibleInvalidName.replaceAll( "[\\s+\\.\\/]", "-" ).replaceAll( "-{2,}", "-" ).replaceAll( "^-|-$", "" ).toLowerCase();
-        return generated.replaceAll( "[^a-z0-9\\-]+", "" );
+        Preconditions.checkNotNull( name, "name cannot be null" );
+        Preconditions.checkArgument( !name.trim().isEmpty(), "name cannot be empty" );
+        Preconditions.checkArgument( NameCharacterHelper.hasNoExplicitIllegal( name ), "Invalid name: '" + name + "'. Cannot contain " +
+            Arrays.toString( NameCharacterHelper.EXIPLICITLY_ILLEGAL_CHARACTERS ) );
+        checkValidName( name );
     }
 
+    private static boolean checkValidName( final String value )
+    {
+
+        for ( final char c : value.toCharArray() )
+        {
+            if ( !NameCharacterHelper.isValidCharacter( c ) )
+            {
+                throw new IllegalArgumentException(
+                    "Invalid character in name : " + c + " (" + NameCharacterHelper.getUnicodeString( c ) + ")" );
+            }
+        }
+
+        return true;
+    }
 
     @Override
     public boolean equals( final Object o )
@@ -42,20 +47,25 @@ public class Name
         {
             return true;
         }
-        if ( !( o instanceof Name ) )
+        if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
 
-        final Name that = (Name) o;
+        final Name name = (Name) o;
 
-        return Objects.equals( this.value, that.value );
+        if ( value != null ? !value.equals( name.value ) : name.value != null )
+        {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( value );
+        return value != null ? value.hashCode() : 0;
     }
 
     @Override

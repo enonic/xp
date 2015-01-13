@@ -2,7 +2,6 @@ package com.enonic.wem.core.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.Name;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.CreateMediaParams;
@@ -47,8 +46,6 @@ final class CreateMediaCommand
         final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( params.getMimeType() );
         final ContentTypeName type = resolvedTypeFromMimeType != null ? resolvedTypeFromMimeType : ContentTypeName.unknownMedia();
 
-        final String nameOfContent = Name.ensureValidName( params.getName() );
-
         // TODO: Resolve form based on type?
         final PropertyTree data = new PropertyTree();
         new ImageFormDataBuilder().
@@ -64,7 +61,7 @@ final class CreateMediaCommand
             build();
 
         final CreateContentParams createContentParams = new CreateContentParams().
-            name( nameOfContent ).
+            name( params.getName() ).
             parent( params.getParent() ).
             draft( false ).
             type( type ).

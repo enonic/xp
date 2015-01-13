@@ -2,8 +2,6 @@ package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
 
-import com.enonic.wem.repo.internal.entity.DuplicateValueResolver;
-
 import static org.junit.Assert.*;
 
 public class DuplicateValueResolverTest
@@ -32,13 +30,6 @@ public class DuplicateValueResolverTest
         throws Exception
     {
         assertEquals( "My node copy 3", DuplicateValueResolver.displayName( "My node copy 2" ) );
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void name_illegal_name()
-        throws Exception
-    {
-        DuplicateValueResolver.name( "my node" );
     }
 
     @Test

@@ -19,7 +19,7 @@ module api.app.wizard {
 
         private displayNameGenerator: DisplayNameGenerator;
 
-        private forbiddenChars: RegExp = /[^_a-z0-9\-]+/ig;
+        private forbiddenChars: RegExp = /[\/\\]+/ig;
 
         private displayNameEl: api.ui.text.TextInput;
 

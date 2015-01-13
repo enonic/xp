@@ -175,8 +175,7 @@ public class ContentNodeTranslatorTest
             displayName( "test Name" );
         final CreateNodeParams createNodeParams = translator.toCreateNode( mycontent );
         Assert.assertNotNull( createNodeParams );
-        Assert.assertEquals( createNodeParams.getName(), "test-name" );
-
+        Assert.assertEquals( createNodeParams.getName(), "testName" );
     }
 
     @Test

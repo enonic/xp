@@ -25,7 +25,15 @@
             "keywordlowercase": {
                 "type": "custom",
                 "tokenizer": "keyword",
-                "filter": ["lowercase", "asciifolding"]
+                "filter": ["lowercase"]
+            },
+            "keywordasciilowercase": {
+                "type": "custom",
+                "tokenizer": "keyword",
+                "filter": [
+                    "lowercase",
+                    "asciifolding"
+                ]
             },
             "ngram": {
                 "type": "custom",

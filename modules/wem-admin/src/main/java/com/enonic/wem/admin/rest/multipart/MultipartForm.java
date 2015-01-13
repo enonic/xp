@@ -7,5 +7,7 @@ public interface MultipartForm
 {
     public FileItem get( String name );
 
+    public String getAsString( final String name );
+
     public void delete();
 }

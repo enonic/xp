@@ -2,8 +2,6 @@ module api {
 
     export class Name implements api.Equitable {
 
-        private static NAME_REG_EXP = new RegExp("^[_a-z0-9]([a-z0-9_\\-\\.])*$");
-
         public static FORBIDDEN_CHARS: RegExp = /[^a-z0-9\-]+/ig;
 
         private value: string;
@@ -13,10 +11,6 @@ module api {
             api.util.assertNotNull(name, "Name cannot be null");
 
             api.util.assert(!api.util.StringHelper.isEmpty(name), "Name cannot be empty");
-
-            api.util.assert(Name.NAME_REG_EXP.test(name),
-                    "A name can only start with lower case latin letters or digit, and further consist of the same, digits or the following special chars: _-.: " +
-                    name);
 
             this.value = name;
         }
