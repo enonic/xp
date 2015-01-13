@@ -105,13 +105,6 @@ module api.ui.selector.dropdown {
             this.dropdownGrid.hide();
         }
 
-        setEmptyDropdownText(label: string) {
-
-            if (this.isDropdownShown()) {
-                this.dropdownGrid.hide();
-            }
-        }
-
         setTopPx(value: number) {
             this.dropdownGrid.setTopPx(value);
         }
