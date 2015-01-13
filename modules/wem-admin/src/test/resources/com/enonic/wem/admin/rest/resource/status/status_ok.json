@@ -1,4 +1,11 @@
 {
-    "installation": "production",
-    "version": "5.0.0"
+  "version": "5.0.0",
+  "installation": "production",
+  "context": {
+    "authenticated": false,
+    "principals": [
+      "user:system:anonymous",
+      "role:everyone"
+    ]
+  }
 }

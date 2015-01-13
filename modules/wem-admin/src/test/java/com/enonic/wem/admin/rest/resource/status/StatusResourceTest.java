@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Version;
+import com.enonic.wem.api.context.ContextAccessor;
 
 public class StatusResourceTest
     extends AbstractResourceTest
