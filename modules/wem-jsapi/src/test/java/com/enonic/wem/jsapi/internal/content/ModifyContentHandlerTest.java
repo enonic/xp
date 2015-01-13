@@ -1,6 +1,5 @@
 package com.enonic.wem.jsapi.internal.content;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -15,7 +14,6 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.jsapi.internal.AbstractHandlerTest;
 import com.enonic.wem.script.command.CommandHandler;
 
-// @Ignore
 public class ModifyContentHandlerTest
     extends AbstractHandlerTest
 {
