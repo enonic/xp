@@ -15,7 +15,7 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.jsapi.internal.AbstractHandlerTest;
 import com.enonic.wem.script.command.CommandHandler;
 
-@Ignore
+// @Ignore
 public class ModifyContentHandlerTest
     extends AbstractHandlerTest
 {

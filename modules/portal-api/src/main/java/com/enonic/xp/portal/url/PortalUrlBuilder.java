@@ -4,14 +4,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.net.UrlEscapers;
 
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 import static com.google.common.base.Strings.emptyToNull;
@@ -23,8 +21,6 @@ public abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
 {
     private String baseUri = "/portal";
 
-    private String renderMode;
-
     private String workspace;
 
     private String contentPath;
@@ -34,17 +30,6 @@ public abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
     public PortalUrlBuilder()
     {
         this.params = HashMultimap.create();
-    }
-
-    public final T renderMode( final String value )
-    {
-        this.renderMode = Strings.isNullOrEmpty( value ) ? RenderMode.LIVE.toString() : value;
-        return typecastThis();
-    }
-
-    public final T renderMode( final RenderMode value )
-    {
-        return renderMode( value != null ? value.toString() : null );
     }
 
     public final T workspace( final String value )
@@ -167,7 +152,6 @@ public abstract class PortalUrlBuilder<T extends PortalUrlBuilder>
 
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
-        appendPart( url, this.renderMode );
         appendPart( url, this.workspace );
         appendPart( url, this.contentPath );
 

@@ -18,7 +18,6 @@ public abstract class AbstractUrlBuilderTest
     public void setup()
     {
         final PortalContext context = new PortalContext();
-        context.setMode( RenderMode.LIVE );
         context.setWorkspace( Workspace.from( "stage" ) );
         context.setModule( ModuleKey.from( "mymodule" ) );
         context.setBaseUri( "/portal" );

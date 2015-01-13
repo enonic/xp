@@ -17,11 +17,11 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public final class PortalForwardHandler
     extends BaseWebHandler
 {
-    private final static String PREFIX = "/admin/portal/";
+    private final static String PREFIX = "/admin/portal";
 
-    private final static String EDIT_PREFIX = PREFIX + "edit/";
+    private final static String EDIT_PREFIX = PREFIX + "/edit/";
 
-    private final static String PREVIEW_PREFIX = PREFIX + "preview/";
+    private final static String PREVIEW_PREFIX = PREFIX + "/preview/";
 
     public PortalForwardHandler()
     {
@@ -70,7 +70,7 @@ public final class PortalForwardHandler
         context.setMode( mode );
 
         PortalContextAccessor.set( req, context );
-        final RequestDispatcher dispatcher = req.getRequestDispatcher( "/portal/" + mode.toString() + "/" + path );
+        final RequestDispatcher dispatcher = req.getRequestDispatcher( "/portal/" + path );
         dispatcher.forward( req, res );
     }
 }

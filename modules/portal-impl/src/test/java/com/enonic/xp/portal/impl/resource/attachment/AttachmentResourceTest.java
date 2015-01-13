@@ -81,7 +81,7 @@ public class AttachmentResourceTest
     {
         setupMedia();
 
-        final MockHttpServletRequest request = newGetRequest( "/live/prod/path/to/content/_/attachment/id/content-id" );
+        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/id/content-id" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 200, response.getStatus() );
@@ -94,7 +94,7 @@ public class AttachmentResourceTest
     {
         setupMedia();
 
-        final MockHttpServletRequest request = newGetRequest( "/live/prod/path/to/content/_/attachment/id/content-id/source" );
+        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/id/content-id/source" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 200, response.getStatus() );
@@ -107,7 +107,7 @@ public class AttachmentResourceTest
     {
         Mockito.when( this.contentService.getById( Mockito.anyObject() ) ).thenReturn( null );
 
-        final MockHttpServletRequest request = newGetRequest( "/live/prod/path/to/content/_/attachment/id/content-id" );
+        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/id/content-id" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 404, response.getStatus() );
@@ -119,7 +119,7 @@ public class AttachmentResourceTest
     {
         setupMedia();
 
-        final MockHttpServletRequest request = newGetRequest( "/live/prod/path/to/content/_/attachment" );
+        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 200, response.getStatus() );
@@ -132,7 +132,7 @@ public class AttachmentResourceTest
     {
         setupMedia();
 
-        final MockHttpServletRequest request = newGetRequest( "/live/prod/path/to/content/_/attachment/source" );
+        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/source" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 200, response.getStatus() );

@@ -14,7 +14,7 @@ public class ComponentUrlBuilderTest
             component( "mycomp" ).
             param( "a", 3 );
 
-        assertEquals( "/portal/live/stage/some/path/_/component/mycomp?a=3", builder.toString() );
+        assertEquals( "/portal/stage/some/path/_/component/mycomp?a=3", builder.toString() );
     }
 }
 

@@ -21,6 +21,8 @@ var expectedJson = {
     "displayName": "Modified",
     "draft": false,
     "hasChildren": false,
+    "isPageTemplate": false,
+    "isSite": false,
     "meta": {
         "mymodule:myschema": {
             "a": ["1"]
@@ -29,7 +31,46 @@ var expectedJson = {
             "name": ["test"]
         }
     },
-    "page": {},
+    "page": {
+        "config": {
+            "a": ["1"]
+        },
+        "controller": "mymodule:mycontroller",
+        "regions": {
+            "top": {
+                "components": [{
+                    "config": {
+                        "a": ["1"]
+                    },
+                    "descriptor": "mymodule:mypart",
+                    "name": "mypart",
+                    "path": "top/0",
+                    "type": "part"
+                }, {
+                    "config": {
+                        "a": ["1"]
+                    },
+                    "descriptor": "mymodule:mylayout",
+                    "name": "mylayout",
+                    "path": "top/1",
+                    "regions": {
+                        "bottom": {
+                            "components": [{
+                                "config": {
+                                    "a": ["1"]
+                                },
+                                "descriptor": "mymodule:mypart",
+                                "name": "mypart",
+                                "path": "top/1/bottom/0",
+                                "type": "part"
+                            }]
+                        }
+                    },
+                    "type": "layout"
+                }]
+            }
+        }
+    },
     "type": "system:unstructured"
 };
 
