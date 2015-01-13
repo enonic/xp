@@ -78,7 +78,7 @@ public class PortalForwardHandlerTest
 
         final PortalContext context = PortalContextAccessor.get( this.req );
         Assert.assertNotNull( context );
-        Assert.assertEquals( "/admin/portal", context.getBaseUri() );
+        Assert.assertEquals( "/admin/portal/edit", context.getBaseUri() );
         Assert.assertEquals( RenderMode.EDIT, context.getMode() );
     }
 
@@ -95,7 +95,7 @@ public class PortalForwardHandlerTest
 
         final PortalContext context = PortalContextAccessor.get( this.req );
         Assert.assertNotNull( context );
-        Assert.assertEquals( "/admin/portal", context.getBaseUri() );
+        Assert.assertEquals( "/admin/portal/preview", context.getBaseUri() );
         Assert.assertEquals( RenderMode.PREVIEW, context.getMode() );
     }
 }

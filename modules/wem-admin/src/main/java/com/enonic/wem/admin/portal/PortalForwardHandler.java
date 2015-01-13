@@ -66,7 +66,7 @@ public final class PortalForwardHandler
         throws Exception
     {
         final PortalContext context = new PortalContext();
-        context.setBaseUri( PREFIX );
+        context.setBaseUri( PREFIX + "/" + mode.toString() );
         context.setMode( mode );
 
         PortalContextAccessor.set( req, context );
