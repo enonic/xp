@@ -151,6 +151,12 @@ module app.wizard.page.contextwindow.inspect.page {
 
                     this.pageControllerForm.show();
 
+                    this.refreshConfigForm(pageModel.getController(), pageModel.getConfig());
+                }
+                else if (event.getPropertyName() == "config" && this !== event.getSource()) {
+
+                    this.pageControllerForm.show();
+
                     var controller = pageModel.getController();
                     if (controller) {
                         this.refreshConfigForm(controller, pageModel.getConfig());
