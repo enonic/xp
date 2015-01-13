@@ -1,5 +1,5 @@
 
-## RC1 (unreleased)
+## RC1 (2015-01-13)
 
 Bugfixes:
 
