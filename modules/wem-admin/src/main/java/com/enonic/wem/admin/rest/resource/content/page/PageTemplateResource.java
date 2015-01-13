@@ -131,7 +131,7 @@ public final class PageTemplateResource
                 {
                     if ( pageTemplate.canRender( content.getType() ) )
                     {
-                        return true;
+                        return pageTemplate.hasPage();
                     }
                 }
             }
