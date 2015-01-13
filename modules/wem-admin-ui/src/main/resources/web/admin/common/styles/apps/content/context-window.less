@@ -148,7 +148,7 @@
 
     .form-view {
       .form-element-spacing(@form-field-spacing);
-      margin:-10px;
+      margin: -10px;
     }
 
     //    .icon {
@@ -183,23 +183,51 @@
     }
 
     .rich-combobox {
-      clear: both;
-      .selected-options {
-        margin-left: 0;
-        width: 100%;
-        .selected-option {
-          padding: 0;
+      border: 1px #ffffff solid;
 
-          .names-and-icon-view {
-            .main-name {
-              color: @admin-font-gray3;
-              font-weight: normal;
+      .selected-option {
+        border: 1px #ffffff solid;
+        height: auto;
+
+        .option-value {
+          margin-left: 0px;
+        }
+
+        .remove {
+          padding-right: 5px;
+        }
+
+        .names-and-icon-view {
+
+          .wrapper {
+            height: 48px;
+            width: 48px;
+
+            .icon {
+              &:before {
+                font-size: 38px;
+              }
             }
           }
+
+          .names-view {
+            .main-name {
+              height: auto;
+              font-size: 20px;
+              line-height: 30px;
+            }
+            .ellipsis();
+          }
         }
-        .icon {
-          width: 32px;
-          height: 32px;
+
+      }
+      &:hover {
+        border: 1px @admin-input-blue solid;
+      }
+
+      .option-filter-input {
+        &:focus {
+          border-color: transparent;
         }
       }
     }
@@ -303,7 +331,7 @@
     }
   }
 
-  .image-selector-small();
+  //  .image-selector-small();
 
 }
 

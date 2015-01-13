@@ -43,7 +43,7 @@ module api.content.page.region {
         setDescriptor(key: DescriptorKey) {
             var option = this.getOptionByValue(key.toString());
             if (option) {
-                this.selectOption(option);
+                this.selectOption(option, true);
             }
         }
     }
