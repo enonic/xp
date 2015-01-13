@@ -28,9 +28,12 @@ module app.wizard.page {
                 then((defaultPageTemplate: PageTemplate) => {
 
                     var defaultPageTemplateDescriptorPromise;
-                    if (defaultPageTemplate) {
+                    if (defaultPageTemplate && defaultPageTemplate.isPage()) {
                         defaultPageTemplateDescriptorPromise = new GetPageDescriptorByKeyRequest(defaultPageTemplate.getController()).
                             sendAndParse();
+                    }
+                    else if (defaultPageTemplate && !defaultPageTemplate.isPage()) {
+                        defaultPageTemplate = null;
                     }
                     var defaultPartDescriptorPromise = DefaultPartDescriptorResolver.resolve(config.modules);
                     var defaultLayoutDescriptorPromise = DefaultLayoutDescriptorResolver.resolve(config.modules);
