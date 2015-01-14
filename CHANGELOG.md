@@ -3,7 +3,7 @@
 
 Bugfixes:
 
-  - N/A
+  - Detect if user is authenticated when loading admin home screen (CMS-4880)
 
 Features:
 

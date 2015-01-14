@@ -60,7 +60,6 @@ module app.home {
 
             LogOutEvent.on(() => {
                 new api.security.auth.LogoutRequest().sendAndParse().then(() => {
-                    api.util.CookieHelper.removeCookie('dummy.userIsLoggedIn');
                     this.centerPanel.showLoginPanel();
                     this.setBackgroundImgUrl(this.backgroundImgUrl);
                     this.returnButton.hide();

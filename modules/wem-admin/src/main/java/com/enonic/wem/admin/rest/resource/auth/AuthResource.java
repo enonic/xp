@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.auth;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -80,6 +81,20 @@ public final class AuthResource
         {
             session.invalidate();
         }
+    }
+
+    @GET
+    @Path("authenticated")
+    public LoginResultJson isAuthenticated()
+    {
+        final Session session = ContextAccessor.current().getLocalScope().getSession();
+        if ( session == null )
+        {
+            return new LoginResultJson( AuthenticationInfo.unAuthenticated() );
+        }
+
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        return new LoginResultJson( authInfo );
     }
 
     private AuthenticationInfo doLogin( final String user, final String password, final boolean rememberMe )
