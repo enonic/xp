@@ -8,10 +8,13 @@ import org.apache.commons.fileupload.FileItem;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.wem.api.util.UnicodeFormNormalizer;
+
 final class MultipartFormImpl
     implements MultipartForm
 {
     private final ImmutableMap<String, FileItem> map;
+
 
     public MultipartFormImpl( final List<FileItem> items )
     {
@@ -33,7 +36,15 @@ final class MultipartFormImpl
     @Override
     public String getAsString( final String name )
     {
-        return this.map.get( name ) != null ? new String( this.map.get( name ).get(), Charsets.UTF_8 ) : null;
+        final FileItem fileItem = this.map.get( name );
+        if ( fileItem == null )
+        {
+            return null;
+        }
+
+        final String rawString = new String( fileItem.get(), Charsets.UTF_8 );
+
+        return UnicodeFormNormalizer.normalize( rawString );
     }
 
     @Override
