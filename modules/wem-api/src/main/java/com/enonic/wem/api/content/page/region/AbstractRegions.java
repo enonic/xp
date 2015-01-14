@@ -18,6 +18,11 @@ public abstract class AbstractRegions
         this.regions = ImmutableList.copyOf( builder.regions );
     }
 
+    public boolean isEmpty()
+    {
+        return regions.isEmpty();
+    }
+    
     public Region getRegion( final String name )
     {
         for ( final Region region : this.regions )

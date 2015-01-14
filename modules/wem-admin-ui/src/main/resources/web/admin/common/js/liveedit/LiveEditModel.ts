@@ -49,26 +49,42 @@ module api.liveedit {
             var pageTemplatePromise: wemQ.Promise<PageTemplate> = null;
 
             if (this.content.isPageTemplate()) {
-
+                var pageTemplate = <PageTemplate>this.content;
                 if (pageMode == PageMode.FORCED_CONTROLLER) {
 
-                    var pageDescriptorKey = this.content.getPage().getController();
+                    var pageDescriptorKey = pageTemplate.getController();
                     pageDescriptorPromise = this.loadPageDescriptor(pageDescriptorKey);
                     pageDescriptorPromise.then((pageDescriptor: PageDescriptor) => {
 
+                        var config = pageTemplate.hasConfig() ?
+                                     pageTemplate.getPage().getConfig().copy() :
+                                     new PropertyTree(api.Client.get().getPropertyIdProvider());
+
+                        var regions = pageTemplate.hasRegions() ?
+                                      pageTemplate.getRegions().clone() :
+                                      new PageRegionsBuilder().build();
+
                         var setController = new SetController(this).
                             setDescriptor(pageDescriptor).
-                            setConfig(this.content.getPage().getConfig().copy()).
-                            setRegions(this.content.getPage().getRegions().clone());
+                            setConfig(config).
+                            setRegions(regions);
                         pageModel.setController(setController);
                     });
                 }
                 else if (pageMode == PageMode.NO_CONTROLLER) {
 
+                    var config = pageTemplate.hasConfig() ?
+                                 pageTemplate.getConfig().copy() :
+                                 new PropertyTree(api.Client.get().getPropertyIdProvider());
+
+                    var regions = pageTemplate.hasRegions() ?
+                                  pageTemplate.getRegions().clone() :
+                                  new PageRegionsBuilder().build();
+
                     var setController = new SetController(this).
                         setDescriptor(null).
-                        setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider())).
-                        setRegions(new PageRegionsBuilder().build());
+                        setConfig(config).
+                        setRegions(regions);
                     pageModel.setController(setController);
                 }
                 else {

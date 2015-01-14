@@ -157,10 +157,6 @@ module api.ui.selector.dropdown {
             this.dropdownDropdown.renderDropdownGrid();
         }
 
-        setEmptyDropdownText(label: string) {
-            this.dropdownDropdown.setEmptyDropdownText(label);
-        }
-
         hideDropdown() {
 
             if (this.selectedOptionView.getOption()) {

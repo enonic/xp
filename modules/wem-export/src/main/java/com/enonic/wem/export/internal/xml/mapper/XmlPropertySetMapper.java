@@ -30,16 +30,23 @@ class XmlPropertySetMapper
     {
         final XmlPropertySet xml = new XmlPropertySet();
 
-        for ( final Property property : propertySet.getProperties() )
+        if ( propertySet != null )
         {
-            if ( property.getType().equals( ValueTypes.PROPERTY_SET ) )
+            for ( final Property property : propertySet.getProperties() )
             {
-                xml.getList().add( XmlPropertySetMapper.toXml( property, objectFactory ) );
+                if ( property.getType().equals( ValueTypes.PROPERTY_SET ) )
+                {
+                    xml.getList().add( XmlPropertySetMapper.toXml( property, objectFactory ) );
+                }
+                else
+                {
+                    xml.getList().add( XmlPropertyMapper.toXml( property, objectFactory ) );
+                }
             }
-            else
-            {
-                xml.getList().add( XmlPropertyMapper.toXml( property, objectFactory ) );
-            }
+        }
+        else
+        {
+            xml.setIsNull( true );
         }
 
         return xml;

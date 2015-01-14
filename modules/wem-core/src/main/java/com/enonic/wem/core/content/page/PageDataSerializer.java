@@ -39,11 +39,19 @@ public class PageDataSerializer
 
         if ( page.hasRegions() )
         {
-            for ( Region region : page.getRegions() )
+            if ( !page.getRegions().isEmpty() )
             {
-                regionDataSerializer.toData( region, asSet );
+                for ( Region region : page.getRegions() )
+                {
+                    regionDataSerializer.toData( region, asSet );
+                }
+            }
+            else
+            {
+                asSet.addSet( regionDataSerializer.getPropertyName(), null );
             }
         }
+
         if ( page.hasConfig() )
         {
             asSet.addSet( CONFIG, page.getConfig().getRoot().copy( asSet.getTree() ) );
@@ -66,7 +74,10 @@ public class PageDataSerializer
             final PageRegions.Builder pageRegionsBuilder = PageRegions.newPageRegions();
             for ( final Property regionAsProp : asData.getProperties( REGION ) )
             {
-                pageRegionsBuilder.add( regionDataSerializer.fromData( regionAsProp.getSet() ) );
+                if ( regionAsProp.hasNotNullValue() )
+                {
+                    pageRegionsBuilder.add( regionDataSerializer.fromData( regionAsProp.getSet() ) );
+                }
             }
             page.regions( pageRegionsBuilder.build() );
         }

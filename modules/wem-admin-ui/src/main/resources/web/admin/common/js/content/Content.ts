@@ -49,34 +49,17 @@ module api.content {
 
         getPageMode(): api.content.page.PageMode {
 
-            if (api.ObjectHelper.iFrameSafeInstanceOf(this, api.content.page.PageTemplate)) {
-                if (this.isPage()) {
-                    if (this.getPage().hasController()) {
-                        return api.content.page.PageMode.FORCED_CONTROLLER;
-                    }
-                    else {
-                        throw new Error("Illegal state: A PageTemplate's Page must a controller set");
-                    }
+            if (this.isPage()) {
+                if (this.getPage().hasTemplate()) {
+                    return api.content.page.PageMode.FORCED_TEMPLATE;
                 }
                 else {
-                    return api.content.page.PageMode.NO_CONTROLLER;
+                    return api.content.page.PageMode.FORCED_CONTROLLER;
                 }
-
             }
             else {
-                if (this.isPage()) {
-                    if (this.getPage().hasTemplate()) {
-                        return api.content.page.PageMode.FORCED_TEMPLATE;
-                    }
-                    else {
-                        return api.content.page.PageMode.FORCED_CONTROLLER;
-                    }
-                }
-                else {
-                    return api.content.page.PageMode.AUTOMATIC;
-                }
+                return api.content.page.PageMode.AUTOMATIC;
             }
-
         }
 
         getPage(): api.content.page.Page {

@@ -196,7 +196,7 @@ module app.wizard {
                 header: this.contentWizardHeader,
                 actions: this.wizardActions,
                 livePanel: this.liveFormPanel,
-                split: true
+                split: !!this.liveFormPanel
             }, () => {
 
                 this.addClass("content-wizard-panel");

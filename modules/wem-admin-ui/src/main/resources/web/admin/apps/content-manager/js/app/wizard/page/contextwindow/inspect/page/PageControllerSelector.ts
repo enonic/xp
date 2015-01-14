@@ -63,6 +63,7 @@ module app.wizard.page.contextwindow.inspect.page {
                     if (descriptorKey) {
                         this.selectController(descriptorKey);
                     }
+                    // TODO: Change class to extend a PageDescriptorComboBox instead, since we then can deselect.
                 }
             });
         }

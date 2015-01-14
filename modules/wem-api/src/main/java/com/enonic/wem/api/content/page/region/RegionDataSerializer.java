@@ -20,6 +20,11 @@ public class RegionDataSerializer
         this.propertyName = "region";
     }
 
+    public String getPropertyName()
+    {
+        return propertyName;
+    }
+
     public void toData( final Region region, final PropertySet parent )
     {
         final PropertySet asData = parent.addSet( propertyName );

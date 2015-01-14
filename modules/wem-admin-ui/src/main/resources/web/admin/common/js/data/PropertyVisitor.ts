@@ -18,7 +18,9 @@ module api.data {
                 }
 
                 if (property.getType().equals(ValueTypes.DATA)) {
-                    this.traverse(property.getSet());
+                    if (property.hasNonNullValue()) {
+                        this.traverse(property.getSet());
+                    }
                 }
             });
         }

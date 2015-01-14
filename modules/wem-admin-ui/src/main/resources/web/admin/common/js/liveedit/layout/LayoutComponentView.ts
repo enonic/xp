@@ -3,6 +3,7 @@ module api.liveedit.layout {
     import Component = api.content.page.region.Component;
     import Region = api.content.page.region.Region;
     import LayoutComponent = api.content.page.region.LayoutComponent;
+    import LayoutRegions = api.content.page.region.LayoutRegions;
     import ComponentView = api.liveedit.ComponentView;
     import RegionView = api.liveedit.RegionView;
     import ItemView = api.liveedit.ItemView;
@@ -83,8 +84,12 @@ module api.liveedit.layout {
 
         private doParseRegions(parentElement?: api.dom.Element) {
 
-            var layoutComponent = this.getComponent();
-            var regions: Region[] = layoutComponent.getLayoutRegions().getRegions();
+            var layoutComponent: LayoutComponent = <LayoutComponent>this.getComponent();
+            var layoutRegions = layoutComponent.getLayoutRegions();
+            if (!layoutRegions) {
+                return;
+            }
+            var regions: Region[] = layoutRegions.getRegions();
             var children = parentElement ? parentElement.getChildren() : this.getChildren();
             var regionIndex = 0;
             children.forEach((childElement: api.dom.Element) => {

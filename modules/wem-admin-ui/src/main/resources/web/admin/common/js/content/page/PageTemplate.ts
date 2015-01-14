@@ -24,6 +24,21 @@ module api.content.page {
             return <PageTemplateKey>this.getContentId();
         }
 
+        getPageMode(): api.content.page.PageMode {
+
+            if (this.isPage()) {
+                if (this.getPage().hasController()) {
+                    return api.content.page.PageMode.FORCED_CONTROLLER;
+                }
+                else {
+                    throw new Error("Illegal state: A PageTemplate's Page must a controller set");
+                }
+            }
+            else {
+                return api.content.page.PageMode.NO_CONTROLLER;
+            }
+        }
+
         getController(): DescriptorKey {
 
             return this.getPage().getController();
@@ -41,14 +56,30 @@ module api.content.page {
         }
 
         hasRegions(): boolean {
+            if (!this.isPage()) {
+                return false;
+            }
             return this.getPage().hasRegions();
         }
 
         getRegions(): PageRegions {
+            if (!this.isPage()) {
+                return null;
+            }
             return this.getPage().getRegions();
         }
 
+        hasConfig(): boolean {
+            if (!this.isPage()) {
+                return false;
+            }
+            return this.getPage().hasConfig();
+        }
+
         getConfig(): PropertyTree {
+            if (!this.isPage()) {
+                return null;
+            }
             return this.getPage().getConfig();
         }
 

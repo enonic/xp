@@ -3,6 +3,8 @@
 ///<reference path='ComponentTypeWrapperJson.ts' />
 ///<reference path='ComponentName.ts' />
 ///<reference path='ComponentType.ts' />
+///<reference path='ComponentChangedEvent.ts' />
+///<reference path='ComponentPropertyChangedEvent.ts' />
 ///<reference path='Component.ts' />
 ///<reference path='ComponentFactory.ts' />
 ///<reference path='DescriptorBasedComponentJson.ts' />

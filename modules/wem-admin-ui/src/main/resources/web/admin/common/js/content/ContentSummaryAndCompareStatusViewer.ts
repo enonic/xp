@@ -38,7 +38,7 @@ module api.content {
                     this.addClass("site");
                 }
             } else if (!!uploadItem) {
-                this.namesAndIconView.setIconClass('icon-image');
+                this.namesAndIconView.setIconClass('icon-file-upload2');
 
                 displayName = uploadItem.getName();
                 subName = uploadItem.getName();

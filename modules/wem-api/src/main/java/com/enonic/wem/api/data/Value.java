@@ -369,7 +369,7 @@ public abstract class Value
 
         PropertySet( final PropertySet source, final PropertyTree tree )
         {
-            super( ValueTypes.PROPERTY_SET, source.asData().copy( tree ) );
+            super( ValueTypes.PROPERTY_SET, !source.isNull() ? source.asData().copy( tree ) : null );
         }
 
         @Override

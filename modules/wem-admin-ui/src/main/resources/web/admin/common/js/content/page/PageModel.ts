@@ -149,10 +149,10 @@ module api.content.page {
             }
 
             if (setController.config) {
-                this.setConfig(setController.config);
+                this.setConfig(setController.config, setController.eventSource);
             }
             if (setController.regions) {
-                this.setRegions(setController.regions);
+                this.setRegions(setController.regions, setController.eventSource);
             }
 
             if (this.regions && setController.descriptor) {
@@ -168,10 +168,19 @@ module api.content.page {
         }
 
         setAutomaticTemplate(eventSource?: any): PageModel {
-            var setTemplate = new SetTemplate(eventSource);
-            setTemplate.setTemplate(null, this.defaultTemplateDescriptor).
-                setRegions(this.defaultTemplate.getRegions().clone()).
-                setConfig(this.defaultTemplate.getConfig().copy());
+
+            var config = this.defaultTemplate.hasConfig() ?
+                         this.defaultTemplate.getConfig().copy() :
+                         new PropertyTree(api.Client.get().getPropertyIdProvider());
+
+            var regions = this.defaultTemplate.hasRegions() ?
+                          this.defaultTemplate.getRegions().clone() :
+                          new PageRegionsBuilder().build();
+
+            var setTemplate = new SetTemplate(eventSource).
+                setTemplate(null, this.defaultTemplateDescriptor).
+                setRegions(regions).
+                setConfig(config);
 
             this.setTemplate(setTemplate);
             return this;
@@ -191,10 +200,10 @@ module api.content.page {
             this.template = setTemplate.template;
 
             if (setTemplate.config) {
-                this.setConfig(setTemplate.config);
+                this.setConfig(setTemplate.config, setTemplate.eventSource);
             }
             if (setTemplate.regions) {
-                this.setRegions(setTemplate.regions);
+                this.setRegions(setTemplate.regions, setTemplate.eventSource);
             }
 
             if (this.regions) {
@@ -212,9 +221,8 @@ module api.content.page {
         setRegions(value: PageRegions, eventOrigin?: any): PageModel {
             var oldValue = this.regions;
             this.regions = value;
-            if (!api.ObjectHelper.equals(oldValue, value)) {
-                this.notifyPropertyChanged("regions", oldValue, value, eventOrigin);
-            }
+
+            this.notifyPropertyChanged("regions", oldValue, value, eventOrigin);
             return this;
         }
 
@@ -230,9 +238,7 @@ module api.content.page {
                 }
             });
 
-            if (!api.ObjectHelper.equals(oldValue, value)) {
-                this.notifyPropertyChanged("config", oldValue, value, eventOrigin);
-            }
+            this.notifyPropertyChanged("config", oldValue, value, eventOrigin);
             return this;
         }
 

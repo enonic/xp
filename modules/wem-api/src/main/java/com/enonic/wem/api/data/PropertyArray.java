@@ -187,7 +187,10 @@ public final class PropertyArray
             if ( property.getValue().isPropertySet() )
             {
                 final PropertySet set = property.getSet();
-                set.setPropertyTree( tree );
+                if ( set != null )
+                {
+                    set.setPropertyTree( tree );
+                }
             }
         }
     }

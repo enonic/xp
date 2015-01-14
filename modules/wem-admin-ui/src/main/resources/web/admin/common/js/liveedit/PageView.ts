@@ -265,7 +265,11 @@ module api.liveedit {
 
         private doParseItemViews(parentElement?: api.dom.Element) {
 
-            var regions: Region[] = this.liveEditModel.getPageModel().getRegions().getRegions();
+            var pageRegions = this.liveEditModel.getPageModel().getRegions();
+            if (!pageRegions) {
+                return;
+            }
+            var regions: Region[] = pageRegions.getRegions();
             var children = parentElement ? parentElement.getChildren() : this.getChildren();
             var regionIndex = 0;
             children.forEach((childElement: api.dom.Element) => {
