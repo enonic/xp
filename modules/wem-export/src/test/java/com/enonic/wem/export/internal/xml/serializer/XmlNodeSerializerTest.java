@@ -32,20 +32,26 @@ public class XmlNodeSerializerTest
     private final TimeZone defaultTimezone = TimeZone.getDefault();
 
     @Test
-    public void test_all_propertytypes_to_xml()
+    public void test_all_propertytypes_to_xml_and_from_xml()
         throws Exception
     {
         final Instant instant = Instant.parse( "2014-11-28T14:16:00Z" );
 
         final Node node = doCreateNode( instant );
 
-        final XmlNode xml = XmlNodeMapper.toXml( node, false );
+        final XmlNode serializedXmlNode = XmlNodeMapper.toXml( node, false );
 
         XmlNodeSerializer serializer = new XmlNodeSerializer();
 
-        final String result = serializer.serialize( xml );
+        final String result = serializer.serialize( serializedXmlNode );
 
         assertXml( "node.xml", result );
+
+        // TODO: Uncomment and make it work
+        //XmlNode parsedXmlNode = serializer.parse( ByteSource.wrap( result.getBytes() ) );
+        //PropertyTree parsedNodeData = PropertyTreeXmlBuilder.build( parsedXmlNode.getData() );
+
+        //assertEquals( node.data(), parsedNodeData );
     }
 
     @Test
@@ -104,6 +110,7 @@ public class XmlNodeSerializerTest
         propertyTree.addString( "myString", null );
         propertyTree.addHtmlPart( "myHtmlPart", null );
         propertyTree.addXml( "myXml", null );
+        propertyTree.addSet( "nullSet", null );
 
         return Node.newNode().
             id( NodeId.from( "abc" ) ).

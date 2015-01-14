@@ -57,7 +57,7 @@
     <xs:attribute name="name" type="xs:string" use="required"/>
   </xs:attributeGroup>
 
-  <xs:attributeGroup name="stringValueProperty">
+  <xs:attributeGroup name="nullableValueProperty">
     <xs:attributeGroup ref="property"/>
     <xs:attribute name="isNull" type="xs:boolean" use="optional"/>
   </xs:attributeGroup>
@@ -65,7 +65,7 @@
   <xs:complexType name="propertySet">
     <xs:complexContent>
       <xs:extension base="propertyTree">
-        <xs:attributeGroup ref="property"/>
+        <xs:attributeGroup ref="nullableValueProperty"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -73,7 +73,7 @@
   <xs:complexType name="stringProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="stringValueProperty"/>
+        <xs:attributeGroup ref="nullableValueProperty"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -145,7 +145,7 @@
   <xs:complexType name="htmlPartProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="stringValueProperty"/>
+        <xs:attributeGroup ref="nullableValueProperty"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -153,7 +153,7 @@
   <xs:complexType name="xmlProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="stringValueProperty"/>
+        <xs:attributeGroup ref="nullableValueProperty"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>

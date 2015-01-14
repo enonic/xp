@@ -27,6 +27,7 @@
         <boolean name="myBoolean">true</boolean>
       </property-set>
     </property-set>
+    <property-set isNull="true" name="nullSet"/>
   </data>
   <indexConfigs>
     <defaultConfig>
