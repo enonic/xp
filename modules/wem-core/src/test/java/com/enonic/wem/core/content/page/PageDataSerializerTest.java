@@ -53,4 +53,47 @@ public class PageDataSerializerTest
         // verify
         assertEquals( page, parsedPage );
     }
+
+    @Test
+    public void page_with_empty_regions()
+    {
+        PageRegions regions = PageRegions.newPageRegions().
+            build();
+
+        PropertyTree pageConfig = new PropertyTree( propertyIdProvider );
+        pageConfig.addString( "some", "config" );
+
+        Page page = Page.newPage().
+            config( pageConfig ).
+            template( PageTemplateKey.from( "template-x" ) ).
+            regions( regions ).
+            build();
+
+        PropertyTree pageAsData = new PropertyTree( propertyIdProvider );
+        pageDataSerializer.toData( page, pageAsData.getRoot() );
+        Page parsedPage = pageDataSerializer.fromData( pageAsData.getSet( "page" ) );
+
+        // verify
+        assertEquals( page, parsedPage );
+    }
+
+    @Test
+    public void page_with_regions_as_null()
+    {
+        PropertyTree pageConfig = new PropertyTree( propertyIdProvider );
+        pageConfig.addString( "some", "config" );
+
+        Page page = Page.newPage().
+            config( pageConfig ).
+            template( PageTemplateKey.from( "template-x" ) ).
+            regions( null ).
+            build();
+
+        PropertyTree pageAsData = new PropertyTree( propertyIdProvider );
+        pageDataSerializer.toData( page, pageAsData.getRoot() );
+        Page parsedPage = pageDataSerializer.fromData( pageAsData.getSet( "page" ) );
+
+        // verify
+        assertEquals( page, parsedPage );
+    }
 }

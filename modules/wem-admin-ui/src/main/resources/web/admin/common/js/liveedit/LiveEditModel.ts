@@ -62,7 +62,7 @@ module api.liveedit {
 
                         var regions = pageTemplate.hasRegions() ?
                                       pageTemplate.getRegions().clone() :
-                                      null;
+                                      new PageRegionsBuilder().build();
 
                         var setController = new SetController(this).
                             setDescriptor(pageDescriptor).
@@ -79,7 +79,7 @@ module api.liveedit {
 
                     var regions = pageTemplate.hasRegions() ?
                                   pageTemplate.getRegions().clone() :
-                                  null;
+                                  new PageRegionsBuilder().build();
 
                     var setController = new SetController(this).
                         setDescriptor(null).

@@ -36,15 +36,26 @@ public final class Property
         this.value = value;
         this.id = id;
         this.parent = parent;
-        if ( value.isSet() )
+        setPropertyOnPropertySetValue( value, parent );
+    }
+
+    private void setPropertyOnPropertySetValue( final Value value, final PropertySet parent )
+    {
+        if ( value.isSet() && !value.isNull() )
         {
             value.asData().setProperty( this );
-            if ( parent.getTree() != null )
+
+            checkPropertySetValueIsNotRootPropertySet( value, parent );
+        }
+    }
+
+    private void checkPropertySetValueIsNotRootPropertySet( final Value value, final PropertySet parent )
+    {
+        if ( parent.getTree() != null )
+        {
+            if ( value.asData() == parent.getTree().getRoot() )
             {
-                if ( value.asData() == parent.getTree().getRoot() )
-                {
-                    throw new IllegalArgumentException( "Given PropertySet is already the root PropertySet of the PropertyTree" );
-                }
+                throw new IllegalArgumentException( "Given PropertySet is already the root PropertySet of the PropertyTree" );
             }
         }
     }
@@ -66,6 +77,7 @@ public final class Property
     public void setValue( final Value value )
     {
         this.value = value;
+        this.setPropertyOnPropertySetValue( value, this.parent );
     }
 
     public PropertySet getParent()
@@ -123,6 +135,11 @@ public final class Property
     public boolean hasNullValue()
     {
         return value.isNull();
+    }
+
+    public boolean hasNotNullValue()
+    {
+        return !value.isNull();
     }
 
     public PropertySet getSet()
