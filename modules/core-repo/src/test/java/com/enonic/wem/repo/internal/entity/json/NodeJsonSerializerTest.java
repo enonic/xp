@@ -4,6 +4,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Locale;
 
 import org.junit.Test;
 
@@ -90,6 +91,8 @@ public class NodeJsonSerializerTest
                 add( new AttachedBinary( BinaryReference.from( "myImage1" ), new BlobKey( "a" ) ) ).
                 add( new AttachedBinary( BinaryReference.from( "myImage2" ), new BlobKey( "b" ) ) ).
                 build() ).
+            owner( PrincipalKey.from( "user:test:owner" ) ).
+            language( Locale.ENGLISH ).
             build();
 
         final String expectedStr = readJson( "serialized-node.json" );

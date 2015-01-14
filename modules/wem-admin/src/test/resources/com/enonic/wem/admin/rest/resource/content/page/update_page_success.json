@@ -1,43 +1,44 @@
 {
-  "attachments": [],
-  "childOrder": null,
-  "createdTime": null,
-  "creator": "user:system:admin",
-  "data": [],
-  "deletable": true,
-  "displayName": "My Content",
-  "editable": true,
-  "hasChildren": false,
-  "iconUrl": "/admin/rest/schema/content/icon/mymodule:content-type?hash=f95b70fdc3088560732a5ac135644506",
-  "id": "content-id",
-  "inheritPermissions": true,
-  "isDraft": false,
-  "isPage": true,
-  "isRoot": true,
-  "meta": [],
-  "modifiedTime": null,
-  "modifier": "user:system:admin",
-  "name": "content-name",
-  "owner": "user:myStore:me",
-  "page": {
-    "config": [
-      {
-        "name": "property1",
-        "type": "String",
-        "values": [
-          {
-            "id": "1",
-            "v": "value1"
-          }
-        ]
-      }
-    ],
-    "controller": null,
-    "regions": [],
-    "template": "my-page"
-  },
-  "path": "/content-name",
-  "permissions": [],
-  "thumbnail": null,
-  "type": "mymodule:content-type"
+    "attachments": [],
+    "childOrder": null,
+    "createdTime": null,
+    "creator": "user:system:admin",
+    "data": [],
+    "deletable": true,
+    "displayName": "My Content",
+    "editable": true,
+    "hasChildren": false,
+    "iconUrl": "/admin/rest/schema/content/icon/mymodule:content-type?hash=f95b70fdc3088560732a5ac135644506",
+    "id": "content-id",
+    "inheritPermissions": true,
+    "isDraft": false,
+    "isPage": true,
+    "isRoot": true,
+    "language": "en",
+    "meta": [],
+    "modifiedTime": null,
+    "modifier": "user:system:admin",
+    "name": "content-name",
+    "owner": "user:myStore:me",
+    "page": {
+        "config": [
+            {
+                "name": "property1",
+                "type": "String",
+                "values": [
+                    {
+                        "id": "1",
+                        "v": "value1"
+                    }
+                ]
+            }
+        ],
+        "controller": null,
+        "regions": [],
+        "template": "my-page"
+    },
+    "path": "/content-name",
+    "permissions": [],
+    "thumbnail": null,
+    "type": "mymodule:content-type"
 }

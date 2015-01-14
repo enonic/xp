@@ -1,9 +1,12 @@
 package com.enonic.wem.api.node;
 
 
+import java.util.Locale;
+
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfigDocument;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 
 public class EditableNode
@@ -24,6 +27,10 @@ public class EditableNode
 
     public boolean inheritPermissions;
 
+    public PrincipalKey owner;
+
+    public Locale language;
+
     public EditableNode( final Node source )
     {
         this.source = source;
@@ -34,18 +41,22 @@ public class EditableNode
         this.childOrder = source.getChildOrder();
         this.permissions = source.getPermissions();
         this.inheritPermissions = source.inheritsPermissions();
+        this.owner = source.getOwner();
+        this.language = source.getLanguage();
     }
 
     public Node build()
     {
-        final Node.Builder builder = Node.newNode( source );
-        builder.name( name );
-        builder.data( data );
-        builder.indexConfigDocument( indexConfigDocument );
-        builder.manualOrderValue( manualOrderValue );
-        builder.childOrder( childOrder );
-        builder.permissions( permissions );
-        builder.inheritPermissions( inheritPermissions );
-        return builder.build();
+        return Node.newNode( source ).
+            name( name ).
+            data( data ).
+            indexConfigDocument( indexConfigDocument ).
+            manualOrderValue( manualOrderValue ).
+            childOrder( childOrder ).
+            permissions( permissions ).
+            inheritPermissions( inheritPermissions ).
+            owner( owner ).
+            language( language ).
+            build();
     }
 }

@@ -1,6 +1,7 @@
 package com.enonic.wem.api.node;
 
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
@@ -49,6 +50,10 @@ public final class Node
 
     private final AttachedBinaries attachedBinaries;
 
+    private final PrincipalKey owner;
+
+    private final Locale language;
+
     private Node( final Builder builder )
     {
         Preconditions.checkNotNull( builder.permissions, "permissions are required" );
@@ -69,6 +74,8 @@ public final class Node
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.attachedBinaries = builder.attachedBinaries;
+        this.owner = builder.owner;
+        this.language = builder.language;
 
         this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
 
@@ -179,6 +186,16 @@ public final class Node
         return attachedBinaries;
     }
 
+    public PrincipalKey getOwner()
+    {
+        return owner;
+    }
+
+    public Locale getLanguage()
+    {
+        return language;
+    }
+
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
@@ -239,6 +256,10 @@ public final class Node
 
         private AttachedBinaries attachedBinaries = AttachedBinaries.empty();
 
+        private PrincipalKey owner;
+
+        private Locale language;
+
         public Builder()
         {
             super();
@@ -267,6 +288,8 @@ public final class Node
             this.permissions = node.permissions;
             this.inheritPermissions = node.inheritPermissions;
             this.attachedBinaries = node.attachedBinaries;
+            this.owner = node.owner;
+            this.language = node.language;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -380,6 +403,18 @@ public final class Node
         public Builder attachedBinaries( final AttachedBinaries attachedBinaries )
         {
             this.attachedBinaries = attachedBinaries;
+            return this;
+        }
+
+        public Builder owner( final PrincipalKey owner )
+        {
+            this.owner = owner;
+            return this;
+        }
+
+        public Builder language( final Locale language )
+        {
+            this.language = language;
             return this;
         }
 

@@ -76,7 +76,7 @@ public class RenderViewHandlerTest
     {
         final String result = execute( "renderTest" ).toString();
         final String expected = Resources.toString( getClass().getResource( "/modules/mymodule/view/test-result.html" ), Charsets.UTF_8 );
-        assertEquals( expected, result );
+        assertEquals( stripLineEndings( expected ), stripLineEndings( result ) );
     }
 
     @Test
@@ -86,6 +86,11 @@ public class RenderViewHandlerTest
         final String result = execute( "functionsTest" ).toString();
         final String expected =
             Resources.toString( getClass().getResource( "/modules/mymodule/view/functions-result.html" ), Charsets.UTF_8 );
-        assertEquals( expected, result );
+        assertEquals( stripLineEndings( expected ), stripLineEndings( result ) );
+    }
+
+    private String stripLineEndings( String crlf )
+    {
+        return crlf.replaceAll( "(\n|\r)", "" );
     }
 }
