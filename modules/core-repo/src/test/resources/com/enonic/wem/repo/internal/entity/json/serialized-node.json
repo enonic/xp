@@ -1,142 +1,144 @@
 {
-  "attachedBinaries": [
-    {
-      "binaryReference": "myImage1",
-      "blobKey": "a"
-    },
-    {
-      "binaryReference": "myImage2",
-      "blobKey": "b"
-    }
-  ],
-  "childOrder": "modifiedtime ASC, displayname DESC",
-  "createdTime": "2013-01-02T03:04:05Z",
-  "creator": "user:test:creator",
-  "data": [
-    {
-      "name": "a",
-      "type": "PropertySet",
-      "values": [
+    "attachedBinaries": [
         {
-          "id": "1",
-          "set": [
-            {
-              "name": "b",
-              "type": "PropertySet",
-              "values": [
-                {
-                  "id": "2",
-                  "set": [
-                    {
-                      "name": "c",
-                      "type": "Double",
-                      "values": [
-                        {
-                          "id": "3",
-                          "v": 2.0
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "b",
-      "type": "LocalDate",
-      "values": [
-        {
-          "id": "4",
-          "v": "2013-01-02"
-        }
-      ]
-    },
-    {
-      "name": "c",
-      "type": "String",
-      "values": [
-        {
-          "id": "5",
-          "v": "runar"
-        }
-      ]
-    },
-    {
-      "name": "d",
-      "type": "LocalDateTime",
-      "values": [
-        {
-          "id": "6",
-          "v": "2013-01-02T03:04:05"
-        }
-      ]
-    },
-    {
-      "name": "e",
-      "type": "BinaryReference",
-      "values": [
-        {
-          "id": "7",
-          "v": "myImage1"
-        }
-      ]
-    },
-    {
-      "name": "f",
-      "type": "BinaryReference",
-      "values": [
-        {
-          "id": "8",
-          "v": "myImage2"
-        }
-      ]
-    }
-  ],
-  "id": "myId",
-  "indexConfigDocument": {
-    "analyzer": "myAnalyzer",
-    "defaultConfig": {
-      "decideByType": false,
-      "enabled": true,
-      "fulltext": false,
-      "includeInAllText": false,
-      "nGram": false
-    },
-    "patternConfigs": [
-      {
-        "indexConfig": {
-          "decideByType": false,
-          "enabled": true,
-          "fulltext": true,
-          "includeInAllText": true,
-          "nGram": true
+            "binaryReference": "myImage1",
+            "blobKey": "a"
         },
-        "path": "myPath"
-      }
-    ]
-  },
-  "inheritPermissions": false,
-  "manualOrderValue": null,
-  "modifiedTime": "2013-01-02T03:04:05Z",
-  "modifier": "user:test:modifier",
-  "name": "my-name",
-  "nodeType": "myNodeType",
-  "parent": "/",
-  "path": "/my-name",
-  "permissions": [
-    {
-      "allow": ["READ"],
-      "deny": ["DELETE"],
-      "principal": "user:system:anonymous"
+        {
+            "binaryReference": "myImage2",
+            "blobKey": "b"
+        }
+    ],
+    "childOrder": "modifiedtime ASC, displayname DESC",
+    "createdTime": "2013-01-02T03:04:05Z",
+    "creator": "user:test:creator",
+    "data": [
+        {
+            "name": "a",
+            "type": "PropertySet",
+            "values": [
+                {
+                    "id": "1",
+                    "set": [
+                        {
+                            "name": "b",
+                            "type": "PropertySet",
+                            "values": [
+                                {
+                                    "id": "2",
+                                    "set": [
+                                        {
+                                            "name": "c",
+                                            "type": "Double",
+                                            "values": [
+                                                {
+                                                    "id": "3",
+                                                    "v": 2.0
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "b",
+            "type": "LocalDate",
+            "values": [
+                {
+                    "id": "4",
+                    "v": "2013-01-02"
+                }
+            ]
+        },
+        {
+            "name": "c",
+            "type": "String",
+            "values": [
+                {
+                    "id": "5",
+                    "v": "runar"
+                }
+            ]
+        },
+        {
+            "name": "d",
+            "type": "LocalDateTime",
+            "values": [
+                {
+                    "id": "6",
+                    "v": "2013-01-02T03:04:05"
+                }
+            ]
+        },
+        {
+            "name": "e",
+            "type": "BinaryReference",
+            "values": [
+                {
+                    "id": "7",
+                    "v": "myImage1"
+                }
+            ]
+        },
+        {
+            "name": "f",
+            "type": "BinaryReference",
+            "values": [
+                {
+                    "id": "8",
+                    "v": "myImage2"
+                }
+            ]
+        }
+    ],
+    "id": "myId",
+    "indexConfigDocument": {
+        "analyzer": "myAnalyzer",
+        "defaultConfig": {
+            "decideByType": false,
+            "enabled": true,
+            "fulltext": false,
+            "includeInAllText": false,
+            "nGram": false
+        },
+        "patternConfigs": [
+            {
+                "indexConfig": {
+                    "decideByType": false,
+                    "enabled": true,
+                    "fulltext": true,
+                    "includeInAllText": true,
+                    "nGram": true
+                },
+                "path": "myPath"
+            }
+        ]
     },
-    {
-      "allow": ["MODIFY"],
-      "deny": ["PUBLISH"],
-      "principal": "user:system:user1"
-    }
-  ]
+    "inheritPermissions": false,
+    "language": "en",
+    "manualOrderValue": null,
+    "modifiedTime": "2013-01-02T03:04:05Z",
+    "modifier": "user:test:modifier",
+    "name": "my-name",
+    "nodeType": "myNodeType",
+    "owner": "user:test:owner",
+    "parent": "/",
+    "path": "/my-name",
+    "permissions": [
+        {
+            "allow": ["READ"],
+            "deny": ["DELETE"],
+            "principal": "user:system:anonymous"
+        },
+        {
+            "allow": ["MODIFY"],
+            "deny": ["PUBLISH"],
+            "principal": "user:system:user1"
+        }
+    ]
 }

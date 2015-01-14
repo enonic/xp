@@ -1,94 +1,96 @@
 {
-  "contents": [
-    {
-      "attachments": [],
-      "childOrder": null,
-      "createdTime": "2013-08-23T12:55:09.162Z",
-      "creator": "user:system:admin",
-      "data": [],
-      "deletable": true,
-      "displayName": "My Content",
-      "editable": true,
-      "hasChildren": false,
-      "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
-      "id": "aaa",
-      "inheritPermissions": true,
-      "isDraft": false,
-      "isPage": false,
-      "isRoot": true,
-      "meta": [
+    "contents": [
         {
-          "data": [
-            {
-              "name": "myProperty",
-              "type": "Long",
-              "values": [
+            "attachments": [],
+            "childOrder": null,
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "creator": "user:system:admin",
+            "data": [],
+            "deletable": true,
+            "displayName": "My Content",
+            "editable": true,
+            "hasChildren": false,
+            "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
+            "id": "aaa",
+            "inheritPermissions": true,
+            "isDraft": false,
+            "isPage": false,
+            "isRoot": true,
+            "language": "en",
+            "meta": [
                 {
-                  "id": "2",
-                  "v": 1
+                    "data": [
+                        {
+                            "name": "myProperty",
+                            "type": "Long",
+                            "values": [
+                                {
+                                    "id": "2",
+                                    "v": 1
+                                }
+                            ]
+                        }
+                    ],
+                    "name": "myModule:myField"
                 }
-              ]
-            }
-          ],
-          "name": "myModule:myField"
-        }
-      ],
-      "modifiedTime": "2013-08-23T12:55:09.162Z",
-      "modifier": "user:system:admin",
-      "name": "my_a_content",
-      "owner": "user:myStore:me",
-      "page": null,
-      "path": "/my_a_content",
-      "permissions": [],
-      "thumbnail": null,
-      "type": "mymodule:my_type"
-    },
-    {
-      "attachments": [],
-      "childOrder": null,
-      "createdTime": "2013-08-23T12:55:09.162Z",
-      "creator": "user:system:admin",
-      "data": [],
-      "deletable": true,
-      "displayName": "My Content",
-      "editable": true,
-      "hasChildren": false,
-      "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
-      "id": "bbb",
-      "inheritPermissions": true,
-      "isDraft": false,
-      "isPage": false,
-      "isRoot": true,
-      "meta": [
+            ],
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "modifier": "user:system:admin",
+            "name": "my_a_content",
+            "owner": "user:myStore:me",
+            "page": null,
+            "path": "/my_a_content",
+            "permissions": [],
+            "thumbnail": null,
+            "type": "mymodule:my_type"
+        },
         {
-          "data": [
-            {
-              "name": "myProperty",
-              "type": "Long",
-              "values": [
+            "attachments": [],
+            "childOrder": null,
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "creator": "user:system:admin",
+            "data": [],
+            "deletable": true,
+            "displayName": "My Content",
+            "editable": true,
+            "hasChildren": false,
+            "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
+            "id": "bbb",
+            "inheritPermissions": true,
+            "isDraft": false,
+            "isPage": false,
+            "isRoot": true,
+            "language": "en",
+            "meta": [
                 {
-                  "id": "3",
-                  "v": 1
+                    "data": [
+                        {
+                            "name": "myProperty",
+                            "type": "Long",
+                            "values": [
+                                {
+                                    "id": "3",
+                                    "v": 1
+                                }
+                            ]
+                        }
+                    ],
+                    "name": "myModule:myField"
                 }
-              ]
-            }
-          ],
-          "name": "myModule:myField"
+            ],
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "modifier": "user:system:admin",
+            "name": "my_b_content",
+            "owner": "user:myStore:me",
+            "page": null,
+            "path": "/my_b_content",
+            "permissions": [],
+            "thumbnail": null,
+            "type": "mymodule:my_type"
         }
-      ],
-      "modifiedTime": "2013-08-23T12:55:09.162Z",
-      "modifier": "user:system:admin",
-      "name": "my_b_content",
-      "owner": "user:myStore:me",
-      "page": null,
-      "path": "/my_b_content",
-      "permissions": [],
-      "thumbnail": null,
-      "type": "mymodule:my_type"
+    ],
+    "metadata": {
+        "hits": 2,
+        "totalHits": 2
     }
-  ],
-  "metadata": {
-    "hits": 2,
-    "totalHits": 2
-  }
 }
