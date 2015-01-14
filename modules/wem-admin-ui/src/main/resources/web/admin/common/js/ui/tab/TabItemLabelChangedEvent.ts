@@ -1,11 +1,11 @@
 module api.ui.tab {
 
-    export class TabMenuItemLabelChangedEvent extends TabMenuItemEvent {
+    export class TabItemLabelChangedEvent extends TabItemEvent {
 
         private oldValue: string;
         private newValue: string;
 
-        constructor(tab: TabMenuItem, oldValue: string, newValue: string) {
+        constructor(tab: TabItem, oldValue: string, newValue: string) {
             super(tab);
             this.oldValue = oldValue;
             this.newValue = newValue;

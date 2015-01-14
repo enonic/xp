@@ -2,8 +2,6 @@ module api.app.bar{
 
     export class AppBarTabMenuButton extends api.ui.tab.TabMenuButton {
 
-        private iconEl:api.dom.ImgEl;
-
         private tabCountEl:AppBarTabCount;
 
         constructor() {
@@ -11,9 +9,6 @@ module api.app.bar{
 
             this.tabCountEl = new AppBarTabCount();
             this.prependChild(this.tabCountEl);
-
-            this.iconEl = new api.dom.ImgEl();
-            this.prependChild(this.iconEl);
         }
 
         setTabCount(value:number) {

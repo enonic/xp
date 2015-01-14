@@ -1,7 +1,7 @@
 module api.ui.security.acl {
 
+    import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
     import UserStoreAccess = api.security.acl.UserStoreAccess;
-
 
     interface UserStoreAccessSelectorOption {
         value: UserStoreAccess;
@@ -24,7 +24,7 @@ module api.ui.security.acl {
             super("access-selector");
 
             UserStoreAccessSelector.OPTIONS.forEach((option: UserStoreAccessSelectorOption, index: number) => {
-                var menuItem = new api.ui.tab.TabMenuItemBuilder().setLabel(option.name).build();
+                var menuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(option.name)).build();
                 this.addNavigationItem(menuItem);
             });
 

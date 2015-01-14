@@ -1,48 +1,38 @@
 .appbar-tab-menu {
-  color: #fff;
-  position: absolute;
+  .flexbox();
+  flex-flow: row no-wrap;
+  align-items: stretch;
+  align-content: stretch;
+
+  .flex(1 1 100%);
+  .order(2);
+
+  position: static;
   margin: 0;
 
-  &:hover {
-    background-color: rgba(75, 74, 76, 0.6);
-  }
+  color: @admin-font-gray3;
 
   a {
     padding-left: 10px;
   }
 
   .tab-menu-button {
+    .flex(0 0 36px);
     position: relative; // to position popup menu relative to me
     display: block;
     font-size: 14px;
-    line-height: 20px;
+    line-height: 32px;
     cursor: pointer;
     overflow: hidden;
     max-width: 360px;
     padding: 6px;
-    background-color: transparent;
-    height:20px;
+    background: @admin-bg-light-gray;
+    color: @admin-font-gray3;
+
+    .noSelect();
 
     &:before {
-      display: none; // hide dropdown arrow from tab-menu
-    }
-
-    &.editing {
-      img {
-        display: block;
-      }
-    }
-
-    img {
-      position: absolute;
-      top: 6px;
-      left: 6px;
       display: none;
-      height: 16px;
-      width: 16px;
-      margin: 2px 12px 2px 2px;
-      border: none !important;
-      background: transparent url("../images/pencil-FFFFFF.svg") 0 0 no-repeat;
     }
 
     .label {
@@ -52,70 +42,35 @@
       .ellipsis();
     }
 
-    .tab-count {
-      display: block;
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      margin-left: 10px;
-      border-radius: 10px;
-      background-color: red;
-      height: 22px;
-      width: 22px;
-      line-height: 18px;
+    &:hover{
+      background-color: @admin-white;
     }
   }
 
-  ul {
-    color: @admin-font-gray3;
-    top: 32px;
-    left: 0;
-    width: auto;
-    padding: 5px 5px 0 5px;
-    margin-top: 7px;
-    min-width: 150px;
-    max-width: 360px;
-    .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
+  .tab-menu-button, ul.bar li {
+    margin-top: 5px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+  }
 
-    &:before {
-      content: " ";
-      border-left: 7px solid transparent;
-      border-right: 7px solid transparent;
-      border-bottom: 7px solid white;
-      position: absolute;
-      top: -7px;
-      left: 50%;
-      margin-left: -7px;
-    }
-
+  ul.bar, ul.menu {
     .tab-menu-item {
-      position: relative; // to position close icon relative to
-      font-size: 14px;
-      line-height: 20px;
-      cursor: pointer;
-      margin-bottom: 5px;
+      position: relative;
       overflow: hidden;
+      height: 24px;
+      line-height: 24px;
       padding: 5px;
-      height:20px;
+      background: @admin-bg-light-gray;
+      font-size: 14px;
+      cursor: pointer;
 
       * {
         vertical-align: top;
       }
 
-      img {
-        height: 16px;
-        width: 16px;
-        margin: 2px 12px 2px 2px;
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        border: none !important;
-        background: transparent url("../images/pencil-333333.svg") 0 0 no-repeat;
-      }
-
       .label {
         max-width: 290px;
-        margin: 0 30px;
+        margin: 0 30px 0 5px;
         display: block;
         .ellipsis();
       }
@@ -135,30 +90,69 @@
 
         &:hover {
           background-color: @admin-red;
+          color: @admin-bg-almost-white;
         }
-
       }
 
       &.active {
-        background-color: @admin-bg-light-gray;
+        background-color: @admin-white;
       }
 
-      &:hover {
-        background-color: @admin-blue;
-        color: @admin-white;
-
-        button {
-          &:before {
-            color: @admin-white;
-          }
-        }
-
-        img {
-          background: transparent url("../images/pencil-FFFFFF.svg") 0 0 no-repeat;
-        }
+      &:hover{
+        background-color: @admin-white;
       }
-
     }
+  }
+
+  ul.bar {
+    .flexbox();
+    flex-flow: row no-wrap;
+    align-items: stretch;
+    align-content: stretch;
+
+    .flex(1 1 100%);
+
+    background: transparent;
+    position: static;
+    padding: 0;
+    top: 0;
+    left: 0;
+
+    .box-shadow(none);
+
+    .tab-menu-item {
+      .flex(0 1 180px);
+      height: initial;
+      margin-right: 1px;
+
+      .label {
+        line-height: 30px;
+      }
+
+      button {
+        top: 9px;
+        right: 5px;
+        padding: 0px;
+        height: 22px;
+        width: 22px;
+        border-radius: 11px;
+      }
+    }
+  }
+
+  ul.menu {
+    position: absolute;
+    top: 44px;
+    right: 64px;
+    left: initial;
+    width: auto;
+    padding: 5px 0;
+    margin: 0px;
+    min-width: 180px;
+    max-width: 360px;
+    background: @admin-bg-light-gray;
+    color: @admin-dark-gray;
+    .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
   }
 
 }
