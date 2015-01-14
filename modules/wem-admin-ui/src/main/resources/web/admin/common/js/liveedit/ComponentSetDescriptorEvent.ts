@@ -3,7 +3,7 @@ module api.liveedit {
     import Event = api.event.Event;
     import Descriptor = api.content.page.Descriptor;
     import ItemView = api.liveedit.ItemView;
-    import DescriptorBasedComponent = api.content.page.DescriptorBasedComponent;
+    import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
 
     export class ComponentSetDescriptorEvent extends api.event.Event {
 

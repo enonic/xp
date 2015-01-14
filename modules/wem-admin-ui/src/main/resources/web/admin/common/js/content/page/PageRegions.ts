@@ -57,23 +57,23 @@ module api.content.page {
 
         constructor(source?: PageRegions) {
             if (source) {
-                source.getRegions().forEach((region: api.content.page.region.Region) => {
+                source.getRegions().forEach((region: region.Region) => {
                     this.regions.push(region.clone());
                 });
             }
         }
 
-        fromJson(regionsJson: api.content.page.region.RegionJson[], propertyIdProvider: PropertyIdProvider): PageRegionsBuilder {
+        fromJson(regionsJson: region.RegionJson[], propertyIdProvider: PropertyIdProvider): PageRegionsBuilder {
 
-            regionsJson.forEach((regionJson: api.content.page.region.RegionJson) => {
+            regionsJson.forEach((regionJson: region.RegionJson) => {
 
                 var region = new api.content.page.region.RegionBuilder().
                     setName(regionJson.name).
                     setParent(null).
                     build();
 
-                regionJson.components.forEach((componentJson: api.content.page.ComponentTypeWrapperJson) => {
-                    var component = ComponentFactory.createFromJson(componentJson, region, propertyIdProvider);
+                regionJson.components.forEach((componentJson: region.ComponentTypeWrapperJson) => {
+                    var component = api.content.page.region.ComponentFactory.createFromJson(componentJson, region, propertyIdProvider);
                     region.addComponent(component);
                 });
 

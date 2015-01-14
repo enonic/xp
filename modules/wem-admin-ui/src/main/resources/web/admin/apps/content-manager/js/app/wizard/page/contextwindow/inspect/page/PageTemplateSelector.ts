@@ -15,6 +15,8 @@ module app.wizard.page.contextwindow.inspect.page {
 
         private pageModel: PageModel;
 
+        private selectionListeners: {(template: PageTemplate):void}[] = [];
+
         constructor() {
             super("pageTemplate", <DropdownConfig<PageTemplateOption>>{
                 optionDisplayValueViewer: new PageTemplateOptionViewer()
@@ -27,6 +29,7 @@ module app.wizard.page.contextwindow.inspect.page {
 
             var pageTemplateOptions = new PageTemplateOptions(liveEditModel.getSiteModel().getSiteId(),
                 liveEditModel.getContent().getType(), this.pageModel);
+            
             pageTemplateOptions.getOptions().
                 then((options: Option<PageTemplateOption>[]) => {
 
@@ -41,15 +44,9 @@ module app.wizard.page.contextwindow.inspect.page {
                         this.selectOption(pageTemplateOptions.getDefault(), true);
                     }
 
-
                     this.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
                         var pageTemplate = event.getOption().displayValue.getPageTemplate();
-                        if (pageTemplate) {
-                            this.pageModel.setTemplate(pageTemplate, null, this);
-                        }
-                        else {
-                            this.pageModel.setDefaultTemplate(this);
-                        }
+                        this.notifySelection(pageTemplate);
                     });
 
                     this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
@@ -73,6 +70,22 @@ module app.wizard.page.contextwindow.inspect.page {
             if (optionToSelect) {
                 this.selectOption(optionToSelect, true);
             }
+        }
+
+        onSelection(listener: (event: PageTemplate)=>void) {
+            this.selectionListeners.push(listener);
+        }
+
+        unSelection(listener: (event: PageTemplate)=>void) {
+            this.selectionListeners.filter((currentListener: (event: PageTemplate)=>void) => {
+                return listener != currentListener;
+            });
+        }
+
+        private notifySelection(item: PageTemplate) {
+            this.selectionListeners.forEach((listener: (event: PageTemplate)=>void) => {
+                listener(item);
+            });
         }
     }
 }

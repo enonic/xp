@@ -1,9 +1,8 @@
 package com.enonic.wem.portal.internal.rendering;
 
 import com.enonic.wem.api.rendering.Renderable;
-import com.enonic.xp.portal.PortalContext;
 
 public interface RendererFactory
 {
-    <T extends Renderable, CONTEXT extends PortalContext> Renderer<T, CONTEXT> getRenderer( T renderable );
+    <R extends Renderable> Renderer<R> getRenderer( R renderable );
 }

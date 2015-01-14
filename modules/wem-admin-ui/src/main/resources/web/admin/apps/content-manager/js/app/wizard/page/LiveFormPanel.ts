@@ -7,6 +7,7 @@ module app.wizard.page {
     import ContentId = api.content.ContentId;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import Page = api.content.page.Page;
+    import PageMode = api.content.page.PageMode;
     import PageModel = api.content.page.PageModel;
     import SiteModel = api.content.site.SiteModel;
     import LiveEditModel = api.liveedit.LiveEditModel;
@@ -16,10 +17,10 @@ module app.wizard.page {
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import LayoutDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.region.LayoutDescriptorChangedEvent;
 
-    import Component = api.content.page.Component;
+    import Component = api.content.page.region.Component;
 
-    import GetPartDescriptorsByModulesRequest = api.content.page.part.GetPartDescriptorsByModulesRequest;
-    import GetLayoutDescriptorsByModulesRequest = api.content.page.layout.GetLayoutDescriptorsByModulesRequest;
+    import GetPartDescriptorsByModulesRequest = api.content.page.region.GetPartDescriptorsByModulesRequest;
+    import GetLayoutDescriptorsByModulesRequest = api.content.page.region.GetLayoutDescriptorsByModulesRequest;
 
     import InspectionsPanelConfig = app.wizard.page.contextwindow.inspect.InspectionsPanelConfig;
     import InspectionsPanel = app.wizard.page.contextwindow.inspect.InspectionsPanel;
@@ -221,7 +222,13 @@ module app.wizard.page {
                     this.saveAndReloadPage();
                 }
                 else if (event.getPropertyName() == "template" && this !== event.getSource()) {
-                    this.saveAndReloadPage();
+
+                    if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
+                        this.saveAndReloadPage();
+                    }
+                    else {
+                        // Skip save. Let user continue working instead.
+                    }
                 }
             });
         }
@@ -335,7 +342,7 @@ module app.wizard.page {
                     this.contextWindow.slideIn();
                 }
 
-                if (!this.pageModel.hasTemplate()) {
+                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
                 }
                 event.getComponentView().getComponent().removeFromParent();
@@ -344,12 +351,8 @@ module app.wizard.page {
 
             this.liveEditPage.onComponentReset((event: ComponentResetEvent) => {
 
-                if (!this.pageModel.hasTemplate()) {
+                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
-                }
-                var component: Component = event.getComponentView().getComponent();
-                if (component) {
-                    component.reset();
                 }
             });
 
@@ -381,7 +384,7 @@ module app.wizard.page {
 
             this.liveEditPage.onComponentAdded((event: ComponentAddedEvent) => {
 
-                if (!this.pageModel.hasTemplate()) {
+                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
                 }
             });
@@ -395,7 +398,7 @@ module app.wizard.page {
                     setComponentView(event.getImageComponentView()).
                     setImageName(event.getImageName());
 
-                if (!this.pageModel.hasTemplate()) {
+                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
                 }
                 command.execute();
@@ -409,7 +412,7 @@ module app.wizard.page {
                     setPageRegions(this.pageModel.getRegions()).
                     setDescriptor(event.getDescriptor());
 
-                if (!this.pageModel.hasTemplate()) {
+                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
                 }
                 command.execute();

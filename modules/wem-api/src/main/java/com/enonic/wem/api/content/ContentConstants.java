@@ -1,5 +1,7 @@
 package com.enonic.wem.api.content;
 
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeType;
@@ -31,6 +33,16 @@ public class ContentConstants
 
     public static final Repository CONTENT_REPO = Repository.create().
         id( RepositoryId.from( "wem-content-repo" ) ).
+        build();
+
+    public static final Context CONTEXT_STAGE = ContextBuilder.create().
+        workspace( WORKSPACE_STAGE ).
+        repositoryId( CONTENT_REPO.getId() ).
+        build();
+
+    public static final Context CONTEXT_PROD = ContextBuilder.create().
+        workspace( WORKSPACE_PROD ).
+        repositoryId( CONTENT_REPO.getId() ).
         build();
 
     public static final String CONTENT_ROOT_NAME = "content";

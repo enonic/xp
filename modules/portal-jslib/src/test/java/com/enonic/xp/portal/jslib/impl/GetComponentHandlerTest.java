@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.jslib.impl;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.enonic.wem.api.content.page.region.Component;
 import com.enonic.wem.script.command.CommandHandler;
@@ -23,7 +22,7 @@ public class GetComponentHandlerTest
         throws Exception
     {
         final Component component = ContentFixtures.newLayoutComponent();
-        Mockito.when( context.getComponent() ).thenReturn( component );
+        context.setComponent( component );
 
         execute( "getComponent" );
     }
@@ -32,8 +31,7 @@ public class GetComponentHandlerTest
     public void getComponent_notFound()
         throws Exception
     {
-        Mockito.when( context.getComponent() ).thenReturn( null );
-
+        context.setComponent( null );
         execute( "getComponent_notFound" );
     }
 

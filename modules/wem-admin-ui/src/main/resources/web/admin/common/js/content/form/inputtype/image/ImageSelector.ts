@@ -172,7 +172,7 @@ module api.content.form.inputtype.image {
         }
 
         private layoutUploadDialog() {
-            this.uploadDialog = new ImageUploadDialog(this.config.contentPath);
+            this.uploadDialog = new ImageUploadDialog(this.config.contentId);
 
             this.uploadDialog.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
                 this.uploadDialog.close();
@@ -199,13 +199,15 @@ module api.content.form.inputtype.image {
                 var item = event.getUploadItem();
                 var createdContent = item.getModel();
 
-                new api.content.ContentCreatedEvent(createdContent.getContentId()).fire();
+                new api.content.ContentUpdatedEvent(this.config.contentId).fire();
 
                 var selectedOption = this.selectedOptionsView.getById(item.getId());
                 var option = selectedOption.getOption();
                 option.displayValue.setContentSummary(createdContent);
 
                 selectedOption.getOptionView().setOption(option);
+
+                this.setContentIdProperty(createdContent.getContentId());
             });
 
             this.uploadDialog.onUploadFailed((event: FileUploadFailedEvent<Content>) => {
@@ -304,16 +306,7 @@ module api.content.form.inputtype.image {
                         return;
                     }
 
-                    var reference = api.util.Reference.from(contentId);
-
-                    var value = new Value(reference, ValueTypes.REFERENCE);
-
-                    if (comboBox.countSelectedOptions() == 1) { // overwrite initial value
-                        this.propertyArray.set(0, value);
-                    }
-                    else {
-                        this.propertyArray.add(value);
-                    }
+                    this.setContentIdProperty(contentId);
                 }
                 this.validate(false);
             });
@@ -336,6 +329,19 @@ module api.content.form.inputtype.image {
                     displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
                 };
             });
+        }
+
+        private setContentIdProperty(contentId: api.content.ContentId) {
+            var reference = api.util.Reference.from(contentId);
+
+            var value = new Value(reference, ValueTypes.REFERENCE);
+
+            if (this.comboBox.countSelectedOptions() == 1) { // overwrite initial value
+                this.propertyArray.set(0, value);
+            }
+            else {
+                this.propertyArray.add(value);
+            }
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

@@ -6,12 +6,12 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
+import com.enonic.wem.api.node.MoveNodeException;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.Nodes;
-import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 
 public class MoveNodeCommand
@@ -19,32 +19,72 @@ public class MoveNodeCommand
 {
     private final NodeId nodeId;
 
-    private final NodePath newParentNodePath;
+    private final NodePath newParentPath;
 
-    private final NodeName nodeName;
+    private NodeName nodeName;
+
+    private final boolean overwriteExisting;
 
     private MoveNodeCommand( final Builder builder )
     {
         super( builder );
         this.nodeId = builder.id;
-        this.newParentNodePath = builder.newParentNodePath;
-        this.nodeName = builder.nodeName;
+        this.newParentPath = builder.newParentPath;
+        this.nodeName = builder.newNodeName;
+        this.overwriteExisting = builder.overwriteExisting;
     }
 
     public Node execute()
     {
-        final Node movedNode = doMoveNode( newParentNodePath, nodeName, nodeId );
-        return movedNode;
+        final Node existingNode = doGetById( nodeId, false );
+
+        if ( nodeName == null )
+        {
+            this.nodeName = existingNode.name();
+        }
+
+        if ( samePath( existingNode ) )
+        {
+            return existingNode;
+        }
+
+        if ( existingNode.path().equals( newParentPath ) )
+        {
+            throw new MoveNodeException( "Not allowed to move to child of self" );
+        }
+
+        return doMoveNode( newParentPath, nodeName, nodeId, true );
     }
 
-    protected Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id )
+    private boolean samePath( final Node existingNode )
+    {
+        return existingNode.path().equals( new NodePath( this.newParentPath, nodeName ) );
+    }
+
+    protected Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id, boolean checkExistingNode )
     {
         final Node persistedNode = doGetById( id, true );
         NodeName nodeName = ( newNodeName != null ) ? newNodeName : persistedNode.name();
 
-        if ( persistedNode.path().equals( new NodePath( newParentPath, nodeName ) ) )
+        if ( checkExistingNode )
         {
-            return persistedNode;
+            final Node existingNode = getExistingNode( newParentPath, newNodeName );
+
+            if ( existingNode != null )
+            {
+                if ( !overwriteExisting )
+                {
+                    throw new MoveNodeException( "Node already exist at path: '" + existingNode.path() );
+                }
+                else
+                {
+                    nodeName = NodeName.from( DuplicateValueResolver.name( nodeName ) );
+                }
+            }
+        }
+        else
+        {
+            checkExistingNode = false;
         }
 
         final Instant now = Instant.now();
@@ -53,7 +93,7 @@ public class MoveNodeCommand
             name( nodeName ).
             parent( newParentPath ).
             modifiedTime( now ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            modifier( getCurrentPrincipalKey() ).
             indexConfigDocument( persistedNode.getIndexConfigDocument() ).
             build();
 
@@ -62,10 +102,21 @@ public class MoveNodeCommand
         if ( persistedNode.getHasChildren() )
         {
             final Nodes children = getChildren( persistedNode );
-            moveNodesToNewParentPath( children, movedNode.path() );
+
+            for ( final Node child : children )
+            {
+                doMoveNode( movedNode.path(), child.name(), child.id(), checkExistingNode );
+            }
         }
 
         return persistedNode;
+    }
+
+    public Node getExistingNode( final NodePath newParentNodePath, final NodeName newNodeName )
+    {
+        final NodePath newNodePath = NodePath.newNodePath( newParentNodePath, newNodeName.toString() ).build();
+
+        return doGetByPath( newNodePath, false );
     }
 
     private Nodes getChildren( final Node parentNode )
@@ -83,38 +134,21 @@ public class MoveNodeCommand
         return result.getNodes();
     }
 
-    private void moveNodesToNewParentPath( final Nodes nodes, final NodePath newParentPath )
-    {
-        for ( final Node childNodeBeforeMove : nodes )
-        {
-            final Node movedNode = doMoveNode( newParentPath, childNodeBeforeMove.name(), childNodeBeforeMove.id() );
-
-            final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
-                parentPath( childNodeBeforeMove.path() ).
-                size( QueryService.GET_ALL_SIZE_FLAG ).
-                build() );
-
-            if ( !result.isEmpty() )
-            {
-                moveNodesToNewParentPath( result.getNodes(), movedNode.path().asAbsolute() );
-            }
-        }
-    }
-
     public static Builder create()
     {
         return new Builder();
     }
-
 
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
         private NodeId id;
 
-        private NodePath newParentNodePath;
+        private NodePath newParentPath;
 
-        private NodeName nodeName;
+        private NodeName newNodeName;
+
+        private boolean overwriteExisting = false;
 
         Builder()
         {
@@ -127,15 +161,21 @@ public class MoveNodeCommand
             return this;
         }
 
-        public Builder parentNodePath( final NodePath parentNodePath )
+        public Builder newParent( final NodePath parentNodePath )
         {
-            this.newParentNodePath = parentNodePath;
+            this.newParentPath = parentNodePath;
             return this;
         }
 
-        public Builder nodeName( final NodeName nodeName )
+        public Builder newNodeName( final NodeName nodeName )
         {
-            this.nodeName = nodeName;
+            this.newNodeName = nodeName;
+            return this;
+        }
+
+        public Builder overwriteExisting( final boolean overwriteExisting )
+        {
+            this.overwriteExisting = overwriteExisting;
             return this;
         }
 

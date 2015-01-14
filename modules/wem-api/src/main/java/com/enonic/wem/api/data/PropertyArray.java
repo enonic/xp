@@ -179,6 +179,20 @@ public final class PropertyArray
     {
         checkType( property.getType() );
         this.array.addLast( property );
+
+        if ( tree != null )
+        {
+            tree.registerProperty( property );
+
+            if ( property.getValue().isPropertySet() )
+            {
+                final PropertySet set = property.getSet();
+                if ( set != null )
+                {
+                    set.setPropertyTree( tree );
+                }
+            }
+        }
     }
 
     Property addValue( final Value value )
@@ -186,6 +200,15 @@ public final class PropertyArray
         checkType( value.getType() );
         final Property property = new Property( name, this.array.size(), value, tree != null ? tree.nextId() : null, parent );
         this.array.addLast( property );
+        if ( tree != null )
+        {
+            tree.registerProperty( property );
+            if ( value.getObject() instanceof PropertySet )
+            {
+                final PropertySet set = (PropertySet) value.getObject();
+                set.setPropertyTree( tree );
+            }
+        }
         return property;
     }
 
@@ -203,6 +226,10 @@ public final class PropertyArray
         {
             final Property newProperty = new Property( name, index, value, tree != null ? tree.nextId() : null, parent );
             this.array.add( index, newProperty );
+            if ( tree != null )
+            {
+                tree.registerProperty( newProperty );
+            }
             return newProperty;
         }
     }

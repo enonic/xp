@@ -7,7 +7,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 
-import javax.annotation.security.RolesAllowed;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.ws.rs.Consumes;
@@ -18,14 +17,11 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
-
 @Provider
 @Produces("image/*")
 @Consumes({"image/*", "application/octet-stream"})
-@RolesAllowed("admin-login")
 public final class RenderedImageProvider
-    implements MessageBodyWriter<RenderedImage>, JaxRsComponent
+    implements MessageBodyWriter<RenderedImage>
 {
     @Override
     public boolean isWriteable( final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType )

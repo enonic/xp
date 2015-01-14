@@ -76,10 +76,13 @@ module api.data {
                 setName(this.name).
                 setIndex(this.array.length).
                 setValue(value).
-                setId(this.tree.getNextId()).
+                setId(this.tree ? this.tree.getNextId() : null).
                 build();
 
             this.array.push(property);
+            if (this.tree) {
+                this.tree.registerProperty(property);
+            }
             return property;
         }
 
@@ -93,21 +96,26 @@ module api.data {
             this.checkType(value.getType());
             this.checkIndex(index);
 
-            var property = Property.create().
-                setParent(this.parent).
-                setName(this.name).
-                setIndex(this.array.length).
-                setValue(value).
-                setId(this.tree.getNextId()).
-                build();
+            var property;
 
             if (this.get(index) != null) {
-                this.array[index] = property;
+                property = this.array[index];
+                property.setValue(value);
             }
             else {
+                property = Property.create().
+                    setParent(this.parent).
+                    setName(this.name).
+                    setIndex(this.array.length).
+                    setValue(value).
+                    setId(this.tree ? this.tree.getNextId() : null).
+                    build();
                 this.array[index] = property;
-            }
 
+                if (this.tree) {
+                    this.tree.registerProperty(property);
+                }
+            }
             return property;
         }
 
@@ -118,6 +126,17 @@ module api.data {
         }
 
         remove(index: number) {
+
+            var property = this.get(index);
+            if (!property) {
+                throw new Error("Property not found: " +
+                                PropertyPath.fromParent(this.getParentPropertyPath(), new PropertyPathElement(name, index)));
+            }
+
+            if (this.tree) {
+                this.tree.unregisterProperty(property.getId());
+            }
+
             this.array.splice(index, 1);
         }
 
@@ -174,7 +193,7 @@ module api.data {
                 return false;
             }
 
-            return false;
+            return true;
         }
 
         copy(destinationPropertySet: PropertySet, generateNewPropertyIds: boolean = false): PropertyArray {

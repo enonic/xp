@@ -42,8 +42,7 @@ final class ControllerScriptImpl
 
     private void doExecute( final PortalContext context )
     {
-        final PortalRequest request = context;
-        final String method = context.getRequest().getMethod();
+        final String method = context.getMethod();
         final String methodName = method.toLowerCase();
 
         if ( !this.scriptExports.hasMethod( methodName ) )
@@ -52,7 +51,7 @@ final class ControllerScriptImpl
             return;
         }
 
-        final PortalRequestMapper requestMapper = new PortalRequestMapper( request );
+        final PortalRequestMapper requestMapper = new PortalRequestMapper( context );
         final ScriptValue result = this.scriptExports.executeMethod( methodName, requestMapper );
 
         populateResponse( context.getResponse(), result );

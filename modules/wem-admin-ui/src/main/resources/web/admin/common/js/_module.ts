@@ -114,10 +114,6 @@
 ///<reference path='content/image/_module.ts' />
 ///<reference path='content/page/_module.ts' />
 ///<reference path='content/page/region/_module.ts' />
-///<reference path='content/page/image/_module.ts' />
-///<reference path='content/page/layout/_module.ts' />
-///<reference path='content/page/part/_module.ts' />
-///<reference path='content/page/text/_module.ts' />
 ///<reference path='content/page/inputtype/pagecontroller/_module.ts' />
 ///<reference path='content/site/_module.ts' />
 ///<reference path='content/site/inputtype/moduleconfigurator/_module.ts' />

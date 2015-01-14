@@ -2,8 +2,6 @@ package com.enonic.wem.api.content.page.region;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.data.PropertyTree;
 
@@ -18,8 +16,7 @@ public abstract class DescriptorBasedComponent
     {
         super( builder );
         this.descriptor = builder.descrpitor;
-        Preconditions.checkNotNull( builder.config, "config cannot be null" );
-        this.config = builder.config;
+        this.config = builder.config != null ? builder.config : new PropertyTree();
     }
 
     public DescriptorKey getDescriptor()
@@ -73,13 +70,13 @@ public abstract class DescriptorBasedComponent
 
         protected Builder()
         {
-            this.config = new PropertyTree();
+            // Default
         }
 
         protected Builder( final DescriptorBasedComponent source )
         {
             super( source );
-            this.config = source.getConfig().copy();
+            this.config = source.getConfig() != null ? source.getConfig().copy() : null;
             this.descrpitor = source.getDescriptor();
         }
 

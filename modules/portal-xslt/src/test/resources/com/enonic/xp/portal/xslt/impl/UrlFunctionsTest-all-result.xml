@@ -1,18 +1,18 @@
 <output>
   <value>/portal/a</value>
   <value>/portal/a?b=2</value>
-  <value>/portal/live/stage/some/path?a=1</value>
-  <value>/portal/live/stage/some/path?a=1&amp;b=2</value>
-  <value>/portal/live/stage/some/path/_/image/id/123</value>
-  <value>/portal/live/stage/some/path/_/image/a?b=2</value>
-  <value>/portal/live/stage/some/path/_/public/mymodule/a</value>
-  <value>/portal/live/stage/some/path/_/public/mymodule/a?b=2</value>
-  <value>/portal/live/stage/some/path/_/attachment/myattachment.pdf</value>
-  <value>/portal/live/stage/some/path/_/attachment/myattachment.pdf?a=1</value>
-  <value>/portal/live/stage/some/path/_/attachment/id/123/myattachment.pdf</value>
-  <value>/portal/live/stage/some/path/_/attachment/id/123/source</value>
-  <value>/portal/live/stage/some/path/_/service/mymodule/a</value>
-  <value>/portal/live/stage/some/path/_/service/mymodule/a?b=2</value>
-  <value>/portal/live/stage/some/path/_/component/a</value>
-  <value>/portal/live/stage/some/path/_/component/a?b=2</value>
+  <value>/portal/stage/some/path?a=1</value>
+  <value>/portal/stage/some/path?a=1&amp;b=2</value>
+  <value>/portal/stage/some/path/_/image/id/123</value>
+  <value>/portal/stage/some/path/_/image/a?b=2</value>
+  <value>/portal/stage/some/path/_/asset/mymodule/a</value>
+  <value>/portal/stage/some/path/_/asset/mymodule/a?b=2</value>
+  <value>/portal/stage/some/path/_/attachment/myattachment.pdf</value>
+  <value>/portal/stage/some/path/_/attachment/myattachment.pdf?a=1</value>
+  <value>/portal/stage/some/path/_/attachment/id/123/myattachment.pdf</value>
+  <value>/portal/stage/some/path/_/attachment/id/123/source</value>
+  <value>/portal/stage/some/path/_/service/mymodule/a</value>
+  <value>/portal/stage/some/path/_/service/mymodule/a?b=2</value>
+  <value>/portal/stage/some/path/_/component/a</value>
+  <value>/portal/stage/some/path/_/component/a?b=2</value>
 </output>

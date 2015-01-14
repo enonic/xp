@@ -43,7 +43,7 @@ module api.util {
          * @returns {string} the URI to a portal path.
          */
         static getPortalUri(path: string): string {
-            return UriHelper.getUri(UriHelper.joinPath('portal', UriHelper.relativePath(path)));
+            return UriHelper.getUri(UriHelper.joinPath('admin', '/portal', UriHelper.relativePath(path)));
         }
 
         static relativePath(path: string): string {

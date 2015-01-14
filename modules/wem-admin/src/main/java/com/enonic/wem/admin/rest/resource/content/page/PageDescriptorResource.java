@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.content.page.PageDescriptorJson;
 import com.enonic.wem.admin.json.content.page.PageDescriptorListJson;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
@@ -19,13 +20,12 @@ import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("admin-login")
 public final class PageDescriptorResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     private PageDescriptorService pageDescriptorService;
 

@@ -105,13 +105,10 @@ final class PostProcessEvaluator
         }
 
         final String content = new String( buffer, contentOffset + 1, contentLen - 1 ).trim();
-        if ( !tryExecuteInstruction( content ) )
-        {
-            this.result.append( new String( buffer, outerOffset, outerLen ) );
-        }
+        tryExecuteInstruction( content );
     }
 
-    private boolean tryExecuteInstruction( final String content )
+    private void tryExecuteInstruction( final String content )
     {
         for ( final PostProcessInstruction instruction : this.instructions )
         {
@@ -119,11 +116,9 @@ final class PostProcessEvaluator
             if ( result != null )
             {
                 this.result.append( result );
-                return true;
+                return;
             }
         }
-
-        return false;
     }
 
     private String processInstruction( final PostProcessInstruction instruction, final String content )

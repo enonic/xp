@@ -19,7 +19,6 @@ public class ContentTypeForms
             build() ).
         addFormItem( Input.newInput().
             name( "moduleConfig" ).
-            label( "Modules" ).
             helpText( "Configure modules needed for the Site" ).
             inputType( InputTypes.MODULE_CONFIGURATOR ).
             required( false ).

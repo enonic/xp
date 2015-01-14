@@ -6,12 +6,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "ui")
 public final class BackgroundImageResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     @GET
     @Path("background.jpg")

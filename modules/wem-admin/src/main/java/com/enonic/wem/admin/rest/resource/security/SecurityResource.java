@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.security.json.CreateGroupJson;
@@ -54,7 +55,6 @@ import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 import static com.enonic.wem.api.security.PrincipalQuery.newQuery;
 import static java.util.stream.Collectors.toList;
@@ -66,7 +66,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("admin-login")
 public final class SecurityResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     private SecurityService securityService;
 

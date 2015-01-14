@@ -1,9 +1,9 @@
 module app.wizard.page.contextwindow.inspect.region {
 
     import SiteModel = api.content.site.SiteModel;
-    import PartDescriptor = api.content.page.part.PartDescriptor;
-    import GetPartDescriptorByKeyRequest = api.content.page.part.GetPartDescriptorByKeyRequest;
-    import PartComponent = api.content.page.part.PartComponent;
+    import PartDescriptor = api.content.page.region.PartDescriptor;
+    import GetPartDescriptorByKeyRequest = api.content.page.region.GetPartDescriptorByKeyRequest;
+    import PartComponent = api.content.page.region.PartComponent;
     import DescriptorKey = api.content.page.DescriptorKey;
     import PartComponentView = api.liveedit.part.PartComponentView;
     import LiveEditModel = api.liveedit.LiveEditModel;

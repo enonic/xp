@@ -1,13 +1,7 @@
 declare var Admin;
 declare var CONFIG;
 
-function isUserLoggedIn(): boolean {
-    var dummyCookie = api.util.CookieHelper.getCookie('dummy.userIsLoggedIn');
-    return dummyCookie === 'true';
-}
-
 function startApplication() {
-    var userLoggedIn = isUserLoggedIn();
 
     var applications: api.app.Application[] = app.launcher.Applications.getAllApps();
     var appSelector = new app.launcher.AppSelector(applications);
@@ -25,7 +19,6 @@ function startApplication() {
     var serverEventsListener = new api.app.ServerEventsListener(applications);
     loginForm.onUserAuthenticated((user: api.security.User) => {
         console.log('User logged in', user.getDisplayName(), user.getKey().toString());
-        api.util.CookieHelper.setCookie('dummy.userIsLoggedIn', 'true');
         homeMainContainer.showAppSelector();
         serverEventsListener.start();
     });
@@ -41,13 +34,6 @@ function startApplication() {
         build();
 
 
-    if (userLoggedIn) {
-        homeMainContainer.showAppSelector();
-        serverEventsListener.start();
-    } else {
-        homeMainContainer.showLogin();
-    }
-
     var appLauncher = new app.launcher.AppLauncher(homeMainContainer);
     api.dom.Body.get().appendChild(homeMainContainer);
     var router = new app.launcher.AppRouter(applications, appLauncher);
@@ -60,6 +46,17 @@ function startApplication() {
     serverEventsListener.onConnectionRestored(() => {
         managerInstance.notifyConnectionRestored();
     });
+
+    new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
+        if (loginResult.isAuthenticated()) {
+            homeMainContainer.showAppSelector();
+            serverEventsListener.start();
+        } else {
+            homeMainContainer.showLogin();
+        }
+    }).catch((reason: any) => {
+        homeMainContainer.showLogin();
+    }).done();
 }
 
 function getApplication(id: string): api.app.Application {

@@ -6,7 +6,6 @@ import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.ValueTypes;
@@ -29,7 +28,6 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeType;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.repo.internal.blob.Blob;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 
@@ -56,11 +54,9 @@ public final class CreateNodeCommand
         verifyNotExistsAlready();
         verifyParentExists();
 
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final PrincipalKey creator =
-            authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.from( "user:system:admin" );
+        final PrincipalKey user = getCurrentPrincipalKey();
 
-        final AccessControlList permissions = getAccessControlEntries( creator );
+        final AccessControlList permissions = getAccessControlEntries( user );
 
         final Long manualOrderValue = resolvePotentialManualOrderValue();
 
@@ -70,8 +66,8 @@ public final class CreateNodeCommand
             id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
             createdTime( now ).
             modifiedTime( now ).
-            creator( creator ).
-            modifier( creator ).
+            creator( user ).
+            modifier( user ).
             parent( params.getParent() ).
             name( NodeName.from( params.getName() ) ).
             data( params.getData() ).

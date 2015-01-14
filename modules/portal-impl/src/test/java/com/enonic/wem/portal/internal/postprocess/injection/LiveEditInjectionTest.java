@@ -9,9 +9,8 @@ import org.mockito.Mockito;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.wem.portal.internal.controller.PortalContextImpl;
-import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
@@ -19,20 +18,15 @@ import static org.junit.Assert.*;
 
 public class LiveEditInjectionTest
 {
-    private PortalContextImpl context;
+    private PortalContext context;
 
     private LiveEditInjection injection;
-
-    private PortalRequestImpl request;
 
     @Before
     public void setup()
     {
-        this.context = new PortalContextImpl();
+        this.context = new PortalContext();
         mockCurrentContextHttpRequest();
-
-        this.request = new PortalRequestImpl();
-        this.context.setRequest( this.request );
 
         this.injection = new LiveEditInjection();
     }
@@ -40,7 +34,7 @@ public class LiveEditInjectionTest
     @Test
     public void testNoInjection()
     {
-        this.request.setMode( RenderMode.EDIT );
+        this.context.setMode( RenderMode.EDIT );
 
         final String result1 = this.injection.inject( this.context, PostProcessInjection.Tag.HEAD_BEGIN );
         assertNull( result1 );
@@ -48,7 +42,7 @@ public class LiveEditInjectionTest
         final String result2 = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_BEGIN );
         assertNull( result2 );
 
-        this.request.setMode( RenderMode.LIVE );
+        this.context.setMode( RenderMode.LIVE );
 
         final String result3 = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_END );
         assertNull( result3 );
@@ -58,7 +52,7 @@ public class LiveEditInjectionTest
     public void testInjectHeadEnd()
         throws Exception
     {
-        this.request.setMode( RenderMode.EDIT );
+        this.context.setMode( RenderMode.EDIT );
 
         final String result = this.injection.inject( this.context, PostProcessInjection.Tag.HEAD_END );
         assertNotNull( result );
@@ -69,7 +63,7 @@ public class LiveEditInjectionTest
     public void testInjectBodyEnd()
         throws Exception
     {
-        this.request.setMode( RenderMode.EDIT );
+        this.context.setMode( RenderMode.EDIT );
 
         final String result = this.injection.inject( this.context, PostProcessInjection.Tag.BODY_END );
         assertNotNull( result );

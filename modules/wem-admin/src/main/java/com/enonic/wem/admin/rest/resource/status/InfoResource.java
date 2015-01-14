@@ -3,7 +3,6 @@ package com.enonic.wem.admin.rest.resource.status;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -13,18 +12,17 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.status.GCStatusInfoBuilder;
 import com.enonic.wem.admin.status.JVMStatusInfoBuilder;
 import com.enonic.wem.admin.status.MemoryStatusInfoBuilder;
 import com.enonic.wem.admin.status.OSStatusInfoBuilder;
 import com.enonic.wem.admin.status.PropertiesStatusInfoBuilder;
 import com.enonic.wem.admin.status.StatusInfoBuilder;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path("status")
-@RolesAllowed("admin-login")
 public final class InfoResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     private final List<StatusInfoBuilder> infoBuilders;
 

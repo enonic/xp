@@ -60,7 +60,7 @@ module api.form {
                 var label = new InputLabel(this.input);
                 this.appendChild(label);
             } else {
-                this.addClass("no-label")
+                this.addClass("no-label");
             }
 
             this.inputTypeView = this.createInputTypeView();

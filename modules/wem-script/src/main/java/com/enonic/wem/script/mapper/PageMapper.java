@@ -27,11 +27,16 @@ public final class PageMapper
         gen.value( "template", value.getTemplate() );
         gen.value( "controller", value.getController() );
 
-        gen.map( "config" );
-        new PropertyTreeMapper( value.getConfig() ).serialize( gen );
-        gen.end();
-
-        serializeRegions( gen, value.getRegions() );
+        if ( value.hasConfig() )
+        {
+            gen.map( "config" );
+            new PropertyTreeMapper( value.getConfig() ).serialize( gen );
+            gen.end();
+        }
+        if ( value.hasRegions() )
+        {
+            serializeRegions( gen, value.getRegions() );
+        }
     }
 
     private static void serializeRegions( final MapGenerator gen, final PageRegions values )

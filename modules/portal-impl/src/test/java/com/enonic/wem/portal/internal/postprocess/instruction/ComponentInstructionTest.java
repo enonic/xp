@@ -21,7 +21,6 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.rendering.Renderable;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.portal.internal.controller.PortalContextImpl;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.wem.portal.internal.rendering.RendererFactory;
@@ -51,7 +50,7 @@ public class ComponentInstructionTest
 
         PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );
-        PortalContextImpl context = new PortalContextImpl();
+        PortalContext context = new PortalContext();
         context.setResponse( resp );
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         context.setContent( content );
@@ -77,7 +76,7 @@ public class ComponentInstructionTest
 
         PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );
-        PortalContextImpl context = new PortalContextImpl();
+        PortalContext context = new PortalContext();
         context.setResponse( resp );
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
         context.setContent( content );
@@ -162,7 +161,7 @@ public class ComponentInstructionTest
     private RendererFactory newRendererFactory( final String renderResult )
     {
         RendererFactory rendererFactory = mock( RendererFactory.class );
-        Renderer<Renderable, PortalContext> renderer = new Renderer<Renderable, PortalContext>()
+        Renderer<Renderable> renderer = new Renderer<Renderable>()
         {
             @Override
             public Class<Renderable> getType()

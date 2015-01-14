@@ -6,9 +6,9 @@ module app.wizard.page.contextwindow.inspect {
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
     import Region = api.content.page.region.Region;
-    import ImageComponent = api.content.page.image.ImageComponent
-    import PartComponent = api.content.page.part.PartComponent;
-    import LayoutComponent = api.content.page.layout.LayoutComponent;
+    import ImageComponent = api.content.page.region.ImageComponent
+    import PartComponent = api.content.page.region.PartComponent;
+    import LayoutComponent = api.content.page.region.LayoutComponent;
 
     export interface InspectionsPanelConfig {
         contentInspectionPanel: ContentInspectionPanel;

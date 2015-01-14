@@ -4,6 +4,7 @@ package com.enonic.wem.api.content.page;
 import java.util.ArrayList;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.Value;
@@ -102,6 +103,14 @@ public final class PageTemplate
         {
             this.key = value;
             this.id = value;
+            return this;
+        }
+
+        @Override
+        public Content.Builder<Builder, PageTemplate> id( final ContentId value )
+        {
+            super.id( value );
+            this.key = PageTemplateKey.from( value );
             return this;
         }
 

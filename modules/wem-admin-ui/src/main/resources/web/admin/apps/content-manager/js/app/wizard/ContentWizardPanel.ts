@@ -196,7 +196,7 @@ module app.wizard {
                 header: this.contentWizardHeader,
                 actions: this.wizardActions,
                 livePanel: this.liveFormPanel,
-                split: true
+                split: !!this.liveFormPanel
             }, () => {
 
                 this.addClass("content-wizard-panel");
@@ -440,7 +440,7 @@ module app.wizard {
                     if (this.liveFormPanel) {
 
                         if (!this.liveEditModel) {
-                            this.initLiveEditModel(content).then(() => {
+                            return this.initLiveEditModel(content).then(() => {
                                 this.liveFormPanel.setModel(this.liveEditModel);
                                 this.liveFormPanel.loadPage();
                                 return wemQ(null);
@@ -463,7 +463,7 @@ module app.wizard {
                 this.siteModel = new SiteModel(this.site);
             }
             this.liveEditModel = new LiveEditModel(this.siteModel);
-            return this.liveEditModel.init(content, this.defaultModels.getPageTemplate());
+            return this.liveEditModel.init(content, this.defaultModels.getPageTemplate(), this.defaultModels.getPageDescriptor());
         }
 
         postLayoutPersisted(existing: Content): wemQ.Promise<void> {
@@ -543,7 +543,7 @@ module app.wizard {
         private produceUpdateContentRequest(persistedContent: Content, viewedContent: Content): UpdateContentRequest {
             var persistedContent = this.getPersistedItem();
 
-            var updateContentRequest = new UpdateContentRequest(this.getPersistedItem().getId()).
+            var updateContentRequest = new UpdateContentRequest(persistedContent.getId()).
                 setDraft(this.persistAsDraft).
                 setContentName(viewedContent.getName()).
                 setDisplayName(viewedContent.getDisplayName()).

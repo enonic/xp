@@ -19,7 +19,7 @@ public class ContextBuilderTest
         builder.repositoryId( "repository" );
         builder.workspace( "workspace" );
 
-        final AuthenticationInfo authInfo = AuthenticationInfo.failed();
+        final AuthenticationInfo authInfo = AuthenticationInfo.unAuthenticated();
         builder.authInfo( authInfo );
 
         builder.attribute( "key1", "value1" );
@@ -54,7 +54,7 @@ public class ContextBuilderTest
         assertNotNull( context );
         assertEquals( "repository", context.getRepositoryId().toString() );
         assertEquals( "workspace", context.getWorkspace().toString() );
-        assertNull( context.getAuthInfo() );
+        assertEquals( AuthenticationInfo.unAuthenticated(), context.getAuthInfo() );
         assertEquals( "value1", context.getAttribute( "key1" ) );
         assertSame( sampleValue, context.getAttribute( SampleValue.class ) );
     }

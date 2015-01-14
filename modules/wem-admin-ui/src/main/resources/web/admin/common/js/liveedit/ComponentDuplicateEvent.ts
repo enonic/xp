@@ -1,8 +1,8 @@
 module api.liveedit {
 
     import Event = api.event.Event;
-    import RegionPath = api.content.page.RegionPath;
-    import Component = api.content.page.Component;
+    import RegionPath = api.content.page.region.RegionPath;
+    import Component = api.content.page.region.Component;
 
     export class ComponentDuplicateEvent extends api.event.Event {
 

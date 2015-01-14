@@ -133,9 +133,9 @@ public class ContextImplTest
     public void testAuthInfo()
     {
         final ContextImpl context = createContext();
-        assertNull( context.getAuthInfo() );
+        assertEquals( AuthenticationInfo.unAuthenticated(), context.getAuthInfo() );
 
-        final AuthenticationInfo value = AuthenticationInfo.failed();
+        final AuthenticationInfo value = AuthenticationInfo.unAuthenticated();
         context.getLocalScope().setAttribute( value );
         assertSame( value, context.getAuthInfo() );
     }

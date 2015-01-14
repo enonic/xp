@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.osgi.framework.BundleContext;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.module.ModuleJson;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.module.json.ListModuleJson;
@@ -21,13 +22,12 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "module")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("admin-login")
 public final class ModuleResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     private ModuleService moduleService;
 

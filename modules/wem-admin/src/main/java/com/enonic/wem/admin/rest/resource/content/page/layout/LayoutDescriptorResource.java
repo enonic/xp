@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.content.page.region.LayoutDescriptorJson;
 import com.enonic.wem.admin.json.content.page.region.LayoutDescriptorsJson;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
@@ -17,13 +18,12 @@ import com.enonic.wem.api.content.page.region.LayoutDescriptor;
 import com.enonic.wem.api.content.page.region.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.region.LayoutDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/layout/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("admin-login")
 public final class LayoutDescriptorResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     private LayoutDescriptorService layoutDescriptorService;
 
@@ -39,7 +39,7 @@ public final class LayoutDescriptorResource
     @Path("list/by_module")
     public LayoutDescriptorsJson getByModules( @QueryParam("moduleKey") final String moduleKey )
     {
-        final LayoutDescriptors descriptors = layoutDescriptorService.getByModule( ModuleKey.from(moduleKey) );
+        final LayoutDescriptors descriptors = layoutDescriptorService.getByModule( ModuleKey.from( moduleKey ) );
         return new LayoutDescriptorsJson( descriptors );
     }
 

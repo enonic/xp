@@ -107,7 +107,7 @@ module api.content.page {
             this.setRegions(json.regions != null ? new PageRegionsBuilder().fromJson(json.regions, propertyIdProvider).build() : null);
             this.setConfig(json.config != null
                 ? PropertyTree.fromJson(json.config, propertyIdProvider)
-                : new PropertyTree(propertyIdProvider));
+                : null);
             return this;
         }
 

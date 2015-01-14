@@ -3,12 +3,15 @@ module app.wizard.page {
     import Content = api.content.Content;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import PageTemplate = api.content.page.PageTemplate;
-    import PartDescriptor = api.content.page.part.PartDescriptor;
-    import LayoutDescriptor = api.content.page.layout.LayoutDescriptor;
+    import PageDescriptor = api.content.page.PageDescriptor;
+    import PartDescriptor = api.content.page.region.PartDescriptor;
+    import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
 
     export interface DefaultModelsConfig {
 
         pageTemplate: PageTemplate;
+        
+        pageDescriptor: PageDescriptor;
 
         partDescriptor: PartDescriptor;
 
@@ -18,6 +21,8 @@ module app.wizard.page {
     export class DefaultModels {
 
         private pageTemplate: PageTemplate;
+        
+        private pageDescriptor: PageDescriptor;
 
         private partDescriptor: PartDescriptor;
 
@@ -29,16 +34,21 @@ module app.wizard.page {
                         "given pageTemplate is not a PageTemplate: " + config.pageTemplate.getType().toString());
             }
             this.pageTemplate = config.pageTemplate;
+            this.pageDescriptor = config.pageDescriptor;
             this.partDescriptor = config.partDescriptor;
             this.layoutDescriptor = config.layoutDescriptor;
         }
 
         hasPageTemplate(): boolean {
-            return !this.pageTemplate ? false : true;
+            return !!this.pageTemplate;
         }
 
         getPageTemplate(): PageTemplate {
             return this.pageTemplate ? this.pageTemplate.clone() : null;
+        }
+
+        getPageDescriptor(): PageDescriptor {
+            return this.pageDescriptor;
         }
 
         getPartDescriptor(): PartDescriptor {

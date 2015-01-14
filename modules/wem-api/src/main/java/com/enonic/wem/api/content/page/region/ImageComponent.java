@@ -117,7 +117,7 @@ public class ImageComponent
         {
             super( source );
             image = source.image;
-            config = source.config.copy();
+            config = source.config != null ? source.config.copy() : null;
         }
 
         public Builder image( final ContentId value )

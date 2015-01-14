@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageRegions;
-import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.region.Component;
 import com.enonic.wem.api.content.page.region.ComponentName;
 import com.enonic.wem.api.content.page.region.ComponentPath;
@@ -25,6 +24,7 @@ import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
+@org.osgi.service.component.annotations.Component(immediate = true)
 public final class ComponentInstruction
     implements PostProcessInstruction
 {
@@ -84,7 +84,7 @@ public final class ComponentInstruction
 
     private String renderComponent( final PortalContext context, final Component component )
     {
-        final Renderer<Component, PortalContext> renderer = this.rendererFactory.getRenderer( component );
+        final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
         if ( renderer == null )
         {
             throw new RenderException( "No Renderer found for: " + component.getClass().getSimpleName() );
@@ -103,16 +103,7 @@ public final class ComponentInstruction
         }
 
         final Page page = content.getPage();
-        final PageRegions pageRegions;
-        if ( ( page != null ) && page.hasRegions() )
-        {
-            pageRegions = resolvePageRegions( page, context.getPageTemplate() );
-        }
-        else
-        {
-            pageRegions = context.getPageTemplate().getRegions();
-        }
-
+        final PageRegions pageRegions = page.getRegions();
         Component component = pageRegions.getComponent( path );
         if ( component == null )
         {
@@ -125,17 +116,5 @@ public final class ComponentInstruction
         }
 
         return component;
-    }
-
-    private PageRegions resolvePageRegions( final Page page, final PageTemplate pageTemplate )
-    {
-        if ( page.hasRegions() )
-        {
-            return page.getRegions();
-        }
-        else
-        {
-            return pageTemplate.getRegions();
-        }
     }
 }

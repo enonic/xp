@@ -7,7 +7,7 @@ module api.liveedit.layout {
 
     export class LayoutPlaceholder extends ComponentPlaceholder {
 
-        private comboBox: api.content.page.layout.LayoutDescriptorComboBox;
+        private comboBox: api.content.page.region.LayoutDescriptorComboBox;
 
         private layoutComponentView: LayoutComponentView;
 
@@ -18,14 +18,14 @@ module api.liveedit.layout {
             this.onClicked((event: MouseEvent) => {
                 event.stopPropagation();
             });
-            var request = new api.content.page.layout.GetLayoutDescriptorsByModulesRequest(layoutView.liveEditModel.getSiteModel().getModuleKeys());
-            var loader = new api.content.page.layout.LayoutDescriptorLoader(request);
-            this.comboBox = new api.content.page.layout.LayoutDescriptorComboBox(loader);
+            var request = new api.content.page.region.GetLayoutDescriptorsByModulesRequest(layoutView.liveEditModel.getSiteModel().getModuleKeys());
+            var loader = new api.content.page.region.LayoutDescriptorLoader(request);
+            this.comboBox = new api.content.page.region.LayoutDescriptorComboBox(loader);
             loader.load();
             this.comboBox.hide();
             this.appendChild(this.comboBox);
 
-            this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.layout.LayoutDescriptor>) => {
+            this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.region.LayoutDescriptor>) => {
                 this.layoutComponentView.showLoadingSpinner();
                 var descriptor: api.content.page.Descriptor = event.getOption().displayValue;
                 new ComponentSetDescriptorEvent(descriptor, layoutView).fire();

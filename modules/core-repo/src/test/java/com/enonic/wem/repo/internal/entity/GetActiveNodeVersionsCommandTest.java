@@ -10,6 +10,7 @@ import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.GetActiveNodeVersionsResult;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersion;
@@ -89,8 +90,8 @@ public class GetActiveNodeVersionsCommandTest
             name( "my-node" ).
             build() );
 
-        PushNodeCommand.create().
-            id( node.id() ).
+        PushNodesCommand.create().
+            ids( NodeIds.from( node.id() ) ).
             target( testWorkspace ).
             queryService( this.queryService ).
             versionService( this.versionService ).

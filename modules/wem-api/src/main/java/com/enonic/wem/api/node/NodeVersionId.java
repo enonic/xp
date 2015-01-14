@@ -20,4 +20,5 @@ public class NodeVersionId
     {
         return new NodeVersionId( value );
     }
+
 }

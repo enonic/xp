@@ -1,7 +1,7 @@
 module app.wizard.page.contextwindow.inspect.region {
 
     import LiveFormPanel = app.wizard.page.LiveFormPanel;
-    import ImageComponent = api.content.page.image.ImageComponent;
+    import ImageComponent = api.content.page.region.ImageComponent;
     import ImageComponentView = api.liveedit.image.ImageComponentView;
     import PropertyTree = api.data.PropertyTree;
 

@@ -1,6 +1,9 @@
 module api.content.page {
 
     import Region = api.content.page.region.Region;
+    import Component = api.content.page.region.Component;
+    import ComponentPath = api.content.page.region.ComponentPath;
+    import ComponentPathRegionAndComponent = api.content.page.region.ComponentPathRegionAndComponent;
 
     export class AbstractRegions implements api.Equitable {
 
@@ -18,7 +21,7 @@ module api.content.page {
         }
 
         addRegion(region: Region) {
-            this.regionByName[name] = region;
+            this.regionByName[region.getName()] = region;
         }
 
         removeRegions(regions: Region[]) {
@@ -52,11 +55,11 @@ module api.content.page {
                 return component;
             }
             else {
-                if (!api.ObjectHelper.iFrameSafeInstanceOf(component, api.content.page.layout.LayoutComponent)) {
+                if (!api.ObjectHelper.iFrameSafeInstanceOf(component, api.content.page.region.LayoutComponent)) {
                     throw new Error("Expected component to be a LayoutComponent: " + api.ClassHelper.getClassName(component));
                 }
 
-                var layoutComponent = <api.content.page.layout.LayoutComponent> component;
+                var layoutComponent = <api.content.page.region.LayoutComponent> component;
                 return layoutComponent.getComponent(path.removeFirstLevel());
             }
         }

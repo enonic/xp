@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.jslib.impl;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.script.command.CommandHandler;
@@ -23,7 +22,7 @@ public class GetContentHandlerTest
         throws Exception
     {
         final Content content = ContentFixtures.newContent();
-        Mockito.when( context.getContent() ).thenReturn( content );
+        context.setContent( content );
 
         execute( "getContent" );
     }
@@ -32,8 +31,7 @@ public class GetContentHandlerTest
     public void getContent_notFound()
         throws Exception
     {
-        Mockito.when( context.getContent() ).thenReturn( null );
-
+        context.setContent( null );
         execute( "getContent_notFound" );
     }
 

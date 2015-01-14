@@ -17,16 +17,16 @@ import org.apache.commons.fileupload.FileItem;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.JsonResult;
 import com.enonic.wem.admin.rest.multipart.MultipartForm;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @Path(ResourceConstants.REST_ROOT + "blob")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("admin-login")
 public final class BlobResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     //private BlobService blobService;
 

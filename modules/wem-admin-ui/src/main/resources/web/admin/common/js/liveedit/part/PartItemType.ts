@@ -3,7 +3,7 @@ module api.liveedit.part {
     import ItemType = api.liveedit.ItemType;
     import ComponentItemType = api.liveedit.ComponentItemType;
     import RegionView = api.liveedit.RegionView;
-    import PartComponent = api.content.page.part.PartComponent;
+    import PartComponent = api.content.page.region.PartComponent;
 
     export class PartItemType extends ComponentItemType {
 

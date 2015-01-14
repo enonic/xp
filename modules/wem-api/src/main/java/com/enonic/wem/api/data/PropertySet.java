@@ -199,6 +199,11 @@ public final class PropertySet
      */
     public PropertySet newSet()
     {
+        if ( tree == null )
+        {
+            throw new IllegalStateException(
+                "The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead." );
+        }
         return new PropertySet( tree );
     }
 
@@ -252,29 +257,12 @@ public final class PropertySet
     void addPropertyArray( final PropertyArray array )
     {
         this.propertyArrayByName.put( array.getName(), array );
-
-        for ( final Property property : array.getProperties() )
-        {
-            this.tree.registerProperty( property );
-        }
     }
 
     void add( final Property property )
     {
-
         final PropertyArray array = getOrCreatePropertyArray( property.getName(), property.getType() );
         array.addProperty( property );
-
-        if ( tree != null )
-        {
-            tree.registerProperty( property );
-
-            if ( property.getValue().isPropertySet() )
-            {
-                final PropertySet set = property.getSet();
-                set.setPropertyTree( tree );
-            }
-        }
     }
 
     public final Property addProperty( final String name, final Value value )
@@ -287,16 +275,6 @@ public final class PropertySet
 
         final PropertyArray array = getOrCreatePropertyArray( name, value.getType() );
         final Property property = array.addValue( value );
-
-        if ( tree != null )
-        {
-            tree.registerProperty( property );
-            if ( value.getObject() instanceof PropertySet )
-            {
-                final PropertySet set = (PropertySet) value.getObject();
-                set.setPropertyTree( tree );
-            }
-        }
         return property;
     }
 
@@ -328,17 +306,7 @@ public final class PropertySet
         }
 
         final PropertyArray array = getOrCreatePropertyArray( name, value.getType() );
-
-        final Property existingProperty = array.get( index );
-
-        final Property property = array.setValue( index, value );
-
-        if ( existingProperty == null && tree != null )
-        {
-            tree.registerProperty( property );
-        }
-
-        return property;
+        return array.setValue( index, value );
     }
 
     private PropertySet getOrCreateSet( final String name, final int index )

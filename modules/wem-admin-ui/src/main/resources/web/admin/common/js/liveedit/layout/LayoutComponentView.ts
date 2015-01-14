@@ -1,8 +1,9 @@
 module api.liveedit.layout {
 
-    import Component = api.content.page.Component;
+    import Component = api.content.page.region.Component;
     import Region = api.content.page.region.Region;
-    import LayoutComponent = api.content.page.layout.LayoutComponent;
+    import LayoutComponent = api.content.page.region.LayoutComponent;
+    import LayoutRegions = api.content.page.region.LayoutRegions;
     import ComponentView = api.liveedit.ComponentView;
     import RegionView = api.liveedit.RegionView;
     import ItemView = api.liveedit.ItemView;
@@ -27,7 +28,7 @@ module api.liveedit.layout {
             super(builder.setPlaceholder(new LayoutPlaceholder(this)));
             this.layoutComponent = builder.component;
 
-            if (this.conditionedForEmpty()) {
+            if (this.isEmpty()) {
                 this.displayPlaceholder();
             }
 
@@ -47,13 +48,10 @@ module api.liveedit.layout {
             return this.regionViews;
         }
 
-        private conditionedForEmpty(): boolean {
-            if (!this.layoutComponent) {
-                return super.isEmpty();
-            }
-            return this.isEmpty() || !this.layoutComponent.getDescriptor();
+        isEmpty(): boolean {
+            return this.layoutComponent.isEmpty();
         }
-
+        
         duplicate(duplicate: LayoutComponent): LayoutComponentView {
 
             var duplicatedView = new LayoutComponentView(new LayoutComponentViewBuilder().
@@ -86,8 +84,12 @@ module api.liveedit.layout {
 
         private doParseRegions(parentElement?: api.dom.Element) {
 
-            var layoutComponent = this.getComponent();
-            var regions: Region[] = layoutComponent.getLayoutRegions().getRegions();
+            var layoutComponent: LayoutComponent = <LayoutComponent>this.getComponent();
+            var layoutRegions = layoutComponent.getLayoutRegions();
+            if (!layoutRegions) {
+                return;
+            }
+            var regions: Region[] = layoutRegions.getRegions();
             var children = parentElement ? parentElement.getChildren() : this.getChildren();
             var regionIndex = 0;
             children.forEach((childElement: api.dom.Element) => {

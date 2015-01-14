@@ -26,6 +26,7 @@ import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.node.RenameNodeParams;
 import com.enonic.wem.api.node.ReorderChildNodesParams;
 import com.enonic.wem.api.node.ReorderChildNodesResult;
@@ -54,7 +55,7 @@ public class NodeServiceImpl
 
     private QueryService queryService;
 
-    private BlobStore binaryBlobStore = new FileBlobStore( NodeConstants.binaryBlobStoreDir );
+    private final BlobStore binaryBlobStore = new FileBlobStore( NodeConstants.binaryBlobStoreDir );
 
     @Override
     public Node getById( final NodeId id )
@@ -240,15 +241,15 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node push( final NodeId id, final Workspace target )
+    public PushNodesResult push( final NodeIds ids, final Workspace target )
     {
-        return PushNodeCommand.create().
+        return PushNodesCommand.create().
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).
             queryService( this.queryService ).
             versionService( this.versionService ).
-            id( id ).
+            ids( ids ).
             target( target ).
             build().
             execute();
@@ -273,7 +274,7 @@ public class NodeServiceImpl
     {
         return MoveNodeCommand.create().
             id( nodeId ).
-            parentNodePath( parentNodePath ).
+            newParent( parentNodePath ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             workspaceService( this.workspaceService ).

@@ -1,13 +1,14 @@
 {
-    "failures": [],
-    "successes": [
-        {
-            "id": "1",
-            "name": "My Content"
-        },
-        {
-            "id": "2",
-            "name": "My Content"
-        }
-    ]
+  "failures": [
+    {
+      "id": "my-content2",
+      "reason": "Parent content does not exist"
+    }
+  ],
+  "successes": [
+    {
+      "id": "my-content",
+      "name": "My Content"
+    }
+  ]
 }

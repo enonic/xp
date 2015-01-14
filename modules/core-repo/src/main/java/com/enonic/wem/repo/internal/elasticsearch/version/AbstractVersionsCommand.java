@@ -44,7 +44,7 @@ class AbstractVersionsCommand
             from( from ).
             size( size ).
             addSortBuilder( new FieldSortBuilder( VersionIndexPath.TIMESTAMP.getPath() ).order( SortOrder.DESC ) ).
-            setReturnFields( ReturnFields.from( VersionIndexPath.TIMESTAMP, VersionIndexPath.VERSION_ID ) ).
+            setReturnFields( ReturnFields.from( VersionIndexPath.TIMESTAMP, VersionIndexPath.VERSION_ID, VersionIndexPath.NODE_ID ) ).
             build();
 
         final SearchResult searchResults = elasticsearchDao.find( query );

@@ -1,6 +1,6 @@
 module api.liveedit.text {
 
-    export class TextComponentViewer extends api.ui.Viewer<api.content.page.text.TextComponent> {
+    export class TextComponentViewer extends api.ui.Viewer<api.content.page.region.TextComponent> {
 
         private namesAndIconView: api.app.NamesAndIconView;
 
@@ -10,7 +10,7 @@ module api.liveedit.text {
             this.appendChild(this.namesAndIconView);
         }
 
-        setObject(textComponent: api.content.page.text.TextComponent) {
+        setObject(textComponent: api.content.page.region.TextComponent) {
             super.setObject(textComponent);
             this.namesAndIconView.setMainName(textComponent.getText()).
                 setSubName(textComponent.getPath().toString()).

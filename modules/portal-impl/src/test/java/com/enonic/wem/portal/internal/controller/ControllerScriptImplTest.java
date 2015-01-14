@@ -24,7 +24,7 @@ public class ControllerScriptImplTest
     @Test
     public void testExecute()
     {
-        this.request.setMethod( "GET" );
+        this.context.setMethod( "GET" );
         execute( "mymodule:/service/test" );
         assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
     }
@@ -32,7 +32,7 @@ public class ControllerScriptImplTest
     @Test
     public void testExecutePostProcess()
     {
-        this.request.setMethod( "GET" );
+        this.context.setMethod( "GET" );
         this.response.setPostProcess( true );
 
         execute( "mymodule:/service/test" );
@@ -44,7 +44,7 @@ public class ControllerScriptImplTest
     @Test
     public void testMethodNotSupported()
     {
-        this.request.setMethod( "POST" );
+        this.context.setMethod( "POST" );
         execute( "mymodule:/service/test" );
         assertEquals( PortalResponse.STATUS_METHOD_NOT_ALLOWED, this.response.getStatus() );
     }
@@ -52,7 +52,7 @@ public class ControllerScriptImplTest
     @Test
     public void testGetterAccess()
     {
-        this.request.setMethod( "GET" );
+        this.context.setMethod( "GET" );
         execute( "mymodule:/service/getters" );
         assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
         assertEquals( "GET,live", this.response.getBody() );

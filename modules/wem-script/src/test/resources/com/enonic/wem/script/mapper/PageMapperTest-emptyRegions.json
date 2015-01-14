@@ -1,0 +1,8 @@
+{
+  "template": null,
+  "controller": "mymodule:default",
+  "config": {
+    "a": ["b"]
+  },
+  "regions": {}
+}

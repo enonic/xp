@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class AuthenticationInfo
 {
-
     private final User user;
 
     private final PrincipalKeys principals;
@@ -63,7 +62,7 @@ public final class AuthenticationInfo
         return new Builder( true );
     }
 
-    public static AuthenticationInfo failed()
+    public static AuthenticationInfo unAuthenticated()
     {
         return new Builder( false ).principals( PrincipalKey.ofAnonymous(), RoleKeys.EVERYONE ).build();
     }
@@ -107,5 +106,44 @@ public final class AuthenticationInfo
         {
             return new AuthenticationInfo( this );
         }
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final AuthenticationInfo that = (AuthenticationInfo) o;
+
+        if ( authenticated != that.authenticated )
+        {
+            return false;
+        }
+        if ( principals != null ? !principals.equals( that.principals ) : that.principals != null )
+        {
+            return false;
+        }
+        if ( user != null ? !user.equals( that.user ) : that.user != null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = user != null ? user.hashCode() : 0;
+        result = 31 * result + ( principals != null ? principals.hashCode() : 0 );
+        result = 31 * result + ( authenticated ? 1 : 0 );
+        return result;
     }
 }

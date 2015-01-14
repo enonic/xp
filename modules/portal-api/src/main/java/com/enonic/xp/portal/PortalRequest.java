@@ -1,7 +1,10 @@
 package com.enonic.xp.portal;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.common.collect.Multimap;
 
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.workspace.Workspace;
 
 public interface PortalRequest
@@ -11,6 +14,12 @@ public interface PortalRequest
     public String getMethod();
 
     public Workspace getWorkspace();
+
+    public ContentPath getContentPath();
+
+    public HttpServletRequest getRawRequest();
+
+    public String getBaseUri();
 
     public Multimap<String, String> getParams();
 

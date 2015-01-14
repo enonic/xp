@@ -1,7 +1,7 @@
 module api.liveedit {
 
     import Event = api.event.Event;
-    import Component = api.content.page.Component;
+    import Component = api.content.page.region.Component;
 
     export class DraggingComponentViewCanceledEvent extends Event {
 

@@ -27,6 +27,8 @@ module api.util {
             if (!api.ObjectHelper.stringEquals(this.referenceId, other.referenceId)) {
                 return false;
             }
+
+            return true;
         }
 
         toString(): string {

@@ -29,9 +29,9 @@ module api.liveedit {
             return false
         }
 
-        toComponentType(): api.content.page.ComponentType {
+        toComponentType(): api.content.page.region.ComponentType {
             api.util.assert(this.isComponentType(), "Not support when ItemType is not a ComponentType");
-            return api.content.page.ComponentType.byShortName(this.shortName);
+            return api.content.page.region.ComponentType.byShortName(this.shortName);
         }
 
         createView(config: CreateItemViewConfig<ItemView,any>): ItemView {

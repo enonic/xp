@@ -1,14 +1,14 @@
 module LiveEdit {
 
     import PropertyTree = api.data.PropertyTree;
-    import Component = api.content.page.Component;
+    import Component = api.content.page.region.Component;
     import Page = api.content.page.Page;
     import PageRegions = api.content.page.PageRegions;
     import Region = api.content.page.region.Region;
-    import ComponentType = api.content.page.ComponentType;
-    import ComponentName = api.content.page.ComponentName;
-    import DescriptorBasedComponentBuilder = api.content.page.DescriptorBasedComponentBuilder;
-    import DescriptorBasedComponent = api.content.page.DescriptorBasedComponent;
+    import ComponentType = api.content.page.region.ComponentType;
+    import ComponentName = api.content.page.region.ComponentName;
+    import DescriptorBasedComponentBuilder = api.content.page.region.DescriptorBasedComponentBuilder;
+    import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import ComponentView = api.liveedit.ComponentView;
     import PageView = api.liveedit.PageView;
     import PageViewBuilder = api.liveedit.PageViewBuilder;

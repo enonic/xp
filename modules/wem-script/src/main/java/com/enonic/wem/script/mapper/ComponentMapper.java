@@ -43,9 +43,12 @@ public final class ComponentMapper
     private static void serialize( final MapGenerator gen, final DescriptorBasedComponent comp )
     {
         gen.value( "descriptor", comp.getDescriptor() );
-        gen.map( "config" );
-        new PropertyTreeMapper( comp.getConfig() ).serialize( gen );
-        gen.end();
+        if ( comp.getConfig() != null )
+        {
+            gen.map( "config" );
+            new PropertyTreeMapper( comp.getConfig() ).serialize( gen );
+            gen.end();
+        }
     }
 
     private static void serialize( final MapGenerator gen, final LayoutComponent comp )

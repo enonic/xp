@@ -13,7 +13,7 @@ public class ImageUrlBuilderTest
         final ImageUrlBuilder builder = this.builders.imageUrl().
             imageName( "myimage.png" );
 
-        assertEquals( "/portal/live/stage/some/path/_/image/myimage.png", builder.toString() );
+        assertEquals( "/portal/stage/some/path/_/image/myimage.png", builder.toString() );
     }
 
     @Test
@@ -26,7 +26,7 @@ public class ImageUrlBuilderTest
             quality( 33 );
 
         assertEquals(
-            "/portal/live/stage/some/path/_/image/myimage.jpg?filter=scalemax%28120%29%3Brounded%2840%29%3Bblock%283%2C3%29%3Bsepia%28%29&background=00ff00&quality=33",
+            "/portal/stage/some/path/_/image/myimage.jpg?filter=scalemax%28120%29%3Brounded%2840%29%3Bblock%283%2C3%29%3Bsepia%28%29&background=00ff00&quality=33",
             builder.toString() );
     }
 
@@ -37,7 +37,7 @@ public class ImageUrlBuilderTest
             imageId( "abc" ).
             workspace( "test" );
 
-        assertEquals( "/portal/live/test/some/path/_/image/id/abc", builder.toString() );
+        assertEquals( "/portal/test/some/path/_/image/id/abc", builder.toString() );
     }
 
     @Test
@@ -50,7 +50,7 @@ public class ImageUrlBuilderTest
             quality( 33 );
 
         assertEquals(
-            "/portal/live/stage/some/path/_/image/id/abc?filter=scalemax%28120%29%3Brounded%2840%29%3Bblock%283%2C3%29%3Bsepia%28%29&background=00ff00&quality=33",
+            "/portal/stage/some/path/_/image/id/abc?filter=scalemax%28120%29%3Brounded%2840%29%3Bblock%283%2C3%29%3Bsepia%28%29&background=00ff00&quality=33",
             builder.toString() );
     }
 }

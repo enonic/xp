@@ -1,8 +1,8 @@
 module api.liveedit {
 
-    import Component = api.content.page.Component;
-    import ComponentPath = api.content.page.ComponentPath;
-    import ComponentName = api.content.page.ComponentName;
+    import Component = api.content.page.region.Component;
+    import ComponentPath = api.content.page.region.ComponentPath;
+    import ComponentName = api.content.page.region.ComponentName;
 
     export class ComponentViewBuilder<COMPONENT extends Component> {
 
@@ -130,7 +130,7 @@ module api.liveedit {
             actions.push(new api.ui.Action("Empty").onExecuted(() => {
                 this.displayPlaceholder();
                 this.select();
-
+                this.component.reset();
                 new ComponentResetEvent(this).fire();
             }));
             actions.push(new api.ui.Action("Remove").onExecuted(() => {
@@ -143,7 +143,7 @@ module api.liveedit {
                 var duplicatedComponent = <COMPONENT> this.getComponent().duplicateComponent();
                 var duplicatedView = this.duplicate(duplicatedComponent);
                 this.deselect();
-                duplicatedView.markAsEmpty();
+                duplicatedView.handleEmptyState();
                 duplicatedView.select();
                 duplicatedView.showLoadingSpinner();
 
@@ -239,11 +239,18 @@ module api.liveedit {
             }
         }
 
-        displayPlaceholder() {
-            this.markAsEmpty();
+        handleEmptyState() {
+            super.handleEmptyState();
 
+            if (!this.hasClass("live-edit-empty-component")) {
+                this.addClass("live-edit-empty-component");
+            }
+        }
+
+        displayPlaceholder() {
             this.removeChildren();
             this.appendChild(this.placeholder);
+            this.handleEmptyState();
         }
 
         showRenderingError(url: string, errorMessage?: string) {

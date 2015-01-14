@@ -1,42 +1,41 @@
 package com.enonic.wem.portal.internal.rendering;
 
-import java.util.List;
 import java.util.Map;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.rendering.Renderable;
-import com.enonic.xp.portal.PortalContext;
 
+@Component
 public final class RendererFactoryImpl
     implements RendererFactory
 {
     private final Map<Class, Renderer> renderers;
 
-    public RendererFactoryImpl( final List<Renderer> renderers )
+    public RendererFactoryImpl()
     {
         this.renderers = Maps.newHashMap();
-
-        for ( final Renderer renderer : renderers )
-        {
-            this.renderers.put( renderer.getType(), renderer );
-        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends Renderable, CONTEXT extends PortalContext> Renderer<T, CONTEXT> getRenderer( final T renderable )
+    public <R extends Renderable> Renderer<R> getRenderer( final R renderable )
     {
-        return getRenderer( (Class<T>) renderable.getClass() );
+        return getRenderer( (Class<R>) renderable.getClass() );
     }
 
-    private <T extends Renderable, CONTEXT extends PortalContext> Renderer<T, CONTEXT> getRenderer( final Class<T> renderableType )
+    private <R extends Renderable> Renderer<R> getRenderer( final Class<R> renderableType )
     {
         return findRenderer( renderableType );
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Renderable, CONTEXT extends PortalContext> Renderer<T, CONTEXT> findRenderer( final Class<T> type )
+    private <R extends Renderable> Renderer<R> findRenderer( final Class<R> type )
     {
         final Renderer renderer = doResolveRenderer( type );
         if ( renderer == null )
@@ -64,5 +63,16 @@ public final class RendererFactoryImpl
         {
             return renderer;
         }
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addRenderer( final Renderer renderer )
+    {
+        this.renderers.put( renderer.getType(), renderer );
+    }
+
+    public void removeRenderer( final Renderer renderer )
+    {
+        this.renderers.remove( renderer.getType() );
     }
 }

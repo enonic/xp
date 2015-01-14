@@ -27,7 +27,7 @@ public interface ContentService
 
     Content delete( DeleteContentParams params );
 
-    Content push( PushContentParams params );
+    PushContentsResult push( PushContentParams params );
 
     Content duplicate( DuplicateContentParams params );
 

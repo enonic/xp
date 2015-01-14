@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
 import com.enonic.wem.admin.json.content.CompareContentResultsJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
@@ -79,6 +80,7 @@ import com.enonic.wem.api.content.GetActiveContentVersionsParams;
 import com.enonic.wem.api.content.GetActiveContentVersionsResult;
 import com.enonic.wem.api.content.MoveContentParams;
 import com.enonic.wem.api.content.PushContentParams;
+import com.enonic.wem.api.content.PushContentsResult;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.ReorderChildContentsParams;
 import com.enonic.wem.api.content.ReorderChildContentsResult;
@@ -100,14 +102,13 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.workspace.Workspaces;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("admin-login")
 public final class ContentResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     public static final String DEFAULT_SORT_FIELD = "modifiedTime";
 
@@ -146,7 +147,16 @@ public final class ContentResource
     {
         final Content persistedContent;
         final CreateMediaParams createMediaParams = new CreateMediaParams();
-        createMediaParams.parent( ContentPath.from( form.get( "parent" ).getString() ) );
+        final String parentParam = form.get( "parent" ).getString();
+        if ( parentParam.startsWith( "/" ) )
+        {
+            createMediaParams.parent( ContentPath.from( parentParam ) );
+        }
+        else
+        {
+            final Content parentContent = contentService.getById( ContentId.from( parentParam ) );
+            createMediaParams.parent( parentContent.getPath() );
+        }
         createMediaParams.name( form.get( "name" ).getString() );
 
         final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
@@ -298,25 +308,9 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
 
-        final PublishContentResultJson jsonResult = new PublishContentResultJson();
+        final PushContentsResult result = contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, contentIds ) );
 
-        for ( ContentId contentId : contentIds )
-        {
-            try
-            {
-                final Content publishedContent = contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, contentId ) );
-
-                final String displayName = publishedContent.getDisplayName().toString();
-
-                jsonResult.addSuccess( contentId, displayName );
-            }
-            catch ( ContentNotFoundException e )
-            {
-                jsonResult.addFailure( contentId, e.getMessage() );
-            }
-        }
-
-        return jsonResult;
+        return PublishContentResultJson.from( result );
     }
 
     @POST

@@ -1,6 +1,6 @@
 module api.liveedit {
 
-    import Component = api.content.page.Component;
+    import Component = api.content.page.region.Component;
 
     export class ComponentRemoveEvent extends api.event.Event {
 

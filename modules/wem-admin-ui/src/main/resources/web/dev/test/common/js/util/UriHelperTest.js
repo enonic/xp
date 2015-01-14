@@ -76,25 +76,25 @@ describe("api.util.UriHelperTest", function () {
     });
 
     describe("getPortalUri", function () {
-        it("should return '/portal' string if no CONFIG.baseUri is present", function () {
+        it("should return '/admin/portal' string if no CONFIG.baseUri is present", function () {
             var config = window.CONFIG;
             window.CONFIG = undefined;
-            expect(uh.getPortalUri()).toBe('/portal');
-            expect(uh.getPortalUri('a/b/c')).toBe('/portal/a/b/c');
+            expect(uh.getPortalUri()).toBe('/admin/portal');
+            expect(uh.getPortalUri('a/b/c')).toBe('/admin/portal/a/b/c');
             window.CONFIG = config;
         });
-        it("should return CONFIG.baseUri/portal if invalid arguments are passed", function () {
-            var expected = window.CONFIG.baseUri + '/portal';
+        it("should return CONFIG.baseUri/admin/portal if invalid arguments are passed", function () {
+            var expected = window.CONFIG.baseUri + '/admin/portal';
             expect(uh.getPortalUri()).toBe(expected);
             expect(uh.getPortalUri('')).toBe(expected);
             expect(uh.getPortalUri('/')).toBe(expected);
             expect(uh.getPortalUri(null)).toBe(expected);
         });
         it("should escape appended path", function () {
-            expect(uh.getPortalUri('/a/b/c?d=1&e=false&foo=bar')).toBe(window.CONFIG.baseUri + '/portal/a/b/c?d=1&e=false&foo=bar');
+            expect(uh.getPortalUri('/a/b/c?d=1&e=false&foo=bar')).toBe(window.CONFIG.baseUri + '/admin/portal/a/b/c?d=1&e=false&foo=bar');
         });
         it("should append path to base uri", function () {
-            expect(uh.getPortalUri('a/b/c?d=1&e=false&foo=bar')).toBe(window.CONFIG.baseUri + '/portal/a/b/c?d=1&e=false&foo=bar');
+            expect(uh.getPortalUri('a/b/c?d=1&e=false&foo=bar')).toBe(window.CONFIG.baseUri + '/admin/portal/a/b/c?d=1&e=false&foo=bar');
         })
     });
 

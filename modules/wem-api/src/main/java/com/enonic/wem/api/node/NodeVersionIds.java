@@ -10,8 +10,7 @@ import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 public class NodeVersionIds
     extends AbstractImmutableEntitySet<NodeVersionId>
 {
-
-    public NodeVersionIds( final ImmutableSet<NodeVersionId> set )
+    private NodeVersionIds( final ImmutableSet<NodeVersionId> set )
     {
         super( set );
     }
@@ -25,6 +24,7 @@ public class NodeVersionIds
     {
         return new NodeVersionIds( ImmutableSet.copyOf( nodeVersionIds ) );
     }
+
 
     public static Builder create()
     {

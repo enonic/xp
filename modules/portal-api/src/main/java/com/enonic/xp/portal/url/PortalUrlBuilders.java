@@ -22,7 +22,7 @@ public final class PortalUrlBuilders
 
     private <T extends PortalUrlBuilder> T defaults( final T builder )
     {
-        builder.renderMode( this.context.getMode() );
+        builder.baseUri( this.context.getBaseUri() );
         builder.workspace( this.context.getWorkspace() );
         builder.contentPath( getContentPath() );
         return builder;
@@ -30,7 +30,7 @@ public final class PortalUrlBuilders
 
     public GeneralUrlBuilder generalUrl()
     {
-        return new GeneralUrlBuilder();
+        return new GeneralUrlBuilder().baseUri( this.context.getBaseUri() );
     }
 
     public AssetUrlBuilder assetUrl()

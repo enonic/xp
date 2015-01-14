@@ -8,6 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.json.content.ContentListJson;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
@@ -29,13 +30,12 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.SecurityService;
-import com.enonic.xp.web.jaxrs.JaxRsComponent;
 
 @javax.ws.rs.Path(ResourceConstants.REST_ROOT + "content/page/template")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("admin-login")
 public final class PageTemplateResource
-    implements JaxRsComponent
+    implements AdminResource
 {
     protected PageTemplateService pageTemplateService;
 
@@ -131,7 +131,7 @@ public final class PageTemplateResource
                 {
                     if ( pageTemplate.canRender( content.getType() ) )
                     {
-                        return true;
+                        return pageTemplate.hasPage();
                     }
                 }
             }

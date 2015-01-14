@@ -4,9 +4,9 @@ module api.content.page.region {
 
         private name: string;
 
-        private components: api.content.page.Component[] = [];
+        private components: Component[] = [];
 
-        private parent: api.content.page.layout.LayoutComponent;
+        private parent: LayoutComponent;
 
         constructor(builder: RegionBuilder) {
             this.name = builder.name;
@@ -20,9 +20,9 @@ module api.content.page.region {
         }
 
         private checkIllegalLayoutComponentWithinLayoutComponent(component: Component,
-                                                                 parent: api.content.page.layout.LayoutComponent) {
+                                                                 parent: LayoutComponent) {
             var hasParentLayoutComponent = !parent ? false : true;
-            if (hasParentLayoutComponent && api.ObjectHelper.iFrameSafeInstanceOf(component, api.content.page.layout.LayoutComponent)) {
+            if (hasParentLayoutComponent && api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
                 throw new Error("Not allowed to have a LayoutComponent within a LayoutComponent: " +
                                 component.getPath().toString());
             }
@@ -32,20 +32,24 @@ module api.content.page.region {
             return this.name;
         }
 
-        setParent(value: api.content.page.layout.LayoutComponent) {
+        setParent(value: LayoutComponent) {
             this.parent = value;
         }
 
-        getParent(): api.content.page.layout.LayoutComponent {
+        getParent(): LayoutComponent {
             return this.parent;
         }
 
-        getPath(): api.content.page.RegionPath {
+        getPath(): RegionPath {
             var parentPath = null;
             if (this.parent) {
                 parentPath = this.parent.getPath();
             }
-            return new api.content.page.RegionPath(parentPath, this.name);
+            return new RegionPath(parentPath, this.name);
+        }
+
+        isEmpty(): boolean {
+            return !this.components || this.components.length == 0;
         }
 
         ensureUniqueComponentName(wantedName: ComponentName): ComponentName {
@@ -73,7 +77,7 @@ module api.content.page.region {
         /*
          *  Add component after target component. Component will only be added if target component is found.
          */
-        addComponentAfter(component: api.content.page.Component, precedingComponent: Component) {
+        addComponentAfter(component: Component, precedingComponent: Component) {
 
             var precedingIndex = -1;
             if (precedingComponent != null) {
@@ -97,7 +101,7 @@ module api.content.page.region {
             });
         }
 
-        removeComponent(component: api.content.page.Component): api.content.page.Component {
+        removeComponent(component: Component): Component {
             if (!component) {
                 return null;
             }
@@ -116,11 +120,11 @@ module api.content.page.region {
             return component;
         }
 
-        getComponents(): api.content.page.Component[] {
+        getComponents(): Component[] {
             return this.components;
         }
 
-        getComponentByIndex(index: number): api.content.page.Component {
+        getComponentByIndex(index: number): Component {
             var component = this.components[index];
             api.util.assertState(component.getIndex() == index,
                     "Index of Component is not as expected. Expected [" + index + "], was: " + component.getIndex());
@@ -137,9 +141,9 @@ module api.content.page.region {
 
         toJson(): RegionJson {
 
-            var componentJsons: api.content.page.ComponentTypeWrapperJson[] = [];
+            var componentJsons: ComponentTypeWrapperJson[] = [];
 
-            this.components.forEach((component: api.content.page.Component) => {
+            this.components.forEach((component: Component) => {
                 componentJsons.push(component.toJson());
             });
 
@@ -177,15 +181,15 @@ module api.content.page.region {
 
         name: string;
 
-        components: api.content.page.Component[] = [];
+        components: Component[] = [];
 
-        parent: api.content.page.layout.LayoutComponent;
+        parent: LayoutComponent;
 
         constructor(source?: Region, generateNewPropertyIds: boolean = false) {
             if (source) {
                 this.name = source.getName();
                 this.parent = source.getParent(); //TODO; Should clone have same parent at all times?
-                source.getComponents().forEach((component: api.content.page.Component) => {
+                source.getComponents().forEach((component: Component) => {
                     this.components.push(component.clone(generateNewPropertyIds));
                 });
             }
@@ -196,12 +200,12 @@ module api.content.page.region {
             return this;
         }
 
-        public setParent(value: api.content.page.layout.LayoutComponent): RegionBuilder {
+        public setParent(value: LayoutComponent): RegionBuilder {
             this.parent = value;
             return this;
         }
 
-        public addComponent(value: api.content.page.Component): RegionBuilder {
+        public addComponent(value: Component): RegionBuilder {
             this.components.push(value);
             return this;
         }

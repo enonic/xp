@@ -4,6 +4,8 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
+
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
@@ -14,6 +16,7 @@ import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.postprocess.PostProcessInjection;
 
+@Component(immediate = true)
 public final class LiveEditInjection
     implements PostProcessInjection
 {
@@ -30,7 +33,7 @@ public final class LiveEditInjection
     @Override
     public String inject( final PortalContext context, final Tag tag )
     {
-        if ( RenderMode.EDIT != context.getRequest().getMode() )
+        if ( RenderMode.EDIT != context.getMode() )
         {
             return null;
         }

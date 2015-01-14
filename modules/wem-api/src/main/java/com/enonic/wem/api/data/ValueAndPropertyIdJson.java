@@ -25,12 +25,17 @@ public final class ValueAndPropertyIdJson
         if ( property.getType().equals( ValueTypes.PROPERTY_SET ) )
         {
             final PropertySet propertySet = property.getSet();
-            final List<PropertyArrayJson> propertyArrayJsonList = new ArrayList<>();
-            for ( final PropertyArray propertyArray : propertySet.getPropertyArrays() )
+            if ( propertySet != null )
             {
-                propertyArrayJsonList.add( PropertyArrayJson.toJson( propertyArray ) );
+                final List<PropertyArrayJson> propertyArrayJsonList = new ArrayList<>();
+
+                for ( final PropertyArray propertyArray : propertySet.getPropertyArrays() )
+                {
+                    propertyArrayJsonList.add( PropertyArrayJson.toJson( propertyArray ) );
+                }
+                this.set = propertyArrayJsonList;
             }
-            this.set = propertyArrayJsonList;
+            
             this.id = property.getId().toString();
         }
         else
@@ -46,12 +51,19 @@ public final class ValueAndPropertyIdJson
         final Value value;
         if ( type.equals( ValueTypes.PROPERTY_SET ) )
         {
-            final PropertySet newSet = array.newSet();
-            for ( final PropertyArrayJson propertyArrayJson : set )
+            if ( this.set != null )
             {
-                propertyArrayJson.fromJson( newSet );
+                final PropertySet newSet = array.newSet();
+                for ( final PropertyArrayJson propertyArrayJson : set )
+                {
+                    propertyArrayJson.fromJson( newSet );
+                }
+                value = Value.newData( newSet );
             }
-            value = Value.newData( newSet );
+            else
+            {
+                value = Value.newData( null );
+            }
         }
         else
         {

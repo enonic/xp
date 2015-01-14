@@ -4,7 +4,9 @@ package com.enonic.wem.admin.rest.resource.content.json;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.PushContentsResult;
 
 public class PublishContentResultJson
 {
@@ -22,20 +24,31 @@ public class PublishContentResultJson
         return failures;
     }
 
-    public void addSuccess( final ContentId contentId, final String displayName )
+    public PublishContentResultJson()
     {
-        successes.add( new Success( contentId, displayName ) );
     }
 
-    public void addFailure( final ContentId contentId, final String reason )
+    public static PublishContentResultJson from( final PushContentsResult pushContentsResult )
     {
-        failures.add( new Failure( contentId, reason ) );
+        final PublishContentResultJson json = new PublishContentResultJson();
+
+        for ( final Content content : pushContentsResult.getSuccessfull() )
+        {
+            json.successes.add( new Success( content.getId(), content.getDisplayName() ) );
+        }
+
+        for ( final PushContentsResult.Failed failed : pushContentsResult.getFailed() )
+        {
+            json.failures.add( new Failure( failed.getContent().getId(), failed.getReason().getMessage() ) );
+        }
+
+        return json;
     }
 
-    public class Success
+    public static class Success
     {
-
         private String id;
+
         private String name;
 
         public Success( final ContentId contentId, final String displayName )
@@ -55,10 +68,11 @@ public class PublishContentResultJson
         }
     }
 
-    public class Failure
+    public static class Failure
     {
 
         private String id;
+
         private String reason;
 
         public Failure( final ContentId contentId, final String reason )

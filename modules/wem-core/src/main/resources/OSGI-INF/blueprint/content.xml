@@ -21,13 +21,13 @@
 
   <service ref="pageService" auto-export="interfaces"/>
 
-  <bean id="layoutDescriptorService" class="com.enonic.wem.core.content.page.layout.LayoutDescriptorServiceImpl">
+  <bean id="layoutDescriptorService" class="com.enonic.wem.core.content.page.region.LayoutDescriptorServiceImpl">
     <property name="moduleService" ref="moduleService"/>
   </bean>
 
   <service ref="layoutDescriptorService" auto-export="interfaces"/>
 
-  <bean id="partDescriptorService" class="com.enonic.wem.core.content.page.part.PartDescriptorServiceImpl">
+  <bean id="partDescriptorService" class="com.enonic.wem.core.content.page.region.PartDescriptorServiceImpl">
     <property name="moduleService" ref="moduleService"/>
   </bean>
 
@@ -46,7 +46,7 @@
 
   <service ref="pageTemplateService" auto-export="interfaces"/>
 
-  <bean id="componentService" class="com.enonic.wem.core.content.page.ComponentServiceImpl">
+  <bean id="componentService" class="com.enonic.wem.core.content.page.region.ComponentServiceImpl">
     <property name="partDescriptorService" ref="partDescriptorService"/>
     <property name="layoutDescriptorService" ref="layoutDescriptorService"/>
   </bean>

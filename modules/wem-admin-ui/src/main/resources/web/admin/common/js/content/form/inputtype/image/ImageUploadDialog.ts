@@ -11,7 +11,7 @@ module api.content.form.inputtype.image {
 
         private imageUploader: api.content.ImageUploader;
 
-        constructor(parentContent: api.content.ContentPath) {
+        constructor(parentContent: api.content.ContentId) {
             super({
                 title: new api.ui.dialog.ModalDialogHeader("Image uploader")
             });

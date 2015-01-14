@@ -1,0 +1,9 @@
+{
+  "template": null,
+  "controller": "mymodule:default",
+  "regions": {
+    "myRegion": {
+      "components": []
+    }
+  }
+}

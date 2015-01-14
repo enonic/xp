@@ -1,5 +1,8 @@
 package com.enonic.wem.portal.internal.controller;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -9,6 +12,7 @@ import com.enonic.wem.portal.internal.postprocess.PostProcessor;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.ScriptService;
 
+@Component
 public final class ControllerScriptFactoryImpl
     implements ControllerScriptFactory
 {
@@ -56,11 +60,13 @@ public final class ControllerScriptFactoryImpl
         return script.toString() + "_" + Resource.from( script ).getTimestamp();
     }
 
+    @Reference
     public void setScriptService( final ScriptService scriptService )
     {
         this.scriptService = scriptService;
     }
 
+    @Reference
     public void setPostProcessor( final PostProcessor postProcessor )
     {
         this.postProcessor = postProcessor;

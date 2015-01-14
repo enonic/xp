@@ -6,21 +6,15 @@ module app.wizard.page.contextwindow.inspect.page {
     import FormView = api.form.FormView;
     import Content = api.content.Content;
     import Page = api.content.page.Page;
+    import SetTemplate = api.content.page.SetTemplate;
     import PageModel = api.content.page.PageModel;
+    import PageMode = api.content.page.PageMode;
     import SiteModel = api.content.site.SiteModel;
     import LiveEditModel = api.liveedit.LiveEditModel;
-    import ContentTypeName = api.schema.content.ContentTypeName;
     import PageTemplate = api.content.page.PageTemplate;
-    import PageTemplateKey = api.content.page.PageTemplateKey;
     import PageDescriptor = api.content.page.PageDescriptor;
-    import DescriptorKey = api.content.page.DescriptorKey;
     import PageController = api.content.page.inputtype.pagecontroller.PageController;
-    import PageDescriptorDropdown = api.content.page.PageDescriptorDropdown;
-    import GetPageDescriptorsByModulesRequest = api.content.page.GetPageDescriptorsByModulesRequest;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
-    import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
-    import PageDescriptorsJson = api.content.page.PageDescriptorsJson;
-    import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
     export class PageInspectionPanel extends app.wizard.page.contextwindow.inspect.BaseInspectionPanel {
 
@@ -29,8 +23,6 @@ module app.wizard.page.contextwindow.inspect.page {
         private siteModel: SiteModel;
 
         private pageModel: PageModel;
-
-        private contentType: ContentTypeName;
 
         private pageTemplateSelector: PageTemplateSelector;
 
@@ -49,7 +41,6 @@ module app.wizard.page.contextwindow.inspect.page {
             this.liveEditModel = liveEditModel;
             this.pageModel = liveEditModel.getPageModel();
             this.siteModel = liveEditModel.getSiteModel();
-            this.contentType = liveEditModel.getContent().getType();
 
             this.pageTemplateSelector = new PageTemplateSelector();
             this.pageTemplateForm = new PageTemplateForm(this.pageTemplateSelector);
@@ -76,6 +67,22 @@ module app.wizard.page.contextwindow.inspect.page {
                     setPageTemplateForm(this.pageTemplateForm).
                     setModel(liveEditModel);
             }
+
+            this.pageTemplateForm.getSelector().onSelection((pageTemplate: PageTemplate) => {
+                if (pageTemplate) {
+                    new GetPageDescriptorByKeyRequest(pageTemplate.getController()).sendAndParse().
+                        then((pageDescriptor: PageDescriptor) => {
+                            var setTemplate = new SetTemplate(this).
+                                setTemplate(pageTemplate, pageDescriptor);
+                            this.pageModel.setTemplate(setTemplate);
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).done();
+                }
+                else {
+                    this.pageModel.setAutomaticTemplate(this);
+                }
+            });
         }
     }
 
@@ -134,19 +141,19 @@ module app.wizard.page.contextwindow.inspect.page {
             var pageModel = liveEditModel.getPageModel();
 
             this.pageControllerForm.getSelector().setModel(liveEditModel);
-
-            if (pageModel.hasTemplate()) {
-                this.pageTemplateForm.show();
-            }
-            else {
-                this.pageControllerForm.show();
-            }
+            this.pageControllerForm.show();
 
             this.refreshConfigForm(pageModel.getController(), pageModel.getConfig());
 
 
             pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
                 if (event.getPropertyName() == "controller" && this !== event.getSource()) {
+
+                    this.pageControllerForm.show();
+
+                    this.refreshConfigForm(pageModel.getController(), pageModel.getConfig());
+                }
+                else if (event.getPropertyName() == "config" && this !== event.getSource()) {
 
                     this.pageControllerForm.show();
 
@@ -165,14 +172,15 @@ module app.wizard.page.contextwindow.inspect.page {
 
             var pageModel = liveEditModel.getPageModel();
 
-            if (pageModel.hasTemplate()) {
+            var pageMode = pageModel.getMode();
+            if (pageMode == PageMode.FORCED_TEMPLATE) {
 
                 this.pageTemplateForm.getSelector().setModel(liveEditModel);
                 this.pageTemplateForm.show();
 
                 this.showPageConfig(pageModel);
             }
-            else if (pageModel.isUsingDefaultTemplate()) {
+            else if (pageMode == PageMode.AUTOMATIC) {
 
                 this.pageTemplateForm.getSelector().setModel(liveEditModel);
                 this.pageTemplateForm.show();
@@ -180,11 +188,7 @@ module app.wizard.page.contextwindow.inspect.page {
                 this.showDefaultPageTemplateConfig(pageModel);
             }
             else {
-
-                this.pageControllerForm.getSelector().setModel(liveEditModel);
-                this.pageControllerForm.show();
-
-                this.refreshConfigForm(pageModel.getController(), pageModel.getConfig());
+                throw new Error("Unsupported PageMode: " + pageMode);
             }
 
             pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
@@ -197,14 +201,15 @@ module app.wizard.page.contextwindow.inspect.page {
                         this.refreshConfigForm(controller, pageModel.getConfig());
                     }
                 }
-                else if (event.getPropertyName() == "template" && this !== event.getSource()) {
+                else if (event.getPropertyName() == "config" && this !== event.getSource()) {
 
-                    if (pageModel.hasTemplate()) {
-                        this.pageTemplateForm.show();
-                        this.showPageConfig(pageModel);
+                    this.pageTemplateForm.show();
+
+                    if (pageModel.getMode() == PageMode.AUTOMATIC) {
+                        this.showDefaultPageTemplateConfig(pageModel);
                     }
                     else {
-                        this.showDefaultPageTemplateConfig(pageModel);
+                        this.showPageConfig(pageModel);
                     }
                 }
             });
@@ -223,7 +228,7 @@ module app.wizard.page.contextwindow.inspect.page {
         private showDefaultPageTemplateConfig(pageModel: PageModel) {
 
             var controller = pageModel.getDefaultPageTemplateController();
-            var config = pageModel.getDefaultPageTemplate().getConfig().copy();
+            var config = pageModel.getConfig();
             this.refreshConfigForm(controller, config);
         }
     }

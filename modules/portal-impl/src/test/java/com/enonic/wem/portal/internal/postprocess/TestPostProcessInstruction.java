@@ -9,6 +9,6 @@ public final class TestPostProcessInstruction
     @Override
     public String evaluate( final PortalContext context, final String instruction )
     {
-        return instruction;
+        return instruction.startsWith( "TEST " ) ? "Testing" : null;
     }
 }

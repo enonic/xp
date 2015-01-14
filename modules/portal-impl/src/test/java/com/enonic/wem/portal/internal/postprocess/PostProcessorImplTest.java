@@ -1,19 +1,13 @@
 package com.enonic.wem.portal.internal.postprocess;
 
 
-import java.util.List;
-
 import org.junit.Test;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.portal.internal.controller.PortalContextImpl;
-import com.enonic.wem.portal.internal.controller.PortalRequestImpl;
+import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.postprocess.PostProcessInjection;
-import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -26,23 +20,15 @@ public class PostProcessorImplTest
         final String html = readResource( "postProcessSource1.html" );
 
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
-
-        final List<PostProcessInstruction> instructions = Lists.newArrayList();
-        instructions.add( new TestPostProcessInstruction() );
-
-        postProcessor.setInstructions( instructions );
-        postProcessor.setInjections( Lists.newArrayList() );
+        postProcessor.addInstruction( new TestPostProcessInstruction() );
 
         final PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );
         resp.setBody( html );
 
-        final PortalRequestImpl req = new PortalRequestImpl();
-        req.setMethod( "GET" );
-
-        final PortalContextImpl context = new PortalContextImpl();
+        final PortalContext context = new PortalContext();
         context.setResponse( resp );
-        context.setRequest( req );
+        context.setMethod( "GET" );
 
         postProcessor.processResponse( context );
 
@@ -59,23 +45,15 @@ public class PostProcessorImplTest
         final String html = readResource( "postProcessSource2.html" );
 
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
-
-        final List<PostProcessInjection> injections = Lists.newArrayList();
-        injections.add( new TestPostProcessInjection() );
-
-        postProcessor.setInjections( injections );
-        postProcessor.setInstructions( Lists.newArrayList() );
+        postProcessor.addInjection( new TestPostProcessInjection() );
 
         final PortalResponse resp = new PortalResponse();
         resp.setPostProcess( true );
         resp.setBody( html );
 
-        final PortalRequestImpl req = new PortalRequestImpl();
-        req.setMethod( "GET" );
-
-        final PortalContextImpl context = new PortalContextImpl();
+        final PortalContext context = new PortalContext();
         context.setResponse( resp );
-        context.setRequest( req );
+        context.setMethod( "GET" );
 
         postProcessor.processResponse( context );
 

@@ -13,7 +13,7 @@ public interface NodeService
 
     Node rename( RenameNodeParams params );
 
-    Node push( NodeId id, Workspace target );
+    PushNodesResult push( NodeIds ids, Workspace target );
 
     Node deleteById( NodeId id );
 

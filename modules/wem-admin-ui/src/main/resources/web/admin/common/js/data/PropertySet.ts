@@ -10,7 +10,7 @@ module api.data {
 
         private _ifNotNull: boolean = false;
 
-        constructor(tree: PropertyTree) {
+        constructor(tree?: PropertyTree) {
             this.tree = tree;
         }
 
@@ -47,7 +47,6 @@ module api.data {
 
             var array = this.getOrCreatePropertyArray(name, value.getType());
             var property = array.add(value);
-            this.tree.registerProperty(property);
             return property;
         }
 
@@ -74,7 +73,7 @@ module api.data {
         private getOrCreateSet(name: string, index: number): PropertySet {
             var existingProperty = this.getProperty(name, index);
             if (!existingProperty) {
-                var newSet = new PropertySet(this.tree);
+                var newSet = this.tree ? new PropertySet(this.tree) : new PropertySet();
                 this.setProperty(name, index, new Value(newSet, ValueTypes.DATA));
                 return newSet;
             }
@@ -106,12 +105,6 @@ module api.data {
         removeProperty(name: string, index: number) {
             var array: PropertyArray = this.propertyArrayByName[name];
             if (array) {
-                var property = array.get(index);
-                if (!property) {
-                    throw new Error("Property not found: " +
-                                    PropertyPath.fromParent(this.property.getPath(), new PropertyPathElement(name, index)));
-                }
-                this.tree.unregisterProperty(property.getId());
                 array.remove(index);
             }
         }
@@ -214,6 +207,19 @@ module api.data {
             }
         }
 
+        public isNotNull(identifier: any, index?: number): boolean {
+            var property = this.getProperty(identifier, index);
+            if (property == null) {
+                return false;
+            }
+
+            return !property.hasNullValue();
+        }
+
+        public isNull(identifier: any, index?: number): boolean {
+            return !this.isNotNull(identifier, index);
+        }
+
         public equals(o: any): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PropertySet)) {
@@ -229,8 +235,16 @@ module api.data {
             return true;
         }
 
-        toTree(): PropertyTree {
-            return new PropertyTree(this.tree.getIdProvider(), this);
+        toTree(idProvider?: PropertyIdProvider): PropertyTree {
+            if (!this.tree && !idProvider) {
+                throw new Error("The PropertySet must be attached to a PropertyTree or a idProvider must be given before when this method is invoked");
+            }
+            if (idProvider) {
+                return new PropertyTree(idProvider, this);
+            }
+            else {
+                return new PropertyTree(this.tree.getIdProvider(), this);
+            }
         }
 
         copy(destinationTree: PropertyTree, generateNewPropertyIds: boolean = false): PropertySet {
@@ -259,15 +273,29 @@ module api.data {
         // PropertySet methods
 
         newSet(): PropertySet {
+            if (!this.tree) {
+                throw new Error("The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead.");
+            }
             return this.tree.newSet();
         }
 
         addSet(name: string, value?: PropertySet): PropertySet {
             if (!value) {
+                if (!this.tree) {
+                    throw new Error("The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead.");
+                }
                 value = this.tree.newSet();
             }
             this.addProperty(name, new Value(value, ValueTypes.DATA));
             return value;
+        }
+
+        setSet(name: string, index: number, value: PropertySet): Property {
+            return this.setProperty(name, index, new Value(value, ValueTypes.DATA));
+        }
+
+        setSetByPath(path: any, value: PropertySet): Property {
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.DATA))
         }
 
         getSet(identifier: any, index?: number): PropertySet {
@@ -275,6 +303,14 @@ module api.data {
             return !property ? null : property.getSet();
         }
 
+        getSets(name: string): PropertySet[] {
+            var values: PropertySet[] = [];
+            var array = this.getPropertyArray(name);
+            array.forEach((property: Property) => {
+                values.push(property.getSet());
+            });
+            return values;
+        }
 
         // string methods
 
@@ -302,6 +338,15 @@ module api.data {
         getString(identifier: string, index?: number): string {
             var property = this.getProperty(identifier, index);
             return !property ? null : property.getString();
+        }
+
+        getStrings(name: string): string[] {
+            var values: string[] = [];
+            var array = this.getPropertyArray(name);
+            array.forEach((property: Property) => {
+                values.push(property.getString());
+            });
+            return values;
         }
     }
 }

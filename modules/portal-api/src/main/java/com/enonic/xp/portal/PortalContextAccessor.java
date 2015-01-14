@@ -1,5 +1,7 @@
 package com.enonic.xp.portal;
 
+import javax.servlet.http.HttpServletRequest;
+
 public final class PortalContextAccessor
 {
     private final static ThreadLocal<PortalContext> CURRENT = new ThreadLocal<>();
@@ -17,5 +19,15 @@ public final class PortalContextAccessor
     public static void remove()
     {
         CURRENT.remove();
+    }
+
+    public static PortalContext get( final HttpServletRequest req )
+    {
+        return (PortalContext) req.getAttribute( PortalContext.class.getName() );
+    }
+
+    public static void set( final HttpServletRequest req, final PortalContext context )
+    {
+        req.setAttribute( PortalContext.class.getName(), context );
     }
 }

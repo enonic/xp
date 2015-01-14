@@ -12,7 +12,7 @@ public class AttachmentUrlBuilderTest
     {
         final AttachmentUrlBuilder urlBuilder = builders.attachmentUrl();
 
-        assertEquals( "/portal/live/stage/some/path/_/attachment", urlBuilder.toString() );
+        assertEquals( "/portal/stage/some/path/_/attachment", urlBuilder.toString() );
     }
     
     @Test
@@ -20,7 +20,7 @@ public class AttachmentUrlBuilderTest
     {
         final AttachmentUrlBuilder urlBuilder = builders.attachmentUrl().name( "mycv.pdf" );
 
-        assertEquals( "/portal/live/stage/some/path/_/attachment/mycv.pdf", urlBuilder.toString() );
+        assertEquals( "/portal/stage/some/path/_/attachment/mycv.pdf", urlBuilder.toString() );
     }
 
     @Test
@@ -28,7 +28,7 @@ public class AttachmentUrlBuilderTest
     {
         final AttachmentUrlBuilder urlBuilder = builders.attachmentUrl().label( "source" );
 
-        assertEquals( "/portal/live/stage/some/path/_/attachment/source", urlBuilder.toString() );
+        assertEquals( "/portal/stage/some/path/_/attachment/source", urlBuilder.toString() );
     }
 
     @Test
@@ -36,7 +36,7 @@ public class AttachmentUrlBuilderTest
     {
         final AttachmentUrlBuilder urlBuilder = builders.attachmentUrl().mediaId( "123abc" );
 
-        assertEquals( "/portal/live/stage/some/path/_/attachment/id/123abc", urlBuilder.toString() );
+        assertEquals( "/portal/stage/some/path/_/attachment/id/123abc", urlBuilder.toString() );
     }
 
     @Test
@@ -44,7 +44,7 @@ public class AttachmentUrlBuilderTest
     {
         final AttachmentUrlBuilder urlBuilder = builders.attachmentUrl().mediaId( "123abc" ).name( "mycv.pdf" );
 
-        assertEquals( "/portal/live/stage/some/path/_/attachment/id/123abc/mycv.pdf", urlBuilder.toString() );
+        assertEquals( "/portal/stage/some/path/_/attachment/id/123abc/mycv.pdf", urlBuilder.toString() );
     }
 
     @Test
@@ -52,7 +52,7 @@ public class AttachmentUrlBuilderTest
     {
         final AttachmentUrlBuilder urlBuilder = builders.attachmentUrl().mediaId( "123abc" ).label( "source" );
 
-        assertEquals( "/portal/live/stage/some/path/_/attachment/id/123abc/source", urlBuilder.toString() );
+        assertEquals( "/portal/stage/some/path/_/attachment/id/123abc/source", urlBuilder.toString() );
     }
 }
 
