@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
+import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.context.LocalScope;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SecurityService;
@@ -19,6 +21,8 @@ import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
+import com.enonic.wem.api.session.SessionKey;
+import com.enonic.wem.api.session.SimpleSession;
 
 public class AuthResourceTest
     extends AbstractResourceTest
@@ -148,6 +152,38 @@ public class AuthResourceTest
             post().getAsString();
 
         assertJson( "login_failed.json", jsonString );
+    }
+
+    @Test
+    public void testAuthenticated_unauthenticated()
+        throws Exception
+    {
+        String jsonString = request().path( "auth/authenticated" ).get().getAsString();
+
+        assertJson( "authenticated_negative.json", jsonString );
+    }
+
+    @Test
+    public void testAuthenticated_authenticated()
+        throws Exception
+    {
+        final User user = User.create().
+            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            displayName( "User 1" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        final LocalScope localScope = ContextAccessor.current().getLocalScope();
+
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
+        localScope.setAttribute( authInfo );
+        localScope.setSession( new SimpleSession( SessionKey.generate() ) );
+
+        String jsonString = request().path( "auth/authenticated" ).get().getAsString();
+
+        assertJson( "authenticated_success.json", jsonString );
     }
 
 }

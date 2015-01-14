@@ -70,6 +70,8 @@ public class PropertyTreeJsonTest
         arraySet2.addStrings( "string", "b", "c" );
         arraySet2.addLong( "long", 2L );
 
+        tree.addSet( "nullSet", null );
+
         return tree;
     }
 
@@ -94,6 +96,46 @@ public class PropertyTreeJsonTest
 
         // verify serialization against serializationOfDeSerialization
         assertEquals( expectedSerialization, serializationOfDeSerialization );
+    }
+
+    @Test
+    public void serialization_equals_serialization_of_deserialization_nullSet()
+        throws IOException
+    {
+        PropertyTree tree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        tree.addSet( "nullSet", null );
+
+        List<PropertyArrayJson> propertyArrayJson = PropertyTreeJson.toJson( tree );
+
+        // serialize from object
+        String expectedSerialization = jsonTestHelper.objectToString( propertyArrayJson );
+
+        System.out.println( expectedSerialization );
+
+        // de-serialize
+        List<?> parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, List.class );
+
+        // serialize from json
+        String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedData );
+
+        // verify serialization against serializationOfDeSerialization
+        assertEquals( expectedSerialization, serializationOfDeSerialization );
+    }
+
+    @Test
+    public void deserialized_from_serialized_with_null_set()
+        throws IOException
+    {
+        PropertyTree sourceTree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        sourceTree.addSet( "nullSet", null );
+        List<PropertyArrayJson> serializedTree = PropertyTreeJson.toJson( sourceTree );
+
+        // exercise
+        PropertyTree tree = PropertyTreeJson.fromJson( serializedTree );
+
+        // verify
+
+        assertEquals( sourceTree.toString(), tree.toString() );
     }
 
     @Test

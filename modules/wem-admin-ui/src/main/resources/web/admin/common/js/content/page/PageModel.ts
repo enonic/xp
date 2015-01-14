@@ -128,7 +128,7 @@ module api.content.page {
                 var setController = new SetController(eventSource).
                     setDescriptor(null).
                     setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider())).
-                    setRegions(null);
+                    setRegions(new PageRegionsBuilder().build());
                 this.setController(setController);
             }
             else {
@@ -175,7 +175,7 @@ module api.content.page {
 
             var regions = this.defaultTemplate.hasRegions() ?
                           this.defaultTemplate.getRegions().clone() :
-                          null;
+                          new PageRegionsBuilder().build();
 
             var setTemplate = new SetTemplate(eventSource).
                 setTemplate(null, this.defaultTemplateDescriptor).

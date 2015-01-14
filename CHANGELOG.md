@@ -3,7 +3,12 @@
 
 Bugfixes:
 
-  - N/A
+  - Detect if user is authenticated when loading admin home screen (CMS-4880)
+  
+  - Page template regions where stored as null instead of being an empty collection (CMS-4837)
+  
+  - Page template created in Admin Console where not configured with regions from selected page descriptor. Making it also impossible
+   to add components (CMS-4837)
 
 Features:
 

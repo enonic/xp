@@ -38,7 +38,10 @@ public abstract class PropertyVisitor
 
             if ( property.getType().equals( ValueTypes.PROPERTY_SET ) )
             {
-                traverse( property.getSet() );
+                if ( property.hasNotNullValue() )
+                {
+                    traverse( property.getSet() );
+                }
             }
         }
     }

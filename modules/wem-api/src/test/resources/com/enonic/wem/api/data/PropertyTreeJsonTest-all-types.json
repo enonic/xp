@@ -412,5 +412,14 @@
         ]
       }
     ]
+  },
+  {
+    "name": "nullSet",
+    "type": "PropertySet",
+    "values": [
+      {
+        "id": "51"
+      }
+    ]
   }
 ]
