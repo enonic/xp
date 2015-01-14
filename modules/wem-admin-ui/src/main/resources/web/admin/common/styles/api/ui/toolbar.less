@@ -1,9 +1,11 @@
 .toolbar {
-  @toolbar-height: 40px;
+  @toolbar-height: 41px;
 
-  background-color: @admin-bg-light-gray;
+  background-color: transparent;
   height: @toolbar-height;
   overflow: visible; // for the button glow
+  .box-sizing(border-box);
+  border-bottom: 1px solid @admin-bg-light-gray;
 
   .button {
     .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent);

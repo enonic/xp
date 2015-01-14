@@ -30,13 +30,14 @@ module app.view {
             this.activeGrid.onLoaded(() => {
                 this.mask.hide();
             });
-            this.deckPanel.addNavigablePanel(new api.ui.tab.TabBarItem('Active Versions'), this.activeGrid, true);
+
+            this.deckPanel.addNavigablePanel(new api.ui.tab.TabBarItemBuilder().setLabel('Active Versions').build(), this.activeGrid, true);
 
             this.allGrid = new AllContentVersionsTreeGrid();
             this.allGrid.onLoaded(() => {
                 this.mask.hide();
             });
-            this.deckPanel.addNavigablePanel(new api.ui.tab.TabBarItem('All Versions'), this.allGrid);
+            this.deckPanel.addNavigablePanel(new api.ui.tab.TabBarItemBuilder().setLabel('All Versions').build(), this.allGrid);
         }
 
         public setItem(item: ViewItem<ContentSummary>) {

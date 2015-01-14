@@ -1,5 +1,7 @@
 module api.ui.security.acl {
 
+    import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
+
     export enum Access {
         READ,
         WRITE,
@@ -30,7 +32,7 @@ module api.ui.security.acl {
             super("access-selector");
 
             AccessSelector.OPTIONS.forEach((option: AccessSelectorOption, index: number) => {
-                var menuItem = new api.ui.tab.TabMenuItemBuilder().setLabel(option.name).build();
+                var menuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(option.name)).build();
                 this.addNavigationItem(menuItem);
             });
 

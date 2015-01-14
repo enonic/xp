@@ -37,7 +37,7 @@ module api.ui.tab {
             });
             this.appendChild(this.tabMenuButton);
 
-            this.menuEl = new api.dom.UlEl();
+            this.menuEl = new api.dom.UlEl("menu");
             this.appendChild(this.menuEl);
 
             api.dom.Body.get().onClicked((event: MouseEvent) => new HideTabMenuEvent(this).fire());
@@ -141,13 +141,13 @@ module api.ui.tab {
         }
 
         private initializeNewItemEvents(tab: TabMenuItem) {
-            tab.onSelected((event: TabMenuItemSelectedEvent) => {
+            tab.onSelected((event: TabItemSelectedEvent) => {
                 this.selectNavigationItem(event.getTab().getIndex());
                 if (this.hideOnItemClick) {
                     this.hideMenu();
                 }
             });
-            tab.onLabelChanged((event: TabMenuItemLabelChangedEvent) => {
+            tab.onLabelChanged((event: TabItemLabelChangedEvent) => {
                 this.setButtonLabel(event.getNewValue());
             });
 
