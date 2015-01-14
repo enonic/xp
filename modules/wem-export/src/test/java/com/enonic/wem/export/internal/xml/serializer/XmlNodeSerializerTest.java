@@ -8,9 +8,13 @@ import java.util.TimeZone;
 
 import org.junit.Test;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.AttachedBinary;
@@ -23,8 +27,11 @@ import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.Link;
 import com.enonic.wem.api.util.Reference;
+import com.enonic.wem.export.internal.builder.PropertyTreeXmlBuilder;
 import com.enonic.wem.export.internal.xml.XmlNode;
 import com.enonic.wem.export.internal.xml.mapper.XmlNodeMapper;
+
+import static org.junit.Assert.*;
 
 public class XmlNodeSerializerTest
     extends BaseXmlSerializerTest
@@ -47,11 +54,24 @@ public class XmlNodeSerializerTest
 
         assertXml( "node.xml", result );
 
-        // TODO: Uncomment and make it work
-        //XmlNode parsedXmlNode = serializer.parse( ByteSource.wrap( result.getBytes() ) );
-        //PropertyTree parsedNodeData = PropertyTreeXmlBuilder.build( parsedXmlNode.getData() );
+        XmlNode parsedXmlNode = serializer.parse( ByteSource.wrap( result.getBytes() ) );
+        PropertyTree parsedNodeData = PropertyTreeXmlBuilder.build( parsedXmlNode.getData() );
 
-        //assertEquals( node.data(), parsedNodeData );
+        final PropertyTree expectedTree = node.data();
+        assertEquals( expectedTree.getTotalSize(), parsedNodeData.getTotalSize() );
+        assertEquals( expectedTree.toString(), parsedNodeData.toString() );
+
+        final PropertyVisitor visitor = new PropertyVisitor()
+        {
+            @Override
+            public void visit( final Property property )
+            {
+                final Property actualProperty = parsedNodeData.getProperty( property.getPath() );
+                assertEquals( property.getValue(), actualProperty.getValue() );
+            }
+        };
+
+        visitor.traverse( expectedTree );
     }
 
     @Test
@@ -77,9 +97,10 @@ public class XmlNodeSerializerTest
 
     private Node doCreateNode( final Instant instant )
     {
-        final PropertyTree propertyTree = new PropertyTree();
+        final PropertyTree propertyTree = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
 
         propertyTree.addString( "myString", "myStringValue" );
+        propertyTree.addString( "myString", "myStringValue2" );
         propertyTree.addBoolean( "myBoolean", true );
         propertyTree.addDouble( "myDouble", 123.1 );
         propertyTree.addHtmlPart( "myHtmlPart", "<h1>This is the title</h1><h2>This is the subheading</h2>" );

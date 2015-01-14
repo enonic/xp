@@ -3,6 +3,7 @@
   <nodeType>content</nodeType>
   <data>
     <string name="myString">myStringValue</string>
+    <string name="myString">myStringValue2</string>
     <string isNull="true" name="myString"/>
     <boolean name="myBoolean">true</boolean>
     <double name="myDouble">123.1</double>

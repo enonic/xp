@@ -16,6 +16,7 @@ import com.enonic.wem.export.internal.xml.XmlDoubleProperty;
 import com.enonic.wem.export.internal.xml.XmlGeoPointProperty;
 import com.enonic.wem.export.internal.xml.XmlHtmlPartProperty;
 import com.enonic.wem.export.internal.xml.XmlLinkProperty;
+import com.enonic.wem.export.internal.xml.XmlLocalDateTimeProperty;
 import com.enonic.wem.export.internal.xml.XmlLongProperty;
 import com.enonic.wem.export.internal.xml.XmlPropertySet;
 import com.enonic.wem.export.internal.xml.XmlPropertyTree;
@@ -104,29 +105,60 @@ public class PropertyTreeXmlBuilder
             {
                 addBinaryReferenceProperty( (XmlBinaryReferenceProperty) propertyValue, propertySet );
             }
+            else if ( propertyValue instanceof XmlLocalDateTimeProperty )
+            {
+                addLocalDateTimeProperty( (XmlLocalDateTimeProperty) propertyValue, propertySet );
+            }
         }
     }
 
     private static void addPropertySet( final XmlPropertySet propertyValue, final PropertySet propertySet )
     {
-        final PropertySet childSet = propertySet.addSet( propertyValue.getName() );
-
-        doParsePropertyElementList( childSet, propertyValue.getList() );
+        if ( propertyValue.isIsNull() != null && propertyValue.isIsNull() )
+        {
+            propertySet.addSet( propertyValue.getName(), null );
+        }
+        else
+        {
+            final PropertySet childSet = propertySet.addSet( propertyValue.getName() );
+            doParsePropertyElementList( childSet, propertyValue.getList() );
+        }
     }
 
     private static void addStringProperty( final XmlStringProperty xmlProperty, final PropertySet propertySet )
     {
-        propertySet.addString( xmlProperty.getName(), xmlProperty.getValue() );
+        if ( xmlProperty.isIsNull() != null && xmlProperty.isIsNull() )
+        {
+            propertySet.addString( xmlProperty.getName(), null );
+        }
+        else
+        {
+            propertySet.addString( xmlProperty.getName(), xmlProperty.getValue() );
+        }
     }
 
     private static void addXmlProperty( final XmlXmlProperty xmlProperty, final PropertySet propertySet )
     {
-        propertySet.addXml( xmlProperty.getName(), XmlStringEscaper.unescapeContent( xmlProperty.getValue() ) );
+        if ( xmlProperty.isIsNull() != null && xmlProperty.isIsNull() )
+        {
+            propertySet.addXml( xmlProperty.getName(), null );
+        }
+        else
+        {
+            propertySet.addXml( xmlProperty.getName(), XmlStringEscaper.unescapeContent( xmlProperty.getValue() ) );
+        }
     }
 
     private static void addHtmlPartProperty( final XmlHtmlPartProperty xmlProperty, final PropertySet propertySet )
     {
-        propertySet.addHtmlPart( xmlProperty.getName(), XmlStringEscaper.unescapeContent( xmlProperty.getValue() ) );
+        if ( xmlProperty.isIsNull() != null && xmlProperty.isIsNull() )
+        {
+            propertySet.addHtmlPart( xmlProperty.getName(), null );
+        }
+        else
+        {
+            propertySet.addHtmlPart( xmlProperty.getName(), XmlStringEscaper.unescapeContent( xmlProperty.getValue() ) );
+        }
     }
 
     private static void addBooleanProperty( final XmlBooleanProperty xmlProperty, final PropertySet propertySet )
@@ -178,4 +210,10 @@ public class PropertyTreeXmlBuilder
     {
         propertySet.addBinaryReference( xmlProperty.getName(), BinaryReference.from( xmlProperty.getValue() ) );
     }
+
+    private static void addLocalDateTimeProperty( final XmlLocalDateTimeProperty xmlProperty, final PropertySet propertySet )
+    {
+        propertySet.addLocalDateTime( xmlProperty.getName(), XmlDateTimeConverter.toLocalDateTime( xmlProperty.getValue() ) );
+    }
+
 }
