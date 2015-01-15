@@ -36,13 +36,20 @@ class BundleResource
     @Override
     public String getName()
     {
-        return null;
+        if ( this.path.equals( "/" ) )
+        {
+            return "";
+        }
+        else
+        {
+            return this.path.substring( this.path.lastIndexOf( '/' ) );
+        }
     }
 
     @Override
     public String getPath()
     {
-        return null;
+        return this.path;
     }
 
     @Override
