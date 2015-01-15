@@ -27,7 +27,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wem-core</artifactId>
+      <artifactId>core-impl</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

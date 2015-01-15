@@ -36,7 +36,7 @@
     <bundle start-level="50">mvn:com.enonic.wem/core-relationship/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/core-schema/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/core-export/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/wem-core/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/core-impl/${project.version}</bundle>
 
     <bundle start-level="50">mvn:com.enonic.wem/web-api/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/web-impl/${project.version}</bundle>
