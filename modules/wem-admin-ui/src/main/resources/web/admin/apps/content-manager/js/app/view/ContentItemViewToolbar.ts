@@ -3,7 +3,6 @@ module app.view {
     export interface ContentItemViewToolbarParams {
         editAction: api.ui.Action;
         deleteAction: api.ui.Action;
-        closeAction: api.ui.Action;
     }
 
     export class ContentItemViewToolbar extends api.ui.toolbar.Toolbar {
@@ -12,8 +11,6 @@ module app.view {
             super();
             super.addAction(params.editAction);
             super.addAction(params.deleteAction);
-            super.addGreedySpacer();
-            super.addAction(params.closeAction);
         }
     }
 }

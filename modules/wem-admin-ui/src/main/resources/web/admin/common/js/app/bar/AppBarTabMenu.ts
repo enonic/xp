@@ -8,7 +8,7 @@ module api.app.bar {
 
     export class AppBarTabMenu extends api.ui.tab.TabMenu {
 
-        static TAB_WIDTH: number = 180;
+        static TAB_WIDTH: number = 190;
 
         private appBarTabMenuButton: AppBarTabMenuButton;
 

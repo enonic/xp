@@ -3,7 +3,6 @@ module app.wizard {
     export interface UserStoreWizardToolbarParams {
         saveAction:api.ui.Action;
         deleteAction:api.ui.Action;
-        closeAction:api.ui.Action;
     }
 
     export class UserStoreWizardToolbar extends api.ui.toolbar.Toolbar {
@@ -12,8 +11,6 @@ module app.wizard {
             super();
             super.addAction(params.saveAction);
             super.addAction(params.deleteAction);
-            super.addAction(params.closeAction);
-            super.addGreedySpacer();
         }
     }
 }
