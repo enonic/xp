@@ -125,7 +125,9 @@ public class ContentNodeTranslator
             hasChildren( node.getHasChildren() ).
             childOrder( node.getChildOrder() ).
             permissions( node.getPermissions() ).
-            inheritPermissions( node.inheritsPermissions() );
+            inheritPermissions( node.inheritsPermissions() ).
+            owner( node.getOwner() ).
+            language( node.getLanguage() );
 
         return builder.build();
     }
@@ -144,6 +146,8 @@ public class ContentNodeTranslator
             editableNode.data = data;
             editableNode.permissions = content.getPermissions();
             editableNode.inheritPermissions = content.inheritsPermissions();
+            editableNode.owner = content.getOwner();
+            editableNode.language = content.getLanguage();
         };
     }
 

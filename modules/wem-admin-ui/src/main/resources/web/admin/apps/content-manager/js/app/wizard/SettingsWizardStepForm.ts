@@ -20,7 +20,7 @@ module app.wizard {
         constructor() {
             super("settings-wizard-step-form");
 
-            this.localeCombo = new LocaleComboBox();
+            this.localeCombo = new LocaleComboBox(1);
             var localeFormItem = new FormItemBuilder(this.localeCombo).
                 setLabel('Language').
                 setValidator(Validators.required).
@@ -54,15 +54,22 @@ module app.wizard {
             this.localeCombo.setValue(model.getLanguage());
 
             // 2-way data binding
-            this.ownerCombo.onChange((event: Event) => {
-                // silent to avoid triggering input update on model change
-                model.setOwner((<HTMLSelectElement> event.target).value, true);
-            });
-            this.localeCombo.onChange((event: Event) => {
-                model.setLanguage((<HTMLSelectElement> event.target).value, true);
-            });
+            var ownerListener = () => {
+                debugger;
+                model.setOwner(this.ownerCombo.getValue(), true);
+            };
+            this.ownerCombo.onOptionSelected((event) => ownerListener());
+            this.ownerCombo.onOptionDeselected((option) => ownerListener());
+
+            var localeListener = () => {
+                debugger;
+                model.setLanguage(this.localeCombo.getValue(), true);
+            };
+            this.localeCombo.onOptionSelected((event) => localeListener());
+            this.localeCombo.onOptionDeselected((option) => localeListener());
 
             model.onPropertyChanged((event: api.PropertyChangedEvent) => {
+                debugger;
                 switch (event.getPropertyName()) {
                 case ContentSettingsModel.PROPERTY_LANG:
                     this.localeCombo.setValue(event.getNewValue());

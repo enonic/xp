@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity.json;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
@@ -72,6 +73,12 @@ final class NodeJson
     @JsonProperty("attachedBinaries")
     private List<AttachedBinaryJson> attachedBinaries;
 
+    @JsonProperty("owner")
+    private String owner;
+
+    @JsonProperty("language")
+    private String language;
+
     public Node fromJson()
     {
         return Node.newNode().
@@ -91,6 +98,8 @@ final class NodeJson
             inheritPermissions( this.inheritPermissions ).
             nodeType( NodeType.from( this.nodeType ) ).
             attachedBinaries( fromNodeAttahcedBinaryJsonList( attachedBinaries ) ).
+            owner( this.owner != null ? PrincipalKey.from( this.owner ) : null ).
+            language( this.language != null ? Locale.forLanguageTag( this.language ) : null ).
             build();
     }
 
@@ -135,6 +144,8 @@ final class NodeJson
         json.inheritPermissions = node.inheritsPermissions();
         json.nodeType = node.getNodeType().getName();
         json.attachedBinaries = toNodeAttachedBinaryJsonList( node.getAttachedBinaries() );
+        json.owner = node.getOwner() != null ? node.getOwner().toString() : null;
+        json.language = node.getLanguage() != null ? node.getLanguage().toLanguageTag() : null;
         return json;
     }
 

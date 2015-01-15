@@ -1,8 +1,11 @@
 package com.enonic.wem.api.content;
 
 
+import java.util.Locale;
+
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.thumb.Thumbnail;
 
@@ -26,6 +29,10 @@ public class EditableContent
 
     public AccessControlList permissions;
 
+    public PrincipalKey owner;
+
+    public Locale language;
+
     public EditableContent( final Content source )
     {
         this.source = source;
@@ -37,6 +44,8 @@ public class EditableContent
         this.thumbnail = source.getThumbnail();
         this.inheritPermissions = source.inheritsPermissions();
         this.permissions = source.getPermissions();
+        this.owner = source.getOwner();
+        this.language = source.getLanguage();
     }
 
     public Content build()
@@ -50,6 +59,8 @@ public class EditableContent
         builder.thumbnail( thumbnail );
         builder.inheritPermissions( inheritPermissions );
         builder.permissions( permissions );
+        builder.owner( owner );
+        builder.language( language );
         return builder.build();
     }
 }

@@ -5,11 +5,16 @@ module api.util.loader {
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
 
+    enum LoaderStatus {
+        LOADING,
+        LOADED
+    }
+
     export class BaseLoader<JSON, OBJECT> {
 
         private request: api.rest.ResourceRequest<JSON, OBJECT[]>;
 
-        private isLoading: boolean;
+        private status: LoaderStatus;
 
         private results: OBJECT[];
 
@@ -20,7 +25,6 @@ module api.util.loader {
         private loadingDataListeners: {(event: LoadingDataEvent):void}[] = [];
 
         constructor(request: api.rest.ResourceRequest<JSON, OBJECT[]>) {
-            this.isLoading = false;
             this.setRequest(request);
         }
 
@@ -29,20 +33,19 @@ module api.util.loader {
         }
 
         load(): void {
-            this.isLoading = true;
             this.notifyLoadingData();
             this.sendRequest().done((results: OBJECT[]) => {
                 this.results = results;
-                this.isLoading = false;
                 this.notifyLoadedData(results);
             });
         }
 
-        loading(isLoading?: boolean): boolean {
-            if (typeof isLoading == 'boolean') {
-                this.isLoading = isLoading;
-            }
-            return this.isLoading;
+        isLoading(): boolean {
+            return this.status == LoaderStatus.LOADING;
+        }
+
+        isLoaded(): boolean {
+            return this.status == LoaderStatus.LOADED;
         }
 
         setRequest(request: api.rest.ResourceRequest<JSON, OBJECT[]>) {
@@ -71,12 +74,14 @@ module api.util.loader {
         }
 
         notifyLoadedData(results: OBJECT[]) {
+            this.status = LoaderStatus.LOADED;
             this.loadedDataListeners.forEach((listener: (event: LoadedDataEvent<OBJECT>)=>void)=> {
                 listener.call(this, new LoadedDataEvent<OBJECT>(results));
             });
         }
 
         notifyLoadingData() {
+            this.status = LoaderStatus.LOADING;
             this.loadingDataListeners.forEach((listener: (event: LoadingDataEvent)=>void)=> {
                 listener.call(this, new LoadingDataEvent());
             });

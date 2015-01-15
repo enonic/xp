@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.ws.rs.core.MediaType;
@@ -816,6 +817,7 @@ public class ContentResourceTest
             name( name ).
             createdTime( Instant.parse( this.currentTime ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
+            language( Locale.ENGLISH ).
             displayName( "My Content" ).
             modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
@@ -833,6 +835,7 @@ public class ContentResourceTest
             name( name ).
             createdTime( Instant.parse( this.currentTime ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
+            language( Locale.ENGLISH ).
             displayName( "My Content" ).
             modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).

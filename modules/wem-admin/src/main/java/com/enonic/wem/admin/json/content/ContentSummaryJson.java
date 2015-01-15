@@ -75,6 +75,11 @@ public class ContentSummaryJson
         return content.getOwner() != null ? content.getOwner().toString() : null;
     }
 
+    public String getLanguage()
+    {
+        return content.getLanguage() != null ? content.getLanguage().toLanguageTag() : null;
+    }
+
     public boolean getIsRoot()
     {
         return content.isRoot();

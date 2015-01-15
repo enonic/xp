@@ -1,43 +1,44 @@
 {
-  "attachments": [],
-  "childOrder": null,
-  "createdTime": "2013-08-23T12:55:09.162Z",
-  "creator": "user:system:admin",
-  "data": [],
-  "deletable": true,
-  "displayName": "My Content",
-  "editable": true,
-  "hasChildren": false,
-  "iconUrl": "/admin/rest/schema/content/icon/mymodule:content-type?hash=f95b70fdc3088560732a5ac135644506",
-  "id": "content-id",
-  "inheritPermissions": true,
-  "isDraft": false,
-  "isPage": false,
-  "isRoot": true,
-  "meta": [
-    {
-      "data": [
+    "attachments": [],
+    "childOrder": null,
+    "createdTime": "2013-08-23T12:55:09.162Z",
+    "creator": "user:system:admin",
+    "data": [],
+    "deletable": true,
+    "displayName": "My Content",
+    "editable": true,
+    "hasChildren": false,
+    "iconUrl": "/admin/rest/schema/content/icon/mymodule:content-type?hash=f95b70fdc3088560732a5ac135644506",
+    "id": "content-id",
+    "inheritPermissions": true,
+    "isDraft": false,
+    "isPage": false,
+    "isRoot": true,
+    "language": "en",
+    "meta": [
         {
-          "name": "myProperty",
-          "type": "Long",
-          "values": [
-            {
-              "id": "1",
-              "v": 1
-            }
-          ]
+            "data": [
+                {
+                    "name": "myProperty",
+                    "type": "Long",
+                    "values": [
+                        {
+                            "id": "1",
+                            "v": 1
+                        }
+                    ]
+                }
+            ],
+            "name": "myModule:myField"
         }
-      ],
-      "name": "myModule:myField"
-    }
-  ],
-  "modifiedTime": "2013-08-23T12:55:09.162Z",
-  "modifier": "user:system:admin",
-  "name": "content-name",
-  "owner": "user:myStore:me",
-  "page": null,
-  "path": "/content-name",
-  "permissions": [],
-  "thumbnail": null,
-  "type": "mymodule:content-type"
+    ],
+    "modifiedTime": "2013-08-23T12:55:09.162Z",
+    "modifier": "user:system:admin",
+    "name": "content-name",
+    "owner": "user:myStore:me",
+    "page": null,
+    "path": "/content-name",
+    "permissions": [],
+    "thumbnail": null,
+    "type": "mymodule:content-type"
 }
