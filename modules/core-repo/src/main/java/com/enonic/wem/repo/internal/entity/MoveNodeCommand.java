@@ -74,7 +74,7 @@ public class MoveNodeCommand
             {
                 if ( !overwriteExisting )
                 {
-                    throw new MoveNodeException( "Node already exist at path: '" + existingNode.path() );
+                    throw new MoveNodeException( "Node already exist at path: " + existingNode.path() );
                 }
                 else
                 {
