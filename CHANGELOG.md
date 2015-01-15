@@ -16,8 +16,10 @@ Features:
 
 Refactoring:
 
-  - N/A
-
+  - Renamed module wem-export to core-export (CMS-4893)
+  - Renamed module wem-script to portal-script (CMS-4896)
+  - Moved security integration tests into core-security (CMS-4897)
+  - Merged wem-jsapi and portal-jslib modules into portal-jslib (CMS-4898)
 
 ## RC1 (2015-01-13)
 

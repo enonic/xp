@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.jslib.impl;
+package com.enonic.xp.portal.jslib.content;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -8,12 +8,10 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.script.command.CommandHandler;
-import com.enonic.wem.script.mapper.ContentFixtures;
 import com.enonic.xp.portal.jslib.AbstractHandlerTest;
 
-public class GetSiteHandlerTest
+public class GetContentHandlerTest
     extends AbstractHandlerTest
 {
     private ContentService contentService;
@@ -24,28 +22,18 @@ public class GetSiteHandlerTest
     {
         this.contentService = Mockito.mock( ContentService.class );
 
-        final GetSiteHandler handler = new GetSiteHandler();
+        final GetContentHandler handler = new GetContentHandler();
         handler.setContentService( this.contentService );
 
         return handler;
     }
 
     @Test
-    public void getCurrentSite()
-        throws Exception
-    {
-        final Site site = ContentFixtures.newSite();
-        context.setSite( site );
-
-        execute( "getCurrentSite" );
-    }
-
-    @Test
     public void getById()
         throws Exception
     {
-        final Site site = ContentFixtures.newSite();
-        Mockito.when( contentService.getNearestSite( site.getId() ) ).thenReturn( site );
+        final Content content = ContentFixtures.newContent();
+        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
         execute( "getById" );
     }
@@ -56,9 +44,6 @@ public class GetSiteHandlerTest
     {
         final Content content = ContentFixtures.newContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
-
-        final Site site = ContentFixtures.newSite();
-        Mockito.when( contentService.getNearestSite( content.getId() ) ).thenReturn( site );
 
         execute( "getByPath" );
     }
