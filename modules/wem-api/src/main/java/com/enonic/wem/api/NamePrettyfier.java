@@ -21,8 +21,17 @@ public class NamePrettyfier
 
     private final static Pattern STRIP_ENDING_PATTERN = Pattern.compile( "(.*[^\\.|\\-|_])([\\.|\\-|_]+)$" );
 
+    public static String create( final String str )
+    {
+        return create( str, true );
+    }
 
-    public static String prettifyName( final String originalName, final boolean transliterate )
+    public static String create( final String originalName, final boolean transliterate )
+    {
+        return doCreate( originalName, transliterate );
+    }
+
+    private static String doCreate( final String originalName, final boolean transliterate )
     {
         if ( StringUtils.isBlank( originalName ) )
         {
@@ -147,15 +156,10 @@ public class NamePrettyfier
             return "";
         }
 
-        return create( prettifiedName );
+        return processChars( prettifiedName.toCharArray() );
     }
 
-    public static String create( String str )
-    {
-        return create( str.toCharArray() );
-    }
-
-    private static String create( char[] chars )
+    private static String processChars( char[] chars )
     {
         final StringBuilder str = new StringBuilder();
         for ( char ch : chars )
