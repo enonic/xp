@@ -1,6 +1,8 @@
 package com.enonic.wem.core.content;
 
 import org.apache.commons.lang.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +31,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 
+@Component(immediate = true, service = ContentNodeTranslator.class)
 public class ContentNodeTranslator
 {
     private final static Logger LOG = LoggerFactory.getLogger( ContentNodeTranslator.class );
@@ -170,9 +173,9 @@ public class ContentNodeTranslator
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 
+    @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
     }
-
 }

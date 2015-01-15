@@ -5,6 +5,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,6 +72,7 @@ import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.util.BinaryReference;
 
+@Component(immediate = true)
 public class ContentServiceImpl
     implements ContentService
 {
@@ -519,26 +522,31 @@ public class ContentServiceImpl
         return nodeService.getBinary( NodeId.from( contentId.toString() ), binaryReference );
     }
 
+    @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
     }
 
+    @Reference
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
     }
 
+    @Reference
     public void setContentNodeTranslator( final ContentNodeTranslator contentNodeTranslator )
     {
         this.contentNodeTranslator = contentNodeTranslator;
     }
 
+    @Reference
     public void setEventPublisher( final EventPublisher eventPublisher )
     {
         this.eventPublisher = eventPublisher;
     }
 
+    @Reference
     public void setMediaInfoService( final MediaInfoService mediaInfoService )
     {
         this.mediaInfoService = mediaInfoService;

@@ -1,5 +1,8 @@
 package com.enonic.wem.core.content.page.region;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.region.LayoutDescriptor;
 import com.enonic.wem.api.content.page.region.LayoutDescriptorService;
@@ -8,6 +11,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleService;
 
+@Component
 public final class LayoutDescriptorServiceImpl
     implements LayoutDescriptorService
 {
@@ -28,6 +32,7 @@ public final class LayoutDescriptorServiceImpl
         return new GetLayoutDescriptorsByModulesCommand().moduleService( this.moduleService ).moduleKeys( moduleKeys ).execute();
     }
 
+    @Reference
     public void setModuleService( final ModuleService moduleService )
     {
         this.moduleService = moduleService;

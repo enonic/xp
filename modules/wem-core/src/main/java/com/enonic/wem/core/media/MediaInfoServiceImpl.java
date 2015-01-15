@@ -9,6 +9,8 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -19,6 +21,7 @@ import com.enonic.wem.api.media.MediaInfo;
 import com.enonic.wem.api.media.MediaInfoService;
 import com.enonic.wem.api.util.Exceptions;
 
+@Component
 public final class MediaInfoServiceImpl
     implements MediaInfoService
 {
@@ -67,11 +70,13 @@ public final class MediaInfoServiceImpl
         return metadata;
     }
 
+    @Reference
     public void setParser( final Parser parser )
     {
         this.parser = parser;
     }
 
+    @Reference
     public void setDetector( final Detector detector )
     {
         this.detector = detector;

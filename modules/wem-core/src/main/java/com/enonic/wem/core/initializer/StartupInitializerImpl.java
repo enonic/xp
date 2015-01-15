@@ -1,5 +1,15 @@
 package com.enonic.wem.core.initializer;
 
+import java.util.List;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+import com.google.common.collect.Lists;
+
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.initializer.DataInitializer;
 import com.enonic.wem.api.initializer.RepositoryInitializer;
@@ -8,6 +18,7 @@ import com.enonic.wem.api.security.SecurityInitializer;
 import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.core.content.ContentInitializer;
 
+@Component(immediate = true)
 public final class StartupInitializerImpl
     implements StartupInitializer
 {
@@ -17,7 +28,12 @@ public final class StartupInitializerImpl
 
     private ContentInitializer contentInitializer;
 
-    private Iterable<DataInitializer> initializers;
+    private final List<DataInitializer> initializers;
+
+    public StartupInitializerImpl()
+    {
+        this.initializers = Lists.newArrayList();
+    }
 
     public void cleanData()
         throws Exception
@@ -27,6 +43,7 @@ public final class StartupInitializerImpl
         initializeContent();
     }
 
+    @Activate
     public void start()
     {
         initializeRepositories( false );
@@ -71,23 +88,32 @@ public final class StartupInitializerImpl
         securityInitializer.init();
     }
 
+    @Reference
     public void setRepositoryInitializer( final RepositoryInitializer repositoryInitializer )
     {
         this.repositoryInitializer = repositoryInitializer;
     }
 
-    public void setInitializers( final Iterable<DataInitializer> initializers )
-    {
-        this.initializers = initializers;
-    }
-
+    @Reference
     public void setSecurityInitializer( final SecurityInitializer securityInitializer )
     {
         this.securityInitializer = securityInitializer;
     }
 
+    @Reference
     public void setContentInitializer( final ContentInitializer contentInitializer )
     {
         this.contentInitializer = contentInitializer;
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addInitializer( final DataInitializer initializer )
+    {
+        this.initializers.add( initializer );
+    }
+
+    public void removeInitializer( final DataInitializer initializer )
+    {
+        this.initializers.remove( initializer );
     }
 }

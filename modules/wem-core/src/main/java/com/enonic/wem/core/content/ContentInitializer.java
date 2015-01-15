@@ -1,5 +1,7 @@
 package com.enonic.wem.core.content;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +11,7 @@ import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeService;
 
+@Component(immediate = true, service = ContentInitializer.class)
 public class ContentInitializer
 {
     private final static Logger LOG = LoggerFactory.getLogger( ContentInitializer.class );
@@ -47,6 +50,7 @@ public class ContentInitializer
         }
     }
 
+    @Reference
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;

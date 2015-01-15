@@ -1,6 +1,9 @@
 package com.enonic.wem.core.content.page;
 
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
@@ -13,6 +16,7 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.PageTemplates;
 
+@Component(immediate = true)
 public final class PageTemplateServiceImpl
     implements PageTemplateService
 {
@@ -63,11 +67,13 @@ public final class PageTemplateServiceImpl
             execute();
     }
 
+    @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
     }
 
+    @Reference
     public void setPageService( final PageService pageService )
     {
         this.pageService = pageService;

@@ -1,5 +1,8 @@
 package com.enonic.wem.core.content.page;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
@@ -7,6 +10,7 @@ import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.UpdatePageParams;
 
+@Component(immediate = true)
 public final class PageServiceImpl
     implements PageService
 {
@@ -42,6 +46,7 @@ public final class PageServiceImpl
             execute();
     }
 
+    @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
