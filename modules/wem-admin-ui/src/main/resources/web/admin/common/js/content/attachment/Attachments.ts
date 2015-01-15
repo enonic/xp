@@ -1,6 +1,6 @@
 module api.content.attachment {
 
-    export class Attachments {
+    export class Attachments implements api.Equitable {
 
         private attachmentByName: {[s:string] : Attachment;} = {};
 
@@ -42,6 +42,20 @@ module api.content.attachment {
 
         getSize(): number {
             return this.size;
+        }
+
+        equals(o: api.Equitable): boolean {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Attachments)) {
+                return false;
+            }
+
+            var other = <Attachments>o;
+
+            if (!api.ObjectHelper.arrayEquals(this.attachments, other.attachments)) {
+                return false;
+            }
+
+            return true;
         }
     }
 

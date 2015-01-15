@@ -337,6 +337,31 @@ module app.wizard {
                 else {
 
                     console.warn("Received Content from server differs from what's viewed:");
+                    if (!viewedContent.getContentData().equals(persistedContent.getContentData())) {
+                        console.warn(" inequality found in Content.data");
+                        if (persistedContent.getContentData() && viewedContent.getContentData()) {
+                            console.warn(" comparing persistedContent.data against viewedContent.data:");
+                            new api.data.PropertyTreeComparator().compareTree(persistedContent.getContentData(),
+                                viewedContent.getContentData());
+                        }
+                    }
+                    if (!api.ObjectHelper.equals(viewedContent.getPage(), persistedContent.getPage())) {
+                        console.warn(" inequality found in Content.page");
+                        if (persistedContent.getPage() && viewedContent.getPage()) {
+                            console.warn(" comparing persistedContent.page.config against viewedContent.page.config:");
+                            new api.data.PropertyTreeComparator().compareTree(persistedContent.getPage().getConfig(),
+                                viewedContent.getPage().getConfig());
+                        }
+                    }
+                    if (!api.ObjectHelper.arrayEquals(viewedContent.getAllMetadata(), persistedContent.getAllMetadata())) {
+                        console.warn(" inequality found in Content.meta");
+                    }
+                    if (!api.ObjectHelper.equals(viewedContent.getAttachments(), persistedContent.getAttachments())) {
+                        console.warn(" inequality found in Content.attachments");
+                    }
+                    if (!api.ObjectHelper.equals(viewedContent.getPermissions(), persistedContent.getPermissions())) {
+                        console.warn(" inequality found in Content.permissions");
+                    }
                     console.warn(" viewedContent: ", viewedContent);
                     console.warn(" persistedContent: ", persistedContent);
 
@@ -395,12 +420,11 @@ module app.wizard {
                     build();
 
                 var contentData = content.getContentData();
-                contentData.onPropertyChanged((event: api.data.PropertyChangedEvent) => {
+                contentData.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
                     if (content.isSite()) {
 
                         // TODO: Move this listening into SiteModel instead
-
-                        if (event.getPath().toString().indexOf(".modules") == 0) {
+                        if (event.getProperty().getPath().toString().indexOf(".modules") == 0) {
 
                             // Update SiteModel
                             if (this.liveFormPanel) {

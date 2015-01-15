@@ -4,7 +4,7 @@ module api.content {
     import PropertyTree = api.data.PropertyTree;
     import PropertyIdProvider = api.data.PropertyIdProvider;
 
-    export class Metadata implements api.Cloneable {
+    export class Metadata implements api.Cloneable, api.Equitable {
 
         private name: MixinName;
 
@@ -15,8 +15,34 @@ module api.content {
             this.data = data;
         }
 
-        static fromJson(metadataJson: api.content.json.MetadataJson, propertyIdProvider: PropertyIdProvider): Metadata {
-            return new Metadata(new MixinName(metadataJson.name), PropertyTree.fromJson(metadataJson.data, propertyIdProvider));
+        getName(): MixinName {
+            return this.name;
+        }
+
+        getData(): PropertyTree {
+            return this.data;
+        }
+
+        clone(): Metadata {
+            return new Metadata(this.name, this.data.copy());
+        }
+
+        equals(o: api.Equitable): boolean {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Metadata)) {
+                return false;
+            }
+
+            var other = <Metadata>o;
+
+            if (!api.ObjectHelper.equals(this.name, other.name)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.equals(this.data, other.data)) {
+                return false;
+            }
+
+            return true;
         }
 
         toJson(): api.content.json.MetadataJson {
@@ -26,17 +52,11 @@ module api.content {
             };
         }
 
-        clone(): Metadata {
-            return new Metadata(this.name, this.data.copy());
+        static fromJson(metadataJson: api.content.json.MetadataJson, propertyIdProvider: PropertyIdProvider): Metadata {
+            return new Metadata(new MixinName(metadataJson.name), PropertyTree.fromJson(metadataJson.data, propertyIdProvider));
         }
 
-        getName(): MixinName {
-            return this.name;
-        }
-
-        getData(): PropertyTree {
-            return this.data;
-        }
+        
     }
 
 }

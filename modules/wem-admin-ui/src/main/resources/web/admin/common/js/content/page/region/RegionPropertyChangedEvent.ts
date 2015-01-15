@@ -1,10 +1,10 @@
 module api.content.page.region {
 
-    export class ComponentPropertyChangedEvent extends ComponentChangedEvent {
+    export class RegionPropertyChangedEvent extends RegionChangedEvent {
 
         private propertyName: string;
 
-        constructor(path: ComponentPath, propertyName: string) {
+        constructor(path: RegionPath, propertyName: string) {
             super(path);
             this.propertyName = propertyName;
         }

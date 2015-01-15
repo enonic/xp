@@ -208,11 +208,14 @@ module app.wizard.page {
             this.liveEditModel = liveEditModel;
             this.content = liveEditModel.getContent();
             this.pageModel = liveEditModel.getPageModel();
+            this.pageModel.setIgnorePropertyChanges(true);
 
             this.liveEditPage.setModel(liveEditModel);
             this.pageInspectionPanel.setModel(liveEditModel);
             this.partInspectionPanel.setModel(liveEditModel);
             this.layoutInspectionPanel.setModel(liveEditModel);
+
+            this.pageModel.setIgnorePropertyChanges(false);
 
             this.pageModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
 

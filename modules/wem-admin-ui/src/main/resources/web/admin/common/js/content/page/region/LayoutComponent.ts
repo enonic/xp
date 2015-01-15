@@ -5,18 +5,31 @@ module api.content.page.region {
 
     export class LayoutComponent extends DescriptorBasedComponent implements api.Equitable, api.Cloneable {
 
+        public debug: boolean = false;
+
         private regions: LayoutRegions;
 
         constructor(builder: LayoutComponentBuilder) {
             super(builder);
+
             if (builder.regions) {
                 this.regions = builder.regions;
                 this.regions.getRegions().forEach((region: Region) => {
                     region.setParent(this);
                 });
-            } else {
+            }
+            else {
                 this.regions = new LayoutRegionsBuilder().build();
             }
+
+            this.regions.onChanged(this.handleRegionsChanged.bind(this));
+        }
+
+        private handleRegionsChanged(event: RegionsChangedEvent) {
+            if (this.debug) {
+                console.debug("LayoutComponent[" + this.getPath().toString() + "].onChanged: ", event);
+            }
+            this.notifyPropertyValueChanged("regions");
         }
 
         public getComponent(path: ComponentPath): Component {
@@ -28,7 +41,19 @@ module api.content.page.region {
         }
 
         public setLayoutRegions(value: LayoutRegions) {
+
+            var oldValue = this.regions;
+            this.regions.unChanged(this.handleRegionsChanged);
+
             this.regions = value;
+            this.regions.onChanged(this.handleRegionsChanged.bind(this));
+
+            if (!api.ObjectHelper.equals(oldValue, value)) {
+                if (this.debug) {
+                    console.debug("LayoutComponent[" + this.getPath().toString() + "].regions reassigned: ", event);
+                }
+                this.notifyPropertyChanged("regions");
+            }
         }
 
         isEmpty(): boolean {

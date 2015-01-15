@@ -18,10 +18,15 @@
 ///<reference path='Value.ts' />
 ///<reference path='PropertyId.ts' />
 ///<reference path='PropertyPath.ts' />
-///<reference path='PropertyChangedEventType.ts' />
-///<reference path='PropertyChangedEvent.ts' />
+///<reference path='PropertyEvent.ts' />
+///<reference path='PropertyIndexChangedEvent.ts' />
+///<reference path='PropertyValueChangedEvent.ts' />
+///<reference path='PropertyEventType.ts' />
+///<reference path='PropertyAddedEvent.ts' />
+///<reference path='PropertyRemovedEvent.ts' />
 ///<reference path='Property.ts' />
 ///<reference path='PropertyVisitor.ts' />
+///<reference path='PropertyTreeComparator.ts' />
 ///<reference path='ValueAndPropertyIdJson.ts' />
 ///<reference path='PropertyArrayJson.ts' />
 ///<reference path='PropertyArray.ts' />

@@ -2,7 +2,7 @@ module api.form.inputtype.support {
 
     import Property = api.data.Property;
     import Value = api.data.Value;
-    import PropertyChangedEvent = api.data.PropertyChangedEvent;
+    import PropertyValueChangedEvent = api.data.PropertyValueChangedEvent;
 
     export class InputOccurrenceView extends api.form.FormItemOccurrenceView {
 
@@ -23,9 +23,9 @@ module api.form.inputtype.support {
 
             this.requiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(property != null ? property.getValue() : null);
 
-            property.onPropertyChanged((event: api.data.PropertyChangedEvent) => {
+            property.onPropertyValueChanged((event: PropertyValueChangedEvent) => {
 
-                var newStateOfRequiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(event.getValue());
+                var newStateOfRequiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(event.getNewValue());
 
                 if (this.requiredContractBroken != newStateOfRequiredContractBroken) {
                     this.requiredContractBroken = newStateOfRequiredContractBroken;

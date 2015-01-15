@@ -2,6 +2,8 @@ module api.data {
 
     export class PropertySet implements api.Equitable {
 
+        public debug: boolean = true;
+
         private tree: PropertyTree = null;
 
         private property: Property = null;
@@ -9,6 +11,16 @@ module api.data {
         private propertyArrayByName: {[s:string] : PropertyArray;} = {};
 
         private _ifNotNull: boolean = false;
+
+        private changedListeners: {(event: PropertyEvent):void}[] = [];
+
+        private propertyAddedListeners: {(event: PropertyAddedEvent):void}[] = [];
+
+        private propertyRemovedListeners: {(event: PropertyRemovedEvent):void}[] = [];
+
+        private propertyIndexChangedListeners: {(event: PropertyIndexChangedEvent):void}[] = [];
+
+        private propertyValueChangedListeners: {(event: PropertyValueChangedEvent):void}[] = [];
 
         constructor(tree?: PropertyTree) {
             this.tree = tree;
@@ -18,8 +30,24 @@ module api.data {
             this.property = value;
         }
 
+        isDetached(): boolean {
+            return !this.tree;
+        }
+
         getTree(): PropertyTree {
             return this.tree;
+        }
+
+        attachToTree(tree: PropertyTree) {
+            this.tree = tree;
+
+            this.forEach((property: Property) => {
+                property.setId(this.tree.getNextId());
+                this.tree.registerProperty(property);
+                if (property.hasNonNullValue() && property.getType().equals(ValueTypes.DATA)) {
+                    property.getSet().attachToTree(tree);
+                }
+            });
         }
 
         /**
@@ -31,11 +59,13 @@ module api.data {
             return this;
         }
 
-        addPropertyArray(propertyArray: PropertyArray) {
-            api.util.assertState(this.tree === propertyArray.getTree(),
+        addPropertyArray(array: PropertyArray) {
+            api.util.assertState(this.tree === array.getTree(),
                 "Added PropertyArray must be attached to the same PropertyTree as this PropertySet");
-            api.util.assert(this == propertyArray.getParent(), "propertyArray must have this PropertySet as parent");
-            this.propertyArrayByName[propertyArray.getName()] = propertyArray;
+            api.util.assert(this == array.getParent(), "propertyArray must have this PropertySet as parent");
+            this.propertyArrayByName[array.getName()] = array;
+
+            this.registerPropertyArrayListeners(array);
         }
 
         addProperty(name: string, value: Value): Property {
@@ -98,6 +128,7 @@ module api.data {
                     setType(type).
                     build();
                 this.propertyArrayByName[name] = array;
+                this.registerPropertyArrayListeners(array);
             }
             return array;
         }
@@ -251,10 +282,9 @@ module api.data {
 
             var copy = new PropertySet(destinationTree);
 
-            api.ObjectHelper.objectPropertyIterator(this.propertyArrayByName, (name: string, propertyArray: PropertyArray) => {
-                var propertyArrayCopy = propertyArray.copy(copy, generateNewPropertyIds);
+            api.ObjectHelper.objectPropertyIterator(this.propertyArrayByName, (name: string, sourcePropertyArray: PropertyArray) => {
+                var propertyArrayCopy = sourcePropertyArray.copy(copy, generateNewPropertyIds);
                 copy.addPropertyArray(propertyArrayCopy);
-
             });
 
             return copy;
@@ -268,6 +298,126 @@ module api.data {
             });
 
             return jsonArray;
+        }
+
+        private registerPropertyArrayListeners(array: PropertyArray) {
+            if (this.debug) {
+                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].registerPropertyArrayListeners: " + array.getName())
+            }
+
+            if (this.forwardPropertyAddedEvent.bind) {
+                array.onPropertyAdded(this.forwardPropertyAddedEvent.bind(this));
+                array.onPropertyRemoved(this.forwardPropertyRemovedEvent.bind(this));
+                array.onPropertyIndexChanged(this.forwardPropertyIndexChangedEvent.bind(this));
+                array.onPropertyValueChanged(this.forwardPropertyValueChangedEvent.bind(this));
+            }
+            else {
+                // PhantomJS does not support bind
+                array.onPropertyAdded((event) => {
+                    this.forwardPropertyAddedEvent(event);
+                });
+                array.onPropertyRemoved((event) => {
+                    this.forwardPropertyRemovedEvent(event);
+                });
+                array.onPropertyIndexChanged((event) => {
+                    this.forwardPropertyIndexChangedEvent(event);
+                });
+                array.onPropertyValueChanged((event) => {
+                    this.forwardPropertyValueChangedEvent(event);
+                });
+            }
+        }
+
+        // Currently not used, because we do not remove arrays
+        private unregisterPropertyArrayListeners(array: PropertyArray) {
+            array.unPropertyAdded(this.forwardPropertyAddedEvent);
+            array.unPropertyRemoved(this.forwardPropertyRemovedEvent);
+            array.unPropertyIndexChanged(this.forwardPropertyIndexChangedEvent);
+            array.unPropertyValueChanged(this.forwardPropertyValueChangedEvent);
+        }
+
+        onChanged(listener: {(event: PropertyEvent): void;}) {
+            this.changedListeners.push(listener);
+        }
+
+        unChanged(listener: {(event: PropertyEvent): void;}) {
+            this.changedListeners = this.changedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyChangedListeners(event: PropertyEvent) {
+            if (this.debug) {
+                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].notifyChangedListeners: " +
+                              event.getPath().toString());
+            }
+            this.changedListeners.forEach((listener) => listener(event));
+        }
+
+        onPropertyAdded(listener: {(event: PropertyAddedEvent): void;}) {
+            this.propertyAddedListeners.push(listener);
+        }
+
+        unPropertyAdded(listener: {(event: PropertyAddedEvent): void;}) {
+            this.propertyAddedListeners = this.propertyAddedListeners.filter((curr) => (curr != listener));
+        }
+
+        private forwardPropertyAddedEvent(event: PropertyAddedEvent) {
+            this.propertyAddedListeners.forEach((listener) => listener(event));
+            if (this.debug) {
+                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyAddedEvent: " +
+                              event.getPath().toString());
+            }
+            this.notifyChangedListeners(event);
+        }
+
+        onPropertyRemoved(listener: {(event: PropertyRemovedEvent): void;}) {
+            this.propertyRemovedListeners.push(listener);
+        }
+
+        unPropertyRemoved(listener: {(event: PropertyRemovedEvent): void;}) {
+            this.propertyRemovedListeners = this.propertyRemovedListeners.filter((curr) => (curr != listener));
+        }
+
+        private forwardPropertyRemovedEvent(event: PropertyRemovedEvent) {
+            if (this.debug) {
+                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyRemovedEvent: " +
+                              event.getPath().toString());
+            }
+            this.propertyRemovedListeners.forEach((listener) => listener(event));
+            this.notifyChangedListeners(event);
+        }
+
+        onPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
+            this.propertyIndexChangedListeners.push(listener);
+        }
+
+        unPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
+            this.propertyIndexChangedListeners = this.propertyIndexChangedListeners.filter((curr) => (curr != listener));
+        }
+
+        private forwardPropertyIndexChangedEvent(event: PropertyIndexChangedEvent) {
+            if (this.debug) {
+                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyIndexChangedEvent: " +
+                              event.getPath().toString());
+            }
+            this.propertyIndexChangedListeners.forEach((listener) => listener(event));
+            this.notifyChangedListeners(event);
+        }
+
+        onPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
+            this.propertyValueChangedListeners.push(listener);
+        }
+
+        unPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
+            this.propertyValueChangedListeners = this.propertyValueChangedListeners.filter((curr) => (curr != listener));
+        }
+
+        private forwardPropertyValueChangedEvent(event: PropertyValueChangedEvent) {
+            if (this.debug) {
+                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyValueChangedEvent: " +
+                              event.getPath().toString());
+            }
+            this.propertyValueChangedListeners.forEach((listener) => listener(event));
+            this.notifyChangedListeners(event);
         }
 
         // PropertySet methods
@@ -348,5 +498,7 @@ module api.data {
             });
             return values;
         }
+
+        // TODO: Add methods for each type
     }
 }

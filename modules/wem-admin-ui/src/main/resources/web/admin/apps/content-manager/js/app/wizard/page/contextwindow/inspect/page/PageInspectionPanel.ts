@@ -217,12 +217,7 @@ module app.wizard.page.contextwindow.inspect.page {
 
         private showPageConfig(pageModel: PageModel) {
 
-            var controllerKey = pageModel.getTemplate().getController();
-            new GetPageDescriptorByKeyRequest(controllerKey).sendAndParse().
-                then((pageDescriptor: PageDescriptor) => {
-
-                    this.refreshConfigForm(pageDescriptor, pageModel.getConfig());
-                }).catch((reason: any) => api.DefaultErrorHandler.handle(reason)).done();
+            this.refreshConfigForm(pageModel.getTemplateDescriptor(), pageModel.getConfig());
         }
 
         private showDefaultPageTemplateConfig(pageModel: PageModel) {

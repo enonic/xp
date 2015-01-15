@@ -10,13 +10,17 @@ module api.content.page.region {
 
         private parent: Region;
 
-        private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
+        private changedListeners: {(event: ComponentChangedEvent):void}[] = [];
 
-        constructor(builder?: ComponentBuilder<any>) {
-            if (builder != undefined) {
-                this.name = builder.name;
-                this.parent = builder.parent;
-            }
+        private propertyChangedListeners: {(event: ComponentPropertyChangedEvent):void}[] = [];
+
+        private propertyValueChangedListeners: {(event: ComponentPropertyValueChangedEvent):void}[] = [];
+
+        constructor(builder: ComponentBuilder<any>) {
+
+            this.name = builder.name;
+            this.index = builder.index;
+            this.parent = builder.parent;
         }
 
         setParent(parent: Region) {
@@ -43,7 +47,7 @@ module api.content.page.region {
             var oldValue = this.name;
             this.name = newValue;
             if (!newValue.equals(oldValue)) {
-                this.notifyPropertyChanged(Component.PROPERTY_NAME, oldValue, newValue);
+                this.notifyPropertyChanged(Component.PROPERTY_NAME);
             }
         }
 
@@ -67,24 +71,6 @@ module api.content.page.region {
 
         removeFromParent() {
             this.parent.removeComponent(this);
-        }
-
-        onPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
-            this.propertyChangedListeners.push(listener);
-        }
-
-        unPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
-            this.propertyChangedListeners =
-            this.propertyChangedListeners.filter((curr: (event: api.PropertyChangedEvent)=>void) => {
-                return listener != curr;
-            });
-        }
-
-        private notifyPropertyChanged(property: string, oldValue: ComponentName, newValue: ComponentName) {
-            var event = new api.PropertyChangedEvent(property, oldValue, newValue);
-            this.propertyChangedListeners.forEach((listener: (event: api.PropertyChangedEvent)=>void) => {
-                listener(event);
-            })
         }
 
         toJson(): ComponentTypeWrapperJson {
@@ -116,11 +102,74 @@ module api.content.page.region {
         clone(generateNewPropertyIds: boolean = false): Component {
             throw new Error("Must be implemented by inheritors");
         }
+
+        onChanged(listener: (event: ComponentChangedEvent)=>void) {
+            this.changedListeners.push(listener);
+        }
+
+        unChanged(listener: (event: ComponentChangedEvent)=>void) {
+            this.changedListeners =
+            this.changedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        private notifyChangedEvent(event: ComponentChangedEvent) {
+            this.changedListeners.forEach((listener: (event: ComponentChangedEvent)=>void) => {
+                listener(event);
+            })
+        }
+
+        /**
+         * Observe when a property of Component have been reassigned.
+         */
+        onPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
+            this.propertyChangedListeners.push(listener);
+        }
+
+        unPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
+            this.propertyChangedListeners =
+            this.propertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        notifyPropertyChanged(propertyName: string) {
+            var event = new ComponentPropertyChangedEvent(this.getPath(), propertyName);
+            this.propertyChangedListeners.forEach((listener: (event: ComponentPropertyChangedEvent)=>void) => {
+                listener(event);
+            });
+            this.notifyChangedEvent(event);
+        }
+
+        /**
+         * Observe when a property of Component have changed (happens only for mutable objects).
+         */
+        onPropertyValueChanged(listener: (event: ComponentPropertyValueChangedEvent)=>void) {
+            this.propertyValueChangedListeners.push(listener);
+        }
+
+        unPropertyValueChanged(listener: (event: ComponentPropertyValueChangedEvent)=>void) {
+            this.propertyValueChangedListeners =
+            this.propertyValueChangedListeners.filter((curr: (event: ComponentPropertyValueChangedEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        notifyPropertyValueChanged(propertyName: string) {
+            var event = new ComponentPropertyValueChangedEvent(this.getPath(), propertyName);
+            this.propertyValueChangedListeners.forEach((listener: (event: ComponentPropertyValueChangedEvent)=>void) => {
+                listener(event);
+            });
+            this.notifyChangedEvent(event);
+        }
     }
 
     export class ComponentBuilder<COMPONENT extends Component> {
 
         name: ComponentName;
+
+        index: number;
 
         parent: Region;
 
@@ -128,7 +177,13 @@ module api.content.page.region {
             if (source) {
                 this.name = source.getName();
                 this.parent = source.getParent();
+                this.index = source.getIndex();
             }
+        }
+
+        public setIndex(value: number): ComponentBuilder<COMPONENT> {
+            this.index = value;
+            return this;
         }
 
         public setName(value: ComponentName): ComponentBuilder<COMPONENT> {

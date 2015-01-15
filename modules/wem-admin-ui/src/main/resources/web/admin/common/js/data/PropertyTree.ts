@@ -22,8 +22,6 @@ module api.data {
 
         private propertyById: {[s:string] : Property;} = {};
 
-        private propertyChangedListeners: {(event: PropertyChangedEvent):void}[] = [];
-
         constructor(idProvider?: PropertyIdProvider, sourceRoot?: PropertySet, generateNewPropertyIds?: boolean) {
 
             if (sourceRoot) {
@@ -34,8 +32,6 @@ module api.data {
                 propertyRegistrar.traverse(this.root);
             }
             else {
-
-
                 if (!idProvider) {
                     this.idProvider = new DefaultPropertyIdProvider();
                 }
@@ -62,17 +58,13 @@ module api.data {
          * Not to be used outside module.
          */
         registerProperty(property: Property) {
-
+            api.util.assertNotNull(property.getId(), "Cannot register a Property without id");
             var existing = this.propertyById[property.getId().toString()];
             if (existing) {
                 throw new Error("Property with id [" + property.getId().toString() + "] already registered: " +
                                 property.getPath().toString());
             }
             this.propertyById[property.getId().toString()] = property;
-
-            property.onPropertyChanged((event: PropertyChangedEvent) => {
-                this.notifyPropertyChangedEvent(event);
-            });
         }
 
         /**
@@ -132,19 +124,6 @@ module api.data {
             this.root.forEachProperty(name, callback);
         }
 
-        onPropertyChanged(listener: {(event: PropertyChangedEvent): void;}) {
-            this.propertyChangedListeners.push(listener);
-        }
-
-        unPropertyChanged(listener: {(event: PropertyChangedEvent): void;}) {
-            this.propertyChangedListeners =
-            this.propertyChangedListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifyPropertyChangedEvent(event: PropertyChangedEvent) {
-            this.propertyChangedListeners.forEach((listener) => listener(event));
-        }
-
         public equals(o: any): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PropertyTree)) {
@@ -167,6 +146,46 @@ module api.data {
         toJson(): PropertyArrayJson[] {
 
             return this.getRoot().toJson();
+        }
+
+        onChanged(listener: {(event: PropertyEvent): void;}) {
+            this.root.onChanged(listener);
+        }
+
+        unChanged(listener: {(event: PropertyEvent): void;}) {
+            this.root.unChanged(listener);
+        }
+
+        onPropertyAdded(listener: {(event: PropertyAddedEvent): void;}) {
+            this.root.onPropertyAdded(listener);
+        }
+
+        unPropertyAdded(listener: {(event: PropertyAddedEvent): void;}) {
+            this.root.unPropertyAdded(listener);
+        }
+
+        onPropertyRemoved(listener: {(event: PropertyRemovedEvent): void;}) {
+            this.root.onPropertyRemoved(listener);
+        }
+
+        unPropertyRemoved(listener: {(event: PropertyRemovedEvent): void;}) {
+            this.root.unPropertyRemoved(listener);
+        }
+
+        onPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
+            this.root.onPropertyIndexChanged(listener);
+        }
+
+        unPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
+            this.root.unPropertyIndexChanged(listener);
+        }
+
+        onPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
+            this.root.onPropertyValueChanged(listener);
+        }
+
+        unPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
+            this.root.unPropertyValueChanged(listener);
         }
 
         public static fromJson(json: PropertyArrayJson[], idProvider: PropertyIdProvider): PropertyTree {

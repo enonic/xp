@@ -2,11 +2,21 @@ module api.content.page.region {
 
     export class Region implements api.Equitable, api.Cloneable {
 
+        public debug: boolean = false;
+        
         private name: string;
 
         private components: Component[] = [];
 
         private parent: LayoutComponent;
+
+        private changedListeners: {(event: RegionChangedEvent):void}[] = [];
+
+        private componentAddedListeners: {(event: ComponentAddedEvent):void}[] = [];
+
+        private componentRemovedListeners: {(event: ComponentRemovedEvent):void}[] = [];
+
+        private propertyValueChangedListeners: {(event: RegionPropertyValueChangedEvent):void}[] = [];
 
         constructor(builder: RegionBuilder) {
             this.name = builder.name;
@@ -16,6 +26,8 @@ module api.content.page.region {
                 this.checkIllegalLayoutComponentWithinLayoutComponent(component, this.parent);
                 component.setParent(this);
                 component.setIndex(index);
+
+                this.registerComponentListeners(component);
             });
         }
 
@@ -26,6 +38,29 @@ module api.content.page.region {
                 throw new Error("Not allowed to have a LayoutComponent within a LayoutComponent: " +
                                 component.getPath().toString());
             }
+        }
+
+        private registerComponentListeners(component: Component) {
+            if (this.handleComponentChanged.bind) {
+                component.onChanged(this.handleComponentChanged.bind(this));
+            }
+            else {
+                // PhantomJS does not support bind
+                component.onChanged((event) => {
+                    this.handleComponentChanged(event);
+                });
+            }
+        }
+
+        private unregisterComponentListeners(component: Component) {
+            component.unChanged(this.handleComponentChanged);
+        }
+
+        private handleComponentChanged(event: ComponentChangedEvent) {
+            if (this.debug) {
+                console.debug("Region[" + this.getPath().toString() + "].handleComponentChanged: ", event);
+            }
+            this.notifyRegionPropertyValueChanged("components");
         }
 
         getName(): string {
@@ -41,7 +76,7 @@ module api.content.page.region {
         }
 
         getPath(): RegionPath {
-            var parentPath = null;
+            var parentPath: ComponentPath = null;
             if (this.parent) {
                 parentPath = this.parent.getPath();
             }
@@ -50,10 +85,6 @@ module api.content.page.region {
 
         isEmpty(): boolean {
             return !this.components || this.components.length == 0;
-        }
-
-        ensureUniqueComponentName(wantedName: ComponentName): ComponentName {
-            return wantedName;
         }
 
         duplicateComponent(source: Component): Component {
@@ -99,6 +130,10 @@ module api.content.page.region {
             this.components.forEach((curr: Component, index: number) => {
                 curr.setIndex(index);
             });
+
+            this.notifyComponentAdded(component.getPath());
+
+            this.registerComponentListeners(component);
         }
 
         removeComponent(component: Component): Component {
@@ -111,12 +146,22 @@ module api.content.page.region {
                 throw new Error("Component [" + component.getPath().toString() + "] to remove does not exist in region: " +
                                 this.getPath().toString());
             }
+
+            var componentPath = component.getPath();
+
             this.components.splice(componentIndex, 1);
 
             // Update indexes
             this.components.forEach((curr: Component, index: number) => {
                 curr.setIndex(index);
             });
+
+            component.setParent(null);
+            component.setIndex(-1);
+
+            this.notifyComponentRemoved(componentPath);
+            this.unregisterComponentListeners(component);
+
             return component;
         }
 
@@ -127,13 +172,19 @@ module api.content.page.region {
         getComponentByIndex(index: number): Component {
             var component = this.components[index];
             api.util.assertState(component.getIndex() == index,
-                    "Index of Component is not as expected. Expected [" + index + "], was: " + component.getIndex());
-            return  component;
+                "Index of Component is not as expected. Expected [" + index + "], was: " + component.getIndex());
+            return component;
         }
 
         removeComponents() {
+
             while (this.components.length > 0) {
                 var component = this.components.pop();
+                var componentPath = component.getPath();
+
+                this.notifyComponentRemoved(componentPath);
+                this.unregisterComponentListeners(component);
+
                 component.setParent(null);
                 component.setIndex(-1);
             }
@@ -147,7 +198,7 @@ module api.content.page.region {
                 componentJsons.push(component.toJson());
             });
 
-            return {
+            return <RegionJson>{
                 name: this.name,
                 components: componentJsons
             };
@@ -174,6 +225,80 @@ module api.content.page.region {
 
         clone(generateNewPropertyIds: boolean = false): Region {
             return new RegionBuilder(this, generateNewPropertyIds).build();
+        }
+
+        onChanged(listener: (event: RegionChangedEvent)=>void) {
+            this.changedListeners.push(listener);
+        }
+
+        unChanged(listener: (event: RegionChangedEvent)=>void) {
+            this.changedListeners =
+            this.changedListeners.filter((curr: (event: RegionChangedEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        private notifyChangedEvent(event: RegionChangedEvent) {
+            this.changedListeners.forEach((listener: (event: RegionChangedEvent)=>void) => {
+                listener(event);
+            })
+        }
+
+        onComponentAdded(listener: (event: ComponentAddedEvent)=>void) {
+            this.componentAddedListeners.push(listener);
+        }
+
+        unComponentAdded(listener: (event: ComponentAddedEvent)=>void) {
+            this.componentAddedListeners =
+            this.componentAddedListeners.filter((curr: (event: ComponentAddedEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        private notifyComponentAdded(componentPath: ComponentPath) {
+            var event = new ComponentAddedEvent(this.getPath(), componentPath);
+            this.componentAddedListeners.forEach((listener: (event: ComponentAddedEvent)=>void) => {
+                listener(event);
+            });
+            this.notifyChangedEvent(event);
+        }
+
+        onComponentRemoved(listener: (event: ComponentRemovedEvent)=>void) {
+            this.componentRemovedListeners.push(listener);
+        }
+
+        unComponentRemoved(listener: (event: ComponentRemovedEvent)=>void) {
+            this.componentRemovedListeners =
+            this.componentRemovedListeners.filter((curr: (event: ComponentRemovedEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        private notifyComponentRemoved(componentPath: ComponentPath) {
+            var event = new ComponentRemovedEvent(this.getPath(), componentPath);
+            this.componentRemovedListeners.forEach((listener: (event: ComponentRemovedEvent)=>void) => {
+                listener(event);
+            });
+            this.notifyChangedEvent(event);
+        }
+
+        onRegionPropertyValueChanged(listener: (event: RegionPropertyValueChangedEvent)=>void) {
+            this.propertyValueChangedListeners.push(listener);
+        }
+
+        unRegionPropertyValueChanged(listener: (event: RegionPropertyValueChangedEvent)=>void) {
+            this.propertyValueChangedListeners =
+            this.propertyValueChangedListeners.filter((curr: (event: RegionPropertyValueChangedEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        private notifyRegionPropertyValueChanged(propertyName: string) {
+            var event = new RegionPropertyValueChangedEvent(this.getPath(), propertyName);
+            this.propertyValueChangedListeners.forEach((listener: (event: RegionPropertyValueChangedEvent)=>void) => {
+                listener(event);
+            });
+            this.notifyChangedEvent(event);
         }
     }
 

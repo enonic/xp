@@ -65,7 +65,7 @@ module api.content.page {
 
         fromJson(regionsJson: region.RegionJson[], propertyIdProvider: PropertyIdProvider): PageRegionsBuilder {
 
-            regionsJson.forEach((regionJson: region.RegionJson) => {
+            regionsJson.forEach((regionJson: region.RegionJson, index: number) => {
 
                 var region = new api.content.page.region.RegionBuilder().
                     setName(regionJson.name).
@@ -73,7 +73,8 @@ module api.content.page {
                     build();
 
                 regionJson.components.forEach((componentJson: region.ComponentTypeWrapperJson) => {
-                    var component = api.content.page.region.ComponentFactory.createFromJson(componentJson, region, propertyIdProvider);
+                    var component: api.content.page.region.Component = api.content.page.region.ComponentFactory.createFromJson(componentJson,
+                        index, region, propertyIdProvider);
                     region.addComponent(component);
                 });
 

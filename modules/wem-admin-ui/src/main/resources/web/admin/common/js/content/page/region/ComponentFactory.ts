@@ -4,7 +4,7 @@ module api.content.page.region {
 
     export class ComponentFactory {
 
-        public static createFromJson(json: ComponentTypeWrapperJson, region: Region,
+        public static createFromJson(json: ComponentTypeWrapperJson, componentIndex: number, region: Region,
                                      propertyIdProvider: PropertyIdProvider): Component {
 
             if (json.PartComponent) {
@@ -16,11 +16,13 @@ module api.content.page.region {
                     propertyIdProvider).build();
             }
             else if (json.LayoutComponent) {
-                return new LayoutComponentBuilder().fromJson(<LayoutComponentJson>json.LayoutComponent, region,
+                var layoutComponentBuilder = new LayoutComponentBuilder();
+                layoutComponentBuilder.setIndex(componentIndex);
+                return layoutComponentBuilder.fromJson(<LayoutComponentJson>json.LayoutComponent, region,
                     propertyIdProvider);
             }
             else if (json.TextComponent) {
-                return new TextComponentBuilder().fromJson(<TextComponentJson>json.TextComponent, region).build();
+                return new TextComponentBuilder().fromJson(<TextComponentJson>json.TextComponent, region).setIndex(componentIndex).build();
             }
             else {
                 throw new Error("Not a component that can be placed in a Region: " + json);

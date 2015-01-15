@@ -1,6 +1,6 @@
 module api.content.attachment {
 
-    export class Attachment {
+    export class Attachment implements api.Equitable {
 
         private name: AttachmentName;
 
@@ -35,6 +35,32 @@ module api.content.attachment {
 
         getSize(): number {
             return this.size;
+        }
+
+        equals(o: api.Equitable): boolean {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Attachment)) {
+                return false;
+            }
+
+            var other = <Attachment>o;
+
+            if (!api.ObjectHelper.equals(this.name, other.name)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.stringEquals(this.label, other.label)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.stringEquals(this.mimeType, other.mimeType)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.numberEquals(this.size, other.size)) {
+                return false;
+            }
+
+            return true;
         }
 
         toJson(): api.content.attachment.AttachmentJson {

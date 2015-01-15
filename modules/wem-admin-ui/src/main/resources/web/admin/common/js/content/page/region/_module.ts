@@ -5,6 +5,7 @@
 ///<reference path='ComponentType.ts' />
 ///<reference path='ComponentChangedEvent.ts' />
 ///<reference path='ComponentPropertyChangedEvent.ts' />
+///<reference path='ComponentPropertyValueChangedEvent.ts' />
 ///<reference path='Component.ts' />
 ///<reference path='ComponentFactory.ts' />
 ///<reference path='DescriptorBasedComponentJson.ts' />
@@ -61,4 +62,9 @@
 ///<reference path='RegionsDescriptorJson.ts' />
 ///<reference path='RegionJson.ts' />
 ///<reference path='RegionDescriptor.ts' />
+///<reference path='RegionChangedEvent.ts' />
+///<reference path='RegionPropertyChangedEvent.ts' />
+///<reference path='RegionPropertyValueChangedEvent.ts' />
+///<reference path='ComponentAddedEvent.ts' />
+///<reference path='ComponentRemovedEvent.ts' />
 ///<reference path='Region.ts' />

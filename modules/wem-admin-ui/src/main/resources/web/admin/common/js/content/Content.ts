@@ -89,6 +89,10 @@ module api.content {
                 return false;
             }
 
+            if (!api.ObjectHelper.arrayEquals(this.metadata, other.metadata)) {
+                return false;
+            }
+
             if (!api.ObjectHelper.equals(this.pageObj, other.pageObj)) {
                 return false;
             }
@@ -97,7 +101,11 @@ module api.content {
                 return false;
             }
 
-            if (this.inheritPermissions !== other.inheritPermissions) {
+            if (!api.ObjectHelper.equals(this.attachments, other.attachments)) {
+                return false;
+            }
+
+            if (!api.ObjectHelper.booleanEquals(this.inheritPermissions, other.inheritPermissions)) {
                 return false;
             }
 

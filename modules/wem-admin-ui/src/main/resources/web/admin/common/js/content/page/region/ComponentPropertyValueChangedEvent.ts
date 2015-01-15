@@ -1,6 +1,6 @@
 module api.content.page.region {
 
-    export class ComponentPropertyChangedEvent extends ComponentChangedEvent {
+    export class ComponentPropertyValueChangedEvent extends ComponentChangedEvent {
 
         private propertyName: string;
 

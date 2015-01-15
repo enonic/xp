@@ -10,5 +10,12 @@ module api.schema.mixin{
             super(ModuleKey.fromString(parts[0]), parts[1]);
         }
 
+        equals(o: api.Equitable): boolean {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, MixinName)) {
+                return false;
+            }
+
+            return super.equals(o);
+        }
     }
 }

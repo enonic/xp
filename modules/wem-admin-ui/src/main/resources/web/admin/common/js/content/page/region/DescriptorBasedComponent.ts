@@ -1,10 +1,17 @@
 module api.content.page.region {
 
     import PropertyTree = api.data.PropertyTree;
+    import PropertyEvent = api.data.PropertyEvent;
 
     export class DescriptorBasedComponent extends Component implements api.Equitable, api.Cloneable {
 
-        private descriptorKey: DescriptorKey;
+        public debug: boolean = false;
+
+        public static PROPERTY_DESCRIPTOR = 'descriptor';
+
+        public static PROPERTY_CONFIG = 'config';
+
+        private descriptor: DescriptorKey;
 
         private config: PropertyTree;
 
@@ -12,12 +19,19 @@ module api.content.page.region {
 
             super(builder);
 
-            this.descriptorKey = builder.descriptor;
+            this.descriptor = builder.descriptor;
             this.config = builder.config;
+
+            this.config.onChanged((event: PropertyEvent) => {
+                if (this.debug) {
+                    console.debug("DescriptorBasedComponent[" + this.getPath().toString() + "].config.onChanged: ", event);
+                }
+                this.notifyPropertyValueChanged(DescriptorBasedComponent.PROPERTY_CONFIG);
+            });
         }
 
         hasDescriptor(): boolean {
-            if (this.descriptorKey) {
+            if (this.descriptor) {
                 return true;
             }
             else {
@@ -26,11 +40,17 @@ module api.content.page.region {
         }
 
         getDescriptor(): DescriptorKey {
-            return this.descriptorKey;
+            return this.descriptor;
         }
 
-        setDescriptor(key: DescriptorKey) {
-            this.descriptorKey = key;
+        setDescriptor(newValue: DescriptorKey) {
+
+            var oldValue = this.descriptor;
+            this.descriptor = newValue;
+
+            if (!api.ObjectHelper.equals(oldValue, newValue)) {
+                this.notifyPropertyChanged(DescriptorBasedComponent.PROPERTY_DESCRIPTOR);
+            }
         }
 
         getConfig(): PropertyTree {
@@ -38,14 +58,14 @@ module api.content.page.region {
         }
 
         reset() {
-            this.descriptorKey = null;
+            this.setDescriptor(null);
         }
 
         toComponentJson(): DescriptorBasedComponentJson {
 
-            return {
+            return <DescriptorBasedComponentJson>{
                 "name": this.getName().toString(),
-                "descriptor": this.descriptorKey != null ? this.descriptorKey.toString() : null,
+                "descriptor": this.descriptor != null ? this.descriptor.toString() : null,
                 "config": this.config != null ? this.config.toJson() : null
             };
         }
@@ -61,7 +81,7 @@ module api.content.page.region {
             }
             var other = <DescriptorBasedComponent>o;
 
-            if (!api.ObjectHelper.equals(this.descriptorKey, other.descriptorKey)) {
+            if (!api.ObjectHelper.equals(this.descriptor, other.descriptor)) {
                 return false;
             }
 

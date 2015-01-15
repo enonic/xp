@@ -1,6 +1,5 @@
 module api.module {
 
-    import ModuleKey = api.module.ModuleKey;
 
     export class ModuleBasedName implements api.Equitable {
         static SEPARATOR = ":";

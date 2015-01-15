@@ -8,6 +8,10 @@ module api.form {
     import PropertyTree = api.data.PropertyTree;
     import PropertySet = api.data.PropertySet;
 
+    /**
+     * Creates a UI component representing the given Form backed by given PropertySet.
+     * Form data is both read from and written to the given PropertySet as the user changes the form.
+     */
     export class FormView extends api.dom.DivEl {
 
         private context: FormContext;
@@ -35,6 +39,9 @@ module api.form {
             this.rootDataSet = propertySet;
         }
 
+        /**
+         * Lays out the form.
+         */
         public layout(): wemQ.Promise<void> {
 
             var deferred = wemQ.defer<void>();

@@ -76,11 +76,11 @@ module api.content.page {
 
         private mode: PageMode;
 
-        private initialized: boolean = false;
-
         private controller: PageDescriptor;
 
         private template: PageTemplate;
+
+        private templateDescriptor: PageDescriptor;
 
         private regions: PageRegions;
 
@@ -88,22 +88,19 @@ module api.content.page {
 
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
+        private ignorePropertyChanges: boolean = false;
+
         constructor(liveEditModel: api.liveedit.LiveEditModel, defaultTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor) {
             this.liveEditModel = liveEditModel;
             this.defaultTemplate = defaultTemplate;
             this.defaultTemplateDescriptor = defaultTemplateDescriptor;
         }
 
-        getDefaultPageTemplate(): PageTemplate {
-            return this.defaultTemplate;
-        }
-
-        getDefaultPageTemplateController(): PageDescriptor {
-            return this.defaultTemplateDescriptor;
-        }
-
-        getMode(): PageMode {
-            return this.mode;
+        /**
+         * Whether to ignore changes happening with properties (regions, properties) or not.
+         */
+        setIgnorePropertyChanges(value: boolean) {
+            this.ignorePropertyChanges = value;
         }
 
         initializePageFromDefault(eventSource?: any) {
@@ -161,7 +158,9 @@ module api.content.page {
 
             var newControllerKey = this.controller ? this.controller.getKey() : null;
             if (!api.ObjectHelper.equals(oldControllerKey, newControllerKey)) {
+                this.setIgnorePropertyChanges(true);
                 this.notifyPropertyChanged("controller", oldControllerKey, newControllerKey, setController.eventSource);
+                this.setIgnorePropertyChanges(false);
             }
 
             return this;
@@ -198,6 +197,7 @@ module api.content.page {
             }
 
             this.template = setTemplate.template;
+            this.templateDescriptor = setTemplate.descriptor;
 
             if (setTemplate.config) {
                 this.setConfig(setTemplate.config, setTemplate.eventSource);
@@ -212,34 +212,63 @@ module api.content.page {
 
             var newTemplateKey = this.template ? this.template.getKey() : null;
             if (!api.ObjectHelper.equals(oldTemplateKey, newTemplateKey)) {
+                this.setIgnorePropertyChanges(true);
                 this.notifyPropertyChanged("template", oldTemplateKey, newTemplateKey, setTemplate.eventSource);
+                this.setIgnorePropertyChanges(false);
             }
-            this.initialized = true;
             return this;
         }
 
         setRegions(value: PageRegions, eventOrigin?: any): PageModel {
             var oldValue = this.regions;
+            if (oldValue) {
+                oldValue.unChanged(this.handleRegionsValueChanged);
+            }
+            
             this.regions = value;
+            this.regions.onChanged(this.handleRegionsValueChanged.bind(this));
 
+            this.setIgnorePropertyChanges(true);
             this.notifyPropertyChanged("regions", oldValue, value, eventOrigin);
+            this.setIgnorePropertyChanges(false);
             return this;
         }
 
-        setConfig(value: PropertyTree, eventOrigin?: any): PageModel {
+        private handleRegionsValueChanged(event: RegionsChangedEvent) {
 
-            var oldValue = this.config;
-
-            this.config = value;
-            this.config.onPropertyChanged((event: api.data.PropertyChangedEvent) => {
+            if (!this.ignorePropertyChanges) {
+                console.log("PageModel.regions.onChanged: ", event);
                 if (this.mode == PageMode.AUTOMATIC) {
                     var setTemplate = new SetTemplate(this).setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor);
                     this.setTemplate(setTemplate);
                 }
-            });
+            }
+        }
 
+        setConfig(value: PropertyTree, eventOrigin?: any): PageModel {
+            var oldValue = this.config;
+            if (oldValue) {
+                oldValue.unChanged(this.handleConfigValueChanged);
+            }
+
+            this.config = value;
+            this.config.onChanged(this.handleConfigValueChanged.bind(this));
+
+            this.setIgnorePropertyChanges(true);
             this.notifyPropertyChanged("config", oldValue, value, eventOrigin);
+            this.setIgnorePropertyChanges(false);
             return this;
+        }
+
+        private handleConfigValueChanged(event: api.data.PropertyEvent) {
+
+            if (!this.ignorePropertyChanges) {
+                console.log("PageModel.config.onChanged: ", event.getPath().toString());
+                if (this.mode == PageMode.AUTOMATIC) {
+                    var setTemplate = new SetTemplate(this).setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor);
+                    this.setTemplate(setTemplate);
+                }
+            }
         }
 
         /**
@@ -286,6 +315,18 @@ module api.content.page {
 
         }
 
+        getDefaultPageTemplate(): PageTemplate {
+            return this.defaultTemplate;
+        }
+
+        getDefaultPageTemplateController(): PageDescriptor {
+            return this.defaultTemplateDescriptor;
+        }
+
+        getMode(): PageMode {
+            return this.mode;
+        }
+
         isPageTemplate(): boolean {
             return this.liveEditModel.getContent().isPageTemplate();
         }
@@ -308,6 +349,10 @@ module api.content.page {
 
         getTemplate(): PageTemplate {
             return this.template;
+        }
+
+        getTemplateDescriptor(): PageDescriptor {
+            return this.templateDescriptor;
         }
 
         getRegions(): PageRegions {

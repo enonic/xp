@@ -2,7 +2,11 @@ module api.data {
 
     export class Property implements api.Equitable {
 
+        public debug: boolean = true;
+        
         private parent: PropertySet;
+
+        private array: PropertyArray;
 
         private name: string;
 
@@ -12,42 +16,63 @@ module api.data {
 
         private id: PropertyId;
 
-        private propertyChangedListeners: {(event: PropertyChangedEvent):void}[];
+        private propertyIndexChangedListeners: {(event: PropertyIndexChangedEvent):void}[] = [];
+
+        private propertyValueChangedListeners: {(event: PropertyValueChangedEvent):void}[] = [];
 
         constructor(builder: PropertyBuilder) {
-            api.util.assertNotNull(builder.parent, "parent of a Property cannot be null");
+            api.util.assertNotNull(builder.array, "array of a Property cannot be null");
             api.util.assertNotNull(builder.name, "name of a Property cannot be null");
             api.util.assertNotNull(builder.index, "index of a Property cannot be null");
             api.util.assertNotNull(builder.value, "value of a Property cannot be null");
-            api.util.assertNotNull(builder.id, "id of a Property cannot be null");
 
-            this.parent = builder.parent;
+            this.array = builder.array;
+            this.parent = builder.array.getParent();
             this.name = builder.name;
             this.index = builder.index;
             this.value = builder.value;
             this.id = builder.id;
 
             if (this.value.getType().equals(ValueTypes.DATA) && this.value.isNotNull()) {
-                this.value.getPropertySet().setContainerProperty(this);
+                var valuePropertySet = this.value.getPropertySet();
+                valuePropertySet.setContainerProperty(this);
             }
-
-            this.propertyChangedListeners = [];
         }
 
-        setIndex(index: number) {
-            this.index = index;
-            // TODO: fire event?
+        setId(id: PropertyId) {
+            this.id = id;
+        }
+
+        setIndex(newIndex: number) {
+            var oldIndex = newIndex;
+            this.index = newIndex;
+
+            if (oldIndex != newIndex) {
+                this.notifyPropertyIndexChangedEvent(oldIndex, newIndex);
+            }
         }
 
         setValue(value: Value) {
             api.util.assertNotNull(value, "value of a Property cannot be null");
             var oldValue = this.value;
             this.value = value;
+
+            // Register listeners on PropertySet
             if (this.value.getType().equals(ValueTypes.DATA) && this.value.isNotNull()) {
-                this.value.getPropertySet().setContainerProperty(this);
+                var propertySet = this.value.getPropertySet();
+                propertySet.setContainerProperty(this);
+                this.array.registerPropertySetListeners(propertySet);
             }
+
+            // Unregister listeners on PropertySet from oldValue
+            if (oldValue.getType().equals(ValueTypes.DATA) && this.value.isNotNull()) {
+                var propertySet = this.value.getPropertySet();
+                propertySet.setContainerProperty(null);
+                this.array.unregisterPropertySetListeners(propertySet);
+            }
+
             if (!value.equals(oldValue)) {
-                this.notifyPropertyChangedEvent(new PropertyChangedEvent(PropertyChangedEventType.CHANGED, this.getPath(), value));
+                this.notifyPropertyValueChangedEvent(oldValue, value);
             }
         }
 
@@ -155,35 +180,68 @@ module api.data {
             return true;
         }
 
-        copy(destinationPropertySet: PropertySet, generateNewPropertyId: boolean = false) {
+        copy(destinationPropertyArray: PropertyArray, generateNewPropertyId: boolean = false) {
+
+            var destinationTree = destinationPropertyArray.getTree();
+            var id: PropertyId = null;
+            if (generateNewPropertyId) {
+                id = destinationTree ? destinationTree.getNextId() : null;
+            }
+            else {
+                id = this.id;
+            }
+
+            var value: Value;
+            if (this.value.isPropertySet() && this.value.isNotNull()) {
+                var copiedPropertySet = this.value.getPropertySet().copy(destinationTree, generateNewPropertyId);
+                value = new Value(copiedPropertySet, ValueTypes.DATA);
+            }
+            else {
+                value = this.value;
+            }
+
             var copy = Property.create().
-                setId(generateNewPropertyId ? destinationPropertySet.getTree().getNextId() : this.id).
+                setId(id).
                 setName(this.name).
-                setValue(this.value).
+                setValue(value).
                 setIndex(this.index).
-                setParent(destinationPropertySet).
+                setArray(destinationPropertyArray).
                 build();
             return copy;
         }
 
-        prettyPrint(indent?: string) {
-            var thisIndent = indent ? indent : "";
-            var idAsString = this.getId().toString();
-            var valueAsString = this.getValue().getString();
-            console.log(thisIndent + idAsString + ": " + valueAsString);
+        onPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
+            this.propertyIndexChangedListeners.push(listener);
         }
 
-        onPropertyChanged(listener: {(event: PropertyChangedEvent): void;}) {
-            this.propertyChangedListeners.push(listener);
+        unPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
+            this.propertyIndexChangedListeners =
+            this.propertyIndexChangedListeners.filter((curr) => (curr != listener));
         }
 
-        unPropertyChanged(listener: {(event: PropertyChangedEvent): void;}) {
-            this.propertyChangedListeners =
-            this.propertyChangedListeners.filter((curr) => (curr != listener));
+        private notifyPropertyIndexChangedEvent(previousIndex: number, newIndex: number) {
+            var event = new PropertyIndexChangedEvent(this, previousIndex, newIndex);
+            if (this.debug) {
+                console.debug("Property[" + this.getPath().toString() + "].notifyPropertyIndexChangedEvent: " + event.getPath().toString());
+            }
+            this.propertyIndexChangedListeners.forEach((listener) => listener(event));
         }
 
-        private notifyPropertyChangedEvent(event: PropertyChangedEvent) {
-            this.propertyChangedListeners.forEach((listener) => listener(event));
+        onPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
+            this.propertyValueChangedListeners.push(listener);
+        }
+
+        unPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
+            this.propertyValueChangedListeners =
+            this.propertyValueChangedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyPropertyValueChangedEvent(previousValue: Value, newValue: Value) {
+            var event = new PropertyValueChangedEvent(this, previousValue, newValue);
+            if (this.debug) {
+                console.debug("Property[" + this.getPath().toString() + "].notifyPropertyValueChangedEvent: " + event.getPath().toString());
+            }
+            this.propertyValueChangedListeners.forEach((listener) => listener(event));
         }
 
         public static checkName(name: string) {
@@ -208,7 +266,7 @@ module api.data {
 
     export class PropertyBuilder {
 
-        parent: PropertySet;
+        array: PropertyArray;
 
         name: string;
 
@@ -218,8 +276,8 @@ module api.data {
 
         id: PropertyId;
 
-        setParent(value: PropertySet): PropertyBuilder {
-            this.parent = value;
+        setArray(value: PropertyArray): PropertyBuilder {
+            this.array = value;
             return this;
         }
 

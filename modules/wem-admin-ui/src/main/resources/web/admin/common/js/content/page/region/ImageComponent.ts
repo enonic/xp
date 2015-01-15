@@ -10,6 +10,8 @@ module api.content.page.region {
 
     export class ImageComponent extends Component implements api.Equitable, api.Cloneable {
 
+        public debug: boolean = false;
+        
         private image: api.content.ContentId;
 
         private config: PropertyTree;
@@ -21,6 +23,12 @@ module api.content.page.region {
 
             this.image = builder.image;
             this.config = builder.config;
+            this.config.onChanged(() => {
+                if (this.debug) {
+                    console.debug("ImageComponent[" + this.getPath().toString() + "].config.onChanged: ", event);
+                }
+                this.notifyPropertyValueChanged("config");
+            });
 
             var formBuilder = new FormBuilder();
             formBuilder.addFormItem(new api.form.InputBuilder().
@@ -45,11 +53,15 @@ module api.content.page.region {
         }
 
         setImage(value: api.content.ContentId) {
+            var oldValue = this.image;
             this.image = value;
+            if (!api.ObjectHelper.equals(oldValue, value)) {
+                this.notifyPropertyChanged("image");
+            }
         }
 
         reset() {
-            this.image = null;
+            this.setImage(null);
         }
 
         isEmpty(): boolean {
