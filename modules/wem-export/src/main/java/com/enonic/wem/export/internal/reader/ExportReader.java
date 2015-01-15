@@ -34,7 +34,7 @@ public class ExportReader
 
         if ( !binaryFile.exists() )
         {
-            throw new ImportNodeException( "Missing binary source, expected at: " + binaryFile.getUrl() );
+            throw new ImportNodeException( "Missing binary source, expected at: " + binaryFile.getPath() );
         }
 
         return binaryFile;
@@ -48,7 +48,7 @@ public class ExportReader
 
         if ( !orderFile.exists() )
         {
-            throw new ImportNodeException( "Parent has manual ordering of children, expected at:" + orderFile.getUrl() );
+            throw new ImportNodeException( "Parent has manual ordering of children, expected at:" + orderFile.getPath() );
         }
 
         return orderFile;
@@ -63,7 +63,7 @@ public class ExportReader
 
         if ( !nodeVF.exists() )
         {
-            throw new ImportNodeException( "Missing node source, expected at: " + nodeVF.getUrl() );
+            throw new ImportNodeException( "Missing node source, expected at: " + nodeVF.getPath() );
         }
 
         return nodeVF;

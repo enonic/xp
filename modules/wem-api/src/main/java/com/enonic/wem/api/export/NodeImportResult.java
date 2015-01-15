@@ -1,6 +1,5 @@
 package com.enonic.wem.api.export;
 
-import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -95,9 +94,9 @@ public class NodeImportResult
             return this;
         }
 
-        public Builder addBinary( final URL url, final BinaryReference binaryReference )
+        public Builder addBinary( final String path, final BinaryReference binaryReference )
         {
-            this.exportedBinaries.add( url.toString() + " [" + binaryReference + "]" );
+            this.exportedBinaries.add( path + " [" + binaryReference + "]" );
             return this;
         }
 

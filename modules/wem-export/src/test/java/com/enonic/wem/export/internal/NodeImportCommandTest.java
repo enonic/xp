@@ -354,6 +354,38 @@ public class NodeImportCommandTest
         assertNotNull( attachedBinary.getBlobKey() );
     }
 
+    @Test
+    public void import_special_characters()
+        throws Exception
+    {
+        final String myChildName = "my child with spaces";
+        final String myChildChildName = "åæø";
+        final String myChildChildChildName = "êôö-.(%fi_)";
+
+        createNodeXmlFile( Paths.get( "myExport", "mynode" ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", myChildName ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", myChildName, myChildChildName ), false );
+        createNodeXmlFile( Paths.get( "myExport", "mynode", myChildName, myChildChildName, myChildChildChildName ), false );
+
+        final NodeImportResult result = NodeImportCommand.create().
+            nodeService( this.importNodeService ).
+            xmlNodeSerializer( new XmlNodeSerializer() ).
+            importRoot( NodePath.ROOT ).
+            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            build().
+            execute();
+
+        assertEquals( 0, result.getImportErrors().size() );
+        assertEquals( 4, result.addedNodes.getSize() );
+
+        final Node myNode = assertNodeExists( NodePath.ROOT, "mynode" );
+        final Node myChild = assertNodeExists( myNode.path(), myChildName );
+        assertEquals( myChildName, myChild.name().toString() );
+        final Node myChildChild = assertNodeExists( myChild.path(), myChildChildName );
+        assertEquals( myChildChildName, myChildChild.name().toString() );
+        final Node myChildChildChild = assertNodeExists( myChildChild.path(), myChildChildChildName );
+        assertEquals( myChildChildChildName, myChildChildChild.name().toString() );
+    }
 
     private void createOrderFile( final Path exportPath, final String... childNodeNames )
         throws Exception

@@ -12,10 +12,9 @@ class NodeImportPathResolver
 
     public static NodePath resolveNodeImportPath( final VirtualFile parent, final VirtualFile exportRoot, final NodePath importRoot )
     {
+        final Path parentPath = Paths.get( PathUtils.removeLeadingWindowsSlash( parent.getPath() ) );
 
-        final Path parentPath = Paths.get( PathUtils.removeLeadingWindowsSlash( parent.getUrl().getPath() ) );
-
-        final Path exportRootPath = Paths.get( PathUtils.removeLeadingWindowsSlash( exportRoot.getUrl().getPath() ) );
+        final Path exportRootPath = Paths.get( PathUtils.removeLeadingWindowsSlash( exportRoot.getPath() ) );
 
         final Path relativePath = exportRootPath.relativize( parentPath );
 

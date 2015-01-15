@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -22,7 +23,7 @@ final class LocalFile
 
     public LocalFile( final Path path )
     {
-        this.path = path;
+        this.path = Paths.get( path.toString() );
     }
 
     @Override
@@ -42,7 +43,7 @@ final class LocalFile
     {
         try
         {
-            return this.path.toUri().toURL();
+            return this.path.toFile().toURI().toURL();
         }
         catch ( MalformedURLException e )
         {
