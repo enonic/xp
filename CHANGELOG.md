@@ -30,9 +30,10 @@ Refactoring:
   - Merged wem-jsapi and portal-jslib modules into portal-jslib (CMS-4898)
   - Loading of current PageDescriptor when refreshing config form i PageInspectionPanel was not necessary,
     since PageModel could keep it and make it accessible. (CMS-4837)
- - Made MixinName, Metadata, Attachments, Attachment, AttachmentName implement Equitable (TypeScript)
- - When ContentWizardPanel detects inconsistent data in method layoutPersistedItem: 
-   Added more logging which can uncover which parts of the Content that was unequal
+  - Made MixinName, Metadata, Attachments, Attachment, AttachmentName implement Equitable (TypeScript)
+  - When ContentWizardPanel detects inconsistent data in method layoutPersistedItem:
+    Added more logging which can uncover which parts of the Content that was unequal
+  - Converted wem-core to use declarative services (CMS-4905)
       
 ## RC1 (2015-01-13)
 
