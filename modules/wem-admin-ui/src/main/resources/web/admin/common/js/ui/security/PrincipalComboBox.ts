@@ -8,13 +8,12 @@ module api.ui.security {
     import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
 
     export class PrincipalComboBox extends api.ui.selector.combobox.RichComboBox<Principal> {
-        constructor(loader?: PrincipalLoader) {
-            loader = loader || new PrincipalLoader();
+        constructor(loader?: PrincipalLoader, max?: number) {
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Principal>().
-                setMaximumOccurrences(0).
+                setMaximumOccurrences(max || 0).
                 setComboBoxName("principalSelector").
                 setIdentifierMethod("getKey").
-                setLoader(loader).
+                setLoader(loader || new PrincipalLoader()).
                 setSelectedOptionsView(new PrincipalSelectedOptionsView()).
                 setOptionDisplayValueViewer(new PrincipalViewer()).
                 setDelayedInputValueChangedHandling(500);
