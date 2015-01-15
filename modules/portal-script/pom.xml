@@ -10,9 +10,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-script</artifactId>
+  <artifactId>portal-script</artifactId>
   <packaging>bundle</packaging>
-  <name>Enonic WEM Script</name>
+  <name>Enonic XP Portal :. Script</name>
 
   <dependencies>
     <dependency>

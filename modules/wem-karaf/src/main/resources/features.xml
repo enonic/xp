@@ -40,8 +40,6 @@
     <bundle start-level="50">mvn:com.enonic.wem/wem-core/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/core-export/${project.version}</bundle>
 
-    <bundle start-level="50">mvn:com.enonic.wem/wem-script/${project.version}</bundle>
-
     <bundle start-level="50">mvn:com.enonic.wem/web-api/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/web-impl/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/web-vhost/${project.version}</bundle>
@@ -49,6 +47,7 @@
 
 
     <bundle start-level="50">mvn:com.enonic.wem/portal-api/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/portal-script/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/portal-mustache/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/portal-thymeleaf/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/portal-xslt/${project.version}</bundle>
