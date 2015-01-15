@@ -217,6 +217,7 @@ module api.form {
             else {
                 this.occurrenceViewContainer.appendChild(occurrenceView);
             }
+            occurrenceView.layout();
 
             this.occurrenceViews.splice(insertAtIndex, 0, occurrenceView);
 
