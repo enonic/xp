@@ -80,19 +80,28 @@ html, body {
 
     .logout {
       float: right;
-      padding-top: 10px;
+      padding: 8px 5px;
+      &:hover {
+        color: rgba(255, 255, 255, 0.5);
+      }
     }
 
     .return-button {
       float: right;
       color: white;
       font-size: 24px;
-      padding: 5px 5px;
+      padding: 2px 0px;
       cursor: pointer;
+      height: 30px;
+      width: 30px;
       box-sizing: border-box;
+      border: 2px solid #ffffff;
+      .border-radius(50px);
       &:hover {
         color: rgba(255, 255, 255, 0.5);
+        border-color: rgba(255, 255, 255, 0.5);
       }
+
       .icon-close2();
     }
   }
@@ -227,6 +236,7 @@ html, body {
 
   .app-selector-container {
     width: 100%;
+    top: 10%;
   }
 
   .app-selector {
