@@ -21,7 +21,7 @@ module api.ui.panel {
         }
 
         addItem<T extends Panel>(label: string, panel: T, hidden?: boolean): number {
-            var item = new api.ui.tab.TabBarItem(label);
+            var item = new api.ui.tab.TabBarItemBuilder().setLabel(label).build();
             this.addItemArray(item);
 
             this.deck.addNavigablePanel(item, panel, this.items.length == 1);

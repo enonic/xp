@@ -3,6 +3,7 @@ package com.enonic.wem.admin.rest.resource.content;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -48,6 +49,7 @@ import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.DuplicateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.GetContentVersionsJson;
+import com.enonic.wem.admin.rest.resource.content.json.LocaleListJson;
 import com.enonic.wem.admin.rest.resource.content.json.MoveContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.PublishContentResultJson;
@@ -580,6 +582,14 @@ public final class ContentResource
             build() );
 
         return new GetActiveContentVersionsResultJson( result );
+    }
+
+
+    @GET
+    @Path("locales")
+    public LocaleListJson getLocales()
+    {
+        return new LocaleListJson( Locale.getAvailableLocales() );
     }
 
     private List<Attachment> parseAttachments( final List<AttachmentJson> attachmentJsonList )

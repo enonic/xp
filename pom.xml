@@ -35,10 +35,9 @@
     <module>modules/core-image</module>
     <module>modules/core-relationship</module>
     <module>modules/core-schema</module>
+    <module>modules/core-export</module>
 
     <module>modules/wem-core</module>
-    <module>modules/wem-export</module>
-    <module>modules/wem-script</module>
 
     <module>modules/web-api</module>
     <module>modules/web-impl</module>
@@ -51,6 +50,7 @@
     <module>modules/admin-event</module>
 
     <module>modules/portal-api</module>
+    <module>modules/portal-script</module>
     <module>modules/portal-mustache</module>
     <module>modules/portal-thymeleaf</module>
     <module>modules/portal-xslt</module>

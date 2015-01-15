@@ -8,6 +8,7 @@ module app.browse {
     import ContentSummary = api.content.ContentSummary;
     import ChildOrder = api.content.ChildOrder;
     import OrderChildMovements = api.content.OrderChildMovements;
+    import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
 
     export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -33,7 +34,7 @@ module app.browse {
             });
 
             var menu = new api.ui.tab.TabMenu();
-            var tabMenuItem = new api.ui.tab.TabMenuItemBuilder().setLabel("(sorting type)").build();
+            var tabMenuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel("(sorting type)")).build();
             tabMenuItem.setActive(true);
             menu.addNavigationItem(tabMenuItem);
             menu.selectNavigationItem(0);

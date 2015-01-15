@@ -10,9 +10,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-export</artifactId>
+  <artifactId>core-export</artifactId>
   <packaging>bundle</packaging>
-  <name>Enonic WEM Export</name>
+  <name>Enonic XP Core :: Export</name>
 
   <dependencies>
     <dependency>

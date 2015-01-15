@@ -1,5 +1,7 @@
 module api.app.bar {
 
+    import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
+
     export class AppBarTabMenuItem extends api.ui.tab.TabMenuItem {
 
         private tabId: AppBarTabId;
@@ -7,18 +9,14 @@ module api.app.bar {
         private editing: boolean;
 
         constructor(builder : AppBarTabMenuItemBuilder) {
-            super(new api.ui.tab.TabMenuItemBuilder().
-                setLabel(builder.label).
-                setOptions({removable: true}).
-                setCloseAction(builder.closeAction));
+            super(builder);
+
+            this.addClass("appbar-tab-menu-item");
+
             this.editing = builder.editing;
             this.tabId = builder.tabId;
-
-            if (this.editing) {
-                var iconEl = new api.dom.ImgEl();
-                this.prependChild(iconEl);
-            }
         }
+
         isEditing(): boolean {
             return this.editing;
         }
@@ -31,14 +29,21 @@ module api.app.bar {
             this.tabId = tabId;
         }
     }
-    export class AppBarTabMenuItemBuilder {
-        label: string;
+
+    export class AppBarTabMenuItemBuilder extends api.ui.tab.TabMenuItemBuilder {
+
         tabId: AppBarTabId;
+
         editing: boolean;
-        closeAction: api.ui.Action;
+
+        constructor() {
+            super();
+            this.options = {removable: true};
+            this.closeButtonEnabled = true;
+        }
 
         setLabel(label: string) : AppBarTabMenuItemBuilder {
-            this.label = label;
+            super.setLabel(label);
             return this;
         }
 
@@ -53,11 +58,11 @@ module api.app.bar {
         }
 
         setCloseAction(closeAction: api.ui.Action) : AppBarTabMenuItemBuilder {
-            this.closeAction = closeAction;
+            super.setCloseAction(closeAction);
             return this;
         }
 
-        build(): AppBarTabMenuItem{
+        build(): AppBarTabMenuItem {
             return new AppBarTabMenuItem(this);
         }
 

@@ -1,12 +1,14 @@
 module app.browse {
 
+    import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
+
     export class SortContentTabMenuItem extends api.ui.tab.TabMenuItem {
 
         private childOrder: api.content.ChildOrder;
 
         constructor(builder: SortContentTabMenuItemBuilder) {
-            super(new api.ui.tab.TabMenuItemBuilder().
-                setLabel(builder.label));
+            super((<TabMenuItemBuilder>new TabMenuItemBuilder().
+                setLabel(builder.label)));
             this.childOrder = builder.childOrder;
         }
 

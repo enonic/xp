@@ -10,8 +10,8 @@ module api.ui.tab {
 
         private navigationItemSelectedListeners: {(event: NavigatorEvent):void}[] = [];
 
-        constructor(className?: string) {
-            super("tab-bar" + (className ? " " + className : ""));
+        constructor(classes?: string) {
+            super("tab-bar" + (!classes ? "" : " " + classes));
         }
 
         addNavigationItem(tab: TabBarItem, silent?: boolean) {
@@ -20,7 +20,7 @@ module api.ui.tab {
 
             this.appendChild(tab);
 
-            tab.onSelected((event: TabBarItemEvent) => {
+            tab.onSelected((event: TabItemEvent) => {
                 this.selectNavigationItem(event.getTab().getIndex());
             });
 

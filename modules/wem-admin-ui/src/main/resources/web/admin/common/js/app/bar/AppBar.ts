@@ -1,9 +1,5 @@
 module api.app.bar {
 
-    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
-    import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
-    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-
     import AppBarActions = api.app.bar.action.AppBarActions;
 
     export class AppBar extends api.dom.DivEl implements api.ui.ActionContainer {
@@ -14,8 +10,6 @@ module api.app.bar {
 
         private homeButton: HomeButton;
 
-        private appImageButton: api.dom.ButtonEl;
-
         private tabMenu: AppBarTabMenu;
 
         private showAppLauncherAction: api.app.bar.action.ShowAppLauncherAction;
@@ -25,9 +19,6 @@ module api.app.bar {
 
             this.application = application;
             this.tabMenu = new AppBarTabMenu();
-            this.tabMenu.onNavigationItemSelected(() => this.layoutChildren());
-            this.tabMenu.onNavigationItemDeselected(() => this.layoutChildren());
-            this.tabMenu.onButtonLabelChanged(() => this.layoutChildren());
 
             this.showAppLauncherAction = new action.ShowAppLauncherAction(this.application);
 
@@ -46,7 +37,10 @@ module api.app.bar {
                 this.updateAppOpenTabs();
             });
 
-            ResponsiveManager.onAvailableSizeChanged(this, this.layoutChildren.bind(this));
+            // Responsive events to update homeButton styles
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this);
+            this.onRendered(() => {api.ui.responsive.ResponsiveManager.fireResizeEvent();});
+
         }
 
 
@@ -60,26 +54,6 @@ module api.app.bar {
 
         private updateAppOpenTabs() {
             this.application.setOpenTabs(this.tabMenu.countVisible());
-        }
-
-        // TODO: Remove, when the new tab implementation is ready.
-        private layoutChildren() {
-            var fullWidth = this.getEl().getWidth();
-
-            var homeEl = this.homeButton.getEl();
-            var homeElRightEdge = homeEl.getOffset().left + homeEl.getWidthWithMargin();
-
-            var tabAvailableWidth = fullWidth - homeElRightEdge;
-
-            var tabEl = this.tabMenu.getEl();
-            tabEl.setWidth('auto').setWidth(tabEl.getWidthWithMargin() > tabAvailableWidth ? tabAvailableWidth + 'px' : 'auto');
-
-            var centerLeftEdge = (fullWidth - tabEl.getWidth()) / 2;
-            tabEl.setLeftPx(Math.max(homeElRightEdge, centerLeftEdge));
-
-            if (this.tabMenu.isMenuVisible()) {
-                this.tabMenu.updateMenuPosition();
-            }
         }
     }
 

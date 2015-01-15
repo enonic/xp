@@ -18,6 +18,7 @@ function startApplication() {
 
     var serverEventsListener = new api.app.ServerEventsListener(applications);
     loginForm.onUserAuthenticated((user: api.security.User) => {
+        new app.home.LogInEvent(user).fire();
         console.log('User logged in', user.getDisplayName(), user.getKey().toString());
         homeMainContainer.showAppSelector();
         serverEventsListener.start();
@@ -49,6 +50,7 @@ function startApplication() {
 
     new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
         if (loginResult.isAuthenticated()) {
+            new app.home.LogInEvent(loginResult.getUser()).fire();
             homeMainContainer.showAppSelector();
             serverEventsListener.start();
         } else {

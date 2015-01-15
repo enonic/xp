@@ -14,11 +14,7 @@ module app.home {
 
         private backgroundImgUrl: string;
 
-        private logoutButton: api.ui.button.Button;
-
-        private returnButton: api.dom.DivEl;
-
-        private returnAction: api.ui.Action;
+        private headerPanel: HeaderPanel;
 
         constructor(builder: HomeMainContainerBuilder) {
             super('home-main-container');
@@ -29,29 +25,19 @@ module app.home {
             this.loginForm = builder.loginForm;
             this.linksContainer = builder.linksContainer;
             this.backgroundImgUrl = builder.backgroundImgUrl;
-            this.logoutButton = new api.ui.button.Button(_i18n('Sign out'));
-            this.logoutButton.setClass("button logout-button");
-
-            this.logoutButton.onClicked((event) => {
-                new LogOutEvent().fire();
-            });
 
             this.setBackgroundImgUrl(this.backgroundImgUrl);
 
+            this.headerPanel = new HeaderPanel();
+            this.headerPanel.hide();
+
             this.brandingPanel = new Branding();
 
-            this.returnButton = new api.dom.DivEl('return-button');
-            this.returnButton.hide();
-            this.returnButton.onClicked(() => {
-                this.returnAction.execute()
-            });
-
             this.centerPanel = new CenterPanel();
-            this.centerPanel.prependChild(this.returnButton);
+            this.centerPanel.prependChild(this.headerPanel);
             this.centerPanel.prependChild(this.brandingPanel);
 
             this.centerPanel.addToAppSelectorPanel(this.appSelector);
-            this.centerPanel.addToAppSelectorPanel(this.logoutButton);
 
             this.centerPanel.addToLoginPanel(this.loginForm);
             this.centerPanel.addToLoginPanel(this.linksContainer);
@@ -62,16 +48,22 @@ module app.home {
                 new api.security.auth.LogoutRequest().sendAndParse().then(() => {
                     this.centerPanel.showLoginPanel();
                     this.setBackgroundImgUrl(this.backgroundImgUrl);
-                    this.returnButton.hide();
+                    this.headerPanel.hide();
+                    this.brandingPanel.show();
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
             });
 
+            LogInEvent.on(() => {
+                this.headerPanel.show();
+                this.disableBranding();
+            });
+
         }
 
         setReturnAction(action: api.ui.Action) {
-            this.returnAction = action;
+            this.headerPanel.setReturnAction(action);
         }
 
         showLogin() {
@@ -93,7 +85,11 @@ module app.home {
         }
 
         enableReturnButton() {
-            this.returnButton.show();
+            this.headerPanel.enableReturnButton();
+        }
+
+        disableBranding() {
+            this.brandingPanel.hide();
         }
     }
 

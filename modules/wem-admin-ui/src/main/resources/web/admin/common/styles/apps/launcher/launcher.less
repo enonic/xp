@@ -54,6 +54,58 @@ html, body {
     -webkit-animation-play-state: running;
   }
 
+  .header-panel {
+    height: 44px;
+    padding: 6px;
+    background: @admin-bg-dark-gray top center;
+    background-size: cover;
+    text-align: center;
+    overflow: hidden;
+    .box-sizing(border-box);
+
+    .installation-header {
+      float: left;
+      line-height: 20px;
+      padding: 6px 10px;
+      color: #eeeeee;
+      font-size: 18px;
+    }
+    .user-name {
+      float: right;
+      line-height: 20px;
+      padding: 6px 10px;
+      color: #eeeeee;
+      font-size: 18px;
+    }
+
+    .logout {
+      float: right;
+      padding: 8px 5px;
+      &:hover {
+        color: rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    .return-button {
+      float: right;
+      color: white;
+      font-size: 24px;
+      padding: 2px 0px;
+      cursor: pointer;
+      height: 30px;
+      width: 30px;
+      box-sizing: border-box;
+      border: 2px solid #ffffff;
+      .border-radius(50px);
+      &:hover {
+        color: rgba(255, 255, 255, 0.5);
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+
+      .icon-close2();
+    }
+  }
+
   /** Branding */
 
   .branding {
@@ -128,23 +180,6 @@ html, body {
 
   }
 
-  .return-button {
-    color: white;
-    font-size: 24px;
-    height: 44px;
-    width: 44px;
-    padding: 10px;
-    cursor: pointer;
-    position: absolute;
-    top: 0;
-    right: 0;
-    box-sizing: border-box;
-    &:hover {
-      color: rgba(255, 255, 255, 0.5);
-    }
-    .icon-close2();
-  }
-
   /** Common */
 
   .login-form,
@@ -196,49 +231,12 @@ html, body {
 
   }
 
-  .logout-button {
-    font-family: @admin-font-family;
-    padding: 5px 20px 5px 20px;
-    font-size: 12px;
-    border-width: 1px 1px 1px 1px;
-    border-style: solid;
-    border-color: transparent;
-    background-color: transparent;
-    color: @admin-white;
-    display: inline-block;
-    width: 100%;
-    .background-color-transition;
-
-    &:hover,
-    &:focus {
-      cursor: pointer;
-      color: rgba(255, 255, 255, 0.35);
-    }
-
-    &.disabled {
-      cursor: default;
-      opacity: 0.5;
-    }
-  }
-
-  .logout-button {
-    width: 280px;
-    position: absolute;
-    bottom: 10%;
-    left: calc(~"50% - 140px");
-    background-color: @admin-red;
-    @media only screen and (max-width: @mobile-threshold) {
-      width: 100%;
-      bottom: 0;
-      left: inherit;
-      //box-shadow: 0px 10px 5px #000, 0px -10px 28px #000;
-    }
-  }
 
   /** App selector */
 
   .app-selector-container {
     width: 100%;
+    top: 10%;
   }
 
   .app-selector {
@@ -395,5 +393,13 @@ html, body {
     }
   }
 
+}
+
+._0-240, ._240-360, ._360-540, ._540-720 {
+  .home-main-container {
+    .user-name {
+      display: none;
+    }
+  }
 }
 

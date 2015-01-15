@@ -2,6 +2,7 @@
   margin-top: 20px;
 
   .form-item {
+    padding: 10px 10px 0;
     .clearfix();
     .form-element-spacing(@form-field-spacing);
 
@@ -22,7 +23,7 @@
         .input-error();
       }
     }
-    
+
     label {
       font-size: 12px;
       max-width: @form-label-width - 10px;
@@ -48,7 +49,7 @@
   fieldset {
     min-width: 100%;
     .form-element-spacing(@form-field-set-spacing);
-    
+
     legend {
       width: 100%;
       margin-bottom: 10px;
@@ -66,7 +67,7 @@
   .form-fieldset-vertical();
 }
 
-.form-fieldset-vertical(){
+.form-fieldset-vertical() {
   .form .form-item {
     label {
       float: none;
