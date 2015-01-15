@@ -29,6 +29,7 @@ module app.home {
             this.setBackgroundImgUrl(this.backgroundImgUrl);
 
             this.headerPanel = new HeaderPanel();
+            this.headerPanel.hide();
 
             this.brandingPanel = new Branding();
 
@@ -47,11 +48,16 @@ module app.home {
                 new api.security.auth.LogoutRequest().sendAndParse().then(() => {
                     this.centerPanel.showLoginPanel();
                     this.setBackgroundImgUrl(this.backgroundImgUrl);
-                    this.headerPanel.disableReturnButton();
+                    this.headerPanel.hide();
                     this.brandingPanel.show();
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
+            });
+
+            LogInEvent.on(() => {
+                this.headerPanel.show();
+                this.disableBranding();
             });
 
         }
