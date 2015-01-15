@@ -86,7 +86,7 @@ public final class Launcher
 
         // new ProvisionActivator().start( this.felix.getBundleContext() );
 
-        sl.setStartLevel( 20 );
+        sl.setStartLevel( 30 );
         this.felix.stop();
         this.felix.waitForStop( 0 );
     }
