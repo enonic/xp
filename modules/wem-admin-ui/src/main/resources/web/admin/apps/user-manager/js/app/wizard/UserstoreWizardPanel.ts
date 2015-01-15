@@ -47,8 +47,7 @@ module app.wizard {
             this.wizardActions = new app.wizard.action.UserStoreWizardActions(this);
             this.toolbar = new UserStoreWizardToolbar({
                 saveAction: this.wizardActions.getSaveAction(),
-                deleteAction: this.wizardActions.getDeleteAction(),
-                closeAction: this.wizardActions.getCloseAction()
+                deleteAction: this.wizardActions.getDeleteAction()
             });
 
             this.wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();

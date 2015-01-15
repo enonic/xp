@@ -46,8 +46,7 @@ module app.wizard {
             this.toolbar = new PrincipalWizardToolbar({
                 saveAction: this.wizardActions.getSaveAction(),
                 duplicateAction: duplicateAction,
-                deleteAction: this.wizardActions.getDeleteAction(),
-                closeAction: this.wizardActions.getCloseAction()
+                deleteAction: this.wizardActions.getDeleteAction()
             });
 
             this.wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();

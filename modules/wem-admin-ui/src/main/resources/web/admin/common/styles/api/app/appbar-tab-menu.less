@@ -20,14 +20,15 @@
     .flex(0 0 36px);
     position: relative; // to position popup menu relative to me
     display: block;
-    font-size: 14px;
-    line-height: 32px;
-    cursor: pointer;
-    overflow: hidden;
     max-width: 360px;
     padding: 6px;
     background: @admin-bg-light-gray;
+    font-size: 13px;
+    line-height: 32px;
+    font-family: @admin-font-family;
     color: @admin-font-gray3;
+    cursor: pointer;
+    overflow: hidden;
 
     .noSelect();
 
@@ -49,50 +50,20 @@
 
   .tab-menu-button, ul.bar li {
     margin-top: 5px;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
   }
 
   ul.bar, ul.menu {
     .tab-menu-item {
       position: relative;
       overflow: hidden;
-      height: 24px;
-      line-height: 24px;
+      height: 30px;
+      line-height: 30px;
       padding: 5px;
       background: @admin-bg-light-gray;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
-
-      * {
-        vertical-align: top;
-      }
-
-      .label {
-        max-width: 290px;
-        margin: 0 30px 0 5px;
-        display: block;
-        .ellipsis();
-      }
-
-      button {
-        position: absolute;
-        top: 0px;
-        right: 0px;
-        padding: 5px;
-        border: 0;
-        cursor: pointer;
-        background-color: transparent;
-        font-size: 20px;
-        height: 30px;
-        width: 30px;
-        .icon-close2();
-
-        &:hover {
-          background-color: @admin-red;
-          color: @admin-bg-almost-white;
-        }
-      }
 
       &.active {
         background-color: @admin-white;
@@ -100,6 +71,37 @@
 
       &:hover{
         background-color: @admin-white;
+      }
+
+      * {
+        vertical-align: top;
+      }
+
+      .label {
+        max-width: 290px;
+        margin: 0 20px 0 10px;
+        display: block;
+        .ellipsis();
+      }
+
+      button {
+        position: absolute;
+        top: 9px;
+        right: 5px;
+        height: 22px;
+        width: 22px;
+        padding: 0px;
+        border-radius: 11px;
+        border: 0;
+        cursor: pointer;
+        background-color: transparent;
+        font-size: 20px;
+        .icon-close2();
+
+        &:hover {
+          background-color: @admin-red;
+          color: @admin-bg-almost-white;
+        }
       }
     }
   }
@@ -112,6 +114,8 @@
 
     .flex(1 1 100%);
 
+    min-width: 100px; // firefox fix
+
     background: transparent;
     position: static;
     padding: 0;
@@ -121,21 +125,17 @@
     .box-shadow(none);
 
     .tab-menu-item {
-      .flex(0 1 180px);
+      .flex(0 1 190px);
       height: initial;
       margin-right: 1px;
+      margin-bottom: 1px;
+
+      &.active {
+        margin-bottom: 0px;
+      }
 
       .label {
         line-height: 30px;
-      }
-
-      button {
-        top: 9px;
-        right: 5px;
-        padding: 0px;
-        height: 22px;
-        width: 22px;
-        border-radius: 11px;
       }
     }
   }
@@ -148,7 +148,7 @@
     width: auto;
     padding: 5px 0;
     margin: 0px;
-    min-width: 180px;
+    min-width: 190px;
     max-width: 360px;
     background: @admin-bg-light-gray;
     color: @admin-dark-gray;

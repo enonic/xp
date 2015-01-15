@@ -4,7 +4,6 @@ module app.wizard {
         saveAction:api.ui.Action;
         duplicateAction:api.ui.Action;
         deleteAction:api.ui.Action;
-        closeAction:api.ui.Action;
     }
 
     export class PrincipalWizardToolbar extends api.ui.toolbar.Toolbar {
@@ -14,7 +13,6 @@ module app.wizard {
             super.addAction(params.saveAction);
             super.addAction(params.duplicateAction);
             super.addAction(params.deleteAction);
-            super.addAction(params.closeAction);
             super.addGreedySpacer();
         }
     }

@@ -30,8 +30,7 @@ module app.view {
 
             var toolbar = new ContentItemViewToolbar({
                 editAction: this.editAction,
-                deleteAction: this.deleteAction,
-                closeAction: this.closeAction
+                deleteAction: this.deleteAction
             });
 
             super(toolbar, this.deckPanel);
