@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.wem.api.content.page.region.Component;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.mapper.ContentFixtures;
+import com.enonic.xp.portal.jslib.AbstractHandlerTest;
 
 public class GetComponentHandlerTest
     extends AbstractHandlerTest

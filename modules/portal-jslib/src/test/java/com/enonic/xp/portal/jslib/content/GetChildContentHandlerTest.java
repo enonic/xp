@@ -1,4 +1,4 @@
-package com.enonic.wem.jsapi.internal.content;
+package com.enonic.xp.portal.jslib.content;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -9,8 +9,8 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.jsapi.internal.AbstractHandlerTest;
 import com.enonic.wem.script.command.CommandHandler;
+import com.enonic.xp.portal.jslib.AbstractHandlerTest;
 
 public class GetChildContentHandlerTest
     extends AbstractHandlerTest

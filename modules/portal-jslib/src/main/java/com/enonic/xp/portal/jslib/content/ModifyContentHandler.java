@@ -1,7 +1,8 @@
-package com.enonic.wem.jsapi.internal.content;
+package com.enonic.xp.portal.jslib.content;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -9,20 +10,25 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentEditor;
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.EditableContent;
 import com.enonic.wem.api.content.Metadata;
+import com.enonic.wem.api.content.Metadatas;
+import com.enonic.wem.api.content.UpdateContentParams;
+import com.enonic.wem.api.convert.Converters;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
 import com.enonic.wem.script.mapper.ContentMapper;
 
 @Component(immediate = true)
-public final class CreateContentHandler
+public final class ModifyContentHandler
     implements CommandHandler
 {
     private ContentService contentService;
@@ -30,38 +36,83 @@ public final class CreateContentHandler
     @Override
     public String getName()
     {
-        return "content.create";
+        return "content.modify";
     }
 
     @Override
     public Object execute( final CommandRequest req )
     {
-        final CreateContentParams params = createParams( req );
-        final Content result = this.contentService.create( params );
-        return new ContentMapper( result );
+        final String key = req.param( "key" ).required().value( String.class );
+        final Function<Object[], Object> editor = req.param( "editor" ).required().callback();
+
+        final ContentId id = findContentId( key );
+        if ( id == null )
+        {
+            return null;
+        }
+
+        final UpdateContentParams params = new UpdateContentParams();
+        params.contentId( id );
+        params.editor( newContentEditor( editor ) );
+
+        final Content result = this.contentService.update( params );
+        return result != null ? new ContentMapper( result ) : null;
     }
 
-    private CreateContentParams createParams( final CommandRequest req )
+    private ContentId findContentId( final String key )
     {
-        final CreateContentParams params = new CreateContentParams();
-        params.name( req.param( "name" ).value( String.class ) );
-        params.parent( contentPath( req.param( "parentPath" ).value( String.class ) ) );
-        params.displayName( req.param( "displayName" ).value( String.class ) );
-        params.draft( req.param( "draft" ).value( Boolean.class ) );
-        params.type( contentTypeName( req.param( "contentType" ).value( String.class ) ) );
-        params.contentData( propertyTree( req.param( "data" ).map() ) );
-        params.metadata( metaDataList( req.param( "meta" ).map() ) );
-        return params;
+        if ( !key.startsWith( "/" ) )
+        {
+            return ContentId.from( key );
+        }
+
+        try
+        {
+            final Content content = this.contentService.getByPath( ContentPath.from( key ) );
+            return content.getId();
+        }
+        catch ( final ContentNotFoundException e )
+        {
+            return null;
+        }
     }
 
-    private ContentPath contentPath( final String value )
+    private ContentEditor newContentEditor( final Function<Object[], Object> func )
     {
-        return value != null ? ContentPath.from( value ) : null;
+        return edit -> {
+            final Object value = func.apply( new Object[]{new ContentMapper( edit.source )} );
+            if ( value instanceof Map )
+            {
+                updateContent( edit, (Map) value );
+            }
+        };
     }
 
-    private ContentTypeName contentTypeName( final String value )
+    private void updateContent( final EditableContent target, final Map<?, ?> map )
     {
-        return value != null ? ContentTypeName.from( value ) : null;
+        final String displayName = Converters.convert( map.get( "displayName" ), String.class );
+        if ( displayName != null )
+        {
+            target.displayName = displayName;
+        }
+
+        final Boolean draft = Converters.convert( map.get( "draft" ), Boolean.class );
+        if ( draft != null )
+        {
+            target.draft = draft;
+        }
+
+        final Object data = map.get( "data" );
+        if ( data instanceof Map )
+        {
+            target.data = propertyTree( (Map) data );
+        }
+
+        final Object metadata = map.get( "meta" );
+        if ( metadata instanceof Map )
+        {
+            target.metadata = metaDatas( (Map) metadata );
+        }
     }
 
     private PropertyTree propertyTree( final Map<?, ?> value )
@@ -134,7 +185,12 @@ public final class CreateContentHandler
         }
     }
 
-    private List<Metadata> metaDataList( final Map<String, Object> value )
+    private Metadatas metaDatas( final Map<?, ?> value )
+    {
+        return Metadatas.from( metaDataList( value ) );
+    }
+
+    private List<Metadata> metaDataList( final Map<?, ?> value )
     {
         if ( value == null )
         {
@@ -142,9 +198,9 @@ public final class CreateContentHandler
         }
 
         final List<Metadata> list = Lists.newArrayList();
-        for ( final Map.Entry<String, Object> entry : value.entrySet() )
+        for ( final Map.Entry<?, ?> entry : value.entrySet() )
         {
-            final Metadata item = metaData( entry.getKey(), entry.getValue() );
+            final Metadata item = metaData( entry.getKey().toString(), entry.getValue() );
             if ( item != null )
             {
                 list.add( item );

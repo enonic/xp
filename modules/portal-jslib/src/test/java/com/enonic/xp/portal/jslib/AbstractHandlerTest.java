@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.jslib.impl;
+package com.enonic.xp.portal.jslib;
 
 import org.junit.Before;
 

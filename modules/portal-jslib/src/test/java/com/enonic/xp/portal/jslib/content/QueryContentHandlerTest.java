@@ -1,4 +1,4 @@
-package com.enonic.wem.jsapi.internal.content;
+package com.enonic.xp.portal.jslib.content;
 
 import java.time.Instant;
 
@@ -16,8 +16,8 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByQueryParams;
 import com.enonic.wem.api.content.FindContentByQueryResult;
-import com.enonic.wem.jsapi.internal.AbstractHandlerTest;
 import com.enonic.wem.script.command.CommandHandler;
+import com.enonic.xp.portal.jslib.AbstractHandlerTest;
 
 public class QueryContentHandlerTest
     extends AbstractHandlerTest

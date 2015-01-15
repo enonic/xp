@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.mapper.ContentFixtures;
+import com.enonic.xp.portal.jslib.AbstractHandlerTest;
 
 public class GetSiteHandlerTest
     extends AbstractHandlerTest

@@ -1,4 +1,4 @@
-package com.enonic.wem.jsapi.internal.content;
+package com.enonic.xp.portal.jslib.content;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

@@ -1,4 +1,4 @@
-package com.enonic.wem.jsapi.internal.content;
+package com.enonic.xp.portal.jslib.content;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -11,8 +11,8 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.EditableContent;
 import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.jsapi.internal.AbstractHandlerTest;
 import com.enonic.wem.script.command.CommandHandler;
+import com.enonic.xp.portal.jslib.AbstractHandlerTest;
 
 public class ModifyContentHandlerTest
     extends AbstractHandlerTest

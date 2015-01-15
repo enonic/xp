@@ -1,4 +1,4 @@
-package com.enonic.wem.jsapi.internal.content;
+package com.enonic.xp.portal.jslib.content;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -8,10 +8,10 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.jsapi.internal.AbstractHandlerTest;
 import com.enonic.wem.script.command.CommandHandler;
+import com.enonic.xp.portal.jslib.AbstractHandlerTest;
 
-public class GetContentHandlerTest
+public class DeleteContentHandlerTest
     extends AbstractHandlerTest
 {
     private ContentService contentService;
@@ -22,49 +22,50 @@ public class GetContentHandlerTest
     {
         this.contentService = Mockito.mock( ContentService.class );
 
-        final GetContentHandler handler = new GetContentHandler();
+        final DeleteContentHandler handler = new DeleteContentHandler();
         handler.setContentService( this.contentService );
 
         return handler;
     }
 
     @Test
-    public void getById()
+    public void deleteById()
         throws Exception
     {
         final Content content = ContentFixtures.newContent();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( content );
 
-        execute( "getById" );
+        execute( "deleteById" );
     }
 
     @Test
-    public void getByPath()
+    public void deleteByPath()
         throws Exception
     {
         final Content content = ContentFixtures.newContent();
-        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( content );
 
-        execute( "getByPath" );
+        execute( "deleteByPath" );
     }
 
     @Test
-    public void getById_notFound()
+    public void deleteById_notFound()
         throws Exception
     {
         final ContentId id = ContentId.from( "123456" );
-        Mockito.when( this.contentService.getById( id ) ).thenThrow( new ContentNotFoundException( id, null ) );
+        Mockito.when( this.contentService.getById( Mockito.any() ) ).thenThrow( new ContentNotFoundException( id, null ) );
 
-        execute( "getById_notFound" );
+        execute( "deleteById_notFound" );
     }
 
     @Test
-    public void getByPath_notFound()
+    public void deleteByPath_notFound()
         throws Exception
     {
-        final ContentPath path = ContentPath.from( "/a/b/mycontent" );
-        Mockito.when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, null ) );
+        final ContentPath path = ContentPath.from( "/a/b" );
+        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenThrow( new ContentNotFoundException( path, null ) );
 
-        execute( "getByPath_notFound" );
+        execute( "deleteByPath_notFound" );
     }
 }
