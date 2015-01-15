@@ -1,4 +1,4 @@
-package com.enonic.wem.itests.core.security;
+package com.enonic.wem.core.security;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,8 +33,7 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
-import com.enonic.wem.core.security.SecurityServiceImpl;
-import com.enonic.wem.itests.core.elasticsearch.AbstractElasticsearchIntegrationTest;
+import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;

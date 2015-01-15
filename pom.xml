@@ -61,7 +61,6 @@
     <module>modules/wem-karaf</module>
     <module>modules/wem-launcher</module>
     <module>modules/wem-distro</module>
-    <module>modules/wem-itests</module>
   </modules>
 
   <dependencies>
