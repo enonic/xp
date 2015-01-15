@@ -38,6 +38,8 @@
     <bundle start-level="50">mvn:org.apache.tika/tika-bundle/1.6</bundle>
 
     <bundle start-level="50">mvn:com.enonic.wem/wem-core/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/core-export/${project.version}</bundle>
+
     <bundle start-level="50">mvn:com.enonic.wem/wem-script/${project.version}</bundle>
 
     <bundle start-level="50">mvn:com.enonic.wem/web-api/${project.version}</bundle>
@@ -45,7 +47,6 @@
     <bundle start-level="50">mvn:com.enonic.wem/web-vhost/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/web-jaxrs/${project.version}</bundle>
 
-    <bundle start-level="50">mvn:com.enonic.wem/wem-export/${project.version}</bundle>
 
     <bundle start-level="50">mvn:com.enonic.wem/portal-api/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/portal-mustache/${project.version}</bundle>
