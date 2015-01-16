@@ -135,7 +135,6 @@ module app.wizard {
                 saveAction: this.wizardActions.getSaveAction(),
                 duplicateAction: this.wizardActions.getDuplicateAction(),
                 deleteAction: this.wizardActions.getDeleteAction(),
-                closeAction: this.wizardActions.getCloseAction(),
                 publishAction: this.wizardActions.getPublishAction(),
                 previewAction: this.wizardActions.getPreviewAction(),
                 showLiveEditAction: this.wizardActions.getShowLiveEditAction(),

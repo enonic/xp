@@ -24,7 +24,7 @@
     padding: 6px;
     background: @admin-bg-light-gray;
     font-size: 13px;
-    line-height: 32px;
+    line-height: 28px;
     font-family: @admin-font-family;
     color: @admin-font-gray3;
     cursor: pointer;
@@ -49,7 +49,7 @@
   }
 
   .tab-menu-button, ul.bar li {
-    margin-top: 5px;
+    margin-top: 8px;
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
   }
@@ -58,11 +58,12 @@
     .tab-menu-item {
       position: relative;
       overflow: hidden;
-      height: 30px;
-      line-height: 30px;
+      height: 26px;
+      line-height: 28px;
       padding: 5px;
       background: @admin-bg-light-gray;
       font-size: 13px;
+      color: @admin-font-gray3;
       cursor: pointer;
 
       &.active {
@@ -86,7 +87,7 @@
 
       button {
         position: absolute;
-        top: 9px;
+        top: 7px;
         right: 5px;
         height: 22px;
         width: 22px;
@@ -133,10 +134,6 @@
       &.active {
         margin-bottom: 0px;
       }
-
-      .label {
-        line-height: 30px;
-      }
     }
   }
 
@@ -151,7 +148,6 @@
     min-width: 190px;
     max-width: 360px;
     background: @admin-bg-light-gray;
-    color: @admin-dark-gray;
     .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
   }
 

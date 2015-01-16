@@ -7,7 +7,6 @@ module app.wizard {
         saveAction:api.ui.Action;
         duplicateAction:api.ui.Action;
         deleteAction:api.ui.Action;
-        closeAction:api.ui.Action;
         publishAction:api.ui.Action;
         previewAction:api.ui.Action;
         showLiveEditAction:api.ui.Action;
@@ -27,7 +26,6 @@ module app.wizard {
             super.addAction(params.deleteAction);
             super.addAction(params.publishAction);
             super.addAction(params.previewAction);
-            super.addAction(params.closeAction);
             super.addGreedySpacer();
 
             this.cycleViewModeButton = new CycleButton(params.showSplitEditAction, params.showFormAction, params.showLiveEditAction);

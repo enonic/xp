@@ -10,6 +10,8 @@ module api.app.bar {
 
         static TAB_WIDTH: number = 190;
 
+        static MAX_WIDTH: number = 248; // maximum width, when only one tab shown
+
         private appBarTabMenuButton: AppBarTabMenuButton;
 
         private barEl: api.dom.UlEl;
@@ -27,7 +29,7 @@ module api.app.bar {
                 this.updateTabMenuButtonVisibility();
             });
 
-            ResponsiveManager.onAvailableSizeChanged(this, this.moveTabs.bind(this, 500));
+            ResponsiveManager.onAvailableSizeChanged(this, this.moveTabs.bind(this, 50));
         }
 
         private updateTabMenuButtonVisibility() {
@@ -41,10 +43,12 @@ module api.app.bar {
             this.appBarTabMenuButton.setTabCount(menuTabsCount);
         }
 
-        private moveTabs(timeout: number = 500) {
+        private moveTabs(timeout: number = 0) {
             clearInterval(this.timeoutHandler);
             this.timeoutHandler = setTimeout(() => {
-                var exactTabs = Math.ceil(this.barEl.getEl().getWidth() / AppBarTabMenu.TAB_WIDTH) || 1, // >= 1
+                var width = this.getEl().getWidth(),
+                    barWidth = this.barEl.getEl().getWidth(),
+                    exactTabs = AppBarTabMenu.MAX_WIDTH < width ? Math.ceil(barWidth / AppBarTabMenu.TAB_WIDTH) || 1 : 1,
                     barTabs = this.barEl.getChildren(),
                     menuTabs = this.getMenuEl().getChildren(),
                     tabsInBar = barTabs.length,
@@ -96,7 +100,7 @@ module api.app.bar {
             this.appBarTabMenuButton.setTabCount(this.countVisible());
             this.appBarTabMenuButton.setEditing(tab.isEditing());
 
-            this.moveTabs(50);
+            this.moveTabs(0);
         }
 
         removeNavigationItem(tab: AppBarTabMenuItem) {
