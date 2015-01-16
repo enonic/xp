@@ -1,6 +1,6 @@
 module api.content.page.region {
 
-    export class RegionChangedEvent extends RegionsChangedEvent {
+    export class RegionAddedEvent extends RegionsChangedEvent {
 
         private regionPath: RegionPath;
 

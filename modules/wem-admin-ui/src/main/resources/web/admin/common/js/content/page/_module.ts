@@ -21,13 +21,6 @@
 ///<reference path='PageTemplateKey.ts' />
 ///<reference path='PageTemplateName.ts' />
 
-///<reference path='RegionsChangedEvent.ts' />
-///<reference path='RegionAddedEvent.ts' />
-///<reference path='RegionRemovedEvent.ts' />
-///<reference path='RegionChangedEvent.ts' />
-///<reference path='AbstractRegions.ts' />
-///<reference path='PageRegions.ts' />
-
 ///<reference path='PageTemplate.ts' />
 
 ///<reference path='PageTemplateViewer.ts' />

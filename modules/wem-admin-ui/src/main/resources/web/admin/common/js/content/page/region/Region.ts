@@ -10,7 +10,7 @@ module api.content.page.region {
 
         private parent: LayoutComponent;
 
-        private changedListeners: {(event: RegionChangedEvent):void}[] = [];
+        private changedListeners: {(event: BaseRegionChangedEvent):void}[] = [];
 
         private componentAddedListeners: {(event: ComponentAddedEvent):void}[] = [];
 
@@ -227,19 +227,19 @@ module api.content.page.region {
             return new RegionBuilder(this, generateNewPropertyIds).build();
         }
 
-        onChanged(listener: (event: RegionChangedEvent)=>void) {
+        onChanged(listener: (event: BaseRegionChangedEvent)=>void) {
             this.changedListeners.push(listener);
         }
 
-        unChanged(listener: (event: RegionChangedEvent)=>void) {
+        unChanged(listener: (event: BaseRegionChangedEvent)=>void) {
             this.changedListeners =
-            this.changedListeners.filter((curr: (event: RegionChangedEvent)=>void) => {
+            this.changedListeners.filter((curr: (event: BaseRegionChangedEvent)=>void) => {
                 return listener != curr;
             });
         }
 
-        private notifyChangedEvent(event: RegionChangedEvent) {
-            this.changedListeners.forEach((listener: (event: RegionChangedEvent)=>void) => {
+        private notifyChangedEvent(event: BaseRegionChangedEvent) {
+            this.changedListeners.forEach((listener: (event: BaseRegionChangedEvent)=>void) => {
                 listener(event);
             })
         }
@@ -300,9 +300,13 @@ module api.content.page.region {
             });
             this.notifyChangedEvent(event);
         }
+
+        static create(source?: Region, generateNewPropertyIds: boolean = false): RegionBuilder {
+            return new RegionBuilder(source, generateNewPropertyIds);
+        }
     }
 
-    export class RegionBuilder {
+    class RegionBuilder {
 
         name: string;
 

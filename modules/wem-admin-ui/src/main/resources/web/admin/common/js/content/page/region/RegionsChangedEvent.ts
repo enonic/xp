@@ -1,4 +1,4 @@
-module api.content.page {
+module api.content.page.region {
 
     export class RegionsChangedEvent {
 

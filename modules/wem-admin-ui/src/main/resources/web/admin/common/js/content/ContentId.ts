@@ -33,5 +33,9 @@ module api.content {
         static isValidContentId(id: string): boolean {
             return !api.util.StringHelper.isEmpty(id) && !api.util.StringHelper.isBlank(id);
         }
+
+        static fromReference(reference: api.util.Reference) {
+            return new ContentId(reference.getNodeId());
+        }
     }
 }

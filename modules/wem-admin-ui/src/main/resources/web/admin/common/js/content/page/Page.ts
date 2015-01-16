@@ -9,7 +9,7 @@ module api.content.page {
 
         private template: PageTemplateKey;
 
-        private regions: PageRegions;
+        private regions: api.content.page.region.Regions;
 
         private config: PropertyTree;
 
@@ -40,7 +40,7 @@ module api.content.page {
             return this.regions != null;
         }
 
-        getRegions(): PageRegions {
+        getRegions(): api.content.page.region.Regions {
             return this.regions;
         }
 
@@ -88,7 +88,7 @@ module api.content.page {
 
         template: PageTemplateKey;
 
-        regions: PageRegions;
+        regions: api.content.page.region.Regions;
 
         config: PropertyTree;
 
@@ -104,7 +104,8 @@ module api.content.page {
         public fromJson(json: api.content.page.PageJson, propertyIdProvider: PropertyIdProvider): PageBuilder {
             this.setController(json.controller ? DescriptorKey.fromString(json.controller) : null);
             this.setTemplate(json.template ? PageTemplateKey.fromString(json.template) : null);
-            this.setRegions(json.regions != null ? new PageRegionsBuilder().fromJson(json.regions, propertyIdProvider).build() : null);
+            this.setRegions(json.regions != null ? api.content.page.region.Regions.create().fromJson(json.regions, propertyIdProvider,
+                null).build() : null);
             this.setConfig(json.config != null
                 ? PropertyTree.fromJson(json.config, propertyIdProvider)
                 : null);
@@ -121,7 +122,7 @@ module api.content.page {
             return this;
         }
 
-        public setRegions(value: PageRegions): PageBuilder {
+        public setRegions(value: api.content.page.region.Regions): PageBuilder {
             this.regions = value;
             return this;
         }

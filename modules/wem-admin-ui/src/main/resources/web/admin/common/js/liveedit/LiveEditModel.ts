@@ -8,7 +8,7 @@ module api.liveedit {
     import SetTemplate = api.content.page.SetTemplate;
     import PageModel = api.content.page.PageModel;
     import SetController = api.content.page.SetController;
-    import PageRegionsBuilder = api.content.page.PageRegionsBuilder;
+    import Regions = api.content.page.region.Regions;
     import PageMode = api.content.page.PageMode;
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
@@ -62,7 +62,7 @@ module api.liveedit {
 
                         var regions = pageTemplate.hasRegions() ?
                                       pageTemplate.getRegions().clone() :
-                                      new PageRegionsBuilder().build();
+                                      Regions.create().build();
 
                         var setController = new SetController(this).
                             setDescriptor(pageDescriptor).
@@ -79,7 +79,7 @@ module api.liveedit {
 
                     var regions = pageTemplate.hasRegions() ?
                                   pageTemplate.getRegions().clone() :
-                                  new PageRegionsBuilder().build();
+                                  Regions.create().build();
 
                     var setController = new SetController(this).
                         setDescriptor(null).

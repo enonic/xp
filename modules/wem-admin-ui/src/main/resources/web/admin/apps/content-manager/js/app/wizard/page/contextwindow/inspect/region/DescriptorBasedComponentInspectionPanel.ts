@@ -5,7 +5,7 @@ module app.wizard.page.contextwindow.inspect.region {
     import DescriptorKey = api.content.page.DescriptorKey;
     import Descriptor = api.content.page.Descriptor;
 
-    export interface DescriptorBasedComponentInspectionPanelConfig extends ComponentInspectionPanelConfig{
+    export interface DescriptorBasedComponentInspectionPanelConfig extends ComponentInspectionPanelConfig {
 
     }
 
@@ -42,9 +42,13 @@ module app.wizard.page.contextwindow.inspect.region {
             var config = component.getConfig();
             this.formView = new FormView(formContext, form, config.getRoot());
             this.appendChild(this.formView);
-            this.formView.layout().catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
+            component.setDisableEventForwarding(true);
+            this.formView.layout().
+                catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).finally(() => {
+                    component.setDisableEventForwarding(false);
+                }).done();
         }
     }
 }

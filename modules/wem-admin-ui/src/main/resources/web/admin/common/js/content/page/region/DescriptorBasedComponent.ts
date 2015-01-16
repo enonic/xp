@@ -11,6 +11,8 @@ module api.content.page.region {
 
         public static PROPERTY_CONFIG = 'config';
 
+        private disableEventForwarding: boolean;
+
         private descriptor: DescriptorKey;
 
         private config: PropertyTree;
@@ -26,8 +28,14 @@ module api.content.page.region {
                 if (this.debug) {
                     console.debug("DescriptorBasedComponent[" + this.getPath().toString() + "].config.onChanged: ", event);
                 }
-                this.notifyPropertyValueChanged(DescriptorBasedComponent.PROPERTY_CONFIG);
+                if (!this.disableEventForwarding) {
+                    this.notifyPropertyValueChanged(DescriptorBasedComponent.PROPERTY_CONFIG);
+                }
             });
+        }
+
+        setDisableEventForwarding(value: boolean) {
+            this.disableEventForwarding = value;
         }
 
         hasDescriptor(): boolean {

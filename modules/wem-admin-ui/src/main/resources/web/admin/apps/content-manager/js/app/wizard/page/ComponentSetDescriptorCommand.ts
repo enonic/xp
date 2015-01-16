@@ -3,18 +3,17 @@ module app.wizard.page {
     import Descriptor = api.content.page.Descriptor;
     import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import LayoutComponent = api.content.page.region.LayoutComponent;
-    import LayoutRegions = api.content.page.region.LayoutRegions;
+    import Regions = api.content.page.region.Regions;
     import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
     import ComponentPathRegionAndComponent = api.content.page.region.ComponentPathRegionAndComponent;
     import ComponentName = api.content.page.region.ComponentName;
-    import PageRegions = api.content.page.PageRegions;
     import ComponentView = api.liveedit.ComponentView;
 
     export class ComponentSetDescriptorCommand {
 
         private componentView: ComponentView<DescriptorBasedComponent>;
 
-        private pageRegions: PageRegions;
+        private pageRegions: Regions;
 
         private descriptor: Descriptor;
 
@@ -23,7 +22,7 @@ module app.wizard.page {
             return this;
         }
 
-        setPageRegions(value: PageRegions): ComponentSetDescriptorCommand {
+        setPageRegions(value: Regions): ComponentSetDescriptorCommand {
             this.pageRegions = value;
             return this;
         }
@@ -63,9 +62,9 @@ module app.wizard.page {
         }
 
         private addLayoutRegions(layoutComponent: LayoutComponent, layoutDescriptor: LayoutDescriptor) {
-            var sourceRegions: LayoutRegions = layoutComponent.getLayoutRegions();
-            var mergedRegions: LayoutRegions = sourceRegions.mergeRegions(layoutDescriptor.getRegions(), layoutComponent);
-            layoutComponent.setLayoutRegions(mergedRegions);
+            var sourceRegions = layoutComponent.getRegions();
+            var mergedRegions = sourceRegions.mergeRegions(layoutDescriptor.getRegions(), layoutComponent);
+            layoutComponent.setRegions(mergedRegions);
         }
     }
 }

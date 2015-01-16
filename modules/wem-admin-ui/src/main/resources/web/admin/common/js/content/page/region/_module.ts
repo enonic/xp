@@ -11,6 +11,12 @@
 ///<reference path='DescriptorBasedComponentJson.ts' />
 ///<reference path='DescriptorBasedComponent.ts' />
 
+///<reference path='RegionsChangedEvent.ts' />
+///<reference path='RegionAddedEvent.ts' />
+///<reference path='RegionRemovedEvent.ts' />
+///<reference path='RegionChangedEvent.ts' />
+///<reference path='Regions.ts' />
+
 ///<reference path='ImageComponentJson.ts' />
 ///<reference path='ImageComponent.ts' />
 ///<reference path='ImageComponentType.ts' />
@@ -41,7 +47,6 @@
 ///<reference path='LayoutComponentJson.ts' />
 ///<reference path='LayoutDescriptorsJson.ts' />
 ///<reference path='LayoutDescriptor.ts' />
-///<reference path='LayoutRegions.ts' />
 ///<reference path='LayoutComponentType.ts' />
 ///<reference path='LayoutComponent.ts' />
 ///<reference path='LayoutDescriptorViewer.ts' />
@@ -62,7 +67,7 @@
 ///<reference path='RegionsDescriptorJson.ts' />
 ///<reference path='RegionJson.ts' />
 ///<reference path='RegionDescriptor.ts' />
-///<reference path='RegionChangedEvent.ts' />
+///<reference path='BaseRegionChangedEvent.ts' />
 ///<reference path='RegionPropertyChangedEvent.ts' />
 ///<reference path='RegionPropertyValueChangedEvent.ts' />
 ///<reference path='ComponentAddedEvent.ts' />

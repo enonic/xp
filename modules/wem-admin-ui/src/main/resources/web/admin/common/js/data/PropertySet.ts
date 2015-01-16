@@ -2,14 +2,21 @@ module api.data {
 
     export class PropertySet implements api.Equitable {
 
-        public debug: boolean = true;
+        public debug: boolean = false;
 
         private tree: PropertyTree = null;
 
+        /**
+         * The property that this PropertySet is the value of.
+         * Required to be set, except for the root PropertySet of a PropertyTree where it will always be null.
+         */
         private property: Property = null;
 
         private propertyArrayByName: {[s:string] : PropertyArray;} = {};
 
+        /**
+         * If true, do not add property if it's value is null.
+         */
         private _ifNotNull: boolean = false;
 
         private changedListeners: {(event: PropertyEvent):void}[] = [];
@@ -51,7 +58,7 @@ module api.data {
         }
 
         /**
-         * If invoked, then the next added or set property with a null will be ignored.
+         * If invoked, then the next added or set property with a Value with null will be ignored.
          * The second add or set after this method is called will not be affected.
          */
         public ifNotNull(): PropertySet {
@@ -141,6 +148,9 @@ module api.data {
         }
 
 
+        /**
+         * Returns the number of child properties in this PropertySet (grand children and so on is not counted).
+         */
         getSize(): number {
             var size = 0;
             api.ObjectHelper.objectPropertyIterator(this.propertyArrayByName, (name: string, propertyArray: PropertyArray) => {
@@ -150,6 +160,9 @@ module api.data {
             return size;
         }
 
+        /**
+         * Counts the number of child properties having the given name (grand children and so on is not counted).
+         */
         countProperties(name: string): number {
             var array = this.propertyArrayByName[name];
             if (!array) {

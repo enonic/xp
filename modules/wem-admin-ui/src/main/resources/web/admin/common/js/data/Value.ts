@@ -107,13 +107,6 @@ module api.data {
             return <api.util.LocalTime>this.value;
         }
 
-        getContentId(): api.content.ContentId {
-            if (this.isNull()) {
-                return null;
-            }
-            return <api.content.ContentId>this.value;
-        }
-
         getLink(): api.util.Link {
             if (this.isNull()) {
                 return null;

@@ -1,6 +1,6 @@
 module api.content.page.region {
 
-    export class ComponentRemovedEvent extends RegionChangedEvent {
+    export class ComponentRemovedEvent extends BaseRegionChangedEvent {
 
         private componentPath: ComponentPath;
 

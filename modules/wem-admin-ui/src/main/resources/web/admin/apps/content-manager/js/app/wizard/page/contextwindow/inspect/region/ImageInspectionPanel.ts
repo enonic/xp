@@ -39,8 +39,11 @@ module app.wizard.page.contextwindow.inspect.region {
             var configForm = this.imageComponent.getForm();
             this.formView = new api.form.FormView(formContext, configForm, configData.getRoot());
             this.appendChild(this.formView);
+            this.imageComponent.setDisableEventForwarding(true);
             this.formView.layout().catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
+            }).finally(() => {
+                this.imageComponent.setDisableEventForwarding(false);
             }).done();
         }
 

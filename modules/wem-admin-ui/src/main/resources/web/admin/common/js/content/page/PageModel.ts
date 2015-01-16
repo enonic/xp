@@ -8,7 +8,7 @@ module api.content.page {
 
         descriptor: PageDescriptor;
 
-        regions: PageRegions;
+        regions: api.content.page.region.Regions;
 
         config: PropertyTree;
 
@@ -21,7 +21,7 @@ module api.content.page {
             return this;
         }
 
-        setRegions(value: PageRegions): SetController {
+        setRegions(value: api.content.page.region.Regions): SetController {
             this.regions = value;
             return this;
         }
@@ -40,7 +40,7 @@ module api.content.page {
 
         descriptor: PageDescriptor;
 
-        regions: PageRegions;
+        regions: api.content.page.region.Regions;
 
         config: PropertyTree;
 
@@ -54,7 +54,7 @@ module api.content.page {
             return this;
         }
 
-        setRegions(value: PageRegions): SetTemplate {
+        setRegions(value: api.content.page.region.Regions): SetTemplate {
             this.regions = value;
             return this;
         }
@@ -82,7 +82,7 @@ module api.content.page {
 
         private templateDescriptor: PageDescriptor;
 
-        private regions: PageRegions;
+        private regions: api.content.page.region.Regions;
 
         private config: PropertyTree;
 
@@ -125,7 +125,7 @@ module api.content.page {
                 var setController = new SetController(eventSource).
                     setDescriptor(null).
                     setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider())).
-                    setRegions(new PageRegionsBuilder().build());
+                    setRegions(api.content.page.region.Regions.create().build());
                 this.setController(setController);
             }
             else {
@@ -174,7 +174,7 @@ module api.content.page {
 
             var regions = this.defaultTemplate.hasRegions() ?
                           this.defaultTemplate.getRegions().clone() :
-                          new PageRegionsBuilder().build();
+                          api.content.page.region.Regions.create().build();
 
             var setTemplate = new SetTemplate(eventSource).
                 setTemplate(null, this.defaultTemplateDescriptor).
@@ -219,7 +219,7 @@ module api.content.page {
             return this;
         }
 
-        setRegions(value: PageRegions, eventOrigin?: any): PageModel {
+        setRegions(value: api.content.page.region.Regions, eventOrigin?: any): PageModel {
             var oldValue = this.regions;
             if (oldValue) {
                 oldValue.unChanged(this.handleRegionsValueChanged);
@@ -234,7 +234,7 @@ module api.content.page {
             return this;
         }
 
-        private handleRegionsValueChanged(event: RegionsChangedEvent) {
+        private handleRegionsValueChanged(event: region.RegionsChangedEvent) {
 
             if (!this.ignorePropertyChanges) {
                 console.log("PageModel.regions.onChanged: ", event);
@@ -355,7 +355,7 @@ module api.content.page {
             return this.templateDescriptor;
         }
 
-        getRegions(): PageRegions {
+        getRegions(): api.content.page.region.Regions {
             return this.regions;
         }
 

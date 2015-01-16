@@ -3,7 +3,7 @@ module LiveEdit {
     import PropertyTree = api.data.PropertyTree;
     import Component = api.content.page.region.Component;
     import Page = api.content.page.Page;
-    import PageRegions = api.content.page.PageRegions;
+    import Regions = api.content.page.region.Regions;
     import Region = api.content.page.region.Region;
     import ComponentType = api.content.page.region.ComponentType;
     import ComponentName = api.content.page.region.ComponentName;

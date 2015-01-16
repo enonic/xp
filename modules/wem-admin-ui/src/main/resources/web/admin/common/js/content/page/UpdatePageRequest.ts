@@ -10,7 +10,7 @@ module api.content.page {
 
         private config: api.data.PropertyTree;
 
-        private regions: PageRegions;
+        private regions: api.content.page.region.Regions;
 
         constructor(contentId: api.content.ContentId) {
             super();
@@ -33,7 +33,7 @@ module api.content.page {
             return this;
         }
 
-        setRegions(value: PageRegions): UpdatePageRequest {
+        setRegions(value: api.content.page.region.Regions): UpdatePageRequest {
             this.regions = value;
             return this;
         }

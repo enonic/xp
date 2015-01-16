@@ -4,20 +4,19 @@ module app.wizard.page {
     import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import Component = api.content.page.region.Component;
     import LayoutComponent = api.content.page.region.LayoutComponent;
-    import LayoutRegions = api.content.page.region.LayoutRegions;
     import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
     import ComponentPathRegionAndComponent = api.content.page.region.ComponentPathRegionAndComponent;
     import ComponentName = api.content.page.region.ComponentName;
-    import PageRegions = api.content.page.PageRegions;
+    import Regions = api.content.page.region.Regions;
     import ComponentView = api.liveedit.ComponentView;
 
     export class ComponentNameChanger {
 
-        private pageRegions: PageRegions;
+        private pageRegions: Regions;
 
         private componentView: ComponentView<Component>;
 
-        setPageRegions(value: PageRegions): ComponentNameChanger {
+        setPageRegions(value: Regions): ComponentNameChanger {
             this.pageRegions = value;
             return this;
         }

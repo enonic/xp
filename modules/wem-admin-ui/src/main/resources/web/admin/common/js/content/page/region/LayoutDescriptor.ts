@@ -1,14 +1,14 @@
 module api.content.page.region {
 
     export class LayoutDescriptor extends api.content.page.Descriptor implements api.Cloneable {
-        private regions: region.RegionDescriptor[];
+        private regions: RegionDescriptor[];
 
         constructor(builder: LayoutDescriptorBuilder) {
             super(builder);
             this.regions = builder.regions;
         }
 
-        public getRegions(): region.RegionDescriptor[] {
+        public getRegions(): RegionDescriptor[] {
             return this.regions;
         }
 
@@ -19,7 +19,7 @@ module api.content.page.region {
 
     export class LayoutDescriptorBuilder extends api.content.page.DescriptorBuilder {
 
-        regions: region.RegionDescriptor[] = [];
+        regions: RegionDescriptor[] = [];
 
         constructor(source?: LayoutDescriptor) {
             super(source);
@@ -62,7 +62,7 @@ module api.content.page.region {
             return this;
         }
 
-        public addRegion(value: region.RegionDescriptor): LayoutDescriptorBuilder {
+        public addRegion(value: RegionDescriptor): LayoutDescriptorBuilder {
             this.regions.push(value);
             return this;
         }

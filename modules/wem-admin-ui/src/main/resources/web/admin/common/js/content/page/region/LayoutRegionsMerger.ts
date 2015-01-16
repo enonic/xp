@@ -17,10 +17,10 @@ module api.content.page.region {
          *  - If a region with the same name or position (index) cannot be found on target: move components to the last region of target
          *
          */
-        merge(layoutRegions: LayoutRegions, layoutDescriptorRegions: RegionDescriptor[],
-              parent: LayoutComponent): LayoutRegions {
+        merge(regions: Regions, layoutDescriptorRegions: RegionDescriptor[],
+              parent: LayoutComponent): Regions {
 
-            this.layoutComponentRegions = layoutRegions.getRegions();
+            this.layoutComponentRegions = regions.getRegions();
             this.initLookupTables(layoutDescriptorRegions, parent);
 
             this.mergeExistingRegions();
@@ -28,7 +28,7 @@ module api.content.page.region {
             this.mergeMissingRegions(layoutDescriptorRegions);
 
             // return merged regions in the same order as they were in target layoutDescriptor
-            var layoutRegionsBuilder = new LayoutRegionsBuilder();
+            var layoutRegionsBuilder = Regions.create();
             layoutDescriptorRegions.forEach((regionDescriptor: RegionDescriptor) => {
                 var layoutRegion = this.targetRegionsByName[regionDescriptor.getName()];
                 layoutRegionsBuilder.addRegion(layoutRegion);
@@ -77,7 +77,7 @@ module api.content.page.region {
 
             layoutDescriptorRegions.forEach((regionDescriptor: RegionDescriptor, idx: number) => {
                 var regionName = regionDescriptor.getName();
-                var layoutRegion = new RegionBuilder().
+                var layoutRegion = Region.create().
                     setName(regionName).
                     setParent(parent).
                     build();
@@ -94,7 +94,7 @@ module api.content.page.region {
                 return toRegion;
             }
 
-            var result: RegionBuilder = new RegionBuilder(toRegion);
+            var result = Region.create(toRegion);
             fromRegion.getComponents().forEach((component: Component) => {
                 result.addComponent(component)
             });

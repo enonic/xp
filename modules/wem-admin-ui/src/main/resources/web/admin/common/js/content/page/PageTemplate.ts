@@ -62,7 +62,7 @@ module api.content.page {
             return this.getPage().hasRegions();
         }
 
-        getRegions(): PageRegions {
+        getRegions(): api.content.page.region.Regions {
             if (!this.isPage()) {
                 return null;
             }

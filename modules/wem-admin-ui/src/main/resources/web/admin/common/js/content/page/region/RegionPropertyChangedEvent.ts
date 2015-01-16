@@ -1,6 +1,6 @@
 module api.content.page.region {
 
-    export class RegionPropertyChangedEvent extends RegionChangedEvent {
+    export class RegionPropertyChangedEvent extends BaseRegionChangedEvent {
 
         private propertyName: string;
 

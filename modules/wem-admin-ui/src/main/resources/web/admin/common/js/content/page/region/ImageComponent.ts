@@ -11,7 +11,9 @@ module api.content.page.region {
     export class ImageComponent extends Component implements api.Equitable, api.Cloneable {
 
         public debug: boolean = false;
-        
+
+        private disableEventForwarding: boolean;
+
         private image: api.content.ContentId;
 
         private config: PropertyTree;
@@ -27,7 +29,9 @@ module api.content.page.region {
                 if (this.debug) {
                     console.debug("ImageComponent[" + this.getPath().toString() + "].config.onChanged: ", event);
                 }
-                this.notifyPropertyValueChanged("config");
+                if (!this.disableEventForwarding) {
+                    this.notifyPropertyValueChanged("config");
+                }
             });
 
             var formBuilder = new FormBuilder();
@@ -38,6 +42,10 @@ module api.content.page.region {
                 setOccurrences(new OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
                 build());
             this.form = formBuilder.build();
+        }
+
+        setDisableEventForwarding(value: boolean) {
+            this.disableEventForwarding = value;
         }
 
         getImage(): api.content.ContentId {

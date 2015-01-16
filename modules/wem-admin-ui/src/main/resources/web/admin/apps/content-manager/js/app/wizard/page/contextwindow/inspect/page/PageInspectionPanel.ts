@@ -55,6 +55,7 @@ module app.wizard.page.contextwindow.inspect.page {
             if (this.pageModel.isPageTemplate()) {
 
                 new PageTemplateInspectionHandler().
+                    setPageModel(this.pageModel).
                     setPageInspectionPanel(this).
                     setPageControllerForm(this.pageControllerForm).
                     setPageTemplateForm(this.pageTemplateForm).
@@ -62,6 +63,7 @@ module app.wizard.page.contextwindow.inspect.page {
             }
             else {
                 new ContentInspectionHandler().
+                    setPageModel(this.pageModel).
                     setPageInspectionPanel(this).
                     setPageControllerForm(this.pageControllerForm).
                     setPageTemplateForm(this.pageTemplateForm).
@@ -88,6 +90,8 @@ module app.wizard.page.contextwindow.inspect.page {
 
     class BaseInspectionHandler {
 
+        pageModel: PageModel;
+
         pageInspectionPanel: PageInspectionPanel;
 
         configForm: FormView;
@@ -95,6 +99,11 @@ module app.wizard.page.contextwindow.inspect.page {
         pageControllerForm: PageControllerForm;
 
         pageTemplateForm: PageTemplateForm;
+
+        setPageModel(value: PageModel): BaseInspectionHandler {
+            this.pageModel = value;
+            return this;
+        }
 
         setPageInspectionPanel(value: PageInspectionPanel): BaseInspectionHandler {
             this.pageInspectionPanel = value;
@@ -128,9 +137,13 @@ module app.wizard.page.contextwindow.inspect.page {
 
             this.configForm = new FormView(new FormContextBuilder().build(), pageDescriptor.getConfig(), config.getRoot());
             this.pageInspectionPanel.appendChild(this.configForm);
+            this.pageModel.setIgnorePropertyChanges(true);
             this.configForm.layout().catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
-            }).done();
+            }).finally(() => {
+                this.pageModel.setIgnorePropertyChanges(false);
+            }).
+                done();
         }
     }
 

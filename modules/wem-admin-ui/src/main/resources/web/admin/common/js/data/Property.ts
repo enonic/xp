@@ -2,7 +2,7 @@ module api.data {
 
     export class Property implements api.Equitable {
 
-        public debug: boolean = true;
+        public debug: boolean = false;
         
         private parent: PropertySet;
 
@@ -65,10 +65,10 @@ module api.data {
             }
 
             // Unregister listeners on PropertySet from oldValue
-            if (oldValue.getType().equals(ValueTypes.DATA) && this.value.isNotNull()) {
-                var propertySet = this.value.getPropertySet();
-                propertySet.setContainerProperty(null);
-                this.array.unregisterPropertySetListeners(propertySet);
+            if (oldValue.getType().equals(ValueTypes.DATA) && oldValue.isNotNull()) {
+                var removedPropertySet = oldValue.getPropertySet();
+                removedPropertySet.setContainerProperty(null);
+                this.array.unregisterPropertySetListeners(removedPropertySet);
             }
 
             if (!value.equals(oldValue)) {
@@ -149,8 +149,8 @@ module api.data {
             return this.value.getLocalTime();
         }
 
-        getContentId(): api.content.ContentId {
-            return this.value.getContentId();
+        getReference(): api.util.Reference {
+            return this.value.getReference();
         }
 
         equals(o: api.Equitable): boolean {

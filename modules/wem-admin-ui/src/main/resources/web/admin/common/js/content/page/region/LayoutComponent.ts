@@ -7,7 +7,7 @@ module api.content.page.region {
 
         public debug: boolean = false;
 
-        private regions: LayoutRegions;
+        private regions: Regions;
 
         constructor(builder: LayoutComponentBuilder) {
             super(builder);
@@ -19,7 +19,7 @@ module api.content.page.region {
                 });
             }
             else {
-                this.regions = new LayoutRegionsBuilder().build();
+                this.regions = Regions.create().build();
             }
 
             this.regions.onChanged(this.handleRegionsChanged.bind(this));
@@ -36,11 +36,11 @@ module api.content.page.region {
             return this.regions.getComponent(path);
         }
 
-        public getLayoutRegions(): LayoutRegions {
+        public getRegions(): Regions {
             return this.regions;
         }
 
-        public setLayoutRegions(value: LayoutRegions) {
+        public setRegions(value: Regions) {
 
             var oldValue = this.regions;
             this.regions.unChanged(this.handleRegionsChanged);
@@ -95,14 +95,14 @@ module api.content.page.region {
 
     export class LayoutComponentBuilder extends DescriptorBasedComponentBuilder<LayoutComponent> {
 
-        regions: LayoutRegions;
+        regions: Regions;
 
         constructor(source?: LayoutComponent, generateNewPropertyIds: boolean = false) {
 
             super(source, generateNewPropertyIds);
 
             if (source) {
-                this.regions = source.getLayoutRegions().clone(generateNewPropertyIds);
+                this.regions = source.getRegions().clone(generateNewPropertyIds);
             }
         }
 
@@ -119,12 +119,12 @@ module api.content.page.region {
             this.setParent(region);
 
             var layoutComponent = this.build();
-            var layoutRegions = new LayoutRegionsBuilder().fromJson(json.regions, layoutComponent, propertyIdProvider).build();
-            layoutComponent.setLayoutRegions(layoutRegions);
+            var layoutRegions = Regions.create().fromJson(json.regions, propertyIdProvider, layoutComponent).build();
+            layoutComponent.setRegions(layoutRegions);
             return layoutComponent;
         }
 
-        public setRegions(value: LayoutRegions): LayoutComponentBuilder {
+        public setRegions(value: Regions): LayoutComponentBuilder {
             this.regions = value;
             return this;
         }

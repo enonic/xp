@@ -1,7 +1,7 @@
 module app.wizard.page {
 
     import ContentId = api.content.ContentId;
-    import PageRegions = api.content.page.PageRegions;
+    import Regions = api.content.page.region.Regions;
     import ImageComponentView = api.liveedit.image.ImageComponentView;
 
     export class ImageComponentSetImageCommand {
@@ -10,7 +10,7 @@ module app.wizard.page {
 
         private imageView: ImageComponentView;
 
-        private pageRegions: PageRegions;
+        private pageRegions: Regions;
 
         private image: ContentId;
 
@@ -26,7 +26,7 @@ module app.wizard.page {
             return this;
         }
 
-        setPageRegions(value: PageRegions): ImageComponentSetImageCommand {
+        setPageRegions(value: Regions): ImageComponentSetImageCommand {
             this.pageRegions = value;
             return this;
         }

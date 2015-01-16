@@ -1,18 +1,12 @@
-module api.content.page {
+module api.content.page.region {
 
-    import Region = api.content.page.region.Region;
-    import Component = api.content.page.region.Component;
-    import ComponentPath = api.content.page.region.ComponentPath;
-    import ComponentPathRegionAndComponent = api.content.page.region.ComponentPathRegionAndComponent;
-    import ComponentAddedEvent = api.content.page.region.ComponentAddedEvent;
-    import ComponentRemovedEvent = api.content.page.region.ComponentRemovedEvent;
-    import RegionPropertyValueChangedEvent = api.content.page.region.RegionPropertyValueChangedEvent;
+    import PropertyIdProvider = api.data.PropertyIdProvider;
 
-    export class AbstractRegions implements api.Equitable {
+    export class Regions implements api.Equitable {
 
         public debug: boolean = false;
 
-        private regionByName: {[s:string] : region.Region;} = {};
+        private regionByName: {[s:string] : Region;} = {};
 
         private changedListeners: {(event: RegionsChangedEvent):void}[] = [];
 
@@ -22,15 +16,19 @@ module api.content.page {
 
         private regionRemovedListeners: {(event: RegionRemovedEvent):void}[] = [];
 
-        constructor(regions: region.Region[]) {
+        constructor(builder: RegionsBuilder) {
 
-            regions.forEach((region: region.Region) => {
+            builder.regions.forEach((region: Region) => {
                 if (this.regionByName[region.getName()] != undefined) {
-                    throw new Error("Regions in a Page must be unique by name, duplicate found: " + region.getName());
+                    throw new Error("Regions must be unique by name, duplicate found: " + region.getName());
                 }
 
                 this.addRegion(region);
             });
+        }
+
+        mergeRegions(descriptorRegions: RegionDescriptor[], parent: LayoutComponent): Regions {
+            return new LayoutRegionsMerger().merge(this, descriptorRegions, parent);
         }
 
         addRegion(region: Region) {
@@ -58,7 +56,7 @@ module api.content.page {
             region.unChanged(this.handleRegionChanged);
         }
 
-        private handleRegionChanged(event: api.content.page.region.RegionChangedEvent) {
+        private handleRegionChanged(event: BaseRegionChangedEvent) {
             this.notifyRegionChanged(event.getPath());
         }
 
@@ -71,7 +69,7 @@ module api.content.page {
             });
         }
 
-        getRegions(): region.Region[] {
+        getRegions(): Region[] {
             var regions = [];
             for (var i in this.regionByName) {
                 var region = this.regionByName[i];
@@ -80,7 +78,7 @@ module api.content.page {
             return regions;
         }
 
-        getRegionByName(name: string): region.Region {
+        getRegionByName(name: string): Region {
 
             return this.regionByName[name];
         }
@@ -95,19 +93,48 @@ module api.content.page {
                 return component;
             }
             else {
-                if (!api.ObjectHelper.iFrameSafeInstanceOf(component, api.content.page.region.LayoutComponent)) {
+                if (!api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
                     throw new Error("Expected component to be a LayoutComponent: " + api.ClassHelper.getClassName(component));
                 }
 
-                var layoutComponent = <api.content.page.region.LayoutComponent> component;
+                var layoutComponent = <LayoutComponent> component;
                 return layoutComponent.getComponent(path.removeFirstLevel());
             }
         }
 
-        public toJson(): region.RegionJson[] {
+        /**
+         * Keeps existing regions (including components) if they are listed in given regionDescriptors.
+         * Removes others and adds those missing.
+         * @param regionDescriptors
+         */
+        changeRegionsTo(regionDescriptors: RegionDescriptor[]) {
 
-            var regionJsons: region.RegionJson[] = [];
-            this.getRegions().forEach((region: region.Region) => {
+            // Remove regions not existing in regionDescriptors
+            var regionsToRemove: Region[] = this.getRegions().
+                filter((region: Region, index: number) => {
+                    return !regionDescriptors.
+                        some((regionDescriptor: RegionDescriptor) => {
+                            return regionDescriptor.getName() == region.getName();
+                        });
+                });
+            this.removeRegions(regionsToRemove);
+
+            // Add missing regions
+            regionDescriptors.forEach((regionDescriptor: RegionDescriptor) => {
+                var region = this.getRegionByName(regionDescriptor.getName());
+                if (!region) {
+                    region = Region.create().
+                        setName(regionDescriptor.getName()).
+                        build();
+                    this.addRegion(region);
+                }
+            });
+        }
+
+        public toJson(): RegionJson[] {
+
+            var regionJsons: RegionJson[] = [];
+            this.getRegions().forEach((region: Region) => {
                 regionJsons.push(region.toJson());
             });
             return regionJsons;
@@ -115,11 +142,11 @@ module api.content.page {
 
         equals(o: api.Equitable): boolean {
 
-            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, AbstractRegions)) {
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Regions)) {
                 return false;
             }
 
-            var other = <AbstractRegions>o;
+            var other = <Regions>o;
 
 
             var thisRegions = this.getRegions();
@@ -132,20 +159,24 @@ module api.content.page {
             return true;
         }
 
-        onChanged(listener: (event: RegionChangedEvent)=>void) {
+        clone(generateNewPropertyIds: boolean = false): Regions {
+            return new RegionsBuilder(this, generateNewPropertyIds).build();
+        }
+
+        onChanged(listener: (event: BaseRegionChangedEvent)=>void) {
             this.changedListeners.push(listener);
         }
 
-        unChanged(listener: (event: RegionChangedEvent)=>void) {
+        unChanged(listener: (event: BaseRegionChangedEvent)=>void) {
             this.changedListeners =
-            this.changedListeners.filter((curr: (event: RegionChangedEvent)=>void) => {
+            this.changedListeners.filter((curr: (event: BaseRegionChangedEvent)=>void) => {
                 return listener != curr;
             });
         }
 
         private notifyChanged(event: RegionsChangedEvent) {
             if (this.debug) {
-                console.debug("AbstractRegions.notifyChanged");
+                console.debug("Regions.notifyChanged");
             }
             this.changedListeners.forEach((listener: (event: RegionsChangedEvent)=>void) => {
                 listener(event);
@@ -163,10 +194,10 @@ module api.content.page {
             });
         }
 
-        private notifyRegionChanged(regionPath: api.content.page.region.RegionPath) {
+        private notifyRegionChanged(regionPath: RegionPath) {
             var event = new RegionChangedEvent(regionPath);
             if (this.debug) {
-                console.debug("AbstractRegions.notifyRegionChanged: " + event.getRegionPath().toString());
+                console.debug("Regions.notifyRegionChanged: " + event.getRegionPath().toString());
             }
             this.regionChangedListeners.forEach((listener: (event: RegionChangedEvent)=>void) => {
                 listener(event);
@@ -185,10 +216,10 @@ module api.content.page {
             });
         }
 
-        private notifyRegionAdded(regionPath: api.content.page.region.RegionPath) {
+        private notifyRegionAdded(regionPath: RegionPath) {
             var event = new RegionAddedEvent(regionPath);
             if (this.debug) {
-                console.debug("AbstractRegions.notifyRegionAdded: " + event.getRegionPath().toString());
+                console.debug("Regions.notifyRegionAdded: " + event.getRegionPath().toString());
             }
             this.regionAddedListeners.forEach((listener: (event: RegionAddedEvent)=>void) => {
                 listener(event);
@@ -207,15 +238,62 @@ module api.content.page {
             });
         }
 
-        private notifyRegionRemoved(regionPath: api.content.page.region.RegionPath) {
+        private notifyRegionRemoved(regionPath: RegionPath) {
             var event = new RegionRemovedEvent(regionPath);
             if (this.debug) {
-                console.debug("AbstractRegions.notifyRegionRemoved: " + event.getRegionPath().toString());
+                console.debug("Regions.notifyRegionRemoved: " + event.getRegionPath().toString());
             }
             this.regionRemovedListeners.forEach((listener: (event: RegionRemovedEvent)=>void) => {
                 listener(event);
             });
             this.notifyChanged(event);
+        }
+
+        public static create(): RegionsBuilder {
+
+            return new RegionsBuilder();
+        }
+    }
+
+    class RegionsBuilder {
+
+        regions: Region[] = [];
+
+        constructor(source?: Regions, generateNewPropertyIds: boolean = false) {
+            if (source) {
+                source.getRegions().forEach((region: Region) => {
+                    this.regions.push(region.clone(generateNewPropertyIds));
+                });
+            }
+        }
+
+        fromJson(regionsJson: RegionJson[], propertyIdProvider: PropertyIdProvider, parent: LayoutComponent): RegionsBuilder {
+
+            regionsJson.forEach((regionJson: RegionJson) => {
+
+                var region = Region.create().
+                    setName(regionJson.name).
+                    setParent(parent).
+                    build();
+
+                regionJson.components.forEach((componentJson: ComponentTypeWrapperJson, componentIndex: number) => {
+                    var component: Component = ComponentFactory.createFromJson(componentJson,
+                        componentIndex, region, propertyIdProvider);
+                    region.addComponent(component);
+                });
+
+                this.addRegion(region);
+            });
+            return this;
+        }
+
+        addRegion(value: Region): RegionsBuilder {
+            this.regions.push(value);
+            return this;
+        }
+
+        public build(): Regions {
+            return new Regions(this);
         }
     }
 
