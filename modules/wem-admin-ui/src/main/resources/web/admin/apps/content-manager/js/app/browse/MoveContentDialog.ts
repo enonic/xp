@@ -56,7 +56,7 @@ module app.browse {
 
                 this.contentMoveMask.show();
 
-                var parentContent = this.contentComboBox.getSelectedDisplayValues()[0];
+                var parentContent = this.getParentContent();
                 this.moveContent(parentContent);
             }));
         }
@@ -73,7 +73,15 @@ module app.browse {
                     new api.content.ContentMovedEvent(content.getContentId()).fire();
                     api.notify.showFeedback('Content was moved!');
                     this.close();
-                });
+                }).catch((reason)=> {
+                    api.notify.showWarning(reason.getMessage());
+                    this.close();
+                    this.contentComboBox.deselect(this.getParentContent());
+                }).done();
+        }
+
+        private getParentContent(): api.content.ContentSummary {
+            return this.contentComboBox.getSelectedDisplayValues()[0];
         }
 
 
