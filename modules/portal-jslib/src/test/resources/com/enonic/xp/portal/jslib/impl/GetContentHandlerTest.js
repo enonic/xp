@@ -7,15 +7,32 @@ var expectedJson = {
     "_name": "mycontent",
     "_path": "/a/b/mycontent",
     "data": {
-        "a": [1],
-        "b": ["2"],
+        "binaryReference": ["abc"],
+        "boolean": [true, true, false],
         "c": [{
-            "d": [true]
-        }, {
             "d": [true],
             "e": ["3", "4", "5"],
             "f": [2]
-        }]
+        }],
+        "double": [2.2],
+        "doubles": [1.1, 2.2, 3.3],
+        "geoPoint": ["1.1,-1.1"],
+        "geoPoints": ["1.1,-1.1", "2.2,-2.2"],
+        "htmlPart": ["<p>some<b>html</b></p>"],
+        "instant": ["+1000000000-12-31T23:59:59.999999999Z"],
+        "link": ["/my/content"],
+        "localDate": ["2014-01-31"],
+        "localDateTime": ["2014-01-31T10:30:05"],
+        "long": [1],
+        "longs": [1, 2, 3],
+        "set": [{
+            "property": ["value"]
+        }],
+        "string": ["a"],
+        "stringEmpty": [""],
+        "stringNull": [],
+        "strings": ["a", "b", "c"],
+        "xml": ["<xml><my-xml hello='world'/></xml>"]
     },
     "displayName": "My Content",
     "draft": false,
