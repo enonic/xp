@@ -22,9 +22,8 @@ module app.wizard.page.contextwindow.inspect.region {
         setComponent(component: COMPONENT, descriptor?: Descriptor) {
 
             super.setComponent(component);
-
             if (descriptor) {
-                this.setMainName(descriptor.getDisplayName().toString());
+                super.setSelectorValue(descriptor.getKey().toString());
             }
         }
 

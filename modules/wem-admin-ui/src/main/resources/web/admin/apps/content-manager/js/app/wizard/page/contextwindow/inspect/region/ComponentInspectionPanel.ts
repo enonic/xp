@@ -11,34 +11,32 @@ module app.wizard.page.contextwindow.inspect.region {
 
     export class ComponentInspectionPanel<COMPONENT extends Component> extends app.wizard.page.contextwindow.inspect.BaseInspectionPanel {
 
-        private namesAndIcon: api.app.NamesAndIconView;
+        componentSelector: api.ui.selector.combobox.RichComboBox<any>;
 
         private component: COMPONENT;
 
         constructor(config: ComponentInspectionPanelConfig) {
             super();
 
-            this.namesAndIcon = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().
-                setSize(api.app.NamesAndIconViewSize.medium)).
-                setIconClass(config.iconClass);
-
-            this.appendChild(this.namesAndIcon);
-
         }
 
         setComponent(component: COMPONENT) {
             this.component = component;
+        }
 
-            this.namesAndIcon.setMainName(component.getName().toString());
-            this.namesAndIcon.setSubName(component.getPath().toString());
+        setSelectorValue(value: string) {
+            if (this.componentSelector) {
+                this.componentSelector.clearSelection();
+                var option = this.componentSelector.getComboBox().getOptionByValue(value);
+                if (option) {
+                    this.componentSelector.select(option.displayValue, true);
+                    this.componentSelector.selectedOptionsView.show();
+                }
+            }
         }
 
         getComponentView(): ComponentView<Component> {
             throw new Error("Must be implemented by inheritors");
-        }
-
-        setMainName(value: string) {
-            this.namesAndIcon.setMainName(value);
         }
 
         getComponent(): COMPONENT {

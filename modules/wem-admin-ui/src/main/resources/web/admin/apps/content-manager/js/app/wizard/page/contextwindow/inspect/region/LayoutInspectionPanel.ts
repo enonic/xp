@@ -10,9 +10,12 @@ module app.wizard.page.contextwindow.inspect.region {
     import GetLayoutDescriptorsByModulesRequest = api.content.page.region.GetLayoutDescriptorsByModulesRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LayoutDescriptorLoader = api.content.page.region.LayoutDescriptorLoader;
+    import LayoutDescriptorBuilder = api.content.page.region.LayoutDescriptorBuilder;
+    import LayoutDescriptorComboBox = api.content.page.region.LayoutDescriptorComboBox;
     import LayoutDescriptorDropdown = api.content.page.region.LayoutDescriptorDropdown;
     import LayoutDescriptorDropdownConfig = api.content.page.region.LayoutDescriptorDropdownConfig;
     import Option = api.ui.selector.Option;
+    import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
 
@@ -23,8 +26,6 @@ module app.wizard.page.contextwindow.inspect.region {
         private layoutComponent: LayoutComponent;
 
         private descriptorSelected: DescriptorKey;
-
-        private descriptorSelector: LayoutDescriptorDropdown;
 
         private layoutDescriptorChangedListeners: {(event: LayoutDescriptorChangedEvent): void;}[] = [];
 
@@ -39,29 +40,11 @@ module app.wizard.page.contextwindow.inspect.region {
 
             var descriptorsRequest = new GetLayoutDescriptorsByModulesRequest(liveEditModel.getSiteModel().getModuleKeys());
             var loader = new LayoutDescriptorLoader(descriptorsRequest);
-            this.descriptorSelector = new LayoutDescriptorDropdown("layoutDescriptor", <LayoutDescriptorDropdownConfig>{
-                loader: loader
-            });
-            var descriptorLabel = new api.dom.LabelEl("Descriptor", this.descriptorSelector, "descriptor-header");
-            this.appendChild(descriptorLabel);
+            this.componentSelector = new LayoutDescriptorComboBox(loader);
             loader.load();
-            this.descriptorSelector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
 
-                var option: Option<LayoutDescriptor> = event.getOption();
-
-                if (this.getComponent()) {
-                    var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
-                    this.layoutComponent.setDescriptor(selectedDescriptorKey);
-
-                    var hasDescriptorChanged = this.descriptorSelected && !this.descriptorSelected.equals(selectedDescriptorKey);
-                    this.descriptorSelected = selectedDescriptorKey;
-                    if (hasDescriptorChanged) {
-                        var selectedDescriptor: LayoutDescriptor = option.displayValue;
-                        this.notifyLayoutDescriptorChanged(this.layoutView, selectedDescriptor);
-                    }
-                }
-            });
-            this.appendChild(this.descriptorSelector);
+            this.initSelectorListeners();
+            this.appendChild(this.componentSelector);
 
             liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() == SiteModel.PROPERTY_NAME_MODULE_CONFIGS) {
@@ -95,12 +78,37 @@ module app.wizard.page.contextwindow.inspect.region {
             if (this.layoutComponent.hasDescriptor()) {
                 new GetLayoutDescriptorByKeyRequest(this.layoutComponent.getDescriptor()).sendAndParse().then((descriptor: LayoutDescriptor) => {
                     this.setComponent(this.layoutComponent);
-                    this.descriptorSelector.setDescriptor(descriptor.getKey());
+                    this.setSelectorValue(descriptor.getKey().toString());
                     this.setupComponentForm(this.layoutComponent, descriptor);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
             }
         }
+
+        private initSelectorListeners() {
+            this.componentSelector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
+
+                var option: Option<LayoutDescriptor> = event.getOption();
+
+                if (this.getComponent()) {
+                    var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
+                    this.layoutComponent.setDescriptor(selectedDescriptorKey);
+
+                    var hasDescriptorChanged = this.descriptorSelected && !this.descriptorSelected.equals(selectedDescriptorKey);
+                    this.descriptorSelected = selectedDescriptorKey;
+                    if (hasDescriptorChanged) {
+                        var selectedDescriptor: LayoutDescriptor = option.displayValue;
+                        this.notifyLayoutDescriptorChanged(this.layoutView, selectedDescriptor);
+                    }
+                }
+            });
+
+            this.componentSelector.onOptionDeselected((option: SelectedOption<LayoutDescriptor>) => {
+                this.descriptorSelected = null;
+                this.notifyLayoutDescriptorChanged(this.layoutView, null);
+            });
+        }
+
     }
 }

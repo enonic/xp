@@ -111,8 +111,8 @@ module api.ui.selector.combobox {
             return this.comboBox.countSelectedOptions();
         }
 
-        select(value: OPTION_DISPLAY_VALUE) {
-            this.comboBox.selectOption(this.createOption(value));
+        select(value: OPTION_DISPLAY_VALUE, silent: boolean = false) {
+            this.comboBox.selectOption(this.createOption(value), silent);
         }
 
         deselect(value: OPTION_DISPLAY_VALUE) {
