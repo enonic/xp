@@ -1,6 +1,8 @@
 package com.enonic.wem.script.mapper;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -26,6 +28,9 @@ import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.util.BinaryReference;
+import com.enonic.wem.api.util.GeoPoint;
+import com.enonic.wem.api.util.Link;
 
 import static com.enonic.wem.api.content.page.region.RegionDescriptor.newRegionDescriptor;
 import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegionDescriptors;
@@ -93,9 +98,27 @@ public final class ContentFixtures
     public static PropertyTree newPropertyTree()
     {
         final PropertyTree tree = new PropertyTree();
-        tree.setLong( "a", 1L );
-        tree.setString( "b", "2" );
-        tree.setBoolean( "c.d", true );
+        tree.setBoolean( "boolean", true );
+        tree.addBooleans( "boolean", true, false );
+        tree.setLong( "long", 1L );
+        tree.addLongs( "longs", 1L, 2L, 3L );
+        tree.setDouble( "double", 2.2 );
+        tree.addDoubles( "doubles", 1.1, 2.2, 3.3 );
+        tree.setString( "string", "a" );
+        tree.addStrings( "strings", "a", "b", "c" );
+        tree.setString( "stringEmpty", "" );
+        tree.setString( "stringNull", null );
+        tree.setString( "set.property", "value" );
+        tree.addXml( "xml", "<xml><my-xml hello='world'/></xml>" );
+        tree.addHtmlPart( "htmlPart", "<p>some<b>html</b></p>" );
+        tree.addBinaryReference( "binaryReference", BinaryReference.from( "abc" ) );
+        tree.addLink( "link", Link.from( ContentPath.from( "/my/content" ).toString() ) );
+        tree.addGeoPoint( "geoPoint", new GeoPoint( 1.1, -1.1 ) );
+        tree.addGeoPoints( "geoPoints", new GeoPoint( 1.1, -1.1 ), new GeoPoint( 2.2, -2.2 ) );
+        tree.addInstant( "instant", Instant.MAX );
+        tree.addLocalDate( "localDate", LocalDate.of( 2014, 1, 31 ) );
+        tree.addLocalDateTime( "localDateTime", LocalDateTime.of( 2014, 1, 31, 10, 30, 5 ) );
+
 
         final PropertySet set1 = tree.addSet( "c" );
         set1.setBoolean( "d", true );
