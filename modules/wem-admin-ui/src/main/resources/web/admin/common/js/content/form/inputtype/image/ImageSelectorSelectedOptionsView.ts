@@ -135,7 +135,7 @@ module api.content.form.inputtype.image {
             });
 
             optionView.getCheckbox().onFocus((event: FocusEvent) => this.showImageSelectorDialog(selectedOption));
-//            optionView.getCheckbox().onBlur((event: FocusEvent) => this.hideImageSelectorDialog());
+            optionView.getCheckbox().onBlur((event: FocusEvent) => this.hideImageSelectorDialog());
 
             optionView.onChecked((view: ImageSelectorSelectedOptionView, checked: boolean) => {
                 if (checked) {
