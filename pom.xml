@@ -43,11 +43,6 @@
     <module>modules/web-vhost</module>
     <module>modules/web-jaxrs</module>
 
-    <module>modules/wem-admin</module>
-    <module>modules/wem-admin-ui</module>
-
-    <module>modules/admin-event</module>
-
     <module>modules/portal-api</module>
     <module>modules/portal-script</module>
     <module>modules/portal-mustache</module>
@@ -55,6 +50,10 @@
     <module>modules/portal-xslt</module>
     <module>modules/portal-jslib</module>
     <module>modules/portal-impl</module>
+
+    <module>modules/admin-impl</module>
+    <module>modules/admin-event</module>
+    <module>modules/wem-admin-ui</module>
 
     <module>modules/wem-karaf</module>
     <module>modules/wem-launcher</module>
