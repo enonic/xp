@@ -19,6 +19,7 @@ Features:
 
 Refactoring:
 
+  - Renamed module wem-api to core-api (CMS-4916)
   - Renamed module wem-core to core-impl (CMS-4906)
   - Renamed module wem-export to core-export (CMS-4893)
   - Renamed module wem-script to portal-script (CMS-4896)

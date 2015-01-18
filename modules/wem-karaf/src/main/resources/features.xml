@@ -27,7 +27,7 @@
     <bundle start-level="50">mvn:org.apache.tika/tika-core/1.6</bundle>
     <bundle start-level="50">mvn:org.apache.tika/tika-bundle/1.6</bundle>
 
-    <bundle start-level="50">mvn:com.enonic.wem/wem-api/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.wem/core-api/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/core-event/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/core-module/${project.version}</bundle>
     <bundle start-level="50">mvn:com.enonic.wem/core-repo/${project.version}</bundle>

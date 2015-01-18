@@ -26,8 +26,7 @@
   </properties>
 
   <modules>
-    <module>modules/wem-api</module>
-
+    <module>modules/core-api</module>
     <module>modules/core-event</module>
     <module>modules/core-module</module>
     <module>modules/core-repo</module>
