@@ -53,7 +53,7 @@
 
     <module>modules/admin-impl</module>
     <module>modules/admin-event</module>
-    <module>modules/wem-admin-ui</module>
+    <module>modules/admin-ui</module>
 
     <module>modules/wem-karaf</module>
     <module>modules/wem-launcher</module>

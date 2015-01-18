@@ -23,6 +23,7 @@ Refactoring:
   - Renamed module wem-export to core-export (CMS-4893)
   - Renamed module wem-script to portal-script (CMS-4896)
   - Renamed module wem-admin to admin-impl (CMS-4914)
+  - Renamed module wem-admin-ui to admin-ui (CMS-4915)
   - Moved security integration tests into core-security (CMS-4897)
   - Merged wem-jsapi and portal-jslib modules into portal-jslib (CMS-4898)
   - Loading of current PageDescriptor when refreshing config form i PageInspectionPanel was not necessary,

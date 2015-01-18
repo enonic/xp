@@ -10,9 +10,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-admin-ui</artifactId>
+  <artifactId>admin-ui</artifactId>
   <packaging>bundle</packaging>
-  <name>Enonic WEM Admin UI</name>
+  <name>Enonic XP Admin :: UI</name>
 
   <properties>
     <npm.exec>npm</npm.exec>
