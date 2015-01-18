@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<layout-component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../model.xsd">
+  <display-name>A Layout</display-name>
+  <config>
+    <input name="width" type="Double">
+      <label>Column width</label>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+  </config>
+  <regions>
+    <region name="left"/>
+    <region name="right"/>
+  </regions>
+</layout-component>

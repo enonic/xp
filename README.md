@@ -26,12 +26,6 @@ Build all code skipping all tests:
 Build all including javadoc and distribution (used for CI build):
 
     mvn -P all clean install
-    
-## JAXB schema classes
-
-If you have modified any of the 'com.enonic.wem.api.xml.model' classes then you have to run
-'com.enonic.wem.api.xml.XsdGenerator' to generate the XSD for the model. The generated XSD is
-then checked into GIT with all the other code.
 
 ## License
 

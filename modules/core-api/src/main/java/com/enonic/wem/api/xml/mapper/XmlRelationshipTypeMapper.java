@@ -17,8 +17,8 @@ public final class XmlRelationshipTypeMapper
         result.setDescription( object.getDescription() );
         result.setFromSemantic( object.getFromSemantic() );
         result.setToSemantic( object.getToSemantic() );
-        result.setAllowedFromTypes( toXml( object.getAllowedFromTypes() ) );
-        result.setAllowedToTypes( toXml( object.getAllowedToTypes() ) );
+        result.setAllowedFromTypes( toAllowedFromTypes( object.getAllowedFromTypes() ) );
+        result.setAllowedToTypes( toAllowedToTypes( object.getAllowedToTypes() ) );
         return result;
     }
 
@@ -27,14 +27,28 @@ public final class XmlRelationshipTypeMapper
         builder.description( xml.getDescription() );
         builder.fromSemantic( xml.getFromSemantic() );
         builder.toSemantic( xml.getToSemantic() );
-        for ( String ctyName : xml.getAllowedFromTypes() )
+        for ( String ctyName : xml.getAllowedFromTypes().getContentType() )
         {
             builder.addAllowedFromType( ContentTypeName.from( ctyName ) );
         }
-        for ( String ctyName : xml.getAllowedToTypes() )
+        for ( String ctyName : xml.getAllowedToTypes().getContentType() )
         {
             builder.addAllowedToType( ContentTypeName.from( ctyName ) );
         }
+    }
+
+    private static XmlRelationshipType.AllowedFromTypes toAllowedFromTypes( final ContentTypeNames names )
+    {
+        final XmlRelationshipType.AllowedFromTypes result = new XmlRelationshipType.AllowedFromTypes();
+        result.getContentType().addAll( toXml( names ) );
+        return result;
+    }
+
+    private static XmlRelationshipType.AllowedToTypes toAllowedToTypes( final ContentTypeNames names )
+    {
+        final XmlRelationshipType.AllowedToTypes result = new XmlRelationshipType.AllowedToTypes();
+        result.getContentType().addAll( toXml( names ) );
+        return result;
     }
 
     private static List<String> toXml( final ContentTypeNames allowedFromTypes )

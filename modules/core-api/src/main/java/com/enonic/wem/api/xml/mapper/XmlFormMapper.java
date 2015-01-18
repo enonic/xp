@@ -34,7 +34,7 @@ public final class XmlFormMapper
     public static XmlForm toXml( final Form object )
     {
         final XmlForm result = new XmlForm();
-        result.getItems().addAll( toItemsXml( object.getFormItems() ).getItems() );
+        result.getList().addAll( toItemsXml( object.getFormItems() ).getList() );
         return result;
     }
 
@@ -58,7 +58,7 @@ public final class XmlFormMapper
     public static List<FormItem> fromItemsXml( final XmlFormItems xml )
     {
         final List<FormItem> result = Lists.newArrayList();
-        for ( final XmlFormItem item : xml.getItems() )
+        for ( final XmlFormItem item : xml.getList() )
         {
             final FormItem converted = fromItemXml( item );
             result.add( converted );
@@ -166,7 +166,7 @@ public final class XmlFormMapper
         for ( final FormItem item : object )
         {
             final XmlFormItem converted = toItemXml( item );
-            result.getItems().add( converted );
+            result.getList().add( converted );
         }
 
         return result;

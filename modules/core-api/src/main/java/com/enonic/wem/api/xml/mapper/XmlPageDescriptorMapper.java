@@ -5,7 +5,6 @@ import com.enonic.wem.api.xml.model.XmlPageDescriptor;
 
 public final class XmlPageDescriptorMapper
 {
-
     public static XmlPageDescriptor toXml( final PageDescriptor object )
     {
         final XmlPageDescriptor result = new XmlPageDescriptor();
@@ -21,5 +20,4 @@ public final class XmlPageDescriptorMapper
         builder.config( XmlFormMapper.fromXml( xml.getConfig() ) );
         builder.regions( XmlRegionDescriptorMapper.fromXml( xml.getRegions() ) );
     }
-
 }

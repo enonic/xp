@@ -8,8 +8,8 @@ import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.xml.mapper.XmlFormMapper;
 import com.enonic.wem.api.xml.model.XmlForm;
+import com.enonic.wem.api.xml.model.XmlMetaStep;
 import com.enonic.wem.api.xml.model.XmlModule;
-import com.enonic.wem.api.xml.model.XmlModuleMetaStep;
 import com.enonic.wem.api.xml.model.XmlVendor;
 import com.enonic.wem.api.xml.serializer.XmlSerializers;
 
@@ -35,12 +35,12 @@ final class ModuleXmlBuilder
             builder.vendorName( vendor.getName() );
         }
 
-        if ( xml.getMetaSteps() != null )
+        if ( xml.getContent() != null )
         {
             final ImmutableList.Builder<MixinName> metaStepMixinNames = ImmutableList.builder();
-            for ( XmlModuleMetaStep xmlMetaStep : xml.getMetaSteps().getMetaSteps() )
+            for ( XmlMetaStep xmlMetaStep : xml.getContent().getMetaStep() )
             {
-                final String mixinName = xmlMetaStep.getMixinName();
+                final String mixinName = xmlMetaStep.getMixin();
                 final MixinName metadataSchemaName =
                     mixinName.contains( SEPARATOR ) ? MixinName.from( mixinName ) : MixinName.from( moduleKey, mixinName );
                 metaStepMixinNames.add( metadataSchemaName );

@@ -10,19 +10,19 @@ import com.enonic.wem.api.xml.model.XmlRelationshipType;
 
 public final class XmlSerializers
 {
-    private final static XmlSerializer<XmlModule> MODULE = XmlSerializer.create( XmlModule.class );
+    private final static XmlSerializer<XmlModule> MODULE = new XmlModuleSerializer();
 
-    private final static XmlSerializer<XmlContentType> CONTENT_TYPE = XmlSerializer.create( XmlContentType.class );
+    private final static XmlSerializer<XmlContentType> CONTENT_TYPE = new XmlContentTypeSerializer();
 
-    private final static XmlSerializer<XmlMixin> MIXIN = XmlSerializer.create( XmlMixin.class );
+    private final static XmlSerializer<XmlMixin> MIXIN = new XmlMixinSerializer();
 
-    private final static XmlSerializer<XmlRelationshipType> RELATIONSHIP_TYPE = XmlSerializer.create( XmlRelationshipType.class );
+    private final static XmlSerializer<XmlRelationshipType> RELATIONSHIP_TYPE = new XmlRelationshipTypeSerializer();
 
-    private final static XmlSerializer<XmlLayoutDescriptor> LAYOUT_DESCRIPTOR = XmlSerializer.create( XmlLayoutDescriptor.class );
+    private final static XmlSerializer<XmlLayoutDescriptor> LAYOUT_DESCRIPTOR = new XmlLayoutDescriptorSerializer();
 
-    private final static XmlSerializer<XmlPartDescriptor> PART_DESCRIPTOR = XmlSerializer.create( XmlPartDescriptor.class );
+    private final static XmlSerializer<XmlPartDescriptor> PART_DESCRIPTOR = new XmlPartDescriptorSerializer();
 
-    private final static XmlSerializer<XmlPageDescriptor> PAGE_DESCRIPTOR = XmlSerializer.create( XmlPageDescriptor.class );
+    private final static XmlSerializer<XmlPageDescriptor> PAGE_DESCRIPTOR = new XmlPageDescriptorSerializer();
 
     public static XmlSerializer<XmlModule> module()
     {
@@ -58,5 +58,4 @@ public final class XmlSerializers
     {
         return LAYOUT_DESCRIPTOR;
     }
-
 }

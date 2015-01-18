@@ -35,6 +35,7 @@ Refactoring:
   - Converted wem-core to use declarative services (CMS-4905)  
   - "Flattened" PageRegions, LayoutRegions with AbstractRegions and renamed it to Regions
   - Replaced usages of Property.getContentId with getReference and removed Property.getContentId and Value.getContentId
+  - Generate java classes from XSD schema at build time (CMS-4917)
       
 ## RC1 (2015-01-13)
 
