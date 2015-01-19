@@ -80,7 +80,7 @@
 
       .label {
         max-width: 290px;
-        margin: 0 20px 0 10px;
+        margin: 0 30px 0 10px;
         display: block;
         .ellipsis();
       }
@@ -128,11 +128,13 @@
     .tab-menu-item {
       .flex(0 1 190px);
       height: initial;
-      margin-right: 1px;
-      margin-bottom: 1px;
+      border-bottom: 1px solid @admin-dark-gray-border;
+      &:not(:last-child) {
+        border-right: 1px solid @admin-dark-gray-border;
+      }
 
       &.active {
-        margin-bottom: 0px;
+        border-bottom: none;
       }
     }
   }

@@ -56,7 +56,7 @@ html, body {
 
   .header-panel {
     height: 44px;
-    padding: 6px;
+    padding: 6px 10px;
     background: @admin-bg-dark-gray top center;
     background-size: cover;
     text-align: center;
@@ -66,9 +66,10 @@ html, body {
     .installation-header {
       float: left;
       line-height: 20px;
-      padding: 6px 10px;
-      color: #eeeeee;
-      font-size: 18px;
+      padding: 4px 0;
+      color: @admin-font-gray;
+      font-size: 22px;
+      line-height: 24px;
     }
     .user-name {
       float: right;
@@ -80,7 +81,7 @@ html, body {
 
     .logout {
       float: right;
-      padding: 8px 5px;
+      padding: 8px 10px 8px 0;
       &:hover {
         color: rgba(255, 255, 255, 0.5);
       }
@@ -160,6 +161,13 @@ html, body {
     top: 0;
     bottom: 0;
 
+    .app-selector-panel {
+      .flexbox();
+      .align-items(center);
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
   }
 
   .login-licensed-to {
@@ -236,7 +244,8 @@ html, body {
 
   .app-selector-container {
     width: 100%;
-    top: 10%;
+    position: static;
+    margin-top: -44px;
   }
 
   .app-selector {
