@@ -288,11 +288,11 @@ module api.ui.uploader {
             });
 
             uploader.bind('Init', (up, params) => {
-                console.log('uploader init', up, params);
-            });
+                //console.log('uploader init', up, params);
+            }, this);
 
             uploader.bind('FilesAdded', (up, files: PluploadFile[]) => {
-                console.log('uploader files added', up, files);
+                //console.log('uploader files added', up, files);
 
                 if (this.config.maximumOccurrences > 0 && files.length > this.config.maximumOccurrences) {
                     files.splice(this.config.maximumOccurrences);
@@ -310,18 +310,18 @@ module api.ui.uploader {
                 }, 1);
 
                 this.notifyFileUploadStarted(this.uploadedItems);
-            });
+            }, this);
 
             uploader.bind('QueueChanged', (up) => {
-                console.log('uploader queue changed', up);
-            });
+                //console.log('uploader queue changed', up);
+            }, this);
 
             uploader.bind('UploadFile', (up, file) => {
-                console.log('uploader upload file', up, file);
-            });
+                //console.log('uploader upload file', up, file);
+            }, this);
 
             uploader.bind('UploadProgress', (up, file: PluploadFile) => {
-                console.log('uploader upload progress', up, file);
+                //console.log('uploader upload progress', up, file);
 
                 this.progress.setValue(file.percent);
 
@@ -330,7 +330,7 @@ module api.ui.uploader {
                     uploadItem.setProgress(file.percent);
                     this.notifyFileUploadProgress(uploadItem);
                 }
-            });
+            }, this);
 
             uploader.bind('FileUploaded', (up, file: PluploadFile, response) => {
                 console.log('uploader file uploaded', up, file, response);
@@ -348,7 +348,7 @@ module api.ui.uploader {
                     }
                 }
 
-            });
+            }, this);
 
             uploader.bind('Error', (up, response) => {
                 console.log('uploader error', up, response);
@@ -366,7 +366,7 @@ module api.ui.uploader {
                     uploadItem.setModel(null);
                     this.notifyUploadFailed(uploadItem);
                 }
-            });
+            }, this);
 
             uploader.bind('UploadComplete', (up, files) => {
                 console.log('uploader upload complete', up, files);
@@ -385,7 +385,7 @@ module api.ui.uploader {
 
                 this.uploadedItems.length = 0;
                 this.uploader.splice();
-            });
+            }, this);
 
             uploader.init();
 

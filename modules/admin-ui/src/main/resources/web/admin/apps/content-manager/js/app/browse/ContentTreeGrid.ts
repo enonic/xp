@@ -337,16 +337,25 @@ module app.browse {
                 });
         }
 
-        appendUploadNode(item: api.ui.uploader.UploadItem<ContentSummary>, nextToSelection?: boolean) {
+        appendUploadNode(item: api.ui.uploader.UploadItem<ContentSummary>) {
 
             var data = ContentSummaryAndCompareStatus.fromUploadItem(item);
-            this.appendNode(data, nextToSelection);
+
+            var parent: TreeNode<ContentSummaryAndCompareStatus> = this.getRoot().getCurrentSelection()[0];
+
+            this.appendNode(data, false).then(() => {
+                if (parent) {
+                    this.expandNode(parent);
+                }
+            }).done();
 
             item.onProgress((progress: number) => {
                 this.resetAndRender();
             });
             item.onUploaded((model: ContentSummary) => {
                 this.updateNode(data, item.getId());
+
+                this.resetAndRender();
                 api.notify.showSuccess("Upload [" + item.getName() + "] finished");
             });
             item.onFailed(() => {

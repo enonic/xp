@@ -185,22 +185,22 @@ module api.ui.treegrid {
 
                     if (!this.gridOptions.isMultipleSelectionDisabled()) {
                         keyBindings =
-                            [
-                                new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
-                                    if (this.active) {
-                                        this.scrollToRow(this.grid.addSelectedUp());
-                                    }
-                                    event.preventDefault();
-                                    event.stopImmediatePropagation();
-                                }),
-                                new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
-                                    if (this.active) {
-                                        this.scrollToRow(this.grid.addSelectedDown());
-                                    }
-                                    event.preventDefault();
-                                    event.stopImmediatePropagation();
-                                })
-                            ];
+                        [
+                            new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
+                                if (this.active) {
+                                    this.scrollToRow(this.grid.addSelectedUp());
+                                }
+                                event.preventDefault();
+                                event.stopImmediatePropagation();
+                            }),
+                            new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
+                                if (this.active) {
+                                    this.scrollToRow(this.grid.addSelectedDown());
+                                }
+                                event.preventDefault();
+                                event.stopImmediatePropagation();
+                            })
+                        ];
                     }
 
                     keyBindings = keyBindings.concat([
@@ -237,7 +237,7 @@ module api.ui.treegrid {
                             if (selected.length === 1) {
                                 var node = this.gridData.getItem(selected[0]);
                                 if (node && this.hasChildren(node.getData())
-                                        && !node.isExpanded() && this.active) {
+                                    && !node.isExpanded() && this.active) {
 
                                     this.active = false;
                                     this.resetAndRender();
@@ -667,7 +667,9 @@ module api.ui.treegrid {
          * @param nextToSelection - by default node is appended as child to selection or root, set this to true to append to the same level
          * @param stashedParentNode
          */
-        appendNode(data: DATA, nextToSelection?: boolean, prepend: boolean = true, stashedParentNode?: TreeNode<DATA>): void {
+        appendNode(data: DATA, nextToSelection?: boolean, prepend: boolean = true, stashedParentNode?: TreeNode<DATA>): wemQ.Promise<void> {
+            var deferred = wemQ.defer<void>();
+
             if (!stashedParentNode && this.stash) {
                 this.appendNode(data, nextToSelection, prepend, this.stash);
             }
@@ -687,43 +689,61 @@ module api.ui.treegrid {
             if (!parentNode.hasChildren() && !isRootParentNode) {
                 this.fetchData(parentNode)
                     .then((dataList: DATA[]) => {
-                        parentNode.setChildren(this.dataToTreeNodes(dataList, parentNode));
-                        this.initData(root.treeToList());
-                        var node = root.findNode(this.getDataId(data));
-                        if (node) {
-                            if (!stashedParentNode) {
-                                this.gridData.setItems(root.treeToList());
-                            }
-                            this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ADDED));
+                        if (parentNode.hasChildren()) {
+                            this.doAppendNodeToParentWithChildren(parentNode, data, root, prepend, stashedParentNode, isRootParentNode);
 
-                            if (parentNode != root) {
-                                this.refreshNodeData(parentNode).then((node: TreeNode<DATA>) => {
-                                    if (!stashedParentNode) {
-                                        this.updateSelectedNode(node);
-                                    }
-                                });
+                        } else {
+                            parentNode.setChildren(this.dataToTreeNodes(dataList, parentNode));
+                            this.initData(root.treeToList());
+                            var node = root.findNode(this.getDataId(data));
+                            if (!node) {
+                                parentNode.addChild(this.dataToTreeNode(data, root), prepend);
+                                node = root.findNode(this.getDataId(data));
+                            }
+
+                            if (node) {
+                                if (!stashedParentNode) {
+                                    this.gridData.setItems(root.treeToList());
+                                }
+                                this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ADDED));
+
+                                if (parentNode != root) {
+                                    this.refreshNodeData(parentNode).then((node: TreeNode<DATA>) => {
+                                        if (!stashedParentNode) {
+                                            this.updateSelectedNode(node);
+                                        }
+                                    });
+                                }
                             }
                         }
+                        deferred.resolve(null);
                     }).catch((reason: any) => {
                         api.DefaultErrorHandler.handle(reason);
+                        deferred.reject(reason);
                     });
             } else {
-                parentNode.addChild(this.dataToTreeNode(data, root), prepend);
+                this.doAppendNodeToParentWithChildren(parentNode, data, root, prepend, stashedParentNode, isRootParentNode);
+                deferred.resolve(null);
+            }
 
-                var node = root.findNode(this.getDataId(data));
-                if (node) {
+            return deferred.promise;
+        }
+
+        private doAppendNodeToParentWithChildren(parentNode, data, root, prepend, stashedParentNode, isRootParentNode) {
+            parentNode.addChild(this.dataToTreeNode(data, root), prepend);
+
+            var node = root.findNode(this.getDataId(data));
+            if (node) {
+                if (!stashedParentNode) {
+                    this.gridData.setItems(root.treeToList());
+                }
+                if (isRootParentNode) {
+                    this.sortNodeChildren(parentNode);
+                } else {
                     if (!stashedParentNode) {
-                        this.gridData.setItems(root.treeToList());
-                    }
-                    if (isRootParentNode) {
-                        this.sortNodeChildren(parentNode);
-                    } else {
-                        if (!stashedParentNode) {
-                            this.updateSelectedNode(parentNode);
-                        }
+                        this.updateSelectedNode(parentNode);
                     }
                 }
-
             }
         }
 
