@@ -8,6 +8,7 @@ Bugfixes:
   - Page template created in Admin Console where not configured with regions from selected page
     descriptor. Making it also impossible to add components (CMS-4837)
   - Included properties metadata and attachments in Content.equals (TypeScript) (CMS-4837)
+  - Made the ImageSelector input type work in Live Edit (CMS-4922)
 
 Features:
 
