@@ -17,7 +17,7 @@ module app.wizard {
         public static PROPERTY_LANG: string = 'language';
 
         constructor(content: Content) {
-            //this.language = content.getLanguage();
+            this.language = content.getLanguage();
             this.owner = content.getOwner();
         }
 
@@ -69,7 +69,7 @@ module app.wizard {
 
         apply(builder: api.content.ContentBuilder) {
             builder.owner = this.owner;
-            //builder.language = this.language;
+            builder.language = this.language;
         }
 
     }

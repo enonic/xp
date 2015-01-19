@@ -207,10 +207,7 @@ module api.ui.selector.combobox {
 
         setValues(values: string[]) {
             values.forEach((value: string) => {
-                var option = this.getOptionByValue(value);
-                if (option != null) {
-                    this.selectOption(option);
-                }
+                this.setValue(value);
             });
         }
 

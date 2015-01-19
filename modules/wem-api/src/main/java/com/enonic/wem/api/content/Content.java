@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content;
 
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
@@ -67,6 +68,8 @@ public class Content
 
     private final boolean inheritPermissions;
 
+    private final Locale language;
+
     protected Content( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
@@ -105,6 +108,7 @@ public class Content
         this.childOrder = builder.childOrder;
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
+        this.language = builder.language;
     }
 
     public ContentPath getParentPath()
@@ -270,6 +274,11 @@ public class Content
         return inheritPermissions;
     }
 
+    public Locale getLanguage()
+    {
+        return language;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -303,14 +312,17 @@ public class Content
             Objects.equals( attachments, other.attachments ) &&
             Objects.equals( data, other.data ) &&
             Objects.equals( metadata, other.metadata ) &&
-            Objects.equals( page, other.page );
+            Objects.equals( page, other.page ) &&
+            Objects.equals( owner, other.owner ) &&
+            Objects.equals( language, other.language );
     }
 
     @Override
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, displayName, type, draft, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, metadata, page );
+                             hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, metadata, page, owner,
+                             language );
     }
 
     public static Builder newContent( final ContentTypeName type )
@@ -410,6 +422,8 @@ public class Content
 
         protected boolean inheritPermissions;
 
+        protected Locale language;
+
         protected Builder()
         {
             this.data = new PropertyTree();
@@ -441,6 +455,7 @@ public class Content
             this.childOrder = source.childOrder;
             this.permissions = source.permissions;
             this.inheritPermissions = source.inheritPermissions;
+            this.language = source.language;
         }
 
         public Builder<BUILDER, C> parentPath( final ContentPath path )
@@ -600,6 +615,12 @@ public class Content
         public Builder<BUILDER, C> inheritPermissions( final boolean inheritPermissions )
         {
             this.inheritPermissions = inheritPermissions;
+            return this;
+        }
+
+        public Builder<BUILDER, C> language( final Locale language )
+        {
+            this.language = language;
             return this;
         }
 

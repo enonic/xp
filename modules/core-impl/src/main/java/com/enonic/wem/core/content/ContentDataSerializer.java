@@ -1,6 +1,9 @@
 package com.enonic.wem.core.content;
 
 import java.io.IOException;
+import java.util.Locale;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.CreateContentParams;
@@ -14,6 +17,7 @@ import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.thumb.Thumbnail;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.Exceptions;
@@ -28,6 +32,10 @@ public class ContentDataSerializer
         contentAsData.setBoolean( ContentPropertyNames.DRAFT, content.isDraft() );
         contentAsData.ifNotNull().addString( ContentPropertyNames.DISPLAY_NAME, content.getDisplayName() );
         contentAsData.ifNotNull().addString( ContentPropertyNames.TYPE, content.getType().toString() );
+        contentAsData.ifNotNull().addString( ContentPropertyNames.OWNER,
+                                             content.getOwner() != null ? content.getOwner().toString() : null );
+        contentAsData.ifNotNull().addString( ContentPropertyNames.LANGUAGE,
+                                             content.getLanguage() != null ? content.getLanguage().toLanguageTag() : null );
 
         contentAsData.addSet( ContentPropertyNames.DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
@@ -63,6 +71,16 @@ public class ContentDataSerializer
         builder.displayName( contentAsSet.getString( ContentPropertyNames.DISPLAY_NAME ) );
         builder.draft( contentAsSet.getBoolean( ContentPropertyNames.DRAFT ) );
         builder.data( contentAsSet.getSet( ContentPropertyNames.DATA ).toTree() );
+        String owner = contentAsSet.getString( ContentPropertyNames.OWNER );
+        if ( StringUtils.isNotBlank( owner ) )
+        {
+            builder.owner( PrincipalKey.from( owner ) );
+        }
+        String language = contentAsSet.getString( ContentPropertyNames.LANGUAGE );
+        if ( StringUtils.isNotEmpty( language ) )
+        {
+            builder.language( Locale.forLanguageTag( language ) );
+        }
 
         final PropertySet metadataSet = contentAsSet.getSet( ContentPropertyNames.META_STEPS );
         if ( metadataSet != null )
@@ -165,5 +183,5 @@ public class ContentDataSerializer
             attachmentSet.addString( "mimeType", attachment.getMimeType() );
             attachmentSet.addLong( "size", attachment.getSize() );
         }
-    }   
+    }
 }

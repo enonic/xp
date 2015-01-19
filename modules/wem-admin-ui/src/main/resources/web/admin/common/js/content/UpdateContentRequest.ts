@@ -18,6 +18,10 @@ module api.content {
 
         private thumbnail: Thumbnail;
 
+        private language: string;
+
+        private owner: string;
+
         constructor(id: string) {
             super();
             this.id = id;
@@ -59,6 +63,16 @@ module api.content {
             return this;
         }
 
+        setLanguage(language: string): UpdateContentRequest {
+            this.language = language;
+            return this;
+        }
+
+        setOwner(owner: string): UpdateContentRequest {
+            this.owner = owner;
+            return this;
+        }
+
         getParams(): Object {
             return {
                 contentId: this.id,
@@ -67,7 +81,9 @@ module api.content {
                 data: this.data.toJson(),
                 meta: (this.meta || []).map((metadata: Metadata) => metadata.toJson()),
                 displayName: this.displayName,
-                thumbnail: this.thumbnail ? this.thumbnail.toJson() : undefined
+                thumbnail: this.thumbnail ? this.thumbnail.toJson() : undefined,
+                language: this.language,
+                owner: this.owner
             };
         }
 

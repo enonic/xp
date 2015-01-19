@@ -13,7 +13,7 @@ module api.module {
 
         search(searchString: string) {
 
-            if (this.loading()) {
+            if (this.isLoading()) {
                 this.preservedSearchString = searchString;
                 return;
             }
@@ -22,13 +22,12 @@ module api.module {
         }
 
         load() {
-            this.loading(true);
+
             this.notifyLoadingData();
 
             this.sendRequest()
                 .done((modules: Module[]) => {
 
-                    this.loading(false);
                     this.notifyLoadedData(modules);
                     if (this.preservedSearchString) {
                         this.search(this.preservedSearchString);

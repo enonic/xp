@@ -1,94 +1,95 @@
 {
-  "attachments": [],
-  "childOrder": null,
-  "createdTime": "2013-08-23T12:55:09.162Z",
-  "creator": "user:system:admin",
-  "data": [
-    {
-      "name": "myProperty",
-      "type": "String",
-      "values": [
+    "attachments": [],
+    "childOrder": null,
+    "createdTime": "2013-08-23T12:55:09.162Z",
+    "creator": "user:system:admin",
+    "data": [
         {
-          "id": "4",
-          "v": "myValue"
-        }
-      ]
-    }
-  ],
-  "deletable": true,
-  "displayName": "My Content",
-  "editable": true,
-  "hasChildren": false,
-  "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
-  "id": "aaa",
-  "inheritPermissions": true,
-  "isDraft": false,
-  "isPage": true,
-  "isRoot": true,
-  "meta": [
-    {
-      "data": [
-        {
-          "name": "myProperty",
-          "type": "Long",
-          "values": [
-            {
-              "id": "3",
-              "v": 1
-            }
-          ]
-        }
-      ],
-      "name": "myModule:myField"
-    }
-  ],
-  "modifiedTime": "2013-08-23T12:55:09.162Z",
-  "modifier": "user:system:admin",
-  "name": "my_a_content",
-  "owner": "user:myStore:me",
-  "page": {
-    "config": [
-      {
-        "name": "background-color",
-        "type": "String",
-        "values": [
-          {
-            "id": "2",
-            "v": "blue"
-          }
-        ]
-      }
-    ],
-    "controller": null,
-    "regions": [
-      {
-        "components": [
-          {
-            "PartComponent": {
-              "config": [
+            "name": "myProperty",
+            "type": "String",
+            "values": [
                 {
-                  "name": "my-prop",
-                  "type": "String",
-                  "values": [
-                    {
-                      "id": "1",
-                      "v": "value"
-                    }
-                  ]
+                    "id": "4",
+                    "v": "myValue"
                 }
-              ],
-              "descriptor": "mainmodule:partTemplateName",
-              "name": "my-component"
-            }
-          }
-        ],
-        "name": "my-region"
-      }
+            ]
+        }
     ],
-    "template": "mypagetemplate"
-  },
-  "path": "/my_a_content",
-  "permissions": [],
-  "thumbnail": null,
-  "type": "mymodule:my_type"
+    "deletable": true,
+    "displayName": "My Content",
+    "editable": true,
+    "hasChildren": false,
+    "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_type?hash=f95b70fdc3088560732a5ac135644506",
+    "id": "aaa",
+    "inheritPermissions": true,
+    "isDraft": false,
+    "isPage": true,
+    "isRoot": true,
+    "language": "en",
+    "meta": [
+        {
+            "data": [
+                {
+                    "name": "myProperty",
+                    "type": "Long",
+                    "values": [
+                        {
+                            "id": "3",
+                            "v": 1
+                        }
+                    ]
+                }
+            ],
+            "name": "myModule:myField"
+        }
+    ],
+    "modifiedTime": "2013-08-23T12:55:09.162Z",
+    "modifier": "user:system:admin",
+    "name": "my_a_content",
+    "owner": "user:myStore:me",
+    "page": {
+        "config": [
+            {
+                "name": "background-color",
+                "type": "String",
+                "values": [
+                    {
+                        "id": "2",
+                        "v": "blue"
+                    }
+                ]
+            }
+        ],
+        "controller": null,
+        "regions": [
+            {
+                "components": [
+                    {
+                        "PartComponent": {
+                            "config": [
+                                {
+                                    "name": "my-prop",
+                                    "type": "String",
+                                    "values": [
+                                        {
+                                            "id": "1",
+                                            "v": "value"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "descriptor": "mainmodule:partTemplateName",
+                            "name": "my-component"
+                        }
+                    }
+                ],
+                "name": "my-region"
+            }
+        ],
+        "template": "mypagetemplate"
+    },
+    "path": "/my_a_content",
+    "permissions": [],
+    "thumbnail": null,
+    "type": "mymodule:my_type"
 }
