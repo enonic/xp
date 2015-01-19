@@ -3,6 +3,9 @@ package com.enonic.wem.admin.rest.resource.content.json;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,7 +35,8 @@ public final class UpdateContentJson
     UpdateContentJson( @JsonProperty("contentId") final String contentId, @JsonProperty("contentName") final String contentName,
                        @JsonProperty("data") final List<PropertyArrayJson> propertyArrayJsonList,
                        @JsonProperty("meta") final List<MetadataJson> metadataJsonList,
-                       @JsonProperty("displayName") final String displayName, @JsonProperty("draft") final String draft )
+                       @JsonProperty("displayName") final String displayName, @JsonProperty("draft") final String draft,
+                       @JsonProperty("owner") final String owner, @JsonProperty("language") final String language )
     {
         this.contentName = ContentName.from( contentName );
 
@@ -47,6 +51,8 @@ public final class UpdateContentJson
                 edit.metadata = metadatas;
                 edit.draft = Boolean.valueOf( draft );
                 edit.displayName = displayName;
+                edit.owner = StringUtils.isNotEmpty( owner ) ? PrincipalKey.from( owner ) : null;
+                edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
             } );
 
         this.renameContentParams = new RenameContentParams().

@@ -1,6 +1,7 @@
 package com.enonic.wem.admin.rest.resource.content.page;
 
 import java.time.Instant;
+import java.util.Locale;
 
 import javax.ws.rs.core.MediaType;
 
@@ -123,6 +124,7 @@ public class PageResourceTest
             id( ContentId.from( id ) ).
             path( ContentPath.from( "/" + name ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
+            language( Locale.ENGLISH ).
             displayName( "My Content" ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).

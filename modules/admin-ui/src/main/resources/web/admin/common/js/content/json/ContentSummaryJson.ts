@@ -28,5 +28,6 @@ module api.content.json {
 
         childOrder:ChildOrderJson;
 
+        language: string;
     }
 }

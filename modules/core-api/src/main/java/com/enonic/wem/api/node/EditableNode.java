@@ -38,14 +38,14 @@ public class EditableNode
 
     public Node build()
     {
-        final Node.Builder builder = Node.newNode( source );
-        builder.name( name );
-        builder.data( data );
-        builder.indexConfigDocument( indexConfigDocument );
-        builder.manualOrderValue( manualOrderValue );
-        builder.childOrder( childOrder );
-        builder.permissions( permissions );
-        builder.inheritPermissions( inheritPermissions );
-        return builder.build();
+        return Node.newNode( source ).
+            name( name ).
+            data( data ).
+            indexConfigDocument( indexConfigDocument ).
+            manualOrderValue( manualOrderValue ).
+            childOrder( childOrder ).
+            permissions( permissions ).
+            inheritPermissions( inheritPermissions ).
+            build();
     }
 }

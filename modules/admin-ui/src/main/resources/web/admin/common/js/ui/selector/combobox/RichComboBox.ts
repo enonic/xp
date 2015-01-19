@@ -269,6 +269,19 @@ module api.ui.selector.combobox {
             this.comboBox.unBlur(listener);
         }
 
+        setValue(value: string): RichComboBox<OPTION_DISPLAY_VALUE> {
+            if (this.loader.isLoaded()) {
+                super.setValue(value);
+            } else {
+                var singleLoadListener = (event) => {
+                    super.setValue(value);
+                    this.loader.unLoadedData(singleLoadListener);
+                };
+                this.loader.onLoadedData(singleLoadListener);
+            }
+            return this;
+        }
+
     }
 
     export class RichComboBoxBuilder<T> {
