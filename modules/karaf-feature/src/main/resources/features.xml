@@ -27,33 +27,33 @@
     <bundle start-level="50">mvn:org.apache.tika/tika-core/1.6</bundle>
     <bundle start-level="50">mvn:org.apache.tika/tika-bundle/1.6</bundle>
 
-    <bundle start-level="50">mvn:com.enonic.wem/core-api/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/core-event/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/core-module/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/core-repo/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/core-security/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/core-image/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/core-relationship/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/core-schema/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/core-export/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/core-impl/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/core-api/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/core-event/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/core-module/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/core-repo/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/core-security/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/core-image/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/core-relationship/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/core-schema/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/core-export/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/core-impl/${project.version}</bundle>
 
-    <bundle start-level="50">mvn:com.enonic.wem/web-api/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/web-impl/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/web-vhost/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/web-jaxrs/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/web-api/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/web-impl/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/web-vhost/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/web-jaxrs/${project.version}</bundle>
 
-    <bundle start-level="50">mvn:com.enonic.wem/portal-api/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/portal-script/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/portal-mustache/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/portal-thymeleaf/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/portal-xslt/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/portal-jslib/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/portal-impl/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/portal-api/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/portal-script/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/portal-mustache/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/portal-thymeleaf/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/portal-xslt/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/portal-jslib/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/portal-impl/${project.version}</bundle>
 
-    <bundle start-level="50">mvn:com.enonic.wem/admin-impl/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/admin-event/${project.version}</bundle>
-    <bundle start-level="50">mvn:com.enonic.wem/admin-ui/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/admin-impl/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/admin-event/${project.version}</bundle>
+    <bundle start-level="50">mvn:com.enonic.xp/admin-ui/${project.version}</bundle>
   </feature>
 
 </features>

@@ -26,6 +26,7 @@ Refactoring:
   - Renamed module wem-admin to admin-impl (CMS-4914)
   - Renamed module wem-admin-ui to admin-ui (CMS-4915)
   - Renamed module wem-distro to distro (CMS-4916)
+  - Renamed maven groupId to com.enonic.xp (CMS-4918)
   - Moved security integration tests into core-security (CMS-4897)
   - Merged wem-jsapi and portal-jslib modules into portal-jslib (CMS-4898)
   - Loading of current PageDescriptor when refreshing config form i PageInspectionPanel was not necessary,
