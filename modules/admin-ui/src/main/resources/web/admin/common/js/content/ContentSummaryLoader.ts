@@ -21,7 +21,7 @@ module api.content {
 
         search(searchString: string) {
 
-            if (this.loading()) {
+            if (this.isLoading()) {
                 this.preservedSearchString = searchString;
                 return;
             }
@@ -34,12 +34,10 @@ module api.content {
 
         load() {
 
-            this.loading(true);
             this.notifyLoadingData();
 
             this.sendRequest().done((contents: ContentSummary[]) => {
 
-                this.loading(false);
                 this.notifyLoadedData(contents);
                 if (this.preservedSearchString) {
                     this.search(this.preservedSearchString);

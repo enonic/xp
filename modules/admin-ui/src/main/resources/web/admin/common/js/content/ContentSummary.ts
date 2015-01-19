@@ -41,6 +41,8 @@ module api.content {
 
         private childOrder: ChildOrder;
 
+        private language: string;
+
         constructor(builder: ContentSummaryBuilder) {
             super(builder);
             this.name = builder.name;
@@ -62,6 +64,7 @@ module api.content {
             this.deletable = builder.deletable;
             this.editable = builder.editable;
             this.childOrder = builder.childOrder;
+            this.language = builder.language;
         }
 
         getName(): ContentName {
@@ -156,6 +159,10 @@ module api.content {
             return this.childOrder;
         }
 
+        getLanguage(): string {
+            return this.language;
+        }
+
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentSummary)) {
@@ -219,6 +226,9 @@ module api.content {
             if (!api.ObjectHelper.booleanEquals(this.editable, other.editable)) {
                 return false;
             }
+            if (!api.ObjectHelper.stringEquals(this.language, other.language)) {
+                return false;
+            }
             return true;
         }
 
@@ -273,6 +283,8 @@ module api.content {
 
         childOrder: ChildOrder;
 
+        language: string;
+
         constructor(source?: ContentSummary) {
             super(source);
             if (source) {
@@ -294,6 +306,7 @@ module api.content {
                 this.deletable = source.isDeletable();
                 this.editable = source.isEditable();
                 this.childOrder = source.getChildOrder();
+                this.language = source.getLanguage();
             }
         }
 
@@ -314,6 +327,7 @@ module api.content {
             this.owner = json.owner;
             this.page = json.isPage;
             this.draft = json.draft;
+            this.language = json.language;
 
             this.id = json.id;
             this.createdTime = json.createdTime ? new Date(Date.parse(json.createdTime)) : null;
