@@ -23,7 +23,7 @@ After starting Karaf you will enter the Karaf shell.
 Before starting up WEM we need to install a feature repository. This is just an
 xml file that defines a set of features.
 
-    feature:repo-add mvn:com.enonic.wem/wem-karaf/5.0.0-SNAPSHOT/xml/features
+    feature:repo-add mvn:com.enonic.xp/karaf-feature/5.0.0-SNAPSHOT/xml/features
 
 If the repository has been changed, you can refresh the repository by running the
 following command:

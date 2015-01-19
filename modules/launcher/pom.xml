@@ -10,9 +10,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-launcher</artifactId>
+  <artifactId>launcher</artifactId>
   <packaging>jar</packaging>
-  <name>Enonic WEM Launcher</name>
+  <name>Enonic XP Launcher</name>
 
   <dependencies>
     <dependency>

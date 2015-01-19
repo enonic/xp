@@ -10,9 +10,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-distro</artifactId>
+  <artifactId>distro</artifactId>
   <packaging>karaf-assembly</packaging>
-  <name>Enonic WEM Distro</name>
+  <name>Enonic XP Distro</name>
 
   <dependencies>
     <dependency>
@@ -31,7 +31,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wem-karaf</artifactId>
+      <artifactId>karaf-feature</artifactId>
       <classifier>features</classifier>
       <version>${project.version}</version>
       <type>xml</type>
