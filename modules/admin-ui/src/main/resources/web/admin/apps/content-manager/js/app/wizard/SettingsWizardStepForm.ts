@@ -55,21 +55,18 @@ module app.wizard {
 
             // 2-way data binding
             var ownerListener = () => {
-                debugger;
                 model.setOwner(this.ownerCombo.getValue(), true);
             };
             this.ownerCombo.onOptionSelected((event) => ownerListener());
             this.ownerCombo.onOptionDeselected((option) => ownerListener());
 
             var localeListener = () => {
-                debugger;
                 model.setLanguage(this.localeCombo.getValue(), true);
             };
             this.localeCombo.onOptionSelected((event) => localeListener());
             this.localeCombo.onOptionDeselected((option) => localeListener());
 
             model.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                debugger;
                 switch (event.getPropertyName()) {
                 case ContentSettingsModel.PROPERTY_LANG:
                     this.localeCombo.setValue(event.getNewValue());

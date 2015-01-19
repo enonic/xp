@@ -439,7 +439,6 @@ module app.wizard {
                 formViewLayoutPromises.push(this.contentWizardStepForm.layout(formContext, contentData, this.contentType.getForm()));
                 // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
                 this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
-                debugger;
                 this.settingsWizardStepForm.layout(content);
                 this.settingsWizardStepForm.setModel(new ContentSettingsModel(content));
 
