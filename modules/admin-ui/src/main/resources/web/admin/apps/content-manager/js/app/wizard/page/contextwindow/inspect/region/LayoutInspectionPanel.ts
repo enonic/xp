@@ -38,6 +38,8 @@ module app.wizard.page.contextwindow.inspect.region {
 
         setModel(liveEditModel: LiveEditModel) {
 
+            super.setModel(liveEditModel);
+            
             var descriptorsRequest = new GetLayoutDescriptorsByModulesRequest(liveEditModel.getSiteModel().getModuleKeys());
             var loader = new LayoutDescriptorLoader(descriptorsRequest);
             this.componentSelector = new LayoutDescriptorComboBox(loader);

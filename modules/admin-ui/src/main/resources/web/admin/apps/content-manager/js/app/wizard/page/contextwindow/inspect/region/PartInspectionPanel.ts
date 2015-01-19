@@ -18,8 +18,6 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private partView: PartComponentView;
 
-        private liveEditModel: LiveEditModel;
-
         private partComponent: PartComponent;
 
         private descriptorSelected: DescriptorKey;
@@ -33,7 +31,7 @@ module app.wizard.page.contextwindow.inspect.region {
         }
 
         setModel(liveEditModel: LiveEditModel) {
-            this.liveEditModel = liveEditModel;
+            super.setModel(liveEditModel);
 
             var descriptorsRequest = new GetPartDescriptorsByModulesRequest(liveEditModel.getSiteModel().getModuleKeys());
             var loader = new PartDescriptorLoader(descriptorsRequest);

@@ -52,11 +52,9 @@ module app.wizard.page.contextwindow.inspect.region {
                 this.removeChild(this.formView);
                 this.formView = null;
             }
-            var formContext = new api.form.FormContextBuilder().
-                build();
             var configData = this.imageComponent.getConfig();
             var configForm = this.imageComponent.getForm();
-            this.formView = new api.form.FormView(formContext, configForm, configData.getRoot());
+            this.formView = new api.form.FormView(this.formContext, configForm, configData.getRoot());
             this.appendChild(this.formView);
             this.imageComponent.setDisableEventForwarding(true);
             this.formView.layout().catch((reason: any) => {

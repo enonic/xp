@@ -11,7 +11,5 @@ module api.content.form.inputtype {
         contentPath: api.content.ContentPath;
 
         parentContentPath: api.content.ContentPath;
-
-        attachments:api.content.attachment.Attachments;
     }
 }

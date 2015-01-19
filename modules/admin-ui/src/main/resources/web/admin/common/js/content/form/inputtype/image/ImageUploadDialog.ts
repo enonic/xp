@@ -12,6 +12,8 @@ module api.content.form.inputtype.image {
         private imageUploader: api.content.ImageUploader;
 
         constructor(parentContent: api.content.ContentId) {
+
+            api.util.assertNotNull(parentContent, "parentContent required");
             super({
                 title: new api.ui.dialog.ModalDialogHeader("Image uploader")
             });

@@ -6,14 +6,14 @@ module api.content.site {
 
         public static PROPERTY_NAME_MODULE_CONFIGS = "moduleConfigs";
 
-        private siteId: api.content.ContentId;
+        private site: api.content.site.Site;
 
         private moduleConfigs: ModuleConfig[];
 
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
         constructor(site: Site) {
-            this.siteId = site.getContentId();
+            this.site = site;
             this.moduleConfigs = site.getModuleConfigs();
         }
 
@@ -23,8 +23,12 @@ module api.content.site {
             this.notifyPropertyChanged(SiteModel.PROPERTY_NAME_MODULE_CONFIGS, oldValue, this.moduleConfigs, source);
         }
 
+        getSite(): api.content.site.Site {
+            return this.site;
+        }
+
         getSiteId(): api.content.ContentId {
-            return this.siteId;
+            return this.site.getContentId();
         }
 
         getModuleKeys(): ModuleKey[] {

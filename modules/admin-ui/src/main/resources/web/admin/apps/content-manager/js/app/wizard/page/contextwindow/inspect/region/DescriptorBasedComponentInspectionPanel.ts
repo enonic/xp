@@ -36,10 +36,9 @@ module app.wizard.page.contextwindow.inspect.region {
                 return;
             }
 
-            var formContext = new api.form.FormContextBuilder().build();
             var form = descriptor.getConfig();
             var config = component.getConfig();
-            this.formView = new FormView(formContext, form, config.getRoot());
+            this.formView = new FormView(this.formContext, form, config.getRoot());
             this.appendChild(this.formView);
             component.setDisableEventForwarding(true);
             this.formView.layout().

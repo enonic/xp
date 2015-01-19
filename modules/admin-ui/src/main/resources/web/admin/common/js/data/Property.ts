@@ -264,7 +264,7 @@ module api.data {
         }
     }
 
-    export class PropertyBuilder {
+    class PropertyBuilder {
 
         array: PropertyArray;
 

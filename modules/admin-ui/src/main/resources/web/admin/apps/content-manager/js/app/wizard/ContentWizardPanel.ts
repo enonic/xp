@@ -3,7 +3,6 @@ module app.wizard {
     import PropertyTree = api.data.PropertyTree;
     import FormView = api.form.FormView;
     import ContentFormContext = api.content.form.ContentFormContext;
-    import ContentFormContextBuilder = api.content.form.ContentFormContextBuilder;
     import Content = api.content.Content;
     import ContentBuilder = api.content.ContentBuilder;
     import Attachment = api.content.attachment.Attachment;
@@ -410,11 +409,10 @@ module app.wizard {
             return wemQ.all(parallelPromises).
                 spread<void>((schemas: Mixin[]) => {
 
-                var formContext = new ContentFormContextBuilder().
+                var formContext: ContentFormContext = <ContentFormContext>ContentFormContext.create().
                     setSite(this.site).
                     setParentContent(this.parentContent).
                     setPersistedContent(content).
-                    setAttachments(content.getAttachments()).
                     setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).
                     build();
 
@@ -465,7 +463,7 @@ module app.wizard {
                     if (this.liveFormPanel) {
 
                         if (!this.liveEditModel) {
-                            return this.initLiveEditModel(content).then(() => {
+                            return this.initLiveEditModel(content, formContext).then(() => {
                                 this.liveFormPanel.setModel(this.liveEditModel);
                                 this.liveFormPanel.loadPage();
                                 return wemQ(null);
@@ -480,15 +478,19 @@ module app.wizard {
             });
         }
 
-        private initLiveEditModel(content: Content): wemQ.Promise<void> {
+        private initLiveEditModel(content: Content, formContext: ContentFormContext): wemQ.Promise<void> {
             if (this.createSite) {
                 this.siteModel = new SiteModel(<Site>content);
             }
             else {
                 this.siteModel = new SiteModel(this.site);
             }
-            this.liveEditModel = new LiveEditModel(this.siteModel);
-            return this.liveEditModel.init(content, this.defaultModels.getPageTemplate(), this.defaultModels.getPageDescriptor());
+            this.liveEditModel = LiveEditModel.create().
+                setParentContent(this.parentContent).
+                setContent(content).
+                setContentFormContext(formContext).
+                setSiteModel(this.siteModel).build();
+            return this.liveEditModel.init(this.defaultModels.getPageTemplate(), this.defaultModels.getPageDescriptor());
         }
 
         postLayoutPersisted(existing: Content): wemQ.Promise<void> {

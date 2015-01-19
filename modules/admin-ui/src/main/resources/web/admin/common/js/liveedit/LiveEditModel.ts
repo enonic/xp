@@ -15,22 +15,28 @@ module api.liveedit {
     import PageTemplateKey = api.content.page.PageTemplateKey;
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import SiteModel = api.content.site.SiteModel;
+    import ContentFormContext = api.content.form.ContentFormContext;
 
     export class LiveEditModel {
 
+        private siteModel: SiteModel;
+
+        private parentContent: Content;
+
         private content: Content;
 
-        private siteModel: SiteModel;
+        private formContext: ContentFormContext;
 
         private pageModel: PageModel;
 
-        constructor(siteModel: SiteModel) {
-            this.siteModel = siteModel;
+        constructor(builder: LiveEditModelBuilder) {
+            this.siteModel = builder.siteModel;
+            this.parentContent = builder.parentContent;
+            this.content = builder.content;
+            this.formContext = builder.formContext;
         }
 
-        init(value: Content, defaultTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor): wemQ.Promise<void> {
-
-            this.content = value;
+        init(defaultTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor): wemQ.Promise<void> {
 
             return this.initPageModel(defaultTemplate, defaultTemplateDescriptor).then((pageModel: PageModel) => {
 
@@ -162,6 +168,14 @@ module api.liveedit {
             this.content = value;
         }
 
+        getParentContent(): Content {
+            return this.parentContent;
+        }
+
+        getFormContext(): ContentFormContext {
+            return this.formContext;
+        }
+
         getContent(): Content {
             return this.content;
         }
@@ -173,5 +187,45 @@ module api.liveedit {
         getPageModel(): PageModel {
             return this.pageModel;
         }
+
+        static create(): LiveEditModelBuilder {
+            return new LiveEditModelBuilder();
+        }
+    }
+
+    class LiveEditModelBuilder {
+
+        siteModel: SiteModel;
+
+        parentContent: Content;
+
+        content: Content;
+
+        formContext: ContentFormContext;
+
+        setSiteModel(value: SiteModel): LiveEditModelBuilder {
+            this.siteModel = value;
+            return this;
+        }
+
+        setParentContent(value: Content): LiveEditModelBuilder {
+            this.parentContent = value;
+            return this;
+        }
+
+        setContent(value: Content): LiveEditModelBuilder {
+            this.content = value;
+            return this;
+        }
+
+        setContentFormContext(value: ContentFormContext): LiveEditModelBuilder {
+            this.formContext = value;
+            return this;
+        }
+
+        build(): LiveEditModel {
+            return new LiveEditModel(this);
+        }
+
     }
 }

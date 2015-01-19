@@ -11,14 +11,11 @@ module api.content.form {
 
         private persistedContent: api.content.Content;
 
-        private attachments: api.content.attachment.Attachments;
-
         constructor(builder: ContentFormContextBuilder) {
             super(builder);
             this.site = builder.site;
             this.parentContent = builder.parentContent;
             this.persistedContent = builder.persistedContent;
-            this.attachments = builder.attachments;
         }
 
         getSite(): api.content.site.Site {
@@ -42,10 +39,6 @@ module api.content.form {
             return this.parentContent.getPath();
         }
 
-        getAttachments(): api.content.attachment.Attachments {
-            return this.persistedContent.getAttachments();
-        }
-
         createInputTypeViewContext(inputTypeConfig: any, parentPropertyPath: PropertyPath,
                                    input: api.form.Input): api.form.inputtype.InputTypeViewContext<any> {
 
@@ -57,13 +50,16 @@ module api.content.form {
                 site: this.getSite(),
                 contentId: this.getContentId(),
                 contentPath: this.getContentPath(),
-                parentContentPath: this.getParentContentPath(),
-                attachments: this.getAttachments()
+                parentContentPath: this.getParentContentPath()
             };
+        }
+
+        static create(): ContentFormContextBuilder {
+            return new ContentFormContextBuilder();
         }
     }
 
-    export class ContentFormContextBuilder extends api.form.FormContextBuilder {
+    class ContentFormContextBuilder extends api.form.FormContextBuilder {
 
         site: api.content.site.Site;
 
@@ -85,11 +81,6 @@ module api.content.form {
 
         public setPersistedContent(value: api.content.Content): ContentFormContextBuilder {
             this.persistedContent = value;
-            return this;
-        }
-
-        public setAttachments(value: api.content.attachment.Attachments): ContentFormContextBuilder {
-            this.attachments = value;
             return this;
         }
 
