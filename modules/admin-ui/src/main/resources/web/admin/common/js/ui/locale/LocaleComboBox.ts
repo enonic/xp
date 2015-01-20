@@ -9,15 +9,24 @@ module api.ui.locale {
 
     export class LocaleComboBox extends api.ui.selector.combobox.RichComboBox<Locale> {
         constructor(max?: number) {
+            var localeSelectedOptionsView = new LocaleSelectedOptionsView();
+            localeSelectedOptionsView.onOptionDeselected(() => {
+                this.clearSelection();
+            });
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Locale>().
                 setMaximumOccurrences(max || 0).
                 setComboBoxName("localeSelector").
                 setIdentifierMethod("getTag").
                 setLoader(new LocaleLoader()).
-                setSelectedOptionsView(new LocaleSelectedOptionsView()).
+                setSelectedOptionsView(localeSelectedOptionsView).
                 setOptionDisplayValueViewer(new LocaleViewer()).
                 setDelayedInputValueChangedHandling(500);
             super(builder);
+        }
+
+        clearSelection(ignoreEmpty: boolean = false) {
+            this.getLoader().search("");
+            super.clearSelection(ignoreEmpty);
         }
     }
 

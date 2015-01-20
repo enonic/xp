@@ -5,16 +5,25 @@ module api.locale {
 
     export class GetLocalesRequest extends api.rest.ResourceRequest<LocaleListJson, Locale[]> {
 
+        private searchQuery: string;
+
         constructor() {
             super();
         }
 
         getParams(): Object {
-            return {}
+            return {
+                "query": this.searchQuery
+            }
         }
 
         getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getRestPath(), 'content', 'locales');
+        }
+
+        setSearchQuery(query: string): GetLocalesRequest {
+            this.searchQuery = query;
+            return this;
         }
 
         sendAndParse(): wemQ.Promise<Locale[]> {

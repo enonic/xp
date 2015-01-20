@@ -1,6 +1,7 @@
 package com.enonic.wem.admin.rest.resource.content;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -104,6 +105,8 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.workspace.Workspaces;
+
+import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content")
@@ -587,9 +590,23 @@ public final class ContentResource
 
     @GET
     @Path("locales")
-    public LocaleListJson getLocales()
+    public LocaleListJson getLocales( @QueryParam("query") final String query )
     {
-        return new LocaleListJson( Locale.getAvailableLocales() );
+        Locale[] locales = Locale.getAvailableLocales();
+        if ( StringUtils.isNotBlank( query ) )
+        {
+            locales = Arrays.stream( locales ).
+                filter( ( locale ) -> containsIgnoreCase( locale.toLanguageTag(), query ) ||
+                    containsIgnoreCase( locale.getDisplayName( locale ), query ) ||
+                    containsIgnoreCase( locale.getLanguage(), query ) ||
+                    containsIgnoreCase( locale.getDisplayLanguage( locale ), query ) ||
+                    containsIgnoreCase( locale.getVariant(), query ) ||
+                    containsIgnoreCase( locale.getDisplayVariant( locale ), query ) ||
+                    containsIgnoreCase( locale.getCountry(), query ) ||
+                    containsIgnoreCase( locale.getDisplayCountry( locale ), query ) ).
+                toArray( Locale[]::new );
+        }
+        return new LocaleListJson( locales );
     }
 
     private List<Attachment> parseAttachments( final List<AttachmentJson> attachmentJsonList )
