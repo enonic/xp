@@ -8,6 +8,7 @@ module api.content.site.inputtype.moduleconfigurator {
     import FormContextBuilder = api.form.FormContextBuilder;
     import Module = api.module.Module;
     import ModuleKey = api.module.ModuleKey;
+    import ModuleConfig = api.content.site.ModuleConfig;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
@@ -17,7 +18,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
         private formView: FormView;
 
-        private config: PropertySet;
+        private moduleConfig: ModuleConfig;
 
         private removeClickedListeners: {(event: MouseEvent): void;}[];
 
@@ -25,14 +26,14 @@ module api.content.site.inputtype.moduleconfigurator {
 
         private moduleConfigFormDisplayedListeners: {(moduleKey: ModuleKey) : void}[] = [];
 
-        constructor(mod: Module, config: PropertySet, formContext: api.content.form.ContentFormContext) {
+        constructor(mod: Module, moduleConfig: ModuleConfig, formContext: api.content.form.ContentFormContext) {
             super("module-view");
 
             this.removeClickedListeners = [];
             this.collapseClickedListeners = [];
 
             this.module = mod;
-            this.config = config;
+            this.moduleConfig = moduleConfig;
 
             var header = new api.dom.DivEl('header');
 
@@ -68,7 +69,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
             this.appendChild(header);
 
-            this.formView = new FormView(formContext, this.module.getForm(), this.config);
+            this.formView = new FormView(formContext, this.module.getForm(), this.moduleConfig.getConfig());
             this.formView.addClass("module-form");
             this.appendChild(this.formView);
             this.formView.layout().then(() => {
@@ -81,6 +82,10 @@ module api.content.site.inputtype.moduleconfigurator {
 
         getModule(): Module {
             return this.module;
+        }
+
+        getModuleConfig(): ModuleConfig {
+            return this.moduleConfig;
         }
 
         getFormView(): FormView {

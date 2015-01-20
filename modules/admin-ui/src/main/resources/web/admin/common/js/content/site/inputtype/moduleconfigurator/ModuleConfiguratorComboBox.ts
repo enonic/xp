@@ -5,6 +5,7 @@ module api.content.site.inputtype.moduleconfigurator {
     import PropertySet = api.data.PropertySet;
     import Module = api.module.Module;
     import ModuleKey = api.module.ModuleKey;
+    import ModuleConfig = api.content.site.ModuleConfig;
     import ModuleViewer = api.module.ModuleViewer;
     import ModuleLoader = api.module.ModuleLoader;
     import FormView = api.form.FormView;
@@ -66,8 +67,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
         createSelectedOption(option: Option<Module>): SelectedOption<Module> {
             var moduleConfig = this.moduleConfigProvider.getConfig(option.displayValue.getModuleKey());
-            var moduleConfigData: PropertySet = moduleConfig ? moduleConfig.getConfig() : new PropertyTree().getRoot();
-            var optionView = new ModuleConfiguratorSelectedOptionView(option, moduleConfigData, this.formContext);
+            var optionView = new ModuleConfiguratorSelectedOptionView(option, moduleConfig, this.formContext);
             optionView.onModuleConfigFormDisplayed((moduleKey: ModuleKey) => {
                 this.notifyModuleConfigFormDisplayed(moduleKey, optionView.getFormView());
             });
@@ -96,11 +96,11 @@ module api.content.site.inputtype.moduleconfigurator {
 
         private selectedOptionToBeRemovedListeners: {(): void;}[];
 
-        constructor(option: Option<Module>, config: PropertySet, formContext: api.content.form.ContentFormContext) {
+        constructor(option: Option<Module>, moduleConfig: ModuleConfig, formContext: api.content.form.ContentFormContext) {
             this.selectedOptionToBeRemovedListeners = [];
             this.option = option;
 
-            super(option.displayValue, config, formContext);
+            super(option.displayValue, moduleConfig, formContext);
 
             this.onRemoveClicked((event: MouseEvent) => {
                 this.notifySelectedOptionRemoveRequested();

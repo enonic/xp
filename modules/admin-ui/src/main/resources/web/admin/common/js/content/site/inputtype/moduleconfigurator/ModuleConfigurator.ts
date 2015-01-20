@@ -16,7 +16,7 @@ module api.content.site.inputtype.moduleconfigurator {
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Module = api.module.Module;
     import ModuleKey = api.module.ModuleKey;
-    import ModuleConfigBuilder = api.content.site.ModuleConfigBuilder;
+    import ModuleConfig = api.content.site.ModuleConfig
     import GetModuleRequest = api.module.GetModuleRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
@@ -77,15 +77,8 @@ module api.content.site.inputtype.moduleconfigurator {
 
                     var selectedOption = this.comboBox.getSelectedOption(event.getOption());
                     var selectedOptionView: ModuleConfiguratorSelectedOptionView = <ModuleConfiguratorSelectedOptionView>selectedOption.getOptionView();
-                    var configData = selectedOptionView.getFormView().getData();
-
-                    var moduleConfig = new ModuleConfigBuilder().
-                        setModuleKey(key).
-                        setConfig(configData).
-                        build();
-
-                    var moduleConfigAsData = moduleConfig.toPropertySet(this.propertyArray.newSet());
-                    var newValue = new Value(moduleConfigAsData, ValueTypes.DATA);
+                    var moduleConfig = selectedOptionView.getModuleConfig();
+                    var newValue = new Value(moduleConfig.getConfig(), ValueTypes.DATA);
 
                     if (this.comboBox.countSelected() == 1) { // overwrite initial value
                         this.propertyArray.set(0, newValue);
@@ -110,7 +103,7 @@ module api.content.site.inputtype.moduleconfigurator {
                 propertyArray.forEach((property: Property) => {
 
                     if (property.hasNonNullValue()) {
-                        var moduleConfig = new ModuleConfigBuilder().fromData(property.getSet()).build();
+                        var moduleConfig = ModuleConfig.create().fromData(property.getSet()).build();
                         moduleConfigFormsToDisplay.push(moduleConfig.getModuleKey().toString());
 
                         new GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse().

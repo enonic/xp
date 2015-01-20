@@ -25,7 +25,7 @@ module api.content.site {
             this.getContentData().forEachProperty("moduleConfig", (moduleProperty: Property) => {
                 var moduleConfigData = moduleProperty.getSet();
                 if (moduleConfigData) {
-                    var moduleConfig = new ModuleConfigBuilder().fromData(moduleConfigData).build();
+                    var moduleConfig = ModuleConfig.create().fromData(moduleConfigData).build();
                     moduleConfigs.push(moduleConfig);
                 }
             });

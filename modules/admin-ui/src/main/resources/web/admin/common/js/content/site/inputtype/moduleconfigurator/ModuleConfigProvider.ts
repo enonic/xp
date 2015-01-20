@@ -2,6 +2,8 @@ module api.content.site.inputtype.moduleconfigurator {
 
     import Property = api.data.Property;
     import PropertyArray = api.data.PropertyArray;
+    import ModuleKey = api.module.ModuleKey;
+    import ModuleConfig = api.content.site.ModuleConfig;
 
     export class ModuleConfigProvider {
 
@@ -11,20 +13,32 @@ module api.content.site.inputtype.moduleconfigurator {
             this.propertyArray = propertyArray;
         }
 
-        getConfig(moduleKey: api.module.ModuleKey): api.content.site.ModuleConfig {
-            var match: api.content.site.ModuleConfig = null;
+        getConfig(moduleKey: ModuleKey): ModuleConfig {
+            var match: ModuleConfig = null;
 
             this.propertyArray.forEach((property: Property) => {
                 if (property.hasNonNullValue()) {
-                    var rootDataSet = property.getSet();
-                    var moduleConfig = new api.content.site.ModuleConfigBuilder().fromData(rootDataSet).build();
+                    var moduleConfigAsSet = property.getSet();
+                    var moduleConfig = ModuleConfig.create().fromData(moduleConfigAsSet).build();
                     if (moduleConfig.getModuleKey().equals(moduleKey)) {
                         match = moduleConfig;
                     }
                 }
             });
 
-            return match;
+            if (!match) {
+                var moduleConfigAsSet = this.propertyArray.addSet();
+                moduleConfigAsSet.addString("moduleKey", moduleKey.toString());
+                moduleConfigAsSet.addSet("config");
+                var newModuleConfig = ModuleConfig.create().
+                    fromData(moduleConfigAsSet).
+                    build();
+                return newModuleConfig;
+
+            }
+            else {
+                return match;
+            }
         }
     }
 }

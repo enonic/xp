@@ -31,13 +31,6 @@ module api.content.site {
             }
         }
 
-        toPropertySet(parent: PropertySet): PropertySet {
-            var moduleConfigSet = parent.addSet("moduleConfig");
-            moduleConfigSet.addString("moduleKey", this.moduleKey.getName());
-            moduleConfigSet.addSet("config", this.config.copy(parent.getTree()));
-            return moduleConfigSet;
-        }
-
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ModuleConfig)) {
@@ -61,9 +54,13 @@ module api.content.site {
 
             return new ModuleConfigBuilder(this).build();
         }
+
+        static create(): ModuleConfigBuilder {
+            return new ModuleConfigBuilder();
+        }
     }
 
-    export class ModuleConfigBuilder {
+    class ModuleConfigBuilder {
 
         moduleKey: ModuleKey;
 
