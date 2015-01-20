@@ -10,6 +10,7 @@ Bugfixes:
   - Included properties metadata and attachments in Content.equals (TypeScript) (CMS-4837)
   - Made the ImageSelector input type work in Live Edit (CMS-4922)
   - Content Manager grid not updated correctly after uploading of Media files (CMS-4859)
+  - When creating a site, anything you enter for module config does not save (CMS-4921)
 
 Features:
 
