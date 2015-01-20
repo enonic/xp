@@ -1,5 +1,7 @@
 module api.ui.tab {
 
+    import Action = api.ui.Action;
+
     export interface TabItemOptions {
         removable?: boolean;
     }
@@ -18,7 +20,7 @@ module api.ui.tab {
 
         private closeAction: api.ui.Action;
 
-        private removeButton: api.dom.ButtonEl;
+        private removeButton: api.ui.button.ActionButton;
 
         private labelChangedListeners: {(event: TabItemLabelChangedEvent):void}[] = [];
 
@@ -51,19 +53,24 @@ module api.ui.tab {
 
         private createRemoveButton() {
             if (this.removable && !this.removeButton) {
-                this.removeButton = new api.dom.ButtonEl();
-                this.prependChild(this.removeButton);
-                this.removeButton.onClicked((event: MouseEvent) => {
-                    if (this.removable) {
-                        if (this.getCloseAction() && this.getCloseAction().isEnabled()) {
-                            this.getCloseAction().execute();
-                        } else {
+                var close:Action = new Action("close");
+
+                if (this.removable) {
+                    if (this.closeAction && this.closeAction.isEnabled()) {
+                        close = this.closeAction;
+                    } else {
+                        close.onExecuted(() => {
                             this.notifyClosedListeners();
-                        }
+                        });
                     }
+                }
+
+                this.removeButton = new api.ui.button.ActionButton(close, false);
+                this.removeButton.onClicked((event: MouseEvent) => {
                     event.stopPropagation();
                     event.preventDefault();
                 });
+                this.prependChild(this.removeButton);
             }
         }
 
