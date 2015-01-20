@@ -50,6 +50,13 @@ module api.content.site {
             return true;
         }
 
+        toPropertySet(parent: PropertySet): PropertySet {
+            var moduleConfigSet = parent.addSet("moduleConfig");
+            moduleConfigSet.addString("moduleKey", this.moduleKey.getName());
+            moduleConfigSet.addSet("config", this.config.copy(parent.getTree()));
+            return moduleConfigSet;
+        }
+
         clone(): ModuleConfig {
 
             return new ModuleConfigBuilder(this).build();

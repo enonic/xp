@@ -78,14 +78,19 @@ module api.content.site.inputtype.moduleconfigurator {
                     var selectedOption = this.comboBox.getSelectedOption(event.getOption());
                     var selectedOptionView: ModuleConfiguratorSelectedOptionView = <ModuleConfiguratorSelectedOptionView>selectedOption.getOptionView();
                     var moduleConfig = selectedOptionView.getModuleConfig();
-                    var newValue = new Value(moduleConfig.getConfig(), ValueTypes.DATA);
 
-                    if (this.comboBox.countSelected() == 1) { // overwrite initial value
+
+                    //var moduleConfigAsData = moduleConfig.toPropertySet(this.propertyArray.newSet());
+                    //var newValue = new Value(moduleConfigAsData, ValueTypes.DATA);
+
+                    //var newValue = new Value(moduleConfig.getConfig(), ValueTypes.DATA);
+
+                    /*if (this.comboBox.countSelected() == 1) { // overwrite initial value
                         this.propertyArray.set(0, newValue);
                     }
                     else {
                         this.propertyArray.add(newValue);
-                    }
+                     }*/
 
                     this.validate(false);
                 });
