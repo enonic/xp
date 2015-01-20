@@ -3,12 +3,12 @@ var expectedJson = {
     "_name": "my-content",
     "_path": "/my-content",
     "data": {
-        "moduleConfig": [{
-            "config": [{
-                "Field": [42]
-            }],
-            "moduleKey": ["mymodule"]
-        }]
+        "moduleConfig": {
+            "config": {
+                "Field": 42
+            },
+            "moduleKey": "mymodule"
+        }
     },
     "draft": false,
     "hasChildren": false,
@@ -17,7 +17,7 @@ var expectedJson = {
     "meta": {},
     "moduleConfigs": {
         "mymodule": {
-            "Field": [42]
+            "Field": 42
         }
     },
     "page": {},
