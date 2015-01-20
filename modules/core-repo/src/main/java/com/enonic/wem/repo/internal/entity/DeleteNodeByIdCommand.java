@@ -40,7 +40,6 @@ public final class DeleteNodeByIdCommand
     public static class Builder
         extends AbstractDeleteNodeCommand.Builder<Builder>
     {
-
         private NodeId nodeId;
 
         Builder()

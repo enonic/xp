@@ -21,7 +21,7 @@ public class DeleteNodeByIdCommandTest
             build() );
         refresh();
 
-        doDeleteNode( createdNode );
+        doDeleteNode( createdNode.id() );
 
         assertNull( getNodeById( createdNode.id() ) );
     }
@@ -52,24 +52,11 @@ public class DeleteNodeByIdCommandTest
         assertNotNull( getNodeById( childNode.id() ) );
         assertNotNull( getNodeById( childChildNode.id() ) );
 
-        doDeleteNode( parentNode );
+        doDeleteNode( parentNode.id() );
 
         assertNull( getNodeById( parentNode.id() ) );
         assertNull( getNodeById( childNode.id() ) );
         assertNull( getNodeById( childChildNode.id() ) );
-    }
-
-    private Node doDeleteNode( final Node createdNode )
-    {
-        return DeleteNodeByIdCommand.create().
-            nodeId( createdNode.id() ).
-            queryService( this.queryService ).
-            indexService( this.indexService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
-            build().
-            execute();
     }
 
 }

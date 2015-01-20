@@ -1,13 +1,14 @@
 package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
+import java.util.Random;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.NodeVersions;
@@ -16,11 +17,10 @@ import com.enonic.wem.api.node.UpdateNodeParams;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-@Ignore
 public class GetNodeVersionsCommandTest
     extends AbstractNodeTest
 {
-
+    private final Random random = new Random();
 
     @Test
     public void get_single_version()
@@ -73,14 +73,13 @@ public class GetNodeVersionsCommandTest
             assertTrue( previousTimestamp == null || nodeVersion.getTimestamp().isBefore( previousTimestamp ) );
             previousTimestamp = nodeVersion.getTimestamp();
         }
-
     }
 
     private Node doUpdateNode( final Node node )
     {
         UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( node.id() ).
-            editor( toBeEdited -> toBeEdited.manualOrderValue = 10l ).
+            editor( toBeEdited -> toBeEdited.name = NodeName.from( node.name() + "-" + this.random.nextLong() ) ).
             build();
 
         return UpdateNodeCommand.create().
@@ -90,6 +89,7 @@ public class GetNodeVersionsCommandTest
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
+            binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();
     }

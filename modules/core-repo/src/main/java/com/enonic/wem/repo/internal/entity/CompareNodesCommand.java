@@ -44,7 +44,7 @@ public class CompareNodesCommand
     {
         private NodeIds nodeIds;
 
-        public Builder nodeId( final NodeIds nodeIds )
+        public Builder nodeIds( final NodeIds nodeIds )
         {
             this.nodeIds = nodeIds;
             return this;

@@ -1,12 +1,8 @@
 package com.enonic.wem.repo.internal.entity;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableMap;
-
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.GetActiveNodeVersionsResult;
 import com.enonic.wem.api.node.Node;
@@ -15,12 +11,10 @@ import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.api.workspace.Workspaces;
 
 import static org.junit.Assert.*;
 
-@Ignore
 public class GetActiveNodeVersionsCommandTest
     extends AbstractNodeTest
 {
@@ -28,94 +22,66 @@ public class GetActiveNodeVersionsCommandTest
     public void get_active_versions()
         throws Exception
     {
-        final Workspace testWorkspace = Workspace.create().
-            name( "test-workspace" ).
-            build();
 
-        final Context testContext = ContextBuilder.create().
-            workspace( testWorkspace ).
-            repositoryId( TEST_REPO.getId() ).
-            build();
+        final Node node = createNode( CreateNodeParams.create().
+            name( "myNode" ).
+            parent( NodePath.ROOT ).
+            build() );
 
-        final Node node = createAndPushNode( testWorkspace );
+        doPushNodes( NodeIds.from( node.id() ), WS_OTHER );
 
-        ImmutableMap<Workspace, NodeVersion> activeNodeVersions = getVersionsMap( testWorkspace, testContext, node );
+        final GetActiveNodeVersionsResult result = GetActiveNodeVersionsCommand.create().
+            versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
+            nodeId( node.id() ).
+            workspaces( Workspaces.from( WS_DEFAULT, WS_OTHER ) ).
+            build().
+            execute();
 
-        final NodeVersion stageVersion = activeNodeVersions.get( WS_STAGE );
-        final NodeVersion testVersion = activeNodeVersions.get( testWorkspace );
-        assertNotNull( testVersion );
-        assertNotNull( stageVersion );
-        assertTrue( stageVersion.equals( testVersion ) );
+        NodeVersion stage = result.getNodeVersions().get( WS_DEFAULT );
+        NodeVersion prod = result.getNodeVersions().get( WS_OTHER );
 
-        updateNode( node );
+        assertEquals( stage, prod );
 
-        activeNodeVersions = getVersionsMap( testWorkspace, testContext, node );
+        updateNode( node, CTX_DEFAULT );
 
-        final NodeVersion newStageVersion = activeNodeVersions.get( WS_STAGE );
-        final NodeVersion newTestVersion = activeNodeVersions.get( testWorkspace );
-        assertNotNull( newTestVersion );
-        assertNotNull( newStageVersion );
-        assertFalse( newStageVersion.equals( newTestVersion ) );
-        assertTrue( newStageVersion.getTimestamp().isAfter( newTestVersion.getTimestamp() ) );
+        final GetActiveNodeVersionsResult result2 = GetActiveNodeVersionsCommand.create().
+            versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
+            nodeId( node.id() ).
+            workspaces( Workspaces.from( WS_DEFAULT, WS_OTHER ) ).
+            build().
+            execute();
+
+        stage = result2.getNodeVersions().get( WS_DEFAULT );
+        prod = result2.getNodeVersions().get( WS_OTHER );
+
+        assertTrue( !stage.equals( prod ) );
+        assertTrue( stage.getTimestamp().isAfter( prod.getTimestamp() ) );
     }
 
-    private ImmutableMap<Workspace, NodeVersion> getVersionsMap( final Workspace testWorkspace, final Context testContext, final Node node )
-    {
-        GetActiveNodeVersionsResult result = doGetActiveVersions( testWorkspace, testContext, node );
-        return result.getNodeVersions();
-    }
-
-    private void updateNode( final Node node )
+    private void updateNode( final Node node, Context context )
     {
         UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( node.id() ).
             editor( toBeEdited -> toBeEdited.name = NodeName.from( toBeEdited.name.toString() + "-edit" ) ).
             build();
 
-        UpdateNodeCommand.create().
+        context.runWith( () -> UpdateNodeCommand.create().
             params( updateNodeParams ).
             indexService( this.indexService ).
             queryService( this.queryService ).
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
-            build().
-            execute();
-    }
-
-    private Node createAndPushNode( final Workspace testWorkspace )
-    {
-        final Node node = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node" ).
-            build() );
-
-        PushNodesCommand.create().
-            ids( NodeIds.from( node.id() ) ).
-            target( testWorkspace ).
-            queryService( this.queryService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
-            indexService( this.indexService ).
-            build().
-            execute();
-        return node;
-    }
-
-    private GetActiveNodeVersionsResult doGetActiveVersions( final Workspace testWorkspace, final Context testContext, final Node node )
-    {
-        return testContext.callWith( () -> GetActiveNodeVersionsCommand.create().
-            versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
-            nodeId( node.id() ).
-            workspaces( Workspaces.from( WS_STAGE, testWorkspace ) ).
+            binaryBlobStore( this.binaryBlobStore ).
             build().
             execute() );
     }
-
 }
 
 

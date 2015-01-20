@@ -14,9 +14,11 @@ import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
+import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.repository.Repository;
@@ -29,8 +31,10 @@ import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
 import com.enonic.wem.repo.internal.elasticsearch.workspace.ElasticsearchWorkspaceService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
+import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializerImpl;
+import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
@@ -45,25 +49,25 @@ public abstract class AbstractNodeTest
 
     protected ElasticsearchQueryService queryService;
 
-    protected static final Workspace WS_STAGE = Workspace.create().
+    protected static final Workspace WS_DEFAULT = Workspace.create().
         name( "stage" ).
         childOrder( ChildOrder.create().
             add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).build() ).
         build();
 
-    protected static final Workspace WS_PROD = Workspace.create().
+    protected static final Workspace WS_OTHER = Workspace.create().
         name( "prod" ).
         childOrder( ChildOrder.create().
             add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).build() ).
         build();
 
     protected static final Context CTX_DEFAULT = ContextBuilder.create().
-        workspace( WS_STAGE ).
+        workspace( WS_DEFAULT ).
         repositoryId( TEST_REPO.getId() ).
         build();
 
     protected static final Context CTX_OTHER = ContextBuilder.create().
-        workspace( WS_PROD ).
+        workspace( WS_OTHER ).
         repositoryId( TEST_REPO.getId() ).
         build();
 
@@ -196,5 +200,42 @@ public abstract class AbstractNodeTest
     void printContentRepoIndex()
     {
         printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), "stage" );
+    }
+
+    void printWorkspaceIndex()
+    {
+        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.WORKSPACE.getName() );
+    }
+
+    void printVersionIndex()
+    {
+        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
+    }
+
+    protected PushNodesResult doPushNodes( final NodeIds nodeIds, final Workspace target )
+    {
+        return PushNodesCommand.create().
+            ids( nodeIds ).
+            target( target ).
+            queryService( this.queryService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            workspaceService( this.workspaceService ).
+            indexService( this.indexService ).
+            build().
+            execute();
+    }
+
+    protected Node doDeleteNode( final NodeId nodeId )
+    {
+        return DeleteNodeByIdCommand.create().
+            nodeId( nodeId ).
+            queryService( this.queryService ).
+            indexService( this.indexService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
+            build().
+            execute();
     }
 }

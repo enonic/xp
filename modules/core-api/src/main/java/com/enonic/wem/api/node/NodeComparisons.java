@@ -2,9 +2,12 @@ package com.enonic.wem.api.node;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+
+import com.enonic.wem.api.content.CompareStatus;
 
 public class NodeComparisons
     implements Iterable<NodeComparison>
@@ -45,5 +48,20 @@ public class NodeComparisons
         {
             return new NodeComparisons( this );
         }
+    }
+
+    public Set<NodeComparison> getWithStatus( final CompareStatus.Status status )
+    {
+        Set<NodeComparison> result = Sets.newHashSet();
+
+        result.addAll( this.nodeComparisons.stream().filter(
+            nodeComparison -> nodeComparison.getCompareStatus().getStatus().equals( status ) ).collect( Collectors.toList() ) );
+
+        return result;
+    }
+
+    public ImmutableSet<NodeComparison> getNodeComparisons()
+    {
+        return nodeComparisons;
     }
 }

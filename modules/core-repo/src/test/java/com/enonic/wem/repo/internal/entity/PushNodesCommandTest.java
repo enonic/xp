@@ -7,7 +7,6 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.PushNodesResult;
-import com.enonic.wem.api.workspace.Workspace;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +26,7 @@ public class PushNodesCommandTest
 
         assertTrue( testWsNode == null );
 
-        doPushNode( NodeIds.from( node.id() ), WS_PROD );
+        doPushNodes( NodeIds.from( node.id() ), WS_OTHER );
 
         testWsNode = CTX_OTHER.callWith( () -> getNodeById( node.id() ) );
 
@@ -48,8 +47,8 @@ public class PushNodesCommandTest
             name( "my-child" ).
             build() );
 
-        doPushNode( NodeIds.from( node.id() ), WS_PROD );
-        doPushNode( NodeIds.from( child.id() ), WS_PROD );
+        doPushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        doPushNodes( NodeIds.from( child.id() ), WS_OTHER );
 
         final Node prodNode = CTX_OTHER.callWith( () -> getNodeById( child.id() ) );
 
@@ -70,7 +69,7 @@ public class PushNodesCommandTest
             name( "my-child" ).
             build() );
 
-        final PushNodesResult result = doPushNode( NodeIds.from( child.id() ), WS_PROD );
+        final PushNodesResult result = doPushNodes( NodeIds.from( child.id() ), WS_OTHER );
 
         assertEquals( 1, result.getFailed().size() );
         assertEquals( PushNodesResult.Reason.PARENT_NOT_FOUND, result.getFailed().iterator().next().getReason() );
@@ -106,7 +105,7 @@ public class PushNodesCommandTest
             build() );
 
         final PushNodesResult result =
-            doPushNode( NodeIds.from( child2_1.id(), child1_1.id(), child1.id(), child2.id(), node.id() ), WS_PROD );
+            doPushNodes( NodeIds.from( child2_1.id(), child1_1.id(), child1.id(), child2.id(), node.id() ), WS_OTHER );
 
         assertTrue( result.getFailed().isEmpty() );
 
@@ -119,20 +118,6 @@ public class PushNodesCommandTest
         } );
 
 
-    }
-
-    private PushNodesResult doPushNode( final NodeIds nodeIds, final Workspace wsProd )
-    {
-        return PushNodesCommand.create().
-            ids( nodeIds ).
-            target( wsProd ).
-            queryService( this.queryService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
-            indexService( this.indexService ).
-            build().
-            execute();
     }
 
 }

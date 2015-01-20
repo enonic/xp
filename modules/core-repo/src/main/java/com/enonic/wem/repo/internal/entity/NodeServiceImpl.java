@@ -302,7 +302,7 @@ public class NodeServiceImpl
     public NodeComparisons compare( final NodeIds nodeIds, final Workspace target )
     {
         return CompareNodesCommand.create().
-            nodeId( nodeIds ).
+            nodeIds( nodeIds ).
             target( target ).
             versionService( this.versionService ).
             workspaceService( this.workspaceService ).

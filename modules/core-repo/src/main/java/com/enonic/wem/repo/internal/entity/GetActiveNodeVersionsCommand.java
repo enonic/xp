@@ -42,7 +42,11 @@ public class GetActiveNodeVersionsCommand
         {
             final Context context = ContextAccessor.current();
 
-            final NodeVersionId nodeVersionId = this.queryService.get( this.nodeId, IndexContext.from( context ) );
+            final NodeVersionId nodeVersionId = this.queryService.get( this.nodeId, IndexContext.create().
+                workspace( workspace ).
+                repositoryId( context.getRepositoryId() ).
+                authInfo( context.getAuthInfo() ).
+                build() );
 
             if ( nodeVersionId != null )
             {

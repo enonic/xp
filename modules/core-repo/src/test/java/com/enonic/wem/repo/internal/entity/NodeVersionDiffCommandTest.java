@@ -28,12 +28,12 @@ public class NodeVersionDiffCommandTest
             parent( NodePath.ROOT ).
             build() ) );
 
-        assertEquals( 1, getDiff( WS_STAGE, WS_PROD ).getNodesWithDifferences().getSize() );
+        assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
 
-        CTX_DEFAULT.runWith( () -> doPushNode( WS_PROD, node ) );
+        CTX_DEFAULT.runWith( () -> doPushNode( WS_OTHER, node ) );
 
-        assertEquals( 0, getDiff( WS_STAGE, WS_PROD ).getNodesWithDifferences().getSize() );
-        assertEquals( 0, getDiff( WS_PROD, WS_STAGE ).getNodesWithDifferences().getSize() );
+        assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
+        assertEquals( 0, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
     }
 
     @Test
@@ -45,10 +45,10 @@ public class NodeVersionDiffCommandTest
             parent( NodePath.ROOT ).
             build() ) );
 
-        CTX_DEFAULT.runWith( () -> doPushNode( WS_PROD, node ) );
+        CTX_DEFAULT.runWith( () -> doPushNode( WS_OTHER, node ) );
 
-        assertEquals( 0, getDiff( WS_STAGE, WS_PROD ).getNodesWithDifferences().getSize() );
-        assertEquals( 0, getDiff( WS_PROD, WS_STAGE ).getNodesWithDifferences().getSize() );
+        assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
+        assertEquals( 0, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
     }
 
     @Test
@@ -60,12 +60,12 @@ public class NodeVersionDiffCommandTest
             parent( NodePath.ROOT ).
             build() ) );
 
-        CTX_DEFAULT.runWith( () -> doPushNode( WS_PROD, node ) );
+        CTX_DEFAULT.runWith( () -> doPushNode( WS_OTHER, node ) );
 
         CTX_DEFAULT.runWith( () -> doUpdateNode( node ) );
 
-        assertEquals( 1, getDiff( WS_STAGE, WS_PROD ).getNodesWithDifferences().getSize() );
-        assertEquals( 1, getDiff( WS_PROD, WS_STAGE ).getNodesWithDifferences().getSize() );
+        assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
+        assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
     }
 
     @Test
@@ -77,12 +77,12 @@ public class NodeVersionDiffCommandTest
             parent( NodePath.ROOT ).
             build() ) );
 
-        CTX_DEFAULT.runWith( () -> doPushNode( WS_PROD, node ) );
+        CTX_DEFAULT.runWith( () -> doPushNode( WS_OTHER, node ) );
 
         CTX_OTHER.runWith( () -> doUpdateNode( node ) );
 
-        assertEquals( 1, getDiff( WS_STAGE, WS_PROD ).getNodesWithDifferences().getSize() );
-        assertEquals( 1, getDiff( WS_PROD, WS_STAGE ).getNodesWithDifferences().getSize() );
+        assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
+        assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
     }
 
     private NodeVersionDiffResult getDiff( final Workspace source, final Workspace target )

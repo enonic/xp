@@ -32,7 +32,7 @@ public class CompareNodeCommandTest
             name( "my-node" ).
             build() ) );
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_PROD, createdNode ) );
+        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.Status.NEW, comparison.getCompareStatus().getStatus() );
     }
@@ -46,7 +46,7 @@ public class CompareNodeCommandTest
             name( "my-node" ).
             build() ) );
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_PROD, createdNode ) );
+        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.Status.NEW_TARGET, comparison.getCompareStatus().getStatus() );
     }
@@ -62,7 +62,7 @@ public class CompareNodeCommandTest
 
         assertNotNull( prod.callWith( () -> getNodeById( createdNode.id() ) ) );
 
-        prod.runWith( () -> doPushNode( WS_STAGE, createdNode ) );
+        prod.runWith( () -> doPushNode( WS_DEFAULT, createdNode ) );
 
         assertNotNull( stage.callWith( () -> getNodeById( createdNode.id() ) ) );
 
@@ -76,7 +76,7 @@ public class CompareNodeCommandTest
             build().
             execute();
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_PROD, createdNode ) );
+        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.Status.DELETED, comparison.getCompareStatus().getStatus() );
     }
@@ -91,9 +91,9 @@ public class CompareNodeCommandTest
             name( "my-node" ).
             build() ) );
 
-        stage.runWith( () -> doPushNode( WS_PROD, createdNode ) );
+        stage.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_PROD, createdNode ) );
+        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.Status.EQUAL, comparison.getCompareStatus().getStatus() );
     }
@@ -107,13 +107,13 @@ public class CompareNodeCommandTest
             name( "my-node" ).
             build() ) );
 
-        stage.runWith( () -> doPushNode( WS_PROD, createdNode ) );
+        stage.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
 
         stage.runWith( () -> doUpdateNode( createdNode ) );
         refresh();
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_PROD, createdNode ) );
+        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.Status.NEWER, comparison.getCompareStatus().getStatus() );
     }
@@ -123,7 +123,7 @@ public class CompareNodeCommandTest
         throws Exception
     {
         final Context prodContext = ContextBuilder.create().
-            workspace( WS_PROD ).
+            workspace( WS_OTHER ).
             repositoryId( TEST_REPO.getId() ).
             build();
 
@@ -132,13 +132,13 @@ public class CompareNodeCommandTest
             name( "my-node" ).
             build() ) );
 
-        stage.runWith( () -> doPushNode( WS_PROD, createdNode ) );
+        stage.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
 
         prodContext.runWith( () -> doUpdateNode( createdNode ) );
         refresh();
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_PROD, createdNode ) );
+        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.Status.OLDER, comparison.getCompareStatus().getStatus() );
     }
@@ -158,7 +158,7 @@ public class CompareNodeCommandTest
             name( "my-second-node" ).
             build() ) );
 
-        stage.runWith( () -> doPushNode( WS_PROD, createdNode ) );
+        stage.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
 
         stage.runWith( () -> MoveNodeCommand.create().
@@ -172,7 +172,7 @@ public class CompareNodeCommandTest
             build().
             execute() );
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_PROD, createdNode ) );
+        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.Status.MOVED, comparison.getCompareStatus().getStatus() );
     }

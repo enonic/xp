@@ -5,10 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.repo.internal.index.IndexContext;
 
 final class DeleteNodeByPathCommand
     extends AbstractDeleteNodeCommand
@@ -25,18 +22,14 @@ final class DeleteNodeByPathCommand
     {
         final Context context = ContextAccessor.current();
 
-        final NodeVersionId version = this.queryService.get( this.nodePath, IndexContext.from( context ) );
+        final Node node = doGetByPath( this.nodePath, false );
 
-        if ( version == null )
+        if ( node != null )
         {
-            throw new NodeNotFoundException( "Node with path " + this.nodeDao + " not found in workspace " + context.getWorkspace() );
+            deleteNodeWithChildren( node, context );
         }
 
-        final Node nodeToDelete = nodeDao.getByVersionId( version );
-
-        deleteNodeWithChildren( nodeToDelete, context );
-
-        return nodeToDelete;
+        return node;
     }
 
     static Builder create()
@@ -48,7 +41,6 @@ final class DeleteNodeByPathCommand
         extends AbstractDeleteNodeCommand.Builder<Builder>
     {
         private NodePath nodePath;
-
 
         Builder()
         {
