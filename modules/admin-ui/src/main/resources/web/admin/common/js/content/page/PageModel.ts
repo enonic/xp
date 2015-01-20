@@ -88,6 +88,8 @@ module api.content.page {
 
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
+        private componentPropertyChangedListeners: {(event: api.content.page.region.ComponentPropertyChangedEvent):void}[] = [];
+
         private ignorePropertyChanges: boolean = false;
 
         constructor(liveEditModel: api.liveedit.LiveEditModel, defaultTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor) {
@@ -222,11 +224,11 @@ module api.content.page {
         setRegions(value: api.content.page.region.Regions, eventOrigin?: any): PageModel {
             var oldValue = this.regions;
             if (oldValue) {
-                oldValue.unChanged(this.handleRegionsValueChanged);
+                this.unregisterRegionsListeners(oldValue);
             }
-            
+
             this.regions = value;
-            this.regions.onChanged(this.handleRegionsValueChanged.bind(this));
+            this.registerRegionsListeners(this.regions);
 
             this.setIgnorePropertyChanges(true);
             this.notifyPropertyChanged("regions", oldValue, value, eventOrigin);
@@ -363,6 +365,29 @@ module api.content.page {
             return this.config;
         }
 
+        private registerRegionsListeners(regions: api.content.page.region.Regions) {
+
+            if (this.handleComponentPropertyChangedEvent.bind) {
+                regions.onChanged(this.handleRegionsValueChanged.bind(this));
+                regions.onComponentPropertyChanged(this.handleComponentPropertyChangedEvent.bind(this));
+            }
+            else {
+                regions.onChanged((event) => {
+                    this.handleRegionsValueChanged(event);
+                });
+                regions.onComponentPropertyChanged((event) => {
+                    this.handleComponentPropertyChangedEvent(event);
+                });
+            }
+        }
+
+        private unregisterRegionsListeners(regions: api.content.page.region.Regions) {
+
+            regions.unComponentPropertyChanged(this.handleComponentPropertyChangedEvent);
+            regions.unChanged(this.handleRegionsValueChanged);
+        }
+
+
         onPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
             this.propertyChangedListeners.push(listener);
         }
@@ -379,6 +404,28 @@ module api.content.page {
             this.propertyChangedListeners.forEach((listener: (event: api.PropertyChangedEvent)=>void) => {
                 listener(event);
             })
+        }
+
+        onComponentPropertyChangedEvent(listener: (event: api.content.page.region.ComponentPropertyChangedEvent)=>void) {
+            this.componentPropertyChangedListeners.push(listener);
+        }
+
+        unComponentPropertyChangedEvent(listener: (event: api.content.page.region.ComponentPropertyChangedEvent)=>void) {
+            this.componentPropertyChangedListeners =
+            this.componentPropertyChangedListeners.filter((curr: (event: api.content.page.region.ComponentPropertyChangedEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        private handleComponentPropertyChangedEvent(event: api.content.page.region.ComponentPropertyChangedEvent) {
+
+            if (!this.isPageTemplate() && this.getMode() == PageMode.AUTOMATIC) {
+                this.initializePageFromDefault(this);
+            }
+
+            this.componentPropertyChangedListeners.forEach((listener: (event: api.content.page.region.ComponentPropertyChangedEvent)=>void) => {
+                listener(event);
+            });
         }
     }
 }

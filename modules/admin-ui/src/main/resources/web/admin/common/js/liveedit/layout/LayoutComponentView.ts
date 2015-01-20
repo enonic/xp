@@ -1,6 +1,7 @@
 module api.liveedit.layout {
 
     import Component = api.content.page.region.Component;
+    import ComponentPath = api.content.page.region.ComponentPath;
     import Region = api.content.page.region.Region;
     import LayoutComponent = api.content.page.region.LayoutComponent;
     import Regions = api.content.page.region.Regions;
@@ -33,6 +34,37 @@ module api.liveedit.layout {
             }
 
             this.parseRegions();
+        }
+
+        getRegionViewByName(name: string): RegionView {
+
+            for (var i = 0; i < this.regionViews.length; i++) {
+                var regionView = this.regionViews[i];
+                if (regionView.getRegionName() == name) {
+                    return regionView;
+                }
+            }
+            return null;
+        }
+
+        getComponentViewByPath(path: ComponentPath): ComponentView<Component> {
+
+            var firstLevelOfPath = path.getFirstLevel();
+
+            for (var i = 0; i < this.regionViews.length; i++) {
+                var regionView = this.regionViews[i];
+                if (firstLevelOfPath.getRegionName() == regionView.getRegionName()) {
+                    if (path.numberOfLevels() == 1) {
+                        return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
+                    }
+                    else {
+                        var layoutView: LayoutComponentView = <LayoutComponentView>regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
+                        return layoutView.getComponentViewByPath(path.removeFirstLevel());
+                    }
+                }
+            }
+
+            return null;
         }
 
         setComponent(layoutComponent: LayoutComponent) {

@@ -2,8 +2,6 @@
 ///<reference path='DescriptorBasedComponentInspectionPanel.ts' />
 ///<reference path='ImageInspectionPanel.ts' />
 ///<reference path='PartInspectionPanel.ts' />
-///<reference path='LayoutDescriptorChangedEvent.ts' />
-///<reference path='PartDescriptorChangedEvent.ts' />
 ///<reference path='LayoutInspectionPanel.ts' />
 ///<reference path='RegionInspectionPanel.ts' />
 ///<reference path='ImageChangedEvent.ts' />

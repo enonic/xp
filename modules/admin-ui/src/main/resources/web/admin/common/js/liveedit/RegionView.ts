@@ -3,6 +3,7 @@ module api.liveedit {
     import Region = api.content.page.region.Region;
     import RegionPath = api.content.page.region.RegionPath;
     import Component = api.content.page.region.Component;
+    import ComponentPath = api.content.page.region.ComponentPath;
 
     export class RegionViewBuilder {
 
@@ -246,6 +247,35 @@ module api.liveedit {
             return this.componentViews.indexOf(view);
         }
 
+        getComponentViewByIndex(index: number): ComponentView<Component> {
+
+            return this.componentViews[index];
+        }
+
+        getComponentViewByPath(path: ComponentPath): ComponentView<Component> {
+
+            var firstLevelOfPath = path.getFirstLevel();
+
+            if (path.numberOfLevels() == 1) {
+
+                return this.componentViews[firstLevelOfPath.getComponentIndex()];
+            }
+
+            for (var i = 0; i < this.componentViews.length; i++) {
+                var componentView = this.componentViews[i];
+                if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, api.liveedit.layout.LayoutComponentView)) {
+
+                    var layoutView = <api.liveedit.layout.LayoutComponentView>componentView;
+                    var match = layoutView.getComponentViewByPath(path.removeFirstLevel());
+                    if (match) {
+                        return match;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         removeComponentView(componentView: ComponentView<Component>) {
 
             componentView.remove();
@@ -378,7 +408,7 @@ module api.liveedit {
                 var itemType = ItemType.fromElement(childElement);
                 if (itemType) {
                     api.util.assert(itemType.isComponentType(),
-                            "Expected ItemView beneath a Region to be a Component: " + itemType.getShortName());
+                        "Expected ItemView beneath a Region to be a Component: " + itemType.getShortName());
 
                     var component = region.getComponentByIndex(componentCount++);
                     itemType.createView(new CreateItemViewConfig().

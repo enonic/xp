@@ -2,11 +2,11 @@ module api.liveedit.part {
 
     import Descriptor = api.content.page.Descriptor;
     import SiteModel = api.content.site.SiteModel;
+    import PartComponent = api.content.page.region.PartComponent;
     import PartDescriptor = api.content.page.region.PartDescriptor;
     import PartDescriptorLoader = api.content.page.region.PartDescriptorLoader;
     import PartDescriptorComboBox = api.content.page.region.PartDescriptorComboBox;
     import GetPartDescriptorsByModulesRequest = api.content.page.region.GetPartDescriptorsByModulesRequest;
-    import ComponentSetDescriptorEvent = api.liveedit.ComponentSetDescriptorEvent;
     import PartItemType = api.liveedit.part.PartItemType;
     import PageItemType = api.liveedit.PageItemType;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
@@ -34,7 +34,8 @@ module api.liveedit.part {
             this.comboBox.onOptionSelected((event: OptionSelectedEvent<PartDescriptor>) => {
                 this.partComponentView.showLoadingSpinner();
                 var descriptor: Descriptor = event.getOption().displayValue;
-                new ComponentSetDescriptorEvent(descriptor, partView).fire();
+                var partComponent: PartComponent = this.partComponentView.getComponent();
+                partComponent.setDescriptor(descriptor.getKey(), descriptor);
             });
 
             partView.liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {

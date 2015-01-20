@@ -51,14 +51,21 @@ module api.content.page.region {
             return this.descriptor;
         }
 
-        setDescriptor(newValue: DescriptorKey) {
+        setDescriptor(descriptorKey: DescriptorKey, descriptor?: Descriptor) {
 
             var oldValue = this.descriptor;
-            this.descriptor = newValue;
+            this.descriptor = descriptorKey;
 
-            if (!api.ObjectHelper.equals(oldValue, newValue)) {
+            this.alignNameWithDescriptor(descriptor);
+
+            if (!api.ObjectHelper.equals(oldValue, descriptorKey)) {
                 this.notifyPropertyChanged(DescriptorBasedComponent.PROPERTY_DESCRIPTOR);
             }
+        }
+
+        alignNameWithDescriptor(descriptor: Descriptor) {
+            var newName = new ComponentName(!!descriptor ? descriptor.getDisplayName() : "");
+            this.setName(newName);
         }
 
         getConfig(): PropertyTree {
@@ -66,7 +73,7 @@ module api.content.page.region {
         }
 
         reset() {
-            this.setDescriptor(null);
+            this.setDescriptor(null, null);
         }
 
         toComponentJson(): DescriptorBasedComponentJson {

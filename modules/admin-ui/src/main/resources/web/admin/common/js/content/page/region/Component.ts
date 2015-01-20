@@ -142,6 +142,12 @@ module api.content.page.region {
             this.notifyChangedEvent(event);
         }
 
+        forwardComponentPropertyChangedEvent(event: ComponentPropertyChangedEvent) {
+            this.propertyChangedListeners.forEach((listener: (event: ComponentPropertyChangedEvent)=>void) => {
+                listener(event);
+            });
+        }
+
         /**
          * Observe when a property of Component have changed (happens only for mutable objects).
          */

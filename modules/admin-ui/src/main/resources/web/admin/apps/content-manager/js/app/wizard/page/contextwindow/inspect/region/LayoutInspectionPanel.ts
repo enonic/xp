@@ -6,6 +6,8 @@ module app.wizard.page.contextwindow.inspect.region {
     import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
     import DescriptorKey = api.content.page.DescriptorKey;
     import LayoutComponent = api.content.page.region.LayoutComponent;
+    import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
+    import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
     import GetLayoutDescriptorByKeyRequest = api.content.page.region.GetLayoutDescriptorByKeyRequest;
     import GetLayoutDescriptorsByModulesRequest = api.content.page.region.GetLayoutDescriptorsByModulesRequest;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
@@ -25,21 +27,16 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private layoutComponent: LayoutComponent;
 
-        private descriptorSelected: DescriptorKey;
-
-        private layoutDescriptorChangedListeners: {(event: LayoutDescriptorChangedEvent): void;}[] = [];
-
         constructor() {
             super(<DescriptorBasedComponentInspectionPanelConfig>{
                 iconClass: "live-edit-font-icon-layout icon-xlarge"
             });
-
         }
 
         setModel(liveEditModel: LiveEditModel) {
 
             super.setModel(liveEditModel);
-            
+
             var descriptorsRequest = new GetLayoutDescriptorsByModulesRequest(liveEditModel.getSiteModel().getModuleKeys());
             var loader = new LayoutDescriptorLoader(descriptorsRequest);
             this.componentSelector = new LayoutDescriptorComboBox(loader);
@@ -56,23 +53,6 @@ module app.wizard.page.contextwindow.inspect.region {
             });
         }
 
-        onLayoutDescriptorChanged(listener: {(event: LayoutDescriptorChangedEvent): void;}) {
-            this.layoutDescriptorChangedListeners.push(listener);
-        }
-
-        unLayoutDescriptorChanged(listener: {(event: LayoutDescriptorChangedEvent): void;}) {
-            this.layoutDescriptorChangedListeners = this.layoutDescriptorChangedListeners.filter(function (curr) {
-                return curr != listener;
-            });
-        }
-
-        private notifyLayoutDescriptorChanged(layoutView: LayoutComponentView, descriptor: LayoutDescriptor) {
-            var event = new LayoutDescriptorChangedEvent(layoutView, descriptor);
-            this.layoutDescriptorChangedListeners.forEach((listener) => {
-                listener(event);
-            });
-        }
-
         setLayoutComponent(layoutView: LayoutComponentView) {
 
             this.layoutView = layoutView;
@@ -86,31 +66,31 @@ module app.wizard.page.contextwindow.inspect.region {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
             }
+
+            this.layoutComponent.onPropertyChanged((event: ComponentPropertyChangedEvent) => {
+
+                // Ensure displayed config form is removed when descriptor is removed
+                if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
+                    if (!this.layoutComponent.hasDescriptor()) {
+                        this.setupComponentForm(this.layoutComponent, null);
+                    }
+                }
+            });
         }
 
         private initSelectorListeners() {
             this.componentSelector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
 
                 var option: Option<LayoutDescriptor> = event.getOption();
-
-                if (this.getComponent()) {
-                    var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
-                    this.layoutComponent.setDescriptor(selectedDescriptorKey);
-
-                    var hasDescriptorChanged = this.descriptorSelected && !this.descriptorSelected.equals(selectedDescriptorKey);
-                    this.descriptorSelected = selectedDescriptorKey;
-                    if (hasDescriptorChanged) {
-                        var selectedDescriptor: LayoutDescriptor = option.displayValue;
-                        this.notifyLayoutDescriptorChanged(this.layoutView, selectedDescriptor);
-                    }
-                }
+                var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
+                this.layoutComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
             });
 
             this.componentSelector.onOptionDeselected((option: SelectedOption<LayoutDescriptor>) => {
-                this.descriptorSelected = null;
-                this.notifyLayoutDescriptorChanged(this.layoutView, null);
+
+                this.layoutComponent.setDescriptor(null, null);
+
             });
         }
-
     }
 }

@@ -9,6 +9,8 @@ module api.liveedit {
     import Regions = api.content.page.region.Regions;
     import Component = api.content.page.region.Component;
     import Region = api.content.page.region.Region;
+    import RegionPath = api.content.page.region.RegionPath;
+    import ComponentPath = api.content.page.region.ComponentPath;
 
     export class PageViewBuilder {
 
@@ -224,6 +226,48 @@ module api.liveedit {
             if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
                 return <ComponentView<Component>>itemView;
             }
+            return null;
+        }
+
+        getRegionViewByPath(path: RegionPath): RegionView {
+
+            for (var i = 0; i < this.regionViews.length; i++) {
+                var regionView = this.regionViews[i];
+
+                if (path.hasParentComponentPath()) {
+                    var componentView = this.getComponentViewByPath(path.getParentComponentPath());
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, api.liveedit.layout.LayoutComponentView)) {
+                        var layoutView = <api.liveedit.layout.LayoutComponentView>componentView;
+                        layoutView.getRegionViewByName(path.getRegionName());
+                    }
+                }
+                else {
+                    if (path.getRegionName() == regionView.getRegionName()) {
+                        return regionView;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        getComponentViewByPath(path: ComponentPath): ComponentView<Component> {
+
+            var firstLevelOfPath = path.getFirstLevel();
+
+            for (var i = 0; i < this.regionViews.length; i++) {
+                var regionView = this.regionViews[i];
+                if (firstLevelOfPath.getRegionName() == regionView.getRegionName()) {
+                    if (path.numberOfLevels() == 1) {
+                        return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
+                    }
+                    else {
+                        var layoutView: api.liveedit.layout.LayoutComponentView = <api.liveedit.layout.LayoutComponentView>regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
+                        return layoutView.getComponentViewByPath(path.removeFirstLevel());
+                    }
+                }
+            }
+
             return null;
         }
 

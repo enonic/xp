@@ -15,11 +15,14 @@ module app.wizard.page {
     import PageDescriptor = api.content.page.PageDescriptor;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
-    import LayoutDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.region.LayoutDescriptorChangedEvent;
-    import PartDescriptorChangedEvent = app.wizard.page.contextwindow.inspect.region.PartDescriptorChangedEvent;
     import ImageChangedEvent = app.wizard.page.contextwindow.inspect.region.ImageChangedEvent;
 
     import Component = api.content.page.region.Component;
+    import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
+    import PartComponent = api.content.page.region.PartComponent;
+    import LayoutComponent = api.content.page.region.LayoutComponent;
+    import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
+    import ComponentPropertyValueChangedEvent = api.content.page.region.ComponentPropertyValueChangedEvent;
 
     import GetPartDescriptorsByModulesRequest = api.content.page.region.GetPartDescriptorsByModulesRequest;
     import GetLayoutDescriptorsByModulesRequest = api.content.page.region.GetLayoutDescriptorsByModulesRequest;
@@ -57,7 +60,6 @@ module app.wizard.page {
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ComponentRemoveEvent = api.liveedit.ComponentRemoveEvent;
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
-    import ComponentSetDescriptorEvent = api.liveedit.ComponentSetDescriptorEvent;
     import ComponentDuplicateEvent = api.liveedit.ComponentDuplicateEvent;
 
     import Panel = api.ui.panel.Panel;
@@ -78,6 +80,8 @@ module app.wizard.page {
         private content: Content;
 
         private liveEditModel: LiveEditModel;
+
+        private pageView: PageView;
 
         private pageModel: PageModel;
 
@@ -123,27 +127,6 @@ module app.wizard.page {
             this.imageInspectionPanel = new ImageInspectionPanel();
             this.partInspectionPanel = new PartInspectionPanel();
             this.layoutInspectionPanel = new LayoutInspectionPanel();
-
-            this.layoutInspectionPanel.onLayoutDescriptorChanged((event: LayoutDescriptorChangedEvent) => {
-
-                var layoutView = event.getLayoutComponentView();
-                var command = new ComponentSetDescriptorCommand().
-                    setComponentView(layoutView).
-                    setPageRegions(this.pageModel.getRegions()).
-                    setDescriptor(event.getDescriptor());
-                command.execute();
-                this.saveAndReloadOnlyComponent(layoutView);
-            });
-
-            this.partInspectionPanel.onPartDescriptorChanged((event: PartDescriptorChangedEvent) => {
-                var partView = event.getPartComponentView();
-                var command = new ComponentSetDescriptorCommand().
-                    setComponentView(partView).
-                    setPageRegions(this.pageModel.getRegions()).
-                    setDescriptor(event.getDescriptor());
-                command.execute();
-                this.saveAndReloadOnlyComponent(event.getPartComponentView());
-            });
 
             this.imageInspectionPanel.onImageChanged((event: ImageChangedEvent) => {
                 this.saveAndReloadOnlyComponent(event.getImageComponentView());
@@ -249,6 +232,34 @@ module app.wizard.page {
                     }
                 }
             });
+
+            this.pageModel.onComponentPropertyChangedEvent((event: ComponentPropertyChangedEvent) => {
+
+                if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
+
+                    var componentPath = event.getPath();
+                    var componentView = this.pageView.getComponentViewByPath(componentPath);
+                    if (componentView) {
+                        if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, PartComponentView)) {
+                            var partView = <PartComponentView>componentView;
+                            var partComponent: PartComponent = partView.getComponent();
+                            if (partComponent.hasDescriptor()) {
+                                this.saveAndReloadOnlyComponent(componentView);
+                            }
+                        }
+                        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
+                            var layoutView = <LayoutComponentView>componentView;
+                            var layoutComponent: LayoutComponent = layoutView.getComponent();
+                            if (layoutComponent.hasDescriptor()) {
+                                this.saveAndReloadOnlyComponent(componentView);
+                            }
+                        }
+                    }
+                    else {
+                        console.debug("ComponentView by path not found: " + componentPath.toString());
+                    }
+                }
+            });
         }
 
         loadPage() {
@@ -309,6 +320,9 @@ module app.wizard.page {
 
         private liveEditListen() {
 
+            this.liveEditPage.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
+                this.pageView = event.getPageView();
+            });
             this.liveEditPage.onPageSelected((event: PageSelectEvent) => {
                 this.inspectPage();
             });
@@ -421,20 +435,6 @@ module app.wizard.page {
                 }
                 command.execute();
                 this.saveAndReloadOnlyComponent(event.getImageComponentView());
-            });
-
-            this.liveEditPage.onComponentSetDescriptor((event: ComponentSetDescriptorEvent) => {
-
-                var command = new ComponentSetDescriptorCommand().
-                    setComponentView(event.getComponentView()).
-                    setPageRegions(this.pageModel.getRegions()).
-                    setDescriptor(event.getDescriptor());
-
-                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
-                    this.pageModel.initializePageFromDefault(this);
-                }
-                command.execute();
-                this.saveAndReloadOnlyComponent(event.getComponentView());
             });
 
             this.liveEditPage.onComponentDuplicated((event: ComponentDuplicateEvent) => {

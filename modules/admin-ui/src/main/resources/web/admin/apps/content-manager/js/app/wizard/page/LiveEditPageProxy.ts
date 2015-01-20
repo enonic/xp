@@ -13,6 +13,7 @@ module app.wizard.page {
     import ComponentView = api.liveedit.ComponentView;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
+    import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
     import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
     import DraggingComponentViewStartedEvent = api.liveedit.DraggingComponentViewStartedEvent;
     import DraggingComponentViewCompletedEvent = api.liveedit.DraggingComponentViewCompletedEvent;
@@ -26,7 +27,6 @@ module app.wizard.page {
     import ComponentRemoveEvent = api.liveedit.ComponentRemoveEvent;
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
     import ComponentDuplicateEvent = api.liveedit.ComponentDuplicateEvent;
-    import ComponentSetDescriptorEvent = api.liveedit.ComponentSetDescriptorEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import RepeatNextItemViewIdProducer = api.liveedit.RepeatNextItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
@@ -75,13 +75,13 @@ module app.wizard.page {
 
         private imageComponentSetImageListeners: {(event: ImageComponentSetImageEvent): void;}[] = [];
 
-        private componentSetDescriptorListeners: {(event: ComponentSetDescriptorEvent): void;}[] = [];
-
         private componentRemovedListeners: {(event: ComponentRemoveEvent): void;}[] = [];
 
         private componentResetListeners: {(event: ComponentResetEvent): void;}[] = [];
 
         private componentDuplicatedListeners: {(event: ComponentDuplicateEvent): void;}[] = [];
+
+        private liveEditPageViewReadyListeners: {(event: LiveEditPageViewReadyEvent): void;}[] = [];
 
         private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
 
@@ -282,6 +282,8 @@ module app.wizard.page {
 
             ComponentDuplicateEvent.on(this.notifyComponentDuplicated.bind(this), this.liveEditWindow);
 
+            LiveEditPageViewReadyEvent.on(this.notifyLiveEditPageViewReady.bind(this), this.liveEditWindow);
+
             ImageComponentSetImageEvent.on((event: ImageComponentSetImageEvent) => {
                 if (!event.getErrorMessage()) {
                     this.notifyImageComponentSetImage(event);
@@ -290,7 +292,6 @@ module app.wizard.page {
                 }
             }, this.liveEditWindow);
 
-            ComponentSetDescriptorEvent.on(this.notifyComponentSetDescriptor.bind(this), this.liveEditWindow);
         }
 
         onLoaded(listener: {(): void;}) {
@@ -433,18 +434,6 @@ module app.wizard.page {
             this.imageComponentSetImageListeners.forEach((listener) => listener(event));
         }
 
-        onComponentSetDescriptor(listener: {(event: ComponentSetDescriptorEvent): void;}) {
-            this.componentSetDescriptorListeners.push(listener);
-        }
-
-        unComponentSetDescriptor(listener: {(event: ComponentSetDescriptorEvent): void;}) {
-            this.componentSetDescriptorListeners = this.componentSetDescriptorListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifyComponentSetDescriptor(event: ComponentSetDescriptorEvent) {
-            this.componentSetDescriptorListeners.forEach((listener) => listener(event));
-        }
-
         onComponentReset(listener: {(event: ComponentResetEvent): void;}) {
             this.componentResetListeners.push(listener);
         }
@@ -480,5 +469,18 @@ module app.wizard.page {
         private notifyComponentDuplicated(event: ComponentDuplicateEvent) {
             this.componentDuplicatedListeners.forEach((listener) => listener(event));
         }
+
+        onLiveEditPageViewReady(listener: {(event: LiveEditPageViewReadyEvent): void;}) {
+            this.liveEditPageViewReadyListeners.push(listener);
+        }
+
+        unLiveEditPageViewReady(listener: {(event: LiveEditPageViewReadyEvent): void;}) {
+            this.liveEditPageViewReadyListeners = this.liveEditPageViewReadyListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyLiveEditPageViewReady(event: LiveEditPageViewReadyEvent) {
+            this.liveEditPageViewReadyListeners.forEach((listener) => listener(event));
+        }
+
     }
 }

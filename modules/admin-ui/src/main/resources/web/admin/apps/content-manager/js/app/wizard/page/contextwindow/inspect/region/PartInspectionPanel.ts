@@ -7,6 +7,8 @@ module app.wizard.page.contextwindow.inspect.region {
     import GetPartDescriptorsByModulesRequest = api.content.page.region.GetPartDescriptorsByModulesRequest;
     import GetPartDescriptorByKeyRequest = api.content.page.region.GetPartDescriptorByKeyRequest;
     import PartComponent = api.content.page.region.PartComponent;
+    import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
+    import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
     import DescriptorKey = api.content.page.DescriptorKey;
     import PartComponentView = api.liveedit.part.PartComponentView;
     import LiveEditModel = api.liveedit.LiveEditModel;
@@ -19,10 +21,6 @@ module app.wizard.page.contextwindow.inspect.region {
         private partView: PartComponentView;
 
         private partComponent: PartComponent;
-
-        private descriptorSelected: DescriptorKey;
-
-        private partDescriptorChangedListeners: {(event: PartDescriptorChangedEvent): void;}[] = [];
 
         constructor() {
             super(<DescriptorBasedComponentInspectionPanelConfig>{
@@ -43,23 +41,6 @@ module app.wizard.page.contextwindow.inspect.region {
 
         }
 
-        onPartDescriptorChanged(listener: {(event: PartDescriptorChangedEvent): void;}) {
-            this.partDescriptorChangedListeners.push(listener);
-        }
-
-        unPartDescriptorChanged(listener: {(event: PartDescriptorChangedEvent): void;}) {
-            this.partDescriptorChangedListeners = this.partDescriptorChangedListeners.filter(function (curr) {
-                return curr != listener;
-            });
-        }
-
-        private notifyPartDescriptorChanged(partView: PartComponentView, descriptor: PartDescriptor) {
-            var event = new PartDescriptorChangedEvent(partView, descriptor);
-            this.partDescriptorChangedListeners.forEach((listener) => {
-                listener(event);
-            });
-        }
-
         setPartComponent(partView: PartComponentView) {
 
             this.partView = partView;
@@ -73,28 +54,31 @@ module app.wizard.page.contextwindow.inspect.region {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
             }
+
+            this.partComponent.onPropertyChanged((event: ComponentPropertyChangedEvent) => {
+
+                // Ensure displayed config form is removed when descriptor is removed
+                if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
+                    if (!this.partComponent.hasDescriptor()) {
+                        this.setupComponentForm(this.partComponent, null);
+                    }
+                }
+            });
         }
 
         private initSelectorListeners() {
+
             this.componentSelector.onOptionSelected((event: OptionSelectedEvent<PartDescriptor>) => {
 
                 var option: Option<PartDescriptor> = event.getOption();
 
-                if (this.getComponent()) {
-                    var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
-                    this.partComponent.setDescriptor(selectedDescriptorKey);
-
-                    var hasDescriptorChanged = selectedDescriptorKey && !selectedDescriptorKey.equals(this.descriptorSelected);
-                    this.descriptorSelected = selectedDescriptorKey;
-                    if (hasDescriptorChanged) {
-                        var selectedDescriptor: PartDescriptor = option.displayValue;
-                        this.notifyPartDescriptorChanged(this.partView, selectedDescriptor);
-                    }
-                }
+                var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
+                this.partComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
             });
+
             this.componentSelector.onOptionDeselected((option: SelectedOption<PartDescriptor>) => {
-                this.descriptorSelected = null;
-                this.notifyPartDescriptorChanged(this.partView, null);
+
+                this.partComponent.setDescriptor(null, null);
             });
         }
     }

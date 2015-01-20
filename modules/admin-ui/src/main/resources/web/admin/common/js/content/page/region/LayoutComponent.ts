@@ -9,6 +9,8 @@ module api.content.page.region {
 
         private regions: Regions;
 
+        private componentPropertyChangedListeners: {(event: ComponentPropertyChangedEvent):void}[] = [];
+
         constructor(builder: LayoutComponentBuilder) {
             super(builder);
 
@@ -22,14 +24,7 @@ module api.content.page.region {
                 this.regions = Regions.create().build();
             }
 
-            this.regions.onChanged(this.handleRegionsChanged.bind(this));
-        }
-
-        private handleRegionsChanged(event: RegionsChangedEvent) {
-            if (this.debug) {
-                console.debug("LayoutComponent[" + this.getPath().toString() + "].onChanged: ", event);
-            }
-            this.notifyPropertyValueChanged("regions");
+            this.registerRegionsListeners(this.regions);
         }
 
         public getComponent(path: ComponentPath): Component {
@@ -43,10 +38,13 @@ module api.content.page.region {
         public setRegions(value: Regions) {
 
             var oldValue = this.regions;
+            if (oldValue) {
+                this.unregisterRegionsListeners(oldValue);
+            }
             this.regions.unChanged(this.handleRegionsChanged);
 
             this.regions = value;
-            this.regions.onChanged(this.handleRegionsChanged.bind(this));
+            this.registerRegionsListeners(this.regions);
 
             if (!api.ObjectHelper.equals(oldValue, value)) {
                 if (this.debug) {
@@ -54,6 +52,18 @@ module api.content.page.region {
                 }
                 this.notifyPropertyChanged("regions");
             }
+        }
+
+        setDescriptor(descriptorKey: DescriptorKey, descriptor?: LayoutDescriptor) {
+
+            super.setDescriptor(descriptorKey, descriptor);
+            this.addRegions(descriptor);
+        }
+
+        addRegions(layoutDescriptor: LayoutDescriptor) {
+            var sourceRegions = this.getRegions();
+            var mergedRegions = sourceRegions.mergeRegions(layoutDescriptor.getRegions(), this);
+            this.setRegions(mergedRegions);
         }
 
         isEmpty(): boolean {
@@ -91,6 +101,47 @@ module api.content.page.region {
         clone(generateNewPropertyIds: boolean = false): LayoutComponent {
             return new LayoutComponentBuilder(this, generateNewPropertyIds).build();
         }
+
+        private registerRegionsListeners(regions: api.content.page.region.Regions) {
+
+            if (this.forwardComponentPropertyChangedEvent.bind) {
+                regions.onChanged(this.handleRegionsChanged.bind(this));
+                regions.onComponentPropertyChanged(this.forwardComponentPropertyChangedEvent.bind(this));
+            }
+            else {
+                regions.onChanged((event) => {
+                    this.handleRegionsChanged(event);
+                });
+                regions.onComponentPropertyChanged((event) => {
+                    this.forwardComponentPropertyChangedEvent(event);
+                });
+            }
+        }
+
+        private unregisterRegionsListeners(regions: api.content.page.region.Regions) {
+
+            regions.unChanged(this.handleRegionsChanged);
+            regions.unComponentPropertyChanged(this.forwardComponentPropertyChangedEvent);
+        }
+
+        private handleRegionsChanged(event: RegionsChangedEvent) {
+            if (this.debug) {
+                console.debug("LayoutComponent[" + this.getPath().toString() + "].onChanged: ", event);
+            }
+            this.notifyPropertyValueChanged("regions");
+        }
+
+        onComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
+            this.componentPropertyChangedListeners.push(listener);
+        }
+
+        unComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
+            this.componentPropertyChangedListeners =
+            this.componentPropertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
     }
 
     export class LayoutComponentBuilder extends DescriptorBasedComponentBuilder<LayoutComponent> {

@@ -1,9 +1,12 @@
 module api.liveedit.layout {
 
-    import ComponentSetDescriptorEvent = api.liveedit.ComponentSetDescriptorEvent;
-    import LayoutItemType = api.liveedit.layout.LayoutItemType;
+    import LayoutComponent = api.content.page.region.LayoutComponent;
     import PageItemType = api.liveedit.PageItemType;
     import SiteModel = api.content.site.SiteModel;
+    import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
+    import GetLayoutDescriptorsByModulesRequest = api.content.page.region.GetLayoutDescriptorsByModulesRequest;
+    import LayoutDescriptorLoader = api.content.page.region.LayoutDescriptorLoader;
+    import LayoutDescriptorComboBox = api.content.page.region.LayoutDescriptorComboBox;
 
     export class LayoutPlaceholder extends ComponentPlaceholder {
 
@@ -18,17 +21,19 @@ module api.liveedit.layout {
             this.onClicked((event: MouseEvent) => {
                 event.stopPropagation();
             });
-            var request = new api.content.page.region.GetLayoutDescriptorsByModulesRequest(layoutView.liveEditModel.getSiteModel().getModuleKeys());
-            var loader = new api.content.page.region.LayoutDescriptorLoader(request);
-            this.comboBox = new api.content.page.region.LayoutDescriptorComboBox(loader);
+            var request = new GetLayoutDescriptorsByModulesRequest(layoutView.liveEditModel.getSiteModel().getModuleKeys());
+            var loader = new LayoutDescriptorLoader(request);
+            this.comboBox = new LayoutDescriptorComboBox(loader);
             loader.load();
             this.comboBox.hide();
             this.appendChild(this.comboBox);
 
-            this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.region.LayoutDescriptor>) => {
+            this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<LayoutDescriptor>) => {
                 this.layoutComponentView.showLoadingSpinner();
-                var descriptor: api.content.page.Descriptor = event.getOption().displayValue;
-                new ComponentSetDescriptorEvent(descriptor, layoutView).fire();
+                var descriptor = event.getOption().displayValue;
+
+                var layoutComponent: LayoutComponent = this.layoutComponentView.getComponent();
+                layoutComponent.setDescriptor(descriptor.getKey(), descriptor);
             });
 
             layoutView.liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
