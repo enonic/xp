@@ -74,7 +74,7 @@ public class ElasticsearchQueryService
             indexName( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
             indexTypeName( indexContext.getWorkspace().getName() ).
             returnFields( ReturnFields.from( NodeIndexPath.VERSION, NodeIndexPath.PERMISSIONS_READ ) ).
-            id( nodeId ).
+            id( nodeId.toString() ).
             build() );
 
         if ( result.isEmpty() )

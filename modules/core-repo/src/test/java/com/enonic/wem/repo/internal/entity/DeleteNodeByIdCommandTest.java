@@ -11,7 +11,6 @@ import static org.junit.Assert.*;
 public class DeleteNodeByIdCommandTest
     extends AbstractNodeTest
 {
-
     @Test
     public void delete()
         throws Exception

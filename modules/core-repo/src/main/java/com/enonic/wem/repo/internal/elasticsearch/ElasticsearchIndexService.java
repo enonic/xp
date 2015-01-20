@@ -85,8 +85,8 @@ public class ElasticsearchIndexService
 
         LOG.info(
             "ElasticSearch cluster '{}' health (timedOut={}, timeOutValue={}, used={}): Status={}, nodes={}, active shards={}, indices={}",
-            new Object[]{response.getClusterName(), response.isTimedOut(), timeout, timer.toString(), response.getStatus(),
-                response.getNumberOfNodes(), response.getActiveShards(), response.getIndices().keySet()} );
+            response.getClusterName(), response.isTimedOut(), timeout, timer.toString(), response.getStatus(), response.getNumberOfNodes(),
+            response.getActiveShards(), response.getIndices().keySet() );
 
         return new ClusterHealthStatus( ClusterStatusCode.valueOf( response.getStatus().name() ), response.isTimedOut() );
     }
@@ -101,7 +101,7 @@ public class ElasticsearchIndexService
         try
         {
             final CreateIndexResponse createIndexResponse =
-                client.admin().indices().create( createIndexRequest ).actionGet( this.createTimeout );
+                client.admin().indices().create( createIndexRequest ).actionGet( createTimeout );
 
             LOG.info( "Index {} created with status {}", indexName, createIndexResponse.isAcknowledged() );
         }
@@ -119,7 +119,7 @@ public class ElasticsearchIndexService
 
         try
         {
-            this.client.admin().indices().putMapping( mappingRequest ).actionGet( this.applyMappingTimeout );
+            this.client.admin().indices().putMapping( mappingRequest ).actionGet( applyMappingTimeout );
             LOG.info( "Mapping for index {} applied", indexName );
         }
         catch ( ElasticsearchException e )
@@ -165,6 +165,7 @@ public class ElasticsearchIndexService
         }
     }
 
+    @Override
     public boolean indicesExists( final String... indices )
     {
         IndicesExistsRequest request = new IndicesExistsRequestBuilder( this.client.admin().indices() ).setIndices( indices ).request();
@@ -180,7 +181,7 @@ public class ElasticsearchIndexService
 
         try
         {
-            client.admin().indices().delete( req ).actionGet( this.deleteTimeout );
+            client.admin().indices().delete( req ).actionGet( deleteTimeout );
             LOG.info( "Deleted index {}", indexName );
         }
         catch ( ElasticsearchException e )
@@ -189,6 +190,7 @@ public class ElasticsearchIndexService
         }
     }
 
+    @Override
     public void store( final Node node, final NodeVersionId nodeVersionId, final IndexContext context )
     {
         final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
@@ -200,9 +202,9 @@ public class ElasticsearchIndexService
             create();
 
         elasticsearchDao.store( storeDocuments );
-        elasticsearchDao.store( storeDocuments );
     }
 
+    @Override
     public void delete( final NodeId nodeId, final IndexContext context )
     {
         final String indexName = IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() );
@@ -215,7 +217,6 @@ public class ElasticsearchIndexService
             build() );
     }
 
-    // TODO: This should go in repo-service or similar
     @Override
     public void snapshot( final RepositoryId repositoryId )
     {

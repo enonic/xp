@@ -159,6 +159,7 @@ public class NodeServiceImpl
             queryService( this.queryService ).
             workspaceService( this.workspaceService ).
             queryService( this.queryService ).
+            versionService( this.versionService ).
             build().
             execute();
     }
@@ -291,8 +292,8 @@ public class NodeServiceImpl
         return CompareNodeCommand.create().
             nodeId( nodeId ).
             target( target ).
-            queryService( this.queryService ).
             versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
             build().
             execute();
     }
@@ -303,8 +304,8 @@ public class NodeServiceImpl
         return CompareNodesCommand.create().
             nodeId( nodeIds ).
             target( target ).
-            queryService( this.queryService ).
             versionService( this.versionService ).
+            workspaceService( this.workspaceService ).
             build().
             execute();
     }

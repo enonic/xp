@@ -1,14 +1,14 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.api.node.NodeNotFoundException;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.wem.repo.internal.index.IndexContext;
 
 final class DeleteNodeByPathCommand
     extends AbstractDeleteNodeCommand
@@ -25,22 +25,16 @@ final class DeleteNodeByPathCommand
     {
         final Context context = ContextAccessor.current();
 
-        final Workspace workspace = context.getWorkspace();
-
         final NodeVersionId version = this.queryService.get( this.nodePath, IndexContext.from( context ) );
 
         if ( version == null )
         {
-            throw new NodeNotFoundException( "Node with path " + this.nodeDao + " not found in workspace " + workspace );
+            throw new NodeNotFoundException( "Node with path " + this.nodeDao + " not found in workspace " + context.getWorkspace() );
         }
 
         final Node nodeToDelete = nodeDao.getByVersionId( version );
 
-        doDeleteChildren( nodeToDelete );
-
-        this.workspaceService.delete( nodeToDelete.id(), WorkspaceContext.from( context ) );
-
-        this.indexService.delete( nodeToDelete.id(), IndexContext.from( context ) );
+        deleteNodeWithChildren( nodeToDelete, context );
 
         return nodeToDelete;
     }
@@ -67,8 +61,15 @@ final class DeleteNodeByPathCommand
             return this;
         }
 
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( this.nodePath );
+        }
+
         DeleteNodeByPathCommand build()
         {
+            this.validate();
             return new DeleteNodeByPathCommand( this );
         }
     }

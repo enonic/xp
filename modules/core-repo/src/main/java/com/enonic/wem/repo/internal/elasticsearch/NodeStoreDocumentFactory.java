@@ -19,6 +19,7 @@ import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.workspace.NodeWorkspaceState;
 
 
 class NodeStoreDocumentFactory
@@ -33,6 +34,8 @@ class NodeStoreDocumentFactory
 
     private final boolean refresh;
 
+    private final NodeWorkspaceState state;
+
     private NodeStoreDocumentFactory( final Builder builder )
     {
         node = builder.node;
@@ -40,6 +43,7 @@ class NodeStoreDocumentFactory
         workspace = builder.workspace;
         repositoryId = builder.repositoryId;
         this.refresh = builder.refresh;
+        this.state = builder.state;
     }
 
     public Collection<StoreDocument> create()
@@ -62,6 +66,7 @@ class NodeStoreDocumentFactory
             indexName( IndexNameResolver.resolveSearchIndexName( this.repositoryId ) ).
             indexTypeName( this.workspace.getName() ).
             analyzer( indexConfigDocument.getAnalyzer() ).
+            state( this.state ).
             refreshAfterOperation( this.refresh );
 
         addNodeMetaData( builder );
@@ -188,6 +193,8 @@ class NodeStoreDocumentFactory
 
         private boolean refresh = true;
 
+        private NodeWorkspaceState state = NodeWorkspaceState.LIVE;
+
         private Builder()
         {
         }
@@ -213,6 +220,12 @@ class NodeStoreDocumentFactory
         public Builder repositoryId( RepositoryId repositoryId )
         {
             this.repositoryId = repositoryId;
+            return this;
+        }
+
+        public Builder state( final NodeWorkspaceState state )
+        {
+            this.state = state;
             return this;
         }
 

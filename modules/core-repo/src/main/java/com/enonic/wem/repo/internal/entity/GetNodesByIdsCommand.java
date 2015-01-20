@@ -1,11 +1,13 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.query.expr.OrderExpressions;
-import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeVersionIds;
 import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.query.expr.OrderExpressions;
+import com.enonic.wem.repo.internal.index.IndexContext;
 
 public class GetNodesByIdsCommand
     extends AbstractNodeCommand
@@ -47,7 +49,7 @@ public class GetNodesByIdsCommand
     {
         private NodeIds ids;
 
-        private boolean resolveHasChild;
+        private boolean resolveHasChild = true;
 
         private OrderExpressions orderExpressions = DEFAULT_ORDER_EXPRESSIONS;
 
@@ -73,8 +75,15 @@ public class GetNodesByIdsCommand
             return this;
         }
 
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( this.ids );
+        }
+
         public GetNodesByIdsCommand build()
         {
+            this.validate();
             return new GetNodesByIdsCommand( this );
         }
     }

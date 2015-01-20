@@ -123,11 +123,16 @@ public class ElasticsearchDao
         final GetRequest getRequest = new GetRequest( getQuery.getIndexName() ).
             type( getQuery.getIndexTypeName() ).
             preference( searchPreference ).
-            id( getQuery.getId().toString() );
+            id( getQuery.getId() );
 
         if ( getQuery.getReturnFields().isNotEmpty() )
         {
             getRequest.fields( getQuery.getReturnFields().getReturnFieldNames() );
+        }
+
+        if ( getQuery.getRouting() != null )
+        {
+            getRequest.routing( getQuery.getRouting() );
         }
 
         final GetResponse getResponse = client.get( getRequest ).

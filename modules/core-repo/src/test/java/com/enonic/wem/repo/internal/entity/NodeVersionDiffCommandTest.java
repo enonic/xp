@@ -113,6 +113,7 @@ public class NodeVersionDiffCommandTest
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
+            binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();
     }

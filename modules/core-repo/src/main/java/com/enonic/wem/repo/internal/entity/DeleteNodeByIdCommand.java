@@ -1,12 +1,11 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
 
 public final class DeleteNodeByIdCommand
     extends AbstractDeleteNodeCommand
@@ -23,24 +22,14 @@ public final class DeleteNodeByIdCommand
     {
         final Context context = ContextAccessor.current();
 
-        final NodeVersionId currentVersion = this.queryService.get( this.nodeId, IndexContext.from( context ) );
+        final Node node = doGetById( nodeId, false );
 
-        final Node nodeToDelete;
-        if ( currentVersion != null )
+        if ( node != null )
         {
-            nodeToDelete = this.nodeDao.getByVersionId( currentVersion );
-
-            doDeleteChildren( nodeToDelete );
+            deleteNodeWithChildren( node, context );
         }
-        else
-        {
-            nodeToDelete = null;
-        }
-        workspaceService.delete( nodeId, WorkspaceContext.from( context ) );
 
-        indexService.delete( nodeId, IndexContext.from( context ) );
-
-        return nodeToDelete;
+        return node;
     }
 
     public static Builder create()
@@ -65,8 +54,15 @@ public final class DeleteNodeByIdCommand
             return this;
         }
 
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( this.nodeId );
+        }
+
         public DeleteNodeByIdCommand build()
         {
+            this.validate();
             return new DeleteNodeByIdCommand( this );
         }
     }

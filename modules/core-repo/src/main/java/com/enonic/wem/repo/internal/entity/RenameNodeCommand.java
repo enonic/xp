@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeAlreadyExistAtPathException;
 import com.enonic.wem.api.node.NodeId;
@@ -70,8 +72,15 @@ public final class RenameNodeCommand
             return this;
         }
 
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( this.params );
+        }
+
         public RenameNodeCommand build()
         {
+            this.validate();
             return new RenameNodeCommand( this );
         }
 

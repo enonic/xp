@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.repo.internal.workspace.NodeWorkspaceState;
 
 public class StoreDocument
     extends AbstractIndexDocument
@@ -17,12 +18,15 @@ public class StoreDocument
 
     private final String analyzer;
 
+    private final NodeWorkspaceState state;
+
     private StoreDocument( final Builder builder )
     {
         super( builder );
         this.id = builder.id;
         this.indexDocumentItems = ImmutableSet.copyOf( builder.indexDocumentEntries );
         this.analyzer = builder.analyzer;
+        this.state = builder.state;
     }
 
     public static Builder create()
@@ -45,12 +49,19 @@ public class StoreDocument
         return analyzer;
     }
 
+    public NodeWorkspaceState getState()
+    {
+        return state;
+    }
+
     public static class Builder
         extends AbstractIndexDocument.Builder<Builder>
     {
         private NodeId id;
 
         private String analyzer;
+
+        private NodeWorkspaceState state = NodeWorkspaceState.LIVE;
 
         private final Set<AbstractStoreDocumentItem> indexDocumentEntries;
 
@@ -81,6 +92,12 @@ public class StoreDocument
         public Builder addEntries( final Set<AbstractStoreDocumentItem> entries )
         {
             this.indexDocumentEntries.addAll( entries );
+            return this;
+        }
+
+        public Builder state( final NodeWorkspaceState state )
+        {
+            this.state = state;
             return this;
         }
 

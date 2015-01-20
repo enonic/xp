@@ -136,6 +136,7 @@ final class ApplyNodePermissionsCommand
 
         void validate()
         {
+            super.validate();
             Preconditions.checkNotNull( params );
             Preconditions.checkNotNull( mergingStrategy );
         }

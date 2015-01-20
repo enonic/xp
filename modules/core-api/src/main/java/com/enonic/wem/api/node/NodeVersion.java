@@ -25,7 +25,6 @@ public class NodeVersion
         return timestamp;
     }
 
-
     // Insert with newest first
     @Override
     public int compareTo( final NodeVersion o )
@@ -50,18 +49,18 @@ public class NodeVersion
         {
             return true;
         }
-        if ( !( o instanceof NodeVersion ) )
+        if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
 
         final NodeVersion that = (NodeVersion) o;
 
-        if ( !nodeVersionId.equals( that.nodeVersionId ) )
+        if ( nodeVersionId != null ? !nodeVersionId.equals( that.nodeVersionId ) : that.nodeVersionId != null )
         {
             return false;
         }
-        if ( !timestamp.equals( that.timestamp ) )
+        if ( timestamp != null ? !timestamp.equals( that.timestamp ) : that.timestamp != null )
         {
             return false;
         }
@@ -72,8 +71,8 @@ public class NodeVersion
     @Override
     public int hashCode()
     {
-        int result = nodeVersionId.hashCode();
-        result = 31 * result + timestamp.hashCode();
+        int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
+        result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         return result;
     }
 }

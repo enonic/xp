@@ -10,4 +10,7 @@ public class WorkspaceIndexPath
 
     public static final IndexPath NODE_ID = IndexPath.from( "nodeId" );
 
+    public static final IndexPath STATE = IndexPath.from( "state" );
+
+    public static final IndexPath PATH = IndexPath.from( "path" );
 }

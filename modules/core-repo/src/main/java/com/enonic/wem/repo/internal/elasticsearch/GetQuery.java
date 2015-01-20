@@ -7,8 +7,6 @@ import org.elasticsearch.search.sort.SortBuilder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.node.NodeId;
-
 public class GetQuery
 {
     private final String indexName;
@@ -19,7 +17,9 @@ public class GetQuery
 
     private final ImmutableSet<SortBuilder> sortBuilders;
 
-    private final NodeId id;
+    private final String id;
+
+    private final String routing;
 
     private GetQuery( final Builder builder )
     {
@@ -28,6 +28,7 @@ public class GetQuery
         this.returnFields = builder.returnFields;
         this.sortBuilders = ImmutableSet.copyOf( builder.sortBuilders );
         this.id = builder.id;
+        this.routing = builder.routing;
     }
 
     public String getIndexName()
@@ -50,9 +51,14 @@ public class GetQuery
         return sortBuilders;
     }
 
-    public NodeId getId()
+    public String getId()
     {
         return id;
+    }
+
+    public String getRouting()
+    {
+        return routing;
     }
 
     public static Builder create()
@@ -66,11 +72,13 @@ public class GetQuery
 
         private String indexTypeName;
 
-        private NodeId id;
+        private String id;
 
         private ReturnFields returnFields = ReturnFields.empty();
 
         private Set<SortBuilder> sortBuilders = Sets.newLinkedHashSet();
+
+        private String routing;
 
         private Builder()
         {
@@ -88,7 +96,7 @@ public class GetQuery
             return this;
         }
 
-        public Builder id( final NodeId id )
+        public Builder id( final String id )
         {
             this.id = id;
             return this;
@@ -106,10 +114,15 @@ public class GetQuery
             return this;
         }
 
-
         public Builder returnFields( final ReturnFields returnFields )
         {
             this.returnFields = returnFields;
+            return this;
+        }
+
+        public Builder routing( final String routing )
+        {
+            this.routing = routing;
             return this;
         }
 

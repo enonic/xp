@@ -101,15 +101,7 @@ public class DuplicateNodeCommandTest
             name( "node1_1" ).
             build() );
 
-        final Node node1Duplicate = DuplicateNodeCommand.create().
-            id( node1.id() ).
-            versionService( versionService ).
-            indexService( indexService ).
-            nodeDao( nodeDao ).
-            queryService( queryService ).
-            workspaceService( workspaceService ).
-            build().
-            execute();
+        final Node node1Duplicate = duplicateNode( node1 );
 
         final Node dNode1_1 = getNodeByPath( NodePath.newNodePath( node1Duplicate.path(), node1_1.name().toString() ).build() );
         assertEquals( dNode1_1.id(), node1Duplicate.data().getReference( "node1_1-id" ).getNodeId() );
@@ -141,15 +133,7 @@ public class DuplicateNodeCommandTest
 
         refresh();
 
-        final Node node1Duplicate = DuplicateNodeCommand.create().
-            id( node1.id() ).
-            versionService( versionService ).
-            indexService( indexService ).
-            nodeDao( nodeDao ).
-            queryService( queryService ).
-            workspaceService( workspaceService ).
-            build().
-            execute();
+        final Node node1Duplicate = duplicateNode( node1 );
 
         final Node dNode1_1 = getNodeByPath( NodePath.newNodePath( node1Duplicate.path(), node1_1.name().toString() ).build() );
         final Node dNode1_1_1 = getNodeByPath( NodePath.newNodePath( dNode1_1.path(), node_1_1_1.name().toString() ).build() );
@@ -199,15 +183,7 @@ public class DuplicateNodeCommandTest
 
         refresh();
 
-        final Node duplicatedNode1 = DuplicateNodeCommand.create().
-            id( node1.id() ).
-            versionService( versionService ).
-            indexService( indexService ).
-            nodeDao( nodeDao ).
-            queryService( queryService ).
-            workspaceService( workspaceService ).
-            build().
-            execute();
+        final Node duplicatedNode1 = duplicateNode( node1 );
 
         final Node dNode1_1 = getNodeByPath( NodePath.newNodePath( duplicatedNode1.path(), node1_1.name().toString() ).build() );
         final Node dNode1_2 = getNodeByPath( NodePath.newNodePath( duplicatedNode1.path(), node1_2.name().toString() ).build() );
@@ -243,19 +219,25 @@ public class DuplicateNodeCommandTest
             data( createDataWithReferences( Reference.from( "node1-id" ) ) ).
             build() );
 
-        final Node node1Duplicate = DuplicateNodeCommand.create().
+        final Node node1Duplicate = duplicateNode( node1 );
+
+        final Node dNode1_1 = getNodeByPath( NodePath.newNodePath( node1Duplicate.path(), node1_1.name().toString() ).build() );
+
+        assertEquals( node1Duplicate.id(), dNode1_1.data().getReference( "node1-id" ).getNodeId() );
+    }
+
+    private Node duplicateNode( final Node node1 )
+    {
+        return DuplicateNodeCommand.create().
             id( node1.id() ).
             versionService( versionService ).
             indexService( indexService ).
             nodeDao( nodeDao ).
             queryService( queryService ).
             workspaceService( workspaceService ).
+            binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();
-
-        final Node dNode1_1 = getNodeByPath( NodePath.newNodePath( node1Duplicate.path(), node1_1.name().toString() ).build() );
-
-        assertEquals( node1Duplicate.id(), dNode1_1.data().getReference( "node1-id" ).getNodeId() );
     }
 
     private PropertyTree createDataWithReferences( final Reference... references )

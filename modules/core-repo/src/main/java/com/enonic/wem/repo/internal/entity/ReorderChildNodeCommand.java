@@ -182,7 +182,7 @@ public class ReorderChildNodeCommand
             return this;
         }
 
-        protected void validate()
+        void validate()
         {
             super.validate();
             Preconditions.checkNotNull( parentNode );
@@ -191,6 +191,7 @@ public class ReorderChildNodeCommand
 
         public ReorderChildNodeCommand build()
         {
+            this.validate();
             return new ReorderChildNodeCommand( this );
         }
     }

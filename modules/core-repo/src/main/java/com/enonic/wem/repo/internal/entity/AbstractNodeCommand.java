@@ -184,12 +184,10 @@ abstract class AbstractNodeCommand
         return authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
     }
 
-    protected AccessControlList evaluatePermissions( final NodePath parentPath, final boolean inheritPermissions,
-                                                     final AccessControlList permissions )
+    AccessControlList evaluatePermissions( final NodePath parentPath, final boolean inheritPermissions,
+                                           final AccessControlList permissions )
     {
-        final AccessControlList effectivePermissions = inheritPermissions ? getPermissions( parentPath ) : permissions;
-//        return AccessControlList.create( effectivePermissions ).add( ENTERPRISE_ADMIN_FULL_PERMISSIONS ).build();
-        return effectivePermissions;
+        return inheritPermissions ? getPermissions( parentPath ) : permissions;
     }
 
     private AccessControlList getPermissions( final NodePath nodePath )
@@ -202,7 +200,7 @@ abstract class AbstractNodeCommand
         return node != null ? node.getPermissions() : AccessControlList.empty();
     }
 
-    public static class Builder<B extends Builder>
+    public static abstract class Builder<B extends Builder>
     {
         IndexService indexService;
 
@@ -217,6 +215,7 @@ abstract class AbstractNodeCommand
         Builder()
         {
         }
+
 
         @SuppressWarnings("unchecked")
         public B indexService( final IndexService indexService )
@@ -259,6 +258,7 @@ abstract class AbstractNodeCommand
             Preconditions.checkNotNull( versionService, "workspaceService not set" );
             Preconditions.checkNotNull( nodeDao, "nodeDao not set" );
             Preconditions.checkNotNull( workspaceService, "workspaceService not set" );
+            Preconditions.checkNotNull( queryService, "workspaceService not set" );
         }
     }
 }

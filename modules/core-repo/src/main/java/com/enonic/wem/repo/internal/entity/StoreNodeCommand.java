@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.Node;
@@ -61,8 +63,15 @@ public class StoreNodeCommand
             return this;
         }
 
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( this.node );
+        }
+
         public StoreNodeCommand build()
         {
+            this.validate();
             return new StoreNodeCommand( this );
         }
     }

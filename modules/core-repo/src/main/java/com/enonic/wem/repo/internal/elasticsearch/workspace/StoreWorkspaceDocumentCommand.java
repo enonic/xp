@@ -51,6 +51,7 @@ public class StoreWorkspaceDocumentCommand
             source( WorkspaceXContentBuilderFactory.create( document, this.workspace ) ).
             id( workspaceDocumentId.toString() ).
             parent( new NodeVersionDocumentId( document.getNode().id(), document.getNodeVersionId() ).toString() ).
+            routing( document.getNode().id().toString() ).
             refresh( DEFAULT_REFRESH );
 
         elasticsearchDao.store( publish );

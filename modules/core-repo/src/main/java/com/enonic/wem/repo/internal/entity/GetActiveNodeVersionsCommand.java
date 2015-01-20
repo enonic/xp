@@ -42,15 +42,11 @@ public class GetActiveNodeVersionsCommand
         {
             final Context context = ContextAccessor.current();
 
-            final NodeVersionId currentVersion = this.queryService.get( this.nodeId, IndexContext.create().
-                workspace( workspace ).
-                repositoryId( context.getRepositoryId() ).
-                authInfo( context.getAuthInfo() ).
-                build() );
+            final NodeVersionId nodeVersionId = this.queryService.get( this.nodeId, IndexContext.from( context ) );
 
-            if ( currentVersion != null )
+            if ( nodeVersionId != null )
             {
-                builder.add( workspace, this.versionService.getVersion( currentVersion, context.getRepositoryId() ) );
+                builder.add( workspace, this.versionService.getVersion( nodeVersionId, context.getRepositoryId() ) );
             }
         }
         return builder.build();
@@ -80,7 +76,7 @@ public class GetActiveNodeVersionsCommand
             return this;
         }
 
-        protected void validate()
+        void validate()
         {
             Preconditions.checkNotNull( this.nodeId );
             Preconditions.checkNotNull( this.workspaces );

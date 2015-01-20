@@ -2,6 +2,8 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.util.LinkedHashSet;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.Node;
@@ -95,6 +97,12 @@ public class SetNodeChildOrderCommand
         {
             this.childOrder = childOrder;
             return this;
+        }
+
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( nodeId );
         }
 
         public SetNodeChildOrderCommand build()

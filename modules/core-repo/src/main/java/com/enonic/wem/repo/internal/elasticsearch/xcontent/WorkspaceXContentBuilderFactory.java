@@ -10,15 +10,16 @@ import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
 public class WorkspaceXContentBuilderFactory
     extends AbstractXContentBuilderFactor
 {
-    public static XContentBuilder create( final StoreWorkspaceDocument storeWorkspaceDocument, final Workspace workspace )
+    public static XContentBuilder create( final StoreWorkspaceDocument doc, final Workspace workspace )
     {
         try
         {
             final XContentBuilder builder = startBuilder();
-
-            addField( builder, WorkspaceIndexPath.VERSION_ID.getPath(), storeWorkspaceDocument.getNodeVersionId().toString() );
+            addField( builder, WorkspaceIndexPath.VERSION_ID.getPath(), doc.getNodeVersionId().toString() );
             addField( builder, WorkspaceIndexPath.WORKSPACE_ID.getPath(), workspace.getName() );
-            addField( builder, WorkspaceIndexPath.NODE_ID.getPath(), storeWorkspaceDocument.getNode().toString() );
+            addField( builder, WorkspaceIndexPath.NODE_ID.getPath(), doc.getNode().id().toString() );
+            addField( builder, WorkspaceIndexPath.STATE.getPath(), doc.getNodeWorkspaceState().name() );
+            addField( builder, WorkspaceIndexPath.PATH.getPath(), doc.getNode().path().toString() );
             endBuilder( builder );
             return builder;
         }

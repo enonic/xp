@@ -5,10 +5,13 @@ public class CompareStatus
     public enum Status
     {
         NEW,
+        NEW_TARGET,
         NEWER,
         OLDER,
         DELETED,
-        EQUAL
+        DELETED_TARGET,
+        EQUAL,
+        MOVED
     }
 
     private final Status status;

@@ -1,12 +1,14 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.query.expr.OrderExpressions;
+import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.NodeQuery;
+import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
-import com.enonic.wem.api.node.FindNodesByQueryResult;
-import com.enonic.wem.api.node.Nodes;
 
 public class FindNodesByQueryCommand
     extends AbstractNodeCommand
@@ -55,8 +57,15 @@ public class FindNodesByQueryCommand
             return this;
         }
 
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( this.query );
+        }
+
         public FindNodesByQueryCommand build()
         {
+            this.validate();
             return new FindNodesByQueryCommand( this );
         }
     }

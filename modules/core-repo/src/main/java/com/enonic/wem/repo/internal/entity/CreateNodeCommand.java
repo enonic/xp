@@ -284,7 +284,7 @@ public final class CreateNodeCommand
             return this;
         }
 
-        protected void validate()
+        void validate()
         {
             super.validate();
             Preconditions.checkNotNull( params );
@@ -292,6 +292,7 @@ public final class CreateNodeCommand
 
         public CreateNodeCommand build()
         {
+            this.validate();
             return new CreateNodeCommand( this );
         }
     }

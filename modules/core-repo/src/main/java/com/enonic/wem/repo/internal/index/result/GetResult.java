@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.index.result;
 
+import com.enonic.wem.api.index.IndexPath;
+
 public class GetResult
 {
     private final SearchResultEntry result;
@@ -22,5 +24,17 @@ public class GetResult
     public SearchResultEntry getSearchResult()
     {
         return result;
+    }
+
+    public String getStringValue( final IndexPath indexPath, final boolean failOnMissing )
+    {
+        final SearchResultFieldValue fieldValue = this.result.getField( indexPath.getPath(), failOnMissing );
+
+        if ( fieldValue == null )
+        {
+            return null;
+        }
+
+        return fieldValue.getValue() != null ? fieldValue.getValue().toString() : null;
     }
 }

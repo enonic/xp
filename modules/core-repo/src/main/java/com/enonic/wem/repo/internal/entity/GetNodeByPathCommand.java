@@ -1,11 +1,13 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.wem.repo.internal.index.IndexContext;
 
 public class GetNodeByPathCommand
     extends AbstractNodeCommand
@@ -69,8 +71,15 @@ public class GetNodeByPathCommand
             return this;
         }
 
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( this.path );
+        }
+
         public GetNodeByPathCommand build()
         {
+            this.validate();
             return new GetNodeByPathCommand( this );
         }
     }

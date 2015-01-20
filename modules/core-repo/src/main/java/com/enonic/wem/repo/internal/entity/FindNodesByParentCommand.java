@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.ChildOrder;
@@ -103,8 +105,15 @@ public class FindNodesByParentCommand
             return this;
         }
 
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( this.params );
+        }
+
         public FindNodesByParentCommand build()
         {
+            this.validate();
             return new FindNodesByParentCommand( this );
         }
     }

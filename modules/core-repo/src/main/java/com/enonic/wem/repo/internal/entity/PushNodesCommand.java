@@ -144,8 +144,9 @@ public class PushNodesCommand
             return new PushNodesCommand( this );
         }
 
-        protected void validate()
+        void validate()
         {
+            super.validate();
             Preconditions.checkNotNull( target );
             Preconditions.checkNotNull( ids );
         }

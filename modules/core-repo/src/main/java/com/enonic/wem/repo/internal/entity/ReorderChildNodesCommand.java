@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.ReorderChildNodeParams;
 import com.enonic.wem.api.node.ReorderChildNodesParams;
@@ -65,8 +67,15 @@ public class ReorderChildNodesCommand
             return this;
         }
 
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( this.params );
+        }
+
         public ReorderChildNodesCommand build()
         {
+            this.validate();
             return new ReorderChildNodesCommand( this );
         }
     }

@@ -3,6 +3,8 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.time.Instant;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.EditableNode;
 import com.enonic.wem.api.node.Node;
@@ -117,8 +119,16 @@ public final class UpdateNodeCommand
             return this;
         }
 
+        void validate()
+        {
+            super.validate();
+            Preconditions.checkNotNull( this.params );
+            Preconditions.checkNotNull( this.binaryBlobStore );
+        }
+
         public UpdateNodeCommand build()
         {
+            this.validate();
             return new UpdateNodeCommand( this );
         }
     }
