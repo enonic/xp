@@ -11,8 +11,6 @@ import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.internal.index.IndexType;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 
 import static org.junit.Assert.*;
 
@@ -23,14 +21,14 @@ public class NodeVersionDiffCommandTest
     public void only_in_source()
         throws Exception
     {
-        final Node node = CTX_DEFAULT.callWith( () -> createNode( CreateNodeParams.create().
+        final Node node = createNode( CreateNodeParams.create().
             name( "mynode" ).
             parent( NodePath.ROOT ).
-            build() ) );
+            build() );
 
         assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
 
-        CTX_DEFAULT.runWith( () -> doPushNode( WS_OTHER, node ) );
+        doPushNode( WS_OTHER, node );
 
         assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
         assertEquals( 0, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
@@ -45,7 +43,7 @@ public class NodeVersionDiffCommandTest
             parent( NodePath.ROOT ).
             build() ) );
 
-        CTX_DEFAULT.runWith( () -> doPushNode( WS_OTHER, node ) );
+        doPushNode( WS_OTHER, node );
 
         assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
         assertEquals( 0, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
@@ -55,14 +53,14 @@ public class NodeVersionDiffCommandTest
     public void newer_in_source()
         throws Exception
     {
-        final Node node = CTX_DEFAULT.callWith( () -> createNode( CreateNodeParams.create().
+        final Node node = createNode( CreateNodeParams.create().
             name( "mynode" ).
             parent( NodePath.ROOT ).
-            build() ) );
+            build() );
 
-        CTX_DEFAULT.runWith( () -> doPushNode( WS_OTHER, node ) );
+        doPushNode( WS_OTHER, node );
 
-        CTX_DEFAULT.runWith( () -> doUpdateNode( node ) );
+        doUpdateNode( node );
 
         assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
         assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
@@ -72,12 +70,12 @@ public class NodeVersionDiffCommandTest
     public void newer_in_target()
         throws Exception
     {
-        final Node node = CTX_DEFAULT.callWith( () -> createNode( CreateNodeParams.create().
+        final Node node = createNode( CreateNodeParams.create().
             name( "mynode" ).
             parent( NodePath.ROOT ).
-            build() ) );
+            build() );
 
-        CTX_DEFAULT.runWith( () -> doPushNode( WS_OTHER, node ) );
+        doPushNode( WS_OTHER, node );
 
         CTX_OTHER.runWith( () -> doUpdateNode( node ) );
 
@@ -85,18 +83,130 @@ public class NodeVersionDiffCommandTest
         assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
     }
 
-    private NodeVersionDiffResult getDiff( final Workspace source, final Workspace target )
+    @Test
+    public void moved_in_source()
+        throws Exception
     {
-        return this.versionService.diff( NodeVersionDiffQuery.create().
-            target( target ).
-            source( source ).
-            build(), TEST_REPO.getId() );
+        final Node node = createNode( CreateNodeParams.create().
+            name( "mynode" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            name( "mynode2" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        doPushNode( WS_OTHER, node );
+        doPushNode( WS_OTHER, node2 );
+
+        assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
+
+        doMoveNode( node, node2 );
+
+        assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
+        assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
     }
 
-    private void printIndexContent()
+    @Test
+    public void moved_in_target()
+        throws Exception
     {
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( TEST_REPO.getId() ), IndexType.VERSION.getName() );
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( TEST_REPO.getId() ), IndexType.WORKSPACE.getName() );
+        final Node node = createNode( CreateNodeParams.create().
+            name( "mynode" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            name( "mynode2" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        doPushNode( WS_OTHER, node );
+        doPushNode( WS_OTHER, node2 );
+
+        assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
+
+        CTX_OTHER.runWith( () -> doMoveNode( node, node2 ) );
+
+        assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
+        assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
+    }
+
+    @Test
+    public void deleted_in_source()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            name( "mynode" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            name( "mynode2" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        doPushNode( WS_OTHER, node );
+        doPushNode( WS_OTHER, node2 );
+
+        assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
+
+        doDeleteNode( node.id() );
+
+        assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
+        //assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
+    }
+
+    @Test
+    public void deleted_in_target()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            name( "mynode" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            name( "mynode2" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        doPushNode( WS_OTHER, node );
+        doPushNode( WS_OTHER, node2 );
+
+        assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
+
+        CTX_OTHER.runWith( () -> doDeleteNode( node.id() ) );
+
+        assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
+        assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
+    }
+
+    private void doMoveNode( final Node node, final Node newParent )
+    {
+        MoveNodeCommand.create().
+            newParent( newParent.path() ).
+            id( node.id() ).
+            queryService( this.queryService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            indexService( this.indexService ).
+            workspaceService( this.workspaceService ).
+            build().
+            execute();
+    }
+
+    private NodeVersionDiffResult getDiff( final Workspace source, final Workspace target )
+    {
+        return NodeVersionDiffCommand.create().
+            versionService( this.versionService ).
+            query( NodeVersionDiffQuery.create().
+                target( target ).
+                source( source ).
+                build() ).
+            build().
+            execute();
     }
 
     private Node doUpdateNode( final Node node )
@@ -131,5 +241,4 @@ public class NodeVersionDiffCommandTest
             build().
             execute();
     }
-
 }

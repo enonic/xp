@@ -14,8 +14,6 @@ import static junit.framework.Assert.assertEquals;
 public class CompareNodesCommandTest
     extends AbstractNodeTest
 {
-
-
     @Test
     public void compare_nodes()
         throws Exception

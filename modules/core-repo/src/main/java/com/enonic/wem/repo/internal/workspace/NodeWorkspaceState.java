@@ -12,7 +12,7 @@ public enum NodeWorkspaceState
         this.value = value;
     }
 
-    String value()
+    public String value()
     {
         return this.value;
     }
