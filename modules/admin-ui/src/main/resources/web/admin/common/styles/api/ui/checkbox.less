@@ -1,6 +1,5 @@
 .checkbox {
   position: relative;
-  overflow: hidden;
 
   &:hover {
     label {
@@ -11,19 +10,52 @@
 
   label {
     color: #777 !important;
-    background-image: url("../images/admin-unchecked.gif");
-    background-repeat: no-repeat;
+    display: block;
     padding-left: 20px;
     white-space: nowrap;
+
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      background: url("../images/admin-unchecked.gif") -1px -2px no-repeat;
+      width: 13px;
+      height: 13px;
+      top: 0;
+      left: 0;
+    }
   }
 
   input[type="checkbox"] {
-    left: -100px;
+    // Hide checkbox, instead of using `left: -9999px;`
     position: absolute;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    // end `hide` block
+
+    &:focus + label:before {
+      .box-shadow(inset 0 0 3px @admin-blue, 0 0 5px @admin-input-blue);
+
+    }
 
     &:checked + label {
-      background-image: url("../images/admin-checked.gif");
       color: #333 !important;
+
+      &:before {
+        content: '';
+        display: block;
+        position: absolute;
+        background: url("../images/admin-checked.gif") -1px -2px no-repeat;
+        width: 13px;
+        height: 13px;
+        top: 0;
+        left: 0;
+      }
     }
   }
 }
