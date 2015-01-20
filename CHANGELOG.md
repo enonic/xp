@@ -9,6 +9,7 @@ Bugfixes:
     descriptor. Making it also impossible to add components (CMS-4837)
   - Included properties metadata and attachments in Content.equals (TypeScript) (CMS-4837)
   - Made the ImageSelector input type work in Live Edit (CMS-4922)
+  - Content Manager grid not updated correctly after uploading of Media files (CMS-4859)
 
 Features:
 
@@ -17,6 +18,7 @@ Features:
     Region and Component's (CMS-4837)
   - PageModel is now able to detect any changes in the PageRegions object and can then switch mode
     to "Forced Template" upon any changes (CMS-4837)
+  - Added language and owner fields to Content
 
 Refactoring:
 
