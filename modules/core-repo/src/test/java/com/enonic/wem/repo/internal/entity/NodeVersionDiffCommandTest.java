@@ -35,6 +35,43 @@ public class NodeVersionDiffCommandTest
     }
 
     @Test
+    public void only_in_source_with_path()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            name( "mynode" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node child1 = createNode( CreateNodeParams.create().
+            name( "mynode" ).
+            parent( node.path() ).
+            build() );
+
+        final Node child1_1 = createNode( CreateNodeParams.create().
+            name( "mynode" ).
+            parent( child1.path() ).
+            build() );
+
+        final Node child1_1_1 = createNode( CreateNodeParams.create().
+            name( "mynode" ).
+            parent( child1_1.path() ).
+            build() );
+
+        assertEquals( 4, getDiff( WS_DEFAULT, WS_OTHER, NodePath.ROOT ).getNodesWithDifferences().getSize() );
+        assertEquals( 4, getDiff( WS_DEFAULT, WS_OTHER, node.path() ).getNodesWithDifferences().getSize() );
+        assertEquals( 3, getDiff( WS_DEFAULT, WS_OTHER, child1.path() ).getNodesWithDifferences().getSize() );
+        assertEquals( 2, getDiff( WS_DEFAULT, WS_OTHER, child1_1.path() ).getNodesWithDifferences().getSize() );
+        assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER, child1_1_1.path() ).getNodesWithDifferences().getSize() );
+
+        doPushNode( WS_OTHER, node );
+        doPushNode( WS_OTHER, child1 );
+        doPushNode( WS_OTHER, child1_1 );
+
+        assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER, node.path() ).getNodesWithDifferences().getSize() );
+    }
+
+    @Test
     public void same_version()
         throws Exception
     {
@@ -199,12 +236,24 @@ public class NodeVersionDiffCommandTest
 
     private NodeVersionDiffResult getDiff( final Workspace source, final Workspace target )
     {
+        return getDiff( source, target, null );
+    }
+
+
+    private NodeVersionDiffResult getDiff( final Workspace source, final Workspace target, final NodePath nodePath )
+    {
+        final NodeVersionDiffQuery.Builder queryBuilder = NodeVersionDiffQuery.create().
+            target( target ).
+            source( source );
+
+        if ( nodePath != null )
+        {
+            queryBuilder.nodePath( nodePath );
+        }
+
         return NodeVersionDiffCommand.create().
             versionService( this.versionService ).
-            query( NodeVersionDiffQuery.create().
-                target( target ).
-                source( source ).
-                build() ).
+            query( queryBuilder.build() ).
             build().
             execute();
     }
@@ -228,11 +277,11 @@ public class NodeVersionDiffCommandTest
             execute();
     }
 
-    private PushNodesResult doPushNode( final Workspace workspace, final Node createdNode )
+    private PushNodesResult doPushNode( final Workspace target, final Node createdNode )
     {
         return PushNodesCommand.create().
             ids( NodeIds.from( createdNode.id() ) ).
-            target( workspace ).
+            target( target ).
             indexService( this.indexService ).
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).

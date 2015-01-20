@@ -4,7 +4,9 @@ import com.enonic.wem.api.workspace.Workspace;
 
 public class NodeVersionDiffQuery
 {
-    private final static int DEFAULT_SIZE = 10;
+    private final NodeId nodeId;
+
+    private final NodePath nodePath;
 
     private final Workspace source;
 
@@ -16,10 +18,17 @@ public class NodeVersionDiffQuery
 
     private NodeVersionDiffQuery( Builder builder )
     {
+        nodeId = builder.nodeId;
+        nodePath = builder.nodePath;
         source = builder.source;
         target = builder.target;
         size = builder.size;
         from = builder.from;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public Workspace getSource()
@@ -32,7 +41,6 @@ public class NodeVersionDiffQuery
         return target;
     }
 
-
     public int getSize()
     {
         return size;
@@ -43,23 +51,39 @@ public class NodeVersionDiffQuery
         return from;
     }
 
-    public static Builder create()
+    public NodePath getNodePath()
     {
-        return new Builder();
+        return nodePath;
     }
 
     public static final class Builder
     {
+        private NodeId nodeId;
+
+        private NodePath nodePath;
+
         private Workspace source;
 
         private Workspace target;
 
-        private int size = DEFAULT_SIZE;
+        private int size = -1;
 
         private int from = 0;
 
         private Builder()
         {
+        }
+
+        public Builder nodeId( final NodeId nodeId )
+        {
+            this.nodeId = nodeId;
+            return this;
+        }
+
+        public Builder nodePath( final NodePath nodePath )
+        {
+            this.nodePath = nodePath;
+            return this;
         }
 
         public Builder source( final Workspace source )
@@ -74,13 +98,13 @@ public class NodeVersionDiffQuery
             return this;
         }
 
-        public Builder size( int size )
+        public Builder size( final int size )
         {
             this.size = size;
             return this;
         }
 
-        public Builder from( int from )
+        public Builder from( final int from )
         {
             this.from = from;
             return this;

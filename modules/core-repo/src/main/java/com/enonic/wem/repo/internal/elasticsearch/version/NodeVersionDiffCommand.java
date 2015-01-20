@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.elasticsearch.version;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.HasChildQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.index.query.WildcardQueryBuilder;
 
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeVersionDiffQuery;
@@ -36,33 +37,26 @@ class NodeVersionDiffCommand
         final Workspace sourceWs = this.query.getSource();
         final Workspace targetWs = this.query.getTarget();
 
-        final BoolQueryBuilder sourceOnly = new BoolQueryBuilder().
-            must( isInWorkspace( indexType, sourceWs ) ).
-            mustNot( isInWorkspace( indexType, targetWs ) );
+        final BoolQueryBuilder inSourceOnly = onlyInQuery( indexType, sourceWs, targetWs );
 
-        final BoolQueryBuilder targetOnly = new BoolQueryBuilder().
-            must( isInWorkspace( indexType, targetWs ) ).
-            mustNot( isInWorkspace( indexType, sourceWs ) );
+        final BoolQueryBuilder inTargetOnly = onlyInQuery( indexType, targetWs, sourceWs );
 
-        final BoolQueryBuilder deletedSourceOnly = new BoolQueryBuilder().
-            must( deletedInWorkspace( indexType, sourceWs ) ).
-            mustNot( deletedInWorkspace( indexType, targetWs ) );
+        final BoolQueryBuilder deletedInSourceOnly = deletedOnlyQuery( indexType, sourceWs, targetWs );
 
-        final BoolQueryBuilder deletedTargetOnly = new BoolQueryBuilder().
-            must( deletedInWorkspace( indexType, targetWs ) ).
-            mustNot( deletedInWorkspace( indexType, sourceWs ) );
+        final BoolQueryBuilder deletedInTargetOnly = deletedOnlyQuery( indexType, targetWs, sourceWs );
+
+        final BoolQueryBuilder sourceTargetCompares =
+            joinOnlyInQueries( inSourceOnly, inTargetOnly, deletedInSourceOnly, deletedInTargetOnly );
+
+        final BoolQueryBuilder query = wrapInPathQueryIfNecessary( indexType, sourceTargetCompares );
 
         final ElasticsearchQuery esQuery = ElasticsearchQuery.create().
             index( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
             indexType( IndexType.VERSION.getName() ).
-            query( new BoolQueryBuilder().
-                should( sourceOnly ).
-                should( targetOnly ).
-                should( deletedSourceOnly ).
-                should( deletedTargetOnly ) ).
+            query( query ).
             setReturnFields( ReturnFields.from( VersionIndexPath.NODE_ID, VersionIndexPath.VERSION_ID, VersionIndexPath.TIMESTAMP ) ).
-            size( query.getSize() ).
-            from( query.getFrom() ).
+            size( this.query.getSize() ).
+            from( this.query.getFrom() ).
             build();
 
         final SearchResult searchResult = elasticsearchDao.find( esQuery );
@@ -75,6 +69,47 @@ class NodeVersionDiffCommand
         }
 
         return builder.build();
+    }
+
+    private BoolQueryBuilder deletedOnlyQuery( final String indexType, final Workspace sourceWs, final Workspace targetWs )
+    {
+        return new BoolQueryBuilder().
+            must( deletedInWorkspace( indexType, sourceWs ) ).
+            mustNot( deletedInWorkspace( indexType, targetWs ) );
+    }
+
+    private BoolQueryBuilder onlyInQuery( final String indexType, final Workspace sourceWs, final Workspace targetWs )
+    {
+        return new BoolQueryBuilder().
+            must( isInWorkspace( indexType, sourceWs ) ).
+            mustNot( isInWorkspace( indexType, targetWs ) );
+    }
+
+    private BoolQueryBuilder wrapInPathQueryIfNecessary( final String indexType, final BoolQueryBuilder sourceTargetCompares )
+    {
+        if ( this.query.getNodePath() != null )
+        {
+            return new BoolQueryBuilder().
+                must( hasPath( indexType ) ).
+                must( sourceTargetCompares );
+        }
+        return sourceTargetCompares;
+    }
+
+    private BoolQueryBuilder joinOnlyInQueries( final BoolQueryBuilder inSourceOnly, final BoolQueryBuilder inTargetOnly,
+                                                final BoolQueryBuilder deletedInSourceOnly, final BoolQueryBuilder deletedInTargetOnly )
+    {
+        return new BoolQueryBuilder().
+            should( inSourceOnly ).
+            should( inTargetOnly ).
+            should( deletedInSourceOnly ).
+            should( deletedInTargetOnly );
+    }
+
+    private HasChildQueryBuilder hasPath( final String indexType )
+    {
+        return new HasChildQueryBuilder( indexType, new WildcardQueryBuilder( WorkspaceIndexPath.PATH.getPath(),
+                                                                              this.query.getNodePath().toString() + "*" ) );
     }
 
     private HasChildQueryBuilder deletedInWorkspace( final String indexType, final Workspace sourceWs )
