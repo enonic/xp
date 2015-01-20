@@ -7,9 +7,16 @@ var expectedJson = {
     "_name": "mycontent",
     "_path": "/a/b/mycontent",
     "data": {
-        "a": 2.0,
-        "b": "2",
-        "z": "99"
+        "a": [2.0],
+        "b": ["2"],
+        "c": [{
+            "d": ["true"]
+        }, {
+            "d": ["true"],
+            "e": ["3", "4", "5"],
+            "f": ["2"]
+        }],
+        "z": ["99"]
     },
     "displayName": "Modified",
     "draft": false,
@@ -18,22 +25,22 @@ var expectedJson = {
     "isSite": false,
     "meta": {
         "mymodule:myschema": {
-            "a": "1"
+            "a": ["1"]
         },
         "mymodule:other": {
-            "name": "test"
+            "name": ["test"]
         }
     },
     "page": {
         "config": {
-            "a": "1"
+            "a": ["1"]
         },
         "controller": "mymodule:mycontroller",
         "regions": {
             "top": {
                 "components": [{
                     "config": {
-                        "a": "1"
+                        "a": ["1"]
                     },
                     "descriptor": "mymodule:mypart",
                     "name": "mypart",
@@ -41,7 +48,7 @@ var expectedJson = {
                     "type": "part"
                 }, {
                     "config": {
-                        "a": "1"
+                        "a": ["1"]
                     },
                     "descriptor": "mymodule:mylayout",
                     "name": "mylayout",
@@ -50,7 +57,7 @@ var expectedJson = {
                         "bottom": {
                             "components": [{
                                 "config": {
-                                    "a": "1"
+                                    "a": ["1"]
                                 },
                                 "descriptor": "mymodule:mypart",
                                 "name": "mypart",
@@ -71,7 +78,6 @@ function editor(c) {
     c.displayName = 'Modified';
     c.data.a++;
     c.data.z = '99';
-    delete c.data.c;
 
     c.meta['mymodule:other'] = {
         name: 'test'

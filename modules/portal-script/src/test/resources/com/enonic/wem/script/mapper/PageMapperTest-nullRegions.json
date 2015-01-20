@@ -2,6 +2,6 @@
   "template": null,
   "controller": "mymodule:default",
   "config": {
-    "a": "b"
+    "a": ["b"]
   }
 }

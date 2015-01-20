@@ -1,6 +1,6 @@
 var expectedJson = {
     "config": {
-        "a": "1"
+        "a": ["1"]
     },
     "descriptor": "mymodule:mylayout",
     "name": "mylayout",
@@ -9,7 +9,7 @@ var expectedJson = {
         "bottom": {
             "components": [{
                 "config": {
-                    "a": "1"
+                    "a": ["1"]
                 },
                 "descriptor": "mymodule:mypart",
                 "name": "mypart",

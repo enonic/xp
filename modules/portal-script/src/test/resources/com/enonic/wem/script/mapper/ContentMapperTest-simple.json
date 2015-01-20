@@ -18,61 +18,65 @@
       true,
       false
     ],
-    "long": 1,
+    "long": [1],
     "longs": [
       1,
       2,
       3
     ],
-    "double": 2.2,
+    "double": [2.2],
     "doubles": [
       1.1,
       2.2,
       3.3
     ],
-    "string": "a",
+    "string": ["a"],
     "strings": [
       "a",
       "b",
       "c"
     ],
-    "stringEmpty": null,
-    "stringNull": null,
-    "set": {
-      "property": "value"
-    },
-    "xml": "<xml><my-xml hello='world'/></xml>",
-    "htmlPart": "<p>some<b>html</b></p>",
-    "binaryReference": "abc",
-    "link": "/my/content",
-    "geoPoint": "1.1,-1.1",
+    "stringEmpty": [""],
+    "stringNull": [null],
+    "set": [
+      {
+        "property": ["value"]
+      }
+    ],
+    "xml": ["<xml><my-xml hello='world'/></xml>"],
+    "htmlPart": ["<p>some<b>html</b></p>"],
+    "binaryReference": ["abc"],
+    "link": ["/my/content"],
+    "geoPoint": ["1.1,-1.1"],
     "geoPoints": [
       "1.1,-1.1",
       "2.2,-2.2"
     ],
-    "instant": "+1000000000-12-31T23:59:59.999999999Z",
-    "localDate": "2014-01-31",
-    "localDateTime": "2014-01-31T10:30:05",
-    "c": {
-      "d": true,
-      "e": [
-        "3",
-        "4",
-        "5"
-      ],
-      "f": 2
-    }
+    "instant": ["+1000000000-12-31T23:59:59.999999999Z"],
+    "localDate": ["2014-01-31"],
+    "localDateTime": ["2014-01-31T10:30:05"],
+    "c": [
+      {
+        "d": [true],
+        "e": [
+          "3",
+          "4",
+          "5"
+        ],
+        "f": [2]
+      }
+    ]
   },
   "meta": {
     "mymodule:myschema": {
-      "a": "1"
+      "a": ["1"]
     }
   },
   "page": {
     "template": null,
     "controller": "mymodule:mycontroller",
     "config": {
-      "a": "1"
+      "a": ["1"]
     },
     "regions": {
       "top": {
@@ -83,7 +87,7 @@
             "type": "part",
             "descriptor": "mymodule:mypart",
             "config": {
-              "a": "1"
+              "a": ["1"]
             }
           },
           {
@@ -92,7 +96,7 @@
             "type": "layout",
             "descriptor": "mymodule:mylayout",
             "config": {
-              "a": "1"
+              "a": ["1"]
             },
             "regions": {
               "bottom": {
@@ -103,7 +107,7 @@
                     "type": "part",
                     "descriptor": "mymodule:mypart",
                     "config": {
-                      "a": "1"
+                      "a": ["1"]
                     }
                   }
                 ]

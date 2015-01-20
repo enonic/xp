@@ -3,15 +3,15 @@ var expectedJson = {
     "_name": "mycontent",
     "_path": "/a/b/mycontent",
     "data": {
-        "a": 1,
-        "b": 2,
+        "a": [1],
+        "b": [2],
         "c": ["1", "2"],
-        "d": {
-            "e": {
-                "f": 3.6,
-                "g": true
-            }
-        }
+        "d": [{
+            "e": [{
+                "f": [3.6],
+                "g": [true]
+            }]
+        }]
     },
     "displayName": "My Content",
     "draft": true,
@@ -20,7 +20,7 @@ var expectedJson = {
     "isSite": false,
     "meta": {
         "test:": {
-            "a": 1
+            "a": [1]
         }
     },
     "page": {},

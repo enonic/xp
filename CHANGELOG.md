@@ -19,8 +19,6 @@ Features:
   - PageModel is now able to detect any changes in the PageRegions object and can then switch mode
     to "Forced Template" upon any changes (CMS-4837)
   - Added language and owner fields to Content
-  - Simplify property-tree values in portal json result. Empty arrays is null, arrays with one value is
-    a single value and all other arrays are still arrays. (CMS-4924)
 
 Refactoring:
 
