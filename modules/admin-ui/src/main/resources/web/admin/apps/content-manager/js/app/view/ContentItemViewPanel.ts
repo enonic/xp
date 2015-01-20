@@ -55,7 +55,7 @@ module app.view {
                 if (this.getItem()) {
                     app.Router.setHash("view/" + this.getItem().getModel().getId());
                 }
-            })
+            });
         }
 
         setItem(item: api.app.view.ViewItem<api.content.ContentSummary>) {
