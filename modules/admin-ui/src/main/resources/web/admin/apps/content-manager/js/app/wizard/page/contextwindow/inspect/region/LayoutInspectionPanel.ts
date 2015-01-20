@@ -42,6 +42,7 @@ module app.wizard.page.contextwindow.inspect.region {
             
             var descriptorsRequest = new GetLayoutDescriptorsByModulesRequest(liveEditModel.getSiteModel().getModuleKeys());
             var loader = new LayoutDescriptorLoader(descriptorsRequest);
+            loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
             this.componentSelector = new LayoutDescriptorComboBox(loader);
             loader.load();
 

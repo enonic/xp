@@ -39,7 +39,7 @@ module app.wizard.page.contextwindow.inspect.page {
 
             var loader = new PageTemplateLoader(new GetPageTemplatesByCanRenderRequest(this.siteId,
                 this.contentType));
-
+            loader.setComparator(new api.content.page.PageTemplateByDisplayNameComparator());
             loader.onLoadedData((event: LoadedDataEvent<PageTemplate>) => {
 
                 event.getData().forEach((pageTemplate: PageTemplate) => {

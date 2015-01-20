@@ -47,10 +47,12 @@ module api.liveedit.image {
             });
             this.uploadButton.hide();
 
+            var loader:api.content.ContentSummaryLoader = new api.content.ContentSummaryLoader();
+            loader.setComparator(new api.content.ContentByDisplayNameComparator());
             this.comboBox = new api.content.ContentComboBoxBuilder().
                 setMaximumOccurrences(1).
                 setAllowedContentTypes([ContentTypeName.IMAGE.toString()]).
-                setLoader(new api.content.ContentSummaryLoader()).
+                setLoader(loader).
                 setMinWidth(270).
                 build();
             this.comboBox.addClass('image-placeholder');

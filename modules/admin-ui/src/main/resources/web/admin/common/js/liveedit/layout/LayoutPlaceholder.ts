@@ -20,6 +20,7 @@ module api.liveedit.layout {
             });
             var request = new api.content.page.region.GetLayoutDescriptorsByModulesRequest(layoutView.liveEditModel.getSiteModel().getModuleKeys());
             var loader = new api.content.page.region.LayoutDescriptorLoader(request);
+            loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
             this.comboBox = new api.content.page.region.LayoutDescriptorComboBox(loader);
             loader.load();
             this.comboBox.hide();
