@@ -42,6 +42,7 @@ Refactoring:
   - "Flattened" PageRegions, LayoutRegions with AbstractRegions and renamed it to Regions
   - Replaced usages of Property.getContentId with getReference and removed Property.getContentId and Value.getContentId
   - Generate java classes from XSD schema at build time (CMS-4917)
+  - Move the common code to the parent classes for tab menu (CMS-4874)
       
 ## RC1 (2015-01-13)
 
