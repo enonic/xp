@@ -7,10 +7,12 @@
   background: linear-gradient(@side, @startColor, @stopColor); /* W3C */
 }
 
-.box-shadow(@arguments) {
-  -webkit-box-shadow: @arguments;
-  -moz-box-shadow: @arguments;
-  box-shadow: @arguments;
+.box-shadow(@value1,@value2:X,...) {
+  @params: ~`"@{arguments}".replace(/[\[\]]|\,\sX/g, '')`;
+
+  -webkit-box-shadow: @params;
+  -moz-box-shadow: @params;
+  box-shadow: @params;
 }
 
 .border-radius(@size) {
