@@ -24,6 +24,8 @@ module api.util.loader {
 
         private loadingDataListeners: {(event: LoadingDataEvent):void}[] = [];
 
+        private comparator:Comparator<OBJECT>;
+
         constructor(request: api.rest.ResourceRequest<JSON, OBJECT[]>) {
             this.setRequest(request);
         }
@@ -36,6 +38,9 @@ module api.util.loader {
             this.notifyLoadingData();
             this.sendRequest().done((results: OBJECT[]) => {
                 this.results = results;
+                if (this.comparator) {
+                    this.results = results.sort(this.comparator.compare);
+                }
                 this.notifyLoadedData(results);
             });
         }
@@ -46,6 +51,11 @@ module api.util.loader {
 
         isLoaded(): boolean {
             return this.status == LoaderStatus.LOADED;
+        }
+
+        setComparator(comparator:Comparator<OBJECT>):BaseLoader<JSON, OBJECT> {
+            this.comparator = comparator;
+            return this;
         }
 
         setRequest(request: api.rest.ResourceRequest<JSON, OBJECT[]>) {

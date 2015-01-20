@@ -1,8 +1,8 @@
-module api.content {
+module api.content.page {
 
-    export class ContentByDisplayNameComparator implements api.Comparator<ContentSummary> {
+    export class PageTemplateByDisplayNameComparator implements api.Comparator<PageTemplate> {
 
-        compare(a:ContentSummary, b:ContentSummary):number {
+        compare(a:PageTemplate, b:PageTemplate):number {
             if (!a) {
                 return 1;
             } else {

@@ -26,7 +26,8 @@ module app.wizard.page.contextwindow.inspect.page {
             this.getPageDescriptorsByModulesRequest = new GetPageDescriptorsByModulesRequest([]);
 
             super('page-controller', {
-                loader: new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(this.getPageDescriptorsByModulesRequest)
+                loader: new api.util.loader.BaseLoader<PageDescriptorsJson, PageDescriptor>(this.getPageDescriptorsByModulesRequest).
+                    setComparator(new api.content.page.DescriptorByDisplayNameComparator())
             });
 
             this.onOptionSelected((event: OptionSelectedEvent<PageDescriptor>) => {

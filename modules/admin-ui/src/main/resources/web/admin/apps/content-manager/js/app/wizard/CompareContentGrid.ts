@@ -79,9 +79,9 @@ module app.wizard {
         sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
             var comparator: api.Comparator<TreeNode<ContentSummaryAndCompareStatus>>;
             if (this.getRoot().getCurrentRoot() == node) {
-                comparator = new api.content.ContentByDisplayNameComparator();
+                comparator = new api.content.ContentNodeByDisplayNameComparator();
             } else {
-                comparator = new api.content.ContentByModifiedTimeComparator();
+                comparator = new api.content.ContentNodeByModifiedTimeComparator();
             }
             var children: TreeNode<ContentSummaryAndCompareStatus>[] = node.getChildren().sort(comparator.compare);
             node.setChildren(children);

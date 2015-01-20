@@ -27,10 +27,12 @@ module app.wizard.page.contextwindow.inspect.region {
             super(<ComponentInspectionPanelConfig>{
                 iconClass: "live-edit-font-icon-image icon-xlarge"
             });
+            var loader = new api.content.ContentSummaryLoader();
+            loader.setComparator(new api.content.ContentByDisplayNameComparator());
             this.componentSelector = new api.content.ContentComboBoxBuilder().
                 setMaximumOccurrences(1).
                 setAllowedContentTypes([ContentTypeName.IMAGE.toString()]).
-                setLoader(new api.content.ContentSummaryLoader()).
+                setLoader(loader).
                 build();
 
             this.initSelectorListeners();
