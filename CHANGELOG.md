@@ -19,6 +19,7 @@ Features:
   - PageModel is now able to detect any changes in the PageRegions object and can then switch mode
     to "Forced Template" upon any changes (CMS-4837)
   - Added language and owner fields to Content
+  - Cleanup application selector by removing unused applications (CMS-4730)
 
 Refactoring:
 
