@@ -10,7 +10,7 @@ module app.wizard {
 
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
-        private owner: string;
+        private owner: api.security.PrincipalKey;
         private language: string;
 
         public static PROPERTY_OWNER: string = 'owner';
@@ -21,11 +21,11 @@ module app.wizard {
             this.owner = content.getOwner();
         }
 
-        getOwner(): string {
+        getOwner(): api.security.PrincipalKey {
             return this.owner;
         }
 
-        setOwner(owner: string, silent?: boolean): ContentSettingsModel {
+        setOwner(owner: api.security.PrincipalKey, silent?: boolean): ContentSettingsModel {
             if (!silent) {
                 this.notifyPropertyChanged(new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_OWNER, this.owner, owner));
             }

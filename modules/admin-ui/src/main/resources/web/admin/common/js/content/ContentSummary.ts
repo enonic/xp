@@ -25,7 +25,7 @@ module api.content {
 
         private modifier: string;
 
-        private owner: string;
+        private owner: api.security.PrincipalKey;
 
         private page: boolean;
 
@@ -107,7 +107,7 @@ module api.content {
             return this.thumbnail;
         }
 
-        getOwner(): string {
+        getOwner(): api.security.PrincipalKey {
             return this.owner;
         }
 
@@ -205,7 +205,7 @@ module api.content {
             if (!api.ObjectHelper.stringEquals(this.modifier, other.modifier)) {
                 return false;
             }
-            if (!api.ObjectHelper.stringEquals(this.owner, other.owner)) {
+            if (!api.ObjectHelper.objectEquals(this.owner, other.owner)) {
                 return false;
             }
             if (!api.ObjectHelper.booleanEquals(this.page, other.page)) {
@@ -267,7 +267,7 @@ module api.content {
 
         modifier: string;
 
-        owner: string;
+        owner: api.security.PrincipalKey;
 
         page: boolean;
 
@@ -324,7 +324,7 @@ module api.content {
             this.iconUrl = json.iconUrl;
             this.thumbnail = json.thumbnail ? Thumbnail.create().fromJson(json.thumbnail).build() : null;
             this.modifier = json.modifier;
-            this.owner = json.owner;
+            this.owner = json.owner ? api.security.PrincipalKey.fromString(json.owner) : null;
             this.page = json.isPage;
             this.draft = json.draft;
             this.language = json.language;

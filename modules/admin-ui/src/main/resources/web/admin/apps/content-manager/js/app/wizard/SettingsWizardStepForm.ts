@@ -50,12 +50,17 @@ module app.wizard {
         setModel(model: ContentSettingsModel) {
             api.util.assertNotNull(model, "Model can't be null");
 
-            this.ownerCombo.setValue(model.getOwner());
-            this.localeCombo.setValue(model.getLanguage());
+            if (model.getOwner()) {
+                this.ownerCombo.setValue(model.getOwner().toString());
+            }
+            if (model.getLanguage()) {
+                this.localeCombo.setValue(model.getLanguage())
+            }
 
             // 2-way data binding
             var ownerListener = () => {
-                model.setOwner(this.ownerCombo.getValue(), true);
+                var principals: api.security.Principal[] = this.ownerCombo.getSelectedDisplayValues();
+                model.setOwner(principals.length > 0 ? principals[0].getKey() : null, true);
             };
             this.ownerCombo.onOptionSelected((event) => ownerListener());
             this.ownerCombo.onOptionDeselected((option) => ownerListener());
