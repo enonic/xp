@@ -9,6 +9,8 @@ Bugfixes:
     descriptor. Making it also impossible to add components (CMS-4837)
   - Included properties metadata and attachments in Content.equals (TypeScript) (CMS-4837)
   - Made the ImageSelector input type work in Live Edit (CMS-4922)
+  - Content Manager grid not updated correctly after uploading of Media files (CMS-4859)
+  - When creating a site, anything you enter for module config does not save (CMS-4921)
 
 Features:
 
@@ -17,6 +19,8 @@ Features:
     Region and Component's (CMS-4837)
   - PageModel is now able to detect any changes in the PageRegions object and can then switch mode
     to "Forced Template" upon any changes (CMS-4837)
+  - Added language and owner fields to Content
+  - Cleanup application selector by removing unused applications (CMS-4730)
 
 Refactoring:
 
@@ -39,6 +43,7 @@ Refactoring:
   - "Flattened" PageRegions, LayoutRegions with AbstractRegions and renamed it to Regions
   - Replaced usages of Property.getContentId with getReference and removed Property.getContentId and Value.getContentId
   - Generate java classes from XSD schema at build time (CMS-4917)
+  - Move the common code to the parent classes for tab menu (CMS-4874)
       
 ## RC1 (2015-01-13)
 

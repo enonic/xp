@@ -20,7 +20,7 @@ module api.content {
 
         private language: string;
 
-        private owner: string;
+        private owner: api.security.PrincipalKey;
 
         constructor(id: string) {
             super();
@@ -68,7 +68,7 @@ module api.content {
             return this;
         }
 
-        setOwner(owner: string): UpdateContentRequest {
+        setOwner(owner: api.security.PrincipalKey): UpdateContentRequest {
             this.owner = owner;
             return this;
         }
@@ -83,7 +83,7 @@ module api.content {
                 displayName: this.displayName,
                 thumbnail: this.thumbnail ? this.thumbnail.toJson() : undefined,
                 language: this.language,
-                owner: this.owner
+                owner: this.owner ? this.owner.toString() : undefined
             };
         }
 

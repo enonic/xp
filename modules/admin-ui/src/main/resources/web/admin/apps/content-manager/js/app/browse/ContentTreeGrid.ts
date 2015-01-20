@@ -345,6 +345,9 @@ module app.browse {
 
             this.appendNode(data, false).then(() => {
                 if (parent) {
+                    var parentData = parent.getData();
+                    var contentSummary = new ContentSummaryBuilder(parentData.getContentSummary()).setHasChildren(true).build();
+                    this.updateNode(parentData.setContentSummary(contentSummary));
                     this.expandNode(parent);
                 }
             }).done();

@@ -1,7 +1,6 @@
 module api.content {
 
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
-    import ContentSummary = api.content.ContentSummary;
 
     export class ContentComboBox extends api.ui.selector.combobox.RichComboBox<ContentSummary> {
 
