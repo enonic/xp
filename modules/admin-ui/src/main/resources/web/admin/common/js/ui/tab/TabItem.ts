@@ -1,8 +1,6 @@
 module api.ui.tab {
 
-    export interface TabItemOptions {
-        removable?: boolean;
-    }
+    import Action = api.ui.Action;
 
     export class TabItem extends api.dom.LiEl implements api.ui.NavigationItem {
 
@@ -14,11 +12,9 @@ module api.ui.tab {
 
         private active: boolean = false;
 
-        private removable: boolean = true;
-
         private closeAction: api.ui.Action;
 
-        private removeButton: api.dom.ButtonEl;
+        private removeButton: api.ui.button.ActionButton;
 
         private labelChangedListeners: {(event: TabItemLabelChangedEvent):void}[] = [];
 
@@ -30,13 +26,10 @@ module api.ui.tab {
 
             super("tab-item" + (!classes ? "" : " " + classes));
 
-            var options = builder.options ? builder.options : {};
-
             this.labelEl = new api.dom.SpanEl('label');
             this.appendChild(this.labelEl);
 
             this.setLabel(builder.label);
-            this.removable = options.removable;
 
             this.closeAction = builder.closeAction;
 
@@ -50,20 +43,15 @@ module api.ui.tab {
         }
 
         private createRemoveButton() {
-            if (this.removable && !this.removeButton) {
-                this.removeButton = new api.dom.ButtonEl();
-                this.prependChild(this.removeButton);
+            if (this.closeAction && !this.removeButton) {
+
+                this.removeButton = new api.ui.button.ActionButton(this.closeAction);
+                this.removeButton.getTooltip().setSide(api.ui.Tooltip.SIDE_LEFT);
                 this.removeButton.onClicked((event: MouseEvent) => {
-                    if (this.removable) {
-                        if (this.getCloseAction() && this.getCloseAction().isEnabled()) {
-                            this.getCloseAction().execute();
-                        } else {
-                            this.notifyClosedListeners();
-                        }
-                    }
                     event.stopPropagation();
                     event.preventDefault();
                 });
+                this.prependChild(this.removeButton);
             }
         }
 
@@ -98,14 +86,6 @@ module api.ui.tab {
 
         isActive(): boolean {
             return this.active;
-        }
-
-        setRemovable(value: boolean) {
-            this.removable = value;
-        }
-
-        isRemovable(): boolean {
-            return this.removable;
         }
 
         getCloseAction(): api.ui.Action {
@@ -175,19 +155,12 @@ module api.ui.tab {
 
         label: string;
 
-        options: TabItemOptions;
-
         closeAction: api.ui.Action;
 
         closeButtonEnabled: boolean;
 
         setLabel(label: string): TabItemBuilder {
             this.label = label;
-            return this;
-        }
-
-        setOptions(options: TabItemOptions): TabItemBuilder {
-            this.options = options;
             return this;
         }
 

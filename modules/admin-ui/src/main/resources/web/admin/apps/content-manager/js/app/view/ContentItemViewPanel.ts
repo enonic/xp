@@ -20,6 +20,8 @@ module app.view {
 
         private closeAction: api.ui.Action;
 
+        private actions: api.ui.Action[];
+
         constructor() {
 
             this.deckPanel = new api.ui.panel.DeckPanel();
@@ -27,6 +29,8 @@ module app.view {
             this.editAction = new EditAction(this);
             this.deleteAction = new DeleteAction(this);
             this.closeAction = new CloseAction(this, true);
+
+            this.actions = [this.editAction, this.deleteAction, this.closeAction];
 
             var toolbar = new ContentItemViewToolbar({
                 editAction: this.editAction,
@@ -55,7 +59,7 @@ module app.view {
                 if (this.getItem()) {
                     app.Router.setHash("view/" + this.getItem().getModel().getId());
                 }
-            })
+            });
         }
 
         setItem(item: api.app.view.ViewItem<api.content.ContentSummary>) {
@@ -77,6 +81,10 @@ module app.view {
 
         public getCloseAction() : api.ui.Action {
             return this.closeAction;
+        }
+
+        getActions(): api.ui.Action[] {
+            return this.actions;
         }
 
     }

@@ -5,5 +5,7 @@ module api.app.wizard {
         enableActionsForNew();
 
         enableActionsForExisting(existing:T);
+
+        getActions(): api.ui.Action[];
     }
 }

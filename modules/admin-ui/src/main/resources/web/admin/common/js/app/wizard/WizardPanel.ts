@@ -202,7 +202,7 @@ module api.app.wizard {
         }
 
         getActions(): api.ui.Action[] {
-            return this.mainToolbar.getActions();
+            return this.actions.getActions();
         }
 
         getSteps(): api.app.wizard.WizardStep[] {

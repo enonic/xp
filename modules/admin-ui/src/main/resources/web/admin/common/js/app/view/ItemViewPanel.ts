@@ -18,6 +18,14 @@ module api.app.view {
             this.appendChild(this.panel);
         }
 
+        /*
+         As long as the close action is excluded from the toolbar,
+         we should add it along with the other toolbar actions to be able to close tabs.
+         */
+        getActions(): api.ui.Action[] {
+            return [];
+        }
+
         setItem(item: ViewItem<M>) {
             this.browseItem = item;
         }

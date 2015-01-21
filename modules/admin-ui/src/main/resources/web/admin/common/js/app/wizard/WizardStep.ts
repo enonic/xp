@@ -7,7 +7,7 @@ module api.app.wizard {
         private stepForm: WizardStepForm;
 
         constructor(label: string, stepForm: WizardStepForm) {
-            this.tabBarItem = new api.ui.tab.TabBarItemBuilder().setLabel(label).setOptions({removable: false}).build();
+            this.tabBarItem = new api.ui.tab.TabBarItemBuilder().setLabel(label).build();
             this.stepForm = stepForm;
         }
 

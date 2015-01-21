@@ -15,7 +15,6 @@ module api.app {
                     setTabId(new api.app.bar.AppBarTabId("hidden", "____home")).
                     build();
                 browseMenuItem.setVisibleInMenu(false);
-                browseMenuItem.setRemovable(false);
                 this.addNavigablePanel(browseMenuItem, browsePanel, true);
                 this.browsePanel = browsePanel;
             }
