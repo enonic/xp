@@ -10,19 +10,10 @@ module app.browse {
             this.appendChild(this.namesAndIconView);
         }
 
-        setObject(gridItem: UserTreeGridItem) {
+        setObject(gridItem:UserTreeGridItem, relativePath:boolean = false) {
             super.setObject(gridItem);
             this.namesAndIconView.setMainName(gridItem.getItemDisplayName());
-
-            var itemType = gridItem.getType();
-            if (itemType === UserTreeGridItemType.PRINCIPAL) {
-                this.namesAndIconView.setSubName(gridItem.getPrincipal().getKey().getId());
-
-            } else if (itemType === UserTreeGridItemType.USER_STORE) {
-                this.namesAndIconView.setSubName('/' + gridItem.getUserStore().getKey().toString());
-            } else {
-                this.namesAndIconView.setSubName(gridItem.getItemDisplayName().toLocaleLowerCase());
-            }
+            this.namesAndIconView.setSubName(this.resolveSubName(gridItem, relativePath));
 
             this.selectIconClass(gridItem);
         }
@@ -63,6 +54,28 @@ module app.browse {
             }
             }
 
+        }
+
+        private resolveSubName(gridItem:UserTreeGridItem, relativePath:boolean):string {
+            var itemType = gridItem.getType();
+            switch (itemType) {
+                case UserTreeGridItemType.USER_STORE:
+                {
+                    return ('/' + gridItem.getUserStore().getKey().toString());
+                }
+                case UserTreeGridItemType.PRINCIPAL:
+                {
+                    if (relativePath) {
+                        return gridItem.getPrincipal().getKey().getId();
+                    } else {
+                        return gridItem.getPrincipal().getKey().toPath();
+                    }
+                }
+                default:
+                {
+                    return gridItem.getItemDisplayName().toLocaleLowerCase();
+                }
+            }
         }
 
         getPreferredHeight(): number {
