@@ -82,7 +82,8 @@ module api.app {
             actions = actions.concat(this.appBar.getActions());
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.wizard.WizardPanel) ||
-                api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.browse.BrowsePanel)) {
+                api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.browse.BrowsePanel) ||
+                api.ObjectHelper.iFrameSafeInstanceOf(panel, api.app.view.ItemViewPanel)) {
                 var actionContainer: api.ui.ActionContainer = <any>panel;
                 actions = actions.concat(actionContainer.getActions());
             }

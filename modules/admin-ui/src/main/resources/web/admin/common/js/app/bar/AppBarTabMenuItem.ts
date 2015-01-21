@@ -38,7 +38,6 @@ module api.app.bar {
 
         constructor() {
             super();
-            this.options = {removable: true};
             this.closeButtonEnabled = true;
         }
 
