@@ -29,8 +29,6 @@ module api.liveedit {
             });
             this.controllerDropdown.load();
 
-            this.controllerDropdown.hide();
-
             this.controllerDropdown.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.PageDescriptor>) => {
 
                 var setController = new SetController(this).
@@ -54,12 +52,11 @@ module api.liveedit {
         }
 
         select() {
-            this.controllerDropdown.show();
             this.controllerDropdown.giveFocus();
         }
 
         deselect() {
-            this.controllerDropdown.hide();
+
         }
     }
 }
