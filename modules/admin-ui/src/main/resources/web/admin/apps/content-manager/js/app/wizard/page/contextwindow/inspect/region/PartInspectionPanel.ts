@@ -33,6 +33,7 @@ module app.wizard.page.contextwindow.inspect.region {
 
             var descriptorsRequest = new GetPartDescriptorsByModulesRequest(liveEditModel.getSiteModel().getModuleKeys());
             var loader = new PartDescriptorLoader(descriptorsRequest);
+            loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
             this.componentSelector = new PartDescriptorComboBox(loader);
             loader.load();
 

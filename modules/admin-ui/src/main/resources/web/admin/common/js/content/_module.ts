@@ -12,8 +12,8 @@
 ///<reference path='ContentMetadata.ts' />
 ///<reference path='Content.ts' />
 ///<reference path='ContentResponse.ts' />
-///<reference path='ContentByDisplayNameComparator.ts' />
-///<reference path='ContentByModifiedTimeComparator.ts' />
+///<reference path='ContentNodeByDisplayNameComparator.ts' />
+///<reference path='ContentNodeByModifiedTimeComparator.ts' />
 ///<reference path='ContentByPathComparator.ts' />
 ///<reference path='MoveContentSummaryLoader.ts' />
 ///<reference path='Metadata.ts' />

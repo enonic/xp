@@ -5,6 +5,7 @@ module app.wizard.page.contextwindow.inspect.region {
     import LiveEditModel = api.liveedit.LiveEditModel;
     import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
     import DescriptorKey = api.content.page.DescriptorKey;
+    import DescriptorByDisplayNameComparator = api.content.page.DescriptorByDisplayNameComparator;
     import LayoutComponent = api.content.page.region.LayoutComponent;
     import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
@@ -39,6 +40,7 @@ module app.wizard.page.contextwindow.inspect.region {
 
             var descriptorsRequest = new GetLayoutDescriptorsByModulesRequest(liveEditModel.getSiteModel().getModuleKeys());
             var loader = new LayoutDescriptorLoader(descriptorsRequest);
+            loader.setComparator(new DescriptorByDisplayNameComparator());
             this.componentSelector = new LayoutDescriptorComboBox(loader);
             loader.load();
 

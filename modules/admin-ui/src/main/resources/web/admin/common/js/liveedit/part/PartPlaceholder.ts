@@ -26,6 +26,7 @@ module api.liveedit.part {
             });
             var request = new GetPartDescriptorsByModulesRequest(partView.liveEditModel.getSiteModel().getModuleKeys());
             var loader = new PartDescriptorLoader(request);
+            loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
             this.comboBox = new PartDescriptorComboBox(loader);
             loader.load();
             this.comboBox.hide();
