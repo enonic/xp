@@ -9,10 +9,10 @@ module api.liveedit {
         constructor(component: COMPONENT, type: ComponentItemType) {
             component.onPropertyChanged((event: ComponentPropertyChangedEvent) => {
                 if (event.getPropertyName() == Component.PROPERTY_NAME) {
-                    this.setMainName(component.getName().toString());
+                    this.setMainName(component.getName() ? component.getName().toString() : "");
                 }
             });
-            super(component.getName().toString(), type.getConfig().getIconCls());
+            super(component.getName() ? component.getName().toString() : "", type.getConfig().getIconCls());
         }
 
     }

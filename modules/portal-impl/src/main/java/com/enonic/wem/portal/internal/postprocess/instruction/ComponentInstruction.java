@@ -75,7 +75,7 @@ public final class ComponentInstruction
         else
         {
             final String name = substringAfter( componentSelector, MODULE_COMPONENT_PREFIX );
-            final ComponentName componentName = new ComponentName( name );
+            final ComponentName componentName = name != null ? new ComponentName( name ) : null;
             final ModuleKey currentModule = context.getPageTemplate().getController().getModuleKey();
             component = componentService.getByName( currentModule, componentName );
         }

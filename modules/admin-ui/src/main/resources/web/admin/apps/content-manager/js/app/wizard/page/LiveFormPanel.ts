@@ -15,9 +15,9 @@ module app.wizard.page {
     import PageDescriptor = api.content.page.PageDescriptor;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
-    import ImageChangedEvent = app.wizard.page.contextwindow.inspect.region.ImageChangedEvent;
 
     import Component = api.content.page.region.Component;
+    import ImageComponent = api.content.page.region.ImageComponent;
     import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import PartComponent = api.content.page.region.PartComponent;
     import LayoutComponent = api.content.page.region.LayoutComponent;
@@ -54,7 +54,6 @@ module app.wizard.page {
     import DraggingComponentViewCanceledEvent = api.liveedit.DraggingComponentViewCanceledEvent;
     import PageSelectEvent = api.liveedit.PageSelectEvent;
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
-    import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
@@ -128,9 +127,6 @@ module app.wizard.page {
             this.partInspectionPanel = new PartInspectionPanel();
             this.layoutInspectionPanel = new LayoutInspectionPanel();
 
-            this.imageInspectionPanel.onImageChanged((event: ImageChangedEvent) => {
-                this.saveAndReloadOnlyComponent(event.getImageComponentView());
-            });
             var saveAction = new api.ui.Action('Apply');
             saveAction.onExecuted(() => {
                 var itemView = this.getSelectedItemView();
@@ -236,28 +232,42 @@ module app.wizard.page {
 
             this.pageModel.onComponentPropertyChangedEvent((event: ComponentPropertyChangedEvent) => {
 
-                if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), DescriptorBasedComponent)) {
+                    if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
 
-                    var componentPath = event.getPath();
-                    var componentView = this.pageView.getComponentViewByPath(componentPath);
-                    if (componentView) {
-                        if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, PartComponentView)) {
-                            var partView = <PartComponentView>componentView;
-                            var partComponent: PartComponent = partView.getComponent();
-                            if (partComponent.hasDescriptor()) {
-                                this.saveAndReloadOnlyComponent(componentView);
+                        var componentView = this.pageView.getComponentViewByPath(event.getPath());
+                        if (componentView) {
+                            if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, PartComponentView)) {
+                                var partView = <PartComponentView>componentView;
+                                var partComponent: PartComponent = partView.getComponent();
+                                if (partComponent.hasDescriptor()) {
+                                    this.saveAndReloadOnlyComponent(componentView);
+                                }
+                            }
+                            else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
+                                var layoutView = <LayoutComponentView>componentView;
+                                var layoutComponent: LayoutComponent = layoutView.getComponent();
+                                if (layoutComponent.hasDescriptor()) {
+                                    this.saveAndReloadOnlyComponent(componentView);
+                                }
                             }
                         }
-                        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
-                            var layoutView = <LayoutComponentView>componentView;
-                            var layoutComponent: LayoutComponent = layoutView.getComponent();
-                            if (layoutComponent.hasDescriptor()) {
-                                this.saveAndReloadOnlyComponent(componentView);
-                            }
+                        else {
+                            console.debug("ComponentView by path not found: " + event.getPath().toString());
                         }
                     }
-                    else {
-                        console.debug("ComponentView by path not found: " + componentPath.toString());
+                }
+                else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), ImageComponent)) {
+                    if (event.getPropertyName() == ImageComponent.PROPERTY_IMAGE) {
+
+                        var componentView = this.pageView.getComponentViewByPath(event.getPath());
+                        if (componentView && api.ObjectHelper.iFrameSafeInstanceOf(componentView, ImageComponentView)) {
+                            var imageView = <ImageComponentView>componentView;
+                            var imageComponent: ImageComponent = imageView.getComponent();
+                            if (!imageComponent.isEmpty()) {
+                                this.saveAndReloadOnlyComponent(componentView);
+                            }
+                        }
                     }
                 }
             });
@@ -304,7 +314,10 @@ module app.wizard.page {
                     componentView.showLoadingSpinner();
                     return this.liveEditPage.loadComponent(componentView, componentUrl);
                 }).
-                catch((errorMessage: string) => {
+                catch((errorMessage: any) => {
+
+                    api.DefaultErrorHandler.handle(errorMessage);
+
                     componentView.hideLoadingSpinner();
                     componentView.showRenderingError(componentUrl, errorMessage);
                 }).done();
@@ -420,22 +433,6 @@ module app.wizard.page {
                 if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
                 }
-            });
-
-            this.liveEditPage.onImageComponentSetImage((event: ImageComponentSetImageEvent) => {
-
-                var command = new ImageComponentSetImageCommand().
-                    setDefaultModels(this.defaultModels).
-                    setPageRegions(this.pageModel.getRegions()).
-                    setImage(event.getImageId()).
-                    setComponentView(event.getImageComponentView()).
-                    setImageName(event.getImageName());
-
-                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
-                    this.pageModel.initializePageFromDefault(this);
-                }
-                command.execute();
-                this.saveAndReloadOnlyComponent(event.getImageComponentView());
             });
 
             this.liveEditPage.onComponentDuplicated((event: ComponentDuplicateEvent) => {

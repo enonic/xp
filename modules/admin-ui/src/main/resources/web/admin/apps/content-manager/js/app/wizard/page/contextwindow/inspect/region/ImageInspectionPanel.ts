@@ -19,10 +19,6 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private formView: api.form.FormView;
 
-        private imageSelected: ContentId;
-
-        private imageChangedListeners: {(event: ImageChangedEvent): void;}[] = [];
-
         constructor() {
             super(<ComponentInspectionPanelConfig>{
                 iconClass: "live-edit-font-icon-image icon-xlarge"
@@ -65,47 +61,21 @@ module app.wizard.page.contextwindow.inspect.region {
         }
 
         private initSelectorListeners() {
+
             this.componentSelector.onOptionSelected((event: OptionSelectedEvent<ContentSummary>) => {
 
                 var option: Option<ContentSummary> = event.getOption();
-
-                if (this.getComponent()) {
-                    var selectedContentId: ContentId = option.displayValue.getContentId();
-                    this.imageComponent.setImage(selectedContentId);
-
-                    var hasImageChanged = selectedContentId && !selectedContentId.equals(this.imageSelected);
-                    if (hasImageChanged) {
-                        this.notifyImageChanged(this.imageView, selectedContentId);
-                    }
-                    this.imageSelected = selectedContentId;
-                }
+                var imageContent = option.displayValue;
+                this.imageComponent.setImage(imageContent.getContentId(), imageContent.getDisplayName());
             });
+
             this.componentSelector.onOptionDeselected((option: SelectedOption<ContentSummary>) => {
-                this.imageSelected = null;
-                this.imageView.getComponent().setImage(null);
-                this.notifyImageChanged(this.imageView, null);
+                this.imageComponent.setImage(null, null);
             });
         }
 
         getComponentView(): ImageComponentView {
             return this.imageView;
-        }
-
-        onImageChanged(listener: {(event: ImageChangedEvent): void;}) {
-            this.imageChangedListeners.push(listener);
-        }
-
-        unImageChanged(listener: {(event: ImageChangedEvent): void;}) {
-            this.imageChangedListeners = this.imageChangedListeners.filter(function (curr) {
-                return curr != listener;
-            });
-        }
-
-        private notifyImageChanged(imageView: ImageComponentView, contentId: ContentId) {
-            var event = new ImageChangedEvent(imageView, contentId);
-            this.imageChangedListeners.forEach((listener) => {
-                listener(event);
-            });
         }
 
     }

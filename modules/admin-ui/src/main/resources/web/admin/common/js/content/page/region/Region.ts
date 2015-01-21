@@ -2,7 +2,7 @@ module api.content.page.region {
 
     export class Region implements api.Equitable, api.Cloneable {
 
-        public debug: boolean = true;
+        public debug: boolean = false;
         
         private name: string;
 

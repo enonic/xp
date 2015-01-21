@@ -14,7 +14,6 @@ module app.wizard.page {
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import ImageUploadedEvent = api.liveedit.ImageUploadedEvent;
     import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
-    import ImageComponentSetImageEvent = api.liveedit.image.ImageComponentSetImageEvent;
     import DraggingComponentViewStartedEvent = api.liveedit.DraggingComponentViewStartedEvent;
     import DraggingComponentViewCompletedEvent = api.liveedit.DraggingComponentViewCompletedEvent;
     import DraggingComponentViewCanceledEvent = api.liveedit.DraggingComponentViewCanceledEvent;
@@ -72,8 +71,6 @@ module app.wizard.page {
         private deselectListeners: {(event: ItemViewDeselectEvent): void;}[] = [];
 
         private componentAddedListeners: {(event: ComponentAddedEvent): void;}[] = [];
-
-        private imageComponentSetImageListeners: {(event: ImageComponentSetImageEvent): void;}[] = [];
 
         private componentRemovedListeners: {(event: ComponentRemoveEvent): void;}[] = [];
 
@@ -284,14 +281,6 @@ module app.wizard.page {
 
             LiveEditPageViewReadyEvent.on(this.notifyLiveEditPageViewReady.bind(this), this.liveEditWindow);
 
-            ImageComponentSetImageEvent.on((event: ImageComponentSetImageEvent) => {
-                if (!event.getErrorMessage()) {
-                    this.notifyImageComponentSetImage(event);
-                } else {
-                    api.notify.showError(event.getErrorMessage());
-                }
-            }, this.liveEditWindow);
-
         }
 
         onLoaded(listener: {(): void;}) {
@@ -420,18 +409,6 @@ module app.wizard.page {
 
         private notifyComponentAdded(event: ComponentAddedEvent) {
             this.componentAddedListeners.forEach((listener) => listener(event));
-        }
-
-        onImageComponentSetImage(listener: {(event: ImageComponentSetImageEvent): void;}) {
-            this.imageComponentSetImageListeners.push(listener);
-        }
-
-        unImageComponentSetImage(listener: {(event: ImageComponentSetImageEvent): void;}) {
-            this.imageComponentSetImageListeners = this.imageComponentSetImageListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifyImageComponentSetImage(event: ImageComponentSetImageEvent) {
-            this.imageComponentSetImageListeners.forEach((listener) => listener(event));
         }
 
         onComponentReset(listener: {(event: ComponentResetEvent): void;}) {

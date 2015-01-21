@@ -4,6 +4,7 @@ module api.liveedit.image {
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;
     import PageItemType = api.liveedit.PageItemType;
     import ContentTypeName = api.schema.content.ContentTypeName;
+    import ImageComponent = api.content.page.region.ImageComponent;
 
     export class ImagePlaceholder extends api.liveedit.ComponentPlaceholder {
 
@@ -22,15 +23,12 @@ module api.liveedit.image {
 
             var imageUploadHandler = (event: ImageUploadedEvent) => {
                 if (event.getTargetImagePlaceholder() === this) {
-                    var createdContent = event.getUploadedItem();
+                    var createdImage = event.getUploadedItem();
 
-                    new api.content.ContentCreatedEvent(createdContent.getContentId()).fire();
+                    new api.content.ContentCreatedEvent(createdImage.getContentId()).fire();
 
-                    new ImageComponentSetImageEvent().
-                        setImageId(createdContent.getContentId()).
-                        setImageComponentView(this.imageComponentView).
-                        setName(createdContent.getName().toString()).
-                        fire();
+                    var component: ImageComponent = this.imageComponentView.getComponent();
+                    component.setImage(createdImage.getContentId(), createdImage.getDisplayName());
                 }
             };
             ImageUploadedEvent.on(imageUploadHandler);
@@ -62,15 +60,13 @@ module api.liveedit.image {
 
             this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
 
+                var component: ImageComponent = this.imageComponentView.getComponent();
+                var imageContent = event.getOption().displayValue;
+
+                component.setImage(imageContent.getContentId(), imageContent.getDisplayName());
+                
                 this.uploadButton.hide();
                 this.imageComponentView.showLoadingSpinner();
-
-                new ImageComponentSetImageEvent().
-                    setImageId(event.getOption().displayValue.getContentId()).
-                    setImageComponentView(imageView).
-                    setName(event.getOption().displayValue.getDisplayName()).
-                    fire();
-
             });
         }
 

@@ -4,7 +4,7 @@ module api.content.page.region {
 
     export class Regions implements api.Equitable {
 
-        public debug: boolean = true;
+        public debug: boolean = false;
 
         private regionByName: {[s:string] : Region;} = {};
 

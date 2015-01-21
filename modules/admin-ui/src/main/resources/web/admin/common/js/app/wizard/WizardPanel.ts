@@ -40,9 +40,9 @@ module api.app.wizard {
 
         private stepNavigator: WizardStepNavigator;
 
-        private steps: api.app.wizard.WizardStep[];
+        private steps: WizardStep[];
 
-        private stepsPanel: api.app.wizard.WizardStepsPanel;
+        private stepsPanel: WizardStepsPanel;
 
         // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
         private isChanged: boolean = true;
@@ -205,14 +205,14 @@ module api.app.wizard {
             return this.mainToolbar.getActions();
         }
 
-        getSteps(): api.app.wizard.WizardStep[] {
+        getSteps(): WizardStep[] {
             return this.steps;
         }
 
-        setSteps(steps: api.app.wizard.WizardStep[]) {
+        setSteps(steps: WizardStep[]) {
 
             this.steps = steps;
-            steps.forEach((step: api.app.wizard.WizardStep, index: number) => {
+            steps.forEach((step: WizardStep, index: number) => {
 
                 this.stepsPanel.addNavigablePanel(step.getTabBarItem(), step.getStepForm(), step.getTabBarItem().getLabel(), index == 0);
             });
@@ -286,7 +286,7 @@ module api.app.wizard {
         }
 
         askUserForSaveChangesBeforeClosing() {
-            new api.app.wizard.SaveBeforeCloseDialog(this).open();
+            new SaveBeforeCloseDialog(this).open();
         }
 
         saveChanges(): wemQ.Promise<EQUITABLE> {

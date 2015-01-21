@@ -134,7 +134,7 @@ public class ImageComponent
 
         public Builder name( String value )
         {
-            this.name = new ComponentName( value );
+            this.name = value != null ? new ComponentName( value ) : null;
             return this;
         }
 

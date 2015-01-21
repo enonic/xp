@@ -6,7 +6,7 @@ module api.app {
 
     }
 
-    export class BrowseAndWizardBasedAppPanel<M extends api.Equitable> extends api.app.AppPanel<M> {
+    export class BrowseAndWizardBasedAppPanel<M extends api.Equitable> extends AppPanel<M> {
 
         private appBarTabMenu: api.app.bar.AppBarTabMenu;
 

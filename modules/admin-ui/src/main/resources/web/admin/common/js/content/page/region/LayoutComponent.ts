@@ -162,8 +162,7 @@ module api.content.page.region {
             if (json.descriptor) {
                 this.setDescriptor(api.content.page.DescriptorKey.fromString(json.descriptor));
             }
-            var componentName = new ComponentName(json.name);
-            this.setName(componentName);
+            this.setName(json.name ? new ComponentName(json.name) : null);
             if (json.config) {
                 this.setConfig(PropertyTree.fromJson(json.config, propertyIdProvider));
             }

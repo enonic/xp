@@ -51,7 +51,7 @@ module api.content.page.region {
             return this.descriptor;
         }
 
-        setDescriptor(descriptorKey: DescriptorKey, descriptor?: Descriptor) {
+        setDescriptor(descriptorKey: DescriptorKey, descriptor: Descriptor) {
 
             var oldValue = this.descriptor;
             this.descriptor = descriptorKey;
@@ -65,7 +65,7 @@ module api.content.page.region {
             this.setConfig(new PropertyTree(this.config.getIdProvider()));
         }
 
-        setConfig(config:PropertyTree) {
+        setConfig(config: PropertyTree) {
             var oldValue = this.config;
             this.config = config;
 
@@ -90,7 +90,7 @@ module api.content.page.region {
         toComponentJson(): DescriptorBasedComponentJson {
 
             return <DescriptorBasedComponentJson>{
-                "name": this.getName().toString(),
+                "name": this.getName() ? this.getName().toString() : null,
                 "descriptor": this.descriptor != null ? this.descriptor.toString() : null,
                 "config": this.config != null ? this.config.toJson() : null
             };

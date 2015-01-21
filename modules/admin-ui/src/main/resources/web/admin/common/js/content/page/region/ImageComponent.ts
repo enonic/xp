@@ -10,6 +10,10 @@ module api.content.page.region {
 
     export class ImageComponent extends Component implements api.Equitable, api.Cloneable {
 
+        public static PROPERTY_IMAGE = 'image';
+
+        public static PROPERTY_CONFIG = 'config';
+
         public debug: boolean = false;
 
         private disableEventForwarding: boolean;
@@ -30,7 +34,7 @@ module api.content.page.region {
                     console.debug("ImageComponent[" + this.getPath().toString() + "].config.onChanged: ", event);
                 }
                 if (!this.disableEventForwarding) {
-                    this.notifyPropertyValueChanged("config");
+                    this.notifyPropertyValueChanged(ImageComponent.PROPERTY_CONFIG);
                 }
             });
 
@@ -60,16 +64,19 @@ module api.content.page.region {
             return this.config;
         }
 
-        setImage(value: api.content.ContentId) {
+        setImage(contentId: api.content.ContentId, name: string) {
             var oldValue = this.image;
-            this.image = value;
-            if (!api.ObjectHelper.equals(oldValue, value)) {
-                this.notifyPropertyChanged("image");
+            this.image = contentId;
+
+            this.setName(name ? new ComponentName(name) : null);
+
+            if (!api.ObjectHelper.equals(oldValue, contentId)) {
+                this.notifyPropertyChanged(ImageComponent.PROPERTY_IMAGE);
             }
         }
 
         reset() {
-            this.setImage(null);
+            this.setImage(null, null);
         }
 
         isEmpty(): boolean {
@@ -148,7 +155,7 @@ module api.content.page.region {
                 this.setImage(new api.content.ContentId(json.image));
             }
 
-            this.setName(new ComponentName(json.name));
+            this.setName(json.name ? new ComponentName(json.name) : null);
 
 
             if (json.config) {

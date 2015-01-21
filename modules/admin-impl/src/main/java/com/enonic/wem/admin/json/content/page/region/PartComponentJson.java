@@ -30,7 +30,7 @@ public class PartComponentJson
                               @JsonProperty("config") final List<PropertyArrayJson> config )
     {
         super( newPartComponent().
-            name( ComponentName.from( name ) ).
+            name( name != null ? ComponentName.from( name ) : null ).
             descriptor( descriptor != null ? DescriptorKey.from( descriptor ) : null ).
             config( config != null ? PropertyTreeJson.fromJson( config ) : null ).
             build() );

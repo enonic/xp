@@ -1,6 +1,6 @@
 module api.app.view {
 
-    export class MultiItemStatisticsPanel<M extends api.Equitable> extends api.app.view.ItemStatisticsPanel<M> {
+    export class MultiItemStatisticsPanel<M extends api.Equitable> extends ItemStatisticsPanel<M> {
 
         private tabMenu: api.ui.tab.TabMenu;
 

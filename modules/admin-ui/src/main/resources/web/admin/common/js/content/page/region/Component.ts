@@ -46,7 +46,7 @@ module api.content.page.region {
         setName(newValue: ComponentName) {
             var oldValue = this.name;
             this.name = newValue;
-            if (!newValue.equals(oldValue)) {
+            if (!api.ObjectHelper.equals(oldValue, newValue)) {
                 this.notifyPropertyChanged(Component.PROPERTY_NAME);
             }
         }
@@ -80,7 +80,7 @@ module api.content.page.region {
         toComponentJson(): ComponentJson {
 
             return {
-                "name": this.name.toString()
+                "name": this.name ? this.name.toString() : null
             };
         }
 
@@ -135,7 +135,7 @@ module api.content.page.region {
         }
 
         notifyPropertyChanged(propertyName: string) {
-            var event = new ComponentPropertyChangedEvent(this.getPath(), propertyName);
+            var event = ComponentPropertyChangedEvent.create().setComponent(this).setPropertyName(propertyName).build();
             this.propertyChangedListeners.forEach((listener: (event: ComponentPropertyChangedEvent)=>void) => {
                 listener(event);
             });

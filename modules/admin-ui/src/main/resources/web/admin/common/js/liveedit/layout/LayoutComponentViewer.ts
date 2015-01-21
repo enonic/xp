@@ -12,7 +12,7 @@ module api.liveedit.layout {
 
         setObject(layoutComponent: api.content.page.region.LayoutComponent) {
             super.setObject(layoutComponent);
-            this.namesAndIconView.setMainName(layoutComponent.getName().toString()).
+            this.namesAndIconView.setMainName(layoutComponent.getName() ? layoutComponent.getName().toString() : "").
                 setSubName(layoutComponent.getPath().toString()).
                 setIconClass('live-edit-font-icon-layout');
         }

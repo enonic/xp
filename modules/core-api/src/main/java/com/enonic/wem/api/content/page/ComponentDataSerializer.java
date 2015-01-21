@@ -15,11 +15,11 @@ public abstract class ComponentDataSerializer<TO_DATA_INPUT extends Component, F
 
     protected void applyComponentToData( final Component component, final PropertySet asData )
     {
-        asData.setString( "name", component.getName().toString() );
+        asData.setString( "name", component.getName() != null ? component.getName().toString() : null );
     }
 
     protected void applyComponentFromData( final Component.Builder component, final PropertySet asData )
     {
-        component.name( new ComponentName( asData.getString( "name" ) ) );
+        component.name( asData.isNotNull( "name" ) ? new ComponentName( asData.getString( "name" ) ) : null );
     }
 }
