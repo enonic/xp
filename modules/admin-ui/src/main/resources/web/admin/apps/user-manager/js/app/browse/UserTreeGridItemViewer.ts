@@ -16,7 +16,7 @@ module app.browse {
 
             var itemType = gridItem.getType();
             if (itemType === UserTreeGridItemType.PRINCIPAL) {
-                this.namesAndIconView.setSubName(gridItem.getPrincipal().getKey().getId());
+                this.namesAndIconView.setSubName(gridItem.getPrincipal().getKey().toPath());
 
             } else if (itemType === UserTreeGridItemType.USER_STORE) {
                 this.namesAndIconView.setSubName('/' + gridItem.getUserStore().getKey().toString());
