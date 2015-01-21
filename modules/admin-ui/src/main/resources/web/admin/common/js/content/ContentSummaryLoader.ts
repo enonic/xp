@@ -2,8 +2,6 @@ module api.content {
 
     export class ContentSummaryLoader extends api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary> {
 
-        private preservedSearchString: string;
-
         private contentSummaryRequest: ContentSummaryRequest;
 
         constructor() {
@@ -22,29 +20,17 @@ module api.content {
         search(searchString: string) {
 
             if (this.isLoading()) {
-                this.preservedSearchString = searchString;
+                var onLoaded = () => {
+                    this.search(searchString);
+                    this.unLoadedData(onLoaded);
+                };
+                this.onLoadedData(onLoaded);
                 return;
             }
 
             this.contentSummaryRequest.setQueryExpr(searchString);
 
             this.load();
-        }
-
-
-        load() {
-
-            this.notifyLoadingData();
-
-            this.sendRequest().done((contents: ContentSummary[]) => {
-
-                this.notifyLoadedData(contents);
-                if (this.preservedSearchString) {
-                    this.search(this.preservedSearchString);
-                    this.preservedSearchString = null;
-                }
-
-            });
         }
 
         sendRequest(): wemQ.Promise<ContentSummary[]> {

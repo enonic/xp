@@ -21,8 +21,10 @@ module api.liveedit.layout {
             this.onClicked((event: MouseEvent) => {
                 event.stopPropagation();
             });
+
             var request = new GetLayoutDescriptorsByModulesRequest(layoutView.liveEditModel.getSiteModel().getModuleKeys());
             var loader = new LayoutDescriptorLoader(request);
+            loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
             this.comboBox = new LayoutDescriptorComboBox(loader);
             loader.load();
             this.comboBox.hide();
