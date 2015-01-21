@@ -94,7 +94,6 @@ module api.liveedit {
         private refreshPlaceholder() {
             if (this.isEmpty()) {
                 this.appendChild(this.placeholder);
-                this.placeholder.select();
                 this.handleEmptyState();
             }
         }
@@ -132,6 +131,16 @@ module api.liveedit {
         select(clickPosition?: Position) {
             new PageSelectEvent(this).fire();
             super.select(clickPosition);
+            if (this.isEmpty()) {
+                this.placeholder.select();
+            }
+        }
+
+        deselect(silent?: boolean) {
+            super.deselect(silent);
+            if (this.isEmpty()) {
+                this.placeholder.deselect();
+            }
         }
 
         getTooltipViewer(): api.ui.Viewer<api.content.ContentSummary> {
