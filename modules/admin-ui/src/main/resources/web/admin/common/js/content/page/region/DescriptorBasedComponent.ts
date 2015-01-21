@@ -61,6 +61,17 @@ module api.content.page.region {
             if (!api.ObjectHelper.equals(oldValue, descriptorKey)) {
                 this.notifyPropertyChanged(DescriptorBasedComponent.PROPERTY_DESCRIPTOR);
             }
+
+            this.setConfig(new PropertyTree(this.config.getIdProvider()));
+        }
+
+        setConfig(config:PropertyTree) {
+            var oldValue = this.config;
+            this.config = config;
+
+            if (!api.ObjectHelper.equals(oldValue, config)) {
+                this.notifyPropertyChanged(DescriptorBasedComponent.PROPERTY_CONFIG);
+            }
         }
 
         alignNameWithDescriptor(descriptor: Descriptor) {

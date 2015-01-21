@@ -212,6 +212,7 @@ module app.wizard.page {
             this.pageInspectionPanel.setModel(liveEditModel);
             this.partInspectionPanel.setModel(liveEditModel);
             this.layoutInspectionPanel.setModel(liveEditModel);
+            this.imageInspectionPanel.setModel(liveEditModel);
 
             this.pageModel.setIgnorePropertyChanges(false);
 
