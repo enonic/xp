@@ -5,16 +5,9 @@ public final class LayoutComponentType
 {
     public final static LayoutComponentType INSTANCE = new LayoutComponentType();
 
-    private static final LayoutComponentDataSerializer dataSerializer = new LayoutComponentDataSerializer();
-
     private LayoutComponentType()
     {
         super( "layout", LayoutComponent.class );
     }
 
-    @Override
-    public LayoutComponentDataSerializer getDataSerializer()
-    {
-        return dataSerializer;
-    }
 }

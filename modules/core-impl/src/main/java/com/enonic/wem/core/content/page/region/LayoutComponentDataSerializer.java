@@ -1,7 +1,10 @@
-package com.enonic.wem.api.content.page.region;
+package com.enonic.wem.core.content.page.region;
 
 
 import com.enonic.wem.api.content.page.DescriptorKey;
+import com.enonic.wem.api.content.page.region.LayoutComponent;
+import com.enonic.wem.api.content.page.region.LayoutRegions;
+import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertySet;
 

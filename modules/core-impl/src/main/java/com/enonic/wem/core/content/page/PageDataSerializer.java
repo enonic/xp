@@ -5,10 +5,10 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.content.page.region.RegionDataSerializer;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
+import com.enonic.wem.core.content.page.region.RegionDataSerializer;
 
 public class PageDataSerializer
     extends AbstractDataSetSerializer<Page, Page>

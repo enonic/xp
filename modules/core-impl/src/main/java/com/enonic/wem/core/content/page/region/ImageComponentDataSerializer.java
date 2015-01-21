@@ -1,8 +1,9 @@
-package com.enonic.wem.api.content.page.region;
+package com.enonic.wem.core.content.page.region;
 
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.ComponentDataSerializer;
+import com.enonic.wem.api.content.page.region.ImageComponent;
 import com.enonic.wem.api.data.PropertySet;
 
 public class ImageComponentDataSerializer

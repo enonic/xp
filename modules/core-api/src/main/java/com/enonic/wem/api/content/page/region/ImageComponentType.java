@@ -5,16 +5,9 @@ public final class ImageComponentType
 {
     public final static ImageComponentType INSTANCE = new ImageComponentType();
 
-    private static final ImageComponentDataSerializer dataSerializer = new ImageComponentDataSerializer();
-
     private ImageComponentType()
     {
         super( "image", ImageComponent.class );
     }
 
-    @Override
-    public ImageComponentDataSerializer getDataSerializer()
-    {
-        return dataSerializer;
-    }
 }

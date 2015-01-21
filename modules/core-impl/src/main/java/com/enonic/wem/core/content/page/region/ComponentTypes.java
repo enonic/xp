@@ -1,10 +1,16 @@
-package com.enonic.wem.api.content.page.region;
+package com.enonic.wem.core.content.page.region;
 
 import java.util.LinkedHashMap;
 
 import com.google.common.collect.Maps;
 
-public final class ComponentTypes
+import com.enonic.wem.api.content.page.region.ComponentType;
+import com.enonic.wem.api.content.page.region.ImageComponentType;
+import com.enonic.wem.api.content.page.region.LayoutComponentType;
+import com.enonic.wem.api.content.page.region.PartComponentType;
+import com.enonic.wem.api.content.page.region.TextComponentType;
+
+final class ComponentTypes
 {
     private final static ComponentTypes INSTANCE = new ComponentTypes();
 

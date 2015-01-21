@@ -1,7 +1,8 @@
-package com.enonic.wem.api.content.page.region;
+package com.enonic.wem.core.content.page.region;
 
 
 import com.enonic.wem.api.content.page.DescriptorKey;
+import com.enonic.wem.api.content.page.region.PartComponent;
 import com.enonic.wem.api.data.PropertySet;
 
 public class PartComponentDataSerializer

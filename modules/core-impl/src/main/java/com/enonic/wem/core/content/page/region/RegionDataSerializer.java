@@ -1,6 +1,8 @@
-package com.enonic.wem.api.content.page.region;
+package com.enonic.wem.core.content.page.region;
 
 
+import com.enonic.wem.api.content.page.region.Component;
+import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
 
