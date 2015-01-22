@@ -6,6 +6,7 @@ Bugfixes:
    then an error occurred when saving content (CMS-4910)
  - Java type conversion with LOCAL_DATE_TIME_FORMATTER and LOCAL_TIME_FORMATTER was using wrong
    hour format (1-24 instead of 0-23) (CMS-4913)
+ - Fixed styling when selecting controller for page template (CMS-4913)
 
 Features:
 
