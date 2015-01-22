@@ -62,10 +62,6 @@ module api.ui.grid {
                 this.slickGrid.registerPlugin(this.rowManagerPlugin);
             }
 
-            ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-                this.resizeCanvas();
-            });
-
             this.onRemoved((event) => {
                 ResponsiveManager.unAvailableSizeChanged(this);
             });
