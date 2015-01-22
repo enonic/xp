@@ -23,8 +23,11 @@ module api.content {
         }
 
         getParams(): Object {
+
+            var queryExprAsString = this.contentQuery.getQueryExpr() ? this.contentQuery.getQueryExpr().toString() : "";
+
             return {
-                queryExpr: this.contentQuery.getQueryExpr().toString(),
+                queryExpr: queryExprAsString,
                 from: this.contentQuery.getFrom(),
                 size: this.contentQuery.getSize(),
                 contentTypeNames: this.contentTypeNamesAsString(this.contentQuery.getContentTypes()),

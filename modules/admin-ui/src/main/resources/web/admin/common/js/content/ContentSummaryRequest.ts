@@ -1,6 +1,9 @@
 module api.content {
 
     import QueryField = api.query.QueryField;
+    import Expression = api.query.expr.Expression;
+    import OrderExpr = api.query.expr.OrderExpr;
+    import QueryExpr = api.query.expr.QueryExpr;
 
     export class ContentSummaryRequest extends api.rest.ResourceRequest<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary[]> {
 
@@ -47,16 +50,16 @@ module api.content {
             this.contentQuery.setSize(size);
         }
 
-        setQueryExpr(searchString: string) {
+        setQueryExpr(searchString: string, orderList?: OrderExpr[]) {
 
-            var fulltextExpression: api.query.expr.Expression = new api.query.FulltextSearchExpressionBuilder().
+            var fulltextExpression: Expression = new api.query.FulltextSearchExpressionBuilder().
                 setSearchString(searchString).
                 addField(new QueryField(QueryField.DISPLAY_NAME, 5)).
                 addField(new QueryField(QueryField.NAME, 3)).
                 addField(new QueryField(QueryField.ALL)).
                 build();
 
-            var queryExpr: api.query.expr.QueryExpr = new api.query.expr.QueryExpr(fulltextExpression);
+            var queryExpr: QueryExpr = new QueryExpr(fulltextExpression, orderList);
             this.contentQuery.setQueryExpr(queryExpr);
         }
 
