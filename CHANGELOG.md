@@ -2,7 +2,8 @@
 
 Bugfixes:
 
-  - N/A
+ - When removing a FormItem occurrence (Input or FormItemSet) that was not the last one
+   then an error occurred when saving content (CMS-4910)
 
 Features:
 

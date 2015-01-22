@@ -180,6 +180,10 @@ module api.data {
 
             this.array.splice(index, 1);
 
+            this.forEach((property: Property, index: number) => {
+                property.setIndex(index);
+            });
+
             if (this.tree) {
                 this.tree.unregisterProperty(propertyToRemove.getId());
             }
