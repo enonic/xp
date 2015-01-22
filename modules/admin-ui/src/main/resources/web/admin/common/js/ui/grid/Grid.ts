@@ -354,6 +354,37 @@ module api.ui.grid {
             return this.slickGrid.getCellCssStyles(key);
         }
 
+        /*
+         Returns the DIV element matching class grid-canvas,
+         which contains every data row currently being rendered in the DOM.
+         */
+        getCanvasNode(): HTMLCanvasElement {
+            return this.slickGrid.getCanvasNode();
+        }
+
+        /*
+         Returns an object representing information about the grid's position on the page.
+         */
+        getGridPosition(): Slick.CellPosition {
+            return this.slickGrid.getGridPosition();
+        }
+
+        /*
+         If passed no arguments, returns an object that tells you the range of rows (by row number)
+         currently being rendered, as well as the left/right range of pixels currently rendered.
+         */
+        getRenderedRange(viewportTop?, viewportLeft?): Slick.Viewport {
+            return this.slickGrid.getRenderedRange(viewportTop, viewportLeft);
+        }
+
+        /*
+         Returns an object telling you which rows are currently being displayed on the screen,
+         and also the pixel offsets for left/right scrolling.
+         */
+        getViewport(viewportTop?, viewportLeft?): Slick.Viewport {
+            return this.slickGrid.getViewport(viewportTop, viewportLeft);
+        }
+
         subscribeOnSelectedRowsChanged(callback: (e, args) => void) {
             this.slickGrid.onSelectedRowsChanged.subscribe(callback);
         }
