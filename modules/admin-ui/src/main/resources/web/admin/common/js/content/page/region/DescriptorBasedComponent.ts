@@ -75,7 +75,7 @@ module api.content.page.region {
         }
 
         alignNameWithDescriptor(descriptor: Descriptor) {
-            var newName = new ComponentName(!!descriptor ? descriptor.getDisplayName() : "");
+            var newName: ComponentName = descriptor ? new ComponentName(descriptor.getDisplayName()) : null;
             this.setName(newName);
         }
 
