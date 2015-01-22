@@ -66,7 +66,6 @@ module api.content.form.inputtype.relationship {
                     this.contentComboBox.setInputIconUrl(relationshipType.getIconUrl());
                     relationshipLoader.setAllowedContentTypes(relationshipType.getAllowedToTypes());
 
-                    relationshipLoader.load();
                     this.appendChild(this.contentComboBox);
 
                     return this.doLoadContent(propertyArray).
