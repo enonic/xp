@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-public class PushNodesWorkResolverResult
+public class ResolveSyncWorkResult
 {
     private final NodeIds publish;
 
@@ -12,7 +12,7 @@ public class PushNodesWorkResolverResult
 
     private final NodeIds conflict;
 
-    private PushNodesWorkResolverResult( Builder builder )
+    private ResolveSyncWorkResult( Builder builder )
     {
         this.publish = NodeIds.from( builder.publish );
         this.delete = NodeIds.from( builder.delete );
@@ -71,9 +71,9 @@ public class PushNodesWorkResolverResult
             return this;
         }
 
-        public PushNodesWorkResolverResult build()
+        public ResolveSyncWorkResult build()
         {
-            return new PushNodesWorkResolverResult( this );
+            return new ResolveSyncWorkResult( this );
         }
     }
 }

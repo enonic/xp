@@ -14,10 +14,10 @@ import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
-import com.enonic.wem.api.node.PushNodesWorkResolverResult;
+import com.enonic.wem.api.node.ResolveSyncWorkResult;
 import com.enonic.wem.api.workspace.Workspace;
 
-public class PushNodesWorkResolverCommand
+public class ResolveSyncWorkCommand
     extends AbstractNodeCommand
 {
     private final NodeId nodeId;
@@ -26,17 +26,17 @@ public class PushNodesWorkResolverCommand
 
     private final boolean includeChildren;
 
-    private final PushNodesWorkResolverResult.Builder resultBuilder;
+    private final ResolveSyncWorkResult.Builder resultBuilder;
 
     private final Set<NodeId> processedIds;
 
-    private PushNodesWorkResolverCommand( final Builder builder )
+    private ResolveSyncWorkCommand( final Builder builder )
     {
         super( builder );
         nodeId = builder.nodeId;
         target = builder.target;
         includeChildren = builder.includeChildren;
-        resultBuilder = PushNodesWorkResolverResult.create();
+        resultBuilder = ResolveSyncWorkResult.create();
         processedIds = Sets.newHashSet();
     }
 
@@ -45,7 +45,7 @@ public class PushNodesWorkResolverCommand
         return new Builder();
     }
 
-    public PushNodesWorkResolverResult execute()
+    public ResolveSyncWorkResult execute()
     {
         final NodeVersionDiffResult diff = getInitialDiff();
 
@@ -229,9 +229,9 @@ public class PushNodesWorkResolverCommand
             return this;
         }
 
-        public PushNodesWorkResolverCommand build()
+        public ResolveSyncWorkCommand build()
         {
-            return new PushNodesWorkResolverCommand( this );
+            return new ResolveSyncWorkCommand( this );
         }
     }
 }

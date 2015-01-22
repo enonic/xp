@@ -42,6 +42,8 @@ import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.node.RenameNodeParams;
 import com.enonic.wem.api.node.ReorderChildNodesParams;
 import com.enonic.wem.api.node.ReorderChildNodesResult;
+import com.enonic.wem.api.node.ResolveSyncWorkParams;
+import com.enonic.wem.api.node.ResolveSyncWorkResult;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -301,5 +303,11 @@ class NodeServiceMock
     public int applyPermissions( final ApplyNodePermissionsParams params )
     {
         return 0;
+    }
+
+    @Override
+    public ResolveSyncWorkResult resolveSyncWork( final ResolveSyncWorkParams params )
+    {
+        return null;
     }
 }

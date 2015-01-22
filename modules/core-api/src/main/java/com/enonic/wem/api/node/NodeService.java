@@ -51,6 +51,8 @@ public interface NodeService
 
     Node getByVersionId( NodeVersionId nodeVersionid );
 
+    ResolveSyncWorkResult resolveSyncWork( final ResolveSyncWorkParams params );
+
     void snapshot();
 
     int applyPermissions( ApplyNodePermissionsParams params );

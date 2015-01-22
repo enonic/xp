@@ -30,6 +30,8 @@ import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.node.RenameNodeParams;
 import com.enonic.wem.api.node.ReorderChildNodesParams;
 import com.enonic.wem.api.node.ReorderChildNodesResult;
+import com.enonic.wem.api.node.ResolveSyncWorkParams;
+import com.enonic.wem.api.node.ResolveSyncWorkResult;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.util.BinaryReference;
@@ -354,6 +356,22 @@ public class NodeServiceImpl
             queryService( this.queryService ).
             build().
             resolve( nodeDao.getByVersionId( blobKey ) );
+    }
+
+    @Override
+    public ResolveSyncWorkResult resolveSyncWork( final ResolveSyncWorkParams params )
+    {
+        return ResolveSyncWorkCommand.create().
+            target( params.getWorkspace() ).
+            nodeId( params.getNodeId() ).
+            includeChildren( params.isIncludeChildren() ).
+            indexService( indexService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
+            workspaceService( this.workspaceService ).
+            build().
+            execute();
     }
 
     @Override

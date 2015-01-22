@@ -8,12 +8,12 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.PushNodesWorkResolverResult;
+import com.enonic.wem.api.node.ResolveSyncWorkResult;
 import com.enonic.wem.api.util.Reference;
 
 import static org.junit.Assert.*;
 
-public class PushNodesWorkResolverCommandTest
+public class ResolveSyncWorkCommandTest
     extends AbstractNodeTest
 {
 
@@ -51,7 +51,7 @@ public class PushNodesWorkResolverCommandTest
             name( "node3" ).
             build() );
 
-        final PushNodesWorkResolverResult result = PushNodesWorkResolverCommand.create().
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             nodeId( null ).
             target( WS_OTHER ).
@@ -112,7 +112,7 @@ public class PushNodesWorkResolverCommandTest
         doDeleteNode( node2_1.id() );
         doDeleteNode( node3.id() );
 
-        final PushNodesWorkResolverResult result = PushNodesWorkResolverCommand.create().
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             target( WS_OTHER ).
             workspaceService( this.workspaceService ).
@@ -169,7 +169,7 @@ public class PushNodesWorkResolverCommandTest
 
         pushNodes( WS_OTHER, node1.id(), node2.id(), node3.id() );
 
-        final PushNodesWorkResolverResult result = PushNodesWorkResolverCommand.create().
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             nodeId( null ).
             target( WS_OTHER ).
@@ -220,7 +220,7 @@ public class PushNodesWorkResolverCommandTest
             name( "node2_1" ).
             build() );
 
-        final PushNodesWorkResolverResult result = PushNodesWorkResolverCommand.create().
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             nodeId( node1.id() ).
             target( WS_OTHER ).
             workspaceService( this.workspaceService ).
@@ -276,7 +276,7 @@ public class PushNodesWorkResolverCommandTest
             name( "node2_1_1" ).
             build() );
 
-        final PushNodesWorkResolverResult result = PushNodesWorkResolverCommand.create().
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             nodeId( node1.id() ).
             target( WS_OTHER ).
@@ -345,7 +345,7 @@ public class PushNodesWorkResolverCommandTest
             name( "node3" ).
             build() );
 
-        final PushNodesWorkResolverResult result = PushNodesWorkResolverCommand.create().
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             nodeId( node1.id() ).
             target( WS_OTHER ).
@@ -418,7 +418,7 @@ public class PushNodesWorkResolverCommandTest
             data( node3_data ).
             build() );
 
-        final PushNodesWorkResolverResult result = PushNodesWorkResolverCommand.create().
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             nodeId( node1.id() ).
             target( WS_OTHER ).
