@@ -42,9 +42,9 @@ import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.node.RenameNodeParams;
 import com.enonic.wem.api.node.ReorderChildNodesParams;
 import com.enonic.wem.api.node.ReorderChildNodesResult;
-import com.enonic.wem.api.node.ResolveSyncWorkParams;
 import com.enonic.wem.api.node.ResolveSyncWorkResult;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
+import com.enonic.wem.api.node.SyncWorkResolverParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.UserStoreKey;
@@ -306,7 +306,7 @@ class NodeServiceMock
     }
 
     @Override
-    public ResolveSyncWorkResult resolveSyncWork( final ResolveSyncWorkParams params )
+    public ResolveSyncWorkResult resolveSyncWork( final SyncWorkResolverParams params )
     {
         return null;
     }

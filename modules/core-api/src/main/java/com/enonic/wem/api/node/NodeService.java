@@ -51,7 +51,7 @@ public interface NodeService
 
     Node getByVersionId( NodeVersionId nodeVersionid );
 
-    ResolveSyncWorkResult resolveSyncWork( final ResolveSyncWorkParams params );
+    ResolveSyncWorkResult resolveSyncWork( final SyncWorkResolverParams params );
 
     void snapshot();
 
