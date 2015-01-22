@@ -13,10 +13,6 @@
     height: auto;
   }
 
-  &.floating {
-    opacity: 0.9;
-  }
-
   &.hidden {
     visibility: hidden;
   }
@@ -27,14 +23,16 @@
     font-size: 14px;
     background-color: @admin-white;
     color: @admin-font-gray3;
+    border-bottom: 1px solid @admin-medium-gray-border;
     .tab-bar-item {
       display: table-cell;
       padding: 10px 12px;
+      border-bottom: 4px solid transparent;
       text-align: center;
       cursor: pointer;
       &.active {
-        background-color: @admin-button-blue1;
-        color: @admin-white;
+        border-bottom-color: @admin-blue;
+        color: @admin-blue;
       }
     }
   }
