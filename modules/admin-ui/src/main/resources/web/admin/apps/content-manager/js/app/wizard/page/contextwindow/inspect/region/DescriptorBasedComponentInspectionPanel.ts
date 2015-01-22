@@ -19,13 +19,6 @@ module app.wizard.page.contextwindow.inspect.region {
             this.formView = null;
         }
 
-        setComponent(component: COMPONENT, descriptor?: Descriptor) {
-
-            super.setComponent(component);
-            if (descriptor) {
-                super.setSelectorValue(descriptor.getKey().toString());
-            }
-        }
 
         setupComponentForm(component: DescriptorBasedComponent, descriptor: Descriptor) {
             if (this.formView) {

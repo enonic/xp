@@ -1,6 +1,7 @@
 module api.content {
 
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
+    import Option = api.ui.selector.Option;
 
     export class ContentComboBox extends api.ui.selector.combobox.RichComboBox<ContentSummary> {
 
@@ -20,6 +21,30 @@ module api.content {
                 .setMinWidth(builder.minWidth);
 
             super(richComboBoxBuilder);
+        }
+
+        getContent(contentId: ContentId): ContentSummary {
+            var option = this.comboBox.getOptionByValue(contentId.toString());
+            if(option) {
+                return option.displayValue;
+            }
+            return null;
+        }
+
+        setContent(content: ContentSummary) {
+
+            this.comboBox.clearSelection(false, false);
+            if (content) {
+                var optionToSelect: Option<ContentSummary> = this.comboBox.getOptionByValue(content.getContentId().toString());
+                if (!optionToSelect) {
+                    optionToSelect = {
+                        value: content.getContentId().toString(),
+                        displayValue: content
+                    };
+                    this.comboBox.addOption(optionToSelect);
+                }
+                this.comboBox.selectOption(optionToSelect);
+            }
         }
     }
 

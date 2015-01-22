@@ -75,6 +75,10 @@ module api.content.page.region {
             }
         }
 
+        hasImage(): boolean {
+            return !!this.image;
+        }
+
         reset() {
             this.setImage(null, null);
         }

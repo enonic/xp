@@ -11,6 +11,7 @@ module app.wizard.page.contextwindow.inspect.region {
     import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
     import GetLayoutDescriptorByKeyRequest = api.content.page.region.GetLayoutDescriptorByKeyRequest;
     import GetLayoutDescriptorsByModulesRequest = api.content.page.region.GetLayoutDescriptorsByModulesRequest;
+    import Descriptor = api.content.page.Descriptor;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LayoutDescriptorLoader = api.content.page.region.LayoutDescriptorLoader;
     import LayoutDescriptorBuilder = api.content.page.region.LayoutDescriptorBuilder;
@@ -28,6 +29,10 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private layoutComponent: LayoutComponent;
 
+        private layoutSelector: LayoutDescriptorComboBox;
+
+        private handleSelectorEvents: boolean = true;
+
         constructor() {
             super(<DescriptorBasedComponentInspectionPanelConfig>{
                 iconClass: "live-edit-font-icon-layout icon-xlarge"
@@ -41,11 +46,11 @@ module app.wizard.page.contextwindow.inspect.region {
             var descriptorsRequest = new GetLayoutDescriptorsByModulesRequest(liveEditModel.getSiteModel().getModuleKeys());
             var loader = new LayoutDescriptorLoader(descriptorsRequest);
             loader.setComparator(new DescriptorByDisplayNameComparator());
-            this.componentSelector = new LayoutDescriptorComboBox(loader);
+            this.layoutSelector = new LayoutDescriptorComboBox(loader);
             loader.load();
 
             this.initSelectorListeners();
-            this.appendChild(this.componentSelector);
+            this.appendChild(this.layoutSelector);
 
             liveEditModel.getSiteModel().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() == SiteModel.PROPERTY_NAME_MODULE_CONFIGS) {
@@ -55,42 +60,72 @@ module app.wizard.page.contextwindow.inspect.region {
             });
         }
 
+        setComponent(component: LayoutComponent, descriptor?: LayoutDescriptor) {
+
+            super.setComponent(component);
+            if (descriptor) {
+                this.layoutSelector.setDescriptor(descriptor);
+            }
+        }
+
         setLayoutComponent(layoutView: LayoutComponentView) {
 
             this.layoutView = layoutView;
             this.layoutComponent = <LayoutComponent>layoutView.getComponent();
-            if (this.layoutComponent.hasDescriptor()) {
-                new GetLayoutDescriptorByKeyRequest(this.layoutComponent.getDescriptor()).sendAndParse().then((descriptor: LayoutDescriptor) => {
-                    this.setComponent(this.layoutComponent);
-                    this.setSelectorValue(descriptor.getKey().toString());
+
+            this.setComponent(this.layoutComponent);
+            var key: DescriptorKey = this.layoutComponent.getDescriptor();
+            if(key) {
+                var descriptor: LayoutDescriptor = this.layoutSelector.getDescriptor(key);
+                if (descriptor) {
+                    this.setSelectorValue(descriptor);
                     this.setupComponentForm(this.layoutComponent, descriptor);
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).done();
+                } else {
+                    new GetLayoutDescriptorByKeyRequest(key).sendAndParse().then((descriptor:LayoutDescriptor) => {
+                        this.setSelectorValue(descriptor);
+                        this.setupComponentForm(this.layoutComponent, descriptor);
+                    }).catch((reason:any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    }).done();
+                }
+            } else {
+                this.setSelectorValue(null);
+                this.setupComponentForm(this.layoutComponent, null);
             }
 
             this.layoutComponent.onPropertyChanged((event: ComponentPropertyChangedEvent) => {
 
-                // Ensure displayed config form is removed when descriptor is removed
+                // Ensure displayed config form and selector option are removed when descriptor is removed
                 if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
                     if (!this.layoutComponent.hasDescriptor()) {
                         this.setupComponentForm(this.layoutComponent, null);
+                        this.layoutSelector.setDescriptor(null);
                     }
                 }
             });
         }
 
-        private initSelectorListeners() {
-            this.componentSelector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
+        private setSelectorValue(descriptor: LayoutDescriptor) {
+            this.handleSelectorEvents = false;
+            this.layoutSelector.setDescriptor(descriptor);
+            this.handleSelectorEvents = true;
+        }
 
-                var option: Option<LayoutDescriptor> = event.getOption();
-                var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
-                this.layoutComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
+        private initSelectorListeners() {
+            this.layoutSelector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
+                if (this.handleSelectorEvents) {
+
+                    var option:Option<LayoutDescriptor> = event.getOption();
+
+                    var selectedDescriptorKey:DescriptorKey = option.displayValue.getKey();
+                    this.layoutComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
+                }
             });
 
-            this.componentSelector.onOptionDeselected((option: SelectedOption<LayoutDescriptor>) => {
-
-                this.layoutComponent.setDescriptor(null, null);
+            this.layoutSelector.onOptionDeselected((option: SelectedOption<LayoutDescriptor>) => {
+                if (this.handleSelectorEvents) {
+                    this.layoutComponent.setDescriptor(null, null);
+                }
 
             });
         }

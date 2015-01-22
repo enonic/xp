@@ -303,9 +303,13 @@ module api.ui.selector.combobox {
             this.input.openForTypingAndFocus();
 
             this.dropdownHandle.setEnabled(true);
+
+            if(!this.maximumOccurrencesReached() && this.hideComboBoxWhenMaxReached) {
+                this.show();
+            }
         }
 
-        clearSelection(ignoreEmpty: boolean = false) {
+        clearSelection(ignoreEmpty: boolean = false, giveInputFocus: boolean = true) {
             var optionsMap = this.getDisplayedOptions().map((x) => x.value).join();
 
             var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.getSelectedOptions();
@@ -320,9 +324,18 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.markSelections([], ignoreEmpty);
 
             this.input.setValue("");
-            this.input.openForTypingAndFocus();
+            if( giveInputFocus ) {
+                this.input.openForTypingAndFocus();
+            }
+            else {
+                this.input.openForTyping();
+            }
 
             this.dropdownHandle.setEnabled(true);
+
+            if(this.hideComboBoxWhenMaxReached) {
+                this.show();
+            }
         }
 
         getSelectedOptions(): Option<OPTION_DISPLAY_VALUE>[] {

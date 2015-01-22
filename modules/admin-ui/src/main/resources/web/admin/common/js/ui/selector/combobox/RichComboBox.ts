@@ -111,15 +111,19 @@ module api.ui.selector.combobox {
             return this.comboBox.countSelectedOptions();
         }
 
-        select(value: OPTION_DISPLAY_VALUE, silent: boolean = false) {
-            this.comboBox.selectOption(this.createOption(value), silent);
+        select(value: OPTION_DISPLAY_VALUE) {
+            this.comboBox.selectOption(this.createOption(value));
+        }
+
+        selectByOption(option: Option<OPTION_DISPLAY_VALUE>) {
+            this.comboBox.selectOption(option);
         }
 
         deselect(value: OPTION_DISPLAY_VALUE) {
             this.comboBox.deselectOption(this.createOption(value));
         }
 
-        clearSelection(ignoreEmpty: boolean = false) {
+        clearSelection(ignoreEmpty: boolean = false, giveInputFocus: boolean = true) {
             this.comboBox.clearSelection(ignoreEmpty);
         }
 

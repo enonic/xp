@@ -11,7 +11,7 @@ module api.content.page.region {
 
     export class PartDescriptorComboBox extends RichComboBox<PartDescriptor> {
 
-        constructor(loader: PartDescriptorLoader) {
+        constructor(loader:PartDescriptorLoader) {
             super(new RichComboBoxBuilder<PartDescriptor>().
                 setIdentifierMethod("getKey").
                 setOptionDisplayValueViewer(new PartDescriptorViewer()).
@@ -21,41 +21,44 @@ module api.content.page.region {
                 setNextInputFocusWhenMaxReached(false));
         }
 
-        setDescriptor(key: DescriptorKey) {
-
-            var descriptorToSelect: PartDescriptor;
-
-            this.getSelectedDisplayValues().forEach((descriptor: PartDescriptor) => {
-                if (descriptor.getKey().toString() == key.toString()) {
-                    descriptorToSelect = descriptor;
-                }
-            });
-            if (!descriptorToSelect) {
-                return;
+        getDescriptor(descriptorKey: DescriptorKey): PartDescriptor {
+            var option = this.comboBox.getOptionByValue(descriptorKey.toString());
+            if(option) {
+                return option.displayValue;
             }
+            return null;
+        }
 
-            var option: Option<PartDescriptor> = {
-                value: descriptorToSelect.getKey().toString(),
-                displayValue: descriptorToSelect
-            };
-            this.comboBox.clearSelection();
-            this.comboBox.selectOption(option);
+        setDescriptor(descriptor: PartDescriptor) {
+
+            this.comboBox.clearSelection(false, false);
+            if (descriptor) {
+                var optionToSelect: Option<PartDescriptor> = this.comboBox.getOptionByValue(descriptor.getKey().toString());
+                if (!optionToSelect) {
+                    optionToSelect = {
+                        value: descriptor.getKey().toString(),
+                        displayValue: descriptor
+                    };
+                    this.comboBox.addOption(optionToSelect);
+                }
+                this.comboBox.selectOption(optionToSelect);
+            }
         }
 
     }
 
     export class PartDescriptorSelectedOptionsView extends BaseSelectedOptionsView<PartDescriptor> {
 
-        createSelectedOption(option: Option<PartDescriptor>): SelectedOption<PartDescriptor> {
+        createSelectedOption(option:Option<PartDescriptor>):SelectedOption<PartDescriptor> {
             return new SelectedOption<PartDescriptor>(new PartDescriptorSelectedOptionView(option), this.count());
         }
     }
 
     export class PartDescriptorSelectedOptionView extends BaseSelectedOptionView<PartDescriptor> {
 
-        private descriptor: PartDescriptor;
+        private descriptor:PartDescriptor;
 
-        constructor(option: Option<PartDescriptor>) {
+        constructor(option:Option<PartDescriptor>) {
             this.descriptor = option.displayValue;
             super(option);
             this.addClass("part-descriptor-selected-option-view");
@@ -68,7 +71,7 @@ module api.content.page.region {
                 .setSubName(this.descriptor.getKey().toString());
 
             var removeButtonEl = new api.dom.AEl("remove");
-            removeButtonEl.onClicked((event: MouseEvent) => {
+            removeButtonEl.onClicked((event:MouseEvent) => {
                 this.notifySelectedOptionRemoveRequested();
 
                 event.stopPropagation();
