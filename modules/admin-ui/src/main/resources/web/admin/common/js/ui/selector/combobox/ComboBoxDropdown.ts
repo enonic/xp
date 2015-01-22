@@ -24,6 +24,8 @@ module api.ui.selector.combobox {
 
         private emptyDropdown: api.dom.DivEl;
 
+        private dropdownGridConfig: DropdownGridConfig<OPTION_DISPLAY_VALUE>;
+        
         private dropdownGrid: DropdownGrid<OPTION_DISPLAY_VALUE>;
 
         constructor(config: ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>) {
@@ -32,14 +34,16 @@ module api.ui.selector.combobox {
             this.emptyDropdown.getEl().setInnerHtml("No matching items");
             this.emptyDropdown.hide();
 
-            this.dropdownGrid = new DropdownGrid<OPTION_DISPLAY_VALUE>(<DropdownGridConfig<OPTION_DISPLAY_VALUE>>{
+            this.dropdownGridConfig = {
                 maxHeight: config.maxHeight,
                 width: Math.max(config.width, 240),
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,
                 dataIdProperty: config.dataIdProperty,
                 multipleSelections: config.multipleSelections
-            });
+            };
+
+            this.dropdownGrid = new DropdownGrid<OPTION_DISPLAY_VALUE>(this.dropdownGridConfig);
         }
 
         getGrid(): DropdownGrid<OPTION_DISPLAY_VALUE> {
@@ -65,6 +69,10 @@ module api.ui.selector.combobox {
             if (this.isDropdownShown()) {
                 this.showDropdown(selectedOptions);
             }
+        }
+
+        removeAllOptions() {
+            this.dropdownGrid.removeAllOptions();
         }
 
         addOption(option: Option<OPTION_DISPLAY_VALUE>) {
