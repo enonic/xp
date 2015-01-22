@@ -5,6 +5,7 @@ import javax.ws.rs.Path;
 import com.enonic.xp.portal.impl.resource.asset.AssetResource;
 import com.enonic.xp.portal.impl.resource.attachment.AttachmentResource;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
+import com.enonic.xp.portal.impl.resource.error.ErrorResource;
 import com.enonic.xp.portal.impl.resource.image.ImageResource;
 import com.enonic.xp.portal.impl.resource.render.ComponentResource;
 import com.enonic.xp.portal.impl.resource.service.ServiceResource;
@@ -40,5 +41,11 @@ public final class UnderscoreResource
     public ComponentResource component()
     {
         return initResource( new ComponentResource() );
+    }
+
+    @Path("error")
+    public ErrorResource error()
+    {
+        return initResource( new ErrorResource() );
     }
 }
