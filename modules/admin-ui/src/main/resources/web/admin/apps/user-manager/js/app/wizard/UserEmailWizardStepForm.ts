@@ -3,6 +3,8 @@ module app.wizard {
     import Principal = api.security.Principal;
 
     import EmailInput = api.ui.text.EmailInput;
+    import FormItemBuilder = api.ui.form.FormItemBuilder;
+    import Validators = api.ui.form.Validators;
 
     import DivEl = api.dom.DivEl;
     import LabelEl = api.dom.LabelEl;
@@ -11,8 +13,6 @@ module app.wizard {
     export class UserEmailWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private email: EmailInput;
-
-        private label: LabelEl;
 
         private userStoreKey: api.security.UserStoreKey;
 
@@ -23,26 +23,24 @@ module app.wizard {
             this.email = new EmailInput();
             this.email.setUserStoreKey(this.userStoreKey);
 
-            var label = new DivEl("input-label"),
-                wrapper = new DivEl("wrapper required");
-            this.label = new LabelEl("Email");
-            wrapper.appendChild(this.label);
-            label.appendChild(wrapper);
+            var emailFormItem = new FormItemBuilder(this.email).
+                setLabel('Email').
+                setValidator(Validators.required).
+                build();
 
-            var formView = new DivEl("form-view"),
-                inputView = new DivEl("input-view valid"),
-                inputTypeView = new DivEl("input-type-view"),
-                inputOccurrenceView = new DivEl("input-occurrence-view single-occurrence"),
-                inputWrapper = new DivEl("input-wrapper");
+            var fieldSet = new api.ui.form.Fieldset();
+            fieldSet.add(emailFormItem);
 
-            inputWrapper.appendChild(this.email);
-            inputOccurrenceView.appendChild(inputWrapper);
-            inputTypeView.appendChild(inputOccurrenceView);
-            inputView.appendChild(label);
-            inputView.appendChild(inputTypeView);
-            formView.appendChild(inputView);
+            var form = new api.ui.form.Form().add(fieldSet);
 
-            this.appendChild(formView);
+            form.onFocus((event) => {
+                this.notifyFocused(event);
+            });
+            form.onBlur((event) => {
+                this.notifyBlurred(event);
+            });
+
+            this.appendChild(form);
         }
 
         layout(principal: Principal) {

@@ -5,6 +5,7 @@ module app.wizard {
     import PrincipalKey = api.security.PrincipalKey;
     import PrincipalType = api.security.PrincipalType;
     import PrincipalLoader = api.security.PrincipalLoader;
+    import FormItemBuilder = api.ui.form.FormItemBuilder;
 
     import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 
@@ -30,22 +31,26 @@ module app.wizard {
             var handler = () => { this.selectMembers(); loadedHandler(); this.principals.unLoaded(handler); };
             this.principals.onLoaded(handler);
 
-            this.label = new LabelEl("", this.principals, "input-label");
+            var principalsFormItem = new FormItemBuilder(this.principals).
+                setLabel('Has Role').
+                build();
 
-            var formView = new DivEl("form-view"),
-                inputView = new DivEl("input-view valid"),
-                inputTypeView = new DivEl("input-type-view"),
-                inputOccurrenceView = new DivEl("input-occurrence-view single-occurrence"),
-                inputWrapper = new DivEl("input-wrapper");
+            this.label = principalsFormItem.getLabel();// new LabelEl("", this.principals, "input-label");
 
-            inputWrapper.appendChild(this.principals);
-            inputOccurrenceView.appendChild(inputWrapper);
-            inputTypeView.appendChild(inputOccurrenceView);
-            inputView.appendChild(this.label);
-            inputView.appendChild(inputTypeView);
-            formView.appendChild(inputView);
+            var fieldSet = new api.ui.form.Fieldset();
+            fieldSet.add(principalsFormItem);
 
-            this.appendChild(formView);
+            var form = new api.ui.form.Form().add(fieldSet);
+
+            form.onFocus((event) => {
+                this.notifyFocused(event);
+            });
+            form.onBlur((event) => {
+                this.notifyBlurred(event);
+            });
+
+            this.appendChild(form);
+
         }
 
         layout(principal: Principal) {

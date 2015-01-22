@@ -6,6 +6,10 @@ module api.ui.form {
 
         private fieldsets: api.ui.form.Fieldset[] = [];
 
+        private focusListeners: {(event: FocusEvent):void}[] = [];
+
+        private blurListeners: {(event: FocusEvent):void}[] = [];
+
         constructor(className?: string) {
             super(className);
             this.formEl = new api.dom.FormEl("form");
@@ -15,6 +19,12 @@ module api.ui.form {
         }
 
         add(fieldset: Fieldset) {
+            fieldset.onFocus((event) => {
+                this.notifyFocused(event);
+            });
+            fieldset.onBlur((event) => {
+                this.notifyBlurred(event);
+            });
             this.fieldsets.push(fieldset);
             this.formEl.appendChild(fieldset);
             return this;
@@ -46,6 +56,38 @@ module api.ui.form {
                 }
             });
             return data;
+        }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners.push(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners = this.focusListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners.push(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners = this.blurListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        notifyFocused(event: FocusEvent) {
+            this.focusListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
+
+        notifyBlurred(event: FocusEvent) {
+            this.blurListeners.forEach((listener) => {
+                listener(event);
+            })
         }
     }
 }

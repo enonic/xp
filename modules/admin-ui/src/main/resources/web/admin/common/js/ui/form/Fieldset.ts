@@ -5,6 +5,10 @@ module api.ui.form {
 
         private items: api.ui.form.FormItem[] = [];
 
+        private focusListeners: {(event: FocusEvent):void}[] = [];
+
+        private blurListeners: {(event: FocusEvent):void}[] = [];
+
         constructor(legend?: string) {
             super();
             if (legend) {
@@ -14,7 +18,15 @@ module api.ui.form {
         }
 
         add(formItem: FormItem) {
+            formItem.onFocus((event: FocusEvent) => {
+                this.notifyFocused(event);
+            });
+
+            formItem.onBlur((event: FocusEvent) => {
+                this.notifyBlurred(event);
+            });
             this.items.push(formItem);
+
             this.appendChild(formItem);
         }
 
@@ -42,6 +54,38 @@ module api.ui.form {
                 data[input.getName()] = input.getValue();
             });
             return data;
+        }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners.push(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners = this.focusListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners.push(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners = this.blurListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyFocused(event: FocusEvent) {
+            this.focusListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
+
+        private notifyBlurred(event: FocusEvent) {
+            this.blurListeners.forEach((listener) => {
+                listener(event);
+            })
         }
     }
 }

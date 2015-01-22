@@ -23,14 +23,12 @@ module app.wizard {
             this.localeCombo = new LocaleComboBox(1);
             var localeFormItem = new FormItemBuilder(this.localeCombo).
                 setLabel('Language').
-                setValidator(Validators.required).
                 build();
 
             var loader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
             this.ownerCombo = new PrincipalComboBox(loader, 1);
             var ownerFormItem = new FormItemBuilder(this.ownerCombo).
                 setLabel('Owner').
-                setValidator(Validators.required).
                 build();
 
             var fieldSet = new api.ui.form.Fieldset();
@@ -40,6 +38,13 @@ module app.wizard {
             var form = new api.ui.form.Form().add(fieldSet);
 
             this.appendChild(form);
+
+            form.onFocus((event) => {
+                this.notifyFocused(event);
+            });
+            form.onBlur((event) => {
+                this.notifyBlurred(event);
+            });
         }
 
         layout(content: api.content.Content) {

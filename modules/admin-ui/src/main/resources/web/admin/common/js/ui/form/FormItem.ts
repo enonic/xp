@@ -8,14 +8,28 @@ module api.ui.form {
         private validator: (input: api.dom.FormInputEl) => string;
         private invalidClass: string = "invalid";
 
+        private focusListeners: {(event: FocusEvent):void}[] = [];
+
+        private blurListeners: {(event: FocusEvent):void}[] = [];
+
         constructor(builder: FormItemBuilder) {
             super("form-item");
             this.error = new api.dom.SpanEl("error");
             this.appendChild(this.error);
 
             this.input = builder.getInput();
+            this.input.onFocus((event: FocusEvent) => {
+                this.notifyFocused(event);
+            });
+
+            this.input.onBlur((event: FocusEvent) => {
+                this.notifyBlurred(event);
+            });
             if (builder.getLabel()) {
                 this.label = new api.dom.LabelEl(builder.getLabel(), this.input);
+                if(Validators.required == builder.getValidator()) {
+                    this.label.setClass("required");
+                }
                 this.appendChild(this.label);
             }
             this.appendChild(this.input);
@@ -52,6 +66,38 @@ module api.ui.form {
                     this.error.setHtml(validationMessage || "");
                 }
             }
+        }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners.push(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners = this.focusListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners.push(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners = this.blurListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyFocused(event: FocusEvent) {
+            this.focusListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
+
+        private notifyBlurred(event: FocusEvent) {
+            this.blurListeners.forEach((listener) => {
+                listener(event);
+            })
         }
 
     }

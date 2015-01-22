@@ -8,6 +8,12 @@ module app.wizard {
             super();
 
             this.description = new api.ui.text.TextInput("middle");
+            this.description.onFocus((event) => {
+                this.notifyFocused(event);
+            });
+            this.description.onBlur((event) => {
+                this.notifyBlurred(event);
+            });
             var formView = new api.dom.DivEl("form-view"),
                 inputView = new api.dom.DivEl("input-view valid"),
                 label = new api.dom.LabelEl("Description", this.description, "input-label"),
