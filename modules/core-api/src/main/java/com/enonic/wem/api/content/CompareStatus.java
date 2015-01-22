@@ -11,7 +11,10 @@ public class CompareStatus
         DELETED,
         DELETED_TARGET,
         EQUAL,
-        MOVED
+        MOVED,
+        CONFLICT_PATH_EXISTS,
+        CONFLICT_VERSION_BRANCH_DIVERGS
+
     }
 
     private final Status status;
@@ -24,6 +27,16 @@ public class CompareStatus
     public Status getStatus()
     {
         return status;
+    }
+
+    public boolean isConflict()
+    {
+        return this.status.equals( Status.CONFLICT_PATH_EXISTS ) || status.equals( Status.CONFLICT_VERSION_BRANCH_DIVERGS );
+    }
+
+    public boolean isDelete()
+    {
+        return this.status.equals( Status.DELETED );
     }
 
     @Override

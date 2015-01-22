@@ -340,7 +340,7 @@ public class NodeServiceImpl
     @Override
     public NodeVersionDiffResult diff( final NodeVersionDiffQuery query )
     {
-        return NodeVersionDiffCommand.create().
+        return FindNodesWithVersionDifferenceCommand.create().
             versionService( this.versionService ).
             query( query ).
             build().

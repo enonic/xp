@@ -5,13 +5,13 @@ import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.repo.internal.version.VersionService;
 
-public class NodeVersionDiffCommand
+public class FindNodesWithVersionDifferenceCommand
 {
     private final NodeVersionDiffQuery query;
 
     private final VersionService versionService;
 
-    private NodeVersionDiffCommand( Builder builder )
+    private FindNodesWithVersionDifferenceCommand( Builder builder )
     {
         query = builder.query;
         versionService = builder.versionService;
@@ -49,9 +49,9 @@ public class NodeVersionDiffCommand
             return this;
         }
 
-        public NodeVersionDiffCommand build()
+        public FindNodesWithVersionDifferenceCommand build()
         {
-            return new NodeVersionDiffCommand( this );
+            return new FindNodesWithVersionDifferenceCommand( this );
         }
     }
 }

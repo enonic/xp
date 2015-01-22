@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
@@ -212,7 +214,17 @@ public abstract class AbstractNodeTest
         printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
     }
 
-    protected PushNodesResult doPushNodes( final NodeIds nodeIds, final Workspace target )
+    protected PushNodesResult pushNodes( final Workspace target, final NodeId... nodeIds )
+    {
+        return doPushNodes( NodeIds.from( Arrays.asList( nodeIds ) ), target );
+    }
+
+    protected PushNodesResult pushNodes( final NodeIds nodeIds, final Workspace target )
+    {
+        return doPushNodes( nodeIds, target );
+    }
+
+    private PushNodesResult doPushNodes( final NodeIds nodeIds, final Workspace target )
     {
         return PushNodesCommand.create().
             ids( nodeIds ).

@@ -50,6 +50,19 @@ public class NodeComparisons
         }
     }
 
+    public boolean hasConflict()
+    {
+        for ( final NodeComparison nodeComparison : this.nodeComparisons )
+        {
+            if ( nodeComparison.getCompareStatus().isConflict() )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public Set<NodeComparison> getWithStatus( final CompareStatus.Status status )
     {
         Set<NodeComparison> result = Sets.newHashSet();

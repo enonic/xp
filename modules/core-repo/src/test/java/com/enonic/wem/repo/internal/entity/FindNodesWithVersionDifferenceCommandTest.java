@@ -14,7 +14,7 @@ import com.enonic.wem.api.workspace.Workspace;
 
 import static org.junit.Assert.*;
 
-public class NodeVersionDiffCommandTest
+public class FindNodesWithVersionDifferenceCommandTest
     extends AbstractNodeTest
 {
     @Test
@@ -251,7 +251,7 @@ public class NodeVersionDiffCommandTest
             queryBuilder.nodePath( nodePath );
         }
 
-        return NodeVersionDiffCommand.create().
+        return FindNodesWithVersionDifferenceCommand.create().
             versionService( this.versionService ).
             query( queryBuilder.build() ).
             build().

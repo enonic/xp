@@ -26,7 +26,7 @@ public class PushNodesCommandTest
 
         assertTrue( testWsNode == null );
 
-        doPushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        pushNodes( NodeIds.from( node.id() ), WS_OTHER );
 
         testWsNode = CTX_OTHER.callWith( () -> getNodeById( node.id() ) );
 
@@ -47,8 +47,8 @@ public class PushNodesCommandTest
             name( "my-child" ).
             build() );
 
-        doPushNodes( NodeIds.from( node.id() ), WS_OTHER );
-        doPushNodes( NodeIds.from( child.id() ), WS_OTHER );
+        pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        pushNodes( NodeIds.from( child.id() ), WS_OTHER );
 
         final Node prodNode = CTX_OTHER.callWith( () -> getNodeById( child.id() ) );
 
@@ -69,7 +69,7 @@ public class PushNodesCommandTest
             name( "my-child" ).
             build() );
 
-        final PushNodesResult result = doPushNodes( NodeIds.from( child.id() ), WS_OTHER );
+        final PushNodesResult result = pushNodes( NodeIds.from( child.id() ), WS_OTHER );
 
         assertEquals( 1, result.getFailed().size() );
         assertEquals( PushNodesResult.Reason.PARENT_NOT_FOUND, result.getFailed().iterator().next().getReason() );
@@ -105,7 +105,7 @@ public class PushNodesCommandTest
             build() );
 
         final PushNodesResult result =
-            doPushNodes( NodeIds.from( child2_1.id(), child1_1.id(), child1.id(), child2.id(), node.id() ), WS_OTHER );
+            pushNodes( NodeIds.from( child2_1.id(), child1_1.id(), child1.id(), child2.id(), node.id() ), WS_OTHER );
 
         assertTrue( result.getFailed().isEmpty() );
 

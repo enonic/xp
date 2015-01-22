@@ -28,7 +28,7 @@ public class GetActiveNodeVersionsCommandTest
             parent( NodePath.ROOT ).
             build() );
 
-        doPushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        pushNodes( NodeIds.from( node.id() ), WS_OTHER );
 
         final GetActiveNodeVersionsResult result = GetActiveNodeVersionsCommand.create().
             versionService( this.versionService ).
