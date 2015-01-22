@@ -276,7 +276,7 @@ module app.wizard.page {
         loadPage() {
             if (this.pageSkipReload == false && !this.pageLoading) {
 
-                this.contextWindow.showInspectionPanel(this.pageInspectionPanel);
+                this.contextWindow.clearSelection();
 
                 this.pageLoading = true;
                 this.liveEditPage.load();
