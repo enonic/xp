@@ -100,9 +100,19 @@
         font-size: 20px;
         .icon-close2();
 
-        &:hover {
+        span {
+          display: none;
+        }
+
+        &:before {
+          color: @admin-font-gray3;
+        }
+
+        &:hover, &:focus {
           background-color: @admin-red;
-          color: @admin-bg-almost-white;
+          &:before {
+            color: @admin-bg-almost-white;
+          }
         }
       }
     }

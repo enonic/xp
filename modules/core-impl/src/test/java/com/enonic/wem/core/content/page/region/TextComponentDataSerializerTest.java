@@ -1,7 +1,8 @@
-package com.enonic.wem.api.content.page.region;
+package com.enonic.wem.core.content.page.region;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.page.region.TextComponent;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
 

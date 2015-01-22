@@ -92,8 +92,7 @@ module app.launcher {
             if (application.isLoaded()) {
                 appFrame.show();
                 appFrame.giveFocus();
-            }
-            else {
+            } else {
                 this.adminApplicationFrames.appendChild(appFrame);
                 this.loadMask.show();
                 application.onLoaded(() => {

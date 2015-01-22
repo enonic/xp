@@ -186,15 +186,16 @@
       border: 1px #ffffff solid;
 
       .selected-option {
-        border: 1px #ffffff solid;
+        border: 1px transparent solid;
         height: auto;
+        padding: 0px;
 
         .option-value {
           margin-left: 0px;
         }
 
         .remove {
-          padding-right: 5px;
+          padding: 15px 5px 0 0;
         }
 
         .names-and-icon-view {
@@ -221,14 +222,9 @@
         }
 
       }
-      &:hover {
-        border: 1px @admin-input-blue solid;
-      }
 
       .option-filter-input {
-        &:focus {
-          border-color: transparent;
-        }
+        .input-glow();
       }
     }
   }

@@ -3,8 +3,6 @@ package com.enonic.wem.api.content.page.region;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 public abstract class Component
     implements com.enonic.wem.api.rendering.Component
 {
@@ -14,7 +12,6 @@ public abstract class Component
 
     protected Component( final Builder properties )
     {
-        Preconditions.checkNotNull( properties.name, "name cannot be null" );
         this.name = properties.name;
     }
 

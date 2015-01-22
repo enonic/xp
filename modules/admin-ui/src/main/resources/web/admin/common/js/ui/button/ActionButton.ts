@@ -38,5 +38,9 @@ module api.ui.button {
             });
         }
 
+        getTooltip(): Tooltip {
+            return this.tooltip;
+        }
+
     }
 }

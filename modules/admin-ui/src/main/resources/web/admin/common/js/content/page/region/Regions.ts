@@ -10,6 +10,8 @@ module api.content.page.region {
 
         private changedListeners: {(event: RegionsChangedEvent):void}[] = [];
 
+        private componentPropertyChangedListeners: {(event: ComponentPropertyChangedEvent):void}[] = [];
+
         private regionChangedListeners: {(event: RegionChangedEvent):void}[] = [];
 
         private regionAddedListeners: {(event: RegionAddedEvent):void}[] = [];
@@ -43,17 +45,22 @@ module api.content.page.region {
 
             if (this.handleRegionChanged.bind) {
                 region.onChanged(this.handleRegionChanged.bind(this));
+                region.onComponentPropertyChangedEvent(this.forwardComponentPropertyChangedEvent.bind(this));
             }
             else {
                 // PhantomJS does not support bind
                 region.onChanged((event) => {
                     this.handleRegionChanged(event);
                 });
+                region.onComponentPropertyChangedEvent((event) => {
+                    this.forwardComponentPropertyChangedEvent(event);
+                });
             }
         }
 
         private unregisterRegionListeners(region: Region) {
             region.unChanged(this.handleRegionChanged);
+            region.unComponentPropertyChangedEvent(this.forwardComponentPropertyChangedEvent);
         }
 
         private handleRegionChanged(event: BaseRegionChangedEvent) {
@@ -180,7 +187,24 @@ module api.content.page.region {
             }
             this.changedListeners.forEach((listener: (event: RegionsChangedEvent)=>void) => {
                 listener(event);
-            })
+            });
+        }
+
+        onComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
+            this.componentPropertyChangedListeners.push(listener);
+        }
+
+        unComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
+            this.componentPropertyChangedListeners =
+            this.componentPropertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        private forwardComponentPropertyChangedEvent(event: ComponentPropertyChangedEvent) {
+            this.componentPropertyChangedListeners.forEach((listener: (event: ComponentPropertyChangedEvent)=>void) => {
+                listener(event);
+            });
         }
 
         onRegionChanged(listener: (event: RegionChangedEvent)=>void) {

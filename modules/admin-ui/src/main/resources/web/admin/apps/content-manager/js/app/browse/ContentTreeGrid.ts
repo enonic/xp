@@ -105,7 +105,6 @@ module app.browse {
                     modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
                 }
 
-                this.getGrid().resizeCanvas();
             });
 
             this.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],

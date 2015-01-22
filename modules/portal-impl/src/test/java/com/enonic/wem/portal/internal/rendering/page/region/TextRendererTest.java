@@ -26,7 +26,7 @@ public class TextRendererTest
     }
 
     @Test
-    public void given_TextComponent_with_no_text_when_render_then_emtpy_string_text_is_returned()
+    public void textComponentWithNoText()
     {
         // setup
         textComponent = TextComponent.newTextComponent().name( "myTextComponent" ).build();
@@ -40,7 +40,7 @@ public class TextRendererTest
     }
 
     @Test
-    public void given_TextComponent_with_no_text_and_RenderMode_is_EDIT_when_render_then_empty_LiveEdit_div_is_returned()
+    public void textComponentWithNoTextAndRenderModeEdit()
     {
         // setup
         context.setMode( RenderMode.EDIT );
@@ -51,13 +51,11 @@ public class TextRendererTest
         RenderResult result = renderer.render( textComponent, context );
 
         // verify
-        assertEquals(
-            "<div data-live-edit-type=\"text\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>",
-            result.getAsString() );
+        assertEquals( "<div data-live-edit-type=\"text\"><article></article></div>", result.getAsString() );
     }
 
     @Test
-    public void given_TextComponent_with_no_text_and_RenderMode_is_PREVIEW_when_render_then_empty_div_is_returned()
+    public void textComponentWithNoTextAndRenderModePreview()
     {
         // setup
         context.setMode( RenderMode.PREVIEW );
@@ -68,12 +66,12 @@ public class TextRendererTest
         RenderResult result = renderer.render( textComponent, context );
 
         // verify
-        assertEquals( "<div></div>", result.getAsString() );
+        assertEquals( "<article></article>", result.getAsString() );
     }
 
 
     @Test
-    public void given_TextComponent_with_some_text_when_render_then_text_is_returned()
+    public void textComponentWithSomeTextAndRenderModePreview()
     {
         // setup
         String text = "<h2>hello</h2><p>How are you?</p>";
@@ -84,11 +82,11 @@ public class TextRendererTest
         RenderResult result = renderer.render( textComponent, context );
 
         // verify
-        assertEquals( text, result.getAsString() );
+        assertEquals( "<article>" + text + "</article>", result.getAsString() );
     }
 
     @Test
-    public void given_TextComponent_with_some_text_and_RenderMode_is_EDIT_when_render_then_result_is_wrapped_by_LiveEdit_div()
+    public void textComponentWithSomeTextAndRenderModeEdit()
     {
         // setup
         context.setMode( RenderMode.EDIT );
@@ -100,6 +98,6 @@ public class TextRendererTest
         RenderResult result = renderer.render( textComponent, context );
 
         // verify
-        assertEquals( "<div data-live-edit-type=\"text\">" + text + "</div>", result.getAsString() );
+        assertEquals( "<div data-live-edit-type=\"text\"><article>" + text + "</article></div>", result.getAsString() );
     }
 }

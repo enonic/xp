@@ -51,14 +51,32 @@ module api.content.page.region {
             return this.descriptor;
         }
 
-        setDescriptor(newValue: DescriptorKey) {
+        setDescriptor(descriptorKey: DescriptorKey, descriptor: Descriptor) {
 
             var oldValue = this.descriptor;
-            this.descriptor = newValue;
+            this.descriptor = descriptorKey;
 
-            if (!api.ObjectHelper.equals(oldValue, newValue)) {
+            this.alignNameWithDescriptor(descriptor);
+
+            if (!api.ObjectHelper.equals(oldValue, descriptorKey)) {
                 this.notifyPropertyChanged(DescriptorBasedComponent.PROPERTY_DESCRIPTOR);
             }
+
+            this.setConfig(new PropertyTree(this.config.getIdProvider()));
+        }
+
+        setConfig(config: PropertyTree) {
+            var oldValue = this.config;
+            this.config = config;
+
+            if (!api.ObjectHelper.equals(oldValue, config)) {
+                this.notifyPropertyChanged(DescriptorBasedComponent.PROPERTY_CONFIG);
+            }
+        }
+
+        alignNameWithDescriptor(descriptor: Descriptor) {
+            var newName: ComponentName = descriptor ? new ComponentName(descriptor.getDisplayName()) : null;
+            this.setName(newName);
         }
 
         getConfig(): PropertyTree {
@@ -66,13 +84,13 @@ module api.content.page.region {
         }
 
         reset() {
-            this.setDescriptor(null);
+            this.setDescriptor(null, null);
         }
 
         toComponentJson(): DescriptorBasedComponentJson {
 
             return <DescriptorBasedComponentJson>{
-                "name": this.getName().toString(),
+                "name": this.getName() ? this.getName().toString() : null,
                 "descriptor": this.descriptor != null ? this.descriptor.toString() : null,
                 "config": this.config != null ? this.config.toJson() : null
             };

@@ -24,7 +24,7 @@ public abstract class ComponentJson<COMPONENT extends Component>
 
     public String getName()
     {
-        return component.getName().toString();
+        return component.getName() != null ? component.getName().toString() : null;
     }
 
     @JsonIgnore

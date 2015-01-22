@@ -1,7 +1,11 @@
-package com.enonic.wem.api.content.page.region;
+package com.enonic.wem.core.content.page.region;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.page.region.ImageComponent;
+import com.enonic.wem.api.content.page.region.LayoutComponent;
+import com.enonic.wem.api.content.page.region.PartComponent;
+import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.PropertyIdProvider;
 import com.enonic.wem.api.data.PropertyTree;
 

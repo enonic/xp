@@ -61,6 +61,8 @@ module LiveEdit {
                     setElement(body).
                     build();
 
+                new api.liveedit.LiveEditPageViewReadyEvent(this.pageView).fire();
+
                 api.liveedit.ComponentLoadedEvent.on((event: api.liveedit.ComponentLoadedEvent) => {
 
                     if (api.liveedit.layout.LayoutItemType.get().equals(event.getItemView().getType())) {

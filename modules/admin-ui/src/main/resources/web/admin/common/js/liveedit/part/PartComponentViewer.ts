@@ -12,7 +12,7 @@ module api.liveedit.part {
 
         setObject(partComponent: api.content.page.region.PartComponent) {
             super.setObject(partComponent);
-            this.namesAndIconView.setMainName(partComponent.getName().toString()).
+            this.namesAndIconView.setMainName(partComponent.getName() ? partComponent.getName().toString() : "").
                 setSubName(partComponent.getPath().toString()).
                 setIconClass('live-edit-font-icon-part');
         }

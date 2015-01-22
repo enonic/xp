@@ -7,6 +7,7 @@ module api.content.page.region {
         private value: string;
 
         constructor(value: string) {
+            api.util.assertNotNull(value, "ComponentName value cannot be null");
             this.value = value;
         }
 

@@ -28,7 +28,7 @@ public final class ImageContentProcessor
     private MediaInfo mediaInfo;
 
     private static final Scale[] scales =
-        new Scale[]{new Scale( "small", 256 ), new Scale( "medium", 512 ), new Scale( "large", 2024 ), new Scale( "extra-large", 2048 )};
+        new Scale[]{new Scale( "small", 256 ), new Scale( "medium", 512 ), new Scale( "large", 1024 ), new Scale( "extra-large", 2048 )};
 
     public ImageContentProcessor( final MediaInfo mediaInfo )
     {

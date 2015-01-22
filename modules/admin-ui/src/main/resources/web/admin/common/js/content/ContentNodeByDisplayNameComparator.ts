@@ -2,9 +2,9 @@ module api.content {
 
     import TreeNode = api.ui.treegrid.TreeNode;
 
-    export class ContentByDisplayNameComparator implements api.Comparator<TreeNode<ContentSummaryAndCompareStatus>> {
+    export class ContentNodeByDisplayNameComparator implements api.Comparator<TreeNode<ContentSummaryAndCompareStatus>> {
 
-        compare(a: TreeNode<ContentSummaryAndCompareStatus>, b: TreeNode<ContentSummaryAndCompareStatus>): number {
+        compare(a:TreeNode<ContentSummaryAndCompareStatus>, b:TreeNode<ContentSummaryAndCompareStatus>):number {
             if (!a.getData().getContentSummary()) {
                 return 1;
             } else {

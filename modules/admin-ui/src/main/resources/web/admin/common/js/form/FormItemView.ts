@@ -31,6 +31,8 @@ module api.form {
 
         constructor(config: FormItemViewConfig) {
             super(config.className);
+            api.util.assertNotNull(config.context, "context cannot be null");
+            api.util.assertNotNull(config.formItem, "formItem cannot be null");
             this.context = config.context;
             this.formItem = config.formItem;
             this.parent = config.parent;

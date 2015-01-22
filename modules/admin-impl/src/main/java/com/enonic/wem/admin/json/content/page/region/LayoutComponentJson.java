@@ -27,7 +27,7 @@ public class LayoutComponentJson
                                 final @JsonProperty("regions") List<RegionJson> regions )
     {
         super( newLayoutComponent().
-            name( ComponentName.from( name ) ).
+            name( name != null ? ComponentName.from( name ) : null ).
             descriptor( descriptor != null ? DescriptorKey.from( descriptor ) : null ).
             config( config != null ? PropertyTreeJson.fromJson( config ) : null ).
             regions( regions != null ? new LayoutRegionsJson( regions ).getLayoutRegions() : null ).

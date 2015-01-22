@@ -76,7 +76,7 @@ module api.content.page.region {
                 this.setText(json.text);
             }
 
-            this.setName(new ComponentName(json.name));
+            this.setName(json.name ? new ComponentName(json.name) : null);
             this.setParent(region);
 
             return this;

@@ -78,7 +78,7 @@ module app.browse {
             var viewer = <UserTreeGridItemViewer>node.getViewer("displayName");
             if (!viewer) {
                 var viewer = new UserTreeGridItemViewer();
-                viewer.setObject(node.getData());
+                viewer.setObject(node.getData(), node.calcLevel() > 1);
                 node.setViewer("displayName", viewer);
             }
             return viewer.toString();

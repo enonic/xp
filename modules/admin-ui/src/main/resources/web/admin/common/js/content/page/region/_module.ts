@@ -59,7 +59,6 @@
 ///<reference path='GetLayoutDescriptorByKeyRequest.ts' />
 ///<reference path='DefaultLayoutDescriptorResolver.ts' />
 ///<reference path='LayoutDescriptorDropdown.ts' />
-///<reference path='LayoutDescriptorComboBox.ts' />
 ///<reference path='LayoutRegionsMerger.ts' />
 ///<reference path='LayoutDescriptorCache.ts' />
 

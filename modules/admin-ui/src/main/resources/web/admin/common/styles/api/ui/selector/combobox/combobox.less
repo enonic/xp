@@ -73,7 +73,7 @@
   .empty-options, .options-container {
     position: absolute;
     .box-sizing(border-box);
-    width: 100%;
+    width: 100% !important;
     margin: 0;
     padding: 0;
     .input-border();
@@ -82,10 +82,24 @@
     z-index: @z-index-wizard-steps;
   }
 
+  .slick-viewport {
+    overflow-x: hidden !important;
+    height: 100% !important;
+  }
+
+  .grid {
+    width: 100% !important;
+    overflow-y: auto !important;
+  }
+
   .options-container {
     .slick-header {
       height: 0px;
       display: none;
+    }
+
+    .grid-canvas {
+      width: 100%! important;
     }
 
     .slick-row {
@@ -99,9 +113,10 @@
     }
 
     .slick-cell-checkboxsel {
+      overflow: visible;
       label {
         display: inline-block;
-        width: 100%;
+        width: 30px;
         height: 100%;
         min-width: 16px;
         min-height: 16px;

@@ -27,7 +27,7 @@ public class ImageComponentJson
                                @JsonProperty("config") final List<PropertyArrayJson> config, @JsonProperty("image") final String image )
     {
         super( newImageComponent().
-            name( ComponentName.from( name ) ).
+            name( name != null ? ComponentName.from( name ) : null ).
             image( image != null ? ContentId.from( image ) : null ).
             config( config != null ? PropertyTreeJson.fromJson( config ) : null ).
             build() );

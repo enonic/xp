@@ -43,7 +43,7 @@
 ///<reference path='ComponentRemoveEvent.ts' />
 ///<reference path='ComponentResetEvent.ts' />
 ///<reference path='ComponentDuplicateEvent.ts' />
-///<reference path='ComponentSetDescriptorEvent.ts' />
 ///<reference path='ComponentLoadedEvent.ts' />
 ///<reference path='Position.ts' />
 ///<reference path='TextComponentSetTextEvent.ts' />
+///<reference path='LiveEditPageViewReadyEvent.ts' />

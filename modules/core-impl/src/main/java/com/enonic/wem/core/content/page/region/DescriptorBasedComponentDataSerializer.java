@@ -1,8 +1,9 @@
-package com.enonic.wem.api.content.page.region;
+package com.enonic.wem.core.content.page.region;
 
 
 import com.enonic.wem.api.content.page.ComponentDataSerializer;
 import com.enonic.wem.api.content.page.DescriptorKey;
+import com.enonic.wem.api.content.page.region.DescriptorBasedComponent;
 import com.enonic.wem.api.data.PropertySet;
 
 public abstract class DescriptorBasedComponentDataSerializer<TO_DATA_INPUT extends DescriptorBasedComponent, FROM_DATA_OUTPUT extends DescriptorBasedComponent>

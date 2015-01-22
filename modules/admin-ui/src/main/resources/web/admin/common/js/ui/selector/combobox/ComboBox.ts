@@ -573,7 +573,6 @@ module api.ui.selector.combobox {
 
         private handleSelectedOptionRemoved(removedSelectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) {
             this.comboBoxDropdown.markSelections(this.getSelectedOptions());
-            this.input.openForTypingAndFocus();
 
             this.dropdownHandle.setEnabled(true);
 
@@ -584,6 +583,7 @@ module api.ui.selector.combobox {
             if (this.countSelectedOptions() == 0) {
                 this.removeClass("followed-by-options");
             }
+            this.input.openForTypingAndFocus();
         }
 
         private handleMultipleSelectionChanged(event: DropdownGridMultipleSelectionEvent) {

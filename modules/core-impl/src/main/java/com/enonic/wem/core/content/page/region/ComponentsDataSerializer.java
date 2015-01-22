@@ -1,10 +1,12 @@
-package com.enonic.wem.api.content.page.region;
+package com.enonic.wem.core.content.page.region;
 
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.enonic.wem.api.content.page.region.Component;
+import com.enonic.wem.api.content.page.region.ComponentType;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.support.serializer.AbstractDataListSerializer;
@@ -12,6 +14,8 @@ import com.enonic.wem.api.support.serializer.AbstractDataListSerializer;
 public class ComponentsDataSerializer
     extends AbstractDataListSerializer<Collection<Component>, List<Component>>
 {
+    private final static ComponentDataSerializerProvider COMPONENT_DATA_SERIALIZER_FACTORY = new ComponentDataSerializerProvider();
+
     public void toData( final Collection<Component> components, final PropertySet parent )
     {
         for ( final Component component : components )
@@ -19,7 +23,7 @@ public class ComponentsDataSerializer
             final PropertySet componentAsSet = parent.addSet( "component" );
             final ComponentType type = component.getType();
             componentAsSet.setString( "type", type.getComponentClass().getSimpleName() );
-            type.getDataSerializer().toData( component, componentAsSet );
+            COMPONENT_DATA_SERIALIZER_FACTORY.getDataSerializer( type ).toData( component, componentAsSet );
         }
     }
 
@@ -31,7 +35,7 @@ public class ComponentsDataSerializer
             final PropertySet componentWrapper = componentAsProperty.getSet();
             final ComponentType type = ComponentTypes.bySimpleClassName( componentWrapper.getString( "type" ) );
             final PropertySet componentSet = componentWrapper.getSet( type.getComponentClass().getSimpleName() );
-            componentList.add( type.getDataSerializer().fromData( componentSet ) );
+            componentList.add( COMPONENT_DATA_SERIALIZER_FACTORY.getDataSerializer( type ).fromData( componentSet ) );
         }
         return componentList;
     }
