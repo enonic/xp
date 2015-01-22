@@ -148,7 +148,7 @@ module api.ui.selector.combobox {
             return this.comboBoxDropdown.isDropdownShown();
         }
 
-        showDropdown() {
+        showDropdown(silent: boolean = false) {
 
             this.doUpdateDropdownTopPositionAndWidth();
             this.comboBoxDropdown.showDropdown(this.getSelectedOptions());
@@ -158,7 +158,9 @@ module api.ui.selector.combobox {
 
             this.input.setReadOnly(true);
 
-            this.notifyDropdownShown();
+            if (!silent) {
+                this.notifyDropdownShown();
+            }
         }
 
         setEmptyDropdownText(label: string) {
@@ -182,7 +184,6 @@ module api.ui.selector.combobox {
         }
 
         removeAllOptions() {
-            this.clearSelection(true, false);
             this.comboBoxDropdown.removeAllOptions();
         }
 
@@ -509,9 +510,6 @@ module api.ui.selector.combobox {
                 this.notifyOptionFilterInputValueChanged(this.preservedInputValueChangedEvent.getOldValue(),
                     this.preservedInputValueChangedEvent.getNewValue());
 
-                if (this.isDropdownShown()) {
-                    this.showDropdown();
-                }
                 this.comboBoxDropdown.resetActiveSelection();
 
                 this.input.setReadOnly(false);
@@ -528,11 +526,12 @@ module api.ui.selector.combobox {
             }
 
             if (!this.isDropdownShown()) {
-                this.showDropdown();
                 if (event.which === 40) { // down
-                    this.comboBoxDropdown.nagivateToFirstRow();
+                    this.showDropdown();
+                    //this.comboBoxDropdown.nagivateToFirstRow();
                     this.input.setReadOnly(true);
                 } else {
+                    this.showDropdown(true);
                     this.input.setReadOnly(false);
                 }
                 return;

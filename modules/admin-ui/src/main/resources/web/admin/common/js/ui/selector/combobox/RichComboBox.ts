@@ -179,7 +179,9 @@ module api.ui.selector.combobox {
                 this.notifyLoaded(event.getData());
             });
 
-            this.loader.search("");
+            this.comboBox.onDropdownShown(() => {
+                this.loader.search(this.comboBox.getFilterInputValue());
+            });
         }
 
         private createOptions(items: OPTION_DISPLAY_VALUE[]): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
@@ -202,7 +204,7 @@ module api.ui.selector.combobox {
             };
         }
 
-        setLoader(loader: api.util.loader.BaseLoader<api.item.ItemJson, OPTION_DISPLAY_VALUE>) {
+        private setLoader(loader: api.util.loader.BaseLoader<api.item.ItemJson, OPTION_DISPLAY_VALUE>) {
             this.loader = loader;
             this.setupLoader();
         }
