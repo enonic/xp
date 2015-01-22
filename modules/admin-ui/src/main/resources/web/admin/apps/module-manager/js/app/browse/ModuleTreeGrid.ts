@@ -53,6 +53,10 @@ module app.browse {
 
                     ]).prependClasses("module-grid")
             );
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                this.getGrid().resizeCanvas();
+            });
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<Module>) {

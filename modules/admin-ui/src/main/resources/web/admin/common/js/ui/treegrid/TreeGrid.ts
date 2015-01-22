@@ -173,7 +173,7 @@ module api.ui.treegrid {
                     if (interval) {
                         clearInterval(interval);
                     }
-                    interval = setInterval(this.postLoad.bind(this), 100);
+                    interval = setInterval(this.postLoad.bind(this), 200);
                 });
             }
 
@@ -369,32 +369,28 @@ module api.ui.treegrid {
         }
 
         private postLoad() {
-            // Get current grid's canvas
-            var gridClasses = (" " + this.grid.getEl().getClass()).replace(/\s/g, ".");
-            var canvas = Element.fromString(".tree-grid " + gridClasses + " .grid-canvas", false);
-            var viewport = Element.fromString(".tree-grid " + gridClasses + " .slick-viewport", false);
+            // Skip if not visible or active (is loading something)
+            var iFrame = api.app.Application.getApplication().getAppFrame(),
+                disabled = !iFrame.isVisible() || // application's iframe is visible
+                           !this.isVisible() ||   // TreeGrid is visible in tab
+                           !this.isActive();      // TreeGrid is active
 
-            if (canvas.getEl().isVisible() && this.isActive()) {
+            if (disabled) return;
 
-                // use `this.grid` instead of `viewport` with the animation on.
-                var gridHeight = viewport.getEl().getHeight(),
-                    scrollTop = viewport.getEl().getScrollTop(),
-                    rowHeight = this.grid.getOptions().rowHeight,
-                    nodes = this.root.getCurrentRoot().treeToList(),
-                    emptyNode: TreeNode<DATA> = null,
-                    from = Math.min(nodes.length - 1, Math.floor(scrollTop / rowHeight)),
-                    to = Math.min(nodes.length - 1, from + Math.round(gridHeight / rowHeight) + this.loadBufferSize);
-                if (nodes.length > 0) {
-                    for (var i = from; i <= to; i++) {
-                        if (nodes[i].getDataId() === "") {
-                            emptyNode = nodes[i];
-                            break;
-                        }
-                    }
-                }
+            var viewportRange = this.grid.getViewport(),
+                lastIndex = this.gridData.getItems().length - 1,
+                // first and last rows, that are visible in grid
+                firstVisible = viewportRange.top,
+                lastVisible = Math.min(viewportRange.bottom, lastIndex),
+                // interval borders to search for the empty node
+                from = firstVisible,
+                to = Math.min(lastVisible + this.loadBufferSize, lastIndex);
 
-                if (this.isActive() && !!emptyNode) {
-                    this.loadEmptyNode(emptyNode);
+            for (var i = from; i <= to; i++) {
+                if (this.gridData.getItem(i).getDataId() === "") {
+                    //emptyNode = this.gridData.getItem(i);
+                    this.loadEmptyNode(this.gridData.getItem(i));
+                    break;
                 }
             }
         }
