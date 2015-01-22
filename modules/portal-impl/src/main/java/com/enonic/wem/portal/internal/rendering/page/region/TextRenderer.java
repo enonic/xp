@@ -9,7 +9,6 @@ import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 
@@ -17,10 +16,14 @@ import com.enonic.xp.portal.RenderMode;
 public final class TextRenderer
     implements Renderer<TextComponent>
 {
-    private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
-        "<div data-live-edit-type=\"{0}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";
 
-    private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div></div>";
+    private static final String EMPTY_COMPONENT_EDIT_MODE_HTML = "<div data-live-edit-type=\"{0}\"><article></article></div>";
+
+    private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<article></article>";
+
+    public static final String COMPONENT_EDIT_MODE_HTML = "<div data-live-edit-type=\"{0}\"><article>{1}</article></div>";
+
+    public static final String COMPONENT_PREVIEW_MODE_HTML = "<article>{0}</article>";
 
     @Override
     public Class<TextComponent> getType()
@@ -42,14 +45,18 @@ public final class TextRenderer
         }
         else
         {
-            if ( renderMode == RenderMode.EDIT )
+            switch ( renderMode )
             {
-                response.setBody( MessageFormat.format( "<div data-live-edit-type=\"{0}\">{1}</div>", textComponent.getType().toString(),
-                                                        textComponent.getText() ) );
-            }
-            else
-            {
-                response.setBody( textComponent.getText() );
+                case EDIT:
+                    response.setBody(
+                        MessageFormat.format( COMPONENT_EDIT_MODE_HTML, textComponent.getType().toString(), textComponent.getText() ) );
+                    break;
+
+                case LIVE:
+                case PREVIEW:
+                default:
+                    response.setBody( MessageFormat.format( COMPONENT_PREVIEW_MODE_HTML, textComponent.getText() ) );
+                    break;
             }
         }
 
