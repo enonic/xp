@@ -58,6 +58,10 @@ module api.ui.selector.combobox {
 
         private minWidth: number = -1;
 
+        private dropdownShownListeners: {():void}[] = [];
+
+        private dropdownHiddenListeners: {()}[] = [];
+
         private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
 
         private optionFilterInputValueChangedListeners: {(event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
@@ -136,6 +140,10 @@ module api.ui.selector.combobox {
             return this.input.giveFocus();
         }
 
+        getFilterInputValue(): string {
+            return this.input.getValue();
+        }
+
         isDropdownShown(): boolean {
             return this.comboBoxDropdown.isDropdownShown();
         }
@@ -149,6 +157,8 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.renderDropdownGrid();
 
             this.input.setReadOnly(true);
+
+            this.notifyDropdownShown();
         }
 
         setEmptyDropdownText(label: string) {
@@ -163,10 +173,17 @@ module api.ui.selector.combobox {
             }
 
             this.input.setReadOnly(false);
+
+            this.notifyDropdownHidden();
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
             this.comboBoxDropdown.setOptions(options, this.getSelectedOptions());
+        }
+
+        removeAllOptions() {
+            this.clearSelection(true, false);
+            this.comboBoxDropdown.removeAllOptions();
         }
 
         addOption(option: Option<OPTION_DISPLAY_VALUE>) {
@@ -640,6 +657,38 @@ module api.ui.selector.combobox {
             var event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item);
             this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
+            });
+        }
+
+        onDropdownShown(listener: ()=>void) {
+            this.dropdownShownListeners.push(listener);
+        }
+
+        unDropdownShown(listener: () =>void) {
+            this.dropdownShownListeners.filter((currentListener: ()=>void) => {
+                return listener != currentListener;
+            });
+        }
+
+        private notifyDropdownShown() {
+            this.dropdownShownListeners.forEach((listener: ()=>void) => {
+                listener();
+            });
+        }
+
+        onDropdownHidden(listener: ()=>void) {
+            this.dropdownHiddenListeners.push(listener);
+        }
+
+        unDropdownHidden(listener: () =>void) {
+            this.dropdownHiddenListeners.filter((currentListener: ()=>void) => {
+                return listener != currentListener;
+            });
+        }
+
+        private notifyDropdownHidden() {
+            this.dropdownHiddenListeners.forEach((listener: ()=>void) => {
+                listener();
             });
         }
 

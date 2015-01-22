@@ -191,7 +191,7 @@ module api.ui.selector.combobox {
         }
 
         createConfig(): ComboBoxConfig<OPTION_DISPLAY_VALUE> {
-            return  {
+            return {
                 maximumOccurrences: this.maximumOccurrences,
                 selectedOptionsView: this.selectedOptionsView,
                 optionDisplayValueViewer: this.optionDisplayValueViewer,
@@ -219,8 +219,16 @@ module api.ui.selector.combobox {
             this.comboBox.onOptionDeselected(listener);
         }
 
+        unOptionDeselected(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+            this.comboBox.unOptionDeselected(listener);
+        }
+
         onOptionSelected(listener: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.onOptionSelected(listener);
+        }
+
+        unOptionSelected(listener: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>): void;}) {
+            this.comboBox.unOptionSelected(listener);
         }
 
         private notifyLoading() {
@@ -285,7 +293,6 @@ module api.ui.selector.combobox {
             }
             return this;
         }
-
     }
 
     export class RichComboBoxBuilder<T> {
@@ -348,7 +355,7 @@ module api.ui.selector.combobox {
             return this;
         }
 
-        setMinWidth(value: number) {
+        setMinWidth(value: number): RichComboBoxBuilder<T> {
             this.minWidth = value;
             return this;
         }
