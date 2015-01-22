@@ -108,7 +108,7 @@ module api.ui.selector.combobox {
 
             this.comboBoxDropdown = new ComboBoxDropdown(<ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: 200,
-                width: this.input.getEl().getWidth(),
+                width: this.input.getWidth(),
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,
                 dataIdProperty: config.dataIdProperty,
@@ -148,7 +148,7 @@ module api.ui.selector.combobox {
 
             this.comboBoxDropdown.renderDropdownGrid();
 
-            this.input.getEl().setAttribute('readonly', 'readonly');
+            this.input.setReadOnly(true);
         }
 
         setEmptyDropdownText(label: string) {
@@ -162,7 +162,7 @@ module api.ui.selector.combobox {
                 this.applySelectionsButton.hide();
             }
 
-            this.input.getEl().removeAttribute('readonly');
+            this.input.setReadOnly(false);
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
@@ -304,7 +304,7 @@ module api.ui.selector.combobox {
 
             this.dropdownHandle.setEnabled(true);
 
-            if(!this.maximumOccurrencesReached() && this.hideComboBoxWhenMaxReached) {
+            if (!this.maximumOccurrencesReached() && this.hideComboBoxWhenMaxReached) {
                 this.show();
             }
         }
@@ -324,7 +324,7 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.markSelections([], ignoreEmpty);
 
             this.input.setValue("");
-            if( giveInputFocus ) {
+            if (giveInputFocus) {
                 this.input.openForTypingAndFocus();
             }
             else {
@@ -333,7 +333,7 @@ module api.ui.selector.combobox {
 
             this.dropdownHandle.setEnabled(true);
 
-            if(this.hideComboBoxWhenMaxReached) {
+            if (this.hideComboBoxWhenMaxReached) {
                 this.show();
             }
         }
@@ -420,7 +420,7 @@ module api.ui.selector.combobox {
             });
 
             this.input.onClicked((event: MouseEvent) => {
-                this.input.getEl().removeAttribute('readonly');
+                this.input.setReadOnly(false);
             });
 
             this.comboBoxDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {
@@ -461,6 +461,7 @@ module api.ui.selector.combobox {
                     this.handleInputValueChanged();
                 }
                 else {
+                    this.setEmptyDropdownText("Just keep on typing...");
                     this.delayedHandleInputValueChangedFnCall.delayCall();
                 }
             });
@@ -471,7 +472,7 @@ module api.ui.selector.combobox {
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
-                    this.input.getEl().removeAttribute('readonly');
+                    this.input.setReadOnly(false);
                 }
             });
 
@@ -496,7 +497,7 @@ module api.ui.selector.combobox {
                 }
                 this.comboBoxDropdown.resetActiveSelection();
 
-                this.input.getEl().removeAttribute('readonly');
+                this.input.setReadOnly(false);
             }
         }
 
@@ -513,9 +514,9 @@ module api.ui.selector.combobox {
                 this.showDropdown();
                 if (event.which === 40) { // down
                     this.comboBoxDropdown.nagivateToFirstRow();
-                    this.input.getEl().setAttribute('readonly', 'readonly');
+                    this.input.setReadOnly(true);
                 } else {
-                    this.input.getEl().removeAttribute('readonly');
+                    this.input.setReadOnly(false);
                 }
                 return;
             }
@@ -525,10 +526,10 @@ module api.ui.selector.combobox {
                 if (this.comboBoxDropdown.hasActiveRow()) {
                     if (this.comboBoxDropdown.getActiveRow() === 0) {
                         this.comboBoxDropdown.resetActiveSelection();
-                        this.input.getEl().removeAttribute('readonly');
+                        this.input.setReadOnly(false);
                     } else {
                         this.comboBoxDropdown.navigateToPreviousRow();
-                        this.input.getEl().setAttribute('readonly', 'readonly');
+                        this.input.setReadOnly(true);
                     }
                 }
                 event.stopPropagation();
@@ -540,7 +541,7 @@ module api.ui.selector.combobox {
                 } else {
                     this.comboBoxDropdown.nagivateToFirstRow();
                 }
-                this.input.getEl().setAttribute('readonly', 'readonly');
+                this.input.setReadOnly(true);
                 event.stopPropagation();
                 event.preventDefault();
                 break;
@@ -548,14 +549,14 @@ module api.ui.selector.combobox {
                 this.selectRowOrApplySelection(this.comboBoxDropdown.getActiveRow());
                 break;
             case 32: // Spacebar
-                if (this.input.getEl().getAttribute('readonly') && this.applySelectionsButton) {
+                if (this.input.isReadOnly() && this.applySelectionsButton) {
                     this.comboBoxDropdown.toggleRowSelection(this.comboBoxDropdown.getActiveRow(), this.maximumSelectionsReached());
                     event.stopPropagation();
                     event.preventDefault();
                 }
                 break;
             case 8:
-                if (this.input.getEl().getAttribute('readonly')) {
+                if (this.input.isReadOnly()) {
                     event.stopPropagation();
                     event.preventDefault();
                 }
@@ -565,23 +566,7 @@ module api.ui.selector.combobox {
                 break;
             }
 
-            this.focusOnInput();
-
-        }
-
-        private focusOnInput(focus?: boolean) {
-            var isReadOnly = !!this.input.getEl().getAttribute('readonly');
-            focus = focus || isReadOnly;
-            this.input.giveFocus();
-            if (focus) {
-                if (isReadOnly) {
-                    this.input.getEl().removeAttribute('readonly');
-                    this.input.getEl().setAttribute('readonly', 'readonly');
-                } else {
-                    this.input.getEl().setAttribute('readonly', 'readonly');
-                    this.input.getEl().removeAttribute('readonly');
-                }
-            }
+            this.input.giveFocus()
         }
 
         private handleSelectedOptionRemoved(removedSelectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) {
@@ -600,7 +585,7 @@ module api.ui.selector.combobox {
         }
 
         private handleMultipleSelectionChanged(event: DropdownGridMultipleSelectionEvent) {
-            this.focusOnInput();
+            this.input.giveFocus();
             if (this.isSelectionChanged()) {
                 this.applySelectionsButton.show();
             } else {
