@@ -30,7 +30,7 @@ module app.wizard.page.contextwindow.inspect.region {
             super(<ComponentInspectionPanelConfig>{
                 iconClass: "live-edit-font-icon-image icon-xlarge"
             });
-            this.imageSelector = new api.content.ContentComboBoxBuilder().
+            this.imageSelector = ContentComboBox.create().
                 setMaximumOccurrences(1).
                 setAllowedContentTypes([ContentTypeName.IMAGE.toString()]).
                 setLoader(new api.content.ContentSummaryLoader()).

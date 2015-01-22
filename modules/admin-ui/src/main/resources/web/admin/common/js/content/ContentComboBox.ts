@@ -25,7 +25,7 @@ module api.content {
 
         getContent(contentId: ContentId): ContentSummary {
             var option = this.comboBox.getOptionByValue(contentId.toString());
-            if(option) {
+            if (option) {
                 return option.displayValue;
             }
             return null;
@@ -45,6 +45,10 @@ module api.content {
                 }
                 this.comboBox.selectOption(optionToSelect);
             }
+        }
+
+        public static create(): ContentComboBoxBuilder {
+            return new ContentComboBoxBuilder();
         }
     }
 
@@ -77,7 +81,7 @@ module api.content {
 
     }
 
-    export class ContentComboBoxBuilder {
+    class ContentComboBoxBuilder {
 
         name: string;
 

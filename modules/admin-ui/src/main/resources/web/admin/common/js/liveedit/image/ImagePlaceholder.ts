@@ -45,7 +45,7 @@ module api.liveedit.image {
             });
             this.uploadButton.hide();
 
-            this.comboBox = new api.content.ContentComboBoxBuilder().
+            this.comboBox = api.content.ContentComboBox.create().
                 setMaximumOccurrences(1).
                 setAllowedContentTypes([ContentTypeName.IMAGE.toString()]).
                 setLoader(new api.content.ContentSummaryLoader()).

@@ -53,7 +53,7 @@ module api.content.form.inputtype.relationship {
 
             var relationshipLoader = new RelationshipLoader();
 
-            this.contentComboBox = new api.content.ContentComboBoxBuilder()
+            this.contentComboBox = api.content.ContentComboBox.create()
                 .setName(input.getName())
                 .setMaximumOccurrences(input.getOccurrences().getMaximum())
                 .setLoader(relationshipLoader)
