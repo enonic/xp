@@ -42,6 +42,7 @@
 
 ///<reference path='Page.ts' />
 ///<reference path='PageMode.ts' />
+///<reference path='PageModeChangedEvent.ts' />
 ///<reference path='PageModel.ts' />
 ///<reference path='DescriptorByDisplayNameComparator.ts' />
 ///<reference path='PageTemplateByDisplayNameComparator.ts' />

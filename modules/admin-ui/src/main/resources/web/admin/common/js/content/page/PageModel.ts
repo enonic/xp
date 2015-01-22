@@ -86,6 +86,8 @@ module api.content.page {
 
         private config: PropertyTree;
 
+        private pageModeChangedListeners: {(event: PageModeChangedEvent):void}[] = [];
+
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
         private componentPropertyChangedListeners: {(event: api.content.page.region.ComponentPropertyChangedEvent):void}[] = [];
@@ -135,16 +137,26 @@ module api.content.page {
             }
         }
 
+        private setMode(value: PageMode) {
+            var oldValue = this.mode;
+
+            this.mode = value;
+
+            if (this.mode != oldValue) {
+                this.notifyPageModeChanged(oldValue, this.mode);
+            }
+        }
+
         setController(setController: SetController): PageModel {
 
             var oldControllerKey = this.controller ? this.controller.getKey() : null;
             this.controller = setController.descriptor;
 
             if (setController.descriptor) {
-                this.mode = PageMode.FORCED_CONTROLLER;
+                this.setMode(PageMode.FORCED_CONTROLLER);
             }
             else {
-                this.mode = PageMode.NO_CONTROLLER;
+                this.setMode(PageMode.NO_CONTROLLER);
             }
 
             if (setController.config) {
@@ -192,10 +204,10 @@ module api.content.page {
             var oldTemplateKey = this.template ? this.template.getKey() : null;
 
             if (setTemplate.template) {
-                this.mode = PageMode.FORCED_TEMPLATE;
+                this.setMode(PageMode.FORCED_TEMPLATE);
             }
             else {
-                this.mode = PageMode.AUTOMATIC;
+                this.setMode(PageMode.AUTOMATIC);
             }
 
             this.template = setTemplate.template;
@@ -387,6 +399,23 @@ module api.content.page {
             regions.unChanged(this.handleRegionsValueChanged);
         }
 
+        onPageModeChanged(listener: (event: PageModeChangedEvent)=>void) {
+            this.pageModeChangedListeners.push(listener);
+        }
+
+        unPageModeChanged(listener: (event: PageModeChangedEvent)=>void) {
+            this.pageModeChangedListeners =
+            this.pageModeChangedListeners.filter((curr: (event: PageModeChangedEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        private notifyPageModeChanged(oldValue: PageMode, newValue: PageMode) {
+            var event = new PageModeChangedEvent(oldValue, newValue);
+            this.pageModeChangedListeners.forEach((listener: (event: PageModeChangedEvent)=>void) => {
+                listener(event);
+            })
+        }
 
         onPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
             this.propertyChangedListeners.push(listener);

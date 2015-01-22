@@ -5,6 +5,7 @@ module api.liveedit {
     import Page = api.content.page.Page;
     import PageModel = api.content.page.PageModel;
     import PageMode = api.content.page.PageMode;
+    import PageModeChangedEvent = api.content.page.PageModeChangedEvent;
     import Site = api.content.site.Site;
     import Regions = api.content.page.region.Regions;
     import Component = api.content.page.region.Component;
@@ -44,6 +45,8 @@ module api.liveedit {
 
         private pageModel: PageModel;
 
+        private resetAction: api.ui.Action;
+
         private placeholder: PagePlaceholder;
 
         private regionViews: RegionView[];
@@ -62,13 +65,30 @@ module api.liveedit {
             this.viewsById = {};
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
+
+            this.resetAction = new api.ui.Action('Reset');
+            if (this.pageModel.getMode() == PageMode.AUTOMATIC || this.pageModel.getMode() == PageMode.NO_CONTROLLER) {
+                this.resetAction.setEnabled(false);
+            }
+            this.resetAction.onExecuted(() => {
+                this.pageModel.reset(this);
+            });
+            this.pageModel.onPageModeChanged((event: PageModeChangedEvent) => {
+                if (event.getNewMode() == PageMode.AUTOMATIC || event.getNewMode() == PageMode.NO_CONTROLLER) {
+                    this.resetAction.setEnabled(false);
+                }
+                else {
+                    this.resetAction.setEnabled(true);
+                }
+            });
+            
             super(new ItemViewBuilder().
                 setLiveEditModel(builder.liveEditModel).
                 setItemViewIdProducer(builder.itemViewProducer).
                 setType(PageItemType.get()).
                 setElement(builder.element).
                 setParentElement(builder.element.getParentElement()).
-                setContextMenuActions(this.createPageContextMenuActions()).
+                setContextMenuActions([this.resetAction]).
                 setContextMenuTitle(new PageViewContextMenuTitle(builder.liveEditModel.getContent())));
             this.setTooltipObject(builder.liveEditModel.getContent());
             this.parseItemViews();
@@ -108,16 +128,6 @@ module api.liveedit {
             if (!this.hasClass("live-edit-empty-component")) {
                 this.addClass("live-edit-empty-component");
             }
-        }
-
-        private createPageContextMenuActions() {
-            var actions: api.ui.Action[] = [];
-
-            actions.push(new api.ui.Action('Reset').onExecuted(() => {
-
-                this.pageModel.reset(this);
-            }));
-            return actions;
         }
 
         getName(): string {
