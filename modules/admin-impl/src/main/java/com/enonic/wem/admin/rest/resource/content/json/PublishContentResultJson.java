@@ -10,9 +10,9 @@ import com.enonic.wem.api.content.PushContentsResult;
 
 public class PublishContentResultJson
 {
-    private List<Success> successes = new ArrayList<>();
+    private final List<Success> successes = new ArrayList<>();
 
-    private List<Failure> failures = new ArrayList<>();
+    private final List<Failure> failures = new ArrayList<>();
 
     public List<Success> getSuccesses()
     {
@@ -24,7 +24,7 @@ public class PublishContentResultJson
         return failures;
     }
 
-    public PublishContentResultJson()
+    private PublishContentResultJson()
     {
     }
 
@@ -39,7 +39,7 @@ public class PublishContentResultJson
 
         for ( final PushContentsResult.Failed failed : pushContentsResult.getFailed() )
         {
-            json.failures.add( new Failure( failed.getContent().getId(), failed.getReason().getMessage() ) );
+            json.failures.add( new Failure( failed.getContent().getId(), failed.getFailedReason().getMessage() ) );
         }
 
         return json;
@@ -47,9 +47,9 @@ public class PublishContentResultJson
 
     public static class Success
     {
-        private String id;
+        private final String id;
 
-        private String name;
+        private final String name;
 
         public Success( final ContentId contentId, final String displayName )
         {
@@ -71,9 +71,9 @@ public class PublishContentResultJson
     public static class Failure
     {
 
-        private String id;
+        private final String id;
 
-        private String reason;
+        private final String reason;
 
         public Failure( final ContentId contentId, final String reason )
         {

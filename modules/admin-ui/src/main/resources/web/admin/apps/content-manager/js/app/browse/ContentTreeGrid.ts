@@ -220,6 +220,18 @@ module app.browse {
                 case CompareStatus.EQUAL:
                     status = "Online";
                     break;
+                case CompareStatus.MOVED:
+                    status = "Moved";
+                    break;
+                case CompareStatus.DELETED_TARGET:
+                    status = "Deleted in prod";
+                    break;
+                case CompareStatus.NEW_TARGET:
+                    status = "New in prod";
+                    break;
+                case CompareStatus.CONFLICT_PATH_EXISTS:
+                    status = "Conflict";
+                    break;
                 default:
                     status = "Unknown"
                 }

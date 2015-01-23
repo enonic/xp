@@ -1,15 +1,12 @@
 package com.enonic.wem.api.node;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.content.CompareStatus;
-
 public class ResolveSyncWorkResult
 {
-    private final NodesToPublish nodesToPublish;
+    private final NodePublishRequests nodePublishRequests;
 
     private final NodeIds delete;
 
@@ -17,7 +14,7 @@ public class ResolveSyncWorkResult
 
     private ResolveSyncWorkResult( Builder builder )
     {
-        this.nodesToPublish = NodesToPublish.from( builder.nodesToPublish );
+        this.nodePublishRequests = builder.nodePublishRequests;
         this.delete = NodeIds.from( builder.delete );
         this.conflict = NodeIds.from( builder.conflict );
     }
@@ -27,9 +24,9 @@ public class ResolveSyncWorkResult
         return getConflict().isNotEmpty();
     }
 
-    public NodesToPublish getNodesToPublish()
+    public NodePublishRequests getNodePublishRequests()
     {
-        return nodesToPublish;
+        return nodePublishRequests;
     }
 
     public NodeIds getDelete()
@@ -37,192 +34,44 @@ public class ResolveSyncWorkResult
         return delete;
     }
 
-    public NodeIds getConflict()
+    NodeIds getConflict()
     {
         return conflict;
     }
+
 
     public static Builder create()
     {
         return new Builder();
     }
 
-    private class Conflict
-    {
-        private NodeId nodeId;
-
-        private CompareStatus.Status conflict;
-    }
-
-    public static class NodesToPublish
-        implements Iterable<NodeToPublish>
-    {
-        private Set<NodeToPublish> nodesToPublish;
-
-        public NodesToPublish( final Set<NodeToPublish> nodesToPublish )
-        {
-            this.nodesToPublish = nodesToPublish;
-        }
-
-        @Override
-        public Iterator<NodeToPublish> iterator()
-        {
-            return nodesToPublish.iterator();
-        }
-
-        public Set<NodeId> getNodeIds()
-        {
-            final Set<NodeId> nodeIds = Sets.newHashSet();
-
-            for ( final NodeToPublish nodeToPublish : this.nodesToPublish )
-            {
-                nodeIds.add( nodeToPublish.getNodeId() );
-            }
-
-            return nodeIds;
-        }
-
-        public static NodesToPublish from( final Set<NodeToPublish> nodesToPublish )
-        {
-            return new NodesToPublish( nodesToPublish );
-        }
-
-        public NodeToPublish get( final NodeId nodeId )
-        {
-            for ( final NodeToPublish nodeToPublish : this.nodesToPublish )
-            {
-                if ( nodeToPublish.nodeId.equals( nodeId ) )
-                {
-                    return nodeToPublish;
-                }
-            }
-
-            return null;
-        }
-
-        public int size()
-        {
-            return this.nodesToPublish.size();
-        }
-    }
-
-    public static class NodeToPublish
-    {
-        private NodeId nodeId;
-
-        private Reason reason;
-
-        private NodeToPublish( final Reason reason, final NodeId nodeId )
-        {
-            this.reason = reason;
-            this.nodeId = nodeId;
-        }
-
-        public boolean isParentFor()
-        {
-            return reason instanceof ParentFor;
-        }
-
-        public boolean isReferredFrom()
-        {
-            return reason instanceof ReferredFrom;
-        }
-
-        public static NodeToPublish requested( final NodeId nodeId )
-        {
-            return new NodeToPublish( new Requested(), nodeId );
-        }
-
-        public static NodeToPublish parentFor( final NodeId nodeId, final NodeId parentOf )
-        {
-            return new NodeToPublish( new ParentFor( parentOf ), nodeId );
-        }
-
-        public static NodeToPublish referredFrom( final NodeId nodeId, final NodeId referredFrom )
-        {
-            return new NodeToPublish( new ReferredFrom( referredFrom ), nodeId );
-        }
-
-        public NodeId getNodeId()
-        {
-            return nodeId;
-        }
-
-        public Reason getReason()
-        {
-            return reason;
-        }
-    }
-
-    public abstract static class Reason
-    {
-        public abstract String getMessage();
-    }
-
-    public static class Requested
-        extends Reason
-    {
-        @Override
-        public String getMessage()
-        {
-            return "";
-        }
-    }
-
-    public static class ParentFor
-        extends Reason
-    {
-        private final String message = "Parent for %s";
-
-        private final NodeId nodeId;
-
-        public ParentFor( final NodeId nodeId )
-        {
-            this.nodeId = nodeId;
-        }
-
-        @Override
-        public String getMessage()
-        {
-            return String.format( message, nodeId.toString() );
-        }
-    }
-
-    public static class ReferredFrom
-        extends Reason
-    {
-        private final String message = "Referred from %s";
-
-        private final NodeId nodeId;
-
-        public ReferredFrom( final NodeId nodeId )
-        {
-            this.nodeId = nodeId;
-        }
-
-        @Override
-        public String getMessage()
-        {
-            return String.format( message, nodeId.toString() );
-        }
-    }
-
-
     public static final class Builder
     {
-        private Set<NodeToPublish> nodesToPublish = Sets.newHashSet();
+        private final NodePublishRequests nodePublishRequests = new NodePublishRequests();
 
-        private Set<NodeId> delete = Sets.newHashSet();
+        private final Set<NodeId> delete = Sets.newHashSet();
 
-        private Set<NodeId> conflict = Sets.newHashSet();
+        private final Set<NodeId> conflict = Sets.newHashSet();
 
         private Builder()
         {
         }
 
-        public Builder publish( final NodeToPublish nodeToPublish )
+        public Builder publishRequested( final NodeId nodeId )
         {
-            this.nodesToPublish.add( nodeToPublish );
+            this.nodePublishRequests.add( NodePublishRequest.requested( nodeId ) );
+            return this;
+        }
+
+        public Builder publishParentFor( final NodeId nodeId, final NodeId parentOf )
+        {
+            this.nodePublishRequests.add( NodePublishRequest.parentFor( nodeId, parentOf ) );
+            return this;
+        }
+
+        public Builder publishReferredFrom( final NodeId nodeId, final NodeId referredFrom )
+        {
+            this.nodePublishRequests.add( NodePublishRequest.referredFrom( nodeId, referredFrom ) );
             return this;
         }
 

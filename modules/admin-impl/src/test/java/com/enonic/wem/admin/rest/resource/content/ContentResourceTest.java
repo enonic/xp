@@ -708,7 +708,7 @@ public class ContentResourceTest
                 parentPath( ContentPath.ROOT ).
                 name( "content" ).
                 displayName( "My Content" ).
-                build(), PushContentsResult.Reason.PARENT_NOT_EXISTS ).
+                build(), PushContentsResult.FailedReason.PARENT_NOT_EXISTS ).
             build() );
 
         String jsonString = request().path( "content/publish" ).

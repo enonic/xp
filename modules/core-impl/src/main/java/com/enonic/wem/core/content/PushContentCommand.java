@@ -25,11 +25,14 @@ public class PushContentCommand
 
     private final Workspace target;
 
+    private final PushContentStrategy strategy;
+
     private PushContentCommand( final Builder builder )
     {
         super( builder );
         this.contentIds = builder.contentIds;
         this.target = builder.target;
+        this.strategy = builder.strategy;
     }
 
     PushContentsResult execute()
@@ -52,7 +55,7 @@ public class PushContentCommand
                 // Do conflict stuff
             }
 
-            toPublish.addAll( result.getNodesToPublish().getNodeIds() );
+            toPublish.addAll( result.getNodePublishRequests().getNodeIds().getSet() );
             toDelete.addAll( result.getDelete().getSet() );
         }
 
@@ -83,23 +86,23 @@ public class PushContentCommand
         {
             final Content content = translator.fromNode( failedNode.getNode() );
 
-            final PushContentsResult.Reason reason;
+            final PushContentsResult.FailedReason failedReason;
 
             switch ( failedNode.getReason() )
             {
                 case PARENT_NOT_FOUND:
                 {
-                    reason = PushContentsResult.Reason.PARENT_NOT_EXISTS;
+                    failedReason = PushContentsResult.FailedReason.PARENT_NOT_EXISTS;
                     break;
                 }
                 default:
                 {
-                    reason = PushContentsResult.Reason.UNKNOWN;
+                    failedReason = PushContentsResult.FailedReason.UNKNOWN;
                 }
 
             }
 
-            builder.addFailed( content, reason );
+            builder.addFailed( content, failedReason );
 
         }
 
@@ -130,6 +133,8 @@ public class PushContentCommand
 
         private Workspace target;
 
+        private final PushContentStrategy strategy = PushContentStrategy.DEFAULT;
+
         public Builder contentIds( final ContentIds contentIds )
         {
             this.contentIds = contentIds;
@@ -154,6 +159,15 @@ public class PushContentCommand
             validate();
             return new PushContentCommand( this );
         }
+
+    }
+
+    public static enum PushContentStrategy
+    {
+        IGNORE_CONFLICTS,
+        ALLOW_PUBLISH_OUTSIDE_SELECTION,
+        STRICT,
+        DEFAULT;
 
     }
 

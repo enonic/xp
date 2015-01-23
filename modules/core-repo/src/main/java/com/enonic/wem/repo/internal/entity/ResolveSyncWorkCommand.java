@@ -232,17 +232,15 @@ public class ResolveSyncWorkCommand
         {
             if ( resolveContext.becauseReferredTo )
             {
-                resultBuilder.publish(
-                    ResolveSyncWorkResult.NodeToPublish.referredFrom( comparison.getNodeId(), resolveContext.contextNodeId ) );
+                resultBuilder.publishReferredFrom( comparison.getNodeId(), resolveContext.contextNodeId );
             }
             else if ( resolveContext.becauseParent )
             {
-                resultBuilder.publish(
-                    ResolveSyncWorkResult.NodeToPublish.parentFor( comparison.getNodeId(), resolveContext.contextNodeId ) );
+                resultBuilder.publishParentFor( comparison.getNodeId(), resolveContext.contextNodeId );
             }
             else
             {
-                resultBuilder.publish( ResolveSyncWorkResult.NodeToPublish.requested( comparison.getNodeId() ) );
+                resultBuilder.publishRequested( comparison.getNodeId() );
             }
         }
     }
@@ -253,7 +251,7 @@ public class ResolveSyncWorkCommand
 
         private boolean becauseReferredTo = false;
 
-        private NodeId contextNodeId;
+        private final NodeId contextNodeId;
 
         private ResolveContext( final boolean becauseParent, final boolean becauseReferredTo, final NodeId contextNodeId )
         {

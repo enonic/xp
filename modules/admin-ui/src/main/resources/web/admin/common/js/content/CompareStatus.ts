@@ -2,10 +2,15 @@ module api.content {
 
     export enum CompareStatus {
         NEW,
+        NEW_TARGET,
         NEWER,
         OLDER,
-        UNKNOWN,
         DELETED,
-        EQUAL
+        DELETED_TARGET,
+        EQUAL,
+        MOVED,
+        CONFLICT_PATH_EXISTS,
+        CONFLICT_VERSION_BRANCH_DIVERGS,
+        UNKNOWN
     }
 }

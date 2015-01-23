@@ -11,13 +11,7 @@ public class PushContentsResult
 
     private final ImmutableSet<Failed> failed;
 
-    public PushContentsResult( final Contents successfull, final ImmutableSet<Failed> failed )
-    {
-        this.successfull = successfull;
-        this.failed = failed;
-    }
-
-    private PushContentsResult( Builder builder )
+    private PushContentsResult( final Builder builder )
     {
         successfull = builder.successfull;
         failed = ImmutableSet.copyOf( builder.failed );
@@ -42,12 +36,12 @@ public class PushContentsResult
     {
         private final Content content;
 
-        private final Reason reason;
+        private final FailedReason failedReason;
 
-        public Failed( final Content content, final Reason reason )
+        public Failed( final Content content, final FailedReason failedReason )
         {
             this.content = content;
-            this.reason = reason;
+            this.failedReason = failedReason;
         }
 
         public Content getContent()
@@ -55,20 +49,20 @@ public class PushContentsResult
             return content;
         }
 
-        public Reason getReason()
+        public FailedReason getFailedReason()
         {
-            return reason;
+            return failedReason;
         }
     }
 
-    public enum Reason
+    public enum FailedReason
     {
         PARENT_NOT_EXISTS( "Parent content does not exist" ),
         UNKNOWN( "Unknown" );
 
         private final String message;
 
-        Reason( final String message )
+        FailedReason( final String message )
         {
             this.message = message;
         }
@@ -78,6 +72,35 @@ public class PushContentsResult
             return message;
         }
     }
+
+    public static class ContentToPush
+    {
+        private final ContentId contentId;
+
+        private String description;
+
+        private ContentToPush( final ContentId contentId )
+        {
+            this.contentId = contentId;
+        }
+
+        private ContentToPush( final ContentId contentId, final String description )
+        {
+            this.description = description;
+            this.contentId = contentId;
+        }
+
+        public ContentId getContentId()
+        {
+            return contentId;
+        }
+
+        public String getDescription()
+        {
+            return description;
+        }
+    }
+
 
     public static final class Builder
     {
@@ -95,9 +118,9 @@ public class PushContentsResult
             return this;
         }
 
-        public Builder addFailed( final Content content, final Reason reason )
+        public Builder addFailed( final Content content, final FailedReason failedReason )
         {
-            this.failed.add( new Failed( content, reason ) );
+            this.failed.add( new Failed( content, failedReason ) );
             return this;
         }
 
