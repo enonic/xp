@@ -4,7 +4,6 @@ module app.wizard {
     import ComboBox = api.ui.selector.combobox.ComboBox;
     import FormItemBuilder = api.ui.form.FormItemBuilder;
     import FormItem = api.ui.form.FormItem;
-    import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 
     export class ContentSettingsModel implements api.Equitable {
 
