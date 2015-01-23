@@ -30,19 +30,19 @@ module app {
                 }
                 break;
             default:
-                new api.app.bar.event.ShowBrowsePanelEvent().fire();
+                new api.app.ShowBrowsePanelEvent().fire();
                 break;
             }
         }
 
         private handleGlobalEvents() {
 
-            api.app.bar.event.ShowBrowsePanelEvent.on((event) => {
+            api.app.ShowBrowsePanelEvent.on((event) => {
                 this.handleBrowse(event);
             });
         }
 
-        private handleBrowse(event: api.app.bar.event.ShowBrowsePanelEvent) {
+        private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
             var browsePanel: api.app.browse.BrowsePanel<api.module.Module> = this.getBrowsePanel();
             if (!browsePanel) {
                 this.addBrowsePanel(new app.browse.ModuleBrowsePanel());

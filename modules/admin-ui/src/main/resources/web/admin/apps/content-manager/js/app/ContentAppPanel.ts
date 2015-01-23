@@ -9,7 +9,7 @@ module app {
     import AppBarTabId = api.app.bar.AppBarTabId;
     import AppBarTabMenuItem = api.app.bar.AppBarTabMenuItem;
     import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
-    import ShowBrowsePanelEvent = api.app.bar.event.ShowBrowsePanelEvent;
+    import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 
     export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<ContentSummary> {
 

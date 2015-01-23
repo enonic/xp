@@ -76,7 +76,7 @@ module app.launcher {
                 api.ui.KeyBindings.get().bindKeys(this.getKeyBindings());
             });
 
-            api.app.bar.event.ShowAppLauncherEvent.on((event) => {
+            api.app.ShowAppLauncherEvent.on((event) => {
                 this.highlightAppTile(event.getApplication());
             });
 

@@ -1,4 +1,4 @@
-module api.app.bar.action {
+module api.app.bar {
 
     export class ShowBrowsePanelAction extends api.ui.Action {
 
@@ -6,7 +6,7 @@ module api.app.bar.action {
             super('Browse');
 
             this.onExecuted(() => {
-                new api.app.bar.event.ShowBrowsePanelEvent().fire();
+                new api.app.ShowBrowsePanelEvent().fire();
             });
         }
     }

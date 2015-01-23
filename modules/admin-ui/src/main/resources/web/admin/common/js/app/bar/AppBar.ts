@@ -1,7 +1,5 @@
 module api.app.bar {
 
-    import AppBarActions = api.app.bar.action.AppBarActions;
-
     export class AppBar extends api.dom.DivEl implements api.ui.ActionContainer {
 
         private application: Application;
@@ -12,7 +10,7 @@ module api.app.bar {
 
         private tabMenu: AppBarTabMenu;
 
-        private showAppLauncherAction: api.app.bar.action.ShowAppLauncherAction;
+        private showAppLauncherAction: ShowAppLauncherAction;
 
         constructor(application: Application) {
             super("appbar");
@@ -20,7 +18,7 @@ module api.app.bar {
             this.application = application;
             this.tabMenu = new AppBarTabMenu();
 
-            this.showAppLauncherAction = new action.ShowAppLauncherAction(this.application);
+            this.showAppLauncherAction = new ShowAppLauncherAction(this.application);
 
             this.launcherButton = new LauncherButton(this.showAppLauncherAction);
             this.appendChild(this.launcherButton);

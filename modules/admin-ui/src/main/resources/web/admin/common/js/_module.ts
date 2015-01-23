@@ -134,8 +134,6 @@
 ///<reference path='rendering/_module.ts' />
 
 ///<reference path='app/_module.ts' />
-///<reference path='app/bar/action/_module.ts' />
-///<reference path='app/bar/event/_module.ts' />
 ///<reference path='app/bar/_module.ts' />
 ///<reference path='app/browse/_module.ts' />
 ///<reference path='app/browse/filter/_module.ts' />

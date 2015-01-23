@@ -42,7 +42,7 @@ module app.launcher {
 
             api.dom.Body.get().appendChild(this.adminApplicationFrames);
 
-            api.app.bar.event.ShowAppLauncherEvent.on((event) => {
+            api.app.ShowAppLauncherEvent.on((event) => {
                 api.ui.KeyBindings.get().shelveBindings();
 
                 this.currentApplication = event.getApplication();

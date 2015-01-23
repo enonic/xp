@@ -44,7 +44,7 @@ module app {
                             ]).fire();
                         });
                 } else {
-                    new api.app.bar.event.ShowBrowsePanelEvent().fire();
+                    new api.app.ShowBrowsePanelEvent().fire();
                 }
                 break;
             case 'view':
@@ -54,7 +54,7 @@ module app {
                 }
                 break;
             default:
-                new api.app.bar.event.ShowBrowsePanelEvent().fire();
+                new api.app.ShowBrowsePanelEvent().fire();
                 break;
             }
         }
@@ -80,7 +80,7 @@ module app {
 
         private handleGlobalEvents() {
 
-            api.app.bar.event.ShowBrowsePanelEvent.on((event) => {
+            api.app.ShowBrowsePanelEvent.on((event) => {
                 this.handleBrowse(event);
             });
 
@@ -93,7 +93,7 @@ module app {
             });
         }
 
-        private handleBrowse(event: api.app.bar.event.ShowBrowsePanelEvent) {
+        private handleBrowse(event: api.app.ShowBrowsePanelEvent) {
             var browsePanel: api.app.browse.BrowsePanel<UserTreeGridItem> = this.getBrowsePanel();
             if (!browsePanel) {
                 this.addBrowsePanel(new app.browse.UserBrowsePanel());

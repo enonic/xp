@@ -35,7 +35,7 @@ module api.app {
                 this.browsePanel = undefined;
             } else if (this.getSize() == 0) {
                 // show browse panel if all others were removed
-                new api.app.bar.event.ShowBrowsePanelEvent().fire();
+                new ShowBrowsePanelEvent().fire();
             }
         }
     }
