@@ -7,39 +7,37 @@ module app.wizard {
 
     import DivEl = api.dom.DivEl;
     import LabelEl = api.dom.LabelEl;
+    import FormItemBuilder = api.ui.form.FormItemBuilder;
+    import Validators = api.ui.form.Validators;
 
 
     export class UserPasswordWizardStepForm extends api.app.wizard.WizardStepForm {
 
         private password: PasswordGenerator;
 
-        private label: LabelEl;
-
         constructor() {
             super();
 
             this.password = new PasswordGenerator();
 
-            var label = new DivEl("input-label"),
-                wrapper = new DivEl("wrapper required");
-            this.label = new LabelEl("Password");
-            wrapper.appendChild(this.label);
-            label.appendChild(wrapper);
+            var passwordFormItem = new FormItemBuilder(this.password).
+                setLabel('Password').
+                setValidator(Validators.required).
+                build();
 
-            var formView = new DivEl("form-view"),
-                inputView = new DivEl("input-view valid"),
-                inputTypeView = new DivEl("input-type-view"),
-                inputOccurrenceView = new DivEl("input-occurrence-view single-occurrence"),
-                inputWrapper = new DivEl("input-wrapper");
+            var fieldSet = new api.ui.form.Fieldset();
+            fieldSet.add(passwordFormItem);
 
-            inputWrapper.appendChild(this.password);
-            inputOccurrenceView.appendChild(inputWrapper);
-            inputTypeView.appendChild(inputOccurrenceView);
-            inputView.appendChild(label);
-            inputView.appendChild(inputTypeView);
-            formView.appendChild(inputView);
+            var form = new api.ui.form.Form().add(fieldSet);
 
-            this.appendChild(formView);
+            form.onFocus((event) => {
+                this.notifyFocused(event);
+            });
+            form.onBlur((event) => {
+                this.notifyBlurred(event);
+            });
+
+            this.appendChild(form);
         }
 
         layout(principal: Principal) {

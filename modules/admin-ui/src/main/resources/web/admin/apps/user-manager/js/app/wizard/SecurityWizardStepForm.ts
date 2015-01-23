@@ -7,6 +7,8 @@ module app.wizard {
     import UserStoreAccessControlComboBox = api.ui.security.acl.UserStoreAccessControlComboBox;
     import Content = api.content.Content;
     import UserStore = api.security.UserStore;
+    import FormItemBuilder = api.ui.form.FormItemBuilder;
+    import Validators = api.ui.form.Validators;
 
     import DivEl = api.dom.DivEl;
     import LabelEl = api.dom.LabelEl;
@@ -14,7 +16,6 @@ module app.wizard {
 
     export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
-        private label: LabelEl;
         private inheritance: DivEl;
         private comboBox: UserStoreAccessControlComboBox;
         private userStore: UserStore;
@@ -24,34 +25,30 @@ module app.wizard {
         constructor() {
             super("security-wizard-step-form");
 
-            var label = new DivEl("input-label"),
-                wrapper = new DivEl("wrapper required");
-            this.label = new LabelEl("Permissions");
-            wrapper.appendChild(this.label);
-            label.appendChild(wrapper);
-
             this.inheritance = new DivEl(/*"inheritance"*/);
 
             this.comboBox = new UserStoreAccessControlComboBox();
             this.comboBox.addClass('principal-combobox');
 
+            var accessComboBoxFormItem = new FormItemBuilder(this.comboBox).
+                setValidator(Validators.required).
+                setLabel("Permissions").
+                build();
 
-            var formView = new DivEl("form-view"),
-                inputView = new DivEl("input-view valid"),
-                inputTypeView = new DivEl("input-type-view"),
-                inputOccurrenceView = new DivEl("input-occurrence-view single-occurrence"),
-                inputWrapper = new DivEl("input-wrapper");
+            var fieldSet = new api.ui.form.Fieldset();
+            fieldSet.add(accessComboBoxFormItem);
 
-            inputWrapper.appendChild(this.inheritance);
-            inputWrapper.appendChild(this.comboBox);
+            var form = new api.ui.form.Form().add(fieldSet);
 
-            inputOccurrenceView.appendChild(inputWrapper);
-            inputTypeView.appendChild(inputOccurrenceView);
-            inputView.appendChild(label);
-            inputView.appendChild(inputTypeView);
-            formView.appendChild(inputView);
+            form.onFocus((event) => {
+                this.notifyFocused(event);
+            });
+            form.onBlur((event) => {
+                this.notifyBlurred(event);
+            });
 
-            this.appendChild(formView);
+            this.appendChild(this.inheritance);
+            this.appendChild(form);
 
         }
 
