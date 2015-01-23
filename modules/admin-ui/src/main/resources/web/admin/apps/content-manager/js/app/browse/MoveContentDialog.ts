@@ -38,7 +38,6 @@ module app.browse {
                 this.movedContentSummary = event.getContent();
                 this.contentComboBox.setFilterContentPath(this.movedContentSummary.getPath());
 
-                this.contentComboBox.loader.load();
                 this.contentPath.setHtml(event.getContent().getPath().toString());
 
                 this.open();
@@ -48,7 +47,7 @@ module app.browse {
 
         private initializeActions() {
 
-            this.setCancelAction(new api.ui.Action("Cancel", "esc").onExecuted(() => {
+            this.setCancelAction(new api.ui.Action("Cancel", "esc", true).onExecuted(() => {
                 this.close();
             }));
 

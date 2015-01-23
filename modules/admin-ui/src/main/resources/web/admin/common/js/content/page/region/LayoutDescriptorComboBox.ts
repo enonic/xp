@@ -21,7 +21,7 @@ module api.content.page.region {
                 setNextInputFocusWhenMaxReached(false));
         }
         getDescriptor(descriptorKey: DescriptorKey): LayoutDescriptor {
-            var option = this.comboBox.getOptionByValue(descriptorKey.toString());
+            var option = this.getOptionByValue(descriptorKey.toString());
             if(option) {
                 return option.displayValue;
             }
@@ -30,17 +30,17 @@ module api.content.page.region {
 
         setDescriptor(descriptor: LayoutDescriptor) {
 
-            this.comboBox.clearSelection(false, false);
+            this.clearSelection(false, false);
             if (descriptor) {
-                var optionToSelect: Option<LayoutDescriptor> = this.comboBox.getOptionByValue(descriptor.getKey().toString());
+                var optionToSelect: Option<LayoutDescriptor> = this.getOptionByValue(descriptor.getKey().toString());
                 if (!optionToSelect) {
                     optionToSelect = {
                         value: descriptor.getKey().toString(),
                         displayValue: descriptor
                     };
-                    this.comboBox.addOption(optionToSelect);
+                    this.addOption(optionToSelect);
                 }
-                this.comboBox.selectOption(optionToSelect);
+                this.selectOption(optionToSelect);
             }
         }
     }

@@ -8,21 +8,21 @@ module api.ui.selector.combobox {
 
     export class RichComboBox<OPTION_DISPLAY_VALUE> extends api.dom.CompositeFormInputEl {
 
-        loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
+        private loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
 
-        comboBoxView: api.dom.DivEl;
+        private comboBoxView: api.dom.DivEl;
 
-        comboBoxName: string;
+        private comboBoxName: string;
 
-        selectedOptionsView: SelectedOptionsView<OPTION_DISPLAY_VALUE>;
+        private selectedOptionsView: SelectedOptionsView<OPTION_DISPLAY_VALUE>;
 
-        comboBox: ComboBox<OPTION_DISPLAY_VALUE>;
+        private comboBox: ComboBox<OPTION_DISPLAY_VALUE>;
 
-        identifierMethod: string;
+        private identifierMethod: string;
 
-        maximumOccurrences: number;
+        private maximumOccurrences: number;
 
-        minWidth: number;
+        private minWidth: number;
 
         private delayedInputValueChangedHandling: number;
 
@@ -105,6 +105,34 @@ module api.ui.selector.combobox {
 
         getComboBox(): ComboBox<OPTION_DISPLAY_VALUE> {
             return this.comboBox;
+        }
+
+        addOption(option: Option<OPTION_DISPLAY_VALUE>) {
+            this.comboBox.addOption(option);
+        }
+
+        selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
+            this.comboBox.selectOption(option, silent);
+        }
+
+        hasOptions(): boolean {
+            return this.comboBox.hasOptions();
+        }
+
+        getOptionCount(): number {
+            return this.comboBox.getOptionCount();
+        }
+
+        getOptions(): Option<OPTION_DISPLAY_VALUE>[] {
+            return this.comboBox.getOptions();
+        }
+
+        getOptionByValue(value: string): Option<OPTION_DISPLAY_VALUE> {
+            return this.comboBox.getOptionByValue(value);
+        }
+
+        getOptionByRow(rowIndex: number): Option<OPTION_DISPLAY_VALUE> {
+            return this.comboBox.getOptionByRow(rowIndex);
         }
 
         countSelected(): number {

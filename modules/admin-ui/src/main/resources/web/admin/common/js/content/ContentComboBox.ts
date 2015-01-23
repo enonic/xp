@@ -25,7 +25,7 @@ module api.content {
         }
 
         getContent(contentId: ContentId): ContentSummary {
-            var option = this.comboBox.getOptionByValue(contentId.toString());
+            var option = this.getOptionByValue(contentId.toString());
             if (option) {
                 return option.displayValue;
             }
@@ -34,17 +34,17 @@ module api.content {
 
         setContent(content: ContentSummary) {
 
-            this.comboBox.clearSelection(false, false);
+            this.clearSelection(false, false);
             if (content) {
-                var optionToSelect: Option<ContentSummary> = this.comboBox.getOptionByValue(content.getContentId().toString());
+                var optionToSelect: Option<ContentSummary> = this.getOptionByValue(content.getContentId().toString());
                 if (!optionToSelect) {
                     optionToSelect = {
                         value: content.getContentId().toString(),
                         displayValue: content
                     };
-                    this.comboBox.addOption(optionToSelect);
+                    this.addOption(optionToSelect);
                 }
-                this.comboBox.selectOption(optionToSelect);
+                this.selectOption(optionToSelect);
             }
         }
 

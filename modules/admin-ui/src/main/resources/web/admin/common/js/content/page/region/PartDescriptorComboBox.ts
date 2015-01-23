@@ -22,7 +22,7 @@ module api.content.page.region {
         }
 
         getDescriptor(descriptorKey: DescriptorKey): PartDescriptor {
-            var option = this.comboBox.getOptionByValue(descriptorKey.toString());
+            var option = this.getOptionByValue(descriptorKey.toString());
             if(option) {
                 return option.displayValue;
             }
@@ -31,17 +31,17 @@ module api.content.page.region {
 
         setDescriptor(descriptor: PartDescriptor) {
 
-            this.comboBox.clearSelection(false, false);
+            this.clearSelection(false, false);
             if (descriptor) {
-                var optionToSelect: Option<PartDescriptor> = this.comboBox.getOptionByValue(descriptor.getKey().toString());
+                var optionToSelect: Option<PartDescriptor> = this.getOptionByValue(descriptor.getKey().toString());
                 if (!optionToSelect) {
                     optionToSelect = {
                         value: descriptor.getKey().toString(),
                         displayValue: descriptor
                     };
-                    this.comboBox.addOption(optionToSelect);
+                    this.addOption(optionToSelect);
                 }
-                this.comboBox.selectOption(optionToSelect);
+                this.selectOption(optionToSelect);
             }
         }
 
