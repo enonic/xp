@@ -14,6 +14,8 @@ import com.enonic.wem.api.content.PushContentsResult;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.PushNodesResult;
+import com.enonic.wem.api.node.ResolveSyncWorkResult;
+import com.enonic.wem.api.node.SyncWorkResolverParams;
 import com.enonic.wem.api.workspace.Workspace;
 
 public class PushContentCommand
@@ -32,17 +34,43 @@ public class PushContentCommand
 
     PushContentsResult execute()
     {
-        final PushNodesResult pushNodesResult =
-            nodeService.push( ContentNodeHelper.toNodeIds( this.contentIds ), ContentConstants.WORKSPACE_PROD );
 
-        final PushContentsResult result = createResult( pushNodesResult );
+        final Set<NodeId> toPublish = Sets.newHashSet();
+        final Set<NodeId> toDelete = Sets.newHashSet();
+        final Set<NodeId> conflicts = Sets.newHashSet();
 
-        for ( final Content content : result.getSuccessfull() )
+        for ( final ContentId contentId : this.contentIds )
+        {
+            final ResolveSyncWorkResult result = nodeService.resolveSyncWork( SyncWorkResolverParams.create().
+                includeChildren( true ).
+                nodeId( NodeId.from( contentId.toString() ) ).
+                workspace( ContentConstants.WORKSPACE_PROD ).
+                build() );
+
+            if ( result.hasConflicts() )
+            {
+                // Do conflict stuff
+            }
+
+            toPublish.addAll( result.getNodesToPublish().getNodeIds() );
+            toDelete.addAll( result.getDelete().getSet() );
+        }
+
+        final PushNodesResult pushNodesResult = nodeService.push( NodeIds.from( toPublish ), ContentConstants.WORKSPACE_PROD );
+
+        PushContentsResult contentResult = createResult( pushNodesResult );
+
+        for ( final Content content : contentResult.getSuccessfull() )
         {
             eventPublisher.publish( new ContentPublishedEvent( content.getId() ) );
         }
 
-        return result;
+        for ( final NodeId nodeId : toDelete )
+        {
+            nodeService.deleteById( nodeId );
+        }
+
+        return contentResult;
     }
 
     private PushContentsResult createResult( final PushNodesResult pushNodesResult )

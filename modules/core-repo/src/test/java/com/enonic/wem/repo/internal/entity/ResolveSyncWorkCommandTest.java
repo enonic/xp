@@ -63,13 +63,13 @@ public class ResolveSyncWorkCommandTest
             build().
             execute();
 
-        final NodeIds published = result.getPublish();
-        assertEquals( 5, published.getSize() );
-        assertTrue( published.contains( node1.id() ) );
-        assertTrue( published.contains( node1_1.id() ) );
-        assertTrue( published.contains( node2.id() ) );
-        assertTrue( published.contains( node2_1.id() ) );
-        assertTrue( published.contains( node3.id() ) );
+        final ResolveSyncWorkResult.NodesToPublish nodesToPublish = result.getNodesToPublish();
+        assertEquals( 5, nodesToPublish.size() );
+        assertNotNull( nodesToPublish.get( node1.id() ) );
+        assertNotNull( nodesToPublish.get( node1_1.id() ) );
+        assertNotNull( nodesToPublish.get( node2.id() ) );
+        assertNotNull( nodesToPublish.get( node2_1.id() ) );
+        assertNotNull( nodesToPublish.get( node3.id() ) );
     }
 
 
@@ -123,14 +123,71 @@ public class ResolveSyncWorkCommandTest
             build().
             execute();
 
-        final NodeIds published = result.getPublish();
-        assertEquals( 0, published.getSize() );
+        final ResolveSyncWorkResult.NodesToPublish nodesToPublish = result.getNodesToPublish();
+        assertEquals( 0, nodesToPublish.size() );
 
         final NodeIds deleted = result.getDelete();
         assertEquals( 2, deleted.getSize() );
         assertTrue( deleted.contains( node2_1.id() ) );
         assertTrue( deleted.contains( node3.id() ) );
+    }
 
+
+    @Test
+    public void deleted_not_in_target_ignored()
+        throws Exception
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1" ) ).
+            parent( NodePath.ROOT ).
+            name( "node1" ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1" ) ).
+            parent( node1.path() ).
+            name( "node1_1" ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node2" ) ).
+            parent( NodePath.ROOT ).
+            name( "node2" ).
+            build() );
+
+        final Node node2_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node2_1" ) ).
+            parent( node2.path() ).
+            name( "node2_1" ).
+            build() );
+
+        final Node node3 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node3" ) ).
+            parent( NodePath.ROOT ).
+            name( "node3" ).
+            build() );
+
+        pushNodes( WS_OTHER, node1.id(), node1_1.id(), node2.id() );
+
+        doDeleteNode( node2_1.id() );
+        doDeleteNode( node3.id() );
+
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
+            includeChildren( true ).
+            target( WS_OTHER ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            queryService( this.queryService ).
+            indexService( this.indexService ).
+            build().
+            execute();
+
+        final ResolveSyncWorkResult.NodesToPublish nodesToPublish = result.getNodesToPublish();
+        assertEquals( 0, nodesToPublish.size() );
+
+        final NodeIds deleted = result.getDelete();
+        assertEquals( 0, deleted.getSize() );
     }
 
     @Test
@@ -181,12 +238,11 @@ public class ResolveSyncWorkCommandTest
             build().
             execute();
 
-        final NodeIds published = result.getPublish();
-        assertEquals( 2, published.getSize() );
-        assertTrue( published.contains( node1_1.id() ) );
-        assertTrue( published.contains( node2_1.id() ) );
+        final ResolveSyncWorkResult.NodesToPublish nodesToPublish = result.getNodesToPublish();
+        assertEquals( 2, nodesToPublish.size() );
+        assertNotNull( nodesToPublish.get( node1_1.id() ) );
+        assertNotNull( nodesToPublish.get( node2_1.id() ) );
     }
-
 
     @Test
     public void include_referred_nodes()
@@ -231,11 +287,14 @@ public class ResolveSyncWorkCommandTest
             build().
             execute();
 
-        final NodeIds published = result.getPublish();
-        assertEquals( 3, published.getSize() );
-        assertTrue( published.contains( node1.id() ) );
-        assertTrue( published.contains( node1_1.id() ) );
-        assertTrue( published.contains( node2.id() ) );
+        final ResolveSyncWorkResult.NodesToPublish nodesToPublish = result.getNodesToPublish();
+        assertEquals( 3, nodesToPublish.size() );
+        assertNotNull( nodesToPublish.get( node1.id() ) );
+        assertNotNull( nodesToPublish.get( node1_1.id() ) );
+        final ResolveSyncWorkResult.NodeToPublish node2Publish = nodesToPublish.get( node2.id() );
+        assertNotNull( node2Publish );
+        assertTrue( node2Publish.isReferredFrom() );
+        assertEquals( "Referred from " + node1_1.id(), node2Publish.getReason().getMessage() );
     }
 
     @Test
@@ -288,13 +347,17 @@ public class ResolveSyncWorkCommandTest
             build().
             execute();
 
-        final NodeIds published = result.getPublish();
-        assertEquals( 5, published.getSize() );
-        assertTrue( published.contains( node1.id() ) );
-        assertTrue( published.contains( node1_1.id() ) );
-        assertTrue( published.contains( node2.id() ) );
-        assertTrue( published.contains( node2_1.id() ) );
-        assertTrue( published.contains( node2_1_1.id() ) );
+        final ResolveSyncWorkResult.NodesToPublish nodesToPublish = result.getNodesToPublish();
+        assertEquals( 5, nodesToPublish.size() );
+        assertNotNull( nodesToPublish.get( node1.id() ) );
+        assertNotNull( nodesToPublish.get( node1_1.id() ) );
+        final ResolveSyncWorkResult.NodeToPublish node2_publish = nodesToPublish.get( node2.id() );
+        assertNotNull( node2_publish );
+        assertTrue( node2_publish.isParentFor() );
+        final ResolveSyncWorkResult.NodeToPublish node2_1_publish = nodesToPublish.get( node2_1.id() );
+        assertNotNull( node2_1_publish );
+        assertTrue( node2_1_publish.isParentFor() );
+        assertNotNull( nodesToPublish.get( node2_1_1.id() ) );
     }
 
     @Test
@@ -357,13 +420,13 @@ public class ResolveSyncWorkCommandTest
             build().
             execute();
 
-        final NodeIds published = result.getPublish();
-        assertEquals( 5, published.getSize() );
-        assertTrue( published.contains( node1.id() ) );
-        assertTrue( published.contains( node1_1.id() ) );
-        assertTrue( published.contains( node2.id() ) );
-        assertTrue( published.contains( node2_1.id() ) );
-        assertTrue( published.contains( node2_1_1.id() ) );
+        final ResolveSyncWorkResult.NodesToPublish nodesToPublish = result.getNodesToPublish();
+        assertEquals( 5, nodesToPublish.size() );
+        assertNotNull( nodesToPublish.get( node1.id() ) );
+        assertNotNull( nodesToPublish.get( node1_1.id() ) );
+        assertNotNull( nodesToPublish.get( node2.id() ) );
+        assertNotNull( nodesToPublish.get( node2_1.id() ) );
+        assertNotNull( nodesToPublish.get( node2_1_1.id() ) );
     }
 
     @Test
@@ -430,15 +493,14 @@ public class ResolveSyncWorkCommandTest
             build().
             execute();
 
-        final NodeIds published = result.getPublish();
-        assertEquals( 6, published.getSize() );
-        assertTrue( published.contains( node1.id() ) );
-        assertTrue( published.contains( node1_1.id() ) );
-        assertTrue( published.contains( node2.id() ) );
-        assertTrue( published.contains( node2_1.id() ) );
-        assertTrue( published.contains( node2_1_1.id() ) );
-        assertTrue( published.contains( node3.id() ) );
+        final ResolveSyncWorkResult.NodesToPublish nodesToPublish = result.getNodesToPublish();
+        assertEquals( 6, nodesToPublish.size() );
+        assertNotNull( nodesToPublish.get( node1.id() ) );
+        assertNotNull( nodesToPublish.get( node1_1.id() ) );
+        assertNotNull( nodesToPublish.get( node2.id() ) );
+        assertNotNull( nodesToPublish.get( node2_1.id() ) );
+        assertNotNull( nodesToPublish.get( node2_1_1.id() ) );
+        assertNotNull( nodesToPublish.get( node3.id() ) );
     }
-
 
 }

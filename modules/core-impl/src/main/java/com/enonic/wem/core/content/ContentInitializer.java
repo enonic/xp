@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeService;
 
 @Component(immediate = true, service = ContentInitializer.class)
@@ -21,7 +22,6 @@ public class ContentInitializer
     public final void init()
     {
         ContentConstants.CONTEXT_STAGE.runWith( this::doInitRootNode );
-        ContentConstants.CONTEXT_PROD.runWith( this::doInitRootNode );
     }
 
     private void doInitRootNode()
@@ -47,6 +47,8 @@ public class ContentInitializer
                 build() );
 
             LOG.info( "Created content root-node: " + root.path() );
+
+            nodeService.push( NodeIds.from( root.id() ), ContentConstants.WORKSPACE_PROD );
         }
     }
 
