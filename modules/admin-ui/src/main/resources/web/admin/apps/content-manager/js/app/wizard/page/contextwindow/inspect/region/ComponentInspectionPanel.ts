@@ -16,8 +16,6 @@ module app.wizard.page.contextwindow.inspect.region {
         liveEditModel: LiveEditModel;
 
         formContext: ContentFormContext;
-        
-        componentSelector: api.ui.selector.combobox.RichComboBox<any>;
 
         private component: COMPONENT;
 
@@ -33,17 +31,6 @@ module app.wizard.page.contextwindow.inspect.region {
 
         setComponent(component: COMPONENT) {
             this.component = component;
-        }
-
-        setSelectorValue(value: string) {
-            if (this.componentSelector) {
-                this.componentSelector.clearSelection();
-                var option = this.componentSelector.getComboBox().getOptionByValue(value);
-                if (option) {
-                    this.componentSelector.select(option.displayValue, true);
-                    this.componentSelector.selectedOptionsView.show();
-                }
-            }
         }
 
         getComponentView(): ComponentView<Component> {

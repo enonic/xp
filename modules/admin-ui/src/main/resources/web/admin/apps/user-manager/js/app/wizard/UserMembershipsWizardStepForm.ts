@@ -6,6 +6,8 @@ module app.wizard {
     import PrincipalType = api.security.PrincipalType;
     import PrincipalLoader = api.security.PrincipalLoader;
     import RoleKeys = api.security.RoleKeys;
+    import FormItemBuilder = api.ui.form.FormItemBuilder;
+    import Validators = api.ui.form.Validators;
 
     import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 
@@ -17,10 +19,6 @@ module app.wizard {
         private groups: PrincipalComboBox;
 
         private roles: PrincipalComboBox;
-
-        private labelGroups: LabelEl;
-
-        private labelRoles: LabelEl;
 
         private principal: Principal;
 
@@ -47,36 +45,30 @@ module app.wizard {
             this.groups.onLoaded(groupsHandler);
             this.roles.onLoaded(rolesHandler);
 
-            this.labelGroups = new LabelEl("Groups", this.groups, "input-label");
-            this.labelRoles = new LabelEl("Roles", this.roles, "input-label");
+            var groupsFormItem = new FormItemBuilder(this.groups).
+                setLabel('Groups').
+                build();
 
-            var formViewGroups = new DivEl("form-view user-groups-memberships"),
-                formViewRoles = new DivEl("form-view user-roles-memberships"),
-                inputViewGroups = new DivEl("input-view valid"),
-                inputViewRoles = new DivEl("input-view valid"),
-                inputTypeViewGroups = new DivEl("input-type-view"),
-                inputTypeViewRoles = new DivEl("input-type-view"),
-                inputOccurrenceViewGroups = new DivEl("input-occurrence-view single-occurrence"),
-                inputOccurrenceViewRoles = new DivEl("input-occurrence-view single-occurrence"),
-                inputWrapperGroups = new DivEl("input-wrapper"),
-                inputWrapperRoles = new DivEl("input-wrapper");
+            var rolesFormItem = new FormItemBuilder(this.roles).
+                setLabel('Roles').
+                build();
 
-            inputWrapperGroups.appendChild(this.groups);
-            inputOccurrenceViewGroups.appendChild(inputWrapperGroups);
-            inputTypeViewGroups.appendChild(inputOccurrenceViewGroups);
-            inputViewGroups.appendChild(this.labelGroups);
-            inputViewGroups.appendChild(inputTypeViewGroups);
-            formViewGroups.appendChild(inputViewGroups);
+            var fieldSet = new api.ui.form.Fieldset();
+            fieldSet.add(groupsFormItem);
+            fieldSet.add(rolesFormItem);
 
-            inputWrapperRoles.appendChild(this.roles);
-            inputOccurrenceViewRoles.appendChild(inputWrapperRoles);
-            inputTypeViewRoles.appendChild(inputOccurrenceViewRoles);
-            inputViewRoles.appendChild(this.labelRoles);
-            inputViewRoles.appendChild(inputTypeViewRoles);
-            formViewRoles.appendChild(inputViewRoles);
+            var form = new api.ui.form.Form().add(fieldSet);
 
-            this.appendChild(formViewGroups);
-            this.appendChild(formViewRoles);
+            this.appendChild(form);
+
+            form.onFocus((event) => {
+                this.notifyFocused(event);
+            });
+            form.onBlur((event) => {
+                this.notifyBlurred(event);
+            });
+
+            this.appendChild(form);
         }
 
         layout(principal: Principal) {

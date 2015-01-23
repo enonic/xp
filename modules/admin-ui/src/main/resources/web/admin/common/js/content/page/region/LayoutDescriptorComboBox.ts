@@ -20,28 +20,29 @@ module api.content.page.region {
                 setMaximumOccurrences(1).
                 setNextInputFocusWhenMaxReached(false));
         }
-
-        setDescriptor(key: DescriptorKey) {
-
-            var descriptorToSelect: LayoutDescriptor;
-
-            this.getSelectedDisplayValues().forEach((descriptor: LayoutDescriptor) => {
-                if (descriptor.getKey().toString() == key.toString()) {
-                    descriptorToSelect = descriptor;
-                }
-            });
-            if (!descriptorToSelect) {
-                return;
+        getDescriptor(descriptorKey: DescriptorKey): LayoutDescriptor {
+            var option = this.comboBox.getOptionByValue(descriptorKey.toString());
+            if(option) {
+                return option.displayValue;
             }
-
-            var option: Option<LayoutDescriptor> = {
-                value: descriptorToSelect.getKey().toString(),
-                displayValue: descriptorToSelect
-            };
-            this.comboBox.clearSelection();
-            this.comboBox.selectOption(option);
+            return null;
         }
 
+        setDescriptor(descriptor: LayoutDescriptor) {
+
+            this.comboBox.clearSelection(false, false);
+            if (descriptor) {
+                var optionToSelect: Option<LayoutDescriptor> = this.comboBox.getOptionByValue(descriptor.getKey().toString());
+                if (!optionToSelect) {
+                    optionToSelect = {
+                        value: descriptor.getKey().toString(),
+                        displayValue: descriptor
+                    };
+                    this.comboBox.addOption(optionToSelect);
+                }
+                this.comboBox.selectOption(optionToSelect);
+            }
+        }
     }
 
     export class LayoutDescriptorSelectedOptionsView extends BaseSelectedOptionsView<LayoutDescriptor> {

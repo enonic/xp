@@ -1,4 +1,4 @@
-module api.app.bar.event {
+module api.app {
 
 
     export class ShowBrowsePanelEvent extends api.event.Event {

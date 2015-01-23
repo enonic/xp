@@ -4,16 +4,21 @@ module api.ui.responsive {
 
         private element: api.dom.Element;
 
-        private rangeSize: ResponsiveRange; // Current layoutRange with class
+        private rangeSize: ResponsiveRange;    // Current layoutRange with class
 
-        private rangeValue: number;         // Range (width) value of the previous state
+        private oldRangeSize: ResponsiveRange; // Previous layoutRange with class
 
-        private handle: Function;           // Additional handler on update
+        private rangeValue: number;            // Range (width) value
+
+        private oldRangeValue: number;         // Range (width) value of the previous state
+
+        private handle: Function;              // Additional handler on update
 
         constructor(element: api.dom.Element, handler: (item: ResponsiveItem) => void = ((item: ResponsiveItem) => {
         })) {
             this.element = element;
             this.rangeValue = this.element.getEl().getWidthWithBorder();
+            this.oldRangeValue = this.rangeValue;
             this.handle = handler;
             this.fitToRange();
         }
@@ -40,12 +45,18 @@ module api.ui.responsive {
         update() {
             var newRangeValue = this.element.getEl().getWidthWithBorder();
             if (newRangeValue !== this.rangeValue) {
+                this.oldRangeValue = this.rangeValue;
+                this.oldRangeSize = this.rangeSize;
                 this.rangeValue = newRangeValue;
                 this.element.getEl().removeClass(this.rangeSize.getRangeClass());
                 this.fitToRange(); // update rangeSize
                 this.element.getEl().addClass(this.rangeSize.getRangeClass());
             }
             this.handle(this);     // Additional handler
+        }
+
+        isRangeSizeChanged(): boolean {
+            return this.rangeSize !== this.oldRangeSize;
         }
 
         setHandler(handler: (item: ResponsiveItem) => void = ((item: ResponsiveItem) => {
@@ -57,8 +68,16 @@ module api.ui.responsive {
             return this.rangeValue;
         }
 
+        getOldRangeValue(): number {
+            return this.oldRangeValue;
+        }
+
         getRangeSize(): ResponsiveRange {
             return this.rangeSize;
+        }
+
+        getOldRangeSize(): ResponsiveRange {
+            return this.oldRangeSize;
         }
 
         isInRange(range: ResponsiveRange): boolean {

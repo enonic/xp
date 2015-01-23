@@ -26,11 +26,11 @@ final class JavaTypeConverters
     private final static DateTimeFormatter LOCAL_DATE_TIME_FORMATTER =
         new java.time.format.DateTimeFormatterBuilder().appendValue( ChronoField.YEAR, 4 ).appendLiteral( '-' ).appendValue(
             ChronoField.MONTH_OF_YEAR, 2 ).appendLiteral( '-' ).appendValue( ChronoField.DAY_OF_MONTH, 2 ).appendLiteral( "T" ).appendValue(
-            ChronoField.CLOCK_HOUR_OF_DAY, 2 ).appendLiteral( ":" ).appendValue( ChronoField.MINUTE_OF_HOUR, 2 ).appendLiteral(
+            ChronoField.HOUR_OF_DAY, 2 ).appendLiteral( ":" ).appendValue( ChronoField.MINUTE_OF_HOUR, 2 ).appendLiteral(
             ":" ).appendValue( ChronoField.SECOND_OF_MINUTE, 2 ).toFormatter();
 
     private final static DateTimeFormatter LOCAL_TIME_FORMATTER =
-        new java.time.format.DateTimeFormatterBuilder().appendValue( ChronoField.CLOCK_HOUR_OF_DAY, 1, 2, SignStyle.NORMAL ).appendLiteral(
+        new java.time.format.DateTimeFormatterBuilder().appendValue( ChronoField.HOUR_OF_DAY, 1, 2, SignStyle.NORMAL ).appendLiteral(
             ":" ).appendValue( ChronoField.MINUTE_OF_HOUR, 1, 2, SignStyle.NORMAL ).toFormatter();
 
     private final static PropertySetJsonSerializer DATA_SERIALIZER = new PropertySetJsonSerializer();

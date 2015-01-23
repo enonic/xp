@@ -1,25 +1,55 @@
 module api.content {
 
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
+    import Option = api.ui.selector.Option;
+    import RichComboBox = api.ui.selector.combobox.RichComboBox;
+    import RichComboBoxBuilder = api.ui.selector.combobox.RichComboBoxBuilder;
 
-    export class ContentComboBox extends api.ui.selector.combobox.RichComboBox<ContentSummary> {
+    export class ContentComboBox extends RichComboBox<ContentSummary> {
 
         constructor(builder: ContentComboBoxBuilder) {
 
             var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
             loader.setAllowedContentTypes(builder.allowedContentTypes);
 
-            var richComboBoxBuilder: api.ui.selector.combobox.RichComboBoxBuilder<ContentSummary> = new api.ui.selector.combobox.RichComboBoxBuilder<ContentSummary>();
-            richComboBoxBuilder
-                .setComboBoxName(builder.name ? builder.name : 'contentSelector')
-                .setLoader(loader)
-                .setSelectedOptionsView(new ContentSelectedOptionsView())
-                .setMaximumOccurrences(builder.maximumOccurrences)
-                .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer())
-                .setDelayedInputValueChangedHandling(500)
-                .setMinWidth(builder.minWidth);
+            var richComboBoxBuilder = new RichComboBoxBuilder().
+                setComboBoxName(builder.name ? builder.name : 'contentSelector').
+                setLoader(loader).
+                setSelectedOptionsView(new ContentSelectedOptionsView()).
+                setMaximumOccurrences(builder.maximumOccurrences).
+                setOptionDisplayValueViewer(new api.content.ContentSummaryViewer()).
+                setDelayedInputValueChangedHandling(750).
+                setMinWidth(builder.minWidth);
 
             super(richComboBoxBuilder);
+        }
+
+        getContent(contentId: ContentId): ContentSummary {
+            var option = this.comboBox.getOptionByValue(contentId.toString());
+            if (option) {
+                return option.displayValue;
+            }
+            return null;
+        }
+
+        setContent(content: ContentSummary) {
+
+            this.comboBox.clearSelection(false, false);
+            if (content) {
+                var optionToSelect: Option<ContentSummary> = this.comboBox.getOptionByValue(content.getContentId().toString());
+                if (!optionToSelect) {
+                    optionToSelect = {
+                        value: content.getContentId().toString(),
+                        displayValue: content
+                    };
+                    this.comboBox.addOption(optionToSelect);
+                }
+                this.comboBox.selectOption(optionToSelect);
+            }
+        }
+
+        public static create(): ContentComboBoxBuilder {
+            return new ContentComboBoxBuilder();
         }
     }
 
@@ -52,7 +82,7 @@ module api.content {
 
     }
 
-    export class ContentComboBoxBuilder {
+    class ContentComboBoxBuilder {
 
         name: string;
 
@@ -84,7 +114,7 @@ module api.content {
             return this;
         }
 
-        setMinWidth(value: number) {
+        setMinWidth(value: number): ContentComboBoxBuilder {
             this.minWidth = value;
             return this;
         }

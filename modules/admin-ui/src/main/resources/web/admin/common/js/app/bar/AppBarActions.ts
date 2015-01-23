@@ -1,4 +1,4 @@
-module api.app.bar.action {
+module api.app.bar {
 
     export class AppBarActions {
 

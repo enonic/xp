@@ -57,7 +57,9 @@ module api.content.page.region {
         setDescriptor(descriptorKey: DescriptorKey, descriptor?: LayoutDescriptor) {
 
             super.setDescriptor(descriptorKey, descriptor);
-            this.addRegions(descriptor);
+            if(descriptor) {
+                this.addRegions(descriptor);
+            }
         }
 
         addRegions(layoutDescriptor: LayoutDescriptor) {

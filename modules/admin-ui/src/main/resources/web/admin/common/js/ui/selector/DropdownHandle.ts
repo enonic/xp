@@ -6,7 +6,7 @@ module api.ui.selector {
             super("dropdown-handle");
 
             this.setEnabled(true);
-            this.up();
+            this.removeClass('down');
         }
 
         setEnabled(value: boolean) {

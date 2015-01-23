@@ -31,9 +31,9 @@ module app.login {
 
             this.messageContainer = new api.dom.DivEl("message-container");
 
-            this.appendChild(this.messageContainer);
             this.appendChild(this.userIdInput);
             this.appendChild(this.passwordInput);
+            this.appendChild(this.messageContainer);
 
             this.onShown((event) => {
                 this.userIdInput.giveFocus();

@@ -30,6 +30,14 @@
       margin-right: 10px;
       display: block;
       float: left;
+
+      &.required {
+        &:after {
+          position: absolute;
+          content: '\00a0*';
+          color: @input-red-text;
+        }
+      }
     }
 
     label + .form-input,

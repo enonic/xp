@@ -12,19 +12,11 @@ module app.view {
 
     export class ModuleItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.module.Module> {
 
-        private upgradeNeeded: boolean = true;
-        private upgradeMessageContainer: api.dom.DivEl;
         private moduleDataContainer: api.dom.DivEl;
         private actionMenu: api.ui.menu.ActionMenu;
 
         constructor() {
             super("module-item-statistics-panel");
-
-            this.upgradeMessageContainer = new api.dom.DivEl("upgrade-message-container");
-            if (this.upgradeNeeded) {
-                this.upgradeMessageContainer.getEl().setInnerHtml("Upgrade Available - 1.0.3");
-                this.appendChild(this.upgradeMessageContainer)
-            }
 
             this.actionMenu =
             new api.ui.menu.ActionMenu("Module actions", ModuleBrowseActions.get().START_MODULE, ModuleBrowseActions.get().STOP_MODULE,

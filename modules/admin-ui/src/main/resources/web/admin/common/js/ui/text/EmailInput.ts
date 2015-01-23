@@ -15,12 +15,23 @@ module api.ui.text {
 
         private userStoreKey: api.security.UserStoreKey;
 
+        private focusListeners: {(event: FocusEvent):void}[] = [];
+
+        private blurListeners: {(event: FocusEvent):void}[] = [];
+
         constructor() {
             super("div", "email-input");
 
             this.input = new InputEl(undefined, 'email');
             this.input.setPattern("^[a-zA-Z0-9\_\-\.]+@[a-zA-Z0-9\-]+(?:\.[a-zA-Z0-9\-]{2,})*(?:\.[a-zA-Z]{2,4})$");
 
+            this.input.onFocus((event: FocusEvent) => {
+                this.notifyFocused(event);
+            });
+
+            this.input.onBlur((event: FocusEvent) => {
+                this.notifyBlurred(event);
+            });
             this.input.onInput((event: Event) => {
                 if (this.checkTimeout) {
                     clearTimeout(this.checkTimeout);
@@ -95,6 +106,39 @@ module api.ui.text {
                 this.status = status;
                 this.addClass(this.status);
             }
+        }
+
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners.push(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners = this.focusListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners.push(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners = this.blurListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyFocused(event: FocusEvent) {
+            this.focusListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
+
+        private notifyBlurred(event: FocusEvent) {
+            this.blurListeners.forEach((listener) => {
+                listener(event);
+            })
         }
 
     }

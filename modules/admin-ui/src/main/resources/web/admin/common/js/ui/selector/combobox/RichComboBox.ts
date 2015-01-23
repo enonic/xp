@@ -111,15 +111,19 @@ module api.ui.selector.combobox {
             return this.comboBox.countSelectedOptions();
         }
 
-        select(value: OPTION_DISPLAY_VALUE, silent: boolean = false) {
-            this.comboBox.selectOption(this.createOption(value), silent);
+        select(value: OPTION_DISPLAY_VALUE) {
+            this.comboBox.selectOption(this.createOption(value));
+        }
+
+        selectByOption(option: Option<OPTION_DISPLAY_VALUE>) {
+            this.comboBox.selectOption(option);
         }
 
         deselect(value: OPTION_DISPLAY_VALUE) {
             this.comboBox.deselectOption(this.createOption(value));
         }
 
-        clearSelection(ignoreEmpty: boolean = false) {
+        clearSelection(ignoreEmpty: boolean = false, giveInputFocus: boolean = true) {
             this.comboBox.clearSelection(ignoreEmpty);
         }
 
@@ -175,7 +179,9 @@ module api.ui.selector.combobox {
                 this.notifyLoaded(event.getData());
             });
 
-            this.loader.search("");
+            this.comboBox.onDropdownShown(() => {
+                this.loader.search(this.comboBox.getFilterInputValue());
+            });
         }
 
         private createOptions(items: OPTION_DISPLAY_VALUE[]): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
@@ -187,7 +193,7 @@ module api.ui.selector.combobox {
         }
 
         createConfig(): ComboBoxConfig<OPTION_DISPLAY_VALUE> {
-            return  {
+            return {
                 maximumOccurrences: this.maximumOccurrences,
                 selectedOptionsView: this.selectedOptionsView,
                 optionDisplayValueViewer: this.optionDisplayValueViewer,
@@ -198,7 +204,7 @@ module api.ui.selector.combobox {
             };
         }
 
-        setLoader(loader: api.util.loader.BaseLoader<api.item.ItemJson, OPTION_DISPLAY_VALUE>) {
+        private setLoader(loader: api.util.loader.BaseLoader<api.item.ItemJson, OPTION_DISPLAY_VALUE>) {
             this.loader = loader;
             this.setupLoader();
         }
@@ -215,8 +221,16 @@ module api.ui.selector.combobox {
             this.comboBox.onOptionDeselected(listener);
         }
 
+        unOptionDeselected(listener: {(removed: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
+            this.comboBox.unOptionDeselected(listener);
+        }
+
         onOptionSelected(listener: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.onOptionSelected(listener);
+        }
+
+        unOptionSelected(listener: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>): void;}) {
+            this.comboBox.unOptionSelected(listener);
         }
 
         private notifyLoading() {
@@ -281,7 +295,6 @@ module api.ui.selector.combobox {
             }
             return this;
         }
-
     }
 
     export class RichComboBoxBuilder<T> {
@@ -344,7 +357,7 @@ module api.ui.selector.combobox {
             return this;
         }
 
-        setMinWidth(value: number) {
+        setMinWidth(value: number): RichComboBoxBuilder<T> {
             this.minWidth = value;
             return this;
         }

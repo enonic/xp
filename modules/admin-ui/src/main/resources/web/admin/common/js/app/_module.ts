@@ -1,3 +1,5 @@
+///<reference path='ShowAppLauncherEvent.ts' />
+///<reference path='ShowBrowsePanelEvent.ts' />
 ///<reference path='NamesView.ts'/>
 ///<reference path='NamesAndIconViewSize.ts'/>
 ///<reference path='NamesAndIconView.ts'/>

@@ -89,20 +89,24 @@ module app.browse {
             );
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
-                if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._240_360)) {
-                    this.getGrid().setColumns([nameColumn, orderColumn]);
-                } else if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._360_540)) {
-                    this.getGrid().setColumns([nameColumn, orderColumn, modifiedTimeColumn]);
-                } else {
-                    this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
-                }
+                if (item.isRangeSizeChanged()) {
+                    if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._240_360)) {
+                        this.getGrid().setColumns([nameColumn, orderColumn]);
+                    } else if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._360_540)) {
+                        this.getGrid().setColumns([nameColumn, orderColumn, modifiedTimeColumn]);
+                    } else {
+                        this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
+                    }
 
-                if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._540_720)) {
-                    modifiedTimeColumn.setMaxWidth(100);
-                    modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
+                    if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._540_720)) {
+                        modifiedTimeColumn.setMaxWidth(100);
+                        modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
+                    } else {
+                        modifiedTimeColumn.setMaxWidth(170);
+                        modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
+                    }
                 } else {
-                    modifiedTimeColumn.setMaxWidth(170);
-                    modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
+                    this.getGrid().resizeCanvas();
                 }
 
             });

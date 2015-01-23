@@ -36,6 +36,13 @@ module app.wizard {
             this.editLink = new Button("Edit Permissions");
             this.editLink.addClass("edit-permissions");
 
+            this.editLink.onFocus((event) => {
+                this.notifyFocused(event);
+            });
+            this.editLink.onBlur((event) => {
+                this.notifyBlurred(event);
+            });
+
             var formView = new DivEl("form-view"),
                 inputView = new DivEl("input-view valid"),
                 inputTypeView = new DivEl("input-type-view"),

@@ -19,6 +19,10 @@ module api.ui.text {
 
         private complexity: string;
 
+        private focusListeners: {(event: FocusEvent):void}[] = [];
+
+        private blurListeners: {(event: FocusEvent):void}[] = [];
+
         private SPECIAL_CHARS = '!@#$%^&*()_+{}:"<>?|[];\',./`~';
         private LOWERCASE_CHARS = 'abcdefghijklmnopqrstuvwxyz';
         private UPPERCASE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -34,12 +38,14 @@ module api.ui.text {
             inputWrapper.appendChild(strengthMeter);
 
             this.input = new PasswordInput();
+            this.initFocusEvents(this.input);
             this.input.onInput((event: Event) => {
                 this.assessComplexity(this.input.getValue());
             });
             inputWrapper.appendChild(this.input);
 
             this.showLink = new api.dom.AEl('show-link');
+            this.initFocusEvents(this.showLink);
             this.showLink.onClicked((event: MouseEvent) => {
                 var unlocked = this.hasClass('unlocked');
                 this.toggleClass('unlocked', !unlocked);
@@ -49,6 +55,7 @@ module api.ui.text {
 
             this.generateLink = new api.dom.AEl();
             this.generateLink.setHtml('Generate');
+            this.initFocusEvents(this.generateLink);
             this.generateLink.onClicked((event: MouseEvent) => {
                 this.generatePassword();
                 this.assessComplexity(this.input.getValue());
@@ -202,6 +209,48 @@ module api.ui.text {
 
         private containsNonAlphabetChars(value: string): boolean {
             return /[^a-z\s]/i.test(value);
+        }
+
+        private initFocusEvents(el: api.dom.Element) {
+            el.onFocus((event: FocusEvent) => {
+                this.notifyFocused(event);
+            });
+
+            el.onBlur((event: FocusEvent) => {
+                this.notifyBlurred(event);
+            });
+        }
+
+        onFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners.push(listener);
+        }
+
+        unFocus(listener: (event: FocusEvent) => void) {
+            this.focusListeners = this.focusListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        onBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners.push(listener);
+        }
+
+        unBlur(listener: (event: FocusEvent) => void) {
+            this.blurListeners = this.blurListeners.filter((curr) => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyFocused(event: FocusEvent) {
+            this.focusListeners.forEach((listener) => {
+                listener(event);
+            })
+        }
+
+        private notifyBlurred(event: FocusEvent) {
+            this.blurListeners.forEach((listener) => {
+                listener(event);
+            })
         }
 
     }

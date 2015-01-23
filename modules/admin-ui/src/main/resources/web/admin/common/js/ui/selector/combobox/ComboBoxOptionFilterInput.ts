@@ -10,6 +10,10 @@ module api.ui.selector.combobox {
             this.setPlaceholder("Maximum reached");
             this.getEl().setDisabled(true);
         }
+
+        getWidth(): number {
+            return this.getEl().getWidth();
+        }
     }
 
 }
