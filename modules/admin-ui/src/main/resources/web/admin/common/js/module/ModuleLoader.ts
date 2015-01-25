@@ -11,30 +11,25 @@ module api.module {
             super(new ListModulesRequest());
         }
 
-        search(searchString: string) {
+        search(searchString: string): wemQ.Promise<Module[]> {
 
-            if (this.isLoading()) {
-                this.preservedSearchString = searchString;
-                return;
-            }
-
-            this.load();
+            return this.load();
         }
 
-        load() {
+        load(): wemQ.Promise<Module[]> {
 
             this.notifyLoadingData();
 
-            this.sendRequest()
-                .done((modules: Module[]) => {
+            return this.sendRequest()
+                .then((modules: Module[]) => {
 
                     this.notifyLoadedData(modules);
                     if (this.preservedSearchString) {
                         this.search(this.preservedSearchString);
                         this.preservedSearchString = null;
                     }
+                    return modules;
                 });
-            return null;
         }
 
     }

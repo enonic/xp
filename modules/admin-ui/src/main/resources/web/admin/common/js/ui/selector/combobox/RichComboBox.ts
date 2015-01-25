@@ -61,8 +61,8 @@ module api.ui.selector.combobox {
                 minWidth: this.minWidth
             };
 
-            this.comboBox = new RichComboBoxComboBox<OPTION_DISPLAY_VALUE>(name, comboBoxConfig);
             this.loader = builder.loader;
+            this.comboBox = new RichComboBoxComboBox<OPTION_DISPLAY_VALUE>(name, comboBoxConfig, this.loader);
             this.setupLoader();
 
             this.comboBox.onClicked((event: MouseEvent) => {
@@ -190,12 +190,23 @@ module api.ui.selector.combobox {
         }
 
         private setupLoader() {
-            this.comboBox.onOptionDeselected(()=> {
-                this.loader.search("");
-            });
+
             this.comboBox.onOptionFilterInputValueChanged((event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>) => {
-                this.loader.search(event.getNewValue());
+
+                this.loader.search(event.getNewValue()).
+                    then((result: OPTION_DISPLAY_VALUE[]) => {
+
+                        if (!this.comboBox.isDropdownShown()) {
+                            this.comboBox.showDropdown();
+                            this.comboBox.giveInputFocus();
+                        }
+                        return result;
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    }).done();
+
             });
+
             this.comboBox.onOptionSelected((event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>) => {
                 this.selectedOptionsView.show();
             });
@@ -209,10 +220,6 @@ module api.ui.selector.combobox {
                 var options = this.createOptions(event.getData());
                 this.comboBox.setOptions(options);
                 this.notifyLoaded(event.getData());
-            });
-
-            this.comboBox.onDropdownShown(() => {
-                this.loader.search(this.comboBox.getFilterInputValue());
             });
         }
 
@@ -314,8 +321,25 @@ module api.ui.selector.combobox {
 
     class RichComboBoxComboBox<OPTION_DISPLAY_VALUE> extends ComboBox<OPTION_DISPLAY_VALUE> {
 
-        constructor(name: string, config: ComboBoxConfig<OPTION_DISPLAY_VALUE>) {
+        private loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>;
+
+        constructor(name: string, config: ComboBoxConfig<OPTION_DISPLAY_VALUE>,
+                    loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>) {
             super(name, config);
+            this.loader = loader;
+        }
+
+        loadOptionsAfterShowDropdown(): wemQ.Promise<void> {
+
+            var deferred = wemQ.defer<void>();
+            this.loader.load().then(() => {
+
+                deferred.resolve(null);
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
+
+            return deferred.promise;
         }
     }
 

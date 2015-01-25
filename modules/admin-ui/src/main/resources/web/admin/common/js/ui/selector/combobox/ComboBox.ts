@@ -58,10 +58,6 @@ module api.ui.selector.combobox {
 
         private minWidth: number = -1;
 
-        private dropdownShownListeners: {():void}[] = [];
-
-        private dropdownHiddenListeners: {()}[] = [];
-
         private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
 
         private optionFilterInputValueChangedListeners: {(event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
@@ -140,15 +136,16 @@ module api.ui.selector.combobox {
             return this.input.giveFocus();
         }
 
-        getFilterInputValue(): string {
-            return this.input.getValue();
+        giveInputFocus() {
+            this.input.setReadOnly(false);
+            this.input.giveFocus();
         }
 
         isDropdownShown(): boolean {
             return this.comboBoxDropdown.isDropdownShown();
         }
 
-        showDropdown(silent: boolean = false) {
+        showDropdown() {
 
             this.doUpdateDropdownTopPositionAndWidth();
             this.comboBoxDropdown.showDropdown(this.getSelectedOptions());
@@ -157,10 +154,6 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.renderDropdownGrid();
 
             this.input.setReadOnly(true);
-
-            if (!silent) {
-                this.notifyDropdownShown();
-            }
         }
 
         setEmptyDropdownText(label: string) {
@@ -175,20 +168,22 @@ module api.ui.selector.combobox {
             }
 
             this.input.setReadOnly(false);
-
-            this.notifyDropdownHidden();
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
             this.comboBoxDropdown.setOptions(options, this.getSelectedOptions());
         }
 
-        removeAllOptions() {
-            this.comboBoxDropdown.removeAllOptions();
-        }
-
         addOption(option: Option<OPTION_DISPLAY_VALUE>) {
             this.comboBoxDropdown.addOption(option);
+        }
+
+        /**
+         * Invoked after
+         */
+        loadOptionsAfterShowDropdown(): wemQ.Promise<void> {
+
+            return api.util.PromiseHelper.newResolvedVoidPromise();
         }
 
         hasOptions(): boolean {
@@ -449,16 +444,19 @@ module api.ui.selector.combobox {
                 event.preventDefault();
                 event.stopPropagation();
 
-                this.comboBoxDropdown.navigateToFirstRowIfNotActive();
-
                 if (!this.maximumOccurrencesReached()) {
                     if (this.isDropdownShown()) {
                         this.hideDropdown();
-                        this.giveFocus();
-                    } else {
+                        this.giveInputFocus();
+                    }
+                    else {
                         this.showDropdown();
-                        this.giveFocus();
-                        this.comboBoxDropdown.navigateToFirstRowIfNotActive();
+                        this.loadOptionsAfterShowDropdown().then(() => {
+                            this.giveInputFocus();
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).done();
+
                     }
                 }
             });
@@ -490,6 +488,11 @@ module api.ui.selector.combobox {
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
+                    this.loadOptionsAfterShowDropdown().then(() => {
+                        this.comboBoxDropdown.navigateToFirstRowIfNotActive();
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    }).done();
                     this.input.setReadOnly(false);
                 }
             });
@@ -526,12 +529,21 @@ module api.ui.selector.combobox {
             }
 
             if (!this.isDropdownShown()) {
+
                 if (event.which === 40) { // down
+
                     this.showDropdown();
-                    //this.comboBoxDropdown.nagivateToFirstRow();
-                    this.input.setReadOnly(true);
+                    this.loadOptionsAfterShowDropdown().then(() => {
+
+                        this.comboBoxDropdown.navigateToFirstRowIfNotActive();
+                        this.input.setReadOnly(true);
+
+                    }).catch((reason: any) => {
+                        api.DefaultErrorHandler.handle(reason);
+                    }).done();
+
                 } else {
-                    this.showDropdown(true);
+                    this.showDropdown();
                     this.input.setReadOnly(false);
                 }
                 return;
@@ -543,6 +555,7 @@ module api.ui.selector.combobox {
                     if (this.comboBoxDropdown.getActiveRow() === 0) {
                         this.comboBoxDropdown.resetActiveSelection();
                         this.input.setReadOnly(false);
+                        this.input.giveFocus();
                     } else {
                         this.comboBoxDropdown.navigateToPreviousRow();
                         this.input.setReadOnly(true);
@@ -563,6 +576,8 @@ module api.ui.selector.combobox {
                 break;
             case 13: // Enter
                 this.selectRowOrApplySelection(this.comboBoxDropdown.getActiveRow());
+                event.stopPropagation();
+                event.preventDefault();
                 break;
             case 32: // Spacebar
                 if (this.input.isReadOnly() && this.applySelectionsButton) {
@@ -656,38 +671,6 @@ module api.ui.selector.combobox {
             var event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item);
             this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
-            });
-        }
-
-        onDropdownShown(listener: ()=>void) {
-            this.dropdownShownListeners.push(listener);
-        }
-
-        unDropdownShown(listener: () =>void) {
-            this.dropdownShownListeners.filter((currentListener: ()=>void) => {
-                return listener != currentListener;
-            });
-        }
-
-        private notifyDropdownShown() {
-            this.dropdownShownListeners.forEach((listener: ()=>void) => {
-                listener();
-            });
-        }
-
-        onDropdownHidden(listener: ()=>void) {
-            this.dropdownHiddenListeners.push(listener);
-        }
-
-        unDropdownHidden(listener: () =>void) {
-            this.dropdownHiddenListeners.filter((currentListener: ()=>void) => {
-                return listener != currentListener;
-            });
-        }
-
-        private notifyDropdownHidden() {
-            this.dropdownHiddenListeners.forEach((listener: ()=>void) => {
-                listener();
             });
         }
 
