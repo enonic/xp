@@ -28,24 +28,19 @@ module api.content {
             this.filterContentPath = filterContentPath;
         }
 
-        search(searchString: string) {
-
-            if (this.isLoading()) {
-                this.preservedSearchString = searchString;
-                return;
-            }
+        search(searchString: string): wemQ.Promise<ContentSummary[]> {
 
             this.contentSummaryRequest.setQueryExpr(searchString);
 
-            this.load();
+            return this.load();
         }
 
 
-        load() {
+        load(): wemQ.Promise<ContentSummary[]> {
 
             this.notifyLoadingData();
 
-            this.sendRequest().done((contents: ContentSummary[]) => {
+            return this.sendRequest().then((contents: ContentSummary[]) => {
 
                 contents = this.filterContent(contents);
                 if (contents && contents.length > 0) {
@@ -56,7 +51,7 @@ module api.content {
                     this.search(this.preservedSearchString);
                     this.preservedSearchString = null;
                 }
-
+                return contents;
             });
         }
 

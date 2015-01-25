@@ -24,7 +24,7 @@ module api.util.loader {
 
         private loadingDataListeners: {(event: LoadingDataEvent):void}[] = [];
 
-        private comparator:Comparator<OBJECT>;
+        private comparator: Comparator<OBJECT>;
 
         constructor(request: api.rest.ResourceRequest<JSON, OBJECT[]>) {
             this.setRequest(request);
@@ -34,14 +34,16 @@ module api.util.loader {
             return this.request.sendAndParse();
         }
 
-        load(): void {
+        load(): wemQ.Promise<OBJECT[]> {
+
             this.notifyLoadingData();
-            this.sendRequest().done((results: OBJECT[]) => {
+            return this.sendRequest().then((results: OBJECT[]) => {
                 this.results = results;
                 if (this.comparator) {
                     this.results = results.sort(this.comparator.compare);
                 }
                 this.notifyLoadedData(results);
+                return this.results;
             });
         }
 
@@ -53,7 +55,7 @@ module api.util.loader {
             return this.status == LoaderStatus.LOADED;
         }
 
-        setComparator(comparator:Comparator<OBJECT>):BaseLoader<JSON, OBJECT> {
+        setComparator(comparator: Comparator<OBJECT>): BaseLoader<JSON, OBJECT> {
             this.comparator = comparator;
             return this;
         }
@@ -66,13 +68,22 @@ module api.util.loader {
             return this.request;
         }
 
-        search(searchString: string) {
+        search(searchString: string): wemQ.Promise<OBJECT[]> {
+
+            var deferred = wemQ.defer<OBJECT[]>();
 
             this.searchString = searchString;
+
             if (this.results) {
                 var filtered = this.results.filter(this.filterFn, this);
                 this.notifyLoadedData(filtered);
+                deferred.resolve(this.results);
             }
+            else {
+                deferred.resolve(null);
+            }
+
+            return deferred.promise;
         }
 
         getSearchString(): string {

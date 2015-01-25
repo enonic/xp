@@ -21,14 +21,9 @@ module api.content.form.inputtype.relationship {
             }
         }
 
-        search(searchString:string) {
-            if (!this.allowedContentTypes) {
-                // requests are restricted before allowedContentTypes has been set
-                this.postponedSearchString = searchString;
-                return;
-            }
+        search(searchString: string): wemQ.Promise<ContentSummary[]> {
 
-            super.search(searchString);
+            return super.search(searchString);
         }
 
     }

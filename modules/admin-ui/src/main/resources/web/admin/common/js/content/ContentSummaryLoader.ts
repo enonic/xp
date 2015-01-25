@@ -35,20 +35,11 @@ module api.content {
             this.contentSummaryRequest.setSize(size);
         }
 
-        search(searchString: string) {
-
-            if (this.isLoading()) {
-                var onLoaded = () => {
-                    this.search(searchString);
-                    this.unLoadedData(onLoaded);
-                };
-                this.onLoadedData(onLoaded);
-                return;
-            }
+        search(searchString: string): wemQ.Promise<ContentSummary[]> {
 
             this.contentSummaryRequest.setQueryExpr(searchString, this.order);
 
-            this.load();
+            return this.load();
         }
 
         sendRequest(): wemQ.Promise<ContentSummary[]> {

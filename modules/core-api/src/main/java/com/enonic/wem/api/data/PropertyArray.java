@@ -249,7 +249,7 @@ public final class PropertyArray
     }
 
 
-    public void remove( final int index )
+    void remove( final int index )
     {
         final Property property = array.get( index );
         if ( tree != null )
@@ -259,7 +259,7 @@ public final class PropertyArray
         array.remove( index );
     }
 
-    public void removeAll()
+    void removeAll()
     {
         for ( int index = array.size() - 1; index >= 0; index-- )
         {
@@ -269,14 +269,6 @@ public final class PropertyArray
                 tree.unregisterProperty( property.getId() );
             }
             array.remove( index );
-        }
-    }
-
-    private void checkName( final String name )
-    {
-        if ( !name.equals( this.name ) )
-        {
-            throw new IllegalArgumentException( "This PropertyArray expects only properties with name '" + this.name + "', got: " + name );
         }
     }
 

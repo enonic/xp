@@ -23,9 +23,9 @@ module api.security {
             return this;
         }
 
-        search(searchString: string) {
+        search(searchString: string): wemQ.Promise<Principal[]> {
             this.findRequest.setSearchQuery(searchString);
-            this.load();
+            return this.load();
         }
 
         skipPrincipals(principalKeys: PrincipalKey[]): PrincipalLoader {

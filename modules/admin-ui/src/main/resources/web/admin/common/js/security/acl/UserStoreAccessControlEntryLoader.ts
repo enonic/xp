@@ -78,9 +78,9 @@ module api.security.acl {
             return this;
         }
 
-        search(searchString: string) {
+        search(searchString: string): wemQ.Promise<UserStoreAccessControlEntry[]> {
             this.findRequest.setSearchQuery(searchString);
-            this.load();
+            return this.load();
         }
 
     }
