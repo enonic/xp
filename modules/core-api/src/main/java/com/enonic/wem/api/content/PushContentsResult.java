@@ -7,19 +7,27 @@ import com.google.common.collect.Sets;
 
 public class PushContentsResult
 {
-    private final Contents successfull;
+    private final Contents pushedContent;
 
     private final ImmutableSet<Failed> failed;
 
+    private final PushContentRequests pushContentRequests;
+
     private PushContentsResult( final Builder builder )
     {
-        successfull = builder.successfull;
-        failed = ImmutableSet.copyOf( builder.failed );
+        this.pushedContent = builder.pushedContent;
+        this.failed = ImmutableSet.copyOf( builder.failed );
+        this.pushContentRequests = builder.pushContentRequests;
     }
 
-    public Contents getSuccessfull()
+    public PushContentRequests getPushContentRequests()
     {
-        return successfull;
+        return pushContentRequests;
+    }
+
+    public Contents getPushedContent()
+    {
+        return pushedContent;
     }
 
     public ImmutableSet<Failed> getFailed()
@@ -73,48 +81,21 @@ public class PushContentsResult
         }
     }
 
-    public static class ContentToPush
-    {
-        private final ContentId contentId;
-
-        private String description;
-
-        private ContentToPush( final ContentId contentId )
-        {
-            this.contentId = contentId;
-        }
-
-        private ContentToPush( final ContentId contentId, final String description )
-        {
-            this.description = description;
-            this.contentId = contentId;
-        }
-
-        public ContentId getContentId()
-        {
-            return contentId;
-        }
-
-        public String getDescription()
-        {
-            return description;
-        }
-    }
-
-
     public static final class Builder
     {
-        private Contents successfull;
+        private Contents pushedContent = Contents.empty();
 
         private final Set<Failed> failed = Sets.newHashSet();
+
+        private PushContentRequests pushContentRequests;
 
         private Builder()
         {
         }
 
-        public Builder successfull( Contents successfull )
+        public Builder setPushedContent( final Contents pushedContent )
         {
-            this.successfull = successfull;
+            this.pushedContent = pushedContent;
             return this;
         }
 
@@ -124,9 +105,16 @@ public class PushContentsResult
             return this;
         }
 
+        public Builder pushContentRequests( final PushContentRequests pushContentRequests )
+        {
+            this.pushContentRequests = pushContentRequests;
+            return this;
+        }
+
         public PushContentsResult build()
         {
             return new PushContentsResult( this );
         }
     }
+
 }

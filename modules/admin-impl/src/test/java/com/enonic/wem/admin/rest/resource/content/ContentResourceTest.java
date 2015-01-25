@@ -697,7 +697,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
-            successfull( Contents.from( newContent().
+            setPushedContent( Contents.from( newContent().
                 id( ContentId.from( "my-content" ) ).
                 parentPath( ContentPath.ROOT ).
                 name( "content" ).

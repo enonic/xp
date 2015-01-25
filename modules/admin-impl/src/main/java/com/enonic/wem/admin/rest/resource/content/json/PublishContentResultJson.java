@@ -32,7 +32,7 @@ public class PublishContentResultJson
     {
         final PublishContentResultJson json = new PublishContentResultJson();
 
-        for ( final Content content : pushContentsResult.getSuccessfull() )
+        for ( final Content content : pushContentsResult.getPushedContent() )
         {
             json.successes.add( new Success( content.getId(), content.getDisplayName() ) );
         }

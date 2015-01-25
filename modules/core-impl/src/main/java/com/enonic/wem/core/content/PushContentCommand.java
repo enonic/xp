@@ -1,20 +1,18 @@
 package com.enonic.wem.core.content;
 
-import java.util.Set;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPublishedEvent;
 import com.enonic.wem.api.content.PushContentsResult;
+import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.node.ResolveSyncWorkResult;
+import com.enonic.wem.api.node.ResolveSyncWorkResults;
 import com.enonic.wem.api.node.SyncWorkResolverParams;
 import com.enonic.wem.api.workspace.Workspace;
 
@@ -27,60 +25,114 @@ public class PushContentCommand
 
     private final PushContentStrategy strategy;
 
+    private final boolean resolveDependencies;
+
+    private PushContentsResult.Builder resultBuilder;
+
     private PushContentCommand( final Builder builder )
     {
         super( builder );
         this.contentIds = builder.contentIds;
         this.target = builder.target;
         this.strategy = builder.strategy;
+        this.resolveDependencies = builder.resolveDependencies;
+        this.resultBuilder = PushContentsResult.create();
     }
 
     PushContentsResult execute()
     {
+        if ( resolveDependencies )
+        {
+            pushWithDependencies();
+        }
+        else
+        {
+            pushWithoutDependencyResolve();
+        }
 
-        final Set<NodeId> toPublish = Sets.newHashSet();
-        final Set<NodeId> toDelete = Sets.newHashSet();
-        final Set<NodeId> conflicts = Sets.newHashSet();
+        return resultBuilder.build();
+    }
+
+    private void pushWithoutDependencyResolve()
+    {
+        final NodeIds nodesToPush = ContentNodeHelper.toNodeIds( this.contentIds );
+        doPushNodes( nodesToPush );
+    }
+
+    private void pushWithDependencies()
+    {
+        final ResolveSyncWorkResults.Builder resultsBuilder = ResolveSyncWorkResults.create();
 
         for ( final ContentId contentId : this.contentIds )
         {
-            final ResolveSyncWorkResult result = nodeService.resolveSyncWork( SyncWorkResolverParams.create().
-                includeChildren( true ).
-                nodeId( NodeId.from( contentId.toString() ) ).
-                workspace( ContentConstants.WORKSPACE_PROD ).
-                build() );
+            final ResolveSyncWorkResult syncWorkResult = getWorkResult( contentId );
 
-            if ( result.hasConflicts() )
-            {
-                // Do conflict stuff
-            }
-
-            toPublish.addAll( result.getNodePublishRequests().getNodeIds().getSet() );
-            toDelete.addAll( result.getDelete().getSet() );
+            resultsBuilder.add( syncWorkResult );
         }
 
-        final PushNodesResult pushNodesResult = nodeService.push( NodeIds.from( toPublish ), ContentConstants.WORKSPACE_PROD );
+        final ResolveSyncWorkResults syncWorkResults = resultsBuilder.build();
 
-        PushContentsResult contentResult = createResult( pushNodesResult );
+        appendSyncWorkResultsToResult( syncWorkResults );
 
-        for ( final Content content : contentResult.getSuccessfull() )
+        if ( isContinuePush( syncWorkResults ) )
         {
-            eventPublisher.publish( new ContentPublishedEvent( content.getId() ) );
+            executePushAndDeletes( syncWorkResults );
         }
-
-        for ( final NodeId nodeId : toDelete )
-        {
-            nodeService.deleteById( nodeId );
-        }
-
-        return contentResult;
     }
 
-    private PushContentsResult createResult( final PushNodesResult pushNodesResult )
+    private ResolveSyncWorkResult getWorkResult( final ContentId contentId )
     {
-        final PushContentsResult.Builder builder = PushContentsResult.create();
+        return nodeService.resolveSyncWork( SyncWorkResolverParams.create().
+            includeChildren( true ).
+            nodeId( NodeId.from( contentId.toString() ) ).
+            workspace( this.target ).
+            build() );
+    }
 
-        builder.successfull( translator.fromNodes( pushNodesResult.getSuccessfull() ) );
+    private boolean isContinuePush( final ResolveSyncWorkResults results )
+    {
+        return !results.hasNotice() || !strategy.equals( PushContentStrategy.STRICT );
+    }
+
+    private void executePushAndDeletes( final ResolveSyncWorkResults results )
+    {
+        for ( final ResolveSyncWorkResult result : results )
+        {
+            final NodeIds nodesToPush = NodeIds.from( result.getNodePublishRequests().getNodeIds() );
+            doPushNodes( nodesToPush );
+
+            for ( final NodeId nodeId : result.getDelete() )
+            {
+                nodeService.deleteById( nodeId );
+            }
+        }
+    }
+
+    private void doPushNodes( final NodeIds nodesToPush )
+    {
+        final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target );
+
+        appendPushNodesResult( pushNodesResult );
+
+        publishNodePublishedEvents( pushNodesResult );
+    }
+
+    private void publishNodePublishedEvents( final PushNodesResult pushNodesResult )
+    {
+        for ( final Node node : pushNodesResult.getSuccessfull() )
+        {
+            eventPublisher.publish( new ContentPublishedEvent( ContentId.from( node.id().toString() ) ) );
+        }
+    }
+
+    private void appendSyncWorkResultsToResult( final ResolveSyncWorkResults syncWorkResults )
+    {
+        this.resultBuilder.pushContentRequests( PushContentRequestsFactory.create( syncWorkResults ) );
+    }
+
+    private void appendPushNodesResult( final PushNodesResult pushNodesResult )
+    {
+        this.resultBuilder.setPushedContent( translator.fromNodes( pushNodesResult.getSuccessfull() ) );
 
         for ( final PushNodesResult.Failed failedNode : pushNodesResult.getFailed() )
         {
@@ -102,23 +154,8 @@ public class PushContentCommand
 
             }
 
-            builder.addFailed( content, failedReason );
-
+            this.resultBuilder.addFailed( content, failedReason );
         }
-
-        return builder.build();
-    }
-
-    private NodeIds getAsNodeIds( final ContentIds contentIds )
-    {
-        final Set<NodeId> nodeIds = Sets.newHashSet();
-
-        for ( final ContentId contentId : contentIds )
-        {
-            nodeIds.add( NodeId.from( contentId.toString() ) );
-        }
-
-        return NodeIds.from( nodeIds );
     }
 
     public static Builder create()
@@ -133,7 +170,9 @@ public class PushContentCommand
 
         private Workspace target;
 
-        private final PushContentStrategy strategy = PushContentStrategy.DEFAULT;
+        private PushContentStrategy strategy = PushContentStrategy.STRICT;
+
+        private boolean resolveDependencies = true;
 
         public Builder contentIds( final ContentIds contentIds )
         {
@@ -144,6 +183,18 @@ public class PushContentCommand
         public Builder target( final Workspace target )
         {
             this.target = target;
+            return this;
+        }
+
+        public Builder strategy( final PushContentStrategy strategy )
+        {
+            this.strategy = strategy;
+            return this;
+        }
+
+        public Builder resolveDependencies( final boolean resolveDependencies )
+        {
+            this.resolveDependencies = resolveDependencies;
             return this;
         }
 
@@ -166,8 +217,7 @@ public class PushContentCommand
     {
         IGNORE_CONFLICTS,
         ALLOW_PUBLISH_OUTSIDE_SELECTION,
-        STRICT,
-        DEFAULT;
+        STRICT
 
     }
 

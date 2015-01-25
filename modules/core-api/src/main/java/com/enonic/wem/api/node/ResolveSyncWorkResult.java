@@ -24,6 +24,11 @@ public class ResolveSyncWorkResult
         return getConflict().isNotEmpty();
     }
 
+    public boolean hasPublishOutsideSelection()
+    {
+        return this.nodePublishRequests.hasPublishOutsideSelection();
+    }
+
     public NodePublishRequests getNodePublishRequests()
     {
         return nodePublishRequests;

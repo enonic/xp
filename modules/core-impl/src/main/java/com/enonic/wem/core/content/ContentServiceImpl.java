@@ -238,6 +238,7 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
             target( params.getTarget() ).
+            strategy( PushContentCommand.PushContentStrategy.ALLOW_PUBLISH_OUTSIDE_SELECTION ).
             build().
             execute();
     }
