@@ -34,13 +34,6 @@ public final class PortalUrlBuildersHelper
         return builder;
     }
 
-    public static ComponentUrlBuilder apply( final ComponentUrlBuilder builder, final Multimap<String, String> params )
-    {
-        builder.component( systemParam( params, "_component" ) );
-        builder.params( params );
-        return builder;
-    }
-
     public static ImageUrlBuilder apply( final ImageUrlBuilder builder, final Multimap<String, String> params )
     {
         builder.imageId( systemParam( params, "_id" ) );

@@ -31,11 +31,6 @@ public final class PortalUrlBuilders
         return defaults( new ImageUrlBuilder() );
     }
 
-    public ComponentUrlBuilder componentUrl()
-    {
-        return defaults( new ComponentUrlBuilder() );
-    }
-
     public AttachmentUrlBuilder attachmentUrl()
     {
         return defaults( new AttachmentUrlBuilder() );
