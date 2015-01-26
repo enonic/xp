@@ -72,7 +72,7 @@ public class CreateNodeParams
             nodeType( node.getNodeType() ).
             name( node.name().toString() ).
 
-            parent( node.parent() );
+            parent( node.parentPath() );
     }
 
     public String getName()

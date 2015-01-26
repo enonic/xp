@@ -90,20 +90,21 @@ public abstract class AbstractNodeTest
 
         this.binaryBlobStore = new FileBlobStore( "test" );
 
-        this.nodeDao = new NodeDaoImpl();
-
-        this.versionService = new ElasticsearchVersionService();
-        this.versionService.setElasticsearchDao( elasticsearchDao );
+        this.queryService = new ElasticsearchQueryService();
+        this.queryService.setElasticsearchDao( elasticsearchDao );
 
         this.workspaceService = new ElasticsearchWorkspaceService();
         this.workspaceService.setElasticsearchDao( elasticsearchDao );
+
+        this.versionService = new ElasticsearchVersionService();
+        this.versionService.setElasticsearchDao( elasticsearchDao );
 
         this.indexService = new ElasticsearchIndexService();
         this.indexService.setClient( client );
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
-        this.queryService = new ElasticsearchQueryService();
-        this.queryService.setElasticsearchDao( elasticsearchDao );
+        this.nodeDao = new NodeDaoImpl();
+        this.nodeDao.setWorkspaceService( this.workspaceService );
 
         createContentRepository();
         waitForClusterHealth();

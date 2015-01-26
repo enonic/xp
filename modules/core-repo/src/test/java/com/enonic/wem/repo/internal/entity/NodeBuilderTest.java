@@ -69,7 +69,7 @@ public class NodeBuilderTest
             build();
 
         assertNotNull( myNode.name() );
-        assertNotNull( myNode.parent() );
+        assertNotNull( myNode.parentPath() );
         assertNotNull( myNode.getModifiedTime() );
         assertNotNull( myNode.modifier() );
         assertNotNull( myNode.getCreatedTime() );

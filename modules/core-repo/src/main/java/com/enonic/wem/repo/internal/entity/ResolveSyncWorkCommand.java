@@ -172,9 +172,9 @@ public class ResolveSyncWorkCommand
 
     private void ensureThatParentExists( final Node node )
     {
-        if ( !node.parent().equals( NodePath.ROOT ) )
+        if ( !node.parentPath().equals( NodePath.ROOT ) )
         {
-            final Node thisParentNode = doGetByPath( node.parent(), false );
+            final Node thisParentNode = doGetByPath( node.parentPath(), false );
 
             final NodeComparison nodeComparison = getNodeComparison( thisParentNode.id() );
 

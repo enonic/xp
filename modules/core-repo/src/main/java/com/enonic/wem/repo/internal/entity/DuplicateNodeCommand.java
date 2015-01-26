@@ -133,7 +133,7 @@ public class DuplicateNodeCommand
 
         while ( !resolvedUnique )
         {
-            final NodePath checkIfExistsPath = NodePath.newNodePath( existingNode.parent(), newNodeName ).build();
+            final NodePath checkIfExistsPath = NodePath.newNodePath( existingNode.parentPath(), newNodeName ).build();
             Node foundNode = this.doGetByPath( checkIfExistsPath, false );
 
             if ( foundNode == null )

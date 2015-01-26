@@ -99,7 +99,10 @@ public class NodeJsonSerializerTest
         assertEquals( expectedStr, serializedNode );
 
         final Node deSerializedNode = this.serializer.toNode( expectedStr );
-        assertEquals( node, deSerializedNode );
+
+        assertEquals( node, Node.newNode( deSerializedNode ).
+            parentPath( node.parentPath() ).
+            build() );
     }
 
     private String readJson( final String name )

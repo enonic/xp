@@ -125,8 +125,7 @@
   "modifier": "user:test:modifier",
   "name": "my-name",
   "nodeType": "myNodeType",
-  "parent": "/",
-  "path": "/my-name",
+  "parentId": null,
   "permissions": [
     {
       "allow": ["READ"],

@@ -33,13 +33,13 @@ public class MoveNodeCommandTest
             versionService( this.versionService ).
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
-            newParent( node.parent() ).
+            newParent( node.parentPath() ).
             build().
             execute();
 
         final Node movedNode = getNodeById( node.id() );
 
-        assertEquals( NodePath.ROOT, movedNode.parent() );
+        assertEquals( NodePath.ROOT, movedNode.parentPath() );
         assertEquals( "mynode2", movedNode.name().toString() );
     }
 
@@ -170,7 +170,7 @@ public class MoveNodeCommandTest
 
         final Node movedNode = getNodeById( node.id() );
 
-        assertEquals( newParent.path(), movedNode.parent() );
+        assertEquals( newParent.path(), movedNode.parentPath() );
         assertEquals( "mynode", movedNode.name().toString() );
     }
 
@@ -224,10 +224,10 @@ public class MoveNodeCommandTest
         final Node movedChild2 = getNodeById( child2.id() );
         final Node movedChild1_1 = getNodeById( child1_1.id() );
 
-        assertEquals( newParent.path(), movedNode.parent() );
-        assertEquals( movedNode.path(), movedChild1.parent() );
-        assertEquals( movedNode.path(), movedChild2.parent() );
-        assertEquals( movedChild1.path(), movedChild1_1.parent() );
+        assertEquals( newParent.path(), movedNode.parentPath() );
+        assertEquals( movedNode.path(), movedChild1.parentPath() );
+        assertEquals( movedNode.path(), movedChild2.parentPath() );
+        assertEquals( movedChild1.path(), movedChild1_1.parentPath() );
 
     }
 

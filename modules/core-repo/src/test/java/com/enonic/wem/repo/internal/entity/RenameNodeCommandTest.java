@@ -96,18 +96,18 @@ public class RenameNodeCommandTest
         assertEquals( "my-node-edited", renamedNode.name().toString() );
 
         final Node renamedChild1_1 = getNodeById( child1_1.id() );
-        assertEquals( renamedNode.path(), renamedChild1_1.parent() );
+        assertEquals( renamedNode.path(), renamedChild1_1.parentPath() );
 
         final Node renamedChild1_2 = getNodeById( child1_2.id() );
-        assertEquals( renamedNode.path(), renamedChild1_2.parent() );
+        assertEquals( renamedNode.path(), renamedChild1_2.parentPath() );
 
         final Node renamedChild1_1_1 = getNodeById( child1_1_1.id() );
-        assertEquals( renamedChild1_1.path(), renamedChild1_1_1.parent() );
+        assertEquals( renamedChild1_1.path(), renamedChild1_1_1.parentPath() );
 
         final Node renamedChild1_2_1 = getNodeById( child1_2_1.id() );
-        assertEquals( renamedChild1_2.path(), renamedChild1_2_1.parent() );
+        assertEquals( renamedChild1_2.path(), renamedChild1_2_1.parentPath() );
 
         final Node renamedChild1_2_2 = getNodeById( child1_2_2.id() );
-        assertEquals( renamedChild1_2.path(), renamedChild1_2_2.parent() );
+        assertEquals( renamedChild1_2.path(), renamedChild1_2_2.parentPath() );
     }
 }

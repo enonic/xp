@@ -8,8 +8,11 @@ import java.nio.charset.StandardCharsets;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeNotFoundException;
+import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.NodeVersionIds;
 import com.enonic.wem.api.node.Nodes;
@@ -18,6 +21,9 @@ import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.entity.NodeConstants;
 import com.enonic.wem.repo.internal.entity.json.NodeJsonSerializer;
+import com.enonic.wem.repo.internal.index.query.NodeWorkspaceVersion;
+import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
+import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
 public class NodeDaoImpl
     implements NodeDao
@@ -25,6 +31,8 @@ public class NodeDaoImpl
     private final NodeJsonSerializer nodeJsonSerializer = NodeJsonSerializer.create( false );
 
     private final BlobStore nodeBlobStore = new FileBlobStore( NodeConstants.nodeBlobStoreDir );
+
+    private WorkspaceService workspaceService;
 
     @Override
     public NodeVersionId store( final Node node )
@@ -36,7 +44,13 @@ public class NodeDaoImpl
 
     private Blob doStoreNodeAsBlob( final Node newNode )
     {
-        final String serializedNode = this.nodeJsonSerializer.toString( newNode );
+        NodeId parentId = resolveParentId( newNode );
+
+        final Node populatedNode = Node.newNode( newNode ).
+            parentId( parentId ).
+            build();
+
+        final String serializedNode = this.nodeJsonSerializer.toString( populatedNode );
 
         try (final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
             serializedNode.getBytes( StandardCharsets.UTF_8 ) ))
@@ -49,6 +63,24 @@ public class NodeDaoImpl
         }
     }
 
+    private NodeId resolveParentId( final Node newNode )
+    {
+        NodeId parentId = newNode.getParentId();
+
+        if ( parentId == null && !newNode.parentPath().equals( NodePath.ROOT ) )
+        {
+            final NodePath parentPath = newNode.path().getParentPath();
+
+            final NodeWorkspaceVersion nodeWorkspaceVersion =
+                this.workspaceService.get( parentPath, WorkspaceContext.from( ContextAccessor.current() ) );
+
+            final Node parentNode = doGetByVersionId( nodeWorkspaceVersion.getVersionId() );
+
+            parentId = parentNode.id();
+        }
+        return parentId;
+    }
+
     @Override
     public Nodes getByVersionIds( final NodeVersionIds nodeVersionIds )
     {
@@ -57,6 +89,11 @@ public class NodeDaoImpl
 
     @Override
     public Node getByVersionId( final NodeVersionId nodeVersionId )
+    {
+        return doGetByVersionId( nodeVersionId );
+    }
+
+    private Node doGetByVersionId( final NodeVersionId nodeVersionId )
     {
         final BlobKey blobKey = new BlobKey( nodeVersionId.toString() );
 
@@ -93,11 +130,40 @@ public class NodeDaoImpl
         {
             final byte[] bytes = ByteStreams.toByteArray( stream );
 
-            return this.nodeJsonSerializer.toNode( new String( bytes, StandardCharsets.UTF_8 ) );
+            final Node node = this.nodeJsonSerializer.toNode( new String( bytes, StandardCharsets.UTF_8 ) );
+
+            return populateWithNodeParentPath( node );
         }
         catch ( IOException e )
         {
             throw new RuntimeException( "Failed to load blob with key: " + blob.getKey(), e );
         }
+    }
+
+    private Node populateWithNodeParentPath( final Node node )
+    {
+        final NodeId parentId = node.getParentId();
+
+        if ( parentId != null )
+        {
+            final NodeWorkspaceVersion nodeWorkspaceVersion =
+                this.workspaceService.get( parentId, WorkspaceContext.from( ContextAccessor.current() ) );
+
+            final Node.Builder populatedNode = Node.newNode( node ).
+                parentPath( nodeWorkspaceVersion.getNodePath() );
+
+            return populatedNode.build();
+        }
+        else
+        {
+            return Node.newNode( node ).
+                parentPath( NodePath.ROOT ).
+                build();
+        }
+    }
+
+    public void setWorkspaceService( final WorkspaceService workspaceService )
+    {
+        this.workspaceService = workspaceService;
     }
 }

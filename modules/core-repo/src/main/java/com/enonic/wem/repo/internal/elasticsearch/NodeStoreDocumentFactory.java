@@ -129,10 +129,10 @@ class NodeStoreDocumentFactory
                                                                  IndexConfig.MINIMAL ) );
         }
 
-        if ( this.node.parent() != null )
+        if ( this.node.parentPath() != null )
         {
             builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.PARENT_PATH, Value.newString( this.node.parent().toString() ),
+                StoreDocumentItemFactory.create( NodeIndexPath.PARENT_PATH, Value.newString( this.node.parentPath().toString() ),
                                                  IndexConfig.MINIMAL ) );
         }
 

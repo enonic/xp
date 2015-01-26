@@ -83,14 +83,14 @@ public class PushNodesCommand
 
     boolean targetParentExists( final Node node, final Context currentContext )
     {
-        if ( node.parent().equals( NodePath.ROOT ) )
+        if ( node.parentPath().equals( NodePath.ROOT ) )
         {
             return true;
         }
 
         final Context targetContext = createTargetContext( currentContext );
 
-        final Node targetParent = targetContext.callWith( () -> doGetByPath( node.parent(), false ) );
+        final Node targetParent = targetContext.callWith( () -> doGetByPath( node.parentPath(), false ) );
 
         if ( targetParent == null )
         {

@@ -78,13 +78,14 @@ public class SecurityServiceImplTest
 
         System.setProperty( "wem.home", WEM_HOME.getRoot().getPath() );
 
+        this.workspaceService = new ElasticsearchWorkspaceService();
+        this.workspaceService.setElasticsearchDao( elasticsearchDao );
+
         this.nodeDao = new NodeDaoImpl();
+        this.nodeDao.setWorkspaceService( this.workspaceService );
 
         this.versionService = new ElasticsearchVersionService();
         this.versionService.setElasticsearchDao( elasticsearchDao );
-
-        this.workspaceService = new ElasticsearchWorkspaceService();
-        this.workspaceService.setElasticsearchDao( elasticsearchDao );
 
         this.indexService = new ElasticsearchIndexService();
         this.indexService.setClient( client );

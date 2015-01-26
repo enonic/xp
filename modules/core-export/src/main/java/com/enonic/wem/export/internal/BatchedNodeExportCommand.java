@@ -156,7 +156,7 @@ public class BatchedNodeExportCommand
         }
         else
         {
-            newParentPath = node.parent().removeFromBeginning( this.exportRootPath );
+            newParentPath = node.parentPath().removeFromBeginning( this.exportRootPath );
         }
         return newParentPath;
     }

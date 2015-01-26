@@ -93,7 +93,7 @@ class NodeServiceMock
         nodePathMap.putIfAbsent( createdNode.path(), createdNode );
         //LOG.info( "Store path " + createdNode.path() );
 
-        final MockNodeTree<NodePath> nodePathTreeNode = this.nodeTree.find( createdNode.parent() );
+        final MockNodeTree<NodePath> nodePathTreeNode = this.nodeTree.find( createdNode.parentPath() );
 
         if ( nodePathTreeNode == null )
         {

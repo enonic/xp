@@ -27,7 +27,7 @@ public class ReorderChildNodesCommand
             final Node nodeToMove = doGetById( reorderChildNodeParams.getNodeId(), false );
             final Node nodeToMoveBefore =
                 reorderChildNodeParams.getMoveBefore() == null ? null : doGetById( reorderChildNodeParams.getMoveBefore(), false );
-            final Node parentNode = doGetByPath( nodeToMove.parent(), false );
+            final Node parentNode = doGetByPath( nodeToMove.parentPath(), false );
 
             final Node reorderedNode = ReorderChildNodeCommand.create().
                 queryService( this.queryService ).

@@ -92,7 +92,7 @@ public final class Node
         return name;
     }
 
-    public NodePath parent()
+    public NodePath parentPath()
     {
         return parentPath;
     }

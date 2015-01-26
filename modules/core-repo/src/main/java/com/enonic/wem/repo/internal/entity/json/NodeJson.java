@@ -16,7 +16,6 @@ import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
-import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeType;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
@@ -44,12 +43,6 @@ final class NodeJson
 
     @JsonProperty("parentId")
     private String parentId;
-
-    @JsonProperty("parent")
-    private String parent;
-
-    @JsonProperty("path")
-    private String path;
 
     @JsonProperty("modifier")
     private String modifier;
@@ -84,9 +77,7 @@ final class NodeJson
             modifier( this.modifier != null ? PrincipalKey.from( this.modifier ) : null ).
             createdTime( this.createdTime ).
             modifiedTime( this.modifiedTime ).
-            parentId( NodeId.from( this.parentId ) ).
-            path( this.path ).
-            parentPath( this.parent != null ? NodePath.newPath( this.parent ).build() : null ).
+            parentId( this.parentId == null ? null : NodeId.from( this.parentId ) ).
             data( PropertyTreeJson.fromJson( this.data ) ).
             indexConfigDocument( this.indexConfigDocument.fromJson() ).
             childOrder( ChildOrder.from( this.childOrder ) ).
@@ -130,8 +121,6 @@ final class NodeJson
         json.indexConfigDocument = createEntityIndexConfig( node.getIndexConfigDocument() );
         json.name = node.name() != null ? node.name().toString() : null;
         json.parentId = node.getParentId() != null ? node.getParentId().toString() : null;
-        json.parent = node.parent() != null ? node.parent().toString() : null;
-        json.path = node.path() != null ? node.path().toString() : null;
         json.modifier = node.modifier() != null ? node.modifier().toString() : null;
         json.creator = node.creator() != null ? node.creator().toString() : null;
         json.childOrder = node.getChildOrder().toString();

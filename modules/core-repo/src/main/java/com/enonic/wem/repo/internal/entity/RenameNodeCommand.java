@@ -38,7 +38,7 @@ public final class RenameNodeCommand
 
     private NodePath verifyNodeNotExistAtNewPath( final Node nodeToBeRenamed )
     {
-        final NodePath parentPath = nodeToBeRenamed.parent().asAbsolute();
+        final NodePath parentPath = nodeToBeRenamed.parentPath().asAbsolute();
         final NodePath targetPath = new NodePath( parentPath, params.getNewNodeName() );
         final Node existingNodeAtTargetPath = doGetByPath( targetPath, false );
 
