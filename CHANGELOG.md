@@ -15,7 +15,7 @@ Features:
 
 Refactoring:
 
-  - N/A
+  - Removed general create URL method. Use pageUrl instead. (CMS-4979)
 
 
 ## RC2 (2015-01-20)

@@ -1,6 +1,4 @@
 <output>
-  <value>/portal/a</value>
-  <value>/portal/a?b=2</value>
   <value>/portal/stage/some/path?a=1</value>
   <value>/portal/stage/some/path?a=1&amp;b=2</value>
   <value>/portal/stage/some/path/_/image/id/123</value>

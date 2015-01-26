@@ -25,13 +25,6 @@ public final class PortalUrlBuildersHelper
         return values.iterator().next();
     }
 
-    public static GeneralUrlBuilder apply( final GeneralUrlBuilder builder, final Multimap<String, String> params )
-    {
-        builder.path( systemParam( params, "_path" ) );
-        builder.params( params );
-        return builder;
-    }
-
     public static AssetUrlBuilder apply( final AssetUrlBuilder builder, final Multimap<String, String> params )
     {
         builder.path( systemParam( params, "_path" ) );

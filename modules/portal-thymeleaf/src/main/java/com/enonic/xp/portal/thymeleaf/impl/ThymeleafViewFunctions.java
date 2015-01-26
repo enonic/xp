@@ -22,11 +22,6 @@ final class ThymeleafViewFunctions
         return PortalUrlBuildersHelper.toParamMap( params );
     }
 
-    public String url( final List<String> params )
-    {
-        return PortalUrlBuildersHelper.apply( createUrlBuilders().generalUrl(), toMap( params ) ).toString();
-    }
-
     public String assetUrl( final List<String> params )
     {
         return PortalUrlBuildersHelper.apply( createUrlBuilders().assetUrl(), toMap( params ) ).toString();
