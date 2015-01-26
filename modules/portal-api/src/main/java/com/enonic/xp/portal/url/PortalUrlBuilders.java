@@ -26,19 +26,9 @@ public final class PortalUrlBuilders
         return builder;
     }
 
-    public AssetUrlBuilder assetUrl()
-    {
-        return defaults( new AssetUrlBuilder() ).module( this.context.getModule() );
-    }
-
     public ImageUrlBuilder imageUrl()
     {
         return defaults( new ImageUrlBuilder() );
-    }
-
-    public ServiceUrlBuilder serviceUrl()
-    {
-        return defaults( new ServiceUrlBuilder() ).module( this.context.getModule() );
     }
 
     public ComponentUrlBuilder componentUrl()

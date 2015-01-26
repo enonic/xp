@@ -7,5 +7,6 @@ exports.createUrl = function () {
         }
     });
 
-    assert.assertEquals('/portal/stage/some/path/_/service/mymodule/myservice?a=1&b=1&b=2', result);
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('ServiceUrlParams{params={a=[1], b=[1, 2]}, service=myservice}', result);
 };

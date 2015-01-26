@@ -41,13 +41,18 @@ final class ThymeleafProcessor
         return this;
     }
 
+    public ThymeleafProcessor parameter( final String key, final Object value )
+    {
+        this.parameters.put( key, value );
+        return this;
+    }
+
     public String process()
     {
         try
         {
             final Context context = new Context();
             context.setVariables( this.parameters );
-            context.setVariable( "portal", new ThymeleafViewFunctions() );
             return this.engine.process( this.view.toString(), context );
         }
         catch ( final RuntimeException e )

@@ -12,6 +12,7 @@ import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.url.PortalUrlBuilders;
 import com.enonic.xp.portal.url.PortalUrlBuildersHelper;
+import com.enonic.xp.portal.url.PortalUrlService;
 
 abstract class AbstractUrlFunction
     extends AbstractFunction
@@ -35,6 +36,8 @@ abstract class AbstractUrlFunction
         }
     }
 
+    protected PortalUrlService urlService;
+
     public AbstractUrlFunction( final String name )
     {
         super( name );
@@ -50,11 +53,15 @@ abstract class AbstractUrlFunction
         return new Call();
     }
 
-    protected final PortalUrlBuilders createUrlBuilders()
+    protected final PortalContext getContext()
     {
-        final PortalContext context = PortalContextAccessor.get();
-        return new PortalUrlBuilders( context );
+        return PortalContextAccessor.get();
     }
 
-    protected abstract String execute( final Multimap<String, String> params );
+    protected final PortalUrlBuilders createUrlBuilders()
+    {
+        return new PortalUrlBuilders( getContext() );
+    }
+
+    protected abstract String execute( final Multimap<String, String> map );
 }

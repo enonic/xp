@@ -3,14 +3,14 @@
   <value>/portal/stage/some/path?a=1&amp;b=2</value>
   <value>/portal/stage/some/path/_/image/id/123</value>
   <value>/portal/stage/some/path/_/image/a?b=2</value>
-  <value>/portal/stage/some/path/_/asset/mymodule/a</value>
-  <value>/portal/stage/some/path/_/asset/mymodule/a?b=2</value>
+  <value>AssetUrlParams{params={}, path=a}</value>
+  <value>AssetUrlParams{params={b=[2]}, path=a}</value>
   <value>/portal/stage/some/path/_/attachment/myattachment.pdf</value>
   <value>/portal/stage/some/path/_/attachment/myattachment.pdf?a=1</value>
   <value>/portal/stage/some/path/_/attachment/id/123/myattachment.pdf</value>
   <value>/portal/stage/some/path/_/attachment/id/123/source</value>
-  <value>/portal/stage/some/path/_/service/mymodule/a</value>
-  <value>/portal/stage/some/path/_/service/mymodule/a?b=2</value>
+  <value>ServiceUrlParams{params={}, service=a}</value>
+  <value>ServiceUrlParams{params={b=[2]}, service=a}</value>
   <value>/portal/stage/some/path/_/component/a</value>
   <value>/portal/stage/some/path/_/component/a?b=2</value>
 </output>

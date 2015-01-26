@@ -20,7 +20,9 @@ public class RenderViewHandlerTest
     @Before
     public void setUp()
     {
-        addHandler( new RenderViewHandler() );
+        final RenderViewHandler handler = new RenderViewHandler();
+        handler.initialize();
+        addHandler( handler );
     }
 
     private ScriptValue execute( final String method )

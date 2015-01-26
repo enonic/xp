@@ -5,16 +5,21 @@ import java.util.List;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalContextAccessor;
+import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.PortalUrlBuilders;
 import com.enonic.xp.portal.url.PortalUrlBuildersHelper;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.url.ServiceUrlParams;
 
 final class ThymeleafViewFunctions
 {
+    protected PortalUrlService urlService;
+
+    protected PortalContext context;
+
     private PortalUrlBuilders createUrlBuilders()
     {
-        final PortalContext context = PortalContextAccessor.get();
-        return new PortalUrlBuilders( context );
+        return new PortalUrlBuilders( this.context );
     }
 
     private Multimap<String, String> toMap( final List<String> params )
@@ -24,7 +29,13 @@ final class ThymeleafViewFunctions
 
     public String assetUrl( final List<String> params )
     {
-        return PortalUrlBuildersHelper.apply( createUrlBuilders().assetUrl(), toMap( params ) ).toString();
+        return assetUrl( toMap( params ) );
+    }
+
+    private String assetUrl( final Multimap<String, String> map )
+    {
+        final AssetUrlParams params = new AssetUrlParams().setAsMap( map ).context( this.context );
+        return this.urlService.assetUrl( params );
     }
 
     public String pageUrl( final List<String> params )
@@ -49,6 +60,12 @@ final class ThymeleafViewFunctions
 
     public String serviceUrl( final List<String> params )
     {
-        return PortalUrlBuildersHelper.apply( createUrlBuilders().serviceUrl(), toMap( params ) ).toString();
+        return serviceUrl( toMap( params ) );
+    }
+
+    private String serviceUrl( final Multimap<String, String> map )
+    {
+        final ServiceUrlParams params = new ServiceUrlParams().setAsMap( map ).context( this.context );
+        return this.urlService.serviceUrl( params );
     }
 }
