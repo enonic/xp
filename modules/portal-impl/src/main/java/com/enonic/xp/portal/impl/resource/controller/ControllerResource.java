@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Form;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
@@ -26,6 +27,9 @@ public abstract class ControllerResource
 
     @Context
     protected UriInfo uriInfo;
+
+    @Context
+    protected HttpHeaders httpHeaders;
 
     protected Form form;
 
@@ -52,6 +56,8 @@ public abstract class ControllerResource
         context.setMethod( this.request.getMethod() );
         context.setBaseUri( this.baseUri );
         context.setWorkspace( this.workspace );
+        final Multimap<String, String> contextHeaders = context.getHeaders();
+        this.httpHeaders.getRequestHeaders().forEach( contextHeaders::putAll );
         setParams( context.getParams(), this.uriInfo.getQueryParameters() );
 
         if ( this.form != null )
