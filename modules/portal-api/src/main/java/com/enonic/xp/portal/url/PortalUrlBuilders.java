@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.url;
 
-import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.xp.portal.PortalContext;
@@ -16,8 +15,7 @@ public final class PortalUrlBuilders
 
     private ContentPath getContentPath()
     {
-        final Content content = this.context.getContent();
-        return content != null ? content.getPath() : null;
+        return this.context.getContentPath();
     }
 
     private <T extends PortalUrlBuilder> T defaults( final T builder )

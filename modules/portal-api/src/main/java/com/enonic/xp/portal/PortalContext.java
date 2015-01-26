@@ -209,7 +209,7 @@ public final class PortalContext
     @Override
     public ContentPath getContentPath()
     {
-        return this.contentPath;
+        return ( this.content != null ) ? this.content.getPath() : this.contentPath;
     }
 
     @Override
