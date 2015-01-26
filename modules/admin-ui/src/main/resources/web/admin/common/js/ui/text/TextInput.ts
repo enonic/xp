@@ -61,10 +61,10 @@ module api.ui.text {
         }
 
         setValue(value: string): TextInput {
-            super.setValue(value);
-
             var oldValue = this.getValue();
             var newValue = this.removeForbiddenChars(value);
+
+            super.setValue(value);
 
             if (oldValue != newValue) {
                 super.setValue(newValue);
