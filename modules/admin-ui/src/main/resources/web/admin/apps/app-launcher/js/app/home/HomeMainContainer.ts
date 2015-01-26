@@ -24,9 +24,6 @@ module app.home {
             this.appSelector = builder.appSelector;
             this.loginForm = builder.loginForm;
             this.linksContainer = builder.linksContainer;
-            this.backgroundImgUrl = builder.backgroundImgUrl;
-
-            this.setBackgroundImgUrl(this.backgroundImgUrl);
 
             this.headerPanel = new HeaderPanel();
             this.headerPanel.hide();
@@ -95,18 +92,11 @@ module app.home {
 
     export class HomeMainContainerBuilder {
 
-        backgroundImgUrl: string;
-
         appSelector: app.launcher.AppSelector;
 
         loginForm: app.login.LoginForm;
 
         linksContainer: app.home.LinksContainer;
-
-        setBackgroundImgUrl(value: string): HomeMainContainerBuilder {
-            this.backgroundImgUrl = value;
-            return this;
-        }
 
         setAppSelector(value: app.launcher.AppSelector): HomeMainContainerBuilder {
             this.appSelector = value;
