@@ -62,6 +62,7 @@ module api.form.inputtype.singleselector {
 
         private createComboBoxElement(name: string, property: Property): api.dom.Element {
 
+            var comboAndSelectedOptionsWrapper = new api.dom.DivEl();
             var selectedOptionsView = new BaseSelectedOptionsView<string>();
             var comboBox = new ComboBox<string>(name, {
                 filter: this.comboboxFilter,
@@ -91,7 +92,9 @@ module api.form.inputtype.singleselector {
                 property.setValue(this.newValue(event.getOption().value));
             });
 
-            return comboBox;
+            comboAndSelectedOptionsWrapper.appendChild(comboBox);
+            comboAndSelectedOptionsWrapper.appendChild(selectedOptionsView);
+            return comboAndSelectedOptionsWrapper;
         }
 
         private createDropdownElement(name: string, property: Property): api.dom.Element {

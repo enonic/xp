@@ -43,15 +43,42 @@ public final class PropertyTreeMapper
         {
             serializeList( gen, key, (List<?>) value );
         }
+        else if ( value instanceof Map )
+        {
+            serializeMap( gen, key, (Map<?, ?>) value );
+        }
+        else
+        {
+            gen.value( key, value );
+        }
     }
 
     private static void serializeList( final MapGenerator gen, final String key, final List<?> values )
     {
+        if ( values.isEmpty() )
+        {
+            serializeKeyValue( gen, key, null );
+            return;
+        }
+
+        if ( values.size() == 1 )
+        {
+            serializeKeyValue( gen, key, values.get( 0 ) );
+            return;
+        }
+
         gen.array( key );
         for ( final Object value : values )
         {
             serializeValue( gen, value );
         }
+        gen.end();
+    }
+
+    private static void serializeMap( final MapGenerator gen, final String key, final Map<?, ?> map )
+    {
+        gen.map( key );
+        serializeMap( gen, map );
         gen.end();
     }
 
