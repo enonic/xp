@@ -22,9 +22,7 @@ module app.wizard.page {
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
-    import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ComponentRemoveEvent = api.liveedit.ComponentRemoveEvent;
-    import ComponentResetEvent = api.liveedit.ComponentResetEvent;
     import ComponentDuplicateEvent = api.liveedit.ComponentDuplicateEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import RepeatNextItemViewIdProducer = api.liveedit.RepeatNextItemViewIdProducer;
@@ -70,11 +68,7 @@ module app.wizard.page {
 
         private deselectListeners: {(event: ItemViewDeselectEvent): void;}[] = [];
 
-        private componentAddedListeners: {(event: ComponentAddedEvent): void;}[] = [];
-
         private componentRemovedListeners: {(event: ComponentRemoveEvent): void;}[] = [];
-
-        private componentResetListeners: {(event: ComponentResetEvent): void;}[] = [];
 
         private componentDuplicatedListeners: {(event: ComponentDuplicateEvent): void;}[] = [];
 
@@ -271,11 +265,7 @@ module app.wizard.page {
 
             ItemViewDeselectEvent.on(this.notifyDeselect.bind(this), this.liveEditWindow);
 
-            ComponentAddedEvent.on(this.notifyComponentAdded.bind(this), this.liveEditWindow);
-
             ComponentRemoveEvent.on(this.notifyComponentRemoved.bind(this), this.liveEditWindow);
-
-            ComponentResetEvent.on(this.notifyComponentReset.bind(this), this.liveEditWindow);
 
             ComponentDuplicateEvent.on(this.notifyComponentDuplicated.bind(this), this.liveEditWindow);
 
@@ -397,30 +387,6 @@ module app.wizard.page {
 
         private notifyDeselect(event: ItemViewDeselectEvent) {
             this.deselectListeners.forEach((listener) => listener(event));
-        }
-
-        onComponentAdded(listener: {(event: ComponentAddedEvent): void;}) {
-            this.componentAddedListeners.push(listener);
-        }
-
-        unComponentAdded(listener: {(event: ComponentAddedEvent): void;}) {
-            this.componentAddedListeners = this.componentAddedListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifyComponentAdded(event: ComponentAddedEvent) {
-            this.componentAddedListeners.forEach((listener) => listener(event));
-        }
-
-        onComponentReset(listener: {(event: ComponentResetEvent): void;}) {
-            this.componentResetListeners.push(listener);
-        }
-
-        unComponentReset(listener: {(event: ComponentResetEvent): void;}) {
-            this.componentResetListeners = this.componentResetListeners.filter((curr) => (curr != listener));
-        }
-
-        private notifyComponentReset(event: ComponentResetEvent) {
-            this.componentResetListeners.forEach((listener) => listener(event));
         }
 
         onComponentRemoved(listener: {(event: ComponentRemoveEvent): void;}) {

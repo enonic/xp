@@ -56,9 +56,7 @@ module app.wizard.page {
     import RegionSelectEvent = api.liveedit.RegionSelectEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
-    import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ComponentRemoveEvent = api.liveedit.ComponentRemoveEvent;
-    import ComponentResetEvent = api.liveedit.ComponentResetEvent;
     import ComponentDuplicateEvent = api.liveedit.ComponentDuplicateEvent;
 
     import Panel = api.ui.panel.Panel;
@@ -397,13 +395,6 @@ module app.wizard.page {
                 this.contextWindow.clearSelection();
             });
 
-            this.liveEditPage.onComponentReset((event: ComponentResetEvent) => {
-
-                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
-                    this.pageModel.initializePageFromDefault(this);
-                }
-            });
-
             this.liveEditPage.onDraggingComponentViewStartedEvent((event: DraggingComponentViewStartedEvent) => {
 
                 if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
@@ -427,13 +418,6 @@ module app.wizard.page {
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
                 if (this.contextWindow.isFloating() && !this.contextWindow.isShown() && toggler.isActive()) {
                     this.contextWindow.slideIn();
-                }
-            });
-
-            this.liveEditPage.onComponentAdded((event: ComponentAddedEvent) => {
-
-                if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
-                    this.pageModel.initializePageFromDefault(this);
                 }
             });
 
