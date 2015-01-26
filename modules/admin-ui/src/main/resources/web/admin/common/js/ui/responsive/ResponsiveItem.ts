@@ -21,6 +21,7 @@ module api.ui.responsive {
             this.oldRangeValue = this.rangeValue;
             this.handle = handler;
             this.fitToRange();
+            this.element.getEl().addClass(this.rangeSize.getRangeClass());
         }
 
         private fitToRange() {

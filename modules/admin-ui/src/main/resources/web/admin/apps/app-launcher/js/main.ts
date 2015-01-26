@@ -28,7 +28,6 @@ function startApplication() {
     });
 
     var homeMainContainer = new app.home.HomeMainContainerBuilder().
-        setBackgroundImgUrl(api.util.UriHelper.getRestUri('ui/background.jpg')).
         setAppSelector(appSelector).
         setLinksContainer(linksContainer).
         setLoginForm(loginForm).
