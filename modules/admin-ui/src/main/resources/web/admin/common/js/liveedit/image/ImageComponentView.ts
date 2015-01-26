@@ -19,19 +19,20 @@ module api.liveedit.image {
 
         constructor(builder: ImageComponentViewBuilder) {
             this.liveEditModel = builder.parentRegionView.liveEditModel;
-            super(builder.setPlaceholder(new ImagePlaceholder(this)));
             this.imageComponent = builder.component;
-            if (this.isEmpty()) {
-                this.displayPlaceholder();
-            }
+
+            super(builder.setPlaceholder(
+                new ImagePlaceholder(this)).
+                setTooltipViewer(new ImageComponentViewer()));
+            this.addClass('image-view');
         }
 
         getImage(): api.dom.ImgEl {
             return <api.dom.ImgEl>this.getChildren().filter((child: api.dom.Element) => (child.getEl().getTagName() == 'IMG'))[0];
         }
-        
+
         isEmpty(): boolean {
-            return this.imageComponent.isEmpty();
+            return !this.imageComponent || this.imageComponent.isEmpty();
         }
 
         duplicate(duplicate: ImageComponent): ImageComponentView {
@@ -43,8 +44,5 @@ module api.liveedit.image {
             return duplicatedView;
         }
 
-        getTooltipViewer(): ImageComponentViewer {
-            return new ImageComponentViewer();
-        }
     }
 }

@@ -7,12 +7,16 @@ module api.liveedit {
     export class ComponentViewContextMenuTitle<COMPONENT extends Component> extends ItemViewContextMenuTitle {
 
         constructor(component: COMPONENT, type: ComponentItemType) {
-            component.onPropertyChanged((event: ComponentPropertyChangedEvent) => {
+            var handler = (event: ComponentPropertyChangedEvent) => {
                 if (event.getPropertyName() == Component.PROPERTY_NAME) {
                     this.setMainName(component.getName() ? component.getName().toString() : "");
                 }
-            });
+            };
+
             super(component.getName() ? component.getName().toString() : "", type.getConfig().getIconCls());
+
+            component.onPropertyChanged(handler);
+            this.onRemoved(() => component.unPropertyChanged(handler));
         }
 
     }

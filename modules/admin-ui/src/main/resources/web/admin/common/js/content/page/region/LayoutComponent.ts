@@ -11,6 +11,10 @@ module api.content.page.region {
 
         private componentPropertyChangedListeners: {(event: ComponentPropertyChangedEvent):void}[] = [];
 
+        private componentPropertyChangedEventHandler;
+
+        private regionsChangedEventHandler;
+
         constructor(builder: LayoutComponentBuilder) {
             super(builder);
 
@@ -23,6 +27,14 @@ module api.content.page.region {
             else {
                 this.regions = Regions.create().build();
             }
+
+            this.componentPropertyChangedEventHandler = (event) => this.forwardComponentPropertyChangedEvent(event);
+            this.regionsChangedEventHandler = (event) => {
+                if (this.debug) {
+                    console.debug("LayoutComponent[" + this.getPath().toString() + "].onChanged: ", event);
+                }
+                this.notifyPropertyValueChanged("regions");
+            };
 
             this.registerRegionsListeners(this.regions);
         }
@@ -41,7 +53,6 @@ module api.content.page.region {
             if (oldValue) {
                 this.unregisterRegionsListeners(oldValue);
             }
-            this.regions.unChanged(this.handleRegionsChanged);
 
             this.regions = value;
             this.registerRegionsListeners(this.regions);
@@ -57,7 +68,7 @@ module api.content.page.region {
         setDescriptor(descriptorKey: DescriptorKey, descriptor?: LayoutDescriptor) {
 
             super.setDescriptor(descriptorKey, descriptor);
-            if(descriptor) {
+            if (descriptor) {
                 this.addRegions(descriptor);
             }
         }
@@ -105,33 +116,15 @@ module api.content.page.region {
         }
 
         private registerRegionsListeners(regions: api.content.page.region.Regions) {
-
-            if (this.forwardComponentPropertyChangedEvent.bind) {
-                regions.onChanged(this.handleRegionsChanged.bind(this));
-                regions.onComponentPropertyChanged(this.forwardComponentPropertyChangedEvent.bind(this));
-            }
-            else {
-                regions.onChanged((event) => {
-                    this.handleRegionsChanged(event);
-                });
-                regions.onComponentPropertyChanged((event) => {
-                    this.forwardComponentPropertyChangedEvent(event);
-                });
-            }
+            regions.onChanged(this.regionsChangedEventHandler);
+            regions.onComponentPropertyChanged(this.componentPropertyChangedEventHandler);
         }
 
         private unregisterRegionsListeners(regions: api.content.page.region.Regions) {
-
-            regions.unChanged(this.handleRegionsChanged);
-            regions.unComponentPropertyChanged(this.forwardComponentPropertyChangedEvent);
+            regions.unChanged(this.regionsChangedEventHandler);
+            regions.unComponentPropertyChanged(this.componentPropertyChangedEventHandler);
         }
 
-        private handleRegionsChanged(event: RegionsChangedEvent) {
-            if (this.debug) {
-                console.debug("LayoutComponent[" + this.getPath().toString() + "].onChanged: ", event);
-            }
-            this.notifyPropertyValueChanged("regions");
-        }
 
         onComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
             this.componentPropertyChangedListeners.push(listener);

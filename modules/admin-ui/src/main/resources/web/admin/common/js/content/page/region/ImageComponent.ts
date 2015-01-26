@@ -79,7 +79,7 @@ module api.content.page.region {
             return !!this.image;
         }
 
-        reset() {
+        doReset() {
             this.setImage(null, null);
         }
 

@@ -1,25 +1,26 @@
 module api.liveedit {
 
+    import Region = api.content.page.region.Region;
 
-    export class RegionPlaceholder extends api.dom.DivEl {
+    export class RegionPlaceholder extends ItemViewPlaceholder {
 
-        private regionView: RegionView;
+        private region: Region;
 
-        constructor(regionView: RegionView) {
-            super("region-placeholder");
-            this.regionView = regionView;
+        constructor(region: Region) {
+            super();
+            this.addClass("region-placeholder");
 
+            this.region = region;
 
             var dragComponentsHereEl = new api.dom.PEl();
             dragComponentsHereEl.setHtml("Drop components here");
 
-            var componentTypeInfoText: string = api.util.StringHelper.capitalize(regionView.getType().getShortName()) + ': ' +
-                                                regionView.getName();
+            var componentTypeInfoText: string = api.util.StringHelper.capitalize(RegionItemType.get().getShortName()) + ': ' +
+                                                region.getName();
             var typeInfoEl = new api.dom.PEl();
             typeInfoEl.setHtml(componentTypeInfoText);
 
-            this.appendChild(dragComponentsHereEl);
-            this.appendChild(typeInfoEl);
+            this.appendChildren(dragComponentsHereEl, typeInfoEl);
         }
     }
 }

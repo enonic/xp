@@ -40,3 +40,4 @@
 ///<reference path='FormEl.ts' />
 ///<reference path='AsideEl.ts' />
 ///<reference path='SectionEl.ts' />
+///<reference path='ArticleEl.ts' />

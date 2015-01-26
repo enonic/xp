@@ -25,6 +25,10 @@ module api.liveedit {
 
         contextMenuTitle: ItemViewContextMenuTitle;
 
+        placeholder: ItemViewPlaceholder;
+
+        tooltipViewer: api.ui.Viewer<any>;
+
         setLiveEditModel(value: LiveEditModel): ItemViewBuilder {
             this.liveEditModel = value;
             return this;
@@ -42,6 +46,16 @@ module api.liveedit {
 
         setElement(value: api.dom.Element): ItemViewBuilder {
             this.element = value;
+            return this;
+        }
+
+        setPlaceholder(value: ItemViewPlaceholder): ItemViewBuilder {
+            this.placeholder = value;
+            return this;
+        }
+
+        setTooltipViewer(value: api.ui.Viewer<any>): ItemViewBuilder {
+            this.tooltipViewer = value;
             return this;
         }
 
@@ -72,6 +86,8 @@ module api.liveedit {
 
         private itemViewIdProducer: ItemViewIdProducer;
 
+        private placeholder: ItemViewPlaceholder;
+
         private type: ItemType;
 
         private parentItemView: ItemView;
@@ -85,7 +101,7 @@ module api.liveedit {
         private contextMenuTitle: ItemViewContextMenuTitle;
 
         private contextMenuActions: api.ui.Action[];
-        
+
         private tooltipViewer: api.ui.Viewer<any>;
 
         private mouseOver: boolean;
@@ -104,6 +120,8 @@ module api.liveedit {
             this.parentItemView = builder.parentView;
             this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.liveEditModel;
             this.itemViewIdProducer = builder.itemViewIdProducer;
+            this.contextMenuActions = builder.contextMenuActions;
+            this.contextMenuTitle = builder.contextMenuTitle;
 
             var props: api.dom.ElementBuilder = null;
             if (builder.element) {
@@ -112,8 +130,7 @@ module api.liveedit {
                 elementFromElementBuilder.setParentElement(builder.parentElement);
                 elementFromElementBuilder.setGenerateId(false);
                 props = elementFromElementBuilder;
-            }
-            else {
+            } else {
                 var newElementBuilder = new api.dom.NewElementBuilder();
                 newElementBuilder.setTagName("div");
                 newElementBuilder.setParentElement(builder.parentElement);
@@ -121,6 +138,7 @@ module api.liveedit {
                 props = newElementBuilder;
             }
             super(props);
+            this.addClass("item-view");
 
             this.mouseOver = false;
             this.mouseOverViewListeners = [];
@@ -129,12 +147,12 @@ module api.liveedit {
             this.setItemId(builder.itemViewIdProducer.next());
 
             if (!builder.element) {
-                this.getEl().setData(ItemType.DATA_ATTRIBUTE, builder.type.getShortName());
+                this.getEl().setData(ItemType.ATTRIBUTE_TYPE, builder.type.getShortName());
             }
 
+            if (builder.tooltipViewer) {
+                this.tooltipViewer = builder.tooltipViewer;
 
-            this.tooltipViewer = this.getTooltipViewer();
-            if (this.tooltipViewer) {
                 this.tooltip = new api.ui.Tooltip(this).
                     setSide(api.ui.Tooltip.SIDE_BOTTOM).
                     setMode(api.ui.Tooltip.MODE_FOLLOW).
@@ -143,9 +161,13 @@ module api.liveedit {
                     setContent(this.tooltipViewer);
             }
 
-            this.contextMenuActions = builder.contextMenuActions;
-            this.contextMenuTitle = builder.contextMenuTitle;
+            if (builder.placeholder) {
+                this.placeholder = builder.placeholder;
+                this.appendChild(this.placeholder);
+            }
 
+            // safe to use bind here because it's the same object who handles the events
+            // and we are not going to unbind them on remove
             this.onMouseEnter(this.handleMouseEnter.bind(this));
             this.onMouseLeave(this.handleMouseLeave.bind(this));
             this.onClicked(this.handleClick.bind(this));
@@ -297,8 +319,8 @@ module api.liveedit {
             throw new Error("Must be implemented by inheritors");
         }
 
-        handleEmptyState() {
-            // Override to execute logic when state of item has become empty.
+        refreshEmptyState() {
+            this.toggleClass('empty', this.isEmpty());
         }
 
         handleClick(event: MouseEvent) {
@@ -311,7 +333,7 @@ module api.liveedit {
                 // therefore we deselect it manually
                 this.deselectParent();
 
-                this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
+                this.select(!this.isEmpty() ? {x: event.pageX, y: event.pageY} : null);
             } else {
                 this.deselect();
             }
@@ -328,11 +350,6 @@ module api.liveedit {
 
         getItemViewIdProducer(): ItemViewIdProducer {
             return this.itemViewIdProducer;
-        }
-
-        getTooltipViewer(): api.ui.Viewer<any> {
-            // override to render tooltip
-            return undefined;
         }
 
         setTooltipObject(object: any) {
@@ -414,6 +431,10 @@ module api.liveedit {
             this.hideTooltip();
             this.showContextMenu(clickPosition);
 
+            if (this.isEmpty()) {
+                this.selectPlaceholder();
+            }
+
             new ItemViewSelectedEvent(this, clickPosition).fire();
         }
 
@@ -421,8 +442,31 @@ module api.liveedit {
             this.getEl().removeAttribute("data-live-edit-selected");
             this.hideContextMenu();
 
+            if (this.isEmpty()) {
+                this.deselectPlaceholder();
+            }
+
             if (!silent) {
                 new ItemViewDeselectEvent(this).fire();
+            }
+        }
+
+        selectPlaceholder() {
+            if (this.placeholder) {
+                this.placeholder.select();
+            }
+        }
+
+        deselectPlaceholder() {
+            if (this.placeholder) {
+                this.placeholder.deselect();
+            }
+        }
+
+        showRenderingError(url: string, errorMessage?: string) {
+            if (this.placeholder) {
+                this.addClass("error");
+                this.placeholder.showRenderingError(url, errorMessage);
             }
         }
 
@@ -442,13 +486,6 @@ module api.liveedit {
             if (this.loadMask) {
                 this.loadMask.hide();
             }
-        }
-
-        setElementDimensions(dimensions: ElementDimensions): void {
-            this.getEl().setOffset({
-                top: dimensions.top,
-                left: dimensions.left
-            }).setWidthPx(dimensions.width).setHeightPx(dimensions.height);
         }
 
         getElementDimensions(): ElementDimensions {
@@ -490,7 +527,7 @@ module api.liveedit {
 
             var element = new api.dom.ElementHelper(htmlElement);
             var previous = element.getPrevious();
-            while (previous != null && !previous.hasAttribute("data-" + ItemType.DATA_ATTRIBUTE)) {
+            while (previous != null && !previous.hasAttribute("data-" + ItemType.ATTRIBUTE_TYPE)) {
                 previous = previous.getPrevious();
             }
             return previous;

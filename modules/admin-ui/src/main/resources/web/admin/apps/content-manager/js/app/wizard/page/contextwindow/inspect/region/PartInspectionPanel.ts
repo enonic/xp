@@ -27,6 +27,8 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private handleSelectorEvents: boolean = true;
 
+        private componentPropertyChangedEventHandler;
+
         constructor() {
             super(<DescriptorBasedComponentInspectionPanelConfig>{
                 iconClass: "live-edit-font-icon-part icon-xlarge"
@@ -41,6 +43,17 @@ module app.wizard.page.contextwindow.inspect.region {
             loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
             this.partSelector = new PartDescriptorComboBox(loader);
             loader.load();
+
+            this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
+
+                // Ensure displayed config form and selector option are removed when descriptor is removed
+                if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
+                    if (!this.partComponent.hasDescriptor()) {
+                        this.setupComponentForm(this.partComponent, null);
+                        this.partSelector.setDescriptor(null);
+                    }
+                }
+            };
 
             this.initSelectorListeners();
             this.appendChild(this.partSelector);
@@ -61,23 +74,35 @@ module app.wizard.page.contextwindow.inspect.region {
             this.handleSelectorEvents = true;
         }
 
+        private registerComponentListeners(component: PartComponent) {
+            component.onPropertyChanged(this.componentPropertyChangedEventHandler);
+        }
+
+        private unregisterComponentListeners(component: PartComponent) {
+            component.unPropertyChanged(this.componentPropertyChangedEventHandler);
+        }
+
         setPartComponent(partView: PartComponentView) {
+
+            if (this.partComponent) {
+                this.unregisterComponentListeners(this.partComponent);
+            }
 
             this.partView = partView;
             this.partComponent = <PartComponent>partView.getComponent();
 
             this.setComponent(this.partComponent);
             var key: DescriptorKey = this.partComponent.getDescriptor();
-            if(key) {
+            if (key) {
                 var descriptor: PartDescriptor = this.partSelector.getDescriptor(key);
                 if (descriptor) {
                     this.setSelectorValue(descriptor);
                     this.setupComponentForm(this.partComponent, descriptor);
                 } else {
-                    new GetPartDescriptorByKeyRequest(key).sendAndParse().then((descriptor:PartDescriptor) => {
+                    new GetPartDescriptorByKeyRequest(key).sendAndParse().then((descriptor: PartDescriptor) => {
                         this.setSelectorValue(descriptor);
                         this.setupComponentForm(this.partComponent, descriptor);
-                    }).catch((reason:any) => {
+                    }).catch((reason: any) => {
                         api.DefaultErrorHandler.handle(reason);
                     }).done();
                 }
@@ -86,24 +111,15 @@ module app.wizard.page.contextwindow.inspect.region {
                 this.setupComponentForm(this.partComponent, null);
             }
 
-            this.partComponent.onPropertyChanged((event: ComponentPropertyChangedEvent) => {
-
-                // Ensure displayed config form and selector option are removed when descriptor is removed
-                if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
-                    if (!this.partComponent.hasDescriptor()) {
-                        this.setupComponentForm(this.partComponent, null);
-                        this.partSelector.setDescriptor(null);
-                    }
-                }
-            });
+            this.registerComponentListeners(this.partComponent);
         }
 
         private initSelectorListeners() {
 
             this.partSelector.onOptionSelected((event: OptionSelectedEvent<PartDescriptor>) => {
                 if (this.handleSelectorEvents) {
-                    var option:Option<PartDescriptor> = event.getOption();
-                    var selectedDescriptorKey:DescriptorKey = option.displayValue.getKey();
+                    var option: Option<PartDescriptor> = event.getOption();
+                    var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
                     this.partComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
                 }
             });

@@ -3,7 +3,7 @@ module api.content.page.region {
     export class Region implements api.Equitable, api.Cloneable {
 
         public debug: boolean = false;
-        
+
         private name: string;
 
         private components: Component[] = [];
@@ -20,10 +20,24 @@ module api.content.page.region {
 
         private propertyValueChangedListeners: {(event: RegionPropertyValueChangedEvent):void}[] = [];
 
+        private componentChangedEventHandler;
+
+        private componentPropertyChangedEventHandler;
+
         constructor(builder: RegionBuilder) {
             this.name = builder.name;
             this.parent = builder.parent;
             this.components = builder.components;
+
+            this.componentChangedEventHandler = (event) => {
+                if (this.debug) {
+                    console.debug("Region[" + this.getPath().toString() + "].handleComponentChanged: ", event);
+                }
+                this.notifyRegionPropertyValueChanged("components");
+            };
+
+            this.componentPropertyChangedEventHandler = (event) => this.forwardComponentPropertyChangedEvent(event);
+
             this.components.forEach((component: Component, index: number) => {
                 this.checkIllegalLayoutComponentWithinLayoutComponent(component, this.parent);
                 component.setParent(this);
@@ -43,31 +57,13 @@ module api.content.page.region {
         }
 
         private registerComponentListeners(component: Component) {
-            if (this.handleComponentChanged.bind) {
-                component.onChanged(this.handleComponentChanged.bind(this));
-                component.onPropertyChanged(this.forwardComponentPropertyChangedEvent.bind(this));
-            }
-            else {
-                // PhantomJS does not support bind
-                component.onChanged((event) => {
-                    this.handleComponentChanged(event);
-                });
-                component.onPropertyChanged((event) => {
-                    this.forwardComponentPropertyChangedEvent(event);
-                });
-            }
+            component.onChanged(this.componentChangedEventHandler);
+            component.onPropertyChanged(this.componentPropertyChangedEventHandler);
         }
 
         private unregisterComponentListeners(component: Component) {
-            component.unChanged(this.handleComponentChanged);
-            component.unPropertyChanged(this.forwardComponentPropertyChangedEvent);
-        }
-
-        private handleComponentChanged(event: ComponentChangedEvent) {
-            if (this.debug) {
-                console.debug("Region[" + this.getPath().toString() + "].handleComponentChanged: ", event);
-            }
-            this.notifyRegionPropertyValueChanged("components");
+            component.unChanged(this.componentChangedEventHandler);
+            component.unPropertyChanged(this.componentPropertyChangedEventHandler);
         }
 
         getName(): string {

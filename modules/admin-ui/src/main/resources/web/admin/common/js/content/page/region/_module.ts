@@ -5,6 +5,7 @@
 ///<reference path='ComponentType.ts' />
 ///<reference path='ComponentChangedEvent.ts' />
 ///<reference path='ComponentPropertyChangedEvent.ts' />
+///<reference path='ComponentResetEvent.ts' />
 ///<reference path='ComponentPropertyValueChangedEvent.ts' />
 ///<reference path='Component.ts' />
 ///<reference path='ComponentFactory.ts' />

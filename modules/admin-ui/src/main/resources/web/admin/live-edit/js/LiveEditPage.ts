@@ -67,6 +67,8 @@ module LiveEdit {
 
                     if (api.liveedit.layout.LayoutItemType.get().equals(event.getItemView().getType())) {
                         LiveEdit.component.dragdropsort.DragDropSort.createSortableLayout(event.getItemView());
+                    } else {
+                        LiveEdit.component.dragdropsort.DragDropSort.refreshSortable();
                     }
                 });
 
@@ -108,7 +110,7 @@ module LiveEdit {
                 } else if (component.getType().equals(api.liveedit.image.ImageItemType.get())) {
                     var image = (<api.liveedit.image.ImageComponentView>component).getImage();
                     if (image) {
-                        image.getEl().addEventListener("load", () => {
+                        image.onLoaded(() => {
                             this.highlighter.highlightItemView(component);
                             this.shader.shadeItemView(component);
                         });
@@ -127,8 +129,7 @@ module LiveEdit {
                 }
             });
             ComponentResetEvent.on((event: ComponentResetEvent) => {
-                this.highlighter.highlightItemView(event.getComponentView());
-                this.shader.shadeItemView(event.getComponentView());
+                LiveEdit.component.dragdropsort.DragDropSort.refreshSortable();
             });
             DraggingComponentViewStartedEvent.on(() => {
                 this.highlighter.hide();

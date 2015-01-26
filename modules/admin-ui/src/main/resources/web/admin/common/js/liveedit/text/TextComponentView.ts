@@ -16,24 +16,32 @@ module api.liveedit.text {
 
         private textComponent: TextComponent;
 
-        private textPlaceholder: TextPlaceholder;
-
-        private editing: boolean;
+        private article: api.dom.Element;
 
         constructor(builder: TextComponentViewBuilder) {
-            this.editing = false;
+
             this.liveEditModel = builder.parentRegionView.liveEditModel;
-            this.textPlaceholder = new TextPlaceholder(this);
-            super(builder.
-                setContextMenuActions(this.createTextContextMenuActions()).
-                setPlaceholder(this.textPlaceholder));
             this.textComponent = builder.component;
 
-            if (this.isEmpty()) {
-                this.addPlaceholder();
+            super(builder.
+                setContextMenuActions(this.createTextContextMenuActions()).
+                setPlaceholder(new TextPlaceholder(this)).
+                setTooltipViewer(new TextComponentViewer()));
+
+            this.addClass('text-view');
+
+
+            if (!this.isEmpty()) {
+                // article comes from server
+                this.article = this.getChildren()[0];
+            } else {
+                // create it in case of new component
+                this.article = new api.dom.ArticleEl();
+                this.appendChild(this.article);
             }
-            this.onKeyDown(this.handleKeyboard.bind(this));
-            this.onKeyUp(this.handleKeyboard.bind(this));
+
+            this.onKeyDown(this.handleKey.bind(this));
+            this.onKeyUp(this.handleKey.bind(this));
             this.onDblClicked(this.handleDbClick.bind(this));
         }
 
@@ -42,21 +50,12 @@ module api.liveedit.text {
         }
 
         processChanges() {
-            this.textComponent.setText(this.getEl().getInnerHtml());
+            this.textComponent.setText(this.article.getHtml());
             new TextComponentEditedEvent(this).fire();
         }
 
-        addPlaceholder() {
-            this.removeChildren();
-            this.appendChild(this.textPlaceholder);
-        }
-
-        removePlaceholder() {
-            this.textPlaceholder.remove();
-        }
-
         isEmpty(): boolean {
-            return this.textComponent.isEmpty();
+            return !this.textComponent || this.textComponent.isEmpty();
         }
 
         duplicate(duplicate: TextComponent): TextComponentView {
@@ -64,87 +63,66 @@ module api.liveedit.text {
                 setParentRegionView(this.getParentItemView()).
                 setParentElement(this.getParentElement()).
                 setComponent(duplicate));
+
             duplicatedView.insertAfterEl(this);
-            duplicatedView.displayPlaceholder();
             return duplicatedView;
         }
 
         handleDbClick(event: MouseEvent) {
             event.stopPropagation();
             event.preventDefault();
-            if (this.editing) {
-                this.showEditor();
-                this.setCaretOffset(true);
-            }
+
+            this.setEditMode(true, true);
         }
 
         handleClick(event: MouseEvent) {
             event.stopPropagation();
+            event.preventDefault();
+
             if (!this.isSelected()) {
                 this.deselectParent();
-                this.select(!this.isEmpty() ? { x: event.pageX, y: event.pageY } : null);
-                this.makeEditable();
-            } else if (!this.editing) {
-                this.showEditor();
+                this.select(!this.isEmpty() ? {x: event.pageX, y: event.pageY} : null);
+            } else {
+                this.setEditMode(true, false);
             }
         }
 
-        handleKeyboard() {
-            if (this.editing) {
-                this.processChanges();
-            }
+        handleKey() {
+            this.processChanges();
         }
 
         select(clickPosition?: Position) {
             super.select(clickPosition);
-            this.getEl().setCursor('url(' + api.util.UriHelper.getAdminUri('live-edit/images/pencil.png') + ') 0 40, text');
-        }
-
-        selectPlaceholder() {
-            this.addPlaceholder();
         }
 
         deselect(silent?: boolean) {
             super.deselect(silent);
+            this.setEditMode(false);
+        }
 
-            if (!this.isEmpty() && api.util.StringHelper.isBlank(this.getEl().getText())) {
-                this.handleEmptyState();
-            }
 
-            if (this.editing) {
+        private setEditMode(flag: boolean, selectText?: boolean) {
+
+            this.toggleClass('edit', flag);
+            this.article.getEl().setAttribute('contenteditable', flag.toString());
+
+            if (flag) {
+                this.hideTooltip();
+                this.hideContextMenu();
+
+                this.article.giveFocus();
+                this.focusText(selectText);
+
+                api.ui.text.TextEditorToolbar.get().showToolbar(this);
+                new TextComponentStartEditingEvent(this).fire();
+            } else {
                 api.ui.text.TextEditorToolbar.get().hideToolbar();
-                this.editing = false;
             }
-
-            this.getEl().setCursor('');
         }
 
-        makeEditable() {
-            var editableElement = this.getElement();
-            editableElement.addClass('text-editor-editable-area').giveFocus();
-            editableElement.getEl().setAttribute('contenteditable', 'true');
-            new TextComponentStartEditingEvent(this).fire();
-        }
-
-        showEditor() {
-            if (this.isEmpty()) {
-                this.removePlaceholder();
-                this.getEl().setInnerHtml('</br>');
-            }
-            this.editing = true;
-            api.ui.text.TextEditorToolbar.get().showToolbar(this);
-            this.hideTooltip();
-            this.hideContextMenu();
-            new TextComponentStartEditingEvent(this).fire();
-        }
-
-        getTooltipViewer(): TextComponentViewer {
-            return new TextComponentViewer();
-        }
-
-        private setCaretOffset(isFullSelection: Boolean) {
+        private focusText(selectText: boolean) {
             var element = this.getHTMLElement();
-            if (isFullSelection) {
+            if (selectText) {
                 var selection = window.getSelection();
                 var range = document.createRange();
                 range.selectNodeContents(element);
@@ -161,10 +139,7 @@ module api.liveedit.text {
         private createTextContextMenuActions(): api.ui.Action[] {
             var actions: api.ui.Action[] = [];
             actions.push(new api.ui.Action('Edit').onExecuted(() => {
-                if (!this.editing) {
-                    this.showEditor();
-                    this.setCaretOffset(false);
-                }
+                this.setEditMode(true, false);
             }));
             return actions;
         }

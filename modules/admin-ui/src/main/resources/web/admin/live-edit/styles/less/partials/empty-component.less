@@ -1,12 +1,12 @@
-@defaultHeight: 135px;
+
 
 .live-edit-empty-component {
   clear: both;
-  background-color: @componentDefaultBackground;
+  background-color: @placeholder-bg;
   padding: 15px;
   margin: 1px 0 10px 0;
   position: relative;
-  min-height: @defaultHeight;
+  min-height: @placeholder-height;
   box-sizing: border-box;
   font-family: @admin-font-family;
   text-align: center;
@@ -84,20 +84,20 @@
     }
   }
 
-  .upload-new-image-button {
-    text-align: center;
-    position: relative;
-    font-size: 3em;
+  /*  .upload-new-image-button {
+      text-align: center;
+      position: relative;
+      font-size: 3em;
 
-    a {
-      color: #224E83;
-      text-decoration: none;
-    }
+      a {
+        color: #224E83;
+        text-decoration: none;
+      }
 
-    a:hover {
-      color: #224E83;
-    }
-  }
+      a:hover {
+        color: #224E83;
+      }
+    }*/
 
   .button.upload-button {
     .button(@admin-font-gray2, white, @admin-font-gray3, white);
@@ -119,7 +119,7 @@
   }
 
   .rich-combobox {
-    margin: @defaultHeight/2-30px auto 0 auto;
+    margin: @placeholder-height/2-30px auto 0 auto;
     vertical-align: middle;
     display: block;
     text-align: left;
@@ -160,18 +160,18 @@
     }
   }
 
-  .live-edit-combo-font-icon {
-    &:before {
-      font-size: 32px;
-    }
-  }
+  /*  .live-edit-combo-font-icon {
+      &:before {
+        font-size: 32px;
+      }
+    }*/
 
   .text-placeholder {
     font-size: 32px;
     font-family: Tahoma, Geneva, sans-serif;
     position: relative;
     vertical-align: middle;
-    margin: @defaultHeight/2-30px auto 0 auto !important;
+    margin: @placeholder-height/2-30px auto 0 auto !important;
     padding: 0;
     display: inline-block;
     box-sizing: content-box;
@@ -181,7 +181,7 @@
 
 }
 
-.live-edit-font-icon-spinner {
+/*.live-edit-font-icon-spinner {
   animation: live-edit-spinner .5s infinite linear;
   -webkit-animation: live-edit-spinner .5s infinite linear;
-}
+}*/

@@ -22,12 +22,13 @@ module api.liveedit.part {
         constructor(builder: PartComponentViewBuilder) {
             this.contentViews = [];
             this.liveEditModel = builder.parentRegionView.liveEditModel;
-            super(builder.setPlaceholder(new PartPlaceholder(this)));
             this.partComponent = builder.component;
 
-            if (this.isEmpty()) {
-                this.displayPlaceholder();
-            }
+            super(builder.
+                setTooltipViewer(new PartComponentViewer()).
+                setPlaceholder(new PartPlaceholder(this)));
+            this.addClass('part-view');
+
             this.parseContentViews(this);
         }
 
@@ -40,7 +41,7 @@ module api.liveedit.part {
         }
 
         isEmpty(): boolean {
-            return this.partComponent.isEmpty();
+            return !this.partComponent || this.partComponent.isEmpty();
         }
 
         duplicate(duplicate: PartComponent): PartComponentView {
@@ -51,10 +52,6 @@ module api.liveedit.part {
                 setComponent(duplicate));
             duplicatedView.insertAfterEl(this);
             return duplicatedView;
-        }
-
-        getTooltipViewer(): PartComponentViewer {
-            return new PartComponentViewer();
         }
 
         toItemViewArray(): ItemView[] {

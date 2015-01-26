@@ -1,0 +1,32 @@
+.text-view {
+
+  &.edit {
+    > .text-placeholder {
+      display: none;
+    }
+
+    > article {
+      cursor: url('../../live-edit/images/pencil.png') 32 32, text;
+      display: block;
+    }
+  }
+
+  & > .text-placeholder {
+    font-size: 32px;
+    line-height: 37px;
+    font-family: Tahoma, Geneva, sans-serif;
+    vertical-align: middle;
+    color: #224E83;
+
+    &:before {
+      font-family: 'icomoon' !important;
+      content: "\e449";
+    }
+
+    .message {
+      position: relative;
+      display: none;
+    }
+  }
+
+}

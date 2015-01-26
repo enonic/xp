@@ -1,0 +1,94 @@
+.item-view {
+
+  &.empty {
+    > * {
+      display: none;
+    }
+
+    > .item-placeholder {
+      display: block;
+    }
+  }
+
+  &.error {
+    background-color: #A31012;
+    .rendering-error {
+      pointer-events: none;
+    }
+    p {
+      color: white;
+      padding: 28px 10px;
+      font-size: 20px;
+    }
+    a {
+      text-decoration: none;
+      color: white;
+      padding: 28px 10px;
+      font-size: 14px;
+      pointer-events: all;
+      display: inline-block;
+      &:hover {
+        color: darken(white, 20%);
+      }
+    }
+    &[data-live-edit-type] {
+      &:before {
+        content: '';
+      }
+    }
+  }
+
+  & > .item-placeholder {
+    display: none;
+    position: relative;
+    font-family: @admin-font-family;
+    background-color: @placeholder-bg;
+    min-height: @placeholder-height;
+    padding: 50px 15px;
+    margin: 1px 0 10px 0;
+    text-align: center;
+    .box-sizing(border-box);
+
+    &:before {
+      position: absolute;
+      color: @placeholder-icon;
+      font-family: 'live-edit-font-icon' !important;
+      font-size: 105px;
+      line-height: 137px;
+      top: 0;
+      left: ~"calc(50% - 52px)";
+      content: '';
+    }
+
+    .rich-combobox {
+      vertical-align: middle;
+      text-align: left;
+      width: auto;
+      max-width: 540px;
+      margin: 0 auto;
+      display: none;
+
+      .options-container {
+        z-index: @z-index-empty-component-options;
+      }
+      .selected-options {
+        display: none !important;
+      }
+
+      .combobox {
+        input[type="text"] {
+          font-family: @admin-font-family;
+          font-size: 15px;
+          padding: 4px 37px 4px 10px;
+
+          .placeholder(1em, italic);
+          .input-glow(); // need to use glow explicitly because it is used out of the form
+        }
+
+      }
+
+    }
+
+  }
+
+}

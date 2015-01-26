@@ -47,8 +47,6 @@ module api.liveedit {
 
         private resetAction: api.ui.Action;
 
-        private placeholder: PagePlaceholder;
-
         private regionViews: RegionView[];
 
         private viewsById: {[s:number] : ItemView;};
@@ -61,10 +59,14 @@ module api.liveedit {
 
             this.liveEditModel = builder.liveEditModel;
             this.pageModel = builder.liveEditModel.getPageModel();
+            this.pageModel.onPropertyChanged(() => {
+                this.refreshEmptyState();
+            });
             this.regionViews = [];
             this.viewsById = {};
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
+
 
             this.resetAction = new api.ui.Action('Reset');
             if (this.pageModel.getMode() == PageMode.AUTOMATIC || this.pageModel.getMode() == PageMode.NO_CONTROLLER) {
@@ -85,16 +87,22 @@ module api.liveedit {
             super(new ItemViewBuilder().
                 setLiveEditModel(builder.liveEditModel).
                 setItemViewIdProducer(builder.itemViewProducer).
+                setPlaceholder(new PagePlaceholder(this)).
+                setTooltipViewer(new api.content.ContentSummaryViewer()).
                 setType(PageItemType.get()).
                 setElement(builder.element).
                 setParentElement(builder.element.getParentElement()).
                 setContextMenuActions([this.resetAction]).
                 setContextMenuTitle(new PageViewContextMenuTitle(builder.liveEditModel.getContent())));
+
+            this.addClass('page-view');
+
             this.setTooltipObject(builder.liveEditModel.getContent());
             this.parseItemViews();
 
-            var arrayOfItemViews = this.toItemViewArray();
-            arrayOfItemViews.forEach((itemView: ItemView) => {
+            this.refreshEmptyState();
+
+            this.toItemViewArray().forEach((itemView: ItemView) => {
                 this.registerItemView(itemView);
             });
 
@@ -107,27 +115,10 @@ module api.liveedit {
                 });
             });
 
-            this.placeholder = new PagePlaceholder(this);
-            this.refreshPlaceholder();
-        }
-
-        private refreshPlaceholder() {
-            if (this.isEmpty()) {
-                this.appendChild(this.placeholder);
-                this.handleEmptyState();
-            }
         }
 
         isEmpty(): boolean {
-            return this.pageModel.getMode() == PageMode.NO_CONTROLLER;
-        }
-
-        handleEmptyState() {
-            super.handleEmptyState();
-
-            if (!this.hasClass("live-edit-empty-component")) {
-                this.addClass("live-edit-empty-component");
-            }
+            return !this.pageModel || this.pageModel.getMode() == PageMode.NO_CONTROLLER;
         }
 
         getName(): string {
@@ -141,20 +132,6 @@ module api.liveedit {
         select(clickPosition?: Position) {
             new PageSelectEvent(this).fire();
             super.select(clickPosition);
-            if (this.isEmpty()) {
-                this.placeholder.select();
-            }
-        }
-
-        deselect(silent?: boolean) {
-            super.deselect(silent);
-            if (this.isEmpty()) {
-                this.placeholder.deselect();
-            }
-        }
-
-        getTooltipViewer(): api.ui.Viewer<api.content.ContentSummary> {
-            return new api.content.ContentSummaryViewer();
         }
 
         addRegion(regionView: RegionView) {
@@ -321,7 +298,6 @@ module api.liveedit {
         }
 
         private parseItemViews() {
-
             this.doParseItemViews();
         }
 
