@@ -259,7 +259,6 @@ module app.wizard.page {
                     }
                 }
                 else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), ImageComponent)) {
-                    debugger;
                     if (event.getPropertyName() == ImageComponent.PROPERTY_IMAGE && !event.getComponent().isEmpty()) {
                         var componentView = this.pageView.getComponentViewByPath(event.getPath());
                         if (componentView) {

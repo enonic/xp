@@ -76,6 +76,17 @@ module api.data {
             }
         }
 
+        /**
+         * Detach this Property from it's array and parent. Should be called when removed from the array.
+         */
+        detach() {
+            this.array = null;
+            this.parent = null;
+            this.id = null;
+            this.propertyIndexChangedListeners = [];
+            this.propertyValueChangedListeners = [];
+        }
+
         getId(): PropertyId {
             return this.id;
         }

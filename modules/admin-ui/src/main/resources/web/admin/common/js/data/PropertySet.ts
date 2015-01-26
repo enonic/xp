@@ -29,8 +29,21 @@ module api.data {
 
         private propertyValueChangedListeners: {(event: PropertyValueChangedEvent):void}[] = [];
 
+        private propertyAddedEventHandler: (event: PropertyAddedEvent) => void;
+
+        private propertyRemovedEventHandler: (event: PropertyRemovedEvent) => void;
+
+        private propertyIndexChangedEventHandler: (event: PropertyIndexChangedEvent) => void;
+
+        private propertyValueChangedEventHandler: (event: PropertyValueChangedEvent) => void;
+
         constructor(tree?: PropertyTree) {
             this.tree = tree;
+
+            this.propertyAddedEventHandler = () => this.forwardPropertyAddedEvent;
+            this.propertyRemovedEventHandler = () => this.forwardPropertyRemovedEvent;
+            this.propertyIndexChangedEventHandler = () => this.forwardPropertyIndexChangedEvent;
+            this.propertyValueChangedEventHandler = () => this.forwardPropertyValueChangedEvent;
         }
 
         setContainerProperty(value: Property) {
@@ -318,35 +331,18 @@ module api.data {
                 console.debug("PropertySet[" + this.getPropertyPath().toString() + "].registerPropertyArrayListeners: " + array.getName())
             }
 
-            if (this.forwardPropertyAddedEvent.bind) {
-                array.onPropertyAdded(this.forwardPropertyAddedEvent.bind(this));
-                array.onPropertyRemoved(this.forwardPropertyRemovedEvent.bind(this));
-                array.onPropertyIndexChanged(this.forwardPropertyIndexChangedEvent.bind(this));
-                array.onPropertyValueChanged(this.forwardPropertyValueChangedEvent.bind(this));
-            }
-            else {
-                // PhantomJS does not support bind
-                array.onPropertyAdded((event) => {
-                    this.forwardPropertyAddedEvent(event);
-                });
-                array.onPropertyRemoved((event) => {
-                    this.forwardPropertyRemovedEvent(event);
-                });
-                array.onPropertyIndexChanged((event) => {
-                    this.forwardPropertyIndexChangedEvent(event);
-                });
-                array.onPropertyValueChanged((event) => {
-                    this.forwardPropertyValueChangedEvent(event);
-                });
-            }
+            array.onPropertyAdded(this.propertyAddedEventHandler);
+            array.onPropertyRemoved(this.propertyRemovedEventHandler);
+            array.onPropertyIndexChanged(this.propertyIndexChangedEventHandler);
+            array.onPropertyValueChanged(this.propertyValueChangedEventHandler);
         }
 
         // Currently not used, because we do not remove arrays
         private unregisterPropertyArrayListeners(array: PropertyArray) {
-            array.unPropertyAdded(this.forwardPropertyAddedEvent);
-            array.unPropertyRemoved(this.forwardPropertyRemovedEvent);
-            array.unPropertyIndexChanged(this.forwardPropertyIndexChangedEvent);
-            array.unPropertyValueChanged(this.forwardPropertyValueChangedEvent);
+            array.unPropertyAdded(this.propertyAddedEventHandler);
+            array.unPropertyRemoved(this.propertyRemovedEventHandler);
+            array.unPropertyIndexChanged(this.propertyIndexChangedEventHandler);
+            array.unPropertyValueChanged(this.propertyValueChangedEventHandler);
         }
 
         onChanged(listener: {(event: PropertyEvent): void;}) {

@@ -22,12 +22,25 @@ module api.data {
 
         private propertyValueChangedListeners: {(event: PropertyValueChangedEvent):void}[] = [];
 
+        private propertyAddedEventHandler: (event: PropertyAddedEvent) => void;
+
+        private propertyRemovedEventHandler: (event: PropertyRemovedEvent) => void;
+
+        private propertyIndexChangedEventHandler: (event: PropertyIndexChangedEvent) => void;
+
+        private propertyValueChangedEventHandler: (event: PropertyValueChangedEvent) => void;
+
         constructor(builder: PropertyArrayBuilder) {
             this.tree = builder.parent.getTree();
             this.parent = builder.parent;
             this.name = builder.name;
             this.type = builder.type;
             this.array = [];
+
+            this.propertyAddedEventHandler = () => this.forwardPropertyAddedEvent;
+            this.propertyRemovedEventHandler = () => this.forwardPropertyRemovedEvent;
+            this.propertyIndexChangedEventHandler = () => this.forwardPropertyIndexChangedEvent;
+            this.propertyValueChangedEventHandler = () => this.forwardPropertyValueChangedEvent;
         }
 
         forEach(callBack: {(property: Property, index: number): void;}) {
@@ -190,6 +203,7 @@ module api.data {
 
             this.notifyPropertyRemoved(propertyToRemove);
             this.unregisterPropertyListeners(propertyToRemove);
+            propertyToRemove.detach();
         }
 
         public exists(index: number): boolean {
@@ -275,24 +289,13 @@ module api.data {
                 this.registerPropertySetListeners(property.getSet());
             }
 
-            if (this.forwardPropertyIndexChangedEvent.bind) {
-                property.onPropertyIndexChanged(this.forwardPropertyIndexChangedEvent.bind(this));
-                property.onPropertyValueChanged(this.forwardPropertyValueChangedEvent.bind(this));
-            }
-            else {
-                // PhantomJS does not support bind
-                property.onPropertyIndexChanged((event) => {
-                    this.forwardPropertyIndexChangedEvent(event);
-                });
-                property.onPropertyValueChanged((event) => {
-                    this.forwardPropertyValueChangedEvent(event);
-                });
-            }
+            property.onPropertyIndexChanged(this.propertyIndexChangedEventHandler);
+            property.onPropertyValueChanged(this.propertyValueChangedEventHandler);
         }
 
         private unregisterPropertyListeners(property: Property) {
-            property.unPropertyIndexChanged(this.forwardPropertyIndexChangedEvent);
-            property.unPropertyValueChanged(this.forwardPropertyValueChangedEvent);
+            property.unPropertyIndexChanged(this.propertyIndexChangedEventHandler);
+            property.unPropertyValueChanged(this.propertyValueChangedEventHandler);
 
             if (property.hasNonNullValue() && property.getType().equals(ValueTypes.DATA)) {
                 var propertySet = property.getSet();
@@ -311,37 +314,20 @@ module api.data {
                               propertySet.getPropertyPath().toString());
             }
 
-            if (this.forwardPropertyAddedEvent.bind) {
-                propertySet.onPropertyAdded(this.forwardPropertyAddedEvent.bind(this));
-                propertySet.onPropertyRemoved(this.forwardPropertyRemovedEvent.bind(this));
-                propertySet.onPropertyIndexChanged(this.forwardPropertyIndexChangedEvent.bind(this));
-                propertySet.onPropertyValueChanged(this.forwardPropertyValueChangedEvent.bind(this));
-            }
-            else {
-                // PhantomJS does not support bind
-                propertySet.onPropertyAdded((event) => {
-                    this.forwardPropertyAddedEvent(event);
-                });
-                propertySet.onPropertyRemoved((event) => {
-                    this.forwardPropertyRemovedEvent(event);
-                });
-                propertySet.onPropertyIndexChanged((event) => {
-                    this.forwardPropertyIndexChangedEvent(event);
-                });
-                propertySet.onPropertyValueChanged((event) => {
-                    this.forwardPropertyValueChangedEvent(event);
-                });
-            }
+            propertySet.onPropertyAdded(this.propertyAddedEventHandler);
+            propertySet.onPropertyRemoved(this.propertyRemovedEventHandler);
+            propertySet.onPropertyIndexChanged(this.propertyIndexChangedEventHandler);
+            propertySet.onPropertyValueChanged(this.propertyValueChangedEventHandler);
         }
 
         /**
          * Package protected. Not to be used outside module.
          */
         unregisterPropertySetListeners(propertySet: PropertySet) {
-            propertySet.unPropertyAdded(this.forwardPropertyAddedEvent);
-            propertySet.unPropertyRemoved(this.forwardPropertyRemovedEvent);
-            propertySet.unPropertyIndexChanged(this.forwardPropertyIndexChangedEvent);
-            propertySet.unPropertyValueChanged(this.forwardPropertyValueChangedEvent);
+            propertySet.unPropertyAdded(this.propertyAddedEventHandler);
+            propertySet.unPropertyRemoved(this.propertyRemovedEventHandler);
+            propertySet.unPropertyIndexChanged(this.propertyIndexChangedEventHandler);
+            propertySet.unPropertyValueChanged(this.propertyValueChangedEventHandler);
         }
 
         onPropertyAdded(listener: {(event: PropertyAddedEvent): void;}) {
