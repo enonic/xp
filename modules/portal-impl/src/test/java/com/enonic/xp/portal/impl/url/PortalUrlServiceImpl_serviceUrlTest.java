@@ -2,8 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import org.junit.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.enonic.xp.portal.url.ServiceUrlParams;
 
 import static org.junit.Assert.*;
 
@@ -13,23 +12,24 @@ public class PortalUrlServiceImpl_serviceUrlTest
     @Test
     public void createUrl()
     {
-        final Multimap<String, String> map = HashMultimap.create();
-        map.put( "_service", "myservice" );
-        map.put( "a", "1" );
+        final ServiceUrlParams params = new ServiceUrlParams().
+            context( this.context ).
+            service( "myservice" ).
+            param( "a", 3 );
 
-        final String url = this.service.serviceUrl( this.context, map );
-        assertEquals( "/portal/stage/context/path/_/service/mymodule/myservice?a=1", url );
+        final String url = this.service.serviceUrl( params );
+        assertEquals( "/portal/stage/context/path/_/service/mymodule/myservice?a=3", url );
     }
 
-    // @Test
-    // Not working yet. Will do later on.
+    @Test
     public void createUrl_withModule()
     {
-        final Multimap<String, String> map = HashMultimap.create();
-        map.put( "_service", "myservice" );
-        map.put( "_module", "othermodule" );
+        final ServiceUrlParams params = new ServiceUrlParams().
+            context( this.context ).
+            service( "myservice" ).
+            module( "othermodule" );
 
-        final String url = this.service.serviceUrl( this.context, map );
+        final String url = this.service.serviceUrl( params );
         assertEquals( "/portal/stage/context/path/_/service/othermodule/myservice", url );
     }
 }

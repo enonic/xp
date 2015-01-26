@@ -2,8 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import org.junit.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.enonic.xp.portal.url.AssetUrlParams;
 
 import static org.junit.Assert.*;
 
@@ -13,23 +12,23 @@ public class PortalUrlServiceImpl_assetUrlTest
     @Test
     public void createUrl()
     {
-        final Multimap<String, String> map = HashMultimap.create();
-        map.put( "_path", "css/my.css" );
-        map.put( "a", "1" );
+        final AssetUrlParams params = new AssetUrlParams().
+            context( this.context ).
+            path( "css/my.css" );
 
-        final String url = this.service.assetUrl( this.context, map );
-        assertEquals( "/portal/stage/context/path/_/asset/mymodule/css/my.css?a=1", url );
+        final String url = this.service.assetUrl( params );
+        assertEquals( "/portal/stage/context/path/_/asset/mymodule/css/my.css", url );
     }
 
-    // @Test
-    // Not working yet. Will do later on.
+    @Test
     public void createUrl_withModule()
     {
-        final Multimap<String, String> map = HashMultimap.create();
-        map.put( "_path", "css/my.css" );
-        map.put( "_module", "othermodule" );
+        final AssetUrlParams params = new AssetUrlParams().
+            context( this.context ).
+            module( "othermodule" ).
+            path( "css/my.css" );
 
-        final String url = this.service.assetUrl( this.context, map );
+        final String url = this.service.assetUrl( params );
         assertEquals( "/portal/stage/context/path/_/asset/othermodule/css/my.css", url );
     }
 }
