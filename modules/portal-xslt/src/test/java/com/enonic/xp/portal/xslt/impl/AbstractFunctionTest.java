@@ -6,6 +6,9 @@ import java.net.URL;
 import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Before;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -14,6 +17,7 @@ import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceUrlRegistry;
 import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.wem.api.xml.DomHelper;
+import com.enonic.xp.portal.url.PortalUrlService;
 
 import static org.junit.Assert.*;
 
@@ -28,10 +32,16 @@ public abstract class AbstractFunctionTest
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
 
         final XsltProcessorFactory factory = new XsltProcessorFactory();
-        factory.urlService = new MockPortalUrlService();
+        factory.urlService = Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer );
         factory.initialize();
 
         this.processor = factory.newProcessor();
+    }
+
+    private Object urlAnswer( final InvocationOnMock invocation )
+        throws Exception
+    {
+        return invocation.getArguments()[0].toString();
     }
 
     protected final void processTemplate( final String baseName )

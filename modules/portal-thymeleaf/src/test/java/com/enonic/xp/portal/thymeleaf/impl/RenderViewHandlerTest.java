@@ -2,6 +2,9 @@ package com.enonic.xp.portal.thymeleaf.impl;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -16,6 +19,7 @@ import com.enonic.wem.script.ScriptExports;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.url.PortalUrlService;
 
 import static org.junit.Assert.*;
 
@@ -36,9 +40,15 @@ public class RenderViewHandlerTest
         PortalContextAccessor.set( context );
 
         final RenderViewHandler handler = new RenderViewHandler();
-        handler.setUrlService( new MockPortalUrlService() );
+        handler.setUrlService( Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer ) );
 
         addHandler( handler );
+    }
+
+    private Object urlAnswer( final InvocationOnMock invocation )
+        throws Exception
+    {
+        return invocation.getArguments()[0].toString();
     }
 
     private Object execute( final String method )
