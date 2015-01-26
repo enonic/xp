@@ -10,7 +10,8 @@ Bugfixes:
 
 Features:
 
-  - N/A
+  - Simplify property-tree values in portal json result. Empty arrays is transformed to nul. Single value arrays
+    is transformed to a single value. (CMS-4924)
 
 Refactoring:
 
