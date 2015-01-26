@@ -1,5 +1,8 @@
-@mobile-threshold: 540px;
+@mobile-threshold: 840px;
 @tablet-threshold: 1380px;
+
+@background-small-threshold: 720px;
+@background-medium-threshold: 1200px;
 
 html, body {
   height: 100%
@@ -26,6 +29,16 @@ html, body {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+
+  background-image: url("../../common/images/background-large.jpg");
+
+  @media only screen and (max-width: @background-medium-threshold) {
+    background-image: url("../../common/images/background-medium.jpg");
+  }
+
+  @media only screen and (max-width: @background-small-threshold) {
+    background-image: url("../../common/images/background-small.jpg");
+  }
 
   a {
     color: @admin-white;
