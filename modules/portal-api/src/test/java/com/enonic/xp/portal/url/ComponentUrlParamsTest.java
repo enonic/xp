@@ -7,13 +7,13 @@ import com.google.common.collect.Multimap;
 
 import static org.junit.Assert.*;
 
-public class PageUrlParamsTest
+public class ComponentUrlParamsTest
     extends AbstractUrlParamsTest
 {
     @Test
     public void testId()
     {
-        final PageUrlParams params = configure( new PageUrlParams() );
+        final ComponentUrlParams params = configure( new ComponentUrlParams() );
         assertNull( params.getId() );
 
         params.id( "" );
@@ -26,7 +26,7 @@ public class PageUrlParamsTest
     @Test
     public void testPath()
     {
-        final PageUrlParams params = configure( new PageUrlParams() );
+        final ComponentUrlParams params = configure( new ComponentUrlParams() );
         assertNull( params.getPath() );
 
         params.path( "" );
@@ -37,19 +37,35 @@ public class PageUrlParamsTest
     }
 
     @Test
+    public void testComponent()
+    {
+        final ComponentUrlParams params = configure( new ComponentUrlParams() );
+        assertNull( params.getComponent() );
+
+        params.component( "" );
+        assertNull( params.getComponent() );
+
+        params.component( "main/0" );
+        assertEquals( "main/0", params.getComponent() );
+    }
+
+    @Test
     public void testSetAsMap()
     {
         final Multimap<String, String> map = HashMultimap.create();
         map.put( "_id", "123456" );
         map.put( "_path", "/a/b" );
+        map.put( "_component", "main/0" );
         map.put( "a", "1" );
 
-        final PageUrlParams params = configure( new PageUrlParams() );
+        final ComponentUrlParams params = configure( new ComponentUrlParams() );
         params.setAsMap( map );
 
         assertEquals( "123456", params.getId() );
         assertEquals( "/a/b", params.getPath() );
+        assertEquals( "main/0", params.getComponent() );
         assertEquals( "{a=[1]}", params.getParams().toString() );
-        assertEquals( "PageUrlParams{params={a=[1]}, id=123456, path=/a/b}", params.toString() );
+        assertEquals( "ComponentUrlParams{params={a=[1]}, id=123456, path=/a/b, component=main/0}", params.toString() );
     }
 }
+

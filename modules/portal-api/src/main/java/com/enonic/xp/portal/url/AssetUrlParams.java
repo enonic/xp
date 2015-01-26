@@ -4,12 +4,10 @@ import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.api.module.ModuleKey;
-
 public final class AssetUrlParams
     extends AbstractUrlParams<AssetUrlParams>
 {
-    private ModuleKey module;
+    private String module;
 
     private String path;
 
@@ -18,7 +16,7 @@ public final class AssetUrlParams
         return this.path;
     }
 
-    public ModuleKey getModule()
+    public String getModule()
     {
         return this.module;
     }
@@ -31,12 +29,7 @@ public final class AssetUrlParams
 
     public AssetUrlParams module( final String value )
     {
-        return Strings.isNullOrEmpty( value ) ? this : module( ModuleKey.from( value ) );
-    }
-
-    public AssetUrlParams module( final ModuleKey value )
-    {
-        this.module = value;
+        this.module = Strings.emptyToNull( value );
         return this;
     }
 

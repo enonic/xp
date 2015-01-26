@@ -97,6 +97,11 @@ public final class ComponentPath
         return regionAndComponentList.iterator();
     }
 
+    public boolean equals( final Object o )
+    {
+        return ( o instanceof ComponentPath ) && ( (ComponentPath) o ).refString.equals( this.refString );
+    }
+
     private String toString( final ComponentPath componentPath )
     {
         return Joiner.on( DIVIDER ).join( componentPath.regionAndComponentList );

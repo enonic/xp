@@ -2,7 +2,7 @@ package com.enonic.xp.portal.xslt.impl.function;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.portal.url.PortalUrlBuildersHelper;
+import com.enonic.xp.portal.url.ComponentUrlParams;
 
 final class ComponentUrlFunction
     extends AbstractUrlFunction
@@ -13,8 +13,9 @@ final class ComponentUrlFunction
     }
 
     @Override
-    protected String execute( final Multimap<String, String> params )
+    protected String execute( final Multimap<String, String> map )
     {
-        return PortalUrlBuildersHelper.apply( createUrlBuilders().componentUrl(), params ).toString();
+        final ComponentUrlParams params = new ComponentUrlParams().context( getContext() ).setAsMap( map );
+        return this.urlService.componentUrl( params );
     }
 }

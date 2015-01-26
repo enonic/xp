@@ -4,12 +4,10 @@ import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.api.module.ModuleKey;
-
 public final class ServiceUrlParams
     extends AbstractUrlParams<ServiceUrlParams>
 {
-    private ModuleKey module;
+    private String module;
 
     private String service;
 
@@ -18,7 +16,7 @@ public final class ServiceUrlParams
         return this.service;
     }
 
-    public ModuleKey getModule()
+    public String getModule()
     {
         return this.module;
     }
@@ -29,15 +27,10 @@ public final class ServiceUrlParams
         return this;
     }
 
-    public ServiceUrlParams module( final ModuleKey value )
-    {
-        this.module = value;
-        return this;
-    }
-
     public ServiceUrlParams module( final String value )
     {
-        return Strings.isNullOrEmpty( value ) ? this : module( ModuleKey.from( value ) );
+        this.module = Strings.emptyToNull( value );
+        return this;
     }
 
     @Override

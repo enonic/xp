@@ -1,12 +1,13 @@
 package com.enonic.xp.portal.jslib.impl;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.portal.url.PortalUrlBuilder;
-import com.enonic.xp.portal.url.PortalUrlBuildersHelper;
 import com.enonic.wem.script.command.CommandHandler;
+import com.enonic.xp.portal.url.ComponentUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
 
 @Component(immediate = true, service = CommandHandler.class)
 public final class ComponentUrlHandler
@@ -18,8 +19,16 @@ public final class ComponentUrlHandler
     }
 
     @Override
-    protected PortalUrlBuilder createBuilder( final Multimap<String, String> map )
+    protected String buildUrl( final Multimap<String, String> map )
     {
-        return PortalUrlBuildersHelper.apply( createBuilders().componentUrl(), map );
+        final ComponentUrlParams params = new ComponentUrlParams().context( getContext() ).setAsMap( map );
+        return this.urlService.componentUrl( params );
+    }
+
+    @Override
+    @Reference
+    public void setUrlService( final PortalUrlService value )
+    {
+        super.setUrlService( value );
     }
 }

@@ -10,7 +10,10 @@ final class AssetUrlBuilder
 {
     private ModuleKey getModule()
     {
-        return choose( this.params.getModule(), this.context.getModule() );
+        return new ModuleResolver().
+            context( this.context ).
+            module( this.params.getModule() ).
+            resolve();
     }
 
     @Override

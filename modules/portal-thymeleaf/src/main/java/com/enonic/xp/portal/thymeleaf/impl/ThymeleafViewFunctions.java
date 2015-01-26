@@ -6,6 +6,7 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.url.AssetUrlParams;
+import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlBuilders;
 import com.enonic.xp.portal.url.PortalUrlBuildersHelper;
@@ -57,7 +58,13 @@ final class ThymeleafViewFunctions
 
     public String componentUrl( final List<String> params )
     {
-        return PortalUrlBuildersHelper.apply( createUrlBuilders().componentUrl(), toMap( params ) ).toString();
+        return componentUrl( toMap( params ) );
+    }
+
+    private String componentUrl( final Multimap<String, String> map )
+    {
+        final ComponentUrlParams params = new ComponentUrlParams().setAsMap( map ).context( this.context );
+        return this.urlService.componentUrl( params );
     }
 
     public String imageUrl( final List<String> params )
