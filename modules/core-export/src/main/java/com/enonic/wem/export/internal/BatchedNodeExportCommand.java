@@ -129,7 +129,7 @@ public class BatchedNodeExportCommand
     {
         final NodePath newParentPath = resolveNewParentPath( node );
 
-        final Node relativeNode = Node.newNode( node ).parent( newParentPath ).build();
+        final Node relativeNode = Node.newNode( node ).parentPath( newParentPath ).build();
 
         final XmlNode xmlNode = XmlNodeMapper.toXml( relativeNode, this.exportNodeIds );
 

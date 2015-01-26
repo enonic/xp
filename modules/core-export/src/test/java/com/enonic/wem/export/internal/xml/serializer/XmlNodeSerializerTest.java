@@ -136,7 +136,7 @@ public class XmlNodeSerializerTest
         return Node.newNode().
             id( NodeId.from( "abc" ) ).
             name( NodeName.from( "my-node-name" ) ).
-            parent( NodePath.ROOT ).
+            parentPath( NodePath.ROOT ).
             childOrder( ChildOrder.manualOrder() ).
             nodeType( NodeType.from( "content" ) ).
             data( propertyTree ).

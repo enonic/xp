@@ -154,7 +154,7 @@ public class ContentNodeTranslatorTest
 
         Node node = Node.newNode().id( NodeId.from( "myId" ) ).
             attachedBinaries( attachedBinaries ).
-            parent( NodePath.ROOT ).
+            parentPath( NodePath.ROOT ).
             path( "myPath" ).
             name( NodeName.from( "myname" ) ).
             data( data ).
@@ -200,7 +200,7 @@ public class ContentNodeTranslatorTest
         contentAsData.addSet( "form" );
 
         final Node node = Node.newNode().id( NodeId.from( "myId" ) ).
-            parent( NodePath.ROOT ).
+            parentPath( NodePath.ROOT ).
             path( "myPath" ).
             name( NodeName.from( "myname" ) ).
             data( contentAsData ).

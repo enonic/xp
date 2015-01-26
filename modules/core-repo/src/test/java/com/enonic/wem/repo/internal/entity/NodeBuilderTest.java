@@ -19,7 +19,7 @@ public class NodeBuilderTest
     public void build_given_no_properties_then_rootDataSet_not_null()
         throws Exception
     {
-        final Node myNode = Node.newNode().name( NodeName.from( "my-node" ) ).parent( NodePath.ROOT ).build();
+        final Node myNode = Node.newNode().name( NodeName.from( "my-node" ) ).parentPath( NodePath.ROOT ).build();
         assertNotNull( myNode.data() );
     }
 
@@ -43,7 +43,7 @@ public class NodeBuilderTest
     {
         final Node myNode = Node.newNode().
             name( NodeName.from( "my-name" ) ).
-            parent( NodePath.ROOT ).
+            parentPath( NodePath.ROOT ).
             path( "test" ).
             build();
 
@@ -59,7 +59,7 @@ public class NodeBuilderTest
 
         final Node myNode = Node.newNode().
             name( NodeName.from( "my-name" ) ).
-            parent( NodePath.ROOT ).
+            parentPath( NodePath.ROOT ).
             modifiedTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
             createdTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
             creator( PrincipalKey.from( "user:test:creator" ) ).

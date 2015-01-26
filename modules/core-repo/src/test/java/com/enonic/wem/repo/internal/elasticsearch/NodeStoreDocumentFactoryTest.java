@@ -136,7 +136,7 @@ public class NodeStoreDocumentFactoryTest
 
         Node node = Node.newNode().
             id( NodeId.from( "myId" ) ).
-            parent( NodePath.ROOT ).
+            parentPath( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
             createdTime( Instant.now() ).
             creator( PrincipalKey.from( "user:test:creator" ) ).

@@ -91,7 +91,7 @@ public class MoveNodeCommand
 
         final Node movedNode = Node.newNode( persistedNode ).
             name( nodeName ).
-            parent( newParentPath ).
+            parentPath( newParentPath ).
             modifiedTime( now ).
             modifier( getCurrentPrincipalKey() ).
             indexConfigDocument( persistedNode.getIndexConfigDocument() ).

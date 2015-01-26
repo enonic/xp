@@ -73,7 +73,7 @@ public class NodeEditTest
 
         return Node.newNode().
             id( NodeId.from( "node" ) ).
-            parent( NodePath.ROOT ).
+            parentPath( NodePath.ROOT ).
             name( NodeName.from( "mynode" ) ).
             creator( PrincipalKey.from( "user:system:admin" ) ).
             createdTime( Instant.now() ).

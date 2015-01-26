@@ -156,7 +156,7 @@ public class PushContentCommandTest
         return Node.newNode().
             id( NodeId.from( id ) ).
             name( name ).
-            parent( NodePath.newPath( path ).build() ).
+            parentPath( NodePath.newPath( path ).build() ).
             build();
     }
 

@@ -42,6 +42,9 @@ final class NodeJson
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("parentId")
+    private String parentId;
+
     @JsonProperty("parent")
     private String parent;
 
@@ -81,8 +84,9 @@ final class NodeJson
             modifier( this.modifier != null ? PrincipalKey.from( this.modifier ) : null ).
             createdTime( this.createdTime ).
             modifiedTime( this.modifiedTime ).
+            parentId( NodeId.from( this.parentId ) ).
             path( this.path ).
-            parent( this.parent != null ? NodePath.newPath( this.parent ).build() : null ).
+            parentPath( this.parent != null ? NodePath.newPath( this.parent ).build() : null ).
             data( PropertyTreeJson.fromJson( this.data ) ).
             indexConfigDocument( this.indexConfigDocument.fromJson() ).
             childOrder( ChildOrder.from( this.childOrder ) ).
@@ -125,6 +129,7 @@ final class NodeJson
         json.data = PropertyTreeJson.toJson( node.data() );
         json.indexConfigDocument = createEntityIndexConfig( node.getIndexConfigDocument() );
         json.name = node.name() != null ? node.name().toString() : null;
+        json.parentId = node.getParentId() != null ? node.getParentId().toString() : null;
         json.parent = node.parent() != null ? node.parent().toString() : null;
         json.path = node.path() != null ? node.path().toString() : null;
         json.modifier = node.modifier() != null ? node.modifier().toString() : null;

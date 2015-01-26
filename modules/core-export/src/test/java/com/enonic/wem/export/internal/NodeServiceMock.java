@@ -70,7 +70,7 @@ class NodeServiceMock
         final Node.Builder builder = Node.newNode().
             id( params.getNodeId() != null ? params.getNodeId() : NodeId.from( System.nanoTime() ) ).
             name( NodeName.from( params.getName() ) ).
-            parent( params.getParent() ).
+            parentPath( params.getParent() ).
             createdTime( Instant.now() ).
             creator( PrincipalKey.ofUser( UserStoreKey.system(), "rmy" ) ).
             childOrder( params.getChildOrder() );

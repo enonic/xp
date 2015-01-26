@@ -99,7 +99,7 @@ public class BatchedNodeExportCommandTest
     {
         final Node root = Node.newNode().
             name( NodeName.from( "root" ) ).
-            parent( NodePath.ROOT ).
+            parentPath( NodePath.ROOT ).
             childOrder( ChildOrder.manualOrder() ).
             build();
 
@@ -230,7 +230,7 @@ public class BatchedNodeExportCommandTest
     {
         final Node node = Node.newNode().
             name( NodeName.from( name ) ).
-            parent( root ).
+            parentPath( root ).
             build();
 
         return this.nodeService.create( CreateNodeParams.from( node ).build() );

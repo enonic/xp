@@ -68,7 +68,7 @@ public final class CreateNodeCommand
             modifiedTime( now ).
             creator( user ).
             modifier( user ).
-            parent( params.getParent() ).
+            parentPath( params.getParent() ).
             name( NodeName.from( params.getName() ) ).
             data( params.getData() ).
             indexConfigDocument( params.getIndexConfigDocument() ).

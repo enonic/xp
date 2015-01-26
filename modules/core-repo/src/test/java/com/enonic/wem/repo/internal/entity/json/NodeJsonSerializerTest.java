@@ -68,7 +68,7 @@ public class NodeJsonSerializerTest
 
         Node node = Node.newNode().
             id( NodeId.from( "myId" ) ).
-            parent( NodePath.ROOT ).
+            parentPath( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
             createdTime( LocalDateTime.of( 2013, 1, 2, 3, 4, 5, 0 ).toInstant( ZoneOffset.UTC ) ).
             creator( PrincipalKey.from( "user:test:creator" ) ).

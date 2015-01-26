@@ -19,7 +19,9 @@ public final class Node
 
     private final NodeName name;
 
-    private final NodePath parent;
+    private final NodeId parentId;
+
+    private final NodePath parentPath;
 
     private final NodeType nodeType;
 
@@ -56,7 +58,8 @@ public final class Node
 
         this.id = builder.id;
         this.name = builder.name;
-        this.parent = builder.parent;
+        this.parentId = builder.parentId;
+        this.parentPath = builder.parentPath;
         this.nodeType = builder.nodeType;
         this.creator = builder.creator;
         this.createdTime = builder.createdTime;
@@ -70,7 +73,7 @@ public final class Node
         this.inheritPermissions = builder.inheritPermissions;
         this.attachedBinaries = builder.attachedBinaries;
 
-        this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
+        this.path = this.parentPath != null && this.name != null ? new NodePath( this.parentPath, this.name ) : null;
 
         if ( builder.indexConfigDocument != null )
         {
@@ -91,7 +94,7 @@ public final class Node
 
     public NodePath parent()
     {
-        return parent;
+        return parentPath;
     }
 
     public NodePath path()
@@ -127,6 +130,11 @@ public final class Node
     public NodeId id()
     {
         return id;
+    }
+
+    public NodeId getParentId()
+    {
+        return parentId;
     }
 
     public Instant getCreatedTime()
@@ -219,7 +227,9 @@ public final class Node
 
         private NodeName name;
 
-        private NodePath parent;
+        private NodeId parentId;
+
+        private NodePath parentPath;
 
         private PrincipalKey modifier;
 
@@ -253,7 +263,8 @@ public final class Node
         {
             this.id = node.id;
             this.name = node.name;
-            this.parent = node.parent;
+            this.parentPath = node.parentPath;
+            this.parentId = node.parentId;
             this.nodeType = node.nodeType;
             this.creator = node.creator;
             this.createdTime = node.createdTime;
@@ -289,13 +300,19 @@ public final class Node
 
         public Builder path( final String value )
         {
-            this.parent = new NodePath( value );
+            this.parentPath = new NodePath( value );
             return this;
         }
 
-        public Builder parent( final NodePath value )
+        public Builder parentId( final NodeId value )
         {
-            this.parent = value;
+            this.parentId = value;
+            return this;
+        }
+
+        public Builder parentPath( final NodePath value )
+        {
+            this.parentPath = value;
             return this;
         }
 
@@ -406,7 +423,7 @@ public final class Node
         return Objects.equals( id, node.id ) &&
             Objects.equals( name, node.name ) &&
             Objects.equals( nodeType, node.nodeType ) &&
-            Objects.equals( parent, node.parent ) &&
+            Objects.equals( parentPath, node.parentPath ) &&
             Objects.equals( hasChildren, node.hasChildren ) &&
             Objects.equals( inheritPermissions, node.inheritPermissions ) &&
             Objects.equals( creator, node.creator ) &&
@@ -424,7 +441,7 @@ public final class Node
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, name, parent, nodeType, hasChildren, inheritPermissions, creator, modifier, createdTime, modifiedTime,
+        return Objects.hash( id, name, parentPath, nodeType, hasChildren, inheritPermissions, creator, modifier, createdTime, modifiedTime,
                              manualOrderValue, childOrder, permissions, data, indexConfigDocument, attachedBinaries );
     }
 }
