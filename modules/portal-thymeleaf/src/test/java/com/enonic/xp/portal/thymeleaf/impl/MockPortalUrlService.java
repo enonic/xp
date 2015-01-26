@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.thymeleaf.impl;
 
 import com.enonic.xp.portal.url.AssetUrlParams;
+import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ServiceUrlParams;
 
@@ -15,6 +16,12 @@ public class MockPortalUrlService
 
     @Override
     public String serviceUrl( final ServiceUrlParams params )
+    {
+        return params.toString();
+    }
+
+    @Override
+    public String pageUrl( final PageUrlParams params )
     {
         return params.toString();
     }

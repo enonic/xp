@@ -25,13 +25,6 @@ public final class PortalUrlBuildersHelper
         return values.iterator().next();
     }
 
-    public static PageUrlBuilder apply( final PageUrlBuilder builder, final Multimap<String, String> params )
-    {
-        builder.contentPath( systemParam( params, "_path" ) );
-        builder.params( params );
-        return builder;
-    }
-
     public static AttachmentUrlBuilder apply( final AttachmentUrlBuilder builder, final Multimap<String, String> params )
     {
         builder.mediaId( systemParam( params, "_id" ) );

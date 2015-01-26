@@ -41,11 +41,6 @@ public final class PortalUrlBuilders
         return defaults( new AttachmentUrlBuilder() );
     }
 
-    public PageUrlBuilder pageUrl()
-    {
-        return defaults( new PageUrlBuilder() );
-    }
-
     @Deprecated
     public ImageUrlBuilder createImageByIdUrl( final ContentId contentId )
     {

@@ -7,5 +7,6 @@ exports.createUrl = function () {
         }
     });
 
-    assert.assertEquals('/portal/stage/a/b?a=1&b=1&b=2', result);
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('PageUrlParams{params={a=[1], b=[1, 2]}, path=a/b}', result);
 };
