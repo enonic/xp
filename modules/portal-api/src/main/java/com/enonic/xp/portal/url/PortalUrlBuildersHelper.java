@@ -25,20 +25,6 @@ public final class PortalUrlBuildersHelper
         return values.iterator().next();
     }
 
-    public static AssetUrlBuilder apply( final AssetUrlBuilder builder, final Multimap<String, String> params )
-    {
-        builder.path( systemParam( params, "_path" ) );
-        builder.params( params );
-        return builder;
-    }
-
-    public static PageUrlBuilder apply( final PageUrlBuilder builder, final Multimap<String, String> params )
-    {
-        builder.contentPath( systemParam( params, "_path" ) );
-        builder.params( params );
-        return builder;
-    }
-
     public static AttachmentUrlBuilder apply( final AttachmentUrlBuilder builder, final Multimap<String, String> params )
     {
         builder.mediaId( systemParam( params, "_id" ) );
@@ -62,13 +48,6 @@ public final class PortalUrlBuildersHelper
         builder.quality( systemParam( params, "_quality" ) );
         builder.filter( systemParam( params, "_filter" ) );
         builder.background( systemParam( params, "_background" ) );
-        builder.params( params );
-        return builder;
-    }
-
-    public static ServiceUrlBuilder apply( final ServiceUrlBuilder builder, final Multimap<String, String> params )
-    {
-        builder.service( systemParam( params, "_service" ) );
         builder.params( params );
         return builder;
     }

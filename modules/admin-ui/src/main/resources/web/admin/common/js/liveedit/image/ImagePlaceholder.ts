@@ -14,12 +14,12 @@ module api.liveedit.image {
 
         private uploadButton: api.dom.ButtonEl;
 
+        private comboboxWrapper: api.dom.DivEl;
+
         constructor(imageView: ImageComponentView) {
             super();
+            this.addClass("image-placeholder");
             this.imageComponentView = imageView;
-            this.onClicked((event: MouseEvent) => {
-                event.stopPropagation();
-            });
 
             var imageUploadHandler = (event: ImageUploadedEvent) => {
                 if (event.getTargetImagePlaceholder() === this) {
@@ -34,7 +34,7 @@ module api.liveedit.image {
             ImageUploadedEvent.on(imageUploadHandler);
             this.onRemoved((event: api.dom.ElementRemovedEvent) => ImageUploadedEvent.un(imageUploadHandler));
 
-            var comboUploadButtonDiv = new api.dom.DivEl('image-placeholder-selector');
+            this.comboboxWrapper = new api.dom.DivEl('rich-combobox-wrapper');
             this.uploadButton = new api.dom.ButtonEl("button upload-button");
             this.uploadButton.addClass("upload-button");
             this.uploadButton.onClicked((event: MouseEvent) => {
@@ -43,7 +43,6 @@ module api.liveedit.image {
 
                 new ImageOpenUploadDialogEvent(this).fire();
             });
-            this.uploadButton.hide();
 
             this.comboBox = api.content.ContentComboBox.create().
                 setMaximumOccurrences(1).
@@ -51,12 +50,9 @@ module api.liveedit.image {
                 setLoader(new api.content.ContentSummaryLoader()).
                 setMinWidth(270).
                 build();
-            this.comboBox.addClass('image-placeholder');
-            this.comboBox.hide();
 
-            comboUploadButtonDiv.appendChild(this.comboBox);
-            comboUploadButtonDiv.appendChild(this.uploadButton);
-            this.appendChild(comboUploadButtonDiv);
+            this.comboboxWrapper.appendChildren(this.comboBox, this.uploadButton);
+            this.appendChild(this.comboboxWrapper);
 
             this.comboBox.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.ContentSummary>) => {
 
@@ -71,14 +67,12 @@ module api.liveedit.image {
         }
 
         select() {
-            this.comboBox.show();
-            this.uploadButton.show();
+            this.comboboxWrapper.show();
             this.comboBox.giveFocus();
         }
 
         deselect() {
-            this.uploadButton.hide();
-            this.comboBox.hide();
+            this.comboboxWrapper.hide();
         }
     }
 }

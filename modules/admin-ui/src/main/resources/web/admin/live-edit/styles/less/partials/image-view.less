@@ -1,0 +1,44 @@
+.image-view {
+
+  > .image-placeholder {
+
+    &:before {
+      content: "\e005";
+    }
+
+    .rich-combobox-wrapper {
+      width: auto;
+      max-width: 540px;
+      position: relative;
+      padding-right: 36px;
+      margin: 0 auto;
+      display: none;
+
+      .rich-combobox {
+        display: block;
+      }
+
+      .upload-button {
+        .button(@admin-font-gray2, white, @admin-font-gray3, white);
+        .box-sizing(content-box);
+        .input-glow();
+        vertical-align: middle;
+        margin: 0;
+        padding: 0;
+        display: block;
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 35px;
+        width: 35px;
+        border-color: #d3d3d3;
+        background-image: url("../../common/images/upload.png"); // don't optimize because bg color is set via .button() mixin
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
+    }
+
+  }
+
+}

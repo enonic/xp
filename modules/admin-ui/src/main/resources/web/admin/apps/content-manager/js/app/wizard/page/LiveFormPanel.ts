@@ -205,6 +205,7 @@ module app.wizard.page {
             this.pageModel.setIgnorePropertyChanges(true);
 
             this.liveEditPage.setModel(liveEditModel);
+            this.imageInspectionPanel.setModel(liveEditModel);
             this.pageInspectionPanel.setModel(liveEditModel);
             this.partInspectionPanel.setModel(liveEditModel);
             this.layoutInspectionPanel.setModel(liveEditModel);
@@ -258,15 +259,11 @@ module app.wizard.page {
                     }
                 }
                 else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), ImageComponent)) {
-                    if (event.getPropertyName() == ImageComponent.PROPERTY_IMAGE) {
-
+                    debugger;
+                    if (event.getPropertyName() == ImageComponent.PROPERTY_IMAGE && !event.getComponent().isEmpty()) {
                         var componentView = this.pageView.getComponentViewByPath(event.getPath());
-                        if (componentView && api.ObjectHelper.iFrameSafeInstanceOf(componentView, ImageComponentView)) {
-                            var imageView = <ImageComponentView>componentView;
-                            var imageComponent: ImageComponent = imageView.getComponent();
-                            if (!imageComponent.isEmpty()) {
-                                this.saveAndReloadOnlyComponent(componentView);
-                            }
+                        if (componentView) {
+                            this.saveAndReloadOnlyComponent(componentView);
                         }
                     }
                 }
@@ -347,7 +344,13 @@ module app.wizard.page {
 
             this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
 
-                var itemView = event.getItemView();
+                var itemView = event.getItemView(),
+                    selectedView = this.getSelectedItemView();
+
+                if (selectedView == itemView) {
+                    return;
+                }
+
                 if (itemView.isEmpty() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView)) {
                     if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
                         this.contextWindow.slideOut();
@@ -359,7 +362,7 @@ module app.wizard.page {
                     }
                 }
 
-                if (this.getSelectedItemView()) {
+                if (selectedView) {
                     // deselect old item silently because new one has already been selected
                     this.getSelectedItemView().deselect(true);
                 }

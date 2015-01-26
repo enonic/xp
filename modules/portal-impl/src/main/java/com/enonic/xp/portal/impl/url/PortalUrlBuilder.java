@@ -42,11 +42,6 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         this.context = this.params.getContext();
     }
 
-    public final void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
-
     protected final <X> X choose( final X first, final X second )
     {
         return first != null ? first : second;

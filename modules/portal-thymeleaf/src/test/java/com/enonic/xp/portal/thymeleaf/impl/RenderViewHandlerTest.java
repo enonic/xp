@@ -35,7 +35,10 @@ public class RenderViewHandlerTest
         context.setContent( content );
         PortalContextAccessor.set( context );
 
-        addHandler( new RenderViewHandler() );
+        final RenderViewHandler handler = new RenderViewHandler();
+        handler.setUrlService( new MockPortalUrlService() );
+
+        addHandler( handler );
     }
 
     private Object execute( final String method )

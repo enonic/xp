@@ -28,6 +28,9 @@ public abstract class AbstractFunctionTest
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
 
         final XsltProcessorFactory factory = new XsltProcessorFactory();
+        factory.urlService = new MockPortalUrlService();
+        factory.initialize();
+
         this.processor = factory.newProcessor();
     }
 
@@ -51,5 +54,4 @@ public abstract class AbstractFunctionTest
     {
         return DomHelper.serialize( DomHelper.parse( xml ) );
     }
-
 }

@@ -16,6 +16,8 @@ module api.content.page.region {
 
         private propertyValueChangedListeners: {(event: ComponentPropertyValueChangedEvent):void}[] = [];
 
+        private resetListeners: {(event: ComponentResetEvent):void}[] = [];
+
         constructor(builder: ComponentBuilder<any>) {
 
             this.name = builder.name;
@@ -51,8 +53,13 @@ module api.content.page.region {
             }
         }
 
-        reset() {
+        doReset() {
+            throw new Error("Must be implemented by inheritors");
+        }
 
+        reset() {
+            this.doReset();
+            this.notifyResetEvent();
         }
 
         isEmpty(): boolean {
@@ -116,6 +123,23 @@ module api.content.page.region {
 
         private notifyChangedEvent(event: ComponentChangedEvent) {
             this.changedListeners.forEach((listener: (event: ComponentChangedEvent)=>void) => {
+                listener(event);
+            })
+        }
+
+        onReset(listener: (event: ComponentResetEvent)=>void) {
+            this.resetListeners.push(listener);
+        }
+
+        unReset(listener: (event: ComponentResetEvent)=>void) {
+            this.resetListeners = this.resetListeners.filter((curr: (event: ComponentResetEvent)=>void) => {
+                return listener != curr;
+            });
+        }
+
+        private notifyResetEvent() {
+            var event = new ComponentResetEvent(this.getPath());
+            this.resetListeners.forEach((listener: (event: ComponentResetEvent)=>void) => {
                 listener(event);
             })
         }

@@ -2,7 +2,7 @@ module api.liveedit {
 
     export class ItemType implements api.Equitable {
 
-        static DATA_ATTRIBUTE = "live-edit-type";
+        static ATTRIBUTE_TYPE = "live-edit-type";
 
         private static shortNameToInstance: {[shortName: string]: ItemType} = {};
 
@@ -69,12 +69,12 @@ module api.liveedit {
         }
 
         static fromHTMLElement(element: HTMLElement): ItemType {
-            var typeAsString = element.getAttribute("data-" + ItemType.DATA_ATTRIBUTE);
+            var typeAsString = element.getAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
             return ItemType.byShortName(typeAsString);
         }
 
         static fromElement(element: api.dom.Element): ItemType {
-            var typeAsString = element.getEl().getAttribute("data-" + ItemType.DATA_ATTRIBUTE);
+            var typeAsString = element.getEl().getAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
             return ItemType.byShortName(typeAsString);
         }
     }

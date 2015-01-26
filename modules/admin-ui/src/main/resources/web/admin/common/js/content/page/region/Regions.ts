@@ -18,7 +18,14 @@ module api.content.page.region {
 
         private regionRemovedListeners: {(event: RegionRemovedEvent):void}[] = [];
 
+        private regionChangedEventHandler;
+
+        private componentPropertyChangedEventHandler;
+
         constructor(builder: RegionsBuilder) {
+
+            this.regionChangedEventHandler = (event) => this.notifyRegionChanged(event.getPath());
+            this.componentPropertyChangedEventHandler = (event) => this.forwardComponentPropertyChangedEvent(event);
 
             builder.regions.forEach((region: Region) => {
                 if (this.regionByName[region.getName()] != undefined) {
@@ -41,30 +48,15 @@ module api.content.page.region {
             this.registerRegionListeners(region);
         }
 
-        private registerRegionListeners(region: Region) {
 
-            if (this.handleRegionChanged.bind) {
-                region.onChanged(this.handleRegionChanged.bind(this));
-                region.onComponentPropertyChangedEvent(this.forwardComponentPropertyChangedEvent.bind(this));
-            }
-            else {
-                // PhantomJS does not support bind
-                region.onChanged((event) => {
-                    this.handleRegionChanged(event);
-                });
-                region.onComponentPropertyChangedEvent((event) => {
-                    this.forwardComponentPropertyChangedEvent(event);
-                });
-            }
+        private registerRegionListeners(region: Region) {
+            region.onChanged(this.regionChangedEventHandler);
+            region.onComponentPropertyChangedEvent(this.componentPropertyChangedEventHandler);
         }
 
         private unregisterRegionListeners(region: Region) {
-            region.unChanged(this.handleRegionChanged);
-            region.unComponentPropertyChangedEvent(this.forwardComponentPropertyChangedEvent);
-        }
-
-        private handleRegionChanged(event: BaseRegionChangedEvent) {
-            this.notifyRegionChanged(event.getPath());
+            region.unChanged(this.regionChangedEventHandler);
+            region.unComponentPropertyChangedEvent(this.componentPropertyChangedEventHandler);
         }
 
         removeRegions(regions: Region[]) {

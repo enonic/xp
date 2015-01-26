@@ -26,12 +26,12 @@ module api.liveedit.layout {
         constructor(builder: LayoutComponentViewBuilder) {
             this.regionViews = [];
             this.liveEditModel = builder.parentRegionView.liveEditModel;
-            super(builder.setPlaceholder(new LayoutPlaceholder(this)));
             this.layoutComponent = builder.component;
 
-            if (this.isEmpty()) {
-                this.displayPlaceholder();
-            }
+            super(builder.
+                setTooltipViewer(new LayoutComponentViewer()).
+                setPlaceholder(new LayoutPlaceholder(this)));
+            this.addClass('layout-view');
 
             this.parseRegions();
         }
@@ -81,7 +81,7 @@ module api.liveedit.layout {
         }
 
         isEmpty(): boolean {
-            return this.layoutComponent.isEmpty();
+            return !this.layoutComponent || this.layoutComponent.isEmpty();
         }
 
         duplicate(duplicate: LayoutComponent): LayoutComponentView {
@@ -92,10 +92,6 @@ module api.liveedit.layout {
                 setComponent(duplicate));
             duplicatedView.insertAfterEl(this);
             return duplicatedView;
-        }
-
-        getTooltipViewer(): LayoutComponentViewer {
-            return new LayoutComponentViewer();
         }
 
         toItemViewArray(): ItemView[] {

@@ -9,7 +9,7 @@ module api.liveedit {
     import PageDescriptorsJson = api.content.page.PageDescriptorsJson;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
-    export class PagePlaceholder extends api.dom.DivEl {
+    export class PagePlaceholder extends ItemViewPlaceholder {
 
         private pageView: PageView;
 

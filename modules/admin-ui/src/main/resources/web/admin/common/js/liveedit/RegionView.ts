@@ -51,8 +51,6 @@ module api.liveedit {
 
         private componentViews: ComponentView<Component>[];
 
-        private placeholder: RegionPlaceholder;
-
         private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
 
         private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
@@ -62,23 +60,21 @@ module api.liveedit {
             this.componentViews = [];
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
+            this.parentView = builder.parentView;
 
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.parentView.getItemViewIdProducer()).
                 setType(RegionItemType.get()).
                 setElement(builder.element).
+                setPlaceholder(new RegionPlaceholder(builder.region)).
+                setTooltipViewer(new RegionComponentViewer()).
                 setParentElement(builder.parentElement).
                 setParentView(builder.parentView).
                 setContextMenuActions(this.createRegionContextMenuActions()).
                 setContextMenuTitle(new RegionViewContextMenuTitle(builder.region)));
 
+            this.addClass('region-view');
             this.setRegion(builder.region);
-
-            this.parentView = builder.parentView;
-            this.placeholder = new RegionPlaceholder(this);
-            this.placeholder.hide();
-            this.appendChild(this.placeholder);
-            this.refreshPlaceholder();
 
             // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
             //this.onDragOver(this.handleDragOver.bind(this));
@@ -149,14 +145,17 @@ module api.liveedit {
             if (region) {
                 this.setTooltipObject(region);
 
+                region.onComponentAdded(() => this.refreshEmptyState());
+                region.onComponentRemoved(() => this.refreshEmptyState());
+
                 var components = region.getComponents();
                 var componentViews = this.getComponentViews();
 
                 componentViews.forEach((view: ComponentView<Component>, index: number) => {
-                    var component = components[index];
-                    view.setComponent(component);
+                    view.setComponent(components[index]);
                 });
             }
+            this.refreshEmptyState();
         }
 
         getRegion(): Region {
@@ -180,10 +179,6 @@ module api.liveedit {
             super.select(clickPosition);
         }
 
-        getTooltipViewer(): api.ui.Viewer<Region> {
-            return new RegionComponentViewer();
-        }
-
         registerComponentView(componentView: ComponentView<Component>, index: number) {
             if (index >= 0) {
                 this.componentViews.splice(index, 0, componentView);
@@ -192,10 +187,10 @@ module api.liveedit {
                 this.componentViews.push(componentView);
             }
 
-            this.notifyItemViewAdded(new ItemViewAddedEvent(componentView));
+            this.notifyItemViewAdded(componentView);
 
             componentView.onItemViewAdded((event: ItemViewAddedEvent) => {
-                this.notifyItemViewAdded(event);
+                this.notifyItemViewAdded(event.getView());
             });
             componentView.onItemViewRemoved((event: ItemViewRemovedEvent) => {
 
@@ -208,7 +203,7 @@ module api.liveedit {
                         this.componentViews.splice(childIndex, 1);
                     }
                 }
-                this.notifyItemViewRemoved(event);
+                this.notifyItemViewRemoved(event.getView());
             });
         }
 
@@ -217,9 +212,6 @@ module api.liveedit {
             var indexToRemove = this.getComponentViewIndex(componentView);
             if (indexToRemove >= 0) {
                 this.componentViews.splice(indexToRemove, 1);
-                if (this.componentViews.length == 0) {
-                    this.placeholder.show();
-                }
                 this.notifyItemViewRemovedForAll(componentView.toItemViewArray());
             }
             else {
@@ -229,11 +221,7 @@ module api.liveedit {
 
         addComponentView(componentView: ComponentView<Component>, positionIndex: number) {
 
-            this.placeholder.hide();
-
-            componentView.toItemViewArray().forEach((itemView: ItemView) => {
-                this.notifyItemViewAdded(new ItemViewAddedEvent(itemView));
-            });
+            this.notifyItemViewAddedForAll(componentView.toItemViewArray());
 
             this.insertChild(componentView, positionIndex);
         }
@@ -286,32 +274,13 @@ module api.liveedit {
             return api.ObjectHelper.iFrameSafeInstanceOf(this.parentView, api.liveedit.layout.LayoutComponentView);
         }
 
-        refreshPlaceholder() {
-
-            if (this.hasComponentViewDropZone()) {
-                this.placeholder.hide();
-            } else if (this.componentViews.length == 0) {
-                this.placeholder.show();
-            } else {
-                if (this.countNonMovingComponentViews() == 0) {
-                    this.placeholder.show();
-                } else {
-                    this.placeholder.hide();
-                }
-            }
+        hasOnlyMovingComponentViews(): boolean {
+            return this.componentViews.length > 0 && this.componentViews.every((view: ComponentView<Component>)=> {
+                    return view.isMoving();
+                })
         }
 
-        countNonMovingComponentViews(): number {
-            var count = 0;
-            this.componentViews.forEach((view: ComponentView<Component>)=> {
-                if (!view.isMoving()) {
-                    count++
-                }
-            });
-            return count;
-        }
-
-        private hasComponentViewDropZone(): boolean {
+        private hasComponentDropzone(): boolean {
 
             var foundDropZone = false;
             var child = this.getHTMLElement().firstChild;
@@ -319,7 +288,7 @@ module api.liveedit {
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(child, HTMLElement)) {
                     var childHtmlElement = new api.dom.ElementHelper(<HTMLElement> child);
-                    if (childHtmlElement.hasClass("region-view-drop-zone") ||
+                    if (childHtmlElement.hasClass("region-dropzone") ||
                         childHtmlElement.hasClass("live-edit-drop-target-placeholder")) {
                         if (childHtmlElement.getDisplay() != "none") {
                             foundDropZone = true;
@@ -334,7 +303,7 @@ module api.liveedit {
         }
 
         isEmpty(): boolean {
-            return this.region.isEmpty();
+            return !this.hasComponentDropzone() && (!this.region || this.region.isEmpty() || this.hasOnlyMovingComponentViews());
         }
 
         empty() {
@@ -343,8 +312,6 @@ module api.liveedit {
             });
 
             this.region.removeComponents();
-
-            this.refreshPlaceholder();
         }
 
         toItemViewArray(): ItemView[] {
@@ -362,7 +329,14 @@ module api.liveedit {
             this.itemViewAddedListeners.push(listener);
         }
 
-        private notifyItemViewAdded(event: ItemViewAddedEvent) {
+        private notifyItemViewAddedForAll(itemViews: ItemView[]) {
+            itemViews.forEach((itemView: ItemView) => {
+                this.notifyItemViewAdded(itemView);
+            });
+        }
+
+        private notifyItemViewAdded(itemView: ItemView) {
+            var event = new ItemViewAddedEvent(itemView);
             this.itemViewAddedListeners.forEach((listener) => {
                 listener(event);
             });
@@ -373,12 +347,13 @@ module api.liveedit {
         }
 
         private notifyItemViewRemovedForAll(itemViews: ItemView[]) {
-            itemViews.forEach((curr: ItemView) => {
-                this.notifyItemViewRemoved(new ItemViewRemovedEvent(curr));
+            itemViews.forEach((itemView: ItemView) => {
+                this.notifyItemViewRemoved(itemView);
             });
         }
 
-        private notifyItemViewRemoved(event: ItemViewRemovedEvent) {
+        private notifyItemViewRemoved(itemView: ItemView) {
+            var event = new ItemViewRemovedEvent(itemView);
             this.itemViewRemovedListeners.forEach((listener) => {
                 listener(event);
             });
@@ -386,7 +361,7 @@ module api.liveedit {
 
         static isRegionViewFromHTMLElement(htmlElement: HTMLElement): boolean {
 
-            var type = htmlElement.getAttribute("data-" + ItemType.DATA_ATTRIBUTE);
+            var type = htmlElement.getAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
             if (api.util.StringHelper.isBlank(type)) {
                 return false;
             }
@@ -394,9 +369,7 @@ module api.liveedit {
         }
 
         parseComponentViews() {
-
             this.doParseComponentViews();
-            this.refreshPlaceholder();
         }
 
         private doParseComponentViews(parentElement?: api.dom.Element) {

@@ -26,6 +26,8 @@ module app.wizard.page.contextwindow.inspect.region {
 
         private handleSelectorEvents: boolean = true;
 
+        private componentPropertyChangedEventHandler: (event: ComponentPropertyChangedEvent) => void;
+
         constructor() {
             super(<ComponentInspectionPanelConfig>{
                 iconClass: "live-edit-font-icon-image icon-xlarge"
@@ -35,6 +37,16 @@ module app.wizard.page.contextwindow.inspect.region {
                 setAllowedContentTypes([ContentTypeName.IMAGE.toString()]).
                 setLoader(new api.content.ContentSummaryLoader()).
                 build();
+
+            this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
+                // Ensure displayed config form and selector option are removed when image is removed
+                if (event.getPropertyName() == ImageComponent.PROPERTY_IMAGE) {
+                    if (!this.imageComponent.hasImage()) {
+                        this.setupComponentForm(this.imageComponent);
+                        this.imageSelector.setContent(null);
+                    }
+                }
+            };
 
             this.initSelectorListeners();
             this.appendChild(this.imageSelector);
@@ -46,20 +58,24 @@ module app.wizard.page.contextwindow.inspect.region {
 
         setImageComponent(imageView: ImageComponentView) {
             this.imageView = imageView;
+            if (this.imageComponent) {
+                this.unregisterComponentListeners(this.imageComponent);
+            }
+
             this.imageComponent = imageView.getComponent();
             this.setComponent(this.imageComponent);
 
             var contentId: ContentId = this.imageComponent.getImage();
-            if(contentId) {
+            if (contentId) {
                 var image: ContentSummary = this.imageSelector.getContent(contentId);
                 if (image) {
                     this.setSelectorValue(image);
                     this.setupComponentForm(this.imageComponent);
                 } else {
-                    new GetContentSummaryByIdRequest(contentId).sendAndParse().then((image:ContentSummary) => {
+                    new GetContentSummaryByIdRequest(contentId).sendAndParse().then((image: ContentSummary) => {
                         this.setSelectorValue(image);
                         this.setupComponentForm(this.imageComponent);
-                    }).catch((reason:any) => {
+                    }).catch((reason: any) => {
                         api.DefaultErrorHandler.handle(reason);
                     }).done();
                 }
@@ -68,15 +84,15 @@ module app.wizard.page.contextwindow.inspect.region {
                 this.setupComponentForm(this.imageComponent);
             }
 
-            this.imageComponent.onPropertyChanged((event: ComponentPropertyChangedEvent) => {
-                // Ensure displayed config form and selector option are removed when image is removed
-                if (event.getPropertyName() == ImageComponent.PROPERTY_IMAGE) {
-                    if (!this.imageComponent.hasImage()) {
-                       this.setupComponentForm(this.imageComponent);
-                        this.imageSelector.setContent(null);
-                    }
-                }
-            });
+            this.registerComponentListeners(this.imageComponent);
+        }
+
+        private registerComponentListeners(component: ImageComponent) {
+            component.onPropertyChanged(this.componentPropertyChangedEventHandler);
+        }
+
+        private unregisterComponentListeners(component: ImageComponent) {
+            component.unPropertyChanged(this.componentPropertyChangedEventHandler);
         }
 
         private setSelectorValue(image: ContentSummary) {
@@ -105,15 +121,15 @@ module app.wizard.page.contextwindow.inspect.region {
         private initSelectorListeners() {
 
             this.imageSelector.onOptionSelected((event: OptionSelectedEvent<ContentSummary>) => {
-                if(this.handleSelectorEvents) {
-                    var option:Option<ContentSummary> = event.getOption();
+                if (this.handleSelectorEvents) {
+                    var option: Option<ContentSummary> = event.getOption();
                     var imageContent = option.displayValue;
                     this.imageComponent.setImage(imageContent.getContentId(), imageContent.getDisplayName());
                 }
             });
 
             this.imageSelector.onOptionDeselected((option: SelectedOption<ContentSummary>) => {
-                if(this.handleSelectorEvents) {
+                if (this.handleSelectorEvents) {
                     this.imageComponent.setImage(null, null);
                 }
             });

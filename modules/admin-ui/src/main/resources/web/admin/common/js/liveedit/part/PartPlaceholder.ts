@@ -19,17 +19,16 @@ module api.liveedit.part {
 
         constructor(partView: PartComponentView) {
             super();
+            this.addClass("part-placeholder");
+
             this.partComponentView = partView;
 
-            this.onClicked((event: MouseEvent) => {
-                event.stopPropagation();
-            });
             var request = new GetPartDescriptorsByModulesRequest(partView.liveEditModel.getSiteModel().getModuleKeys());
             var loader = new PartDescriptorLoader(request);
             loader.setComparator(new api.content.page.DescriptorByDisplayNameComparator());
             this.comboBox = new PartDescriptorComboBox(loader);
             loader.load();
-            this.comboBox.hide();
+
             this.appendChild(this.comboBox);
 
             this.comboBox.onOptionSelected((event: OptionSelectedEvent<PartDescriptor>) => {

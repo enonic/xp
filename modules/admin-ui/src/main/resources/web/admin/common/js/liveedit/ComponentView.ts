@@ -3,10 +3,11 @@ module api.liveedit {
     import Component = api.content.page.region.Component;
     import ComponentPath = api.content.page.region.ComponentPath;
     import ComponentName = api.content.page.region.ComponentName;
+    import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
+    import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
+    import ComponentResetEvent = api.content.page.region.ComponentResetEvent;
 
     export class ComponentViewBuilder<COMPONENT extends Component> {
-
-        placeholder: ComponentPlaceholder;
 
         itemViewProducer: ItemViewIdProducer;
 
@@ -24,10 +25,9 @@ module api.liveedit {
 
         contextMenuActions: api.ui.Action[];
 
-        setPlaceholder(value: ComponentPlaceholder): ComponentViewBuilder<COMPONENT> {
-            this.placeholder = value;
-            return this;
-        }
+        placeholder: ComponentPlaceholder;
+
+        tooltipViewer: api.ui.Viewer<any>;
 
         /**
          * Optional. The ItemViewIdProducer of parentRegionView will be used if not set.
@@ -71,11 +71,19 @@ module api.liveedit {
             this.contextMenuActions = actions;
             return this;
         }
+
+        setPlaceholder(value: ComponentPlaceholder): ComponentViewBuilder<COMPONENT> {
+            this.placeholder = value;
+            return this;
+        }
+
+        setTooltipViewer(value: api.ui.Viewer<any>): ComponentViewBuilder<COMPONENT> {
+            this.tooltipViewer = value;
+            return this;
+        }
     }
 
-    export class ComponentView<COMPONENT extends Component> extends ItemView {
-
-        private placeholder: ComponentPlaceholder;
+    export class ComponentView<COMPONENT extends Component> extends ItemView implements api.Cloneable {
 
         private parentRegionView: RegionView;
 
@@ -87,17 +95,23 @@ module api.liveedit {
 
         private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
 
+        private propertyChangedListener: (event: ComponentPropertyChangedEvent) => void;
+
+        private resetListener: (event: ComponentResetEvent) => void;
+
         constructor(builder: ComponentViewBuilder<COMPONENT>) {
 
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
             this.moving = false;
-            this.placeholder = builder.placeholder;
+            this.parentRegionView = builder.parentRegionView;
 
             super(new ItemViewBuilder().
                     setItemViewIdProducer(builder.itemViewProducer
                         ? builder.itemViewProducer
                         : builder.parentRegionView.getItemViewIdProducer()).
+                    setPlaceholder(builder.placeholder).
+                    setTooltipViewer(builder.tooltipViewer).
                     setType(builder.type).
                     setElement(builder.element).
                     setParentView(builder.parentRegionView).
@@ -106,7 +120,18 @@ module api.liveedit {
                     setContextMenuTitle(new ComponentViewContextMenuTitle(builder.component, builder.type))
             );
 
-            this.parentRegionView = builder.parentRegionView;
+            this.propertyChangedListener = () => this.refreshEmptyState();
+            this.resetListener = () => {
+                // recreate the component view from scratch
+                // if the component has been reset
+
+                var clone = this.clone();
+                this.replaceWith(clone);
+                clone.select();
+
+                new api.liveedit.ComponentResetEvent(clone).fire();
+            };
+
             this.setComponent(builder.component);
             this.parentRegionView.registerComponentView(this, builder.positionIndex);
 
@@ -115,6 +140,16 @@ module api.liveedit {
             //this.onDragStart(this.handleDragStart2.bind(this));
             //this.onDrag(this.handleDrag.bind(this));
             //this.onDragEnd(this.handleDragEnd.bind(this));
+        }
+
+        private registerComponentListeners(component: COMPONENT) {
+            component.onReset(this.resetListener);
+            component.onPropertyChanged(this.propertyChangedListener);
+        }
+
+        private unregisterComponentListeners(component: COMPONENT) {
+            component.unPropertyChanged(this.propertyChangedListener);
+            component.unReset(this.resetListener);
         }
 
         private createComponentContextMenuActions(actions: api.ui.Action[]): api.ui.Action[] {
@@ -128,10 +163,7 @@ module api.liveedit {
                 }
             }));
             actions.push(new api.ui.Action("Empty").onExecuted(() => {
-                this.displayPlaceholder();
-                this.select();
                 this.component.reset();
-                new ComponentResetEvent(this).fire();
             }));
             actions.push(new api.ui.Action("Remove").onExecuted(() => {
                 this.deselect();
@@ -143,7 +175,6 @@ module api.liveedit {
                 var duplicatedComponent = <COMPONENT> this.getComponent().duplicateComponent();
                 var duplicatedView = this.duplicate(duplicatedComponent);
                 this.deselect();
-                duplicatedView.handleEmptyState();
                 duplicatedView.select();
                 duplicatedView.showLoadingSpinner();
 
@@ -183,10 +214,16 @@ module api.liveedit {
         }
 
         setComponent(component: COMPONENT) {
-            this.component = component;
             if (component) {
+                if (this.component) {
+                    this.unregisterComponentListeners(this.component);
+                }
                 this.setTooltipObject(component);
+                this.registerComponentListeners(component);
             }
+
+            this.component = component;
+            this.refreshEmptyState();
         }
 
         getComponent(): COMPONENT {
@@ -221,41 +258,18 @@ module api.liveedit {
             return this.moving;
         }
 
-        select(clickPosition?: Position) {
-            super.select(clickPosition);
-            if (this.isEmpty()) {
-                this.selectPlaceholder();
-            }
-        }
+        clone(): ComponentView<Component> {
 
-        selectPlaceholder() {
-            this.placeholder.select();
-        }
+            var index = this.getParentItemView().getComponentViewIndex(this);
 
-        deselect(silent?: boolean) {
-            super.deselect(silent);
-            if (this.isEmpty()) {
-                this.placeholder.deselect();
-            }
-        }
+            var clone = this.getType().createView(
+                new CreateItemViewConfig<RegionView,Component>().
+                    setParentView(this.getParentItemView()).
+                    setParentElement(this.getParentElement()).
+                    setData(this.getComponent()).
+                    setPositionIndex(index));
 
-        handleEmptyState() {
-            super.handleEmptyState();
-
-            if (!this.hasClass("live-edit-empty-component")) {
-                this.addClass("live-edit-empty-component");
-            }
-        }
-
-        displayPlaceholder() {
-            this.removeChildren();
-            this.appendChild(this.placeholder);
-            this.handleEmptyState();
-        }
-
-        showRenderingError(url: string, errorMessage?: string) {
-            this.addClass("error");
-            this.placeholder.showRenderingError(url, errorMessage);
+            return clone;
         }
 
         duplicate(duplicate: COMPONENT): ComponentView<COMPONENT> {
@@ -264,7 +278,16 @@ module api.liveedit {
 
         replaceWith(replacement: ComponentView<Component>) {
             super.replaceWith(replacement);
+
+            var index = this.getParentItemView().getComponentViewIndex(this);
+
+            // unbind the old view from the component and bind the new one
+            this.unregisterComponentListeners(this.component);
+
+            this.parentRegionView.unregisterComponentView(this);
             this.notifyItemViewRemoved(new ItemViewRemovedEvent(this));
+
+            this.parentRegionView.registerComponentView(replacement, index);
             this.notifyItemViewAdded(new ItemViewAddedEvent(replacement));
         }
 
@@ -282,7 +305,6 @@ module api.liveedit {
             if (precedingComponentIndex >= 0) {
                 indexInNewParent = precedingComponentIndex + 1;
             }
-
             this.getComponent().setName(this.getComponent().getName());
 
             // Unregister from previous region...
@@ -323,8 +345,7 @@ module api.liveedit {
             });
         }
 
-        static
-        findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
+        static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
 
             var parentItemView = ItemView.findParentItemViewAsHTMLElement(htmlElement);
             while (!RegionView.isRegionViewFromHTMLElement(parentItemView)) {
@@ -333,8 +354,7 @@ module api.liveedit {
             return parentItemView;
         }
 
-        static
-        findPrecedingComponentItemViewId(htmlElement: HTMLElement): ItemViewId {
+        static findPrecedingComponentItemViewId(htmlElement: HTMLElement): ItemViewId {
 
             var previousItemView = ItemView.findPreviousItemView(htmlElement);
             if (!previousItemView) {

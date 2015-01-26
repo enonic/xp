@@ -39,12 +39,7 @@ module api.content.page.region {
         }
 
         hasDescriptor(): boolean {
-            if (this.descriptor) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return !!this.descriptor;
         }
 
         getDescriptor(): DescriptorKey {
@@ -83,7 +78,7 @@ module api.content.page.region {
             return this.config;
         }
 
-        reset() {
+        doReset() {
             this.setDescriptor(null, null);
         }
 

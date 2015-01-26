@@ -5,17 +5,20 @@ import java.util.Map;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import com.enonic.wem.script.command.CommandHandler;
+import com.enonic.wem.script.command.CommandRequest;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.url.PortalUrlBuilder;
 import com.enonic.xp.portal.url.PortalUrlBuilders;
-import com.enonic.wem.script.command.CommandHandler;
-import com.enonic.wem.script.command.CommandRequest;
+import com.enonic.xp.portal.url.PortalUrlService;
 
 public abstract class AbstractUrlHandler
     implements CommandHandler
 {
     private final String name;
+
+    protected PortalUrlService urlService;
 
     public AbstractUrlHandler( final String name )
     {
@@ -30,18 +33,29 @@ public abstract class AbstractUrlHandler
 
     protected final PortalUrlBuilders createBuilders()
     {
-        final PortalContext context = PortalContextAccessor.get();
-        return new PortalUrlBuilders( context );
+        return new PortalUrlBuilders( getContext() );
     }
 
-    protected abstract PortalUrlBuilder createBuilder( final Multimap<String, String> map );
+    protected final PortalContext getContext()
+    {
+        return PortalContextAccessor.get();
+    }
+
+    protected PortalUrlBuilder createBuilder( final Multimap<String, String> map )
+    {
+        return null;
+    }
+
+    protected String buildUrl( final Multimap<String, String> map )
+    {
+        return createBuilder( map ).build();
+    }
 
     @Override
     public final Object execute( final CommandRequest req )
     {
         final Multimap<String, String> map = toMap( req );
-        final PortalUrlBuilder builder = createBuilder( map );
-        return builder.toString();
+        return buildUrl( map );
     }
 
     private Multimap<String, String> toMap( final CommandRequest req )
@@ -98,5 +112,10 @@ public abstract class AbstractUrlHandler
         {
             params.put( key, value.toString() );
         }
+    }
+
+    public void setUrlService( final PortalUrlService value )
+    {
+        this.urlService = value;
     }
 }

@@ -7,5 +7,6 @@ exports.createUrl = function () {
         }
     });
 
-    assert.assertEquals('/portal/stage/some/path/_/asset/mymodule/styles/my.css?a=1&b=1&b=2', result);
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('AssetUrlParams{params={a=[1], b=[1, 2]}, path=styles/my.css}', result);
 };

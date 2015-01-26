@@ -13,8 +13,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import ItemView = api.liveedit.ItemView;
     import PageView = api.liveedit.PageView;
     import RegionView = api.liveedit.RegionView;
-    import RegionViewDropZone = api.liveedit.RegionViewDropZone;
-    import RegionViewDropZoneBuilder = api.liveedit.RegionViewDropZoneBuilder;
+    import RegionDropzoneBuilder = api.liveedit.RegionDropzoneBuilder;
     import ComponentView = api.liveedit.ComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import ComponentItemType = api.liveedit.ComponentItemType;
@@ -122,7 +121,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         if (!draggedComponentView) {
             api.util.assertState(!!_newItemItemType, "_newItemItemType should not have been null");
 
-            var dropZoneBuilder = new RegionViewDropZoneBuilder().
+            var dropZoneBuilder = new RegionDropzoneBuilder().
                 setRegionView(draggingOverRegionView).
                 setItemType(_newItemItemType);
 
@@ -137,16 +136,16 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             }
             ui.placeholder.html(dropZoneBuilder.build().toString());
 
-            draggingOverRegionView.refreshPlaceholder();
-        }
-        else {
+            draggingOverRegionView.refreshEmptyState();
+
+        } else {
             draggedComponentView.hideContextMenu();
             draggedComponentView.setMoving(true);
 
             var parentRegionOfDraggedComponent = draggedComponentView.getParentItemView();
-            parentRegionOfDraggedComponent.refreshPlaceholder();
+            parentRegionOfDraggedComponent.refreshEmptyState();
 
-            var dropZoneBuilder = new RegionViewDropZoneBuilder().
+            var dropZoneBuilder = new RegionDropzoneBuilder().
                 setRegionView(draggingOverRegionView).
                 setComponentView(draggedComponentView);
 
@@ -181,7 +180,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             return;
         }
 
-        var dropZoneBuilder = new RegionViewDropZoneBuilder().
+        var dropZoneBuilder = new RegionDropzoneBuilder().
             setRegionView(draggingOverRegionView).
             setComponentView(draggedComponentView);
 
@@ -197,7 +196,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         }
 
         ui.placeholder.html(dropZoneBuilder.build().toString());
-        draggingOverRegionView.refreshPlaceholder();
+        draggingOverRegionView.refreshEmptyState();
 
         // Hinders drag out event being fired on parental regions
         event.stopPropagation();
@@ -215,7 +214,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         api.util.assertState(!!draggedOutOfRegionView, "draggedOutOfRegionView not expected to be null");
 
         ui.placeholder.hide();
-        draggedOutOfRegionView.refreshPlaceholder();
+        draggedOutOfRegionView.refreshEmptyState();
     }
 
     function handleSortChange(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
@@ -228,13 +227,13 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         if (ui.sender) {
             var fromRegionView = getRegionView(ui.sender);
             if (fromRegionView) {
-                fromRegionView.refreshPlaceholder();
+                fromRegionView.refreshEmptyState();
             }
         }
         else {
             ui.placeholder.show();
         }
-        draggingOverRegionView.refreshPlaceholder();
+        draggingOverRegionView.refreshEmptyState();
 
         var draggedComponentView = getComponentView(ui.item);
         if (draggedComponentView) {
@@ -287,7 +286,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             droppedComponentView.moveToRegion(droppedInRegionView, precedingComponentView);
         }
 
-        droppedInRegionView.refreshPlaceholder();
+        droppedInRegionView.refreshEmptyState();
     }
 
     // When sortable receives a new item
@@ -304,7 +303,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var itemType: ComponentItemType = <ComponentItemType>ItemType.byShortName(droppedElement.data('live-edit-type'));
 
             if (isDraggingLayoutOverLayout(regionView, itemType)) {
-                regionView.refreshPlaceholder();
+                regionView.refreshEmptyState();
                 return;
             }
 
@@ -314,6 +313,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var componentIndex = droppedElement.index();
             var newComponentView = itemType.createView(new CreateItemViewConfig<RegionView,Component>().
                 setParentView(regionView).
+                setParentElement(regionView).
                 setData(newComponent).
                 setPositionIndex(componentIndex));
 
@@ -423,7 +423,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         return scrollSensitivity
     }
 
-    function refreshSortable(): void {
+    export function refreshSortable(): void {
         wemjq(REGION_SELECTOR).sortable('refresh');
     }
 

@@ -4,6 +4,8 @@ module api.content.page.region {
 
         private text: string;
 
+        public static PROPERTY_TEXT: string = "text";
+
         constructor(builder?: TextComponentBuilder) {
             super(builder);
             if (builder) {
@@ -15,12 +17,18 @@ module api.content.page.region {
             return this.text;
         }
 
-        setText(value: string) {
+        setText(value?: string) {
             this.text = value;
+            console.log('Setting text to', value);
+            this.notifyPropertyChanged(TextComponent.PROPERTY_TEXT);
+        }
+
+        doReset() {
+            this.setText();
         }
 
         isEmpty(): boolean {
-            return !this.text;
+            return api.util.StringHelper.isBlank(this.text);
         }
 
         toJson(): ComponentTypeWrapperJson {
