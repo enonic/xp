@@ -49,11 +49,13 @@ module api.schema.content.inputtype {
             this.combobox = new ContentTypeComboBox(input.getOccurrences().getMaximum());
 
             // select properties once when combobox has been loaded first time
-            var selectProperties = (items: ContentTypeSummary[]) => {
-                var names = propertyArray.getProperties().map((property: Property) => property.getValue().getString());
-                items.filter((item: ContentTypeSummary) => (names.indexOf(item.getContentTypeName().toString()) >= 0)).
-                    forEach((item: ContentTypeSummary) => this.combobox.select(item));
+            var selectProperties = (contentTypeArray: ContentTypeSummary[]) => {
 
+                propertyArray.forEach((property: Property) => {
+                    var contentTypeName = property.getString();
+                    this.combobox.getComboBox().setValue(contentTypeName);
+                });
+                
                 this.layoutInProgress = false;
                 this.combobox.unLoaded(selectProperties);
             };
