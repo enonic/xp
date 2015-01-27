@@ -92,6 +92,13 @@ module api.form {
 
     }
 
+    /**
+     * An input is a [[FormItem]] which the user can give input to.
+     *
+     * An input must be of certain type which using a [[InputTypeName]].
+     * All input types must be registered in [[api.form.inputtype.InputTypeManager]] to be used.
+     *
+     */
     export class Input extends FormItem implements api.Equitable {
 
         private inputType: InputTypeName;

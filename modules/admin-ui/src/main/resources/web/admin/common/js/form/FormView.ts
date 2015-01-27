@@ -9,8 +9,8 @@ module api.form {
     import PropertySet = api.data.PropertySet;
 
     /**
-     * Creates a UI component representing the given Form backed by given PropertySet.
-     * Form data is both read from and written to the given PropertySet as the user changes the form.
+     * Creates a UI component representing the given [[Form]] backed by given [[api.data.PropertySet]].
+     * Form data is both read from and written to the given [[api.data.PropertySet]] as the user changes the form.
      */
     export class FormView extends api.dom.DivEl {
 
@@ -18,7 +18,7 @@ module api.form {
 
         private form: Form;
 
-        private rootDataSet: PropertySet;
+        private data: PropertySet;
 
         private formItemViews: FormItemView[] = [];
 
@@ -32,11 +32,16 @@ module api.form {
 
         private blurListeners: {(event: FocusEvent):void}[] = [];
 
-        constructor(context: FormContext, form: Form, propertySet: PropertySet) {
+        /**
+         * @param context the form context.
+         * @param form the form to display.
+         * @param data the data to back the form with.
+         */
+        constructor(context: FormContext, form: Form, data: PropertySet) {
             super("form-view");
             this.context = context;
             this.form = form;
-            this.rootDataSet = propertySet;
+            this.data = data;
         }
 
         /**
@@ -51,7 +56,7 @@ module api.form {
                 setFormContext(this.context).
                 setFormItems(formItems).
                 setParentElement(this).
-                layout(this.rootDataSet);
+                layout(this.data);
 
             layoutPromise.then((formItemViews: FormItemView[]) => {
 
@@ -159,7 +164,7 @@ module api.form {
         }
 
         getData(): PropertySet {
-            return this.rootDataSet;
+            return this.data;
         }
 
         giveFocus(): boolean {
