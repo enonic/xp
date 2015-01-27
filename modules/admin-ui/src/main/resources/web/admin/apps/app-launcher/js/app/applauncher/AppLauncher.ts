@@ -47,7 +47,6 @@ module app.launcher {
 
                 this.currentApplication = event.getApplication();
                 this.currentApplicationHash = hasher.getHash();
-                this.homeMainContainer.setBackgroundImgUrl("");
                 this.homeMainContainer.enableReturnButton();
                 this.homeMainContainer.disableBranding();
                 this.homeMainContainer.giveFocus();
