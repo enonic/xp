@@ -58,7 +58,7 @@ final class AttachmentUrlBuilder
         final Content content = this.contentService.getById( id );
         final Attachments attachments = content.getAttachments();
 
-        final String label = this.params.getLabel() != null ? this.params.getLabel() : "media";
+        final String label = this.params.getLabel() != null ? this.params.getLabel() : "source";
         final Attachment attachment = attachments.byLabel( label );
 
         if ( attachment == null )
