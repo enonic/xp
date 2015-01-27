@@ -4,20 +4,13 @@
   padding: 10px 10px 0;
   border-bottom-width: 0;
 
-  &.valid {
-
-    input, textarea {
-      .input-glow();
-    }
+  input, textarea {
+    .input-glow();
   }
 
   .display-validation-errors &.invalid {
     .input-error();
     padding: 10px;
-
-    input, textarea {
-
-    }
   }
 
   &:not(.no-label) {
