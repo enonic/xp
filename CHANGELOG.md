@@ -20,6 +20,7 @@ Features:
 Refactoring:
 
   - Removed general create URL method. Use pageUrl instead. (CMS-4979)
+  - Refactor attachment endpoint to support new pattern. (CMS-4963)
 
 
 ## RC2 (2015-01-20)
