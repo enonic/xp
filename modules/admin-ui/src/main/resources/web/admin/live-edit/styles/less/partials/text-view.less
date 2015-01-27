@@ -11,7 +11,14 @@
     }
   }
 
+  &.empty {
+    & > article:before {
+      content: 'Just start typing...';
+    }
+  }
+
   & > article {
+    min-height: @placeholder-height;
     .outline(0 none);
   }
 
