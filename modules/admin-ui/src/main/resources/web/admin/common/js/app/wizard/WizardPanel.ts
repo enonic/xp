@@ -218,6 +218,16 @@ module api.app.wizard {
             });
         }
 
+        insertStep(step: WizardStep, index: number) {
+            this.steps.splice(index, 0, step);
+            return this.stepsPanel.insertNavigablePanel(step.getTabBarItem(), step.getStepForm(), step.getTabBarItem().getLabel(), index);
+        }
+
+        removeStep(form: WizardStepForm) {
+            this.steps = this.steps.filter((step: WizardStep) => !(step.getStepForm() == form));
+            return this.stepsPanel.removeNavigablePanel(form);
+        }
+
         preLayoutNew(): wemQ.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of layoutNew
             var deferred = wemQ.defer<void>();
