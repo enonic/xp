@@ -7,7 +7,7 @@
 
   .combobox {
 
-    z-index: 1; // show shadow over the upload button
+    z-index: @z-index-wizard-filed; // show shadow over the upload button
 
     .slick-cell {
       .default-slick-cell-styling();
@@ -186,7 +186,7 @@
     background-position: center;
 
     &:hover, &:focus {
-      z-index: 2; // show shadow over the input
+      z-index: @z-index-wizard-filed-element; // show shadow over the input
     }
   }
 
