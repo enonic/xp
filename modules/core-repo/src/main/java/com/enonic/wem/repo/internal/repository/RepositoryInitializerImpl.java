@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.initializer.RepositoryInitializer;
+import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.repo.internal.elasticsearch.ClusterHealthStatus;
 import com.enonic.wem.repo.internal.elasticsearch.ClusterStatusCode;
@@ -19,6 +20,8 @@ public final class RepositoryInitializerImpl
     implements RepositoryInitializer
 {
     private IndexService indexService;
+
+    private NodeService nodeService;
 
     private final static TimeValue CLUSTER_HEALTH_TIMEOUT_VALUE = TimeValue.timeValueSeconds( 10 );
 
@@ -120,5 +123,10 @@ public final class RepositoryInitializerImpl
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;
+    }
+
+    public void setNodeService( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
     }
 }

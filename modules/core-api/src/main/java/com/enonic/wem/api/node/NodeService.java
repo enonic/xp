@@ -58,4 +58,8 @@ public interface NodeService
     int applyPermissions( ApplyNodePermissionsParams params );
 
     ByteSource getBinary( final NodeId nodeId, final BinaryReference reference );
+
+    RootNode createRootNode();
+
+    RootNode getRoot();
 }

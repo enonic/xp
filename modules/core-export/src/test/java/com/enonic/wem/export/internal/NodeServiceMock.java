@@ -43,6 +43,7 @@ import com.enonic.wem.api.node.RenameNodeParams;
 import com.enonic.wem.api.node.ReorderChildNodesParams;
 import com.enonic.wem.api.node.ReorderChildNodesResult;
 import com.enonic.wem.api.node.ResolveSyncWorkResult;
+import com.enonic.wem.api.node.RootNode;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.SyncWorkResolverParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
@@ -309,5 +310,11 @@ class NodeServiceMock
     public ResolveSyncWorkResult resolveSyncWork( final SyncWorkResolverParams params )
     {
         return null;
+    }
+
+    @Override
+    public RootNode createRootNode()
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 }

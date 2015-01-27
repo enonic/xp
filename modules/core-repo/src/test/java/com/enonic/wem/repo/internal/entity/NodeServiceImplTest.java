@@ -1,8 +1,12 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.time.Instant;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
@@ -15,9 +19,13 @@ import com.enonic.wem.api.node.RenameNodeParams;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.wem.api.security.User;
+import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 
 import static org.junit.Assert.*;
 
@@ -58,6 +66,34 @@ public class NodeServiceImplTest
         throws Exception
     {
         this.nodeService.getById( NodeId.from( "a" ) );
+    }
+
+    @Test
+    public void createRootNode()
+    {
+        final User user = User.create().
+            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            displayName( "User 1" ).
+            modifiedTime( Instant.now() ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        this.nodeService.createRootNode();
+
+        printContentRepoIndex();
+
+        final Context context = ContextBuilder.create().
+            authInfo( AuthenticationInfo.create().
+                user( user ).
+                principals( RoleKeys.CONTENT_MANAGER ).
+                build() ).
+            workspace( WS_DEFAULT ).
+            repositoryId( TEST_REPO.getId() ).
+            build();
+
+        context.runWith( () -> assertNotNull( this.nodeService.getByPath( NodePath.ROOT ) ) );
+        context.runWith( () -> assertNotNull( this.nodeService.getRoot() ) );
     }
 
     @Test

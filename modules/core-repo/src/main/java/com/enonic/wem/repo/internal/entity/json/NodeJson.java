@@ -161,4 +161,9 @@ final class NodeJson
 
         return attachedBinaryJsons;
     }
+
+    public String getId()
+    {
+        return id;
+    }
 }

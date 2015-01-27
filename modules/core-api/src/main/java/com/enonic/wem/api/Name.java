@@ -16,7 +16,7 @@ public class Name
         this.value = name;
     }
 
-    private static void doValidateName( final String name )
+    protected void doValidateName( final String name )
     {
         Preconditions.checkNotNull( name, "name cannot be null" );
         Preconditions.checkArgument( !name.trim().isEmpty(), "name cannot be empty" );
@@ -25,7 +25,7 @@ public class Name
         checkValidName( name );
     }
 
-    private static boolean checkValidName( final String value )
+    protected boolean checkValidName( final String value )
     {
 
         for ( final char c : value.toCharArray() )

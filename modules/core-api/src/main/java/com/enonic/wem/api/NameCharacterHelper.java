@@ -12,7 +12,7 @@ public class NameCharacterHelper
     final static char[] ADDITIONAL_ALLOWED_CHARACTERS =
         {' ', '.', '-', '_', ':', '#', '%', '+', '^', '&', '(', ')', '<', '>', ';', '$', '\''};
 
-    final static char[] EXIPLICITLY_ILLEGAL_CHARACTERS = {'/', '\\'};
+    public final static char[] EXIPLICITLY_ILLEGAL_CHARACTERS = {'/', '\\'};
 
     static final String DEFAULT_REPLACE = "";
 
@@ -259,7 +259,7 @@ public class NameCharacterHelper
         return false;
     }
 
-    static boolean hasNoExplicitIllegal( final String value )
+    public static boolean hasNoExplicitIllegal( final String value )
     {
         return !StringUtils.containsAny( value, EXIPLICITLY_ILLEGAL_CHARACTERS );
     }

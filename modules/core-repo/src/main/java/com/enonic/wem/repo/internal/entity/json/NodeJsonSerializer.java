@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.RootNode;
 import com.enonic.wem.api.util.Exceptions;
 
 public final class NodeJsonSerializer
@@ -39,8 +40,19 @@ public final class NodeJsonSerializer
     {
         try
         {
-            final NodeJson node = this.mapper.readValue( serialized, NodeJson.class );
-            return node.fromJson();
+            final NodeJson nodeJson = this.mapper.readValue( serialized, NodeJson.class );
+
+            final Node node = nodeJson.fromJson();
+
+            if ( node.id().equals( RootNode.UUID ) )
+            {
+                return RootNode.create().
+                    permissions( node.getPermissions() ).
+                    childOrder( node.getChildOrder() ).
+                    build();
+            }
+
+            return node;
         }
         catch ( final IOException e )
         {

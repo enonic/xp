@@ -16,6 +16,7 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.NodeVersionIds;
 import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.node.RootNode;
 import com.enonic.wem.repo.internal.blob.Blob;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
@@ -118,6 +119,11 @@ public class NodeDaoImpl
 
     private Node populateWithTreeProperties( final Node node )
     {
+        if ( node instanceof RootNode )
+        {
+            return node;
+        }
+
         final NodeWorkspaceVersion nodeWorkspaceVersion =
             this.workspaceService.get( node.id(), WorkspaceContext.from( ContextAccessor.current() ) );
 

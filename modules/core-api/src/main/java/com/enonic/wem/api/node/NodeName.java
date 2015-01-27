@@ -7,7 +7,7 @@ import com.enonic.wem.api.Name;
 public class NodeName
     extends Name
 {
-    private NodeName( final String name )
+    protected NodeName( final String name )
     {
         super( checkNodeNameRestrictions( name ) );
     }

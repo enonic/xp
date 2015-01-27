@@ -31,6 +31,7 @@ import com.enonic.wem.api.node.RenameNodeParams;
 import com.enonic.wem.api.node.ReorderChildNodesParams;
 import com.enonic.wem.api.node.ReorderChildNodesResult;
 import com.enonic.wem.api.node.ResolveSyncWorkResult;
+import com.enonic.wem.api.node.RootNode;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.SyncWorkResolverParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
@@ -437,6 +438,35 @@ public class NodeServiceImpl
             binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();
+    }
+
+    public RootNode createRootNode()
+    {
+        final RootNode rootNode = RootNode.create().build();
+        StoreNodeCommand.create().
+            node( rootNode ).
+            queryService( this.queryService ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            indexService( this.indexService ).
+            build().
+            execute();
+
+        return rootNode;
+    }
+
+    @Override
+    public RootNode getRoot()
+    {
+        final Node node = doGetByPath( NodePath.ROOT, false );
+
+        if ( node instanceof RootNode )
+        {
+            return (RootNode) node;
+        }
+
+        throw new RuntimeException( "Expected node with path " + NodePath.ROOT.toString() + " to be of type RootNode, found " + node.id() );
     }
 
     public void setIndexService( final IndexService indexService )

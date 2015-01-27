@@ -13,7 +13,7 @@ import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 
-public final class Node
+public class Node
 {
     private final NodeId id;
 
@@ -51,7 +51,7 @@ public final class Node
 
     private final AttachedBinaries attachedBinaries;
 
-    private Node( final Builder builder )
+    protected Node( final Builder builder )
     {
         Preconditions.checkNotNull( builder.permissions, "permissions are required" );
         Preconditions.checkNotNull( builder.data, "data are required" );

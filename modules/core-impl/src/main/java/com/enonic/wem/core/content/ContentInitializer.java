@@ -11,6 +11,7 @@ import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.node.RootNode;
 
 @Component(immediate = true, service = ContentInitializer.class)
 public class ContentInitializer
@@ -21,14 +22,15 @@ public class ContentInitializer
 
     public final void init()
     {
-        ContentConstants.CONTEXT_STAGE.runWith( this::doInitRootNode );
+        final RootNode rootNode = ContentConstants.CONTEXT_STAGE.callWith( () -> this.doInitNodeRoot() );
+        ContentConstants.CONTEXT_STAGE.runWith( () -> this.doInitContentRootNode( rootNode ) );
     }
 
-    private void doInitRootNode()
+    private void doInitContentRootNode( final RootNode rootNode )
     {
-        final Node rootNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
+        final Node contentRootNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
 
-        if ( rootNode == null )
+        if ( contentRootNode == null )
         {
             LOG.info( "Content root-node not found, creating" );
 
@@ -41,7 +43,7 @@ public class ContentInitializer
             final Node root = nodeService.create( CreateNodeParams.create().
                 data( data ).
                 name( ContentConstants.CONTENT_ROOT_NAME ).
-                parent( ContentConstants.CONTENT_ROOT_PARENT ).
+                parent( rootNode.path() ).
                 permissions( ContentConstants.CONTENT_ROOT_DEFAULT_ACL ).
                 childOrder( ContentConstants.CONTENT_DEFAULT_CHILD_ORDER ).
                 build() );
@@ -50,6 +52,15 @@ public class ContentInitializer
 
             nodeService.push( NodeIds.from( root.id() ), ContentConstants.WORKSPACE_PROD );
         }
+    }
+
+    private RootNode doInitNodeRoot()
+    {
+        final RootNode rootNode = this.nodeService.createRootNode();
+
+        nodeService.push( NodeIds.from( rootNode.id() ), ContentConstants.WORKSPACE_PROD );
+
+        return rootNode;
     }
 
     @Reference

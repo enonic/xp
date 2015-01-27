@@ -3,6 +3,7 @@
 
   <bean id="repositoryInitializer" class="com.enonic.wem.repo.internal.repository.RepositoryInitializerImpl">
     <property name="indexService" ref="indexService"/>
+    <property name="nodeService" ref="nodeService"/>
   </bean>
 
   <service ref="repositoryInitializer" auto-export="interfaces"/>

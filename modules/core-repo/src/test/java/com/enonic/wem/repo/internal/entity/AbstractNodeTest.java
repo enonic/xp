@@ -112,8 +112,16 @@ public abstract class AbstractNodeTest
 
     void createRepository( final Repository repository )
     {
+        NodeServiceImpl nodeService = new NodeServiceImpl();
+        nodeService.setIndexService( indexService );
+        nodeService.setQueryService( queryService );
+        nodeService.setNodeDao( nodeDao );
+        nodeService.setVersionService( versionService );
+        nodeService.setWorkspaceService( workspaceService );
+
         RepositoryInitializerImpl repositoryInitializer = new RepositoryInitializerImpl();
         repositoryInitializer.setIndexService( this.indexService );
+        repositoryInitializer.setNodeService( nodeService );
         repositoryInitializer.init( repository );
 
         refresh();
