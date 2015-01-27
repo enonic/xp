@@ -39,20 +39,16 @@ public abstract class RenderResource
             {
                 return contentById;
             }
-
-            throw notFound( "Page [%s] not found.", contentId.toString() );
         }
-        else
+
+        final ContentPath contentPath = ContentPath.from( contentSelector ).asAbsolute();
+        final Content content = getContentByPath( contentPath );
+        if ( content != null )
         {
-            final ContentPath contentPath = ContentPath.from( contentSelector ).asAbsolute();
-            final Content content = getContentByPath( contentPath );
-            if ( content != null )
-            {
-                return content;
-            }
-
-            throw notFound( "Page [%s] not found", contentPath.toString() );
+            return content;
         }
+
+        throw notFound( "Page [%s] not found", contentPath.toString() );
     }
 
     protected final Page getPage( final Content content )
