@@ -17,8 +17,7 @@ import com.enonic.xp.portal.RenderMode;
 public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBasedComponent>
     implements Renderer<R>
 {
-    private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
-        "<div data-live-edit-type=\"{0}\" data-live-edit-empty-component=\"true\" class=\"live-edit-empty-component\"></div>";
+    private static final String EMPTY_COMPONENT_EDIT_MODE_HTML = "<div data-live-edit-type=\"{0}\"></div>";
 
     private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div></div>";
 

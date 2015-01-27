@@ -21,9 +21,9 @@ public final class TextRenderer
 
     private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<article></article>";
 
-    public static final String COMPONENT_EDIT_MODE_HTML = "<div data-live-edit-type=\"{0}\"><article>{1}</article></div>";
+    private static final String COMPONENT_EDIT_MODE_HTML = "<div data-live-edit-type=\"{0}\"><article>{1}</article></div>";
 
-    public static final String COMPONENT_PREVIEW_MODE_HTML = "<article>{0}</article>";
+    private static final String COMPONENT_PREVIEW_MODE_HTML = "<article>{0}</article>";
 
     @Override
     public Class<TextComponent> getType()
