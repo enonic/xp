@@ -5,53 +5,81 @@ import javax.ws.rs.PathParam;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Media;
+import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.util.MediaTypes;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
+
+import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
 public final class ImageResource
     extends BaseSubResource
 {
-    // Update to use {id}/{name}  -> name is verified against content.getName()
-    @Path("id/{id}")
-    public ImageHandleResource imageById( @PathParam("id") final String id )
+
+    @Path("{id}/{name}")
+    public ImageHandleResource imageById( @PathParam("id") final String id, @PathParam("name") final String name )
     {
         final ImageHandleResource resource = initResource( new ImageHandleResource() );
 
         final ContentId imageContentId = ContentId.from( id );
         final Media imageContent = getImage( imageContentId );
 
-        resource.attachment = imageContent.getMediaAttachment();
-        if ( resource.attachment == null )
+        if ( !contentNameMatch( imageContent.getName(), name ) )
+        {
+            throw notFound( "Image [%s] not found for content [%s]", name, id );
+        }
+
+        final Attachment attachment = imageContent.getMediaAttachment();
+        if ( attachment == null )
         {
             throw notFound( "Attachment [%s] not found", imageContent.getName().toString() );
         }
 
-        resource.binary = this.services.getContentService().getBinary( imageContentId, resource.attachment.getBinaryReference() );
+        resource.binary = this.services.getContentService().getBinary( imageContentId, attachment.getBinaryReference() );
         if ( resource.binary == null )
         {
-            throw notFound( "Binary [%s] not found for content [%s]", resource.attachment.getBinaryReference(), imageContentId );
+            throw notFound( "Binary [%s] not found for content [%s]", attachment.getBinaryReference(), imageContentId );
         }
 
+        resource.mimeType = getMimeType( name, imageContent.getName(), attachment );
+        resource.name = name;
         return resource;
     }
 
-    // Do not use name as attachment name, just verify against content.getName()
     @Path("{name}")
     public ImageHandleResource imageByName( @PathParam("name") final String name )
     {
         final ImageHandleResource resource = initResource( new ImageHandleResource() );
 
-        final Content content = getImage( this.contentPath );
-        resource.attachment = content.getAttachments().byName( name );
-
-        resource.binary = this.services.getContentService().getBinary( content.getId(), resource.attachment.getBinaryReference() );
-        if ( resource.binary == null )
+        final Media imageContent = getImage( this.contentPath );
+        final Attachment attachment = imageContent.getMediaAttachment();
+        if ( !contentNameMatch( imageContent.getName(), name ) )
         {
-            throw notFound( "Binary [%s] not found for content [%s]", resource.attachment.getBinaryReference(), content.getId() );
+            throw notFound( "Image [%s] not found for content [%s]", name, this.contentPath );
         }
 
+        resource.binary = this.services.getContentService().getBinary( imageContent.getId(), attachment.getBinaryReference() );
+        if ( resource.binary == null )
+        {
+            throw notFound( "Binary [%s] not found for content [%s]", attachment.getBinaryReference(), imageContent.getId() );
+        }
+
+        resource.mimeType = getMimeType( name, imageContent.getName(), attachment );
+        resource.name = name;
         return resource;
+    }
+
+    private boolean contentNameMatch( final ContentName contentName, final String urlName )
+    {
+        final String contentNameStr = contentName.toString();
+        return contentNameStr.equals( urlName ) || contentNameStr.equals( substringBeforeLast( urlName, "." ) );
+    }
+
+    private String getMimeType( final String fileName, final ContentName contentName, final Attachment attachment )
+    {
+        return contentName.toString().equals( fileName ) ? attachment.getMimeType() : MediaTypes.instance().fromFile( fileName ).toString();
     }
 
     private Media getImage( final ContentId contentId )
@@ -76,7 +104,7 @@ public final class ImageResource
         return media;
     }
 
-    private Content getImage( final ContentPath contentPath )
+    private Media getImage( final ContentPath contentPath )
     {
         final Content content = this.services.getContentService().getByPath( contentPath );
         if ( content == null )
