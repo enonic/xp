@@ -6,7 +6,7 @@ interface MediumEditorOptions {
     anchorInputPlaceholder?: string; //'Paste or type a link'
     anchorPreviewHideDelay?: number; // 500
     buttons?: string[]; // ['bold', 'italic', 'underline', 'anchor', 'header1', 'header2', 'quote']
-    buttonLabels?: boolean; // false
+    buttonLabels?: any; // false | 'fontawesome' | object
     checkLinkFormat?: boolean; // false
     cleanPastedHTML?: boolean; // false
     delay?: number; // 0
@@ -43,6 +43,8 @@ interface MediumEditorType {
     activate(); // re-activates the editor
     serialize(); // returns a JSON object with elements contents
 
+    onHideToolbar?: () => void;
+    onShowToolbar?: () => void;
 }
 
 declare var MediumEditor: MediumEditorType;

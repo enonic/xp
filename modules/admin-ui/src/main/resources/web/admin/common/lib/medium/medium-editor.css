@@ -79,7 +79,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 2147483610;
+  z-index: 2000;
   visibility: hidden;
   font-size: 16px;
   font-family: HelveticaNeue, Helvetica, Arial, sans-serif; }

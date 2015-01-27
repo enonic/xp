@@ -24,3 +24,4 @@
 // @include mousetrap-global-bind.min.js
 // @include q.js
 // @include noconflict.js
+// @include medium/medium-editor.js
