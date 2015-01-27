@@ -4,6 +4,7 @@ import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.UpgradeRequest;
 import org.eclipse.jetty.websocket.api.UpgradeResponse;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,15 +12,22 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class EventServletTest
+public class EventHandlerTest
 {
-    private EventServlet eventServlet;
+    private EventHandler handler;
 
     @Before
-    public final void setUp()
+    public void setUp()
         throws Exception
     {
-        eventServlet = new EventServlet();
+        handler = new EventHandler();
+        handler.init();
+    }
+
+    @After
+    public void tearDown()
+    {
+        this.handler.destroy();
     }
 
     @Test
@@ -33,11 +41,11 @@ public class EventServletTest
         when( session.getRemote() ).thenReturn( remoteEndPoint );
         when( session.isOpen() ).thenReturn( true );
 
-        final EventWebSocket webSocket = (EventWebSocket) eventServlet.createWebSocket( req, resp );
+        final EventWebSocket webSocket = (EventWebSocket) handler.createWebSocket( req, resp );
 
         webSocket.onConnect( session );
 
-        eventServlet.sendToAll( "Hello" );
+        handler.sendToAll( "Hello" );
 
         verify( remoteEndPoint ).sendString( "Hello" );
     }
@@ -51,12 +59,12 @@ public class EventServletTest
         final Session session = mock( Session.class );
         when( session.isOpen() ).thenReturn( false );
 
-        final EventWebSocket webSocket = (EventWebSocket) eventServlet.createWebSocket( req, resp );
+        final EventWebSocket webSocket = (EventWebSocket) handler.createWebSocket( req, resp );
 
         webSocket.onConnect( session );
         webSocket.onClose( session, -1, "" );
 
-        eventServlet.sendToAll( "Hello" );
+        handler.sendToAll( "Hello" );
     }
 
     @Test
@@ -72,12 +80,12 @@ public class EventServletTest
         when( session.isOpen() ).thenReturn( false );
         when( session2.isOpen() ).thenReturn( false );
 
-        final EventWebSocket webSocket = (EventWebSocket) eventServlet.createWebSocket( req, resp );
-        final EventWebSocket webSocket2 = (EventWebSocket) eventServlet.createWebSocket( req2, resp2 );
+        final EventWebSocket webSocket = (EventWebSocket) handler.createWebSocket( req, resp );
+        final EventWebSocket webSocket2 = (EventWebSocket) handler.createWebSocket( req2, resp2 );
 
         webSocket.onConnect( session );
         webSocket2.onConnect( session );
 
-        eventServlet.sendToAll( "Hello" );
+        handler.sendToAll( "Hello" );
     }
 }
