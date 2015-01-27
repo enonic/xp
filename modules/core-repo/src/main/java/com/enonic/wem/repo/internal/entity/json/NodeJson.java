@@ -15,7 +15,6 @@ import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodeType;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
@@ -37,12 +36,6 @@ final class NodeJson
 
     @JsonProperty("indexConfigDocument")
     private IndexConfigDocumentJson indexConfigDocument;
-
-    @JsonProperty("name")
-    private String name;
-
-    @JsonProperty("parentId")
-    private String parentId;
 
     @JsonProperty("modifier")
     private String modifier;
@@ -72,12 +65,10 @@ final class NodeJson
     {
         return Node.newNode().
             id( NodeId.from( this.id ) ).
-            name( NodeName.from( this.name ) ).
             creator( PrincipalKey.from( this.creator ) ).
             modifier( this.modifier != null ? PrincipalKey.from( this.modifier ) : null ).
             createdTime( this.createdTime ).
             modifiedTime( this.modifiedTime ).
-            parentId( this.parentId == null ? null : NodeId.from( this.parentId ) ).
             data( PropertyTreeJson.fromJson( this.data ) ).
             indexConfigDocument( this.indexConfigDocument.fromJson() ).
             childOrder( ChildOrder.from( this.childOrder ) ).
@@ -119,8 +110,6 @@ final class NodeJson
         json.modifiedTime = node.getModifiedTime();
         json.data = PropertyTreeJson.toJson( node.data() );
         json.indexConfigDocument = createEntityIndexConfig( node.getIndexConfigDocument() );
-        json.name = node.name() != null ? node.name().toString() : null;
-        json.parentId = node.getParentId() != null ? node.getParentId().toString() : null;
         json.modifier = node.modifier() != null ? node.modifier().toString() : null;
         json.creator = node.creator() != null ? node.creator().toString() : null;
         json.childOrder = node.getChildOrder().toString();

@@ -10,7 +10,7 @@ import com.google.common.io.ByteStreams;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
@@ -44,13 +44,7 @@ public class NodeDaoImpl
 
     private Blob doStoreNodeAsBlob( final Node newNode )
     {
-        NodeId parentId = resolveParentId( newNode );
-
-        final Node populatedNode = Node.newNode( newNode ).
-            parentId( parentId ).
-            build();
-
-        final String serializedNode = this.nodeJsonSerializer.toString( populatedNode );
+        final String serializedNode = this.nodeJsonSerializer.toString( newNode );
 
         try (final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
             serializedNode.getBytes( StandardCharsets.UTF_8 ) ))
@@ -61,24 +55,6 @@ public class NodeDaoImpl
         {
             throw new RuntimeException( "Failed to create blob for node: " + newNode.toString(), e );
         }
-    }
-
-    private NodeId resolveParentId( final Node newNode )
-    {
-        NodeId parentId = newNode.getParentId();
-
-        if ( parentId == null && !newNode.parentPath().equals( NodePath.ROOT ) )
-        {
-            final NodePath parentPath = newNode.path().getParentPath();
-
-            final NodeWorkspaceVersion nodeWorkspaceVersion =
-                this.workspaceService.get( parentPath, WorkspaceContext.from( ContextAccessor.current() ) );
-
-            final Node parentNode = doGetByVersionId( nodeWorkspaceVersion.getVersionId() );
-
-            parentId = parentNode.id();
-        }
-        return parentId;
     }
 
     @Override
@@ -132,7 +108,7 @@ public class NodeDaoImpl
 
             final Node node = this.nodeJsonSerializer.toNode( new String( bytes, StandardCharsets.UTF_8 ) );
 
-            return populateWithNodeParentPath( node );
+            return populateWithTreeProperties( node );
         }
         catch ( IOException e )
         {
@@ -140,26 +116,19 @@ public class NodeDaoImpl
         }
     }
 
-    private Node populateWithNodeParentPath( final Node node )
+    private Node populateWithTreeProperties( final Node node )
     {
-        final NodeId parentId = node.getParentId();
+        final NodeWorkspaceVersion nodeWorkspaceVersion =
+            this.workspaceService.get( node.id(), WorkspaceContext.from( ContextAccessor.current() ) );
 
-        if ( parentId != null )
-        {
-            final NodeWorkspaceVersion nodeWorkspaceVersion =
-                this.workspaceService.get( parentId, WorkspaceContext.from( ContextAccessor.current() ) );
+        final NodePath nodePath = nodeWorkspaceVersion.getNodePath();
+        final NodePath parentPath = nodePath.getParentPath();
+        final NodeName nodeName = NodeName.from( nodePath.getLastElement().toString() );
 
-            final Node.Builder populatedNode = Node.newNode( node ).
-                parentPath( nodeWorkspaceVersion.getNodePath() );
-
-            return populatedNode.build();
-        }
-        else
-        {
-            return Node.newNode( node ).
-                parentPath( NodePath.ROOT ).
-                build();
-        }
+        return Node.newNode( node ).
+            parentPath( parentPath ).
+            name( nodeName ).
+            build();
     }
 
     public void setWorkspaceService( final WorkspaceService workspaceService )

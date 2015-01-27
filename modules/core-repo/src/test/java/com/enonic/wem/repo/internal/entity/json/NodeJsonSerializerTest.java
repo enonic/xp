@@ -101,6 +101,7 @@ public class NodeJsonSerializerTest
         final Node deSerializedNode = this.serializer.toNode( expectedStr );
 
         assertEquals( node, Node.newNode( deSerializedNode ).
+            name( node.name() ).
             parentPath( node.parentPath() ).
             build() );
     }

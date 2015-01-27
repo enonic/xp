@@ -123,9 +123,7 @@
   "manualOrderValue": null,
   "modifiedTime": "2013-01-02T03:04:05Z",
   "modifier": "user:test:modifier",
-  "name": "my-name",
   "nodeType": "myNodeType",
-  "parentId": null,
   "permissions": [
     {
       "allow": ["READ"],
