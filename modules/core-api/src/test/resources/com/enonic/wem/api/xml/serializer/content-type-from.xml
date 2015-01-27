@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<content-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../model.xsd">
+<content-type>
   <display-name>All the Base Types</display-name>
   <description>description</description>
   <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
-  <super-type>mymodule:content</super-type>
+  <super-type>content</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
+  <is-built-in>false</is-built-in>
   <allow-child-content>true</allow-child-content>
   <form>
     <form-item-set name="mySet">

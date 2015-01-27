@@ -16,6 +16,7 @@ Features:
   - Better componentUrl handling. Support "this" component and component to other pages. (CMS-4995)
   - Improvement to imageUrl function. Allow id and path to image. (CMS-5002)
   - Improvement to attachmentUrl function. Resolve label to name and allow id/path to content. (CMS-4951)
+  - Resolving schema names to current module when module prefix is missing. (CMS-4077)
 
 Refactoring:
 

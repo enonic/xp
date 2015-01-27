@@ -1,12 +1,11 @@
 package com.enonic.wem.api.xml.mapper;
 
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.xml.model.XmlContentType;
 
 public final class XmlContentTypeMapper
 {
-
     public static XmlContentType toXml( final ContentType object )
     {
         final XmlContentType result = new XmlContentType();
@@ -22,17 +21,18 @@ public final class XmlContentTypeMapper
         return result;
     }
 
-    public static void fromXml( final XmlContentType xml, final ContentType.Builder builder )
+    public static void fromXml( final ModuleKey currentModule, final XmlContentType xml, final ContentType.Builder builder )
     {
+        final XmlModuleRelativeResolver resolver = new XmlModuleRelativeResolver( currentModule );
+
         builder.displayName( xml.getDisplayName() );
         builder.description( xml.getDescription() );
         builder.contentDisplayNameScript( xml.getContentDisplayNameScript() );
-        builder.superType( ContentTypeName.from( xml.getSuperType() ) );
+        builder.superType( resolver.toContentTypeName( xml.getSuperType() ) );
         builder.setAbstract( xml.isIsAbstract() );
         builder.setFinal( xml.isIsFinal() );
         builder.setBuiltIn( xml.isIsBuiltIn() );
         builder.allowChildContent( xml.isAllowChildContent() );
         XmlFormMapper.fromItemsXml( xml.getForm() ).forEach( builder::addFormItem );
     }
-
 }
