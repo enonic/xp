@@ -84,6 +84,7 @@
 
 ///<reference path='data/_module.ts' />
 
+///<reference path='form/_module-doc.ts' />
 ///<reference path='form/json/_module.ts' />
 ///<reference path='form/_module.ts' />
 ///<reference path='form/inputtype/_module.ts' />
