@@ -13,6 +13,17 @@ public class PortalUrlServiceImpl_pageUrlTest
     extends AbstractPortalUrlServiceImplTest
 {
     @Test
+    public void createUrl_toMe()
+    {
+        final PageUrlParams params = new PageUrlParams().
+            context( this.context ).
+            param( "a", 3 );
+
+        final String url = this.service.pageUrl( params );
+        assertEquals( "/portal/stage/context/path?a=3", url );
+    }
+
+    @Test
     public void createUrl_withRelativePath()
     {
         final PageUrlParams params = new PageUrlParams().

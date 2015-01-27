@@ -27,6 +27,8 @@ html, body {
   -o-background-size: cover;
   background-size: cover;
 
+  background-image: url("../../common/images/background-1920.jpg");
+
   a {
     color: @admin-white;
     text-decoration: none;
@@ -382,9 +384,17 @@ html, body {
 
 ._0-240, ._240-360, ._360-540, ._540-720 {
   .home-main-container {
+    background-image: url("../../common/images/background-720.jpg");
+
     .user-name {
       display: none;
     }
+  }
+}
+
+._720-960, ._960-1200 {
+  .home-main-container {
+    background-image: url("../../common/images/background-1200.jpg");
   }
 }
 

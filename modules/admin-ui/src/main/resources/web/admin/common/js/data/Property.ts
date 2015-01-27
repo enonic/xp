@@ -2,7 +2,7 @@ module api.data {
 
     export class Property implements api.Equitable {
 
-        public debug: boolean = false;
+        public static debug: boolean = false;
         
         private parent: PropertySet;
 
@@ -74,6 +74,17 @@ module api.data {
             if (!value.equals(oldValue)) {
                 this.notifyPropertyValueChangedEvent(oldValue, value);
             }
+        }
+
+        /**
+         * Detach this Property from it's array and parent. Should be called when removed from the array.
+         */
+        detach() {
+            this.array = null;
+            this.parent = null;
+            this.id = null;
+            this.propertyIndexChangedListeners = [];
+            this.propertyValueChangedListeners = [];
         }
 
         getId(): PropertyId {
@@ -221,7 +232,7 @@ module api.data {
 
         private notifyPropertyIndexChangedEvent(previousIndex: number, newIndex: number) {
             var event = new PropertyIndexChangedEvent(this, previousIndex, newIndex);
-            if (this.debug) {
+            if (Property.debug) {
                 console.debug("Property[" + this.getPath().toString() + "].notifyPropertyIndexChangedEvent: " + event.getPath().toString());
             }
             this.propertyIndexChangedListeners.forEach((listener) => listener(event));
@@ -238,7 +249,7 @@ module api.data {
 
         private notifyPropertyValueChangedEvent(previousValue: Value, newValue: Value) {
             var event = new PropertyValueChangedEvent(this, previousValue, newValue);
-            if (this.debug) {
+            if (Property.debug) {
                 console.debug("Property[" + this.getPath().toString() + "].notifyPropertyValueChangedEvent: " + event.getPath().toString());
             }
             this.propertyValueChangedListeners.forEach((listener) => listener(event));

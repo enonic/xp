@@ -17,6 +17,8 @@ module api.content.page.region {
 
         private config: PropertyTree;
 
+        private configChangedHandler: (event: PropertyEvent) => void;
+
         constructor(builder: DescriptorBasedComponentBuilder<any>) {
 
             super(builder);
@@ -24,14 +26,16 @@ module api.content.page.region {
             this.descriptor = builder.descriptor;
             this.config = builder.config;
 
-            this.config.onChanged((event: PropertyEvent) => {
+            this.configChangedHandler = (event: PropertyEvent) => {
                 if (this.debug) {
                     console.debug("DescriptorBasedComponent[" + this.getPath().toString() + "].config.onChanged: ", event);
                 }
                 if (!this.disableEventForwarding) {
                     this.notifyPropertyValueChanged(DescriptorBasedComponent.PROPERTY_CONFIG);
                 }
-            });
+            };
+
+            this.config.onChanged(this.configChangedHandler);
         }
 
         setDisableEventForwarding(value: boolean) {
@@ -62,7 +66,11 @@ module api.content.page.region {
 
         setConfig(config: PropertyTree) {
             var oldValue = this.config;
+            if (oldValue) {
+                this.config.unChanged(this.configChangedHandler);
+            }
             this.config = config;
+            this.config.onChanged(this.configChangedHandler);
 
             if (!api.ObjectHelper.equals(oldValue, config)) {
                 this.notifyPropertyChanged(DescriptorBasedComponent.PROPERTY_CONFIG);

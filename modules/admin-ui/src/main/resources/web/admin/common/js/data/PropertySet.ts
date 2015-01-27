@@ -2,7 +2,7 @@ module api.data {
 
     export class PropertySet implements api.Equitable {
 
-        public debug: boolean = false;
+        public static debug: boolean = false;
 
         private tree: PropertyTree = null;
 
@@ -29,8 +29,29 @@ module api.data {
 
         private propertyValueChangedListeners: {(event: PropertyValueChangedEvent):void}[] = [];
 
+        private propertyAddedEventHandler: (event: PropertyAddedEvent) => void;
+
+        private propertyRemovedEventHandler: (event: PropertyRemovedEvent) => void;
+
+        private propertyIndexChangedEventHandler: (event: PropertyIndexChangedEvent) => void;
+
+        private propertyValueChangedEventHandler: (event: PropertyValueChangedEvent) => void;
+
         constructor(tree?: PropertyTree) {
             this.tree = tree;
+
+            this.propertyAddedEventHandler = (event) => {
+                this.forwardPropertyAddedEvent(event)
+            };
+            this.propertyRemovedEventHandler = (event) => {
+                this.forwardPropertyRemovedEvent(event)
+            };
+            this.propertyIndexChangedEventHandler = (event) => {
+                this.forwardPropertyIndexChangedEvent(event)
+            };
+            this.propertyValueChangedEventHandler = (event) => {
+                this.forwardPropertyValueChangedEvent(event)
+            };
         }
 
         setContainerProperty(value: Property) {
@@ -314,39 +335,22 @@ module api.data {
         }
 
         private registerPropertyArrayListeners(array: PropertyArray) {
-            if (this.debug) {
+            if (PropertySet.debug) {
                 console.debug("PropertySet[" + this.getPropertyPath().toString() + "].registerPropertyArrayListeners: " + array.getName())
             }
 
-            if (this.forwardPropertyAddedEvent.bind) {
-                array.onPropertyAdded(this.forwardPropertyAddedEvent.bind(this));
-                array.onPropertyRemoved(this.forwardPropertyRemovedEvent.bind(this));
-                array.onPropertyIndexChanged(this.forwardPropertyIndexChangedEvent.bind(this));
-                array.onPropertyValueChanged(this.forwardPropertyValueChangedEvent.bind(this));
-            }
-            else {
-                // PhantomJS does not support bind
-                array.onPropertyAdded((event) => {
-                    this.forwardPropertyAddedEvent(event);
-                });
-                array.onPropertyRemoved((event) => {
-                    this.forwardPropertyRemovedEvent(event);
-                });
-                array.onPropertyIndexChanged((event) => {
-                    this.forwardPropertyIndexChangedEvent(event);
-                });
-                array.onPropertyValueChanged((event) => {
-                    this.forwardPropertyValueChangedEvent(event);
-                });
-            }
+            array.onPropertyAdded(this.propertyAddedEventHandler);
+            array.onPropertyRemoved(this.propertyRemovedEventHandler);
+            array.onPropertyIndexChanged(this.propertyIndexChangedEventHandler);
+            array.onPropertyValueChanged(this.propertyValueChangedEventHandler);
         }
 
         // Currently not used, because we do not remove arrays
         private unregisterPropertyArrayListeners(array: PropertyArray) {
-            array.unPropertyAdded(this.forwardPropertyAddedEvent);
-            array.unPropertyRemoved(this.forwardPropertyRemovedEvent);
-            array.unPropertyIndexChanged(this.forwardPropertyIndexChangedEvent);
-            array.unPropertyValueChanged(this.forwardPropertyValueChangedEvent);
+            array.unPropertyAdded(this.propertyAddedEventHandler);
+            array.unPropertyRemoved(this.propertyRemovedEventHandler);
+            array.unPropertyIndexChanged(this.propertyIndexChangedEventHandler);
+            array.unPropertyValueChanged(this.propertyValueChangedEventHandler);
         }
 
         onChanged(listener: {(event: PropertyEvent): void;}) {
@@ -358,7 +362,7 @@ module api.data {
         }
 
         private notifyChangedListeners(event: PropertyEvent) {
-            if (this.debug) {
+            if (PropertySet.debug) {
                 console.debug("PropertySet[" + this.getPropertyPath().toString() + "].notifyChangedListeners: " +
                               event.getPath().toString());
             }
@@ -375,7 +379,7 @@ module api.data {
 
         private forwardPropertyAddedEvent(event: PropertyAddedEvent) {
             this.propertyAddedListeners.forEach((listener) => listener(event));
-            if (this.debug) {
+            if (PropertySet.debug) {
                 console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyAddedEvent: " +
                               event.getPath().toString());
             }
@@ -391,7 +395,7 @@ module api.data {
         }
 
         private forwardPropertyRemovedEvent(event: PropertyRemovedEvent) {
-            if (this.debug) {
+            if (PropertySet.debug) {
                 console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyRemovedEvent: " +
                               event.getPath().toString());
             }
@@ -408,7 +412,7 @@ module api.data {
         }
 
         private forwardPropertyIndexChangedEvent(event: PropertyIndexChangedEvent) {
-            if (this.debug) {
+            if (PropertySet.debug) {
                 console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyIndexChangedEvent: " +
                               event.getPath().toString());
             }
@@ -425,7 +429,7 @@ module api.data {
         }
 
         private forwardPropertyValueChangedEvent(event: PropertyValueChangedEvent) {
-            if (this.debug) {
+            if (PropertySet.debug) {
                 console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyValueChangedEvent: " +
                               event.getPath().toString());
             }

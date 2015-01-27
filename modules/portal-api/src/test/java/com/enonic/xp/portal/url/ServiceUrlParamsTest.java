@@ -5,8 +5,6 @@ import org.junit.Test;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.api.module.ModuleKey;
-
 import static org.junit.Assert.*;
 
 public class ServiceUrlParamsTest
@@ -22,7 +20,7 @@ public class ServiceUrlParamsTest
         assertNull( params.getModule() );
 
         params.module( "othermodule" );
-        assertEquals( ModuleKey.from( "othermodule" ), params.getModule() );
+        assertEquals( "othermodule", params.getModule() );
     }
 
     @Test
@@ -50,7 +48,7 @@ public class ServiceUrlParamsTest
         params.setAsMap( map );
 
         assertEquals( "myservice", params.getService() );
-        assertEquals( ModuleKey.from( "othermodule" ), params.getModule() );
+        assertEquals( "othermodule", params.getModule() );
         assertEquals( "{a=[1]}", params.getParams().toString() );
         assertEquals( "ServiceUrlParams{params={a=[1]}, service=myservice, module=othermodule}", params.toString() );
     }

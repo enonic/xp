@@ -23,7 +23,7 @@ module api.form.inputtype.support {
 
             this.requiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(property != null ? property.getValue() : null);
 
-            property.onPropertyValueChanged((event: PropertyValueChangedEvent) => {
+            var propertyValueChangedHandler = (event: PropertyValueChangedEvent) => {
 
                 var newStateOfRequiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(event.getNewValue());
 
@@ -31,7 +31,9 @@ module api.form.inputtype.support {
                     this.requiredContractBroken = newStateOfRequiredContractBroken;
                     baseInputTypeView.notifyRequiredContractBroken(newStateOfRequiredContractBroken, inputOccurrence.getIndex());
                 }
-            });
+            };
+            property.onPropertyValueChanged(propertyValueChangedHandler);
+            
 
             this.inputOccurrence = inputOccurrence;
 

@@ -106,7 +106,7 @@ module api.content.page {
             this.defaultTemplateDescriptor = defaultTemplateDescriptor;
             this.configPropertyChangedHandler = (event) => {
                 if (!this.ignorePropertyChanges) {
-                    console.log("PageModel.config.onChanged: ", event.getPath().toString());
+                    //console.log("PageModel.config.onChanged: ", event.getPath().toString());
                     if (this.mode == PageMode.AUTOMATIC) {
                         var setTemplate = new SetTemplate(this).setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor);
                         this.setTemplate(setTemplate);
@@ -115,7 +115,7 @@ module api.content.page {
             };
             this.regionsChangedEventHandler = (event) => {
                 if (!this.ignorePropertyChanges) {
-                    console.log("PageModel.regions.onChanged: ", event);
+                    //console.log("PageModel.regions.onChanged: ", event);
                     if (this.mode == PageMode.AUTOMATIC) {
                         var setTemplate = new SetTemplate(this).setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor);
                         this.setTemplate(setTemplate);

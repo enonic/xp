@@ -4,46 +4,33 @@ import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
-
 public final class PageUrlParams
     extends AbstractUrlParams<PageUrlParams>
 {
-    private ContentId id;
+    private String id;
 
-    private ContentPath path;
+    private String path;
 
-    public ContentId getId()
+    public String getId()
     {
         return this.id;
     }
 
-    public ContentPath getPath()
+    public String getPath()
     {
         return this.path;
     }
 
-    public PageUrlParams id( final ContentId value )
-    {
-        this.id = value;
-        return this;
-    }
-
-    public PageUrlParams path( final ContentPath value )
-    {
-        this.path = value;
-        return this;
-    }
-
     public PageUrlParams id( final String value )
     {
-        return Strings.isNullOrEmpty( value ) ? this : id( ContentId.from( value ) );
+        this.id = Strings.emptyToNull( value );
+        return this;
     }
 
     public PageUrlParams path( final String value )
     {
-        return Strings.isNullOrEmpty( value ) ? this : path( ContentPath.from( value ) );
+        this.path = Strings.emptyToNull( value );
+        return this;
     }
 
     @Override

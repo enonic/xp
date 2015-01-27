@@ -11,6 +11,6 @@
   <value>/portal/stage/some/path/_/attachment/id/123/source</value>
   <value>ServiceUrlParams{params={}, service=a}</value>
   <value>ServiceUrlParams{params={b=[2]}, service=a}</value>
-  <value>/portal/stage/some/path/_/component/a</value>
-  <value>/portal/stage/some/path/_/component/a?b=2</value>
+  <value>ComponentUrlParams{params={}, component=a}</value>
+  <value>ComponentUrlParams{params={b=[2]}, component=a}</value>
 </output>

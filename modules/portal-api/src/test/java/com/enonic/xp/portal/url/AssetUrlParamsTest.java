@@ -5,8 +5,6 @@ import org.junit.Test;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.api.module.ModuleKey;
-
 import static org.junit.Assert.*;
 
 public class AssetUrlParamsTest
@@ -22,7 +20,7 @@ public class AssetUrlParamsTest
         assertNull( params.getModule() );
 
         params.module( "othermodule" );
-        assertEquals( ModuleKey.from( "othermodule" ), params.getModule() );
+        assertEquals( "othermodule", params.getModule() );
     }
 
     @Test
@@ -50,7 +48,7 @@ public class AssetUrlParamsTest
         params.setAsMap( map );
 
         assertEquals( "/a/b", params.getPath() );
-        assertEquals( ModuleKey.from( "othermodule" ), params.getModule() );
+        assertEquals( "othermodule", params.getModule() );
         assertEquals( "{a=[1]}", params.getParams().toString() );
         assertEquals( "AssetUrlParams{params={a=[1]}, path=/a/b, module=othermodule}", params.toString() );
     }

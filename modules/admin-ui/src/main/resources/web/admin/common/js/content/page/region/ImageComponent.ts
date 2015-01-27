@@ -7,6 +7,7 @@ module api.content.page.region {
     import TextArea = api.form.inputtype.text.TextArea;
     import PropertyTree = api.data.PropertyTree;
     import PropertyIdProvider = api.data.PropertyIdProvider;
+    import PropertyEvent = api.data.PropertyEvent;
 
     export class ImageComponent extends Component implements api.Equitable, api.Cloneable {
 
@@ -24,19 +25,23 @@ module api.content.page.region {
 
         private form: Form;
 
+        private configChangedHandler: (event: PropertyEvent) => void;
+
         constructor(builder: ImageComponentBuilder) {
             super(builder);
 
             this.image = builder.image;
             this.config = builder.config;
-            this.config.onChanged(() => {
+            this.configChangedHandler = (event: PropertyEvent) => {
                 if (this.debug) {
                     console.debug("ImageComponent[" + this.getPath().toString() + "].config.onChanged: ", event);
                 }
                 if (!this.disableEventForwarding) {
                     this.notifyPropertyValueChanged(ImageComponent.PROPERTY_CONFIG);
                 }
-            });
+            };
+
+            this.config.onChanged(this.configChangedHandler);
 
             var formBuilder = new FormBuilder();
             formBuilder.addFormItem(new api.form.InputBuilder().

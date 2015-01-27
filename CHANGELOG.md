@@ -13,6 +13,7 @@ Features:
   - Simplify property-tree values in portal json result. Empty arrays is transformed to nul. Single value arrays
     is transformed to a single value. (CMS-4924)
   - Support id parameter for pageUrl. (CMS-4950)
+  - Better componentUrl handling. Support "this" component and component to other pages. (CMS-4995)
 
 Refactoring:
 
