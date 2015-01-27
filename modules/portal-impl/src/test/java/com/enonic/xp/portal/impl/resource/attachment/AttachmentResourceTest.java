@@ -40,12 +40,12 @@ public class AttachmentResourceTest
         throws Exception
     {
         final Attachment attachment = Attachment.newAttachment().
-            name( "source" ).
+            name( "logo.png" ).
             mimeType( "image/png" ).
             label( "small" ).
             build();
 
-        final Media content = createMedia( "content-id", "path/to/content", attachment );
+        final Media content = createMedia( "123456", "path/to/content", attachment );
 
         Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
         Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
@@ -76,66 +76,54 @@ public class AttachmentResourceTest
     }
 
     @Test
-    public void getById()
+    public void handleInline()
         throws Exception
     {
         setupMedia();
 
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/id/content-id" );
+        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/inline/123456/logo.png" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 200, response.getStatus() );
         assertEquals( "image/png", response.getContentType() );
+        assertNull( response.getHeader( "Content-Disposition" ) );
     }
 
     @Test
-    public void getById_withLabel()
+    public void handleDownload()
         throws Exception
     {
         setupMedia();
 
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/id/content-id/source" );
+        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/download/123456/logo.png" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 200, response.getStatus() );
         assertEquals( "image/png", response.getContentType() );
+        assertEquals( "attachment; filename=logo.png", response.getHeader( "Content-Disposition" ) );
     }
 
     @Test
-    public void getById_notFound()
+    public void testIdNotFound()
         throws Exception
     {
-        Mockito.when( this.contentService.getById( Mockito.anyObject() ) ).thenReturn( null );
+        setupMedia();
 
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/id/content-id" );
+        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/download/1/logo.png" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 404, response.getStatus() );
     }
 
     @Test
-    public void getSource()
+    public void testNameNotFound()
         throws Exception
     {
         setupMedia();
 
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment" );
+        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/download/123456/other.jpg" );
         final MockHttpServletResponse response = executeRequest( request );
 
-        assertEquals( 200, response.getStatus() );
-        assertEquals( "image/png", response.getContentType() );
-    }
-
-    @Test
-    public void getByLabel()
-        throws Exception
-    {
-        setupMedia();
-
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/source" );
-        final MockHttpServletResponse response = executeRequest( request );
-
-        assertEquals( 200, response.getStatus() );
-        assertEquals( "image/png", response.getContentType() );
+        assertEquals( 404, response.getStatus() );
     }
 }
