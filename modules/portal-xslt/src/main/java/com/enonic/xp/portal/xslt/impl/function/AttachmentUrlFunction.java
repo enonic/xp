@@ -2,7 +2,7 @@ package com.enonic.xp.portal.xslt.impl.function;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.portal.url.PortalUrlBuildersHelper;
+import com.enonic.xp.portal.url.AttachmentUrlParams;
 
 final class AttachmentUrlFunction
     extends AbstractUrlFunction
@@ -13,8 +13,9 @@ final class AttachmentUrlFunction
     }
 
     @Override
-    protected String execute( final Multimap<String, String> params )
+    protected String execute( final Multimap<String, String> map )
     {
-        return PortalUrlBuildersHelper.apply( createUrlBuilders().attachmentUrl(), params ).toString();
+        final AttachmentUrlParams params = new AttachmentUrlParams().context( getContext() ).setAsMap( map );
+        return this.urlService.attachmentUrl( params );
     }
 }

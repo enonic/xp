@@ -2,44 +2,19 @@ package com.enonic.xp.portal.jslib.impl;
 
 import org.junit.Test;
 
-import com.enonic.wem.script.command.CommandHandler;
-import com.enonic.xp.portal.jslib.AbstractHandlerTest;
-
 public class AttachmentUrlHandlerTest
-    extends AbstractHandlerTest
+    extends AbstractUrlHandlerTest
 {
     @Override
-    protected CommandHandler createHandler()
+    protected AbstractUrlHandler createUrlHandler()
     {
         return new AttachmentUrlHandler();
     }
 
     @Test
-    public void createUrl_with_name()
+    public void createUrl()
         throws Exception
     {
-        execute( "createUrl_with_name" );
+        execute( "createUrl" );
     }
-
-    @Test
-    public void createUrl_with_label()
-        throws Exception
-    {
-        execute( "createUrl_with_label" );
-    }
-
-    @Test
-    public void createUrl_with_id_and_name()
-        throws Exception
-    {
-        execute( "createUrl_with_id_and_name" );
-    }
-
-    @Test
-    public void createUrl_with_id_and_label()
-        throws Exception
-    {
-        execute( "createUrl_with_id_and_label" );
-    }
-
 }

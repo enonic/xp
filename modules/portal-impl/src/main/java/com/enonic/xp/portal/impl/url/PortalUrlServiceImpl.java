@@ -2,12 +2,11 @@ package com.enonic.xp.portal.impl.url;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
+import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
@@ -48,6 +47,12 @@ public final class PortalUrlServiceImpl
     public String imageUrl( final ImageUrlParams params )
     {
         return build( new ImageUrlBuilder(), params );
+    }
+
+    @Override
+    public String attachmentUrl( final AttachmentUrlParams params )
+    {
+        return build( new AttachmentUrlBuilder(), params );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )

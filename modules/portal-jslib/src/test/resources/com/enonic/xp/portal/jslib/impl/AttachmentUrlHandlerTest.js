@@ -1,4 +1,4 @@
-exports.createUrl_with_name = function () {
+exports.createUrl = function () {
     var result = execute('portal.attachmentUrl', {
         name: "myattachment.pdf",
         params: {
@@ -7,44 +7,6 @@ exports.createUrl_with_name = function () {
         }
     });
 
-    assert.assertEquals('/portal/stage/some/path/_/attachment/myattachment.pdf?a=1&b=1&b=2', result);
-};
-
-exports.createUrl_with_label = function () {
-    var result = execute('portal.attachmentUrl', {
-        label: "source",
-        params: {
-            a: 1,
-            b: [1, 2]
-        }
-    });
-
-    assert.assertEquals('/portal/stage/some/path/_/attachment/source?a=1&b=1&b=2', result);
-};
-
-
-exports.createUrl_with_id_and_name = function () {
-    var result = execute('portal.attachmentUrl', {
-        id: "123",
-        name: "myattachment.pdf",
-        params: {
-            a: 1,
-            b: [1, 2]
-        }
-    });
-
-    assert.assertEquals('/portal/stage/some/path/_/attachment/id/123/myattachment.pdf?a=1&b=1&b=2', result);
-};
-
-exports.createUrl_with_id_and_label = function () {
-    var result = execute('portal.attachmentUrl', {
-        id: "123",
-        label: "source",
-        params: {
-            a: 1,
-            b: [1, 2]
-        }
-    });
-
-    assert.assertEquals('/portal/stage/some/path/_/attachment/id/123/source?a=1&b=1&b=2', result);
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('AttachmentUrlParams{params={a=[1], b=[1, 2]}, name=myattachment.pdf, download=false}', result);
 };

@@ -5,8 +5,8 @@
     <div data-th-text="${portal.imageUrl({'_name=a','b=2'})}">url</div>
     <div data-th-text="${portal.assetUrl({'_path=a'})}">url</div>
     <div data-th-text="${portal.assetUrl({'_path=a','b=2'})}">url</div>
-    <div data-th-text="${portal.attachmentUrl({'a=1'})}">url</div>
-    <div data-th-text="${portal.attachmentUrl({'a=1','b=2'})}">url</div>
+    <div data-th-text="${portal.attachmentUrl({'_name=test'})}">url</div>
+    <div data-th-text="${portal.attachmentUrl({'_label=media'})}">url</div>
     <div data-th-text="${portal.serviceUrl({'_service=a'})}">url</div>
     <div data-th-text="${portal.serviceUrl({'_service=a','b=2'})}">url</div>
     <div data-th-text="${portal.componentUrl({'_component=a'})}">url</div>

@@ -18,6 +18,9 @@ import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 public final class AttachmentResource
     extends BaseSubResource
 {
+    // Pattern should be inline/{id}/{name} where {name} is attachmentName
+    // Or download/{id}/{name} where {name} is attachmentName. This will also set the right disposition header.
+
     @GET
     @Path("id/{mediaId}/{nameOrLabel}")
     public Response getById( @PathParam("mediaId") final String mediaId, @PathParam("nameOrLabel") final String nameOrLabel )

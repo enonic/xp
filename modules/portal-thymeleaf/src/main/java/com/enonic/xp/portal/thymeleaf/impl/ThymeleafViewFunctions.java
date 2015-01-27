@@ -2,15 +2,15 @@ package com.enonic.xp.portal.thymeleaf.impl;
 
 import java.util.List;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.url.AssetUrlParams;
+import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
-import com.enonic.xp.portal.url.PortalUrlBuilders;
-import com.enonic.xp.portal.url.PortalUrlBuildersHelper;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ServiceUrlParams;
 
@@ -20,14 +20,28 @@ final class ThymeleafViewFunctions
 
     protected PortalContext context;
 
-    private PortalUrlBuilders createUrlBuilders()
+    private static Multimap<String, String> toMap( final List<String> params )
     {
-        return new PortalUrlBuilders( this.context );
+        final Multimap<String, String> map = HashMultimap.create();
+        for ( final String param : params )
+        {
+            addParam( map, param );
+        }
+
+        return map;
     }
 
-    private Multimap<String, String> toMap( final List<String> params )
+    private static void addParam( final Multimap<String, String> map, final String param )
     {
-        return PortalUrlBuildersHelper.toParamMap( params );
+        final int pos = param.indexOf( '=' );
+        if ( ( pos <= 0 ) || ( pos >= param.length() ) )
+        {
+            return;
+        }
+
+        final String key = param.substring( 0, pos ).trim();
+        final String value = param.substring( pos + 1 ).trim();
+        map.put( key, value );
     }
 
     public String assetUrl( final List<String> params )
@@ -54,7 +68,13 @@ final class ThymeleafViewFunctions
 
     public String attachmentUrl( final List<String> params )
     {
-        return PortalUrlBuildersHelper.apply( createUrlBuilders().attachmentUrl(), toMap( params ) ).toString();
+        return attachmentUrl( toMap( params ) );
+    }
+
+    private String attachmentUrl( final Multimap<String, String> map )
+    {
+        final AttachmentUrlParams params = new AttachmentUrlParams().setAsMap( map ).context( this.context );
+        return this.urlService.attachmentUrl( params );
     }
 
     public String componentUrl( final List<String> params )

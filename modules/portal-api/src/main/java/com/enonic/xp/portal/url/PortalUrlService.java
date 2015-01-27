@@ -11,4 +11,6 @@ public interface PortalUrlService
     public String componentUrl( ComponentUrlParams params );
 
     public String imageUrl( ImageUrlParams params );
+
+    public String attachmentUrl( AttachmentUrlParams params );
 }
