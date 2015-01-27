@@ -7,6 +7,7 @@ Bugfixes:
  - Java type conversion with LOCAL_DATE_TIME_FORMATTER and LOCAL_TIME_FORMATTER was using wrong
    hour format (1-24 instead of 0-23) (CMS-4913)
  - Fixed styling when selecting controller for page template (CMS-4913)
+ - InputType ContentTypeFilter lists selected options in wrong order causing the wrong content type to be removed when removing (CMS-5008)
 
 Features:
 
