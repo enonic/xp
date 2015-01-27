@@ -14,19 +14,25 @@ module api.ui.tab {
             super("tab-bar" + (!classes ? "" : " " + classes));
         }
 
-        addNavigationItem(tab: TabBarItem, silent?: boolean) {
-            var newLength = this.tabs.push(tab);
-            tab.setIndex(newLength - 1);
+        insertNavigationItem(tab: TabBarItem, index?: number, silent?: boolean) {
+            this.tabs.splice(index, 0, tab);
+            tab.setIndex(index);
 
-            this.appendChild(tab);
+            this.tabs.slice(index+1).forEach((tab:TabBarItem) => {
+                tab.setIndex(tab.getIndex()+1);
+            });
 
+            this.insertChild(tab, index);
             tab.onSelected((event: TabItemEvent) => {
                 this.selectNavigationItem(event.getTab().getIndex());
             });
-
             if (!silent) {
                 this.notifyTabAddedListeners(tab);
             }
+        }
+
+        addNavigationItem(tab: TabBarItem, silent?: boolean) {
+            this.insertNavigationItem(tab, this.tabs.length, silent);
         }
 
         removeNavigationItem(tab: TabBarItem) {

@@ -114,15 +114,24 @@ module api.ui.tab {
             return this.menuVisible;
         }
 
-        addNavigationItem(tab: TabMenuItem) {
-            var newLength = this.tabs.push(tab);
-            tab.setIndex(newLength - 1);
+        insertNavigationItem(tab: TabMenuItem, index: number) {
+            this.tabs.splice(index, 0, tab);
+            tab.setIndex(index);
+
+            this.tabs.slice(index+1).forEach((tab:TabBarItem) => {
+                tab.setIndex(tab.getIndex()+1);
+            });
+
 
             if (tab.isVisibleInMenu()) {
-                this.menuEl.appendChild(tab);
+                this.menuEl.insertChild(tab, index);
                 this.tabMenuButton.show();
             }
             this.initializeNewItemEvents(tab);
+        }
+
+        addNavigationItem(tab: TabMenuItem) {
+            this.insertNavigationItem(tab, this.tabs.length);
         }
 
         prependNavigationItem(tab: TabMenuItem) {
