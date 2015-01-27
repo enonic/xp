@@ -207,11 +207,14 @@ public class ResolveSyncWorkCommand
 
         for ( final Property reference : references )
         {
-            final NodeId referredNodeId = reference.getReference().getNodeId();
-
-            if ( !this.processedIds.contains( referredNodeId ) )
+            if ( reference.hasNotNullValue() )
             {
-                resolveDiff( referredNodeId, ResolveContext.referredFrom( node.id() ) );
+                final NodeId referredNodeId = reference.getReference().getNodeId();
+
+                if ( !this.processedIds.contains( referredNodeId ) )
+                {
+                    resolveDiff( referredNodeId, ResolveContext.referredFrom( node.id() ) );
+                }
             }
         }
     }
