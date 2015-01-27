@@ -8,6 +8,7 @@ import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
+import com.enonic.wem.api.util.Reference;
 import com.enonic.wem.core.content.page.region.RegionDataSerializer;
 
 public class PageDataSerializer
@@ -35,7 +36,7 @@ public class PageDataSerializer
         final PropertySet asSet = parent.addSet( propertyName );
 
         asSet.addString( CONTROLLER, page.hasController() ? page.getController().toString() : null );
-        asSet.addString( TEMPLATE, page.hasTemplate() ? page.getTemplate().toString() : null );
+        asSet.addReference( TEMPLATE, page.hasTemplate() ? Reference.from( page.getTemplate().toString() ) : null );
 
         if ( page.hasRegions() )
         {
@@ -67,7 +68,7 @@ public class PageDataSerializer
         }
         if ( asData.isNotNull( TEMPLATE ) )
         {
-            page.template( PageTemplateKey.from( asData.getString( TEMPLATE ) ) );
+            page.template( PageTemplateKey.from( asData.getReference( TEMPLATE ).toString() ) );
         }
         if ( asData.hasProperty( REGION ) )
         {

@@ -46,5 +46,6 @@
 ///<reference path='ComponentDuplicateEvent.ts' />
 ///<reference path='ComponentLoadedEvent.ts' />
 ///<reference path='Position.ts' />
-///<reference path='TextComponentSetTextEvent.ts' />
 ///<reference path='LiveEditPageViewReadyEvent.ts' />
+///<reference path='StartTextEditModeEvent.ts' />
+///<reference path='StopTextEditModeEvent.ts' />

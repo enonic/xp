@@ -6,6 +6,7 @@ import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Layout;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.xml.mapper.XmlContentTypeMapper;
@@ -38,19 +39,19 @@ public class XmlContentTypeSerializerTest
         final XmlContentType xml = XmlContentTypeMapper.toXml( contentType );
         final String result = XmlSerializers.contentType().serialize( xml );
 
-        assertXml( "content-type.xml", result );
+        assertXml( "content-type-to.xml", result );
     }
 
     @Test
     public void test_from_xml()
         throws Exception
     {
-        final String xml = readFromFile( "content-type.xml" );
+        final String xml = readFromFile( "content-type-from.xml" );
         final ContentType.Builder builder = newContentType();
         builder.name( "mymodule:content-type" );
 
         final XmlContentType xmlObject = XmlSerializers.contentType().parse( xml );
-        XmlContentTypeMapper.fromXml( xmlObject, builder );
+        XmlContentTypeMapper.fromXml( ModuleKey.from( "mymodule" ), xmlObject, builder );
 
         final ContentType contentType = builder.build();
         assertEquals( "mymodule:content-type", contentType.getName().toString() );
@@ -62,6 +63,4 @@ public class XmlContentTypeSerializerTest
         assertEquals( true, contentType.isFinal() );
 
     }
-
-
 }

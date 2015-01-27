@@ -9,8 +9,6 @@ import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
-import com.enonic.xp.portal.url.PortalUrlBuilder;
-import com.enonic.xp.portal.url.PortalUrlBuilders;
 import com.enonic.xp.portal.url.PortalUrlService;
 
 public abstract class AbstractUrlHandler
@@ -31,25 +29,12 @@ public abstract class AbstractUrlHandler
         return "portal." + this.name;
     }
 
-    protected final PortalUrlBuilders createBuilders()
-    {
-        return new PortalUrlBuilders( getContext() );
-    }
-
     protected final PortalContext getContext()
     {
         return PortalContextAccessor.get();
     }
 
-    protected PortalUrlBuilder createBuilder( final Multimap<String, String> map )
-    {
-        return null;
-    }
-
-    protected String buildUrl( final Multimap<String, String> map )
-    {
-        return createBuilder( map ).build();
-    }
+    protected abstract String buildUrl( final Multimap<String, String> map );
 
     @Override
     public final Object execute( final CommandRequest req )

@@ -1,5 +1,10 @@
 module api.form {
 
+    /**
+     * A set of [[FormItem]]s.
+     *
+     * The form items are kept in the order they where inserted.
+     */
     export class FormItemSet extends FormItem {
 
         private label: string;

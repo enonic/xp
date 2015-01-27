@@ -52,8 +52,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         return _isDragging;
     }
 
-    function disableDragDrop(): void {
-        wemjq(REGION_SELECTOR).sortable('disable');
+    function setSortableEnabled(enabled = true): void {
+        wemjq(REGION_SELECTOR).sortable(enabled ? 'enabled' : 'disable');
     }
 
     export function cancelDragDrop(selector: string) {
@@ -269,7 +269,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
                 return;
             }
         } else {
-            if (isDraggingLayoutOverLayout(droppedInRegionView,  droppedComponentView.getType())) {
+            if (isDraggingLayoutOverLayout(droppedInRegionView, droppedComponentView.getType())) {
                 ui.item.remove();
                 new DraggingComponentViewCanceledEvent(droppedComponentView).fire();
                 return;
@@ -370,11 +370,11 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function registerGlobalListeners(): void {
-       ItemViewDeselectEvent.on(() => {
-           if (LiveEdit.DomHelper.supportsTouch() && !_isDragging) {
-               disableDragDrop();
-           }
-       });
+        ItemViewDeselectEvent.on(() => {
+            if (LiveEdit.DomHelper.supportsTouch() && !_isDragging) {
+                setSortableEnabled(false);
+            }
+        });
     }
 
     function isDraggingLayoutOverLayout(regionView: RegionView, draggingItemType: ItemType): boolean {

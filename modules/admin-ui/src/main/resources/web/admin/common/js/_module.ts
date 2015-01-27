@@ -84,6 +84,7 @@
 
 ///<reference path='data/_module.ts' />
 
+///<reference path='form/_module-doc.ts' />
 ///<reference path='form/json/_module.ts' />
 ///<reference path='form/_module.ts' />
 ///<reference path='form/inputtype/_module.ts' />
@@ -143,14 +144,12 @@
 ///<reference path='app/view/_module.ts' />
 ///<reference path='app/wizard/_module.ts' />
 
-///<reference path='liveedit/_module.ts' />
-
 ///<reference path='system/_module.ts' />
 
+///<reference path='liveedit/_module.ts' />
 ///<reference path='liveedit/image/_module.ts' />
 ///<reference path='liveedit/part/_module.ts' />
 ///<reference path='liveedit/layout/_module.ts' />
 ///<reference path='liveedit/text/_module.ts' />
-///<reference path='liveedit/_module.ts' />
 
 ///<reference path='main.ts' />

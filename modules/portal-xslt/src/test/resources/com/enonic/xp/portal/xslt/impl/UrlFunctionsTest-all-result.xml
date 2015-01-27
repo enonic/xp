@@ -1,14 +1,14 @@
 <output>
   <value>PageUrlParams{params={a=[1]}, path=some/path}</value>
   <value>PageUrlParams{params={a=[1], b=[2]}, path=some/path}</value>
-  <value>/portal/stage/some/path/_/image/id/123</value>
-  <value>/portal/stage/some/path/_/image/a?b=2</value>
+  <value>ImageUrlParams{params={}, id=123}</value>
+  <value>ImageUrlParams{params={b=[2], _name=[a]}}</value>
   <value>AssetUrlParams{params={}, path=a}</value>
   <value>AssetUrlParams{params={b=[2]}, path=a}</value>
-  <value>/portal/stage/some/path/_/attachment/myattachment.pdf</value>
-  <value>/portal/stage/some/path/_/attachment/myattachment.pdf?a=1</value>
-  <value>/portal/stage/some/path/_/attachment/id/123/myattachment.pdf</value>
-  <value>/portal/stage/some/path/_/attachment/id/123/source</value>
+  <value>AttachmentUrlParams{params={}, name=myattachment.pdf, download=false}</value>
+  <value>AttachmentUrlParams{params={a=[1]}, name=myattachment.pdf, download=false}</value>
+  <value>AttachmentUrlParams{params={}, id=123, name=myattachment.pdf, download=false}</value>
+  <value>AttachmentUrlParams{params={}, id=123, label=source, download=false}</value>
   <value>ServiceUrlParams{params={}, service=a}</value>
   <value>ServiceUrlParams{params={b=[2]}, service=a}</value>
   <value>ComponentUrlParams{params={}, component=a}</value>

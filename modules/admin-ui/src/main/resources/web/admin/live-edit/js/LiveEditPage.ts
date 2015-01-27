@@ -24,8 +24,6 @@ module LiveEdit {
     import ComponentRemoveEvent = api.liveedit.ComponentRemoveEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
-    import TextComponentStartEditingEvent = api.liveedit.text.TextComponentStartEditingEvent;
-    import TextComponentEditedEvent = api.liveedit.text.TextComponentEditedEvent;
     import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
 
     export class LiveEditPage {
@@ -131,6 +129,7 @@ module LiveEdit {
             ComponentResetEvent.on((event: ComponentResetEvent) => {
                 LiveEdit.component.dragdropsort.DragDropSort.refreshSortable();
             });
+
             DraggingComponentViewStartedEvent.on(() => {
                 this.highlighter.hide();
                 this.shader.hide();
@@ -148,17 +147,14 @@ module LiveEdit {
                 this.highlighter.highlightItemView(selectedView);
                 this.shader.shadeItemView(selectedView);
             });
-            LiveEdit.ui.ShaderClickedEvent.on(() => this.deselectSelectedView());
 
-            TextComponentStartEditingEvent.on((event: TextComponentStartEditingEvent) => {
-                this.highlighter.hide();
-                LiveEdit.component.dragdropsort.DragDropSort.cancelDragDrop(
-                    api.liveedit.text.TextItemType.get().getConfig().getCssSelector());
+            LiveEdit.ui.ShaderClickedEvent.on(() => {
+                var selectedView = this.pageView.getSelectedView();
+                if (selectedView) {
+                    selectedView.deselect();
+                }
             });
 
-            TextComponentEditedEvent.on((event: TextComponentEditedEvent) => {
-                this.shader.shadeItemView(event.getView());
-            });
         }
 
         setItemViewListeners(itemView: ItemView) {
@@ -212,10 +208,6 @@ module LiveEdit {
 
         hasSelectedView(): boolean {
             return this.pageView.hasSelectedView();
-        }
-
-        deselectSelectedView() {
-            this.pageView.deselectSelectedView();
         }
 
         createComponent(region: Region, type: ComponentType, precedingComponentView: ComponentView<Component>): Component {

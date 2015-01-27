@@ -4,6 +4,42 @@
     height: 100%;
   }
 
+  &.text-edit-mode {
+    .box-shadow(inset 0px 0px 15px @admin-input-blue);
+
+    .text-edit-toolbar {
+      display: block;
+    }
+  }
+
+  .text-edit-toolbar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: @z-index-shader;
+    text-align: center;
+
+    .wrapper {
+      line-height: 24px;
+      padding: 10px 10px 10px 16px;
+      display: inline-block;
+      color: @admin-almost-white;
+      background: @admin-bg-dark-gray;
+      .opacity(.9);
+      .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
+      .border-radius(0 0 13px 13px);
+
+      .close-button {
+        .button(@admin-font-gray2, transparent, @admin-almost-white, transparent);
+        padding: 0;
+        margin-left: 5px;
+        float: right;
+      }
+    }
+  }
+
   & > .page-placeholder {
 
     &:before {

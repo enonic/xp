@@ -1,6 +1,6 @@
 .text-view {
 
-  &.edit {
+  &.edit-mode {
     > .text-placeholder {
       display: none;
     }
@@ -9,6 +9,17 @@
       cursor: url('../../live-edit/images/pencil.png') 32 32, text;
       display: block;
     }
+  }
+
+  &.empty {
+    & > article:before {
+      content: 'Just start typing...';
+    }
+  }
+
+  & > article {
+    min-height: @placeholder-height;
+    .outline(0 none);
   }
 
   & > .text-placeholder {

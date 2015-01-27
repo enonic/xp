@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
@@ -51,7 +52,7 @@ final class ContentIdResolver
             return resolveId( this.path );
         }
 
-        return null;
+        return resolveId( ContentPath.from( "" ) );
     }
 
     private ContentPath resolvePath( final ContentPath path )
@@ -67,6 +68,7 @@ final class ContentIdResolver
     private ContentId resolveId( final ContentPath path )
     {
         final ContentPath resolved = resolvePath( path );
-        return this.contentService.getByPath( resolved ).getId();
+        final Content content = this.contentService.getByPath( resolved );
+        return content != null ? content.getId() : null;
     }
 }

@@ -12,8 +12,6 @@ module app.home {
 
         private centerPanel: CenterPanel;
 
-        private backgroundImgUrl: string;
-
         private headerPanel: HeaderPanel;
 
         constructor(builder: HomeMainContainerBuilder) {
@@ -44,7 +42,6 @@ module app.home {
             LogOutEvent.on(() => {
                 new api.security.auth.LogoutRequest().sendAndParse().then(() => {
                     this.centerPanel.showLoginPanel();
-                    this.setBackgroundImgUrl(this.backgroundImgUrl);
                     this.headerPanel.hide();
                     this.brandingPanel.show();
                 }).catch((reason: any) => {

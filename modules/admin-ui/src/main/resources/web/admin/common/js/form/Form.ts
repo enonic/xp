@@ -28,6 +28,14 @@ module api.form {
         }
     }
 
+    /**
+     * A form consist of [[FormItem]]s.
+     *
+     * A [[FormItem]] can either be a [[Input]], [[FormItemSet]] or a [[FieldSet]]:
+     * * A [[Input]] gives the user the possibility input one or more values.
+     * * A [[FormItemSet]] groups a set of [[FormItem]]s, both visually and the data.
+     * * A [[FieldSet]] is a [[Layout]] which only visually groups [[FormItem]]s.
+     */
     export class Form implements api.Equitable {
 
         private formItems: FormItem[] = [];

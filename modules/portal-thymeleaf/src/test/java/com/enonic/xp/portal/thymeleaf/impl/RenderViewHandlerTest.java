@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.thymeleaf.impl;
 
+import java.util.regex.Pattern;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -7,6 +9,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.api.content.Content;
@@ -89,7 +93,7 @@ public class RenderViewHandlerTest
     {
         final String result = execute( "renderTest" ).toString();
         final String expected = Resources.toString( getClass().getResource( "/modules/mymodule/view/test-result.html" ), Charsets.UTF_8 );
-        assertEquals( stripLineEndings( expected ), stripLineEndings( result ) );
+        assertEquals( normalizeTest( expected ), normalizeTest( result ) );
     }
 
     @Test
@@ -99,11 +103,12 @@ public class RenderViewHandlerTest
         final String result = execute( "functionsTest" ).toString();
         final String expected =
             Resources.toString( getClass().getResource( "/modules/mymodule/view/functions-result.html" ), Charsets.UTF_8 );
-        assertEquals( stripLineEndings( expected ), stripLineEndings( result ) );
+        assertEquals( normalizeTest( expected ), normalizeTest( result ) );
     }
 
-    private String stripLineEndings( String crlf )
+    private String normalizeTest( final String text )
     {
-        return crlf.replaceAll( "(\n|\r)", "" );
+        final Iterable<String> lines = Splitter.on( Pattern.compile( "(\n|\r)" ) ).trimResults().split( text );
+        return Joiner.on( "\n" ).join( lines );
     }
 }

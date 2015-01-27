@@ -1,4 +1,3 @@
-declare var Admin;
 declare var CONFIG;
 
 import Module = api.module.Module;

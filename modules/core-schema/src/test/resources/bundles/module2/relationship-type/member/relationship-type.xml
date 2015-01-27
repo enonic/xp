@@ -5,6 +5,6 @@
   <to-semantic>from member</to-semantic>
   <allowed-from-types/>
   <allowed-to-types>
-    <content-type>module2:member</content-type>
+    <content-type>member</content-type>
   </allowed-to-types>
 </relationship-type>

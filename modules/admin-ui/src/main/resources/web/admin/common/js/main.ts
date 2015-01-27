@@ -3,7 +3,6 @@
  */
 
 declare var Mousetrap:MousetrapStatic;
-declare var Admin;
 
 
 wemQ.longStackSupport = true;

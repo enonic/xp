@@ -83,7 +83,7 @@ module api.liveedit {
                     this.resetAction.setEnabled(true);
                 }
             });
-            
+
             super(new ItemViewBuilder().
                 setLiveEditModel(builder.liveEditModel).
                 setItemViewIdProducer(builder.itemViewProducer).
@@ -100,6 +100,21 @@ module api.liveedit {
             this.setTooltipObject(builder.liveEditModel.getContent());
             this.parseItemViews();
 
+            var textEditToolbar = new api.dom.DivEl('text-edit-toolbar');
+            var wrapper = new api.dom.DivEl('wrapper');
+            wrapper.setHtml('Text Edit Mode');
+            var closeButton = new api.ui.button.CloseButton('no-bg');
+            closeButton.onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+                event.preventDefault();
+
+                new StopTextEditModeEvent().fire();
+                this.setTextEditMode(false);
+            });
+            wrapper.appendChild(closeButton);
+            textEditToolbar.appendChild(wrapper);
+            this.appendChild(textEditToolbar);
+
             this.refreshEmptyState();
 
             this.toItemViewArray().forEach((itemView: ItemView) => {
@@ -115,6 +130,49 @@ module api.liveedit {
                 });
             });
 
+            this.listenToTextModeEvents();
+        }
+
+        private listenToTextModeEvents() {
+
+            /* Text component listeners */
+            var viewSelectedBeforeTextEditMode: ItemView;
+
+            StartTextEditModeEvent.on((event: StartTextEditModeEvent) => {
+
+                // save currently selected view to restore it later
+                viewSelectedBeforeTextEditMode = this.getSelectedView();
+                if (viewSelectedBeforeTextEditMode) {
+                    viewSelectedBeforeTextEditMode.deselect();
+                }
+                this.setTextEditMode(true);
+            });
+
+            StopTextEditModeEvent.on((event: StopTextEditModeEvent) => {
+                if (viewSelectedBeforeTextEditMode) {
+                    viewSelectedBeforeTextEditMode.select();
+                    viewSelectedBeforeTextEditMode = undefined;
+                }
+            })
+
+        }
+
+        isTextEditMode(): boolean {
+            return this.hasClass('text-edit-mode');
+        }
+
+        setTextEditMode(flag: boolean) {
+            this.toggleClass('text-edit-mode', flag);
+
+            var textItemViews = this.getItemViewsByType(api.liveedit.text.TextItemType.get());
+
+            var textView: api.liveedit.text.TextComponentView;
+            textItemViews.forEach((view: ItemView) => {
+                textView = (<api.liveedit.text.TextComponentView> view);
+                if (textView.isEditMode() != flag) {
+                    textView.setEditMode(flag);
+                }
+            })
         }
 
         isEmpty(): boolean {
@@ -166,16 +224,23 @@ module api.liveedit {
             return null;
         }
 
-        deselectSelectedView() {
-            var selectedView = this.getSelectedView();
-            if (selectedView) {
-                this.getSelectedView().deselect();
-            }
-        }
-
         getItemViewById(id: ItemViewId): ItemView {
             api.util.assertNotNull(id, "value cannot be null");
             return this.viewsById[id.toNumber()];
+        }
+
+
+        getItemViewsByType(type: ItemType): ItemView[] {
+            var views: ItemView[] = [];
+            for (var key in this.viewsById) {
+                if (this.viewsById.hasOwnProperty(key)) {
+                    var view = this.viewsById[key];
+                    if (type.equals(view.getType())) {
+                        views.push(view);
+                    }
+                }
+            }
+            return views;
         }
 
         getItemViewByElement(element: HTMLElement): ItemView {

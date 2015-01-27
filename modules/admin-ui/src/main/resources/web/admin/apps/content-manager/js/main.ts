@@ -1,4 +1,3 @@
-declare var Admin;
 declare var CONFIG;
 
 module components {

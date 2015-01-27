@@ -9,8 +9,6 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.Media;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
@@ -19,74 +17,45 @@ public final class AttachmentResource
     extends BaseSubResource
 {
     @GET
-    @Path("id/{mediaId}/{nameOrLabel}")
-    public Response getById( @PathParam("mediaId") final String mediaId, @PathParam("nameOrLabel") final String nameOrLabel )
+    @Path("inline/{id}/{name}")
+    public Response handleInline( @PathParam("id") final String id, @PathParam("name") final String name )
         throws Exception
     {
-        final Media media = getMedia( ContentId.from( mediaId ) );
-        final Attachment attachment = resolveAttachment( media, nameOrLabel );
-        if ( attachment == null )
-        {
-            throw notFound( "Attachment [%s] not found for Media [%s]", nameOrLabel, mediaId );
-        }
-
-        final ByteSource binary = this.services.getContentService().getBinary( media.getId(), attachment.getBinaryReference() );
-        if ( binary == null )
-        {
-            throw notFound( "Binary [%s] not found for Media [%s]", attachment.getBinaryReference(), mediaId );
-        }
-
-        return Response.ok().type( attachment.getMimeType() ).entity( binary.openStream() ).build();
+        return handleAttachment( id, name, false );
     }
 
     @GET
-    @Path("id/{mediaId}")
-    public Response getById( @PathParam("mediaId") final String mediaId )
+    @Path("download/{id}/{name}")
+    public Response handleDownload( @PathParam("id") final String id, @PathParam("name") final String name )
         throws Exception
     {
-        return getById( mediaId, "source" );
+        return handleAttachment( id, name, true );
     }
 
-    @GET
-    @Path("{nameOrLabel}")
-    public Response getByNameOrLabel( @PathParam("nameOrLabel") final String nameOrLabel )
+    private Response handleAttachment( final String id, final String name, final boolean download )
         throws Exception
     {
-        final Media media = getMedia( contentPath );
-        final Attachment attachment = resolveAttachment( media, nameOrLabel );
-        if ( attachment == null )
-        {
-            throw notFound( "Attachment [%s] not found for Media [%s]", nameOrLabel, contentPath );
-        }
-
-        final ByteSource binary = this.services.getContentService().getBinary( media.getId(), attachment.getBinaryReference() );
-        if ( binary == null )
-        {
-            throw notFound( "Binary [%s] not found for Media [%s]", attachment.getBinaryReference(), contentPath );
-        }
-
-        return Response.ok().type( attachment.getMimeType() ).entity( binary.openStream() ).build();
+        return handleAttachment( ContentId.from( id ), name, download );
     }
 
-    @GET
-    public Response getSource()
+    private Response handleAttachment( final ContentId id, final String name, final boolean download )
         throws Exception
     {
-        return getByNameOrLabel( "source" );
-    }
+        final Content content = getContent( id );
+        final Attachment attachment = resolveAttachment( content, name );
+        final ByteSource binary = resolveBinary( id, attachment );
 
-    private Attachment resolveAttachment( final Media media, final String nameOrLabel )
-    {
-        final Attachments attachments = media.getAttachments();
-        final Attachment attachment = attachments.byName( nameOrLabel );
-        if ( attachment != null )
+        final Response.ResponseBuilder response = Response.ok().type( attachment.getMimeType() ).entity( binary.openStream() );
+
+        if ( download )
         {
-            return attachment;
+            response.header( "Content-Disposition", "attachment; filename=" + attachment.getName() );
         }
-        return attachments.byLabel( nameOrLabel );
+
+        return response.build();
     }
 
-    private Media getMedia( final ContentId contentId )
+    private Content getContent( final ContentId contentId )
     {
         final Content content = this.services.getContentService().getById( contentId );
         if ( content == null )
@@ -94,25 +63,29 @@ public final class AttachmentResource
             throw notFound( "Content with id [%s] not found", contentId.toString() );
         }
 
-        if ( !( content instanceof Media ) )
-        {
-            throw notFound( "Content with id [%s] is not an Media", contentId.toString() );
-        }
-        return (Media) content;
+        return content;
     }
 
-    private Media getMedia( final ContentPath contentPath )
+    private ByteSource resolveBinary( final ContentId id, final Attachment attachment )
     {
-        final Content content = this.services.getContentService().getByPath( contentPath );
-        if ( content == null )
+        final ByteSource binary = this.services.getContentService().getBinary( id, attachment.getBinaryReference() );
+        if ( binary == null )
         {
-            throw notFound( "Content with path [%s] not found", contentPath.toString() );
+            throw notFound( "Binary [%s] not found for [%s]", attachment.getBinaryReference(), id );
         }
 
-        if ( !( content instanceof Media ) )
+        return binary;
+    }
+
+    private Attachment resolveAttachment( final Content content, final String name )
+    {
+        final Attachments attachments = content.getAttachments();
+        final Attachment attachment = attachments.byName( name );
+        if ( attachment != null )
         {
-            throw notFound( "Content with path [%s] is not an Media", contentPath.toString() );
+            return attachment;
         }
-        return (Media) content;
+
+        throw notFound( "Attachment [%s] not found for [%s]", name, content.getPath() );
     }
 }

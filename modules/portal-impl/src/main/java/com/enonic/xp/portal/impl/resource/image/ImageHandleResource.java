@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.image.BuilderContext;
 import com.enonic.wem.api.image.ImageFilter;
 import com.enonic.wem.api.image.ImageHelper;
@@ -37,18 +36,20 @@ public final class ImageHandleResource
 
     protected ByteSource binary;
 
-    protected Attachment attachment;
+    protected String mimeType;
+
+    protected String name;
 
     @GET
     public Response handle()
         throws Exception
     {
         final BufferedImage contentImage = toBufferedImage( this.binary );
-        final String format = getFormat( this.attachment.getName() );
+        final String format = getFormat( this.name );
         final BufferedImage image = applyFilters( contentImage, format );
 
         final byte[] imageData = serializeImage( image, format );
-        return Response.ok().type( this.attachment.getMimeType() ).entity( imageData ).build();
+        return Response.ok().type( this.mimeType ).entity( imageData ).build();
     }
 
     private BufferedImage applyFilters( final BufferedImage sourceImage, final String format )
@@ -63,7 +64,7 @@ public final class ImageHandleResource
 
         if ( !ImageHelper.supportsAlphaChannel( format ) )
         {
-            return ImageHelper.removeAlphaChannel( targetImage, getBackgrundColor() );
+            return ImageHelper.removeAlphaChannel( targetImage, getBackgroundColor() );
         }
         else
         {
@@ -96,7 +97,7 @@ public final class ImageHandleResource
         return ( this.quality > 0 ) && ( this.quality <= 100 ) ? this.quality : DEFAULT_QUALITY;
     }
 
-    private int getBackgrundColor()
+    private int getBackgroundColor()
     {
         if ( Strings.isNullOrEmpty( this.background ) )
         {

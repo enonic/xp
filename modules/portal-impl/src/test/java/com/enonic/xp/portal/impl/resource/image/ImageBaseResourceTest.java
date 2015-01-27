@@ -49,7 +49,7 @@ public abstract class ImageBaseResourceTest
             label( "small" ).
             build();
 
-        final Content content = createContent( "content-id", "path/to/content", attachment );
+        final Content content = createContent( "content-id", "path/to/image-name.jpg", attachment );
 
         Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
         Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
