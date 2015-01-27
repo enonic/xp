@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -22,18 +23,21 @@ public final class XmlRelationshipTypeMapper
         return result;
     }
 
-    public static void fromXml( final XmlRelationshipType xml, final RelationshipType.Builder builder )
+    public static void fromXml( final ModuleKey currentModule, final XmlRelationshipType xml, final RelationshipType.Builder builder )
     {
         builder.description( xml.getDescription() );
         builder.fromSemantic( xml.getFromSemantic() );
         builder.toSemantic( xml.getToSemantic() );
-        for ( String ctyName : xml.getAllowedFromTypes().getContentType() )
+
+        final XmlModuleRelativeResolver resolver = new XmlModuleRelativeResolver( currentModule );
+        for ( final String ctyName : xml.getAllowedFromTypes().getContentType() )
         {
-            builder.addAllowedFromType( ContentTypeName.from( ctyName ) );
+            builder.addAllowedFromType( resolver.toContentTypeName( ctyName ) );
         }
-        for ( String ctyName : xml.getAllowedToTypes().getContentType() )
+
+        for ( final String ctyName : xml.getAllowedToTypes().getContentType() )
         {
-            builder.addAllowedToType( ContentTypeName.from( ctyName ) );
+            builder.addAllowedToType( resolver.toContentTypeName( ctyName ) );
         }
     }
 

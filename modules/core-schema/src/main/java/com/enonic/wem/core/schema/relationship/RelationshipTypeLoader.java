@@ -144,7 +144,7 @@ final class RelationshipTypeLoader
     {
         final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
         final XmlRelationshipType relationshipTypeXml = XmlSerializers.relationshipType().parse( str );
-        XmlRelationshipTypeMapper.fromXml( relationshipTypeXml, builder );
+        XmlRelationshipTypeMapper.fromXml( this.moduleKey, relationshipTypeXml, builder );
         return builder;
     }
 }

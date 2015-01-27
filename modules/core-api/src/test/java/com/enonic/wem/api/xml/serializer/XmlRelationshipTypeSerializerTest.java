@@ -2,6 +2,7 @@ package com.enonic.wem.api.xml.serializer;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -23,26 +24,26 @@ public class XmlRelationshipTypeSerializerTest
             description( "description" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType(  ContentTypeName.from( "mymodule:person" ) ).
-            addAllowedFromType(  ContentTypeName.from( "mymodule:animal" ) ).
-            addAllowedToType(  ContentTypeName.from( "mymodule:vehicle" ) ).
+            addAllowedFromType( ContentTypeName.from( "mymodule:person" ) ).
+            addAllowedFromType( ContentTypeName.from( "mymodule:animal" ) ).
+            addAllowedToType( ContentTypeName.from( "mymodule:vehicle" ) ).
             build();
 
         XmlRelationshipType xmlObject = XmlRelationshipTypeMapper.toXml( relationshipType );
         String result = XmlSerializers.relationshipType().serialize( xmlObject );
 
-        assertXml( "relationship-type.xml", result );
+        assertXml( "relationship-type-to.xml", result );
     }
 
     @Test
     public void test_from_xml()
         throws Exception
     {
-        final String xml = readFromFile( "relationship-type.xml" );
+        final String xml = readFromFile( "relationship-type-from.xml" );
         final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
 
         XmlRelationshipType xmlObject = XmlSerializers.relationshipType().parse( xml );
-        XmlRelationshipTypeMapper.fromXml( xmlObject, builder );
+        XmlRelationshipTypeMapper.fromXml( ModuleKey.from( "mymodule" ), xmlObject, builder );
         builder.name( "mymodule:myreltype" );
         RelationshipType relationshipType = builder.build();
 
@@ -53,5 +54,4 @@ public class XmlRelationshipTypeSerializerTest
         assertEquals( ContentTypeNames.from( "mymodule:animal", "mymodule:person" ), relationshipType.getAllowedFromTypes() );
         assertEquals( ContentTypeNames.from( "mymodule:vehicle" ), relationshipType.getAllowedToTypes() );
     }
-
 }
