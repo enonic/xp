@@ -3,6 +3,7 @@ module api.liveedit.text {
     import ComponentView = api.liveedit.ComponentView;
     import RegionView = api.liveedit.RegionView;
     import TextComponent = api.content.page.region.TextComponent;
+    import StartTextEditModeEvent = api.liveedit.StartTextEditModeEvent;
 
 
     export class TextComponentViewBuilder extends ComponentViewBuilder<TextComponent> {
@@ -53,7 +54,6 @@ module api.liveedit.text {
 
         processChanges() {
             this.textComponent.setText(this.article.getHtml());
-            new TextComponentEditedEvent(this).fire();
         }
 
         isEmpty(): boolean {
@@ -74,18 +74,29 @@ module api.liveedit.text {
             event.stopPropagation();
             event.preventDefault();
 
-            //this.setEditMode(true, true);
+            if (this.isEditMode()) {
+                return;
+            }
+
+            this.setEditMode(true, true);
+            new StartTextEditModeEvent(this).fire();
         }
 
         handleClick(event: MouseEvent) {
             event.stopPropagation();
             event.preventDefault();
 
+            if (this.isEditMode()) {
+                return;
+            }
+
             if (!this.isSelected()) {
                 this.deselectParent();
                 this.select(!this.isEmpty() ? {x: event.pageX, y: event.pageY} : null);
             } else {
-                this.setEditMode(true, false);
+                this.deselect();
+                this.setEditMode(true);
+                new StartTextEditModeEvent(this).fire();
             }
         }
 
@@ -93,43 +104,38 @@ module api.liveedit.text {
             this.processChanges();
         }
 
-        select(clickPosition?: Position) {
-            super.select(clickPosition);
+        public isEditMode(): boolean {
+            return this.hasClass('edit-mode');
         }
 
-        deselect(silent?: boolean) {
-            super.deselect(silent);
-            this.setEditMode(false);
-        }
+        public setEditMode(flag: boolean, selectText?: boolean) {
 
-
-        private setEditMode(flag: boolean, selectText?: boolean) {
-
-            this.toggleClass('edit', flag);
+            this.toggleClass('edit-mode', flag);
             this.article.getEl().setAttribute('contenteditable', flag.toString());
+            this.setDraggableEnabled(!flag);
 
             if (flag) {
-                this.hideTooltip();
-                this.hideContextMenu();
 
-                this.article.giveFocus();
-                this.focusText(selectText);
+                if (selectText) {
+                    this.focusText();
+                }
 
-                //api.ui.text.TextEditorToolbar.get().showToolbar(this);
-                new TextComponentStartEditingEvent(this).fire();
-
-                if (this.editor) {
-                    this.editor.activate();
-                } else {
+                if (!this.editor) {
                     this.editor = this.createEditor();
                     this.editor.onHideToolbar = this.processChanges.bind(this);
                 }
+
+                this.editor.activate();
+
             } else {
-                // api.ui.text.TextEditorToolbar.get().hideToolbar();
                 if (this.editor) {
                     this.editor.deactivate();
                 }
             }
+        }
+
+        private setDraggableEnabled(enabled: boolean = true) {
+            wemjq(RegionItemType.get().getConfig().getCssSelector()).sortable(enabled ? 'enable' : 'disable');
         }
 
         private createEditor(): MediumEditorType {
@@ -149,26 +155,22 @@ module api.liveedit.text {
             });
         }
 
-        private focusText(selectText: boolean) {
-            var element = this.getHTMLElement();
-            if (selectText) {
-                var selection = window.getSelection();
-                var range = document.createRange();
-                range.selectNodeContents(element);
-                range.setStart(range.endContainer, range.startOffset);
-                range.setEnd(range.endContainer, range.endOffset);
-                selection.removeAllRanges();
-                selection.addRange(range);
-            } else {
-                element.focus();
-                element.click();
-            }
+        private focusText() {
+            var element = this.article.getHTMLElement();
+            var selection = window.getSelection();
+            var range = document.createRange();
+            range.selectNodeContents(element);
+            range.setStart(range.endContainer, range.startOffset);
+            range.setEnd(range.endContainer, range.endOffset);
+            selection.removeAllRanges();
+            selection.addRange(range);
         }
 
         private createTextContextMenuActions(): api.ui.Action[] {
             var actions: api.ui.Action[] = [];
             actions.push(new api.ui.Action('Edit').onExecuted(() => {
-                this.setEditMode(true, false);
+                this.setEditMode(true);
+                new StartTextEditModeEvent(this).fire();
             }));
             return actions;
         }

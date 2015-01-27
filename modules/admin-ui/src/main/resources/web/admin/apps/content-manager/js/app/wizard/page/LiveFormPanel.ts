@@ -102,7 +102,7 @@ module app.wizard.page {
 
         private contentWizardPanel: ContentWizardPanel;
 
-        private liveEditPage: LiveEditPageProxy;
+        private liveEditPageProxy: LiveEditPageProxy;
 
         private selectedItemView: api.liveedit.ItemView;
 
@@ -114,9 +114,7 @@ module app.wizard.page {
             this.pageLoading = false;
             this.pageSkipReload = false;
 
-            this.liveEditPage = new LiveEditPageProxy(<LiveEditPageProxyConfig>{
-                liveFormPanel: this
-            });
+            this.liveEditPageProxy = new LiveEditPageProxy();
 
             this.contentInspectionPanel = new ContentInspectionPanel();
             this.pageInspectionPanel = new PageInspectionPanel();
@@ -148,19 +146,19 @@ module app.wizard.page {
             });
 
             this.emulatorPanel = new EmulatorPanel({
-                liveEditPage: this.liveEditPage
+                liveEditPage: this.liveEditPageProxy
             });
 
             this.insertablesPanel = new InsertablesPanel({
-                liveEditPage: this.liveEditPage
+                liveEditPage: this.liveEditPageProxy
             });
 
             this.frameContainer = new Panel("frame-container");
             this.appendChild(this.frameContainer);
-            this.frameContainer.appendChild(this.liveEditPage.getIFrame());
+            this.frameContainer.appendChild(this.liveEditPageProxy.getIFrame());
 
             // append it here in order for the context window to be above
-            this.appendChild(this.liveEditPage.getLoadMask());
+            this.appendChild(this.liveEditPageProxy.getLoadMask());
 
 
             this.contextWindow = new ContextWindow(<ContextWindowConfig>{
@@ -186,7 +184,7 @@ module app.wizard.page {
 
         remove(): LiveFormPanel {
 
-            this.liveEditPage.remove();
+            this.liveEditPageProxy.remove();
             super.remove();
             return this;
         }
@@ -202,7 +200,7 @@ module app.wizard.page {
             this.pageModel = liveEditModel.getPageModel();
             this.pageModel.setIgnorePropertyChanges(true);
 
-            this.liveEditPage.setModel(liveEditModel);
+            this.liveEditPageProxy.setModel(liveEditModel);
             this.imageInspectionPanel.setModel(liveEditModel);
             this.pageInspectionPanel.setModel(liveEditModel);
             this.partInspectionPanel.setModel(liveEditModel);
@@ -273,8 +271,8 @@ module app.wizard.page {
                 this.contextWindow.clearSelection();
 
                 this.pageLoading = true;
-                this.liveEditPage.load();
-                this.liveEditPage.onLoaded(() => {
+                this.liveEditPageProxy.load();
+                this.liveEditPageProxy.onLoaded(() => {
                     this.pageLoading = false;
 
                 });
@@ -286,7 +284,7 @@ module app.wizard.page {
             this.contentWizardPanel.saveChanges().
                 then(() => {
                     this.pageSkipReload = false;
-                    this.liveEditPage.load();
+                    this.liveEditPageProxy.load();
                 }).
                 catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                 done();
@@ -306,7 +304,7 @@ module app.wizard.page {
                 then(() => {
                     this.pageSkipReload = false;
                     componentView.showLoadingSpinner();
-                    return this.liveEditPage.loadComponent(componentView, componentUrl);
+                    return this.liveEditPageProxy.loadComponent(componentView, componentUrl);
                 }).
                 catch((errorMessage: any) => {
 
@@ -328,18 +326,18 @@ module app.wizard.page {
 
         private liveEditListen() {
 
-            this.liveEditPage.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
+            this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
             });
-            this.liveEditPage.onPageSelected((event: PageSelectEvent) => {
+            this.liveEditPageProxy.onPageSelected((event: PageSelectEvent) => {
                 this.inspectPage();
             });
 
-            this.liveEditPage.onRegionSelected((event: RegionSelectEvent) => {
+            this.liveEditPageProxy.onRegionSelected((event: RegionSelectEvent) => {
                 this.inspectRegion(event.getRegionView());
             });
 
-            this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
+            this.liveEditPageProxy.onItemViewSelected((event: ItemViewSelectedEvent) => {
 
                 var itemView = event.getItemView(),
                     selectedView = this.getSelectedItemView();
@@ -370,7 +368,7 @@ module app.wizard.page {
                 }
             });
 
-            this.liveEditPage.onDeselect((event: ItemViewDeselectEvent) => {
+            this.liveEditPageProxy.onDeselect((event: ItemViewDeselectEvent) => {
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
                 if (!toggler.isActive() && this.contextWindow.isShown()) {
                     this.contextWindow.slideOut();
@@ -381,7 +379,7 @@ module app.wizard.page {
                 this.selectedItemView = null;
             });
 
-            this.liveEditPage.onComponentRemoved((event: ComponentRemoveEvent) => {
+            this.liveEditPageProxy.onComponentRemoved((event: ComponentRemoveEvent) => {
 
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
                 if ((this.contextWindow.isFloating() || toggler.isActive()) && !this.contextWindow.isShown()) {
@@ -395,14 +393,14 @@ module app.wizard.page {
                 this.contextWindow.clearSelection();
             });
 
-            this.liveEditPage.onDraggingComponentViewStartedEvent((event: DraggingComponentViewStartedEvent) => {
+            this.liveEditPageProxy.onDraggingComponentViewStartedEvent((event: DraggingComponentViewStartedEvent) => {
 
                 if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
                     this.contextWindow.slideOut();
                 }
             });
 
-            this.liveEditPage.onDraggingComponentViewCompleted((event: DraggingComponentViewCompletedEvent) => {
+            this.liveEditPageProxy.onDraggingComponentViewCompleted((event: DraggingComponentViewCompletedEvent) => {
 
                 var componentView = event.getComponentView();
                 if (!componentView.isEmpty()) {
@@ -414,14 +412,14 @@ module app.wizard.page {
                 }
             });
 
-            this.liveEditPage.onDraggingComponentViewCanceled((event: DraggingComponentViewCanceledEvent) => {
+            this.liveEditPageProxy.onDraggingComponentViewCanceled((event: DraggingComponentViewCanceledEvent) => {
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
                 if (this.contextWindow.isFloating() && !this.contextWindow.isShown() && toggler.isActive()) {
                     this.contextWindow.slideIn();
                 }
             });
 
-            this.liveEditPage.onComponentDuplicated((event: ComponentDuplicateEvent) => {
+            this.liveEditPageProxy.onComponentDuplicated((event: ComponentDuplicateEvent) => {
 
                 this.saveAndReloadOnlyComponent(event.getDuplicatedComponentView());
             });

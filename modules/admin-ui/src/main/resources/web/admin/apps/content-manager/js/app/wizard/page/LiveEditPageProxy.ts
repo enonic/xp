@@ -29,16 +29,10 @@ module app.wizard.page {
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
     import RegionView = api.liveedit.RegionView;
 
-    export interface LiveEditPageProxyConfig {
-
-        liveFormPanel: LiveFormPanel;
-    }
 
     export class LiveEditPageProxy {
 
         private liveEditModel: LiveEditModel;
-
-        private liveFormPanel: LiveFormPanel;
 
         private liveEditIFrame: api.dom.IFrameEl;
 
@@ -76,9 +70,7 @@ module app.wizard.page {
 
         private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
 
-        constructor(config: LiveEditPageProxyConfig) {
-
-            this.liveFormPanel = config.liveFormPanel;
+        constructor() {
 
             this.liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
             console.log("LiveEditPageProxy.constructor ");

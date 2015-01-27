@@ -451,13 +451,13 @@ module api.liveedit {
             }
         }
 
-        selectPlaceholder() {
+        private selectPlaceholder() {
             if (this.placeholder) {
                 this.placeholder.select();
             }
         }
 
-        deselectPlaceholder() {
+        private deselectPlaceholder() {
             if (this.placeholder) {
                 this.placeholder.deselect();
             }
