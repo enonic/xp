@@ -1,22 +1,25 @@
 package com.enonic.wem.portal.internal.rendering.page.region;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.region.ImageComponent;
 import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.url.ImageUrlBuilder;
-import com.enonic.xp.portal.url.PortalUrlBuilders;
+import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
 
 @Component(immediate = true, service = Renderer.class)
 public final class ImageRenderer
     implements Renderer<ImageComponent>
 {
+    private PortalUrlService urlService;
+
     @Override
     public Class<ImageComponent> getType()
     {
@@ -39,10 +42,7 @@ public final class ImageRenderer
 
         if ( component.getImage() != null )
         {
-            final PortalUrlBuilders portalUrlBuilders = new PortalUrlBuilders( context );
-            final ImageUrlBuilder imageUrlBuilder = portalUrlBuilders.createImageByIdUrl( component.getImage() );
-            imageUrlBuilder.filter( "scalewidth(500)" );
-            final String imageUrl = imageUrlBuilder.toString();
+            final String imageUrl = buildUrl( context, component.getImage() );
             s.append( "<figure>" );
             s.append( "<img style=\"display: block; width: 100%\" src=\"" ).append( imageUrl ).append( "\"/>" );
             if ( component.hasCaption() )
@@ -60,8 +60,22 @@ public final class ImageRenderer
         return new PortalResponseSerializer( response ).serialize();
     }
 
+    private String buildUrl( final PortalContext context, final ContentId id )
+    {
+        final ImageUrlParams params = new ImageUrlParams().context( context );
+        params.id( id.toString() );
+        params.filter( "scalewidth(500)" );
+        return this.urlService.imageUrl( params );
+    }
+
     private RenderMode getRenderingMode( final PortalContext context )
     {
         return context == null ? RenderMode.LIVE : context.getMode();
+    }
+
+    @Reference
+    public void setUrlService( final PortalUrlService urlService )
+    {
+        this.urlService = urlService;
     }
 }

@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.url;
 
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.xp.portal.PortalContext;
 
@@ -26,19 +25,8 @@ public final class PortalUrlBuilders
         return builder;
     }
 
-    public ImageUrlBuilder imageUrl()
-    {
-        return defaults( new ImageUrlBuilder() );
-    }
-
     public AttachmentUrlBuilder attachmentUrl()
     {
         return defaults( new AttachmentUrlBuilder() );
-    }
-
-    @Deprecated
-    public ImageUrlBuilder createImageByIdUrl( final ContentId contentId )
-    {
-        return imageUrl().imageId( contentId );
     }
 }

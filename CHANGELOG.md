@@ -14,6 +14,7 @@ Features:
     is transformed to a single value. (CMS-4924)
   - Support id parameter for pageUrl. (CMS-4950)
   - Better componentUrl handling. Support "this" component and component to other pages. (CMS-4995)
+  - Improvement to imageUrl function. Allow id and path to image. (CMS-5002)
 
 Refactoring:
 

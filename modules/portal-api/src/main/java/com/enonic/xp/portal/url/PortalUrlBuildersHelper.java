@@ -34,17 +34,6 @@ public final class PortalUrlBuildersHelper
         return builder;
     }
 
-    public static ImageUrlBuilder apply( final ImageUrlBuilder builder, final Multimap<String, String> params )
-    {
-        builder.imageId( systemParam( params, "_id" ) );
-        builder.imageName( systemParam( params, "_name" ) );
-        builder.quality( systemParam( params, "_quality" ) );
-        builder.filter( systemParam( params, "_filter" ) );
-        builder.background( systemParam( params, "_background" ) );
-        builder.params( params );
-        return builder;
-    }
-
     public static Multimap<String, String> toParamMap( final String... params )
     {
         return toParamMap( Lists.newArrayList( params ) );

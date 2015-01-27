@@ -10,6 +10,6 @@ exports.createUrl = function () {
         }
     });
 
-    assert.assertEquals('/portal/stage/some/path/_/image/id/123?filter=scale%281%2C1%29&a=1&b=1&b=2&background=ffffff&quality=90',
-        result);
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('ImageUrlParams{params={a=[1], b=[1, 2]}, id=123, quality=90, filter=scale(1,1), background=ffffff}', result);
 };
