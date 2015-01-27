@@ -100,7 +100,7 @@ module api.data {
             return this.elementCount() == 0;
         }
 
-        equals(o: PropertyPath): boolean {
+        equals(o: Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PropertyPath)) {
                 return false;

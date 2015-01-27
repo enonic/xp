@@ -1,5 +1,9 @@
 module api.data {
 
+    /**
+     * A PropertyArray manages an array of properties having the same: [[parent]], [[type]] and [[name]].
+     * @see [[Property]]
+     */
     export class PropertyArray implements api.Equitable {
 
         public static debug: boolean = false;
@@ -247,7 +251,7 @@ module api.data {
             return this.array.slice(0);
         }
 
-        public equals(o: any): boolean {
+        public equals(o: Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PropertyArray)) {
                 return false;
@@ -287,7 +291,7 @@ module api.data {
 
         private registerPropertyListeners(property: Property) {
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.getParentPropertyPath().toString() + "." + this.getName() +
+                console.debug("PropertyArray[" + this.idForDebug() +
                               "].registerPropertyListeners: " +
                               property.getPath().toString());
             }
@@ -302,6 +306,12 @@ module api.data {
         }
 
         private unregisterPropertyListeners(property: Property) {
+            if (PropertyArray.debug) {
+                console.debug("PropertyArray[" + this.idForDebug() +
+                              "].unregisterPropertyListeners: " +
+                              property.getPath().toString());
+            }
+
             property.unPropertyIndexChanged(this.propertyIndexChangedEventHandler);
             property.unPropertyValueChanged(this.propertyValueChangedEventHandler);
 
@@ -317,7 +327,7 @@ module api.data {
         registerPropertySetListeners(propertySet: PropertySet) {
 
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.getParentPropertyPath().toString() + "." + this.getName() +
+                console.debug("PropertyArray[" + this.idForDebug() +
                               "].registerPropertySetListeners: " +
                               propertySet.getPropertyPath().toString());
             }
@@ -350,18 +360,18 @@ module api.data {
         private notifyPropertyAdded(property: Property) {
             var event = new PropertyAddedEvent(property);
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.getParentPropertyPath().toString() + "." + this.getName() +
+                console.debug("PropertyArray[" + this.idForDebug() +
                               "].notifyPropertyAdded: " +
-                              event.getPath().toString());
+                              event.toString());
             }
             this.propertyAddedListeners.forEach((listener) => listener(event));
         }
 
         private forwardPropertyAddedEvent(event: PropertyAddedEvent) {
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.getParentPropertyPath().toString() + "." + this.getName() +
+                console.debug("PropertyArray[" + this.idForDebug() +
                               "].forwardPropertyAddedEvent: " +
-                              event.getPath().toString());
+                              event.toString());
             }
             this.propertyAddedListeners.forEach((listener) => listener(event));
         }
@@ -378,18 +388,18 @@ module api.data {
         private notifyPropertyRemoved(property: Property) {
             var event = new PropertyRemovedEvent(property);
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.getParentPropertyPath().toString() + "." + this.getName() +
+                console.debug("PropertyArray[" + this.idForDebug() +
                               "].notifyPropertyRemoved: " +
-                              event.getPath().toString());
+                              event.toString());
             }
             this.propertyRemovedListeners.forEach((listener) => listener(event));
         }
 
         private forwardPropertyRemovedEvent(event: PropertyRemovedEvent) {
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.getParentPropertyPath().toString() + "." + this.getName() +
+                console.debug("PropertyArray[" + this.idForDebug() +
                               "].forwardPropertyRemovedEvent: " +
-                              event.getPath().toString());
+                              event.toString());
             }
             this.propertyRemovedListeners.forEach((listener) => listener(event));
         }
@@ -405,9 +415,8 @@ module api.data {
 
         private forwardPropertyIndexChangedEvent(event: PropertyIndexChangedEvent) {
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.getParentPropertyPath().toString() + "." + this.getName() +
-                              "].forwardPropertyIndexChangedEvent: " +
-                              event.getPath().toString());
+                console.debug("PropertyArray[" + this.idForDebug() +
+                              "].forwardPropertyIndexChangedEvent: " + event.toString());
             }
             this.propertyIndexChangedListeners.forEach((listener) => listener(event));
         }
@@ -423,9 +432,8 @@ module api.data {
 
         private forwardPropertyValueChangedEvent(event: PropertyValueChangedEvent) {
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.getParentPropertyPath().toString() + "." + this.getName() +
-                              "].forwardPropertyValueChangedEvent: " +
-                              event.getPath().toString());
+                console.debug("PropertyArray[" + this.idForDebug() +
+                              "].forwardPropertyValueChangedEvent: : " + event.toString());
             }
             this.propertyValueChangedListeners.forEach((listener) => listener(event));
         }
@@ -459,6 +467,10 @@ module api.data {
                 type: this.type.toString(),
                 values: valuesJson
             };
+        }
+
+        private idForDebug(): string {
+            return this.getParentPropertyPath().toString() + "." + this.getName();
         }
 
         public static fromJson(json: PropertyArrayJson, parentPropertySet: PropertySet, tree: PropertyTree): PropertyArray {

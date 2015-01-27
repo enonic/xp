@@ -1,9 +1,18 @@
 module api.data {
 
+    /**
+     * A Property has a [[name]] and a [[value]],
+     * but also:
+     * *  an [[index]], since it's a part of an [[array]]
+     * *  a [[parent]], since it's also a part of a [[PropertySet]]
+     * *  and finally an unique [[id]] within the [[PropertyTree]].
+     *
+     * A Property is mutable, both it's [[index]] and [[value]] can change, but never it's [[id]].
+     */
     export class Property implements api.Equitable {
 
         public static debug: boolean = false;
-        
+
         private parent: PropertySet;
 
         private array: PropertyArray;
@@ -40,9 +49,16 @@ module api.data {
         }
 
         setId(id: PropertyId) {
+            api.util.assert(!(this.id && id), "The id of an Property cannot be changed.");
             this.id = id;
         }
 
+        /**
+         * Change the index.
+         *
+         * A [[PropertyIndexChangedEvent]] will be notified to listeners if the index really changed.
+         * @param newIndex
+         */
         setIndex(newIndex: number) {
             var oldIndex = newIndex;
             this.index = newIndex;
@@ -52,6 +68,12 @@ module api.data {
             }
         }
 
+        /**
+         * Change the value.
+         *
+         * A [[PropertyValueChangedEvent]] will be notified to listeners if the value really changed.
+         * @param value
+         */
         setValue(value: Value) {
             api.util.assertNotNull(value, "value of a Property cannot be null");
             var oldValue = this.value;
@@ -233,7 +255,7 @@ module api.data {
         private notifyPropertyIndexChangedEvent(previousIndex: number, newIndex: number) {
             var event = new PropertyIndexChangedEvent(this, previousIndex, newIndex);
             if (Property.debug) {
-                console.debug("Property[" + this.getPath().toString() + "].notifyPropertyIndexChangedEvent: " + event.getPath().toString());
+                console.debug("Property[" + this.getPath().toString() + "].notifyPropertyIndexChangedEvent: " + event.toString());
             }
             this.propertyIndexChangedListeners.forEach((listener) => listener(event));
         }
@@ -250,7 +272,7 @@ module api.data {
         private notifyPropertyValueChangedEvent(previousValue: Value, newValue: Value) {
             var event = new PropertyValueChangedEvent(this, previousValue, newValue);
             if (Property.debug) {
-                console.debug("Property[" + this.getPath().toString() + "].notifyPropertyValueChangedEvent: " + event.getPath().toString());
+                console.debug("Property[" + this.getPath().toString() + "].notifyPropertyValueChangedEvent: " + event.toString());
             }
             this.propertyValueChangedListeners.forEach((listener) => listener(event));
         }

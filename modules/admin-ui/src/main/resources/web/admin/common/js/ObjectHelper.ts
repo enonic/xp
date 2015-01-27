@@ -1,5 +1,8 @@
 module api {
 
+    /**
+     * Helps with doing a IFRAME-safe instanceof and doing equals on different types of objects.
+     */
     export class ObjectHelper {
 
         static iFrameSafeInstanceOf(obj: any, fn: Function): boolean {

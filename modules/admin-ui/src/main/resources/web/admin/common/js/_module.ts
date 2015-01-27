@@ -82,6 +82,7 @@
 
 ///<reference path='ui/locale/_module.ts' />
 
+///<reference path='data/_module-doc.ts' />
 ///<reference path='data/_module.ts' />
 
 ///<reference path='form/_module-doc.ts' />

@@ -8,7 +8,7 @@ module api.data {
             this.value = value;
         }
 
-        public equals(o: any): boolean {
+        public equals(o: Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PropertyId)) {
                 return false;
