@@ -18,6 +18,8 @@ module api.liveedit.text {
 
         private article: api.dom.Element;
 
+        private editor: MediumEditorType;
+
         constructor(builder: TextComponentViewBuilder) {
 
             this.liveEditModel = builder.parentRegionView.liveEditModel;
@@ -72,7 +74,7 @@ module api.liveedit.text {
             event.stopPropagation();
             event.preventDefault();
 
-            this.setEditMode(true, true);
+            //this.setEditMode(true, true);
         }
 
         handleClick(event: MouseEvent) {
@@ -113,11 +115,38 @@ module api.liveedit.text {
                 this.article.giveFocus();
                 this.focusText(selectText);
 
-                api.ui.text.TextEditorToolbar.get().showToolbar(this);
+                //api.ui.text.TextEditorToolbar.get().showToolbar(this);
                 new TextComponentStartEditingEvent(this).fire();
+
+                if (this.editor) {
+                    this.editor.activate();
+                } else {
+                    this.editor = this.createEditor();
+                    this.editor.onHideToolbar = this.processChanges.bind(this);
+                }
             } else {
-                api.ui.text.TextEditorToolbar.get().hideToolbar();
+                // api.ui.text.TextEditorToolbar.get().hideToolbar();
+                if (this.editor) {
+                    this.editor.deactivate();
+                }
             }
+        }
+
+        private createEditor(): MediumEditorType {
+            return new MediumEditor([this.article.getHTMLElement()], {
+                buttons: ['bold', 'italic', 'underline', 'strikethrough',
+                    'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull',
+                    'anchor',
+                    'header1', 'header2',
+                    'orderedlist', 'unorderedlist',
+                    'quote'
+                ],
+                cleanPastedHTML: true,
+                targetBlank: true,
+                placeholder: '',
+                firstHeader: 'h1',
+                secondHeader: 'h2'
+            });
         }
 
         private focusText(selectText: boolean) {
