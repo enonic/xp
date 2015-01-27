@@ -12,6 +12,7 @@ import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 public final class ImageResource
     extends BaseSubResource
 {
+    // Update to use {id}/{name}  -> name is verified against content.getName()
     @Path("id/{id}")
     public ImageHandleResource imageById( @PathParam("id") final String id )
     {
@@ -35,6 +36,7 @@ public final class ImageResource
         return resource;
     }
 
+    // Do not use name as attachment name, just verify against content.getName()
     @Path("{name}")
     public ImageHandleResource imageByName( @PathParam("name") final String name )
     {

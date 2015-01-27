@@ -36,15 +36,10 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         return this.context.getWorkspace();
     }
 
-    public final void setParams( final T value )
+    public final void setParams( final T params )
     {
-        this.params = value;
+        this.params = params;
         this.context = this.params.getContext();
-    }
-
-    protected final <X> X choose( final X first, final X second )
-    {
-        return first != null ? first : second;
     }
 
     protected final void appendPart( final StringBuilder str, final String urlPart )
@@ -105,9 +100,11 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     {
         final StringBuilder str = new StringBuilder();
         appendPart( str, getBaseUri() );
+
         final Multimap<String, String> params = HashMultimap.create();
         buildUrl( str, params );
         appendParams( str, params.entries() );
+
         final String uri = str.toString();
         return ServletRequestUrlHelper.rewriteUri( uri );
     }
@@ -115,8 +112,8 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     @SuppressWarnings("unchecked")
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
-        appendPart( url, getWorkspace().toString() );
         params.putAll( this.params.getParams() );
+        appendPart( url, getWorkspace().toString() );
     }
 
     @Override
