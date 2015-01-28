@@ -155,7 +155,9 @@ module api.content.form.inputtype.image {
                     this.contentRequestsAllowed = true;
                     this.loadOptions("");
 
-                    this.layoutUploadDialog();
+                    if (this.config.contentId) {
+                        this.layoutUploadDialog();
+                    }
 
                     var loadContentPromise = this.doLoadContent(this.propertyArray);
                     return loadContentPromise.then((contents: ContentSummary[]) => {

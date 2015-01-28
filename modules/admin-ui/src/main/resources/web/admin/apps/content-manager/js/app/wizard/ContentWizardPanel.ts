@@ -410,12 +410,7 @@ module app.wizard {
             return wemQ.all(parallelPromises).
                 spread<void>((schemas: Mixin[]) => {
 
-                var formContext: ContentFormContext = <ContentFormContext>ContentFormContext.create().
-                    setSite(this.site).
-                    setParentContent(this.parentContent).
-                    setPersistedContent(content).
-                    setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).
-                    build();
+                var formContext = this.createFormContext(content);
 
                 var contentData = content.getContentData();
                 contentData.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
@@ -535,7 +530,7 @@ module app.wizard {
             }
             else {
 
-                var formContext = new FormContextBuilder().setShowEmptyFormItemSetOccurrences(true).build();
+                var formContext = this.createFormContext(null);
                 var form = this.contentType.getForm();
                 var data = new PropertyTree();
                 var formView = new FormView(formContext, form, data.getRoot());
@@ -745,6 +740,16 @@ module app.wizard {
                 this.setPersistedItem(updatedContent);
             }
 
+        }
+
+        private createFormContext(content: Content): ContentFormContext {
+            var formContext: ContentFormContext = <ContentFormContext>ContentFormContext.create().
+                setSite(this.site).
+                setParentContent(this.parentContent).
+                setPersistedContent(content).
+                setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).
+                build();
+            return formContext;
         }
 
     }
