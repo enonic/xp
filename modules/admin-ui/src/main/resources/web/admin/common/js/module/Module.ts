@@ -22,7 +22,7 @@ module api.module {
 
         private contentTypeDependencies: api.schema.content.ContentTypeName[] = [];
 
-        private metaSteps: api.schema.mixin.MixinName[] = [];
+        private metaSteps: api.schema.mixin.MixinNames;
 
         private minSystemVersion: string;
 
@@ -101,7 +101,7 @@ module api.module {
             return this.contentTypeDependencies;
         }
 
-        getMetaSteps(): api.schema.mixin.MixinName[] {
+        getMetaSteps(): api.schema.mixin.MixinNames {
             return this.metaSteps;
         }
 
@@ -132,8 +132,7 @@ module api.module {
                    this.version == other.version &&
                    api.ObjectHelper.arrayEquals(this.moduleDependencies, other.moduleDependencies) &&
                    api.ObjectHelper.arrayEquals(this.contentTypeDependencies, other.contentTypeDependencies) &&
-                                                                                                             api.ObjectHelper.arrayEquals(this.metaSteps,
-                                                                                                                 other.metaSteps) &&
+                   api.ObjectHelper.equals(this.metaSteps, other.metaSteps) &&
                    this.minSystemVersion == other.minSystemVersion &&
                    this.maxSystemVersion == other.maxSystemVersion;
         }
@@ -161,7 +160,7 @@ module api.module {
 
         contentTypeDependencies: api.schema.content.ContentTypeName[];
 
-        metaSteps: api.schema.mixin.MixinName[];
+        metaSteps: api.schema.mixin.MixinNames;
 
         minSystemVersion: string;
 
@@ -171,7 +170,7 @@ module api.module {
         constructor(source?: Module) {
             this.moduleDependencies = [];
             this.contentTypeDependencies = [];
-            this.metaSteps = [];
+            this.metaSteps;
             if (source) {
                 super(source);
                 this.moduleKey = source.getModuleKey();
@@ -219,9 +218,7 @@ module api.module {
             }
 
             if (json.metaSteps != null) {
-                json.metaSteps.forEach((dependency: string) => {
-                    this.metaSteps.push(new api.schema.mixin.MixinName(dependency));
-                });
+                this.metaSteps = api.schema.mixin.MixinNames.create().fromStrings(json.metaSteps).build();
             }
 
             return this;
