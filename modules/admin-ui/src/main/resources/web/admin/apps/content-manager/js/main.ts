@@ -1,21 +1,20 @@
 declare var CONFIG;
 
 module components {
-    export var contextMenu: app.browse.ContentTreeGridContextMenu;
-    export var gridPanel: app.browse.ContentTreeGrid;
     export var detailPanel: app.browse.ContentBrowseItemPanel;
 }
 
 function startApplication() {
+
     var application: api.app.Application = api.app.Application.getApplication();
 
+    var body = api.dom.Body.get();
+    
     var appBar = new api.app.bar.AppBar(application);
     var appPanel = new app.ContentAppPanel(appBar, application.getPath());
 
-    api.dom.Body.get().appendChild(appBar);
-    api.dom.Body.get().appendChild(appPanel);
-
-    appPanel.init();
+    body.appendChild(appBar);
+    body.appendChild(appPanel);
 
     var contentDeleteDialog = new app.remove.ContentDeleteDialog();
     app.browse.ContentDeletePromptEvent.on((event) => {

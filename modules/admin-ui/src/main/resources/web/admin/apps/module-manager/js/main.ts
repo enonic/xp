@@ -3,14 +3,14 @@ declare var CONFIG;
 import Module = api.module.Module;
 
 function startApplication() {
+    
     var application: api.app.Application = api.app.Application.getApplication();
     var appBar = new api.app.bar.AppBar(application);
     var appPanel = new app.ModuleAppPanel(appBar, application.getPath());
 
-    api.dom.Body.get().appendChild(appBar);
-    api.dom.Body.get().appendChild(appPanel);
-
-    appPanel.init();
+    var body = api.dom.Body.get();
+    body.appendChild(appBar);
+    body.appendChild(appPanel);
 
     application.setLoaded(true);
 
