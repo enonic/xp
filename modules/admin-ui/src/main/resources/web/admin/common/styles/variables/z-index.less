@@ -7,10 +7,10 @@
 @z-index-toolbar-element: @z-index-tab-menu - 1;
 @z-index-docked-panel: @z-index-toolbar-element - 1;
 
-@z-index-wizard-steps: 200;
-@z-index-wizard-option: @z-index-wizard-steps - 1;
-@z-index-wizard-filed: @z-index-wizard-steps + 1;
+@z-index-wizard-option: 200;
+@z-index-wizard-filed: @z-index-wizard-option + 1;
 @z-index-wizard-filed-element: @z-index-wizard-filed + 1;
+@z-index-wizard-steps: @z-index-wizard-filed-element + 1;
 
 @z-index-shader: 2147483600; // number close to max integer 2147483647 to be above live edit page elements
 @z-index-medium-editor: @z-index-shader + 1;

@@ -103,14 +103,7 @@ module app.wizard {
         }
 
         giveInitialFocus() {
-            var newWithoutDisplayCameScript = this.isLayingOutNew();
-
-            if (newWithoutDisplayCameScript) {
-                this.wizardHeader.giveFocus();
-            } else if (!this.wizardHeader.giveFocus()) {
-                this.wizardHeader.giveFocus();
-            }
-
+            this.wizardHeader.giveFocus();
             this.startRememberFocus();
         }
 
