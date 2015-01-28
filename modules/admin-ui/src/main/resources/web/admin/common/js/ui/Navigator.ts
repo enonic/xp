@@ -2,6 +2,8 @@ module api.ui {
 
     export interface Navigator {
 
+        insertNavigationItem(item: NavigationItem, index: number);
+
         addNavigationItem(item: NavigationItem);
 
         removeNavigationItem(item: NavigationItem);

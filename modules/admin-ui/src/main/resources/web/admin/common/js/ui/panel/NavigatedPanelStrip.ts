@@ -81,10 +81,11 @@ module api.ui.panel {
             return this.navigator.getSelectedNavigationItem();
         }
 
-        addNavigablePanel(item: NavigationItem, panel: Panel, header: string, select?: boolean): number {
-            this.navigator.addNavigationItem(item);
+        insertNavigablePanel(item: NavigationItem, panel: Panel, header: string, index: number, select?: boolean): number {
+            this.navigator.insertNavigationItem(item, index);
             var panelHeader = select ? null : header;
-            var index = super.addPanel(panel, panelHeader);
+            super.insertPanel(panel, index, panelHeader);
+
             // select corresponding step on focus
             panel.onFocus((event: FocusEvent) => {
                 this.navigator.selectNavigationItem(item.getIndex(), true);
@@ -95,11 +96,14 @@ module api.ui.panel {
                 // Update navigation item according to scroll position
                 this.updateScrolledNavigationItem();
             });
-
             if (select) {
                 this.selectPanel(item);
             }
             return index;
+        }
+
+        addNavigablePanel(item: NavigationItem, panel: Panel, header: string, select?: boolean): number {
+            return this.insertNavigablePanel(item, panel, header, this.getPanels().length, select);
         }
 
         selectPanel(item: NavigationItem) {
