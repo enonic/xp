@@ -16,6 +16,7 @@ import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.BinaryAttachment;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.CreateRootNodeParams;
 import com.enonic.wem.api.node.EditableNode;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.FindNodesByParentParams;
@@ -313,8 +314,19 @@ class NodeServiceMock
     }
 
     @Override
-    public RootNode createRootNode()
+    public RootNode createRootNode( final CreateRootNodeParams params )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public RootNode getRoot()
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    public NodeServiceMock()
+    {
+        super();
     }
 }

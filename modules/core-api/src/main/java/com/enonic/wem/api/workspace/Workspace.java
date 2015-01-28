@@ -3,18 +3,13 @@ package com.enonic.wem.api.workspace;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.index.ChildOrder;
-
 public final class Workspace
 {
     private final String name;
 
-    private final ChildOrder childOrder;
-
     private Workspace( final Builder builder )
     {
         this.name = builder.name;
-        this.childOrder = builder.childOrder;
     }
 
     public static Workspace from( final String name )
@@ -29,10 +24,6 @@ public final class Workspace
         return name;
     }
 
-    public ChildOrder getChildOrder()
-    {
-        return childOrder;
-    }
 
     public static Builder create()
     {
@@ -71,8 +62,6 @@ public final class Workspace
     {
         private String name;
 
-        private ChildOrder childOrder;
-
         private Builder()
         {
         }
@@ -83,12 +72,6 @@ public final class Workspace
             return this;
         }
 
-        public Builder childOrder( ChildOrder childOrder )
-        {
-            this.childOrder = childOrder;
-            return this;
-        }
-
         private void validate()
         {
             Preconditions.checkArgument( !Strings.isNullOrEmpty( this.name ) );
@@ -96,12 +79,6 @@ public final class Workspace
 
         public Workspace build()
         {
-            if ( childOrder == null )
-            {
-                this.childOrder = ChildOrder.create().
-                    build();
-            }
-
             return new Workspace( this );
         }
     }

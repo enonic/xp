@@ -9,6 +9,7 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.CreateRootNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIndexPath;
@@ -79,7 +80,13 @@ public class NodeServiceImplTest
             login( "user1" ).
             build();
 
-        this.nodeService.createRootNode();
+        this.nodeService.createRootNode( CreateRootNodeParams.create().
+            childOrder( ChildOrder.from( "_name ASC" ) ).
+            permissions( AccessControlList.of( AccessControlEntry.create().
+                allowAll().
+                principal( user.getKey() ).
+                build() ) ).
+            build() );
 
         printContentRepoIndex();
 

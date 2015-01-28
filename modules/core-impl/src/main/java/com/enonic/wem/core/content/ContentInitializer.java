@@ -7,11 +7,16 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.CreateRootNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.RootNode;
+import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
 
 @Component(immediate = true, service = ContentInitializer.class)
 public class ContentInitializer
@@ -22,7 +27,7 @@ public class ContentInitializer
 
     public final void init()
     {
-        final RootNode rootNode = ContentConstants.CONTEXT_STAGE.callWith( () -> this.doInitNodeRoot() );
+        final RootNode rootNode = ContentConstants.CONTEXT_STAGE.callWith( this::doInitNodeRoot );
         ContentConstants.CONTEXT_STAGE.runWith( () -> this.doInitContentRootNode( rootNode ) );
     }
 
@@ -56,7 +61,13 @@ public class ContentInitializer
 
     private RootNode doInitNodeRoot()
     {
-        final RootNode rootNode = this.nodeService.createRootNode();
+        final RootNode rootNode = this.nodeService.createRootNode( CreateRootNodeParams.create().
+            childOrder( ChildOrder.from( "_name ASC" ) ).
+            permissions( AccessControlList.of( AccessControlEntry.create().
+                allowAll().
+                principal( RoleKeys.CONTENT_MANAGER ).
+                build() ) ).
+            build() );
 
         nodeService.push( NodeIds.from( rootNode.id() ), ContentConstants.WORKSPACE_PROD );
 

@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByParentParams;
 import com.enonic.wem.api.content.FindContentByParentResult;
-import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.NodeId;
@@ -30,33 +29,16 @@ final class FindContentByParentCommand
 
     FindContentByParentResult execute()
     {
-        boolean useWorkspaceOrdering = false;
-
         final FindNodesByParentParams.Builder findNodesParam = FindNodesByParentParams.create();
 
-        if ( params.getParentPath() == null && params.getParentId() == null )
-        {
-            final NodePath parentPath = ContentNodeHelper.CONTENT_ROOT_NODE.asAbsolute();
-            findNodesParam.parentPath( parentPath );
-
-            useWorkspaceOrdering = params.getChildOrder() == null || params.getChildOrder().isEmpty();
-        }
-        else if ( params.getParentPath() != null )
-        {
-            final NodePath parentPath = ContentNodeHelper.translateContentPathToNodePath( params.getParentPath() );
-            findNodesParam.parentPath( parentPath );
-        }
-        else
-        {
-            final NodeId parentId = NodeId.from( params.getParentId().toString() );
-            findNodesParam.parentId( parentId );
-        }
+        populateParentIdentificator( findNodesParam );
 
         findNodesParam.
             from( params.getFrom() ).
             size( params.getSize() ).
-            childOrder( useWorkspaceOrdering ? ContextAccessor.current().getWorkspace().getChildOrder() : params.getChildOrder() ).
+            childOrder( params.getChildOrder() ).
             build();
+
         final FindNodesByParentResult result = nodeService.findByParent( findNodesParam.build() );
 
         final Nodes nodes = result.getNodes();
@@ -68,6 +50,25 @@ final class FindContentByParentCommand
             totalHits( result.getTotalHits() ).
             hits( result.getHits() ).
             build();
+    }
+
+    private void populateParentIdentificator( final FindNodesByParentParams.Builder findNodesParam )
+    {
+        if ( params.getParentPath() == null && params.getParentId() == null )
+        {
+            final NodePath parentPath = ContentNodeHelper.CONTENT_ROOT_NODE.asAbsolute();
+            findNodesParam.parentPath( parentPath );
+        }
+        else if ( params.getParentPath() != null )
+        {
+            final NodePath parentPath = ContentNodeHelper.translateContentPathToNodePath( params.getParentPath() );
+            findNodesParam.parentPath( parentPath );
+        }
+        else
+        {
+            final NodeId parentId = NodeId.from( params.getParentId().toString() );
+            findNodesParam.parentId( parentId );
+        }
     }
 
     public static class Builder

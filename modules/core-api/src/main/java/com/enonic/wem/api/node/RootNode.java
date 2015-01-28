@@ -2,12 +2,10 @@ package com.enonic.wem.api.node;
 
 import java.time.Instant;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.query.expr.FieldOrderExpr;
-import com.enonic.wem.api.query.expr.OrderExpr;
-import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.RoleKeys;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 
 public class RootNode
@@ -21,7 +19,7 @@ public class RootNode
             id( UUID ).
             creator( RoleKeys.CONTENT_MANAGER ).
             createdTime( Instant.now() ).
-            parentPath( NodePath.ROOT ).
+            parentPath( null ).
             name( RootNodeName.create() ).
             permissions( builder.permissions ).
             childOrder( builder.childOrder ) );
@@ -32,19 +30,17 @@ public class RootNode
         return new Builder();
     }
 
+    @Override
+    public NodePath path()
+    {
+        return NodePath.ROOT;
+    }
+
     public static class Builder
     {
-        private AccessControlList permissions = AccessControlList.of( AccessControlEntry.create().
-            allowAll().
-            principal( RoleKeys.CONTENT_MANAGER ).
-            build(), AccessControlEntry.create().
-            allowAll().
-            principal( PrincipalKey.ofAnonymous() ).
-            build() );
+        private AccessControlList permissions;
 
-        private ChildOrder childOrder = ChildOrder.create().
-            add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).
-            build();
+        private ChildOrder childOrder;
 
         public Builder childOrder( final ChildOrder childOrder )
         {
@@ -58,8 +54,15 @@ public class RootNode
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( this.childOrder );
+            Preconditions.checkNotNull( this.permissions );
+        }
+
         public RootNode build()
         {
+            validate();
             return new RootNode( this );
         }
 

@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.CreateRootNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
@@ -14,6 +15,9 @@ import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.Nodes;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
 
 import static org.junit.Assert.*;
 
@@ -244,4 +248,56 @@ public class FindNodesByParentCommandTest
         return rootDataSet;
     }
 
+    @Test
+    public void child_order_use_root_node()
+        throws Exception
+    {
+        CreateRootNodeCommand.create().
+            params( CreateRootNodeParams.create().
+                childOrder( ChildOrder.from( "order ASC" ) ).
+                permissions( AccessControlList.of( AccessControlEntry.create().
+                    allowAll().
+                    principal( PrincipalKey.ofAnonymous() ).
+                    build() ) ).
+                build() ).
+            queryService( this.queryService ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            indexService( this.indexService ).
+            build().
+            execute();
+
+        final Node node1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1" ) ).
+            name( "node1" ).
+            parent( NodePath.ROOT ).
+            data( createOrderProperty( 4.0 ) ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node2" ) ).
+            name( "node2" ).
+            parent( NodePath.ROOT ).
+            data( createOrderProperty( 1.0 ) ).
+            build() );
+
+        final Node node3 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node3" ) ).
+            name( "node3" ).
+            parent( NodePath.ROOT ).
+            data( createOrderProperty( 3.0 ) ).
+            build() );
+
+        final FindNodesByParentResult result = findByParent( FindNodesByParentParams.create().
+            parentPath( NodePath.ROOT ).
+            build() );
+
+        final Iterator<Node> iterator = result.getNodes().iterator();
+
+        assertEquals( node2.id(), iterator.next().id() );
+        assertEquals( node3.id(), iterator.next().id() );
+        assertEquals( node1.id(), iterator.next().id() );
+
+    }
 }

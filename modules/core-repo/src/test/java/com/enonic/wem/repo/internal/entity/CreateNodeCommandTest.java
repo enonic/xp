@@ -13,7 +13,6 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeBinaryReferenceException;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.RootNode;
 import com.enonic.wem.api.util.BinaryReference;
 
 import static junit.framework.Assert.assertTrue;
@@ -22,15 +21,6 @@ import static org.junit.Assert.*;
 public class CreateNodeCommandTest
     extends AbstractNodeTest
 {
-
-    @Test
-    public void testName()
-        throws Exception
-    {
-        final RootNode rootNode = RootNode.create().build();
-
-    }
-
     @Test
     public void populate_manual_order_value_and_insert_first()
         throws Exception

@@ -9,7 +9,6 @@ import org.junit.rules.TemporaryFolder;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
-import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -17,12 +16,9 @@ import com.enonic.wem.api.node.FindNodesByQueryResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
-import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.PushNodesResult;
-import com.enonic.wem.api.query.expr.FieldOrderExpr;
-import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.blob.BlobStore;
@@ -53,14 +49,10 @@ public abstract class AbstractNodeTest
 
     protected static final Workspace WS_DEFAULT = Workspace.create().
         name( "stage" ).
-        childOrder( ChildOrder.create().
-            add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).build() ).
         build();
 
     protected static final Workspace WS_OTHER = Workspace.create().
         name( "prod" ).
-        childOrder( ChildOrder.create().
-            add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).build() ).
         build();
 
     protected static final Context CTX_DEFAULT = ContextBuilder.create().

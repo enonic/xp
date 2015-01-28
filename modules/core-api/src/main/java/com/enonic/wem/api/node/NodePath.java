@@ -30,6 +30,12 @@ public class NodePath
         super( builder );
     }
 
+    @Override
+    public boolean isRoot()
+    {
+        return this.equals( NodePath.ROOT );
+    }
+
     public NodePath asRelative()
     {
         if ( isRelative() )

@@ -5,6 +5,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.ApplyNodePermissionsParams;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.CreateRootNodeParams;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -440,11 +441,11 @@ public class NodeServiceImpl
             execute();
     }
 
-    public RootNode createRootNode()
+    @Override
+    public RootNode createRootNode( final CreateRootNodeParams params )
     {
-        final RootNode rootNode = RootNode.create().build();
-        StoreNodeCommand.create().
-            node( rootNode ).
+        return CreateRootNodeCommand.create().
+            params( params ).
             queryService( this.queryService ).
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
@@ -452,8 +453,6 @@ public class NodeServiceImpl
             indexService( this.indexService ).
             build().
             execute();
-
-        return rootNode;
     }
 
     @Override

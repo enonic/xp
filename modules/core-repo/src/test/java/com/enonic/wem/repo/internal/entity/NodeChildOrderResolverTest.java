@@ -1,26 +1,18 @@
 package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.internal.entity.dao.NodeDao;
-import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.CreateRootNodeParams;
+import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 
 import static org.junit.Assert.*;
 
 public class NodeChildOrderResolverTest
+    extends AbstractNodeTest
 {
-
-    private final NodeDao nodeDao = Mockito.mock( NodeDao.class );
-
-    private final QueryService queryService = Mockito.mock( QueryService.class );
 
     @Test
     public void given_child_order_as_param()
@@ -40,25 +32,57 @@ public class NodeChildOrderResolverTest
     }
 
     @Test
-    public void root_use_workspace_order()
+    public void user_parent_child_order_when_root()
         throws Exception
     {
         final ChildOrder childOrder = ChildOrder.from( "myField DESC" );
 
-        final Context myContext = ContextBuilder.create().
-            workspace( Workspace.create().
-                name( "myWorkspace" ).
+        CreateRootNodeCommand.create().
+            params( CreateRootNodeParams.create().
                 childOrder( childOrder ).
                 build() ).
-            repositoryId( Repository.create().id( RepositoryId.from( "myRepository" ) ).build().getId() ).
-            build();
-
-        final ChildOrder resolvedOrder = myContext.callWith( () -> NodeChildOrderResolver.create().
+            queryService( this.queryService ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.queryService ).
-            nodePath( NodePath.ROOT ).
+            indexService( this.indexService ).
             build().
-            resolve() );
+            execute();
+
+        final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
+            nodePath( NodePath.ROOT ).
+            queryService( this.queryService ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            indexService( this.indexService ).
+            build().
+            resolve();
+
+        assertEquals( childOrder, resolvedOrder );
+    }
+
+    @Test
+    public void user_parent_child_order()
+        throws Exception
+    {
+        final ChildOrder childOrder = ChildOrder.from( "myField DESC" );
+
+        final Node parent = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "parent" ).
+            childOrder( childOrder ).
+            build() );
+
+        final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
+            nodePath( parent.path() ).
+            queryService( this.queryService ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            indexService( this.indexService ).
+            build().
+            resolve();
 
         assertEquals( childOrder, resolvedOrder );
     }

@@ -59,7 +59,7 @@ public interface NodeService
 
     ByteSource getBinary( final NodeId nodeId, final BinaryReference reference );
 
-    RootNode createRootNode();
+    public RootNode createRootNode( final CreateRootNodeParams params );
 
     RootNode getRoot();
 }
