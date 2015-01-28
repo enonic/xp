@@ -292,6 +292,89 @@ module app.wizard {
                 });
         }
 
+        private removeMetadataStepForms() {
+            var moduleKeys = this.siteModel ? this.siteModel.getModuleKeys() : [];
+            //moduleKeys = moduleKeys.filter((item: ModuleKey) => item.getName()!= null);
+            var modulePromises = moduleKeys.map((key: ModuleKey) => new api.module.GetModuleRequest(key).sendAndParse());
+            return wemQ.all(modulePromises).
+                then((modules: Module[]) => {
+                    var mixinNames: string[] = [];
+                    modules.forEach((mdl: Module) => {
+                        var moduleStepMixinNames = mdl.getMetaSteps().map((name: MixinName) => name.toString()),
+                            uniqNames = moduleStepMixinNames.filter((name: string) => mixinNames.indexOf(name) < 0);
+                        Array.prototype.push.apply(mixinNames, uniqNames);
+                    });
+
+                    var metadataMixinPromises = mixinNames.map((name: string) => new GetMixinByQualifiedNameRequest(new MixinName(name)).sendAndParse());
+                    return wemQ.all(metadataMixinPromises);
+                }).then((mixins: Mixin[]) => {
+
+                    var activeMixinsNames = mixins.map((mixin:Mixin) => {return mixin.getMixinName().toString()});
+
+                    var panelNamesToRemove = [];
+
+                    for (var mixinName in this.metadataStepFormByName) {// check all old mixin panels
+                        if(activeMixinsNames.indexOf(mixinName) >= 0) {// if still active
+                            activeMixinsNames.splice(activeMixinsNames.indexOf(mixinName), 1);
+                        } else {// add to remove
+                            panelNamesToRemove.push(mixinName);
+                        }
+                    }
+                    panelNamesToRemove.forEach((panelName: string) => {
+                        this.removeStep(this.metadataStepFormByName[panelName]);
+                        delete this.metadataStepFormByName[panelName];
+                    });
+
+
+                    return mixins;
+                });
+        }
+
+        addMetadataStepForms(moduleKey: ModuleKey) {
+            new api.module.GetModuleRequest(moduleKey).sendAndParse().
+                then((module: Module) => {
+                    var mixinNames: string[] = [];
+                        var moduleStepMixinNames = module.getMetaSteps().map((name: MixinName) => name.toString()),
+                            uniqNames = moduleStepMixinNames.filter((name: string) => mixinNames.indexOf(name) < 0);
+                        Array.prototype.push.apply(mixinNames, uniqNames);
+
+                    //remove already existing metadata
+                    mixinNames = mixinNames.filter((mixinName: string) =>
+                        !this.metadataStepFormByName[mixinName]
+                    );
+                    var metadataMixinPromises = mixinNames.map((name: string) => new GetMixinByQualifiedNameRequest(new MixinName(name)).sendAndParse());
+                return wemQ.all(metadataMixinPromises);
+                }).then((mixins: Mixin[]) => {
+                    mixins.forEach((mixin: Mixin, index: number) => {
+                        if (!this.metadataStepFormByName[mixin.getMixinName().toString()]) {
+                            var stepForm = new ContentWizardStepForm();
+                            this.metadataStepFormByName[mixin.getMixinName().toString()] = stepForm;
+                            var wizardStep: WizardStep = new WizardStep(mixin.getDisplayName(), stepForm);
+
+                            this.insertStep(wizardStep, 1);
+
+                            var metadata = new Metadata(mixin.getMixinName(), new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                            this.site.getAllMetadata().push(metadata);
+
+                            var metadataFormView = this.metadataStepFormByName[mixin.getMixinName().toString()];
+                            var metadataForm = new api.form.FormBuilder().addFormItems(mixin.getFormItems()).build();
+
+                            var formContext: ContentFormContext = <ContentFormContext>ContentFormContext.create().
+                                setSite(this.site).
+                                setParentContent(this.parentContent).
+                                setPersistedContent(this.getPersistedItem()).
+                                setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).
+                                build();
+
+                            metadataFormView.layout(formContext, metadata.getData(), metadataForm);
+                        }
+                    });
+
+                    return mixins;
+                });
+
+        }
+
         preLayoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
@@ -418,23 +501,6 @@ module app.wizard {
                     build();
 
                 var contentData = content.getContentData();
-                contentData.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                    if (content.isSite()) {
-
-                        // TODO: Move this listening into SiteModel instead
-                        if (event.getProperty().getPath().toString().indexOf(".modules") == 0) {
-
-                            // Update SiteModel
-                            if (this.liveFormPanel) {
-                                var site = <Site>content;
-                                var viewedSiteBuilder = site.newBuilder();
-                                this.assembleViewedContent(viewedSiteBuilder);
-                                var viewedSite = viewedSiteBuilder.build();
-                                this.siteModel.setModules(viewedSite.getModuleConfigs());
-                            }
-                        }
-                    }
-                });
 
                 var formViewLayoutPromises: wemQ.Promise<void>[] = [];
                 formViewLayoutPromises.push(this.contentWizardStepForm.layout(formContext, contentData, this.contentType.getForm()));
@@ -471,20 +537,31 @@ module app.wizard {
                         }
                         else {
                             this.liveFormPanel.loadPage();
-                            return wemQ(null);
                         }
                     }
+                    if(!this.siteModel  && content.isSite()) {
+                        this.siteModel = new SiteModel(<Site>content);
+                    }
+                    this.initSiteModelListeners();
+                    return wemQ(null);
                 });
             });
         }
 
+        private initSiteModelListeners() {
+
+            this.siteModel.onModuleAdded((event: api.content.site.ModuleAddedEvent) => {
+                this.addMetadataStepForms(event.getModuleConfig().getModuleKey());
+            });
+
+            this.siteModel.onModuleRemoved((event: api.content.site.ModuleRemovedEvent) => {
+                this.removeMetadataStepForms();
+            });
+        }
+
         private initLiveEditModel(content: Content, formContext: ContentFormContext): wemQ.Promise<void> {
-            if (this.createSite) {
-                this.siteModel = new SiteModel(<Site>content);
-            }
-            else {
-                this.siteModel = new SiteModel(this.site);
-            }
+            this.siteModel = new SiteModel(<Site>content);
+            this.initSiteModelListeners();
             this.liveEditModel = LiveEditModel.create().
                 setParentContent(this.parentContent).
                 setContent(content).
