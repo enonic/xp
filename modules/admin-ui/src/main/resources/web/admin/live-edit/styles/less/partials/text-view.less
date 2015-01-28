@@ -1,13 +1,16 @@
 .text-view {
 
   &.edit-mode {
+
     > .text-placeholder {
       display: none;
     }
 
     > article {
-      cursor: url('../../live-edit/images/pencil.png') 32 32, text;
+      cursor: text;
       display: block;
+      .input-border();
+      .input-glow();
     }
   }
 

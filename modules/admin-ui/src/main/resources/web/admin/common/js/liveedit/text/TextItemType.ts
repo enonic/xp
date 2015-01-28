@@ -20,7 +20,7 @@ module api.liveedit.text {
                 cursor: 'move',
                 iconCls: 'live-edit-font-icon-text',
                 highlighterStyle: {
-                    stroke: 'rgba(68, 68, 68, 1)',
+                    stroke: 'rgba(152, 201, 242, 1)',
                     strokeDasharray: '5 5',
                     fill: 'rgba(255, 255, 255, 0)'
                 },

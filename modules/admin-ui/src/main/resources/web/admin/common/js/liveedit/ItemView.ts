@@ -174,6 +174,18 @@ module api.liveedit {
             this.onContextMenu(this.handleClick.bind(this));
             this.onTouchStart(this.handleClick.bind(this));
 
+            // text component handles its tooltips itself because of the edit mode
+            this.onMouseOverView(() => {
+                if (!this.type.equals(api.liveedit.text.TextItemType.get())) {
+                    this.showTooltip();
+                }
+            });
+            this.onMouseLeaveView(() => {
+                if (!this.type.equals(api.liveedit.text.TextItemType.get())) {
+                    this.hideTooltip();
+                }
+            })
+
         }
 
         remove(): ItemView {
@@ -217,24 +229,36 @@ module api.liveedit {
          *
          * @param event browser MouseEvent
          */
-        private handleMouseEnter(event: MouseEvent) {
+        handleMouseEnter(event: MouseEvent) {
             // If ItemView has 'mouseOver' state before it has received 'mouseenter' event,
             // then 'mouseenter' event has already occurred on child ItemView
             // and child has already called notifyMouseOver and notifyMouseOut for this ItemView.
             // No need to process this event.
 
-            var className = api.ClassHelper.getClassName(this);
             if (this.debug) {
-                console.info("mouse enter start --> ", className);
+                console.group("mouse enter [" + this.getId() + "]");
             }
 
             if (this.mouseOver) {
                 if (this.debug) {
-                    console.log('   mouseOver = true, returning', className);
+                    console.log('mouseOver = true, returning.');
+                    console.groupEnd();
                 }
                 return;
             }
 
+            this.manageParentsMouseOver();
+
+            // Turn on 'mouseOver' state for this element and notify it entered.
+            this.mouseOver = true;
+            this.notifyMouseOverView();
+
+            if (this.debug) {
+                console.groupEnd()
+            }
+        }
+
+        private manageParentsMouseOver() {
             // Look up for the parent ItemView with 'mouseOver' state.
             // It is direct parent for case 1 or some parent up to the PageView for case 2.
             // Parents are stored to the stack to manage their state and triger events for them further.
@@ -251,31 +275,50 @@ module api.liveedit {
             // If parent has 'mouseOver' state, notify that mouse is moved out this parent.
             // If parent isn't in 'mouseOver' state, turn it on and notify the parent was entered and left.
             parentsStack.reverse().forEach((view: ItemView) => {
-                var viewName = api.ClassHelper.getClassName(view);
                 if (view.mouseOver) {
                     if (this.debug) {
-                        console.log('   notifying parent mouse out', viewName);
+                        console.debug('parent.mouseOver = true, notifying mouse out [' + view.getId() + "]");
                     }
-                    view.notifyMouseOutView();
+                    view.notifyMouseLeaveView();
                 } else {
                     view.mouseOver = true;
                     if (this.debug) {
-                        console.log('   setting parent mouseOver = true', viewName);
+                        console.debug('parent.mouseOver = false, setting to true [' + view.getId() + "]");
                     }
                     view.notifyMouseOverView();
-                    view.notifyMouseOutView();
+                    view.notifyMouseLeaveView();
                 }
             });
+        }
 
-            // Turn on 'mouseOver' state for this element and notify it entered.
-            this.mouseOver = true;
+        handleMouseMove(event: MouseEvent) {
+
             if (this.debug) {
-                console.log('   notifying target mouse over', className);
+                console.group("mouse move [" + this.getId() + "]");
             }
-            this.notifyMouseOverView();
+
+            if (this.mouseOver) {
+                if (this.debug) {
+                    console.log('mouseOver = true, returning.');
+                    console.groupEnd();
+                }
+                return;
+            }
+
+            // Simulate mouse over if for some reason element still has no mouseOver
+            if (!this.mouseOver) {
+                if (this.debug) {
+                    console.warn('mouseOver = false, setting to true.')
+                }
+                this.manageParentsMouseOver();
+
+                // Turn on 'mouseOver' state for this element and notify it entered.
+                this.mouseOver = true;
+                this.notifyMouseOverView();
+            }
 
             if (this.debug) {
-                console.info("mouse enter end --> ", className);
+                console.groupEnd();
             }
         }
 
@@ -287,31 +330,24 @@ module api.liveedit {
          *
          * @param event browser MouseEvent
          */
-        private handleMouseLeave(event: MouseEvent) {
+        handleMouseLeave(event: MouseEvent) {
 
-            var className = api.ClassHelper.getClassName(this);
             if (this.debug) {
-                console.info("mouse leave start <-- ", className);
+                console.group("mouse leave [" + this.getId() + "]");
             }
 
             // Turn off 'mouseOver' state and notify ItemVeiw was left.
             this.mouseOver = false;
-            if (this.debug) {
-                console.log('   notifying target mouse out', className);
-            }
-            this.notifyMouseOutView();
+            this.notifyMouseLeaveView();
             this.tooltip.hide();
 
             // Notify parent ItemView is entered.
             if (this.parentItemView) {
-                if (this.debug) {
-                    console.log('   notifying parent mouse over', className);
-                }
                 this.parentItemView.notifyMouseOverView();
             }
 
             if (this.debug) {
-                console.info("mouse leave end <-- ", className);
+                console.groupEnd();
             }
         }
 
@@ -359,10 +395,16 @@ module api.liveedit {
         }
 
         showTooltip() {
+            if (this.debug) {
+                console.log('showing tooltip [' + this.getId() + "]");
+            }
             this.tooltip.show();
         }
 
         hideTooltip(hideParentTooltip: boolean = true) {
+            if (this.debug) {
+                console.log('hiding tooltip [' + this.getId() + "]");
+            }
             this.tooltip.hide();
             if (hideParentTooltip && this.parentItemView) {
                 this.parentItemView.hideTooltip();
@@ -543,22 +585,22 @@ module api.liveedit {
 
         private notifyMouseOverView() {
             if (this.debug) {
-                console.log("       notify mouse over", api.ClassHelper.getClassName(this));
+                console.log("notifying mouse over [" + this.getId() + "]");
             }
             this.mouseOverViewListeners.forEach((listener: () => void) => listener());
         }
 
-        onMouseOutView(listener: () => void) {
+        onMouseLeaveView(listener: () => void) {
             this.mouseOutViewListeners.push(listener);
         }
 
-        unMouseOutView(listener: () => void) {
+        unMouseLeaveView(listener: () => void) {
             this.mouseOutViewListeners = this.mouseOutViewListeners.filter((current) => (current != listener));
         }
 
-        private notifyMouseOutView() {
+        private notifyMouseLeaveView() {
             if (this.debug) {
-                console.log("       notify mouse out", api.ClassHelper.getClassName(this));
+                console.log("notifying mouse out [" + this.getId() + "]");
             }
             this.mouseOutViewListeners.forEach((listener: () => void) => listener());
         }
