@@ -1,4 +1,19 @@
-## RC3 (unreleased)
+## RC4 (unreleased)
+
+Bugfixes:
+
+ - N/A
+
+Features:
+
+  - N/A
+
+Refactoring:
+
+  - N/A
+
+
+## RC3 (2015-01-28)
 
 Bugfixes:
 
