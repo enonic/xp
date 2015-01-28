@@ -158,7 +158,7 @@ module api.liveedit {
                 var parentView: ItemView = this.getParentItemView();
                 if (parentView) {
                     this.deselect();
-                    parentView.select();
+                    parentView.select(null, true);
                     parentView.scrollComponentIntoView();
                 }
             }));
