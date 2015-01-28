@@ -162,23 +162,27 @@ module LiveEdit {
                 if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
                     return;
                 }
-                if ((itemView instanceof api.liveedit.PageView) && itemView.isEmpty()) {
+                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, api.liveedit.PageView) && itemView.isEmpty()) {
+                    return;
+                }
+
+                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, api.liveedit.text.TextComponentView) &&
+                    (<api.liveedit.text.TextComponentView> itemView).isEditMode()) {
+                    // don't show highlighter for text component in edit mode
                     return;
                 }
 
                 this.highlighter.highlightItemView(itemView);
                 this.cursor.displayItemViewCursor(itemView);
-                itemView.showTooltip();
             });
 
-            itemView.onMouseOutView(() => {
+            itemView.onMouseLeaveView(() => {
                 if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
                     return;
                 }
 
                 this.highlighter.hide();
                 this.cursor.reset();
-                itemView.hideTooltip();
             });
         }
 

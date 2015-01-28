@@ -33,23 +33,42 @@ module api.liveedit.text {
 
             this.addClass('text-view');
 
-
-            if (!this.isEmpty()) {
-                // article comes from server
-                this.article = this.getChildren()[0];
-            } else {
-                // create it in case of new component
-                this.article = new api.dom.ArticleEl();
-                this.appendChild(this.article);
-            }
+            this.initializeArticle();
 
             this.onKeyDown(this.handleKey.bind(this));
             this.onKeyUp(this.handleKey.bind(this));
             this.onDblClicked(this.handleDbClick.bind(this));
+
+            // ItemView is not managing tooltip for text component
+            this.onMouseOverView(() => {
+                if (!this.isEditMode()) {
+                    this.showTooltip();
+                }
+            });
+            this.onMouseLeaveView(() => {
+                if (!this.isEditMode()) {
+                    this.hideTooltip();
+                }
+            });
+        }
+
+        private initializeArticle() {
+            // check if article came from server
+            for (var i = 0; i < this.getChildren().length; i++) {
+                var child = this.getChildren()[i];
+                if (child.getEl().getTagName().toLowerCase() == 'article') {
+                    this.article = child;
+                }
+            }
+            if (!this.article) {
+                // create it in case of new component
+                this.article = new api.dom.ArticleEl();
+                this.prependChild(this.article);
+            }
         }
 
         getElement(): api.dom.Element {
-            return this;
+            return this.article;
         }
 
         processChanges() {
@@ -78,7 +97,8 @@ module api.liveedit.text {
                 return;
             }
 
-            this.setEditMode(true, true);
+            this.setEditMode(true);
+            this.selectText();
             new StartTextEditModeEvent(this).fire();
         }
 
@@ -96,6 +116,7 @@ module api.liveedit.text {
             } else {
                 this.deselect();
                 this.setEditMode(true);
+                this.giveFocus();
                 new StartTextEditModeEvent(this).fire();
             }
         }
@@ -108,17 +129,14 @@ module api.liveedit.text {
             return this.hasClass('edit-mode');
         }
 
-        public setEditMode(flag: boolean, selectText?: boolean) {
+        public setEditMode(flag: boolean) {
 
             this.toggleClass('edit-mode', flag);
             this.article.getEl().setAttribute('contenteditable', flag.toString());
             this.setDraggableEnabled(!flag);
 
             if (flag) {
-
-                if (selectText) {
-                    this.focusText();
-                }
+                this.hideTooltip();
 
                 if (!this.editor) {
                     this.editor = this.createEditor();
@@ -155,7 +173,7 @@ module api.liveedit.text {
             });
         }
 
-        private focusText() {
+        private selectText() {
             var element = this.article.getHTMLElement();
             var selection = window.getSelection();
             var range = document.createRange();
@@ -166,10 +184,15 @@ module api.liveedit.text {
             selection.addRange(range);
         }
 
+        giveFocus() {
+            return this.isEditMode() && this.article.giveFocus();
+        }
+
         private createTextContextMenuActions(): api.ui.Action[] {
             var actions: api.ui.Action[] = [];
             actions.push(new api.ui.Action('Edit').onExecuted(() => {
                 this.setEditMode(true);
+                this.giveFocus();
                 new StartTextEditModeEvent(this).fire();
             }));
             return actions;
