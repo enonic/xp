@@ -51,7 +51,7 @@ public final class Launcher
 
     private void printBanner()
     {
-        System.out.println( new BannerBuilder().homeDir( this.homeDir ).build() );
+        // System.out.println( new BannerBuilder().homeDir( this.homeDir ).build() );
     }
 
     private void createFramework()

@@ -8,6 +8,8 @@ module api.form.inputtype.support {
 
         private inputOccurrence: InputOccurrence;
 
+        private property: Property;
+
         private inputElement: api.dom.Element;
 
         private removeButtonEl: api.dom.AEl;
@@ -19,6 +21,7 @@ module api.form.inputtype.support {
         constructor(inputOccurrence: InputOccurrence, baseInputTypeView: BaseInputTypeNotManagingAdd<any,any>, property: Property) {
             super("input-occurrence-view", inputOccurrence);
 
+            this.property = property;
             var inputElement = baseInputTypeView.createInputOccurrenceElement(inputOccurrence.getIndex(), property);
 
             this.requiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(property != null ? property.getValue() : null);
@@ -63,6 +66,11 @@ module api.form.inputtype.support {
             else {
                 this.addClass("multiple-occurrence").removeClass("single-occurrence");
             }
+        }
+
+        getDataPath(): api.data.PropertyPath {
+
+            return this.property.getPath();
         }
 
         getIndex(): number {

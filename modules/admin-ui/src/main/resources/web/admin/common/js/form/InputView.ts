@@ -136,7 +136,7 @@ module api.form {
                 return inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewContext);
             }
             else {
-                console.log("Input type [" + inputType.getName() + "] needs to be registered first.");
+                console.warn("Input type [" + inputType.getName() + "] needs to be registered first.");
                 return inputtype.InputTypeManager.createView("NoInputTypeFound", inputTypeViewContext);
             }
         }

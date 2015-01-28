@@ -239,7 +239,6 @@ module api.form {
         }
 
         public displayValidationErrors(value: boolean) {
-            console.log("FormItemSetView.displayValidationErrors: " + value);
             this.formItemSetOccurrences.getOccurrenceViews().forEach((view: FormItemSetOccurrenceView) => {
                 view.displayValidationErrors(value);
             });
@@ -247,10 +246,7 @@ module api.form {
 
         validate(silent: boolean = true): ValidationRecording {
 
-            console.log("FormItemSetView.validate: " + this.formItemSet.getPath());
-
             var validationRecordingPath = this.resolveValidationRecordingPath();
-            //console.log("FormItemSetView[ " + validationRecordingPath + " ].validate(" + silent + ")");
 
             var wholeRecording = new ValidationRecording();
 

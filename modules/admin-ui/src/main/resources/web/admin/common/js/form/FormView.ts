@@ -11,6 +11,9 @@ module api.form {
     /**
      * Creates a UI component representing the given [[Form]] backed by given [[api.data.PropertySet]].
      * Form data is both read from and written to the given [[api.data.PropertySet]] as the user changes the form.
+     *
+     * When displaying a form for a empty PropertyTree, then FormItemSet's will not be displayed by default.
+     * To enable displaying set [[FormContext.showEmptyFormItemSetOccurrences]] to true.
      */
     export class FormView extends api.dom.DivEl {
 

@@ -1,7 +1,7 @@
 package com.enonic.wem.launcher.provision;
 
 import java.io.File;
-import java.net.URL;
+import java.io.FileInputStream;
 import java.util.Map;
 
 import org.apache.felix.utils.properties.Properties;
@@ -41,7 +41,7 @@ public final class ProvisionActivator
     private void doStart()
         throws Exception
     {
-        createResolver();
+        // createResolver();
 
         if ( this.context.getBundles().length == 1 )
         {
@@ -53,11 +53,15 @@ public final class ProvisionActivator
     private void installBundles()
         throws Exception
     {
+        this.context.installBundle( "mvn:com.enonic.xp/core-api/5.0.0-SNAPSHOT" ).start();
+
+        /*
         final Map<String, String> bundleList = loadBundleList();
         for ( final Map.Entry<String, String> entry : bundleList.entrySet() )
         {
             installBundle( entry.getKey().trim(), entry.getValue().trim() );
         }
+        */
     }
 
     private void installBundle( final String uri, final String startLevel )
@@ -104,10 +108,10 @@ public final class ProvisionActivator
     private Map<String, String> loadBundleList()
         throws Exception
     {
-        final URL url = getClass().getResource( "bundles.properties" );
+        final File file = new File( this.context.getProperty( BUNDLES_FILE_PROP ) );
 
         final Properties props = new Properties();
-        props.load( url.openStream() );
+        props.load( new FileInputStream( file ) );
 
         return props;
     }

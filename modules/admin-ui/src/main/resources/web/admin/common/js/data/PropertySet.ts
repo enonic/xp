@@ -1,5 +1,10 @@
 module api.data {
 
+    /**
+     * A PropertySet manages a set of properties. The properties are grouped in arrays by name ([[Property.name]]).
+     * @see [[PropertyArray]]
+     * @see [[Property]]
+     */
     export class PropertySet implements api.Equitable {
 
         public static debug: boolean = false;
@@ -58,6 +63,10 @@ module api.data {
             this.property = value;
         }
 
+        /**
+         * Whether this PropertySet is attached to a [[PropertyTree]] or not.
+         * @returns {boolean} true if it's not attached to a [[PropertyTree]].
+         */
         isDetached(): boolean {
             return !this.tree;
         }
@@ -285,7 +294,7 @@ module api.data {
             return !this.isNotNull(identifier, index);
         }
 
-        public equals(o: any): boolean {
+        public equals(o: Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PropertySet)) {
                 return false;
@@ -364,15 +373,25 @@ module api.data {
         private notifyChangedListeners(event: PropertyEvent) {
             if (PropertySet.debug) {
                 console.debug("PropertySet[" + this.getPropertyPath().toString() + "].notifyChangedListeners: " +
-                              event.getPath().toString());
+                              event.toString());
             }
             this.changedListeners.forEach((listener) => listener(event));
         }
 
+        /**
+         * Register a listener-function to be called when a [[Property]] has been added to this PropertySet or any below.
+         * @param listener
+         * @see [[PropertyAddedEvent]]
+         */
         onPropertyAdded(listener: {(event: PropertyAddedEvent): void;}) {
             this.propertyAddedListeners.push(listener);
         }
 
+        /**
+         * Deregister a listener-function.
+         * @param listener
+         * @see [[PropertyAddedEvent]]
+         */
         unPropertyAdded(listener: {(event: PropertyAddedEvent): void;}) {
             this.propertyAddedListeners = this.propertyAddedListeners.filter((curr) => (curr != listener));
         }
@@ -381,15 +400,25 @@ module api.data {
             this.propertyAddedListeners.forEach((listener) => listener(event));
             if (PropertySet.debug) {
                 console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyAddedEvent: " +
-                              event.getPath().toString());
+                              event.toString());
             }
             this.notifyChangedListeners(event);
         }
 
+        /**
+         * Register a listener-function to be called when a [[Property]] has been removed from this PropertySet or any below.
+         * @param listener
+         * @see [[PropertyRemovedEvent]]
+         */
         onPropertyRemoved(listener: {(event: PropertyRemovedEvent): void;}) {
             this.propertyRemovedListeners.push(listener);
         }
 
+        /**
+         * Deregister a listener-function.
+         * @param listener
+         * @see [[PropertyRemovedEvent]]
+         */
         unPropertyRemoved(listener: {(event: PropertyRemovedEvent): void;}) {
             this.propertyRemovedListeners = this.propertyRemovedListeners.filter((curr) => (curr != listener));
         }
@@ -397,33 +426,52 @@ module api.data {
         private forwardPropertyRemovedEvent(event: PropertyRemovedEvent) {
             if (PropertySet.debug) {
                 console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyRemovedEvent: " +
-                              event.getPath().toString());
+                              event.toString());
             }
             this.propertyRemovedListeners.forEach((listener) => listener(event));
             this.notifyChangedListeners(event);
         }
 
+        /**
+         * Register a listener-function to be called when the [[Property.index]] in this this PropertySet or any below has changed.
+         * @param listener
+         * @see [[PropertyRemovedEvent]]
+         */
         onPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
             this.propertyIndexChangedListeners.push(listener);
         }
 
+        /**
+         * Deregister a listener-function.
+         * @param listener
+         * @see [[PropertyIndexChangedEvent]]
+         */
         unPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
             this.propertyIndexChangedListeners = this.propertyIndexChangedListeners.filter((curr) => (curr != listener));
         }
 
         private forwardPropertyIndexChangedEvent(event: PropertyIndexChangedEvent) {
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyIndexChangedEvent: " +
-                              event.getPath().toString());
+                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyIndexChangedEvent: " + event.toString());
             }
             this.propertyIndexChangedListeners.forEach((listener) => listener(event));
             this.notifyChangedListeners(event);
         }
 
+        /**
+         * Register a listener-function to be called when the [[Property.value]] in this this PropertySet or any below has changed.
+         * @param listener
+         * @see [[PropertyValueChangedEvent]]
+         */
         onPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
             this.propertyValueChangedListeners.push(listener);
         }
 
+        /**
+         * Deregister a listener-function.
+         * @param listener
+         * @see [[PropertyValueChangedEvent]]
+         */
         unPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
             this.propertyValueChangedListeners = this.propertyValueChangedListeners.filter((curr) => (curr != listener));
         }
@@ -431,7 +479,7 @@ module api.data {
         private forwardPropertyValueChangedEvent(event: PropertyValueChangedEvent) {
             if (PropertySet.debug) {
                 console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyValueChangedEvent: " +
-                              event.getPath().toString());
+                              event.toString());
             }
             this.propertyValueChangedListeners.forEach((listener) => listener(event));
             this.notifyChangedListeners(event);
@@ -439,6 +487,11 @@ module api.data {
 
         // PropertySet methods
 
+        /**
+         * Creates a new PropertySet attached to the same [[PropertyTree]] as this PropertySet.
+         * However, the PropertySet is not yet a value of a [[Property]].
+         * @returns {PropertySet}
+         */
         newSet(): PropertySet {
             if (!this.tree) {
                 throw new Error("The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead.");
@@ -446,6 +499,12 @@ module api.data {
             return this.tree.newSet();
         }
 
+        /**
+         * Creates
+         * @param name
+         * @param value optional
+         * @returns {PropertySet}
+         */
         addSet(name: string, value?: PropertySet): PropertySet {
             if (!value) {
                 if (!this.tree) {

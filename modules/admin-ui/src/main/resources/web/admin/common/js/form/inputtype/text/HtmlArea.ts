@@ -13,11 +13,11 @@ module api.form.inputtype.text {
         }
 
         getValueType(): ValueType {
-            return ValueTypes.STRING;
+            return ValueTypes.HTML_PART;
         }
 
         newInitialValue(): Value {
-            return ValueTypes.STRING.newValue("");
+            return ValueTypes.HTML_PART.newValue("");
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
@@ -34,7 +34,7 @@ module api.form.inputtype.text {
         }
 
         private newValue(s: string): Value {
-            return new Value(s, ValueTypes.STRING);
+            return new Value(s, ValueTypes.HTML_PART);
         }
 
         valueBreaksRequiredContract(value: Value): boolean {

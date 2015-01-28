@@ -22,5 +22,9 @@ module api.data {
         getPath(): PropertyPath {
             return this.property.getPath();
         }
+
+        toString(): string {
+            return this.getPath().toString();
+        }
     }
 }

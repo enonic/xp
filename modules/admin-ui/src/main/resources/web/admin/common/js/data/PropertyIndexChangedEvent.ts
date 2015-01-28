@@ -19,5 +19,9 @@ module api.data {
         getNewIndex(): number {
             return this.newIndex;
         }
+
+        toString(): string {
+            return "[" + this.previousIndex + "] -> [" + this.newIndex + "]";
+        }
     }
 }

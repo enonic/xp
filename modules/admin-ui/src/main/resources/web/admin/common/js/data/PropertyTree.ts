@@ -14,6 +14,21 @@ module api.data {
         }
     }
 
+    /**
+     * The PropertyTree is the root container of properties. 
+     * It has a root [[PropertySet]] and [[PropertyIdProvider]] and keeps a reference to all properties 
+     * in the tree in a map using the [[PropertyId]] as key. All properties in a tree must have unique ids within the tree.
+     * 
+     * The PropertyTree is mutable and most mutations can be observed by listening to the following events:
+     * * [[PropertyAddedEvent]]
+     * * [[PropertyRemovedEvent]]
+     * * [[PropertyIndexChangedEvent]]
+     * * [[PropertyValueChangedEvent]]
+     *
+     * @see [[Property]]
+     * @see [[PropertyArray]]
+     * @see [[PropertySet]]
+     */
     export class PropertyTree implements api.Equitable {
 
         private idProvider: PropertyIdProvider;
@@ -22,6 +37,17 @@ module api.data {
 
         private propertyById: {[s:string] : Property;} = {};
 
+        /**
+         * * To create new PropertyTree:
+         * ** give no arguments or optionally with a idProvider.
+         * * To create a copy of another tree: 
+         * ** give the root [[PropertySet]] of the tree to copy from
+         * ** and optionally a idProvider and generateNewPropertyIds
+         *  
+         * @param idProvider optional. If not given, a [[DefaultPropertyIdProvider]] will be created.
+         * @param sourceRoot optional. If given this tree will be a copy of the given [[PropertySet]].
+         * @param generateNewPropertyIds optional. Used only when sourceRoot is given. Default value is false.
+         */
         constructor(idProvider?: PropertyIdProvider, sourceRoot?: PropertySet, generateNewPropertyIds?: boolean) {
 
             if (sourceRoot) {
@@ -55,7 +81,10 @@ module api.data {
         }
 
         /**
-         * Not to be used outside module.
+         * Not to be used outside module. 
+         * 
+         * An Error is thrown if a Property with same id as the given is already registered.
+         * @param property the property to register
          */
         registerProperty(property: Property) {
             api.util.assertNotNull(property.getId(), "Cannot register a Property without id");
@@ -124,7 +153,7 @@ module api.data {
             this.root.forEachProperty(name, callback);
         }
 
-        public equals(o: any): boolean {
+        public equals(o: Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PropertyTree)) {
                 return false;
@@ -148,42 +177,92 @@ module api.data {
             return this.getRoot().toJson();
         }
 
+        /**
+         * Register a listener-function to be called when any [[PropertyEvent]] has been fired anywhere in the tree.
+         * @param listener
+         * @see [[PropertyEvent]]
+         */
         onChanged(listener: {(event: PropertyEvent): void;}) {
             this.root.onChanged(listener);
         }
 
+        /**
+         * Deregister a listener-function.
+         * @param listener
+         * @see [[PropertyEvent]]
+         */
         unChanged(listener: {(event: PropertyEvent): void;}) {
             this.root.unChanged(listener);
         }
 
+        /**
+         * Register a listener-function to be called when a [[Property]] has been added anywhere in the tree.
+         * @param listener
+         * @see [[PropertyAddedEvent]]
+         */
         onPropertyAdded(listener: {(event: PropertyAddedEvent): void;}) {
             this.root.onPropertyAdded(listener);
         }
 
+        /**
+         * Deregister a listener-function.
+         * @param listener
+         * @see [[PropertyAddedEvent]]
+         */
         unPropertyAdded(listener: {(event: PropertyAddedEvent): void;}) {
             this.root.unPropertyAdded(listener);
         }
 
+        /**
+         * Register a listener-function to be called when a [[Property]] has been removed anywhere in the tree.
+         * @param listener
+         * @see [[PropertyRemovedEvent]]
+         */
         onPropertyRemoved(listener: {(event: PropertyRemovedEvent): void;}) {
             this.root.onPropertyRemoved(listener);
         }
 
+        /**
+         * Deregister a listener-function.
+         * @param listener
+         * @see [[PropertyRemovedEvent]]
+         */
         unPropertyRemoved(listener: {(event: PropertyRemovedEvent): void;}) {
             this.root.unPropertyRemoved(listener);
         }
 
+        /**
+         * Register a listener-function to be called when a [[Property.index]] has changed anywhere in the tree.
+         * @param listener
+         * @see [[PropertyIndexChangedEvent]]
+         */
         onPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
             this.root.onPropertyIndexChanged(listener);
         }
 
+        /**
+         * Deregister a listener-function.
+         * @param listener
+         * @see [[PropertyIndexChangedEvent]]
+         */
         unPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
             this.root.unPropertyIndexChanged(listener);
         }
 
+        /**
+         * Register a listener-function to be called when a [[Property.value]] has changed anywhere in the tree.
+         * @param listener
+         * @see [[PropertyValueChangedEvent]]
+         */
         onPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
             this.root.onPropertyValueChanged(listener);
         }
 
+        /**
+         * Deregister a listener-function.
+         * @param listener
+         * @see [[PropertyValueChangedEvent]]
+         */
         unPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
             this.root.unPropertyValueChanged(listener);
         }

@@ -160,7 +160,6 @@ module api.form {
         }
 
         public displayValidationErrors(value: boolean) {
-            console.log("FormItemSetOccurrenceView.displayValidationErrors: " + value);
             this.formItemViews.forEach((view: FormItemView) => {
                 view.displayValidationErrors(value);
             });

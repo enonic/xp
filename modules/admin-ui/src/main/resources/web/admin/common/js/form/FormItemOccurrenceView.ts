@@ -11,6 +11,10 @@ module api.form {
             this.formItemOccurrence = formItemOccurrence;
         }
 
+        getDataPath(): api.data.PropertyPath {
+            throw new Error("Must be implemented by inheritor");
+        }
+
         public layout(): wemQ.Promise<void> {
             return wemQ<void>(null);
         }
