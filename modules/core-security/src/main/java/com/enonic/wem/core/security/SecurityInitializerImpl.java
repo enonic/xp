@@ -5,7 +5,9 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.CreateRootNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
@@ -20,9 +22,12 @@ import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 
+import static com.enonic.wem.api.security.SystemConstants.CONTEXT_USER_STORES;
 import static com.enonic.wem.api.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.wem.api.security.acl.UserStoreAccess.USER_STORE_MANAGER;
 
@@ -119,6 +124,14 @@ public final class SecurityInitializerImpl
                 displayName( SystemConstants.SYSTEM_USERSTORE.getDisplayName() ).
                 permissions( permissions ).build();
             this.securityService.createUserStore( createParams );
+
+            CONTEXT_USER_STORES.callWith( () -> this.nodeService.createRootNode( CreateRootNodeParams.create().
+                childOrder( ChildOrder.defaultOrder() ).
+                permissions( AccessControlList.of( AccessControlEntry.create().
+                    allowAll().
+                    principal( RoleKeys.CONTENT_MANAGER ).
+                    build() ) ).
+                build() ) );
         }
     }
 
