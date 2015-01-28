@@ -2,10 +2,14 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
+import com.enonic.wem.api.node.FindNodesByParentParams;
+import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeComparison;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodePath;
@@ -51,6 +55,19 @@ public class PushNodesCommand
 
         for ( final Node node : nodes )
         {
+            final NodeComparison nodeComparison = CompareNodeCommand.create().
+                nodeId( node.id() ).
+                versionService( this.versionService ).
+                workspaceService( this.workspaceService ).
+                target( this.target ).
+                build().
+                execute();
+
+            if ( nodeComparison.getCompareStatus().getStatus().equals( CompareStatus.Status.EQUAL ) )
+            {
+                builder.addSuccess( node );
+            }
+
             final NodeVersionId nodeVersionId = this.queryService.get( node.id(), IndexContext.from( context ) );
 
             if ( !targetParentExists( node, context ) )
@@ -62,9 +79,34 @@ public class PushNodesCommand
                 doPushNode( context, node, nodeVersionId );
                 builder.addSuccess( node );
             }
+
+            if ( nodeComparison.getCompareStatus().getStatus().equals( CompareStatus.Status.MOVED ) )
+            {
+                updateNodeChildrenWithNewMetadata( node );
+            }
         }
 
         return builder.build();
+    }
+
+    private void updateNodeChildrenWithNewMetadata( final Node node )
+    {
+        final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
+            parentPath( node.path() ).
+            build() );
+
+        final Context context = ContextAccessor.current();
+
+        for ( final Node child : result.getNodes() )
+        {
+            ContextBuilder.create().
+                authInfo( context.getAuthInfo() ).
+                workspace( this.target ).
+                repositoryId( context.getRepositoryId() ).
+                build().runWith( () -> updateNodeMetadata( child ) );
+
+            updateNodeChildrenWithNewMetadata( child );
+        }
     }
 
     private void doPushNode( final Context context, final Node node, final NodeVersionId nodeVersionId )

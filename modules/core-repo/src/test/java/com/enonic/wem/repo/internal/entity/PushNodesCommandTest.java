@@ -116,8 +116,74 @@ public class PushNodesCommandTest
             assertNotNull( getNodeById( child2.id() ) );
             assertNotNull( getNodeById( child2_1.id() ) );
         } );
-
-
     }
+
+    @Test
+    public void moved_nodes_yields_reindex_of_children()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node1" ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node2" ).
+            build() );
+
+        final Node child1 = createNode( CreateNodeParams.create().
+            parent( node.path() ).
+            name( "my-child1" ).
+            build() );
+
+        final Node child2 = createNode( CreateNodeParams.create().
+            parent( node.path() ).
+            name( "my-child2" ).
+            build() );
+
+        final Node child1_1 = createNode( CreateNodeParams.create().
+            parent( child1.path() ).
+            name( "my-child1_1" ).
+            build() );
+
+        final Node child1_1_1 = createNode( CreateNodeParams.create().
+            parent( child1_1.path() ).
+            name( "my-child1_1" ).
+            build() );
+
+        final Node child2_1 = createNode( CreateNodeParams.create().
+            parent( child2.path() ).
+            name( "my-child2_1" ).
+            build() );
+
+        pushNodes( NodeIds.from( node.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() ),
+                   WS_OTHER );
+
+        assertNotNull( getNodeByPathInOther( NodePath.newNodePath( node.path(), child1.name().toString() ).build() ) );
+
+        final Node movedNode = MoveNodeCommand.create().
+            id( node.id() ).
+            newParent( node2.path() ).
+            queryService( this.queryService ).
+            nodeDao( this.nodeDao ).
+            workspaceService( this.workspaceService ).
+            indexService( this.indexService ).
+            versionService( this.versionService ).
+            build().
+            execute();
+
+        pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+
+        assertNotNull( getNodeByPathInOther( NodePath.newNodePath( movedNode.path(), child1.name().toString() ).build() ) );
+        assertNull( getNodeByPathInOther( NodePath.newNodePath( node.path(), child1.name().toString() ).build() ) );
+    }
+
+    private Node getNodeByPathInOther( final NodePath nodePath )
+    {
+        System.out.println( nodePath.toString() );
+        return CTX_OTHER.callWith( () -> getNodeByPath( nodePath ) );
+    }
+
 
 }

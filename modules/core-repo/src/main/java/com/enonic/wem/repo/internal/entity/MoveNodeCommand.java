@@ -116,7 +116,7 @@ public class MoveNodeCommand
             }
         }
 
-        return persistedNode;
+        return movedNode;
     }
 
     public Node getExistingNode( final NodePath newParentNodePath, final NodeName newNodeName )

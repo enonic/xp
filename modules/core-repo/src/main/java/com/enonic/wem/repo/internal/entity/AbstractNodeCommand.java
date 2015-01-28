@@ -65,7 +65,6 @@ abstract class AbstractNodeCommand
             execute();
     }
 
-
     void doStoreNode( final Node node )
     {
         StoreNodeCommand.create().
