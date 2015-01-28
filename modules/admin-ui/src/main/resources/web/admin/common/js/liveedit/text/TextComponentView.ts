@@ -40,6 +40,14 @@ module api.liveedit.text {
             this.onDblClicked(this.handleDbClick.bind(this));
 
             // ItemView is not managing tooltip for text component
+            this.listenToTooltipEvents();
+        }
+
+        isManagingTooltip(): boolean {
+            return true;
+        }
+
+        private listenToTooltipEvents() {
             this.onMouseOverView(() => {
                 if (!this.isEditMode()) {
                     this.showTooltip();

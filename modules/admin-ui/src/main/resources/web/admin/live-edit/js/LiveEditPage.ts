@@ -162,11 +162,13 @@ module LiveEdit {
                 if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
                     return;
                 }
-                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, api.liveedit.PageView) && itemView.isEmpty()) {
+                if (itemView.getType().equals(api.liveedit.PageItemType.get()) &&
+                    (itemView.isEmpty() || this.pageView.isTextEditMode())) {
+                    // don't show highlighter for page that is empty or in text edit mode
                     return;
                 }
 
-                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, api.liveedit.text.TextComponentView) &&
+                if (itemView.getType().equals(api.liveedit.text.TextItemType.get()) &&
                     (<api.liveedit.text.TextComponentView> itemView).isEditMode()) {
                     // don't show highlighter for text component in edit mode
                     return;
