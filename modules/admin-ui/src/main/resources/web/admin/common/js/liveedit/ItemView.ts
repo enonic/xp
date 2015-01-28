@@ -140,6 +140,8 @@ module api.liveedit {
             super(props);
             this.addClass("item-view");
 
+            this.setDraggable(true);
+
             this.mouseOver = false;
             this.mouseOverViewListeners = [];
             this.mouseOutViewListeners = [];
@@ -185,6 +187,14 @@ module api.liveedit {
             }
         }
 
+        getPageView(): PageView {
+            var pageView = this;
+            while (!PageItemType.get().equals(this.parentItemView.getType())) {
+                pageView = pageView.parentItemView;
+            }
+            return <PageView> pageView;
+        }
+
         /**
          * Tells if the view wants to manage tooltips itself
          * @returns {boolean}
@@ -202,6 +212,12 @@ module api.liveedit {
             }
             super.remove();
             return this;
+        }
+
+        setDraggable(value: boolean) {
+            super.setDraggable(value);
+            // tells jquery drag n drop to ignore this draggable
+            this.toggleClass('not-draggable', !value);
         }
 
         scrollComponentIntoView(): void {

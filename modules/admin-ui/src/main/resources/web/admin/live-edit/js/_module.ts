@@ -10,7 +10,7 @@
 ///<reference path='ui/Highlighter.ts' />
 ///<reference path='ui/ShaderClickedEvent.ts' />
 
-///<reference path='component/dragdropsort/DragDropSort.ts' />
+///<reference path='dnd/DragDropSort.ts' />
 ///<reference path='LiveEditPage.ts' />
 
 ///<reference path='main.ts' />

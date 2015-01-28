@@ -141,7 +141,7 @@ module api.liveedit.text {
 
             this.toggleClass('edit-mode', flag);
             this.article.getEl().setAttribute('contenteditable', flag.toString());
-            this.setDraggableEnabled(!flag);
+            this.setDraggable(!flag);
 
             if (flag) {
                 this.hideTooltip();
@@ -157,10 +157,6 @@ module api.liveedit.text {
                     this.editor.deactivate();
                 }
             }
-        }
-
-        private setDraggableEnabled(enabled: boolean = true) {
-            wemjq(RegionItemType.get().getConfig().getCssSelector()).sortable(enabled ? 'enable' : 'disable');
         }
 
         private createEditor(): MediumEditorType {

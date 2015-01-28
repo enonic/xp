@@ -144,6 +144,7 @@ module api.liveedit {
             event.preventDefault();
 
             if (this.isTextEditMode()) {
+                new StopTextEditModeEvent().fire();
                 this.setTextEditMode(false);
             } else {
                 super.handleClick(event);
@@ -202,11 +203,11 @@ module api.liveedit {
 
             var textView: api.liveedit.text.TextComponentView;
             textItemViews.forEach((view: ItemView) => {
-                textView = (<api.liveedit.text.TextComponentView> view);
+                textView = <api.liveedit.text.TextComponentView> view;
                 if (textView.isEditMode() != flag) {
                     textView.setEditMode(flag);
                 }
-            })
+            });
         }
 
         isEmpty(): boolean {
