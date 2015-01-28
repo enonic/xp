@@ -5,9 +5,9 @@ public final class LauncherMain
     public static void main( final String... args )
         throws Exception
     {
-        System.setProperty( "wem.home", "/Users/srs/development/cms-homes/wem-home" );
-        System.setProperty( "karaf.startLocalConsole", "true" );
-        
-        new Launcher().launch();
+        System.setProperty( "xp.install", "/Users/srs/development/server/xp-distro" );
+        // System.setProperty( "xp.home", "/Users/srs/development/server/xp-distro/home" );
+
+        new Launcher2().launch();
     }
 }

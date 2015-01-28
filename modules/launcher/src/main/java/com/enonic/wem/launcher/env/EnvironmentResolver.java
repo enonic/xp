@@ -1,0 +1,50 @@
+package com.enonic.wem.launcher.env;
+
+import java.io.File;
+
+import com.google.common.base.Strings;
+
+import com.enonic.wem.launcher.SharedConstants;
+import com.enonic.wem.launcher.util.SystemProperties;
+
+public final class EnvironmentResolver
+    implements SharedConstants
+{
+    private final SystemProperties properties;
+
+    public EnvironmentResolver( final SystemProperties properties )
+    {
+        this.properties = properties;
+    }
+
+    public Environment resolve()
+    {
+        final EnvironmentImpl env = new EnvironmentImpl();
+        env.installDir = resolveInstallDir();
+        env.homeDir = resolveHomeDir( env.installDir );
+        env.validate();
+        return env;
+    }
+
+    private File resolveInstallDir()
+    {
+        final String path = this.properties.get( XP_INSTALL_DIR );
+        if ( Strings.isNullOrEmpty( path ) )
+        {
+            return null;
+        }
+
+        return new File( path );
+    }
+
+    private File resolveHomeDir( final File installDir )
+    {
+        final String path = this.properties.get( XP_HOME_DIR );
+        if ( Strings.isNullOrEmpty( path ) )
+        {
+            return installDir != null ? new File( installDir, "home" ) : null;
+        }
+
+        return new File( path );
+    }
+}

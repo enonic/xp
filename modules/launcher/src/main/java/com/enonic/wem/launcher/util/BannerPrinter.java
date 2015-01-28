@@ -1,6 +1,7 @@
 package com.enonic.wem.launcher.util;
 
 import java.io.File;
+import java.io.PrintStream;
 
 import com.enonic.wem.launcher.env.Environment;
 
@@ -11,7 +12,7 @@ import static com.google.common.base.StandardSystemProperty.OS_ARCH;
 import static com.google.common.base.StandardSystemProperty.OS_NAME;
 import static com.google.common.base.StandardSystemProperty.OS_VERSION;
 
-public final class BannerBuilder
+public final class BannerPrinter
 {
     private final static String BANNER = "" +
         " _____ _____ _____ _____ _____ _____    _ _ _ _____ _____ \n" +
@@ -23,23 +24,25 @@ public final class BannerBuilder
 
     private final static String VERSION = "5.0.0-SNAPSHOT";
 
-    private final Environment env;
+    private final PrintStream out;
 
-    public BannerBuilder( final Environment env )
+    public BannerPrinter( final PrintStream out )
     {
-        this.env = env;
+        this.out = out;
     }
 
-    public String build()
+    public void printHeader()
     {
-        final StringBuilder str = new StringBuilder();
-        str.append( "\n" ).append( BANNER ).append( "\n" );
-        str.append( " # " ).append( PRODUCT ).append( " " ).append( VERSION ).append( "\n" );
-        str.append( " # " ).append( getFormattedJvmInfo() ).append( "\n" );
-        str.append( " # " ).append( getFormattedOsInfo() ).append( "\n" );
-        str.append( " # Install directory is " ).append( getFormattedDir( this.env.getInstallDir() ) ).append( "\n" );
-        str.append( " # Home directory is " ).append( getFormattedDir( this.env.getHomeDir() ) ).append( "\n" );
-        return str.toString();
+        this.out.println( BANNER );
+        this.out.println( " # " + PRODUCT + " " + VERSION );
+        this.out.println( " # " + getFormattedJvmInfo() );
+        this.out.println( " # " + getFormattedOsInfo() );
+    }
+
+    public void printEnvironment( final Environment env )
+    {
+        this.out.println( " # Install directory is " + env.getInstallDir() );
+        this.out.println( " # Home directory is " + env.getHomeDir() );
     }
 
     private String getFormattedJvmInfo()
