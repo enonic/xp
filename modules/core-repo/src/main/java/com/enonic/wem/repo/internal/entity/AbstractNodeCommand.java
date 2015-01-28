@@ -51,6 +51,21 @@ abstract class AbstractNodeCommand
         this.queryService = builder.queryService;
     }
 
+    void updateNodeMetadata( final Node node )
+    {
+        StoreNodeCommand.create().
+            node( node ).
+            updateMetadataOnly( true ).
+            indexService( this.indexService ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            queryService( this.queryService ).
+            build().
+            execute();
+    }
+
+
     void doStoreNode( final Node node )
     {
         StoreNodeCommand.create().

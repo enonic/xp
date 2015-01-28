@@ -8,6 +8,7 @@ import org.elasticsearch.search.sort.SortOrder;
 
 import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.repository.RepositoryId;
@@ -51,7 +52,7 @@ class AbstractVersionsCommand
 
         if ( searchResults.isEmpty() )
         {
-            throw new RuntimeException( "Did not find version entry with id: " + id );
+            throw new NodeNotFoundException( "Did not find version entry with id: " + id );
         }
         return searchResults;
     }

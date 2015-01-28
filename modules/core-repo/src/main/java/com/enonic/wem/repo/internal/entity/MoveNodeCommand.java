@@ -64,6 +64,7 @@ public class MoveNodeCommand
     protected Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id, boolean checkExistingNode )
     {
         final Node persistedNode = doGetById( id, true );
+
         NodeName nodeName = ( newNodeName != null ) ? newNodeName : persistedNode.name();
 
         if ( checkExistingNode )
@@ -87,17 +88,23 @@ public class MoveNodeCommand
             checkExistingNode = false;
         }
 
-        final Instant now = Instant.now();
-
         final Node movedNode = Node.newNode( persistedNode ).
             name( nodeName ).
             parentPath( newParentPath ).
-            modifiedTime( now ).
+            modifiedTime( Instant.now() ).
             modifier( getCurrentPrincipalKey() ).
             indexConfigDocument( persistedNode.getIndexConfigDocument() ).
             build();
 
-        doStoreNode( movedNode );
+        // The node that is moved must be updated
+        if ( movedNode.id().equals( this.nodeId ) )
+        {
+            doStoreNode( movedNode );
+        }
+        else
+        {
+            updateNodeMetadata( movedNode );
+        }
 
         if ( persistedNode.getHasChildren() )
         {

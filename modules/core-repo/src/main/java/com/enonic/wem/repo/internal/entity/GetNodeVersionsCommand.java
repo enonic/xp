@@ -1,13 +1,15 @@
 package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.repo.internal.version.GetVersionsQuery;
-import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.repo.internal.version.GetVersionsQuery;
+import com.enonic.wem.repo.internal.version.VersionService;
 
 public class GetNodeVersionsCommand
 {
+    private final static int DEFAULT_SIZE = 10;
+
     private final NodeId nodeId;
 
     private final int from;
@@ -46,7 +48,7 @@ public class GetNodeVersionsCommand
 
         private int from;
 
-        private int size;
+        private int size = DEFAULT_SIZE;
 
         private VersionService versionService;
 

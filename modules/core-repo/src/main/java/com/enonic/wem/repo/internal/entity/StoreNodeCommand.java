@@ -16,30 +16,42 @@ public class StoreNodeCommand
 {
     private final Node node;
 
+    private final boolean updateMetadataOnly;
+
     private StoreNodeCommand( final Builder builder )
     {
         super( builder );
-        node = builder.node;
+        this.node = builder.node;
+        this.updateMetadataOnly = builder.updateMetadataOnly;
     }
 
     public void execute()
     {
-        final NodeVersionId updatedNodeVersionId = nodeDao.store( node );
-
         final Context context = ContextAccessor.current();
 
-        this.versionService.store( NodeVersionDocument.create().
-            nodeId( node.id() ).
-            nodeVersionId( updatedNodeVersionId ).
-            nodePath( node.path() ).
-            build(), context.getRepositoryId() );
+        final NodeVersionId nodeVersionId;
+
+        if ( !updateMetadataOnly )
+        {
+            nodeVersionId = nodeDao.store( node );
+
+            this.versionService.store( NodeVersionDocument.create().
+                nodeId( node.id() ).
+                nodeVersionId( nodeVersionId ).
+                nodePath( node.path() ).
+                build(), context.getRepositoryId() );
+        }
+        else
+        {
+            nodeVersionId = this.queryService.get( node.id(), IndexContext.from( context ) );
+        }
 
         this.workspaceService.store( StoreWorkspaceDocument.create().
             node( node ).
-            nodeVersionId( updatedNodeVersionId ).
+            nodeVersionId( nodeVersionId ).
             build(), WorkspaceContext.from( context ) );
 
-        this.indexService.store( node, updatedNodeVersionId, IndexContext.from( context ) );
+        this.indexService.store( node, nodeVersionId, IndexContext.from( context ) );
     }
 
     public static Builder create()
@@ -53,6 +65,8 @@ public class StoreNodeCommand
     {
         private Node node;
 
+        private boolean updateMetadataOnly = false;
+
         private Builder()
         {
         }
@@ -60,6 +74,12 @@ public class StoreNodeCommand
         public Builder node( Node node )
         {
             this.node = node;
+            return this;
+        }
+
+        public Builder updateMetadataOnly( final boolean updateMetadataOnly )
+        {
+            this.updateMetadataOnly = updateMetadataOnly;
             return this;
         }
 

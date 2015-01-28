@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.entity;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.MoveNodeException;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
@@ -141,6 +142,7 @@ public class MoveNodeCommandTest
         assertNotNull( getNodeById( equalNode.id() ) );
     }
 
+
     @Test
     public void move_to_new_parent()
         throws Exception
@@ -208,6 +210,12 @@ public class MoveNodeCommandTest
             setNodeId( NodeId.from( "newparent" ) ).
             build() );
 
+        printVersionIndex();
+
+        assertEquals( 1, getVersions( node ).getHits() );
+        assertEquals( 1, getVersions( child1 ).getHits() );
+        assertEquals( 1, getVersions( child2 ).getHits() );
+
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
@@ -219,6 +227,12 @@ public class MoveNodeCommandTest
             build().
             execute();
 
+        printVersionIndex();
+
+        assertEquals( 2, getVersions( node ).getHits() );
+        assertEquals( 1, getVersions( child1 ).getHits() );
+        assertEquals( 1, getVersions( child2 ).getHits() );
+
         final Node movedNode = getNodeById( node.id() );
         final Node movedChild1 = getNodeById( child1.id() );
         final Node movedChild2 = getNodeById( child2.id() );
@@ -229,6 +243,15 @@ public class MoveNodeCommandTest
         assertEquals( movedNode.path(), movedChild2.parentPath() );
         assertEquals( movedChild1.path(), movedChild1_1.parentPath() );
 
+    }
+
+    private FindNodeVersionsResult getVersions( final Node node )
+    {
+        return GetNodeVersionsCommand.create().
+            nodeId( node.id() ).
+            versionService( this.versionService ).
+            build().
+            execute();
     }
 
 }
