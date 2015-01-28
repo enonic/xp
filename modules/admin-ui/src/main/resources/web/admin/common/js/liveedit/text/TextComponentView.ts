@@ -140,7 +140,6 @@ module api.liveedit.text {
 
                 if (!this.editor) {
                     this.editor = this.createEditor();
-                    this.editor.onHideToolbar = this.processChanges.bind(this);
                 }
 
                 this.editor.activate();
@@ -157,7 +156,7 @@ module api.liveedit.text {
         }
 
         private createEditor(): MediumEditorType {
-            return new MediumEditor([this.article.getHTMLElement()], {
+            var editor = new MediumEditor([this.article.getHTMLElement()], {
                 buttons: ['bold', 'italic', 'underline', 'strikethrough',
                     'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull',
                     'anchor',
@@ -165,12 +164,34 @@ module api.liveedit.text {
                     'orderedlist', 'unorderedlist',
                     'quote'
                 ],
+                buttonLabels: {
+                    'bold': '<i class="icon-bold"></i>',
+                    'italic': '<i class="icon-italic"></i>',
+                    'underline': '<i class="icon-underline"></i>',
+                    'strikethrough': '<i class="icon-strikethrough"></i>',
+                    'justifyCenter': '<i class="icon-justify-center"></i>',
+                    'justifyFull': '<i class="icon-justify-full"></i>',
+                    'justifyLeft': '<i class="icon-justify-left"></i>',
+                    'justifyRight': '<i class="icon-justify-right"></i>',
+                    'anchor': '<i class="icon-anchor"></i>',
+                    'header1': '<i class="icon-header1"></i>',
+                    'header2': '<i class="icon-header2"></i>',
+                    'orderedlist': '<i class="icon-ordered-list"></i>',
+                    'unorderedlist': '<i class="icon-unordered-list"></i>',
+                    'quote': '<i class="icon-quote"></i>'
+                },
                 cleanPastedHTML: true,
                 targetBlank: true,
                 placeholder: '',
                 firstHeader: 'h1',
                 secondHeader: 'h2'
             });
+
+            editor.onHideToolbar = this.processChanges.bind(this);
+            editor.onShowToolbar = () => {
+
+            };
+            return editor;
         }
 
         private selectText() {
