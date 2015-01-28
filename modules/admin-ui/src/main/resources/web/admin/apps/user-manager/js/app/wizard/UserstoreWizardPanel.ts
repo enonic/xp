@@ -98,6 +98,10 @@ module app.wizard {
             });
         }
 
+        getUserItemType(): string {
+            return "User Store";
+        }
+
         getUserStoreWizardHeader(): WizardHeaderWithDisplayNameAndName {
             return this.wizardHeader;
         }

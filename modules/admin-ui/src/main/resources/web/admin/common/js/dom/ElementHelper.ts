@@ -85,6 +85,11 @@ module api.dom {
             return this.el.innerHTML;
         }
 
+        setText(value: string): ElementHelper {
+            wemjq(this.el).text(value);
+            return this;
+        }
+
         getText(): string {
             return this.el.innerText || this.el.textContent;
         }

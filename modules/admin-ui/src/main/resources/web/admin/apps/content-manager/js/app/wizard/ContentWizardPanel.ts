@@ -238,6 +238,10 @@ module app.wizard {
             });
         }
 
+        getContentType(): ContentType {
+            return this.contentType;
+        }
+
         giveInitialFocus() {
 
             console.log("ContentWizardPanel.giveInitialFocus");

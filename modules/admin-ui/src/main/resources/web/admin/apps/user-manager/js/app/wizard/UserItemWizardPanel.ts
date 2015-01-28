@@ -65,6 +65,10 @@ module app.wizard {
             });
         }
 
+        getUserItemType(): string {
+            throw new Error("Must be implemented by inheritors");
+        }
+
         giveInitialFocus() {
             this.wizardHeader.giveFocus();
             this.startRememberFocus();

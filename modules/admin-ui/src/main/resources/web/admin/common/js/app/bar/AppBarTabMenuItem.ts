@@ -61,6 +61,11 @@ module api.app.bar {
             return this;
         }
 
+        setMarkInvalid(markInvalid: boolean): AppBarTabMenuItemBuilder {
+            super.setMarkInvalid(markInvalid);
+            return this;
+        }
+
         build(): AppBarTabMenuItem {
             return new AppBarTabMenuItem(this);
         }
