@@ -2,6 +2,7 @@ module app.wizard {
 
     import PropertyTree = api.data.PropertyTree;
     import FormView = api.form.FormView;
+    import FormContextBuilder = api.form.FormContextBuilder;
     import ContentFormContext = api.content.form.ContentFormContext;
     import Content = api.content.Content;
     import ContentBuilder = api.content.ContentBuilder;
@@ -523,25 +524,39 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private produceCreateContentRequest(): CreateContentRequest {
+        private produceCreateContentRequest(): wemQ.Promise<CreateContentRequest> {
+
+            var deferred = wemQ.defer<CreateContentRequest>();
 
             var parentPath = this.parentContent != null ? this.parentContent.getPath() : api.content.ContentPath.ROOT;
 
-            if (this.contentType.isImage()) {
-                // TODO: Check on all media types?
-                return null;
+            if (this.contentType.getContentTypeName().isMedia()) {
+                deferred.resolve(null);
             }
             else {
+
+                var formContext = new FormContextBuilder().setShowEmptyFormItemSetOccurrences(true).build();
+                var form = this.contentType.getForm();
                 var data = new PropertyTree();
-                return new CreateContentRequest().
-                    setDraft(this.persistAsDraft).
-                    setName(api.content.ContentUnnamed.newUnnamed()).
-                    setParent(parentPath).
-                    setContentType(this.contentType.getContentTypeName()).
-                    setDisplayName(this.contentWizardHeader.getDisplayName()).
-                    setData(data).
-                    setMetadata([]);
+                var formView = new FormView(formContext, form, data.getRoot());
+                formView.layout().then(() => {
+
+                    deferred.resolve(new CreateContentRequest().
+                        setDraft(this.persistAsDraft).
+                        setName(api.content.ContentUnnamed.newUnnamed()).
+                        setParent(parentPath).
+                        setContentType(this.contentType.getContentTypeName()).
+                        setDisplayName(this.contentWizardHeader.getDisplayName()).
+                        setData(data).
+                        setMetadata([]));
+
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
+
             }
+
+            return deferred.promise;
         }
 
         updatePersistedItem(): wemQ.Promise<Content> {

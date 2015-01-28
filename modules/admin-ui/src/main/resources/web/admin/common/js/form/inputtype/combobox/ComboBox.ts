@@ -34,7 +34,7 @@ module api.form.inputtype.combobox {
         }
 
         availableSizeChanged() {
-            console.log("ComboBox.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
+            // console.log("ComboBox.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
         }
 
         getValueType(): ValueType {

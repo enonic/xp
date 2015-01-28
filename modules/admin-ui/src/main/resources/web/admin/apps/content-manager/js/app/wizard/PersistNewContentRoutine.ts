@@ -1,5 +1,8 @@
 module app.wizard {
 
+    import CreateContentRequest = api.content.CreateContentRequest;
+    import Content = api.content.Content;
+
     export class PersistedNewContentRoutineContext {
 
         content: api.content.Content = null;
@@ -7,7 +10,7 @@ module app.wizard {
 
     export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,PersistedNewContentRoutineContext> {
 
-        private createContentRequestProducer: {() : api.content.CreateContentRequest; };
+        private createContentRequestProducer: {() : wemQ.Promise<CreateContentRequest>; };
 
         private doneHandledContent = false;
 
@@ -15,18 +18,18 @@ module app.wizard {
             super(thisOfProducer);
         }
 
-        public setCreateContentRequestProducer(producer: {() : api.content.CreateContentRequest; }): PersistNewContentRoutine {
+        public setCreateContentRequestProducer(producer: {() : wemQ.Promise<CreateContentRequest>; }): PersistNewContentRoutine {
             this.createContentRequestProducer = producer;
             return this;
         }
 
-        public execute(): wemQ.Promise<api.content.Content> {
+        public execute(): wemQ.Promise<Content> {
 
             var context = new PersistedNewContentRoutineContext();
             return this.doExecute(context);
         }
 
-        doExecuteNext(context: PersistedNewContentRoutineContext): wemQ.Promise<api.content.Content> {
+        doExecuteNext(context: PersistedNewContentRoutineContext): wemQ.Promise<Content> {
 
             if (!this.doneHandledContent) {
 
@@ -48,17 +51,18 @@ module app.wizard {
             if (this.createContentRequestProducer != undefined) {
 
                 return this.createContentRequestProducer.call(this.getThisOfProducer()).
-                    sendAndParse().
-                    then((content: api.content.Content): void => {
+                    then((createContentRequest: CreateContentRequest) => {
 
-                        context.content = content;
+                        return createContentRequest.sendAndParse().
+                            then((content: Content): void => {
 
+                                context.content = content;
+
+                            });
                     });
             }
             else {
-                var deferred = wemQ.defer<void>();
-                deferred.resolve(null)
-                return deferred.promise;
+                return api.util.PromiseHelper.newResolvedVoidPromise();
             }
         }
     }
