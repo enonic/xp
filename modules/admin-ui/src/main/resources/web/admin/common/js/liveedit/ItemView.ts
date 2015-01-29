@@ -401,21 +401,21 @@ module api.liveedit {
             }
         }
 
-        showContextMenu(position?: Position, showOnTop?: boolean) {
+        showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
             if (!this.contextMenu) {
                 this.contextMenu = new api.liveedit.ItemViewContextMenu(this.contextMenuTitle, this.contextMenuActions);
             }
             var dimensions = this.getElementDimensions();
             var x, y;
 
-            if (position) {
+            if (clickPosition) {
                 // show menu at position
-                x = position.x;
-                y = position.y;
+                x = clickPosition.x;
+                y = clickPosition.y;
             } else {
                 // show menu below if empty or on top
                 x = dimensions.left + dimensions.width / 2;
-                y = dimensions.top + (showOnTop ? 0 : dimensions.height);
+                y = dimensions.top + (ItemViewContextMenuPosition.TOP == menuPosition ? 0 : dimensions.height);
             }
             this.contextMenu.showAt(x, y);
         }
@@ -458,10 +458,10 @@ module api.liveedit {
             return this.getEl().hasAttribute('data-live-edit-selected');
         }
 
-        select(clickPosition?: Position, tooltipOnTop?: boolean ) {
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition ) {
             this.getEl().setData("live-edit-selected", "true");
             this.hideTooltip();
-            this.showContextMenu(clickPosition, tooltipOnTop);
+            this.showContextMenu(clickPosition, menuPosition);
 
             if (this.isEmpty()) {
                 this.selectPlaceholder();

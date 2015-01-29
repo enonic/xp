@@ -52,7 +52,7 @@ module api.liveedit {
                 var parentView: ItemView = this.getParentItemView();
                 if (parentView) {
                     this.deselect();
-                    parentView.select(null, true);
+                    parentView.select(null, ItemViewContextMenuPosition.TOP);
                 }
             }));
             actions.push(new api.ui.Action('Insert').onExecuted(() => {
@@ -80,8 +80,8 @@ module api.liveedit {
             return this.parentPartComponentView;
         }
 
-        select(clickPosition?: Position, tooltipOnTop?: boolean) {
-            super.select(clickPosition, tooltipOnTop);
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+            super.select(clickPosition, menuPosition);
         }
     }
 }
