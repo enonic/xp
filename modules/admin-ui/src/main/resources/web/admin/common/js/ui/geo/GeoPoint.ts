@@ -11,9 +11,6 @@ module api.ui.geo {
             this.geoLocationInput.getEl().setAttribute("title", "geo location").addClass("geo-point-input");
 
             this.layoutItems();
-            this.onShown((event) => {
-                this.geoLocationInput.giveFocus();
-            })
         }
 
         private layoutItems() {
@@ -42,10 +39,8 @@ module api.ui.geo {
 
         }
 
-        getGeoPoint1(): string {
-            return this.geoLocationInput.getValue();
+        giveFocus(): boolean {
+            return this.geoLocationInput.giveFocus();
         }
-
-
     }
 }

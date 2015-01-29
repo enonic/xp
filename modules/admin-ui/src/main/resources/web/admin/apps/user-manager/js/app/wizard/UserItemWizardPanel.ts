@@ -65,15 +65,12 @@ module app.wizard {
             });
         }
 
+        getUserItemType(): string {
+            throw new Error("Must be implemented by inheritors");
+        }
+
         giveInitialFocus() {
-            var newWithoutDisplayCameScript = this.isLayingOutNew();
-
-            if (newWithoutDisplayCameScript) {
-                this.wizardHeader.giveFocus();
-            } else if (!this.wizardHeader.giveFocus()) {
-                this.wizardHeader.giveFocus();
-            }
-
+            this.wizardHeader.giveFocus();
             this.startRememberFocus();
         }
 

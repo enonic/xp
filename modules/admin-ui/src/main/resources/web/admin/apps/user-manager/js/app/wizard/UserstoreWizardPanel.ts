@@ -98,19 +98,16 @@ module app.wizard {
             });
         }
 
+        getUserItemType(): string {
+            return "User Store";
+        }
+
         getUserStoreWizardHeader(): WizardHeaderWithDisplayNameAndName {
             return this.wizardHeader;
         }
 
         giveInitialFocus() {
-            var newWithoutDisplayCameScript = this.isLayingOutNew();
-
-            if (newWithoutDisplayCameScript) {
-                this.wizardHeader.giveFocus();
-            } else if (!this.wizardHeader.giveFocus()) {
-                this.wizardHeader.giveFocus();
-            }
-
+            this.wizardHeader.giveFocus();
             this.startRememberFocus();
         }
 

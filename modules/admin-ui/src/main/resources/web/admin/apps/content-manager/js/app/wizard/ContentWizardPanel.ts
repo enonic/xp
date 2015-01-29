@@ -243,20 +243,20 @@ module app.wizard {
             });
         }
 
+        getContentType(): ContentType {
+            return this.contentType;
+        }
+
         giveInitialFocus() {
 
             console.log("ContentWizardPanel.giveInitialFocus");
-            var newWithoutDisplayCameScript = this.isLayingOutNew() && !this.contentType.hasContentDisplayNameScript();
-            var displayNameEmpty = this.isLayingOutNew() || api.util.StringHelper.isEmpty(this.getPersistedItem().getDisplayName());
-            var editWithEmptyDisplayName = !this.isLayingOutNew() && displayNameEmpty && !this.contentType.hasContentDisplayNameScript();
-
-            if (newWithoutDisplayCameScript || editWithEmptyDisplayName) {
-                this.contentWizardHeader.giveFocus();
-            } else {
+            if (this.contentType.hasContentDisplayNameScript()) {
                 if (!this.contentWizardStepForm.giveFocus()) {
                     console.log("ContentWizardPanel.giveInitialFocus() WARNING: Failed to give focus to contentWizardStepForm");
                     this.contentWizardHeader.giveFocus();
                 }
+            } else {
+                this.contentWizardHeader.giveFocus();
             }
 
             this.startRememberFocus();
