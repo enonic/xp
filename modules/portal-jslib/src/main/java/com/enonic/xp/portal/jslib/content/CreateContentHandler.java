@@ -47,7 +47,7 @@ public final class CreateContentHandler
         params.name( req.param( "name" ).value( String.class ) );
         params.parent( contentPath( req.param( "parentPath" ).value( String.class ) ) );
         params.displayName( req.param( "displayName" ).value( String.class ) );
-        params.draft( req.param( "draft" ).value( Boolean.class ) );
+        params.requireValid( !req.param( "draft" ).value( Boolean.class ) );
         params.type( contentTypeName( req.param( "contentType" ).value( String.class ) ) );
         params.contentData( propertyTree( req.param( "data" ).map() ) );
         params.metadata( metaDataList( req.param( "meta" ).map() ) );

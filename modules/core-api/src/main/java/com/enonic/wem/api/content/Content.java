@@ -26,7 +26,7 @@ import com.enonic.wem.api.thumb.Thumbnail;
 public class Content
     implements Renderable
 {
-    private final boolean draft;
+    private final boolean valid;
 
     private final String displayName;
 
@@ -87,7 +87,7 @@ public class Content
             builder.type = ContentTypeName.unstructured();
         }
 
-        this.draft = builder.draft;
+        this.valid = builder.valid;
         this.displayName = builder.displayName;
         this.type = builder.type;
         this.name = builder.name;
@@ -136,9 +136,9 @@ public class Content
         return this.name;
     }
 
-    public boolean isDraft()
+    public boolean isValid()
     {
-        return draft;
+        return valid;
     }
 
     public String getDisplayName()
@@ -298,7 +298,7 @@ public class Content
             Objects.equals( parentPath, other.parentPath ) &&
             Objects.equals( displayName, other.displayName ) &&
             Objects.equals( type, other.type ) &&
-            Objects.equals( draft, other.draft ) &&
+            Objects.equals( valid, other.valid ) &&
             Objects.equals( modifier, other.modifier ) &&
             Objects.equals( creator, other.creator ) &&
             Objects.equals( owner, other.owner ) &&
@@ -320,7 +320,7 @@ public class Content
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, name, parentPath, displayName, type, draft, modifier, creator, owner, createdTime, modifiedTime,
+        return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
                              hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, metadata, page, owner,
                              language );
     }
@@ -386,7 +386,7 @@ public class Content
 
         protected Page page;
 
-        protected boolean draft;
+        protected boolean valid;
 
         protected ContentPath parentPath;
 
@@ -436,7 +436,7 @@ public class Content
         {
 
             this.id = source.id;
-            this.draft = source.draft;
+            this.valid = source.valid;
             this.parentPath = source.parentPath;
             this.name = source.name;
             this.type = source.type;
@@ -489,9 +489,9 @@ public class Content
             return this;
         }
 
-        public Builder<BUILDER, C> draft( final boolean draft )
+        public Builder<BUILDER, C> validated( final boolean validated )
         {
-            this.draft = draft;
+            this.valid = validated;
             return this;
         }
 

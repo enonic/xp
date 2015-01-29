@@ -99,7 +99,7 @@ public final class ModifyContentHandler
         final Boolean draft = Converters.convert( map.get( "draft" ), Boolean.class );
         if ( draft != null )
         {
-            target.draft = draft;
+            target.validated = draft;
         }
 
         final Object data = map.get( "data" );

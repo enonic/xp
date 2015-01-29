@@ -10,7 +10,7 @@ var expectedJson = {
             "moduleKey": "mymodule"
         }
     },
-    "draft": false,
+    "draft": true,
     "hasChildren": false,
     "isPageTemplate": false,
     "isSite": true,

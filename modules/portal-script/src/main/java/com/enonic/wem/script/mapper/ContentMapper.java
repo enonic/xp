@@ -35,7 +35,7 @@ public final class ContentMapper
         gen.value( "type", value.getType() );
         gen.value( "displayName", value.getDisplayName() );
         gen.value( "hasChildren", value.hasChildren() );
-        gen.value( "draft", value.isDraft() );
+        gen.value( "draft", !value.isValid() );
         gen.value( "isPageTemplate", value.isPageTemplate() );
         gen.value( "isSite", value.isSite() );
 

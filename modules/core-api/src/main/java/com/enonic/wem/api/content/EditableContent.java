@@ -21,7 +21,7 @@ public class EditableContent
 
     public Page page;
 
-    public boolean draft;
+    public boolean validated;
 
     public Thumbnail thumbnail;
 
@@ -40,7 +40,7 @@ public class EditableContent
         this.data = source.getData().copy();
         this.metadata = source.getAllMetadata().copy();
         this.page = source.hasPage() ? source.getPage().copy() : null;
-        this.draft = source.isDraft();
+        this.validated = source.isValid();
         this.thumbnail = source.getThumbnail();
         this.inheritPermissions = source.inheritsPermissions();
         this.permissions = source.getPermissions();
@@ -55,7 +55,7 @@ public class EditableContent
         builder.data( data );
         builder.metadata( metadata );
         builder.page( page );
-        builder.draft( draft );
+        builder.validated( validated );
         builder.thumbnail( thumbnail );
         builder.inheritPermissions( inheritPermissions );
         builder.permissions( permissions );

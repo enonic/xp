@@ -26,7 +26,9 @@ public final class CreateContentParams
 
     private ContentPath parentContentPath;
 
-    private boolean draft;
+    private boolean requireValid;
+
+    private boolean valid;
 
     private CreateAttachments createAttachments = CreateAttachments.empty();
 
@@ -88,15 +90,9 @@ public final class CreateContentParams
         return this;
     }
 
-    public CreateContentParams draft()
+    public CreateContentParams requireValid( final boolean value )
     {
-        this.draft = true;
-        return this;
-    }
-
-    public CreateContentParams draft( final boolean value )
-    {
-        this.draft = value;
+        this.requireValid = value;
         return this;
     }
 
@@ -109,6 +105,12 @@ public final class CreateContentParams
     public CreateContentParams setInheritPermissions( final boolean inheritPermissions )
     {
         this.inheritPermissions = inheritPermissions;
+        return this;
+    }
+
+    public CreateContentParams valid( final boolean value )
+    {
+        this.valid = value;
         return this;
     }
 
@@ -152,9 +154,9 @@ public final class CreateContentParams
         return name;
     }
 
-    public boolean isDraft()
+    public boolean isRequireValid()
     {
-        return draft;
+        return requireValid;
     }
 
     public AccessControlList getPermissions()
@@ -167,12 +169,17 @@ public final class CreateContentParams
         return inheritPermissions;
     }
 
+    public boolean isValid()
+    {
+        return valid;
+    }
+
     public void validate()
     {
         Preconditions.checkNotNull( parentContentPath, "parentContentPath cannot be null" );
         Preconditions.checkArgument( parentContentPath.isAbsolute(), "parentContentPath must be absolute: " + parentContentPath );
         Preconditions.checkNotNull( data, "data cannot be null" );
-        Preconditions.checkArgument( draft || this.parentContentPath != null, "parentContentPath cannot be null" );
+        Preconditions.checkArgument( requireValid || this.parentContentPath != null, "parentContentPath cannot be null" );
         Preconditions.checkNotNull( displayName, "displayName cannot be null" );
         Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
         Preconditions.checkNotNull( type, "type cannot be null" );

@@ -45,7 +45,7 @@ public class CreateContentHandlerTest
         builder.name( params.getName() );
         builder.parentPath( params.getParent() );
         builder.displayName( params.getDisplayName() );
-        builder.draft( params.isDraft() );
+        builder.validated( params.isRequireValid() );
         builder.type( params.getType() );
         builder.data( params.getData() );
 

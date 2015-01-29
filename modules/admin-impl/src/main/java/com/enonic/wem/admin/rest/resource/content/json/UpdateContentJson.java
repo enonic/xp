@@ -44,12 +44,12 @@ public final class UpdateContentJson
         final Metadatas metadatas = parseMetadata( metadataJsonList );
 
         this.updateContentParams = new UpdateContentParams().
+            requireValid( !Boolean.valueOf( draft ) ).
             contentId( ContentId.from( contentId ) ).
             modifier( PrincipalKey.ofAnonymous() ).
             editor( edit -> {
                 edit.data = contentData;
                 edit.metadata = metadatas;
-                edit.draft = Boolean.valueOf( draft );
                 edit.displayName = displayName;
                 edit.owner = StringUtils.isNotEmpty( owner ) ? PrincipalKey.from( owner ) : null;
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;

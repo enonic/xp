@@ -56,10 +56,7 @@ final class CreateContentCommand
             throw new IllegalArgumentException( "Cannot create content with an abstract type [" + params.getType().toString() + "]" );
         }
 
-        if ( !params.isDraft() )
-        {
-            validateContentData( params );
-        }
+        params.valid( checkIsValid( params ) );
 
         final CreateContentParams handledParams = new ProxyContentProcessor( mediaInfo ).processCreate( params );
 
@@ -79,7 +76,7 @@ final class CreateContentCommand
         return translator.fromNode( createdNode );
     }
 
-    private void validateContentData( final CreateContentParams contentParams )
+    private boolean checkIsValid( final CreateContentParams contentParams )
     {
         final DataValidationErrors dataValidationErrors = validate( contentParams.getType(), contentParams.getData() );
 
@@ -89,8 +86,17 @@ final class CreateContentCommand
         }
         if ( dataValidationErrors.hasErrors() )
         {
-            throw new ContentDataValidationException( dataValidationErrors.getFirst().getErrorMessage() );
+            if ( params.isRequireValid() )
+            {
+                throw new ContentDataValidationException( dataValidationErrors.getFirst().getErrorMessage() );
+            }
+            else
+            {
+                return false;
+            }
         }
+
+        return true;
     }
 
     static Builder create()

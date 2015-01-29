@@ -63,7 +63,7 @@ final class CreateMediaCommand
         final CreateContentParams createContentParams = new CreateContentParams().
             name( params.getName() ).
             parent( params.getParent() ).
-            draft( false ).
+            requireValid( true ).
             type( type ).
             displayName( params.getName() ).
             contentData( data ).

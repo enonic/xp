@@ -118,7 +118,8 @@ public class ContentServiceImpl
             parent( params.getParentContentPath() ).
             name( params.getName() ).
             displayName( params.getDisplayName() ).
-            contentData( data ).draft( params.isDraft() );
+            contentData( data ).
+            requireValid( params.isRequireValid() );
 
         final Site site = (Site) CreateContentCommand.create().
             nodeService( this.nodeService ).
@@ -135,7 +136,7 @@ public class ContentServiceImpl
             name( TEMPLATES_FOLDER_NAME ).
             parent( site.getPath() ).
             type( ContentTypeName.templateFolder() ).
-            draft( false ).
+            requireValid( true ).
             contentData( new PropertyTree() ) );
 
         return site;
@@ -170,7 +171,7 @@ public class ContentServiceImpl
                 name( TEMPLATES_FOLDER_NAME ).
                 parent( content.getPath() ).
                 type( ContentTypeName.templateFolder() ).
-                draft( false ).
+                requireValid( true ).
                 contentData( new PropertyTree() ) );
         }
 

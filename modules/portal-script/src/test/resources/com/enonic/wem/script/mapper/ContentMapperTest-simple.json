@@ -9,7 +9,7 @@
   "type": "system:unstructured",
   "displayName": "My Content",
   "hasChildren": false,
-  "draft": false,
+  "draft": true,
   "isPageTemplate": false,
   "isSite": false,
   "data": {

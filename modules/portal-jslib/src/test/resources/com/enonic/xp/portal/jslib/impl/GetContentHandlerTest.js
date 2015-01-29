@@ -34,7 +34,7 @@ var expectedJson = {
         "xml": "<xml><my-xml hello='world'/></xml>"
     },
     "displayName": "My Content",
-    "draft": false,
+    "draft": true,
     "hasChildren": false,
     "isPageTemplate": false,
     "isSite": false,

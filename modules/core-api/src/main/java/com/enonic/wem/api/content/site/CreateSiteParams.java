@@ -18,7 +18,7 @@ public final class CreateSiteParams
 
     private ModuleConfigs moduleConfigs;
 
-    private boolean draft;
+    private boolean requireValid = true;
 
     public CreateSiteParams parent( final ContentPath parentContentPath )
     {
@@ -57,9 +57,9 @@ public final class CreateSiteParams
         return this;
     }
 
-    public CreateSiteParams draft()
+    public CreateSiteParams requireValid()
     {
-        this.draft = true;
+        this.requireValid = true;
         return this;
     }
 
@@ -88,8 +88,8 @@ public final class CreateSiteParams
         return moduleConfigs;
     }
 
-    public boolean isDraft()
+    public boolean isRequireValid()
     {
-        return draft;
+        return requireValid;
     }
 }

@@ -14,7 +14,7 @@ class ContentPropertyNames
 
     public static final String DISPLAY_NAME = "displayName";
 
-    public static final String DRAFT = "draft";
+    public static final String VALIDATED = "validated";
 
     public static final String METADATA = "metadata";
 

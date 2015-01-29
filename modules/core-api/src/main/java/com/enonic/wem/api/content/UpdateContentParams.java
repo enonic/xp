@@ -15,6 +15,10 @@ public final class UpdateContentParams
 
     private CreateAttachments createAttachments = null;
 
+    private boolean requireValid;
+
+    private boolean valid;
+
     public UpdateContentParams editor( final ContentEditor editor )
     {
         this.editor = editor;
@@ -36,6 +40,18 @@ public final class UpdateContentParams
     public UpdateContentParams createAttachments( final CreateAttachments value )
     {
         this.createAttachments = value;
+        return this;
+    }
+
+    public UpdateContentParams requireValid( final boolean value )
+    {
+        this.requireValid = value;
+        return this;
+    }
+
+    public UpdateContentParams valid( final boolean value )
+    {
+        this.valid = value;
         return this;
     }
 
@@ -64,5 +80,15 @@ public final class UpdateContentParams
     public CreateAttachments getCreateAttachments()
     {
         return createAttachments;
+    }
+
+    public boolean isRequireValid()
+    {
+        return requireValid;
+    }
+
+    public boolean isValid()
+    {
+        return valid;
     }
 }

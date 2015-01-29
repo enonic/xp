@@ -34,7 +34,7 @@ public final class CreateContentJson
     {
 
         this.createContent = new CreateContentParams();
-        this.createContent.draft( Boolean.valueOf( draft ) );
+        this.createContent.requireValid( !Boolean.valueOf( draft ) );
         this.createContent.name( ContentName.from( name ) );
         this.createContent.displayName( displayName );
         this.createContent.parent( ContentPath.from( parent ) );

@@ -65,9 +65,12 @@ final class UpdateContentCommand
             return contentBeforeChange;
         }
 
-        validateEditedContent( editedContent );
+        final boolean validated = validateEditedContent( editedContent );
 
-        editedContent = Content.newContent( editedContent ).modifier( this.params.getModifier() ).build();
+        editedContent = Content.newContent( editedContent ).
+            modifier( this.params.getModifier() ).
+            validated( validated ).
+            build();
 
         final ProcessUpdateResult processUpdateResult =
             proxyProcessor.processEdit( contentBeforeChange.getType(), params, params.getCreateAttachments() );
@@ -104,26 +107,28 @@ final class UpdateContentCommand
         return editableContent.build();
     }
 
-    private void validateEditedContent( final Content edited )
+    private boolean validateEditedContent( final Content edited )
     {
-        if ( !edited.isDraft() )
-        {
-            validateContentData( edited );
-        }
-    }
-
-    private void validateContentData( final Content modifiedContent )
-    {
-        final DataValidationErrors dataValidationErrors = validate( modifiedContent.getType(), modifiedContent.getData() );
+        final DataValidationErrors dataValidationErrors = validate( edited.getType(), edited.getData() );
 
         for ( DataValidationError error : dataValidationErrors )
         {
             LOG.info( "*** DataValidationError: " + error.getErrorMessage() );
         }
+
         if ( dataValidationErrors.hasErrors() )
         {
-            throw new ContentDataValidationException( dataValidationErrors.getFirst().getErrorMessage() );
+            if ( this.params.isRequireValid() )
+            {
+                throw new ContentDataValidationException( dataValidationErrors.getFirst().getErrorMessage() );
+            }
+            else
+            {
+                return false;
+            }
         }
+
+        return true;
     }
 
     private Thumbnail resolveMediaThumbnail( final Content content )

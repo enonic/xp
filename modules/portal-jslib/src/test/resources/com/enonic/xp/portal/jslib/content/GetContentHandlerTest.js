@@ -18,7 +18,7 @@ var expectedJson = {
         }]
     },
     "displayName": "My Content",
-    "draft": false,
+    "draft": true,
     "hasChildren": false,
     "isPageTemplate": false,
     "isSite": false,

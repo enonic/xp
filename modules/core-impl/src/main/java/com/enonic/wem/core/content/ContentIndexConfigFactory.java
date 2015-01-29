@@ -10,12 +10,12 @@ import com.enonic.wem.api.index.PatternIndexConfigDocument;
 
 import static com.enonic.wem.core.content.ContentPropertyNames.ATTACHMENT;
 import static com.enonic.wem.core.content.ContentPropertyNames.DATA;
-import static com.enonic.wem.core.content.ContentPropertyNames.DRAFT;
 import static com.enonic.wem.core.content.ContentPropertyNames.FORM;
 import static com.enonic.wem.core.content.ContentPropertyNames.METADATA;
 import static com.enonic.wem.core.content.ContentPropertyNames.PAGE;
 import static com.enonic.wem.core.content.ContentPropertyNames.SITE;
 import static com.enonic.wem.core.content.ContentPropertyNames.TYPE;
+import static com.enonic.wem.core.content.ContentPropertyNames.VALIDATED;
 
 class ContentIndexConfigFactory
 {
@@ -35,7 +35,7 @@ class ContentIndexConfigFactory
             analyzer( ContentConstants.CONTENT_DEFAULT_ANALYZER ).
             add( PAGE, IndexConfig.NONE ).
             add( SITE, IndexConfig.NONE ).
-            add( DRAFT, IndexConfig.NONE ).
+            add( VALIDATED, IndexConfig.NONE ).
             add( FORM, IndexConfig.NONE ).
             add( DATA, IndexConfig.BY_TYPE ).
             add( TYPE, IndexConfig.MINIMAL ).

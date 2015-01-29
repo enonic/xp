@@ -112,7 +112,7 @@ public class ContentSummaryJson
 
     public boolean getIsDraft()
     {
-        return content.isDraft();
+        return !content.isValid();
     }
 
     public ChildOrderJson getChildOrder()
