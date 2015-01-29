@@ -40,6 +40,14 @@ module api.liveedit.text {
             this.onDblClicked(this.handleDbClick.bind(this));
 
             // ItemView is not managing tooltip for text component
+            this.listenToTooltipEvents();
+        }
+
+        isManagingTooltip(): boolean {
+            return true;
+        }
+
+        private listenToTooltipEvents() {
             this.onMouseOverView(() => {
                 if (!this.isEditMode()) {
                     this.showTooltip();
@@ -133,7 +141,7 @@ module api.liveedit.text {
 
             this.toggleClass('edit-mode', flag);
             this.article.getEl().setAttribute('contenteditable', flag.toString());
-            this.setDraggableEnabled(!flag);
+            this.setDraggable(!flag);
 
             if (flag) {
                 this.hideTooltip();
@@ -151,16 +159,13 @@ module api.liveedit.text {
             }
         }
 
-        private setDraggableEnabled(enabled: boolean = true) {
-            wemjq(RegionItemType.get().getConfig().getCssSelector()).sortable(enabled ? 'enable' : 'disable');
-        }
-
         private createEditor(): MediumEditorType {
+            var headersExtension = new MediumHeadersDropdownExtension();
             var editor = new MediumEditor([this.article.getHTMLElement()], {
                 buttons: ['bold', 'italic', 'underline', 'strikethrough',
                     'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull',
                     'anchor',
-                    'header1', 'header2',
+                    'headers',
                     'orderedlist', 'unorderedlist',
                     'quote'
                 ],
@@ -184,12 +189,19 @@ module api.liveedit.text {
                 targetBlank: true,
                 placeholder: '',
                 firstHeader: 'h1',
-                secondHeader: 'h2'
+                secondHeader: 'h2',
+                extensions: {
+                    'headers': headersExtension
+                }
             });
+            headersExtension.setEditor(editor);
 
-            editor.onHideToolbar = this.processChanges.bind(this);
+            editor.onHideToolbar = () => {
+                this.processChanges();
+                headersExtension.onHideToolbar();
+            };
             editor.onShowToolbar = () => {
-
+                headersExtension.onShowToolbar();
             };
             return editor;
         }

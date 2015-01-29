@@ -30,10 +30,11 @@ module app {
 
         addWizardPanel(tabMenuItem: AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<Content>) {
             super.addWizardPanel(tabMenuItem, wizardPanel);
-
             wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() == "displayName") {
-                    tabMenuItem.setLabel(<string>event.getNewValue());
+                if (event.getPropertyName() === "displayName") {
+                    var contentType = (<app.wizard.ContentWizardPanel>wizardPanel).getContentType(),
+                        name = <string>event.getNewValue() || "<Unnamed " + contentType.getDisplayName()  + ">";
+                    tabMenuItem.setLabel(name, !<string>event.getNewValue());
                 }
             });
         }
@@ -126,7 +127,8 @@ module app {
 
                 contentWizardPanelFactory.setCreateSite(newContentEvent.getContentType().isSite());
                 contentWizardPanelFactory.createForNew().then((wizard: app.wizard.ContentWizardPanel) => {
-                    tabMenuItem = new AppBarTabMenuItemBuilder().setLabel("[New " + contentTypeSummary.getDisplayName() + "]").
+                    tabMenuItem = new AppBarTabMenuItemBuilder().
+                        setLabel("<New " + contentTypeSummary.getDisplayName() + ">").
                         setTabId(tabId).
                         setCloseAction(wizard.getCloseAction()).
                         build();
@@ -170,7 +172,13 @@ module app {
                                 this.getAppBarTabMenu().removeNavigationItem(closeViewPanelMenuItem);
                                 this.removePanelByIndex(closeViewPanelMenuItem.getIndex());
                             }
-                            tabMenuItem = new AppBarTabMenuItemBuilder().setLabel(content.getDisplayName()).
+
+                            var contentType = (<app.wizard.ContentWizardPanel>wizard).getContentType(),
+                                name = content.getDisplayName() || "<Unnamed " + contentType.getDisplayName()  + ">";
+
+                            tabMenuItem = new AppBarTabMenuItemBuilder().
+                                setLabel(name).
+                                setMarkInvalid(!content.getDisplayName()).
                                 setTabId(tabId).
                                 setEditing(true).
                                 setCloseAction(wizard.getCloseAction()).
@@ -207,10 +215,20 @@ module app {
                 } else {
                     var tabId = AppBarTabId.forView(content.getId());
                     var contentItemViewPanel = new app.view.ContentItemViewPanel();
-                    tabMenuItem = new AppBarTabMenuItemBuilder().setLabel(content.getDisplayName()).
+
+                    tabMenuItem = new AppBarTabMenuItemBuilder().
+                        setLabel(content.getDisplayName()).
                         setTabId(tabId).
                         setCloseAction(contentItemViewPanel.getCloseAction()).
                         build();
+
+                    if (!content.getDisplayName()) {
+                        new api.schema.content.GetContentTypeByNameRequest(content.getType()).
+                            sendAndParse().
+                            then((contentType: api.schema.content.ContentType) => {
+                                tabMenuItem.setLabel("<Unnamed " + contentType.getDisplayName() + ">", true);
+                            }).done();
+                    }
 
                     var contentItem = new api.app.view.ViewItem(content)
                         .setDisplayName(content.getDisplayName())

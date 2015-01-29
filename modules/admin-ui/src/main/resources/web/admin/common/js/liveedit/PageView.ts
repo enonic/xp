@@ -100,20 +100,7 @@ module api.liveedit {
             this.setTooltipObject(builder.liveEditModel.getContent());
             this.parseItemViews();
 
-            var textEditToolbar = new api.dom.DivEl('text-edit-toolbar');
-            var wrapper = new api.dom.DivEl('wrapper');
-            wrapper.setHtml('Text Edit Mode');
-            var closeButton = new api.ui.button.CloseButton('no-bg');
-            closeButton.onClicked((event: MouseEvent) => {
-                event.stopPropagation();
-                event.preventDefault();
-
-                new StopTextEditModeEvent().fire();
-                this.setTextEditMode(false);
-            });
-            wrapper.appendChild(closeButton);
-            textEditToolbar.appendChild(wrapper);
-            this.appendChild(textEditToolbar);
+            this.appendChild(this.createTextModeToolbar());
 
             this.refreshEmptyState();
 
@@ -131,6 +118,54 @@ module api.liveedit {
             });
 
             this.listenToTextModeEvents();
+
+            this.listenToTooltipEvents();
+        }
+
+        isManagingTooltip(): boolean {
+            return true;
+        }
+
+        private listenToTooltipEvents() {
+            this.onMouseOverView(() => {
+                if (!this.isTextEditMode()) {
+                    this.showTooltip();
+                }
+            });
+            this.onMouseLeaveView(() => {
+                if (!this.isTextEditMode()) {
+                    this.hideTooltip();
+                }
+            });
+        }
+
+        handleClick(event: MouseEvent) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            if (this.isTextEditMode()) {
+                new StopTextEditModeEvent().fire();
+                this.setTextEditMode(false);
+            } else {
+                super.handleClick(event);
+            }
+        }
+
+        private createTextModeToolbar() {
+            var toolbar = new api.dom.DivEl('text-edit-toolbar');
+            var wrapper = new api.dom.DivEl('wrapper');
+            wrapper.setHtml('Text Edit Mode');
+            var closeButton = new api.ui.button.CloseButton('no-bg');
+            closeButton.onClicked((event: MouseEvent) => {
+                event.stopPropagation();
+                event.preventDefault();
+
+                new StopTextEditModeEvent().fire();
+                this.setTextEditMode(false);
+            });
+            wrapper.appendChild(closeButton);
+            toolbar.appendChild(wrapper);
+            return toolbar;
         }
 
         private listenToTextModeEvents() {
@@ -168,11 +203,11 @@ module api.liveedit {
 
             var textView: api.liveedit.text.TextComponentView;
             textItemViews.forEach((view: ItemView) => {
-                textView = (<api.liveedit.text.TextComponentView> view);
+                textView = <api.liveedit.text.TextComponentView> view;
                 if (textView.isEditMode() != flag) {
                     textView.setEditMode(flag);
                 }
-            })
+            });
         }
 
         isEmpty(): boolean {

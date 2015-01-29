@@ -39,7 +39,7 @@ module api.app.wizard {
             this.displayNameProgrammaticallySet = this.displayNameGenerator != null;
 
             this.displayNameEl = api.ui.text.AutosizeTextInput.large().setName('displayName');
-            this.displayNameEl.setPlaceholder("Display Name");
+            this.displayNameEl.setPlaceholder("<Display Name>");
             this.displayNameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 this.notifyPropertyChanged("displayName", event.getOldValue(), event.getNewValue());
             });
@@ -50,7 +50,7 @@ module api.app.wizard {
             this.appendChild(this.pathEl);
 
             this.nameEl = api.ui.text.AutosizeTextInput.middle().setName('name').setForbiddenCharsRe(this.forbiddenChars);
-            this.nameEl.setPlaceholder("name");
+            this.nameEl.setPlaceholder("<name>");
             this.nameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 this.notifyPropertyChanged("name", event.getOldValue(), event.getNewValue());
             });

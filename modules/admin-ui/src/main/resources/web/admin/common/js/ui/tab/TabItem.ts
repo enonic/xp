@@ -29,7 +29,7 @@ module api.ui.tab {
             this.labelEl = new api.dom.SpanEl('label');
             this.appendChild(this.labelEl);
 
-            this.setLabel(builder.label);
+            this.setLabel(builder.label, builder.markInvalid);
 
             this.closeAction = builder.closeAction;
 
@@ -63,15 +63,20 @@ module api.ui.tab {
             return this.index;
         }
 
-        setLabel(newValue: string) {
+        setLabel(newValue: string, markInvalid: boolean = false) {
             if (this.label == newValue) {
                 return;
             }
 
             var oldValue = this.label;
             this.label = newValue;
-            this.labelEl.getEl().setInnerHtml(newValue);
+            this.labelEl.getEl().setText(newValue);
             this.labelEl.getEl().setAttribute('title', newValue);
+            if (markInvalid) {
+                this.addClass("invalid");
+            } else {
+                this.removeClass("invalid");
+            }
             this.notifyLabelChangedListeners(newValue, oldValue);
         }
 
@@ -159,6 +164,8 @@ module api.ui.tab {
 
         closeButtonEnabled: boolean;
 
+        markInvalid: boolean;
+
         setLabel(label: string): TabItemBuilder {
             this.label = label;
             return this;
@@ -171,6 +178,11 @@ module api.ui.tab {
 
         setCloseButtonEnabled(enabled: boolean): TabItemBuilder {
             this.closeButtonEnabled = enabled;
+            return this;
+        }
+
+        setMarkInvalid(markInvalid: boolean): TabItemBuilder {
+            this.markInvalid = markInvalid;
             return this;
         }
 

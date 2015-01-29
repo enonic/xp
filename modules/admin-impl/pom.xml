@@ -79,7 +79,7 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Import-Package>
+            <!--Import-Package>
               !com.fasterxml.jackson.module.jaxb,
               !javax.portlet,
               *
@@ -88,7 +88,10 @@
             <Embed-Dependency>
               jackson-jaxrs-*,
               commons-fileupload;scope=compile
-            </Embed-Dependency>
+            </Embed-Dependency-->
+            <Import-Package>
+              *
+            </Import-Package>
           </instructions>
         </configuration>
       </plugin>

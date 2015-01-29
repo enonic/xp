@@ -37,7 +37,7 @@ public final class JaxRsDispatcher
         throws Exception
     {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader( getClass().getClassLoader() );
+        Thread.currentThread().setContextClassLoader( ServletContainerDispatcher.class.getClassLoader() );
 
         try
         {

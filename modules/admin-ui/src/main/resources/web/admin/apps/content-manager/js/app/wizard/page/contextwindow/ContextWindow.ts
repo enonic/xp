@@ -73,7 +73,7 @@ module app.wizard.page.contextwindow {
 
             this.appendChild(this.splitter);
             this.addItem("Insert", this.insertablesPanel);
-            this.addItem("Settings", this.inspectionsPanel);
+            this.addItem("Inspect", this.inspectionsPanel);
             this.addItem("Emulator", this.emulatorPanel);
 
             this.onRendered(() => this.initializeResizable());

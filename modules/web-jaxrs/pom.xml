@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -21,14 +22,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-jaxrs</artifactId>
-      <version>3.0.8.Final</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>jaxrs-api</artifactId>
-      <version>3.0.8.Final</version>
+      <groupId>com.enonic.osgi.bundles</groupId>
+      <artifactId>resteasy</artifactId>
+      <version>3.0.8_1</version>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>
@@ -62,18 +58,8 @@
         <configuration>
           <instructions>
             <Import-Package>
-              *;resolution:=optional
+              *
             </Import-Package>
-            <_exportcontents>
-              com.enonic.xp.web.jaxrs2,
-              javax.ws.rs.*;version=2.0,
-              javax.annotation.security.*;version=1.2
-            </_exportcontents>
-            <Embed-Dependency>
-              resteasy-jaxrs,
-              jaxrs-api,
-              javax.annotation-api
-            </Embed-Dependency>
           </instructions>
         </configuration>
       </plugin>

@@ -237,6 +237,9 @@ module api.ui.time {
             return Array(pad - String(value).length + 1).join('0') + value;
         }
 
+        giveFocus(): boolean {
+            return this.input.giveFocus();
+        }
     }
 
 }

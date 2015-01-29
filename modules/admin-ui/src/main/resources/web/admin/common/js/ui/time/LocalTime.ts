@@ -16,10 +16,6 @@ module api.ui.time {
 
 
             this.layoutItems();
-
-            this.onShown((event) => {
-                this.timePicker.giveFocus();
-            })
         }
 
         private layoutItems() {
@@ -41,11 +37,8 @@ module api.ui.time {
             return this;
         }
 
-        getSelectedTime(): {hour: number; minute: number} {
-
-            return this.timePicker.getSelectedTime();
-
-
+        giveFocus(): boolean {
+            return this.timePicker.giveFocus();
         }
     }
 }

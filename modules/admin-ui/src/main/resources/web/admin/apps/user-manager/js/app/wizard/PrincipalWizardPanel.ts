@@ -110,6 +110,19 @@ module app.wizard {
 
         }
 
+        getUserItemType(): string {
+            switch (this.principalType) {
+                case PrincipalType.USER:
+                    return "User";
+                case PrincipalType.GROUP:
+                    return "Group";
+                case PrincipalType.ROLE:
+                    return "Role";
+                default:
+                    return "";
+            }
+        }
+
         isParentOfSameType(): boolean {
             return this.parentOfSameType;
         }
@@ -127,14 +140,7 @@ module app.wizard {
         }
 
         giveInitialFocus() {
-            var newWithoutDisplayCameScript = this.isLayingOutNew();
-
-            if (newWithoutDisplayCameScript) {
-                this.wizardHeader.giveFocus();
-            } else if (!this.wizardHeader.giveFocus()) {
-                this.wizardHeader.giveFocus();
-            }
-
+            this.wizardHeader.giveFocus();
             this.startRememberFocus();
         }
 

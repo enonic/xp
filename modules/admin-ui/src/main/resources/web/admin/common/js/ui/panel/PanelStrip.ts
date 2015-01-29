@@ -30,14 +30,27 @@ module api.ui.panel {
             })
         }
 
-        addPanel(panel: Panel, header?: string): number {
+        private countExistingChildren(index: number): number {
+            var count = Math.min(this.panels.length, index);
+            for (var i = 0; i < Math.min(this.headers.length, index); i++) {
+                if(this.headers[i]) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        insertPanel(panel: Panel, index: number, header?: string ): number {
             panel.setDoOffset(false);
+            var previousChildrenIndex = this.countExistingChildren(index);
             if (header) {
                 var headerEl = new api.dom.H2El("panel-strip-panel-header");
                 headerEl.getEl().setInnerHtml(header);
                 headerEl.setVisible(false);
-                this.appendChild(headerEl);
+                this.insertChild(headerEl, previousChildrenIndex);
             }
+            this.panels.splice(index, 0, panel);
+            this.headers.splice(index, 0, headerEl);
 
             panel.onShown((event: api.dom.ElementShownEvent) => {
                 var panel = <Panel>event.getElement();
@@ -50,11 +63,12 @@ module api.ui.panel {
                     }
                 }
             });
+            if (header) {
+                this.insertChild(panel, previousChildrenIndex + 1);
+            } else {
+                this.insertChild(panel, previousChildrenIndex);
+            }
 
-
-            this.appendChild(panel);
-            var index = this.panels.push(panel) - 1;
-            this.headers.push(headerEl);
             if (this.isVisible()) {
                 this.updateLastPanelHeight();
             }
@@ -106,7 +120,9 @@ module api.ui.panel {
                 return -1;
             }
             this.removeChild(panelToRemove);
+            this.removeChild(this.getHeader(index));
             this.panels.splice(index, 1);
+            this.headers.splice(index, 1);
 
             if (this.isEmpty()) {
                 this.panelShown = null;
@@ -172,7 +188,6 @@ module api.ui.panel {
         }
 
         showPanelByIndex(index: number) {
-
             var panelToShow = this.getPanel(index);
             if (panelToShow == null) {
                 return;

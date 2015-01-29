@@ -48,6 +48,10 @@ module api.schema.mixin {
             return true;
         }
 
+        toForm(): api.form.Form {
+            return new api.form.FormBuilder().addFormItems(this.formItems).build();
+        }
+
         static fromJson(json: api.schema.mixin.MixinJson): Mixin {
             return new MixinBuilder().fromMixinJson(json).build();
         }

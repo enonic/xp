@@ -35,6 +35,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     var CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR: string = '[data-context-window-draggable="true"]';
 
+    var ITEM_NOT_DRAGGABLE_SELECTOR: string = '.not-draggable';
+
     var SORTABLE_ITEMS_SELECTOR: string = createSortableItemsSelector();
 
     var _isDragging: boolean = false;
@@ -56,8 +58,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         wemjq(REGION_SELECTOR).sortable(enabled ? 'enabled' : 'disable');
     }
 
-    export function cancelDragDrop(selector: string) {
-        wemjq(REGION_SELECTOR).sortable('option', 'cancel', selector);
+    export function refreshSortable(): void {
+        wemjq(REGION_SELECTOR).sortable('refresh');
     }
 
     export function createSortableLayout(component: api.liveedit.ItemView) {
@@ -70,6 +72,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
         wemjq(selector).sortable({
             revert: false,
+            cancel: ITEM_NOT_DRAGGABLE_SELECTOR,
             connectWith: REGION_SELECTOR,
             items: SORTABLE_ITEMS_SELECTOR,
             distance: 20,
@@ -421,10 +424,6 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         var scrollSensitivity = Math.round(height / 8);
         scrollSensitivity = Math.max(20, Math.min(scrollSensitivity, 100));
         return scrollSensitivity
-    }
-
-    export function refreshSortable(): void {
-        wemjq(REGION_SELECTOR).sortable('refresh');
     }
 
 }

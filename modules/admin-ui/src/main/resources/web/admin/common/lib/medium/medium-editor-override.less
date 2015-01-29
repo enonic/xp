@@ -1,10 +1,11 @@
 @medium-editor-toolbar-opacity: 0.9;
 
-.medium-editor-toolbar, .medium-editor-anchor-preview {
+.medium-editor-anchor-preview {
   z-index: @z-index-medium-editor;
 }
 
 .medium-editor-toolbar {
+  z-index: @z-index-medium-editor;
   max-width: 322px;
 
   background-color: rgba(36, 36, 36, @medium-editor-toolbar-opacity);
@@ -12,6 +13,25 @@
 
   border: 1px solid rgba(36, 36, 36, @medium-editor-toolbar-opacity);
   box-shadow: 0 0 3px rgba(36, 36, 36, @medium-editor-toolbar-opacity);
+
+  // dropdown buttons
+  ul li ul {
+    position: absolute;
+    top: 80px;
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    width: 40px;
+
+    background-color: rgba(36, 36, 36, @medium-editor-toolbar-opacity);
+    background: linear-gradient(bottom, #242424, rgba(36, 36, 36, @medium-editor-toolbar-opacity));
+  }
+
+  ul li:hover ul {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+  }
 
   li button {
     min-width: 40px;
@@ -37,6 +57,14 @@
 
     .icon-header2:after {
       content: "H2";
+    }
+
+    .icon-header3:after {
+      content: "H3";
+    }
+
+    .icon-header4:after {
+      content: "H4";
     }
 
     .icon-justify-center {
@@ -96,6 +124,11 @@
 
     .icon-quote {
       .icon-quotes-left();
+      .button-icon;
+    }
+
+    .icon-headers {
+      .icon-font-size();
       .button-icon;
     }
 

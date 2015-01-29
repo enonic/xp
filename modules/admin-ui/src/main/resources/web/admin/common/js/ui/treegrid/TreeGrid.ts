@@ -387,7 +387,7 @@ module api.ui.treegrid {
                 to = Math.min(lastVisible + this.loadBufferSize, lastIndex);
 
             for (var i = from; i <= to; i++) {
-                if (this.gridData.getItem(i).getDataId() === "") {
+                if (!!this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === "") {
                     //emptyNode = this.gridData.getItem(i);
                     this.loadEmptyNode(this.gridData.getItem(i));
                     break;

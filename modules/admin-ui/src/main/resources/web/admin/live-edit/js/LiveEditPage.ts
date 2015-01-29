@@ -49,9 +49,6 @@ module LiveEdit {
                 var liveEditModel = event.getLiveEditModel();
 
                 var body = api.dom.Body.get().loadExistingChildren();
-                //body.traverse( (el: api.dom.Element) => {
-                //el.setDraggable(false);
-                //});
 
                 this.pageView = new PageViewBuilder().
                     setItemViewProducer(new ItemViewIdProducer()).
@@ -89,10 +86,19 @@ module LiveEdit {
             LiveEditPage.INSTANCE = this;
         }
 
+        private exitTextEditModeIfNeeded() {
+            if (this.pageView.isTextEditMode()) {
+                this.pageView.setTextEditMode(false);
+            }
+        }
+
         private registerGlobalListeners(): void {
 
             this.pageView.onItemViewAdded((event: api.liveedit.ItemViewAddedEvent) => {
                 this.setItemViewListeners(event.getView());
+
+                // adding anything should exit the text edit mode
+                this.exitTextEditModeIfNeeded();
             });
 
             ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => {
@@ -115,6 +121,9 @@ module LiveEdit {
                     }
                 }
 
+                // selecting anything should exit the text edit mode
+                this.exitTextEditModeIfNeeded();
+
                 this.highlighter.highlightItemView(component);
                 this.shader.shadeItemView(component);
                 this.cursor.displayItemViewCursor(component);
@@ -122,9 +131,6 @@ module LiveEdit {
             ItemViewDeselectEvent.on((event: ItemViewDeselectEvent) => {
                 this.highlighter.hide();
                 this.shader.hide();
-                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getItemView(), TextComponentView)) {
-                    LiveEdit.component.dragdropsort.DragDropSort.cancelDragDrop('');
-                }
             });
             ComponentResetEvent.on((event: ComponentResetEvent) => {
                 LiveEdit.component.dragdropsort.DragDropSort.refreshSortable();
@@ -134,6 +140,9 @@ module LiveEdit {
                 this.highlighter.hide();
                 this.shader.hide();
                 this.cursor.hide();
+
+                // dragging anything should exit the text edit mode
+                this.exitTextEditModeIfNeeded();
             });
             DraggingComponentViewCompletedEvent.on(() => {
                 this.cursor.reset();
@@ -162,11 +171,13 @@ module LiveEdit {
                 if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
                     return;
                 }
-                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, api.liveedit.PageView) && itemView.isEmpty()) {
+                if (itemView.getType().equals(api.liveedit.PageItemType.get()) &&
+                    (itemView.isEmpty() || this.pageView.isTextEditMode())) {
+                    // don't show highlighter for page that is empty or in text edit mode
                     return;
                 }
 
-                if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, api.liveedit.text.TextComponentView) &&
+                if (itemView.getType().equals(api.liveedit.text.TextItemType.get()) &&
                     (<api.liveedit.text.TextComponentView> itemView).isEditMode()) {
                     // don't show highlighter for text component in edit mode
                     return;

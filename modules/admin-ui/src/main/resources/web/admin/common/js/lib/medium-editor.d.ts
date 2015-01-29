@@ -1,6 +1,15 @@
 // Type definitions for medium-editor.js
 // Project: https://github.com/daviferreira/medium-editor
 
+interface MediumEditorExtension {
+
+    onClick(e: MouseEvent): void;
+
+    getButton(): HTMLElement;
+
+    checkState(node: Element): void;
+}
+
 interface MediumEditorOptions {
     allowMultiParagraphSelection?: boolean; // true
     anchorInputPlaceholder?: string; //'Paste or type a link'
@@ -29,7 +38,7 @@ interface MediumEditorOptions {
     anchorTarget?: boolean; // false
     anchorButton?: boolean; // false
     anchorButtonClass?: string; //'btn'
-    extensions?: any; // {}
+    extensions?: {[buttonName:string]: MediumEditorExtension};
     activeButtonClass?: string; //'medium-editor-button-active'
     firstButtonClass?: string; //'medium-editor-button-first'
     lastButtonClass?: string; //'medium-editor-button-last'
@@ -42,6 +51,8 @@ interface MediumEditorType {
     deactivate(); // disables the editor
     activate(); // re-activates the editor
     serialize(); // returns a JSON object with elements contents
+
+    execAction(action: string, event: MouseEvent);
 
     onHideToolbar?: () => void;
     onShowToolbar?: () => void;

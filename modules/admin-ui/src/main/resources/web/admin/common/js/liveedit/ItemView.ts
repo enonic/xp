@@ -140,6 +140,8 @@ module api.liveedit {
             super(props);
             this.addClass("item-view");
 
+            this.setDraggable(true);
+
             this.mouseOver = false;
             this.mouseOverViewListeners = [];
             this.mouseOutViewListeners = [];
@@ -174,18 +176,31 @@ module api.liveedit {
             this.onContextMenu(this.handleClick.bind(this));
             this.onTouchStart(this.handleClick.bind(this));
 
-            // text component handles its tooltips itself because of the edit mode
-            this.onMouseOverView(() => {
-                if (!this.type.equals(api.liveedit.text.TextItemType.get())) {
+            if (!this.isManagingTooltip()) {
+                // default tooltip behaviour if view is not managing tooltip
+                this.onMouseOverView(() => {
                     this.showTooltip();
-                }
-            });
-            this.onMouseLeaveView(() => {
-                if (!this.type.equals(api.liveedit.text.TextItemType.get())) {
+                });
+                this.onMouseLeaveView(() => {
                     this.hideTooltip();
-                }
-            })
+                })
+            }
+        }
 
+        getPageView(): PageView {
+            var pageView = this;
+            while (!PageItemType.get().equals(this.parentItemView.getType())) {
+                pageView = pageView.parentItemView;
+            }
+            return <PageView> pageView;
+        }
+
+        /**
+         * Tells if the view wants to manage tooltips itself
+         * @returns {boolean}
+         */
+        isManagingTooltip(): boolean {
+            return false;
         }
 
         remove(): ItemView {
@@ -197,6 +212,12 @@ module api.liveedit {
             }
             super.remove();
             return this;
+        }
+
+        setDraggable(value: boolean) {
+            super.setDraggable(value);
+            // tells jquery drag n drop to ignore this draggable
+            this.toggleClass('not-draggable', !value);
         }
 
         scrollComponentIntoView(): void {
@@ -289,37 +310,6 @@ module api.liveedit {
                     view.notifyMouseLeaveView();
                 }
             });
-        }
-
-        handleMouseMove(event: MouseEvent) {
-
-            if (this.debug) {
-                console.group("mouse move [" + this.getId() + "]");
-            }
-
-            if (this.mouseOver) {
-                if (this.debug) {
-                    console.log('mouseOver = true, returning.');
-                    console.groupEnd();
-                }
-                return;
-            }
-
-            // Simulate mouse over if for some reason element still has no mouseOver
-            if (!this.mouseOver) {
-                if (this.debug) {
-                    console.warn('mouseOver = false, setting to true.')
-                }
-                this.manageParentsMouseOver();
-
-                // Turn on 'mouseOver' state for this element and notify it entered.
-                this.mouseOver = true;
-                this.notifyMouseOverView();
-            }
-
-            if (this.debug) {
-                console.groupEnd();
-            }
         }
 
         /**

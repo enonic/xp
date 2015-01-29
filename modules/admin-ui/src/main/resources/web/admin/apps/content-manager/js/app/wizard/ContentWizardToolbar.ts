@@ -28,7 +28,7 @@ module app.wizard {
             super.addAction(params.previewAction);
             super.addGreedySpacer();
 
-            this.cycleViewModeButton = new CycleButton(params.showSplitEditAction, params.showFormAction, params.showLiveEditAction);
+            this.cycleViewModeButton = new CycleButton(params.showSplitEditAction, params.showLiveEditAction, params.showFormAction);
 
             super.addElement(this.cycleViewModeButton);
             this.contextWindowToggler = new ContextWindowToggler();

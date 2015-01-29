@@ -6,6 +6,7 @@ module app {
     import UserTreeGridItem = app.browse.UserTreeGridItem;
     import UserItemsTreeGrid = app.browse.UserItemsTreeGrid;
     import UserTreeGridItemType = app.browse.UserTreeGridItemType;
+    import Principal = api.security.Principal;
     import PrincipalType = api.security.PrincipalType;
     import PrincipalKey = api.security.PrincipalKey;
     import UserStore = api.security.UserStore;
@@ -73,7 +74,13 @@ module app {
 
             wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() === "displayName") {
-                    tabMenuItem.setLabel(<string>event.getNewValue());
+                    var name = <string>event.getNewValue();
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(wizardPanel, app.wizard.UserStoreWizardPanel)) {
+                        name = name || "<Unnamed " + (<app.wizard.UserStoreWizardPanel>wizardPanel).getUserItemType()  + ">";
+                    } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizardPanel, app.wizard.PrincipalWizardPanel)) {
+                        name = name || "<Unnamed " + (<app.wizard.PrincipalWizardPanel>wizardPanel).getUserItemType()  + ">";
+                    }
+                    tabMenuItem.setLabel(name, !<string>event.getNewValue());
                 }
             });
         }
@@ -104,7 +111,7 @@ module app {
 
 
         private handleWizardCreated(wizard: UserItemWizardPanel<api.Equitable>, tabName: string) {
-            var tabMenuItem = new AppBarTabMenuItemBuilder().setLabel("[New " + tabName + "]").
+            var tabMenuItem = new AppBarTabMenuItemBuilder().setLabel("<New " + tabName + ">").
                 setTabId(wizard.getTabId()).
                 setCloseAction(wizard.getCloseAction()).
                 build();
@@ -122,7 +129,7 @@ module app {
                 displayName = (<api.security.Principal>wizard.getPersistedItem()).getDisplayName();
                 id = (<api.security.Principal>wizard.getPersistedItem()).getKey().getId();
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizard.getPersistedItem(), api.security.UserStore)) {
-                displayName = (<api.security.UserStore>wizard.getPersistedItem()).getDisplayName()
+                displayName = (<api.security.UserStore>wizard.getPersistedItem()).getDisplayName();
                 id = (<api.security.UserStore>wizard.getPersistedItem()).getKey().getId();
             }
 
@@ -179,7 +186,7 @@ module app {
                     principalPath = userItem.getPrincipal().getKey().toPath(true);
                     tabName = PrincipalType[principalType];
                     tabName = tabName[0] + tabName.slice(0).toUpperCase();
-                    // Roles does not have a userstore link
+                    // Roles does not have a UserStore link
                     if (userItem.getPrincipal().getType() !== PrincipalType.ROLE) {
                         userStoreRequest = new GetUserStoreByKeyRequest(userItem.getPrincipal().getKey().getUserStore()).sendAndParse();
                     }
@@ -284,15 +291,20 @@ module app {
             });
         }
 
-        private handlePrincipalNamedEvent(eventt: api.event.Event) {
-            var event = <api.security.PrincipalNamedEvent>eventt;
-            var wizard = event.getWizard(),
+        private handlePrincipalNamedEvent(event: api.event.Event) {
+            var e = <api.security.PrincipalNamedEvent>event;
+            var wizard = e.getWizard(),
                 tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
             // update tab id so that new wizard for the same content type can be created
-            var newTabId = api.app.bar.AppBarTabId.forEdit(event.getPrincipal().getKey().getId());
+            var newTabId = api.app.bar.AppBarTabId.forEdit(e.getPrincipal().getKey().getId());
             tabMenuItem.setTabId(newTabId);
             wizard.setTabId(newTabId);
-            this.getAppBarTabMenu().getNavigationItemById(newTabId).setLabel(event.getPrincipal().getDisplayName());
+
+            var name = e.getPrincipal().getDisplayName();
+            if (api.ObjectHelper.iFrameSafeInstanceOf(wizard, app.wizard.PrincipalWizardPanel)) {
+                name = name || "<Unnamed " + (<app.wizard.UserItemWizardPanel<Principal>>wizard).getUserItemType()  + ">";
+            }
+            this.getAppBarTabMenu().getNavigationItemById(newTabId).setLabel(name, !e.getPrincipal().getDisplayName());
         }
 
         private resolveTabMenuItemForUserItemBeingEditedOrViewed(userItem: UserTreeGridItem): AppBarTabMenuItem {
