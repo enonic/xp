@@ -451,7 +451,9 @@ module app.wizard {
                     if (this.liveFormPanel) {
 
                         if (!this.liveEditModel) {
-                            return this.initLiveEditModel(content, formContext).then(() => {
+                            var site = content.isSite() ? <Site>content : this.site;
+                            this.siteModel = new SiteModel(site);
+                            return this.initLiveEditModel(content, this.siteModel, formContext).then(() => {
                                 this.liveFormPanel.setModel(this.liveEditModel);
                                 this.liveFormPanel.loadPage();
                                 return wemQ(null);
@@ -561,14 +563,13 @@ module app.wizard {
                 }).done();
         }
 
-        private initLiveEditModel(content: Content, formContext: ContentFormContext): wemQ.Promise<void> {
-            this.siteModel = new SiteModel(<Site>content);
+        private initLiveEditModel(content: Content, siteModel: SiteModel, formContext: ContentFormContext): wemQ.Promise<void> {
             this.initSiteModelListeners();
             this.liveEditModel = LiveEditModel.create().
                 setParentContent(this.parentContent).
                 setContent(content).
                 setContentFormContext(formContext).
-                setSiteModel(this.siteModel).build();
+                setSiteModel(siteModel).build();
             return this.liveEditModel.init(this.defaultModels.getPageTemplate(), this.defaultModels.getPageDescriptor());
         }
 
