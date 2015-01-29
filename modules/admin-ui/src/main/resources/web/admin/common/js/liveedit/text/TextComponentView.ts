@@ -194,6 +194,12 @@ module api.liveedit.text {
                     'headers': headersExtension
                 }
             });
+            var checkActiveButtons = editor.checkActiveButtons.bind(editor);
+            editor.checkActiveButtons = () => {
+                headersExtension.beforeCheckState();
+                checkActiveButtons();
+                headersExtension.afterCheckState();
+            };
             headersExtension.setEditor(editor);
 
             editor.onHideToolbar = () => {

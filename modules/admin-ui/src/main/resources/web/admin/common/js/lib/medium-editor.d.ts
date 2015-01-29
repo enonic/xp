@@ -53,6 +53,7 @@ interface MediumEditorType {
     serialize(); // returns a JSON object with elements contents
 
     execAction(action: string, event: MouseEvent);
+    checkActiveButtons();
 
     onHideToolbar?: () => void;
     onShowToolbar?: () => void;

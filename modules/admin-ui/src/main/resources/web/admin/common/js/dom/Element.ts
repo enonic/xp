@@ -261,6 +261,10 @@ module api.dom {
             return this;
         }
 
+        getClass(): string {
+            return this.el.getClass();
+        }
+
         getId(): string {
             return this.el.getId();
         }
