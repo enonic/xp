@@ -70,6 +70,8 @@ module api.liveedit.text {
             var icon = new api.dom.IEl(iconClass);
             button.appendChild(icon);
             button.onClicked((event) => {
+                event.preventDefault();
+                event.stopPropagation();
                 // apply header action to selected text
                 this.editor.execAction('append-' + elementTag, event);
             });
