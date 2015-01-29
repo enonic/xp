@@ -12,7 +12,7 @@
     <feature>scr</feature>
     <feature>wem-base</feature>
 
-    <bundle start-level="50">mvn:com.google.guava/guava/16.0.1</bundle>
+    <bundle start-level="50">mvn:com.google.guava/guava/18.0</bundle>
     <bundle start-level="50">mvn:commons-lang/commons-lang/2.4</bundle>
     <bundle start-level="50">mvn:commons-io/commons-io/2.4</bundle>
     <bundle start-level="50">mvn:com.fasterxml.jackson.core/jackson-core/2.4.1</bundle>
