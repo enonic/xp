@@ -1,5 +1,10 @@
 module api.data {
 
+    import BinaryReference = api.util.BinaryReference;
+    import Reference = api.util.Reference;
+    import GeoPoint = api.util.GeoPoint;
+    import LocalTime = api.util.LocalTime;
+    
     /**
      * A Property has a [[name]] and a [[value]],
      * but also:
@@ -158,32 +163,52 @@ module api.data {
             return !this.value.isNull();
         }
 
+        getSet(): PropertySet {
+            return this.value.getPropertySet();
+        }
+
         getString(): string {
             return this.value.getString();
+        }
+
+        getLong(): number {
+            return this.value.getLong();
+        }
+
+        getDouble(): number {
+            return this.value.getDouble();
         }
 
         getBoolean(): boolean {
             return this.value.getBoolean();
         }
 
-        getDate(): Date {
-            return this.value.getDate();
+        getDateTime(): Date {
+            return this.value.getDateTime();
         }
 
-        getSet(): PropertySet {
-            return this.value.getPropertySet();
+        getLocalDate(): Date {
+            return this.value.getLocalDate();
         }
 
-        getGeoPoint(): api.util.GeoPoint {
-            return this.value.getGeoPoint();
+        getLocalDateTime(): Date {
+            return this.value.getLocalDateTime();
         }
 
-        getLocalTime(): api.util.LocalTime {
+        getLocalTime(): LocalTime {
             return this.value.getLocalTime();
         }
 
-        getReference(): api.util.Reference {
+        getGeoPoint(): GeoPoint {
+            return this.value.getGeoPoint();
+        }
+
+        getReference(): Reference {
             return this.value.getReference();
+        }
+
+        getBinaryReference(): BinaryReference {
+            return this.value.getBinaryReference();
         }
 
         equals(o: api.Equitable): boolean {

@@ -44,7 +44,7 @@ module api.data {
         }
 
         toJsonValue(value: Value): string {
-            return value.isNull() ? null : api.util.DateHelper.formatUTCDate(value.getDate());
+            return value.isNull() ? null : api.util.DateHelper.formatUTCDate(value.getLocalDate());
         }
 
         valueToString(value: Value): string {

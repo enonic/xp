@@ -7,6 +7,9 @@ module api.content.form.inputtype.time {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
 
+    /**
+     * Uses [[api.data.ValueType]] [[api.data.ValueTypeLocalDate]].
+     */
     export class Date extends support.BaseInputTypeNotManagingAdd<any,Date> {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
@@ -26,7 +29,7 @@ module api.content.form.inputtype.time {
             var datePickerBuilder = new api.ui.time.DatePickerBuilder();
 
             if (!property.hasNullValue()) {
-                var date = property.getDate();
+                var date = property.getLocalDate();
                 datePickerBuilder.
                     setSelectedDate(date).
                     setYear(date.getUTCFullYear()).
