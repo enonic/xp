@@ -125,6 +125,20 @@ module api.ui.text {
             });
         }
 
+        updateValidationStatusOnUserInput(isValid: boolean) {
+            if (isValid) {
+                this.removeClass("invalid");
+                if (!api.util.StringHelper.isEmpty(this.getValue())) {
+                    this.addClass("valid");
+                } else {
+                    this.removeClass("valid");
+                }
+            } else {
+                this.removeClass("valid");
+                this.addClass("invalid");
+            }
+        }
+
         private notifyValueChanged(oldValue: string, newValue: string) {
             this.valueChangedListeners.forEach((listener: (event: ValueChangedEvent)=>void) => {
                 listener.call(this, new ValueChangedEvent(oldValue, newValue));

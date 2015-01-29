@@ -40,5 +40,9 @@ module api.ui.time {
         giveFocus(): boolean {
             return this.timePicker.giveFocus();
         }
+
+        getTimePicker(): api.ui.time.TimePicker {
+            return this.timePicker;
+        }
     }
 }

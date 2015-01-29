@@ -37,8 +37,11 @@ module api.ui.time {
 
         private popupTrigger: api.ui.button.Button;
 
+        private validUserInput: boolean;
+
         constructor(builder: TimePickerBuilder) {
             super('time-picker');
+            this.validUserInput = true;
 
             this.input = api.ui.text.TextInput.middle();
             this.input.onClicked((e: MouseEvent) => {
@@ -48,15 +51,24 @@ module api.ui.time {
                 this.popup.show();
             });
 
+            this.input.onKeyDown((event: KeyboardEvent) => {
+                if (!api.ui.KeyHelper.isNumber(event) && !api.ui.KeyHelper.isBackspace(event) && !api.ui.KeyHelper.isDel(event) &&
+                    !api.ui.KeyHelper.isColon(event)) {
+
+                    event.preventDefault();
+                }
+            });
+
             this.input.onKeyUp((event: KeyboardEvent) => {
                 if (api.ui.KeyHelper.isNumber(event) ||
-                    api.ui.KeyHelper.isDash(event) ||
                     api.ui.KeyHelper.isBackspace(event) ||
-                    api.ui.KeyHelper.isDel(event)) {
+                                                        api.ui.KeyHelper.isDel(event) ||
+                                                        api.ui.KeyHelper.isColon(event)) {
 
                     var typedTime = this.input.getValue();
                     if (api.util.StringHelper.isEmpty(typedTime)) {
                         this.popup.setSelectedTime(null, null);
+                        this.validUserInput = true;
                         if (this.popup.isVisible()) {
                             this.popup.hide();
                         }
@@ -65,13 +77,17 @@ module api.ui.time {
                         if (parsedTime && parsedTime.length == 1) {
                             var splitTime = parsedTime[0].split(':');
                             this.popup.setSelectedTime(parseInt(splitTime[0]), parseInt(splitTime[1]));
+                            this.validUserInput = true;
                             if (!this.popup.isVisible()) {
                                 this.popup.show();
                             }
                         } else {
+                            this.validUserInput = false;
                             this.popup.setSelectedTime(null, null);
                         }
                     }
+
+                    this.updateInputStyling();
                 }
             });
 
@@ -109,9 +125,16 @@ module api.ui.time {
             this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
                 if (hours != null && minutes != null) {
                     this.input.setValue(this.formatTime(hours, minutes));
+                    this.validUserInput = true;
                 }
+
+                this.updateInputStyling();
             });
 
+        }
+
+        hasValidUserInput(): boolean {
+            return this.validUserInput;
         }
 
         getSelectedTime(): {hour: number; minute: number} {
@@ -132,6 +155,10 @@ module api.ui.time {
 
         private padNumber(value: number, pad: number): string {
             return Array(pad - String(value).length + 1).join('0') + value;
+        }
+
+        private updateInputStyling() {
+            this.input.updateValidationStatusOnUserInput(this.validUserInput);
         }
 
         giveFocus(): boolean {

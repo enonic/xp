@@ -1,6 +1,22 @@
+@available-color: #008424;
+
 .text-input {
   .input-border();
   .input-font();
+
+  &.form-input {
+    &.invalid {
+      .input-border(@admin-input-red);
+      .input-glow(@admin-input-red);
+
+    }
+
+    &.valid {
+      .input-border(@available-color);
+      .input-glow(@available-color);
+
+    }
+  }
   display: block;
   box-sizing: border-box;
   min-height: 30px;

@@ -38,6 +38,8 @@ module api.form.inputtype {
 
         displayValidationErrors(value: boolean);
 
+        hasValidUserInput() : boolean;
+
         validate(silent: boolean) : InputValidationRecording;
 
         onValidityChanged(listener: (event: InputValidityChangedEvent)=>void);

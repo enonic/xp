@@ -58,6 +58,10 @@ module api.form.inputtype.support {
 
         }
 
+        hasValidUserInput(): boolean {
+            return true;
+        }
+
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));

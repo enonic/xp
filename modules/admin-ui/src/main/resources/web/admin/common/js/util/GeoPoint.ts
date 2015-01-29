@@ -47,7 +47,7 @@ module api.util {
             }
 
             var indexOfComma = s.indexOf(',');
-            if (indexOfComma < 1) {
+            if (indexOfComma < 1 || s.split(',').length != 2) {
                 return false;
             }
             else if (indexOfComma == s.length - 1) {

@@ -43,6 +43,12 @@ module api.form.inputtype.text {
                    api.util.StringHelper.isBlank(value.getString());
         }
 
+        hasInputElementValidUserInput(inputElement: api.dom.Element) {
+
+            // TODO
+            return true;
+        }
+
         static getName(): api.form.InputTypeName {
             return new api.form.InputTypeName("TextArea", false);
         }

@@ -8,6 +8,7 @@ module api.form.inputtype {
 
         maximumOccurrencesReached():boolean;
 
+        hasInputElementValidUserInput(inputElement: api.dom.Element);
 
         onOccurrenceAdded(listener: (event: api.form.OccurrenceAddedEvent)=>void);
 

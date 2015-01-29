@@ -69,10 +69,13 @@ module api.ui.time {
 
         private selectedDate: Date;
 
+        private validUserInput: boolean;
+
         private selectedDateChangedListeners: {(event: SelectedDateChangedEvent) : void}[] = [];
 
         constructor(builder: DatePickerBuilder) {
             super('date-picker');
+            this.validUserInput = true;
 
             this.input = api.ui.text.TextInput.middle();
             this.input.onClicked((e: MouseEvent) => {
@@ -127,42 +130,68 @@ module api.ui.time {
                 this.selectedDate = e.getDate();
                 this.input.setValue(this.formatDate(e.getDate()));
                 this.notifySelectedDateChanged(e);
+                this.validUserInput = true;
+                this.updateInputStyling();
+            });
+
+            this.input.onKeyDown((event: KeyboardEvent) => {
+                if (!api.ui.KeyHelper.isNumber(event) && !api.ui.KeyHelper.isDash(event) && !api.ui.KeyHelper.isBackspace(event) &&
+                    !api.ui.KeyHelper.isDel(event)) {
+
+                    event.preventDefault();
+                }
             });
 
             this.input.onKeyUp((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isNumber(event) ||
+                    api.ui.KeyHelper.isDash(event) ||
+                    api.ui.KeyHelper.isBackspace(event) ||
+                    api.ui.KeyHelper.isDel(event)) {
 
-                var typedDate = this.input.getValue();
+                    var typedDate = this.input.getValue();
 
-                if (api.util.StringHelper.isEmpty(typedDate)) {
-                    this.calendar.selectDate(null);
-                    this.selectedDate = null;
-                    this.popup.hide();
-                    this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
-                }
-                else {
-                    var date = api.util.DateHelper.parseUTCDate(typedDate);
-                    if (date) {
-                        var correctlyTyped = api.util.DateHelper.formatUTCDate(date) == typedDate;
-                        if (correctlyTyped) {
-                            this.selectedDate = date;
-                            this.calendar.selectDate(date);
-                            this.notifySelectedDateChanged(new SelectedDateChangedEvent(date));
-                            if (!this.popup.isVisible()) {
-                                this.popup.show();
+                    if (api.util.StringHelper.isEmpty(typedDate)) {
+                        this.calendar.selectDate(null);
+                        this.selectedDate = null;
+                        this.validUserInput = true;
+                        this.popup.hide();
+                        this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
+                    }
+                    else {
+                        var date = api.util.DateHelper.parseUTCDate(typedDate);
+                        if (date) {
+                            var correctlyTyped = api.util.DateHelper.formatUTCDate(date) == typedDate;
+                            if (correctlyTyped) {
+                                this.selectedDate = date;
+                                this.validUserInput = true;
+                                this.calendar.selectDate(date);
+                                this.notifySelectedDateChanged(new SelectedDateChangedEvent(date));
+                                if (!this.popup.isVisible()) {
+                                    this.popup.show();
+                                }
+                            }
+                            else {
+                                this.selectedDate = null;
+                                this.validUserInput = false;
+                                this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
                             }
                         }
                         else {
                             this.selectedDate = null;
+                            this.validUserInput = false;
                             this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
                         }
                     }
-                    else {
-                        this.selectedDate = null;
-                        this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
-                    }
+
+                    this.updateInputStyling();
+
                 }
             });
 
+        }
+
+        hasValidUserInput(): boolean {
+            return this.validUserInput;
         }
 
         getSelectedDate(): Date {
@@ -187,6 +216,10 @@ module api.ui.time {
 
         private formatDate(date: Date): string {
             return api.util.DateHelper.formatUTCDate(date);
+        }
+
+        private updateInputStyling() {
+            this.input.updateValidationStatusOnUserInput(this.validUserInput);
         }
 
     }
