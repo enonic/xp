@@ -124,7 +124,7 @@ public class PageResourceTest
             id( ContentId.from( id ) ).
             path( ContentPath.from( "/" + name ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
-            validated( true ).
+            valid( true ).
             language( Locale.ENGLISH ).
             displayName( "My Content" ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).

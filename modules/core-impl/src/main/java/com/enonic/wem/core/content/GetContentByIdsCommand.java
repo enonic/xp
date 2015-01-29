@@ -15,7 +15,6 @@ import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.NoNodeWithIdFoundException;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
-import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.Nodes;
 
 
@@ -24,13 +23,10 @@ final class GetContentByIdsCommand
 {
     private final GetContentByIdsParams params;
 
-    private final NodeService nodeService;
-
     private GetContentByIdsCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.nodeService = builder.nodeService;
     }
 
     Contents execute()
@@ -83,28 +79,20 @@ final class GetContentByIdsCommand
     {
         private final GetContentByIdsParams params;
 
-        private NodeService nodeService;
-
         public Builder( final GetContentByIdsParams params )
         {
             this.params = params;
-        }
-
-        public Builder nodeService( final NodeService nodeService )
-        {
-            this.nodeService = nodeService;
-            return this;
         }
 
         void validate()
         {
             super.validate();
             Preconditions.checkNotNull( params );
-            Preconditions.checkNotNull( nodeService );
         }
 
         public GetContentByIdsCommand build()
         {
+            validate();
             return new GetContentByIdsCommand( this );
         }
     }

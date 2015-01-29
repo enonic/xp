@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import com.enonic.wem.api.content.PushContentException;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.exception.NotFoundException;
@@ -39,6 +40,11 @@ public final class JsonExceptionMapper
         }
 
         if ( cause instanceof IllegalArgumentException )
+        {
+            return toErrorInfo( cause, Response.Status.BAD_REQUEST.getStatusCode() );
+        }
+
+        if ( cause instanceof PushContentException )
         {
             return toErrorInfo( cause, Response.Status.BAD_REQUEST.getStatusCode() );
         }

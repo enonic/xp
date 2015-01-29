@@ -6,6 +6,10 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPublishedEvent;
+import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.FindContentByParentParams;
+import com.enonic.wem.api.content.FindContentByParentResult;
+import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.content.PushContentsResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
@@ -27,7 +31,9 @@ public class PushContentCommand
 
     private final boolean resolveDependencies;
 
-    private PushContentsResult.Builder resultBuilder;
+    private final PushContentsResult.Builder resultBuilder;
+
+    private final boolean includeChildren;
 
     private PushContentCommand( final Builder builder )
     {
@@ -36,11 +42,28 @@ public class PushContentCommand
         this.target = builder.target;
         this.strategy = builder.strategy;
         this.resolveDependencies = builder.resolveDependencies;
+        this.includeChildren = builder.includeChildren;
         this.resultBuilder = PushContentsResult.create();
+
     }
 
     PushContentsResult execute()
     {
+        final GetContentByIdsParams getContentParams = new GetContentByIdsParams( this.contentIds ).setGetChildrenIds( false );
+
+        final Contents contents = GetContentByIdsCommand.create( getContentParams ).
+            nodeService( this.nodeService ).
+            translator( this.translator ).
+            contentTypeService( this.contentTypeService ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+
+        if ( !ensureValidContents( contents ) )
+        {
+            return this.resultBuilder.build();
+        }
+
         if ( resolveDependencies )
         {
             pushWithDependencies();
@@ -51,6 +74,40 @@ public class PushContentCommand
         }
 
         return resultBuilder.build();
+    }
+
+    private boolean ensureValidContents( final Contents contents )
+    {
+        boolean allOk = true;
+
+        for ( final Content content : contents )
+        {
+            if ( !content.isValid() )
+            {
+                this.resultBuilder.addFailed( content, PushContentsResult.FailedReason.CONTENT_NOT_VALID );
+                allOk = false;
+            }
+
+            if ( this.includeChildren && content.hasChildren() )
+            {
+                final FindContentByParentResult result = FindContentByParentCommand.create( FindContentByParentParams.create().
+                    parentPath( content.getPath() ).
+                    build() ).
+                    translator( this.translator ).
+                    nodeService( this.nodeService ).
+                    contentTypeService( this.contentTypeService ).
+                    eventPublisher( this.eventPublisher ).
+                    build().
+                    execute();
+
+                if ( !ensureValidContents( result.getContents() ) )
+                {
+                    allOk = false;
+                }
+            }
+        }
+
+        return allOk;
     }
 
     private void pushWithoutDependencyResolve()
@@ -174,6 +231,8 @@ public class PushContentCommand
 
         private boolean resolveDependencies = true;
 
+        private boolean includeChildren = true;
+
         public Builder contentIds( final ContentIds contentIds )
         {
             this.contentIds = contentIds;
@@ -198,6 +257,12 @@ public class PushContentCommand
             return this;
         }
 
+        public Builder includeChildren( final boolean includeChildren )
+        {
+            this.includeChildren = includeChildren;
+            return this;
+        }
+
         void validate()
         {
             super.validate();
@@ -218,7 +283,5 @@ public class PushContentCommand
         IGNORE_CONFLICTS,
         ALLOW_PUBLISH_OUTSIDE_SELECTION,
         STRICT
-
     }
-
 }

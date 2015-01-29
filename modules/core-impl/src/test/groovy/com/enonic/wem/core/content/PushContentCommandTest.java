@@ -14,6 +14,7 @@ import com.enonic.wem.api.content.PushContentsResult;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.Nodes;
@@ -54,9 +55,12 @@ public class PushContentCommandTest
                 publishRequested( NodeId.from( "s2" ) ).
                 build() );
 
+        Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
+            thenReturn( Nodes.empty() );
+
         Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
-            thenReturn(
-                Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT ), createContent( "s2", "s2Name", ContentPath.ROOT ) ) );
+            thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
+                                       createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
         Mockito.when( nodeService.push( Mockito.any(), Mockito.any() ) ).thenReturn( PushNodesResult.create().
             addSuccess( createNode( "s1", "s1Name", "/content" ) ).
@@ -88,9 +92,12 @@ public class PushContentCommandTest
                 publishReferredFrom( NodeId.from( "s1" ), NodeId.from( "s2" ) ).
                 build() );
 
+        Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
+            thenReturn( Nodes.empty() );
+
         Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
-            thenReturn(
-                Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT ), createContent( "s2", "s2Name", ContentPath.ROOT ) ) );
+            thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
+                                       createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
         Mockito.when( nodeService.push( Mockito.any(), Mockito.any() ) ).thenReturn( PushNodesResult.create().
             addSuccess( createNode( "s1", "s1Name", "/content" ) ).
@@ -124,9 +131,12 @@ public class PushContentCommandTest
                 publishReferredFrom( NodeId.from( "s1" ), NodeId.from( "s2" ) ).
                 build() );
 
+        Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
+            thenReturn( Nodes.empty() );
+
         Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
-            thenReturn(
-                Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT ), createContent( "s2", "s2Name", ContentPath.ROOT ) ) );
+            thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
+                                       createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
 
         Mockito.when( nodeService.push( Mockito.any(), Mockito.any() ) ).thenReturn( PushNodesResult.create().
             addSuccess( createNode( "s1", "s1Name", "/content" ) ).
@@ -150,6 +160,42 @@ public class PushContentCommandTest
         assertEquals( 1, result.getPushContentRequests().getPushedBecauseReferredTos().size() );
     }
 
+    @Test
+    public void contains_invalid()
+        throws Exception
+    {
+        Mockito.when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
+            thenReturn( ResolveSyncWorkResult.create().
+                publishRequested( NodeId.from( "s1" ) ).
+                publishReferredFrom( NodeId.from( "s1" ), NodeId.from( "s2" ) ).
+                build() );
+
+        Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
+            thenReturn( Nodes.empty() );
+
+        final Content validContent = createContent( "s1", "s1Name", ContentPath.ROOT, true );
+        final Content invalidContent = createContent( "s2", "s2Name", ContentPath.ROOT, false );
+        final Contents contents = Contents.from( validContent, invalidContent );
+
+        Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+            thenReturn( contents );
+
+        final PushContentsResult result = PushContentCommand.create().
+            contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
+            resolveDependencies( true ).
+            strategy( PushContentCommand.PushContentStrategy.STRICT ).
+            target( ContentConstants.WORKSPACE_PROD ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+
+        assertEquals( 0, result.getPushedContent().getSize() );
+        assertEquals( 1, result.getFailed().size() );
+    }
+
 
     private Node createNode( final String id, final String name, final String path )
     {
@@ -160,12 +206,13 @@ public class PushContentCommandTest
             build();
     }
 
-    private Content createContent( final String id, final String name, final ContentPath path )
+    private Content createContent( final String id, final String name, final ContentPath path, boolean valid )
     {
         return Content.newContent().
             id( ContentId.from( id ) ).
             name( name ).
             parentPath( path ).
+            valid( valid ).
             build();
     }
 }

@@ -314,7 +314,12 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
 
-        final PushContentsResult result = contentService.push( new PushContentParams( ContentConstants.WORKSPACE_PROD, contentIds ) );
+        final PushContentsResult result = contentService.push( PushContentParams.create().
+            target( ContentConstants.WORKSPACE_PROD ).
+            contentIds( contentIds ).
+            includeChildren( true ).
+            allowPublishOutsideSelection( true ).
+            build() );
 
         return PublishContentResultJson.from( result );
     }

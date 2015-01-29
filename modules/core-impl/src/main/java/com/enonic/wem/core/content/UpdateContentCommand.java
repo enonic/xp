@@ -69,7 +69,7 @@ final class UpdateContentCommand
 
         editedContent = Content.newContent( editedContent ).
             modifier( this.params.getModifier() ).
-            validated( validated ).
+            valid( validated ).
             build();
 
         final ProcessUpdateResult processUpdateResult =
@@ -140,19 +140,6 @@ final class UpdateContentCommand
             return null;
         }
 
-        if ( contentType.getSuperType().isMedia() )
-        {
-            /*Attachment mediaAttachment = this.params.byName( content.getName().toString() );
-
-            if ( mediaAttachment == null )
-            {
-                mediaAttachment = this.params.getCreateAttachments().getAttachments().first();
-            }
-            if ( mediaAttachment != null )
-            {
-                return createThumbnail( mediaAttachment );
-            }*/
-        }
         return null;
     }
 

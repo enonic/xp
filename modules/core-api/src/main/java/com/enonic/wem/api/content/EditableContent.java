@@ -55,7 +55,7 @@ public class EditableContent
         builder.data( data );
         builder.metadata( metadata );
         builder.page( page );
-        builder.validated( validated );
+        builder.valid( validated );
         builder.thumbnail( thumbnail );
         builder.inheritPermissions( inheritPermissions );
         builder.permissions( permissions );

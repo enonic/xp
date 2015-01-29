@@ -239,7 +239,10 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
             target( params.getTarget() ).
-            strategy( PushContentCommand.PushContentStrategy.ALLOW_PUBLISH_OUTSIDE_SELECTION ).
+            includeChildren( params.isIncludeChildren() ).
+            strategy( params.isAllowPublishOutsideSelection()
+                          ? PushContentCommand.PushContentStrategy.ALLOW_PUBLISH_OUTSIDE_SELECTION
+                          : PushContentCommand.PushContentStrategy.STRICT ).
             build().
             execute();
     }

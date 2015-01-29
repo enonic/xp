@@ -489,7 +489,7 @@ public class Content
             return this;
         }
 
-        public Builder<BUILDER, C> validated( final boolean validated )
+        public Builder<BUILDER, C> valid( final boolean validated )
         {
             this.valid = validated;
             return this;
@@ -624,6 +624,7 @@ public class Content
             return this;
         }
 
+        @SuppressWarnings("unchecked")
         public C build()
         {
             return (C) new Content( this );

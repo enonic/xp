@@ -815,7 +815,7 @@ public class ContentResourceTest
             id( ContentId.from( id ) ).
             parentPath( ContentPath.ROOT ).
             name( name ).
-            validated( true ).
+            valid( true ).
             createdTime( Instant.parse( this.currentTime ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
             language( Locale.ENGLISH ).
@@ -834,7 +834,7 @@ public class ContentResourceTest
             id( ContentId.from( id ) ).
             parentPath( ContentPath.ROOT ).
             name( name ).
-            validated( true ).
+            valid( true ).
             createdTime( Instant.parse( this.currentTime ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
             language( Locale.ENGLISH ).

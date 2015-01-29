@@ -65,6 +65,7 @@ public class PushContentsResult
 
     public enum FailedReason
     {
+        CONTENT_NOT_VALID( "Content not valid" ),
         PARENT_NOT_EXISTS( "Parent content does not exist" ),
         UNKNOWN( "Unknown" );
 
