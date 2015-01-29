@@ -21,6 +21,7 @@
 ///<reference path='PageViewContextMenuTitle.ts' />
 ///<reference path='RegionViewContextMenuTitle.ts' />
 ///<reference path='ItemViewContextMenu.ts' />
+///<reference path='ItemViewContextMenuPosition.ts' />
 ///<reference path='RegionView.ts' />
 ///<reference path='RegionDropzone.ts' />
 ///<reference path='RegionComponentViewer.ts' />

@@ -18,14 +18,14 @@ module app.wizard.page.contextwindow.inspect.page {
             if (pageTemplate) {
                 this.namesAndIconView.
                     setMainName(pageTemplate.getDisplayName()).
-                    setSubName(pageTemplate.getController().toString()).
+                    setSubName(pageTemplate.getPath().toString()).
                     setIconClass("icon-newspaper icon-large");
             }
             else {
-                var defaultPageTemplateDisplayName = option.getPageModel().getDefaultPageTemplate().getDisplayName();
+                var defaultPageTemplateDisplayName = option.getPageModel().getDefaultPageTemplate().getPath().toString();
                 this.namesAndIconView.
                     setMainName("Automatic").
-                    setSubName("(" + defaultPageTemplateDisplayName + ")").
+                    setSubName(defaultPageTemplateDisplayName).
                     setIconClass("icon-wand icon-large");
             }
         }

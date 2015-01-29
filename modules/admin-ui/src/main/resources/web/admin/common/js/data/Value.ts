@@ -65,18 +65,46 @@ module api.data {
             return this.type.valueToBoolean(this);
         }
 
-        getNumber(): number {
+        getLong(): number {
             if (this.isNull()) {
                 return null;
             }
             return this.type.valueToNumber(this);
         }
 
-        getDate(): Date {
+        getDouble(): number {
+            if (this.isNull()) {
+                return null;
+            }
+            return this.type.valueToNumber(this);
+        }
+
+        getDateTime(): Date {
             if (this.isNull()) {
                 return null;
             }
             return <Date>this.value;
+        }
+
+        getLocalDate(): Date {
+            if (this.isNull()) {
+                return null;
+            }
+            return <Date>this.value;
+        }
+
+        getLocalDateTime(): Date {
+            if (this.isNull()) {
+                return null;
+            }
+            return <Date>this.value;
+        }
+
+        getLocalTime(): api.util.LocalTime {
+            if (this.isNull()) {
+                return null;
+            }
+            return <api.util.LocalTime>this.value;
         }
 
         getGeoPoint(): api.util.GeoPoint {
@@ -98,13 +126,6 @@ module api.data {
                 return null;
             }
             return <api.util.Reference>this.value;
-        }
-
-        getLocalTime(): api.util.LocalTime {
-            if (this.isNull()) {
-                return null;
-            }
-            return <api.util.LocalTime>this.value;
         }
 
         getLink(): api.util.Link {

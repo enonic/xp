@@ -1,5 +1,10 @@
 module api.data {
 
+    import Reference = api.util.Reference;
+    import BinaryReference = api.util.BinaryReference;
+    import GeoPoint = api.util.GeoPoint;
+    import LocalTime = api.util.LocalTime;
+
     /**
      * A PropertySet manages a set of properties. The properties are grouped in arrays by name ([[Property.name]]).
      * @see [[PropertyArray]]
@@ -452,7 +457,8 @@ module api.data {
 
         private forwardPropertyIndexChangedEvent(event: PropertyIndexChangedEvent) {
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyIndexChangedEvent: " + event.toString());
+                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyIndexChangedEvent: " +
+                              event.toString());
             }
             this.propertyIndexChangedListeners.forEach((listener) => listener(event));
             this.notifyChangedListeners(event);
@@ -575,6 +581,376 @@ module api.data {
             return values;
         }
 
+        // long methods
+
+        addLong(name: string, value: number): Property {
+            return this.addProperty(name, new Value(value, ValueTypes.LONG));
+        }
+
+        addLongs(name: string, values: number[]): Property[] {
+
+            var properties: Property[] = [];
+            values.forEach((value: number) => {
+                properties.push(this.addLong(name, value));
+            });
+            return properties;
+        }
+
+        setLong(name: string, index: number, value: number): Property {
+            return this.setProperty(name, index, new Value(value, ValueTypes.LONG));
+        }
+
+        setLongByPath(path: any, value: number): Property {
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.LONG));
+        }
+
+        getLong(identifier: string, index?: number): number {
+            var property = this.getProperty(identifier, index);
+            return !property ? null : property.getLong();
+        }
+
+        getLongs(name: string): number[] {
+            var values: number[] = [];
+            var array = this.getPropertyArray(name);
+            array.forEach((property: Property) => {
+                values.push(property.getLong());
+            });
+            return values;
+        }
+
+        // double methods
+
+        addDouble(name: string, value: number): Property {
+            return this.addProperty(name, new Value(value, ValueTypes.DOUBLE));
+        }
+
+        addDoubles(name: string, values: number[]): Property[] {
+
+            var properties: Property[] = [];
+            values.forEach((value: number) => {
+                properties.push(this.addDouble(name, value));
+            });
+            return properties;
+        }
+
+        setDouble(name: string, index: number, value: number): Property {
+            return this.setProperty(name, index, new Value(value, ValueTypes.DOUBLE));
+        }
+
+        setDoubleByPath(path: any, value: number): Property {
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.DOUBLE));
+        }
+
+        getDouble(identifier: string, index?: number): number {
+            var property = this.getProperty(identifier, index);
+            return !property ? null : property.getDouble();
+        }
+
+        getDoubles(name: string): number[] {
+            var values: number[] = [];
+            var array = this.getPropertyArray(name);
+            array.forEach((property: Property) => {
+                values.push(property.getDouble());
+            });
+            return values;
+        }
+
+        // boolean methods
+
+        addBoolean(name: string, value: boolean): Property {
+            return this.addProperty(name, new Value(value, ValueTypes.BOOLEAN));
+        }
+
+        addBooleans(name: string, values: boolean[]): Property[] {
+
+            var properties: Property[] = [];
+            values.forEach((value: boolean) => {
+                properties.push(this.addBoolean(name, value));
+            });
+            return properties;
+        }
+
+        setBoolean(name: string, index: number, value: boolean): Property {
+            return this.setProperty(name, index, new Value(value, ValueTypes.BOOLEAN));
+        }
+
+        setBooleanByPath(path: any, value: boolean): Property {
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.BOOLEAN));
+        }
+
+        getBoolean(identifier: string, index?: number): boolean {
+            var property = this.getProperty(identifier, index);
+            return !property ? null : property.getBoolean();
+        }
+
+        getBooleans(name: string): boolean[] {
+            var values: boolean[] = [];
+            var array = this.getPropertyArray(name);
+            array.forEach((property: Property) => {
+                values.push(property.getBoolean());
+            });
+            return values;
+        }
+
+        // reference methods
+
+        addReference(name: string, value: Reference): Property {
+            return this.addProperty(name, new Value(value, ValueTypes.REFERENCE));
+        }
+
+        addReferences(name: string, values: Reference[]): Property[] {
+
+            var properties: Property[] = [];
+            values.forEach((value: Reference) => {
+                properties.push(this.addReference(name, value));
+            });
+            return properties;
+        }
+
+        setReference(name: string, index: number, value: Reference): Property {
+            return this.setProperty(name, index, new Value(value, ValueTypes.REFERENCE));
+        }
+
+        setReferenceByPath(path: any, value: Reference): Property {
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.REFERENCE));
+        }
+
+        getReference(identifier: string, index?: number): Reference {
+            var property = this.getProperty(identifier, index);
+            return !property ? null : property.getReference();
+        }
+
+        getReferences(name: string): Reference[] {
+            var values: Reference[] = [];
+            var array = this.getPropertyArray(name);
+            array.forEach((property: Property) => {
+                values.push(property.getReference());
+            });
+            return values;
+        }
+
+        // binary reference methods
+
+        addBinaryReference(name: string, value: BinaryReference): Property {
+            return this.addProperty(name, new Value(value, ValueTypes.BINARY_REFERENCE));
+        }
+
+        addBinaryReferences(name: string, values: BinaryReference[]): Property[] {
+
+            var properties: Property[] = [];
+            values.forEach((value: BinaryReference) => {
+                properties.push(this.addBinaryReference(name, value));
+            });
+            return properties;
+        }
+
+        setBinaryReference(name: string, index: number, value: BinaryReference): Property {
+            return this.setProperty(name, index, new Value(value, ValueTypes.BINARY_REFERENCE));
+        }
+
+        setBinaryReferenceByPath(path: any, value: BinaryReference): Property {
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.BINARY_REFERENCE));
+        }
+
+        getBinaryReference(identifier: string, index?: number): BinaryReference {
+            var property = this.getProperty(identifier, index);
+            return !property ? null : property.getBinaryReference();
+        }
+
+        getBinaryReferences(name: string): BinaryReference[] {
+            var values: BinaryReference[] = [];
+            var array = this.getPropertyArray(name);
+            array.forEach((property: Property) => {
+                values.push(property.getBinaryReference());
+            });
+            return values;
+        }
+
+        // geo point methods
+
+        addGeoPoint(name: string, value: GeoPoint): Property {
+            return this.addProperty(name, new Value(value, ValueTypes.GEO_POINT));
+        }
+
+        addGeoPoints(name: string, values: GeoPoint[]): Property[] {
+
+            var properties: Property[] = [];
+            values.forEach((value: GeoPoint) => {
+                properties.push(this.addGeoPoint(name, value));
+            });
+            return properties;
+        }
+
+        setGeoPoint(name: string, index: number, value: GeoPoint): Property {
+            return this.setProperty(name, index, new Value(value, ValueTypes.GEO_POINT));
+        }
+
+        setGeoPointByPath(path: any, value: GeoPoint): Property {
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.GEO_POINT));
+        }
+
+        getGeoPoint(identifier: string, index?: number): GeoPoint {
+            var property = this.getProperty(identifier, index);
+            return !property ? null : property.getGeoPoint();
+        }
+
+        getGeoPoints(name: string): GeoPoint[] {
+            var values: GeoPoint[] = [];
+            var array = this.getPropertyArray(name);
+            array.forEach((property: Property) => {
+                values.push(property.getGeoPoint());
+            });
+            return values;
+        }
+
+        // local date methods
+
+        addLocalDate(name: string, value: Date): Property {
+            return this.addProperty(name, new Value(value, ValueTypes.LOCAL_DATE));
+        }
+
+        addLocalDates(name: string, values: Date[]): Property[] {
+
+            var properties: Property[] = [];
+            values.forEach((value: Date) => {
+                properties.push(this.addLocalDate(name, value));
+            });
+            return properties;
+        }
+
+        setLocalDate(name: string, index: number, value: Date): Property {
+            return this.setProperty(name, index, new Value(value, ValueTypes.LOCAL_DATE));
+        }
+
+        setLocalDateByPath(path: any, value: Date): Property {
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.LOCAL_DATE));
+        }
+
+        getLocalDate(identifier: string, index?: number): Date {
+            var property = this.getProperty(identifier, index);
+            return !property ? null : property.getLocalDate();
+        }
+
+        getLocalDates(name: string): Date[] {
+            var values: Date[] = [];
+            var array = this.getPropertyArray(name);
+            array.forEach((property: Property) => {
+                values.push(property.getLocalDate());
+            });
+            return values;
+        }
+
+        // local date time methods
+
+        addLocalDateTime(name: string, value: Date): Property {
+            return this.addProperty(name, new Value(value, ValueTypes.LOCAL_DATE_TIME));
+        }
+
+        addLocalDateTimes(name: string, values: Date[]): Property[] {
+
+            var properties: Property[] = [];
+            values.forEach((value: Date) => {
+                properties.push(this.addLocalDateTime(name, value));
+            });
+            return properties;
+        }
+
+        setLocalDateTime(name: string, index: number, value: Date): Property {
+            return this.setProperty(name, index, new Value(value, ValueTypes.LOCAL_DATE_TIME));
+        }
+
+        setLocalDateTimeByPath(path: any, value: Date): Property {
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.LOCAL_DATE_TIME));
+        }
+
+        getLocalDateTime(identifier: string, index?: number): Date {
+            var property = this.getProperty(identifier, index);
+            return !property ? null : property.getLocalDateTime();
+        }
+
+        getLocalDateTimes(name: string): Date[] {
+            var values: Date[] = [];
+            var array = this.getPropertyArray(name);
+            array.forEach((property: Property) => {
+                values.push(property.getLocalDateTime());
+            });
+            return values;
+        }
+
+        // local time methods
+
+        addLocalTime(name: string, value: LocalTime): Property {
+            return this.addProperty(name, new Value(value, ValueTypes.LOCAL_TIME));
+        }
+
+        addLocalTimes(name: string, values: LocalTime[]): Property[] {
+
+            var properties: Property[] = [];
+            values.forEach((value: LocalTime) => {
+                properties.push(this.addLocalTime(name, value));
+            });
+            return properties;
+        }
+
+        setLocalTime(name: string, index: number, value: LocalTime): Property {
+            return this.setProperty(name, index, new Value(value, ValueTypes.LOCAL_TIME));
+        }
+
+        setLocalTimeByPath(path: any, value: LocalTime): Property {
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.LOCAL_TIME));
+        }
+
+        getLocalTime(identifier: string, index?: number): LocalTime {
+            var property = this.getProperty(identifier, index);
+            return !property ? null : property.getLocalTime();
+        }
+
+        getLocalTimes(name: string): LocalTime[] {
+            var values: LocalTime[] = [];
+            var array = this.getPropertyArray(name);
+            array.forEach((property: Property) => {
+                values.push(property.getLocalTime());
+            });
+            return values;
+        }
+
+        // date time methods
+
+        addDateTime(name: string, value: Date): Property {
+            return this.addProperty(name, new Value(value, ValueTypes.DATE_TIME));
+        }
+
+        addDateTimes(name: string, values: Date[]): Property[] {
+
+            var properties: Property[] = [];
+            values.forEach((value: Date) => {
+                properties.push(this.addDateTime(name, value));
+            });
+            return properties;
+        }
+
+        setDateTime(name: string, index: number, value: Date): Property {
+            return this.setProperty(name, index, new Value(value, ValueTypes.DATE_TIME));
+        }
+
+        setDateTimeByPath(path: any, value: Date): Property {
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.DATE_TIME));
+        }
+
+        getDateTime(identifier: string, index?: number): Date {
+            var property = this.getProperty(identifier, index);
+            return !property ? null : property.getDateTime();
+        }
+
+        getDateTimes(name: string): Date[] {
+            var values: Date[] = [];
+            var array = this.getPropertyArray(name);
+            array.forEach((property: Property) => {
+                values.push(property.getDateTime());
+            });
+            return values;
+        }
+        
         // TODO: Add methods for each type
     }
 }

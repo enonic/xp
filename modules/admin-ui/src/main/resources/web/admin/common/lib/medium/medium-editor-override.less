@@ -6,7 +6,7 @@
 
 .medium-editor-toolbar {
   z-index: @z-index-medium-editor;
-  max-width: 322px;
+  max-width: 282px;
 
   background-color: rgba(36, 36, 36, @medium-editor-toolbar-opacity);
   background: linear-gradient(bottom, #242424, rgba(36, 36, 36, @medium-editor-toolbar-opacity));
@@ -25,6 +25,11 @@
 
     background-color: rgba(36, 36, 36, @medium-editor-toolbar-opacity);
     background: linear-gradient(bottom, #242424, rgba(36, 36, 36, @medium-editor-toolbar-opacity));
+
+    li button.medium-editor-button-bottom {
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
   }
 
   ul li:hover ul {
@@ -49,22 +54,6 @@
           color: yellow;
         }
       }
-    }
-
-    .icon-header1:after {
-      content: "H1";
-    }
-
-    .icon-header2:after {
-      content: "H2";
-    }
-
-    .icon-header3:after {
-      content: "H3";
-    }
-
-    .icon-header4:after {
-      content: "H4";
     }
 
     .icon-justify-center {
@@ -127,9 +116,24 @@
       .button-icon;
     }
 
-    .icon-headers {
-      .icon-font-size();
-      .button-icon;
+    .icon-header1:after {
+      content: "H1";
+    }
+
+    .icon-header2:after {
+      content: "H2";
+    }
+
+    .icon-header3:after {
+      content: "H3";
+    }
+
+    .icon-header4:after {
+      content: "H4";
+    }
+
+    .icon-headers:after {
+      content: "H";
     }
 
   }
