@@ -222,9 +222,9 @@ module api.liveedit {
             return null;
         }
 
-        select(clickPosition?: Position) {
+        select(clickPosition?: Position, tooltipOnTop?: boolean) {
             new PageSelectEvent(this).fire();
-            super.select(clickPosition);
+            super.select(clickPosition, tooltipOnTop);
         }
 
         addRegion(regionView: RegionView) {

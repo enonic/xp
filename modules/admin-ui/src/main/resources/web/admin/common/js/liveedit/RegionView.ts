@@ -89,7 +89,7 @@ module api.liveedit {
                 var parentView: ItemView = this.getParentItemView();
                 if (parentView) {
                     this.deselect();
-                    parentView.select();
+                    parentView.select(null, true);
                     parentView.scrollComponentIntoView();
                 }
             }));
@@ -174,9 +174,9 @@ module api.liveedit {
             return this.getRegionName() ? this.getRegionName().toString() : "[No Name]";
         }
 
-        select(clickPosition?: Position) {
+        select(clickPosition?: Position, tooltipOnTop?: boolean) {
             new RegionSelectEvent(this).fire();
-            super.select(clickPosition);
+            super.select(clickPosition, tooltipOnTop);
         }
 
         registerComponentView(componentView: ComponentView<Component>, index: number) {
