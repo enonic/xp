@@ -18,7 +18,7 @@ public final class CreateSiteParams
 
     private ModuleConfigs moduleConfigs;
 
-    private boolean requireValid = true;
+    private boolean requireValid = false;
 
     public CreateSiteParams parent( final ContentPath parentContentPath )
     {
