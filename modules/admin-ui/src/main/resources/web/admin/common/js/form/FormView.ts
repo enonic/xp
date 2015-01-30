@@ -133,6 +133,18 @@ module api.form {
             });
         }
 
+        public hasValidUserInput(): boolean {
+
+            var result = true;
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                if (!formItemView.hasValidUserInput()) {
+                    result = false;
+                }
+            });
+
+            return result;
+        }
+
         public validate(silent?: boolean): ValidationRecording {
 
             var recording: ValidationRecording = new ValidationRecording();

@@ -76,12 +76,16 @@ module api.ui.time {
 
         private selectedDate: Date;
 
+        private validUserInput: boolean;
+
         private selectedDateTimeChangedListeners: {(event: SelectedDateChangedEvent) : void}[] = [];
 
         constructor(builder: DateTimePickerBuilder) {
             super('date-time-picker');
 
-            this.input = api.ui.text.TextInput.middle();
+            this.validUserInput = true;
+            this.input =
+            api.ui.text.TextInput.middle();
             this.input.onClicked((e: MouseEvent) => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -144,24 +148,38 @@ module api.ui.time {
                 this.input.setValue(this.formatDate(this.selectedDate) + " " +
                                     this.formatTime(this.selectedDate.getUTCHours(), this.selectedDate.getUTCMinutes()));
                 this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(this.selectedDate));
+                this.validUserInput = true;
+                this.updateInputStyling();
             });
 
             this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
                 this.setTime(hours, minutes);
                 this.input.setValue(this.formatDate(this.selectedDate) + " " + this.formatTime(hours, minutes));
                 this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(this.selectedDate));
+                this.validUserInput = true;
+                this.updateInputStyling();
+            });
+
+            this.input.onKeyDown((event: KeyboardEvent) => {
+                if (!api.ui.KeyHelper.isNumber(event) && !api.ui.KeyHelper.isDash(event) && !api.ui.KeyHelper.isBackspace(event) &&
+                    !api.ui.KeyHelper.isDel(event) && !api.ui.KeyHelper.isColon(event)) {
+
+                    event.preventDefault();
+                }
             });
 
             this.input.onKeyUp((event: KeyboardEvent) => {
                 if (api.ui.KeyHelper.isNumber(event) ||
                     api.ui.KeyHelper.isDash(event) ||
                     api.ui.KeyHelper.isBackspace(event) ||
-                    api.ui.KeyHelper.isDel(event)) {
+                                                        api.ui.KeyHelper.isDel(event) ||
+                                                        api.ui.KeyHelper.isColon(event)) {
 
                     var typedDateTime = this.input.getValue();
                     if (api.util.StringHelper.isEmpty(typedDateTime)) {
                         this.calendar.selectDate(null);
                         this.selectedDate = null;
+                        this.validUserInput = true;
                         this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(null));
                         this.popup.hide();
                     } else {
@@ -169,6 +187,7 @@ module api.ui.time {
                         var dateLength = date.getUTCFullYear().toString().length + 12;
                         if (date && date.toString() != "Invalid Date" && typedDateTime.length == dateLength) {
                             this.selectedDate = date;
+                            this.validUserInput = true;
                             this.calendar.selectDate(date);
                             this.popup.setSelectedTime(date.getUTCHours(), date.getUTCMinutes());
                             this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(date));
@@ -177,9 +196,12 @@ module api.ui.time {
                             }
                         } else {
                             this.selectedDate = null;
+                            this.validUserInput = false;
                             this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(null));
                         }
                     }
+
+                    this.updateInputStyling();
                 }
             });
 
@@ -203,6 +225,10 @@ module api.ui.time {
             if (hours || minutes) {
                 this.setTime(hours, minutes);
             }
+        }
+
+        hasValidUserInput(): boolean {
+            return this.validUserInput;
         }
 
         getSelectedDateTime(): Date {
@@ -235,6 +261,10 @@ module api.ui.time {
 
         private padNumber(value: number, pad: number): string {
             return Array(pad - String(value).length + 1).join('0') + value;
+        }
+
+        private updateInputStyling() {
+            this.input.updateValidationStatusOnUserInput(this.validUserInput);
         }
 
         giveFocus(): boolean {

@@ -19,6 +19,11 @@ module api.form {
             return wemQ<void>(null);
         }
 
+        hasValidUserInput(): boolean {
+
+            throw new Error("Must be implemented by inheritor");
+        }
+
         onRemoveButtonClicked(listener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) {
             this.removeButtonClickedListeners.push(listener);
         }

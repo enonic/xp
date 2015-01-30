@@ -10,6 +10,8 @@ module api.form.inputtype.support {
 
         private property: Property;
 
+        private inputTypeView: BaseInputTypeNotManagingAdd<any,any>;
+
         private inputElement: api.dom.Element;
 
         private removeButtonEl: api.dom.AEl;
@@ -22,17 +24,18 @@ module api.form.inputtype.support {
             super("input-occurrence-view", inputOccurrence);
 
             this.property = property;
-            var inputElement = baseInputTypeView.createInputOccurrenceElement(inputOccurrence.getIndex(), property);
+            this.inputTypeView = baseInputTypeView;
+            this.inputElement = this.inputTypeView.createInputOccurrenceElement(inputOccurrence.getIndex(), property);
 
-            this.requiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(property != null ? property.getValue() : null);
+            this.requiredContractBroken = this.inputTypeView.valueBreaksRequiredContract(property != null ? property.getValue() : null);
 
             var propertyValueChangedHandler = (event: PropertyValueChangedEvent) => {
 
-                var newStateOfRequiredContractBroken = baseInputTypeView.valueBreaksRequiredContract(event.getNewValue());
+                var newStateOfRequiredContractBroken = this.inputTypeView.valueBreaksRequiredContract(event.getNewValue());
 
                 if (this.requiredContractBroken != newStateOfRequiredContractBroken) {
                     this.requiredContractBroken = newStateOfRequiredContractBroken;
-                    baseInputTypeView.notifyRequiredContractBroken(newStateOfRequiredContractBroken, inputOccurrence.getIndex());
+                    this.inputTypeView.notifyRequiredContractBroken(newStateOfRequiredContractBroken, inputOccurrence.getIndex());
                 }
             };
             property.onPropertyValueChanged(propertyValueChangedHandler);
@@ -52,7 +55,6 @@ module api.form.inputtype.support {
             var inputWrapper = new api.dom.DivEl("input-wrapper");
             this.appendChild(inputWrapper);
 
-            this.inputElement = inputElement;
             inputWrapper.appendChild(this.inputElement);
 
             this.refresh();
@@ -80,6 +82,12 @@ module api.form.inputtype.support {
         getInputElement(): api.dom.Element {
             return this.inputElement;
         }
+
+        hasValidUserInput(): boolean {
+
+            return this.inputTypeView.hasInputElementValidUserInput(this.inputElement);
+        }
+
 
         giveFocus(): boolean {
             return this.inputElement.giveFocus();

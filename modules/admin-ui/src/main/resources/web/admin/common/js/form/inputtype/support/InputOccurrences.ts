@@ -62,6 +62,17 @@ module api.form.inputtype.support {
             }
         }
 
+        hasValidUserInput(): boolean {
+            var result = true;
+            this.getOccurrenceViews().forEach((formItemOccurrenceView: FormItemOccurrenceView) => {
+
+                if (!formItemOccurrenceView.hasValidUserInput()) {
+                    result = false;
+                }
+            });
+            return result;
+        }
+
         moveOccurrence(fromIndex: number, toIndex: number) {
 
             super.moveOccurrence(fromIndex, toIndex);

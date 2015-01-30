@@ -45,6 +45,12 @@ module api.form.inputtype.support {
             return value.isNull() || !value.getType().equals(ValueTypes.STRING) ||
                    api.util.StringHelper.isBlank(value.getString());
         }
+
+        hasInputElementValidUserInput(inputElement: api.dom.Element) {
+
+            // TODO
+            return true;
+        }
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("NoInputTypeFound", NoInputTypeFoundView));

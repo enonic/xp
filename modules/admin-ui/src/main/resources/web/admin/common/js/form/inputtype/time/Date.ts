@@ -50,6 +50,10 @@ module api.content.form.inputtype.time {
             return value.isNull() || !value.getType().equals(ValueTypes.LOCAL_DATE);
         }
 
+        hasInputElementValidUserInput(inputElement: api.dom.Element) {
+            var datePicker = <api.ui.time.DatePicker>inputElement;
+            return datePicker.hasValidUserInput();
+        }
     }
     api.form.inputtype.InputTypeManager.register(new api.Class("Date", Date));
 

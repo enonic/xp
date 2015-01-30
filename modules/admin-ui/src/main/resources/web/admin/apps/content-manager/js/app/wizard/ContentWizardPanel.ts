@@ -779,11 +779,14 @@ module app.wizard {
         }
 
         public checkContentCanBePublished(): boolean {
+            var contentFormHasValidUserInput = true;
             if (!this.isContentFormValid) {
                 this.contentWizardStepForm.displayValidationErrors(true);
             }
+            contentFormHasValidUserInput = this.contentWizardStepForm.getFormView().hasValidUserInput();
 
             var allMetadataFormsValid = true;
+            var allMetadataFormsHasValidUserInput = true;
             for (var key in this.metadataStepFormByName) {
                 if (this.metadataStepFormByName.hasOwnProperty(key)) {
                     var form = this.metadataStepFormByName[key];
@@ -791,9 +794,13 @@ module app.wizard {
                         form.displayValidationErrors(true);
                         allMetadataFormsValid = false;
                     }
+                    var formHasValidUserInput = form.getFormView().hasValidUserInput();
+                    if (!formHasValidUserInput) {
+                        allMetadataFormsHasValidUserInput = false;
+                    }
                 }
             }
-            return this.isContentFormValid && allMetadataFormsValid;
+            return this.isContentFormValid && allMetadataFormsValid && contentFormHasValidUserInput && allMetadataFormsHasValidUserInput;
         }
 
         getContextWindowToggler(): app.wizard.page.contextwindow.ContextWindowToggler {

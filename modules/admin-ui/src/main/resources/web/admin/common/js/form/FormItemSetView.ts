@@ -244,6 +244,19 @@ module api.form {
             });
         }
 
+        hasValidUserInput(): boolean {
+
+            var result = true;
+            this.formItemSetOccurrences.getOccurrenceViews().forEach((formItemOccurrenceView: FormItemOccurrenceView) => {
+                if (!formItemOccurrenceView.hasValidUserInput()) {
+                    result = false;
+                }
+            });
+
+            return result;
+        }
+
+
         validate(silent: boolean = true): ValidationRecording {
 
             var validationRecordingPath = this.resolveValidationRecordingPath();
