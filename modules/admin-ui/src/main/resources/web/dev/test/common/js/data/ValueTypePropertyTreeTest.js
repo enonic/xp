@@ -8,7 +8,7 @@ describe("api.data.type.ValueTypeDataTest", function () {
 
         it("given a 'api.data.PropertySet' then true is returned", function () {
             var tree = new PropertyTree();
-            var mySet = tree.newSet();
+            var mySet = tree.newPropertySet();
             expect(ValueTypes.DATA.isValid(mySet)).toBe(true);
         });
     });

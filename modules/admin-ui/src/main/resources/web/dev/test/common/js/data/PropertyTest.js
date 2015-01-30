@@ -57,7 +57,7 @@ describe("api.data.PropertyTest", function () {
 
         it("given a Property named 'myProp' which has root as parent then '.myProp' is returned", function () {
             var tree = new PropertyTree();
-            var propertySet = tree.addSet("mySet");
+            var propertySet = tree.addPropertySet("mySet");
             var property = propertySet.setString("myProp", 0, "myValue");
             expect(property).not.toBeNull();
             expect(property.getPath().toString()).toBe(".mySet.myProp");
@@ -76,7 +76,7 @@ describe("api.data.PropertyTest", function () {
 
         it("given a Property having a sub-set as parent then the Property of that sub-set is returned", function () {
             var tree = new PropertyTree();
-            var propertySet = tree.addSet("mySet");
+            var propertySet = tree.addPropertySet("mySet");
             var property = propertySet.setString("myProp", 0, "myValue");
             expect(property).not.toBeNull();
             expect(property.getParentProperty()).toBe(tree.getProperty("mySet"));
@@ -95,7 +95,7 @@ describe("api.data.PropertyTest", function () {
 
         it("given a Property having a sub-set as parent then that sub-set is returned", function () {
             var tree = new PropertyTree();
-            var propertySet = tree.addSet("mySet");
+            var propertySet = tree.addPropertySet("mySet");
             var property = propertySet.setString("myProp", 0, "myValue");
             expect(property).not.toBeNull();
             expect(property.getParent()).toBe(propertySet);

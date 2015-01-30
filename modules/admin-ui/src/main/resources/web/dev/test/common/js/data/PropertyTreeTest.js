@@ -41,7 +41,7 @@ describe("api.data.PropertyTreeTest", function () {
 
             var detachedSet = new PropertySet();
             var p1 = detachedSet.addString("myProp", "1");
-            tree.addSet("mySet", detachedSet);
+            tree.addPropertySet("mySet", detachedSet);
 
             expect(p1.getId()).not.toBe(null);
             expect(p1.getId().toString()).toBe("3");
@@ -54,7 +54,7 @@ describe("api.data.PropertyTreeTest", function () {
 
         it("given a PropertyTree with 3 properties when removing one then getTotalSize returns 2", function () {
             var tree = new PropertyTree();
-            var mySet = tree.addSet("mySet");
+            var mySet = tree.addPropertySet("mySet");
             mySet.addStrings("myProp", ["1", "2"]);
             mySet.removeProperty("myProp", 1);
 
@@ -66,7 +66,7 @@ describe("api.data.PropertyTreeTest", function () {
 
         it("given a Property then not null is returned", function () {
             var tree = new PropertyTree();
-            tree.addSet("mySet");
+            tree.addPropertySet("mySet");
             tree.addStrings("myProp", ["1", "2"]);
             expect(tree.getTotalSize()).toBe(3);
         });
@@ -77,7 +77,7 @@ describe("api.data.PropertyTreeTest", function () {
         it("given generateNewPropertyIds as false then copied PropertyTree has properties with equal ids", function () {
             var originalTree = new PropertyTree();
             originalTree.addString("myProp", "1");
-            var originalSet = originalTree.addSet("mySet");
+            var originalSet = originalTree.addPropertySet("mySet");
             originalSet.addString("myProp", "2");
 
             // exercise
@@ -94,7 +94,7 @@ describe("api.data.PropertyTreeTest", function () {
         it("given generateNewPropertyIds as true then copied PropertyTree has properties with different ids", function () {
             var originalTree = new PropertyTree();
             originalTree.addString("myProp", "1");
-            var originalSet = originalTree.addSet("mySet");
+            var originalSet = originalTree.addPropertySet("mySet");
             originalSet.addString("myProp", "2");
 
             // exercise
@@ -116,7 +116,7 @@ describe("api.data.PropertyTreeTest", function () {
         it("adding Property to a sub set then PropertyEvent of type ADDED is received", function () {
 
             var rootSet = new PropertyTree();
-            var subSet = rootSet.addSet("mySet");
+            var subSet = rootSet.addPropertySet("mySet");
 
             rootSet.onPropertyAdded(function (event) {
                 expect(event.getType()).toBe(PropertyEventType.ADDED);
@@ -132,7 +132,7 @@ describe("api.data.PropertyTreeTest", function () {
         it("changing Property in a sub set then PropertyEvent of type CHANGED is received", function () {
 
             var rootSet = new PropertyTree();
-            var subSet = rootSet.addSet("mySet");
+            var subSet = rootSet.addPropertySet("mySet");
             subSet.addString("myProp", "myVal");
 
             rootSet.onPropertyValueChanged(function (event) {
@@ -149,7 +149,7 @@ describe("api.data.PropertyTreeTest", function () {
         it("removing Property in a sub set then PropertyEvent of type REMOVED is received", function () {
 
             var rootSet = new PropertyTree();
-            var subSet = rootSet.addSet("mySet");
+            var subSet = rootSet.addPropertySet("mySet");
             subSet.addString("myProp", "myVal");
 
             rootSet.onPropertyRemoved(function (event) {

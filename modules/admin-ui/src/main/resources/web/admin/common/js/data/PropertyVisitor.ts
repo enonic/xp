@@ -19,7 +19,7 @@ module api.data {
 
                 if (property.getType().equals(ValueTypes.DATA)) {
                     if (property.hasNonNullValue()) {
-                        this.traverse(property.getSet());
+                        this.traverse(property.getPropertySet());
                     }
                 }
             });

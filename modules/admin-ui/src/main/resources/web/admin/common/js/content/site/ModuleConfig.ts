@@ -51,9 +51,9 @@ module api.content.site {
         }
 
         toPropertySet(parent: PropertySet): PropertySet {
-            var moduleConfigSet = parent.addSet("moduleConfig");
+            var moduleConfigSet = parent.addPropertySet("moduleConfig");
             moduleConfigSet.addString("moduleKey", this.moduleKey.getName());
-            moduleConfigSet.addSet("config", this.config.copy(parent.getTree()));
+            moduleConfigSet.addPropertySet("config", this.config.copy(parent.getTree()));
             return moduleConfigSet;
         }
 
@@ -86,7 +86,7 @@ module api.content.site {
         fromData(propertySet: PropertySet): ModuleConfigBuilder {
             api.util.assertNotNull(propertySet, "data cannot be null");
             var moduleKey = ModuleKey.fromString(propertySet.getString("moduleKey"));
-            var moduleConfig = propertySet.getSet("config");
+            var moduleConfig = propertySet.getPropertySet("config");
             this.setModuleKey(moduleKey);
             this.setConfig(moduleConfig);
             return this;

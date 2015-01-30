@@ -26,8 +26,8 @@ module api.data {
                 }
 
                 if (propertyA.getValue().isPropertySet()) {
-                    var childSetA = propertyA.getSet();
-                    var childSetB = propertyB.getSet();
+                    var childSetA = propertyA.getPropertySet();
+                    var childSetB = propertyB.getPropertySet();
                     this.compareSet(childSetA, childSetB);
                 }
 

@@ -64,7 +64,7 @@ module api.content.form.inputtype.tag {
                     contentQueryResult.getContents().forEach((content: Content) => {
                         var propertySet = this.propertyPath.getParentPath().isRoot() ?
                                           content.getContentData().getRoot() :
-                                          content.getContentData().getSet(this.propertyPath);
+                                          content.getContentData().getPropertySet(this.propertyPath);
                         propertySet.forEachProperty(this.propertyPath.getLastElement().getName(), (property: Property) => {
                             if (property.hasNonNullValue()) {
                                 var suggestedTag = property.getString();

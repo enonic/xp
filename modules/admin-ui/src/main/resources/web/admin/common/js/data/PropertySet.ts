@@ -64,6 +64,9 @@ module api.data {
             };
         }
 
+        /**
+         * Module protected. Not to be used outside module.
+         */
         setContainerProperty(value: Property) {
             this.property = value;
         }
@@ -80,6 +83,9 @@ module api.data {
             return this.tree;
         }
 
+        /**
+         * Module protected. Not to be used outside module.
+         */
         attachToTree(tree: PropertyTree) {
             this.tree = tree;
 
@@ -87,7 +93,7 @@ module api.data {
                 property.setId(this.tree.getNextId());
                 this.tree.registerProperty(property);
                 if (property.hasNonNullValue() && property.getType().equals(ValueTypes.DATA)) {
-                    property.getSet().attachToTree(tree);
+                    property.getPropertySet().attachToTree(tree);
                 }
             });
         }
@@ -150,7 +156,7 @@ module api.data {
                 return newSet;
             }
             else {
-                return existingProperty.getSet();
+                return existingProperty.getPropertySet();
             }
         }
 
@@ -206,16 +212,22 @@ module api.data {
             return array.getSize();
         }
 
+        /**
+         * @returns {PropertyPath} The [[PropertyPath]] that this PropertySet is a value of.
+         */
         getPropertyPath(): PropertyPath {
             return !this.property ? PropertyPath.ROOT : this.property.getPath();
         }
 
         /**
-         * If no arguments are given then this PropertySet's Property is returned.
-         * If name and index are given then property with that name and index is returned.
+         * * getProperty() - If no arguments are given then this PropertySet's Property is returned.
+         * * getProperty(name: string, index: number) - If name and index are given then property with that name and index is returned.
+         * * getProperty(path: string) - If a path as string is given then property with that path is returned.
+         * * getProperty(path: PropertyPath ) - If a path as [[PropertyPath]] is given then property with that path is returned.
+         *
          * @param identifier
          * @param index
-         * @returns {*}
+         * @returns {Property}
          */
         getProperty(identifier?: any, index?: number): Property {
 
@@ -253,7 +265,7 @@ module api.data {
                 if (!property) {
                     return null;
                 }
-                var propertySet = property.getSet();
+                var propertySet = property.getPropertySet();
                 return propertySet.getPropertyByPath(path.removeFirstPathElement());
             }
             else {
@@ -326,6 +338,12 @@ module api.data {
             }
         }
 
+        /**
+         * Copies this PropertySet (deep copy).
+         * @param destinationTree The [[PropertyTree]] that the copied PropertySet will be attached to.
+         * @param generateNewPropertyIds Whether to generate new property ids for the copied properties or not. Default is false.
+         * @returns {api.data.PropertySet}
+         */
         copy(destinationTree: PropertyTree, generateNewPropertyIds: boolean = false): PropertySet {
 
             var copy = new PropertySet(destinationTree);
@@ -495,14 +513,14 @@ module api.data {
 
         /**
          * Creates a new PropertySet attached to the same [[PropertyTree]] as this PropertySet.
-         * However, the PropertySet is not yet a value of a [[Property]].
+         * The PropertySet is not added to the tree.
          * @returns {PropertySet}
          */
         newSet(): PropertySet {
             if (!this.tree) {
                 throw new Error("The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead.");
             }
-            return this.tree.newSet();
+            return this.tree.newPropertySet();
         }
 
         /**
@@ -511,35 +529,35 @@ module api.data {
          * @param value optional
          * @returns {PropertySet}
          */
-        addSet(name: string, value?: PropertySet): PropertySet {
+        addPropertySet(name: string, value?: PropertySet): PropertySet {
             if (!value) {
                 if (!this.tree) {
                     throw new Error("The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead.");
                 }
-                value = this.tree.newSet();
+                value = this.tree.newPropertySet();
             }
             this.addProperty(name, new Value(value, ValueTypes.DATA));
             return value;
         }
 
-        setSet(name: string, index: number, value: PropertySet): Property {
+        setPropertySet(name: string, index: number, value: PropertySet): Property {
             return this.setProperty(name, index, new Value(value, ValueTypes.DATA));
         }
 
-        setSetByPath(path: any, value: PropertySet): Property {
+        setPropertySetByPath(path: any, value: PropertySet): Property {
             return this.setPropertyByPath(path, new Value(value, ValueTypes.DATA))
         }
 
-        getSet(identifier: any, index?: number): PropertySet {
+        getPropertySet(identifier: any, index?: number): PropertySet {
             var property = this.getProperty(identifier, index);
-            return !property ? null : property.getSet();
+            return !property ? null : property.getPropertySet();
         }
 
-        getSets(name: string): PropertySet[] {
+        getPropertySets(name: string): PropertySet[] {
             var values: PropertySet[] = [];
             var array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
-                values.push(property.getSet());
+                values.push(property.getPropertySet());
             });
             return values;
         }

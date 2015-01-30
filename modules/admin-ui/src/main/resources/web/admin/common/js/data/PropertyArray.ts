@@ -104,7 +104,7 @@ module api.data {
         }
 
         /**
-         * Package protected. Not to be used outside module.
+         * Module protected. Not to be used outside module.
          */
         addProperty(property: Property) {
 
@@ -237,7 +237,7 @@ module api.data {
 
         public getSet(index: number): PropertySet {
             var property = this.get(index);
-            return !property ? null : property.getSet();
+            return !property ? null : property.getPropertySet();
         }
 
         public getSize(): number {
@@ -298,7 +298,7 @@ module api.data {
 
             if (this.type.equals(ValueTypes.DATA) && property.hasNonNullValue()) {
                 // Ensure events from added PropertySet is forwarded
-                this.registerPropertySetListeners(property.getSet());
+                this.registerPropertySetListeners(property.getPropertySet());
             }
 
             property.onPropertyIndexChanged(this.propertyIndexChangedEventHandler);
@@ -316,13 +316,13 @@ module api.data {
             property.unPropertyValueChanged(this.propertyValueChangedEventHandler);
 
             if (property.hasNonNullValue() && property.getType().equals(ValueTypes.DATA)) {
-                var propertySet = property.getSet();
+                var propertySet = property.getPropertySet();
                 this.unregisterPropertySetListeners(propertySet);
             }
         }
 
         /**
-         * Package protected. Not to be used outside module.
+         * Module protected. Not to be used outside module.
          */
         registerPropertySetListeners(propertySet: PropertySet) {
 
@@ -339,7 +339,7 @@ module api.data {
         }
 
         /**
-         * Package protected. Not to be used outside module.
+         * Module protected. Not to be used outside module.
          */
         unregisterPropertySetListeners(propertySet: PropertySet) {
             propertySet.unPropertyAdded(this.propertyAddedEventHandler);
@@ -447,7 +447,7 @@ module api.data {
             var valuesJson: ValueAndPropertyIdJson[] = [];
             this.array.forEach((property: Property) => {
                 if (this.type.equals(ValueTypes.DATA)) {
-                    var valueSetJson = property.hasNullValue() ? null : property.getSet().toJson();
+                    var valueSetJson = property.hasNullValue() ? null : property.getPropertySet().toJson();
                     valuesJson.push(<ValueAndPropertyIdJson>{
                         id: property.getId().toString(),
                         set: valueSetJson
@@ -488,7 +488,7 @@ module api.data {
                 var value;
 
                 if (type.equals(ValueTypes.DATA)) {
-                    var valueAsPropertySet = tree.newSet();
+                    var valueAsPropertySet = tree.newPropertySet();
                     var propertyArrayJsonArray = valueAndPropertyIdJson.set;
                     propertyArrayJsonArray.forEach((propertyArrayJson: PropertyArrayJson) => {
 

@@ -13,7 +13,7 @@ describe("api.data.PropertySetTest", function () {
 
         it("given 2 string values then 2 properties are returned ", function () {
             var tree = new PropertyTree();
-            var propertySet = tree.addSet("mySet");
+            var propertySet = tree.addPropertySet("mySet");
             var properties = tree.addStrings("myProp", ["1", "2"]);
             expect(properties.length).toBe(2);
             expect(properties[0].getString()).toBe("1");
@@ -68,9 +68,9 @@ describe("api.data.PropertySetTest", function () {
 
         it("given a PropertySet with 3 properties when getSize returns 3", function () {
             var tree = new PropertyTree();
-            var mySet = tree.addSet("mySet");
+            var mySet = tree.addPropertySet("mySet");
             mySet.addStrings("myProp", ["1", "2"]);
-            mySet.addSet("subSet");
+            mySet.addPropertySet("subSet");
 
             expect(mySet.getSize()).toBe(3);
         });
@@ -80,9 +80,9 @@ describe("api.data.PropertySetTest", function () {
 
         it("given a PropertySet with 3 properties when removing one then getTotalSize returns 2", function () {
             var tree = new PropertyTree();
-            var mySet = tree.addSet("mySet");
+            var mySet = tree.addPropertySet("mySet");
             mySet.addStrings("myProp", ["1", "2"]);
-            var subSet = mySet.addSet("subSet");
+            var subSet = mySet.addPropertySet("subSet");
             subSet.addStrings("myProp", ["1", "2"]);
 
             mySet.removeProperty("myProp", 1);
@@ -96,7 +96,7 @@ describe("api.data.PropertySetTest", function () {
         describe("given a PropertySet with a property named 'myProp'", function () {
 
             var tree = new PropertyTree();
-            var mySet = tree.addSet("mySet");
+            var mySet = tree.addPropertySet("mySet");
             var property = mySet.addProperty("myProp", new Value("myVal", ValueTypes.STRING));
 
             it("given name 'myProp' then not null is returned", function () {
@@ -127,7 +127,7 @@ describe("api.data.PropertySetTest", function () {
 
             var properties = [];
             var tree = new PropertyTree();
-            var mySet = tree.addSet("mySet");
+            var mySet = tree.addPropertySet("mySet");
             properties.push(mySet.addString("a", "1"));
             properties.push(mySet.addString("a", "2"));
             properties.push(mySet.addString("b", "1"));
@@ -144,8 +144,8 @@ describe("api.data.PropertySetTest", function () {
         it("given a PropertySet containing 5 properties then all 5 are available in the new PropertyTree", function () {
 
             var tree = new PropertyTree();
-            var subSet = tree.addSet("subTree");
-            var mySet = subSet.addSet("mySet");
+            var subSet = tree.addPropertySet("subTree");
+            var mySet = subSet.addPropertySet("mySet");
             mySet.addStrings("a", ["1", "2"]);
             mySet.addStrings("b", ["1", "2"]);
 

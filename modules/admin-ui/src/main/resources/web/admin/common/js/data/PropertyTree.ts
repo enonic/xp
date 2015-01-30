@@ -30,6 +30,34 @@ module api.data {
      * * [[PropertyIndexChangedEvent]]
      * * [[PropertyValueChangedEvent]]
      *
+     * The PropertyTree provides several functions for both creation, updating and getting property values of a certain type (see [[ValueTypes]]).
+     * Instead of repeating the documentation for each type, here is an overview of the functions which exists for each [[ValueType]]
+     * (replace Xxx with one of the value types).
+     *
+     * * addXxx(name, value) : Property
+     * > Creates a new property with the given name and value, and adds it to the root PropertySet.
+     * Returns the added property.
+     *
+     * * addXxxs(name: string, values:Xxx[]) : Property[]
+     * > Creates new properties with the given name and values, and adds them to the root PropertySet.
+     * Returns an array of the added properties.
+     *
+     * * setXxx(name: string, value: Xxx, index: number) : Property
+     * > On the root PropertySet: Creates a new property with given name, index and value or updates existing with given value.
+     * Returns the created or updated property.
+     *
+     * * setXxxByPath(path: any, value: Xxx) : Property
+     * > Creates a new property at given path with given value or updates existing with given value. path can either be a string or [[PropertyPath]].
+     * Returns the created or updated property.
+     *
+     * * getXxx(identifier: string, index: number): Xxx
+     * > Gets a property value of type Xxx with given identifier and optional index. If index is given, then the identifier is understood
+     *  as the name of the property and it will be retrieved from the root PropertySet. If the index is omitted the identifier is understood
+     *  as the absolute path of the property.
+     *
+     * * getXxxs(name: string): Xxx[]
+     * > Gets property values of type Xxx with the given name. Returns an array of type Xxx.
+     *
      * @see [[Property]]
      * @see [[PropertyArray]]
      * @see [[PropertySet]]
@@ -44,10 +72,10 @@ module api.data {
 
         /**
          * * To create new PropertyTree:
-         * ** give no arguments or optionally with a idProvider.
+         * > give no arguments or optionally with a idProvider.
+         *
          * * To create a copy of another tree:
-         * ** give the root [[PropertySet]] of the tree to copy from
-         * ** and optionally a idProvider and generateNewPropertyIds
+         * > give the root [[PropertySet]] of the tree to copy from and optionally a idProvider and generateNewPropertyIds
          *
          * @param idProvider optional. If not given, a [[DefaultPropertyIdProvider]] will be created.
          * @param sourceRoot optional. If given this tree will be a copy of the given [[PropertySet]].
@@ -81,12 +109,15 @@ module api.data {
             return this.idProvider.getNextId();
         }
 
+        /**
+         * @returns {PropertySet} Returns the root [[PropertySet]] of this tree.
+         */
         public getRoot(): PropertySet {
             return this.root;
         }
 
         /**
-         * Not to be used outside module.
+         * Module protected. Not to be used outside module.
          *
          * An Error is thrown if a Property with same id as the given is already registered.
          * @param property the property to register
@@ -102,7 +133,7 @@ module api.data {
         }
 
         /**
-         * Not to be used outside module.
+         * Module protected. Not to be used outside module.
          */
         unregisterProperty(id: PropertyId) {
             delete this.propertyById[id.toString()];
@@ -139,11 +170,15 @@ module api.data {
         }
 
         /**
-         * If no arguments are given then this PropertySet's Property is returned.
-         * If name and index are given then property with that name and index is returned.
+         * * getProperty() - If no arguments are given then this PropertySet's Property is returned.
+         * * getProperty(name: string, index: number) - If name and index are given then property with that name and index is returned.
+         * * getProperty(path: string) - If a path as string is given then property with that path is returned.
+         * * getProperty(path: PropertyPath ) - If a path as [[PropertyPath]] is given then property with that path is returned.
+         *
+         * @see [[PropertySet.getProperty]]
          * @param identifier
          * @param index
-         * @returns {*}
+         * @returns {Property}
          */
         getProperty(identifier?: any, index?: number): Property {
             return this.root.getProperty(identifier, index);
@@ -158,7 +193,11 @@ module api.data {
             this.root.forEachProperty(name, callback);
         }
 
-        public equals(o: Equitable): boolean {
+        /**
+         * @param o
+         * @returns {boolean} true if given [[api.Equitable]] equals this tree.
+         */
+        public equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PropertyTree)) {
                 return false;
@@ -173,6 +212,12 @@ module api.data {
             return true;
         }
 
+        /**
+         * Copies this tree (deep copy).
+         * @see [[PropertySet.copy]]
+         * @param generateNewPropertyIds Whether to generate new property ids for the copied properties or not. Default is false.
+         * @returns {api.data.PropertyTree}
+         */
         copy(generateNewPropertyIds: boolean = false): PropertyTree {
             return new PropertyTree(this.getIdProvider(), this.getRoot(), generateNewPropertyIds);
         }
@@ -286,16 +331,32 @@ module api.data {
 
         // PropertySet methods
 
-        newSet(): PropertySet {
+        /**
+         * Creates a new [[PropertySet]] attached to this tree.
+         * The PropertySet is not added to the tree.
+         */
+        newPropertySet(): PropertySet {
             return new PropertySet(this);
         }
 
-        addSet(name: string, value?: PropertySet): PropertySet {
-            return this.root.addSet(name, value);
+        addPropertySet(name: string, value?: PropertySet): PropertySet {
+            return this.root.addPropertySet(name, value);
         }
 
-        getSet(identifier: any, index?: number): PropertySet {
-            return this.root.getSet(name, index);
+        setPropertySet(name: string, index: number, value: PropertySet): Property {
+            return this.root.setPropertySet(name, index, value);
+        }
+
+        setPropertySetByPath(path: any, value: PropertySet): Property {
+            return this.root.setPropertySetByPath(path, value);
+        }
+
+        getPropertySet(identifier: any, index?: number): PropertySet {
+            return this.root.getPropertySet(identifier, index);
+        }
+
+        getPropertySets(name: string): PropertySet[] {
+            return this.root.getPropertySets(name);
         }
 
         // string methods

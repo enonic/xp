@@ -18,7 +18,7 @@ module api.content.site.inputtype.moduleconfigurator {
 
             this.propertyArray.forEach((property: Property) => {
                 if (property.hasNonNullValue()) {
-                    var moduleConfigAsSet = property.getSet();
+                    var moduleConfigAsSet = property.getPropertySet();
                     var moduleConfig = ModuleConfig.create().fromData(moduleConfigAsSet).build();
                     if (moduleConfig.getModuleKey().equals(moduleKey)) {
                         match = moduleConfig;
@@ -29,7 +29,7 @@ module api.content.site.inputtype.moduleconfigurator {
             if (!match) {
                 var moduleConfigAsSet = this.propertyArray.addSet();
                 moduleConfigAsSet.addString("moduleKey", moduleKey.toString());
-                moduleConfigAsSet.addSet("config");
+                moduleConfigAsSet.addPropertySet("config");
                 var newModuleConfig = ModuleConfig.create().
                     fromData(moduleConfigAsSet).
                     build();

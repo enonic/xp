@@ -36,7 +36,7 @@ module api.content.site {
             this.site.getContentData().onPropertyRemoved((event: api.data.PropertyRemovedEvent) => {
                 var property: api.data.Property = event.getProperty();
                 if (property.getName()=="moduleConfig") {
-                    var moduleKey = ModuleKey.fromString(property.getSet().getString("moduleKey"));
+                    var moduleKey = ModuleKey.fromString(property.getPropertySet().getString("moduleKey"));
                     this.moduleConfigs = this.moduleConfigs.filter((moduleConfig: ModuleConfig) =>
                         !moduleConfig.getModuleKey().equals(moduleKey)
                     );

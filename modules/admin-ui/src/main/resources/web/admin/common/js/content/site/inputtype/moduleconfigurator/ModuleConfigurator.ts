@@ -108,7 +108,7 @@ module api.content.site.inputtype.moduleconfigurator {
                 propertyArray.forEach((property: Property) => {
 
                     if (property.hasNonNullValue()) {
-                        var moduleConfig = ModuleConfig.create().fromData(property.getSet()).build();
+                        var moduleConfig = ModuleConfig.create().fromData(property.getPropertySet()).build();
                         moduleConfigFormsToDisplay.push(moduleConfig.getModuleKey().toString());
 
                         new GetModuleRequest(moduleConfig.getModuleKey()).sendAndParse().

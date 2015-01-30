@@ -163,7 +163,7 @@ module api.data {
             return !this.value.isNull();
         }
 
-        getSet(): PropertySet {
+        getPropertySet(): PropertySet {
             return this.value.getPropertySet();
         }
 

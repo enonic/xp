@@ -23,7 +23,7 @@ module api.content.site {
 
             var moduleConfigs: ModuleConfig[] = [];
             this.getContentData().forEachProperty("moduleConfig", (moduleProperty: Property) => {
-                var moduleConfigData = moduleProperty.getSet();
+                var moduleConfigData = moduleProperty.getPropertySet();
                 if (moduleConfigData) {
                     var moduleConfig = ModuleConfig.create().fromData(moduleConfigData).build();
                     moduleConfigs.push(moduleConfig);
