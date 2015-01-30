@@ -22,10 +22,10 @@ module app.wizard.page.contextwindow.inspect.page {
                     setIconClass("icon-newspaper icon-large");
             }
             else {
-                var defaultPageTemplateDisplayName = option.getPageModel().getDefaultPageTemplate().getPath().toString();
+                var defaultPageTemplateDisplayName = option.getPageModel().getDefaultPageTemplate().getDisplayName().toString();
                 this.namesAndIconView.
                     setMainName("Automatic").
-                    setSubName(defaultPageTemplateDisplayName).
+                    setSubName("("+defaultPageTemplateDisplayName+")").
                     setIconClass("icon-wand icon-large");
             }
         }
