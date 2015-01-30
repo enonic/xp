@@ -227,6 +227,13 @@ module api.liveedit {
             super.select(clickPosition, menuPosition);
         }
 
+        showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+            // don't show context menu for empty page
+            if (!this.isEmpty()) {
+                super.showContextMenu(clickPosition, menuPosition);
+            }
+        }
+
         addRegion(regionView: RegionView) {
             this.regionViews.push(regionView);
         }
