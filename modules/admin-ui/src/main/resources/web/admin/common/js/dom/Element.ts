@@ -87,6 +87,8 @@ module api.dom {
 
         private rendered: boolean;
 
+        public static debug: boolean = true;
+
         private addedListeners: {(event: ElementAddedEvent) : void}[] = [];
         private removedListeners: {(event: ElementRemovedEvent) : void}[] = [];
         private renderedListeners: {(event: ElementRenderedEvent) : void}[] = [];
@@ -703,47 +705,6 @@ module api.dom {
             })
         }
 
-        // TODO: check where it is used and replace by ResponsiveManager
-        onResized(listener: (event: ElementResizedEvent) => void) {
-            this.resizedListeners.push(listener);
-
-            if (this.resizedListeners.length == 1) {
-                var handler = (event) => {
-                    this.notifyResized();
-                }
-                if (this.isVisible()) {
-                    wemjq(this.getHTMLElement()).resize(handler);
-                } else {
-                    var firstShowListener = (event: ElementShownEvent) => {
-                        wemjq(this.getHTMLElement()).resize(handler);
-                        this.unShown(firstShowListener);
-                    }
-                    this.onShown(firstShowListener);
-                }
-            }
-        }
-
-        unResized(listener: (event: ElementResizedEvent) => void) {
-            this.resizedListeners = this.resizedListeners.filter((curr) => {
-                return curr !== listener;
-            });
-
-            if (this.resizedListeners.length == 0) {
-                wemjq(this.getHTMLElement()).removeResize((event) => {
-                    this.notifyResized();
-                });
-            }
-        }
-
-        private notifyResized() {
-            var width = this.getEl().getWidth();
-            var height = this.getEl().getHeight();
-            var event = new ElementResizedEvent(width, height, this);
-            this.resizedListeners.forEach((listener) => {
-                listener(event);
-            });
-        }
-
         onScrolled(listener: (event: WheelEvent) => void) {
             // IE9, Chrome, Safari, Opera
             this.getEl().addEventListener("mousewheel", listener);
@@ -759,13 +720,6 @@ module api.dom {
             this.getEl().removeEventListener("click", listener);
         }
 
-        onContextMenu(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("contextmenu", listener);
-        }
-
-        unContextMenu(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("contextmenu", listener);
-        }
 
         onDblClicked(listener: (event: MouseEvent) => void) {
             this.getEl().addEventListener("dblclick", listener);
@@ -773,6 +727,14 @@ module api.dom {
 
         unDblClicked(listener: (event: MouseEvent) => void) {
             this.getEl().removeEventListener("dblclick", listener);
+        }
+
+        onContextMenu(listener: (event: MouseEvent) => void) {
+            this.getEl().addEventListener("contextmenu", listener);
+        }
+
+        unContextMenu(listener: (event: MouseEvent) => void) {
+            this.getEl().removeEventListener("contextmenu", listener);
         }
 
         onMouseDown(listener: (event: MouseEvent) => void) {

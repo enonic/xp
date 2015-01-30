@@ -4,7 +4,7 @@ module api.content.page.region {
 
     export class Regions implements api.Equitable {
 
-        public debug: boolean = false;
+        public static debug: boolean = false;
 
         private regionByName: {[s:string] : Region;} = {};
 
@@ -174,7 +174,7 @@ module api.content.page.region {
         }
 
         private notifyChanged(event: RegionsChangedEvent) {
-            if (this.debug) {
+            if (Regions.debug) {
                 console.debug("Regions.notifyChanged");
             }
             this.changedListeners.forEach((listener: (event: RegionsChangedEvent)=>void) => {
@@ -212,7 +212,7 @@ module api.content.page.region {
 
         private notifyRegionChanged(regionPath: RegionPath) {
             var event = new RegionChangedEvent(regionPath);
-            if (this.debug) {
+            if (Regions.debug) {
                 console.debug("Regions.notifyRegionChanged: " + event.getRegionPath().toString());
             }
             this.regionChangedListeners.forEach((listener: (event: RegionChangedEvent)=>void) => {
@@ -234,7 +234,7 @@ module api.content.page.region {
 
         private notifyRegionAdded(regionPath: RegionPath) {
             var event = new RegionAddedEvent(regionPath);
-            if (this.debug) {
+            if (Regions.debug) {
                 console.debug("Regions.notifyRegionAdded: " + event.getRegionPath().toString());
             }
             this.regionAddedListeners.forEach((listener: (event: RegionAddedEvent)=>void) => {
@@ -256,7 +256,7 @@ module api.content.page.region {
 
         private notifyRegionRemoved(regionPath: RegionPath) {
             var event = new RegionRemovedEvent(regionPath);
-            if (this.debug) {
+            if (Regions.debug) {
                 console.debug("Regions.notifyRegionRemoved: " + event.getRegionPath().toString());
             }
             this.regionRemovedListeners.forEach((listener: (event: RegionRemovedEvent)=>void) => {

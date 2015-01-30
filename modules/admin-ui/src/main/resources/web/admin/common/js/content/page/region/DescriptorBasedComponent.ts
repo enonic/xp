@@ -5,7 +5,7 @@ module api.content.page.region {
 
     export class DescriptorBasedComponent extends Component implements api.Equitable, api.Cloneable {
 
-        public debug: boolean = false;
+        public static debug: boolean = false;
 
         public static PROPERTY_DESCRIPTOR = 'descriptor';
 
@@ -27,7 +27,7 @@ module api.content.page.region {
             this.config = builder.config;
 
             this.configChangedHandler = (event: PropertyEvent) => {
-                if (this.debug) {
+                if (DescriptorBasedComponent.debug) {
                     console.debug("DescriptorBasedComponent[" + this.getPath().toString() + "].config.onChanged: ", event);
                 }
                 if (!this.disableEventForwarding) {

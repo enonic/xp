@@ -15,7 +15,7 @@ module api.content.page.region {
 
         public static PROPERTY_CONFIG = 'config';
 
-        public debug: boolean = false;
+        public static debug: boolean = false;
 
         private disableEventForwarding: boolean;
 
@@ -33,7 +33,7 @@ module api.content.page.region {
             this.image = builder.image;
             this.config = builder.config;
             this.configChangedHandler = (event: PropertyEvent) => {
-                if (this.debug) {
+                if (ImageComponent.debug) {
                     console.debug("ImageComponent[" + this.getPath().toString() + "].config.onChanged: ", event);
                 }
                 if (!this.disableEventForwarding) {

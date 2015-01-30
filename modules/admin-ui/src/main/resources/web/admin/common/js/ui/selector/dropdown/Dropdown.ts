@@ -285,7 +285,7 @@ module api.ui.selector.dropdown {
 
             });
 
-            this.input.getEl().addEventListener('dblclick', (event: any) => {
+            this.input.onDblClicked((event: MouseEvent) => {
 
                 this.dropdownDropdown.navigateToFirstRowIfNotActive();
 
@@ -294,7 +294,7 @@ module api.ui.selector.dropdown {
                 }
             });
 
-            this.input.getEl().addEventListener('keydown', (event: any) => {
+            this.input.onKeyDown((event: KeyboardEvent) => {
 
                 if (event.which == 9) { // tab
                     this.hideDropdown();

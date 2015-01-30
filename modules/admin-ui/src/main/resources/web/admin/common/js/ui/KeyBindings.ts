@@ -12,7 +12,7 @@ module api.ui {
 
         private shelves: {[s:string] : KeyBinding;}[] = [];
 
-        private debug: boolean = false;
+        private static debug: boolean = false;
 
         public static get(): KeyBindings {
             return KeyBindings.INSTANCE;
@@ -21,7 +21,7 @@ module api.ui {
         constructor() {
             KeyBindings.instanceCount++;
             this.instance = KeyBindings.instanceCount;
-            if (this.debug) {
+            if (KeyBindings.debug) {
                 console.log("KeyBindings constructed instance #" + this.instance);
             }
         }
@@ -34,7 +34,7 @@ module api.ui {
                 logMessage += "'" + binding.getCombination() + "' ,";
             });
             logMessage += "]";
-            if (this.debug) {
+            if (KeyBindings.debug) {
                 console.log("KeyBindings[#" + this.instance + "].bindKeys(): " + logMessage);
             }
         }
@@ -56,7 +56,7 @@ module api.ui {
                 this.unbindKey(binding);
                 logMessage += "'" + binding.getCombination() + "' ,";
             });
-            if (this.debug) {
+            if (KeyBindings.debug) {
                 console.log("KeyBindings[#" + this.instance + "].unbindKeys(): " + logMessage);
             }
         }
@@ -73,7 +73,7 @@ module api.ui {
         }
 
         public reset() {
-            if (this.debug) {
+            if (KeyBindings.debug) {
                 console.log("KeyBindings[#" + this.instance + "].reset()");
             }
 
@@ -86,7 +86,7 @@ module api.ui {
          * Stores the current bindings on a new shelf and resets.
          */
         public shelveBindings() {
-            if (this.debug) {
+            if (KeyBindings.debug) {
                 console.log("KeyBindings[#" + this.instance + "].shelveBindings(): ");
             }
             Mousetrap.reset();
@@ -101,12 +101,12 @@ module api.ui {
 
             var previousMousetraps: {[s:string] : KeyBinding;} = this.shelves.pop();
             if (previousMousetraps == undefined) {
-                if (this.debug) {
+                if (KeyBindings.debug) {
                     console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): nothing to unshelve");
                 }
                 return;
             }
-            if (this.debug) {
+            if (KeyBindings.debug) {
                 console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): unshelving... ");
             }
 

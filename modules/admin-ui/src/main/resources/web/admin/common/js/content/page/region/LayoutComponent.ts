@@ -5,7 +5,7 @@ module api.content.page.region {
 
     export class LayoutComponent extends DescriptorBasedComponent implements api.Equitable, api.Cloneable {
 
-        public debug: boolean = false;
+        public static debug: boolean = false;
 
         private regions: Regions;
 
@@ -30,7 +30,7 @@ module api.content.page.region {
 
             this.componentPropertyChangedEventHandler = (event) => this.forwardComponentPropertyChangedEvent(event);
             this.regionsChangedEventHandler = (event) => {
-                if (this.debug) {
+                if (LayoutComponent.debug) {
                     console.debug("LayoutComponent[" + this.getPath().toString() + "].onChanged: ", event);
                 }
                 this.notifyPropertyValueChanged("regions");
@@ -58,7 +58,7 @@ module api.content.page.region {
             this.registerRegionsListeners(this.regions);
 
             if (!api.ObjectHelper.equals(oldValue, value)) {
-                if (this.debug) {
+                if (LayoutComponent.debug) {
                     console.debug("LayoutComponent[" + this.getPath().toString() + "].regions reassigned: ", event);
                 }
                 this.notifyPropertyChanged("regions");

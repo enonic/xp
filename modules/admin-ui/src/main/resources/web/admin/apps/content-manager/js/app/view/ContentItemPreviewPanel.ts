@@ -22,12 +22,14 @@ module app.view {
             });
             this.appendChild(this.image);
 
-            this.onResized((event: api.dom.ElementResizedEvent) => {
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 if (this.hasClass("image-preview")) {
-                    var imgEl = this.image.getEl();
-                    this.centerImage(imgEl.getWidth(), imgEl.getHeight(), event.getNewWidth(), event.getNewHeight());
+                    var imgEl = this.image.getEl(),
+                        el = this.getEl();
+                    this.centerImage(imgEl.getWidth(), imgEl.getHeight(), el.getWidth(), el.getHeight());
                 }
             });
+
             this.onShown((event) => {
                 if (this.item && this.hasClass("image-preview")) {
                     this.addImageSizeToUrl(this.item);

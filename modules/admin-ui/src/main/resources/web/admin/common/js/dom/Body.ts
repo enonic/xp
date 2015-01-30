@@ -10,10 +10,14 @@ module api.dom {
             if (!body) {
                 body = document.body;
             }
+            var html = Element.fromHtmlElement(body.parentElement);
+
             super(new ElementFromHelperBuilder().
                 setHelper(new ElementHelper(body)).
                 setLoadExistingChildren(loadExistingChildren).
-                setParentElement(Element.fromHtmlElement(body.parentElement)));
+                setParentElement(html));
+
+            html.registerChildElement(this, 0, true);
 
             this.init();
             this.childrenLoaded = loadExistingChildren;

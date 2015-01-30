@@ -2,7 +2,7 @@ module api.content.page.region {
 
     export class Region implements api.Equitable, api.Cloneable {
 
-        public debug: boolean = false;
+        public static debug: boolean = false;
 
         private name: string;
 
@@ -30,7 +30,7 @@ module api.content.page.region {
             this.components = builder.components;
 
             this.componentChangedEventHandler = (event) => {
-                if (this.debug) {
+                if (Region.debug) {
                     console.debug("Region[" + this.getPath().toString() + "].handleComponentChanged: ", event);
                 }
                 this.notifyRegionPropertyValueChanged("components");

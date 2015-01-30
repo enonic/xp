@@ -110,12 +110,11 @@ module api.liveedit {
 
         private mouseOutViewListeners: {(): void} [];
 
-        private debug: boolean;
+        public static debug: boolean = false;
 
         constructor(builder: ItemViewBuilder) {
             api.util.assertNotNull(builder.type, "type cannot be null");
 
-            this.debug = false;
             this.type = builder.type;
             this.parentItemView = builder.parentView;
             this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.liveEditModel;
@@ -256,12 +255,12 @@ module api.liveedit {
             // and child has already called notifyMouseOver and notifyMouseOut for this ItemView.
             // No need to process this event.
 
-            if (this.debug) {
+            if (ItemView.debug) {
                 console.group("mouse enter [" + this.getId() + "]");
             }
 
             if (this.mouseOver) {
-                if (this.debug) {
+                if (ItemView.debug) {
                     console.log('mouseOver = true, returning.');
                     console.groupEnd();
                 }
@@ -274,7 +273,7 @@ module api.liveedit {
             this.mouseOver = true;
             this.notifyMouseOverView();
 
-            if (this.debug) {
+            if (ItemView.debug) {
                 console.groupEnd()
             }
         }
@@ -297,13 +296,13 @@ module api.liveedit {
             // If parent isn't in 'mouseOver' state, turn it on and notify the parent was entered and left.
             parentsStack.reverse().forEach((view: ItemView) => {
                 if (view.mouseOver) {
-                    if (this.debug) {
+                    if (ItemView.debug) {
                         console.debug('parent.mouseOver = true, notifying mouse out [' + view.getId() + "]");
                     }
                     view.notifyMouseLeaveView();
                 } else {
                     view.mouseOver = true;
-                    if (this.debug) {
+                    if (ItemView.debug) {
                         console.debug('parent.mouseOver = false, setting to true [' + view.getId() + "]");
                     }
                     view.notifyMouseOverView();
@@ -322,7 +321,7 @@ module api.liveedit {
          */
         handleMouseLeave(event: MouseEvent) {
 
-            if (this.debug) {
+            if (ItemView.debug) {
                 console.group("mouse leave [" + this.getId() + "]");
             }
 
@@ -336,7 +335,7 @@ module api.liveedit {
                 this.parentItemView.notifyMouseOverView();
             }
 
-            if (this.debug) {
+            if (ItemView.debug) {
                 console.groupEnd();
             }
         }
@@ -385,14 +384,14 @@ module api.liveedit {
         }
 
         showTooltip() {
-            if (this.debug) {
+            if (ItemView.debug) {
                 console.log('showing tooltip [' + this.getId() + "]");
             }
             this.tooltip.show();
         }
 
         hideTooltip(hideParentTooltip: boolean = true) {
-            if (this.debug) {
+            if (ItemView.debug) {
                 console.log('hiding tooltip [' + this.getId() + "]");
             }
             this.tooltip.hide();
@@ -574,7 +573,7 @@ module api.liveedit {
         }
 
         private notifyMouseOverView() {
-            if (this.debug) {
+            if (ItemView.debug) {
                 console.log("notifying mouse over [" + this.getId() + "]");
             }
             this.mouseOverViewListeners.forEach((listener: () => void) => listener());
@@ -589,7 +588,7 @@ module api.liveedit {
         }
 
         private notifyMouseLeaveView() {
-            if (this.debug) {
+            if (ItemView.debug) {
                 console.log("notifying mouse out [" + this.getId() + "]");
             }
             this.mouseOutViewListeners.forEach((listener: () => void) => listener());

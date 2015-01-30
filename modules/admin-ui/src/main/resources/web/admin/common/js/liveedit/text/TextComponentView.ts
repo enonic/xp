@@ -21,8 +21,16 @@ module api.liveedit.text {
 
         private editor: MediumEditorType;
 
+        public static debug = false;
+
+        // special handling for click to allow dblclick event without triggering 2 clicks before it
+        public static DBL_CLICK_TIMEOUT = 200;
+        private singleClickTimer: number;
+        private lastClicked: number;
+
         constructor(builder: TextComponentViewBuilder) {
 
+            this.lastClicked = 0;
             this.liveEditModel = builder.parentRegionView.liveEditModel;
             this.textComponent = builder.component;
 
@@ -37,7 +45,6 @@ module api.liveedit.text {
 
             this.onKeyDown(this.handleKey.bind(this));
             this.onKeyUp(this.handleKey.bind(this));
-            this.onDblClicked(this.handleDbClick.bind(this));
 
             // ItemView is not managing tooltip for text component
             this.listenToTooltipEvents();
@@ -97,10 +104,7 @@ module api.liveedit.text {
             return duplicatedView;
         }
 
-        handleDbClick(event: MouseEvent) {
-            event.stopPropagation();
-            event.preventDefault();
-
+        private doHandleDbClick(event: MouseEvent) {
             if (this.isEditMode()) {
                 return;
             }
@@ -110,10 +114,7 @@ module api.liveedit.text {
             new StartTextEditModeEvent(this).fire();
         }
 
-        handleClick(event: MouseEvent) {
-            event.stopPropagation();
-            event.preventDefault();
-
+        private doHandleClick(event: MouseEvent) {
             if (this.isEditMode()) {
                 return;
             }
@@ -123,10 +124,43 @@ module api.liveedit.text {
                 this.select(!this.isEmpty() ? {x: event.pageX, y: event.pageY} : null);
             } else {
                 this.deselect();
-                this.setEditMode(true);
-                this.giveFocus();
-                new StartTextEditModeEvent(this).fire();
             }
+        }
+
+
+        handleClick(event: MouseEvent) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            if (TextComponentView.debug) {
+                console.group('Handling click [' + this.getId() + ']');
+                console.log(event);
+            }
+
+            var timeSinceLastClick = new Date().getTime() - this.lastClicked;
+
+            if (timeSinceLastClick > TextComponentView.DBL_CLICK_TIMEOUT) {
+                this.singleClickTimer = setTimeout(() => {
+                    if (TextComponentView.debug) {
+                        console.log('no dblclick occured during ' + TextComponentView.DBL_CLICK_TIMEOUT + 'ms, notifying click', this);
+                        console.groupEnd();
+                    }
+
+                    this.doHandleClick(event);
+                }, TextComponentView.DBL_CLICK_TIMEOUT);
+
+            } else {
+
+                if (TextComponentView.debug) {
+                    console.log('dblclick occured after ' + timeSinceLastClick + 'ms, notifying dbl click', this);
+                    // end the group started by the first click first
+                    console.groupEnd();
+                    console.groupEnd();
+                }
+                clearTimeout(this.singleClickTimer);
+                this.doHandleDbClick(event);
+            }
+            this.lastClicked = new Date().getTime();
         }
 
         handleKey() {
