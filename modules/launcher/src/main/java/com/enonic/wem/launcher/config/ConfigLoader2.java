@@ -14,7 +14,7 @@ import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.launcher.SharedConstants;
-import com.enonic.wem.launcher.env.Environment;
+import com.enonic.xp.launcher.env.Environment;
 
 public final class ConfigLoader2
     implements SharedConstants

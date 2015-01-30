@@ -57,6 +57,7 @@
     <module>modules/karaf-feature</module>
     <module>modules/launcher</module>
     <module>modules/distro</module>
+    <module>modules/distro-v2</module>
   </modules>
 
   <dependencies>

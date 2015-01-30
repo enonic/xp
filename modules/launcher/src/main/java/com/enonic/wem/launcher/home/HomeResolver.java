@@ -4,9 +4,9 @@ import java.io.File;
 
 import com.google.common.base.Strings;
 
-import com.enonic.wem.launcher.LauncherException;
+import com.enonic.xp.launcher.LauncherException;
 import com.enonic.wem.launcher.SharedConstants;
-import com.enonic.wem.launcher.util.SystemProperties;
+import com.enonic.xp.launcher.env.SystemProperties;
 
 public final class HomeResolver
     implements SharedConstants

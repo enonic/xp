@@ -15,8 +15,7 @@ import com.enonic.wem.launcher.config.ConfigLoader;
 import com.enonic.wem.launcher.config.ConfigProperties;
 import com.enonic.wem.launcher.home.HomeDir;
 import com.enonic.wem.launcher.home.HomeResolver;
-import com.enonic.wem.launcher.util.BannerBuilder;
-import com.enonic.wem.launcher.util.SystemProperties;
+import com.enonic.xp.launcher.env.SystemProperties;
 
 public final class Launcher
     implements SharedConstants

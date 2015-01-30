@@ -13,12 +13,12 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.launcher.config.ConfigLoader2;
 import com.enonic.wem.launcher.config.ConfigProperties;
-import com.enonic.wem.launcher.env.Environment;
-import com.enonic.wem.launcher.env.EnvironmentResolver;
+import com.enonic.xp.launcher.env.Environment;
+import com.enonic.xp.launcher.env.EnvironmentResolver;
 import com.enonic.wem.launcher.provision.ProvisionActivator;
 import com.enonic.wem.launcher.util.BannerPrinter;
-import com.enonic.wem.launcher.util.RequirementChecker;
-import com.enonic.wem.launcher.util.SystemProperties;
+import com.enonic.xp.launcher.env.RequirementChecker;
+import com.enonic.xp.launcher.env.SystemProperties;
 
 public final class Launcher2
     implements SharedConstants
@@ -38,7 +38,7 @@ public final class Launcher2
 
     private void checkRequirements()
     {
-        new RequirementChecker().check();
+        new RequirementChecker(null).check();
     }
 
     private void resolveEnvironment()

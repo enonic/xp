@@ -1,11 +1,11 @@
-package com.enonic.wem.launcher.env;
+package com.enonic.xp.launcher.env;
 
 import java.io.File;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.launcher.LauncherException;
+import com.enonic.xp.launcher.LauncherException;
 import com.enonic.wem.launcher.SharedConstants;
 
 final class EnvironmentImpl
@@ -27,18 +27,6 @@ final class EnvironmentImpl
         return this.installDir;
     }
 
-    @Override
-    public boolean isDevMode()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isConsoleMode()
-    {
-        return false;
-    }
-
     public void validate()
     {
         checkDir( "Install", XP_INSTALL_DIR, this.installDir );
@@ -54,7 +42,7 @@ final class EnvironmentImpl
 
         if ( !dir.isDirectory() )
         {
-            throw new LauncherException( "[%] directory [%s] is not a valid directory.", message, dir );
+            throw new LauncherException( "[%s] directory [%s] is not a valid directory.", message, dir );
         }
     }
 

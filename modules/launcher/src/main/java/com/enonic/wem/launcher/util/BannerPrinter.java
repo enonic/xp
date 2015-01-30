@@ -3,7 +3,7 @@ package com.enonic.wem.launcher.util;
 import java.io.File;
 import java.io.PrintStream;
 
-import com.enonic.wem.launcher.env.Environment;
+import com.enonic.xp.launcher.env.Environment;
 
 import static com.google.common.base.StandardSystemProperty.JAVA_VERSION;
 import static com.google.common.base.StandardSystemProperty.JAVA_VM_NAME;

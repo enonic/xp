@@ -1,4 +1,4 @@
-package com.enonic.wem.launcher.env;
+package com.enonic.xp.launcher.env;
 
 import java.io.File;
 import java.util.Map;
@@ -9,9 +9,7 @@ public interface Environment
 
     public File getInstallDir();
 
-    public boolean isDevMode();
-
-    public boolean isConsoleMode();
+    public void validate();
 
     public Map<String, String> getAsMap();
 }

@@ -7,9 +7,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.enonic.wem.launcher.LauncherException;
+import com.enonic.xp.launcher.LauncherException;
 import com.enonic.wem.launcher.SharedConstants;
-import com.enonic.wem.launcher.util.SystemProperties;
+import com.enonic.xp.launcher.env.SystemProperties;
 
 import static org.junit.Assert.*;
 

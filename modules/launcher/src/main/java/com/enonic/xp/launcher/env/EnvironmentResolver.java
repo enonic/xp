@@ -1,11 +1,10 @@
-package com.enonic.wem.launcher.env;
+package com.enonic.xp.launcher.env;
 
 import java.io.File;
 
 import com.google.common.base.Strings;
 
 import com.enonic.wem.launcher.SharedConstants;
-import com.enonic.wem.launcher.util.SystemProperties;
 
 public final class EnvironmentResolver
     implements SharedConstants
@@ -22,7 +21,6 @@ public final class EnvironmentResolver
         final EnvironmentImpl env = new EnvironmentImpl();
         env.installDir = resolveInstallDir();
         env.homeDir = resolveHomeDir( env.installDir );
-        env.validate();
         return env;
     }
 

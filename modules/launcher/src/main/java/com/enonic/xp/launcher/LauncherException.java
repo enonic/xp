@@ -1,4 +1,4 @@
-package com.enonic.wem.launcher;
+package com.enonic.xp.launcher;
 
 public final class LauncherException
     extends RuntimeException

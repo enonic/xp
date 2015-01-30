@@ -13,7 +13,7 @@ import org.osgi.framework.wiring.BundleRevision;
 
 import com.google.common.base.Splitter;
 
-import com.enonic.wem.launcher.LauncherException;
+import com.enonic.xp.launcher.LauncherException;
 import com.enonic.wem.launcher.SharedConstants;
 
 public final class ProvisionActivator
