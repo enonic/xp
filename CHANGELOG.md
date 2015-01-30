@@ -2,7 +2,7 @@
 
 Bugfixes:
 
- - N/A
+ - Client (TypeScript) parsed Property values with empty string as null instead of "", causing the values to be changed from "" to null if saved (CMS-4910)
 
 Features:
 
