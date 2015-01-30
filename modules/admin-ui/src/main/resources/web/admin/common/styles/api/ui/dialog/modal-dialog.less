@@ -39,6 +39,37 @@
       margin-left: 11px;
     }
   }
+
+  .button {
+    &.cancel-button {
+      &:extend(.icon);
+      .icon-close;
+
+      position: absolute;
+      top: 5px;
+      right: 5px;
+
+      padding: 4px 4px 4px 4px;
+      background-color: white;
+
+      &:before {
+        color: #53585f;
+      }
+
+      &:hover:not(:disabled) {
+        background-color: white;
+
+        &:before, span {
+          color: #53585f;
+        }
+      }
+
+      &:focus:not(:disabled) {
+        box-shadow: 0px 0px 5px white;
+        border: 1px solid white;
+      }
+    }
+  }
 }
 
 .upload-dialog {

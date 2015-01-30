@@ -54,6 +54,8 @@ module api.ui.dialog {
         }
 
         setCancelAction(action: api.ui.Action) {
+            action.setIconClass("cancel-button");
+            action.setLabel("");
             this.cancelAction = action;
             this.addAction(action);
         }

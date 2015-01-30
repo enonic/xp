@@ -86,10 +86,14 @@
     height: 100%;
   }
 
-  .dialog-buttons .dialog-button:last-child {
-    .button(@form-button-font, @form-button-bg);
-    padding: 4px 19px;
-    margin-left: 11px;
+  .button {
+    &.cancel-button {
+
+      position: absolute;
+      top: 5px;
+      right: 5px;
+
+    }
   }
 
 }
