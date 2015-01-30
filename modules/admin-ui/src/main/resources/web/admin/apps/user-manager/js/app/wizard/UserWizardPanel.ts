@@ -110,7 +110,6 @@ module app.wizard {
                         }).
                         show();
                 }
-
                 deferred.resolve(null);
                 return deferred.promise;
             } else {
@@ -154,6 +153,7 @@ module app.wizard {
                     this.wizardHeader.setAutoGenerationEnabled(false);
                     api.notify.showFeedback('User was created!');
                     new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
+                    this.userPasswordWizardStepForm.updatePrincipal(principal);
 
                     return principal;
                 });

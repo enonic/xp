@@ -490,7 +490,6 @@ module app.wizard {
 
             return wemQ.all(modulePromises).
                 then((modules: Module[]) => {
-                    debugger;
                     var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
 
                     modules.forEach((mdl: Module) => {
@@ -503,7 +502,6 @@ module app.wizard {
 
                     return wemQ.all(metadataMixinPromises);
                 }).then((mixins: Mixin[]) => {
-                    debugger;
                     var activeMixinsNames = api.schema.mixin.MixinNames.create().fromMixins(mixins).build();
 
                     var panelNamesToRemoveBuilder = MixinNames.create();

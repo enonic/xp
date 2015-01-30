@@ -1,20 +1,9 @@
 module api.dom {
-    export class FormInputEl extends Element {
+    export class FormInputEl extends FormItemEl {
 
         constructor(tagName: string, className?: string) {
-            super(new NewElementBuilder().
-                setTagName(tagName).
-                setClassName(className));
+            super(tagName, className);
             this.addClass('form-input');
-        }
-
-        getName(): string {
-            return this.getEl().getAttribute("name");
-        }
-
-        setName(name: string): FormInputEl {
-            this.getEl().setAttribute("name", name);
-            return this;
         }
 
         getValue(): string {

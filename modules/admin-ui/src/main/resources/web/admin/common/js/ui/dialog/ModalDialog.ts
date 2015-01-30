@@ -53,9 +53,9 @@ module api.ui.dialog {
             this.onAdded(() => api.dom.Body.get().onMouseDown(this.mouseClickListener));
         }
 
-        setCancelAction(action: api.ui.Action) {
+        setCancelAction(action: api.ui.Action): DialogButton {
             this.cancelAction = action;
-            this.addAction(action);
+            return this.addAction(action);
         }
 
         getCancelAction(): api.ui.Action {
@@ -74,9 +74,9 @@ module api.ui.dialog {
             this.contentPanel.removeChild(child);
         }
 
-        addAction(action: api.ui.Action, useDefault?: boolean, prepend?: boolean) {
+        addAction(action: api.ui.Action, useDefault?: boolean, prepend?: boolean): DialogButton {
             this.actions.push(action);
-            this.buttonRow.addAction(action, useDefault, prepend);
+            return this.buttonRow.addAction(action, useDefault, prepend);
         }
 
         show() {
