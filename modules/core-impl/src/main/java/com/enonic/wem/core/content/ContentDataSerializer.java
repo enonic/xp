@@ -29,7 +29,7 @@ public class ContentDataSerializer
 
     public void toData( final Content content, final PropertySet contentAsData, final CreateAttachments createAttachments )
     {
-        contentAsData.setBoolean( ContentPropertyNames.VALIDATED, content.isValid() );
+        contentAsData.setBoolean( ContentPropertyNames.VALID, content.isValid() );
         contentAsData.ifNotNull().addString( ContentPropertyNames.DISPLAY_NAME, content.getDisplayName() );
         contentAsData.ifNotNull().addString( ContentPropertyNames.TYPE, content.getType().toString() );
         contentAsData.ifNotNull().addString( ContentPropertyNames.OWNER,
@@ -69,7 +69,7 @@ public class ContentDataSerializer
         final Content.Builder builder = Content.newContent( contentTypeName );
 
         builder.displayName( contentAsSet.getString( ContentPropertyNames.DISPLAY_NAME ) );
-        builder.valid( contentAsSet.getBoolean( ContentPropertyNames.VALIDATED ) );
+        builder.valid( contentAsSet.getBoolean( ContentPropertyNames.VALID ) );
         builder.data( contentAsSet.getSet( ContentPropertyNames.DATA ).toTree() );
         String owner = contentAsSet.getString( ContentPropertyNames.OWNER );
         if ( StringUtils.isNotBlank( owner ) )
@@ -115,7 +115,7 @@ public class ContentDataSerializer
 
     void toData( final CreateContentParams params, final PropertySet contentAsData )
     {
-        contentAsData.addBoolean( ContentPropertyNames.VALIDATED, params.isValid() );
+        contentAsData.addBoolean( ContentPropertyNames.VALID, params.isValid() );
         contentAsData.ifNotNull().addString( ContentPropertyNames.DISPLAY_NAME, params.getDisplayName() );
         contentAsData.ifNotNull().addString( ContentPropertyNames.TYPE, params.getType() != null ? params.getType().toString() : null );
 
