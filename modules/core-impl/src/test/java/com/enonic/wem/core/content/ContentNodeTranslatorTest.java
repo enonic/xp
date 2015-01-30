@@ -144,7 +144,7 @@ public class ContentNodeTranslatorTest
 
         PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         data.addString( "type", "my-type" );
-        data.addBoolean( "validated", true );
+        data.addBoolean( "valid", true );
         data.addSet( "data" );
         data.addSet( "form" );
         PropertySet attachmentSet = data.addSet( "attachment" );
@@ -195,7 +195,7 @@ public class ContentNodeTranslatorTest
 
         final PropertyTree contentAsData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         contentAsData.addString( "type", "my-type" );
-        contentAsData.addBoolean( "validated", true );
+        contentAsData.addBoolean( "valid", true );
         contentAsData.addSet( "data" );
         contentAsData.addSet( "form" );
 
