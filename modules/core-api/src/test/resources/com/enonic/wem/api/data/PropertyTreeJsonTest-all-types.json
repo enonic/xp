@@ -10,11 +10,20 @@
     ]
   },
   {
+    "name": "nullString",
+    "type": "String",
+    "values": [
+      {
+        "id": "2"
+      }
+    ]
+  },
+  {
     "name": "singleHtmlPart",
     "type": "String",
     "values": [
       {
-        "id": "2",
+        "id": "3",
         "v": "<h1>Hello</h1>"
       }
     ]
@@ -24,7 +33,7 @@
     "type": "Xml",
     "values": [
       {
-        "id": "3",
+        "id": "4",
         "v": "<xml>Hello</xml>"
       }
     ]
@@ -34,7 +43,7 @@
     "type": "Boolean",
     "values": [
       {
-        "id": "4",
+        "id": "5",
         "v": true
       }
     ]
@@ -44,7 +53,7 @@
     "type": "Long",
     "values": [
       {
-        "id": "5",
+        "id": "6",
         "v": 1
       }
     ]
@@ -54,7 +63,7 @@
     "type": "Double",
     "values": [
       {
-        "id": "6",
+        "id": "7",
         "v": 1.1
       }
     ]
@@ -64,7 +73,7 @@
     "type": "GeoPoint",
     "values": [
       {
-        "id": "7",
+        "id": "8",
         "v": "1.1,-2.2"
       }
     ]
@@ -74,7 +83,7 @@
     "type": "LocalDate",
     "values": [
       {
-        "id": "8",
+        "id": "9",
         "v": "2006-01-08"
       }
     ]
@@ -84,7 +93,7 @@
     "type": "LocalDateTime",
     "values": [
       {
-        "id": "9",
+        "id": "10",
         "v": "2006-01-08T12:00:00"
       }
     ]
@@ -94,7 +103,7 @@
     "type": "LocalTime",
     "values": [
       {
-        "id": "10",
+        "id": "11",
         "v": "12:00"
       }
     ]
@@ -104,7 +113,7 @@
     "type": "DateTime",
     "values": [
       {
-        "id": "11",
+        "id": "12",
         "v": "2007-12-03T10:15:30Z"
       }
     ]
@@ -114,7 +123,7 @@
     "type": "Reference",
     "values": [
       {
-        "id": "12",
+        "id": "13",
         "v": "my-node-id"
       }
     ]
@@ -124,7 +133,7 @@
     "type": "BinaryReference",
     "values": [
       {
-        "id": "13",
+        "id": "14",
         "v": "myImage"
       }
     ]
@@ -134,7 +143,7 @@
     "type": "Link",
     "values": [
       {
-        "id": "14",
+        "id": "15",
         "v": "/root/my-node"
       }
     ]
@@ -144,14 +153,14 @@
     "type": "PropertySet",
     "values": [
       {
-        "id": "15",
+        "id": "16",
         "set": [
           {
             "name": "long",
             "type": "Long",
             "values": [
               {
-                "id": "16",
+                "id": "17",
                 "v": 1
               }
             ]
@@ -161,14 +170,14 @@
             "type": "PropertySet",
             "values": [
               {
-                "id": "17",
+                "id": "18",
                 "set": [
                   {
                     "name": "long",
                     "type": "Long",
                     "values": [
                       {
-                        "id": "18",
+                        "id": "19",
                         "v": 1
                       }
                     ]
@@ -186,11 +195,11 @@
     "type": "String",
     "values": [
       {
-        "id": "19",
+        "id": "20",
         "v": "a"
       },
       {
-        "id": "20",
+        "id": "21",
         "v": "b"
       }
     ]
@@ -200,11 +209,11 @@
     "type": "HtmlPart",
     "values": [
       {
-        "id": "21",
+        "id": "22",
         "v": "<h1>Hello</h1>"
       },
       {
-        "id": "22",
+        "id": "23",
         "v": "<h1>World</h1>"
       }
     ]
@@ -214,11 +223,11 @@
     "type": "Xml",
     "values": [
       {
-        "id": "23",
+        "id": "24",
         "v": "<xml>Hello</xml>"
       },
       {
-        "id": "24",
+        "id": "25",
         "v": "<xml>World</xml>"
       }
     ]
@@ -228,11 +237,11 @@
     "type": "Boolean",
     "values": [
       {
-        "id": "25",
+        "id": "26",
         "v": true
       },
       {
-        "id": "26",
+        "id": "27",
         "v": false
       }
     ]
@@ -242,11 +251,11 @@
     "type": "Long",
     "values": [
       {
-        "id": "27",
+        "id": "28",
         "v": 1
       },
       {
-        "id": "28",
+        "id": "29",
         "v": 2
       }
     ]
@@ -256,11 +265,11 @@
     "type": "Double",
     "values": [
       {
-        "id": "29",
+        "id": "30",
         "v": 1.1
       },
       {
-        "id": "30",
+        "id": "31",
         "v": 1.2
       }
     ]
@@ -270,11 +279,11 @@
     "type": "LocalDate",
     "values": [
       {
-        "id": "31",
+        "id": "32",
         "v": "2006-01-08"
       },
       {
-        "id": "32",
+        "id": "33",
         "v": "2015-01-31"
       }
     ]
@@ -284,11 +293,11 @@
     "type": "LocalDateTime",
     "values": [
       {
-        "id": "33",
+        "id": "34",
         "v": "2006-01-08T12:00:00"
       },
       {
-        "id": "34",
+        "id": "35",
         "v": "2015-01-31T12:00:00"
       }
     ]
@@ -298,11 +307,11 @@
     "type": "GeoPoint",
     "values": [
       {
-        "id": "35",
+        "id": "36",
         "v": "1.1,-2.2"
       },
       {
-        "id": "36",
+        "id": "37",
         "v": "-2.2,1.1"
       }
     ]
@@ -312,11 +321,11 @@
     "type": "Reference",
     "values": [
       {
-        "id": "37",
+        "id": "38",
         "v": "my-node-id-1"
       },
       {
-        "id": "38",
+        "id": "39",
         "v": "my-node-id-2"
       }
     ]
@@ -326,11 +335,11 @@
     "type": "Link",
     "values": [
       {
-        "id": "39",
+        "id": "40",
         "v": "/root/my-node-1"
       },
       {
-        "id": "40",
+        "id": "41",
         "v": "/root/my-node-2"
       }
     ]
@@ -340,11 +349,11 @@
     "type": "BinaryReference",
     "values": [
       {
-        "id": "41",
+        "id": "42",
         "v": "image1"
       },
       {
-        "id": "42",
+        "id": "43",
         "v": "image2"
       }
     ]
@@ -354,14 +363,14 @@
     "type": "PropertySet",
     "values": [
       {
-        "id": "43",
+        "id": "44",
         "set": [
           {
             "name": "string",
             "type": "String",
             "values": [
               {
-                "id": "44",
+                "id": "45",
                 "v": "a"
               }
             ]
@@ -371,11 +380,11 @@
             "type": "Long",
             "values": [
               {
-                "id": "45",
+                "id": "46",
                 "v": 1
               },
               {
-                "id": "46",
+                "id": "47",
                 "v": 2
               }
             ]
@@ -383,18 +392,18 @@
         ]
       },
       {
-        "id": "47",
+        "id": "48",
         "set": [
           {
             "name": "string",
             "type": "String",
             "values": [
               {
-                "id": "48",
+                "id": "49",
                 "v": "b"
               },
               {
-                "id": "49",
+                "id": "50",
                 "v": "c"
               }
             ]
@@ -404,7 +413,7 @@
             "type": "Long",
             "values": [
               {
-                "id": "50",
+                "id": "51",
                 "v": 2
               }
             ]
@@ -418,7 +427,7 @@
     "type": "PropertySet",
     "values": [
       {
-        "id": "51"
+        "id": "52"
       }
     ]
   }
