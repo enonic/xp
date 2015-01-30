@@ -7,6 +7,36 @@ module api.data {
 
     /**
      * A PropertySet manages a set of properties. The properties are grouped in arrays by name ([[Property.name]]).
+     *
+     * The PropertySet provides several functions for both creation, updating and getting property values of a certain type (see [[ValueTypes]]).
+     * Instead of repeating the documentation for each type, here is an overview of the functions which exists for each [[ValueType]]
+     * (replace Xxx with one of the value types).
+     *
+     * * addXxx(name, value) : Property
+     * > Creates a new property with the given name and value, and adds it to this PropertySet.
+     * Returns the added property.
+     *
+     * * addXxxs(name: string, values:Xxx[]) : Property[]
+     * > Creates new properties with the given name and values, and adds them to this PropertySet.
+     * Returns an array of the added properties.
+     *
+     * * setXxx(name: string, value: Xxx, index: number) : Property
+     * > On the root PropertySet: In this PropertySet; creates a new property with given name, index and value or updates existing with given value.
+     * Returns the created or updated property.
+     *
+     * * setXxxByPath(path: any, value: Xxx) : Property
+     * > Creates a new property at given path (relative to this PropertySet) with given value or updates existing with given value. path can either be a string or [[PropertyPath]].
+     * Returns the created or updated property.
+     *
+     * * getXxx(identifier: string, index: number): Xxx
+     * > Gets a property value of type Xxx with given identifier and optional index. If index is given, then the identifier is understood
+     *  as the name of the property and it will be retrieved from this PropertySet. If the index is omitted the identifier is understood
+     *  as a relative path (to this PropertySet) of the property.
+     *
+     * * getXxxs(name: string): Xxx[]
+     * > Gets property values of type Xxx with the given name. Returns an array of type Xxx.
+     *
+     *
      * @see [[PropertyArray]]
      * @see [[Property]]
      */
