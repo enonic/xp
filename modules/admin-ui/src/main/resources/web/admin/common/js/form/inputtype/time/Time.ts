@@ -47,6 +47,12 @@ module api.content.form.inputtype.time {
             return value.isNull() || !value.getType().equals(ValueTypes.LOCAL_TIME);
         }
 
+        hasInputElementValidUserInput(inputElement: api.dom.Element) {
+            var localTime = <api.ui.time.LocalTime>inputElement;
+            var timePicker = localTime.getTimePicker();
+            return timePicker.hasValidUserInput();
+        }
+
     }
     api.form.inputtype.InputTypeManager.register(new api.Class("Time", Time));
 

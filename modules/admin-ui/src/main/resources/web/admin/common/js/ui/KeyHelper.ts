@@ -17,5 +17,17 @@ module api.ui {
         static isBackspace(event: KeyboardEvent): boolean {
             return event.keyCode == 8;
         }
+
+        static isColon(event: KeyboardEvent): boolean {
+            return event.keyCode == 186;
+        }
+
+        static isComma(event: KeyboardEvent): boolean {
+            return event.keyCode == 188;
+        }
+
+        static isDot(event: KeyboardEvent): boolean {
+            return event.keyCode == 190;
+        }
     }
 }

@@ -165,6 +165,11 @@ module api.form {
             this.inputTypeView.displayValidationErrors(value);
         }
 
+        hasValidUserInput(): boolean {
+
+            return this.inputTypeView.hasValidUserInput();
+        }
+
         validate(silent: boolean = true): ValidationRecording {
 
             var inputRecording = this.inputTypeView.validate(silent);

@@ -29,6 +29,14 @@ module api.content.form.inputtype.long {
 
                 var value = ValueTypes.LONG.newValue(event.getNewValue());
                 property.setValue(value);
+                inputEl.updateValidationStatusOnUserInput(this.isValid(event.getNewValue()));
+            });
+
+            inputEl.onKeyDown((event: KeyboardEvent) => {
+                if (!api.ui.KeyHelper.isNumber(event) && !api.ui.KeyHelper.isBackspace(event) && !api.ui.KeyHelper.isDel(event)) {
+
+                    event.preventDefault();
+                }
             });
 
             return inputEl;
@@ -39,6 +47,29 @@ module api.content.form.inputtype.long {
 
         valueBreaksRequiredContract(value: Value): boolean {
             return value.isNull() || !value.getType().equals(ValueTypes.LONG);
+        }
+
+        hasInputElementValidUserInput(inputElement: api.dom.Element) {
+            var value = <api.ui.text.TextInput>inputElement;
+
+            return this.isValid(value.getValue());
+        }
+
+        private isValid(value: string): boolean {
+            var validUserInput = true;
+
+            if (api.util.StringHelper.isEmpty(value)) {
+                validUserInput = true;
+            } else {
+
+                if (api.util.NumberHelper.isWholeNumber(+value)) {
+                    validUserInput = true;
+                } else {
+                    validUserInput = false;
+                }
+            }
+
+            return validUserInput;
         }
 
     }

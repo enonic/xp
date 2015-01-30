@@ -45,6 +45,11 @@ module api.content.form.inputtype.time {
             return dateTimePicker;
         }
 
+        hasInputElementValidUserInput(inputElement: api.dom.Element) {
+            var dateTimePicker = <api.ui.time.DateTimePicker>inputElement;
+            return dateTimePicker.hasValidUserInput();
+        }
+
         availableSizeChanged() {
             // Nothing
         }

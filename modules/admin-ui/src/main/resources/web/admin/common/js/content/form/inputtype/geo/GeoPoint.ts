@@ -48,6 +48,11 @@ module api.content.form.inputtype.geo {
         valueBreaksRequiredContract(value: Value): boolean {
             return value.isNull() || !value.getType().equals(ValueTypes.GEO_POINT);
         }
+
+        hasInputElementValidUserInput(inputElement: api.dom.Element) {
+            var geoPoint = <api.ui.geo.GeoPoint>inputElement;
+            return geoPoint.hasValidUserInput();
+        }
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("GeoPoint", GeoPoint));

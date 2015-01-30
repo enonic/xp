@@ -59,6 +59,13 @@ module api.content.page.inputtype.pagecontroller {
             return new api.form.InputTypeName("PageController", false);
         }
 
+        hasInputElementValidUserInput(inputElement: api.dom.Element) {
+
+            // TODO
+            return true;
+        }
+
+
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class(PageController.getName().getName(), PageController));

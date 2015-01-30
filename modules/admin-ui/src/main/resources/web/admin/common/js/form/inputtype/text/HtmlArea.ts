@@ -41,6 +41,12 @@ module api.form.inputtype.text {
             return value.isNull() || !value.getType().equals(ValueTypes.HTML_PART) ||
                    api.util.StringHelper.isBlank(value.getString());
         }
+
+        hasInputElementValidUserInput(inputElement: api.dom.Element) {
+
+            // TODO
+            return true;
+        }
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("HtmlArea", HtmlArea));

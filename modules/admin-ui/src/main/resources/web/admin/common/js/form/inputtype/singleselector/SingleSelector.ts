@@ -168,6 +168,12 @@ module api.form.inputtype.singleselector {
                 return option.value == value;
             });
         }
+
+        hasInputElementValidUserInput(inputElement: api.dom.Element) {
+
+            // TODO
+            return true;
+        }
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class("SingleSelector", SingleSelector));

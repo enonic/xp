@@ -135,6 +135,14 @@ module api.form.inputtype.support {
             });
         }
 
+        hasValidUserInput(): boolean {
+            return this.inputOccurrences.hasValidUserInput();
+        }
+
+        hasInputElementValidUserInput(inputElement: api.dom.Element): boolean {
+            throw new Error("Must be implemented by inheritor");
+        }
+
 
         onFocus(listener: (event: FocusEvent) => void) {
             this.inputOccurrences.onFocus(listener);
