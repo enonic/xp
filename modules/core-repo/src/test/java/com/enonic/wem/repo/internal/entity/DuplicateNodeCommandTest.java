@@ -35,6 +35,7 @@ public class DuplicateNodeCommandTest
             nodeDao( nodeDao ).
             queryService( queryService ).
             workspaceService( workspaceService ).
+            binaryBlobStore( binaryBlobStore ).
             build().
             execute();
 
@@ -65,6 +66,7 @@ public class DuplicateNodeCommandTest
             nodeDao( nodeDao ).
             queryService( queryService ).
             workspaceService( workspaceService ).
+            binaryBlobStore( binaryBlobStore ).
             build().
             execute();
 
@@ -134,8 +136,12 @@ public class DuplicateNodeCommandTest
         refresh();
 
         final Node node1Duplicate = duplicateNode( node1 );
-
         final Node dNode1_1 = getNodeByPath( NodePath.newNodePath( node1Duplicate.path(), node1_1.name().toString() ).build() );
+
+        final Reference reference = node1Duplicate.data().getReference( "node1_1-id" );
+
+        assertEquals( dNode1_1.id(), reference.getNodeId() );
+
         final Node dNode1_1_1 = getNodeByPath( NodePath.newNodePath( dNode1_1.path(), node_1_1_1.name().toString() ).build() );
         assertEquals( dNode1_1.id(), node1Duplicate.data().getReference( "node1_1-id" ).getNodeId() );
         assertEquals( dNode1_1_1.id(), dNode1_1.data().getReference( "node1_1_1-id" ).getNodeId() );

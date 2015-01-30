@@ -42,13 +42,13 @@ public class DuplicateNodeCommand
 
         final Node duplicatedNode = doCreateNode( createNodeParams, this.binaryBlobStore );
 
-        final NodeReferenceUpdatesHolder.Builder builder = NodeReferenceUpdatesHolder.create();
-
-        builder.add( existingNode.id(), duplicatedNode.id() );
+        final NodeReferenceUpdatesHolder.Builder builder = NodeReferenceUpdatesHolder.create().
+            add( existingNode.id(), duplicatedNode.id() );
 
         storeChildNodes( existingNode, duplicatedNode, builder );
 
         final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
+
         updateNodeReferences( duplicatedNode, nodesToBeUpdated );
         updateChildReferences( duplicatedNode, nodesToBeUpdated );
 
@@ -187,7 +187,8 @@ public class DuplicateNodeCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( id );
+            Preconditions.checkNotNull( this.id );
+            Preconditions.checkNotNull( this.binaryBlobStore );
         }
     }
 

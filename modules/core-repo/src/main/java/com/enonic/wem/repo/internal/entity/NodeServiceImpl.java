@@ -270,6 +270,7 @@ public class NodeServiceImpl
             workspaceService( this.workspaceService ).
             indexService( this.indexService ).
             versionService( this.versionService ).
+            binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();
     }

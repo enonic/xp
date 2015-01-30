@@ -511,4 +511,74 @@ public class ResolveSyncWorkCommandTest
         assertTrue( nodePublishRequests.get( node3.id() ).reasonReferredFrom() );
     }
 
+    @Test
+    public void duplicate_node_with_reference_then_resolve()
+        throws Exception
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "node1" ).
+            data( createDataWithReferences( Reference.from( "node1_1-id" ), Reference.from( "node1_1_1-id" ) ) ).
+            build() );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1-id" ) ).
+            parent( node1.path() ).
+            name( "node1_1" ).
+            data( createDataWithReferences( Reference.from( "node1_1_1-id" ) ) ).
+            build() );
+
+        final Node node_1_1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1_1-id" ) ).
+            parent( node1_1.path() ).
+            name( "node1_1_1" ).
+            build() );
+
+        refresh();
+
+        final Node node1Duplicate = duplicateNode( node1 );
+
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
+            includeChildren( true ).
+            nodeId( node1Duplicate.id() ).
+            target( WS_OTHER ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            queryService( this.queryService ).
+            indexService( this.indexService ).
+            build().
+            execute();
+
+        assertEquals( 3, result.getNodePublishRequests().size() );
+
+
+    }
+
+    private Node duplicateNode( final Node node1 )
+    {
+        return DuplicateNodeCommand.create().
+            id( node1.id() ).
+            versionService( versionService ).
+            indexService( indexService ).
+            nodeDao( nodeDao ).
+            queryService( queryService ).
+            workspaceService( workspaceService ).
+            binaryBlobStore( this.binaryBlobStore ).
+            build().
+            execute();
+    }
+
+
+    private PropertyTree createDataWithReferences( final Reference... references )
+    {
+        PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+
+        for ( final Reference reference : references )
+        {
+            data.setReference( reference.getNodeId().toString(), reference );
+        }
+
+        return data;
+    }
 }
