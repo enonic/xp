@@ -69,7 +69,8 @@ public class ContentDataSerializer
         final Content.Builder builder = Content.newContent( contentTypeName );
 
         builder.displayName( contentAsSet.getString( ContentPropertyNames.DISPLAY_NAME ) );
-        builder.valid( contentAsSet.getBoolean( ContentPropertyNames.VALID ) );
+        builder.valid(
+            contentAsSet.getBoolean( ContentPropertyNames.VALID ) != null ? contentAsSet.getBoolean( ContentPropertyNames.VALID ) : false );
         builder.data( contentAsSet.getSet( ContentPropertyNames.DATA ).toTree() );
         String owner = contentAsSet.getString( ContentPropertyNames.OWNER );
         if ( StringUtils.isNotBlank( owner ) )
