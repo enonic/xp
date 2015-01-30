@@ -71,6 +71,9 @@ module api.data {
             if (jsonValue) {
                 return this.newValue(jsonValue.toString());
             }
+            else if ("" == jsonValue) { // NB: empty string is not true in Javascript
+                return this.newValue(jsonValue);
+            }
             else {
                 return this.newNullValue();
             }
