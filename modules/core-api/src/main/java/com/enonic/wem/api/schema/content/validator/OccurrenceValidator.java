@@ -6,29 +6,31 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.data.PropertySet;
+import com.enonic.wem.api.form.Form;
 
 public final class OccurrenceValidator
 {
-    private final ContentType contentType;
+    private final Form form;
 
-    public OccurrenceValidator( final ContentType contentType )
+    public OccurrenceValidator( final Form form )
     {
-        Preconditions.checkNotNull( contentType, "No contentType given" );
-        this.contentType = contentType;
+        Preconditions.checkNotNull( form, "No form given" );
+        this.form = form;
     }
 
-    public DataValidationErrors validate( final PropertyTree contentData )
+    public DataValidationErrors validate( final PropertySet propertySet )
     {
         final List<DataValidationError> validationErrors = Lists.newArrayList();
 
         final MinimumOccurrencesValidator minimum = new MinimumOccurrencesValidator();
-        minimum.validate( contentType.form(), contentData );
+
+        minimum.validate( form, propertySet );
         validationErrors.addAll( minimum.validationErrors() );
 
-        final MaximumOccurrencesValidator maximum = new MaximumOccurrencesValidator( contentType );
-        maximum.validate( contentData );
+        final MaximumOccurrencesValidator maximum = new MaximumOccurrencesValidator( this.form );
+
+        maximum.validate( propertySet );
         validationErrors.addAll( maximum.validationErrors() );
 
         return DataValidationErrors.from( validationErrors );

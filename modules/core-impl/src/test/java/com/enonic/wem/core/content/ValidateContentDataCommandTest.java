@@ -5,16 +5,17 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.schema.mixin.MixinService;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
@@ -25,18 +26,19 @@ import static org.junit.Assert.*;
 
 public class ValidateContentDataCommandTest
 {
-    private ValidateContentDataCommand command;
-
     private ContentTypeService contentTypeService;
+
+    private MixinService mixinService;
+
+    private ModuleService moduleService;
 
     @Before
     public void setUp()
         throws Exception
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-
-        command = new ValidateContentDataCommand();
-        command.contentTypeService( this.contentTypeService );
+        this.mixinService = Mockito.mock( MixinService.class );
+        this.moduleService = Mockito.mock( ModuleService.class );
     }
 
     @Test
@@ -62,10 +64,17 @@ public class ValidateContentDataCommandTest
         final Content content = Content.newContent().path( "/mycontent" ).type( contentType.getName() ).build();
 
         // exercise
-        final ValidateContentData data = new ValidateContentData().contentData( content.getData() ).contentType( contentType.getName() );
+
+        final DataValidationErrors result = ValidateContentDataCommand.create().
+            contentData( content.getData() ).
+            contentType( contentType.getName() ).
+            contentTypeService( this.contentTypeService ).
+            mixinService( this.mixinService ).
+            moduleService( this.moduleService ).
+            build().
+            execute();
 
         // test
-        final DataValidationErrors result = this.command.data( data ).execute();
         assertTrue( result.hasErrors() );
         assertEquals( 1, result.size() );
 
@@ -75,7 +84,6 @@ public class ValidateContentDataCommandTest
     public void validation_no_errors()
         throws Exception
     {
-
         // setup
         final FieldSet fieldSet = newFieldSet().label( "My layout" ).name( "myLayout" ).addFormItem(
             newFormItemSet().name( "mySet" ).required( true ).addFormItem(
@@ -92,13 +100,19 @@ public class ValidateContentDataCommandTest
         content.getData().setString( "mySet.myInput", "thing" );
 
         // exercise
-        final ValidateContentData data = new ValidateContentData().contentData( content.getData() ).contentType( contentType.getName() );
+        final DataValidationErrors result = ValidateContentDataCommand.create().
+            contentData( content.getData() ).
+            contentType( contentType.getName() ).
+            contentTypeService( this.contentTypeService ).
+            mixinService( this.mixinService ).
+            moduleService( this.moduleService ).
+            build().
+            execute();
 
         // test
-        final DataValidationErrors result = this.command.data( data ).execute();
+
         assertFalse( result.hasErrors() );
         assertEquals( 0, result.size() );
-
     }
 
 }

@@ -13,7 +13,7 @@ import com.enonic.wem.api.media.MediaInfoService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 final class UpdateMediaCommand
-    extends AbstractContentCommand
+    extends AbstractCreatingOrUpdatingContentCommand
 {
     private final UpdateMediaParams params;
 
@@ -72,15 +72,17 @@ final class UpdateMediaCommand
             createAttachments( CreateAttachments.from( mediaAttachment ) ).
             editor( editable -> editable.data = data );
 
-        final UpdateContentCommand updateCommand = UpdateContentCommand.create( this ).
+        return UpdateContentCommand.create( this ).
             params( updateParams ).
             mediaInfo( mediaInfo ).
-            build();
-        return updateCommand.execute();
+            moduleService( this.moduleService ).
+            mixinService( this.mixinService ).
+            build().
+            execute();
     }
 
     public static class Builder
-        extends AbstractContentCommand.Builder<Builder>
+        extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
         private final UpdateMediaParams params;
 

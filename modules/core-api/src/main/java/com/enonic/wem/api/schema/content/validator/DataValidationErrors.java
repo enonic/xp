@@ -1,8 +1,10 @@
 package com.enonic.wem.api.schema.content.validator;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 
 public final class DataValidationErrors
     implements Iterable<DataValidationError>
@@ -29,6 +31,16 @@ public final class DataValidationErrors
         return this.validationErrors.isEmpty() ? null : this.validationErrors.iterator().next();
     }
 
+    private DataValidationErrors( final Builder builder )
+    {
+        this.validationErrors = ImmutableList.copyOf( builder.dataValidationErrors );
+    }
+
+    ImmutableList<DataValidationError> getValidationErrors()
+    {
+        return validationErrors;
+    }
+
     @Override
     public Iterator<DataValidationError> iterator()
     {
@@ -44,6 +56,7 @@ public final class DataValidationErrors
     {
         return ( o instanceof DataValidationErrors ) && this.validationErrors.equals( ( (DataValidationErrors) o ).validationErrors );
     }
+
 
     public String toString()
     {
@@ -65,4 +78,33 @@ public final class DataValidationErrors
     {
         return new DataValidationErrors( ImmutableList.copyOf( validationErrors ) );
     }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private final Set<DataValidationError> dataValidationErrors = Sets.newHashSet();
+
+        public Builder add( final DataValidationError dataValidationError )
+        {
+            this.dataValidationErrors.add( dataValidationError );
+            return this;
+        }
+
+        public Builder addAll( final DataValidationErrors dataValidationErrors )
+        {
+            this.dataValidationErrors.addAll( dataValidationErrors.getValidationErrors() );
+            return this;
+        }
+
+        public DataValidationErrors build()
+        {
+            return new DataValidationErrors( this );
+        }
+
+    }
+
 }

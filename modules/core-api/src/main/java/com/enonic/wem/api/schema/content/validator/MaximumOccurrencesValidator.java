@@ -7,24 +7,23 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.data.PropertySet;
-import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemPath;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
-import com.enonic.wem.api.schema.content.ContentType;
 
 
 class MaximumOccurrencesValidator
 {
     private final List<DataValidationError> validationErrors = Lists.newArrayList();
 
-    private final ContentType contentType;
+    private final Form form;
 
-    MaximumOccurrencesValidator( final ContentType contentType )
+    MaximumOccurrencesValidator( final Form form )
     {
-        Preconditions.checkNotNull( contentType, "No contentType given" );
-        this.contentType = contentType;
+        Preconditions.checkNotNull( form, "No form given" );
+        this.form = form;
     }
 
     final List<DataValidationError> validationErrors()
@@ -32,13 +31,13 @@ class MaximumOccurrencesValidator
         return Collections.unmodifiableList( validationErrors );
     }
 
-    void validate( final PropertyTree propertyTree )
+    void validate( final PropertySet propertySet )
     {
-        final PropertySet root = propertyTree.getRoot();
+        final PropertySet root = propertySet;
         for ( final String entryName : root.getPropertyNames() )
         {
             final FormItemPath path = FormItemPath.from( FormItemPath.ROOT, entryName );
-            final FormItem formItem = contentType.form().getFormItem( path );
+            final FormItem formItem = this.form.getFormItem( path );
 
             if ( formItem instanceof Input )
             {

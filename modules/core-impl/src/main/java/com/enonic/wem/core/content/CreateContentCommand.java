@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.Metadatas;
 import com.enonic.wem.api.media.MediaInfo;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
@@ -22,7 +23,7 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 final class CreateContentCommand
-    extends AbstractContentCommand
+    extends AbstractCreatingOrUpdatingContentCommand
 {
     private final static Logger LOG = LoggerFactory.getLogger( CreateContentCommand.class );
 
@@ -78,7 +79,15 @@ final class CreateContentCommand
 
     private boolean checkIsValid( final CreateContentParams contentParams )
     {
-        final DataValidationErrors dataValidationErrors = validate( contentParams.getType(), contentParams.getData() );
+        final DataValidationErrors dataValidationErrors = ValidateContentDataCommand.create().
+            contentData( contentParams.getData() ).
+            contentType( contentParams.getType() ).
+            metadatas( contentParams.getMetadata() != null ? Metadatas.from( contentParams.getMetadata() ) : Metadatas.empty() ).
+            mixinService( this.mixinService ).
+            moduleService( this.moduleService ).
+            contentTypeService( this.contentTypeService ).
+            build().
+            execute();
 
         for ( DataValidationError error : dataValidationErrors )
         {
@@ -104,13 +113,13 @@ final class CreateContentCommand
         return new Builder();
     }
 
-    static Builder create( AbstractContentCommand source )
+    static Builder create( AbstractCreatingOrUpdatingContentCommand source )
     {
         return new Builder( source );
     }
 
     static class Builder
-        extends AbstractContentCommand.Builder<Builder>
+        extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
         private CreateContentParams params;
 
@@ -121,7 +130,7 @@ final class CreateContentCommand
             // nothing
         }
 
-        private Builder( AbstractContentCommand source )
+        private Builder( final AbstractCreatingOrUpdatingContentCommand source )
         {
             super( source );
         }

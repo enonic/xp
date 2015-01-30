@@ -6,7 +6,6 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.util.BinaryReference;
 
 public interface ContentService
@@ -50,8 +49,6 @@ public interface ContentService
     Contents getByPaths( ContentPaths paths );
 
     FindContentByParentResult findByParent( FindContentByParentParams params );
-
-    DataValidationErrors validate( ValidateContentData data );
 
     FindContentByQueryResult find( FindContentByQueryParams params );
 

@@ -50,7 +50,6 @@ import com.enonic.wem.api.content.ReorderChildParams;
 import com.enonic.wem.api.content.SetContentChildOrderParams;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.UpdateMediaParams;
-import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.ModuleConfigsDataSerializer;
 import com.enonic.wem.api.content.site.Site;
@@ -58,6 +57,7 @@ import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.media.MediaInfoService;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.node.MoveNodeException;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
@@ -69,7 +69,7 @@ import com.enonic.wem.api.node.ReorderChildNodesResult;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.util.BinaryReference;
 
 @Component(immediate = true)
@@ -95,6 +95,10 @@ public class ContentServiceImpl
     private MediaInfoService mediaInfoService;
 
     private final ExecutorService applyPermissionsExecutor;
+
+    private MixinService mixinService;
+
+    private ModuleService moduleService;
 
     public ContentServiceImpl()
     {
@@ -126,6 +130,8 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
+            moduleService( this.moduleService ).
+            mixinService( this.mixinService ).
             params( createContentParams ).
             build().
             execute();
@@ -159,6 +165,8 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
+            moduleService( this.moduleService ).
+            mixinService( this.mixinService ).
             params( params ).
             build().
             execute();
@@ -188,6 +196,8 @@ public class ContentServiceImpl
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
+            moduleService( this.moduleService ).
+            mixinService( this.mixinService ).
             build().
             execute();
     }
@@ -200,6 +210,8 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
+            moduleService( this.moduleService ).
+            mixinService( this.mixinService ).
             build().
             execute();
     }
@@ -213,6 +225,8 @@ public class ContentServiceImpl
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
+            moduleService( this.moduleService ).
+            mixinService( this.mixinService ).
             build().
             execute();
     }
@@ -360,15 +374,6 @@ public class ContentServiceImpl
                                        "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " +
                                            path );
         }
-    }
-
-    @Override
-    public DataValidationErrors validate( final ValidateContentData data )
-    {
-        return new ValidateContentDataCommand().
-            contentTypeService( this.contentTypeService ).
-            data( data ).
-            execute();
     }
 
     @Override
@@ -555,5 +560,17 @@ public class ContentServiceImpl
     public void setMediaInfoService( final MediaInfoService mediaInfoService )
     {
         this.mediaInfoService = mediaInfoService;
+    }
+
+    @Reference
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
+    }
+
+    @Reference
+    public void setModuleService( final ModuleService moduleService )
+    {
+        this.moduleService = moduleService;
     }
 }

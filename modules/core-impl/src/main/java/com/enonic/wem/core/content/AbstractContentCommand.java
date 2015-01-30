@@ -4,13 +4,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ValidateContentData;
-import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 abstract class AbstractContentCommand
 {
@@ -35,13 +31,6 @@ abstract class AbstractContentCommand
         return GetContentByIdCommand.create( contentId, this ).
             build().
             execute();
-    }
-
-    DataValidationErrors validate( final ContentTypeName contentType, final PropertyTree contentData )
-    {
-        final ValidateContentData data = new ValidateContentData().contentType( contentType ).contentData( contentData );
-
-        return new ValidateContentDataCommand().contentTypeService( this.contentTypeService ).data( data ).execute();
     }
 
     public static class Builder<B extends Builder>

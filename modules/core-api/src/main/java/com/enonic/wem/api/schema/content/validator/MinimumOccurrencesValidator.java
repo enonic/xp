@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertySet;
-import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.Form;
@@ -26,10 +25,10 @@ final class MinimumOccurrencesValidator
         return Collections.unmodifiableList( validationErrors );
     }
 
-    final void validate( final Form form, final PropertyTree dataSet )
+    final void validate( final Form form, final PropertySet dataSet )
     {
         final List<PropertySet> parentDataSets = Lists.newArrayList();
-        parentDataSets.add( dataSet.getRoot() );
+        parentDataSets.add( dataSet );
         validate( form, parentDataSets );
     }
 

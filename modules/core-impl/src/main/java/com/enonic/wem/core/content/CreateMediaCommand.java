@@ -13,7 +13,7 @@ import com.enonic.wem.api.media.MediaInfoService;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 final class CreateMediaCommand
-    extends AbstractContentCommand
+    extends AbstractCreatingOrUpdatingContentCommand
 {
     private final CreateMediaParams params;
 
@@ -72,7 +72,10 @@ final class CreateMediaCommand
         final CreateContentCommand createCommand = CreateContentCommand.create( this ).
             mediaInfo( mediaInfo ).
             params( createContentParams ).
+            moduleService( this.moduleService ).
+            mixinService( this.mixinService ).
             build();
+
         return createCommand.execute();
     }
 
@@ -83,7 +86,7 @@ final class CreateMediaCommand
     }
 
     public static class Builder
-        extends AbstractContentCommand.Builder<Builder>
+        extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
         private CreateMediaParams params;
 

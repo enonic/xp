@@ -6,7 +6,7 @@ import com.enonic.wem.api.data.PropertySet;
 
 public class ModuleConfigsDataSerializer
 {
-    private ModuleConfigDataSerializer moduleConfigSerializer = new ModuleConfigDataSerializer();
+    private final ModuleConfigDataSerializer moduleConfigSerializer = new ModuleConfigDataSerializer();
 
     public void toProperties( final ModuleConfigs moduleConfigs, final PropertySet parentSet )
     {
@@ -21,7 +21,7 @@ public class ModuleConfigsDataSerializer
         moduleConfigSerializer.toData( moduleConfig, parentSet );
     }
 
-    ModuleConfigs.Builder fromProperties( final PropertySet data )
+    public ModuleConfigs.Builder fromProperties( final PropertySet data )
     {
         final ModuleConfigs.Builder builder = ModuleConfigs.builder();
         for ( final Property moduleConfigAsProperty : data.getProperties( "moduleConfig" ) )

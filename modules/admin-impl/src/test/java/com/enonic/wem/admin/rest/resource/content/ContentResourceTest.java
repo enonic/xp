@@ -10,7 +10,6 @@ import java.util.Optional;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -37,7 +36,6 @@ import com.enonic.wem.api.content.PushContentsResult;
 import com.enonic.wem.api.content.RenameContentParams;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.api.content.ValidateContentData;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageRegions;
@@ -499,42 +497,6 @@ public class ContentResourceTest
             request().path( "content/generateName" ).queryParam( "displayName", "Some rea11y we!rd name..." ).get().getAsString();
 
         assertJson( "generate_content_name.json", jsonString );
-    }
-
-    @Test
-    @Ignore // Not implemented yet
-    public void validate_content_success()
-        throws Exception
-    {
-
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "mymodule:my_type" ) ) );
-
-        Mockito.when( contentService.validate( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
-
-        String jsonString = request().path( "content/validate" ).
-            entity( readFromFile( "validate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "validate_content_success.json", jsonString );
-    }
-
-    @Test
-    @Ignore // Not implemented yet
-    public void validate_content_error()
-        throws Exception
-    {
-
-        Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "mymodule:my_type" ) ) );
-
-        Mockito.when( contentService.validate( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( createDataValidationErrors() );
-
-        String jsonString = request().path( "content/validate" ).
-            entity( readFromFile( "validate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        assertJson( "validate_content_error.json", jsonString );
     }
 
     @Test

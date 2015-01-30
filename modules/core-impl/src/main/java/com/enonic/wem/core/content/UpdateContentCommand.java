@@ -22,7 +22,7 @@ import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.thumb.Thumbnail;
 
 final class UpdateContentCommand
-    extends AbstractContentCommand
+    extends AbstractCreatingOrUpdatingContentCommand
 {
     private final static Logger LOG = LoggerFactory.getLogger( UpdateContentCommand.class );
 
@@ -42,7 +42,7 @@ final class UpdateContentCommand
         return new Builder( params );
     }
 
-    public static Builder create( final AbstractContentCommand source )
+    public static Builder create( final AbstractCreatingOrUpdatingContentCommand source )
     {
         return new Builder( source );
     }
@@ -109,7 +109,15 @@ final class UpdateContentCommand
 
     private boolean validateEditedContent( final Content edited )
     {
-        final DataValidationErrors dataValidationErrors = validate( edited.getType(), edited.getData() );
+        final DataValidationErrors dataValidationErrors = ValidateContentDataCommand.create().
+            contentData( edited.getData() ).
+            contentType( edited.getType() ).
+            metadatas( edited.getAllMetadata() ).
+            mixinService( this.mixinService ).
+            moduleService( this.moduleService ).
+            contentTypeService( this.contentTypeService ).
+            build().
+            execute();
 
         for ( DataValidationError error : dataValidationErrors )
         {
@@ -149,7 +157,7 @@ final class UpdateContentCommand
     }
 
     public static class Builder
-        extends AbstractContentCommand.Builder<Builder>
+        extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
         private UpdateContentParams params;
 
@@ -160,10 +168,9 @@ final class UpdateContentCommand
             this.params = params;
         }
 
-        Builder( final AbstractContentCommand source )
+        Builder( final AbstractCreatingOrUpdatingContentCommand source )
         {
             super( source );
-
         }
 
         Builder params( final UpdateContentParams value )
@@ -180,6 +187,7 @@ final class UpdateContentCommand
 
         void validate()
         {
+            super.validate();
             Preconditions.checkNotNull( params );
         }
 

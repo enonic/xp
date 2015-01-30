@@ -16,12 +16,14 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.media.MediaInfo;
+import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.PrincipalKey;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -31,6 +33,10 @@ public class UpdateContentCommandTest
     private static final Instant CREATED_TIME = LocalDateTime.of( 2013, 1, 1, 12, 0, 0, 0 ).toInstant( ZoneOffset.UTC );
 
     private final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+
+    private final MixinService mixinService = Mockito.mock( MixinService.class );
+
+    private final ModuleService moduleService = Mockito.mock( ModuleService.class );
 
     private final NodeService nodeService = Mockito.mock( NodeService.class );
 
@@ -62,6 +68,8 @@ public class UpdateContentCommandTest
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfo( this.mediaInfo ).
+            mixinService( this.mixinService ).
+            moduleService( this.moduleService ).
             build();
 
         Mockito.when( nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
@@ -93,6 +101,8 @@ public class UpdateContentCommandTest
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfo( this.mediaInfo ).
+            mixinService( this.mixinService ).
+            moduleService( this.moduleService ).
             build();
 
         final Node mockNode = Node.newNode().build();
