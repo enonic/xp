@@ -10,8 +10,6 @@
   "displayName": "My Content",
   "hasChildren": false,
   "draft": true,
-  "isPageTemplate": false,
-  "isSite": false,
   "data": {
     "boolean": [
       true,

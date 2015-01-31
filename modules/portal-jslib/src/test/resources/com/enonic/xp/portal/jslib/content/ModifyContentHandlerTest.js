@@ -21,8 +21,6 @@ var expectedJson = {
     "displayName": "Modified",
     "draft": false,
     "hasChildren": false,
-    "isPageTemplate": false,
-    "isSite": false,
     "meta": {
         "mymodule:myschema": {
             "a": "1"
