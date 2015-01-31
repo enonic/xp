@@ -3,9 +3,9 @@ module api.ui.form {
     export class FormItem extends api.dom.DivEl {
 
         private label: api.dom.LabelEl;
-        private input: api.dom.FormInputEl;
+        private input: api.dom.FormItemEl;
         private error: api.dom.SpanEl;
-        private validator: (input: api.dom.FormInputEl) => string;
+        private validator: (input: api.dom.FormItemEl) => string;
         private invalidClass: string = "invalid";
 
         private focusListeners: {(event: FocusEvent):void}[] = [];
@@ -43,11 +43,11 @@ module api.ui.form {
             return this.label;
         }
 
-        getInput(): api.dom.FormInputEl {
+        getInput(): api.dom.FormItemEl {
             return this.input;
         }
 
-        getValidator(): (input: api.dom.FormInputEl) => string {
+        getValidator(): (input: api.dom.FormItemEl) => string {
             return this.validator;
         }
 
@@ -106,9 +106,9 @@ module api.ui.form {
 
         private label: string;
         private validator: (el: api.dom.FormInputEl) => string;
-        private input: api.dom.FormInputEl;
+        private input: api.dom.FormItemEl;
 
-        constructor(input: api.dom.FormInputEl) {
+        constructor(input: api.dom.FormItemEl) {
             if(!input) {
                 throw new Error("Input can't be null.");
             }
@@ -119,7 +119,7 @@ module api.ui.form {
             return new FormItem(this);
         }
 
-        getInput(): api.dom.FormInputEl {
+        getInput(): api.dom.FormItemEl {
             return this.input;
         }
 

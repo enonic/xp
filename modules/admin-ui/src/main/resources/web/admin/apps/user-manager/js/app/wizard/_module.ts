@@ -20,3 +20,5 @@
 ///<reference path='RoleMembersWizardStepForm.ts' />
 ///<reference path='GroupMembersWizardStepForm.ts' />
 ///<reference path='SecurityWizardStepForm.ts' />
+///<reference path='OpenChangePasswordDialogEvent.ts' />
+///<reference path='ChangeUserPasswordDialog.ts' />

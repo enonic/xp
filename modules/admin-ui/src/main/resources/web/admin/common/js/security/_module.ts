@@ -20,6 +20,7 @@
 ///<reference path="FindPrincipalsRequest.ts"/>
 ///<reference path="GetPrincipalByKeyRequest.ts"/>
 ///<reference path="CheckEmailAvailabilityRequest.ts"/>
+///<reference path="UpdateUserPasswordRequest.ts"/>
 ///<reference path="CreateUserRequest.ts"/>
 ///<reference path="CreateGroupRequest.ts"/>
 ///<reference path="CreateRoleRequest.ts"/>

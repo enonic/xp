@@ -32,6 +32,7 @@ import com.enonic.wem.admin.rest.resource.security.json.PrincipalJson;
 import com.enonic.wem.admin.rest.resource.security.json.PrincipalsJson;
 import com.enonic.wem.admin.rest.resource.security.json.RoleJson;
 import com.enonic.wem.admin.rest.resource.security.json.UpdateGroupJson;
+import com.enonic.wem.admin.rest.resource.security.json.UpdatePasswordJson;
 import com.enonic.wem.admin.rest.resource.security.json.UpdateRoleJson;
 import com.enonic.wem.admin.rest.resource.security.json.UpdateUserJson;
 import com.enonic.wem.admin.rest.resource.security.json.UpdateUserStoreJson;
@@ -278,6 +279,21 @@ public final class SecurityResource
 
         final Principals memberships = securityService.getPrincipals( securityService.getMemberships( userKey ) );
         return new UserJson( user, memberships );
+    }
+
+    @POST
+    @Path("principals/updatePassword")
+    public UserJson updatePassword( final UpdatePasswordJson params )
+    {
+        final PrincipalKey userKey = params.getUserKey();
+
+        if ( params.getPassword() != null )
+        {
+            final User user = securityService.setPassword( userKey, params.getPassword() );
+            return new UserJson( user );
+        }
+
+        throw new WebApplicationException( "Password has not been set." ) ;
     }
 
     @POST
