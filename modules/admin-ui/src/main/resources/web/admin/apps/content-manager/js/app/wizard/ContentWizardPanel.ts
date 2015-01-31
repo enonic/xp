@@ -5,6 +5,8 @@ module app.wizard {
     import FormContextBuilder = api.form.FormContextBuilder;
     import ContentFormContext = api.content.form.ContentFormContext;
     import Content = api.content.Content;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+    import CompareStatus = api.content.CompareStatus;
     import ContentBuilder = api.content.ContentBuilder;
     import Attachment = api.content.attachment.Attachment;
     import Thumbnail = api.thumb.Thumbnail;
@@ -328,8 +330,13 @@ module app.wizard {
         }
 
         layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
-
             this.formIcon.setSrc(new ContentIconUrlResolver().setContent(persistedContent).setCrop(false).resolve());
+
+            api.content.ContentSummaryAndCompareStatusFetcher.fetch(persistedContent.getContentId()).
+                then((contentSummaryAndCompareStatus:ContentSummaryAndCompareStatus) => {
+                    var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
+                    this.contentWizardHeader.setIgnoreGenerateStatusForName(ignore);
+                }).done();
 
             var viewedContent;
             if (!this.constructing) {
@@ -342,9 +349,7 @@ module app.wizard {
                     if (this.liveFormPanel) {
                         this.liveFormPanel.loadPage();
                     }
-                }
-                else {
-
+                } else {
                     console.warn("Received Content from server differs from what's viewed:");
                     if (!viewedContent.getContentData().equals(persistedContent.getContentData())) {
                         console.warn(" inequality found in Content.data");
@@ -699,7 +704,6 @@ module app.wizard {
             if (this.displayNameScriptExecutor.hasScript()) {
 
                 formView.onKeyUp((event: KeyboardEvent) => {
-
                     if (this.displayNameScriptExecutor.hasScript()) {
                         this.contentWizardHeader.setDisplayName(this.displayNameScriptExecutor.execute());
                     }
@@ -777,11 +781,11 @@ module app.wizard {
         }
 
         public checkContentCanBePublished(): boolean {
-            var contentFormHasValidUserInput = true;
+
             if (!this.isContentFormValid) {
                 this.contentWizardStepForm.displayValidationErrors(true);
             }
-            contentFormHasValidUserInput = this.contentWizardStepForm.getFormView().hasValidUserInput();
+            var contentFormHasValidUserInput = this.contentWizardStepForm.getFormView().hasValidUserInput();
 
             var allMetadataFormsValid = true;
             var allMetadataFormsHasValidUserInput = true;

@@ -16,6 +16,13 @@
       min-width: 100px;
       margin-top: 2px;
     }
+
+    &[name="displayName"], &[name="name"] {
+      &.generated {
+        color: @admin-font-gray2;
+      }
+    }
+
     .input-glow();
     .placeholderColor(@admin-medium-gray-border);
   }

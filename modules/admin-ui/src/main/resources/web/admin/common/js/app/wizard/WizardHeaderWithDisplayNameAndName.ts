@@ -33,6 +33,8 @@ module api.app.wizard {
 
         private autoGenerationEnabled: boolean = true;
 
+        private ignoreGenerateStatusForName: boolean = true;
+
         constructor(builder: WizardHeaderWithDisplayNameAndNameBuilder) {
             super();
             this.displayNameGenerator = builder.displayNameGenerator;
@@ -58,13 +60,21 @@ module api.app.wizard {
 
             this.displayNameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
 
+                this.displayNameEl.removeClass("generated");
+
                 var currentDisplayName = event.getNewValue();
 
                 if (this.displayNameGenerator && this.displayNameGenerator.hasScript()) {
                     var generatedDisplayName = this.displayNameGenerator.execute();
 
                     this.displayNameProgrammaticallySet =
-                    generatedDisplayName == currentDisplayName || api.util.StringHelper.isEmpty(currentDisplayName);
+                        generatedDisplayName == currentDisplayName ||
+                        generatedDisplayName.trim() === currentDisplayName ||
+                        api.util.StringHelper.isEmpty(currentDisplayName);
+
+                    if (this.displayNameProgrammaticallySet) {
+                        this.displayNameEl.addClass("generated");
+                    }
                 }
                 this.doAutoGenerateName(currentDisplayName);
             });
@@ -74,6 +84,8 @@ module api.app.wizard {
                 var generatedName = this.generateName(this.getDisplayName());
 
                 this.autoGenerateName = this.checkAutoGenerateName(currentName, generatedName);
+
+                this.updateNameGeneratedStatus();
             });
 
             this.onShown((event) => this.updatePathAndNameWidth());
@@ -82,7 +94,7 @@ module api.app.wizard {
         }
 
         private checkAutoGenerateName(name: string, displayName: string): boolean {
-            return api.util.StringHelper.isEmpty(name) || displayName == name || name == this.generateName(displayName);
+            return api.util.StringHelper.isEmpty(name) || displayName === name || name === this.generateName(displayName);
         }
 
         initNames(displayName: string, name: string, forceDisplayNameProgrammaticallySet: boolean) {
@@ -92,8 +104,7 @@ module api.app.wizard {
             this.displayNameEl.setValue(displayName);
             if (name != null) {
                 this.nameEl.setValue(name);
-            }
-            else {
+            } else {
                 this.nameEl.setValue(this.generateName(displayName));
             }
 
@@ -101,8 +112,7 @@ module api.app.wizard {
                 if (!forceDisplayNameProgrammaticallySet) {
                     var generatedDisplayName = this.displayNameGenerator.execute();
                     this.displayNameProgrammaticallySet = generatedDisplayName == displayName;
-                }
-                else {
+                } else {
                     this.displayNameProgrammaticallySet = true;
                 }
             }
@@ -124,6 +134,7 @@ module api.app.wizard {
 
         setDisplayName(value: string) {
             if (this.displayNameProgrammaticallySet) {
+                value = value.trim();
                 this.displayNameEl.setValue(value);
                 this.doAutoGenerateName(value);
             }
@@ -157,6 +168,19 @@ module api.app.wizard {
 
         private generateName(value: string): string {
             return api.Name.ensureValidName(value);
+        }
+
+        setIgnoreGenerateStatusForName(value: boolean) {
+            this.ignoreGenerateStatusForName = value;
+            this.updateNameGeneratedStatus();
+        }
+
+        private updateNameGeneratedStatus() {
+            if (this.autoGenerateName && !this.ignoreGenerateStatusForName) {
+                this.nameEl.addClass("generated");
+            } else {
+                this.nameEl.removeClass("generated");
+            }
         }
 
         private updatePathAndNameWidth() {
