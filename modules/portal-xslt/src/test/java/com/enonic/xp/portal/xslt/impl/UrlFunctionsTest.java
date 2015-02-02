@@ -19,7 +19,7 @@ public class UrlFunctionsTest
     {
         final PortalContext context = new PortalContext();
         context.setMode( RenderMode.LIVE );
-        context.setWorkspace( Workspace.from( "stage" ) );
+        context.setWorkspace( Workspace.from( "draft" ) );
         context.setModule( ModuleKey.from( "mymodule" ) );
         context.setBaseUri( "/portal" );
 

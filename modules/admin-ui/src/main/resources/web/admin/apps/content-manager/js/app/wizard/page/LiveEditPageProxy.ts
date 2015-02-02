@@ -146,7 +146,7 @@ module app.wizard.page {
         public load() {
             this.loadMask.show();
             var contentId = this.liveEditModel.getContent().getContentId().toString();
-            var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.STAGE);
+            var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
             console.log("LiveEditPageProxy.load pageUrl: " + pageUrl);
             this.liveEditIFrame.setSrc(pageUrl);
         }

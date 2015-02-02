@@ -22,7 +22,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             param( "a", 3 );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/portal/stage/context/path?a=3", url );
+        assertEquals( "/portal/draft/context/path?a=3", url );
     }
 
     @Test
@@ -34,7 +34,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             context( this.context );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/portal/stage/context/path/_/component/main/0", url );
+        assertEquals( "/portal/draft/context/path/_/component/main/0", url );
     }
 
     @Test
@@ -45,7 +45,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             component( "other/1" );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/portal/stage/context/path/_/component/other/1", url );
+        assertEquals( "/portal/draft/context/path/_/component/other/1", url );
     }
 
     @Test
@@ -57,7 +57,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             component( "other/1" );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/portal/stage/a/b/_/component/other/1", url );
+        assertEquals( "/portal/draft/a/b/_/component/other/1", url );
     }
 
     @Test
@@ -72,7 +72,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             component( "other/1" );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/portal/stage/a/b/mycontent/_/component/other/1", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/component/other/1", url );
     }
 
     private void addComponent()

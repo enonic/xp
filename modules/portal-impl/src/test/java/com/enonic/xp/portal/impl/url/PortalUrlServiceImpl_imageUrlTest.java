@@ -21,7 +21,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             context( this.context );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/stage/a/b/mycontent/_/image/123456/mycontent", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456/mycontent", url );
     }
 
     @Test
@@ -34,7 +34,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             context( this.context );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/stage/a/b/mycontent/_/image/123456/mycontent.png", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456/mycontent.png", url );
     }
 
     @Test
@@ -50,7 +50,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             context( this.context );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/stage/a/b/mycontent/_/image/123456/mycontent.jpg?filter=scale%2810%2C10%29&background=00ff00&quality=90",
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456/mycontent.jpg?filter=scale%2810%2C10%29&background=00ff00&quality=90",
                       url );
     }
 
@@ -64,7 +64,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             context( this.context );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/stage/context/path/_/image/123456/mycontent", url );
+        assertEquals( "/portal/draft/context/path/_/image/123456/mycontent", url );
     }
 
     @Test
@@ -77,7 +77,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             context( this.context );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/stage/context/path/_/image/123456/mycontent", url );
+        assertEquals( "/portal/draft/context/path/_/image/123456/mycontent", url );
     }
 
     private Content createContent()

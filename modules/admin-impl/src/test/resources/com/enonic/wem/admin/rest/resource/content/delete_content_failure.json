@@ -2,7 +2,7 @@
     "failures": [
         {
             "path": "/one",
-            "reason": "Content with path [/one] was not found in workspace [stage]"
+          "reason": "Content with path [/one] was not found in workspace [draft]"
         },
         {
             "path": "/two",

@@ -316,7 +316,7 @@ public final class ContentResource
         final ContentIds contentIds = ContentIds.from( params.getIds() );
 
         final PushContentsResult result = contentService.push( PushContentParams.create().
-            target( ContentConstants.WORKSPACE_PROD ).
+            target( ContentConstants.WORKSPACE_ONLINE ).
             contentIds( contentIds ).
             includeChildren( true ).
             allowPublishOutsideSelection( true ).
@@ -561,7 +561,7 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final CompareContentResults compareResults =
-            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.WORKSPACE_PROD ) );
+            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.WORKSPACE_ONLINE ) );
 
         return new CompareContentResultsJson( compareResults );
     }
@@ -586,7 +586,7 @@ public final class ContentResource
     public GetActiveContentVersionsResultJson getActiveVersions( @QueryParam("id") final String id )
     {
         final GetActiveContentVersionsResult result = contentService.getActiveVersions( GetActiveContentVersionsParams.create().
-            workspaces( Workspaces.from( ContentConstants.WORKSPACE_STAGE, ContentConstants.WORKSPACE_PROD ) ).
+            workspaces( Workspaces.from( ContentConstants.WORKSPACE_DRAFT, ContentConstants.WORKSPACE_ONLINE ) ).
             contentId( ContentId.from( id ) ).
             build() );
 

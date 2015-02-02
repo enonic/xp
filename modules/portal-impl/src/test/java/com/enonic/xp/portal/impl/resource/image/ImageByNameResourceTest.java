@@ -16,7 +16,7 @@ public class ImageByNameResourceTest
     {
         setupContent();
 
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/image-name.jpg/_/image/image-name.jpg" );
+        final MockHttpServletRequest request = newGetRequest( "/online/path/to/image-name.jpg/_/image/image-name.jpg" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 200, response.getStatus() );
@@ -29,7 +29,7 @@ public class ImageByNameResourceTest
     {
         Mockito.when( this.contentService.getByPath( Mockito.anyObject() ) ).thenReturn( null );
 
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/image-name.jpg/_/image/image-name.jpg" );
+        final MockHttpServletRequest request = newGetRequest( "/online/path/to/image-name.jpg/_/image/image-name.jpg" );
         final MockHttpServletResponse response = executeRequest( request );
         assertEquals( 404, response.getStatus() );
     }
@@ -40,7 +40,7 @@ public class ImageByNameResourceTest
     {
         setupContent();
 
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/image-name.jpg/_/image/image-name.jpg" );
+        final MockHttpServletRequest request = newGetRequest( "/online/path/to/image-name.jpg/_/image/image-name.jpg" );
         request.setQueryString( "filter=sepia()&quality=75&background=0x0" );
         final MockHttpServletResponse response = executeRequest( request );
 

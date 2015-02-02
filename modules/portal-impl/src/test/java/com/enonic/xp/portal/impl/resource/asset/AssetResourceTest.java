@@ -24,7 +24,7 @@ public class AssetResourceTest
     {
         addResource( "main.css", "demo:/public/css/main.css", "p {color:red;}" );
 
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/asset/demo/css/main.css" );
+        final MockHttpServletRequest request = newGetRequest( "/online/path/to/content/_/asset/demo/css/main.css" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 200, response.getStatus() );
@@ -36,7 +36,7 @@ public class AssetResourceTest
     public void getPublicResource_moduleNotFound()
         throws Exception
     {
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/asset/demo/css/main.css" );
+        final MockHttpServletRequest request = newGetRequest( "/online/path/to/content/_/asset/demo/css/main.css" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 404, response.getStatus() );
@@ -49,7 +49,7 @@ public class AssetResourceTest
     {
         addModule( "demo" );
 
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/asset/demo/css/main.css" );
+        final MockHttpServletRequest request = newGetRequest( "/online/path/to/content/_/asset/demo/css/main.css" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 404, response.getStatus() );
@@ -60,7 +60,7 @@ public class AssetResourceTest
     public void methodNotAllowed()
         throws Exception
     {
-        final MockHttpServletRequest request = newPostRequest( "/prod/path/to/content/_/asset/demo/css/main.css" );
+        final MockHttpServletRequest request = newPostRequest( "/online/path/to/content/_/asset/demo/css/main.css" );
         final MockHttpServletResponse response = executeRequest( request );
         assertEquals( 405, response.getStatus() );
     }

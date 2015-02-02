@@ -81,7 +81,7 @@ public class AttachmentResourceTest
     {
         setupMedia();
 
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/inline/123456/logo.png" );
+        final MockHttpServletRequest request = newGetRequest( "/online/path/to/content/_/attachment/inline/123456/logo.png" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 200, response.getStatus() );
@@ -95,7 +95,7 @@ public class AttachmentResourceTest
     {
         setupMedia();
 
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/download/123456/logo.png" );
+        final MockHttpServletRequest request = newGetRequest( "/online/path/to/content/_/attachment/download/123456/logo.png" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 200, response.getStatus() );
@@ -109,7 +109,7 @@ public class AttachmentResourceTest
     {
         setupMedia();
 
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/download/1/logo.png" );
+        final MockHttpServletRequest request = newGetRequest( "/online/path/to/content/_/attachment/download/1/logo.png" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 404, response.getStatus() );
@@ -121,7 +121,7 @@ public class AttachmentResourceTest
     {
         setupMedia();
 
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/attachment/download/123456/other.jpg" );
+        final MockHttpServletRequest request = newGetRequest( "/online/path/to/content/_/attachment/download/123456/other.jpg" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 404, response.getStatus() );

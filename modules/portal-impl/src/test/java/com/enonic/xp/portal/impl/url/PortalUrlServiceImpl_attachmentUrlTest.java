@@ -24,7 +24,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             param( "a", 3 );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/portal/stage/a/b/mycontent/_/attachment/inline/123456/a2.jpg?a=3", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/attachment/inline/123456/a2.jpg?a=3", url );
     }
 
     @Test
@@ -37,7 +37,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             download( true );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/portal/stage/a/b/mycontent/_/attachment/download/123456/a2.jpg", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/attachment/download/123456/a2.jpg", url );
     }
 
     @Test
@@ -50,7 +50,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             name( "myfile.pdf" );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/portal/stage/a/b/mycontent/_/attachment/inline/123456/myfile.pdf", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/attachment/inline/123456/myfile.pdf", url );
     }
 
     @Test
@@ -63,7 +63,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             label( "thumb" );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/portal/stage/a/b/mycontent/_/attachment/inline/123456/a1.jpg", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/attachment/inline/123456/a1.jpg", url );
     }
 
     @Test
@@ -77,7 +77,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             context( this.context );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/portal/stage/context/path/_/attachment/inline/123456/myfile.pdf", url );
+        assertEquals( "/portal/draft/context/path/_/attachment/inline/123456/myfile.pdf", url );
     }
 
     @Test
@@ -91,7 +91,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             context( this.context );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/portal/stage/context/path/_/attachment/inline/123456/myfile.pdf", url );
+        assertEquals( "/portal/draft/context/path/_/attachment/inline/123456/myfile.pdf", url );
     }
 
     private Content createContent()

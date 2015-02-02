@@ -182,7 +182,7 @@ public class ElasticsearchDao
         }
 
         final CreateSnapshotRequestBuilder createRequest = new CreateSnapshotRequestBuilder( this.client.admin().cluster() ).
-            setIndices( "search-wem-content-repo", "storage-wem-content-repo" ).
+            setIndices( "search-cms-repo", "storage-cms-repo" ).
             setIncludeGlobalState( false ).
             setWaitForCompletion( true ).
             setRepository( name ).
@@ -197,7 +197,7 @@ public class ElasticsearchDao
     {
         RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder = new RestoreSnapshotRequestBuilder( this.client.admin().cluster() ).
             setRestoreGlobalState( false ).
-            setIndices( "search-wem-content-repo", "storage-wem-content-repo" ).
+            setIndices( "search-cms-repo", "storage-cms-repo" ).
             setRepository( repositoryName ).
             setSnapshot( snapshotName ).
             setWaitForCompletion( true );

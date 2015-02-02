@@ -40,10 +40,10 @@ public class GetActiveNodeVersionsCommandTest
             build().
             execute();
 
-        NodeVersion stage = result.getNodeVersions().get( WS_DEFAULT );
-        NodeVersion prod = result.getNodeVersions().get( WS_OTHER );
+        NodeVersion draft = result.getNodeVersions().get( WS_DEFAULT );
+        NodeVersion online = result.getNodeVersions().get( WS_OTHER );
 
-        assertEquals( stage, prod );
+        assertEquals( draft, online );
 
         updateNode( node, CTX_DEFAULT );
 
@@ -57,11 +57,11 @@ public class GetActiveNodeVersionsCommandTest
             build().
             execute();
 
-        stage = result2.getNodeVersions().get( WS_DEFAULT );
-        prod = result2.getNodeVersions().get( WS_OTHER );
+        draft = result2.getNodeVersions().get( WS_DEFAULT );
+        online = result2.getNodeVersions().get( WS_OTHER );
 
-        assertTrue( !stage.equals( prod ) );
-        assertTrue( stage.getTimestamp().isAfter( prod.getTimestamp() ) );
+        assertTrue( !draft.equals( online ) );
+        assertTrue( draft.getTimestamp().isAfter( online.getTimestamp() ) );
     }
 
     private void updateNode( final Node node, Context context )

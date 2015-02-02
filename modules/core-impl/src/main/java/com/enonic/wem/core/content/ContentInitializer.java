@@ -6,12 +6,14 @@ import org.slf4j.LoggerFactory;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.CreateRootNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.RootNode;
+import com.enonic.wem.api.query.Direction;
 import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -19,6 +21,21 @@ import com.enonic.wem.api.security.acl.AccessControlList;
 public final class ContentInitializer
 {
     private final static Logger LOG = LoggerFactory.getLogger( ContentInitializer.class );
+
+    private static final AccessControlList CONTENT_ROOT_DEFAULT_ACL = AccessControlList.create().
+        add( AccessControlEntry.create().
+            principal( RoleKeys.ADMIN ).
+            allowAll().
+            build() ).
+        add( AccessControlEntry.create().
+            principal( RoleKeys.CONTENT_MANAGER ).
+            allowAll().
+            build() ).
+        build();
+
+    private static final IndexPath CONTENT_INDEX_PATH_DISPLAY_NAME = IndexPath.from( "displayName" );
+
+    private static final ChildOrder CONTENT_DEFAULT_CHILD_ORDER = ChildOrder.from( CONTENT_INDEX_PATH_DISPLAY_NAME + " " + Direction.ASC );
 
     private final NodeService nodeService;
 
@@ -29,8 +46,8 @@ public final class ContentInitializer
 
     public final void initialize()
     {
-        final RootNode rootNode = ContentConstants.CONTEXT_STAGE.callWith( this::doInitNodeRoot );
-        ContentConstants.CONTEXT_STAGE.runWith( () -> this.doInitContentRootNode( rootNode ) );
+        final RootNode rootNode = ContentConstants.CONTEXT_DRAFT.callWith( this::doInitNodeRoot );
+        ContentConstants.CONTEXT_DRAFT.runWith( () -> this.doInitContentRootNode( rootNode ) );
     }
 
     private void doInitContentRootNode( final RootNode rootNode )
@@ -51,13 +68,13 @@ public final class ContentInitializer
                 data( data ).
                 name( ContentConstants.CONTENT_ROOT_NAME ).
                 parent( rootNode.path() ).
-                permissions( ContentConstants.CONTENT_ROOT_DEFAULT_ACL ).
-                childOrder( ContentConstants.CONTENT_DEFAULT_CHILD_ORDER ).
+                permissions( CONTENT_ROOT_DEFAULT_ACL ).
+                childOrder( CONTENT_DEFAULT_CHILD_ORDER ).
                 build() );
 
             LOG.info( "Created content root-node: " + root.path() );
 
-            nodeService.push( NodeIds.from( root.id() ), ContentConstants.WORKSPACE_PROD );
+            nodeService.push( NodeIds.from( root.id() ), ContentConstants.WORKSPACE_ONLINE );
         }
     }
 
@@ -65,13 +82,10 @@ public final class ContentInitializer
     {
         final RootNode rootNode = this.nodeService.createRootNode( CreateRootNodeParams.create().
             childOrder( ChildOrder.from( "_name ASC" ) ).
-            permissions( AccessControlList.of( AccessControlEntry.create().
-                allowAll().
-                principal( RoleKeys.CONTENT_MANAGER ).
-                build() ) ).
+            permissions( CONTENT_ROOT_DEFAULT_ACL ).
             build() );
 
-        nodeService.push( NodeIds.from( rootNode.id() ), ContentConstants.WORKSPACE_PROD );
+        nodeService.push( NodeIds.from( rootNode.id() ), ContentConstants.WORKSPACE_ONLINE );
 
         return rootNode;
     }

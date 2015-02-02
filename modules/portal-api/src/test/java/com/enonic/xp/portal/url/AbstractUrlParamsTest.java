@@ -15,7 +15,7 @@ public abstract class AbstractUrlParamsTest
     public void setup()
     {
         this.context = new PortalContext();
-        this.context.setWorkspace( Workspace.from( "stage" ) );
+        this.context.setWorkspace( Workspace.from( "draft" ) );
         this.context.setModule( ModuleKey.from( "mymodule" ) );
         this.context.setBaseUri( "/portal" );
         this.context.setContentPath( ContentPath.from( "context/path" ) );

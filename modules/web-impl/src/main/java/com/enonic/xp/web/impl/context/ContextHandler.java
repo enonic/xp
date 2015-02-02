@@ -33,7 +33,7 @@ public final class ContextHandler
         throws Exception
     {
         final Context context = ContextBuilder.create().build();
-        context.getLocalScope().setAttribute( ContentConstants.WORKSPACE_STAGE );
+        context.getLocalScope().setAttribute( ContentConstants.WORKSPACE_DRAFT );
         context.getLocalScope().setAttribute( ContentConstants.CONTENT_REPO.getId() );
 
         final HttpSession session = req.getSession( true );

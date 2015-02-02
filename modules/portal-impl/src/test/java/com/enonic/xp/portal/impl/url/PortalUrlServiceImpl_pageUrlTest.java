@@ -20,7 +20,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             param( "a", 3 );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/portal/stage/context/path?a=3", url );
+        assertEquals( "/portal/draft/context/path?a=3", url );
     }
 
     @Test
@@ -32,7 +32,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             param( "a", 3 );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/portal/stage/context/path/a/b?a=3", url );
+        assertEquals( "/portal/draft/context/path/a/b?a=3", url );
     }
 
     @Test
@@ -43,7 +43,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             path( "/a/b" );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/portal/stage/a/b", url );
+        assertEquals( "/portal/draft/a/b", url );
     }
 
     @Test
@@ -57,7 +57,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             id( "123456" );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/portal/stage/a/b/mycontent", url );
+        assertEquals( "/portal/draft/a/b/mycontent", url );
     }
 
     @Test
@@ -72,6 +72,6 @@ public class PortalUrlServiceImpl_pageUrlTest
             path( "/a/b" );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/portal/stage/a/b/mycontent", url );
+        assertEquals( "/portal/draft/a/b/mycontent", url );
     }
 }

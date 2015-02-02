@@ -27,7 +27,7 @@ public abstract class AbstractElasticsearchIntegrationTest
     private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
 
     protected static final Repository TEST_REPO = Repository.create().
-        id( RepositoryId.from( "wem-content-repo" ) ).
+        id( RepositoryId.from( "cms-repo" ) ).
         build();
 
     @Before

@@ -20,6 +20,6 @@ public final class RoleKeys
 
     public static final PrincipalKey CONTENT_MANAGER_APP = PrincipalKey.ofRole( "system.cm.app" );
 
-    public static final PrincipalKey CONTENT_MANAGER = PrincipalKey.ofRole( "system.cm.admin" ); // TODO remove?
+    public static final PrincipalKey CONTENT_MANAGER = PrincipalKey.ofRole( "system.cm.admin" );
 
 }

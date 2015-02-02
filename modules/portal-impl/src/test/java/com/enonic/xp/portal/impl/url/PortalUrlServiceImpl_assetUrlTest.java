@@ -17,7 +17,7 @@ public class PortalUrlServiceImpl_assetUrlTest
             path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/portal/stage/context/path/_/asset/mymodule/css/my.css", url );
+        assertEquals( "/portal/draft/context/path/_/asset/mymodule/css/my.css", url );
     }
 
     @Test
@@ -29,6 +29,6 @@ public class PortalUrlServiceImpl_assetUrlTest
             path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/portal/stage/context/path/_/asset/othermodule/css/my.css", url );
+        assertEquals( "/portal/draft/context/path/_/asset/othermodule/css/my.css", url );
     }
 }

@@ -48,11 +48,11 @@ public abstract class AbstractNodeTest
     protected ElasticsearchQueryService queryService;
 
     protected static final Workspace WS_DEFAULT = Workspace.create().
-        name( "stage" ).
+        name( "draft" ).
         build();
 
     protected static final Workspace WS_OTHER = Workspace.create().
-        name( "prod" ).
+        name( "online" ).
         build();
 
     protected static final Context CTX_DEFAULT = ContextBuilder.create().
@@ -200,7 +200,7 @@ public abstract class AbstractNodeTest
 
     void printContentRepoIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), "stage" );
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), "draft" );
     }
 
     void printWorkspaceIndex()

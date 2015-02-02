@@ -18,7 +18,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
             param( "a", 3 );
 
         final String url = this.service.serviceUrl( params );
-        assertEquals( "/portal/stage/context/path/_/service/mymodule/myservice?a=3", url );
+        assertEquals( "/portal/draft/context/path/_/service/mymodule/myservice?a=3", url );
     }
 
     @Test
@@ -30,6 +30,6 @@ public class PortalUrlServiceImpl_serviceUrlTest
             module( "othermodule" );
 
         final String url = this.service.serviceUrl( params );
-        assertEquals( "/portal/stage/context/path/_/service/othermodule/myservice", url );
+        assertEquals( "/portal/draft/context/path/_/service/othermodule/myservice", url );
     }
 }
