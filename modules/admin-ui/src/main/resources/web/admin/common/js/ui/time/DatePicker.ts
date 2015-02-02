@@ -134,46 +134,27 @@ module api.ui.time {
                 this.updateInputStyling();
             });
 
-            this.input.onKeyDown((event: KeyboardEvent) => {
-                if (!api.ui.KeyHelper.isNumber(event) && !api.ui.KeyHelper.isDash(event) && !api.ui.KeyHelper.isBackspace(event) &&
-                    !api.ui.KeyHelper.isDel(event)) {
-
-                    event.preventDefault();
-                }
-            });
-
             this.input.onKeyUp((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isNumber(event) ||
-                    api.ui.KeyHelper.isDash(event) ||
-                    api.ui.KeyHelper.isBackspace(event) ||
-                    api.ui.KeyHelper.isDel(event)) {
+                var typedDate = this.input.getValue();
 
-                    var typedDate = this.input.getValue();
-
-                    if (api.util.StringHelper.isEmpty(typedDate)) {
-                        this.calendar.selectDate(null);
-                        this.selectedDate = null;
-                        this.validUserInput = true;
-                        this.popup.hide();
-                        this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
-                    }
-                    else {
-                        var date = api.util.DateHelper.parseUTCDate(typedDate);
-                        if (date) {
-                            var correctlyTyped = api.util.DateHelper.formatUTCDate(date) == typedDate;
-                            if (correctlyTyped) {
-                                this.selectedDate = date;
-                                this.validUserInput = true;
-                                this.calendar.selectDate(date);
-                                this.notifySelectedDateChanged(new SelectedDateChangedEvent(date));
-                                if (!this.popup.isVisible()) {
-                                    this.popup.show();
-                                }
-                            }
-                            else {
-                                this.selectedDate = null;
-                                this.validUserInput = false;
-                                this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
+                if (api.util.StringHelper.isEmpty(typedDate)) {
+                    this.calendar.selectDate(null);
+                    this.selectedDate = null;
+                    this.validUserInput = true;
+                    this.popup.hide();
+                    this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
+                }
+                else {
+                    var date = api.util.DateHelper.parseUTCDate(typedDate);
+                    if (date) {
+                        var correctlyTyped = api.util.DateHelper.formatUTCDate(date) == typedDate;
+                        if (correctlyTyped) {
+                            this.selectedDate = date;
+                            this.validUserInput = true;
+                            this.calendar.selectDate(date);
+                            this.notifySelectedDateChanged(new SelectedDateChangedEvent(date));
+                            if (!this.popup.isVisible()) {
+                                this.popup.show();
                             }
                         }
                         else {
@@ -182,10 +163,14 @@ module api.ui.time {
                             this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
                         }
                     }
-
-                    this.updateInputStyling();
-
+                    else {
+                        this.selectedDate = null;
+                        this.validUserInput = false;
+                        this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
+                    }
                 }
+
+                this.updateInputStyling();
             });
 
         }
