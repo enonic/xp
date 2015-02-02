@@ -71,7 +71,7 @@ module app.wizard {
             this.closeDialogButton.setVisible(false);
 
             this.changePasswordButton = this.addAction(new api.ui.Action("Change Password", "").onExecuted(() => {
-                new api.security.UpdateUserPasswordRequest().
+                new api.security.SetUserPasswordRequest().
                     setKey(this.principal.getKey()).
                     setPassword(this.password.getValue()).sendAndParse().then((result) => {
                         api.notify.showFeedback('Password was changed!');

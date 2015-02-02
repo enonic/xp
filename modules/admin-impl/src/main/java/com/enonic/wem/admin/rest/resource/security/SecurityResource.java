@@ -50,6 +50,7 @@ import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
@@ -65,7 +66,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "security")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 public final class SecurityResource
     implements AdminResource
 {
@@ -282,8 +283,8 @@ public final class SecurityResource
     }
 
     @POST
-    @Path("principals/updatePassword")
-    public UserJson updatePassword( final UpdatePasswordJson params )
+    @Path("principals/setPassword")
+    public UserJson setPassword( final UpdatePasswordJson params )
     {
         final PrincipalKey userKey = params.getUserKey();
 

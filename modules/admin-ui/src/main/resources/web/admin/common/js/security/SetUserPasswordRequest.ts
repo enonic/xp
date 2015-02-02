@@ -1,6 +1,6 @@
 module api.security {
 
-    export class UpdateUserPasswordRequest extends SecurityResourceRequest<UserJson, User> {
+    export class SetUserPasswordRequest extends SecurityResourceRequest<UserJson, User> {
 
         private key: PrincipalKey;
         private password: string;
@@ -10,12 +10,12 @@ module api.security {
             super.setMethod("POST");
         }
 
-        setKey(key: PrincipalKey): UpdateUserPasswordRequest {
+        setKey(key: PrincipalKey): SetUserPasswordRequest {
             this.key = key;
             return this;
         }
 
-        setPassword(password: string): UpdateUserPasswordRequest {
+        setPassword(password: string): SetUserPasswordRequest {
             this.password = password;
             return this;
         }
@@ -28,7 +28,7 @@ module api.security {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), 'principals', 'updatePassword');
+            return api.rest.Path.fromParent(super.getResourcePath(), 'principals', 'setPassword');
         }
 
         sendAndParse(): wemQ.Promise<User> {

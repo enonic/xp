@@ -18,10 +18,11 @@ import com.enonic.wem.api.content.page.region.PartDescriptor;
 import com.enonic.wem.api.content.page.region.PartDescriptorService;
 import com.enonic.wem.api.content.page.region.PartDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/part/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 public final class PartDescriptorResource
     implements AdminResource
 {

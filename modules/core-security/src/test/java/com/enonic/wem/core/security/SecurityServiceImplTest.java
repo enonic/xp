@@ -1,11 +1,16 @@
 package com.enonic.wem.core.security;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.CreateRootNodeParams;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.security.CreateGroupParams;
@@ -18,6 +23,7 @@ import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.PrincipalRelationship;
 import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.Role;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.security.UpdateGroupParams;
 import com.enonic.wem.api.security.UpdateRoleParams;
@@ -26,6 +32,9 @@ import com.enonic.wem.api.security.UpdateUserStoreParams;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
 import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationException;
@@ -40,7 +49,7 @@ import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionSe
 import com.enonic.wem.repo.internal.elasticsearch.workspace.ElasticsearchWorkspaceService;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
-import com.enonic.wem.repo.internal.repository.RepositoryInitializerImpl;
+import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 
 import static com.enonic.wem.api.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.wem.api.security.acl.UserStoreAccess.CREATE_USERS;
@@ -104,28 +113,43 @@ public class SecurityServiceImplTest
         securityService = new SecurityServiceImpl();
         securityService.setNodeService( this.nodeService );
 
+        runAsAdmin();
+
         createRepository( SystemConstants.SYSTEM_REPO );
         waitForClusterHealth();
 
         final CreateUserStoreParams createParams = CreateUserStoreParams.create().
-            key( SystemConstants.SYSTEM_USERSTORE.getKey() ).
-            displayName( SystemConstants.SYSTEM_USERSTORE.getDisplayName() ).
+            key( UserStoreKey.system() ).
+            displayName( SecurityInitializer.SYSTEM_USER_STORE_DISPLAY_NAME ).
             build();
         securityService.createUserStore( createParams );
 
-        SystemConstants.CONTEXT_USER_STORES.callWith( () -> nodeService.create( CreateNodeParams.create().
+        SystemConstants.CONTEXT_SECURITY.callWith( () -> nodeService.create( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( PrincipalKey.ROLES_NODE_NAME ).
             build() ) );
     }
 
+    @After
+    public void cleanUp()
+    {
+        ContextAccessor.INSTANCE.set( null );
+    }
+
     void createRepository( final Repository repository )
     {
-        RepositoryInitializerImpl repositoryInitializer = new RepositoryInitializerImpl();
-        repositoryInitializer.setIndexService( this.indexService );
-        repositoryInitializer.init( repository );
+        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
+        repositoryInitializer.initializeRepository( repository );
 
         refresh();
+
+        final CreateRootNodeParams createRoot =
+            CreateRootNodeParams.create().permissions( AccessControlList.of( AccessControlEntry.create().
+                principal( RoleKeys.ADMIN ).
+                allowAll().build(), AccessControlEntry.create().
+                principal( RoleKeys.AUTHENTICATED ).
+                allow( Permission.READ ).build() ) ).build();
+        nodeService.createRootNode( createRoot );
     }
 
     @Test
@@ -687,6 +711,17 @@ public class SecurityServiceImplTest
     private class CustomAuthenticationToken
         extends AuthenticationToken
     {
+    }
+
+    private void runAsAdmin()
+    {
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.ANONYMOUS ).build();
+        final Context context = ContextBuilder.create().
+            authInfo( authInfo ).
+            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            workspace( SystemConstants.WORKSPACE_SECURITY ).
+            build();
+        ContextAccessor.INSTANCE.set( context );
     }
 
 }

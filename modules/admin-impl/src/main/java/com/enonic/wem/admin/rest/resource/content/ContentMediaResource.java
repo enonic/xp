@@ -24,13 +24,14 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Media;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.util.ImageHelper;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content/media")
 @Produces("application/octet-stream")
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 public final class ContentMediaResource
     implements AdminResource
 {

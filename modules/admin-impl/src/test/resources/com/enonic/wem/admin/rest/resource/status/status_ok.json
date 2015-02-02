@@ -5,7 +5,7 @@
     "authenticated": false,
     "principals": [
       "user:system:anonymous",
-      "role:everyone"
+      "role:system.everyone"
     ]
   }
 }

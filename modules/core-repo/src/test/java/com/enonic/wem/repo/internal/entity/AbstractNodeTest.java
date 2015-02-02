@@ -31,7 +31,7 @@ import com.enonic.wem.repo.internal.elasticsearch.workspace.ElasticsearchWorkspa
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.wem.repo.internal.repository.RepositoryInitializerImpl;
+import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 
 public abstract class AbstractNodeTest
@@ -111,10 +111,8 @@ public abstract class AbstractNodeTest
         nodeService.setVersionService( versionService );
         nodeService.setWorkspaceService( workspaceService );
 
-        RepositoryInitializerImpl repositoryInitializer = new RepositoryInitializerImpl();
-        repositoryInitializer.setIndexService( this.indexService );
-        repositoryInitializer.setNodeService( nodeService );
-        repositoryInitializer.init( repository );
+        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
+        repositoryInitializer.initializeRepository( repository );
 
         refresh();
     }

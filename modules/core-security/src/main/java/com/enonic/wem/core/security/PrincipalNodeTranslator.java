@@ -100,6 +100,7 @@ abstract class PrincipalNodeTranslator
             name( PrincipalKeyNodeTranslator.toNodeName( principal.getKey() ).toString() ).
             parent( principal.getKey().toPath().getParentPath() ).
             setNodeId( NodeId.from( principal.getKey() ) ).
+            inheritPermissions( true ).
             indexConfigDocument( PrincipalIndexConfigFactory.create() );
 
         final PropertyTree data = new PropertyTree();

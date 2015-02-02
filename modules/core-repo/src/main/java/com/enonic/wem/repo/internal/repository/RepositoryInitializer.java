@@ -8,26 +8,38 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.initializer.RepositoryInitializer;
-import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.repo.internal.elasticsearch.ClusterHealthStatus;
 import com.enonic.wem.repo.internal.elasticsearch.ClusterStatusCode;
 import com.enonic.wem.repo.internal.index.IndexService;
 import com.enonic.wem.repo.internal.index.IndexType;
 
-public final class RepositoryInitializerImpl
-    implements RepositoryInitializer
+public final class RepositoryInitializer
 {
-    private IndexService indexService;
-
-    private NodeService nodeService;
+    private final IndexService indexService;
 
     private final static TimeValue CLUSTER_HEALTH_TIMEOUT_VALUE = TimeValue.timeValueSeconds( 10 );
 
-    private final static Logger LOG = LoggerFactory.getLogger( RepositoryInitializerImpl.class );
+    private final static Logger LOG = LoggerFactory.getLogger( RepositoryInitializer.class );
 
-    public final void init( final Repository repository )
+    public RepositoryInitializer( final IndexService indexService )
+    {
+        this.indexService = indexService;
+    }
+
+    public void initializeRepository( final Repository repository )
+    {
+        if ( !isInitialized( repository ) )
+        {
+            doInitializeRepo( repository );
+        }
+        else
+        {
+            waitForInitialized( repository );
+        }
+    }
+
+    private void doInitializeRepo( final Repository repository )
     {
         LOG.info( "Initializing repositoryId {}", repository.getId() );
 
@@ -102,7 +114,7 @@ public final class RepositoryInitializerImpl
         }
     }
 
-    public boolean isInitialized( final Repository repository )
+    private boolean isInitialized( final Repository repository )
     {
         final String storageIndexName = getStoreIndexName( repository );
         final String searchIndexName = getSearchIndexName( repository );
@@ -118,15 +130,5 @@ public final class RepositoryInitializerImpl
     private String getSearchIndexName( final Repository repository )
     {
         return IndexNameResolver.resolveSearchIndexName( repository.getId() );
-    }
-
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
-    }
-
-    public void setNodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
     }
 }

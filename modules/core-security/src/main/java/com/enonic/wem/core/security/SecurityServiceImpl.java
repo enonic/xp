@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -17,6 +19,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.node.ApplyNodePermissionsParams;
@@ -31,6 +36,7 @@ import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.node.RootNode;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.query.expr.CompareExpr;
 import com.enonic.wem.api.query.expr.FieldExpr;
@@ -57,7 +63,6 @@ import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
 import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SecurityService;
-import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.security.UpdateGroupParams;
 import com.enonic.wem.api.security.UpdateRoleParams;
 import com.enonic.wem.api.security.UpdateUserParams;
@@ -74,14 +79,14 @@ import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 
-import static com.enonic.wem.api.security.SystemConstants.CONTEXT_USER_STORES;
+import static com.enonic.wem.api.security.SystemConstants.CONTEXT_SECURITY;
 import static com.enonic.wem.core.security.PrincipalKeyNodeTranslator.toNodeId;
 
 @Component(immediate = true)
 public final class SecurityServiceImpl
     implements SecurityService
 {
-    private static final ImmutableSet<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP = ImmutableSet.of( RoleKeys.OWNER, RoleKeys.EVERYONE );
+    private static final ImmutableSet<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP = ImmutableSet.of( RoleKeys.EVERYONE );
 
     private NodeService nodeService;
 
@@ -94,12 +99,18 @@ public final class SecurityServiceImpl
 
     private final PasswordEncoder passwordEncoder = new PBKDF2Encoder();
 
+    @Activate
+    public void initialize()
+    {
+        new SecurityInitializer( this, this.nodeService ).initialize();
+    }
+
     @Override
     public UserStores getUserStores()
     {
         final FindNodesByParentParams findByParent = FindNodesByParentParams.create().
             parentPath( UserStoreNodeTranslator.getUserStoresParentPath() ).build();
-        final FindNodesByParentResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByParent( findByParent ) );
+        final FindNodesByParentResult result = callWithContext( () -> this.nodeService.findByParent( findByParent ) );
 
         return UserStoreNodeTranslator.fromNodes( result.getNodes() );
     }
@@ -108,7 +119,7 @@ public final class SecurityServiceImpl
     public UserStore getUserStore( final UserStoreKey userStore )
     {
         final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( userStore );
-        final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getByPath( userStoreNodePath ) );
+        final Node node = callWithContext( () -> this.nodeService.getByPath( userStoreNodePath ) );
         return node == null ? null : UserStoreNodeTranslator.fromNode( node );
     }
 
@@ -119,9 +130,9 @@ public final class SecurityServiceImpl
         final NodePath usersNodePath = UserStoreNodeTranslator.toUserStoreUsersNodePath( userStore );
         final NodePath groupsNodePath = UserStoreNodeTranslator.toUserStoreGroupsNodePath( userStore );
 
-        final Node userStoreNode = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getByPath( userStoreNodePath ) );
-        final Node usersNode = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getByPath( usersNodePath ) );
-        final Node groupsNode = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getByPath( groupsNodePath ) );
+        final Node userStoreNode = callWithContext( () -> this.nodeService.getByPath( userStoreNodePath ) );
+        final Node usersNode = callWithContext( () -> this.nodeService.getByPath( usersNodePath ) );
+        final Node groupsNode = callWithContext( () -> this.nodeService.getByPath( groupsNodePath ) );
 
         return UserStoreNodeTranslator.userStorePermissionsFromNode( userStoreNode, usersNode, groupsNode );
     }
@@ -131,7 +142,7 @@ public final class SecurityServiceImpl
     {
         try
         {
-            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( from ) ) );
+            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( from ) ) );
             return PrincipalNodeTranslator.relationshipsFromNode( node );
         }
         catch ( NodeNotFoundException e )
@@ -148,7 +159,7 @@ public final class SecurityServiceImpl
         {
             throw new IllegalArgumentException( "Invalid 'from' value in relationship: " + from.toString() );
         }
-        CONTEXT_USER_STORES.callWith( () -> {
+        callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.addRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
             return null;
@@ -158,7 +169,7 @@ public final class SecurityServiceImpl
     @Override
     public void removeRelationship( final PrincipalRelationship relationship )
     {
-        CONTEXT_USER_STORES.callWith( () -> {
+        callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
             return null;
@@ -168,7 +179,7 @@ public final class SecurityServiceImpl
     @Override
     public void removeRelationships( final PrincipalKey from )
     {
-        CONTEXT_USER_STORES.callWith( () -> {
+        callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from );
             nodeService.update( updateNodeParams );
             return null;
@@ -206,7 +217,7 @@ public final class SecurityServiceImpl
     {
         try
         {
-            final FindNodesByQueryResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( NodeQuery.create().
+            final FindNodesByQueryResult result = callWithContext( () -> this.nodeService.findByQuery( NodeQuery.create().
                 addQueryFilter( ValueFilter.create().
                     fieldName( PrincipalPropertyNames.MEMBER_KEY ).
                     addValue( Value.newString( member.toString() ) ).
@@ -290,7 +301,7 @@ public final class SecurityServiceImpl
     {
         final PrincipalKeys principals = resolveMemberships( user.getKey() );
         return AuthenticationInfo.create().principals( principals ).
-            principals( PrincipalKey.ofAnonymous(), RoleKeys.EVERYONE ).
+            principals( PrincipalKey.ofAnonymous(), RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
             user( user ).build();
     }
 
@@ -311,8 +322,7 @@ public final class SecurityServiceImpl
         final CompareExpr userNameExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.LOGIN_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( username ) );
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
-        final FindNodesByQueryResult result =
-            CONTEXT_USER_STORES.callWith( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
+        final FindNodesByQueryResult result = callWithContext( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
 
         if ( result.getNodes().getSize() > 1 )
         {
@@ -329,8 +339,7 @@ public final class SecurityServiceImpl
         final CompareExpr userNameExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.EMAIL_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( email ) );
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
-        final FindNodesByQueryResult result =
-            CONTEXT_USER_STORES.callWith( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
+        final FindNodesByQueryResult result = callWithContext( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
 
         if ( result.getNodes().getSize() > 1 )
         {
@@ -345,9 +354,9 @@ public final class SecurityServiceImpl
     {
         Preconditions.checkArgument( key.isUser(), "Expected principal key of type User" );
 
-        return CONTEXT_USER_STORES.callWith( () -> {
+        return callWithContext( () -> {
 
-            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( key ) ) );
+            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( key ) ) );
 
             final User user = PrincipalNodeTranslator.userFromNode( node );
 
@@ -383,7 +392,7 @@ public final class SecurityServiceImpl
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
         try
         {
-            final Node node = CONTEXT_USER_STORES.callWith( () -> nodeService.create( createNodeParams ) );
+            final Node node = callWithContext( () -> nodeService.create( createNodeParams ) );
             if ( createUser.getPassword() != null )
             {
                 return setPassword( user.getKey(), createUser.getPassword() );
@@ -400,7 +409,7 @@ public final class SecurityServiceImpl
     @Override
     public User updateUser( final UpdateUserParams updateUserParams )
     {
-        return CONTEXT_USER_STORES.callWith( () -> {
+        return callWithContext( () -> {
 
             final Node node;
             try
@@ -429,7 +438,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( userKey ) ) );
+            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( userKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.userFromNode( node ) );
         }
         catch ( NodeNotFoundException e )
@@ -450,7 +459,7 @@ public final class SecurityServiceImpl
         final CreateNodeParams createGroupParams = PrincipalNodeTranslator.toCreateNodeParams( group );
         try
         {
-            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.create( createGroupParams ) );
+            final Node node = callWithContext( () -> this.nodeService.create( createGroupParams ) );
 
             return PrincipalNodeTranslator.groupFromNode( node );
         }
@@ -463,7 +472,7 @@ public final class SecurityServiceImpl
     @Override
     public Group updateGroup( final UpdateGroupParams updateGroupParams )
     {
-        return CONTEXT_USER_STORES.callWith( () -> {
+        return callWithContext( () -> {
 
             final Node node;
             try
@@ -492,7 +501,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( groupKey ) ) );
+            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( groupKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.groupFromNode( node ) );
         }
         catch ( NodeNotFoundException e )
@@ -513,7 +522,7 @@ public final class SecurityServiceImpl
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( role );
         try
         {
-            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.create( createNodeParams ) );
+            final Node node = callWithContext( () -> this.nodeService.create( createNodeParams ) );
 
             return PrincipalNodeTranslator.roleFromNode( node );
         }
@@ -526,7 +535,7 @@ public final class SecurityServiceImpl
     @Override
     public Role updateRole( final UpdateRoleParams updateRoleParams )
     {
-        return CONTEXT_USER_STORES.callWith( () -> {
+        return callWithContext( () -> {
 
             final Node node;
             try
@@ -555,7 +564,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( roleKey ) ) );
+            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( roleKey ) ) );
             return Optional.ofNullable( PrincipalNodeTranslator.roleFromNode( node ) );
         }
         catch ( NodeNotFoundException e )
@@ -590,7 +599,7 @@ public final class SecurityServiceImpl
             final Node node;
             try
             {
-                node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getById( toNodeId( key ) ) );
+                node = callWithContext( () -> this.nodeService.getById( toNodeId( key ) ) );
             }
             catch ( NodeNotFoundException e )
             {
@@ -618,7 +627,7 @@ public final class SecurityServiceImpl
     public void deletePrincipal( final PrincipalKey principalKey )
     {
         removeRelationships( principalKey );
-        final Node deletedNode = CONTEXT_USER_STORES.callWith( () -> this.nodeService.deleteById( toNodeId( principalKey ) ) );
+        final Node deletedNode = callWithContext( () -> this.nodeService.deleteById( toNodeId( principalKey ) ) );
         if ( deletedNode == null )
         {
             throw new PrincipalNotFoundException( principalKey );
@@ -631,7 +640,7 @@ public final class SecurityServiceImpl
         try
         {
             final NodeQuery nodeQueryBuilder = PrincipalQueryNodeQueryTranslator.translate( query );
-            final FindNodesByQueryResult result = CONTEXT_USER_STORES.callWith( () -> this.nodeService.findByQuery( nodeQueryBuilder ) );
+            final FindNodesByQueryResult result = callWithContext( () -> this.nodeService.findByQuery( nodeQueryBuilder ) );
 
             final Principals principals = PrincipalNodeTranslator.fromNodes( result.getNodes() );
             return PrincipalQueryResult.newResult().
@@ -651,33 +660,42 @@ public final class SecurityServiceImpl
         final PropertyTree data = new PropertyTree();
         data.setString( UserStorePropertyNames.DISPLAY_NAME_KEY, createUserStoreParams.getDisplayName() );
 
-        final Node node = SystemConstants.CONTEXT_USER_STORES.callWith( () -> {
+        final Node node = callWithContext( () -> {
+
+            final UserStoreAccessControlList permissions = createUserStoreParams.getUserStorePermissions();
+            AccessControlList userStoreNodePermissions =
+                UserStoreNodeTranslator.userStorePermissionsToUserStoreNodePermissions( permissions );
+            AccessControlList usersNodePermissions = UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
+            AccessControlList groupsNodePermissions = UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
+
+            final RootNode rootNode = nodeService.getRoot();
+            userStoreNodePermissions = mergeWithRootPermissions( userStoreNodePermissions, rootNode.getPermissions() );
+            usersNodePermissions = mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
+            groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
 
             final Node userStoreNode = nodeService.create( CreateNodeParams.create().
                 parent( UserStoreNodeTranslator.getUserStoresParentPath() ).
                 name( createUserStoreParams.getKey().toString() ).
                 data( data ).
+                permissions( userStoreNodePermissions ).
                 build() );
             final Node usersNode = nodeService.create( CreateNodeParams.create().
                 parent( userStoreNode.path() ).
                 name( UserStoreNodeTranslator.USER_FOLDER_NODE_NAME ).
+                permissions( usersNodePermissions ).
                 build() );
             final Node groupsNode = nodeService.create( CreateNodeParams.create().
                 parent( userStoreNode.path() ).
                 name( UserStoreNodeTranslator.GROUP_FOLDER_NODE_NAME ).
+                permissions( groupsNodePermissions ).
                 build() );
 
-            final UserStoreAccessControlList permissions = createUserStoreParams.getUserStorePermissions();
-            final AccessControlList userStoreNodePermissions =
-                UserStoreNodeTranslator.userStorePermissionsToUserStoreNodePermissions( permissions );
-            final AccessControlList usersNodePermissions =
-                UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
-            final AccessControlList groupsNodePermissions =
-                UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
-
-            setNodePermissions( userStoreNode.id(), userStoreNodePermissions, false );
-            setNodePermissions( usersNode.id(), usersNodePermissions, false );
-            setNodePermissions( groupsNode.id(), groupsNodePermissions, false );
+            final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
+                nodeId( rootNode.id() ).
+                overwriteChildPermissions( false ).
+                modifier( ContextAccessor.current().getAuthInfo().getUser().getKey() ).
+                build();
+            nodeService.applyPermissions( applyPermissions );
 
             return userStoreNode;
         } );
@@ -685,13 +703,26 @@ public final class SecurityServiceImpl
         return UserStoreNodeTranslator.fromNode( node );
     }
 
+    private AccessControlList mergeWithRootPermissions( final AccessControlList nodePermissions, final AccessControlList rootPermissions )
+    {
+        final AccessControlList.Builder permissions = AccessControlList.create( nodePermissions );
+        for ( PrincipalKey principal : rootPermissions.getAllPrincipals() )
+        {
+            if ( !nodePermissions.contains( principal ) )
+            {
+                permissions.add( rootPermissions.getEntry( principal ) );
+            }
+        }
+        return permissions.build();
+    }
+
     @Override
     public UserStore updateUserStore( final UpdateUserStoreParams updateUserStoreParams )
     {
-        return CONTEXT_USER_STORES.callWith( () -> {
+        return callWithContext( () -> {
 
             final NodePath userStoreNodePath = UserStoreNodeTranslator.toUserStoreNodePath( updateUserStoreParams.getKey() );
-            final Node node = CONTEXT_USER_STORES.callWith( () -> this.nodeService.getByPath( userStoreNodePath ) );
+            final Node node = this.nodeService.getByPath( userStoreNodePath );
             if ( node == null )
             {
                 return null;
@@ -708,21 +739,25 @@ public final class SecurityServiceImpl
                     nodeService.getByPath( UserStoreNodeTranslator.toUserStoreGroupsNodePath( updateUserStoreParams.getKey() ) );
 
                 final UserStoreAccessControlList permissions = updateUserStoreParams.getUserStorePermissions();
-                final AccessControlList userStoreNodePermissions =
+                AccessControlList userStoreNodePermissions =
                     UserStoreNodeTranslator.userStorePermissionsToUserStoreNodePermissions( permissions );
-                final AccessControlList usersNodePermissions =
-                    UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
-                final AccessControlList groupsNodePermissions =
+                AccessControlList usersNodePermissions = UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
+                AccessControlList groupsNodePermissions =
                     UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
 
-                setNodePermissions( userStoreNode.id(), userStoreNodePermissions, false );
-                setNodePermissions( usersNode.id(), usersNodePermissions, false );
-                setNodePermissions( groupsNode.id(), groupsNodePermissions, false );
+                final RootNode rootNode = nodeService.getRoot();
+                userStoreNodePermissions = mergeWithRootPermissions( userStoreNodePermissions, rootNode.getPermissions() );
+                usersNodePermissions = mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
+                groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
+
+                setNodePermissions( userStoreNode.id(), userStoreNodePermissions );
+                setNodePermissions( usersNode.id(), usersNodePermissions );
+                setNodePermissions( groupsNode.id(), groupsNodePermissions );
 
                 final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
                     nodeId( userStoreNode.id() ).
                     overwriteChildPermissions( false ).
-                    modifier( PrincipalKey.ofAnonymous() ). // TODO get actual user
+                    modifier( ContextAccessor.current().getAuthInfo().getUser().getKey() ).
                     build();
                 nodeService.applyPermissions( applyPermissions );
             }
@@ -731,17 +766,25 @@ public final class SecurityServiceImpl
         } );
     }
 
-    private void setNodePermissions( final NodeId nodeId, final AccessControlList permissions, final boolean inheritPermissions )
+    private void setNodePermissions( final NodeId nodeId, final AccessControlList permissions )
     {
         final UpdateNodeParams updateParams = UpdateNodeParams.create().
             id( nodeId ).
-            editor( editableNode -> {
-                editableNode.permissions = permissions;
-                editableNode.inheritPermissions = inheritPermissions;
-            } ).
+            editor( editableNode -> editableNode.permissions = permissions ).
             build();
 
         nodeService.update( updateParams );
+    }
+
+    private <T> T callWithContext( Callable<T> runnable )
+    {
+        return this.getContext().callWith( runnable );
+    }
+
+    private Context getContext()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        return ContextBuilder.from( CONTEXT_SECURITY ).authInfo( authInfo ).build();
     }
 
     @Reference

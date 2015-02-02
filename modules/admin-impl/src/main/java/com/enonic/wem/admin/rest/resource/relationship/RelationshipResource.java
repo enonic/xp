@@ -26,10 +26,11 @@ import com.enonic.wem.api.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.relationship.UpdateRelationshipParams;
 import com.enonic.wem.api.relationship.editor.RelationshipEditors;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "relationship")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 public final class RelationshipResource
     implements AdminResource
 {

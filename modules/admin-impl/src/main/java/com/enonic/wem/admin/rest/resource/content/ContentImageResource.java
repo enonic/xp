@@ -25,13 +25,14 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.security.RoleKeys;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/image")
 @Produces("image/*")
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 public final class ContentImageResource
     implements AdminResource
 {

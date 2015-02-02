@@ -5,7 +5,7 @@
     <property name="workspaceService" ref="workspaceService"/>
   </bean>
 
-  <bean id="nodeService" class="com.enonic.wem.repo.internal.entity.NodeServiceImpl">
+  <bean id="nodeService" class="com.enonic.wem.repo.internal.entity.NodeServiceImpl" init-method="initialize">
     <property name="indexService" ref="indexService"/>
     <property name="nodeDao" ref="nodeDao"/>
     <property name="workspaceService" ref="workspaceService"/>

@@ -8,6 +8,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import junit.framework.Assert;
 
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;
@@ -57,7 +58,7 @@ public class PortalForwardHandlerTest
     public void forward_notFound()
         throws Exception
     {
-        this.req.addUserRole( "admin-login" );
+        this.req.addUserRole( RoleKeys.ADMIN_LOGIN_ID );
         this.req.setRequestURI( "/admin/portal/mode/ws/a/b" );
         this.handler.handle( this.req, this.res, this.chain );
 
@@ -69,7 +70,7 @@ public class PortalForwardHandlerTest
     public void forward_edit()
         throws Exception
     {
-        this.req.addUserRole( "admin-login" );
+        this.req.addUserRole( RoleKeys.ADMIN_LOGIN_ID );
         this.req.setRequestURI( "/admin/portal/edit/ws/a/b" );
         this.handler.handle( this.req, this.res, this.chain );
 
@@ -86,7 +87,7 @@ public class PortalForwardHandlerTest
     public void forward_preview()
         throws Exception
     {
-        this.req.addUserRole( "admin-login" );
+        this.req.addUserRole( RoleKeys.ADMIN_LOGIN_ID );
         this.req.setRequestURI( "/admin/portal/preview/ws/a/b" );
         this.handler.handle( this.req, this.res, this.chain );
 

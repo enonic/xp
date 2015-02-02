@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.ApplyNodePermissionsParams;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -36,6 +37,7 @@ import com.enonic.wem.api.node.RootNode;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.SyncWorkResolverParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
+import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.blob.BlobStore;
@@ -43,6 +45,7 @@ import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexService;
 import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
@@ -60,6 +63,13 @@ public class NodeServiceImpl
     private QueryService queryService;
 
     private final BlobStore binaryBlobStore = new FileBlobStore( NodeConstants.binaryBlobStoreDir );
+
+    public void initialize()
+    {
+        final RepositoryInitializer repoInitializer = new RepositoryInitializer( this.indexService );
+        repoInitializer.initializeRepository( ContentConstants.CONTENT_REPO );
+        repoInitializer.initializeRepository( SystemConstants.SYSTEM_REPO );
+    }
 
     @Override
     public Node getById( final NodeId id )
@@ -461,7 +471,7 @@ public class NodeServiceImpl
     {
         final Node node = doGetByPath( NodePath.ROOT, false );
 
-        if ( node instanceof RootNode )
+        if ( node instanceof RootNode || node == null )
         {
             return (RootNode) node;
         }

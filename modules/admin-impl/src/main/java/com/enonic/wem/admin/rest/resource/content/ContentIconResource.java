@@ -25,6 +25,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Media;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.thumb.Thumbnail;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
@@ -33,7 +34,7 @@ import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.Imag
 
 @Path(ResourceConstants.REST_ROOT + "content/icon")
 @Produces("image/*")
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 public final class ContentIconResource
     implements AdminResource
 {

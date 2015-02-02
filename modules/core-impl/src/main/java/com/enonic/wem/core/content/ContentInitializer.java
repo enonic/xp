@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,14 +16,18 @@ import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 
-@Component(immediate = true, service = ContentInitializer.class)
-public class ContentInitializer
+public final class ContentInitializer
 {
     private final static Logger LOG = LoggerFactory.getLogger( ContentInitializer.class );
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    public final void init()
+    public ContentInitializer( final NodeService nodeService )
+    {
+        this.nodeService = nodeService;
+    }
+
+    public final void initialize()
     {
         final RootNode rootNode = ContentConstants.CONTEXT_STAGE.callWith( this::doInitNodeRoot );
         ContentConstants.CONTEXT_STAGE.runWith( () -> this.doInitContentRootNode( rootNode ) );
@@ -74,9 +76,4 @@ public class ContentInitializer
         return rootNode;
     }
 
-    @Reference
-    public void setNodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
-    }
 }

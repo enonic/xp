@@ -18,10 +18,11 @@ import com.enonic.wem.api.content.page.region.LayoutDescriptor;
 import com.enonic.wem.api.content.page.region.LayoutDescriptorService;
 import com.enonic.wem.api.content.page.region.LayoutDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/layout/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 public final class LayoutDescriptorResource
     implements AdminResource
 {

@@ -206,10 +206,6 @@ abstract class AbstractNodeCommand
 
     private AccessControlList getPermissions( final NodePath nodePath )
     {
-        if ( nodePath.isRoot() )
-        {
-            return AccessControlList.empty();
-        }
         final Node node = doGetByPath( nodePath, false );
         return node != null ? node.getPermissions() : AccessControlList.empty();
     }
