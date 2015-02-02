@@ -50,18 +50,6 @@ module api.content {
                 });
             });
 
-            var toolbar = new api.dom.DivEl('toolbar');
-            container.appendChild(toolbar);
-
-            var crop = new Button().addClass("icon-crop2");
-            var rotateLeft = new Button().addClass("icon-rotate");
-            var rotateRight = new Button().addClass("icon-rotate2");
-            var flipHorizontal = new Button().addClass("icon-flip");
-            var flipVertical = new Button().addClass("icon-flip2");
-            var palette = new Button().addClass("icon-palette");
-
-            toolbar.appendChildren(crop, rotateLeft, rotateRight, flipHorizontal, flipVertical, palette);
-
             return container;
         }
 
