@@ -1,41 +1,42 @@
 .image-uploader {
   position: relative;
 
+  .button.close-button{
+    border: 2px solid transparent ;
+    border-radius: 0px ;
+    top: 1px;
+    right: 1px;
+    .box-shadow(0px 0px 0px) ;
+    background: rgba(55, 55, 55, 0.5);
+
+    &:hover:not(:disabled) {
+      background: rgba(55, 55, 55, 0.5);
+      &:before {
+        color: rgba(255, 255, 255, 0.5);
+      }
+    }
+
+
+
+  }
+
   .result-container {
 
     img {
       width: 100%;
       max-height: 500px;
       border: 1px solid transparent;
+      box-sizing: border-box;
 
       &:hover {
+        border: 1px solid transparent;
+        box-sizing: border-box;
         border-color: darken(@admin-input-blue, 10%);
       }
 
       &.selected {
         border-color: darken(@admin-input-blue, 10%);
         .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
-      }
-    }
-
-    .toolbar {
-      height: auto;
-
-      button {
-        border: 1px solid transparent;
-        padding: 5px;
-        margin: 0;
-        cursor: pointer;
-
-        &:before {
-          height: 24px;
-          width: 24px;
-          font-size: 24px;
-        }
-
-        span {
-          display: none;
-        }
       }
     }
 
