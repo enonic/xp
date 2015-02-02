@@ -2,34 +2,23 @@ package com.enonic.wem.api.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.security.PrincipalKey;
-
 public final class DeleteContentParams
 {
-    private ContentPath contentPath;
+    private final ContentPath contentPath;
 
-    private PrincipalKey deleter;
-
-    public PrincipalKey getDeleter()
+    private DeleteContentParams( Builder builder )
     {
-        return deleter;
+        contentPath = builder.contentPath;
     }
 
-    public DeleteContentParams contentPath( final ContentPath contentPath )
+    public static Builder create()
     {
-        this.contentPath = contentPath;
-        return this;
+        return new Builder();
     }
 
     public ContentPath getContentPath()
     {
         return contentPath;
-    }
-
-    public DeleteContentParams deleter( final PrincipalKey deleter )
-    {
-        this.deleter = deleter;
-        return this;
     }
 
     public void validate()
@@ -64,5 +53,25 @@ public final class DeleteContentParams
     public int hashCode()
     {
         return contentPath.hashCode();
+    }
+
+    public static final class Builder
+    {
+        private ContentPath contentPath;
+
+        private Builder()
+        {
+        }
+
+        public Builder contentPath( ContentPath contentPath )
+        {
+            this.contentPath = contentPath;
+            return this;
+        }
+
+        public DeleteContentParams build()
+        {
+            return new DeleteContentParams( this );
+        }
     }
 }

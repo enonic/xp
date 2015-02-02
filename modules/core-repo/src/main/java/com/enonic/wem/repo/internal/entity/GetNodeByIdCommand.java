@@ -47,6 +47,11 @@ public class GetNodeByIdCommand
         return new Builder();
     }
 
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
+    }
+
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
@@ -56,6 +61,12 @@ public class GetNodeByIdCommand
 
         private Builder()
         {
+            super();
+        }
+
+        private Builder( final AbstractNodeCommand source )
+        {
+            super( source );
         }
 
         public Builder id( NodeId id )

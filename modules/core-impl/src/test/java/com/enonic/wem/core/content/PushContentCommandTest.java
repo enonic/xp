@@ -160,6 +160,48 @@ public class PushContentCommandTest
         assertEquals( 1, result.getPushContentRequests().getPushedBecauseReferredTos().size() );
     }
 
+
+    @Test
+    public void pending_deleted()
+        throws Exception
+    {
+        Mockito.when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
+            thenReturn( ResolveSyncWorkResult.create().
+                addDelete( NodeId.from( "s3" ) ).
+                addDelete( NodeId.from( "s4" ) ).
+                build() );
+
+        Mockito.when( nodeService.getByIds( Mockito.isA( NodeIds.class ) ) ).
+            thenReturn( Nodes.empty() );
+
+        Mockito.when( contentNodeTranslator.fromNodes( Mockito.isA( Nodes.class ) ) ).
+            thenReturn( Contents.from( createContent( "s1", "s1Name", ContentPath.ROOT, true ),
+                                       createContent( "s2", "s2Name", ContentPath.ROOT, true ) ) );
+
+        Mockito.when( nodeService.push( Mockito.any(), Mockito.any() ) ).thenReturn( PushNodesResult.create().
+            addSuccess( createNode( "s1", "s1Name", "/content" ) ).
+            addSuccess( createNode( "s2", "s2Name", "/content" ) ).
+            build() );
+
+        final PushContentsResult result = PushContentCommand.create().
+            contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
+            resolveDependencies( true ).
+            strategy( PushContentCommand.PushContentStrategy.ALLOW_PUBLISH_OUTSIDE_SELECTION ).
+            target( ContentConstants.WORKSPACE_PROD ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+
+        assertEquals( 2, result.getPushedContent().getSize() );
+        assertEquals( 2, result.getDeleted().getSize() );
+        assertEquals( 0, result.getPushContentRequests().getPushBecauseRequested().size() );
+        assertEquals( 0, result.getPushContentRequests().getPushedBecauseReferredTos().size() );
+    }
+
+
     @Test
     public void contains_invalid()
         throws Exception
@@ -183,7 +225,7 @@ public class PushContentCommandTest
         final PushContentsResult result = PushContentCommand.create().
             contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
             resolveDependencies( true ).
-            strategy( PushContentCommand.PushContentStrategy.STRICT ).
+            strategy( PushContentCommand.PushContentStrategy.ALLOW_PUBLISH_OUTSIDE_SELECTION ).
             target( ContentConstants.WORKSPACE_ONLINE ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).

@@ -30,6 +30,7 @@ public class ExportReader
     public VirtualFile getBinarySource( final VirtualFile nodeFolder, final String binaryReferenceString )
     {
         final Path binaryPath = Paths.get( SYSTEM_FOLDER_NAME, BINARY_FOLDER, binaryReferenceString );
+
         final VirtualFile binaryFile = nodeFolder.resolve( binaryPath.toString() );
 
         if ( !binaryFile.exists() )

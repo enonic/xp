@@ -52,7 +52,7 @@ public class CompareNodeCommandTest
     }
 
     @Test
-    public void status_deleted()
+    public void status_deleted_stage_yields_new_in_target()
         throws Exception
     {
         final Node createdNode = online.callWith( () -> createNode( CreateNodeParams.create().
@@ -78,7 +78,7 @@ public class CompareNodeCommandTest
 
         final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.Status.DELETED, comparison.getCompareStatus().getStatus() );
+        assertEquals( CompareStatus.Status.NEW_TARGET, comparison.getCompareStatus().getStatus() );
     }
 
 

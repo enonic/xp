@@ -113,7 +113,7 @@ public class NodeDaoImpl
 
             final Node node = this.nodeJsonSerializer.toNode( new String( bytes, StandardCharsets.UTF_8 ) );
 
-            return populateWithTreeProperties( node );
+            return populateWithMetaData( node );
         }
         catch ( IOException e )
         {
@@ -121,7 +121,7 @@ public class NodeDaoImpl
         }
     }
 
-    private Node populateWithTreeProperties( final Node node )
+    private Node populateWithMetaData( final Node node )
     {
         if ( node instanceof RootNode )
         {
@@ -138,6 +138,7 @@ public class NodeDaoImpl
         return Node.newNode( node ).
             parentPath( parentPath ).
             name( nodeName ).
+            nodeState( nodeWorkspaceVersion.getNodeState() ).
             build();
     }
 

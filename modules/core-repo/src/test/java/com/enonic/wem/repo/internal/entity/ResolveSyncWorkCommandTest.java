@@ -10,6 +10,7 @@ import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePublishRequest;
 import com.enonic.wem.api.node.NodePublishRequests;
+import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.ResolveSyncWorkResult;
 import com.enonic.wem.api.util.Reference;
 
@@ -111,8 +112,8 @@ public class ResolveSyncWorkCommandTest
 
         pushNodes( WS_OTHER, node1.id(), node1_1.id(), node2.id(), node2_1.id(), node3.id() );
 
-        doDeleteNode( node2_1.id() );
-        doDeleteNode( node3.id() );
+        markAsDelete( node2_1.id() );
+        markAsDelete( node3.id() );
 
         final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
@@ -134,9 +135,22 @@ public class ResolveSyncWorkCommandTest
         assertTrue( deleted.contains( node3.id() ) );
     }
 
+    private void markAsDelete( final NodeId id )
+    {
+        SetNodeStateCommand.create().
+            nodeId( id ).
+            nodeState( NodeState.PENDING_DELETE ).
+            indexService( this.indexService ).
+            queryService( this.queryService ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            build().
+            execute();
+    }
 
     @Test
-    public void deleted_not_in_target_ignored()
+    public void deleted_not_in_target()
         throws Exception
     {
         final Node node1 = createNode( CreateNodeParams.create().
@@ -171,8 +185,8 @@ public class ResolveSyncWorkCommandTest
 
         pushNodes( WS_OTHER, node1.id(), node1_1.id(), node2.id() );
 
-        doDeleteNode( node2_1.id() );
-        doDeleteNode( node3.id() );
+        markAsDelete( node2_1.id() );
+        markAsDelete( node3.id() );
 
         final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
@@ -186,7 +200,7 @@ public class ResolveSyncWorkCommandTest
             execute();
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
-        assertEquals( 0, nodePublishRequests.size() );
+        assertEquals( 2, nodePublishRequests.size() );
 
         final NodeIds deleted = result.getDelete();
         assertEquals( 0, deleted.getSize() );

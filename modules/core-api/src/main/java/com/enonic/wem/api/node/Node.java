@@ -51,6 +51,8 @@ public class Node
 
     private final AttachedBinaries attachedBinaries;
 
+    private final NodeState nodeState;
+
     protected Node( final Builder builder )
     {
         Preconditions.checkNotNull( builder.permissions, "permissions are required" );
@@ -72,6 +74,7 @@ public class Node
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.attachedBinaries = builder.attachedBinaries;
+        this.nodeState = builder.nodeState;
 
         this.path = this.parentPath != null && this.name != null ? new NodePath( this.parentPath, this.name ) : null;
 
@@ -187,6 +190,11 @@ public class Node
         return attachedBinaries;
     }
 
+    public NodeState getNodeState()
+    {
+        return nodeState;
+    }
+
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
@@ -249,6 +257,8 @@ public class Node
 
         private AttachedBinaries attachedBinaries = AttachedBinaries.empty();
 
+        private NodeState nodeState = NodeState.DEFAULT;
+
         public Builder()
         {
             super();
@@ -278,6 +288,7 @@ public class Node
             this.permissions = node.permissions;
             this.inheritPermissions = node.inheritPermissions;
             this.attachedBinaries = node.attachedBinaries;
+            this.nodeState = node.nodeState;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -397,6 +408,12 @@ public class Node
         public Builder attachedBinaries( final AttachedBinaries attachedBinaries )
         {
             this.attachedBinaries = attachedBinaries;
+            return this;
+        }
+
+        public Builder nodeState( final NodeState nodeState )
+        {
+            this.nodeState = nodeState;
             return this;
         }
 

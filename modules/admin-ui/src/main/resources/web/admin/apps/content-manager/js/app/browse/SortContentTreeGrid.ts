@@ -98,7 +98,7 @@ module app.browse {
             case CompareStatus.UNKNOWN:
                 return "Unknown";
                 break;
-            case CompareStatus.DELETED:
+            case CompareStatus.PENDING_DELETE:
                 return "Deleted";
                 break;
             case CompareStatus.EQUAL:

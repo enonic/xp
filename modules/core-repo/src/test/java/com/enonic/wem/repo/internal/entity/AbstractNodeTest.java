@@ -48,11 +48,11 @@ public abstract class AbstractNodeTest
     protected ElasticsearchQueryService queryService;
 
     protected static final Workspace WS_DEFAULT = Workspace.create().
-        name( "draft" ).
+        name( "stage" ).
         build();
 
     protected static final Workspace WS_OTHER = Workspace.create().
-        name( "online" ).
+        name( "prod" ).
         build();
 
     protected static final Context CTX_DEFAULT = ContextBuilder.create().

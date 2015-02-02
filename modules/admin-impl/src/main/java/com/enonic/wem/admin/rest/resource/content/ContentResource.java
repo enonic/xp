@@ -294,9 +294,9 @@ public final class ContentResource
 
         for ( final ContentPath contentToDelete : contentsToDeleteList )
         {
-            final DeleteContentParams deleteContent = new DeleteContentParams();
-            deleteContent.deleter( PrincipalKey.ofAnonymous() );
-            deleteContent.contentPath( contentToDelete );
+            final DeleteContentParams deleteContent = DeleteContentParams.create().
+                contentPath( contentToDelete ).
+                build();
 
             try
             {

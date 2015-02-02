@@ -58,6 +58,20 @@ class ContentNodeHelper
         return NodeIds.from( nodeIds );
     }
 
+    public static ContentIds toContentIds( final NodeIds nodeIds )
+    {
+        final Set<ContentId> contentIds = Sets.newHashSet();
+
+        final Iterator<NodeId> iterator = nodeIds.iterator();
+
+        while ( iterator.hasNext() )
+        {
+            contentIds.add( ContentId.from( iterator.next().toString() ) );
+        }
+
+        return ContentIds.from( contentIds );
+    }
+
 }
 
 

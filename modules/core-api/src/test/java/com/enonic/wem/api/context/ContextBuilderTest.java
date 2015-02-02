@@ -3,6 +3,7 @@ package com.enonic.wem.api.context;
 import org.junit.Test;
 
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.wem.api.workspace.Workspace;
 
 import static org.junit.Assert.*;
 
@@ -57,5 +58,25 @@ public class ContextBuilderTest
         assertEquals( AuthenticationInfo.unAuthenticated(), context.getAuthInfo() );
         assertEquals( "value1", context.getAttribute( "key1" ) );
         assertSame( sampleValue, context.getAttribute( SampleValue.class ) );
+    }
+
+    @Test
+    public void copy_construct_with_overwrite()
+        throws Exception
+    {
+
+        final Context old = ContextBuilder.create().
+            repositoryId( "repository" ).
+            workspace( "workspace" ).
+            attribute( "key1", "value1" ).
+            build();
+
+        final Workspace newWS = Workspace.from( "new" );
+        final Context newContext = ContextBuilder.from( old ).
+            workspace( newWS ).
+            build();
+
+        assertEquals( newWS, newContext.getWorkspace() );
+        assertEquals( "repository", newContext.getRepositoryId().toString() );
     }
 }

@@ -10,6 +10,7 @@ import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
@@ -24,7 +25,6 @@ import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
-import com.enonic.wem.repo.internal.workspace.NodeWorkspaceState;
 import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
 import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
 import com.enonic.wem.repo.internal.workspace.WorkspaceDocumentId;
@@ -120,7 +120,7 @@ public class ElasticsearchWorkspaceService
         return NodeWorkspaceVersion.create().
             nodePath( nodeReturnValue.nodePath ).
             nodeVersionId( nodeReturnValue.getNodeVersionId() ).
-            state( nodeReturnValue.getState() ).
+            nodeState( nodeReturnValue.getState() ).
             build();
     }
 
@@ -130,9 +130,9 @@ public class ElasticsearchWorkspaceService
 
         private final NodeVersionId nodeVersionId;
 
-        private final NodeWorkspaceState state;
+        private final NodeState state;
 
-        public NodeReturnValue( final NodePath nodePath, final NodeVersionId nodeVersionId, final NodeWorkspaceState state )
+        public NodeReturnValue( final NodePath nodePath, final NodeVersionId nodeVersionId, final NodeState state )
         {
             this.nodePath = nodePath;
             this.nodeVersionId = nodeVersionId;
@@ -169,7 +169,7 @@ public class ElasticsearchWorkspaceService
 
             return new NodeReturnValue( NodePath.newPath( nodePathValue.getValue().toString() ).build(),
                                         NodeVersionId.from( nodeVersionIdValue.getValue().toString() ),
-                                        NodeWorkspaceState.from( stateValue.getValue().toString() ) );
+                                        NodeState.from( stateValue.getValue().toString() ) );
         }
 
         public NodePath getNodePath()
@@ -182,7 +182,7 @@ public class ElasticsearchWorkspaceService
             return nodeVersionId;
         }
 
-        public NodeWorkspaceState getState()
+        public NodeState getState()
         {
             return state;
         }

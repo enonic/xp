@@ -4,6 +4,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.workspace.Workspaces;
 
 public interface NodeService
 {
@@ -60,6 +61,8 @@ public interface NodeService
     ByteSource getBinary( NodeId nodeId, BinaryReference reference );
 
     RootNode createRootNode( CreateRootNodeParams params );
+
+    Node setNodeState( final NodeId nodeId, final NodeState nodeState );
 
     RootNode getRoot();
 }

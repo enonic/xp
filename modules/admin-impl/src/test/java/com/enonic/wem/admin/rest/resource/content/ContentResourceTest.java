@@ -522,16 +522,18 @@ public class ContentResourceTest
     public void delete_content_failure()
         throws Exception
     {
-        Mockito.when(
-            contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/one" ) ) ) ) ).thenThrow(
-            new ContentNotFoundException( ContentPath.from( "/one" ), ContentConstants.WORKSPACE_DRAFT ) );
+        Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
+            contentPath( ContentPath.from( "/one" ) ).
+            build() ) ) ).
+            thenThrow( new ContentNotFoundException( ContentPath.from( "/one" ), ContentConstants.WORKSPACE_STAGE ) );
 
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent );
-        Mockito.when(
-            contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/two" ) ) ) ) ).thenThrow(
-            new UnableToDeleteContentException( ContentPath.from( "/two" ), "Some reason" ) );
+        Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
+            contentPath( ContentPath.from( "/two" ) ).
+            build() ) ) ).
+            thenThrow( new UnableToDeleteContentException( ContentPath.from( "/two" ), "Some reason" ) );
 
         String jsonString = request().path( "content/delete" ).
             entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -548,16 +550,19 @@ public class ContentResourceTest
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent1 );
 
-        Mockito.when(
-            contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/one" ) ) ) ) ).thenReturn(
-            newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() );
+        Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
+            contentPath( ContentPath.from( "/one" ) ).
+            build() ) ) ).
+            thenReturn( newContent().parentPath( ContentPath.ROOT ).name( "one" ).build() );
 
         final Content aContent2 = createContent( "aaa", "my_a_content2", "mymodule:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
             thenReturn( aContent2 );
-        Mockito.when(
-            contentService.delete( Mockito.eq( new DeleteContentParams().contentPath( ContentPath.from( "/two" ) ) ) ) ).thenThrow(
-            new UnableToDeleteContentException( ContentPath.from( "/two" ), "Some reason" ) );
+
+        Mockito.when( contentService.delete( DeleteContentParams.create().
+            contentPath( ContentPath.from( "/two" ) ).
+            build() ) ).
+            thenThrow( new UnableToDeleteContentException( ContentPath.from( "/two" ), "Some reason" ) );
 
         String jsonString = request().path( "content/delete" ).
             entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -679,6 +684,28 @@ public class ContentResourceTest
 
         assertJson( "publish_content_success.json", jsonString );
     }
+
+    @Test
+    public void publish_content_deleted()
+        throws Exception
+    {
+        Mockito.when( contentService.push( Mockito.isA( PushContentParams.class ) ) ).thenReturn( PushContentsResult.create().
+            setPushedContent( Contents.from( newContent().
+                id( ContentId.from( "my-content" ) ).
+                parentPath( ContentPath.ROOT ).
+                name( "content" ).
+                displayName( "My Content" ).
+                build() ) ).
+            addDeleted( ContentId.from( "myContentId" ) ).
+            build() );
+
+        String jsonString = request().path( "content/publish" ).
+            entity( readFromFile( "publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "publish_content_deleted.json", jsonString );
+    }
+
 
     @Test
     public void duplicate()

@@ -92,7 +92,6 @@ public class ResolveSyncWorkCommand
         if ( this.nodeId != null )
         {
             nodePath = resolveDiffRootFromNodeId();
-
         }
         else
         {
@@ -153,9 +152,9 @@ public class ResolveSyncWorkCommand
 
         if ( node == null )
         {
-            if ( comparison.getCompareStatus().isDelete() )
+            if ( comparison.getCompareStatus().getStatus().equals( CompareStatus.Status.PENDING_DELETE ) )
             {
-                resultBuilder.delete( nodeId );
+                resultBuilder.addDelete( nodeId );
             }
         }
         else
@@ -227,13 +226,13 @@ public class ResolveSyncWorkCommand
         {
             resultBuilder.conflict( nodeId );
         }
-        else if ( comparison.getCompareStatus().isDelete() )
-        {
-            resultBuilder.delete( nodeId );
-        }
         else
         {
-            if ( resolveContext.becauseReferredTo )
+            if ( comparison.getCompareStatus().getStatus().equals( CompareStatus.Status.PENDING_DELETE ) )
+            {
+                resultBuilder.addDelete( nodeId );
+            }
+            else if ( resolveContext.becauseReferredTo )
             {
                 resultBuilder.publishReferredFrom( comparison.getNodeId(), resolveContext.contextNodeId );
             }

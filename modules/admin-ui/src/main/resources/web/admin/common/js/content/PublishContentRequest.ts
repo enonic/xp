@@ -2,9 +2,9 @@ module api.content {
 
     export class PublishContentRequest extends ContentResourceRequest<PublishContentResult, any> {
 
-        private ids:ContentId[] = [];
+        private ids: ContentId[] = [];
 
-        constructor(contentId?:ContentId) {
+        constructor(contentId?: ContentId) {
             super();
             super.setMethod("POST");
             if (contentId) {
@@ -12,23 +12,25 @@ module api.content {
             }
         }
 
-        setIds(contentIds:ContentId[]):PublishContentRequest {
+        setIds(contentIds: ContentId[]): PublishContentRequest {
             this.ids = contentIds;
             return this;
         }
 
-        addId(contentId:ContentId):PublishContentRequest {
+        addId(contentId: ContentId): PublishContentRequest {
             this.ids.push(contentId);
             return this;
         }
 
-        getParams():Object {
+        getParams(): Object {
             return {
-                ids: this.ids.map((el) => { return el.toString(); })
+                ids: this.ids.map((el) => {
+                    return el.toString();
+                })
             };
         }
 
-        getRequestPath():api.rest.Path {
+        getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "publish");
         }
 
@@ -37,7 +39,8 @@ module api.content {
             var result = jsonResponse.getResult(),
                 succeeded = result.successes.length,
                 failed = result.failures.length,
-                total = succeeded + failed;
+                deleted = result.deleted.length,
+                total = succeeded + failed + deleted;
 
             switch (total) {
             case 0:
@@ -46,13 +49,18 @@ module api.content {
             case 1:
                 if (succeeded === 1) {
                     api.notify.showSuccess('Content [' + result.successes[0].name + '] published!');
-                } else {
+                } else if (failed === 1) {
                     api.notify.showError(result.failures[0].reason);
+                } else {
+                    api.notify.showSuccess('Content [' + result.deleted[0] + '] deleted');
                 }
                 break;
             default: // > 1
                 if (succeeded > 0) {
                     api.notify.showSuccess('[' + succeeded + '] contents published!');
+                }
+                if (deleted > 0) {
+                    api.notify.showSuccess('[' + deleted + '] contents deleted ');
                 }
                 if (failed > 0) {
                     api.notify.showError('[' + failed + '] contents failed to publish!');

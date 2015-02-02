@@ -28,6 +28,7 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePaths;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.node.NodeVersionId;
@@ -466,6 +467,21 @@ public class NodeServiceImpl
             queryService( this.queryService ).
             workspaceService( this.workspaceService ).
             versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            indexService( this.indexService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Node setNodeState( final NodeId nodeId, final NodeState nodeState )
+    {
+        return SetNodeStateCommand.create().
+            nodeId( nodeId ).
+            nodeState( nodeState ).
+            versionService( this.versionService ).
+            queryService( this.queryService ).
+            workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
             build().

@@ -18,7 +18,7 @@ public class WorkspaceXContentBuilderFactory
             addField( builder, WorkspaceIndexPath.VERSION_ID.getPath(), doc.getNodeVersionId().toString() );
             addField( builder, WorkspaceIndexPath.WORKSPACE_ID.getPath(), workspace.getName() );
             addField( builder, WorkspaceIndexPath.NODE_ID.getPath(), doc.getNode().id().toString() );
-            addField( builder, WorkspaceIndexPath.STATE.getPath(), doc.getNodeWorkspaceState().name() );
+            addField( builder, WorkspaceIndexPath.STATE.getPath(), doc.getNode().getNodeState().value() );
             addField( builder, WorkspaceIndexPath.PATH.getPath(), doc.getNode().path().toString() );
             endBuilder( builder );
             return builder;

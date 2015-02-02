@@ -25,7 +25,7 @@ public abstract class AbstractElasticsearchIntegrationTest
     protected Client client;
 
     private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
-
+    
     protected static final Repository TEST_REPO = Repository.create().
         id( RepositoryId.from( "cms-repo" ) ).
         build();
@@ -102,6 +102,4 @@ public abstract class AbstractElasticsearchIntegrationTest
         this.client.close();
         server.shutdown();
     }
-
-
 }

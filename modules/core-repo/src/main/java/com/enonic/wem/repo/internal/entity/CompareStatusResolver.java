@@ -1,12 +1,12 @@
 package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.wem.api.content.CompareStatus;
+import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.repo.internal.index.query.NodeWorkspaceVersion;
 import com.enonic.wem.repo.internal.version.VersionService;
-import com.enonic.wem.repo.internal.workspace.NodeWorkspaceState;
 
 class CompareStatusResolver
 {
@@ -52,16 +52,16 @@ class CompareStatusResolver
             return new CompareStatus( CompareStatus.Status.EQUAL );
         }
 
-        final NodeWorkspaceState sourceState = source.getState();
-        final NodeWorkspaceState targetState = target.getState();
+        final NodeState sourceState = source.getNodeState();
+        final NodeState targetState = target.getNodeState();
 
-        if ( sourceState.equals( NodeWorkspaceState.DELETED ) && !targetState.equals( NodeWorkspaceState.DELETED ) )
+        if ( sourceState.equals( NodeState.PENDING_DELETE ) && !targetState.equals( NodeState.PENDING_DELETE ) )
         {
-            return new CompareStatus( CompareStatus.Status.DELETED );
+            return new CompareStatus( CompareStatus.Status.PENDING_DELETE );
         }
-        else if ( !sourceState.equals( NodeWorkspaceState.DELETED ) && targetState.equals( NodeWorkspaceState.DELETED ) )
+        else if ( !sourceState.equals( NodeState.PENDING_DELETE ) && targetState.equals( NodeState.PENDING_DELETE ) )
         {
-            return new CompareStatus( CompareStatus.Status.DELETED_TARGET );
+            return new CompareStatus( CompareStatus.Status.PENDING_DELETE_TARGET );
         }
 
         if ( !source.getNodePath().equals( target.getNodePath() ) )

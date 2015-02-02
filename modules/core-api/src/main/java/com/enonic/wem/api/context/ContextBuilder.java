@@ -1,6 +1,9 @@
 package com.enonic.wem.api.context;
 
+import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
@@ -10,11 +13,11 @@ public final class ContextBuilder
 {
     private LocalScope localScope;
 
-    private final ImmutableMap.Builder<String, Object> attributes;
+    private final Map<String, Object> attributes;
 
     private ContextBuilder()
     {
-        this.attributes = ImmutableMap.builder();
+        this.attributes = Maps.newHashMap();
     }
 
     public ContextBuilder repositoryId( final String value )
@@ -60,7 +63,7 @@ public final class ContextBuilder
             this.localScope = new LocalScopeImpl();
         }
 
-        return new ContextImpl( this.attributes.build(), this.localScope );
+        return new ContextImpl( ImmutableMap.copyOf( this.attributes ), this.localScope );
     }
 
     public static ContextBuilder create()

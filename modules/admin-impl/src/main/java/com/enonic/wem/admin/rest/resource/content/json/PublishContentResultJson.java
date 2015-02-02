@@ -14,6 +14,8 @@ public class PublishContentResultJson
 
     private final List<Failure> failures = new ArrayList<>();
 
+    private final List<String> deleted = new ArrayList<>();
+
     public List<Success> getSuccesses()
     {
         return successes;
@@ -22,6 +24,11 @@ public class PublishContentResultJson
     public List<Failure> getFailures()
     {
         return failures;
+    }
+
+    public List<String> getDeleted()
+    {
+        return deleted;
     }
 
     private PublishContentResultJson()
@@ -40,6 +47,11 @@ public class PublishContentResultJson
         for ( final PushContentsResult.Failed failed : pushContentsResult.getFailed() )
         {
             json.failures.add( new Failure( failed.getContent().getId(), failed.getFailedReason().getMessage() ) );
+        }
+
+        for ( final ContentId deleted : pushContentsResult.getDeleted() )
+        {
+            json.deleted.add( deleted.toString() );
         }
 
         return json;

@@ -94,6 +94,11 @@ public final class UpdateNodeCommand
         return new Builder();
     }
 
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
+    }
+
 
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
@@ -105,6 +110,11 @@ public final class UpdateNodeCommand
         private Builder()
         {
             super();
+        }
+
+        private Builder( final AbstractNodeCommand source )
+        {
+            super( source );
         }
 
         public Builder params( final UpdateNodeParams params )

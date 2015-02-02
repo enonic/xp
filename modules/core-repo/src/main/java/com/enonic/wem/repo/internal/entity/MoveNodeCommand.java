@@ -146,6 +146,12 @@ public class MoveNodeCommand
         return new Builder();
     }
 
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
+    }
+
+
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
@@ -157,9 +163,14 @@ public class MoveNodeCommand
 
         private boolean overwriteExisting = false;
 
-        Builder()
+        private Builder()
         {
             super();
+        }
+
+        private Builder( final AbstractNodeCommand source )
+        {
+            super( source );
         }
 
         public Builder id( final NodeId nodeId )

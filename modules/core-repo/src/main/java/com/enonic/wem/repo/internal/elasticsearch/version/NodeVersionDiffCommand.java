@@ -6,6 +6,7 @@ import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
 
 import com.enonic.wem.api.node.NodeId;
+import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.workspace.Workspace;
@@ -17,7 +18,6 @@ import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
-import com.enonic.wem.repo.internal.workspace.NodeWorkspaceState;
 
 class NodeVersionDiffCommand
     extends AbstractVersionsCommand
@@ -121,7 +121,7 @@ class NodeVersionDiffCommand
 
     private TermQueryBuilder isDeleted()
     {
-        return new TermQueryBuilder( WorkspaceIndexPath.STATE.toString(), NodeWorkspaceState.DELETED.value() );
+        return new TermQueryBuilder( WorkspaceIndexPath.STATE.toString(), NodeState.PENDING_DELETE.value() );
     }
 
     private HasChildQueryBuilder isInWorkspace( final String indexType, final Workspace source1 )

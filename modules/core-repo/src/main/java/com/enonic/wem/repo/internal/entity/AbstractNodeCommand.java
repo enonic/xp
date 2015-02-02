@@ -53,85 +53,55 @@ abstract class AbstractNodeCommand
 
     void updateNodeMetadata( final Node node )
     {
-        StoreNodeCommand.create().
+        StoreNodeCommand.create( this ).
             node( node ).
             updateMetadataOnly( true ).
-            indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             build().
             execute();
     }
 
     void doStoreNode( final Node node )
     {
-        StoreNodeCommand.create().
+        StoreNodeCommand.create( this ).
             node( node ).
-            indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             build().
             execute();
     }
 
     Node doMoveNode( final NodePath newParentPath, final NodeName nodeName, final NodeId nodeId )
     {
-        return MoveNodeCommand.create().
+        return MoveNodeCommand.create( this ).
             id( nodeId ).
             newParent( newParentPath ).
             newNodeName( nodeName ).
-            queryService( this.queryService ).
-            nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
-            indexService( this.indexService ).
-            versionService( this.versionService ).
             build().
             execute();
     }
 
     Node doGetByPath( final NodePath path, final boolean resolveHasChild )
     {
-        return GetNodeByPathCommand.create().
+        return GetNodeByPathCommand.create( this ).
             nodePath( path ).
             resolveHasChild( resolveHasChild ).
-            indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             build().
             execute();
     }
 
     Node doGetById( final NodeId id, final boolean resolveHasChild )
     {
-        return GetNodeByIdCommand.create().
+        return GetNodeByIdCommand.create( this ).
             id( id ).
             resolveHasChild( resolveHasChild ).
-            indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             build().
             execute();
     }
 
     Nodes doGetByIds( final NodeIds ids, final OrderExpressions orderExprs, final boolean resolveHasChild )
     {
-        return GetNodesByIdsCommand.create().
+        return GetNodesByIdsCommand.create( this ).
             ids( ids ).
             orderExpressions( orderExprs ).
             resolveHasChild( resolveHasChild ).
-            indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
-            versionService( this.versionService ).
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             build().
             execute();
     }
@@ -139,13 +109,8 @@ abstract class AbstractNodeCommand
 
     Node doCreateNode( final CreateNodeParams params, final BlobStore binaryBlobStore )
     {
-        return CreateNodeCommand.create().
+        return CreateNodeCommand.create( this ).
             params( params ).
-            indexService( this.indexService ).
-            versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             binaryBlobStore( binaryBlobStore ).
             build().
             execute();
@@ -153,13 +118,8 @@ abstract class AbstractNodeCommand
 
     Node doUpdateNode( final UpdateNodeParams params, final BlobStore binaryBlobStore )
     {
-        return UpdateNodeCommand.create().
+        return UpdateNodeCommand.create( this ).
             params( params ).
-            indexService( this.indexService ).
-            versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
             binaryBlobStore( binaryBlobStore ).
             build().
             execute();
@@ -167,12 +127,7 @@ abstract class AbstractNodeCommand
 
     Node doDeleteNode( final NodeId nodeId )
     {
-        return DeleteNodeByIdCommand.create().
-            indexService( this.indexService ).
-            versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
-            nodeDao( this.nodeDao ).
-            queryService( this.queryService ).
+        return DeleteNodeByIdCommand.create( this ).
             nodeId( nodeId ).
             build().
             execute();
@@ -180,13 +135,8 @@ abstract class AbstractNodeCommand
 
     FindNodesByParentResult doFindNodesByParent( final FindNodesByParentParams params )
     {
-        return FindNodesByParentCommand.create().
+        return FindNodesByParentCommand.create( this ).
             params( params ).
-            queryService( this.queryService ).
-            nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
-            versionService( this.versionService ).
-            indexService( this.indexService ).
             build().
             execute();
     }
@@ -226,6 +176,14 @@ abstract class AbstractNodeCommand
         {
         }
 
+        Builder( final AbstractNodeCommand source )
+        {
+            this.indexService = source.indexService;
+            this.nodeDao = source.nodeDao;
+            this.workspaceService = source.workspaceService;
+            this.queryService = source.queryService;
+            this.versionService = source.versionService;
+        }
 
         @SuppressWarnings("unchecked")
         public B indexService( final IndexService indexService )

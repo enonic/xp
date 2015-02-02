@@ -17,4 +17,10 @@ public class Workspaces
         return new Workspaces( ImmutableSet.copyOf( workspaces ) );
     }
 
+    public static Workspaces empty()
+    {
+        ImmutableSet<Workspace> empty = ImmutableSet.of();
+        return new Workspaces( empty );
+    }
+
 }
