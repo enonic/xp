@@ -64,7 +64,6 @@ final class UpdateMediaCommand
         final PropertyTree data = new PropertyTree();
         new ImageFormDataBuilder().
             image( params.getName() ).
-            mimeType( params.getMimeType() ).
             build( data );
 
         final UpdateContentParams updateParams = new UpdateContentParams().

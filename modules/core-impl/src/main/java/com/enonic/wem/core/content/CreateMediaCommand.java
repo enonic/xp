@@ -50,7 +50,6 @@ final class CreateMediaCommand
         final PropertyTree data = new PropertyTree();
         new ImageFormDataBuilder().
             image( params.getName() ).
-            mimeType( params.getMimeType() ).
             build( data );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create().

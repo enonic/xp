@@ -40,11 +40,27 @@ public class ContentTypeForms
     public static final Form MEDIA_IMAGE = Form.newForm().
         addFormItem( Input.newInput().name( "media" ).
             inputType( InputTypes.IMAGE_UPLOADER ).build() ).
-        addFormItem( Input.newInput().name( "mimeType" ).
-            inputType( InputTypes.TEXT_LINE ).
-            label( "Mime type" ).
-            occurrences( 1, 1 ).
+        addFormItem( Input.newInput().name( "caption" ).
+            inputType( InputTypes.TEXT_AREA ).
+            label( "Caption" ).
+            occurrences( 0, 1 ).
             build() ).
+        addFormItem( Input.newInput().name( "artist" ).
+            inputType( InputTypes.TAG ).
+            label( "Artist" ).
+            occurrences( 0, 0 ).
+            build() ).
+        addFormItem( Input.newInput().name( "copyright" ).
+            inputType( InputTypes.TEXT_LINE ).
+            label( "Copyright" ).
+            occurrences( 0, 1 ).
+            build() ).
+        addFormItem( Input.newInput().name( "tags" ).
+            inputType( InputTypes.TAG ).
+            label( "Tags" ).
+            occurrences( 0, 0 ).
+            build() ).
+
         addFormItem( FormItemSet.newFormItemSet().label( "Metadata" ).name( "metadata" ).occurrences( 0, 1 ).
             addFormItem( createImmutableTextLine( "exifVersion" ).occurrences( 0, 1 ).build() ).
             addFormItem( createImmutableTextLine( "compressionType" ).occurrences( 0, 1 ).build() ).
