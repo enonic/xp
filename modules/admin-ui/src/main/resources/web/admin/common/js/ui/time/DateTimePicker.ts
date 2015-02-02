@@ -160,20 +160,22 @@ module api.ui.time {
                 this.updateInputStyling();
             });
 
+            /* may be added later
             this.input.onKeyDown((event: KeyboardEvent) => {
                 if (!api.ui.KeyHelper.isNumber(event) && !api.ui.KeyHelper.isDash(event) && !api.ui.KeyHelper.isBackspace(event) &&
                     !api.ui.KeyHelper.isDel(event) && !api.ui.KeyHelper.isColon(event)) {
 
                     event.preventDefault();
                 }
-            });
+             });*/
 
             this.input.onKeyUp((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isNumber(event) ||
-                    api.ui.KeyHelper.isDash(event) ||
-                    api.ui.KeyHelper.isBackspace(event) ||
-                                                        api.ui.KeyHelper.isDel(event) ||
-                                                        api.ui.KeyHelper.isColon(event)) {
+                // may be added later
+                //if (api.ui.KeyHelper.isNumber(event) ||
+                //    api.ui.KeyHelper.isDash(event) ||
+                //    api.ui.KeyHelper.isBackspace(event) ||
+                //    api.ui.KeyHelper.isDel(event) ||
+                //    api.ui.KeyHelper.isColon(event)) {
 
                     var typedDateTime = this.input.getValue();
                     if (api.util.StringHelper.isEmpty(typedDateTime)) {
@@ -202,7 +204,7 @@ module api.ui.time {
                     }
 
                     this.updateInputStyling();
-                }
+                //}
             });
 
         }

@@ -51,19 +51,21 @@ module api.ui.time {
                 this.popup.show();
             });
 
+            /* may be added later
             this.input.onKeyDown((event: KeyboardEvent) => {
                 if (!api.ui.KeyHelper.isNumber(event) && !api.ui.KeyHelper.isBackspace(event) && !api.ui.KeyHelper.isDel(event) &&
                     !api.ui.KeyHelper.isColon(event)) {
 
                     event.preventDefault();
                 }
-            });
+             });*/
 
             this.input.onKeyUp((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isNumber(event) ||
-                    api.ui.KeyHelper.isBackspace(event) ||
-                                                        api.ui.KeyHelper.isDel(event) ||
-                                                        api.ui.KeyHelper.isColon(event)) {
+                // may be added later
+                //if (api.ui.KeyHelper.isNumber(event) ||
+                //    api.ui.KeyHelper.isBackspace(event) ||
+                //    api.ui.KeyHelper.isDel(event) ||
+                //    api.ui.KeyHelper.isColon(event)) {
 
                     var typedTime = this.input.getValue();
                     if (api.util.StringHelper.isEmpty(typedTime)) {
@@ -88,7 +90,7 @@ module api.ui.time {
                     }
 
                     this.updateInputStyling();
-                }
+                //}
             });
 
             var wrapper = new api.dom.DivEl('wrapper');
