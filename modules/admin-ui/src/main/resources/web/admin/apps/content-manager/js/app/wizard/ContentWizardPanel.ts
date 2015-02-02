@@ -172,6 +172,8 @@ module app.wizard {
             this.contentWizardStepForm = new ContentWizardStepForm();
             this.contentWizardStepForm.onValidityChanged((event: WizardStepValidityChangedEvent) => {
                 this.isContentFormValid = event.isValid();
+                this.formIcon.toggleClass("invalid", !event.isValid());
+                this.notifyValidityChanged(event.isValid());
             });
             this.metadataStepFormByName = {};
 
@@ -334,10 +336,9 @@ module app.wizard {
 
         layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
             this.formIcon.setSrc(new ContentIconUrlResolver().setContent(persistedContent).setCrop(false).resolve());
-            this.toggleClass("invalid", !persistedContent.isValid());
+            this.formIcon.toggleClass("invalid", !persistedContent.isValid());
 
             this.notifyValidityChanged(persistedContent.isValid());
-            console.log([persistedContent.isValid(), this.validityChangedListeners]);
 
             api.content.ContentSummaryAndCompareStatusFetcher.fetch(persistedContent.getContentId()).
                 then((contentSummaryAndCompareStatus:ContentSummaryAndCompareStatus) => {

@@ -97,6 +97,14 @@ module api.app.browse {
             });
         }
 
+        getTreeGrid(): api.ui.treegrid.TreeGrid<Object> {
+            return this.treeGrid;
+        }
+
+        getBrowseItemPanel(): BrowseItemPanel<M> {
+            return this.browseItemPanel;
+        }
+
         getActions(): api.ui.Action[] {
             return this.browseToolbar.getActions();
         }
