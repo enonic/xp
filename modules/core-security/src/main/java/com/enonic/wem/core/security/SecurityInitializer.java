@@ -81,7 +81,7 @@ public final class SecurityInitializer
 
     private boolean isWorkspaceInitialized()
     {
-        return CONTEXT_SECURITY.callWith( this.nodeService::getRoot ) != null;
+        return this.nodeService.getRoot() != null;
     }
 
     private void initializeUsersWorkspace()
