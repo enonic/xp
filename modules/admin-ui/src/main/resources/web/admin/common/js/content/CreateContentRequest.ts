@@ -2,7 +2,9 @@ module api.content {
 
     export class CreateContentRequest extends ContentResourceRequest<api.content.json.ContentJson, Content> {
 
-        private draft: boolean = false;
+        private valid: boolean;
+
+        private requireValid: boolean;
 
         private name: ContentName;
 
@@ -18,11 +20,18 @@ module api.content {
 
         constructor() {
             super();
+            this.valid = false;
+            this.requireValid = false;
             super.setMethod("POST");
         }
 
-        setDraft(value: boolean): CreateContentRequest {
-            this.draft = value;
+        setValid(value: boolean): CreateContentRequest {
+            this.valid = value;
+            return this;
+        }
+
+        setRequireValid(value: boolean): CreateContentRequest {
+            this.requireValid = value;
             return this;
         }
 
@@ -58,7 +67,8 @@ module api.content {
 
         getParams(): Object {
             return {
-                draft: this.draft,
+                valid: this.valid,
+                requireValid: this.requireValid,
                 name: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.name.toString(),
                 parent: this.parent.toString(),
                 contentType: this.contentType.toString(),

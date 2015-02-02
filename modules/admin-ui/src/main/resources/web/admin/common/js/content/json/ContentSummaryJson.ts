@@ -24,7 +24,9 @@ module api.content.json {
 
         isPage:boolean;
 
-        draft:boolean;
+        valid:boolean;
+
+        requireValid:boolean;
 
         childOrder:ChildOrderJson;
 
