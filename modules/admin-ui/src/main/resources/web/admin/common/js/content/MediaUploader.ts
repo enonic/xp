@@ -26,6 +26,7 @@ module api.content {
 
             super(config);
 
+            this.addClass('media-uploader');
             this.propertyIdProvider = api.Client.get().getPropertyIdProvider();
         }
 

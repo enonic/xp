@@ -90,11 +90,17 @@
 
 .close-button:not(.no-bg) {
   .button(@admin-white, #A6A9A8);
-  .box-shadow(0px 1px 3px #000);
   .box-sizing(content-box); // for firefox to center the icon
-  .border-radius(15px);
   padding: 0;
   width: 24px;
   height: 24px;
+
+  top: 1px;
+  right: 1px;
+  background: rgba(55, 55, 55, 0.2);
+
+  &:hover:not(:disabled) {
+    background: rgba(55, 55, 55, 0.5);
+  }
 }
 
