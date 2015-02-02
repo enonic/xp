@@ -32,11 +32,15 @@ public final class UpdateContentJson
     final RenameContentParams renameContentParams;
 
     @JsonCreator
-    UpdateContentJson( @JsonProperty("contentId") final String contentId, @JsonProperty("contentName") final String contentName,
+    UpdateContentJson( @JsonProperty("contentId") final String contentId,
+                       @JsonProperty("contentName") final String contentName,
                        @JsonProperty("data") final List<PropertyArrayJson> propertyArrayJsonList,
                        @JsonProperty("meta") final List<MetadataJson> metadataJsonList,
-                       @JsonProperty("displayName") final String displayName, @JsonProperty("draft") final String draft,
-                       @JsonProperty("owner") final String owner, @JsonProperty("language") final String language )
+                       @JsonProperty("displayName") final String displayName,
+                       @JsonProperty("valid") final String valid,
+                       @JsonProperty("requireValid") final String requireValid,
+                       @JsonProperty("owner") final String owner,
+                       @JsonProperty("language") final String language )
     {
         this.contentName = ContentName.from( contentName );
 
@@ -44,7 +48,8 @@ public final class UpdateContentJson
         final Metadatas metadatas = parseMetadata( metadataJsonList );
 
         this.updateContentParams = new UpdateContentParams().
-            requireValid( !Boolean.valueOf( draft ) ).
+            valid( Boolean.valueOf( valid ) ).
+            requireValid( Boolean.valueOf( requireValid ) ).
             contentId( ContentId.from( contentId ) ).
             modifier( PrincipalKey.ofAnonymous() ).
             editor( edit -> {

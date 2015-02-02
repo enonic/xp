@@ -85,7 +85,7 @@ module app.wizard {
 
         private showSplitEditAction: api.ui.Action;
 
-        private persistAsDraft: boolean;
+        private requireValid: boolean;
 
         private createSite: boolean;
 
@@ -113,7 +113,7 @@ module app.wizard {
             this.constructing = true;
             this.isContentFormValid = false;
 
-            this.persistAsDraft = true;
+            this.requireValid = false;
             this.contentNamedListeners = [];
             this.parentContent = params.parentContent;
             this.defaultModels = params.defaultModels;
@@ -625,7 +625,7 @@ module app.wizard {
                 formView.layout().then(() => {
 
                     deferred.resolve(new CreateContentRequest().
-                        setDraft(this.persistAsDraft).
+                        setRequireValid(this.requireValid).
                         setName(api.content.ContentUnnamed.newUnnamed()).
                         setParent(parentPath).
                         setContentType(this.contentType.getContentTypeName()).
@@ -668,7 +668,7 @@ module app.wizard {
             var persistedContent = this.getPersistedItem();
 
             var updateContentRequest = new UpdateContentRequest(persistedContent.getId()).
-                setDraft(this.persistAsDraft).
+                setRequireValid(this.requireValid).
                 setContentName(viewedContent.getName()).
                 setDisplayName(viewedContent.getDisplayName()).
                 setData(viewedContent.getContentData()).
@@ -752,8 +752,8 @@ module app.wizard {
             }
         }
 
-        setPersistAsDraft(draft: boolean) {
-            this.persistAsDraft = draft;
+        setRequireValid(requireValid: boolean) {
+            this.requireValid = requireValid;
         }
 
         showLiveEdit() {

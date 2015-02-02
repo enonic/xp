@@ -10,7 +10,7 @@ module app.wizard.action {
             super("Preview");
             this.onExecuted(() => {
                     if (wizard.hasUnsavedChanges()) {
-                        wizard.setPersistAsDraft(false);
+                        wizard.setRequireValid(true);
                         wizard.updatePersistedItem().
                             then(this.showPreviewDialog).
                             catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
