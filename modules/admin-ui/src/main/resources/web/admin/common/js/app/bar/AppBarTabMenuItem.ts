@@ -61,6 +61,11 @@ module api.app.bar {
             return this;
         }
 
+        setMarkUnnamed(markUnnamed: boolean): AppBarTabMenuItemBuilder {
+            super.setMarkUnnamed(markUnnamed);
+            return this;
+        }
+
         setMarkInvalid(markInvalid: boolean): AppBarTabMenuItemBuilder {
             super.setMarkInvalid(markInvalid);
             return this;

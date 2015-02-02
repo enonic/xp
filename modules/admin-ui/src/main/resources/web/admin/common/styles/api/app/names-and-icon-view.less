@@ -14,7 +14,7 @@
   }
 
   .names-and-icon-view-styles(@size) {
-    @icon-names-gap: 10px;
+    @icon-names-gap: 15px;
 
     position: relative;
     overflow: hidden;
@@ -28,6 +28,19 @@
       line-height: @size - 2px;
       vertical-align: middle;
       text-align: center;
+
+      &:before {
+        position: absolute;
+        top: 0;
+        left: @size - 10px;
+        width: 16px;
+        height: 16px;
+        padding: 2px;
+        line-height: 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        z-index: 1;
+      }
 
       .icon {
         max-width: 100%;

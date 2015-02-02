@@ -103,6 +103,8 @@ module app.wizard {
 
         private contentNamedListeners: {(event: api.content.ContentNamedEvent):void}[];
 
+        private validityChangedListeners: {(event: ValidityChangedEvent):void}[];
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -115,6 +117,7 @@ module app.wizard {
 
             this.requireValid = false;
             this.contentNamedListeners = [];
+            this.validityChangedListeners = [];
             this.parentContent = params.parentContent;
             this.defaultModels = params.defaultModels;
             this.site = params.site;
@@ -331,6 +334,10 @@ module app.wizard {
 
         layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
             this.formIcon.setSrc(new ContentIconUrlResolver().setContent(persistedContent).setCrop(false).resolve());
+            this.toggleClass("invalid", !persistedContent.isValid());
+
+            this.notifyValidityChanged(persistedContent.isValid());
+            console.log([persistedContent.isValid(), this.validityChangedListeners]);
 
             api.content.ContentSummaryAndCompareStatusFetcher.fetch(persistedContent.getContentId()).
                 then((contentSummaryAndCompareStatus:ContentSummaryAndCompareStatus) => {
@@ -817,9 +824,33 @@ module app.wizard {
             this.contentNamedListeners.push(listener);
         }
 
+        unContentNamed(listener: (event: api.content.ContentNamedEvent)=>void) {
+            this.contentNamedListeners = this.contentNamedListeners.filter((curr) => {
+                return curr != listener;
+            });
+            return this;
+        }
+
         private notifyContentNamed(content: api.content.Content) {
             this.contentNamedListeners.forEach((listener: (event: api.content.ContentNamedEvent)=>void)=> {
                 listener.call(this, new api.content.ContentNamedEvent(this, content));
+            });
+        }
+
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+            this.validityChangedListeners.push(listener);
+        }
+
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+            this.validityChangedListeners = this.validityChangedListeners.filter((curr) => {
+                return curr != listener;
+            });
+            return this;
+        }
+
+        private notifyValidityChanged(valid: boolean) {
+            this.validityChangedListeners.forEach((listener: (event: ValidityChangedEvent)=>void)=> {
+                listener.call(this, new ValidityChangedEvent(valid));
             });
         }
 

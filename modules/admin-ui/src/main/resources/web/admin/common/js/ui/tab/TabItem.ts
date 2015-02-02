@@ -29,7 +29,9 @@ module api.ui.tab {
             this.labelEl = new api.dom.SpanEl('label');
             this.appendChild(this.labelEl);
 
-            this.setLabel(builder.label, builder.markInvalid);
+            this.setLabel(builder.label, builder.markUnnamed);
+
+            this.markInvalid(builder.markInvalid);
 
             this.closeAction = builder.closeAction;
 
@@ -63,7 +65,7 @@ module api.ui.tab {
             return this.index;
         }
 
-        setLabel(newValue: string, markInvalid: boolean = false) {
+        setLabel(newValue: string, markUnnamed: boolean = false) {
             if (this.label == newValue) {
                 return;
             }
@@ -72,12 +74,13 @@ module api.ui.tab {
             this.label = newValue;
             this.labelEl.getEl().setText(newValue);
             this.labelEl.getEl().setAttribute('title', newValue);
-            if (markInvalid) {
-                this.addClass("invalid");
-            } else {
-                this.removeClass("invalid");
-            }
+            this.labelEl.toggleClass("unnamed", markUnnamed);
+
             this.notifyLabelChangedListeners(newValue, oldValue);
+        }
+
+        markInvalid(markInvalid: boolean) {
+            this.toggleClass("invalid", markInvalid);
         }
 
         getLabel(): string {
@@ -86,7 +89,7 @@ module api.ui.tab {
 
         setActive(value: boolean) {
             this.active = value;
-            this.active ? this.addClass("active") : this.removeClass("active");
+            this.toggleClass("active", value);
         }
 
         isActive(): boolean {
@@ -164,6 +167,8 @@ module api.ui.tab {
 
         closeButtonEnabled: boolean;
 
+        markUnnamed: boolean;
+
         markInvalid: boolean;
 
         setLabel(label: string): TabItemBuilder {
@@ -178,6 +183,11 @@ module api.ui.tab {
 
         setCloseButtonEnabled(enabled: boolean): TabItemBuilder {
             this.closeButtonEnabled = enabled;
+            return this;
+        }
+
+        setMarkUnnamed(markUnnamed: boolean): TabItemBuilder {
+            this.markUnnamed = markUnnamed;
             return this;
         }
 

@@ -338,7 +338,7 @@ module api.content {
             this.modifier = json.modifier;
             this.owner = json.owner ? api.security.PrincipalKey.fromString(json.owner) : null;
             this.page = json.isPage;
-            this.valid = json.valid;
+            this.valid = json.isValid;
             this.requireValid = json.requireValid;
             this.language = json.language;
 

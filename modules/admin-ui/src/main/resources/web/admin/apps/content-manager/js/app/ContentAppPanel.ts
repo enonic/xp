@@ -37,6 +37,13 @@ module app {
                     tabMenuItem.setLabel(name, !<string>event.getNewValue());
                 }
             });
+
+            var contentWizardPanel = <app.wizard.ContentWizardPanel>wizardPanel;
+            tabMenuItem.markInvalid(!contentWizardPanel.getPersistedItem().isValid());
+
+            contentWizardPanel.onValidityChanged((event: app.wizard.ValidityChangedEvent) => {
+                tabMenuItem.markInvalid(!event.isValid());
+            });
         }
 
         private route(path?: api.rest.Path) {
@@ -178,7 +185,8 @@ module app {
 
                             tabMenuItem = new AppBarTabMenuItemBuilder().
                                 setLabel(name).
-                                setMarkInvalid(!content.getDisplayName()).
+                                setMarkUnnamed(!content.getDisplayName()).
+                                setMarkInvalid(!content.isValid()).
                                 setTabId(tabId).
                                 setEditing(true).
                                 setCloseAction(wizard.getCloseAction()).
@@ -218,6 +226,7 @@ module app {
 
                     tabMenuItem = new AppBarTabMenuItemBuilder().
                         setLabel(content.getDisplayName()).
+                        setMarkInvalid(!content.isValid()).
                         setTabId(tabId).
                         setCloseAction(contentItemViewPanel.getCloseAction()).
                         build();

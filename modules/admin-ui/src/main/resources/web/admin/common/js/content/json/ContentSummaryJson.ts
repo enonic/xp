@@ -24,7 +24,7 @@ module api.content.json {
 
         isPage:boolean;
 
-        valid:boolean;
+        isValid:boolean;
 
         requireValid:boolean;
 

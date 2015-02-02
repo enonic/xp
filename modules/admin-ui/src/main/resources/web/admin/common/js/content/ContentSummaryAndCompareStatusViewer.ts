@@ -5,7 +5,7 @@ module api.content {
         private namesAndIconView: api.app.NamesAndIconView;
 
         constructor() {
-            super();
+            super("content-summary-and-compare-status-viewer");
             this.namesAndIconView = new api.app.NamesAndIconViewBuilder().
                 setSize(api.app.NamesAndIconViewSize.small).
                 build();
@@ -34,8 +34,8 @@ module api.content {
                 subName = this.resolveSubName(contentSummary, relativePath);
                 subTitle = contentSummary.getPath().toString();
 
-                if (contentSummary.isSite()) {
-                    this.addClass("site");
+                if (!contentSummary.isValid()) {
+                    this.addClass("invalid");
                 }
             } else if (!!uploadItem) {
                 this.namesAndIconView.setIconClass('icon-file-upload2');

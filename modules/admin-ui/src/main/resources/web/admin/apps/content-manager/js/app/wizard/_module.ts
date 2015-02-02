@@ -18,3 +18,4 @@
 ///<reference path='OpenEditPermissionsDialogEvent.ts' />
 ///<reference path='ContentPermissionsAppliedEvent.ts' />
 ///<reference path='EditPermissionsDialog.ts' />
+///<reference path='ValidityChangedEvent.ts' />
