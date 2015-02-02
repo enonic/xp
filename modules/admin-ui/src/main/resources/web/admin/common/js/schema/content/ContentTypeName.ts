@@ -5,42 +5,42 @@ module api.schema.content {
     export class ContentTypeName extends api.module.ModuleBasedName {
 
         // Built-in ContentTypes can be listed here
+//
+        static MEDIA = new ContentTypeName("base:media");
 
-        static MEDIA = new ContentTypeName("system:media");
+        static MEDIA_TEXT = new ContentTypeName("media:text");
 
-        static MEDIA_TEXT = new ContentTypeName("system:text");
+        static MEDIA_DATA = new ContentTypeName("media:data");
 
-        static MEDIA_DATA = new ContentTypeName("system:data");
+        static MEDIA_AUDIO = new ContentTypeName("media:audio");
 
-        static MEDIA_AUDIO = new ContentTypeName("system:audio");
+        static MEDIA_VIDEO = new ContentTypeName("media:video");
 
-        static MEDIA_VIDEO = new ContentTypeName("system:video");
+        static MEDIA_IMAGE = new ContentTypeName("media:image");
 
-        static MEDIA_IMAGE = new ContentTypeName("system:image");
+        static MEDIA_VECTOR = new ContentTypeName("media:vector");
 
-        static MEDIA_VECTOR = new ContentTypeName("system:vector");
+        static MEDIA_ARCHIVE = new ContentTypeName("media:archive");
 
-        static MEDIA_ARCHIVE = new ContentTypeName("system:archive");
+        static MEDIA_DOCUMENT = new ContentTypeName("media:document");
 
-        static MEDIA_DOCUMENT = new ContentTypeName("system:document");
+        static MEDIA_SPREADSHEET = new ContentTypeName("media:spreadsheet");
 
-        static MEDIA_SPREADSHEET = new ContentTypeName("system:spreadsheet");
+        static MEDIA_PRESENTATION = new ContentTypeName("media:presentation");
 
-        static MEDIA_PRESENTATION = new ContentTypeName("system:presentation");
+        static MEDIA_CODE = new ContentTypeName("media:code");
 
-        static MEDIA_CODE = new ContentTypeName("system:code");
+        static MEDIA_EXECUTABLE = new ContentTypeName("media:executable");
 
-        static MEDIA_EXECUTABLE = new ContentTypeName("system:executable");
+        static MEDIA_UNKNOWN = new ContentTypeName("media:unknown");
 
-        static MEDIA_UNKNOWN = new ContentTypeName("system:unknown");
+        static SITE = new ContentTypeName('portal:site');
 
-        static SITE = new ContentTypeName('system:site');
+        static PAGE_TEMPLATE = new ContentTypeName('portal:page-template');
 
-        static PAGE_TEMPLATE = new ContentTypeName('system:page-template');
+        static TEMPLATE_FOLDER = new ContentTypeName('portal:template-folder');
 
-        static TEMPLATE_FOLDER = new ContentTypeName('system:template-folder');
-
-        static IMAGE = new ContentTypeName('system:image');
+        static IMAGE = new ContentTypeName('media:image');
 
         constructor(name: string) {
             api.util.assertNotNull(name, "Content type name can't be null");

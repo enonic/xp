@@ -3,7 +3,7 @@
     "displayName": "All the Input Types",
     "description": "A description",
     "contentDisplayNameScript": null,
-    "superType": "system:structured",
+  "superType": "base:structured",
     "isAbstract": false,
     "isFinal": true,
     "isBuiltIn": false,

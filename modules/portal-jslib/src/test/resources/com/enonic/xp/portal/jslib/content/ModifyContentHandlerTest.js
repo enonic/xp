@@ -69,7 +69,7 @@ var expectedJson = {
             }
         }
     },
-    "type": "system:unstructured"
+    "type": "base:unstructured"
 };
 
 function editor(c) {

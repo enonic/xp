@@ -64,24 +64,24 @@ public class ContentTypeNameTest
         assertTrue( ContentTypeName.codeMedia().isCodeMedia() );
         assertTrue( ContentTypeName.executableMedia().isExecutableMedia() );
 
-        assertEquals( "system:media", ContentTypeName.media().toString() );
-        assertEquals( "system:folder", ContentTypeName.folder().toString() );
-        assertEquals( "system:page-template", ContentTypeName.pageTemplate().toString() );
-        assertEquals( "system:shortcut", ContentTypeName.shortcut().toString() );
-        assertEquals( "system:structured", ContentTypeName.structured().toString() );
-        assertEquals( "system:unstructured", ContentTypeName.unstructured().toString() );
+        assertEquals( "base:media", ContentTypeName.media().toString() );
+        assertEquals( "base:folder", ContentTypeName.folder().toString() );
+        assertEquals( "portal:page-template", ContentTypeName.pageTemplate().toString() );
+        assertEquals( "base:shortcut", ContentTypeName.shortcut().toString() );
+        assertEquals( "base:structured", ContentTypeName.structured().toString() );
+        assertEquals( "base:unstructured", ContentTypeName.unstructured().toString() );
 
-        assertEquals( "system:text", ContentTypeName.textMedia().toString() );
-        assertEquals( "system:data", ContentTypeName.dataMedia().toString() );
-        assertEquals( "system:audio", ContentTypeName.audioMedia().toString() );
-        assertEquals( "system:video", ContentTypeName.videoMedia().toString() );
-        assertEquals( "system:image", ContentTypeName.imageMedia().toString() );
-        assertEquals( "system:vector", ContentTypeName.vectorMedia().toString() );
-        assertEquals( "system:archive", ContentTypeName.archiveMedia().toString() );
-        assertEquals( "system:document", ContentTypeName.documentMedia().toString() );
-        assertEquals( "system:spreadsheet", ContentTypeName.spreadsheetMedia().toString() );
-        assertEquals( "system:presentation", ContentTypeName.presentationMedia().toString() );
-        assertEquals( "system:code", ContentTypeName.codeMedia().toString() );
-        assertEquals( "system:executable", ContentTypeName.executableMedia().toString() );
+        assertEquals( "media:text", ContentTypeName.textMedia().toString() );
+        assertEquals( "media:data", ContentTypeName.dataMedia().toString() );
+        assertEquals( "media:audio", ContentTypeName.audioMedia().toString() );
+        assertEquals( "media:video", ContentTypeName.videoMedia().toString() );
+        assertEquals( "media:image", ContentTypeName.imageMedia().toString() );
+        assertEquals( "media:vector", ContentTypeName.vectorMedia().toString() );
+        assertEquals( "media:archive", ContentTypeName.archiveMedia().toString() );
+        assertEquals( "media:document", ContentTypeName.documentMedia().toString() );
+        assertEquals( "media:spreadsheet", ContentTypeName.spreadsheetMedia().toString() );
+        assertEquals( "media:presentation", ContentTypeName.presentationMedia().toString() );
+        assertEquals( "media:code", ContentTypeName.codeMedia().toString() );
+        assertEquals( "media:executable", ContentTypeName.executableMedia().toString() );
     }
 }

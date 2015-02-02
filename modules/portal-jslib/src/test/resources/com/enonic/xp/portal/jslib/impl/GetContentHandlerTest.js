@@ -81,7 +81,7 @@ var expectedJson = {
             }
         }
     },
-    "type": "system:unstructured"
+    "type": "base:unstructured"
 };
 
 exports.getContent = function () {

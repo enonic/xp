@@ -10,52 +10,56 @@ public final class ContentTypeName
     extends ModuleBasedName
     implements Comparable<ContentTypeName>
 {
-    private static final ContentTypeName UNSTRUCTURED = new ContentTypeName( "unstructured" );
+    // base:
+    private static final ModuleKey BASE = ModuleKey.from( "base" );
 
-    private static final ContentTypeName STRUCTURED = new ContentTypeName( "structured" );
+    private static final ContentTypeName UNSTRUCTURED = new ContentTypeName( BASE, "unstructured" );
 
-    private static final ContentTypeName FOLDER = new ContentTypeName( "folder" );
+    private static final ContentTypeName STRUCTURED = new ContentTypeName( BASE, "structured" );
 
-    private static final ContentTypeName PAGE_TEMPLATE = new ContentTypeName( "page-template" );
+    private static final ContentTypeName FOLDER = new ContentTypeName( BASE, "folder" );
 
-    private static final ContentTypeName TEMPLATE_FOLDER = new ContentTypeName( "template-folder" );
+    private static final ContentTypeName SHORTCUT = new ContentTypeName( BASE, "shortcut" );
 
-    private static final ContentTypeName SITE = new ContentTypeName( "site" );
+    private static final ContentTypeName MEDIA = new ContentTypeName( BASE, "media" );
 
-    private static final ContentTypeName SHORTCUT = new ContentTypeName( "shortcut" );
+    // portal:
+    private static final ModuleKey PORTAL = ModuleKey.from( "portal" );
 
-    private static final ContentTypeName MEDIA = new ContentTypeName( "media" );
+    private static final ContentTypeName PAGE_TEMPLATE = new ContentTypeName( PORTAL, "page-template" );
 
-    private static final ContentTypeName MEDIA_TEXT = new ContentTypeName( "text" );
+    private static final ContentTypeName TEMPLATE_FOLDER = new ContentTypeName( PORTAL, "template-folder" );
 
-    private static final ContentTypeName MEDIA_DATA = new ContentTypeName( "data" );
+    private static final ContentTypeName SITE = new ContentTypeName( PORTAL, "site" );
 
-    private static final ContentTypeName MEDIA_AUDIO = new ContentTypeName( "audio" );
+    // media:
+    private static final ModuleKey MEDIA_MOD = ModuleKey.from( "media" );
 
-    private static final ContentTypeName MEDIA_VIDEO = new ContentTypeName( "video" );
+    private static final ContentTypeName MEDIA_TEXT = new ContentTypeName( MEDIA_MOD, "text" );
 
-    private static final ContentTypeName MEDIA_IMAGE = new ContentTypeName( "image" );
+    private static final ContentTypeName MEDIA_DATA = new ContentTypeName( MEDIA_MOD, "data" );
 
-    private static final ContentTypeName MEDIA_VECTOR = new ContentTypeName( "vector" );
+    private static final ContentTypeName MEDIA_AUDIO = new ContentTypeName( MEDIA_MOD, "audio" );
 
-    private static final ContentTypeName MEDIA_ARCHIVE = new ContentTypeName( "archive" );
+    private static final ContentTypeName MEDIA_VIDEO = new ContentTypeName( MEDIA_MOD, "video" );
 
-    private static final ContentTypeName MEDIA_DOCUMENT = new ContentTypeName( "document" );
+    private static final ContentTypeName MEDIA_IMAGE = new ContentTypeName( MEDIA_MOD, "image" );
 
-    private static final ContentTypeName MEDIA_SPREADSHEET = new ContentTypeName( "spreadsheet" );
+    private static final ContentTypeName MEDIA_VECTOR = new ContentTypeName( MEDIA_MOD, "vector" );
 
-    private static final ContentTypeName MEDIA_PRESENTATION = new ContentTypeName( "presentation" );
+    private static final ContentTypeName MEDIA_ARCHIVE = new ContentTypeName( MEDIA_MOD, "archive" );
 
-    private static final ContentTypeName MEDIA_CODE = new ContentTypeName( "code" );
+    private static final ContentTypeName MEDIA_DOCUMENT = new ContentTypeName( MEDIA_MOD, "document" );
 
-    private static final ContentTypeName MEDIA_EXECUTABLE = new ContentTypeName( "executable" );
+    private static final ContentTypeName MEDIA_SPREADSHEET = new ContentTypeName( MEDIA_MOD, "spreadsheet" );
 
-    private static final ContentTypeName MEDIA_UNKNOWN = new ContentTypeName( "unknown" );
+    private static final ContentTypeName MEDIA_PRESENTATION = new ContentTypeName( MEDIA_MOD, "presentation" );
 
-    private ContentTypeName( final String localName )
-    {
-        super( ModuleKey.SYSTEM, localName );
-    }
+    private static final ContentTypeName MEDIA_CODE = new ContentTypeName( MEDIA_MOD, "code" );
+
+    private static final ContentTypeName MEDIA_EXECUTABLE = new ContentTypeName( MEDIA_MOD, "executable" );
+
+    private static final ContentTypeName MEDIA_UNKNOWN = new ContentTypeName( MEDIA_MOD, "unknown" );
 
     private ContentTypeName( final ModuleKey moduleKey, final String localName )
     {

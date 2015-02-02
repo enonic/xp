@@ -15,27 +15,27 @@ public class BuiltinContentTypeProviderTest
         final ContentTypes types = new BuiltinContentTypeProvider().get();
         assertEquals( 21, types.getSize() );
 
-        assertType( types.get( 0 ), "system:unstructured", true );
-        assertType( types.get( 1 ), "system:structured", true );
-        assertType( types.get( 2 ), "system:folder", true );
-        assertType( types.get( 3 ), "system:shortcut", true );
-        assertType( types.get( 4 ), "system:media", true );
-        assertType( types.get( 5 ), "system:text", true );
-        assertType( types.get( 6 ), "system:data", true );
-        assertType( types.get( 7 ), "system:audio", true );
-        assertType( types.get( 8 ), "system:video", true );
-        assertType( types.get( 9 ), "system:image", true );
-        assertType( types.get( 10 ), "system:vector", true );
-        assertType( types.get( 11 ), "system:archive", true );
-        assertType( types.get( 12 ), "system:document", true );
-        assertType( types.get( 13 ), "system:spreadsheet", true );
-        assertType( types.get( 14 ), "system:presentation", true );
-        assertType( types.get( 15 ), "system:code", true );
-        assertType( types.get( 16 ), "system:executable", true );
-        assertType( types.get( 17 ), "system:unknown", false );
-        assertType( types.get( 18 ), "system:site", true );
-        assertType( types.get( 19 ), "system:template-folder", true );
-        assertType( types.get( 20 ), "system:page-template", true );
+        assertType( types.get( 0 ), "base:unstructured", true );
+        assertType( types.get( 1 ), "base:structured", true );
+        assertType( types.get( 2 ), "base:folder", true );
+        assertType( types.get( 3 ), "base:shortcut", true );
+        assertType( types.get( 4 ), "base:media", true );
+        assertType( types.get( 5 ), "media:text", true );
+        assertType( types.get( 6 ), "media:data", true );
+        assertType( types.get( 7 ), "media:audio", true );
+        assertType( types.get( 8 ), "media:video", true );
+        assertType( types.get( 9 ), "media:image", true );
+        assertType( types.get( 10 ), "media:vector", true );
+        assertType( types.get( 11 ), "media:archive", true );
+        assertType( types.get( 12 ), "media:document", true );
+        assertType( types.get( 13 ), "media:spreadsheet", true );
+        assertType( types.get( 14 ), "media:presentation", true );
+        assertType( types.get( 15 ), "media:code", true );
+        assertType( types.get( 16 ), "media:executable", true );
+        assertType( types.get( 17 ), "media:unknown", false );
+        assertType( types.get( 18 ), "portal:site", true );
+        assertType( types.get( 19 ), "portal:template-folder", true );
+        assertType( types.get( 20 ), "portal:page-template", true );
     }
 
     private void assertType( final ContentType type, final String name, final boolean hasIcon )

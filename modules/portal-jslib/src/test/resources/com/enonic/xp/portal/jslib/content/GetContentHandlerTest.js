@@ -65,7 +65,7 @@ var expectedJson = {
             }
         }
     },
-    "type": "system:unstructured"
+    "type": "base:unstructured"
 };
 
 exports.getById = function () {

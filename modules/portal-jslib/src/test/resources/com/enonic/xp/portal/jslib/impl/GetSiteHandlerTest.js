@@ -19,7 +19,7 @@ var expectedJson = {
         }
     },
     "page": {},
-    "type": "system:unstructured"
+    "type": "base:unstructured"
 };
 
 exports.getCurrentSite = function () {

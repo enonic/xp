@@ -122,5 +122,5 @@
     "modifiedTime": null,
     "modifier": null,
     "name": "mymodule:my_cty",
-    "superType": "system:unstructured"
+    "superType": "base:unstructured"
 }

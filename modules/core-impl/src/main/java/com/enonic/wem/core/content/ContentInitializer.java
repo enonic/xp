@@ -59,7 +59,7 @@ public final class ContentInitializer
             LOG.info( "Content root-node not found, creating" );
 
             PropertyTree data = new PropertyTree();
-            data.setString( ContentPropertyNames.TYPE, "system:folder" );
+            data.setString( ContentPropertyNames.TYPE, "base:folder" );
             data.setString( ContentPropertyNames.DISPLAY_NAME, "Content" );
             data.addSet( ContentPropertyNames.DATA );
             data.addSet( ContentPropertyNames.FORM );
