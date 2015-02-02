@@ -1,4 +1,4 @@
-package com.enonic.wem.launcher.provision;
+package com.enonic.xp.launcher.provision;
 
 import java.io.File;
 

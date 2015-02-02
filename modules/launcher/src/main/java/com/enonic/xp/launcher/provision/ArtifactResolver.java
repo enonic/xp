@@ -1,4 +1,4 @@
-package com.enonic.wem.launcher.provision;
+package com.enonic.xp.launcher.provision;
 
 import java.io.File;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.launcher.SharedConstants;
+import com.enonic.xp.launcher.SharedConstants;
 
 final class ArtifactResolver
     implements SharedConstants

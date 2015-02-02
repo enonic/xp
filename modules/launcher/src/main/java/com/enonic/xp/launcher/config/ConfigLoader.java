@@ -1,7 +1,6 @@
-package com.enonic.wem.launcher.config;
+package com.enonic.xp.launcher.config;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
@@ -13,45 +12,46 @@ import com.google.common.io.CharSource;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.launcher.SharedConstants;
-import com.enonic.wem.launcher.home.HomeDir;
+import com.enonic.xp.launcher.SharedConstants;
+import com.enonic.xp.launcher.env.Environment;
 
 public final class ConfigLoader
     implements SharedConstants
 {
-    private final static String CONFIG_FILE = "etc/system.properties";
+    private final static String CONFIG_FILE = "system.properties";
 
-    private final static String DEFAULT_CONFIG = "system.properties";
+    private final static String DEFAULT_CONFIG = "/META-INF/config/system.properties";
 
-    private final HomeDir homeDir;
+    private final Environment env;
 
-    public ConfigLoader( final HomeDir homeDir )
+    public ConfigLoader( final Environment env )
     {
-        this.homeDir = homeDir;
+        this.env = env;
     }
 
     public ConfigProperties load()
-        throws IOException
+        throws Exception
     {
         final ConfigProperties props = new ConfigProperties();
         props.putAll( loadDefaultProperties() );
         props.putAll( loadFileProperties() );
-        props.put( HOME_PROP, this.homeDir.toString() );
+        props.putAll( this.env.getAsMap() );
         return props;
     }
 
     private Map<String, String> loadDefaultProperties()
-        throws IOException
+        throws Exception
     {
         final URL url = getClass().getResource( DEFAULT_CONFIG );
-        Preconditions.checkNotNull( url, "Could not find " + DEFAULT_CONFIG + " file in classpath." );
+        Preconditions.checkNotNull( url, "Could not find " + DEFAULT_CONFIG );
         return loadProperties( Resources.asCharSource( url, Charsets.UTF_8 ) );
     }
 
     private Map<String, String> loadFileProperties()
-        throws IOException
+        throws Exception
     {
-        final File file = new File( this.homeDir.toFile(), CONFIG_FILE );
+        final File configDir = new File( this.env.getHomeDir(), "config" );
+        final File file = new File( configDir, CONFIG_FILE );
         if ( !file.isFile() )
         {
             return Maps.newHashMap();
@@ -61,7 +61,7 @@ public final class ConfigLoader
     }
 
     private Map<String, String> loadProperties( final CharSource source )
-        throws IOException
+        throws Exception
     {
         final Properties props = new Properties();
         props.load( source.openStream() );

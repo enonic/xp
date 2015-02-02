@@ -1,4 +1,4 @@
-package com.enonic.wem.launcher.config;
+package com.enonic.xp.launcher.config;
 
 import java.util.HashMap;
 import java.util.Map;

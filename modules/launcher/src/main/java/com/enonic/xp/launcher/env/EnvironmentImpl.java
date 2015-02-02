@@ -6,7 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.launcher.LauncherException;
-import com.enonic.wem.launcher.SharedConstants;
+import com.enonic.xp.launcher.SharedConstants;
 
 final class EnvironmentImpl
     implements Environment, SharedConstants
@@ -38,11 +38,6 @@ final class EnvironmentImpl
         if ( dir == null )
         {
             throw new LauncherException( "[%s] directory not set. Please set [%s] system property variable.", message, prop );
-        }
-
-        if ( !dir.isDirectory() )
-        {
-            throw new LauncherException( "[%s] directory [%s] is not a valid directory.", message, dir );
         }
     }
 

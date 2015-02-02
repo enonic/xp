@@ -1,4 +1,4 @@
-package com.enonic.wem.launcher.config;
+package com.enonic.xp.launcher.config;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,8 +9,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
-import com.enonic.wem.launcher.home.HomeDir;
+import com.enonic.xp.launcher.env.Environment;
 
 public class ConfigLoaderTest
 {
@@ -26,7 +27,11 @@ public class ConfigLoaderTest
         throws Exception
     {
         this.homeDir = this.folder.newFolder( "home" );
-        this.configLoader = new ConfigLoader( new HomeDir( this.homeDir ) );
+
+        final Environment env = Mockito.mock( Environment.class );
+        Mockito.when( env.getHomeDir() ).thenReturn( this.homeDir );
+
+        this.configLoader = new ConfigLoader( env );
     }
 
     private void setupHomeProperties()
@@ -36,7 +41,7 @@ public class ConfigLoaderTest
         props.setProperty( "home.param", "home.value" );
         props.setProperty( "home.other.param ", " home.other.value " );
 
-        final File file = new File( this.homeDir, "etc/system.properties" );
+        final File file = new File( this.homeDir, "config/system.properties" );
         file.getParentFile().mkdirs();
 
         final FileOutputStream out = new FileOutputStream( file );
