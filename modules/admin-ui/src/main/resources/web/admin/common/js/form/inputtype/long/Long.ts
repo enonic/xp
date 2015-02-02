@@ -32,12 +32,13 @@ module api.content.form.inputtype.long {
                 inputEl.updateValidationStatusOnUserInput(this.isValid(event.getNewValue()));
             });
 
+            /* may be added later
             inputEl.onKeyDown((event: KeyboardEvent) => {
                 if (!api.ui.KeyHelper.isNumber(event) && !api.ui.KeyHelper.isBackspace(event) && !api.ui.KeyHelper.isDel(event)) {
 
                     event.preventDefault();
                 }
-            });
+             });*/
 
             return inputEl;
         }

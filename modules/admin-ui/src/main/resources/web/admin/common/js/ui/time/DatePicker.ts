@@ -134,19 +134,22 @@ module api.ui.time {
                 this.updateInputStyling();
             });
 
+            /* may be added later
             this.input.onKeyDown((event: KeyboardEvent) => {
+
                 if (!api.ui.KeyHelper.isNumber(event) && !api.ui.KeyHelper.isDash(event) && !api.ui.KeyHelper.isBackspace(event) &&
                     !api.ui.KeyHelper.isDel(event)) {
 
                     event.preventDefault();
                 }
-            });
+             });*/
 
             this.input.onKeyUp((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isNumber(event) ||
-                    api.ui.KeyHelper.isDash(event) ||
-                    api.ui.KeyHelper.isBackspace(event) ||
-                    api.ui.KeyHelper.isDel(event)) {
+                // may be added later
+                //if (api.ui.KeyHelper.isNumber(event) ||
+                //    api.ui.KeyHelper.isDash(event) ||
+                //    api.ui.KeyHelper.isBackspace(event) ||
+                //    api.ui.KeyHelper.isDel(event)) {
 
                     var typedDate = this.input.getValue();
 
@@ -185,7 +188,7 @@ module api.ui.time {
 
                     this.updateInputStyling();
 
-                }
+                //}
             });
 
         }
