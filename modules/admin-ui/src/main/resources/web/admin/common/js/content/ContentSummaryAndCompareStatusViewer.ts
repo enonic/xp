@@ -34,9 +34,7 @@ module api.content {
                 subName = this.resolveSubName(contentSummary, relativePath);
                 subTitle = contentSummary.getPath().toString();
 
-                if (!contentSummary.isValid()) {
-                    this.addClass("invalid");
-                }
+                this.toggleClass("invalid", !contentSummary.isValid());
             } else if (!!uploadItem) {
                 this.namesAndIconView.setIconClass('icon-file-upload2');
 
