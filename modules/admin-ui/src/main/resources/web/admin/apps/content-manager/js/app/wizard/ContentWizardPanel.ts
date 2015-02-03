@@ -167,9 +167,7 @@ module app.wizard {
             }
 
             this.contentWizardStepForm = new ContentWizardStepForm();
-            this.contentWizardStepForm.onValidityChanged((event: WizardStepValidityChangedEvent) => {
-                this.isContentFormValid = event.isValid();
-            });
+
             this.metadataStepFormByName = {};
 
             this.settingsWizardStepForm = new SettingsWizardStepForm();
@@ -204,6 +202,11 @@ module app.wizard {
                 livePanel: this.liveFormPanel,
                 split: !!this.liveFormPanel
             }, () => {
+
+                this.onValidityChanged((event: api.app.wizard.WizardValidityChangedEvent) => {
+                    this.isContentFormValid = this.isValid();
+                    this.formIcon.toggleClass("invalid", !this.isValid());
+                });
 
                 this.addClass("content-wizard-panel");
                 if (this.getSplitPanel()) {
@@ -331,6 +334,9 @@ module app.wizard {
 
         layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
             this.formIcon.setSrc(new ContentIconUrlResolver().setContent(persistedContent).setCrop(false).resolve());
+            this.formIcon.toggleClass("invalid", !persistedContent.isValid());
+
+            this.notifyValidityChanged(persistedContent.isValid());
 
             api.content.ContentSummaryAndCompareStatusFetcher.fetch(persistedContent.getContentId()).
                 then((contentSummaryAndCompareStatus:ContentSummaryAndCompareStatus) => {
@@ -815,6 +821,13 @@ module app.wizard {
 
         onContentNamed(listener: (event: api.content.ContentNamedEvent)=>void) {
             this.contentNamedListeners.push(listener);
+        }
+
+        unContentNamed(listener: (event: api.content.ContentNamedEvent)=>void) {
+            this.contentNamedListeners = this.contentNamedListeners.filter((curr) => {
+                return curr != listener;
+            });
+            return this;
         }
 
         private notifyContentNamed(content: api.content.Content) {

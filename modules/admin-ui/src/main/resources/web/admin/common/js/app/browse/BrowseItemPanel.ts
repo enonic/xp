@@ -34,6 +34,10 @@ module api.app.browse {
             return this.itemsSelectionPanel.getItems();
         }
 
+        updateItemViewers(items: BrowseItem<M>[]) {
+            this.itemsSelectionPanel.updateItemViewers(items);
+        }
+
         updateDisplayedPanel() {
             var selectedItems = this.getItems();
             if (selectedItems.length == 1) {

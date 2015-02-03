@@ -24,7 +24,7 @@ module api.app.browse {
                 return;
             }
 
-            if (this.items.length == 0) {
+            if (this.items.length === 0) {
                 this.removeClass('no-selection');
                 this.removeChildren();
             }
@@ -32,7 +32,7 @@ module api.app.browse {
             var removeCallback = () => {
                 this.removeItem(item);
             };
-            var selectionItem = new SelectionItem(this.createItemViewer(item), removeCallback);
+            var selectionItem = new SelectionItem(this.createItemViewer(item), item, removeCallback);
 
             this.appendChild(selectionItem);
             this.selectionItems.push(selectionItem);
@@ -49,7 +49,7 @@ module api.app.browse {
             this.selectionItems.splice(index, 1);
             this.items.splice(index, 1);
 
-            if (this.items.length == 0) {
+            if (this.items.length === 0) {
                 this.getEl().addClass('no-selection').setInnerHtml(this.messageForNoSelection);
             }
 
@@ -82,6 +82,18 @@ module api.app.browse {
             var viewer = new api.ui.Viewer<M>();
             viewer.setObject(item.getModel());
             return viewer;
+        }
+
+        updateItemViewers(items: BrowseItem<M>[]) {
+            items.forEach((item) => {
+                for (var i = 0; i < this.selectionItems.length; i++) {
+                    if (this.selectionItems[i].getBrowseItem().getPath() === item.getPath()) {
+                        this.selectionItems[i].updateViewer(this.createItemViewer(item));
+                        console.log(this.createItemViewer(item));
+                        break;
+                    }
+                }
+            });
         }
 
         private indexOf(item: BrowseItem<M>): number {

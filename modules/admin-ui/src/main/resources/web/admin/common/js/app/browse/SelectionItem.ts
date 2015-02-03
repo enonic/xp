@@ -4,21 +4,41 @@ module api.app.browse {
 
         private viewer: api.ui.Viewer<M>;
 
-        constructor(viewer: api.ui.Viewer<M>, removeCallback?: () => void) {
+        private item: BrowseItem<M>;
+
+        private removeEl: api.dom.DivEl;
+
+        constructor(viewer: api.ui.Viewer<M>, item: BrowseItem<M>, removeCallback?: () => void) {
             super("browse-selection-item");
             this.viewer = viewer;
-            this.addRemoveButton(removeCallback);
-            this.appendChild(this.viewer);
+            this.item = item;
+            this.initRemoveButton(removeCallback);
         }
 
-        private addRemoveButton(callback?: () => void) {
-            var removeEl = new api.dom.DivEl("icon remove");
-            removeEl.onClicked((event: MouseEvent) => {
+        private initRemoveButton(callback?: () => void) {
+            this.removeEl = new api.dom.DivEl("icon remove");
+            this.removeEl.onClicked((event: MouseEvent) => {
                 if (callback) {
                     callback();
                 }
             });
-            this.appendChild(removeEl);
+        }
+
+        getBrowseItem(): BrowseItem<M> {
+            return this.item;
+        }
+
+        updateViewer(viewer: api.ui.Viewer<M>) {
+            this.viewer = viewer;
+            this.render();
+        }
+
+        doRender(): boolean {
+            this.removeChildren();
+            this.appendChild(this.removeEl);
+            this.appendChild(this.viewer);
+
+            return true;
         }
     }
 

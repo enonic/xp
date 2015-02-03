@@ -5,7 +5,7 @@ module api.content {
         private namesAndIconView: api.app.NamesAndIconView;
 
         constructor() {
-            super();
+            super("content-summary-viewer");
             this.namesAndIconView = new api.app.NamesAndIconViewBuilder().
                 setSize(api.app.NamesAndIconViewSize.small).
                 build();
@@ -21,8 +21,8 @@ module api.content {
             this.namesAndIconView.setMainName(content.getDisplayName()).
                 setSubName(subName, content.getPath().toString()).
                 setIconUrl(iconUrl);
-            if (content.isSite()) {
-                this.addClass("site");
+            if (!content.isValid()) {
+                this.addClass("invalid");
             }
         }
 

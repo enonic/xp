@@ -200,12 +200,16 @@ module api.dom {
                     child.render();
                 });
             }
-            this.rendered = true;
+            this.rendered = this.doRender();
             this.notifyRendered();
         }
 
         isRendered(): boolean {
             return this.rendered;
+        }
+
+        doRender(): boolean {
+            return true;
         }
 
         show() {
