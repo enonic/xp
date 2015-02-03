@@ -10,8 +10,6 @@ module api.ui.panel {
 
         private offset: number = 0;
 
-        private hiddenHeader: number = 0;
-
         private panelShown: Panel = null;
 
         private panelShownListeners: {(event: PanelShownEvent):void}[] = [];
@@ -46,23 +44,11 @@ module api.ui.panel {
             if (header) {
                 var headerEl = new api.dom.H2El("panel-strip-panel-header");
                 headerEl.getEl().setInnerHtml(header);
-                headerEl.setVisible(false);
                 this.insertChild(headerEl, previousChildrenIndex);
             }
             this.panels.splice(index, 0, panel);
             this.headers.splice(index, 0, headerEl);
 
-            panel.onShown((event: api.dom.ElementShownEvent) => {
-                var panel = <Panel>event.getElement();
-                var panelIndex = this.getPanelIndex(panel);
-                if (panelIndex > 0) {
-                    if (this.panels[this.hiddenHeader].isVisible()) {
-                        this.headers[index].setVisible(true);
-                    } else {
-                        this.hiddenHeader += 1;
-                    }
-                }
-            });
             if (header) {
                 this.insertChild(panel, previousChildrenIndex + 1);
             } else {
