@@ -2,43 +2,45 @@ module api.app.wizard {
 
     export class WizardStepsValidityManager {
 
-        private items: WizardStepValidityItem[];
+        private steps: WizardStep[];
 
         private validityChangedListeners: {(event: WizardValidityChangedEvent):void}[] = [];
 
         constructor() {
-            this.items = [];
+            this.steps = [];
             this.validityChangedListeners = [];
         }
 
         clearItems() {
-            this.items = [];
+            this.steps = [];
         }
 
-        getItems(): WizardStepValidityItem[] {
-            return this.items;
+        getSteps(): WizardStep[] {
+            return this.steps;
         }
 
         addItem(step: WizardStep) {
-            this.items.push(new WizardStepValidityItem(step, this.notifyValidityChanged.bind(this)));
+            this.steps.push(step);
+            step.getStepForm().onValidityChanged((event: WizardStepValidityChangedEvent) => {
+                this.notifyValidityChanged(event.isValid());
+            });
         }
 
         removeItem(step: WizardStep) {
-            var index = this.items.map((item) => { return item.getStep(); }).indexOf(step);
+            var index = this.steps.indexOf(step);
             if (index >= 0) {
-                this.items.splice(index, 1);
+                this.steps.splice(index, 1);
             }
         }
 
         isAllValid(): boolean {
-            var result = true;
-            for (var i = 0; i < this.items.length; i++) {
-                if (!this.items[i].isValid()) {
-                    result = false;
+            for (var i = 0; i < this.steps.length; i++) {
+                if (!this.steps[i].getStepForm().isValid()) {
+                    return false;
                 }
             }
 
-            return result;
+            return true;
         }
 
         onValidityChanged(listener: (event: WizardValidityChangedEvent)=>void) {
