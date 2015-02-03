@@ -15,6 +15,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
@@ -67,6 +69,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @Path(ResourceConstants.REST_ROOT + "security")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class SecurityResource
     implements AdminResource
 {
@@ -364,9 +367,9 @@ public final class SecurityResource
         return PrincipalKeys.from( members );
     }
 
+    @Reference
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
     }
-
 }

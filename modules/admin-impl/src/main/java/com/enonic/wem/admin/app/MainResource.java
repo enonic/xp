@@ -8,9 +8,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.enonic.wem.admin.AdminResource;
 
 @Path("/")
+@Component(immediate = true)
 public final class MainResource
     implements AdminResource
 {
@@ -47,6 +51,7 @@ public final class MainResource
         return this.appHtmlHandler.render( app );
     }
 
+    @Reference
     public void setResourceLocator( final ResourceLocator resourceLocator )
     {
         this.resourceHandler.setResourceLocator( resourceLocator );

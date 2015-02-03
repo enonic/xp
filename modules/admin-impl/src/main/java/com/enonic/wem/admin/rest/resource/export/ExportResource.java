@@ -8,6 +8,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +25,7 @@ import com.enonic.wem.api.vfs.VirtualFiles;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Path(ResourceConstants.REST_ROOT + "export")
+@Component(immediate = true)
 public class ExportResource
     implements AdminResource
 {
@@ -63,11 +66,10 @@ public class ExportResource
         return Response.temporaryRedirect( new URI( uri ) ).build();
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+    @Reference
     public void setExportService( final ExportService exportService )
     {
         this.exportService = exportService;
     }
-
 }
 

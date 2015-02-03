@@ -9,6 +9,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.content.page.PageDescriptorJson;
 import com.enonic.wem.admin.json.content.page.PageDescriptorListJson;
@@ -25,6 +28,7 @@ import com.enonic.wem.api.security.RoleKeys;
 @Path(ResourceConstants.REST_ROOT + "content/page/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class PageDescriptorResource
     implements AdminResource
 {
@@ -57,6 +61,7 @@ public final class PageDescriptorResource
         return new PageDescriptorListJson( PageDescriptors.from( pageDescriptors ) );
     }
 
+    @Reference
     public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
     {
         this.pageDescriptorService = pageDescriptorService;

@@ -12,6 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
@@ -32,6 +34,7 @@ import com.enonic.wem.api.util.ImageHelper;
 @Path(ResourceConstants.REST_ROOT + "content/media")
 @Produces("application/octet-stream")
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class ContentMediaResource
     implements AdminResource
 {
@@ -133,14 +136,15 @@ public final class ContentMediaResource
         return new ContentIconUrlResolver( this.contentTypeService );
     }
 
+    @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
     }
 
+    @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
     }
-
 }

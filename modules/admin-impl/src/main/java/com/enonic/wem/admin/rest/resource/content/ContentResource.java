@@ -19,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.lang.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
@@ -113,6 +115,7 @@ import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 @Path(ResourceConstants.REST_ROOT + "content")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class ContentResource
     implements AdminResource
 {
@@ -642,21 +645,25 @@ public final class ContentResource
         return new ContentIconUrlResolver( this.contentTypeService );
     }
 
+    @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
     }
 
+    @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
     }
 
+    @Reference
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinReferencesToFormItemsTransformer = new MixinReferencesToFormItemsTransformer( mixinService );
     }
 
+    @Reference
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;

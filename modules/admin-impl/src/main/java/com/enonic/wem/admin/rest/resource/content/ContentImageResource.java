@@ -12,6 +12,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.admin.AdminResource;
@@ -33,6 +36,7 @@ import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.Imag
 @Path(ResourceConstants.REST_ROOT + "content/image")
 @Produces("image/*")
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class ContentImageResource
     implements AdminResource
 {
@@ -132,11 +136,13 @@ public final class ContentImageResource
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 
+    @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
     }
 
+    @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;

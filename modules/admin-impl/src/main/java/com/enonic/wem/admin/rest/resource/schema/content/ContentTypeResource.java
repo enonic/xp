@@ -14,6 +14,8 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
@@ -34,6 +36,7 @@ import com.enonic.wem.api.security.RoleKeys;
 @Path(ResourceConstants.REST_ROOT + "schema/content")
 @Produces("application/json")
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class ContentTypeResource
     implements AdminResource
 {
@@ -120,6 +123,7 @@ public final class ContentTypeResource
         responseBuilder.cacheControl( cacheControl );
     }
 
+    @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;

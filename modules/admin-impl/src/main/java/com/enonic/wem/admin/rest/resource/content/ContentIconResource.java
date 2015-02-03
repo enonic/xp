@@ -14,6 +14,8 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
@@ -35,6 +37,7 @@ import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.Imag
 @Path(ResourceConstants.REST_ROOT + "content/icon")
 @Produces("image/*")
 @RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class ContentIconResource
     implements AdminResource
 {
@@ -128,6 +131,7 @@ public final class ContentIconResource
         return ResolvedImage.unresolved();
     }
 
+    @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;

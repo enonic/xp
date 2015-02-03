@@ -6,6 +6,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.node.NodeService;
@@ -13,6 +16,7 @@ import com.enonic.wem.core.initializer.StartupInitializer;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Path(ResourceConstants.REST_ROOT + "tools")
+@Component(immediate = true)
 public final class ToolsResource
     implements AdminResource
 {
@@ -54,11 +58,13 @@ public final class ToolsResource
         return Response.temporaryRedirect( new URI( uri ) ).build();
     }
 
+    @Reference
     public void setStartupInitializer( final StartupInitializer startupInitializer )
     {
         this.startupInitializer = startupInitializer;
     }
 
+    @Reference
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
