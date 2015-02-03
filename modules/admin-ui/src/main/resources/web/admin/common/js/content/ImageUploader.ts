@@ -10,6 +10,8 @@ module api.content {
 
         private images: api.dom.ImgEl[];
 
+        private initialWidth: number;
+
         constructor(config: ImageUploaderConfig) {
             this.images = [];
 
@@ -24,15 +26,24 @@ module api.content {
         }
 
         createResultItem(value: string): api.dom.DivEl {
+            this.initialWidth = this.getParentElement().getEl().getWidth();
             var container = new api.dom.DivEl();
 
             var imgUrl = new ContentImageUrlResolver().
                 setContentId(new api.content.ContentId(value)).
-                setSize(this.getEl().getWidth()).
+                setSize(this.initialWidth).
                 setTimestamp(new Date()).
                 resolve();
 
             var image = new api.dom.ImgEl(imgUrl);
+            this.getEl().setMaxWidthPx(image.getEl().getNaturalWidth());
+
+            image.onLoaded(() => {
+                this.getEl().setMaxWidthPx(image.getEl().getNaturalWidth());
+            });
+            image.onRemoved(() => {
+                this.getEl().setMaxWidthPx(this.initialWidth);
+            });
 
             image.onClicked((event: MouseEvent) => {
                 image.toggleClass('selected');

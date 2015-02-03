@@ -36,16 +36,21 @@ final class ContentImageHelper
     private BufferedImage readImage( final InputStream inputStream, final int size, final ImageFilter imageFilter )
     {
         final BufferedImage image = ImageHelper.toBufferedImage( inputStream );
-        switch ( imageFilter )
+        if(size > 0 && image.getWidth() >= size)
         {
-            case ScaleSquareFilter:
-                return new ScaleSquareFilter( size ).filter( image );
+            switch ( imageFilter )
+            {
+                case ScaleSquareFilter:
+                    return new ScaleSquareFilter( size ).filter( image );
 
-            case ScaleMax:
-                return new ScaleMaxFilter( size ).filter( image );
+                case ScaleMax:
+                    return new ScaleMaxFilter( size ).filter( image );
 
-            default:
-                throw new IllegalArgumentException( "Invalid image filter: " + imageFilter );
+                default:
+                    throw new IllegalArgumentException( "Invalid image filter: " + imageFilter );
+            }
+        } else {
+            return image;
         }
     }
 }
