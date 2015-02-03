@@ -12,7 +12,7 @@ public class RootNodeNameTest
     {
         final RootNodeName rootNodeName = RootNodeName.create();
 
-        assertEquals( null, rootNodeName.toString() );
+        assertEquals( "", rootNodeName.toString() );
     }
 
 }
