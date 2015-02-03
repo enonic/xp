@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.elasticsearch.index.query.QueryBuilder;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
@@ -35,6 +37,7 @@ import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 
+@Component
 public class ElasticsearchQueryService
     implements QueryService
 {
@@ -274,6 +277,7 @@ public class ElasticsearchQueryService
         return queryResultFactory.create( searchResult );
     }
 
+    @Reference
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {
         this.elasticsearchDao = elasticsearchDao;

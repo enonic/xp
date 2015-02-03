@@ -20,6 +20,8 @@ import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,7 @@ import com.enonic.wem.repo.internal.index.IndexService;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 
+@Component
 public class ElasticsearchIndexService
     implements IndexService
 {
@@ -223,11 +226,13 @@ public class ElasticsearchIndexService
         this.elasticsearchDao.snapshot( repositoryId.toString() );
     }
 
+    @Reference
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {
         this.elasticsearchDao = elasticsearchDao;
     }
 
+    @Reference
     public void setClient( final Client client )
     {
         this.client = client;

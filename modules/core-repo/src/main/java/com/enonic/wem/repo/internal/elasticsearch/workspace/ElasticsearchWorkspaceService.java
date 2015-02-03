@@ -1,7 +1,8 @@
 package com.enonic.wem.repo.internal.elasticsearch.workspace;
 
-
 import org.elasticsearch.index.query.QueryBuilder;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Preconditions;
 
@@ -29,6 +30,7 @@ import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
 import com.enonic.wem.repo.internal.workspace.WorkspaceDocumentId;
 import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
+@Component
 public class ElasticsearchWorkspaceService
     implements WorkspaceService
 {
@@ -186,6 +188,7 @@ public class ElasticsearchWorkspaceService
         }
     }
 
+    @Reference
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {
         this.elasticsearchDao = elasticsearchDao;

@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.blob.BlobKey;
@@ -26,6 +29,7 @@ import com.enonic.wem.repo.internal.index.query.NodeWorkspaceVersion;
 import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
 import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
+@Component
 public class NodeDaoImpl
     implements NodeDao
 {
@@ -137,6 +141,7 @@ public class NodeDaoImpl
             build();
     }
 
+    @Reference
     public void setWorkspaceService( final WorkspaceService workspaceService )
     {
         this.workspaceService = workspaceService;

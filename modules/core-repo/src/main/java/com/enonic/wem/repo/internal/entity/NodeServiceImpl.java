@@ -1,5 +1,9 @@
 package com.enonic.wem.repo.internal.entity;
 
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.content.ContentConstants;
@@ -49,6 +53,7 @@ import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
+@Component(immediate = true)
 public class NodeServiceImpl
     implements NodeService
 {
@@ -64,6 +69,7 @@ public class NodeServiceImpl
 
     private final BlobStore binaryBlobStore = new FileBlobStore( NodeConstants.binaryBlobStoreDir );
 
+    @Activate
     public void initialize()
     {
         final RepositoryInitializer repoInitializer = new RepositoryInitializer( this.indexService );
@@ -479,26 +485,31 @@ public class NodeServiceImpl
         throw new RuntimeException( "Expected node with path " + NodePath.ROOT.toString() + " to be of type RootNode, found " + node.id() );
     }
 
+    @Reference
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;
     }
 
+    @Reference
     public void setNodeDao( final NodeDao nodeDao )
     {
         this.nodeDao = nodeDao;
     }
 
+    @Reference
     public void setWorkspaceService( final WorkspaceService workspaceService )
     {
         this.workspaceService = workspaceService;
     }
 
+    @Reference
     public void setVersionService( final VersionService versionService )
     {
         this.versionService = versionService;
     }
 
+    @Reference
     public void setQueryService( final QueryService queryService )
     {
         this.queryService = queryService;
