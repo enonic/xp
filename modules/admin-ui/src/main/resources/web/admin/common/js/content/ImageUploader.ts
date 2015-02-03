@@ -23,6 +23,14 @@ module api.content {
 
             super(config);
             this.addClass('image-uploader');
+
+            this.initialWidth = 0;
+            this.onShown(() => {
+                if(this.getEl().getWidth() == 0) {
+                    this.initialWidth = Math.max(this.getParentElement().getEl().getWidth(), this.initialWidth);
+                    this.getEl().setMaxWidthPx(this.initialWidth);
+                }
+            });
         }
 
         createResultItem(value: string): api.dom.DivEl {
