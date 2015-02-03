@@ -19,6 +19,7 @@ import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.PushNodesResult;
+import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.RoleKeys;
@@ -130,6 +131,20 @@ public abstract class AbstractNodeTest
         repositoryInitializer.initializeRepository( repository );
 
         refresh();
+    }
+
+    protected Node updateNode( final UpdateNodeParams updateNodeParams )
+    {
+        return UpdateNodeCommand.create().
+            params( updateNodeParams ).
+            queryService( this.queryService ).
+            indexService( this.indexService ).
+            nodeDao( this.nodeDao ).
+            workspaceService( this.workspaceService ).
+            versionService( this.versionService ).
+            binaryBlobStore( this.binaryBlobStore ).
+            build().
+            execute();
     }
 
     void createContentRepository()

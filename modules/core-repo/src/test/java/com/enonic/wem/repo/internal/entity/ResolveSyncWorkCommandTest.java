@@ -13,6 +13,7 @@ import com.enonic.wem.api.node.NodePublishRequest;
 import com.enonic.wem.api.node.NodePublishRequests;
 import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.ResolveSyncWorkResult;
+import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.util.Reference;
 
 import static org.junit.Assert.*;
@@ -293,16 +294,7 @@ public class ResolveSyncWorkCommandTest
             name( "node2_1" ).
             build() );
 
-        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
-            nodeId( node1.id() ).
-            target( WS_OTHER ).
-            workspaceService( this.workspaceService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
-            queryService( this.queryService ).
-            indexService( this.indexService ).
-            build().
-            execute();
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( node1.id() );
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
         assertEquals( 3, nodePublishRequests.size() );
@@ -569,7 +561,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
-    public void include_renamed_nodes()
+    public void include_renamed_parents()
         throws Exception
     {
         final Node node1 = createNode( CreateNodeParams.create().
@@ -600,14 +592,28 @@ public class ResolveSyncWorkCommandTest
             name( "node2_1" ).
             build() );
 
+        final Node node2_2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node2_2" ) ).
+            parent( node2.path() ).
+            name( "node2_2" ).
+            build() );
+
         pushNodes( WS_OTHER, node1_1.id(), node2.id(), node1.id() );
 
         renameNode( node1 );
         renameNode( node1_1 );
         renameNode( node2 );
 
-        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
-            nodeId( node1_1.id() ).
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( node1_1.id() );
+
+        final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
+        assertEquals( 4, nodePublishRequests.size() );
+    }
+
+    private ResolveSyncWorkResult getResolveSyncWorkResult( final NodeId nodeId )
+    {
+        return ResolveSyncWorkCommand.create().
+            nodeId( nodeId ).
             target( WS_OTHER ).
             workspaceService( this.workspaceService ).
             nodeDao( this.nodeDao ).
@@ -616,9 +622,220 @@ public class ResolveSyncWorkCommandTest
             indexService( this.indexService ).
             build().
             execute();
+    }
+
+    private ResolveSyncWorkResult getResolveSyncWorkResult( final String nodeId )
+    {
+        return getResolveSyncWorkResult( NodeId.from( nodeId ) );
+    }
+
+
+    /*
+    - S1 (E)
+        - A1 (E)
+ 	    - A2 (E)
+ 	        - A2_1 - Ref:B2_1 (M)
+    - S2 (Moved)
+        - B1 (E)
+        - B2 (E)
+ 	        - B2_1 (E)
+
+ 	 Push only A2_1 since B2_1 is unchanged, even if S2 is moved (this has to be done in separate push)
+     */
+    @Test
+    public void reference_not_updated()
+        throws Exception
+    {
+        createS1S2Tree();
+
+        pushAllNodesInS1S2Tree();
+
+        updateNode( "a2_1" );
+
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( "a2_1" );
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
-        assertEquals( 4, nodePublishRequests.size() );
+
+        assertEquals( 1, nodePublishRequests.size() );
+    }
+
+    /*
+    - S1 (E)
+        - A1 (E)
+ 	    - A2 (E)
+ 	        - A2_1 - Ref:B2_1 (M)
+    - S2 (Moved)
+        - B1 (E)
+        - B2 (E)
+ 	        - B2_1 (M)
+
+ 	    Push A2_1 and B2_1, S2 is moved but this has to be done in separate push
+     */
+    @Test
+    public void reference_is_updated()
+        throws Exception
+    {
+        createS1S2Tree();
+
+        pushAllNodesInS1S2Tree();
+
+        updateNode( "a2_1" );
+        updateNode( "b2_1" );
+
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( "a2_1" );
+
+        final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
+
+        assertEquals( 2, nodePublishRequests.size() );
+    }
+
+    /*
+    - S1 (E)
+        - A1 (E)
+        - A2 (M)
+            - A2_1 - Ref:B2_1 (M)
+    - S2 (Moved)
+        - B1 (E)
+        - B2 (E)
+           - B2_1 (E)
+
+        Push A2_1, A2 is modified but this has to be done in separate push
+    */
+    @Test
+    public void parent_modified_should_be_ignored()
+        throws Exception
+    {
+        createS1S2Tree();
+
+        pushAllNodesInS1S2Tree();
+
+        updateNode( "a2" );
+        updateNode( "a2_1" );
+
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( "a2_1" );
+
+        final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
+
+        assertEquals( 1, nodePublishRequests.size() );
+    }
+
+    /*
+    - S1 (E)
+        - A1 (E)
+        - A2 (M)
+          - A2_1 - Ref:B2_1 (M)
+    - S2 (Moved)
+        - B1 (E)
+        - B2 (E)
+          - B2_1 (Moved to S2)
+
+        Push A2_1, B2_1 since modified
+    */
+    @Test
+    public void reference_target_moved()
+        throws Exception
+    {
+        createS1S2Tree();
+
+        pushAllNodesInS1S2Tree();
+
+        updateNode( "a2_1" );
+
+        moveNode( "b2_1", NodePath.newPath( "/s2" ).build(), "b2_1" );
+
+        printWorkspaceIndex();
+
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( "a2_1" );
+
+        final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
+
+        assertEquals( 2, nodePublishRequests.size() );
+    }
+
+    private void pushAllNodesInS1S2Tree()
+    {
+        pushNodes( NodeIds.from( "s1", "s2", "a1", "a2", "a2_1", "b1", "b2", "b2_1" ), WS_OTHER );
+    }
+
+
+    private void updateNode( final String nodeId )
+    {
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+            editor( toBeEdited -> {
+                final PropertyTree nodeData = toBeEdited.data;
+                nodeData.addString( "newValue", "hepp" );
+            } ).
+            id( NodeId.from( nodeId ) ).
+            build();
+
+        updateNode( updateNodeParams );
+    }
+
+    public void moveNode( final String nodeId, final NodePath newParent, final String newName )
+    {
+        MoveNodeCommand.create().
+            queryService( this.queryService ).
+            indexService( this.indexService ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            id( NodeId.from( nodeId ) ).
+            newNodeName( NodeName.from( newName ) ).
+            newParent( newParent ).
+            build().
+            execute();
+    }
+
+    private void createS1S2Tree()
+    {
+        final Node s1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "s1" ) ).
+            parent( NodePath.ROOT ).
+            name( "s1" ).
+            build() );
+
+        final Node a1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "a1" ) ).
+            parent( s1.path() ).
+            name( "a1" ).
+            build() );
+
+        final Node a2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "a2" ) ).
+            parent( s1.path() ).
+            name( "a2" ).
+            build() );
+
+        final Node a2_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "a2_1" ) ).
+            parent( a2.path() ).
+            data( createDataWithReferences( Reference.from( "b2_1" ) ) ).
+            name( "a2_1" ).
+            build() );
+
+        final Node s2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "s2" ) ).
+            parent( NodePath.ROOT ).
+            name( "s2" ).
+            build() );
+
+        final Node b1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "b1" ) ).
+            parent( s2.path() ).
+            name( "b1" ).
+            build() );
+
+        final Node b2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "b2" ) ).
+            parent( s2.path() ).
+            name( "b2" ).
+            build() );
+
+        final Node b2_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "b2_1" ) ).
+            parent( b2.path() ).
+            name( "b2_1" ).
+            build() );
     }
 
     private void renameNode( final Node node )

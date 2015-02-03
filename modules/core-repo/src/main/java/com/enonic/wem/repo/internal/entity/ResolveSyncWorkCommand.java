@@ -57,7 +57,7 @@ public class ResolveSyncWorkCommand
 
         for ( final NodeId nodeId : diff.getNodesWithDifferences() )
         {
-            resolveDiff( nodeId, ResolveContext.requested() );
+            resolveDiffWithNodeId( nodeId, ResolveContext.requested() );
         }
 
         return resultBuilder.build();
@@ -120,7 +120,7 @@ public class ResolveSyncWorkCommand
         return nodePath;
     }
 
-    private void resolveDiff( final Node node, final ResolveContext resolveContext )
+    private void resolveDiffWithNode( final Node node, final ResolveContext resolveContext )
     {
         if ( isProcessed( node.id() ) )
         {
@@ -132,7 +132,7 @@ public class ResolveSyncWorkCommand
         doResolveDiff( node, node.id(), resolveContext );
     }
 
-    private void resolveDiff( final NodeId nodeId, final ResolveContext resolveContext )
+    private void resolveDiffWithNodeId( final NodeId nodeId, final ResolveContext resolveContext )
     {
         if ( isProcessed( nodeId ) )
         {
@@ -150,23 +150,23 @@ public class ResolveSyncWorkCommand
     {
         final NodeComparison comparison = getNodeComparison( nodeId );
 
-        if ( node == null )
+        if ( nodeNotChanged( comparison ) )
         {
-            if ( comparison.getCompareStatus().getStatus().equals( CompareStatus.Status.PENDING_DELETE ) )
-            {
-                resultBuilder.addDelete( nodeId );
-            }
+            return;
         }
-        else
-        {
-            addResult( comparison, resolveContext );
 
-            if ( !allPossibleNodesAreIncluded )
-            {
-                ensureThatParentExists( node );
-                includeReferences( node );
-            }
+        addResult( comparison, resolveContext );
+
+        if ( !allPossibleNodesAreIncluded )
+        {
+            ensureThatParentExists( node );
+            includeReferences( node );
         }
+    }
+
+    private boolean nodeNotChanged( final NodeComparison comparison )
+    {
+        return comparison.getCompareStatus().getStatus().equals( CompareStatus.Status.EQUAL );
     }
 
     private void ensureThatParentExists( final Node node )
@@ -179,14 +179,33 @@ public class ResolveSyncWorkCommand
 
             if ( shouldBeResolvedDiffFor( nodeComparison ) )
             {
-                resolveDiff( thisParentNode, ResolveContext.parentFor( node.id() ) );
+                resolveDiffWithNode( thisParentNode, ResolveContext.parentFor( node.id() ) );
+            }
+        }
+    }
+
+    private void includeReferences( final Node node )
+    {
+        final Set<Property> references = node.data().getByValueType( ValueTypes.REFERENCE );
+
+        for ( final Property reference : references )
+        {
+            if ( reference.hasNotNullValue() )
+            {
+                final NodeId referredNodeId = reference.getReference().getNodeId();
+
+                if ( !this.processedIds.contains( referredNodeId ) )
+                {
+                    resolveDiffWithNodeId( referredNodeId, ResolveContext.referredFrom( node.id() ) );
+                }
             }
         }
     }
 
     private boolean shouldBeResolvedDiffFor( final NodeComparison nodeComparison )
     {
-        return !nodeComparison.getCompareStatus().getStatus().equals( CompareStatus.Status.EQUAL );
+        final CompareStatus.Status status = nodeComparison.getCompareStatus().getStatus();
+        return status.equals( CompareStatus.Status.NEW ) || status.equals( CompareStatus.Status.MOVED );
     }
 
     private boolean isProcessed( final NodeId nodeId )
@@ -203,24 +222,6 @@ public class ResolveSyncWorkCommand
             nodeId( nodeId ).
             build().
             execute();
-    }
-
-    private void includeReferences( final Node node )
-    {
-        final Set<Property> references = node.data().getByValueType( ValueTypes.REFERENCE );
-
-        for ( final Property reference : references )
-        {
-            if ( reference.hasNotNullValue() )
-            {
-                final NodeId referredNodeId = reference.getReference().getNodeId();
-
-                if ( !this.processedIds.contains( referredNodeId ) )
-                {
-                    resolveDiff( referredNodeId, ResolveContext.referredFrom( node.id() ) );
-                }
-            }
-        }
     }
 
     private void addResult( final NodeComparison comparison, final ResolveContext resolveContext )
