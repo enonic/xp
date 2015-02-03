@@ -10,7 +10,7 @@ Features:
 
 Refactoring:
 
-  - N/A
+  - Removed usage of blueprint in core and admin. (CMS-5065)
 
 
 ## RC3 (2015-01-28)
