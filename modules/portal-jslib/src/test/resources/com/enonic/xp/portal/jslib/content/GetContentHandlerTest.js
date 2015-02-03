@@ -21,7 +21,7 @@ var expectedJson = {
     "draft": true,
     "hasChildren": false,
     "meta": {
-        "mymodule:myschema": {
+        "myschema": {
             "a": "1"
         }
     },

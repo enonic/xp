@@ -8,6 +8,8 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.Metadatas;
+import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.xp.portal.jslib.AbstractHandlerTest;
 
@@ -16,14 +18,18 @@ public class CreateContentHandlerTest
 {
     private ContentService contentService;
 
+    private MixinService mixinService;
+
     @Override
     protected CommandHandler createHandler()
         throws Exception
     {
         this.contentService = Mockito.mock( ContentService.class );
+        this.mixinService = Mockito.mock( MixinService.class );
 
         final CreateContentHandler handler = new CreateContentHandler();
         handler.setContentService( this.contentService );
+        handler.setMixinService( this.mixinService );
 
         return handler;
     }
@@ -34,6 +40,8 @@ public class CreateContentHandlerTest
     {
         Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
+        final Mixin metaMixin = Mixin.newMixin().name( "mymodule:test" ).build();
+        Mockito.when( this.mixinService.getByLocalName( Mockito.eq( "test" ) ) ).thenReturn( metaMixin );
 
         execute( "createContent" );
     }

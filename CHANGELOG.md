@@ -6,7 +6,7 @@ Bugfixes:
 
 Features:
 
-  - N/A
+  - Mixin names in meta steps are referenced just with the local name, the module prefix is omitted. (CMS-5045)
 
 Refactoring:
 

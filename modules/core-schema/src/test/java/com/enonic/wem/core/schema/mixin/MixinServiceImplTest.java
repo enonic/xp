@@ -52,6 +52,16 @@ public class MixinServiceImplTest
     }
 
     @Test
+    public void testGetByLocalName()
+    {
+        this.service.addProvider( this.provider );
+
+        final Mixin result1 = this.service.getByLocalName( "test" );
+        assertNotNull( result1 );
+        assertEquals( "test", result1.getName().getLocalName() );
+    }
+
+    @Test
     public void testGetAll()
     {
         this.service.addProvider( this.provider );

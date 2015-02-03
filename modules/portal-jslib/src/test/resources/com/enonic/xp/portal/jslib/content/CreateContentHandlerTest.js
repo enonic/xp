@@ -17,7 +17,7 @@ var expectedJson = {
     "draft": true,
     "hasChildren": false,
     "meta": {
-        "test:": {
+        "test": {
             "a": 1
         }
     },

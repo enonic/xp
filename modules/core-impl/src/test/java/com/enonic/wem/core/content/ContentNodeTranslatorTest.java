@@ -26,10 +26,9 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
@@ -50,14 +49,13 @@ public class ContentNodeTranslatorTest
     @Before
     public void before()
     {
-        final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+        final MixinService mixinService = Mockito.mock( MixinService.class );
 
-        final ContentType contentType =
-            ContentType.newContentType().superType( ContentTypeName.structured() ).name( "mymodule:my-content-type" ).build();
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+        final Mixin mixin = Mixin.newMixin().name( "mymodule:my-mixin" ).build();
+        Mockito.when( mixinService.getByLocalName( Mockito.anyString() ) ).thenReturn( mixin );
 
         translator = new ContentNodeTranslator();
-        translator.setContentTypeService( contentTypeService );
+        translator.setMixinService( mixinService );
     }
 
     @Test

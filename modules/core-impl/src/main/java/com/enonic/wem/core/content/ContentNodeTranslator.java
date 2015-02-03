@@ -26,19 +26,14 @@ import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.Nodes;
 import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.schema.mixin.MixinService;
 
 @Component(immediate = true, service = ContentNodeTranslator.class)
 public class ContentNodeTranslator
 {
     private final static Logger LOG = LoggerFactory.getLogger( ContentNodeTranslator.class );
 
-    private final ContentDataSerializer CONTENT_SERIALIZER = new ContentDataSerializer();
-
-    private ContentTypeService contentTypeService;
+    private ContentDataSerializer contentSerializer;
 
     public CreateNodeParams toCreateNode( final CreateContentParams params )
     {
@@ -48,7 +43,7 @@ public class ContentNodeTranslator
         }
 
         final PropertyTree contentAsData = new PropertyTree();
-        CONTENT_SERIALIZER.toData( params, contentAsData.getRoot() );
+        contentSerializer.toData( params, contentAsData.getRoot() );
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( params );
 
@@ -116,7 +111,7 @@ public class ContentNodeTranslator
         final NodePath parentContentPathAsNodePath = parentNodePath.removeFromBeginning( ContentConstants.CONTENT_ROOT_PATH );
         final ContentPath parentContentPath = ContentPath.from( parentContentPathAsNodePath.toString() );
 
-        final Content.Builder builder = CONTENT_SERIALIZER.fromData( node.data().getRoot() );
+        final Content.Builder builder = contentSerializer.fromData( node.data().getRoot() );
         builder.
             id( ContentId.from( node.id().toString() ) ).
             parentPath( parentContentPath ).
@@ -136,7 +131,7 @@ public class ContentNodeTranslator
     private NodeEditor toNodeEditor( final Content content, final CreateAttachments createAttachments )
     {
         final PropertyTree data = new PropertyTree();
-        CONTENT_SERIALIZER.toData( content, data.getRoot(), createAttachments );
+        contentSerializer.toData( content, data.getRoot(), createAttachments );
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( content );
 
@@ -168,14 +163,9 @@ public class ContentNodeTranslator
         return NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements( parentContentPath.toString() ).build();
     }
 
-    private ContentType getContentType( final ContentTypeName contentTypeName )
-    {
-        return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
-    }
-
     @Reference
-    public void setContentTypeService( final ContentTypeService contentTypeService )
+    public void setMixinService( final MixinService mixinService )
     {
-        this.contentTypeService = contentTypeService;
+        this.contentSerializer = new ContentDataSerializer( mixinService );
     }
 }

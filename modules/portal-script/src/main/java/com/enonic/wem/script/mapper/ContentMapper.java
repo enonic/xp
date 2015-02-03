@@ -54,7 +54,7 @@ public final class ContentMapper
         gen.map( "meta" );
         for ( final Metadata value : values )
         {
-            gen.map( value.getName().toString() );
+            gen.map( value.getName().getLocalName() );
             new PropertyTreeMapper( value.getData() ).serialize( gen );
             gen.end();
         }

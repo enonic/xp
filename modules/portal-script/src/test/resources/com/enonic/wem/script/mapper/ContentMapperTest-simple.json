@@ -62,7 +62,7 @@
     }
   },
   "meta": {
-    "mymodule:myschema": {
+    "myschema": {
       "a": "1"
     }
   },

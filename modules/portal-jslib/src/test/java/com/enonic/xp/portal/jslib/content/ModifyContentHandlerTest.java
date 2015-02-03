@@ -11,6 +11,8 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.EditableContent;
 import com.enonic.wem.api.content.UpdateContentParams;
+import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.xp.portal.jslib.AbstractHandlerTest;
 
@@ -19,14 +21,18 @@ public class ModifyContentHandlerTest
 {
     private ContentService contentService;
 
+    private MixinService mixinService;
+
     @Override
     protected CommandHandler createHandler()
         throws Exception
     {
         this.contentService = Mockito.mock( ContentService.class );
+        this.mixinService = Mockito.mock( MixinService.class );
 
         final ModifyContentHandler handler = new ModifyContentHandler();
         handler.setContentService( this.contentService );
+        handler.setMixinService( this.mixinService );
 
         return handler;
     }
@@ -35,6 +41,11 @@ public class ModifyContentHandlerTest
     public void modifyById()
         throws Exception
     {
+        final Mixin metaMixin = Mixin.newMixin().name( "mymodule:myschema" ).build();
+        Mockito.when( this.mixinService.getByLocalName( Mockito.eq( "myschema" ) ) ).thenReturn( metaMixin );
+        final Mixin metaMixin2 = Mixin.newMixin().name( "mymodule:other" ).build();
+        Mockito.when( this.mixinService.getByLocalName( Mockito.eq( "other" ) ) ).thenReturn( metaMixin2 );
+
         Mockito.when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0] ) );
 
@@ -45,6 +56,11 @@ public class ModifyContentHandlerTest
     public void modifyByPath()
         throws Exception
     {
+        final Mixin metaMixin = Mixin.newMixin().name( "mymodule:myschema" ).build();
+        Mockito.when( this.mixinService.getByLocalName( Mockito.eq( "myschema" ) ) ).thenReturn( metaMixin );
+        final Mixin metaMixin2 = Mixin.newMixin().name( "mymodule:other" ).build();
+        Mockito.when( this.mixinService.getByLocalName( Mockito.eq( "other" ) ) ).thenReturn( metaMixin2 );
+
         final Content content = ContentFixtures.newContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 

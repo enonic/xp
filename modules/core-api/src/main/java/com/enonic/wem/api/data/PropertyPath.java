@@ -87,7 +87,7 @@ public final class PropertyPath
         this.parentPath = null;
     }
 
-    public PropertyPath( final ImmutableList<Element> pathElements )
+    private PropertyPath( final ImmutableList<Element> pathElements )
     {
         Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
 
