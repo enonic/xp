@@ -161,11 +161,11 @@ module api.form {
 
             this.doAddOccurrence(occurrence);
 
-            var occurenceView = this.occurrenceViews[occurrence.getIndex()];
-            occurenceView.onFocus((event: FocusEvent) => this.notifyFocused(event));
-            occurenceView.onBlur((event: FocusEvent) => this.notifyBlurred(event));
-            if (occurenceView) {
-                occurenceView.giveFocus();
+            var occurrenceView = this.occurrenceViews[occurrence.getIndex()];
+            occurrenceView.onFocus((event: FocusEvent) => this.notifyFocused(event));
+            occurrenceView.onBlur((event: FocusEvent) => this.notifyBlurred(event));
+            if (occurrenceView) {
+                occurrenceView.giveFocus();
             }
         }
 

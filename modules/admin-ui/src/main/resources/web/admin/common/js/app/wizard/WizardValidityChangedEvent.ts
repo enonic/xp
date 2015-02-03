@@ -1,6 +1,6 @@
-module app.wizard {
+module api.app.wizard {
 
-    export class ValidityChangedEvent {
+    export class WizardValidityChangedEvent {
 
         private valid: boolean;
 

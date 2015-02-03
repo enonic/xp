@@ -15,3 +15,6 @@
 ///<reference path='SaveBeforeCloseDialog.ts' />
 ///<reference path='UploadFinishedEvent.ts' />
 ///<reference path='WizardClosedEvent.ts' />
+///<reference path='WizardValidityChangedEvent.ts' />
+///<reference path='WizardStepsValidityManager.ts' />
+///<reference path='WizardStepValidityItem.ts' />
