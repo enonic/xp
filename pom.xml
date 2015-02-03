@@ -13,11 +13,11 @@
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
   <name>Enonic XP Parent</name>
-  <version>5.0.0-SNAPSHOT</version>
+  <version>5.0.0-RC4</version>
 
   <scm>
     <developerConnection>scm:git:git://github.com/enonic/wem-ce.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>v5.0.0-RC4</tag>
   </scm>
 
   <properties>
