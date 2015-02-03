@@ -12,7 +12,6 @@
 ///<reference path='ToggleSearchPanelEvent.ts' />
 ///<reference path='ViewContentEvent.ts' />
 ///<reference path='ContentBrowseToolbar.ts' />
-///<reference path='ContentTreeGridContextMenu.ts' />
 ///<reference path='ContentBrowseItemPanel.ts' />
 ///<reference path='ContentBrowseItemsSelectionPanel.ts' />
 ///<reference path='ContentBrowsePanel.ts' />

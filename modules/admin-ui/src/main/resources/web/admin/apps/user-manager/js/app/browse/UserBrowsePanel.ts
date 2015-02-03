@@ -49,12 +49,6 @@ module app.browse {
                 this.refreshFilter();
             });
 
-            this.userTreeGrid.onSelectionChanged((currentSelection: TreeNode<UserTreeGridItem>[], fullSelection: TreeNode<UserTreeGridItem>[]) => {
-                this.browseActions.updateActionsEnabledState(<any[]>fullSelection.map((elem) => {
-                    return elem.getData();
-                }));
-            });
-
             this.onShown((event) => {
                 app.Router.setHash("browse");
             });

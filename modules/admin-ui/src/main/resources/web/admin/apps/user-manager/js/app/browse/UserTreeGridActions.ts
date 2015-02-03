@@ -1,8 +1,9 @@
 module app.browse {
     import Action = api.ui.Action;
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
+    import BrowseItem = api.app.browse.BrowseItem;
 
-    export class UserTreeGridActions implements TreeGridActions {
+    export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
 
         public NEW: Action;
         public EDIT: Action;
@@ -26,12 +27,13 @@ module app.browse {
             return this.actions;
         }
 
-        updateActionsEnabledState(selectedItems: UserTreeGridItem[]) {
+        updateActionsEnabledState(userItemBrowseItems: BrowseItem<UserTreeGridItem>[]): wemQ.Promise<BrowseItem<UserTreeGridItem>[]> {
             var userStoresSelected:  number = 0,
                 principalsSelected:  number = 0,
                 directoriesSelected: number = 0;
 
-            selectedItems.forEach((item: UserTreeGridItem) => {
+            userItemBrowseItems.forEach((browseItem: BrowseItem<UserTreeGridItem>) => {
+                var item = <UserTreeGridItem>browseItem.getModel();
                 var itemType = item.getType();
                 switch (itemType) {
                 case UserTreeGridItemType.PRINCIPAL:
@@ -61,6 +63,10 @@ module app.browse {
             this.DELETE.setEnabled(principalsSelected == 1 && totalSelection == 1);
             this.DUPLICATE.setEnabled((principalsSelected === 1) && (totalSelection === 1));
             this.SYNCH.setEnabled(anyUserStore);
+
+            var deferred = wemQ.defer<BrowseItem<UserTreeGridItem>[]>();
+            deferred.resolve(userItemBrowseItems);
+            return deferred.promise;
         }
     }
 }

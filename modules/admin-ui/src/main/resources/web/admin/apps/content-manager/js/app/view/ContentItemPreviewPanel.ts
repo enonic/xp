@@ -68,18 +68,15 @@ module app.view {
                     }
                 } else {
                     this.mask.show();
-                    new IsRenderableRequest(item.getModel().getContentId()).sendAndParse()
-                        .done((renderable:boolean) => {
-                            if (renderable) {
-                                this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
-                                this.frame.setSrc(api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW,
-                                    api.content.Workspace.DRAFT));
-                            } else {
-                                this.getEl().removeClass("image-preview page-preview").addClass('no-preview');
-                                this.frame.setSrc("about:blank");
-                                this.mask.hide();
-                            }
-                        });
+                    if (item.isRenderable()) {
+                        this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
+                        this.frame.setSrc(api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW,
+                            api.content.Workspace.DRAFT));
+                    } else {
+                        this.getEl().removeClass("image-preview page-preview").addClass('no-preview');
+                        this.frame.setSrc("about:blank");
+                        this.mask.hide();
+                    }
                 }
             }
         }
