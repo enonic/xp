@@ -21,7 +21,7 @@ public class MoveNodeCommand
 
     private final NodePath newParentPath;
 
-    private NodeName nodeName;
+    private final NodeName newNodeName;
 
     private final boolean overwriteExisting;
 
@@ -30,7 +30,7 @@ public class MoveNodeCommand
         super( builder );
         this.nodeId = builder.id;
         this.newParentPath = builder.newParentPath;
-        this.nodeName = builder.newNodeName;
+        this.newNodeName = builder.newNodeName;
         this.overwriteExisting = builder.overwriteExisting;
     }
 
@@ -38,27 +38,52 @@ public class MoveNodeCommand
     {
         final Node existingNode = doGetById( nodeId, false );
 
-        if ( nodeName == null )
+        final NodeName newNodeName;
+        if ( this.newNodeName == null )
         {
-            this.nodeName = existingNode.name();
+            newNodeName = existingNode.name();
+        }
+        else
+        {
+            newNodeName = this.newNodeName;
         }
 
-        if ( samePath( existingNode ) )
+        final NodePath newParentPath;
+        if ( this.newParentPath == null )
+        {
+            newParentPath = existingNode.parentPath();
+        }
+        else
+        {
+            newParentPath = this.newParentPath;
+        }
+
+        if ( samePath( existingNode, newParentPath, newNodeName ) )
         {
             return existingNode;
         }
 
-        if ( existingNode.path().equals( newParentPath ) )
-        {
-            throw new MoveNodeException( "Not allowed to move to child of self" );
-        }
+        checkNotMovedToSelfOrChild( existingNode, newParentPath );
 
-        return doMoveNode( newParentPath, nodeName, nodeId, true );
+        return doMoveNode( newParentPath, newNodeName, nodeId, true );
     }
 
-    private boolean samePath( final Node existingNode )
+    private void checkNotMovedToSelfOrChild( final Node existingNode, final NodePath newParentPath )
     {
-        return existingNode.path().equals( new NodePath( this.newParentPath, nodeName ) );
+        if ( newParentPath.equals( existingNode.path() ) )
+        {
+            throw new MoveNodeException( "Not allowed to move to " + newParentPath + " because child of self ( " + existingNode.path() );
+        }
+
+        if ( newParentPath.getParentPaths().contains( existingNode.path() ) )
+        {
+            throw new MoveNodeException( "Not allowed to move to " + newParentPath + " because child of self ( " + existingNode.path() );
+        }
+    }
+
+    private boolean samePath( final Node existingNode, final NodePath newParentPath, final NodeName newNodeName )
+    {
+        return existingNode.parentPath().equals( newParentPath ) && existingNode.name().equals( newNodeName );
     }
 
     protected Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id, boolean checkExistingNode )
@@ -207,6 +232,12 @@ public class MoveNodeCommand
         {
             super.validate();
             Preconditions.checkNotNull( id );
+
+            if ( this.newParentPath == null && this.newNodeName == null )
+            {
+                throw new IllegalArgumentException( "Must provide either newNodeName or newParentPath" );
+            }
+
         }
     }
 

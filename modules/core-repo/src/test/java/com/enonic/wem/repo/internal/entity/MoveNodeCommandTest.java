@@ -46,7 +46,7 @@ public class MoveNodeCommandTest
 
 
     @Test(expected = MoveNodeException.class)
-    public void move_to_child_of_self_not_allowed()
+    public void move_to_child_as_self_not_allowed()
         throws Exception
     {
         final Node node = createNode( CreateNodeParams.create().
@@ -64,6 +64,35 @@ public class MoveNodeCommandTest
             id( node.id() ).
             newNodeName( NodeName.from( "mynode2" ) ).
             newParent( node.path() ).
+            build().
+            execute();
+    }
+
+    @Test(expected = MoveNodeException.class)
+    public void move_to_child_of_own_child_not_allowed()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            name( "mynode" ).
+            parent( NodePath.ROOT ).
+            setNodeId( NodeId.from( "mynode" ) ).
+            build() );
+
+        final Node child = createNode( CreateNodeParams.create().
+            name( "child" ).
+            parent( node.path() ).
+            setNodeId( NodeId.from( "child" ) ).
+            build() );
+
+        MoveNodeCommand.create().
+            queryService( this.queryService ).
+            indexService( this.indexService ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            id( node.id() ).
+            newNodeName( NodeName.from( "mynode2" ) ).
+            newParent( child.path() ).
             build().
             execute();
     }

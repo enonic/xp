@@ -60,13 +60,13 @@ final class DeleteContentCommand
         final Workspace currentWorkspace = context.getWorkspace();
 
         final NodeComparison compare;
-        if ( currentWorkspace.equals( ContentConstants.WORKSPACE_STAGE ) )
+        if ( currentWorkspace.equals( ContentConstants.WORKSPACE_DRAFT ) )
         {
-            compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.WORKSPACE_PROD );
+            compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.WORKSPACE_ONLINE );
         }
         else
         {
-            compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.WORKSPACE_STAGE );
+            compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.WORKSPACE_DRAFT );
         }
         return compare.getCompareStatus().getStatus();
     }

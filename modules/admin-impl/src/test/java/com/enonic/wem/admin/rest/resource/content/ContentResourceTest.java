@@ -525,7 +525,7 @@ public class ContentResourceTest
         Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/one" ) ).
             build() ) ) ).
-            thenThrow( new ContentNotFoundException( ContentPath.from( "/one" ), ContentConstants.WORKSPACE_STAGE ) );
+            thenThrow( new ContentNotFoundException( ContentPath.from( "/one" ), ContentConstants.WORKSPACE_DRAFT ) );
 
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).

@@ -7,6 +7,7 @@ import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
+import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePublishRequest;
 import com.enonic.wem.api.node.NodePublishRequests;
@@ -565,9 +566,75 @@ public class ResolveSyncWorkCommandTest
             execute();
 
         assertEquals( 3, result.getNodePublishRequests().size() );
-
-
     }
+
+    @Test
+    public void include_renamed_nodes()
+        throws Exception
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1" ) ).
+            parent( NodePath.ROOT ).
+            name( "node1" ).
+            build() );
+
+        final PropertyTree node1_1_data = new PropertyTree();
+        node1_1_data.addReference( "myRef", Reference.from( "node2_1" ) );
+
+        final Node node1_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node1_1" ) ).
+            parent( node1.path() ).
+            name( "node1_1" ).
+            data( node1_1_data ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node2" ) ).
+            parent( NodePath.ROOT ).
+            name( "node2" ).
+            build() );
+
+        final Node node2_1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "node2_1" ) ).
+            parent( node2.path() ).
+            name( "node2_1" ).
+            build() );
+
+        pushNodes( WS_OTHER, node1_1.id(), node2.id(), node1.id() );
+
+        renameNode( node1 );
+        renameNode( node1_1 );
+        renameNode( node2 );
+
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
+            nodeId( node1_1.id() ).
+            target( WS_OTHER ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            queryService( this.queryService ).
+            indexService( this.indexService ).
+            build().
+            execute();
+
+        final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
+        assertEquals( 4, nodePublishRequests.size() );
+    }
+
+    private void renameNode( final Node node )
+    {
+        MoveNodeCommand.create().
+            id( node.id() ).
+            newNodeName( NodeName.from( node.id().toString() + "edited" ) ).
+            indexService( this.indexService ).
+            versionService( this.versionService ).
+            queryService( this.queryService ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            build().
+            execute();
+    }
+
 
     private Node duplicateNode( final Node node1 )
     {

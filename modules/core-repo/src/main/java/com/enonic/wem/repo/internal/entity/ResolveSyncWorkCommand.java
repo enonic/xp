@@ -177,11 +177,16 @@ public class ResolveSyncWorkCommand
 
             final NodeComparison nodeComparison = getNodeComparison( thisParentNode.id() );
 
-            if ( nodeComparison.getCompareStatus().getStatus().equals( CompareStatus.Status.NEW ) )
+            if ( shouldBeResolvedDiffFor( nodeComparison ) )
             {
                 resolveDiff( thisParentNode, ResolveContext.parentFor( node.id() ) );
             }
         }
+    }
+
+    private boolean shouldBeResolvedDiffFor( final NodeComparison nodeComparison )
+    {
+        return !nodeComparison.getCompareStatus().getStatus().equals( CompareStatus.Status.EQUAL );
     }
 
     private boolean isProcessed( final NodeId nodeId )

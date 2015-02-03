@@ -187,7 +187,7 @@ public class PushContentCommandTest
             contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
             resolveDependencies( true ).
             strategy( PushContentCommand.PushContentStrategy.ALLOW_PUBLISH_OUTSIDE_SELECTION ).
-            target( ContentConstants.WORKSPACE_PROD ).
+            target( ContentConstants.WORKSPACE_ONLINE ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).

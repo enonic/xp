@@ -90,6 +90,11 @@ public class Node
         }
     }
 
+    public boolean isRoot()
+    {
+        return this instanceof RootNode;
+    }
+
     public NodeName name()
     {
         return name;
