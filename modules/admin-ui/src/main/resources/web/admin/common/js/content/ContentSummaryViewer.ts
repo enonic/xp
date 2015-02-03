@@ -21,9 +21,7 @@ module api.content {
             this.namesAndIconView.setMainName(content.getDisplayName()).
                 setSubName(subName, content.getPath().toString()).
                 setIconUrl(iconUrl);
-            if (!content.isValid()) {
-                this.addClass("invalid");
-            }
+            this.toggleClass("invalid", !content.isValid());
         }
 
         private resolveSubName(content: ContentSummary, relativePath: boolean): string {
