@@ -10,6 +10,8 @@ module api.content {
 
         private images: api.dom.ImgEl[];
 
+        private initialWidth: number;
+
         constructor(config: ImageUploaderConfig) {
             this.images = [];
 
@@ -21,6 +23,9 @@ module api.content {
 
             super(config);
             this.addClass('image-uploader');
+            this.onShown(() => {
+                this.initialWidth = this.getEl().getWidth();
+            });
         }
 
         createResultItem(value: string): api.dom.DivEl {
@@ -33,6 +38,14 @@ module api.content {
                 resolve();
 
             var image = new api.dom.ImgEl(imgUrl);
+            this.getEl().setMaxWidthPx(image.getEl().getNaturalWidth());
+
+            image.onLoaded(() => {
+                this.getEl().setMaxWidthPx(image.getEl().getNaturalWidth());
+            });
+            image.onRemoved(() => {
+                this.getEl().setMaxWidthPx(this.initialWidth);
+            });
 
             image.onClicked((event: MouseEvent) => {
                 image.toggleClass('selected');
