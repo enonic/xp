@@ -51,14 +51,14 @@ public final class CreateNodeCommand
         Preconditions.checkArgument( params.getParent().isAbsolute(), "Path to parent Node must be absolute: " + params.getParent() );
 
         final Instant now = Instant.now();
-        verifyNotExistsAlready();
-        verifyParentExists();
+        runAsAdmin( this::verifyNotExistsAlready );
+        runAsAdmin( this::verifyParentExists );
 
         final PrincipalKey user = getCurrentPrincipalKey();
 
         final AccessControlList permissions = getAccessControlEntries( user );
 
-        final Long manualOrderValue = resolvePotentialManualOrderValue();
+        final Long manualOrderValue = runAsAdmin( this::resolvePotentialManualOrderValue );
 
         final AttachedBinaries attachedBinaries = storeAndAttachBinaries();
 
@@ -121,10 +121,12 @@ public final class CreateNodeCommand
     private AccessControlList getAccessControlEntries( final PrincipalKey creator )
     {
         AccessControlList paramPermissions = params.getPermissions();
+
         if ( paramPermissions == null || paramPermissions.isEmpty() )
         {
             paramPermissions = NodeDefaultAclFactory.create( creator );
         }
+
         return evaluatePermissions( params.getParent(), params.inheritPermissions(), paramPermissions );
     }
 

@@ -1,8 +1,11 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.util.concurrent.Callable;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -152,6 +155,22 @@ abstract class AbstractNodeCommand
                                            final AccessControlList permissions )
     {
         return inheritPermissions ? getPermissions( parentPath ) : permissions;
+    }
+
+    void runAsAdmin( final Runnable runnable )
+    {
+        ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( NodeConstants.NODE_SU_AUTH_INFO ).
+            build().
+            runWith( runnable );
+    }
+
+    <T> T runAsAdmin( final Callable<T> callable )
+    {
+        return ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( NodeConstants.NODE_SU_AUTH_INFO ).
+            build().
+            callWith( callable );
     }
 
     private AccessControlList getPermissions( final NodePath nodePath )

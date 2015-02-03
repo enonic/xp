@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeComparison;
@@ -122,11 +121,6 @@ public class CompareNodeCommandTest
     public void status_older()
         throws Exception
     {
-        final Context prodContext = ContextBuilder.create().
-            workspace( WS_OTHER ).
-            repositoryId( TEST_REPO.getId() ).
-            build();
-
         final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
@@ -135,7 +129,7 @@ public class CompareNodeCommandTest
         draft.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
 
-        prodContext.runWith( () -> doUpdateNode( createdNode ) );
+        online.runWith( () -> doUpdateNode( createdNode ) );
         refresh();
 
         final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );

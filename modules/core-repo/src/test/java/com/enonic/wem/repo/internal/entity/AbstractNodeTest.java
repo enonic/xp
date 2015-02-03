@@ -20,6 +20,11 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.wem.api.security.User;
+import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
@@ -47,22 +52,32 @@ public abstract class AbstractNodeTest
 
     protected ElasticsearchQueryService queryService;
 
+    public static final User TEST_DEFAULT_USER =
+        User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "test-user" ) ).login( "test-user" ).build();
+
+    public static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
+        principals( RoleKeys.AUTHENTICATED ).
+        user( TEST_DEFAULT_USER ).
+        build();
+
     protected static final Workspace WS_DEFAULT = Workspace.create().
-        name( "stage" ).
+        name( "draft" ).
         build();
 
     protected static final Workspace WS_OTHER = Workspace.create().
-        name( "prod" ).
+        name( "online" ).
         build();
 
     protected static final Context CTX_DEFAULT = ContextBuilder.create().
         workspace( WS_DEFAULT ).
         repositoryId( TEST_REPO.getId() ).
+        authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
 
     protected static final Context CTX_OTHER = ContextBuilder.create().
         workspace( WS_OTHER ).
         repositoryId( TEST_REPO.getId() ).
+        authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
 
     @Rule
@@ -200,7 +215,7 @@ public abstract class AbstractNodeTest
 
     void printContentRepoIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), "draft" );
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getName() );
     }
 
     void printWorkspaceIndex()

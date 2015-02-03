@@ -23,6 +23,7 @@ import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 
 public final class ContentInitializer
@@ -34,6 +35,17 @@ public final class ContentInitializer
         login( "su" ).
         build();
 
+
+    private static final AccessControlList CONTENT_REPO_DEFAULT_ACL = AccessControlList.create().
+        add( AccessControlEntry.create().
+            allowAll().
+            principal( RoleKeys.ADMIN ).
+            build() ).
+        add( AccessControlEntry.create().
+            allow( Permission.READ ).
+            principal( RoleKeys.CONTENT_MANAGER ).
+            build() ).
+        build();
 
     private static final AccessControlList CONTENT_ROOT_DEFAULT_ACL = AccessControlList.create().
         add( AccessControlEntry.create().
@@ -127,7 +139,7 @@ public final class ContentInitializer
         {
             final RootNode rootNode = this.nodeService.createRootNode( CreateRootNodeParams.create().
                 childOrder( ChildOrder.from( "_name ASC" ) ).
-                permissions( CONTENT_ROOT_DEFAULT_ACL ).
+                permissions( CONTENT_REPO_DEFAULT_ACL ).
                 build() );
 
             nodeService.push( NodeIds.from( rootNode.id() ), ContentConstants.WORKSPACE_ONLINE );
