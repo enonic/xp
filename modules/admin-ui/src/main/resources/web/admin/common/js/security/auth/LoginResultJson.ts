@@ -6,5 +6,6 @@ module api.security.auth {
 
         user: api.security.UserJson;
 
+        applications: string[];
     }
 }

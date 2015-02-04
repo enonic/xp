@@ -43,7 +43,7 @@ public final class ContentInitializer
             build() ).
         add( AccessControlEntry.create().
             allow( Permission.READ ).
-            principal( RoleKeys.CONTENT_MANAGER ).
+            principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
             build() ).
         build();
 
@@ -53,7 +53,7 @@ public final class ContentInitializer
             allowAll().
             build() ).
         add( AccessControlEntry.create().
-            principal( RoleKeys.CONTENT_MANAGER ).
+            principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
             allowAll().
             build() ).
         build();

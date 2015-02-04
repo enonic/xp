@@ -34,7 +34,15 @@ import com.enonic.wem.api.session.Session;
 public final class AuthResource
     implements AdminResource
 {
+
+    private final AdminApplicationsRegistry appRegistry;
+
     private SecurityService securityService;
+
+    public AuthResource()
+    {
+        this.appRegistry = new AdminApplicationsRegistry();
+    }
 
     @POST
     @Path("login")
@@ -77,7 +85,7 @@ public final class AuthResource
             }
         }
 
-        return new LoginResultJson( authInfo );
+        return new LoginResultJson( authInfo, appRegistry.getAllowedApplications( authInfo.getPrincipals() ) );
     }
 
     @POST
@@ -102,7 +110,7 @@ public final class AuthResource
         }
 
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        return new LoginResultJson( authInfo );
+        return new LoginResultJson( authInfo, appRegistry.getAllowedApplications( authInfo.getPrincipals() ) );
     }
 
     private AuthenticationInfo doLogin( final String user, final String password, final boolean rememberMe )
