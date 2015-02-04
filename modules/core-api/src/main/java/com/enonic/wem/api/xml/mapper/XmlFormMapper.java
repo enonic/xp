@@ -119,7 +119,7 @@ public final class XmlFormMapper
         builder.customText( xml.getCustomText() );
         builder.helpText( xml.getHelpText() );
         builder.occurrences( fromOccurenceXml( xml.getOccurrences() ) );
-        builder.immutable( xml.isImmutable() );
+        builder.immutable( xml.isImmutable() != null && xml.isImmutable() );
         builder.addFormItems( fromItemsXml( xml.getItems() ) );
         return builder.build();
     }
