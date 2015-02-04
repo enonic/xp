@@ -30,8 +30,8 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.thumb.Thumbnail;
 
-import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleSquareFilter;
+import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleWidthFilter;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/icon")
@@ -108,7 +108,7 @@ public final class ContentIconResource
             final ByteSource binary = contentService.getBinary( content.getId(), contentThumbnail.getBinaryReference() );
             if ( binary != null )
             {
-                ImageFilter filter = crop ? ScaleSquareFilter : ScaleMax;
+                ImageFilter filter = crop ? ScaleSquareFilter : ScaleWidthFilter;
                 final BufferedImage thumbnailImage = helper.readImage( binary, size, filter );
                 return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
             }
