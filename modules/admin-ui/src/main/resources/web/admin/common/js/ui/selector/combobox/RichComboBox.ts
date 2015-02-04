@@ -314,6 +314,9 @@ module api.ui.selector.combobox {
                     this.loader.unLoadedData(singleLoadListener);
                 };
                 this.loader.onLoadedData(singleLoadListener);
+                if(this.loader.isNotStarted()) {
+                    this.loader.load();
+                }
             }
             return this;
         }

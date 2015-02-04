@@ -146,6 +146,8 @@ public final class ContentDataSerializer
         contentAsData.addBoolean( ContentPropertyNames.VALID, params.isValid() );
         contentAsData.ifNotNull().addString( ContentPropertyNames.DISPLAY_NAME, params.getDisplayName() );
         contentAsData.ifNotNull().addString( ContentPropertyNames.TYPE, params.getType() != null ? params.getType().toString() : null );
+        contentAsData.ifNotNull().addString( ContentPropertyNames.OWNER,
+                                             PrincipalKey.ofAnonymous().equals( params.getOwner() ) ? null : params.getOwner().toString() );
 
         contentAsData.addSet( ContentPropertyNames.DATA, params.getData().getRoot().copy( contentAsData.getTree() ) );
 

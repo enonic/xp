@@ -13,6 +13,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.Metadatas;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.media.MediaInfo;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
@@ -21,6 +22,8 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 
 final class CreateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -61,6 +64,8 @@ final class CreateContentCommand
 
         final CreateContentParams handledParams = new ProxyContentProcessor( mediaInfo ).processCreate( params );
 
+        addDefaultOwner( handledParams );
+
         final CreateNodeParams createNodeParams = translator.toCreateNode( handledParams );
 
         final Node createdNode;
@@ -75,6 +80,23 @@ final class CreateContentCommand
         }
 
         return translator.fromNode( createdNode );
+    }
+
+    private void addDefaultOwner( final CreateContentParams createContentParams )
+    {
+        if(createContentParams.getOwner() == null)
+        {
+            PrincipalKey user = getCurrentPrincipalKey();
+
+            createContentParams.owner( PrincipalKey.ofAnonymous().equals( user ) ? null : user );
+        }
+    }
+
+    private PrincipalKey getCurrentPrincipalKey()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        return authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
     }
 
     private boolean checkIsValid( final CreateContentParams contentParams )
