@@ -190,7 +190,7 @@ public final class SecurityInitializer
         final CreateUserParams createSuperUser = CreateUserParams.create().
             userKey( SUPER_USER ).
             displayName( "Super User" ).
-            login( "admin" ). // TODO change to "su"
+            login( "su" ).
             password( "password" ).
             build();
         addUser( createSuperUser );
