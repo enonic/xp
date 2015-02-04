@@ -1,10 +1,8 @@
 package com.enonic.xp.launcher.provision;
 
 import java.io.File;
-import java.net.URL;
-import java.util.Map;
+import java.net.URI;
 
-import org.apache.felix.utils.properties.Properties;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -13,36 +11,18 @@ import org.osgi.framework.wiring.BundleRevision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.launcher.LauncherException;
-import com.enonic.xp.launcher.env.Environment;
-
-/**
- * New initial provisioning...
- * <p/>
- * If in "prod" mode:
- * - Load bundles from XP_INSTALL/system.
- * <p/>
- * If in "dev" mode:
- * - Needs project root folder set.
- * - Resolve bundles starting with specific group id form project.
- * - Else from XP_INSTALL/system
- */
 public final class ProvisionActivator
     implements BundleActivator
 {
-    private final static String BUNDLES_FILE = "/META-INF/config/bundles.properties";
-    
     private final static Logger LOG = LoggerFactory.getLogger( ProvisionActivator.class );
 
-    private final Environment env;
+    private final File systemDir;
 
     private BundleContext context;
 
-    private ArtifactResolver resolver;
-
-    public ProvisionActivator( final Environment env )
+    public ProvisionActivator( final File systemDir )
     {
-        this.env = env;
+        this.systemDir = systemDir;
     }
 
     @Override
@@ -63,8 +43,6 @@ public final class ProvisionActivator
     private void doStart()
         throws Exception
     {
-        createResolver();
-
         if ( this.context.getBundles().length == 1 )
         {
             installBundles();
@@ -75,41 +53,26 @@ public final class ProvisionActivator
         }
     }
 
-    private void createResolver()
-    {
-        this.resolver = new ArtifactResolver();
-        this.resolver.addRepo( new File( this.env.getInstallDir(), "system" ) );
-    }
-
     private void installBundles()
         throws Exception
     {
-        final Map<String, String> bundleList = loadBundleList();
-        for ( final Map.Entry<String, String> entry : bundleList.entrySet() )
+        final File bundlesFile = new File( this.systemDir, "bundles.xml" );
+        final BundleXmlLoader loader = new BundleXmlLoader( bundlesFile );
+
+        for ( final BundleInfo info : loader.load() )
         {
-            installBundle( entry.getKey().trim(), entry.getValue().trim() );
+            installBundle( info );
         }
     }
 
-    private void installBundle( final String uri, final String startLevel )
+    private void installBundle( final BundleInfo info )
         throws Exception
     {
-        installBundle( uri, Integer.parseInt( startLevel ) );
-    }
+        LOG.info( "Installing bundle {} at start-level {}", info.getLocation(), info.getLevel() );
 
-    private void installBundle( final String uri, final int startLevel )
-        throws Exception
-    {
-        LOG.info( "Installing bundle {} at start-level {}", uri, startLevel );
-
-        final String resolved = this.resolver.resolve( uri );
-        if ( resolved == null )
-        {
-            throw new LauncherException( "Failed to find bundle [%s] in any of the repositories.", uri );
-        }
-
-        final Bundle bundle = this.context.installBundle( resolved );
-        bundle.adapt( BundleStartLevel.class ).setStartLevel( startLevel );
+        final URI uri = info.getUri( this.systemDir );
+        final Bundle bundle = this.context.installBundle( uri.toString() );
+        bundle.adapt( BundleStartLevel.class ).setStartLevel( info.getLevel() );
         if ( !isFragmentBundle( bundle ) )
         {
             bundle.start();
@@ -119,14 +82,5 @@ public final class ProvisionActivator
     private boolean isFragmentBundle( final Bundle bundle )
     {
         return ( bundle.adapt( BundleRevision.class ).getTypes() & BundleRevision.TYPE_FRAGMENT ) != 0;
-    }
-
-    private Map<String, String> loadBundleList()
-        throws Exception
-    {
-        final URL url = getClass().getResource( BUNDLES_FILE );
-        final Properties props = new Properties();
-        props.load( url );
-        return props;
     }
 }

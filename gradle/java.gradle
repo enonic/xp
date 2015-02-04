@@ -1,0 +1,37 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+
+compileJava {
+    options.encoding = 'utf-8'
+    options.compilerArgs = ['-Xlint:-options']
+}
+
+compileGroovy {
+    options.encoding = 'utf-8'
+    options.compilerArgs = ['-Xlint:-options']
+    groovyOptions.encoding = 'utf-8'
+}
+
+buildDir = 'target'
+
+configurations {
+    testOutput.extendsFrom( testCompile )
+}
+
+dependencies {
+    testOutput sourceSets.test.output
+}
+
+task testJar( type: Jar ) {
+    group 'build'
+    description 'Creates a jar file with all test sources.'
+    from sourceSets.test.output
+    classifier = 'test'
+}
+
+artifacts {
+    testOutput testJar
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = sourceCompatibility

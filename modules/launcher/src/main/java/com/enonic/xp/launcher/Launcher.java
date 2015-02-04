@@ -1,5 +1,7 @@
 package com.enonic.xp.launcher;
 
+import java.io.File;
+
 import com.enonic.xp.launcher.config.ConfigLoader;
 import com.enonic.xp.launcher.config.ConfigProperties;
 import com.enonic.xp.launcher.env.Environment;
@@ -69,7 +71,8 @@ public final class Launcher
 
     private void addProvisionActivator()
     {
-        final ProvisionActivator activator = new ProvisionActivator( this.env );
+        final File systemDir = new File( this.env.getInstallDir(), "system" );
+        final ProvisionActivator activator = new ProvisionActivator( systemDir );
         this.framework.activator( activator );
     }
 

@@ -1,0 +1,16 @@
+buildscript {
+    apply from: "$rootDir/gradle/buildscript.gradle", to: buildscript
+}
+
+apply plugin: 'java-base'
+
+allprojects {
+    group = 'com.enonic.xp'
+
+    repositories {
+        jcenter()
+        maven {
+            url 'http://repo.enonic.com/public'
+        }
+    }
+}
