@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.PushContentsResult;
 
 public class PublishContentResultJson
@@ -46,7 +47,7 @@ public class PublishContentResultJson
 
         for ( final PushContentsResult.Failed failed : pushContentsResult.getFailed() )
         {
-            json.failures.add( new Failure( failed.getContent().getId(), failed.getFailedReason().getMessage() ) );
+            json.failures.add( new Failure( failed.getContent().getPath(), failed.getFailedReason().getMessage() ) );
         }
 
         for ( final ContentId deleted : pushContentsResult.getDeleted() )
@@ -82,20 +83,19 @@ public class PublishContentResultJson
 
     public static class Failure
     {
-
-        private final String id;
+        private final String path;
 
         private final String reason;
 
-        public Failure( final ContentId contentId, final String reason )
+        public Failure( final ContentPath contentPath, final String reason )
         {
-            this.id = contentId.toString();
+            this.path = contentPath.toString();
             this.reason = reason;
         }
 
-        public String getId()
+        public String getPath()
         {
-            return id;
+            return path;
         }
 
         public String getReason()

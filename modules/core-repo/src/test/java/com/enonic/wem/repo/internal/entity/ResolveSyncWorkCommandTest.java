@@ -743,47 +743,46 @@ public class ResolveSyncWorkCommandTest
 
         moveNode( "b2_1", NodePath.newPath( "/s2" ).build(), "b2_1" );
 
-        printWorkspaceIndex();
-
         final ResolveSyncWorkResult result = getResolveSyncWorkResult( "a2_1" );
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
 
         assertEquals( 2, nodePublishRequests.size() );
+
+        assertNode( nodePublishRequests, "a2_1" );
+        assertNode( nodePublishRequests, "b2_1" );
     }
 
-    private void pushAllNodesInS1S2Tree()
+    /*
+    - S1 (New)
+        - A1 (New)
+        - A2 (New)
+            - A2_1 - Ref:B2_1 (New)
+    - S2 (New)
+        - B1 (New)
+        - B2 (New)
+            - B2_1 (New)
+
+        Push A2_1, A2, S1, B2_1, B2, S2. A1 and B1 should remain untouched
+    */
+    @Test
+    public void do_not_publish_other_children_of_dependent_parent()
+        throws Exception
     {
-        pushNodes( NodeIds.from( "s1", "s2", "a1", "a2", "a2_1", "b1", "b2", "b2_1" ), WS_OTHER );
-    }
+        createS1S2Tree();
 
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( "a2_1" );
 
-    private void updateNode( final String nodeId )
-    {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
-            editor( toBeEdited -> {
-                final PropertyTree nodeData = toBeEdited.data;
-                nodeData.addString( "newValue", "hepp" );
-            } ).
-            id( NodeId.from( nodeId ) ).
-            build();
+        final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
 
-        updateNode( updateNodeParams );
-    }
+        assertEquals( 6, nodePublishRequests.size() );
 
-    public void moveNode( final String nodeId, final NodePath newParent, final String newName )
-    {
-        MoveNodeCommand.create().
-            queryService( this.queryService ).
-            indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
-            nodeDao( this.nodeDao ).
-            versionService( this.versionService ).
-            id( NodeId.from( nodeId ) ).
-            newNodeName( NodeName.from( newName ) ).
-            newParent( newParent ).
-            build().
-            execute();
+        assertNode( nodePublishRequests, "s1" );
+        assertNode( nodePublishRequests, "a2" );
+        assertNode( nodePublishRequests, "a2_1" );
+        assertNode( nodePublishRequests, "s2" );
+        assertNode( nodePublishRequests, "b2" );
+        assertNode( nodePublishRequests, "b2_1" );
     }
 
     private void createS1S2Tree()
@@ -838,6 +837,40 @@ public class ResolveSyncWorkCommandTest
             build() );
     }
 
+    private void pushAllNodesInS1S2Tree()
+    {
+        pushNodes( NodeIds.from( "s1", "s2", "a1", "a2", "a2_1", "b1", "b2", "b2_1" ), WS_OTHER );
+    }
+
+
+    private void updateNode( final String nodeId )
+    {
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+            editor( toBeEdited -> {
+                final PropertyTree nodeData = toBeEdited.data;
+                nodeData.addString( "newValue", "hepp" );
+            } ).
+            id( NodeId.from( nodeId ) ).
+            build();
+
+        updateNode( updateNodeParams );
+    }
+
+    public void moveNode( final String nodeId, final NodePath newParent, final String newName )
+    {
+        MoveNodeCommand.create().
+            queryService( this.queryService ).
+            indexService( this.indexService ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            versionService( this.versionService ).
+            id( NodeId.from( nodeId ) ).
+            newNodeName( NodeName.from( newName ) ).
+            newParent( newParent ).
+            build().
+            execute();
+    }
+
     private void renameNode( final Node node )
     {
         MoveNodeCommand.create().
@@ -867,7 +900,6 @@ public class ResolveSyncWorkCommandTest
             execute();
     }
 
-
     private PropertyTree createDataWithReferences( final Reference... references )
     {
         PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
@@ -878,5 +910,10 @@ public class ResolveSyncWorkCommandTest
         }
 
         return data;
+    }
+
+    private void assertNode( final NodePublishRequests nodePublishRequests, final String s1 )
+    {
+        assertNotNull( nodePublishRequests.get( NodeId.from( s1 ) ) );
     }
 }

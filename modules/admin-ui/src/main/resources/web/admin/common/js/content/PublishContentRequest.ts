@@ -50,7 +50,7 @@ module api.content {
                 if (succeeded === 1) {
                     api.notify.showSuccess('Content [' + result.successes[0].name + '] published!');
                 } else if (failed === 1) {
-                    api.notify.showError(result.failures[0].reason);
+                    api.notify.showError('Content [' + result.failures[0].path + '] failed, reason: ' + result.failures[0].reason);
                 } else {
                     api.notify.showSuccess('Content [' + result.deleted[0] + '] deleted');
                 }

@@ -7,8 +7,6 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPublishedEvent;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.FindContentByParentParams;
-import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.content.PushContentsResult;
 import com.enonic.wem.api.context.Context;
@@ -220,24 +218,6 @@ public class PushContentCommand
             {
                 this.resultBuilder.addFailed( content, PushContentsResult.FailedReason.CONTENT_NOT_VALID );
                 allOk = false;
-            }
-
-            if ( this.includeChildren && content.hasChildren() )
-            {
-                final FindContentByParentResult result = FindContentByParentCommand.create( FindContentByParentParams.create().
-                    parentPath( content.getPath() ).
-                    build() ).
-                    translator( this.translator ).
-                    nodeService( this.nodeService ).
-                    contentTypeService( this.contentTypeService ).
-                    eventPublisher( this.eventPublisher ).
-                    build().
-                    execute();
-
-                if ( !ensureValidContents( result.getContents() ) )
-                {
-                    allOk = false;
-                }
             }
         }
 
