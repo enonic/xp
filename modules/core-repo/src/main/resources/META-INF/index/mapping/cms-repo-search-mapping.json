@@ -11,6 +11,9 @@
     },
     "date_detection": false,
     "numeric_detection": false,
+    "_timestamp": {
+      "enabled": true
+    },
     "properties": {
 
     },

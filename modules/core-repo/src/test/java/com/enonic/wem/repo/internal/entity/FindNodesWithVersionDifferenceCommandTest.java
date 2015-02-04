@@ -43,6 +43,8 @@ public class FindNodesWithVersionDifferenceCommandTest
             parent( NodePath.ROOT ).
             build() );
 
+        printWorkspaceIndex();
+
         final Node child1 = createNode( CreateNodeParams.create().
             name( "mynode" ).
             parent( node.path() ).

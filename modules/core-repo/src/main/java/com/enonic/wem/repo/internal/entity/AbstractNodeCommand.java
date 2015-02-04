@@ -33,7 +33,7 @@ import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 abstract class AbstractNodeCommand
 {
     static final OrderExpressions DEFAULT_ORDER_EXPRESSIONS =
-        OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) );
+        OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) );
 
     final IndexService indexService;
 
@@ -54,18 +54,18 @@ abstract class AbstractNodeCommand
         this.queryService = builder.queryService;
     }
 
-    void updateNodeMetadata( final Node node )
+    Node updateNodeMetadata( final Node node )
     {
-        StoreNodeCommand.create( this ).
+        return StoreNodeCommand.create( this ).
             node( node ).
             updateMetadataOnly( true ).
             build().
             execute();
     }
 
-    void doStoreNode( final Node node )
+    Node doStoreNode( final Node node )
     {
-        StoreNodeCommand.create( this ).
+        return StoreNodeCommand.create( this ).
             node( node ).
             build().
             execute();

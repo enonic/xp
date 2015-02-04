@@ -10,7 +10,6 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
-import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 
 public class Node
@@ -27,13 +26,7 @@ public class Node
 
     private final NodePath path;
 
-    private final PrincipalKey creator;
-
-    private final Instant createdTime;
-
-    private final PrincipalKey modifier;
-
-    private final Instant modifiedTime;
+    private final Instant timestamp;
 
     private final boolean hasChildren;
 
@@ -63,10 +56,6 @@ public class Node
         this.parentId = builder.parentId;
         this.parentPath = builder.parentPath;
         this.nodeType = builder.nodeType;
-        this.creator = builder.creator;
-        this.createdTime = builder.createdTime;
-        this.modifier = builder.modifier;
-        this.modifiedTime = builder.modifiedTime;
         this.hasChildren = builder.hasChildren;
         this.data = builder.data != null ? builder.data : new PropertyTree();
         this.childOrder = builder.childOrder;
@@ -75,6 +64,7 @@ public class Node
         this.inheritPermissions = builder.inheritPermissions;
         this.attachedBinaries = builder.attachedBinaries;
         this.nodeState = builder.nodeState;
+        this.timestamp = builder.timestamp;
 
         this.path = this.parentPath != null && this.name != null ? new NodePath( this.parentPath, this.name ) : null;
 
@@ -110,26 +100,6 @@ public class Node
         return path;
     }
 
-    public PrincipalKey creator()
-    {
-        return creator;
-    }
-
-    public PrincipalKey getCreator()
-    {
-        return creator;
-    }
-
-    public PrincipalKey modifier()
-    {
-        return modifier;
-    }
-
-    public PrincipalKey getModifier()
-    {
-        return modifier;
-    }
-
     public boolean getHasChildren()
     {
         return hasChildren;
@@ -140,19 +110,14 @@ public class Node
         return id;
     }
 
+    public Instant getTimestamp()
+    {
+        return timestamp;
+    }
+
     public NodeId getParentId()
     {
         return parentId;
-    }
-
-    public Instant getCreatedTime()
-    {
-        return createdTime;
-    }
-
-    public Instant getModifiedTime()
-    {
-        return modifiedTime;
     }
 
     public PropertyTree data()
@@ -230,10 +195,6 @@ public class Node
     {
         private NodeId id;
 
-        private Instant createdTime;
-
-        private Instant modifiedTime;
-
         private PropertyTree data = new PropertyTree();
 
         private IndexConfigDocument indexConfigDocument;
@@ -244,9 +205,7 @@ public class Node
 
         private NodePath parentPath;
 
-        private PrincipalKey modifier;
-
-        private PrincipalKey creator;
+        private Instant timestamp;
 
         boolean hasChildren = false;
 
@@ -281,10 +240,6 @@ public class Node
             this.parentPath = node.parentPath;
             this.parentId = node.parentId;
             this.nodeType = node.nodeType;
-            this.creator = node.creator;
-            this.createdTime = node.createdTime;
-            this.modifier = node.modifier;
-            this.modifiedTime = node.modifiedTime;
             this.hasChildren = node.hasChildren;
             this.data = node.data;
             this.indexConfigDocument = node.indexConfigDocument;
@@ -294,6 +249,7 @@ public class Node
             this.inheritPermissions = node.inheritPermissions;
             this.attachedBinaries = node.attachedBinaries;
             this.nodeState = node.nodeState;
+            this.timestamp = node.timestamp;
         }
 
         public Builder( final NodeId id, final NodeName name )
@@ -332,18 +288,6 @@ public class Node
             return this;
         }
 
-        public Builder creator( final PrincipalKey value )
-        {
-            this.creator = value;
-            return this;
-        }
-
-        public Builder modifier( final PrincipalKey value )
-        {
-            this.modifier = value;
-            return this;
-        }
-
         public Builder hasChildren( final boolean hasChildren )
         {
             this.hasChildren = hasChildren;
@@ -353,18 +297,6 @@ public class Node
         public Builder id( final NodeId id )
         {
             this.id = id;
-            return this;
-        }
-
-        public Builder createdTime( final Instant value )
-        {
-            this.createdTime = value;
-            return this;
-        }
-
-        public Builder modifiedTime( final Instant value )
-        {
-            this.modifiedTime = value;
             return this;
         }
 
@@ -422,6 +354,12 @@ public class Node
             return this;
         }
 
+        public Builder timestamp( final Instant timestamp )
+        {
+            this.timestamp = timestamp;
+            return this;
+        }
+
         public Node build()
         {
             return new Node( this );
@@ -448,10 +386,6 @@ public class Node
             Objects.equals( parentPath, node.parentPath ) &&
             Objects.equals( hasChildren, node.hasChildren ) &&
             Objects.equals( inheritPermissions, node.inheritPermissions ) &&
-            Objects.equals( creator, node.creator ) &&
-            Objects.equals( modifier, node.modifier ) &&
-            Objects.equals( createdTime, node.createdTime ) &&
-            Objects.equals( modifiedTime, node.modifiedTime ) &&
             Objects.equals( manualOrderValue, node.manualOrderValue ) &&
             Objects.equals( childOrder, node.childOrder ) &&
             Objects.equals( permissions, node.permissions ) &&
@@ -463,7 +397,7 @@ public class Node
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, name, parentPath, nodeType, hasChildren, inheritPermissions, creator, modifier, createdTime, modifiedTime,
-                             manualOrderValue, childOrder, permissions, data, indexConfigDocument, attachedBinaries );
+        return Objects.hash( id, name, parentPath, nodeType, hasChildren, inheritPermissions, manualOrderValue, childOrder, permissions,
+                             data, indexConfigDocument, attachedBinaries );
     }
 }

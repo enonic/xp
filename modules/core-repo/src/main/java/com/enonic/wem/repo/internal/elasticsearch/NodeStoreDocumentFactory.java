@@ -95,33 +95,6 @@ class NodeStoreDocumentFactory
             builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.NAME, nameValue, IndexConfig.FULLTEXT ) );
         }
 
-        if ( this.node.getCreatedTime() != null )
-        {
-            builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.CREATED_TIME, Value.newInstant( this.node.getCreatedTime() ),
-                                                                 IndexConfig.MINIMAL ) );
-        }
-
-        if ( this.node.getCreator() != null )
-        {
-            builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.CREATOR, Value.newString( this.node.getCreator().toString() ),
-                                                 IndexConfig.MINIMAL ) );
-        }
-
-        if ( this.node.getModifiedTime() != null )
-        {
-            builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.MODIFIED_TIME, Value.newInstant( this.node.getModifiedTime() ),
-                                                 IndexConfig.MINIMAL ) );
-        }
-
-        if ( this.node.getModifier() != null )
-        {
-            builder.addEntries(
-                StoreDocumentItemFactory.create( NodeIndexPath.MODIFIER, Value.newString( this.node.getModifier().toString() ),
-                                                 IndexConfig.MINIMAL ) );
-        }
-
         if ( this.node.path() != null )
         {
             builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.PATH, Value.newString( this.node.path().toString() ),

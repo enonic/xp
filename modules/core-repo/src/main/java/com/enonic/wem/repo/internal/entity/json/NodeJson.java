@@ -16,7 +16,6 @@ import com.enonic.wem.api.node.AttachedBinary;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeType;
-import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 
@@ -65,10 +64,6 @@ final class NodeJson
     {
         return Node.newNode().
             id( NodeId.from( this.id ) ).
-            creator( PrincipalKey.from( this.creator ) ).
-            modifier( this.modifier != null ? PrincipalKey.from( this.modifier ) : null ).
-            createdTime( this.createdTime ).
-            modifiedTime( this.modifiedTime ).
             data( PropertyTreeJson.fromJson( this.data ) ).
             indexConfigDocument( this.indexConfigDocument.fromJson() ).
             childOrder( ChildOrder.from( this.childOrder ) ).
@@ -106,12 +101,8 @@ final class NodeJson
     {
         final NodeJson json = new NodeJson();
         json.id = node.id().toString();
-        json.createdTime = node.getCreatedTime();
-        json.modifiedTime = node.getModifiedTime();
         json.data = PropertyTreeJson.toJson( node.data() );
         json.indexConfigDocument = createEntityIndexConfig( node.getIndexConfigDocument() );
-        json.modifier = node.modifier() != null ? node.modifier().toString() : null;
-        json.creator = node.creator() != null ? node.creator().toString() : null;
         json.childOrder = node.getChildOrder().toString();
         json.manualOrderValue = node.getManualOrderValue();
         json.permissions = toJson( node.getPermissions() );

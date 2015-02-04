@@ -237,7 +237,6 @@ abstract class PrincipalNodeTranslator
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( nodeAsTree.getString( DISPLAY_NAME_KEY ) ).
             authenticationHash( nodeAsTree.getString( AUTHENTICATION_HASH_KEY ) ).
-            modifiedTime( node.getModifiedTime() ).
             build();
     }
 
@@ -250,7 +249,6 @@ abstract class PrincipalNodeTranslator
         return Group.create().
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( nodeAsTree.getString( DISPLAY_NAME_KEY ) ).
-            modifiedTime( node.getModifiedTime() ).
             build();
     }
 
@@ -263,7 +261,6 @@ abstract class PrincipalNodeTranslator
         return Role.create().
             key( PrincipalKeyNodeTranslator.toKey( node ) ).
             displayName( nodeAsTree.getString( DISPLAY_NAME_KEY ) ).
-            modifiedTime( node.getModifiedTime() ).
             build();
     }
 

@@ -8,6 +8,8 @@ public class NodeIndexPath
 
     private static final String PERMISSIONS_ROOT = "_permissions";
 
+    public static final IndexPath TIMESTAMP = IndexPath.from( "_timestamp" );
+
     public static final IndexPath STATE = IndexPath.from( "_state" );
 
     public static final IndexPath VERSION = IndexPath.from( "_versionKey" );
@@ -22,17 +24,9 @@ public class NodeIndexPath
 
     public static final IndexPath ID = IndexPath.from( "_id" );
 
-    public static final IndexPath MODIFIER = IndexPath.from( "_modifier" );
-
     public static final IndexPath NAME = IndexPath.from( "_name" );
 
-    public static final IndexPath CREATED_TIME = IndexPath.from( "_createdTime" );
-
-    public static final IndexPath CREATOR = IndexPath.from( "_creator" );
-
     public static final IndexPath PARENT_PATH = IndexPath.from( "_parentPath" );
-
-    public static final IndexPath MODIFIED_TIME = IndexPath.from( "_modifiedTime" );
 
     public static final IndexPath PERMISSIONS_READ = IndexPath.from( PERMISSIONS_ROOT + DIVIDER + "read" );
 

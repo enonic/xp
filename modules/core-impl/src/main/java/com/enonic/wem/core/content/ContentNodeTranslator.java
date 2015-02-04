@@ -116,10 +116,6 @@ public class ContentNodeTranslator
             id( ContentId.from( node.id().toString() ) ).
             parentPath( parentContentPath ).
             name( node.name().toString() ).
-            createdTime( node.getCreatedTime() ).
-            creator( node.getCreator() ).
-            modifiedTime( node.getModifiedTime() ).
-            modifier( node.getModifier() ).
             hasChildren( node.getHasChildren() ).
             childOrder( node.getChildOrder() ).
             permissions( node.getPermissions() ).

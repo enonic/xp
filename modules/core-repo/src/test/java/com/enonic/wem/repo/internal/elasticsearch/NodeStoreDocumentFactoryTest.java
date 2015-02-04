@@ -1,11 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Set;
 
 import org.junit.Test;
@@ -18,11 +14,9 @@ import com.enonic.wem.api.index.IndexPath;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.index.IndexValueType;
@@ -132,16 +126,10 @@ public class NodeStoreDocumentFactoryTest
     {
         final String myAnalyzerName = "myAnalyzer";
 
-        Instant modifiedDateTime = LocalDateTime.of( 2013, 1, 2, 3, 4, 5 ).toInstant( ZoneOffset.UTC );
-
         Node node = Node.newNode().
             id( NodeId.from( "myId" ) ).
             parentPath( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
-            createdTime( Instant.now() ).
-            creator( PrincipalKey.from( "user:test:creator" ) ).
-            modifier( PrincipalKey.from( "user:test:modifier" ) ).
-            modifiedTime( modifiedDateTime ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( myAnalyzerName ).
                 defaultConfig( IndexConfig.MINIMAL ).
@@ -161,19 +149,6 @@ public class NodeStoreDocumentFactoryTest
         assertEquals( myAnalyzerName, storeDocument.getAnalyzer() );
         assertEquals( IndexNameResolver.resolveSearchIndexName( TEST_REPOSITORY.getId() ), storeDocument.getIndexName() );
         assertEquals( "test", storeDocument.getIndexTypeName() );
-
-        final AbstractStoreDocumentItem createdTimeItem =
-            getItemWithName( storeDocument, NodeIndexPath.CREATED_TIME, IndexValueType.DATETIME );
-
-        assertEquals( Date.from( node.getCreatedTime() ), createdTimeItem.getValue() );
-
-        final AbstractStoreDocumentItem creator = getItemWithName( storeDocument, NodeIndexPath.CREATOR, IndexValueType.STRING );
-
-        assertEquals( "user:test:creator", creator.getValue() );
-
-        final AbstractStoreDocumentItem modifier = getItemWithName( storeDocument, NodeIndexPath.MODIFIER, IndexValueType.STRING );
-
-        assertEquals( "user:test:modifier", modifier.getValue() );
     }
 
     @Test

@@ -1,7 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 import org.junit.Test;
 
@@ -9,7 +8,6 @@ import com.enonic.wem.api.index.PatternIndexConfigDocument;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
@@ -60,20 +58,11 @@ public class NodeBuilderTest
         final Node myNode = Node.newNode().
             name( NodeName.from( "my-name" ) ).
             parentPath( NodePath.ROOT ).
-            modifiedTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
-            createdTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
-            creator( PrincipalKey.from( "user:test:creator" ) ).
-            modifier( PrincipalKey.from( "user:test:modifier" ) ).
-            modifiedTime( localDateTime.toInstant( ZoneOffset.UTC ) ).
             path( "test" ).
             build();
 
         assertNotNull( myNode.name() );
         assertNotNull( myNode.parentPath() );
-        assertNotNull( myNode.getModifiedTime() );
-        assertNotNull( myNode.modifier() );
-        assertNotNull( myNode.getCreatedTime() );
-        assertNotNull( myNode.creator() );
         assertNotNull( myNode.path() );
     }
 }

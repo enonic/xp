@@ -1,7 +1,5 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.time.Instant;
-
 import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,8 +90,6 @@ final class ApplyNodePermissionsCommand
     private Node createUpdatedNode( final Node persistedNode, final AccessControlList permissions, final boolean inheritsPermissions )
     {
         final Node.Builder updateNodeBuilder = Node.newNode( persistedNode ).
-            modifiedTime( Instant.now() ).
-            modifier( params.getModifier() ).
             permissions( permissions ).
             inheritPermissions( inheritsPermissions );
         return updateNodeBuilder.build();

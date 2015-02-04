@@ -25,7 +25,7 @@ public class StoreNodeCommand
         this.updateMetadataOnly = builder.updateMetadataOnly;
     }
 
-    public void execute()
+    public Node execute()
     {
         final Context context = ContextAccessor.current();
 
@@ -52,6 +52,8 @@ public class StoreNodeCommand
             build(), WorkspaceContext.from( context ) );
 
         this.indexService.store( node, nodeVersionId, IndexContext.from( context ) );
+
+        return this.nodeDao.getByVersionId( nodeVersionId );
     }
 
     public static Builder create()

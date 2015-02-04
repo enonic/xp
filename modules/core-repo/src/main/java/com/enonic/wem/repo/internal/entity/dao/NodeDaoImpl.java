@@ -139,6 +139,7 @@ public class NodeDaoImpl
             parentPath( parentPath ).
             name( nodeName ).
             nodeState( nodeWorkspaceVersion.getNodeState() ).
+            timestamp( nodeWorkspaceVersion.getTimestamp() ).
             build();
     }
 

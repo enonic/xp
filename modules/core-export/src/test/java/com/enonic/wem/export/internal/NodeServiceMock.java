@@ -1,6 +1,5 @@
 package com.enonic.wem.export.internal;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,8 +48,6 @@ import com.enonic.wem.api.node.RootNode;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.SyncWorkResolverParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.workspace.Workspace;
 
@@ -74,8 +71,6 @@ class NodeServiceMock
             id( params.getNodeId() != null ? params.getNodeId() : NodeId.from( System.nanoTime() ) ).
             name( NodeName.from( params.getName() ) ).
             parentPath( params.getParent() ).
-            createdTime( Instant.now() ).
-            creator( PrincipalKey.ofUser( UserStoreKey.system(), "rmy" ) ).
             childOrder( params.getChildOrder() );
 
         final AttachedBinaries.Builder attachmentBuilder = AttachedBinaries.create();
@@ -122,11 +117,7 @@ class NodeServiceMock
             return persistedNode;
         }
 
-        final Instant now = Instant.now();
-
         final Node.Builder updateNodeBuilder = Node.newNode( editedNode ).
-            modifiedTime( now ).
-            modifier( persistedNode.getModifier() ).
             permissions( persistedNode.getPermissions() );
 
         return updateNodeBuilder.build();

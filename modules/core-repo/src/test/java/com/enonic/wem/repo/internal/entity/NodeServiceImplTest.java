@@ -128,7 +128,7 @@ public class NodeServiceImplTest
     {
 
         final ChildOrder childOrder = ChildOrder.create().
-            add( FieldOrderExpr.create( NodeIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) ).
+            add( FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
             add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).
             build();
 

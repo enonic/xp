@@ -64,10 +64,6 @@ public final class CreateNodeCommand
 
         final Node.Builder nodeBuilder = Node.newNode().
             id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
-            createdTime( now ).
-            modifiedTime( now ).
-            creator( user ).
-            modifier( user ).
             parentPath( params.getParent() ).
             name( NodeName.from( params.getName() ) ).
             data( params.getData() ).

@@ -15,7 +15,7 @@ import com.enonic.wem.api.query.parser.QueryParser;
 
 public class ChildOrder
 {
-    private static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( NodeIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC );
+    private static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC );
 
     private static final FieldOrderExpr MANUAL_ORDER = FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 

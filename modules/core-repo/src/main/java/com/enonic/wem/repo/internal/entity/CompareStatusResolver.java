@@ -90,7 +90,7 @@ class CompareStatusResolver
             return new CompareStatus( CompareStatus.Status.OLDER );
         }
 
-        throw new RuntimeException( "Not able to resolve compare status" );
+        return new CompareStatus( CompareStatus.Status.EQUAL );
     }
 
 

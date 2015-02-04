@@ -180,7 +180,6 @@ public class PushNodesCommandTest
         assertNull( getNodeByPathInOther( NodePath.newNodePath( node.path(), child1.name().toString() ).build() ) );
     }
 
-
     @Test
     public void push_after_rename()
         throws Exception

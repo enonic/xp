@@ -1,7 +1,5 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.time.Instant;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.node.FindNodesByParentParams;
@@ -113,22 +111,22 @@ public class MoveNodeCommand
             checkExistingNode = false;
         }
 
-        final Node movedNode = Node.newNode( persistedNode ).
+        final Node nodeToMove = Node.newNode( persistedNode ).
             name( nodeName ).
             parentPath( newParentPath ).
-            modifiedTime( Instant.now() ).
-            modifier( getCurrentPrincipalKey() ).
             indexConfigDocument( persistedNode.getIndexConfigDocument() ).
             build();
 
+        final Node movedNode;
+
         // The node that is moved must be updated
-        if ( movedNode.id().equals( this.nodeId ) )
+        if ( nodeToMove.id().equals( this.nodeId ) )
         {
-            doStoreNode( movedNode );
+            movedNode = doStoreNode( nodeToMove );
         }
         else
         {
-            updateNodeMetadata( movedNode );
+            movedNode = updateNodeMetadata( nodeToMove );
         }
 
         if ( persistedNode.getHasChildren() )
@@ -137,7 +135,7 @@ public class MoveNodeCommand
 
             for ( final Node child : children )
             {
-                doMoveNode( movedNode.path(), child.name(), child.id(), checkExistingNode );
+                doMoveNode( nodeToMove.path(), child.name(), child.id(), checkExistingNode );
             }
         }
 
