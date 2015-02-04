@@ -8,7 +8,7 @@
     "description": "My description",
     "displayName": "My ContentType",
     "editable": false,
-    "final": false,
+  "final": true,
     "form": {
         "formItems": [
             {

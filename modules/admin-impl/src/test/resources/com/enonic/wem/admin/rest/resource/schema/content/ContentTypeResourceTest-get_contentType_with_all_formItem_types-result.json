@@ -8,7 +8,7 @@
     "description": null,
     "displayName": null,
     "editable": false,
-    "final": false,
+  "final": true,
     "form": {
         "formItems": [
             {

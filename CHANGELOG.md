@@ -6,7 +6,8 @@ Bugfixes:
 
 Features:
 
-  - N/A
+  - Fields (elements) "is-abstract", "is-final" and "allow-child-content" in content-type.xml made optional. The "is-built-in" field has been removed from content-type.xml. (CMS-5064)
+  - Fields "immutable" and "indexed from input-type in xml are made optional. (CMS-4878)
 
 Refactoring:
 

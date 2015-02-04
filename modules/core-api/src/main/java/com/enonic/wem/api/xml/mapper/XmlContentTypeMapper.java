@@ -15,7 +15,6 @@ public final class XmlContentTypeMapper
         result.setSuperType( object.getSuperType().toString() );
         result.setIsAbstract( object.isAbstract() );
         result.setIsFinal( object.isFinal() );
-        result.setIsBuiltIn( object.isBuiltIn() );
         result.setAllowChildContent( object.allowChildContent() );
         result.setForm( XmlFormMapper.toItemsXml( object.form().getFormItems() ) );
         return result;
@@ -29,10 +28,9 @@ public final class XmlContentTypeMapper
         builder.description( xml.getDescription() );
         builder.contentDisplayNameScript( xml.getContentDisplayNameScript() );
         builder.superType( resolver.toContentTypeName( xml.getSuperType() ) );
-        builder.setAbstract( xml.isIsAbstract() );
-        builder.setFinal( xml.isIsFinal() );
-        builder.setBuiltIn( xml.isIsBuiltIn() );
-        builder.allowChildContent( xml.isAllowChildContent() );
+        builder.setAbstract( xml.isIsAbstract() != null && xml.isIsAbstract() );
+        builder.setFinal( xml.isIsFinal() != null && xml.isIsFinal() );
+        builder.allowChildContent( xml.isAllowChildContent() != null && xml.isAllowChildContent() );
         XmlFormMapper.fromItemsXml( xml.getForm() ).forEach( builder::addFormItem );
     }
 }
