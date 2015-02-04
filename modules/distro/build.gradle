@@ -22,6 +22,12 @@ addBundle( 'org.apache.felix:org.apache.felix.eventadmin:1.4.2', 1 )
 addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.8.0', 1 )
 addBundle( 'org.apache.felix:org.apache.felix.scr:1.8.2', 1 )
 
+// Remote shell
+addBundle( 'org.apache.felix:org.apache.felix.gogo.runtime:0.12.1', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.gogo.command:0.12.0', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.shell.remote:1.1.2', 6 )
+addBundle( 'org.apache.felix:org.apache.felix.gogo.shell:0.10.0', 5 )
+
 // Blueprint bundles
 addBundle( 'org.ow2.asm:asm-all:5.0.3', 20 )
 addBundle( 'org.apache.aries:org.apache.aries.util:1.1.0', 20 )
@@ -42,7 +48,6 @@ addBundle( 'org.ops4j.pax.web:pax-web-jetty-bundle:4.0.0', 25 )
 // Felix web console
 addBundle( 'org.apache.felix:org.apache.felix.webconsole:4.2.4:all', 25 )
 addBundle( 'org.apache.felix:org.apache.felix.webconsole.plugins.ds:1.0.0', 25 )
-
 
 def getStartLevel( ResolvedArtifact item )
 {
