@@ -56,9 +56,7 @@ public final class ProvisionActivator
     private void installBundles()
         throws Exception
     {
-        final File bundlesFile = new File( this.systemDir, "bundles.xml" );
-        final BundleXmlLoader loader = new BundleXmlLoader( bundlesFile );
-
+        final BundleInfoLoader loader = new BundleInfoLoader( this.systemDir );
         for ( final BundleInfo info : loader.load() )
         {
             installBundle( info );

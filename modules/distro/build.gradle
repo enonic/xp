@@ -1,0 +1,70 @@
+apply plugin: 'java-base'
+
+configurations {
+    bundle
+    bundle.transitive = false
+}
+
+ext {
+    bundleLevels = [:]
+    bundlesFile = file( '/Users/srs/development/server/new-distro/system/bundles.properties' )
+}
+
+def addBundle( value, level )
+{
+    def dep = dependencies.add( 'bundle', value )
+    bundleLevels["${dep.group}:${dep.name}:${dep.version}"] = level
+}
+
+// Core bundles
+addBundle( 'org.apache.felix:org.apache.felix.metatype:1.0.10', 1 )
+addBundle( 'org.apache.felix:org.apache.felix.eventadmin:1.4.2', 1 )
+addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.8.0', 1 )
+addBundle( 'org.apache.felix:org.apache.felix.scr:1.8.2', 1 )
+
+// Blueprint bundles
+addBundle( 'org.ow2.asm:asm-all:5.0.3', 20 )
+addBundle( 'org.apache.aries:org.apache.aries.util:1.1.0', 20 )
+addBundle( 'org.apache.aries.proxy:org.apache.aries.proxy.api:1.0.1', 20 )
+addBundle( 'org.apache.aries.proxy:org.apache.aries.proxy.impl:1.0.4', 20 )
+addBundle( 'org.apache.aries.blueprint:org.apache.aries.blueprint.api:1.0.1', 20 )
+addBundle( 'org.apache.aries.blueprint:org.apache.aries.blueprint.core:1.4.2', 20 )
+addBundle( 'org.apache.aries.blueprint:org.apache.aries.blueprint.cm:1.0.5', 20 )
+addBundle( 'org.apache.aries.blueprint:org.apache.aries.blueprint.cm:1.0.5', 20 )
+addBundle( 'org.apache.aries.blueprint:org.apache.aries.blueprint.core.compatibility:1.0.0', 20 )
+addBundle( 'org.apache.aries.quiesce:org.apache.aries.quiesce.api:1.0.0', 20 )
+
+// Jetty
+addBundle( 'org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0', 25 )
+addBundle( 'org.apache.geronimo.specs:geronimo-annotation_1.1_spec:1.0.1', 25 )
+addBundle( 'org.ops4j.pax.web:pax-web-jetty-bundle:4.0.0', 25 )
+
+// Felix web console
+addBundle( 'org.apache.felix:org.apache.felix.webconsole:4.2.4:all', 25 )
+addBundle( 'org.apache.felix:org.apache.felix.webconsole.plugins.ds:1.0.0', 25 )
+
+
+def getStartLevel( ResolvedArtifact item )
+{
+    def gav = item.moduleVersion.id
+    return bundleLevels["${gav.group}:${gav.name}:${gav.version}"]
+}
+
+def getBundleUri( ResolvedArtifact item )
+{
+    return item.file.toURI().toString()
+}
+
+task generateBundlesFile {
+    doLast {
+        def props = new Properties()
+
+        configurations.getByName( 'bundle' ).resolvedConfiguration.resolvedArtifacts.each {
+            def level = getStartLevel( it )
+            def uri = getBundleUri( it )
+            props.put( uri, level.toString() )
+        }
+
+        props.store( ( (File) bundlesFile ).newWriter(), '' )
+    }
+}

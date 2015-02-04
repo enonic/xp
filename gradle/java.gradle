@@ -19,6 +19,10 @@ configurations {
 }
 
 dependencies {
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-all:1.10.19'
+    testCompile 'org.codehaus.groovy:groovy-all:2.1.8'
+    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
     testOutput sourceSets.test.output
 }
 

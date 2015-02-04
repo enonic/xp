@@ -9,6 +9,7 @@ import com.enonic.xp.launcher.env.EnvironmentResolver;
 import com.enonic.xp.launcher.env.RequirementChecker;
 import com.enonic.xp.launcher.env.SystemProperties;
 import com.enonic.xp.launcher.framework.FrameworkService;
+import com.enonic.xp.launcher.logging.LogActivator;
 import com.enonic.xp.launcher.logging.LogConfigurator;
 import com.enonic.xp.launcher.provision.ProvisionActivator;
 import com.enonic.xp.launcher.util.BannerPrinter;
@@ -66,7 +67,15 @@ public final class Launcher
     {
         this.framework = new FrameworkService();
         this.framework.config( this.config );
+
+        addLogActivator();
         addProvisionActivator();
+    }
+
+    private void addLogActivator()
+    {
+        final LogActivator activator = new LogActivator();
+        this.framework.activator( activator );
     }
 
     private void addProvisionActivator()

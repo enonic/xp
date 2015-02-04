@@ -1,0 +1,10 @@
+apply from: "$rootDir/gradle/java.gradle"
+
+dependencies {
+    compile 'org.osgi:org.osgi.core:5.0.0'
+    compile 'org.osgi:org.osgi.compendium:5.0.0'
+    compile 'org.apache.felix:org.apache.felix.framework:4.6.0'
+    compile 'org.apache.felix:org.apache.felix.utils:1.6.0'
+    compile 'com.google.guava:guava:18.0'
+    compile 'ch.qos.logback:logback-classic:1.1.2'
+}

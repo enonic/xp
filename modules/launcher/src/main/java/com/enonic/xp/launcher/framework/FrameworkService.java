@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.felix.framework.Felix;
 import org.osgi.framework.BundleActivator;
+import org.osgi.framework.startlevel.FrameworkStartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +70,11 @@ public final class FrameworkService
     {
         this.felix.init();
         this.felix.start();
+        this.felix.adapt( FrameworkStartLevel.class ).setStartLevel( 1 );
+
         startActivators();
+
+        this.felix.adapt( FrameworkStartLevel.class ).setStartLevel( 40 );
 
         /*
 
