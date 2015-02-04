@@ -185,7 +185,7 @@ module app {
                     principalType = userItem.getPrincipal().getType();
                     principalPath = userItem.getPrincipal().getKey().toPath(true);
                     tabName = PrincipalType[principalType];
-                    tabName = tabName[0] + tabName.slice(0).toUpperCase();
+                    tabName = tabName[0] + tabName.slice(1).toLowerCase();
                     // Roles does not have a UserStore link
                     if (userItem.getPrincipal().getType() !== PrincipalType.ROLE) {
                         userStoreRequest = new GetUserStoreByKeyRequest(userItem.getPrincipal().getKey().getUserStore()).sendAndParse();
