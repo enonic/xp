@@ -6,6 +6,7 @@ module api.util.loader {
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
 
     enum LoaderStatus {
+        NOT_STARTED,
         LOADING,
         LOADED
     }
@@ -14,7 +15,7 @@ module api.util.loader {
 
         private request: api.rest.ResourceRequest<JSON, OBJECT[]>;
 
-        private status: LoaderStatus;
+        private status: LoaderStatus = LoaderStatus.NOT_STARTED;
 
         private results: OBJECT[];
 
@@ -53,6 +54,10 @@ module api.util.loader {
 
         isLoaded(): boolean {
             return this.status == LoaderStatus.LOADED;
+        }
+
+        isNotStarted(): boolean {
+            return this.status == LoaderStatus.NOT_STARTED;
         }
 
         setComparator(comparator: Comparator<OBJECT>): BaseLoader<JSON, OBJECT> {
