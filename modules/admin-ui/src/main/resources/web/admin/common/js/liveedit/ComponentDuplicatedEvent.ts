@@ -4,7 +4,7 @@ module api.liveedit {
     import RegionPath = api.content.page.region.RegionPath;
     import Component = api.content.page.region.Component;
 
-    export class ComponentDuplicateEvent extends api.event.Event {
+    export class ComponentDuplicatedEvent extends api.event.Event {
 
         private originalComponentView: ComponentView<Component>;
 
@@ -25,11 +25,11 @@ module api.liveedit {
             return this.duplicatedComponentView;
         }
 
-        static on(handler: (event: ComponentDuplicateEvent) => void, contextWindow: Window = window) {
+        static on(handler: (event: ComponentDuplicatedEvent) => void, contextWindow: Window = window) {
             Event.bind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
 
-        static un(handler?: (event: ComponentDuplicateEvent) => void, contextWindow: Window = window) {
+        static un(handler?: (event: ComponentDuplicatedEvent) => void, contextWindow: Window = window) {
             Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
     }

@@ -151,16 +151,17 @@ module api.liveedit {
                 this.getEl().setData(ItemType.ATTRIBUTE_TYPE, builder.type.getShortName());
             }
 
-            if (builder.tooltipViewer) {
-                this.tooltipViewer = builder.tooltipViewer;
+            /*          To disable all the tooltips
+             if (builder.tooltipViewer) {
+             this.tooltipViewer = builder.tooltipViewer;
 
-                this.tooltip = new api.ui.Tooltip(this).
-                    setSide(api.ui.Tooltip.SIDE_BOTTOM).
-                    setMode(api.ui.Tooltip.MODE_FOLLOW).
-                    setTrigger(api.ui.Tooltip.TRIGGER_NONE).
-                    setHideTimeout(0).
-                    setContent(this.tooltipViewer);
-            }
+             this.tooltip = new api.ui.Tooltip(this).
+             setSide(api.ui.Tooltip.SIDE_BOTTOM).
+             setMode(api.ui.Tooltip.MODE_FOLLOW).
+             setTrigger(api.ui.Tooltip.TRIGGER_NONE).
+             setHideTimeout(0).
+             setContent(this.tooltipViewer);
+             }*/
 
             if (builder.placeholder) {
                 this.placeholder = builder.placeholder;
@@ -175,20 +176,82 @@ module api.liveedit {
             this.onContextMenu(this.handleClick.bind(this));
             this.onTouchStart(this.handleClick.bind(this));
 
-            if (!this.isManagingTooltip()) {
-                // default tooltip behaviour if view is not managing tooltip
-                this.onMouseOverView(() => {
+
+            this.bindMouseListeners();
+        }
+
+        private bindMouseListeners() {
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                // no need to check if the view manages shader and highlighter here
+                // because it is essential to resize them on window resize
+                if (this.isSelected()) {
+                    this.highlight();
+                    this.shade();
+                }
+            });
+
+            this.onMouseOverView(() => {
+                var hasSelectedView = this.getPageView().hasSelectedView();
+
+                if (!this.isManagingTooltip()) {
                     this.showTooltip();
-                });
-                this.onMouseLeaveView(() => {
+                }
+                if (!this.isManagingHighlighter() && !hasSelectedView) {
+                    this.highlight();
+                }
+                if (!this.isManagingCursor()) {
+                    this.showCursor();
+                }
+            });
+
+            this.onMouseLeaveView(() => {
+                var hasSelectedView = this.getPageView().hasSelectedView();
+
+                if (!this.isManagingTooltip()) {
                     this.hideTooltip();
-                })
-            }
+                }
+                if (!this.isManagingHighlighter() && !hasSelectedView) {
+                    this.unhighlight();
+                }
+                if (!this.isManagingCursor()) {
+                    this.resetCursor();
+                }
+            });
+
+            Shader.get().onClicked((event: MouseEvent) => {
+                if (!this.isManagingShader()) {
+                    this.handleShaderClick(event);
+                }
+            });
+        }
+
+        highlight() {
+            Highlighter.get().highlightItemView(this);
+        }
+
+        unhighlight() {
+            Highlighter.get().hide()
+        }
+
+        shade() {
+            Shader.get().shadeItemView(this);
+        }
+
+        unshade() {
+            Shader.get().hide();
+        }
+
+        showCursor() {
+            Cursor.get().displayItemViewCursor(this);
+        }
+
+        resetCursor() {
+            Cursor.get().reset();
         }
 
         getPageView(): PageView {
             var pageView = this;
-            while (!PageItemType.get().equals(this.parentItemView.getType())) {
+            while (!PageItemType.get().equals(pageView.getType())) {
                 pageView = pageView.parentItemView;
             }
             return <PageView> pageView;
@@ -196,9 +259,46 @@ module api.liveedit {
 
         /**
          * Tells if the view wants to manage tooltips itself
+         * Will get basic mouse over/out behavior by default
          * @returns {boolean}
          */
         isManagingTooltip(): boolean {
+            return false;
+        }
+
+        /**
+         * Tells if the view wants to manage context menu itself
+         * Will get basic mouse selected/deselected behavior by default
+         * @returns {boolean}
+         */
+        isManagingContextMenu(): boolean {
+            return false;
+        }
+
+        /**
+         * Tells if the view wants to manage highlighter itself
+         * Will get basic mouse over/out behavior by default
+         * @returns {boolean}
+         */
+        isManagingHighlighter(): boolean {
+            return false;
+        }
+
+        /**
+         * Tells if the view wants to manage shader itself
+         * Will get basic click selects/deselects behavior by default
+         * @returns {boolean}
+         */
+        isManagingShader(): boolean {
+            return false;
+        }
+
+        /**
+         * Tells if the view wants to manage cursor itself
+         * Will get cursor defined in config on mouse over by default
+         * @returns {boolean}
+         */
+        isManagingCursor(): boolean {
             return false;
         }
 
@@ -209,6 +309,10 @@ module api.liveedit {
             if (this.loadMask) {
                 this.loadMask.remove();
             }
+
+            this.unhighlight();
+            this.unshade();
+
             super.remove();
             return this;
         }
@@ -328,7 +432,9 @@ module api.liveedit {
             // Turn off 'mouseOver' state and notify ItemVeiw was left.
             this.mouseOver = false;
             this.notifyMouseLeaveView();
-            this.tooltip.hide();
+            if (this.tooltip) {
+                this.tooltip.hide();
+            }
 
             // Notify parent ItemView is entered.
             if (this.parentItemView) {
@@ -364,6 +470,12 @@ module api.liveedit {
             }
         }
 
+        handleShaderClick(event: MouseEvent) {
+            if (this.isSelected()) {
+                this.deselect();
+            }
+        }
+
         deselectParent() {
             for (var parent = this.parentItemView; parent; parent = parent.parentItemView) {
                 if (parent.isSelected()) {
@@ -387,14 +499,18 @@ module api.liveedit {
             if (ItemView.debug) {
                 console.log('showing tooltip [' + this.getId() + "]");
             }
-            this.tooltip.show();
+            if (this.tooltip) {
+                this.tooltip.show();
+            }
         }
 
         hideTooltip(hideParentTooltip: boolean = true) {
             if (ItemView.debug) {
                 console.log('hiding tooltip [' + this.getId() + "]");
             }
-            this.tooltip.hide();
+            if (this.tooltip) {
+                this.tooltip.hide();
+            }
             if (hideParentTooltip && this.parentItemView) {
                 this.parentItemView.hideTooltip();
             }
@@ -422,6 +538,13 @@ module api.liveedit {
         hideContextMenu() {
             if (this.contextMenu) {
                 this.contextMenu.hide();
+            }
+        }
+
+        setContextMenuActions(actions: api.ui.Action[]) {
+            this.contextMenuActions = actions;
+            if (this.contextMenu) {
+                this.contextMenu.setActions(actions);
             }
         }
 
@@ -457,10 +580,27 @@ module api.liveedit {
             return this.getEl().hasAttribute('data-live-edit-selected');
         }
 
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition ) {
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
             this.getEl().setData("live-edit-selected", "true");
-            this.hideTooltip();
-            this.showContextMenu(clickPosition, menuPosition);
+
+            if (!this.isManagingContextMenu()) {
+                this.showContextMenu(clickPosition, menuPosition);
+            }
+            if (!this.isManagingTooltip()) {
+                this.hideTooltip();
+            }
+            if (!this.isManagingHighlighter()) {
+                this.highlight();
+            }
+            if (!this.isManagingShader()) {
+                this.shade();
+            }
+            if (!this.isManagingCursor()) {
+                this.showCursor();
+            }
+
+            // selecting anything should exit the text edit mode
+            this.stopTextEditMode();
 
             if (this.isEmpty()) {
                 this.selectPlaceholder();
@@ -471,7 +611,16 @@ module api.liveedit {
 
         deselect(silent?: boolean) {
             this.getEl().removeAttribute("data-live-edit-selected");
-            this.hideContextMenu();
+
+            if (!this.isManagingContextMenu()) {
+                this.hideContextMenu();
+            }
+            if (!this.isManagingHighlighter()) {
+                this.unhighlight();
+            }
+            if (!this.isManagingShader()) {
+                this.unshade();
+            }
 
             if (this.isEmpty()) {
                 this.deselectPlaceholder();
@@ -479,6 +628,13 @@ module api.liveedit {
 
             if (!silent) {
                 new ItemViewDeselectEvent(this).fire();
+            }
+        }
+
+        private stopTextEditMode() {
+            var pageView = this.getPageView();
+            if (pageView.isTextEditMode()) {
+                pageView.setTextEditMode(false);
             }
         }
 

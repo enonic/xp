@@ -52,12 +52,12 @@ module app.wizard.page {
     import DraggingComponentViewStartedEvent = api.liveedit.DraggingComponentViewStartedEvent;
     import DraggingComponentViewCompletedEvent = api.liveedit.DraggingComponentViewCompletedEvent;
     import DraggingComponentViewCanceledEvent = api.liveedit.DraggingComponentViewCanceledEvent;
-    import PageSelectEvent = api.liveedit.PageSelectEvent;
-    import RegionSelectEvent = api.liveedit.RegionSelectEvent;
+    import PageSelectedEvent = api.liveedit.PageSelectedEvent;
+    import RegionSelectedEvent = api.liveedit.RegionSelectedEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
-    import ComponentRemoveEvent = api.liveedit.ComponentRemoveEvent;
-    import ComponentDuplicateEvent = api.liveedit.ComponentDuplicateEvent;
+    import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
+    import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
 
     import Panel = api.ui.panel.Panel;
 
@@ -104,8 +104,6 @@ module app.wizard.page {
 
         private liveEditPageProxy: LiveEditPageProxy;
 
-        private selectedItemView: api.liveedit.ItemView;
-
         constructor(config: LiveFormPanelConfig) {
             super("live-form-panel");
             this.contentWizardPanel = config.contentWizardPanel;
@@ -125,7 +123,7 @@ module app.wizard.page {
 
             var saveAction = new api.ui.Action('Apply');
             saveAction.onExecuted(() => {
-                var itemView = this.getSelectedItemView();
+                var itemView = this.pageView.getSelectedView();
                 if (itemView) {
                     if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
                         this.saveAndReloadOnlyComponent(<ComponentView<Component>> itemView);
@@ -160,7 +158,6 @@ module app.wizard.page {
             // append it here in order for the context window to be above
             this.appendChild(this.liveEditPageProxy.getLoadMask());
 
-
             this.contextWindow = new ContextWindow(<ContextWindowConfig>{
                 liveFormPanel: this,
                 inspectionPanel: this.inspectionsPanel,
@@ -176,10 +173,6 @@ module app.wizard.page {
             );
 
             this.liveEditListen();
-        }
-
-        getSelectedItemView(): api.liveedit.ItemView {
-            return this.selectedItemView;
         }
 
         remove(): LiveFormPanel {
@@ -326,25 +319,27 @@ module app.wizard.page {
 
         private liveEditListen() {
 
+            this.liveEditPageProxy.onPageUnlocked((event: api.liveedit.PageUnlockedEvent) => {
+                // assign a page template to a page on unlock if needed
+                if (!this.pageModel.isPageTemplate() || this.pageModel.getMode() == PageMode.AUTOMATIC) {
+                    this.pageModel.initializePageFromDefault(this);
+                }
+            });
+
             this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
             });
-            this.liveEditPageProxy.onPageSelected((event: PageSelectEvent) => {
+            this.liveEditPageProxy.onPageSelected((event: PageSelectedEvent) => {
                 this.inspectPage();
             });
 
-            this.liveEditPageProxy.onRegionSelected((event: RegionSelectEvent) => {
+            this.liveEditPageProxy.onRegionSelected((event: RegionSelectedEvent) => {
                 this.inspectRegion(event.getRegionView());
             });
 
             this.liveEditPageProxy.onItemViewSelected((event: ItemViewSelectedEvent) => {
 
-                var itemView = event.getItemView(),
-                    selectedView = this.getSelectedItemView();
-
-                if (selectedView == itemView) {
-                    return;
-                }
+                var itemView = event.getItemView();
 
                 if (itemView.isEmpty() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, TextComponentView)) {
                     if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
@@ -357,18 +352,12 @@ module app.wizard.page {
                     }
                 }
 
-                if (selectedView) {
-                    // deselect old item silently because new one has already been selected
-                    this.getSelectedItemView().deselect(true);
-                }
-                this.selectedItemView = itemView;
-
                 if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
                     this.inspectComponent(<ComponentView<Component>>itemView);
                 }
             });
 
-            this.liveEditPageProxy.onDeselect((event: ItemViewDeselectEvent) => {
+            this.liveEditPageProxy.onItemViewDeselected((event: ItemViewDeselectEvent) => {
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
                 if (!toggler.isActive() && this.contextWindow.isShown()) {
                     this.contextWindow.slideOut();
@@ -376,10 +365,9 @@ module app.wizard.page {
                     this.contextWindow.slideIn();
                 }
                 this.contextWindow.clearSelection();
-                this.selectedItemView = null;
             });
 
-            this.liveEditPageProxy.onComponentRemoved((event: ComponentRemoveEvent) => {
+            this.liveEditPageProxy.onComponentRemoved((event: ComponentRemovedEvent) => {
 
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
                 if ((this.contextWindow.isFloating() || toggler.isActive()) && !this.contextWindow.isShown()) {
@@ -419,7 +407,7 @@ module app.wizard.page {
                 }
             });
 
-            this.liveEditPageProxy.onComponentDuplicated((event: ComponentDuplicateEvent) => {
+            this.liveEditPageProxy.onComponentDuplicated((event: ComponentDuplicatedEvent) => {
 
                 this.saveAndReloadOnlyComponent(event.getDuplicatedComponentView());
             });

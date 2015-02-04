@@ -172,7 +172,7 @@ module api.dom {
             this.children[index] = replacementChild;
         }
 
-        public loadExistingChildren() {
+        public loadExistingChildren(): Element {
 
             var children = this.getHTMLElement().children;
             for (var i = 0; i < children.length; i++) {
@@ -180,6 +180,7 @@ module api.dom {
                 var childAsElement = Element.fromHtmlElement(<HTMLElement>child, true, this);
                 this.children.push(childAsElement);
             }
+            return this;
         }
 
         init() {

@@ -1,6 +1,6 @@
 module api.liveedit {
 
-    export class PageSelectEvent extends api.event.Event {
+    export class PageSelectedEvent extends api.event.Event {
 
         private pageView: PageView;
 
@@ -13,11 +13,11 @@ module api.liveedit {
             return this.pageView;
         }
 
-        static on(handler: (event: PageSelectEvent) => void, contextWindow: Window = window) {
+        static on(handler: (event: PageSelectedEvent) => void, contextWindow: Window = window) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
 
-        static un(handler: (event: PageSelectEvent) => void, contextWindow: Window = window) {
+        static un(handler: (event: PageSelectedEvent) => void, contextWindow: Window = window) {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
     }

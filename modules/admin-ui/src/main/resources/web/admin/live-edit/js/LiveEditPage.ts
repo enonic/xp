@@ -21,22 +21,19 @@ module LiveEdit {
     import DraggingComponentViewCompletedEvent = api.liveedit.DraggingComponentViewCompletedEvent;
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
-    import ComponentRemoveEvent = api.liveedit.ComponentRemoveEvent;
+    import ComponentRemoveEvent = api.liveedit.ComponentRemovedEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ComponentResetEvent = api.liveedit.ComponentResetEvent;
     import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
+    import Shader = api.liveedit.Shader;
+    import Highlighter = api.liveedit.Highlighter;
+    import Cursor = api.liveedit.Cursor;
 
     export class LiveEditPage {
 
         private static INSTANCE: LiveEditPage;
 
         private pageView: PageView;
-
-        private highlighter: LiveEdit.ui.Highlighter;
-
-        private shader: LiveEdit.ui.Shader;
-
-        private cursor: LiveEdit.ui.Cursor;
 
         static get(): LiveEditPage {
             return LiveEditPage.INSTANCE;
@@ -67,18 +64,7 @@ module LiveEdit {
                     }
                 });
 
-                this.highlighter = new LiveEdit.ui.Highlighter();
-                api.dom.Body.get().appendChild(this.highlighter);
-
                 api.ui.Tooltip.allowMultipleInstances(false);
-
-                this.shader = new LiveEdit.ui.Shader();
-
-                this.cursor = new LiveEdit.ui.Cursor();
-
-                this.pageView.toItemViewArray().forEach((itemView: ItemView) => {
-                    this.setItemViewListeners(itemView);
-                });
 
                 this.registerGlobalListeners();
             });
@@ -86,115 +72,26 @@ module LiveEdit {
             LiveEditPage.INSTANCE = this;
         }
 
-        private exitTextEditModeIfNeeded() {
-            if (this.pageView.isTextEditMode()) {
-                this.pageView.setTextEditMode(false);
-            }
-        }
 
         private registerGlobalListeners(): void {
 
-            this.pageView.onItemViewAdded((event: api.liveedit.ItemViewAddedEvent) => {
-                this.setItemViewListeners(event.getView());
-
-                // adding anything should exit the text edit mode
-                this.exitTextEditModeIfNeeded();
-            });
-
-            ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => {
-                var component = event.getItemView();
-
-                // Highlighter should not be shown when type page is selected
-                if (component.getType().equals(api.liveedit.PageItemType.get())) {
-                    this.highlighter.hide();
-                    if (!component.isEmpty()) {
-                        this.shader.shadeItemView(component);
-                    }
-                    return;
-                } else if (component.getType().equals(api.liveedit.image.ImageItemType.get())) {
-                    var image = (<api.liveedit.image.ImageComponentView>component).getImage();
-                    if (image) {
-                        image.onLoaded(() => {
-                            this.highlighter.highlightItemView(component);
-                            this.shader.shadeItemView(component);
-                        });
-                    }
-                }
-
-                // selecting anything should exit the text edit mode
-                this.exitTextEditModeIfNeeded();
-
-                this.highlighter.highlightItemView(component);
-                this.shader.shadeItemView(component);
-                this.cursor.displayItemViewCursor(component);
-            });
-            ItemViewDeselectEvent.on((event: ItemViewDeselectEvent) => {
-                this.highlighter.hide();
-                this.shader.hide();
-            });
             ComponentResetEvent.on((event: ComponentResetEvent) => {
                 LiveEdit.component.dragdropsort.DragDropSort.refreshSortable();
             });
 
             DraggingComponentViewStartedEvent.on(() => {
-                this.highlighter.hide();
-                this.shader.hide();
-                this.cursor.hide();
+                Highlighter.get().hide();
+                Shader.get().hide();
+                Cursor.get().hide();
 
                 // dragging anything should exit the text edit mode
-                this.exitTextEditModeIfNeeded();
+                //this.exitTextEditModeIfNeeded();
             });
+
             DraggingComponentViewCompletedEvent.on(() => {
-                this.cursor.reset();
-            });
-            ComponentRemoveEvent.on((event: ComponentRemoveEvent) => {
-                this.highlighter.hide();
-                this.shader.hide();
-            });
-            wemjq(window).on('resizeBrowserWindow.liveEdit', () => {
-                var selectedView = this.pageView.getSelectedView();
-                this.highlighter.highlightItemView(selectedView);
-                this.shader.shadeItemView(selectedView);
+                Cursor.get().reset();
             });
 
-            LiveEdit.ui.ShaderClickedEvent.on(() => {
-                var selectedView = this.pageView.getSelectedView();
-                if (selectedView) {
-                    selectedView.deselect();
-                }
-            });
-
-        }
-
-        setItemViewListeners(itemView: ItemView) {
-            itemView.onMouseOverView(() => {
-                if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
-                    return;
-                }
-                if (itemView.getType().equals(api.liveedit.PageItemType.get()) &&
-                    (itemView.isEmpty() || this.pageView.isTextEditMode())) {
-                    // don't show highlighter for page that is empty or in text edit mode
-                    return;
-                }
-
-                if (itemView.getType().equals(api.liveedit.text.TextItemType.get()) &&
-                    (<api.liveedit.text.TextComponentView> itemView).isEditMode()) {
-                    // don't show highlighter for text component in edit mode
-                    return;
-                }
-
-                this.highlighter.highlightItemView(itemView);
-                this.cursor.displayItemViewCursor(itemView);
-            });
-
-            itemView.onMouseLeaveView(() => {
-                if (this.hasSelectedView() || LiveEdit.component.dragdropsort.DragDropSort.isDragging()) {
-                    return;
-                }
-
-                this.highlighter.hide();
-                this.cursor.reset();
-            });
         }
 
         getByItemId(id: ItemViewId) {
@@ -219,10 +116,6 @@ module LiveEdit {
 
             new ComponentAddedEvent().setComponentView(componentView).fire();
             componentView.select();
-        }
-
-        hasSelectedView(): boolean {
-            return this.pageView.hasSelectedView();
         }
 
         createComponent(region: Region, type: ComponentType, precedingComponentView: ComponentView<Component>): Component {

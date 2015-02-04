@@ -66,6 +66,14 @@ module api.dom {
             this.el.removeEventListener("resize", listener);
         }
 
+        getWidth(): number {
+            return wemjq(this.el).innerWidth();
+        }
+
+        getHeight(): number {
+            return wemjq(this.el).innerHeight();
+        }
+
         onScroll(listener: (event: UIEvent) => void, element?: api.dom.Element) {
             this.el.addEventListener('scroll', listener);
 

@@ -1,10 +1,10 @@
-module LiveEdit.ui {
+module api.liveedit {
 
-    import ItemView = api.liveedit.ItemView;
-
-    export class Highlighter extends BaseComponent {
+    export class Highlighter extends api.dom.Element {
 
         private rectangle: api.dom.Element;
+
+        private static INSTANCE: Highlighter;
 
         constructor() {
             // Needs to be a SVG element as the css has pointer-events:none
@@ -18,6 +18,15 @@ module LiveEdit.ui {
 
             this.rectangle = this.getChildren()[0];
             this.appendChild(this.rectangle);
+
+            api.dom.Body.get().appendChild(this);
+        }
+
+        public static get(): Highlighter {
+            if (!Highlighter.INSTANCE) {
+                Highlighter.INSTANCE = new Highlighter();
+            }
+            return Highlighter.INSTANCE;
         }
 
         highlightItemView(itemView: ItemView): void {

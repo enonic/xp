@@ -3,7 +3,7 @@ module api.liveedit {
     import RegionPath = api.content.page.region.RegionPath;
     import RegionView = api.liveedit.RegionView;
 
-    export class RegionSelectEvent extends api.event.Event {
+    export class RegionSelectedEvent extends api.event.Event {
 
         private pageItemView: RegionView;
 
@@ -16,11 +16,11 @@ module api.liveedit {
             return this.pageItemView;
         }
 
-        static on(handler: (event: RegionSelectEvent) => void, contextWindow: Window = window) {
+        static on(handler: (event: RegionSelectedEvent) => void, contextWindow: Window = window) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
 
-        static un(handler: (event: RegionSelectEvent) => void, contextWindow: Window = window) {
+        static un(handler: (event: RegionSelectedEvent) => void, contextWindow: Window = window) {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
     }

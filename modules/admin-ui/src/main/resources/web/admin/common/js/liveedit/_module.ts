@@ -7,6 +7,9 @@
 ///<reference path='ComponentItemType.ts' />
 ///<reference path='PageItemType.ts' />
 ///<reference path='ContentItemType.ts' />
+///<reference path='Shader.ts' />
+///<reference path='Highlighter.ts' />
+///<reference path='Cursor.ts' />
 ///<reference path='ItemViewId.ts' />
 ///<reference path='ItemViewIdProducer.ts' />
 ///<reference path='RepeatNextItemViewIdProducer.ts' />
@@ -33,20 +36,19 @@
 ///<reference path='PageView.ts' />
 ///<reference path='ContentView.ts' />
 
+///<reference path='PageUnlockedEvent.ts' />
 ///<reference path='ImageOpenUploadDialogEvent.ts' />
 ///<reference path='ImageUploadedEvent.ts' />
 ///<reference path='DraggingComponentViewStartedEvent.ts' />
 ///<reference path='DraggingComponentViewCompletedEvent.ts' />
 ///<reference path='DraggingComponentViewCanceledEvent.ts' />
 ///<reference path='ItemFromContextWindowDroppedEvent.ts' />
-///<reference path='PageSelectEvent.ts' />
-///<reference path='RegionSelectEvent.ts' />
+///<reference path='PageSelectedEvent.ts' />
+///<reference path='RegionSelectedEvent.ts' />
 ///<reference path='ComponentAddedEvent.ts' />
-///<reference path='ComponentRemoveEvent.ts' />
+///<reference path='ComponentRemovedEvent.ts' />
 ///<reference path='ComponentResetEvent.ts' />
-///<reference path='ComponentDuplicateEvent.ts' />
+///<reference path='ComponentDuplicatedEvent.ts' />
 ///<reference path='ComponentLoadedEvent.ts' />
 ///<reference path='Position.ts' />
 ///<reference path='LiveEditPageViewReadyEvent.ts' />
-///<reference path='StartTextEditModeEvent.ts' />
-///<reference path='StopTextEditModeEvent.ts' />

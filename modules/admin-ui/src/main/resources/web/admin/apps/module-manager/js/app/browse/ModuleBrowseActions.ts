@@ -1,6 +1,8 @@
 module app.browse {
 
-    export class ModuleBrowseActions {
+    import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
+
+    export class ModuleBrowseActions implements TreeGridActions {
 
         public INSTALL_MODULE: api.ui.Action;
         public UNINSTALL_MODULE: api.ui.Action;
