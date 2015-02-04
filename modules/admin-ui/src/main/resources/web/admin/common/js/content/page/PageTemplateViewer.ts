@@ -1,24 +1,21 @@
 module api.content.page {
 
-    export class PageTemplateViewer extends api.ui.Viewer<PageTemplate> {
-
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class PageTemplateViewer extends api.ui.NamesAndIconViewer<PageTemplate> {
 
         constructor() {
             super();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            this.namesAndIconView.setIconClass("icon-newspaper icon-large");
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(pageTemplate: PageTemplate) {
-            super.setObject(pageTemplate);
-            this.namesAndIconView.setMainName(pageTemplate.getDisplayName()).
-                setSubName(pageTemplate.getController().toString());
+        resolveDisplayName(object: PageTemplate): string {
+            return object.getDisplayName();
         }
 
-        getPreferredHeight(): number {
-            return 50;
+        resolveSubName(object: PageTemplate, relativePath: boolean = false): string {
+            return object.getController().toString();
+        }
+
+        resolveIconClass(object: PageTemplate): string {
+            return "icon-newspaper icon-large";
         }
     }
 }

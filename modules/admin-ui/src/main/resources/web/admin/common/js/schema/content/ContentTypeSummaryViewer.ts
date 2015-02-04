@@ -1,27 +1,24 @@
 module api.schema.content {
 
-    export class ContentTypeSummaryViewer extends api.ui.Viewer<ContentTypeSummary> {
-
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class ContentTypeSummaryViewer extends api.ui.NamesAndIconViewer<ContentTypeSummary> {
 
         private contentTypeIconUrlResolver: ContentTypeIconUrlResolver;
 
         constructor() {
             super();
             this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(contentType: ContentTypeSummary) {
-            super.setObject(contentType);
-            this.namesAndIconView.setMainName(contentType.getDisplayName()).
-                setSubName(contentType.getName()).
-                setIconUrl(this.contentTypeIconUrlResolver.resolve(contentType));
+        resolveDisplayName(object: ContentTypeSummary): string {
+            return object.getDisplayName();
         }
 
-        getPreferredHeight(): number {
-            return 50;
+        resolveSubName(object: ContentTypeSummary, relativePath: boolean = false): string {
+            return object.getName();
+        }
+
+        resolveIconUrl(object: ContentTypeSummary): string {
+            return this.contentTypeIconUrlResolver.resolve(object);
         }
     }
 }

@@ -1,76 +1,59 @@
 module api.content {
 
-    export class ContentSummaryAndCompareStatusViewer extends api.ui.Viewer<ContentSummaryAndCompareStatus> {
-
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class ContentSummaryAndCompareStatusViewer extends api.ui.NamesAndIconViewer<ContentSummaryAndCompareStatus> {
 
         constructor() {
             super("content-summary-and-compare-status-viewer");
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().
-                setSize(api.app.NamesAndIconViewSize.small).
-                build();
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus, relativePath: boolean = false) {
-            super.setObject(contentSummaryAndCompareStatus);
+        resolveDisplayName(object: ContentSummaryAndCompareStatus): string {
+            var contentSummary = object.getContentSummary(),
+                uploadItem = object.getUploadItem();
 
-            var contentSummary = contentSummaryAndCompareStatus.getContentSummary();
-            var uploadItem = contentSummaryAndCompareStatus.getUploadItem();
+            if (contentSummary) {
+                return contentSummary.getDisplayName();
+            } else if (uploadItem) {
+                return uploadItem.getName();
+            }
 
-            var subName,
-                subTitle,
-                displayName,
-                iconUrl;
+            return "";
+        }
 
-            if (!!contentSummary) {
-                iconUrl = new ContentIconUrlResolver().
-                    setContent(contentSummary).
-                    setCrop(false).resolve();
+        resolveSubName(object: ContentSummaryAndCompareStatus, relativePath: boolean = false): string {
+            var contentSummary = object.getContentSummary(),
+                uploadItem = object.getUploadItem();
 
-                this.namesAndIconView.setIconUrl(iconUrl);
-
-                displayName = contentSummary.getDisplayName();
-                subName = this.resolveSubName(contentSummary, relativePath);
-                subTitle = contentSummary.getPath().toString();
-
+            if (contentSummary) {
                 this.toggleClass("invalid", !contentSummary.isValid());
-            } else if (!!uploadItem) {
-                this.namesAndIconView.setIconClass('icon-file-upload2');
 
-                displayName = uploadItem.getName();
-                subName = uploadItem.getName();
+                var contentName = contentSummary.getName();
+                if (relativePath) {
+                    return !contentName.isUnnamed() ? contentName.toString() :
+                                                      api.ui.NamesAndIconViewer.EMPTY_SUB_NAME;
+                } else {
+                    return !contentName.isUnnamed() ? contentSummary.getPath().toString() :
+                                                      ContentPath.fromParent(contentSummary.getPath().getParentPath(),
+                                                                             api.ui.NamesAndIconViewer.EMPTY_SUB_NAME).toString();
+                }
+            } else if (uploadItem) {
+                return uploadItem.getName();
             }
 
-            this.namesAndIconView.setMainName(displayName).
-                setSubName(subName, subTitle);
-
+            return "";
         }
 
-        private resolveSubName(content: ContentSummary, relativePath: boolean): string {
-
-            var contentName = content.getName();
-            if (relativePath) {
-                if (contentName.isUnnamed()) {
-                    return ContentUnnamed.PRETTY_UNNAMED;
-                }
-                else {
-                    return content.getName().toString()
-                }
-            }
-            else {
-                if (contentName.isUnnamed()) {
-                    var parentPath = content.getPath().getParentPath();
-                    return ContentPath.fromParent(parentPath, ContentUnnamed.PRETTY_UNNAMED).toString();
-                }
-                else {
-                    return content.getPath().toString();
-                }
-            }
+        resolveSubTitle(object: ContentSummaryAndCompareStatus): string {
+            var contentSummary = object.getContentSummary();
+            return !!contentSummary ? contentSummary.getPath().toString() : "";
         }
 
-        getPreferredHeight(): number {
-            return 50;
+        resolveIconClass(object: ContentSummaryAndCompareStatus): string {
+            return !!object.getUploadItem() ? "icon-file-upload2" : "";
+        }
+
+        resolveIconUrl(object: ContentSummaryAndCompareStatus): string {
+            var contentSummary = object.getContentSummary();
+            return !!contentSummary ? new ContentIconUrlResolver().setContent(contentSummary).setCrop(false).resolve() : "";
         }
     }
 }

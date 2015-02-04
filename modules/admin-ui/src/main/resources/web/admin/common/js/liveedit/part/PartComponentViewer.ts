@@ -1,24 +1,21 @@
 module api.liveedit.part {
 
-    export class PartComponentViewer extends api.ui.Viewer<api.content.page.region.PartComponent> {
-
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class PartComponentViewer extends api.ui.NamesAndIconViewer<api.content.page.region.PartComponent> {
 
         constructor() {
             super();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(partComponent: api.content.page.region.PartComponent) {
-            super.setObject(partComponent);
-            this.namesAndIconView.setMainName(partComponent.getName() ? partComponent.getName().toString() : "").
-                setSubName(partComponent.getPath().toString()).
-                setIconClass('live-edit-font-icon-part');
+        resolveDisplayName(object: api.content.page.region.PartComponent): string {
+            return !!object.getName() ? object.getName().toString() : "";
         }
 
-        getPreferredHeight(): number {
-            return 50;
+        resolveSubName(object: api.content.page.region.PartComponent, relativePath: boolean = false): string {
+            return object.getPath().toString();
+        }
+
+        resolveIconClass(object: api.content.page.region.PartComponent): string {
+            return "live-edit-font-icon-part";
         }
     }
 

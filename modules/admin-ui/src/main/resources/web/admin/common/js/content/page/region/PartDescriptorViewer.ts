@@ -1,24 +1,21 @@
 module api.content.page.region {
 
-    export class PartDescriptorViewer extends api.ui.Viewer<PartDescriptor> {
-
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class PartDescriptorViewer extends api.ui.NamesAndIconViewer<PartDescriptor> {
 
         constructor() {
             super();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build()
-                .setIconClass("icon-puzzle icon-large");
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(partDescriptor: PartDescriptor) {
-            super.setObject(partDescriptor);
-            this.namesAndIconView.setMainName(partDescriptor.getDisplayName()).
-                setSubName(partDescriptor.getKey().toString());
+        resolveDisplayName(object: PartDescriptor): string {
+            return object.getDisplayName();
         }
 
-        getPreferredHeight(): number {
-            return 50;
+        resolveSubName(object: PartDescriptor, relativePath: boolean = false): string {
+            return object.getKey().toString();
+        }
+
+        resolveIconClass(object: PartDescriptor): string {
+            return "icon-puzzle icon-large";
         }
     }
 }

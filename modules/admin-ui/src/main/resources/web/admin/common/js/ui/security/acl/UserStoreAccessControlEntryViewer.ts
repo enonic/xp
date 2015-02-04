@@ -1,39 +1,23 @@
 module api.ui.security.acl {
 
-    import PrincipalType = api.security.PrincipalType;
-    import PrincipalKey = api.security.PrincipalKey;
-    import UserStoreKey = api.security.UserStoreKey;
     import UserStoreAccessControlEntry = api.security.acl.UserStoreAccessControlEntry;
 
-    export class UserStoreAccessControlEntryViewer extends api.ui.Viewer<UserStoreAccessControlEntry> {
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class UserStoreAccessControlEntryViewer extends api.ui.NamesAndIconViewer<UserStoreAccessControlEntry> {
 
         constructor() {
             super();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().
-                setSize(api.app.NamesAndIconViewSize.small).
-                build();
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(ace: UserStoreAccessControlEntry) {
-            super.setObject(ace);
-
-            this.namesAndIconView.setMainName(ace.getPrincipalDisplayName()).
-                setSubName(this.resolveSubName(ace.getPrincipalKey())).
-                setIconClass(this.resolveIconClass(ace.getPrincipalKey()));
+        resolveDisplayName(object: UserStoreAccessControlEntry): string {
+            return object.getPrincipalDisplayName();
         }
 
-        private resolveSubName(key: PrincipalKey): string {
-            return key.toPath();
+        resolveSubName(object: UserStoreAccessControlEntry, relativePath: boolean = false): string {
+            return object.getPrincipalKey().toPath();
         }
 
-        private resolveIconClass(key: PrincipalKey): string {
+        resolveIconClass(object: UserStoreAccessControlEntry): string {
             return "icon-users";
-        }
-
-        getPreferredHeight(): number {
-            return 50;
         }
     }
 

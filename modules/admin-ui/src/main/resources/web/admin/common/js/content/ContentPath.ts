@@ -100,9 +100,8 @@ module api.content {
             var prettyElements: string[] = [];
             this.elements.forEach((element: string) => {
                 if (ContentName.fromString(element).isUnnamed()) {
-                    prettyElements.push(ContentUnnamed.PRETTY_UNNAMED);
-                }
-                else {
+                    prettyElements.push("<" + ContentUnnamed.PRETTY_UNNAMED + ">");
+                } else {
                     prettyElements.push(element);
                 }
             });

@@ -1,27 +1,22 @@
 module api.content.page {
 
-    export class PageDescriptorViewer extends  api.ui.Viewer<PageDescriptor> {
-
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class PageDescriptorViewer extends api.ui.NamesAndIconViewer<PageDescriptor> {
 
         constructor() {
             super();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder()
-                .setSize(api.app.NamesAndIconViewSize.small).build();
-            this.namesAndIconView.setIconClass('icon-file icon-large');
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(desriptor: PageDescriptor) {
-            super.setObject(desriptor);
-            this.namesAndIconView.setMainName(desriptor.getDisplayName()).
-                setSubName(desriptor.getKey().toString());
+        resolveDisplayName(object: PageDescriptor): string {
+            return object.getDisplayName();
         }
 
-        getPreferredHeight(): number {
-            return 50;
+        resolveSubName(object: PageDescriptor, relativePath: boolean = false): string {
+            return object.getKey().toString();
         }
 
+        resolveIconClass(object: PageDescriptor): string {
+            return "icon-file icon-large";
+        }
     }
 
 }
