@@ -124,13 +124,14 @@ public class ContentServiceImpl
 
         MODULE_CONFIGS_DATA_SERIALIZER.toProperties( params.getModuleConfigs(), data.getRoot() );
 
-        final CreateContentParams createContentParams = new CreateContentParams().
+        final CreateContentParams createContentParams = CreateContentParams.create().
             type( ContentTypeName.site() ).
             parent( params.getParentContentPath() ).
             name( params.getName() ).
             displayName( params.getDisplayName() ).
             contentData( data ).
-            requireValid( params.isRequireValid() );
+            requireValid( params.isRequireValid() ).
+            build();
 
         final Site site = (Site) CreateContentCommand.create().
             nodeService( this.nodeService ).
@@ -143,14 +144,15 @@ public class ContentServiceImpl
             build().
             execute();
 
-        this.create( new CreateContentParams().
+        this.create( CreateContentParams.create().
             owner( site.getOwner() ).
             displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
             name( TEMPLATES_FOLDER_NAME ).
             parent( site.getPath() ).
             type( ContentTypeName.templateFolder() ).
             requireValid( true ).
-            contentData( new PropertyTree() ) );
+            contentData( new PropertyTree() ).
+            build() );
 
         return site;
     }
@@ -180,14 +182,15 @@ public class ContentServiceImpl
 
         if ( content instanceof Site )
         {
-            this.create( new CreateContentParams().
+            this.create( CreateContentParams.create().
                 owner( content.getOwner() ).
                 displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
                 name( TEMPLATES_FOLDER_NAME ).
                 parent( content.getPath() ).
                 type( ContentTypeName.templateFolder() ).
                 requireValid( true ).
-                contentData( new PropertyTree() ) );
+                contentData( new PropertyTree() ).
+                build() );
         }
 
         return content;

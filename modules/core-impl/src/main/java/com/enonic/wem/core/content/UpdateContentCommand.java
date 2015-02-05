@@ -1,5 +1,7 @@
 package com.enonic.wem.core.content;
 
+import java.time.Instant;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +13,7 @@ import com.enonic.wem.api.content.ContentEditor;
 import com.enonic.wem.api.content.ContentUpdatedEvent;
 import com.enonic.wem.api.content.EditableContent;
 import com.enonic.wem.api.content.UpdateContentParams;
+import com.enonic.wem.api.content.UpdateContentTranslatorParams;
 import com.enonic.wem.api.media.MediaInfo;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.UpdateNodeParams;
@@ -69,9 +72,28 @@ final class UpdateContentCommand
 
         editedContent = Content.newContent( editedContent ).
             modifier( this.params.getModifier() ).
+            modifiedTime( Instant.now() ).
             valid( validated ).
             build();
+        editedContent = processContent( contentBeforeChange, editedContent );
+        editedContent = attachThumbnai( editedContent );
 
+        final UpdateContentTranslatorParams updateContentTranslatorParams = UpdateContentTranslatorParams.create().
+            editedContent( editedContent ).
+            createAttachments( this.params.getCreateAttachments() ).
+            modifier( getCurrentUser().getKey() ).
+            build();
+
+        final UpdateNodeParams updateNodeParams = translator.toUpdateNodeParams( updateContentTranslatorParams );
+        final Node editedNode = this.nodeService.update( updateNodeParams );
+
+        eventPublisher.publish( new ContentUpdatedEvent( editedContent.getId() ) );
+
+        return translator.fromNode( editedNode );
+    }
+
+    private Content processContent( final Content contentBeforeChange, Content editedContent )
+    {
         final ProcessUpdateResult processUpdateResult =
             proxyProcessor.processEdit( contentBeforeChange.getType(), params, params.getCreateAttachments() );
         if ( processUpdateResult != null )
@@ -82,7 +104,11 @@ final class UpdateContentCommand
             }
             this.params.createAttachments( processUpdateResult.createAttachments );
         }
+        return editedContent;
+    }
 
+    private Content attachThumbnai( Content editedContent )
+    {
         if ( !editedContent.hasThumbnail() )
         {
             final Thumbnail mediaThumbnail = resolveMediaThumbnail( editedContent );
@@ -91,13 +117,7 @@ final class UpdateContentCommand
                 editedContent = Content.newContent( editedContent ).thumbnail( mediaThumbnail ).build();
             }
         }
-
-        final UpdateNodeParams updateNodeParams = translator.toUpdateNodeCommand( editedContent, this.params.getCreateAttachments() );
-        final Node editedNode = this.nodeService.update( updateNodeParams );
-
-        eventPublisher.publish( new ContentUpdatedEvent( editedContent.getId() ) );
-
-        return translator.fromNode( editedNode );
+        return editedContent;
     }
 
     private Content editContent( final ContentEditor editor, final Content original )

@@ -59,14 +59,15 @@ final class CreateMediaCommand
             byteSource( params.getByteSource() ).
             build();
 
-        final CreateContentParams createContentParams = new CreateContentParams().
+        final CreateContentParams createContentParams = CreateContentParams.create().
             name( params.getName() ).
             parent( params.getParent() ).
             requireValid( true ).
             type( type ).
             displayName( params.getName() ).
             contentData( data ).
-            createAttachments( CreateAttachments.from( mediaAttachment ) );
+            createAttachments( CreateAttachments.from( mediaAttachment ) ).
+            build();
 
         final CreateContentCommand createCommand = CreateContentCommand.create( this ).
             mediaInfo( mediaInfo ).

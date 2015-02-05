@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.jslib.content;
 
+import java.time.Instant;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -10,6 +12,7 @@ import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.Metadatas;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.xp.portal.jslib.AbstractHandlerTest;
 
@@ -40,7 +43,9 @@ public class CreateContentHandlerTest
     {
         Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
+
         final Mixin metaMixin = Mixin.newMixin().name( "mymodule:test" ).build();
+
         Mockito.when( this.mixinService.getByLocalName( Mockito.eq( "test" ) ) ).thenReturn( metaMixin );
 
         execute( "createContent" );
@@ -56,6 +61,8 @@ public class CreateContentHandlerTest
         builder.valid( params.isRequireValid() );
         builder.type( params.getType() );
         builder.data( params.getData() );
+        builder.creator( PrincipalKey.ofAnonymous() );
+        builder.createdTime( Instant.parse( "1975-01-08T00:00:00Z" ) );
 
         if ( params.getMetadata() != null )
         {

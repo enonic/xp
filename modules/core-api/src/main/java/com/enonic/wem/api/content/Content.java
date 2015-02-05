@@ -158,7 +158,7 @@ public class Content
 
     public PrincipalKey getCreator()
     {
-        return modifier;
+        return creator;
     }
 
     public PrincipalKey getModifier()

@@ -24,23 +24,14 @@ final class NodeJson
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("createdTime")
-    private Instant createdTime;
+    @JsonProperty("timestamp")
+    private Instant timestamp;
 
     @JsonProperty("data")
     private List<PropertyArrayJson> data;
 
-    @JsonProperty("modifiedTime")
-    private Instant modifiedTime;
-
     @JsonProperty("indexConfigDocument")
     private IndexConfigDocumentJson indexConfigDocument;
-
-    @JsonProperty("modifier")
-    private String modifier;
-
-    @JsonProperty("creator")
-    private String creator;
 
     @JsonProperty("childOrder")
     private String childOrder;
@@ -71,7 +62,8 @@ final class NodeJson
             permissions( fromJson( this.permissions ) ).
             inheritPermissions( this.inheritPermissions ).
             nodeType( NodeType.from( this.nodeType ) ).
-            attachedBinaries( fromNodeAttahcedBinaryJsonList( attachedBinaries ) ).
+            attachedBinaries( fromNodeAttachedBinaryJsonList( attachedBinaries ) ).
+            timestamp( this.timestamp ).
             build();
     }
 
@@ -86,7 +78,7 @@ final class NodeJson
         return builder.build();
     }
 
-    private AttachedBinaries fromNodeAttahcedBinaryJsonList( final List<AttachedBinaryJson> list )
+    private AttachedBinaries fromNodeAttachedBinaryJsonList( final List<AttachedBinaryJson> list )
     {
         final AttachedBinaries.Builder builder = AttachedBinaries.create();
         for ( final AttachedBinaryJson entry : list )
@@ -109,6 +101,7 @@ final class NodeJson
         json.inheritPermissions = node.inheritsPermissions();
         json.nodeType = node.getNodeType().getName();
         json.attachedBinaries = toNodeAttachedBinaryJsonList( node.getAttachedBinaries() );
+        json.timestamp = node.getTimestamp();
         return json;
     }
 

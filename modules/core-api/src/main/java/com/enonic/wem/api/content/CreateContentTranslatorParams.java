@@ -1,5 +1,6 @@
 package com.enonic.wem.api.content;
 
+import java.time.Instant;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -10,7 +11,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 
-public final class CreateContentParams
+public class CreateContentTranslatorParams
 {
     private final PropertyTree data;
 
@@ -20,13 +21,21 @@ public final class CreateContentParams
 
     private final PrincipalKey owner;
 
+    private final PrincipalKey creator;
+
+    private final PrincipalKey modifier;
+
+    private final Instant createdTime;
+
+    private final Instant modifiedTime;
+
     private final String displayName;
 
     private final ContentName name;
 
     private final ContentPath parentContentPath;
 
-    private final boolean requireValid;
+    private final boolean valid;
 
     private final CreateAttachments createAttachments;
 
@@ -34,19 +43,30 @@ public final class CreateContentParams
 
     private final boolean inheritPermissions;
 
-    private CreateContentParams( Builder builder )
+    private CreateContentTranslatorParams( Builder builder )
     {
+        final Instant now = Instant.now();
+
         this.data = builder.data;
         this.metadata = builder.metadata;
         this.type = builder.type;
         this.owner = builder.owner;
+        this.creator = builder.creator;
+        this.modifier = builder.creator;
+        this.createdTime = now;
+        this.modifiedTime = now;
         this.displayName = builder.displayName;
         this.name = builder.name;
-        this.parentContentPath = builder.parentPath;
-        this.requireValid = builder.requireValid;
+        this.parentContentPath = builder.parent;
+        this.valid = builder.valid;
         this.permissions = builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.createAttachments = builder.createAttachments;
+    }
+
+    public static Builder create( final CreateContentParams source )
+    {
+        return new Builder( source );
     }
 
     public static Builder create()
@@ -54,10 +74,6 @@ public final class CreateContentParams
         return new Builder();
     }
 
-    public static Builder create( final CreateContentParams source )
-    {
-        return new Builder( source );
-    }
 
     public PropertyTree getData()
     {
@@ -79,6 +95,26 @@ public final class CreateContentParams
         return owner;
     }
 
+    public PrincipalKey getCreator()
+    {
+        return creator;
+    }
+
+    public PrincipalKey getModifier()
+    {
+        return modifier;
+    }
+
+    public Instant getCreatedTime()
+    {
+        return createdTime;
+    }
+
+    public Instant getModifiedTime()
+    {
+        return modifiedTime;
+    }
+
     public String getDisplayName()
     {
         return displayName;
@@ -94,9 +130,9 @@ public final class CreateContentParams
         return parentContentPath;
     }
 
-    public boolean isRequireValid()
+    public boolean isValid()
     {
-        return requireValid;
+        return valid;
     }
 
     public CreateAttachments getCreateAttachments()
@@ -124,13 +160,13 @@ public final class CreateContentParams
 
         private PrincipalKey owner;
 
+        private PrincipalKey creator;
+
         private String displayName;
 
         private ContentName name;
 
-        private ContentPath parentPath;
-
-        private boolean requireValid;
+        private ContentPath parent;
 
         private boolean valid;
 
@@ -144,19 +180,18 @@ public final class CreateContentParams
         {
         }
 
-        private Builder( final CreateContentParams source )
+        private Builder( final CreateContentParams params )
         {
-            this.data = source.data;
-            this.metadata = source.metadata;
-            this.type = source.type;
-            this.owner = source.owner;
-            this.displayName = source.displayName;
-            this.name = source.name;
-            this.parentPath = source.parentContentPath;
-            this.requireValid = source.requireValid;
-            this.permissions = source.permissions;
-            this.inheritPermissions = source.inheritPermissions;
-            this.createAttachments = source.createAttachments;
+            this.data = params.getData();
+            this.metadata = params.getMetadata();
+            this.type = params.getType();
+            this.owner = params.getOwner();
+            this.displayName = params.getDisplayName();
+            this.name = params.getName();
+            this.parent = params.getParent();
+            this.permissions = params.getPermissions();
+            this.createAttachments = params.getCreateAttachments();
+            this.inheritPermissions = params.isInheritPermissions();
         }
 
         public Builder contentData( final PropertyTree data )
@@ -183,6 +218,12 @@ public final class CreateContentParams
             return this;
         }
 
+        public Builder creator( final PrincipalKey creator )
+        {
+            this.creator = creator;
+            return this;
+        }
+
         public Builder displayName( final String displayName )
         {
             this.displayName = displayName;
@@ -204,13 +245,13 @@ public final class CreateContentParams
 
         public Builder parent( final ContentPath parentContentPath )
         {
-            this.parentPath = parentContentPath;
+            this.parent = parentContentPath;
             return this;
         }
 
-        public Builder requireValid( final boolean requireValid )
+        public Builder valid( final boolean valid )
         {
-            this.requireValid = requireValid;
+            this.valid = valid;
             return this;
         }
 
@@ -234,19 +275,23 @@ public final class CreateContentParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( parentPath, "parentContentPath cannot be null" );
-            Preconditions.checkArgument( parentPath.isAbsolute(), "parentContentPath must be absolute: " + parentPath );
+            Preconditions.checkNotNull( parent, "parentContentPath cannot be null" );
+            Preconditions.checkArgument( parent.isAbsolute(), "parentContentPath must be absolute: " + parent );
             Preconditions.checkNotNull( data, "data cannot be null" );
-            Preconditions.checkArgument( requireValid || this.parentPath != null, "parentContentPath cannot be null" );
             Preconditions.checkNotNull( displayName, "displayName cannot be null" );
             Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
             Preconditions.checkNotNull( type, "type cannot be null" );
+            Preconditions.checkNotNull( creator, "creator cannot be null" );
+            Preconditions.checkNotNull( name, "name cannom be null" );
+            Preconditions.checkNotNull( valid, "valid cannot be null" );
         }
 
-        public CreateContentParams build()
+        public CreateContentTranslatorParams build()
         {
             this.validate();
-            return new CreateContentParams( this );
+            return new CreateContentTranslatorParams( this );
         }
     }
+
+
 }

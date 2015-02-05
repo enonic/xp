@@ -1,11 +1,13 @@
 package com.enonic.wem.core.content;
 
+import java.time.Instant;
 import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.content.ContentConstants;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.ChildOrder;
@@ -79,6 +81,8 @@ public final class ContentInitializer
     {
         final Node contentRootNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
 
+        final User user = ContextAccessor.current().getAuthInfo().getUser();
+
         if ( contentRootNode == null )
         {
             LOG.info( "Content root-node not found, creating" );
@@ -88,6 +92,8 @@ public final class ContentInitializer
             data.setString( ContentPropertyNames.DISPLAY_NAME, "Content" );
             data.addSet( ContentPropertyNames.DATA );
             data.addSet( ContentPropertyNames.FORM );
+            data.setString( ContentPropertyNames.CREATOR, user.getKey().toString() );
+            data.setInstant( ContentPropertyNames.CREATED_TIME, Instant.now() );
 
             final Node root = nodeService.create( CreateNodeParams.create().
                 data( data ).

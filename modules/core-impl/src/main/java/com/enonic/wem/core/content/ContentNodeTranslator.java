@@ -1,19 +1,18 @@
 package com.enonic.wem.core.content;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.api.NamePrettyfier;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.CreateContentTranslatorParams;
+import com.enonic.wem.api.content.UpdateContentTranslatorParams;
 import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertyTree;
@@ -35,15 +34,10 @@ public class ContentNodeTranslator
 
     private ContentDataSerializer contentSerializer;
 
-    public CreateNodeParams toCreateNode( final CreateContentParams params )
+    public CreateNodeParams toCreateNodeParams( final CreateContentTranslatorParams params )
     {
-        if ( params.getName() == null || StringUtils.isEmpty( params.getName().toString() ) )
-        {
-            params.name( NamePrettyfier.create( params.getDisplayName() ) );
-        }
-
         final PropertyTree contentAsData = new PropertyTree();
-        contentSerializer.toData( params, contentAsData.getRoot() );
+        contentSerializer.toCreateNodeData( params, contentAsData.getRoot() );
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( params );
 
@@ -61,15 +55,19 @@ public class ContentNodeTranslator
             builder.attachBinary( attachment.getBinaryReference(), attachment.getByteSource() );
         }
 
-        // TODO: Thumbnail?
         return builder.build();
     }
 
-    public UpdateNodeParams toUpdateNodeCommand( final Content content, final CreateAttachments createAttachments )
+    public UpdateNodeParams toUpdateNodeParams( final UpdateContentTranslatorParams params )
     {
+        final Content editedContent = params.getEditedContent();
+        final CreateAttachments createAttachments = params.getCreateAttachments();
+
+        final NodeEditor nodeEditor = toNodeEditor( editedContent, createAttachments );
+
         final UpdateNodeParams.Builder builder = UpdateNodeParams.create().
-            id( NodeId.from( content.getId() ) ).
-            editor( toNodeEditor( content, createAttachments ) );
+            id( NodeId.from( editedContent.getId() ) ).
+            editor( nodeEditor );
 
         if ( createAttachments != null )
         {
@@ -127,12 +125,11 @@ public class ContentNodeTranslator
     private NodeEditor toNodeEditor( final Content content, final CreateAttachments createAttachments )
     {
         final PropertyTree data = new PropertyTree();
-        contentSerializer.toData( content, data.getRoot(), createAttachments );
+        contentSerializer.populatedEditedProperties( content, data.getRoot(), createAttachments );
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( content );
 
         return editableNode -> {
-
             editableNode.name = NodeName.from( content.getName().toString() );
             editableNode.indexConfigDocument = indexConfigDocument;
             editableNode.data = data;

@@ -26,35 +26,32 @@ public final class CreateContentJson
     private List<AttachmentJson> attachments;
 
     @JsonCreator
-    CreateContentJson( @JsonProperty("valid") final String valid,
-                       @JsonProperty("requireValid") final String requireValid,
-                       @JsonProperty("name") final String name,
-                       @JsonProperty("displayName") final String displayName,
-                       @JsonProperty("parent") final String parent,
-                       @JsonProperty("contentType") final String contentType,
+    CreateContentJson( @JsonProperty("valid") final String valid, @JsonProperty("requireValid") final String requireValid,
+                       @JsonProperty("name") final String name, @JsonProperty("displayName") final String displayName,
+                       @JsonProperty("parent") final String parent, @JsonProperty("contentType") final String contentType,
                        @JsonProperty("data") final List<PropertyArrayJson> dataJsonList,
                        @JsonProperty("meta") final List<MetadataJson> metadataJsonList )
     {
 
-        this.createContent = new CreateContentParams();
-        this.createContent.valid( Boolean.valueOf( valid ) );
-        this.createContent.requireValid( Boolean.valueOf( requireValid ) );
-        this.createContent.name( ContentName.from( name ) );
-        this.createContent.displayName( displayName );
-        this.createContent.parent( ContentPath.from( parent ) );
-        this.createContent.type( ContentTypeName.from( contentType ) );
+        final CreateContentParams.Builder paramsBuilder = CreateContentParams.create().
+            requireValid( Boolean.valueOf( requireValid ) ).
+            name( ContentName.from( name ) ).
+            displayName( displayName ).
+            parent( ContentPath.from( parent ) ).
+            type( ContentTypeName.from( contentType ) );
 
         final PropertyTree contentData = PropertyTreeJson.fromJson( dataJsonList );
-        this.createContent.contentData( contentData );
+        paramsBuilder.contentData( contentData );
 
         final List<Metadata> metadataList = new ArrayList<>();
         for ( MetadataJson metadataJson : metadataJsonList )
         {
             metadataList.add( metadataJson.getMetadata() );
         }
-        this.createContent.metadata( metadataList );
+        paramsBuilder.metadata( metadataList );
+        paramsBuilder.inheritPermissions( true );
 
-        createContent.setInheritPermissions( true );
+        this.createContent = paramsBuilder.build();
     }
 
     @JsonIgnore

@@ -1,7 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
@@ -50,7 +49,6 @@ public final class CreateNodeCommand
         Preconditions.checkNotNull( params.getParent(), "Path of parent Node must be specified" );
         Preconditions.checkArgument( params.getParent().isAbsolute(), "Path to parent Node must be absolute: " + params.getParent() );
 
-        final Instant now = Instant.now();
         runAsAdmin( this::verifyNotExistsAlready );
         runAsAdmin( this::verifyParentExists );
 

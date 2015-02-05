@@ -2,7 +2,7 @@
     "valid": true,
     "requireValid": true,
     "name": "content-path",
-    "parent": "parent-path:/",
+    "parent": "/parent-path:/",
     "contentType": "mymodule::my-type",
     "data": [],
   "meta": [],

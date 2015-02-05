@@ -3,13 +3,14 @@ package com.enonic.wem.core.content;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.CreateContentTranslatorParams;
 import com.enonic.wem.api.data.PropertyPath;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
@@ -28,14 +29,16 @@ public class ContentIndexConfigFactoryTest
         final PropertySet subSet = metadata.addSet( "subSet" );
         subSet.addString( "subSetValue", "promp" );
 
-        final CreateContentParams createContentParams = new CreateContentParams();
-        createContentParams.type( ContentTypeName.imageMedia() ).
+        final CreateContentTranslatorParams createContentTranslatorParams = CreateContentTranslatorParams.create().
+            type( ContentTypeName.imageMedia() ).
             displayName( "myContent" ).
             name( "my-content" ).
             parent( ContentPath.ROOT ).
-            contentData( data );
+            contentData( data ).
+            creator( PrincipalKey.ofAnonymous() ).
+            build();
 
-        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( createContentParams );
+        final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( createContentTranslatorParams );
 
         assertEquals( IndexConfig.NONE, indexConfigDocument.getConfigForPath(
             PropertyPath.from( ContentPropertyNames.DATA, ContentPropertyNames.METADATA ) ) );

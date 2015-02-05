@@ -17,8 +17,6 @@ public final class UpdateContentParams
 
     private boolean requireValid;
 
-    private boolean valid;
-
     public UpdateContentParams editor( final ContentEditor editor )
     {
         this.editor = editor;
@@ -46,12 +44,6 @@ public final class UpdateContentParams
     public UpdateContentParams requireValid( final boolean value )
     {
         this.requireValid = value;
-        return this;
-    }
-
-    public UpdateContentParams valid( final boolean value )
-    {
-        this.valid = value;
         return this;
     }
 
@@ -85,10 +77,5 @@ public final class UpdateContentParams
     public boolean isRequireValid()
     {
         return requireValid;
-    }
-
-    public boolean isValid()
-    {
-        return valid;
     }
 }

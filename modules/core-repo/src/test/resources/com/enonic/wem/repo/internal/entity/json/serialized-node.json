@@ -10,8 +10,6 @@
     }
   ],
   "childOrder": "modifiedtime ASC, displayname DESC",
-  "createdTime": "2013-01-02T03:04:05Z",
-  "creator": "user:test:creator",
   "data": [
     {
       "name": "a",
@@ -121,8 +119,6 @@
   },
   "inheritPermissions": false,
   "manualOrderValue": null,
-  "modifiedTime": "2013-01-02T03:04:05Z",
-  "modifier": "user:test:modifier",
   "nodeType": "myNodeType",
   "permissions": [
     {
@@ -135,5 +131,6 @@
       "deny": ["PUBLISH"],
       "principal": "user:system:user1"
     }
-  ]
+  ],
+  "timestamp": null
 }

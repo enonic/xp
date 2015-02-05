@@ -1,10 +1,12 @@
 package com.enonic.wem.core.content;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.NamePrettyfier;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentCreatedEvent;
@@ -12,8 +14,8 @@ import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.CreateContentTranslatorParams;
 import com.enonic.wem.api.content.Metadatas;
-import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.media.MediaInfo;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
@@ -22,8 +24,7 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.wem.api.security.User;
 
 final class CreateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -43,14 +44,51 @@ final class CreateContentCommand
 
     Content execute()
     {
-        this.params.validate();
-
         return doExecute();
     }
 
     private Content doExecute()
     {
+        validateContentTypeProperties();
+
+        final CreateContentParams processedContent = runContentProcessors();
+
+        final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedContent );
+
+        final CreateNodeParams createNodeParams = translator.toCreateNodeParams( createContentTranslatorParams );
+
+        try
+        {
+            final Node createdNode = nodeService.create( createNodeParams );
+            eventPublisher.publish( new ContentCreatedEvent( ContentId.from( createdNode.id().toString() ) ) );
+            return translator.fromNode( createdNode );
+        }
+        catch ( NodeAlreadyExistAtPathException e )
+        {
+            throw new ContentAlreadyExistException(
+                ContentPath.from( createContentTranslatorParams.getParent(), createContentTranslatorParams.getName().toString() ) );
+        }
+    }
+
+    private CreateContentTranslatorParams createContentTranslatorParams( final CreateContentParams processedContent )
+    {
+        final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent );
+        builder.valid( checkIsValid( processedContent ) );
+        populateName( builder );
+        populateCreator( builder );
+
+        return builder.build();
+    }
+
+    private CreateContentParams runContentProcessors()
+    {
+        return new ProxyContentProcessor( mediaInfo ).processCreate( params );
+    }
+
+    private void validateContentTypeProperties()
+    {
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
+
         if ( contentType == null )
         {
             throw new IllegalArgumentException( "Content type not found [" + params.getType().toString() + "]" );
@@ -59,44 +97,20 @@ final class CreateContentCommand
         {
             throw new IllegalArgumentException( "Cannot create content with an abstract type [" + params.getType().toString() + "]" );
         }
-
-        params.valid( checkIsValid( params ) );
-
-        final CreateContentParams handledParams = new ProxyContentProcessor( mediaInfo ).processCreate( params );
-
-        addDefaultOwner( handledParams );
-
-        final CreateNodeParams createNodeParams = translator.toCreateNode( handledParams );
-
-        final Node createdNode;
-        try
-        {
-            createdNode = nodeService.create( createNodeParams );
-            eventPublisher.publish( new ContentCreatedEvent( ContentId.from( createdNode.id().toString() ) ) );
-        }
-        catch ( NodeAlreadyExistAtPathException e )
-        {
-            throw new ContentAlreadyExistException( ContentPath.from( params.getParent(), params.getName().toString() ) );
-        }
-
-        return translator.fromNode( createdNode );
     }
 
-    private void addDefaultOwner( final CreateContentParams createContentParams )
+    private void populateName( final CreateContentTranslatorParams.Builder builder )
     {
-        if(createContentParams.getOwner() == null)
+        if ( params.getName() == null || StringUtils.isEmpty( params.getName().toString() ) )
         {
-            PrincipalKey user = getCurrentPrincipalKey();
-
-            createContentParams.owner( PrincipalKey.ofAnonymous().equals( user ) ? null : user );
+            builder.name( NamePrettyfier.create( params.getDisplayName() ) );
         }
     }
 
-    private PrincipalKey getCurrentPrincipalKey()
+    private void populateCreator( final CreateContentTranslatorParams.Builder builder )
     {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-
-        return authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
+        final User currentUser = getCurrentUser();
+        builder.creator( currentUser.getKey() );
     }
 
     private boolean checkIsValid( final CreateContentParams contentParams )
@@ -149,7 +163,6 @@ final class CreateContentCommand
 
         private Builder()
         {
-            // nothing
         }
 
         private Builder( final AbstractCreatingOrUpdatingContentCommand source )

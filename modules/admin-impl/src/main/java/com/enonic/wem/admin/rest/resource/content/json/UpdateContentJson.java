@@ -48,7 +48,6 @@ public final class UpdateContentJson
         final Metadatas metadatas = parseMetadata( metadataJsonList );
 
         this.updateContentParams = new UpdateContentParams().
-            valid( Boolean.valueOf( valid ) ).
             requireValid( Boolean.valueOf( requireValid ) ).
             contentId( ContentId.from( contentId ) ).
             modifier( PrincipalKey.ofAnonymous() ).

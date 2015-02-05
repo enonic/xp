@@ -26,4 +26,12 @@ class ContentPropertyNames
 
     public static final String LANGUAGE = "language";
 
+    public static final String CREATOR = "creator";
+
+    public static final String MODIFIER = "modifier";
+
+    public static final String CREATED_TIME = "createdTime";
+
+    public static final String MODIFIED_TIME = "modifiedTime";
+
 }

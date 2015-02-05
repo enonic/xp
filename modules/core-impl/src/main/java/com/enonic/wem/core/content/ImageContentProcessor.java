@@ -66,8 +66,9 @@ public final class ImageContentProcessor
         builder.add( sourceAttachment );
         builder.add( scaleImages( sourceImage, sourceAttachment ) );
 
-        params.createAttachments( builder.build() );
-        return params;
+        return CreateContentParams.create( params ).
+            createAttachments( builder.build() ).
+            build();
     }
 
     private CreateAttachments scaleImages( final BufferedImage sourceImage, final CreateAttachment sourceAttachment )
