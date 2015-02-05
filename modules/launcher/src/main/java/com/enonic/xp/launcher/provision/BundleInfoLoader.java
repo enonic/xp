@@ -2,6 +2,7 @@ package com.enonic.xp.launcher.provision;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -27,6 +28,8 @@ final class BundleInfoLoader
         props.load( new FileInputStream( file ) );
 
         build( list, props );
+
+        Collections.sort( list );
         return list;
     }
 
@@ -49,17 +52,5 @@ final class BundleInfoLoader
         throws Exception
     {
         list.add( new BundleInfo( uri, level ) );
-    }
-
-    private int parseInt( String value, final int defValue )
-    {
-        try
-        {
-            return Integer.parseInt( value );
-        }
-        catch ( final Exception e )
-        {
-            return defValue;
-        }
     }
 }

@@ -1,0 +1,7 @@
+apply plugin: 'org.dm.bundle'
+
+bundle {
+    instruction 'Bundle-SymbolicName', group + '.' + name.replace( '-', '.' )
+    instruction '-nouses', 'true'
+    instruction '-dsannotations', '*'
+}

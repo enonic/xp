@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URI;
 
 final class BundleInfo
+    implements Comparable<BundleInfo>
 {
     private final String location;
 
@@ -34,5 +35,20 @@ final class BundleInfo
         }
 
         return uri;
+    }
+
+    @Override
+    public int compareTo( final BundleInfo o )
+    {
+        if ( this.level < o.level )
+        {
+            return -1;
+        }
+        else if ( this.level > o.level )
+        {
+            return 1;
+        }
+
+        return this.location.compareTo( o.location );
     }
 }

@@ -40,6 +40,8 @@ public final class Launcher
         final EnvironmentResolver resolver = new EnvironmentResolver( this.systemProperties );
         this.env = resolver.resolve();
         this.env.validate();
+
+        System.setProperty( "wem.home", this.env.getHomeDir().toString() );
     }
 
     private void printBanner()

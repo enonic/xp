@@ -4,6 +4,7 @@ allprojects {
     group = 'com.enonic.xp'
 
     repositories {
+        mavenLocal()
         jcenter()
         maven {
             url 'http://repo.enonic.com/public'

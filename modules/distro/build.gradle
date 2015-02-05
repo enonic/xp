@@ -41,6 +41,32 @@ bundles {
     // Felix web console
     bundle 'org.apache.felix:org.apache.felix.webconsole:4.2.4:all', 25
     bundle 'org.apache.felix:org.apache.felix.webconsole.plugins.ds:1.0.0', 25
+
+    // Core app dependencies
+    bundle 'com.google.guava:guava:18.0', 30
+    bundle 'commons-lang:commons-lang:2.4', 30
+    bundle 'commons-io:commons-io:2.4', 30
+    bundle 'com.fasterxml.jackson.core:jackson-core:2.4.1', 30
+    bundle 'com.fasterxml.jackson.core:jackson-annotations:2.4.1', 30
+    bundle 'com.fasterxml.jackson.core:jackson-databind:2.4.1', 30
+    bundle 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.1', 30
+    bundle 'org.apache.tika:tika-core:1.6', 30
+    bundle 'org.apache.tika:tika-bundle:1.6', 30
+    bundle 'com.enonic.osgi.bundles:jparsec:2.1.0_1', 30
+    bundle 'com.enonic.osgi.bundles:jhlabs-filters:2.0.235_1', 30
+    bundle 'com.enonic.osgi.bundles:elasticsearch:1.3.6_1', 30
+
+    // Core app
+    bundle 'com.enonic.xp:core-api:5.0.0-SNAPSHOT', 30
+    bundle 'com.enonic.xp:core-event:5.0.0-SNAPSHOT', 30
+    bundle 'com.enonic.xp:core-image:5.0.0-SNAPSHOT', 30
+    bundle 'com.enonic.xp:core-module:5.0.0-SNAPSHOT', 30
+    bundle 'com.enonic.xp:core-schema:5.0.0-SNAPSHOT', 30
+    bundle 'com.enonic.xp:core-relationship:5.0.0-SNAPSHOT', 30
+    bundle 'com.enonic.xp:core-security:5.0.0-SNAPSHOT', 30
+    bundle 'com.enonic.xp:core-export:5.0.0-SNAPSHOT', 30
+    bundle 'com.enonic.xp:core-impl:5.0.0-SNAPSHOT', 30
+    bundle 'com.enonic.xp:core-repo:5.0.0-SNAPSHOT', 30
 }
 
 prepareDevBundles {
