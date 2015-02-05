@@ -1,7 +1,3 @@
-buildscript {
-    apply from: "$rootDir/gradle/buildscript.gradle", to: buildscript
-}
-
 apply plugin: 'java-base'
 
 allprojects {

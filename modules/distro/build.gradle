@@ -1,75 +1,64 @@
-apply plugin: 'java-base'
+apply plugin: 'build.bundles'
 
 configurations {
-    bundle
-    bundle.transitive = false
+    lib
 }
 
-ext {
-    bundleLevels = [:]
-    bundlesFile = file( '/Users/srs/development/server/new-distro/system/bundles.properties' )
+dependencies {
+    lib project( ':launcher' )
 }
 
-def addBundle( value, level )
-{
-    def dep = dependencies.add( 'bundle', value )
-    bundleLevels["${dep.group}:${dep.name}:${dep.version}"] = level
+bundles {
+    // Core bundles
+    bundle 'org.apache.felix:org.apache.felix.metatype:1.0.10', 1
+    bundle 'org.apache.felix:org.apache.felix.eventadmin:1.4.2', 1
+    bundle 'org.apache.felix:org.apache.felix.configadmin:1.8.0', 1
+    bundle 'org.apache.felix:org.apache.felix.scr:1.8.2', 1
+
+    // Shell bundles
+    bundle 'org.apache.felix:org.apache.felix.gogo.runtime:0.12.1', 5
+    bundle 'org.apache.felix:org.apache.felix.gogo.command:0.12.0', 5
+    bundle 'org.apache.felix:org.apache.felix.shell.remote:1.1.2', 6
+    bundle 'org.apache.felix:org.apache.felix.gogo.shell:0.10.0', 5
+
+    // Blueprint bundles
+    bundle 'org.ow2.asm:asm-all:5.0.3', 20
+    bundle 'org.apache.aries:org.apache.aries.util:1.1.0', 20
+    bundle 'org.apache.aries.proxy:org.apache.aries.proxy.api:1.0.1', 20
+    bundle 'org.apache.aries.proxy:org.apache.aries.proxy.impl:1.0.4', 20
+    bundle 'org.apache.aries.blueprint:org.apache.aries.blueprint.api:1.0.1', 20
+    bundle 'org.apache.aries.blueprint:org.apache.aries.blueprint.core:1.4.2', 20
+    bundle 'org.apache.aries.blueprint:org.apache.aries.blueprint.cm:1.0.5', 20
+    bundle 'org.apache.aries.blueprint:org.apache.aries.blueprint.cm:1.0.5', 20
+    bundle 'org.apache.aries.blueprint:org.apache.aries.blueprint.core.compatibility:1.0.0', 20
+    bundle 'org.apache.aries.quiesce:org.apache.aries.quiesce.api:1.0.0', 20
+
+    // Jetty
+    bundle 'org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0', 25
+    bundle 'org.apache.geronimo.specs:geronimo-annotation_1.1_spec:1.0.1', 25
+    bundle 'org.ops4j.pax.web:pax-web-jetty-bundle:4.0.0', 25
+
+    // Felix web console
+    bundle 'org.apache.felix:org.apache.felix.webconsole:4.2.4:all', 25
+    bundle 'org.apache.felix:org.apache.felix.webconsole.plugins.ds:1.0.0', 25
 }
 
-// Core bundles
-addBundle( 'org.apache.felix:org.apache.felix.metatype:1.0.10', 1 )
-addBundle( 'org.apache.felix:org.apache.felix.eventadmin:1.4.2', 1 )
-addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.8.0', 1 )
-addBundle( 'org.apache.felix:org.apache.felix.scr:1.8.2', 1 )
-
-// Remote shell
-addBundle( 'org.apache.felix:org.apache.felix.gogo.runtime:0.12.1', 5 )
-addBundle( 'org.apache.felix:org.apache.felix.gogo.command:0.12.0', 5 )
-addBundle( 'org.apache.felix:org.apache.felix.shell.remote:1.1.2', 6 )
-addBundle( 'org.apache.felix:org.apache.felix.gogo.shell:0.10.0', 5 )
-
-// Blueprint bundles
-addBundle( 'org.ow2.asm:asm-all:5.0.3', 20 )
-addBundle( 'org.apache.aries:org.apache.aries.util:1.1.0', 20 )
-addBundle( 'org.apache.aries.proxy:org.apache.aries.proxy.api:1.0.1', 20 )
-addBundle( 'org.apache.aries.proxy:org.apache.aries.proxy.impl:1.0.4', 20 )
-addBundle( 'org.apache.aries.blueprint:org.apache.aries.blueprint.api:1.0.1', 20 )
-addBundle( 'org.apache.aries.blueprint:org.apache.aries.blueprint.core:1.4.2', 20 )
-addBundle( 'org.apache.aries.blueprint:org.apache.aries.blueprint.cm:1.0.5', 20 )
-addBundle( 'org.apache.aries.blueprint:org.apache.aries.blueprint.cm:1.0.5', 20 )
-addBundle( 'org.apache.aries.blueprint:org.apache.aries.blueprint.core.compatibility:1.0.0', 20 )
-addBundle( 'org.apache.aries.quiesce:org.apache.aries.quiesce.api:1.0.0', 20 )
-
-// Jetty
-addBundle( 'org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0', 25 )
-addBundle( 'org.apache.geronimo.specs:geronimo-annotation_1.1_spec:1.0.1', 25 )
-addBundle( 'org.ops4j.pax.web:pax-web-jetty-bundle:4.0.0', 25 )
-
-// Felix web console
-addBundle( 'org.apache.felix:org.apache.felix.webconsole:4.2.4:all', 25 )
-addBundle( 'org.apache.felix:org.apache.felix.webconsole.plugins.ds:1.0.0', 25 )
-
-def getStartLevel( ResolvedArtifact item )
-{
-    def gav = item.moduleVersion.id
-    return bundleLevels["${gav.group}:${gav.name}:${gav.version}"]
+prepareDevBundles {
+    outputDir = mkdir( "$buildDir/dev/system" )
 }
 
-def getBundleUri( ResolvedArtifact item )
-{
-    return item.file.toURI().toString()
+prepareProdBundles {
+    outputDir = mkdir( "$buildDir/prod/system" )
 }
 
-task generateBundlesFile {
-    doLast {
-        def props = new Properties()
+task run( type: JavaExec, dependsOn: 'prepareDevBundles' ) {
+    main = 'com.enonic.xp.launcher.LauncherMain'
+    classpath = configurations.lib
+    debug = project.hasProperty( 'debug' )
+    systemProperties['xp.install'] = mkdir( "$buildDir/dev" )
 
-        configurations.getByName( 'bundle' ).resolvedConfiguration.resolvedArtifacts.each {
-            def level = getStartLevel( it )
-            def uri = getBundleUri( it )
-            props.put( uri, level.toString() )
-        }
-
-        props.store( ( (File) bundlesFile ).newWriter(), '' )
+    if ( project.hasProperty( 'xp.home' ) )
+    {
+        systemProperties['xp.home'] = project.getProperty( 'xp.home' )
     }
 }

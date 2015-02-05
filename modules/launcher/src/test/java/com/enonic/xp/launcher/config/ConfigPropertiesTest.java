@@ -2,11 +2,10 @@ package com.enonic.xp.launcher.config;
 
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.common.collect.Maps;
-
-import junit.framework.Assert;
 
 public class ConfigPropertiesTest
 {
