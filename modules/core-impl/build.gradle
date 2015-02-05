@@ -1,0 +1,12 @@
+apply from: "$rootDir/gradle/java.gradle"
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':core-api' )
+    compile 'org.apache.tika:tika-parsers:1.6'
+    testCompile project( path: ':core-api', configuration: 'testOutput' )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP Core - Impl'
+}

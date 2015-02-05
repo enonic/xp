@@ -1,0 +1,14 @@
+apply from: "$rootDir/gradle/java.gradle"
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':core-api' )
+
+    testCompile project( ':core-repo' )
+    testCompile project( path: ':core-api', configuration: 'testOutput' )
+    testCompile project( path: ':core-repo', configuration: 'testOutput' )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP Core - Security'
+}

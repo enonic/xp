@@ -63,12 +63,12 @@ bundles {
     bundle project( ':core-event' ), 30
     bundle project( ':core-module' ), 30
     bundle project( ':core-schema' ), 30
-    //bundle 'com.enonic.xp:core-image:5.0.0-SNAPSHOT', 30
-    //bundle 'com.enonic.xp:core-relationship:5.0.0-SNAPSHOT', 30
-    //bundle 'com.enonic.xp:core-security:5.0.0-SNAPSHOT', 30
-    //bundle 'com.enonic.xp:core-export:5.0.0-SNAPSHOT', 30
-    //bundle 'com.enonic.xp:core-impl:5.0.0-SNAPSHOT', 30
-    //bundle 'com.enonic.xp:core-repo:5.0.0-SNAPSHOT', 30
+    bundle project( ':core-repo' ), 30
+    bundle project( ':core-relationship' ), 30
+    bundle project( ':core-security' ), 30
+    bundle project( ':core-image' ), 30
+    bundle project( ':core-export' ), 30
+    bundle project( ':core-impl' ), 30
 }
 
 prepareDevBundles {
