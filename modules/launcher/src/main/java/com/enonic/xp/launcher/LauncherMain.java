@@ -5,7 +5,7 @@ public final class LauncherMain
     public static void main( final String... args )
         throws Exception
     {
-        System.setProperty( "xp.install", "/Users/srs/development/server/new-distro" );
+        // System.setProperty( "xp.install", "/Users/srs/development/server/new-distro" );
 
         final Launcher launcher = new Launcher();
         new ShutdownHook( launcher::stop ).register();
