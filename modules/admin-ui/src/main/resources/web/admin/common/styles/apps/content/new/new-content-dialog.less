@@ -14,7 +14,9 @@
 }
 
 .new-content-dialog {
-  width: 540px;
+  @media screen and (max-height: 360px) {
+    min-height: 220px;
+  }
 
   .dialog-header .path {
     display: none;
@@ -30,14 +32,31 @@
   .dialog-content {
     position: relative;
 
+    @media screen and (max-height: 360px) {
+      height: 65%;
+    }
+
+
     .column {
       height: 100%;
       float: left;
 
       .content-types-list {
-        height: 308px;
+        max-height: 420px;
         overflow-y: auto;
         overflow-x: hidden;
+
+        @media screen and (max-height: 720px) {
+          max-height: 308px;
+        }
+
+        @media screen and (max-height: 540px) {
+          max-height: 150px;
+        }
+
+        @media screen and (max-height: 360px) {
+          max-height: 70%;
+        }
 
         .content-types-list-item {
           position: relative;
@@ -97,7 +116,6 @@
   }
 
   .dialog-buttons {
-    position: relative;
 
     &:before {
       position: absolute;
@@ -108,19 +126,6 @@
       content: 'Drop files here to upload';
     }
 
-    .button-container {
-      position: relative; // to pull buttons above the :before text positioned absolutely
-    }
-
-    .button {
-      &.cancel-button {
-
-        position: absolute;
-        top: -475px;
-        right: -20px;
-
-      }
-    }
   }
 
   .uploader-container {

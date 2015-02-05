@@ -20,10 +20,19 @@ module api.ui.dialog {
 
         private mouseClickListener: {(MouseEvent): void};
 
+        private responsiveItem: api.ui.responsive.ResponsiveItem;
+
+        private cancelButton: api.ui.button.ActionButton;
+
         constructor(config: ModalDialogConfig) {
             super("modal-dialog");
 
             this.config = config;
+
+            this.createCancelAction();
+            this.cancelButton = this.createCancelButton();
+
+            this.appendChild(this.cancelButton);
 
             this.title = this.config.title;
             this.appendChild(this.title);
@@ -51,13 +60,25 @@ module api.ui.dialog {
 
             this.onRemoved(() => api.dom.Body.get().unMouseDown(this.mouseClickListener));
             this.onAdded(() => api.dom.Body.get().onMouseDown(this.mouseClickListener));
+            this.onShown(() => api.ui.responsive.ResponsiveManager.fireResizeEvent());
+
+            this.responsiveItem =
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                if (this.isVisible()) {
+                    this.centerMyself();
+                }
+            });
         }
 
-        setCancelAction(action: api.ui.Action) {
-            action.setIconClass("cancel-button");
-            action.setLabel("");
-            this.cancelAction = action;
-            this.addAction(action);
+        private createCancelAction() {
+            var cancelAction = new api.ui.Action("Cancel", "esc");
+            cancelAction.setIconClass("cancel-button");
+            cancelAction.setLabel("");
+            cancelAction.onExecuted(()=> {
+                this.close();
+            });
+            this.cancelAction = cancelAction;
+            this.actions.push(cancelAction);
         }
 
         getCancelAction(): api.ui.Action {
@@ -89,9 +110,21 @@ module api.ui.dialog {
 
         private centerMyself() {
             var el = this.getEl();
-            el.setMarginLeft("-" + (el.getWidthWithBorder() / 2) + "px").
-                setMarginTop("-" + (el.getHeightWithBorder() / 2) + "px");
+            el.setMarginTop("-" + (el.getHeightWithBorder() / 2) + "px");
+
+            if (this.responsiveItem.isInRangeOrBigger(api.ui.responsive.ResponsiveRanges._540_720)) {
+                el.setMarginLeft("-" + (el.getWidthWithBorder() / 2) + "px");
+                el.addClass("centered_horizontally");
+            } else {
+                el.setMarginLeft("0px");
+                el.removeClass("centered_horizontally");
+            }
         }
+
+        private createCancelButton(): api.ui.button.ActionButton {
+            return new DialogButton(this.getCancelAction());
+        }
+
 
         hide() {
             super.hide();

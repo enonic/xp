@@ -1,6 +1,9 @@
 .move-content-dialog {
   width: 650px;
-  height: 300px;
+
+  @media screen and (min-height: 360px) {
+    height: 300px;
+  }
 
   .dialog-header {
     margin-bottom: 5px;
@@ -25,13 +28,4 @@
 
   }
 
-  .button {
-    &.cancel-button {
-
-      position: absolute;
-      top: -300px;
-      right: -20px;
-
-    }
-  }
 }

@@ -1,5 +1,10 @@
 .install-module-dialog {
-  min-width: 800px;
+
+  @media screen and (max-height: 360px ) {
+    .dialog-content {
+      height: 65%;
+    }
+  }
 
   .dialog-header .path {
     font-size: 16px;
@@ -12,16 +17,6 @@
 
   .url-input {
     width: 100%;
-  }
-
-  .button {
-    &.cancel-button {
-
-      position: absolute;
-      top: 5px;
-      right: 5px;
-
-    }
   }
 
 }

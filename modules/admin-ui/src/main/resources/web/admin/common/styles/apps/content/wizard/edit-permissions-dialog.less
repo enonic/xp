@@ -1,12 +1,26 @@
 .edit-permissions-dialog {
   width: 800px;
 
+  @media screen and (max-height: 360px) {
+    min-height: 240px;
+  }
+
   .dialog-header .path {
     font-size: 16px;
   }
 
+  .dialog-header {
+    @media screen and (max-height: 360px) {
+      margin-bottom: 5px;
+    }
+  }
+
   .inherit-perm-check {
     margin-bottom: 20px;
+
+    @media screen and (max-height: 360px) {
+      margin-bottom: 5px;
+    }
   }
 
   .overwrite-child-check {
@@ -15,16 +29,48 @@
     &.checkbox label {
       color: @admin-blue !important;
     }
+
+    @media screen and (max-height: 360px) {
+      bottom: 25px;
+    }
+  }
+
+  .form {
+    @media screen and (max-height: 360px) {
+      margin-top: 5px;
+    }
+  }
+
+  .combobox.followed-by-options {
+    @media screen and (max-height: 360px) {
+      margin-bottom: 5px;
+    }
   }
 
   .principal-combobox {
     height: 320px;
+
+    @media screen and (max-height: 540px) {
+      max-height: 160px;
+    }
+
+    @media screen and (max-height: 360px) {
+      max-height: 110px;
+    }
 
     .access-control-list {
       height: 277px;
       overflow-y: auto;
       overflow-x: hidden;
       padding: 5px 0;
+
+      @media screen and (max-height: 540px) {
+        max-height: 100px;
+      }
+
+      @media screen and (max-height: 360px) {
+        max-height: 50px;
+      }
 
       .access-control-entry .access-selector ul.upward {
         padding: 4px 4px 38px;
@@ -84,16 +130,6 @@
 
   section {
     height: 100%;
-  }
-
-  .button {
-    &.cancel-button {
-
-      position: absolute;
-      top: 5px;
-      right: 5px;
-
-    }
   }
 
 }

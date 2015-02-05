@@ -39,7 +39,6 @@ module api.content.form.inputtype.image {
             });
             this.appendChildToContentPanel(this.imageUploader);
 
-            this.setCancelAction(new UploadDialogCancelAction());
             this.getCancelAction().onExecuted((action: UploadDialogCancelAction) => {
                 this.imageUploader.stop();
                 this.imageUploader.reset();

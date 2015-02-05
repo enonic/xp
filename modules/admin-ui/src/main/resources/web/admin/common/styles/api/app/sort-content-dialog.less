@@ -1,9 +1,29 @@
 .sort-content-dialog {
-  width: 650px;
+
+  @media screen and (max-height: 360px) {
+    .sort-content-grid {
+      height: 100%;
+      .grid {
+        height: 100%;
+        .slick-viewport {
+          max-height: 80%;
+        }
+      }
+    }
+  }
 
   .slick-viewport {
-    max-height: 600px;
+    max-height: 560px;
     overflow: auto;
+
+    @media screen and (max-height: 720px) {
+      max-height: 400px;
+    }
+
+    @media screen and (max-height: 540px) {
+      max-height: 200px;
+    }
+
   }
   .drag-icon {
     cursor: move;
@@ -89,20 +109,15 @@
     top: 10px;
     right: 30px;
 
-    .button {
-      &.cancel-button {
-
-        position: absolute;
-        top: -28px;
-        right: -25px;
-
-      }
+    @media screen and (max-height: 360px) {
+      top: 20px;
     }
   }
+
   .sort-content-grid {
     /*overflow: auto;*/
     /*max-height: 500px;*/
-    height: 100%;
+    height: 70%;
     width: 100%;
   }
   .toggle.icon {

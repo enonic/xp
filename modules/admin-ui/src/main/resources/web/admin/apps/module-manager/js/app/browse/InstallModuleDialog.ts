@@ -26,7 +26,6 @@ module app.browse {
             container.appendChild(title);
             container.appendChild(this.input);
 
-            this.setCancelAction(new api.ui.Action("Cancel", "esc"));
 
             api.dom.Body.get().appendChild(this);
 
@@ -38,7 +37,6 @@ module app.browse {
                 }
             });
 
-            this.getCancelAction().onExecuted(()=> this.close());
             this.installAction = new api.ui.Action('Install', 'enter');
             this.installAction.onExecuted(() => {
                 var url = this.input.getValue();
