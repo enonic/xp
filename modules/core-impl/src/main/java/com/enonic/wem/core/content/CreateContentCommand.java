@@ -16,6 +16,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.CreateContentTranslatorParams;
 import com.enonic.wem.api.content.Metadatas;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.media.MediaInfo;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
@@ -24,7 +25,9 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.User;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 
 final class CreateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -76,6 +79,7 @@ final class CreateContentCommand
         builder.valid( checkIsValid( processedContent ) );
         populateName( builder );
         populateCreator( builder );
+        builder.owner( getDefaultOwner( processedContent ) );
 
         return builder.build();
     }
@@ -97,6 +101,27 @@ final class CreateContentCommand
         {
             throw new IllegalArgumentException( "Cannot create content with an abstract type [" + params.getType().toString() + "]" );
         }
+    }
+
+    private PrincipalKey getDefaultOwner( final CreateContentParams createContentParams )
+    {
+        if ( createContentParams.getOwner() == null )
+        {
+            PrincipalKey user = getCurrentPrincipalKey();
+
+            return PrincipalKey.ofAnonymous().equals( user ) ? null : user;
+        }
+        else
+        {
+            return createContentParams.getOwner();
+        }
+    }
+
+    private PrincipalKey getCurrentPrincipalKey()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        return authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
     }
 
     private void populateName( final CreateContentTranslatorParams.Builder builder )
