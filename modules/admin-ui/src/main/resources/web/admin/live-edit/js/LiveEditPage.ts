@@ -55,15 +55,6 @@ module LiveEdit {
 
                 new api.liveedit.LiveEditPageViewReadyEvent(this.pageView).fire();
 
-                api.liveedit.ComponentLoadedEvent.on((event: api.liveedit.ComponentLoadedEvent) => {
-
-                    if (api.liveedit.layout.LayoutItemType.get().equals(event.getItemView().getType())) {
-                        LiveEdit.component.dragdropsort.DragDropSort.createSortableLayout(event.getItemView());
-                    } else {
-                        LiveEdit.component.dragdropsort.DragDropSort.refreshSortable();
-                    }
-                });
-
                 api.ui.Tooltip.allowMultipleInstances(false);
 
                 this.registerGlobalListeners();
@@ -74,6 +65,15 @@ module LiveEdit {
 
 
         private registerGlobalListeners(): void {
+
+            api.liveedit.ComponentLoadedEvent.on((event: api.liveedit.ComponentLoadedEvent) => {
+
+                if (api.liveedit.layout.LayoutItemType.get().equals(event.getItemView().getType())) {
+                    LiveEdit.component.dragdropsort.DragDropSort.createSortableLayout(event.getItemView());
+                } else {
+                    LiveEdit.component.dragdropsort.DragDropSort.refreshSortable();
+                }
+            });
 
             ComponentResetEvent.on((event: ComponentResetEvent) => {
                 LiveEdit.component.dragdropsort.DragDropSort.refreshSortable();

@@ -11,7 +11,7 @@ module api.liveedit.text {
         }
     }
 
-    export class TextComponentView extends ComponentView<TextComponent> implements api.ui.text.TextEditorEditableArea {
+    export class TextComponentView extends ComponentView<TextComponent> {
 
         private textComponent: TextComponent;
 
@@ -19,7 +19,7 @@ module api.liveedit.text {
 
         private editor: MediumEditorType;
 
-        public static debug = false;
+        public static debug = true;
 
         // special handling for click to allow dblclick event without triggering 2 clicks before it
         public static DBL_CLICK_TIMEOUT = 200;
@@ -71,11 +71,11 @@ module api.liveedit.text {
         }
 
         private initializeArticle() {
-            // check if article came from server
             for (var i = 0; i < this.getChildren().length; i++) {
                 var child = this.getChildren()[i];
                 if (child.getEl().getTagName().toUpperCase() == 'ARTICLE') {
                     this.article = child;
+                    break;
                 }
             }
             if (!this.article) {
@@ -83,14 +83,24 @@ module api.liveedit.text {
                 this.article = new api.dom.ArticleEl();
                 this.prependChild(this.article);
             }
+
+            this.article.onClicked((event: MouseEvent) => {
+                if (TextComponentView.debug) {
+                    console.log('Article clicked', event);
+                }
+            });
+
+            // text component has a placeholder text
+            // that should be used instead of a regular one
+            this.article.setHtml(this.textComponent.getText());
         }
 
-        getElement(): api.dom.Element {
-            return this.article;
-        }
-
-        processChanges() {
-            this.textComponent.setText(this.article.getHtml());
+        private processChanges() {
+            var text = this.editor.serialize();
+            if (TextComponentView.debug) {
+                console.log('Processing editor contents:', text.value);
+            }
+            this.textComponent.setText(text.value);
         }
 
         isEmpty(): boolean {
@@ -107,13 +117,13 @@ module api.liveedit.text {
             return duplicatedView;
         }
 
-        private startTextEditMode() {
+        private startPageTextEditMode() {
             this.deselect();
-
             var pageView = this.getPageView();
             if (!pageView.isTextEditMode()) {
                 pageView.setTextEditMode(true);
             }
+            this.giveFocus();
         }
 
         private doHandleDbClick(event: MouseEvent) {
@@ -121,7 +131,7 @@ module api.liveedit.text {
                 return;
             }
 
-            this.startTextEditMode();
+            this.startPageTextEditMode();
             this.selectText();
         }
 
@@ -140,12 +150,20 @@ module api.liveedit.text {
 
 
         handleClick(event: MouseEvent) {
-            event.stopPropagation();
-            event.preventDefault();
-
             if (TextComponentView.debug) {
                 console.group('Handling click [' + this.getId() + ']');
                 console.log(event);
+            }
+
+            event.stopPropagation();
+            event.preventDefault();
+
+            if (this.isEditMode()) {
+                if (TextComponentView.debug) {
+                    console.log('Is in text edit mode, not handling click');
+                    console.groupEnd();
+                }
+                return;
             }
 
             var timeSinceLastClick = new Date().getTime() - this.lastClicked;
@@ -174,15 +192,20 @@ module api.liveedit.text {
             this.lastClicked = new Date().getTime();
         }
 
-        handleKey() {
+        private handleKey() {
             this.processChanges();
         }
 
-        public isEditMode(): boolean {
+        isEditMode(): boolean {
             return this.hasClass('edit-mode');
         }
 
-        public setEditMode(flag: boolean) {
+        setEditMode(flag: boolean) {
+            debugger;
+            if (!flag && this.editor) {
+                this.deselectText();
+                this.editor.deactivate();
+            }
 
             this.toggleClass('edit-mode', flag);
             this.article.getEl().setAttribute('contenteditable', flag.toString());
@@ -194,13 +217,7 @@ module api.liveedit.text {
                 if (!this.editor) {
                     this.editor = this.createEditor();
                 }
-
                 this.editor.activate();
-
-            } else {
-                if (this.editor) {
-                    this.editor.deactivate();
-                }
             }
         }
 
@@ -232,7 +249,7 @@ module api.liveedit.text {
                 },
                 cleanPastedHTML: true,
                 targetBlank: true,
-                placeholder: '',
+                disablePlaceholders: true,
                 firstHeader: 'h1',
                 secondHeader: 'h2',
                 extensions: {
@@ -258,25 +275,43 @@ module api.liveedit.text {
         }
 
         private selectText() {
-            var element = this.article.getHTMLElement();
-            var selection = window.getSelection();
-            var range = document.createRange();
-            range.selectNodeContents(element);
-            range.setStart(range.endContainer, range.startOffset);
-            range.setEnd(range.endContainer, range.endOffset);
-            selection.removeAllRanges();
-            selection.addRange(range);
+            var doc = document;
+            var text = this.article.getHTMLElement();
+
+            if (window['getSelection']) { // moz, opera, webkit
+                var selection = window['getSelection']();
+                var rangeOther = doc.createRange();
+                rangeOther.selectNodeContents(text);
+                selection.removeAllRanges();
+                selection.addRange(rangeOther);
+            } else if (doc.body['createTextRange']) { // ms
+                var rangeIE = doc.body['createTextRange']();
+                rangeIE.moveToElementText(text);
+                rangeIE.select();
+            }
+            text.click();
+        }
+
+        private deselectText() {
+            if (window['getSelection']) {  // moz, opera, webkit
+                window['getSelection']().removeAllRanges();
+            } else if (document.selection) {    // ms
+                document.selection.empty();
+            }
         }
 
         giveFocus() {
-            return this.isEditMode() && this.article.giveFocus();
+            if (this.isEditMode()) {
+                this.article.getHTMLElement().focus();
+                return true;
+            }
+            return false;
         }
 
         private createTextContextMenuActions(): api.ui.Action[] {
             var actions: api.ui.Action[] = [];
             actions.push(new api.ui.Action('Edit').onExecuted(() => {
-                this.startTextEditMode();
-                this.giveFocus();
+                this.startPageTextEditMode();
             }));
             return actions;
         }

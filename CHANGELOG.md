@@ -2,7 +2,7 @@
 
 Bugfixes:
 
- - N/A
+ - Text Component - Improved initial mode when starting to edit (CMS-5043)
 
 Features:
 
@@ -10,6 +10,7 @@ Features:
   - Fields "immutable" and "indexed from input-type in xml are made optional. (CMS-4878)
   - Show available apps in home screen depending on user permissions. (CMS-5018)
   - Automatically set owner to the user creating the content. (CMS-5074)
+  - Live Edit - Lock page by default (CMS-4827)
 
 Refactoring:
 

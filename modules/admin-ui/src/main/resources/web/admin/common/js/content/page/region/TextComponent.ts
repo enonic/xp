@@ -6,10 +6,12 @@ module api.content.page.region {
 
         public static PROPERTY_TEXT: string = "text";
 
+        private PLACEHOLDER_TEXT: string = "<h2>Article</h2>";
+
         constructor(builder?: TextComponentBuilder) {
             super(builder);
             if (builder) {
-                this.text = builder.text;
+                this.setText(builder.text, true);
             }
         }
 
@@ -17,10 +19,12 @@ module api.content.page.region {
             return this.text;
         }
 
-        setText(value?: string) {
-            this.text = value;
-            console.log('Setting text to', value);
-            this.notifyPropertyChanged(TextComponent.PROPERTY_TEXT);
+        setText(value?: string, silent?: boolean) {
+            this.text = value || this.PLACEHOLDER_TEXT;
+
+            if (!silent) {
+                this.notifyPropertyChanged(TextComponent.PROPERTY_TEXT);
+            }
         }
 
         doReset() {

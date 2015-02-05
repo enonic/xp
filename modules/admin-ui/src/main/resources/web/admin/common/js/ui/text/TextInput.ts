@@ -92,10 +92,10 @@ module api.ui.text {
         }
 
         selectText(from?: number, to?: number) {
-            var htmlEl = <any>this.getHTMLElement();
+            var htmlEl = <HTMLInputElement> this.getHTMLElement();
 
             if (!from) {
-                (<HTMLInputElement>htmlEl).select();
+                htmlEl.select();
             } else if (!to) {
                 to = this.getValue().length;
             }
@@ -113,6 +113,10 @@ module api.ui.text {
                 htmlEl.selectionEnd = to;
             }
             htmlEl.focus();
+        }
+
+        moveCaretTo(pos) {
+            this.selectText(pos, pos);
         }
 
         onValueChanged(listener: (event: ValueChangedEvent)=>void) {
