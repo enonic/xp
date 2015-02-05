@@ -36,12 +36,6 @@ module app.browse {
                 filterPanel: undefined
             });
 
-            this.moduleTreeGrid.onSelectionChanged((currentSelection: TreeNode<Module>[], fullSelection: TreeNode<Module>[]) => {
-                this.browseActions.updateActionsEnabledState(<any[]>fullSelection.map((elem) => {
-                    return elem.getData();
-                }));
-            });
-
             this.moduleIconUrl = api.util.UriHelper.getAdminUri('common/images/icons/icoMoon/128x128/puzzle.png');
 
             this.registerEvents();

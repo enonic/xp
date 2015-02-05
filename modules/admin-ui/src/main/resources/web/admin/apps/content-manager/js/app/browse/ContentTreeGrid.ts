@@ -111,14 +111,6 @@ module app.browse {
 
             });
 
-            this.onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
-                                     fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
-                var contentSummaries: ContentSummary[] = fullSelection.map((elem) => {
-                    return elem.getData().getContentSummary();
-                });
-                (<ContentTreeGridActions>this.getContextMenu().getActions()).updateActionsEnabledState(contentSummaries);
-            });
-
             this.getGrid().subscribeOnDblClick((event, data) => {
                 if (this.isActive()) {
                     var node = this.getGrid().getDataView().getItem(data.row);

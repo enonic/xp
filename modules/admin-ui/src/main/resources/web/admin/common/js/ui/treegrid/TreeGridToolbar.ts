@@ -6,7 +6,7 @@ module api.ui.treegrid {
 
         private treeGrid: TreeGrid<any>;
 
-        constructor(actions: TreeGridActions, treeGrid: TreeGrid<any>) {
+        constructor(actions: TreeGridActions<any>, treeGrid: TreeGrid<any>) {
             super();
 
             this.addActions(actions.getAllActions());
