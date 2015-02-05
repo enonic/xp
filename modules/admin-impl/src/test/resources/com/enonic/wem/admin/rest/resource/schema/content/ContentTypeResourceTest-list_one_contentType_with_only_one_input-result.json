@@ -12,6 +12,7 @@
             "editable": false,
           "final": true,
             "iconUrl": "/admin/rest/schema/content/icon/mymodule:my_cty?hash=f95b70fdc3088560732a5ac135644506",
+            "metadata" : [ ],
             "modifiedTime": null,
             "modifier": null,
             "name": "mymodule:my_cty",
