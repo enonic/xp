@@ -1,9 +1,11 @@
 package com.enonic.wem.api.data;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Stopwatch;
 
+@Ignore
 public class PropertyTreeSpeedTest
 {
     private static final int ONE_MILLION = 1000000;
