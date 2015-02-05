@@ -18,3 +18,4 @@
 ///<reference path='RadioGroup.ts' />
 ///<reference path='Checkbox.ts' />
 ///<reference path='DragHelper.ts' />
+///<reference path='NamesAndIconViewer.ts' />

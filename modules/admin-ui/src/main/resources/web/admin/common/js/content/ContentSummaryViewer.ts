@@ -1,53 +1,34 @@
 module api.content {
 
-    export class ContentSummaryViewer extends api.ui.Viewer<ContentSummary> {
-
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class ContentSummaryViewer extends api.ui.NamesAndIconViewer<ContentSummary> {
 
         constructor() {
             super("content-summary-viewer");
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().
-                setSize(api.app.NamesAndIconViewSize.small).
-                build();
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(content: ContentSummary, relativePath: boolean = false) {
-            super.setObject(content);
-            var subName = this.resolveSubName(content, relativePath);
-            var iconUrl = new ContentIconUrlResolver().
-                setContent(content).
-                setCrop(false).resolve();
-            this.namesAndIconView.setMainName(content.getDisplayName()).
-                setSubName(subName, content.getPath().toString()).
-                setIconUrl(iconUrl);
-            this.toggleClass("invalid", !content.isValid());
+        resolveDisplayName(object: ContentSummary): string {
+            this.toggleClass("invalid", !object.isValid());
+            return object.getDisplayName();
         }
 
-        private resolveSubName(content: ContentSummary, relativePath: boolean): string {
-
-            var contentName = content.getName();
+        resolveSubName(object: ContentSummary, relativePath: boolean = false): string {
+            var contentName = object.getName();
             if (relativePath) {
-                if (contentName.isUnnamed()) {
-                    return ContentUnnamed.PRETTY_UNNAMED;
-                }
-                else {
-                    return content.getName().toString()
-                }
-            }
-            else {
-                if (contentName.isUnnamed()) {
-                    var parentPath = content.getPath().getParentPath();
-                    return ContentPath.fromParent(parentPath, ContentUnnamed.PRETTY_UNNAMED).toString();
-                }
-                else {
-                    return content.getPath().toString();
-                }
+                return !contentName.isUnnamed() ? object.getName().toString() :
+                                                  api.ui.NamesAndIconViewer.EMPTY_SUB_NAME;
+            } else {
+                return !contentName.isUnnamed() ? object.getPath().toString() :
+                                                  ContentPath.fromParent(object.getPath().getParentPath(),
+                                                                         api.ui.NamesAndIconViewer.EMPTY_SUB_NAME).toString();
             }
         }
 
-        getPreferredHeight(): number {
-            return 50;
+        resolveSubTitle(object: ContentSummary): string {
+            return object.getPath().toString();
+        }
+
+        resolveIconUrl(object: ContentSummary): string {
+            return new ContentIconUrlResolver().setContent(object).setCrop(false).resolve();
         }
     }
 }

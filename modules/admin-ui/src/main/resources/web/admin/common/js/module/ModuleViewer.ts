@@ -1,24 +1,21 @@
 module api.module {
 
-    export class ModuleViewer extends api.ui.Viewer<Module> {
-
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class ModuleViewer extends api.ui.NamesAndIconViewer<Module> {
 
         constructor() {
             super();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(moduleObj: Module) {
-            super.setObject(moduleObj);
-            this.namesAndIconView.setMainName(moduleObj.getDisplayName()).
-                setSubName(moduleObj.getName()).
-                setIconClass("icon-puzzle icon-large");
+        resolveDisplayName(object: Module): string {
+            return object.getDisplayName();
         }
 
-        getPreferredHeight(): number {
-            return 50;
+        resolveSubName(object: Module, relativePath: boolean = false): string {
+            return object.getName();
+        }
+
+        resolveIconClass(object: Module): string {
+            return "icon-puzzle icon-large";
         }
     }
 }

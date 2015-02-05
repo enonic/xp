@@ -1,24 +1,21 @@
 module api.content.form.inputtype.image {
 
-    export class ImageSelectorViewer extends api.ui.Viewer<ImageSelectorDisplayValue> {
-
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class ImageSelectorViewer extends api.ui.NamesAndIconViewer<ImageSelectorDisplayValue> {
 
         constructor() {
             super();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(value: ImageSelectorDisplayValue) {
-            super.setObject(value);
-            this.namesAndIconView.setMainName(value.getDisplayName()).
-                setSubName(value.getPath()).
-                setIconUrl(value.getImageUrl() + '?crop=false');
+        resolveDisplayName(object: ImageSelectorDisplayValue): string {
+            return object.getDisplayName();
         }
 
-        getPreferredHeight(): number {
-            return 50;
+        resolveSubName(object: ImageSelectorDisplayValue, relativePath: boolean = false): string {
+            return object.getPath();
+        }
+
+        resolveIconUrl(object: ImageSelectorDisplayValue): string {
+            return object.getImageUrl() + "?crop=false";
         }
     }
 }

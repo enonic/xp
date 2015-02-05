@@ -1,33 +1,22 @@
 module app.wizard.page.contextwindow.inspect.page {
 
-    export class PageTemplateOptionViewer extends api.ui.Viewer<PageTemplateOption> {
-
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class PageTemplateOptionViewer extends api.ui.NamesAndIconViewer<PageTemplateOption> {
 
         constructor() {
             super();
-
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(option: PageTemplateOption) {
-            super.setObject(option);
+        resolveDisplayName(object: PageTemplateOption): string {
+            return !!object.getPageTemplate() ? object.getPageTemplate().getDisplayName() : "Automatic";
+        }
 
-            var pageTemplate = option.getPageTemplate();
-            if (pageTemplate) {
-                this.namesAndIconView.
-                    setMainName(pageTemplate.getDisplayName()).
-                    setSubName(pageTemplate.getPath().toString()).
-                    setIconClass("icon-newspaper icon-large");
-            }
-            else {
-                var defaultPageTemplateDisplayName = option.getPageModel().getDefaultPageTemplate().getDisplayName().toString();
-                this.namesAndIconView.
-                    setMainName("Automatic").
-                    setSubName("("+defaultPageTemplateDisplayName+")").
-                    setIconClass("icon-wand icon-large");
-            }
+        resolveSubName(object: PageTemplateOption, relativePath: boolean = false): string {
+            return !!object.getPageTemplate() ? object.getPageTemplate().getPath().toString() :
+                                                "(" + object.getPageModel().getDefaultPageTemplate().getDisplayName().toString() + ")";
+        }
+
+        resolveIconClass(object: PageTemplateOption): string {
+            return !!object.getPageTemplate() ? "icon-newspaper icon-large" : "icon-wand icon-large";
         }
 
         getPreferredHeight(): number {
