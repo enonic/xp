@@ -43,7 +43,7 @@ module api.ui.treegrid {
 
         private active: boolean;
 
-        private actions: TreeGridToolbarActions;
+        private actions: TreeGridToolbarActions<any>;
 
         private loadedListeners: Function[] = [];
 

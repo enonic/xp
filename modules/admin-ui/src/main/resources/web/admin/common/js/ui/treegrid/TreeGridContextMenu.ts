@@ -4,16 +4,16 @@ module api.ui.treegrid {
 
     export class TreeGridContextMenu extends api.ui.menu.ContextMenu {
 
-        private actions: TreeGridActions;
+        private actions: TreeGridActions<any>;
 
-        constructor(actions: TreeGridActions) {
+        constructor(actions: TreeGridActions<any>) {
             super();
 
             this.actions = actions;
             this.addActions(actions.getAllActions());
         }
 
-        getActions(): TreeGridActions {
+        getActions(): TreeGridActions<any> {
             return this.actions;
         }
     }

@@ -1,5 +1,7 @@
 module app.browse {
 
+    import BrowseItem = api.app.browse.BrowseItem;
+    import Module = api.module.Module;
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
 
     export class ModuleBrowseActions implements TreeGridActions {
@@ -40,13 +42,13 @@ module app.browse {
             return this.allActions;
         }
 
-        updateActionsEnabledState(selectedModules: Module[]) {
-            var modulesSelected = selectedModules.length;
+        updateActionsEnabledState(moduleBrowseItems: BrowseItem<Module>[]): wemQ.Promise<BrowseItem<Module>[]> {
+            var modulesSelected = moduleBrowseItems.length;
             var anySelected = modulesSelected > 0;
             var anyStarted = false;
             var anyStopped = false;
-            selectedModules.forEach((mod: Module) => {
-                var state = mod.getState();
+            moduleBrowseItems.forEach((moduleBrowseItem: BrowseItem<Module>) => {
+                var state = moduleBrowseItem.getModel().getState();
                 if (state === 'started') {
                     anyStarted = true;
                 } else if (state === 'stopped') {
@@ -59,6 +61,10 @@ module app.browse {
             this.START_MODULE.setEnabled(anyStopped);
             this.STOP_MODULE.setEnabled(anyStarted);
             this.UPDATE_MODULE.setEnabled(anyStarted);
+
+            var deferred = wemQ.defer<BrowseItem<Module>[]>();
+            deferred.resolve(moduleBrowseItems);
+            return deferred.promise;
         }
 
     }
