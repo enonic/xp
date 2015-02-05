@@ -26,6 +26,10 @@ module api.app.wizard {
             })
         }
 
+        isValid(): boolean {
+            return true;
+        }
+
         giveFocus(): boolean {
             return false;
         }

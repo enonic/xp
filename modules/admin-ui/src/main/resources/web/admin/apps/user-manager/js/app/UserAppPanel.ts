@@ -126,10 +126,12 @@ module app {
 
             var displayName, id: string;
             if (api.ObjectHelper.iFrameSafeInstanceOf(wizard.getPersistedItem(), api.security.Principal)) {
-                displayName = (<api.security.Principal>wizard.getPersistedItem()).getDisplayName();
+                displayName = (<api.security.Principal>wizard.getPersistedItem()).getDisplayName() ||
+                              "<Unnamed " + (<app.wizard.PrincipalWizardPanel>wizard).getUserItemType()  + ">";
                 id = (<api.security.Principal>wizard.getPersistedItem()).getKey().getId();
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(wizard.getPersistedItem(), api.security.UserStore)) {
-                displayName = (<api.security.UserStore>wizard.getPersistedItem()).getDisplayName();
+                displayName = (<api.security.UserStore>wizard.getPersistedItem()).getDisplayName() ||
+                              "<Unnamed " + (<app.wizard.UserStoreWizardPanel>wizard).getUserItemType()  + ">";
                 id = (<api.security.UserStore>wizard.getPersistedItem()).getKey().getId();
             }
 

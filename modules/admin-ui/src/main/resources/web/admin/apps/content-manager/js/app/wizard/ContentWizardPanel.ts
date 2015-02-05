@@ -787,7 +787,6 @@ module app.wizard {
         }
 
         public checkContentCanBePublished(): boolean {
-
             if (!this.isContentFormValid) {
                 this.contentWizardStepForm.displayValidationErrors(true);
             }

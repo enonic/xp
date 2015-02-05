@@ -65,11 +65,11 @@ module api.app.wizard {
 
         private stepNavigatorPlaceholder: api.dom.DivEl;
 
-        private validityManager: WizardStepsValidityManager;
+        private validityManager: WizardValidityManager;
 
         constructor(params: WizardPanelParams, callback: Function) {
             super("wizard-panel");
-            this.validityManager = new WizardStepsValidityManager();
+            this.validityManager = new WizardValidityManager();
 
             this.tabId = params.tabId;
             this.persistedItem = params.persistedItem;
@@ -77,6 +77,8 @@ module api.app.wizard {
             this.mainToolbar = params.mainToolbar;
             this.stepToolbar = params.stepToolbar;
             this.actions = params.actions;
+
+            this.validityManager.setHeader(this.header);
 
             this.formPanel = new api.ui.panel.Panel("form-panel");
             this.formPanel.onScroll(() => this.updateStickyToolbar());
@@ -124,13 +126,13 @@ module api.app.wizard {
                     then(() => this.postLayoutNew()).
                     catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                     finally(()=> callback()).
-                    done();
+                    done(() => this.validityManager.notifyValidityChanged(this.isValid()));
             } else {
                 this.startLayoutPersistedItem(this.persistedItem).
                     then(() => this.postLayoutPersisted(this.persistedItem)).
                     catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
                     finally(() => callback()).
-                    done();
+                    done(() => this.validityManager.notifyValidityChanged(this.isValid()));
             }
 
             this.onRendered((event: api.dom.ElementRenderedEvent) => {
