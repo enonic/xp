@@ -96,11 +96,11 @@ module api.liveedit.text {
         }
 
         private processChanges() {
-            var text = this.editor.serialize();
+            var text = this.article.getHtml();
             if (TextComponentView.debug) {
-                console.log('Processing editor contents:', text.value);
+                console.log('Processing editor contents:', text);
             }
-            this.textComponent.setText(text.value);
+            this.textComponent.setText(text);
         }
 
         isEmpty(): boolean {
