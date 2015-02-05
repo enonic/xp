@@ -39,7 +39,7 @@ public final class InputTypes
 
     public static final InputType PHONE = new Phone();
 
-    public static final InputType RELATIONSHIP = new Relationship();
+    public static final InputType CONTENT_SELECTOR = new ContentSelector();
 
     public static final InputType SINGLE_SELECTOR = new SingleSelector();
 
@@ -73,7 +73,7 @@ public final class InputTypes
         add( IMAGE_SELECTOR ).
         add( MONEY ).
         add( PHONE ).
-        add( RELATIONSHIP ).
+        add( CONTENT_SELECTOR ).
         add( SINGLE_SELECTOR ).
         add( TAG ).
         add( TEXT_AREA ).

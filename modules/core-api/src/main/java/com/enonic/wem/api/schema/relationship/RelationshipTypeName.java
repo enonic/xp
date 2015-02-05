@@ -13,8 +13,6 @@ public final class RelationshipTypeName
 
     public static final RelationshipTypeName PARENT = new RelationshipTypeName( "parent" );
 
-    public static final RelationshipTypeName IMAGE = new RelationshipTypeName( "related-image" );
-
     private RelationshipTypeName( final ModuleKey moduleKey, final String localName )
     {
         super( moduleKey, localName );

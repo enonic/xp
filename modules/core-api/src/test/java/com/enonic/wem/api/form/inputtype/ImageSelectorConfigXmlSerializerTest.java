@@ -82,7 +82,7 @@ public class ImageSelectorConfigXmlSerializerTest
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void parseConfig_relationshipType_as_empty()
         throws IOException
     {
@@ -102,16 +102,20 @@ public class ImageSelectorConfigXmlSerializerTest
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
     }
 
-    @Test(expected = NullPointerException.class)
-    public void parseConfig_relationshipType_not_existing()
+    @Test
+    public void parseConfig_relationshipType_not_specified()
         throws IOException
     {
         // setup
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
         xml.append( "</config>\n" );
+        ImageSelectorConfig expected = ImageSelectorConfig.newImageSelectorConfig().build();
 
         // exercise
-        serializer.parseConfig( DomHelper.parse( xml.toString() ) );
+        ImageSelectorConfig parsed = serializer.parseConfig( DomHelper.parse( xml.toString() ) );
+
+        // verify
+        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
     }
 }

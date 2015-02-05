@@ -14,11 +14,10 @@ public class BuiltinRelationshipTypesProviderTest
     public void testBuiltin()
     {
         final RelationshipTypes types = new BuiltinRelationshipTypesProvider().get();
-        assertEquals( 3, types.getSize() );
+        assertEquals( 2, types.getSize() );
 
         assertType( types.get( 0 ), RelationshipTypeName.REFERENCE, true );
         assertType( types.get( 1 ), RelationshipTypeName.PARENT, true );
-        assertType( types.get( 2 ), RelationshipTypeName.IMAGE, false );
     }
 
     private void assertType( final RelationshipType type, final RelationshipTypeName name, final boolean hasIcon )

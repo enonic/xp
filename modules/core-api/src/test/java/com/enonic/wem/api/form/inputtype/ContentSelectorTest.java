@@ -8,12 +8,12 @@ import com.enonic.wem.api.util.Reference;
 import static junit.framework.Assert.assertEquals;
 
 
-public class RelationshipTest
+public class ContentSelectorTest
 {
     @Test
     public void newValue()
     {
-        Value value = new Relationship().newValue( "ABC" );
+        Value value = new ContentSelector().newValue( "ABC" );
         assertEquals( Reference.from( "ABC" ), value.asReference() );
     }
 }

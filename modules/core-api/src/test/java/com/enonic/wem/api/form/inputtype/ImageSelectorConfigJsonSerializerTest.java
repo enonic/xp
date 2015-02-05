@@ -42,8 +42,8 @@ public class ImageSelectorConfigJsonSerializerTest
         assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );
     }
 
-    @Test(expected = NullPointerException.class)
-    public void serializeConfig_with_no_relationShipType()
+    @Test
+    public void serializeConfig_with_no_explicit_relationShipType()
         throws IOException
     {
         // setup
@@ -51,7 +51,10 @@ public class ImageSelectorConfigJsonSerializerTest
         ImageSelectorConfig config = builder.build();
 
         // exercise
-        serializer.serializeConfig( config, jsonHelper.objectMapper() );
+        JsonNode json = serializer.serializeConfig( config, jsonHelper.objectMapper() );
+
+        // verify
+        assertJsonEquals( jsonHelper.loadTestJson( "serializeConfig.json" ), json );
     }
 
     @Test
@@ -70,17 +73,18 @@ public class ImageSelectorConfigJsonSerializerTest
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void parseConfig_relationshipType_not_existing()
         throws IOException
     {
         // setup
-        StringBuilder json = new StringBuilder();
-        json.append( "{\n" );
-        json.append( "\"allowContentTypes\": [\"audio\", \"image\"]\n" );
-        json.append( "}\n" );
+        String json = "{}";
+        ImageSelectorConfig expected = ImageSelectorConfig.newImageSelectorConfig().build();
 
         // exercise
-        serializer.parseConfig( jsonHelper.stringToJson( json.toString() ) );
+        ImageSelectorConfig parsed = serializer.parseConfig( jsonHelper.stringToJson( json ) );
+
+        // verify
+        assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
     }
 }

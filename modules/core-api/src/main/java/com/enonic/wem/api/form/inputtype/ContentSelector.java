@@ -8,23 +8,23 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.ValueTypes;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 
-final class Relationship
+final class ContentSelector
     extends InputType
 {
-    Relationship()
+    ContentSelector()
     {
-        super( RelationshipConfig.class );
+        super( ContentSelectorConfig.class );
     }
 
     public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
-        return RelationshipConfigJsonSerializer.DEFAULT;
+        return ContentSelectorConfigJsonSerializer.DEFAULT;
     }
 
     @Override
     public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
     {
-        return RelationshipConfigXmlSerializer.DEFAULT;
+        return ContentSelectorConfigXmlSerializer.DEFAULT;
     }
 
     @Override
