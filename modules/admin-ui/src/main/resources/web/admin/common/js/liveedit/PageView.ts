@@ -226,11 +226,15 @@ module api.liveedit {
             this.toggleClass('locked', locked);
 
             if (locked) {
-                this.select();
                 this.shade();
+
+                new PageLockedEvent(this).fire();
             } else {
                 this.unshade();
-                new PageUnlockedEvent(this).fire();
+
+                if (!this.pageModel.isPageTemplate() || this.pageModel.getMode() == PageMode.AUTOMATIC) {
+                    this.pageModel.initializePageFromDefault(this);
+                }
             }
         }
 
@@ -267,6 +271,10 @@ module api.liveedit {
                     textView.setEditMode(flag);
                 }
             });
+
+            if (flag) {
+                new PageTextModeStartedEvent(this).fire();
+            }
         }
 
         isEmpty(): boolean {

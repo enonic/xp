@@ -19,7 +19,8 @@ module app.wizard.page {
     import DraggingComponentViewCanceledEvent = api.liveedit.DraggingComponentViewCanceledEvent;
     import ItemFromContextWindowDroppedEvent = api.liveedit.ItemFromContextWindowDroppedEvent;
     import PageSelectedEvent = api.liveedit.PageSelectedEvent;
-    import PageUnlockedEvent = api.liveedit.PageUnlockedEvent;
+    import PageLockedEvent = api.liveedit.PageLockedEvent;
+    import PageTextModeStartedEvent = api.liveedit.PageTextModeStartedEvent;
     import RegionSelectedEvent = api.liveedit.RegionSelectedEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
@@ -57,7 +58,9 @@ module app.wizard.page {
 
         private pageSelectedListeners: {(event: PageSelectedEvent): void;}[] = [];
 
-        private pageUnlockedListeners: {(event: PageUnlockedEvent): void;}[] = [];
+        private pageLockedListeners: {(event: PageLockedEvent): void;}[] = [];
+
+        private pageTextModeStartedListeners: {(event: PageTextModeStartedEvent): void;}[] = [];
 
         private regionSelectedListeners: {(event: RegionSelectedEvent): void;}[] = [];
 
@@ -252,7 +255,9 @@ module app.wizard.page {
 
             PageSelectedEvent.on(this.notifyPageSelected.bind(this), this.liveEditWindow);
 
-            PageUnlockedEvent.on(this.notifyPageUnlocked.bind(this), this.liveEditWindow);
+            PageLockedEvent.on(this.notifyPageLocked.bind(this), this.liveEditWindow);
+
+            PageTextModeStartedEvent.on(this.notifyPageTextModeStarted.bind(this), this.liveEditWindow);
 
             RegionSelectedEvent.on(this.notifyRegionSelected.bind(this), this.liveEditWindow);
 
@@ -348,16 +353,28 @@ module app.wizard.page {
             this.pageSelectedListeners.forEach((listener) => listener(event));
         }
 
-        onPageUnlocked(listener: (event: PageUnlockedEvent) => void) {
-            this.pageUnlockedListeners.push(listener);
+        onPageLocked(listener: (event: PageLockedEvent) => void) {
+            this.pageLockedListeners.push(listener);
         }
 
-        unPageUnlocked(listener: (event: PageUnlockedEvent) => void) {
-            this.pageUnlockedListeners = this.pageUnlockedListeners.filter((curr) => (curr != listener));
+        unPageLocked(listener: (event: PageLockedEvent) => void) {
+            this.pageLockedListeners = this.pageLockedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyPageUnlocked(event: PageUnlockedEvent) {
-            this.pageUnlockedListeners.forEach((listener) => listener(event));
+        private notifyPageLocked(event: PageLockedEvent) {
+            this.pageLockedListeners.forEach((listener) => listener(event));
+        }
+
+        onPageTextModeStarted(listener: (event: PageTextModeStartedEvent) => void) {
+            this.pageTextModeStartedListeners.push(listener);
+        }
+
+        unPageTextModeStarted(listener: (event: PageTextModeStartedEvent) => void) {
+            this.pageTextModeStartedListeners = this.pageTextModeStartedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyPageTextModeStarted(event: PageTextModeStartedEvent) {
+            this.pageTextModeStartedListeners.forEach((listener) => listener(event));
         }
 
         onRegionSelected(listener: {(event: RegionSelectedEvent): void;}) {

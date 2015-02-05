@@ -3,6 +3,8 @@
 Bugfixes:
 
  - Text Component - Improved initial mode when starting to edit (CMS-5043)
+ - Text Component - Editor selection hangs up (CMS-5059)
+ - Text Component - When in edit mode context window should always hide (CMS-5075)
 
 Features:
 
@@ -16,6 +18,7 @@ Refactoring:
 
   - Removed menu-item meta step Mixin from built-in types. (CMS-5045)
   - Removed built-in relationship types "system:like" and "system:link". Renamed "system:default" to "system:reference". (CMS-5053)
+
 
 ## RC4 (2015-02-03)
 

@@ -19,7 +19,7 @@ module api.liveedit.text {
 
         private editor: MediumEditorType;
 
-        public static debug = true;
+        public static debug = false;
 
         // special handling for click to allow dblclick event without triggering 2 clicks before it
         public static DBL_CLICK_TIMEOUT = 200;
@@ -201,7 +201,6 @@ module api.liveedit.text {
         }
 
         setEditMode(flag: boolean) {
-            debugger;
             if (!flag && this.editor) {
                 this.deselectText();
                 this.editor.deactivate();

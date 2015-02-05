@@ -319,16 +319,23 @@ module app.wizard.page {
 
         private liveEditListen() {
 
-            this.liveEditPageProxy.onPageUnlocked((event: api.liveedit.PageUnlockedEvent) => {
-                // assign a page template to a page on unlock if needed
-                if (!this.pageModel.isPageTemplate() || this.pageModel.getMode() == PageMode.AUTOMATIC) {
-                    this.pageModel.initializePageFromDefault(this);
+            this.liveEditPageProxy.onPageLocked((event: api.liveedit.PageLockedEvent) => {
+                if (this.contextWindow.isFloating() && !this.contextWindow.isShown()) {
+                    this.contextWindow.slideIn();
+                }
+                this.inspectPage();
+            });
+
+            this.liveEditPageProxy.onPageTextModeStarted((event: api.liveedit.PageTextModeStartedEvent) => {
+                if (this.contextWindow.isFloating() && this.contextWindow.isShown()) {
+                    this.contextWindow.slideOut();
                 }
             });
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
                 this.pageView = event.getPageView();
             });
+
             this.liveEditPageProxy.onPageSelected((event: PageSelectedEvent) => {
                 this.inspectPage();
             });
