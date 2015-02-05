@@ -65,11 +65,8 @@ public final class ContentDataSerializer
         contentAsData.ifNotNull().addString( LANGUAGE, content.getLanguage() != null ? content.getLanguage().toLanguageTag() : null );
         contentAsData.ifNotNull().addInstant( MODIFIED_TIME, content.getModifiedTime() );
         contentAsData.ifNotNull().addString( MODIFIER, content.getModifier().toString() );
-        contentAsData.ifNotNull().addString( CREATOR, content.getCreator() == null
-            ? content.getModifier().toString()
-            : content.getCreator().toString() );
-        contentAsData.ifNotNull().addInstant( CREATED_TIME,
-                                              content.getCreatedTime() == null ? content.getModifiedTime() : content.getCreatedTime() );
+        contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
+        contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
         contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
         if ( content.hasMetadata() )
@@ -148,8 +145,8 @@ public final class ContentDataSerializer
 
     private void addUserInfo( final PropertySet contentAsSet, final Content.Builder builder )
     {
-        builder.creator( contentAsSet.getString( CREATOR ) != null ? PrincipalKey.from( contentAsSet.getString( CREATOR ) ) : null );
-        builder.createdTime( contentAsSet.getInstant( CREATED_TIME ) != null ? contentAsSet.getInstant( CREATED_TIME ) : null );
+        builder.creator( PrincipalKey.from( contentAsSet.getString( CREATOR ) ) );
+        builder.createdTime( contentAsSet.getInstant( CREATED_TIME ) );
         builder.modifier( contentAsSet.getString( MODIFIER ) != null ? PrincipalKey.from( contentAsSet.getString( MODIFIER ) ) : null );
         builder.modifiedTime( contentAsSet.getInstant( MODIFIED_TIME ) != null ? contentAsSet.getInstant( MODIFIED_TIME ) : null );
     }
