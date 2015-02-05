@@ -1,11 +1,18 @@
 package com.enonic.wem.api.xml.mapper;
 
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.xml.model.XmlContentType;
+import com.enonic.wem.api.xml.model.XmlMetadata;
 
 public final class XmlContentTypeMapper
 {
+    private final static String SEPARATOR = ":";
+
     public static XmlContentType toXml( final ContentType object )
     {
         final XmlContentType result = new XmlContentType();
@@ -31,6 +38,15 @@ public final class XmlContentTypeMapper
         builder.setAbstract( xml.isIsAbstract() != null && xml.isIsAbstract() );
         builder.setFinal( xml.isIsFinal() != null && xml.isIsFinal() );
         builder.allowChildContent( xml.isAllowChildContent() != null && xml.isAllowChildContent() );
+        final ImmutableList.Builder<MixinName> metadataMixinNames = ImmutableList.builder();
+        for ( XmlMetadata xmlMetadata : xml.getMetadata() )
+        {
+            final String mixinName = xmlMetadata.getMixin();
+            final MixinName metadataSchemaName =
+                mixinName.contains( SEPARATOR ) ? MixinName.from( mixinName ) : MixinName.from( mixinName );
+            metadataMixinNames.add( metadataSchemaName );
+        }
+        builder.metadata( MixinNames.from( metadataMixinNames.build() ) );
         XmlFormMapper.fromItemsXml( xml.getForm() ).forEach( builder::addFormItem );
     }
 }
