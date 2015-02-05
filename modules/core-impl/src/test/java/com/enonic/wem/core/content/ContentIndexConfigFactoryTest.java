@@ -3,6 +3,7 @@ package com.enonic.wem.core.content;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentPropertyNames;
 import com.enonic.wem.api.content.CreateContentTranslatorParams;
 import com.enonic.wem.api.data.PropertyPath;
 import com.enonic.wem.api.data.PropertySet;

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import com.google.common.collect.Sets;
+
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.ValueTypes;
@@ -23,6 +25,8 @@ import com.enonic.wem.export.internal.builder.CreateNodeParamsFactory;
 import com.enonic.wem.export.internal.builder.PropertyTreeXmlBuilder;
 import com.enonic.wem.export.internal.builder.UpdateNodeParamsFactory;
 import com.enonic.wem.export.internal.reader.ExportReader;
+import com.enonic.wem.export.internal.validator.ContentImportValidator;
+import com.enonic.wem.export.internal.validator.ImportValidator;
 import com.enonic.wem.export.internal.xml.XmlNode;
 import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
@@ -47,6 +51,8 @@ public class NodeImportCommand
     private static final Long IMPORT_NODE_ORDER_SPACE = (long) Integer.MAX_VALUE;
 
     private final boolean importNodeIds;
+
+    private final Set<ImportValidator> importValidators = Sets.newHashSet( new ContentImportValidator() );
 
     private NodeImportCommand( final Builder builder )
     {
@@ -183,7 +189,9 @@ public class NodeImportCommand
             build().
             execute();
 
-        final Node createdNode = this.nodeService.create( createNodeParams );
+        CreateNodeParams validatedCreateNodeParams = validateImportData( createNodeParams );
+
+        final Node createdNode = this.nodeService.create( validatedCreateNodeParams );
 
         result.added( createdNode.path() );
 
@@ -248,6 +256,20 @@ public class NodeImportCommand
         {
             throw new ImportNodeException( "Import root '" + this.importRoot + "' not found" );
         }
+    }
+
+    private CreateNodeParams validateImportData( final CreateNodeParams createNodeParams )
+    {
+        CreateNodeParams validatedCreateNodeParams = createNodeParams;
+
+        for ( final ImportValidator validator : this.importValidators )
+        {
+            if ( validator.canHandle( createNodeParams ) )
+            {
+                validatedCreateNodeParams = validator.ensureValid( validatedCreateNodeParams );
+            }
+        }
+        return validatedCreateNodeParams;
     }
 
     public static Builder create()

@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentPropertyNames;
 import com.enonic.wem.api.content.CreateContentTranslatorParams;
 import com.enonic.wem.api.content.attachment.AttachmentNames;
 import com.enonic.wem.api.data.PropertyPath;

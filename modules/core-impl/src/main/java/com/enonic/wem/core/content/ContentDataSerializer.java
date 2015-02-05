@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentPropertyNames;
 import com.enonic.wem.api.content.CreateContentTranslatorParams;
 import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.Metadatas;
@@ -27,19 +28,19 @@ import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.content.page.PageDataSerializer;
 
-import static com.enonic.wem.core.content.ContentPropertyNames.ATTACHMENT;
-import static com.enonic.wem.core.content.ContentPropertyNames.CREATED_TIME;
-import static com.enonic.wem.core.content.ContentPropertyNames.CREATOR;
-import static com.enonic.wem.core.content.ContentPropertyNames.DATA;
-import static com.enonic.wem.core.content.ContentPropertyNames.DISPLAY_NAME;
-import static com.enonic.wem.core.content.ContentPropertyNames.LANGUAGE;
-import static com.enonic.wem.core.content.ContentPropertyNames.META_STEPS;
-import static com.enonic.wem.core.content.ContentPropertyNames.MODIFIED_TIME;
-import static com.enonic.wem.core.content.ContentPropertyNames.MODIFIER;
-import static com.enonic.wem.core.content.ContentPropertyNames.OWNER;
-import static com.enonic.wem.core.content.ContentPropertyNames.PAGE;
-import static com.enonic.wem.core.content.ContentPropertyNames.TYPE;
-import static com.enonic.wem.core.content.ContentPropertyNames.VALID;
+import static com.enonic.wem.api.content.ContentPropertyNames.ATTACHMENT;
+import static com.enonic.wem.api.content.ContentPropertyNames.CREATED_TIME;
+import static com.enonic.wem.api.content.ContentPropertyNames.CREATOR;
+import static com.enonic.wem.api.content.ContentPropertyNames.DATA;
+import static com.enonic.wem.api.content.ContentPropertyNames.DISPLAY_NAME;
+import static com.enonic.wem.api.content.ContentPropertyNames.LANGUAGE;
+import static com.enonic.wem.api.content.ContentPropertyNames.META_STEPS;
+import static com.enonic.wem.api.content.ContentPropertyNames.MODIFIED_TIME;
+import static com.enonic.wem.api.content.ContentPropertyNames.MODIFIER;
+import static com.enonic.wem.api.content.ContentPropertyNames.OWNER;
+import static com.enonic.wem.api.content.ContentPropertyNames.PAGE;
+import static com.enonic.wem.api.content.ContentPropertyNames.TYPE;
+import static com.enonic.wem.api.content.ContentPropertyNames.VALID;
 
 public final class ContentDataSerializer
 {
@@ -64,8 +65,11 @@ public final class ContentDataSerializer
         contentAsData.ifNotNull().addString( LANGUAGE, content.getLanguage() != null ? content.getLanguage().toLanguageTag() : null );
         contentAsData.ifNotNull().addInstant( MODIFIED_TIME, content.getModifiedTime() );
         contentAsData.ifNotNull().addString( MODIFIER, content.getModifier().toString() );
-        contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
-        contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
+        contentAsData.ifNotNull().addString( CREATOR, content.getCreator() == null
+            ? content.getModifier().toString()
+            : content.getCreator().toString() );
+        contentAsData.ifNotNull().addInstant( CREATED_TIME,
+                                              content.getCreatedTime() == null ? content.getModifiedTime() : content.getCreatedTime() );
         contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
         if ( content.hasMetadata() )
@@ -144,8 +148,8 @@ public final class ContentDataSerializer
 
     private void addUserInfo( final PropertySet contentAsSet, final Content.Builder builder )
     {
-        builder.creator( PrincipalKey.from( contentAsSet.getString( CREATOR ) ) );
-        builder.createdTime( contentAsSet.getInstant( CREATED_TIME ) );
+        builder.creator( contentAsSet.getString( CREATOR ) != null ? PrincipalKey.from( contentAsSet.getString( CREATOR ) ) : null );
+        builder.createdTime( contentAsSet.getInstant( CREATED_TIME ) != null ? contentAsSet.getInstant( CREATED_TIME ) : null );
         builder.modifier( contentAsSet.getString( MODIFIER ) != null ? PrincipalKey.from( contentAsSet.getString( MODIFIER ) ) : null );
         builder.modifiedTime( contentAsSet.getInstant( MODIFIED_TIME ) != null ? contentAsSet.getInstant( MODIFIED_TIME ) : null );
     }

@@ -62,6 +62,11 @@ public class CreateNodeParams
         return new Builder();
     }
 
+    public static Builder create( final CreateNodeParams source )
+    {
+        return new Builder( source );
+    }
+
     public static Builder from( final Node node )
     {
         return new Builder().
@@ -170,6 +175,22 @@ public class CreateNodeParams
         }
 
         private Set<BinaryAttachment> binaryAttachments = Sets.newHashSet();
+
+
+        private Builder( final CreateNodeParams createNodeParams )
+        {
+            this.parent = createNodeParams.parent;
+            this.name = createNodeParams.name;
+            this.data = createNodeParams.data;
+            this.indexConfigDocument = createNodeParams.indexConfigDocument;
+            this.childOrder = createNodeParams.childOrder;
+            this.nodeId = createNodeParams.nodeId;
+            this.inheritPermissions = createNodeParams.inheritPermissions;
+            this.insertManualStrategy = createNodeParams.insertManualStrategy;
+            this.manualOrderValue = createNodeParams.manualOrderValue;
+            this.nodeType = createNodeParams.nodeType;
+            this.binaryAttachments = createNodeParams.binaryAttachments.getSet();
+        }
 
         public Builder setNodeId( final NodeId nodeId )
         {
@@ -283,7 +304,7 @@ public class CreateNodeParams
     @Override
     public int hashCode()
     {
-        return Objects.hash( parent, name, data, indexConfigDocument, childOrder, nodeId, permissions, inheritPermissions,
-                             nodeType, binaryAttachments );
+        return Objects.hash( parent, name, data, indexConfigDocument, childOrder, nodeId, permissions, inheritPermissions, nodeType,
+                             binaryAttachments );
     }
 }

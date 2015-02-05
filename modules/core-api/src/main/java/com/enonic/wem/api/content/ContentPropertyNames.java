@@ -1,6 +1,6 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.api.content;
 
-class ContentPropertyNames
+public class ContentPropertyNames
 {
     public static final String PAGE = "page";
 
