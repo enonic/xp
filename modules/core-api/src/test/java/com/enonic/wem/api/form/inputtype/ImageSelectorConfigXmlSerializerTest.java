@@ -33,7 +33,7 @@ public class ImageSelectorConfigXmlSerializerTest
     {
         // setup
         ImageSelectorConfig.Builder builder = newImageSelectorConfig();
-        builder.relationshipType( RelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.REFERENCE );
         ImageSelectorConfig config = builder.build();
 
         // exercise
@@ -49,7 +49,7 @@ public class ImageSelectorConfigXmlSerializerTest
     {
         // setup
         ImageSelectorConfig.Builder builder = newImageSelectorConfig();
-        builder.relationshipType( RelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.REFERENCE );
         ImageSelectorConfig expected = builder.build();
 
         // exercise
@@ -66,13 +66,13 @@ public class ImageSelectorConfigXmlSerializerTest
     {
         // setup
         ImageSelectorConfig.Builder builder = newImageSelectorConfig();
-        builder.relationshipType( RelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.REFERENCE );
         ImageSelectorConfig expected = builder.build();
 
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
         xml.append( "<content-type-filter></content-type-filter>" );
-        xml.append( "<relationship-type>system:like</relationship-type>" );
+        xml.append( "<relationship-type>system:reference</relationship-type>" );
         xml.append( "</config>\n" );
 
         // exercise
