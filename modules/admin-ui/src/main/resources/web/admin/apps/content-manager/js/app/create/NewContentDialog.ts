@@ -93,9 +93,6 @@ module app.create {
                 this.closeAndFireEventFromContentType(event.getItem());
             });
 
-            var cancelAction = new api.ui.Action("Cancel", "esc");
-            cancelAction.onExecuted(() => this.close());
-            this.setCancelAction(cancelAction);
         }
 
         private initMediaUploader() {

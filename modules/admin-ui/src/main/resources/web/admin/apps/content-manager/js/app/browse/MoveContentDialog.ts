@@ -47,10 +47,6 @@ module app.browse {
 
         private initializeActions() {
 
-            this.setCancelAction(new api.ui.Action("Cancel", "esc", true).onExecuted(() => {
-                this.close();
-            }));
-
             this.addAction(new api.ui.Action("Move", "").onExecuted(() => {
 
                 this.contentMoveMask.show();

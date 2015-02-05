@@ -1,17 +1,36 @@
 .delete-dialog {
-  width: 500px;
+
+  .dialog-content {
+    @media screen and (max-height: 360px) {
+      height: 60%;
+    }
+  }
 
   .item-list {
     padding: 10px;
 
     box-shadow: 0 0 5px #777;
 
-    max-height: 150px;
+    max-height: 400px;
     overflow-y: auto;
 
     .viewer {
       padding-top: 5px;
       padding-bottom: 5px;
     }
+
+    @media screen and (max-height: 720px) {
+      max-height: 350px;
+    }
+
+    @media screen and (max-height: 540px) {
+      max-height: 170px;
+    }
+
+    @media screen and (max-height: 360px) {
+      max-height: 82%;
+    }
+
   }
+
 }

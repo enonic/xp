@@ -33,7 +33,6 @@ module api.app.wizard {
             });
             this.addAction(this.noAction);
 
-            this.setCancelAction(new api.ui.Action('Cancel', 'esc'));
             this.getCancelAction().setMnemonic("c");
             this.getCancelAction().onExecuted(() => {
                 this.close();
