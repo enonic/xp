@@ -150,7 +150,6 @@
       <xs:element minOccurs="0" name="super-type" type="xs:string"/>
       <xs:element minOccurs="0" name="is-abstract" type="xs:boolean"/>
       <xs:element minOccurs="0" name="is-final" type="xs:boolean"/>
-      <xs:element minOccurs="0" name="is-built-in" type="xs:boolean"/>
       <xs:element minOccurs="0" name="allow-child-content" type="xs:boolean"/>
       <xs:element minOccurs="0" name="form" type="formItems"/>
     </xs:sequence>

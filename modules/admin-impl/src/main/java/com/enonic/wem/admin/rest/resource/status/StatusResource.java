@@ -5,6 +5,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.osgi.service.component.annotations.Component;
+
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -18,6 +20,7 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 
 @Path(ResourceConstants.REST_ROOT + "status")
+@Component(immediate = true)
 public final class StatusResource
     implements AdminResource
 {

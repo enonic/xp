@@ -6,6 +6,8 @@ public interface MixinService
 {
     Mixin getByName( MixinName name );
 
+    Mixin getByLocalName( String localName );
+
     Mixins getAll();
 
     Mixins getByModule( ModuleKey moduleKey );

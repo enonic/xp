@@ -8,8 +8,8 @@ public class CompareStatus
         NEW_TARGET,
         NEWER,
         OLDER,
-        DELETED,
-        DELETED_TARGET,
+        PENDING_DELETE,
+        PENDING_DELETE_TARGET,
         EQUAL,
         MOVED,
         CONFLICT_PATH_EXISTS,
@@ -32,11 +32,6 @@ public class CompareStatus
     public boolean isConflict()
     {
         return this.status.equals( Status.CONFLICT_PATH_EXISTS ) || status.equals( Status.CONFLICT_VERSION_BRANCH_DIVERGS );
-    }
-
-    public boolean isDelete()
-    {
-        return this.status.equals( Status.DELETED );
     }
 
     @Override

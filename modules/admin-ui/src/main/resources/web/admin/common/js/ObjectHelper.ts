@@ -6,6 +6,10 @@ module api {
     export class ObjectHelper {
 
         static iFrameSafeInstanceOf(obj: any, fn: Function): boolean {
+            if (!fn) {
+                console.warn('Undefined fn passed to iFrameSafeInstanceOf, returning false', obj, fn);
+                return false;
+            }
             if (!obj) {
                 return false;
             }

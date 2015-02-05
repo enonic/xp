@@ -26,7 +26,7 @@ public abstract class AbstractHandlerTest
     {
         this.context = new PortalContext();
         this.context.setMode( RenderMode.LIVE );
-        this.context.setWorkspace( Workspace.from( "stage" ) );
+        this.context.setWorkspace( Workspace.from( "draft" ) );
         this.context.setModule( ModuleKey.from( "mymodule" ) );
         this.context.setBaseUri( "/portal" );
 

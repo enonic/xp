@@ -4,7 +4,6 @@ module api.app {
         private id: string;
         private name: string;
         private shortName: string;
-        private description: string;
         private iconUrl: string;
         private fullSizeIcon: boolean;
         private openTabs: number;
@@ -13,14 +12,13 @@ module api.app {
         private path: api.rest.Path;
         private loadedListeners: {(): void}[] = [];
 
-        constructor(id: string, name: string, shortName: string, icon: string, description?: string, appFrame: api.dom.IFrameEl = null,
+        constructor(id: string, name: string, shortName: string, icon: string, appFrame: api.dom.IFrameEl = null,
                     iconImage: boolean = false) {
             this.id = id;
             this.name = name;
             this.shortName = shortName;
             this.iconUrl = icon;
             this.fullSizeIcon = iconImage;
-            this.description = description;
             this.openTabs = 0;
         }
 
@@ -46,10 +44,6 @@ module api.app {
 
         getShortName(): string {
             return this.shortName;
-        }
-
-        getDescription(): string {
-            return this.description;
         }
 
         getIconUrl(): string {

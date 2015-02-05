@@ -20,6 +20,7 @@ import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.UserStores;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.acl.UserStoreAccess;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
 import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
 
@@ -128,6 +129,12 @@ abstract class UserStoreNodeTranslator
                     principal( principal ).access( CREATE_USERS ).build();
                 acl.add( access );
             }
+            else if ( usersPermissions.isAllowedFor( principal, READ ) )
+            {
+                final UserStoreAccessControlEntry access = UserStoreAccessControlEntry.create().
+                    principal( principal ).access( UserStoreAccess.READ ).build();
+                acl.add( access );
+            }
         }
 
         return acl.build();
@@ -136,7 +143,6 @@ abstract class UserStoreNodeTranslator
     static AccessControlList userStorePermissionsToUserStoreNodePermissions( final UserStoreAccessControlList userStorePermissions )
     {
         final List<AccessControlEntry> entries = new ArrayList<>();
-        entries.add( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build() ); // TODO remove this later
         for ( UserStoreAccessControlEntry entry : userStorePermissions )
         {
             if ( entry.getAccess() == ADMINISTRATOR )
@@ -152,7 +158,6 @@ abstract class UserStoreNodeTranslator
     static AccessControlList userStorePermissionsToUsersNodePermissions( final UserStoreAccessControlList userStorePermissions )
     {
         final List<AccessControlEntry> entries = new ArrayList<>();
-        entries.add( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build() ); // TODO remove this later
         for ( UserStoreAccessControlEntry entry : userStorePermissions )
         {
             final AccessControlEntry ace;
@@ -178,6 +183,11 @@ abstract class UserStoreNodeTranslator
                         allow( READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS ).build();
                     entries.add( ace );
                     break;
+                case READ:
+                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
+                        allow( READ ).build();
+                    entries.add( ace );
+                    break;
             }
         }
         return AccessControlList.create().addAll( entries ).build();
@@ -186,7 +196,6 @@ abstract class UserStoreNodeTranslator
     static AccessControlList userStorePermissionsToGroupsNodePermissions( final UserStoreAccessControlList userStorePermissions )
     {
         final List<AccessControlEntry> entries = new ArrayList<>();
-        entries.add( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build() ); // TODO remove this later
         for ( UserStoreAccessControlEntry entry : userStorePermissions )
         {
             final AccessControlEntry ace;

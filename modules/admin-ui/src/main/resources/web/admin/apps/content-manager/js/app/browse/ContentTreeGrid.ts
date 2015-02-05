@@ -214,8 +214,8 @@ module app.browse {
                 case CompareStatus.UNKNOWN:
                     status = "Unknown";
                     break;
-                case CompareStatus.DELETED:
-                    status = "Deleted";
+                case CompareStatus.PENDING_DELETE:
+                    status = "Pending delete";
                     break;
                 case CompareStatus.EQUAL:
                     status = "Online";
@@ -223,7 +223,7 @@ module app.browse {
                 case CompareStatus.MOVED:
                     status = "Moved";
                     break;
-                case CompareStatus.DELETED_TARGET:
+                case CompareStatus.PENDING_DELETE_TARGET:
                     status = "Deleted in prod";
                     break;
                 case CompareStatus.NEW_TARGET:

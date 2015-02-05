@@ -274,17 +274,4 @@ public class UpdateNodeCommandTest
         assertEquals( 1, updatedNode.getAttachedBinaries().getSize() );
     }
 
-    private Node updateNode( final UpdateNodeParams updateNodeParams )
-    {
-        return UpdateNodeCommand.create().
-            params( updateNodeParams ).
-            queryService( this.queryService ).
-            indexService( this.indexService ).
-            nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
-            versionService( this.versionService ).
-            binaryBlobStore( this.binaryBlobStore ).
-            build().
-            execute();
-    }
 }

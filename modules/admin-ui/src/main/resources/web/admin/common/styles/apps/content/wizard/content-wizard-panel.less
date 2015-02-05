@@ -1,14 +1,16 @@
 .content-wizard-panel {
 
-  .form-icon.site:before {
+  .form-icon.invalid:before {
     position: absolute;
-      content: "S";
+    content: "!";
     top: 0;
     right: 0;
-    padding: 2px 6px;
+    width: 16px;
+    height: 16px;
+    padding: 2px;
     line-height: 16px;
     border-radius: 10px;
-    background: @admin-blue;
+    background: @admin-red;
     color: @admin-white;
     font-size: 14px;
     z-index: 1;

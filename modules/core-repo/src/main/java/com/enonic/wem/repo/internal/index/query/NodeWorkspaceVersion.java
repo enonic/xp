@@ -1,21 +1,21 @@
 package com.enonic.wem.repo.internal.index.query;
 
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.repo.internal.workspace.NodeWorkspaceState;
 
 public class NodeWorkspaceVersion
 {
     private final NodeVersionId nodeVersionId;
 
-    private final NodeWorkspaceState state;
+    private final NodeState nodeState;
 
     private final NodePath nodePath;
 
     private NodeWorkspaceVersion( Builder builder )
     {
         nodeVersionId = builder.nodeVersionId;
-        state = builder.state;
+        nodeState = builder.state;
         nodePath = builder.nodePath;
     }
 
@@ -29,9 +29,9 @@ public class NodeWorkspaceVersion
         return nodeVersionId;
     }
 
-    public NodeWorkspaceState getState()
+    public NodeState getNodeState()
     {
-        return state;
+        return nodeState;
     }
 
     public NodePath getNodePath()
@@ -57,7 +57,7 @@ public class NodeWorkspaceVersion
         {
             return false;
         }
-        if ( state != that.state )
+        if ( nodeState != that.nodeState )
         {
             return false;
         }
@@ -69,7 +69,7 @@ public class NodeWorkspaceVersion
     public int hashCode()
     {
         int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
-        result = 31 * result + ( state != null ? state.hashCode() : 0 );
+        result = 31 * result + ( nodeState != null ? nodeState.hashCode() : 0 );
         return result;
     }
 
@@ -77,7 +77,7 @@ public class NodeWorkspaceVersion
     {
         private NodeVersionId nodeVersionId;
 
-        private NodeWorkspaceState state;
+        private NodeState state;
 
         private NodePath nodePath;
 
@@ -85,19 +85,19 @@ public class NodeWorkspaceVersion
         {
         }
 
-        public Builder nodeVersionId( NodeVersionId nodeVersionId )
+        public Builder nodeVersionId( final NodeVersionId nodeVersionId )
         {
             this.nodeVersionId = nodeVersionId;
             return this;
         }
 
-        public Builder state( NodeWorkspaceState state )
+        public Builder nodeState( final NodeState state )
         {
             this.state = state;
             return this;
         }
 
-        public Builder nodePath( NodePath nodePath )
+        public Builder nodePath( final NodePath nodePath )
         {
             this.nodePath = nodePath;
             return this;

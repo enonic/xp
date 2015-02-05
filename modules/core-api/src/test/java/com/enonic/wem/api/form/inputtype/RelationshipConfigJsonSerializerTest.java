@@ -32,7 +32,7 @@ public class RelationshipConfigJsonSerializerTest
     {
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.relationshipType( RelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.REFERENCE );
         RelationshipConfig config = builder.build();
 
         // exercise
@@ -60,7 +60,7 @@ public class RelationshipConfigJsonSerializerTest
     {
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.relationshipType( RelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.REFERENCE );
         RelationshipConfig expected = builder.build();
 
         // exercise

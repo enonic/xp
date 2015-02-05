@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.CreateContentParams;
@@ -16,16 +18,27 @@ import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.thumb.Thumbnail;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.core.content.page.PageDataSerializer;
 
-public class ContentDataSerializer
+public final class ContentDataSerializer
 {
+    private final static Logger LOG = LoggerFactory.getLogger( ContentDataSerializer.class );
+
     private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE );
+
+    private final MixinService mixinService;
+
+    public ContentDataSerializer( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
+    }
 
     public void toData( final Content content, final PropertySet contentAsData, final CreateAttachments createAttachments )
     {
@@ -44,7 +57,7 @@ public class ContentDataSerializer
             final PropertySet metadataSet = contentAsData.addSet( ContentPropertyNames.META_STEPS );
             for ( final Metadata metadata : content.getAllMetadata() )
             {
-                metadataSet.addSet( metadata.getName().toString(), metadata.getData().getRoot().copy( contentAsData.getTree() ) );
+                metadataSet.addSet( metadata.getName().getLocalName(), metadata.getData().getRoot().copy( contentAsData.getTree() ) );
             }
         }
 
@@ -87,9 +100,17 @@ public class ContentDataSerializer
         if ( metadataSet != null )
         {
             final Metadatas.Builder metadatasBuilder = Metadatas.builder();
-            for ( final String metadataName : metadataSet.getPropertyNames() )
+            for ( final String metadataLocalName : metadataSet.getPropertyNames() )
             {
-                metadatasBuilder.add( new Metadata( MixinName.from( metadataName ), metadataSet.getSet( metadataName ).toTree() ) );
+                final MixinName metadataName = resolveMetadataName( metadataLocalName );
+                if ( metadataName != null )
+                {
+                    metadatasBuilder.add( new Metadata( metadataName, metadataSet.getSet( metadataLocalName ).toTree() ) );
+                }
+                else
+                {
+                    LOG.warn( "Mixin [%s] could not be found", metadataLocalName );
+                }
             }
             builder.metadata( metadatasBuilder.build() );
         }
@@ -114,11 +135,21 @@ public class ContentDataSerializer
         return builder;
     }
 
+    private MixinName resolveMetadataName( final String metadataLocalName )
+    {
+        final Mixin mixin = mixinService.getByLocalName( metadataLocalName );
+        return mixin != null ? mixin.getName() : null;
+    }
+
     void toData( final CreateContentParams params, final PropertySet contentAsData )
     {
         contentAsData.addBoolean( ContentPropertyNames.VALID, params.isValid() );
         contentAsData.ifNotNull().addString( ContentPropertyNames.DISPLAY_NAME, params.getDisplayName() );
         contentAsData.ifNotNull().addString( ContentPropertyNames.TYPE, params.getType() != null ? params.getType().toString() : null );
+        contentAsData.ifNotNull().addString( ContentPropertyNames.OWNER,
+                                             PrincipalKey.ofAnonymous().equals( params.getOwner() ) || params.getOwner() == null
+                                                 ? null
+                                                 : params.getOwner().toString() );
 
         contentAsData.addSet( ContentPropertyNames.DATA, params.getData().getRoot().copy( contentAsData.getTree() ) );
 

@@ -259,6 +259,16 @@ module api.dom {
             return this;
         }
 
+        setMaxWidth(value: string): ElementHelper {
+            this.el.style.maxWidth = value;
+            return this;
+        }
+
+        setMaxWidthPx(value: number): ElementHelper {
+            this.setMaxWidth(value + "px");
+            return this;
+        }
+
         getWidth(): number {
             return wemjq(this.el).innerWidth();
         }

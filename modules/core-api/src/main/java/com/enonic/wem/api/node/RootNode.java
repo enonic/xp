@@ -17,7 +17,7 @@ public class RootNode
     {
         super( new Node.Builder().
             id( UUID ).
-            creator( RoleKeys.CONTENT_MANAGER ).
+            creator( RoleKeys.ADMIN ).
             createdTime( Instant.now() ).
             parentPath( null ).
             name( RootNodeName.create() ).

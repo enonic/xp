@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.blob.BlobKey;
@@ -26,6 +29,7 @@ import com.enonic.wem.repo.internal.index.query.NodeWorkspaceVersion;
 import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
 import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
+@Component
 public class NodeDaoImpl
     implements NodeDao
 {
@@ -109,7 +113,7 @@ public class NodeDaoImpl
 
             final Node node = this.nodeJsonSerializer.toNode( new String( bytes, StandardCharsets.UTF_8 ) );
 
-            return populateWithTreeProperties( node );
+            return populateWithMetaData( node );
         }
         catch ( IOException e )
         {
@@ -117,7 +121,7 @@ public class NodeDaoImpl
         }
     }
 
-    private Node populateWithTreeProperties( final Node node )
+    private Node populateWithMetaData( final Node node )
     {
         if ( node instanceof RootNode )
         {
@@ -134,9 +138,11 @@ public class NodeDaoImpl
         return Node.newNode( node ).
             parentPath( parentPath ).
             name( nodeName ).
+            nodeState( nodeWorkspaceVersion.getNodeState() ).
             build();
     }
 
+    @Reference
     public void setWorkspaceService( final WorkspaceService workspaceService )
     {
         this.workspaceService = workspaceService;

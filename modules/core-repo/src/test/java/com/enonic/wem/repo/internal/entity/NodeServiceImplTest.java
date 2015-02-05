@@ -93,7 +93,7 @@ public class NodeServiceImplTest
         final Context context = ContextBuilder.create().
             authInfo( AuthenticationInfo.create().
                 user( user ).
-                principals( RoleKeys.CONTENT_MANAGER ).
+                principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
                 build() ).
             workspace( WS_DEFAULT ).
             repositoryId( TEST_REPO.getId() ).

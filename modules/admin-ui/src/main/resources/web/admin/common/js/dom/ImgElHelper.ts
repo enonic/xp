@@ -25,5 +25,9 @@ module api.dom {
         getSrc(): string {
             return this.imgEl.src;
         }
+
+        getNaturalWidth() {
+            return this.imgEl.naturalWidth;
+        }
     }
 }

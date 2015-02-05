@@ -163,6 +163,8 @@ public class CreateNodeCommandTest
             parent( node.path() ).
             build() );
 
+        printContentRepoIndex();
+
         assertNotNull( getNodeByPath( childNode.path() ) );
     }
 

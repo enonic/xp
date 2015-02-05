@@ -19,7 +19,7 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 public final class PortalContext
     implements PortalRequest
 {
-    public final static Workspace DEFAULT_WORKSPACE = ContentConstants.WORKSPACE_STAGE;
+    public final static Workspace DEFAULT_WORKSPACE = ContentConstants.WORKSPACE_DRAFT;
 
     private String uri;
 

@@ -9,6 +9,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
@@ -26,10 +29,12 @@ import com.enonic.wem.api.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.relationship.UpdateRelationshipParams;
 import com.enonic.wem.api.relationship.editor.RelationshipEditors;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "relationship")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class RelationshipResource
     implements AdminResource
 {
@@ -90,6 +95,7 @@ public final class RelationshipResource
         }
     }
 
+    @Reference
     public void setRelationshipService( final RelationshipService relationshipService )
     {
         this.relationshipService = relationshipService;

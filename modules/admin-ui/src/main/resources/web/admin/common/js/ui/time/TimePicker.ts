@@ -51,44 +51,30 @@ module api.ui.time {
                 this.popup.show();
             });
 
-            this.input.onKeyDown((event: KeyboardEvent) => {
-                if (!api.ui.KeyHelper.isNumber(event) && !api.ui.KeyHelper.isBackspace(event) && !api.ui.KeyHelper.isDel(event) &&
-                    !api.ui.KeyHelper.isColon(event)) {
-
-                    event.preventDefault();
-                }
-            });
-
             this.input.onKeyUp((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isNumber(event) ||
-                    api.ui.KeyHelper.isBackspace(event) ||
-                                                        api.ui.KeyHelper.isDel(event) ||
-                                                        api.ui.KeyHelper.isColon(event)) {
-
-                    var typedTime = this.input.getValue();
-                    if (api.util.StringHelper.isEmpty(typedTime)) {
-                        this.popup.setSelectedTime(null, null);
+                var typedTime = this.input.getValue();
+                if (api.util.StringHelper.isEmpty(typedTime)) {
+                    this.popup.setSelectedTime(null, null);
+                    this.validUserInput = true;
+                    if (this.popup.isVisible()) {
+                        this.popup.hide();
+                    }
+                } else {
+                    var parsedTime = typedTime.match(/^[0-2][0-9]:[0-5][0-9]$/);
+                    if (parsedTime && parsedTime.length == 1) {
+                        var splitTime = parsedTime[0].split(':');
+                        this.popup.setSelectedTime(parseInt(splitTime[0]), parseInt(splitTime[1]));
                         this.validUserInput = true;
-                        if (this.popup.isVisible()) {
-                            this.popup.hide();
+                        if (!this.popup.isVisible()) {
+                            this.popup.show();
                         }
                     } else {
-                        var parsedTime = typedTime.match(/^[0-2][0-9]:[0-5][0-9]$/);
-                        if (parsedTime && parsedTime.length == 1) {
-                            var splitTime = parsedTime[0].split(':');
-                            this.popup.setSelectedTime(parseInt(splitTime[0]), parseInt(splitTime[1]));
-                            this.validUserInput = true;
-                            if (!this.popup.isVisible()) {
-                                this.popup.show();
-                            }
-                        } else {
-                            this.validUserInput = false;
-                            this.popup.setSelectedTime(null, null);
-                        }
+                        this.validUserInput = false;
+                        this.popup.setSelectedTime(null, null);
                     }
-
-                    this.updateInputStyling();
                 }
+
+                this.updateInputStyling();
             });
 
             var wrapper = new api.dom.DivEl('wrapper');

@@ -2,6 +2,8 @@ package com.enonic.wem.repo.internal.elasticsearch.version;
 
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Requests;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.NodeVersion;
@@ -18,6 +20,7 @@ import com.enonic.wem.repo.internal.version.NodeVersionDocument;
 import com.enonic.wem.repo.internal.version.NodeVersionDocumentId;
 import com.enonic.wem.repo.internal.version.VersionService;
 
+@Component
 public class ElasticsearchVersionService
     implements VersionService
 {
@@ -71,6 +74,7 @@ public class ElasticsearchVersionService
             execute();
     }
 
+    @Reference
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {
         this.elasticsearchDao = elasticsearchDao;

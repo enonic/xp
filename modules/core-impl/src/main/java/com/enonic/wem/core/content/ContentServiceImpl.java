@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -107,6 +108,12 @@ public class ContentServiceImpl
             setUncaughtExceptionHandler( ( t, e ) -> LOG.error( "Apply Permissions failed", e ) ).
             build();
         this.applyPermissionsExecutor = Executors.newFixedThreadPool( 5, namedThreadFactory );
+    }
+
+    @Activate
+    public void initialize()
+    {
+        new ContentInitializer( this.nodeService ).initialize();
     }
 
     @Override

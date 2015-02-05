@@ -12,8 +12,6 @@ var expectedJson = {
     },
     "draft": true,
     "hasChildren": false,
-    "isPageTemplate": false,
-    "isSite": true,
     "meta": {},
     "moduleConfigs": {
         "mymodule": {
@@ -21,7 +19,7 @@ var expectedJson = {
         }
     },
     "page": {},
-    "type": "system:unstructured"
+    "type": "base:unstructured"
 };
 
 exports.getCurrentSite = function () {

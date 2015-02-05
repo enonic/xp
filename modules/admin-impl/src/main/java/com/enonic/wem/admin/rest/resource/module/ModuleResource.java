@@ -10,6 +10,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.module.ModuleJson;
@@ -22,16 +26,24 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.Modules;
+import com.enonic.wem.api.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "module")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class ModuleResource
     implements AdminResource
 {
     private ModuleService moduleService;
 
     private BundleContext bundleContext;
+
+    @Activate
+    public void initialize( final ComponentContext context )
+    {
+        this.bundleContext = context.getBundleContext();
+    }
 
     @GET
     @Path("list")
@@ -114,13 +126,9 @@ public final class ModuleResource
         return new ModuleSuccessJson();
     }
 
+    @Reference
     public void setModuleService( final ModuleService moduleService )
     {
         this.moduleService = moduleService;
-    }
-
-    public void setBundleContext( final BundleContext bundleContext )
-    {
-        this.bundleContext = bundleContext;
     }
 }

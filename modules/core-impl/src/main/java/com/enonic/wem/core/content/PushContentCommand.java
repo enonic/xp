@@ -7,10 +7,11 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPublishedEvent;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.FindContentByParentParams;
-import com.enonic.wem.api.content.FindContentByParentResult;
 import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.content.PushContentsResult;
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
@@ -44,26 +45,10 @@ public class PushContentCommand
         this.resolveDependencies = builder.resolveDependencies;
         this.includeChildren = builder.includeChildren;
         this.resultBuilder = PushContentsResult.create();
-
     }
 
     PushContentsResult execute()
     {
-        final GetContentByIdsParams getContentParams = new GetContentByIdsParams( this.contentIds ).setGetChildrenIds( false );
-
-        final Contents contents = GetContentByIdsCommand.create( getContentParams ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            contentTypeService( this.contentTypeService ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
-
-        if ( !ensureValidContents( contents ) )
-        {
-            return this.resultBuilder.build();
-        }
-
         if ( resolveDependencies )
         {
             pushWithDependencies();
@@ -76,47 +61,31 @@ public class PushContentCommand
         return resultBuilder.build();
     }
 
-    private boolean ensureValidContents( final Contents contents )
-    {
-        boolean allOk = true;
-
-        for ( final Content content : contents )
-        {
-            if ( !content.isValid() )
-            {
-                this.resultBuilder.addFailed( content, PushContentsResult.FailedReason.CONTENT_NOT_VALID );
-                allOk = false;
-            }
-
-            if ( this.includeChildren && content.hasChildren() )
-            {
-                final FindContentByParentResult result = FindContentByParentCommand.create( FindContentByParentParams.create().
-                    parentPath( content.getPath() ).
-                    build() ).
-                    translator( this.translator ).
-                    nodeService( this.nodeService ).
-                    contentTypeService( this.contentTypeService ).
-                    eventPublisher( this.eventPublisher ).
-                    build().
-                    execute();
-
-                if ( !ensureValidContents( result.getContents() ) )
-                {
-                    allOk = false;
-                }
-            }
-        }
-
-        return allOk;
-    }
-
     private void pushWithoutDependencyResolve()
     {
-        final NodeIds nodesToPush = ContentNodeHelper.toNodeIds( this.contentIds );
-        doPushNodes( nodesToPush );
+        final GetContentByIdsParams getContentParams = new GetContentByIdsParams( this.contentIds ).setGetChildrenIds( false );
+        final boolean validContents = ensureValidContents( getContentByIds( getContentParams ) );
+
+        if ( validContents )
+        {
+            final NodeIds nodesToPush = ContentNodeHelper.toNodeIds( this.contentIds );
+            doPushNodes( nodesToPush );
+        }
     }
 
     private void pushWithDependencies()
+    {
+        final ResolveSyncWorkResults syncWorkResults = resolveSyncWorkResults();
+
+        appendSyncWorkResultsToResult( syncWorkResults );
+
+        if ( isContinuePush( syncWorkResults ) )
+        {
+            executePushAndDeletes( syncWorkResults );
+        }
+    }
+
+    private ResolveSyncWorkResults resolveSyncWorkResults()
     {
         final ResolveSyncWorkResults.Builder resultsBuilder = ResolveSyncWorkResults.create();
 
@@ -126,15 +95,7 @@ public class PushContentCommand
 
             resultsBuilder.add( syncWorkResult );
         }
-
-        final ResolveSyncWorkResults syncWorkResults = resultsBuilder.build();
-
-        appendSyncWorkResultsToResult( syncWorkResults );
-
-        if ( isContinuePush( syncWorkResults ) )
-        {
-            executePushAndDeletes( syncWorkResults );
-        }
+        return resultsBuilder.build();
     }
 
     private ResolveSyncWorkResult getWorkResult( final ContentId contentId )
@@ -146,21 +107,21 @@ public class PushContentCommand
             build() );
     }
 
-    private boolean isContinuePush( final ResolveSyncWorkResults results )
-    {
-        return !results.hasNotice() || !strategy.equals( PushContentStrategy.STRICT );
-    }
-
     private void executePushAndDeletes( final ResolveSyncWorkResults results )
     {
         for ( final ResolveSyncWorkResult result : results )
         {
             final NodeIds nodesToPush = NodeIds.from( result.getNodePublishRequests().getNodeIds() );
-            doPushNodes( nodesToPush );
 
-            for ( final NodeId nodeId : result.getDelete() )
+            final Contents contents = getContentByIds( new GetContentByIdsParams( ContentNodeHelper.toContentIds( nodesToPush ) ) );
+
+            final boolean validContents = ensureValidContents( contents );
+
+            if ( validContents )
             {
-                nodeService.deleteById( nodeId );
+                doPushNodes( nodesToPush );
+
+                doDeleteNodes( result );
             }
         }
     }
@@ -180,6 +141,33 @@ public class PushContentCommand
         {
             eventPublisher.publish( new ContentPublishedEvent( ContentId.from( node.id().toString() ) ) );
         }
+    }
+
+    private void doDeleteNodes( final ResolveSyncWorkResult result )
+    {
+        final Context currentContext = ContextAccessor.current();
+
+        deleteNodesInContext( result, currentContext );
+
+        deleteNodesInContext( result, ContextBuilder.from( currentContext ).
+            workspace( target ).
+            build() );
+
+        for ( final NodeId nodeId : result.getDelete() )
+        {
+            this.resultBuilder.addDeleted( ContentId.from( nodeId.toString() ) );
+        }
+
+    }
+
+    private void deleteNodesInContext( final ResolveSyncWorkResult result, final Context context )
+    {
+        context.runWith( () -> {
+            for ( final NodeId nodeId : result.getDelete() )
+            {
+                nodeService.deleteById( nodeId );
+            }
+        } );
     }
 
     private void appendSyncWorkResultsToResult( final ResolveSyncWorkResults syncWorkResults )
@@ -213,6 +201,38 @@ public class PushContentCommand
 
             this.resultBuilder.addFailed( content, failedReason );
         }
+    }
+
+    private boolean isContinuePush( final ResolveSyncWorkResults results )
+    {
+        return !results.hasNotice() || !strategy.equals( PushContentStrategy.STRICT );
+    }
+
+    private boolean ensureValidContents( final Contents contents )
+    {
+        boolean allOk = true;
+
+        for ( final Content content : contents )
+        {
+            if ( !content.isValid() )
+            {
+                this.resultBuilder.addFailed( content, PushContentsResult.FailedReason.CONTENT_NOT_VALID );
+                allOk = false;
+            }
+        }
+
+        return allOk;
+    }
+
+    private Contents getContentByIds( final GetContentByIdsParams getContentParams )
+    {
+        return GetContentByIdsCommand.create( getContentParams ).
+            nodeService( this.nodeService ).
+            translator( this.translator ).
+            contentTypeService( this.contentTypeService ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
     }
 
     public static Builder create()

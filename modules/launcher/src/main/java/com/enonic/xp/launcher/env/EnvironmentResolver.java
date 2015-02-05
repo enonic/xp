@@ -4,7 +4,7 @@ import java.io.File;
 
 import com.google.common.base.Strings;
 
-import com.enonic.wem.launcher.SharedConstants;
+import com.enonic.xp.launcher.SharedConstants;
 
 public final class EnvironmentResolver
     implements SharedConstants

@@ -15,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.schema.mixin.MixinJson;
@@ -27,10 +29,12 @@ import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.schema.mixin.Mixins;
+import com.enonic.wem.api.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "schema/mixin")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class MixinResource
     implements AdminResource
 {
@@ -118,6 +122,7 @@ public final class MixinResource
         return mixinService.getByName( name );
     }
 
+    @Reference
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinService = mixinService;

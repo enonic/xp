@@ -2,7 +2,7 @@
 <content>
   <parentPath>/</parentPath>
   <name>mycontent</name>
-  <type>system:unstructured</type>
+  <type>base:unstructured</type>
   <data>
     <myInput type="String">A value</myInput>
   </data>

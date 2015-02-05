@@ -5,6 +5,8 @@ module app.wizard {
     import FormContextBuilder = api.form.FormContextBuilder;
     import ContentFormContext = api.content.form.ContentFormContext;
     import Content = api.content.Content;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+    import CompareStatus = api.content.CompareStatus;
     import ContentBuilder = api.content.ContentBuilder;
     import Attachment = api.content.attachment.Attachment;
     import Thumbnail = api.thumb.Thumbnail;
@@ -83,7 +85,7 @@ module app.wizard {
 
         private showSplitEditAction: api.ui.Action;
 
-        private persistAsDraft: boolean;
+        private requireValid: boolean;
 
         private createSite: boolean;
 
@@ -111,7 +113,7 @@ module app.wizard {
             this.constructing = true;
             this.isContentFormValid = false;
 
-            this.persistAsDraft = true;
+            this.requireValid = false;
             this.contentNamedListeners = [];
             this.parentContent = params.parentContent;
             this.defaultModels = params.defaultModels;
@@ -165,9 +167,7 @@ module app.wizard {
             }
 
             this.contentWizardStepForm = new ContentWizardStepForm();
-            this.contentWizardStepForm.onValidityChanged((event: WizardStepValidityChangedEvent) => {
-                this.isContentFormValid = event.isValid();
-            });
+
             this.metadataStepFormByName = {};
 
             this.settingsWizardStepForm = new SettingsWizardStepForm();
@@ -202,6 +202,11 @@ module app.wizard {
                 livePanel: this.liveFormPanel,
                 split: !!this.liveFormPanel
             }, () => {
+
+                this.onValidityChanged((event: api.app.wizard.WizardValidityChangedEvent) => {
+                    this.isContentFormValid = this.isValid();
+                    this.formIcon.toggleClass("invalid", !this.isValid());
+                });
 
                 this.addClass("content-wizard-panel");
                 if (this.getSplitPanel()) {
@@ -328,8 +333,16 @@ module app.wizard {
         }
 
         layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
-
             this.formIcon.setSrc(new ContentIconUrlResolver().setContent(persistedContent).setCrop(false).resolve());
+            this.formIcon.toggleClass("invalid", !persistedContent.isValid());
+
+            this.notifyValidityChanged(persistedContent.isValid());
+
+            api.content.ContentSummaryAndCompareStatusFetcher.fetch(persistedContent.getContentId()).
+                then((contentSummaryAndCompareStatus:ContentSummaryAndCompareStatus) => {
+                    var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
+                    this.contentWizardHeader.setIgnoreGenerateStatusForName(ignore);
+                }).done();
 
             var viewedContent;
             if (!this.constructing) {
@@ -342,9 +355,7 @@ module app.wizard {
                     if (this.liveFormPanel) {
                         this.liveFormPanel.loadPage();
                     }
-                }
-                else {
-
+                } else {
                     console.warn("Received Content from server differs from what's viewed:");
                     if (!viewedContent.getContentData().equals(persistedContent.getContentData())) {
                         console.warn(" inequality found in Content.data");
@@ -490,7 +501,6 @@ module app.wizard {
 
             return wemQ.all(modulePromises).
                 then((modules: Module[]) => {
-                    debugger;
                     var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
 
                     modules.forEach((mdl: Module) => {
@@ -503,7 +513,6 @@ module app.wizard {
 
                     return wemQ.all(metadataMixinPromises);
                 }).then((mixins: Mixin[]) => {
-                    debugger;
                     var activeMixinsNames = api.schema.mixin.MixinNames.create().fromMixins(mixins).build();
 
                     var panelNamesToRemoveBuilder = MixinNames.create();
@@ -622,7 +631,7 @@ module app.wizard {
                 formView.layout().then(() => {
 
                     deferred.resolve(new CreateContentRequest().
-                        setDraft(this.persistAsDraft).
+                        setRequireValid(this.requireValid).
                         setName(api.content.ContentUnnamed.newUnnamed()).
                         setParent(parentPath).
                         setContentType(this.contentType.getContentTypeName()).
@@ -665,7 +674,7 @@ module app.wizard {
             var persistedContent = this.getPersistedItem();
 
             var updateContentRequest = new UpdateContentRequest(persistedContent.getId()).
-                setDraft(this.persistAsDraft).
+                setRequireValid(this.requireValid).
                 setContentName(viewedContent.getName()).
                 setDisplayName(viewedContent.getDisplayName()).
                 setData(viewedContent.getContentData()).
@@ -701,7 +710,6 @@ module app.wizard {
             if (this.displayNameScriptExecutor.hasScript()) {
 
                 formView.onKeyUp((event: KeyboardEvent) => {
-
                     if (this.displayNameScriptExecutor.hasScript()) {
                         this.contentWizardHeader.setDisplayName(this.displayNameScriptExecutor.execute());
                     }
@@ -750,8 +758,8 @@ module app.wizard {
             }
         }
 
-        setPersistAsDraft(draft: boolean) {
-            this.persistAsDraft = draft;
+        setRequireValid(requireValid: boolean) {
+            this.requireValid = requireValid;
         }
 
         showLiveEdit() {
@@ -779,11 +787,11 @@ module app.wizard {
         }
 
         public checkContentCanBePublished(): boolean {
-            var contentFormHasValidUserInput = true;
+
             if (!this.isContentFormValid) {
                 this.contentWizardStepForm.displayValidationErrors(true);
             }
-            contentFormHasValidUserInput = this.contentWizardStepForm.getFormView().hasValidUserInput();
+            var contentFormHasValidUserInput = this.contentWizardStepForm.getFormView().hasValidUserInput();
 
             var allMetadataFormsValid = true;
             var allMetadataFormsHasValidUserInput = true;
@@ -813,6 +821,13 @@ module app.wizard {
 
         onContentNamed(listener: (event: api.content.ContentNamedEvent)=>void) {
             this.contentNamedListeners.push(listener);
+        }
+
+        unContentNamed(listener: (event: api.content.ContentNamedEvent)=>void) {
+            this.contentNamedListeners = this.contentNamedListeners.filter((curr) => {
+                return curr != listener;
+            });
+            return this;
         }
 
         private notifyContentNamed(content: api.content.Content) {

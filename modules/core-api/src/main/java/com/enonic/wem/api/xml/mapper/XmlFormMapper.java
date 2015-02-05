@@ -102,8 +102,8 @@ public final class XmlFormMapper
         builder.customText( xml.getCustomText() );
         builder.helpText( xml.getHelpText() );
         builder.occurrences( fromOccurenceXml( xml.getOccurrences() ) );
-        builder.immutable( xml.isImmutable() );
-        builder.indexed( xml.isIndexed() );
+        builder.immutable( xml.isImmutable() != null && xml.isImmutable() );
+        builder.indexed( xml.isIndexed() != null && xml.isIndexed() );
         builder.inputType( type );
         builder.validationRegexp( xml.getValidationRegexp() );
         builder.inputTypeConfig( fromConfigXml( type, xml.getConfig() ) );
@@ -119,7 +119,7 @@ public final class XmlFormMapper
         builder.customText( xml.getCustomText() );
         builder.helpText( xml.getHelpText() );
         builder.occurrences( fromOccurenceXml( xml.getOccurrences() ) );
-        builder.immutable( xml.isImmutable() );
+        builder.immutable( xml.isImmutable() != null && xml.isImmutable() );
         builder.addFormItems( fromItemsXml( xml.getItems() ) );
         return builder.build();
     }

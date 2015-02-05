@@ -80,7 +80,7 @@ public class ResolveSyncWorkResult
             return this;
         }
 
-        public Builder delete( final NodeId delete )
+        public Builder addDelete( final NodeId delete )
         {
             this.delete.add( delete );
             return this;

@@ -136,6 +136,8 @@ public final class ContentType
         {
             super();
             formBuilder = newForm();
+            isAbstract = false;
+            isFinal = true;
             allowChildContent = true;
             isBuiltIn = false;
         }

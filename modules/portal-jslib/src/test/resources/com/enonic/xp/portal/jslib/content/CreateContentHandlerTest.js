@@ -16,15 +16,13 @@ var expectedJson = {
     "displayName": "My Content",
     "draft": true,
     "hasChildren": false,
-    "isPageTemplate": false,
-    "isSite": false,
     "meta": {
-        "test:": {
+        "test": {
             "a": 1
         }
     },
     "page": {},
-    "type": "system:unstructured"
+    "type": "base:unstructured"
 };
 
 exports.createContent = function () {
@@ -33,7 +31,7 @@ exports.createContent = function () {
         parentPath: '/a/b',
         displayName: 'My Content',
         draft: true,
-        contentType: 'system:unstructured',
+        contentType: 'base:unstructured',
         data: {
             a: 1,
             b: 2,

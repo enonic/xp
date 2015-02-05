@@ -110,9 +110,9 @@ public class ContentSummaryJson
         return content.hasChildren();
     }
 
-    public boolean getIsDraft()
+    public boolean getIsValid()
     {
-        return !content.isValid();
+        return content.isValid();
     }
 
     public ChildOrderJson getChildOrder()

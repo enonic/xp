@@ -8,14 +8,14 @@ module api.rendering {
             var workspaceName: string;
 
             switch (workspace) {
-            case api.content.Workspace.STAGE:
-                workspaceName = "stage";
+            case api.content.Workspace.DRAFT:
+                workspaceName = "draft";
                 break;
-            case api.content.Workspace.PROD:
-                workspaceName = "prod";
+            case api.content.Workspace.ONLINE:
+                workspaceName = "online";
                 break;
             default:
-                workspaceName = "stage";
+                workspaceName = "draft";
             }
 
             switch (renderingMode) {

@@ -6,12 +6,10 @@
   "_modifier": "user:system:admin",
   "_createdTime": "1970-01-01T00:00:00Z",
   "_modifiedTime": "1970-01-01T00:00:00Z",
-  "type": "system:unstructured",
+  "type": "base:unstructured",
   "displayName": "My Content",
   "hasChildren": false,
   "draft": true,
-  "isPageTemplate": false,
-  "isSite": false,
   "data": {
     "boolean": [
       true,
@@ -64,7 +62,7 @@
     }
   },
   "meta": {
-    "mymodule:myschema": {
+    "myschema": {
       "a": "1"
     }
   },

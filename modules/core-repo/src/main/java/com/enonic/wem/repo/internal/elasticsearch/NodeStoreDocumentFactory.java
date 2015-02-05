@@ -13,13 +13,13 @@ import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeIndexPath;
+import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.wem.repo.internal.workspace.NodeWorkspaceState;
 
 
 class NodeStoreDocumentFactory
@@ -34,7 +34,7 @@ class NodeStoreDocumentFactory
 
     private final boolean refresh;
 
-    private final NodeWorkspaceState state;
+    private final NodeState state;
 
     private NodeStoreDocumentFactory( final Builder builder )
     {
@@ -66,7 +66,6 @@ class NodeStoreDocumentFactory
             indexName( IndexNameResolver.resolveSearchIndexName( this.repositoryId ) ).
             indexTypeName( this.workspace.getName() ).
             analyzer( indexConfigDocument.getAnalyzer() ).
-            state( this.state ).
             refreshAfterOperation( this.refresh );
 
         addNodeMetaData( builder );
@@ -149,6 +148,9 @@ class NodeStoreDocumentFactory
                 StoreDocumentItemFactory.create( NodeIndexPath.NODE_TYPE, Value.newString( this.node.getNodeType().getName() ),
                                                  IndexConfig.MINIMAL ) );
         }
+
+        builder.addEntries( StoreDocumentItemFactory.create( NodeIndexPath.STATE, Value.newString( this.node.getNodeState().value() ),
+                                                             IndexConfig.MINIMAL ) );
     }
 
     private void addNodeDataProperties( final StoreDocument.Builder builder )
@@ -193,7 +195,7 @@ class NodeStoreDocumentFactory
 
         private boolean refresh = true;
 
-        private NodeWorkspaceState state = NodeWorkspaceState.LIVE;
+        private NodeState state = NodeState.DEFAULT;
 
         private Builder()
         {
@@ -223,7 +225,7 @@ class NodeStoreDocumentFactory
             return this;
         }
 
-        public Builder state( final NodeWorkspaceState state )
+        public Builder state( final NodeState state )
         {
             this.state = state;
             return this;

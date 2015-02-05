@@ -36,8 +36,6 @@ public final class ContentMapper
         gen.value( "displayName", value.getDisplayName() );
         gen.value( "hasChildren", value.hasChildren() );
         gen.value( "draft", !value.isValid() );
-        gen.value( "isPageTemplate", value.isPageTemplate() );
-        gen.value( "isSite", value.isSite() );
 
         serializeData( gen, value.getData() );
         serializeMetaData( gen, value.getAllMetadata() );
@@ -56,7 +54,7 @@ public final class ContentMapper
         gen.map( "meta" );
         for ( final Metadata value : values )
         {
-            gen.map( value.getName().toString() );
+            gen.map( value.getName().getLocalName() );
             new PropertyTreeMapper( value.getData() ).serialize( gen );
             gen.end();
         }

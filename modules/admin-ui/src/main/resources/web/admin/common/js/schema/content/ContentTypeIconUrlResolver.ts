@@ -4,7 +4,7 @@ module api.schema.content {
 
         static default(): string {
             return api.util.UriHelper.getRestUri(api.rest.Path.fromParent(api.schema.SchemaIconUrlResolver.getResourcePath(),
-                "system:structured").toString());
+                "base:structured").toString());
         }
     }
 }

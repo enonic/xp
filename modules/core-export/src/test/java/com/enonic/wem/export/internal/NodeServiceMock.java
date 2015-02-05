@@ -35,6 +35,7 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePaths;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.node.NodeVersionId;
@@ -160,7 +161,6 @@ class NodeServiceMock
     @Override
     public Node deleteByPath( final NodePath path )
     {
-
         final MockNodeTree<NodePath> treeNode = nodeTree.find( path );
         treeNode.getParent().children.remove( treeNode );
 
@@ -315,6 +315,12 @@ class NodeServiceMock
 
     @Override
     public RootNode createRootNode( final CreateRootNodeParams params )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public Node setNodeState( final NodeId nodeId, final NodeState nodeState )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

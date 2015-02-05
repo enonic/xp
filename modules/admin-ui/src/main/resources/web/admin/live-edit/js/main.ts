@@ -6,11 +6,8 @@ declare var wemjq: JQueryStatic;
 new LiveEdit.LiveEditPage();
 
 wemjq(window).load(() => {
+
     LiveEdit.component.dragdropsort.DragDropSort.init();
-
-    wemjq(window).resize(() => wemjq(window).trigger('resizeBrowserWindow.liveEdit'));
-
-    wemjq(window).unload(() => console.log('Clean up any css classes etc. that live edit / sortable has added'));
 
 });
 

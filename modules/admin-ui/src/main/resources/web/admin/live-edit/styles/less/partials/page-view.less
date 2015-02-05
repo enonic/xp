@@ -1,7 +1,16 @@
 .page-view {
 
   &.empty {
-    height: 100%;
+    // placeholder should occupy whole page when empty
+    & > .page-placeholder {
+      height: 100%;
+      margin: 0;
+
+      .dropdown {
+        top: 50%;
+        margin-top: -18px;
+      }
+    }
   }
 
   &.text-edit-mode {
@@ -11,7 +20,7 @@
     }
   }
 
-  .text-edit-toolbar {
+  & > .text-edit-toolbar {
     display: none;
     position: fixed;
     top: 0;

@@ -160,49 +160,34 @@ module api.ui.time {
                 this.updateInputStyling();
             });
 
-            this.input.onKeyDown((event: KeyboardEvent) => {
-                if (!api.ui.KeyHelper.isNumber(event) && !api.ui.KeyHelper.isDash(event) && !api.ui.KeyHelper.isBackspace(event) &&
-                    !api.ui.KeyHelper.isDel(event) && !api.ui.KeyHelper.isColon(event)) {
-
-                    event.preventDefault();
-                }
-            });
-
             this.input.onKeyUp((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isNumber(event) ||
-                    api.ui.KeyHelper.isDash(event) ||
-                    api.ui.KeyHelper.isBackspace(event) ||
-                                                        api.ui.KeyHelper.isDel(event) ||
-                                                        api.ui.KeyHelper.isColon(event)) {
-
-                    var typedDateTime = this.input.getValue();
-                    if (api.util.StringHelper.isEmpty(typedDateTime)) {
-                        this.calendar.selectDate(null);
-                        this.selectedDate = null;
+                var typedDateTime = this.input.getValue();
+                if (api.util.StringHelper.isEmpty(typedDateTime)) {
+                    this.calendar.selectDate(null);
+                    this.selectedDate = null;
+                    this.validUserInput = true;
+                    this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(null));
+                    this.popup.hide();
+                } else {
+                    var date = api.util.DateHelper.parseUTCDateTime(typedDateTime);
+                    var dateLength = date.getUTCFullYear().toString().length + 12;
+                    if (date && date.toString() != "Invalid Date" && typedDateTime.length == dateLength) {
+                        this.selectedDate = date;
                         this.validUserInput = true;
-                        this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(null));
-                        this.popup.hide();
-                    } else {
-                        var date = api.util.DateHelper.parseUTCDateTime(typedDateTime);
-                        var dateLength = date.getUTCFullYear().toString().length + 12;
-                        if (date && date.toString() != "Invalid Date" && typedDateTime.length == dateLength) {
-                            this.selectedDate = date;
-                            this.validUserInput = true;
-                            this.calendar.selectDate(date);
-                            this.popup.setSelectedTime(date.getUTCHours(), date.getUTCMinutes());
-                            this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(date));
-                            if (!this.popup.isVisible()) {
-                                this.popup.show();
-                            }
-                        } else {
-                            this.selectedDate = null;
-                            this.validUserInput = false;
-                            this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(null));
+                        this.calendar.selectDate(date);
+                        this.popup.setSelectedTime(date.getUTCHours(), date.getUTCMinutes());
+                        this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(date));
+                        if (!this.popup.isVisible()) {
+                            this.popup.show();
                         }
+                    } else {
+                        this.selectedDate = null;
+                        this.validUserInput = false;
+                        this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(null));
                     }
-
-                    this.updateInputStyling();
                 }
+
+                this.updateInputStyling();
             });
 
         }

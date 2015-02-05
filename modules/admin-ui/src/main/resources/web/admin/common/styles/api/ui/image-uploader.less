@@ -1,41 +1,28 @@
 .image-uploader {
-  position: relative;
+  width: 100%;
 
   .result-container {
 
     img {
       width: 100%;
-      max-height: 500px;
-      border: 1px solid transparent;
+      margin: 1px;
+      .box-sizing(content-box);
+      background-color: @admin-bg-light-gray;
+      background-image: linear-gradient(45deg, @admin-font-gray1 25%, transparent 25%, transparent 75%, @admin-font-gray1 75%, @admin-font-gray1),
+      linear-gradient(45deg, @admin-font-gray1 25%, transparent 25%, transparent 75%, @admin-font-gray1 75%, @admin-font-gray1);
+      background-size:20px 20px;
+      background-position:0 0, 10px 10px;
 
       &:hover {
+        border: 1px solid transparent;
+        margin: 0px;
+        .box-sizing(content-box);
         border-color: darken(@admin-input-blue, 10%);
       }
 
       &.selected {
         border-color: darken(@admin-input-blue, 10%);
         .box-shadow(0px 0px 10px darken(@admin-input-blue, 10%));
-      }
-    }
-
-    .toolbar {
-      height: auto;
-
-      button {
-        border: 1px solid transparent;
-        padding: 5px;
-        margin: 0;
-        cursor: pointer;
-
-        &:before {
-          height: 24px;
-          width: 24px;
-          font-size: 24px;
-        }
-
-        span {
-          display: none;
-        }
       }
     }
 

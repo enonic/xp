@@ -4,6 +4,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.workspace.Workspaces;
 
 public interface NodeService
 {
@@ -37,29 +38,31 @@ public interface NodeService
 
     NodeComparison compare( NodeId id, Workspace target );
 
-    NodeComparisons compare( final NodeIds ids, final Workspace target );
+    NodeComparisons compare( NodeIds ids, Workspace target );
 
-    FindNodeVersionsResult findVersions( final GetNodeVersionsParams params );
+    FindNodeVersionsResult findVersions( GetNodeVersionsParams params );
 
-    GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params );
+    GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
 
-    NodeVersionDiffResult diff( final NodeVersionDiffQuery query );
+    NodeVersionDiffResult diff( NodeVersionDiffQuery query );
 
-    Node setChildOrder( final SetNodeChildOrderParams params );
+    Node setChildOrder( SetNodeChildOrderParams params );
 
-    ReorderChildNodesResult reorderChildren( final ReorderChildNodesParams params );
+    ReorderChildNodesResult reorderChildren( ReorderChildNodesParams params );
 
     Node getByVersionId( NodeVersionId nodeVersionid );
 
-    ResolveSyncWorkResult resolveSyncWork( final SyncWorkResolverParams params );
+    ResolveSyncWorkResult resolveSyncWork( SyncWorkResolverParams params );
 
     void snapshot();
 
     int applyPermissions( ApplyNodePermissionsParams params );
 
-    ByteSource getBinary( final NodeId nodeId, final BinaryReference reference );
+    ByteSource getBinary( NodeId nodeId, BinaryReference reference );
 
-    public RootNode createRootNode( final CreateRootNodeParams params );
+    RootNode createRootNode( CreateRootNodeParams params );
+
+    Node setNodeState( final NodeId nodeId, final NodeState nodeState );
 
     RootNode getRoot();
 }

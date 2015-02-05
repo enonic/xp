@@ -26,19 +26,16 @@ public final class BuiltinRelationshipTypesProvider
 
     // System Relationship Types
     private static final RelationshipType DEFAULT =
-        createRelationshipType( RelationshipTypeName.DEFAULT, "Default", "relates to", "related of" );
+        createRelationshipType( RelationshipTypeName.REFERENCE, "Reference", "references", "is referenced by" );
 
-    private static final RelationshipType PARENT = createRelationshipType( RelationshipTypeName.PARENT, "Parent", "parent of", "child of" );
-
-    private static final RelationshipType LINK = createRelationshipType( RelationshipTypeName.LINK, "Link", "links to", "linked by" );
-
-    private static final RelationshipType LIKE = createRelationshipType( RelationshipTypeName.LIKE, "Like", "likes", "liked by" );
+    private static final RelationshipType PARENT =
+        createRelationshipType( RelationshipTypeName.PARENT, "Parent", "is child of", "is parent of" );
 
     private static final RelationshipType IMAGE =
         createRelationshipType( RelationshipTypeName.IMAGE, "Image", "relates to image", "related of image",
                                 ContentTypeNames.from( ContentTypeName.imageMedia() ) );
 
-    private static final RelationshipType[] RELATIONSHIP_TYPES = {DEFAULT, PARENT, LINK, LIKE, IMAGE};
+    private static final RelationshipType[] RELATIONSHIP_TYPES = {DEFAULT, PARENT, IMAGE};
 
     private final RelationshipTypes types;
 

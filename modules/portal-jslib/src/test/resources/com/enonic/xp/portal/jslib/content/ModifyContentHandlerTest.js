@@ -21,13 +21,11 @@ var expectedJson = {
     "displayName": "Modified",
     "draft": false,
     "hasChildren": false,
-    "isPageTemplate": false,
-    "isSite": false,
     "meta": {
-        "mymodule:myschema": {
+        "myschema": {
             "a": "1"
         },
-        "mymodule:other": {
+        "other": {
             "name": "test"
         }
     },
@@ -71,7 +69,7 @@ var expectedJson = {
             }
         }
     },
-    "type": "system:unstructured"
+    "type": "base:unstructured"
 };
 
 function editor(c) {
@@ -79,7 +77,7 @@ function editor(c) {
     c.data.a++;
     c.data.z = '99';
 
-    c.meta['mymodule:other'] = {
+    c.meta['other'] = {
         name: 'test'
     };
 

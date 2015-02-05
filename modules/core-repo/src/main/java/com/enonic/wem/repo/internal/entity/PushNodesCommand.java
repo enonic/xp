@@ -12,6 +12,7 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeComparison;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeIndexPath;
+import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.node.Nodes;
@@ -70,6 +71,11 @@ public class PushNodesCommand
 
             final NodeVersionId nodeVersionId = this.queryService.get( node.id(), IndexContext.from( context ) );
 
+            if ( nodeVersionId == null )
+            {
+                throw new NodeNotFoundException( "Node version for node with id '" + node.id() + "' not found" );
+            }
+
             if ( !targetParentExists( node, context ) )
             {
                 builder.addFailed( node, PushNodesResult.Reason.PARENT_NOT_FOUND );
@@ -125,7 +131,7 @@ public class PushNodesCommand
 
     boolean targetParentExists( final Node node, final Context currentContext )
     {
-        if ( node.parentPath().equals( NodePath.ROOT ) )
+        if ( node.isRoot() || node.parentPath().equals( NodePath.ROOT ) )
         {
             return true;
         }

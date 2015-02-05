@@ -12,6 +12,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.admin.AdminResource;
@@ -25,13 +28,15 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.wem.api.security.RoleKeys;
 
-import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
+import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleWidthFilter;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/image")
 @Produces("image/*")
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class ContentImageResource
     implements AdminResource
 {
@@ -91,7 +96,7 @@ public final class ContentImageResource
             final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );
             if ( binary != null )
             {
-                final BufferedImage contentImage = helper.readImage( binary, size, ScaleMax );
+                final BufferedImage contentImage = helper.readImage( binary, size, ScaleWidthFilter );
                 return new ResolvedImage( contentImage, attachment.getMimeType() );
             }
         }
@@ -131,11 +136,13 @@ public final class ContentImageResource
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 
+    @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
     }
 
+    @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;

@@ -65,8 +65,11 @@ module api.app.wizard {
 
         private stepNavigatorPlaceholder: api.dom.DivEl;
 
+        private validityManager: WizardStepsValidityManager;
+
         constructor(params: WizardPanelParams, callback: Function) {
             super("wizard-panel");
+            this.validityManager = new WizardStepsValidityManager();
 
             this.tabId = params.tabId;
             this.persistedItem = params.persistedItem;
@@ -210,22 +213,32 @@ module api.app.wizard {
         }
 
         setSteps(steps: WizardStep[]) {
-
-            this.steps = steps;
             steps.forEach((step: WizardStep, index: number) => {
-
-                this.stepsPanel.addNavigablePanel(step.getTabBarItem(), step.getStepForm(), step.getTabBarItem().getLabel(), index == 0);
+                this.addStep(step, index === 0);
             });
+            this.steps = steps;
+        }
+
+        addStep(step: WizardStep, select: boolean) {
+            this.stepsPanel.addNavigablePanel(step.getTabBarItem(), step.getStepForm(), step.getTabBarItem().getLabel(), select);
+            this.validityManager.addItem(step);
         }
 
         insertStepBefore(stepToInsert: WizardStep, beforeStep: WizardStep) {
             var indexOfBeforeStep = this.steps.indexOf(beforeStep);
             this.steps.splice(indexOfBeforeStep, 0, stepToInsert);
             this.stepsPanel.insertNavigablePanel(stepToInsert.getTabBarItem(), stepToInsert.getStepForm(), stepToInsert.getTabBarItem().getLabel(), indexOfBeforeStep);
+            this.validityManager.addItem(stepToInsert);
         }
 
         removeStepWithForm(form: WizardStepForm) {
-            this.steps = this.steps.filter((step: WizardStep) => !(step.getStepForm() == form));
+            this.steps = this.steps.filter((step: WizardStep) => {
+                var remove = (step.getStepForm() == form);
+                if (remove) {
+                    this.validityManager.removeItem(step);
+                }
+                return !remove;
+            });
             return this.stepsPanel.removeNavigablePanel(form);
         }
 
@@ -390,6 +403,22 @@ module api.app.wizard {
             this.closedListeners.forEach((listener: (event: WizardClosedEvent)=>void) => {
                 listener(new WizardClosedEvent(this));
             });
+        }
+
+        onValidityChanged(listener: (event: WizardValidityChangedEvent)=>void) {
+            this.validityManager.onValidityChanged(listener);
+        }
+
+        unValidityChanged(listener: (event: WizardValidityChangedEvent)=>void) {
+            this.validityManager.onValidityChanged(listener);
+        }
+
+        notifyValidityChanged(valid: boolean) {
+            this.validityManager.notifyValidityChanged(valid);
+        }
+
+        isValid() {
+            return this.validityManager.isAllValid();
         }
     }
 }

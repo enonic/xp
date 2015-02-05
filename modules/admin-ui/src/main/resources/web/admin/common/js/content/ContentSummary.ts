@@ -29,7 +29,9 @@ module api.content {
 
         private page: boolean;
 
-        private draft: boolean;
+        private valid: boolean;
+
+        private requireValid: boolean;
 
         private createdTime: Date;
 
@@ -56,7 +58,8 @@ module api.content {
             this.modifier = builder.modifier;
             this.owner = builder.owner;
             this.page = builder.page;
-            this.draft = builder.draft;
+            this.valid = builder.valid;
+            this.requireValid = builder.requireValid;
 
             this.id = builder.id;
             this.createdTime = builder.createdTime;
@@ -131,8 +134,12 @@ module api.content {
             return this.type.isImage();
         }
 
-        isDraft(): boolean {
-            return this.draft;
+        isValid(): boolean {
+            return this.valid;
+        }
+
+        isRequireValid(): boolean {
+            return this.requireValid;
         }
 
         getId(): string {
@@ -211,7 +218,10 @@ module api.content {
             if (!api.ObjectHelper.booleanEquals(this.page, other.page)) {
                 return false;
             }
-            if (!api.ObjectHelper.booleanEquals(this.draft, other.draft)) {
+            if (!api.ObjectHelper.booleanEquals(this.valid, other.valid)) {
+                return false;
+            }
+            if (!api.ObjectHelper.booleanEquals(this.requireValid, other.requireValid)) {
                 return false;
             }
             if (!api.ObjectHelper.dateEquals(this.createdTime, other.createdTime)) {
@@ -271,7 +281,9 @@ module api.content {
 
         page: boolean;
 
-        draft: boolean;
+        valid: boolean;
+
+        requireValid: boolean;
 
         createdTime: Date;
 
@@ -300,7 +312,8 @@ module api.content {
                 this.modifier = source.getModifier();
                 this.owner = source.getOwner();
                 this.page = source.isPage();
-                this.draft = source.isDraft();
+                this.valid = source.isValid();
+                this.requireValid = source.isRequireValid();
                 this.createdTime = source.getCreatedTime();
                 this.modifiedTime = source.getModifiedTime();
                 this.deletable = source.isDeletable();
@@ -309,7 +322,6 @@ module api.content {
                 this.language = source.getLanguage();
             }
         }
-
 
         fromContentSummaryJson(json: api.content.json.ContentSummaryJson): ContentSummaryBuilder {
 
@@ -326,7 +338,8 @@ module api.content {
             this.modifier = json.modifier;
             this.owner = json.owner ? api.security.PrincipalKey.fromString(json.owner) : null;
             this.page = json.isPage;
-            this.draft = json.draft;
+            this.valid = json.isValid;
+            this.requireValid = json.requireValid;
             this.language = json.language;
 
             this.id = json.id;
@@ -346,8 +359,13 @@ module api.content {
             return this;
         }
 
-        setDraft(value: boolean): ContentSummaryBuilder {
-            this.draft = value;
+        setValid(value: boolean): ContentSummaryBuilder {
+            this.valid = value;
+            return this;
+        }
+
+        setRequireValid(value: boolean): ContentSummaryBuilder {
+            this.valid = value;
             return this;
         }
 

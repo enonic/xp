@@ -10,6 +10,7 @@ function startApplication() {
     body.appendChild(appBar);
     body.appendChild(appPanel);
 
+    var changePasswordDialog = new app.wizard.ChangeUserPasswordDialog();
     application.setLoaded(true);
 
     window.onmessage = (e: MessageEvent) => {

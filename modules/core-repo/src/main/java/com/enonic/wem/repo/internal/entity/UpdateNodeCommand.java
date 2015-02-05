@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.EditableNode;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -43,6 +44,11 @@ public final class UpdateNodeCommand
     private Node doExecute()
     {
         final Node persistedNode = doGetById( params.getId(), false );
+
+        if ( persistedNode == null )
+        {
+            throw new NodeNotFoundException( "Cannot update node with id '" + params.getId() + "', node not found" );
+        }
 
         final EditableNode editableNode = new EditableNode( persistedNode );
         params.getEditor().edit( editableNode );
@@ -94,6 +100,11 @@ public final class UpdateNodeCommand
         return new Builder();
     }
 
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
+    }
+
 
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
@@ -105,6 +116,11 @@ public final class UpdateNodeCommand
         private Builder()
         {
             super();
+        }
+
+        private Builder( final AbstractNodeCommand source )
+        {
+            super( source );
         }
 
         public Builder params( final UpdateNodeParams params )

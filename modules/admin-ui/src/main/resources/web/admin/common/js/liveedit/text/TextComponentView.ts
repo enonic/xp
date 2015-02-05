@@ -3,8 +3,6 @@ module api.liveedit.text {
     import ComponentView = api.liveedit.ComponentView;
     import RegionView = api.liveedit.RegionView;
     import TextComponent = api.content.page.region.TextComponent;
-    import StartTextEditModeEvent = api.liveedit.StartTextEditModeEvent;
-
 
     export class TextComponentViewBuilder extends ComponentViewBuilder<TextComponent> {
         constructor() {
@@ -46,32 +44,37 @@ module api.liveedit.text {
             this.onKeyDown(this.handleKey.bind(this));
             this.onKeyUp(this.handleKey.bind(this));
 
-            // ItemView is not managing tooltip for text component
-            this.listenToTooltipEvents();
         }
 
-        isManagingTooltip(): boolean {
-            return true;
+        showTooltip() {
+            if (!this.isEditMode()) {
+                super.showTooltip();
+            }
         }
 
-        private listenToTooltipEvents() {
-            this.onMouseOverView(() => {
-                if (!this.isEditMode()) {
-                    this.showTooltip();
-                }
-            });
-            this.onMouseLeaveView(() => {
-                if (!this.isEditMode()) {
-                    this.hideTooltip();
-                }
-            });
+        hideTooltip(hideParentTooltip: boolean = true) {
+            if (!this.isEditMode()) {
+                super.hideTooltip(hideParentTooltip);
+            }
+        }
+
+        highlight() {
+            if (!this.isEditMode()) {
+                super.highlight();
+            }
+        }
+
+        unhighlight() {
+            if (!this.isEditMode()) {
+                super.unhighlight();
+            }
         }
 
         private initializeArticle() {
             // check if article came from server
             for (var i = 0; i < this.getChildren().length; i++) {
                 var child = this.getChildren()[i];
-                if (child.getEl().getTagName().toLowerCase() == 'article') {
+                if (child.getEl().getTagName().toUpperCase() == 'ARTICLE') {
                     this.article = child;
                 }
             }
@@ -104,14 +107,22 @@ module api.liveedit.text {
             return duplicatedView;
         }
 
+        private startTextEditMode() {
+            this.deselect();
+
+            var pageView = this.getPageView();
+            if (!pageView.isTextEditMode()) {
+                pageView.setTextEditMode(true);
+            }
+        }
+
         private doHandleDbClick(event: MouseEvent) {
             if (this.isEditMode()) {
                 return;
             }
 
-            this.setEditMode(true);
+            this.startTextEditMode();
             this.selectText();
-            new StartTextEditModeEvent(this).fire();
         }
 
         private doHandleClick(event: MouseEvent) {
@@ -264,9 +275,8 @@ module api.liveedit.text {
         private createTextContextMenuActions(): api.ui.Action[] {
             var actions: api.ui.Action[] = [];
             actions.push(new api.ui.Action('Edit').onExecuted(() => {
-                this.setEditMode(true);
+                this.startTextEditMode();
                 this.giveFocus();
-                new StartTextEditModeEvent(this).fire();
             }));
             return actions;
         }

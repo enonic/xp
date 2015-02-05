@@ -1,9 +1,9 @@
 module api.dom {
 
-    export class ButtonEl extends Element {
+    export class ButtonEl extends FormItemEl {
 
         constructor(className?: string) {
-            super(new NewElementBuilder().setTagName("button").setClassName(className));
+            super("button", className);
         }
 
     }

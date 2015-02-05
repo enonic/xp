@@ -56,6 +56,13 @@ module app.browse {
                 this.contentTreeGridPanelMask.hide();
             });
 
+            this.getTreeGrid().onDataChanged((event: api.ui.treegrid.DataChangedEvent<ContentSummaryAndCompareStatus>) => {
+                if (event.getType() === 'updated') {
+                    var browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
+                    this.getBrowseItemPanel().updateItemViewers(browseItems);
+                }
+            });
+
             this.onShown((event) => {
                 app.Router.setHash("browse");
             });
@@ -169,9 +176,6 @@ module app.browse {
         }
 
         private handleNewMediaUpload(event: app.create.NewMediaUploadEvent) {
-
-            var parentContent = event.getParentContent();   // do we need it ?
-
             event.getUploadItems().forEach((item: UploadItem<ContentSummary>) => {
                 this.contentTreeGridPanel.appendUploadNode(item);
             });

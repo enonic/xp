@@ -33,7 +33,7 @@ module app.wizard {
             steps.push(new WizardStep("Role", this.getDescriptionWizardStepForm()));
 
             var principalKey: PrincipalKey = principal ? principal.getKey() : undefined;
-            if (!RoleKeys.EVERYONE.equals(principalKey) && !RoleKeys.OWNER.equals(principalKey)) {
+            if (!RoleKeys.EVERYONE.equals(principalKey)) {
                 steps.push(new WizardStep("Grants", this.getMembersWizardStepForm()));
             }
 

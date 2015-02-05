@@ -6,7 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.enonic.wem.launcher.SharedConstants;
+import com.enonic.xp.launcher.SharedConstants;
 
 import static org.junit.Assert.*;
 

@@ -21,10 +21,11 @@ import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.JsonResult;
 import com.enonic.wem.admin.rest.multipart.MultipartForm;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
+import com.enonic.wem.api.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "blob")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 public final class BlobResource
     implements AdminResource
 {

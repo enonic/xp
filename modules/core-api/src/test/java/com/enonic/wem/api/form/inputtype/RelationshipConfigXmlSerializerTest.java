@@ -32,7 +32,7 @@ public class RelationshipConfigXmlSerializerTest
     {
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.relationshipType( RelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.REFERENCE );
         RelationshipConfig config = builder.build();
 
         // exercise
@@ -48,7 +48,7 @@ public class RelationshipConfigXmlSerializerTest
     {
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.relationshipType( RelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.REFERENCE );
         RelationshipConfig expected = builder.build();
 
         // exercise
@@ -65,13 +65,13 @@ public class RelationshipConfigXmlSerializerTest
     {
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.relationshipType( RelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.REFERENCE );
         RelationshipConfig expected = builder.build();
 
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
         xml.append( "<content-type-filter></content-type-filter>" );
-        xml.append( "<relationship-type>system:like</relationship-type>" );
+        xml.append( "<relationship-type>system:reference</relationship-type>" );
         xml.append( "</config>\n" );
 
         // exercise

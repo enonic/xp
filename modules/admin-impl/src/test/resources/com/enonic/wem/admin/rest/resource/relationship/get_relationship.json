@@ -12,7 +12,7 @@
             "modifier": null,
             "properties": { },
             "toContent": "222",
-            "type" : "system:default"
+          "type": "system:reference"
         }
     ],
     "total": 1

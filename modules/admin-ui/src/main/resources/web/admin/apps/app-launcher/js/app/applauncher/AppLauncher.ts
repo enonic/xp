@@ -8,16 +8,17 @@ module app.launcher {
 
         private adminApplicationFrames: api.dom.DivEl;
 
-        private router: AppRouter;
-
         private loadMask: api.ui.mask.LoadMask;
 
         private currentApplication: api.app.Application;
 
         private currentApplicationHash: string;
 
+        private allowedApplications: {[id:string]:api.app.Application};
+
         constructor(mainContainer: app.home.HomeMainContainer) {
             this.homeMainContainer = mainContainer;
+            this.allowedApplications = {};
 
             var returnToAppAction = new api.ui.Action("Return");
             returnToAppAction.onExecuted(() => {
@@ -63,16 +64,40 @@ module app.launcher {
                     new app.home.LogOutEvent().fire();
                 }
             });
-
-            app.home.LogOutEvent.on(() => {
-                Applications.getAllApps().forEach((app: api.app.Application) => {
-                    app.getAppFrame().remove();
-                });
-            });
         }
 
-        loadApplication(application: api.app.Application) {
+        loadApplication(application: api.app.Application): wemQ.Promise<boolean> {
+            var deferred = wemQ.defer<boolean>();
 
+            if (!this.isAllowedApp(application)) {
+
+                new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
+                    var allowedApps = app.launcher.Applications.getAppsByIds(loginResult.getApplications());
+                    this.setAllowedApps(allowedApps);
+
+                    if (loginResult.isAuthenticated() && this.isAllowedApp(application)) {
+                        this.doLoadApplication(application);
+                        deferred.resolve(true);
+
+                    } else {
+                        this.showLauncherScreen();
+                        deferred.resolve(false);
+                    }
+
+                }).catch((reason: any) => {
+                    this.showLauncherScreen();
+                    deferred.resolve(false);
+                }).done();
+
+            } else {
+                this.doLoadApplication(application);
+                deferred.resolve(true);
+            }
+
+            return deferred.promise;
+        }
+
+        private doLoadApplication(application: api.app.Application) {
             Applications.getAllApps().forEach((app: api.app.Application) => {
                 if (app != application) {
                     app.hide();
@@ -118,6 +143,17 @@ module app.launcher {
             hasher.setHash(AppRouter.HOME_HASH_ID);
         }
 
+        setAllowedApps(applications: api.app.Application[]) {
+            this.allowedApplications = {};
+            applications.forEach((application: api.app.Application) => {
+                this.allowedApplications[application.getId()] = application;
+            });
+        }
+
+        private isAllowedApp(application: api.app.Application): boolean {
+            return !!this.allowedApplications[application.getId()];
+        }
+
         private returnToApp() {
             this.homeMainContainer.hide();
             api.ui.KeyBindings.get().unshelveBindings();
@@ -125,8 +161,5 @@ module app.launcher {
             hasher.setHash(this.currentApplicationHash);
         }
 
-        setRouter(router: AppRouter) {
-            this.router = router;
-        }
     }
 }

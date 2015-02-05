@@ -45,8 +45,6 @@ module api.liveedit {
 
         private pageModel: PageModel;
 
-        private resetAction: api.ui.Action;
-
         private regionViews: RegionView[];
 
         private viewsById: {[s:number] : ItemView;};
@@ -55,34 +53,32 @@ module api.liveedit {
 
         private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
 
+        private unlockedScreenActions: api.ui.Action[];
+
         constructor(builder: PageViewBuilder) {
 
             this.liveEditModel = builder.liveEditModel;
             this.pageModel = builder.liveEditModel.getPageModel();
-            this.pageModel.onPropertyChanged(() => {
-                this.refreshEmptyState();
-            });
+            this.pageModel.onPropertyChanged(() => this.refreshEmptyState());
             this.regionViews = [];
             this.viewsById = {};
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
 
 
-            this.resetAction = new api.ui.Action('Reset');
+            var resetAction = new api.ui.Action('Reset');
             if (this.pageModel.getMode() == PageMode.AUTOMATIC || this.pageModel.getMode() == PageMode.NO_CONTROLLER) {
-                this.resetAction.setEnabled(false);
+                resetAction.setEnabled(false);
             }
-            this.resetAction.onExecuted(() => {
+            resetAction.onExecuted(() => {
                 this.pageModel.reset(this);
+                this.setLocked(true);
             });
             this.pageModel.onPageModeChanged((event: PageModeChangedEvent) => {
-                if (event.getNewMode() == PageMode.AUTOMATIC || event.getNewMode() == PageMode.NO_CONTROLLER) {
-                    this.resetAction.setEnabled(false);
-                }
-                else {
-                    this.resetAction.setEnabled(true);
-                }
+                var resetEnabled = !(event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER);
+                resetAction.setEnabled(resetEnabled);
             });
+            this.unlockedScreenActions = [resetAction];
 
             super(new ItemViewBuilder().
                 setLiveEditModel(builder.liveEditModel).
@@ -92,7 +88,7 @@ module api.liveedit {
                 setType(PageItemType.get()).
                 setElement(builder.element).
                 setParentElement(builder.element.getParentElement()).
-                setContextMenuActions([this.resetAction]).
+                setContextMenuActions(this.unlockedScreenActions).
                 setContextMenuTitle(new PageViewContextMenuTitle(builder.liveEditModel.getContent())));
 
             this.addClass('page-view');
@@ -111,32 +107,104 @@ module api.liveedit {
             this.regionViews.forEach((regionView: RegionView) => {
                 regionView.onItemViewAdded((event: ItemViewAddedEvent) => {
                     this.registerItemView(event.getView());
+
+                    // adding anything should exit the text edit mode
+                    this.exitTextEditModeIfNeeded();
                 });
-                regionView.onItemViewRemoved((event: ItemViewRemovedEvent) => {
-                    this.unregisterItemView(event.getView());
-                });
+                regionView.onItemViewRemoved((event: ItemViewRemovedEvent) => this.unregisterItemView(event.getView()));
             });
 
-            this.listenToTextModeEvents();
+            // lock page by default for every content that has not been modified except for page template
+            if (!this.liveEditModel.getContent().isPageTemplate() && !this.isPageModified(this.pageModel)) {
+                this.setLocked(true);
+            }
 
-            this.listenToTooltipEvents();
+            this.listenToMouseEvents();
+        }
+
+        private isPageModified(pageModel: PageModel): boolean {
+            // default template regions differing from page regions means it has been modified
+            return pageModel.getDefaultPageTemplate().isPage() &&
+                   !pageModel.getDefaultPageTemplate().getRegions().equals(pageModel.getRegions());
+        }
+
+        isManagingContextMenu(): boolean {
+            return true;
+        }
+
+        isManagingCursor(): boolean {
+            return true;
         }
 
         isManagingTooltip(): boolean {
             return true;
         }
 
-        private listenToTooltipEvents() {
+        isManagingShader(): boolean {
+            return true;
+        }
+
+        isManagingHighlighter(): boolean {
+            return true;
+        }
+
+        private listenToMouseEvents() {
             this.onMouseOverView(() => {
-                if (!this.isTextEditMode()) {
+                var hasSelectedView = this.hasSelectedView();
+
+                if (!this.isTextEditMode() && !hasSelectedView && !this.isLocked()) {
                     this.showTooltip();
+                    this.highlight();
+                    this.showCursor();
                 }
             });
             this.onMouseLeaveView(() => {
-                if (!this.isTextEditMode()) {
+                var hasSelectedView = this.hasSelectedView();
+
+                if (!this.isTextEditMode() && !hasSelectedView && !this.isLocked()) {
                     this.hideTooltip();
+                    this.unhighlight();
+                    this.resetCursor();
                 }
             });
+
+            Shader.get().onClicked((event: MouseEvent) => {
+                if (!this.isLocked() && this.isSelected()) {
+                    this.deselect();
+                }
+            });
+            Shader.get().onUnlockClicked((event: MouseEvent) => {
+                if (this.isLocked()) {
+                    this.setLocked(false);
+                }
+            })
+        }
+
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+            super.select(clickPosition, menuPosition);
+
+            if (!this.isLocked()) {
+                this.showContextMenu(clickPosition, menuPosition);
+            }
+            if (!this.isEmpty()) {
+                this.shade();
+            }
+
+            this.hideTooltip();
+            this.showCursor();
+
+            new PageSelectedEvent(this).fire();
+        }
+
+        deselect(silent?: boolean) {
+            super.deselect(silent);
+
+            if (!this.isEmpty()) {
+                this.unshade();
+            }
+
+            this.resetCursor();
+            this.hideContextMenu();
         }
 
         handleClick(event: MouseEvent) {
@@ -144,10 +212,25 @@ module api.liveedit {
             event.preventDefault();
 
             if (this.isTextEditMode()) {
-                new StopTextEditModeEvent().fire();
                 this.setTextEditMode(false);
             } else {
                 super.handleClick(event);
+            }
+        }
+
+        isLocked() {
+            return this.hasClass('locked');
+        }
+
+        setLocked(locked: boolean) {
+            this.toggleClass('locked', locked);
+
+            if (locked) {
+                this.select();
+                this.shade();
+            } else {
+                this.unshade();
+                new PageUnlockedEvent(this).fire();
             }
         }
 
@@ -160,7 +243,6 @@ module api.liveedit {
                 event.stopPropagation();
                 event.preventDefault();
 
-                new StopTextEditModeEvent().fire();
                 this.setTextEditMode(false);
             });
             wrapper.appendChild(closeButton);
@@ -168,29 +250,6 @@ module api.liveedit {
             return toolbar;
         }
 
-        private listenToTextModeEvents() {
-
-            /* Text component listeners */
-            var viewSelectedBeforeTextEditMode: ItemView;
-
-            StartTextEditModeEvent.on((event: StartTextEditModeEvent) => {
-
-                // save currently selected view to restore it later
-                viewSelectedBeforeTextEditMode = this.getSelectedView();
-                if (viewSelectedBeforeTextEditMode) {
-                    viewSelectedBeforeTextEditMode.deselect();
-                }
-                this.setTextEditMode(true);
-            });
-
-            StopTextEditModeEvent.on((event: StopTextEditModeEvent) => {
-                if (viewSelectedBeforeTextEditMode) {
-                    viewSelectedBeforeTextEditMode.select();
-                    viewSelectedBeforeTextEditMode = undefined;
-                }
-            })
-
-        }
 
         isTextEditMode(): boolean {
             return this.hasClass('text-edit-mode');
@@ -220,11 +279,6 @@ module api.liveedit {
 
         getParentItemView(): ItemView {
             return null;
-        }
-
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
-            new PageSelectEvent(this).fire();
-            super.select(clickPosition, menuPosition);
         }
 
         addRegion(regionView: RegionView) {
@@ -365,6 +419,12 @@ module api.liveedit {
             }
 
             return null;
+        }
+
+        private exitTextEditModeIfNeeded() {
+            if (this.isTextEditMode()) {
+                this.setTextEditMode(false);
+            }
         }
 
         private registerItemView(view: ItemView) {

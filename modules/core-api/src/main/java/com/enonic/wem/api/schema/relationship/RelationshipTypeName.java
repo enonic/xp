@@ -3,19 +3,15 @@ package com.enonic.wem.api.schema.relationship;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleBasedName;
+import com.enonic.wem.api.module.ModuleKey;
 
 public final class RelationshipTypeName
     extends ModuleBasedName
 {
-    public static final RelationshipTypeName DEFAULT = new RelationshipTypeName( "default" );
+    public static final RelationshipTypeName REFERENCE = new RelationshipTypeName( "reference" );
 
     public static final RelationshipTypeName PARENT = new RelationshipTypeName( "parent" );
-
-    public static final RelationshipTypeName LINK = new RelationshipTypeName( "link" );
-
-    public static final RelationshipTypeName LIKE = new RelationshipTypeName( "like" );
 
     public static final RelationshipTypeName IMAGE = new RelationshipTypeName( "related-image" );
 

@@ -22,7 +22,8 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.convert.Converters;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.script.command.CommandHandler;
 import com.enonic.wem.script.command.CommandRequest;
 import com.enonic.wem.script.mapper.ContentMapper;
@@ -32,6 +33,8 @@ public final class ModifyContentHandler
     implements CommandHandler
 {
     private ContentService contentService;
+
+    private MixinService mixinService;
 
     @Override
     public String getName()
@@ -210,11 +213,15 @@ public final class ModifyContentHandler
         return list;
     }
 
-    private Metadata metaData( final String name, final Object value )
+    private Metadata metaData( final String localName, final Object value )
     {
         if ( value instanceof Map )
         {
-            return new Metadata( MixinName.from( name ), propertyTree( (Map) value ) );
+            final Mixin mixin = mixinService.getByLocalName( localName );
+            if ( mixin != null )
+            {
+                return new Metadata( mixin.getName(), propertyTree( (Map) value ) );
+            }
         }
 
         return null;
@@ -224,5 +231,11 @@ public final class ModifyContentHandler
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
     }
 }

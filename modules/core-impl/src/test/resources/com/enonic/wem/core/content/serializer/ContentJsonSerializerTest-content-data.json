@@ -2,7 +2,7 @@
     "id": null,
     "parentPath": "/",
     "name": "mycontent",
-    "type": "system:unstructured",
+  "type": "base:unstructured",
     "displayName": null,
     "owner": null,
     "creator": null,

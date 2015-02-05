@@ -21,11 +21,6 @@ module api.content {
                                               contentVersion.displayName).
                 setSubName(contentVersion.comment);
         }
-
-        getPreferredHeight(): number {
-            return 50;
-        }
-
     }
 
 }

@@ -124,7 +124,11 @@ public class QueryBuilderFactory
 
         public Builder addQueryFilter( final Filter filter )
         {
-            filterBuilder.add( filter );
+            if ( filter != null )
+            {
+                filterBuilder.add( filter );
+            }
+
             return this;
         }
 

@@ -32,17 +32,6 @@ public class StoreWorkspaceDocumentCommand
 
     void execute()
     {
-        /*
-        final IndexRequest nodeIndexRequest = Requests.indexRequest().
-            index( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
-            type( IndexType.NODE.getName() ).
-            id( document.getNode().id() + "_" + document.getNodeVersionId() ).
-            source( NodeXContentBuilderFactory.create( document.getNode(), document.getNodeVersionId() ) ).
-            refresh( DEFAULT_REFRESH );
-
-        elasticsearchDao.store( nodeIndexRequest );
-        */
-
         final WorkspaceDocumentId workspaceDocumentId = new WorkspaceDocumentId( document.getNode().id(), this.workspace );
 
         final IndexRequest publish = Requests.indexRequest().
@@ -56,7 +45,6 @@ public class StoreWorkspaceDocumentCommand
 
         elasticsearchDao.store( publish );
     }
-
 
     static final class Builder
         extends AbstractWorkspaceCommand.Builder<Builder>

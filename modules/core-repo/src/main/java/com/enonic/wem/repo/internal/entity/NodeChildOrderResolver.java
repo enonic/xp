@@ -25,6 +25,11 @@ public class NodeChildOrderResolver
 
     public ChildOrder resolve()
     {
+        return runAsAdmin( this::doResolve );
+    }
+
+    private ChildOrder doResolve()
+    {
         if ( this.childOrder != null && !this.childOrder.isEmpty() )
         {
             return this.childOrder;

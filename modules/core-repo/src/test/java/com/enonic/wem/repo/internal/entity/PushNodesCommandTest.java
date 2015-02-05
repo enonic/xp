@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeIds;
+import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.PushNodesResult;
 
@@ -177,6 +178,78 @@ public class PushNodesCommandTest
 
         assertNotNull( getNodeByPathInOther( NodePath.newNodePath( movedNode.path(), child1.name().toString() ).build() ) );
         assertNull( getNodeByPathInOther( NodePath.newNodePath( node.path(), child1.name().toString() ).build() ) );
+    }
+
+
+    @Test
+    public void push_after_rename()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node1" ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node2" ).
+            build() );
+
+        final Node child1 = createNode( CreateNodeParams.create().
+            parent( node.path() ).
+            name( "my-child1" ).
+            build() );
+
+        final Node child2 = createNode( CreateNodeParams.create().
+            parent( node.path() ).
+            name( "my-child2" ).
+            build() );
+
+        final Node child1_1 = createNode( CreateNodeParams.create().
+            parent( child1.path() ).
+            name( "my-child1_1" ).
+            build() );
+
+        final Node child1_1_1 = createNode( CreateNodeParams.create().
+            parent( child1_1.path() ).
+            name( "my-child1_1" ).
+            build() );
+
+        final Node child2_1 = createNode( CreateNodeParams.create().
+            parent( child2.path() ).
+            name( "my-child2_1" ).
+            build() );
+
+        pushNodes( NodeIds.from( node.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() ),
+                   WS_OTHER );
+
+        renameNode( node2 );
+        renameNode( node );
+        renameNode( child1 );
+        renameNode( child2 );
+        renameNode( child2_1 );
+        renameNode( child1_1_1 );
+
+        final PushNodesResult result =
+            pushNodes( NodeIds.from( child1_1_1.id(), child1_1.id(), node.id(), child2_1.id(), node2.id(), child1.id(), child2.id() ),
+                       WS_OTHER );
+
+        assertEquals( 7, result.getSuccessfull().getSize() );
+    }
+
+
+    private void renameNode( final Node node )
+    {
+        MoveNodeCommand.create().
+            id( node.id() ).
+            newNodeName( NodeName.from( node.id().toString() + "edited" ) ).
+            indexService( this.indexService ).
+            versionService( this.versionService ).
+            queryService( this.queryService ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            build().
+            execute();
     }
 
     private Node getNodeByPathInOther( final NodePath nodePath )

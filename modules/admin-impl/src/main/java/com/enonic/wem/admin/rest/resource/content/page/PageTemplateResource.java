@@ -8,6 +8,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.json.content.ContentListJson;
@@ -29,11 +32,13 @@ import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SecurityService;
 
 @javax.ws.rs.Path(ResourceConstants.REST_ROOT + "content/page/template")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class PageTemplateResource
     implements AdminResource
 {
@@ -148,29 +153,33 @@ public final class PageTemplateResource
         return new ContentIconUrlResolver( this.contentTypeService );
     }
 
+    @Reference
     public void setPageTemplateService( final PageTemplateService pageTemplateService )
     {
         this.pageTemplateService = pageTemplateService;
     }
 
+    @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
     }
 
+    @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
     }
 
+    @Reference
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinReferencesToFormItemsTransformer = new MixinReferencesToFormItemsTransformer( mixinService );
     }
 
+    @Reference
     public void setSecurityService( final SecurityService securityService )
     {
         this.principalsResolver = new ContentPrincipalsResolver( securityService );
     }
-
 }

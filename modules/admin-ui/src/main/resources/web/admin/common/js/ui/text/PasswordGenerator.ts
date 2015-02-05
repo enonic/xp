@@ -221,6 +221,14 @@ module api.ui.text {
             });
         }
 
+        onInput(listener: (event: Event) => void) {
+            this.input.onInput(listener);
+        }
+
+        unInput(listener: (event: Event) => void) {
+            this.input.unInput(listener);
+        }
+
         onFocus(listener: (event: FocusEvent) => void) {
             this.focusListeners.push(listener);
         }

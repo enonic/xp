@@ -30,7 +30,7 @@ public class RelationshipKeyTest
             public Object[] getObjectsThatNotEqualsX()
             {
                 return new Object[]{RelationshipKey.newRelationshipKey().
-                    type( RelationshipTypeName.LINK ).
+                    type( RelationshipTypeName.REFERENCE ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
                     managingData( PropertyPath.from( "myInput" ) ).

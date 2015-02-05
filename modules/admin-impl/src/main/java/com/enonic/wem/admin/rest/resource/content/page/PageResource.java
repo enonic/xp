@@ -9,6 +9,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
@@ -22,11 +25,13 @@ import com.enonic.wem.api.content.page.UpdatePageParams;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SecurityService;
 
 @Path(ResourceConstants.REST_ROOT + "content/page")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class PageResource
     implements AdminResource
 {
@@ -76,24 +81,27 @@ public final class PageResource
         return new ContentIconUrlResolver( this.contentTypeService );
     }
 
+    @Reference
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinReferencesToFormItemsTransformer = new MixinReferencesToFormItemsTransformer( mixinService );
     }
 
+    @Reference
     public void setPageService( final PageService pageService )
     {
         this.pageService = pageService;
     }
 
+    @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
     }
 
+    @Reference
     public void setSecurityService( final SecurityService securityService )
     {
         this.principalsResolver = new ContentPrincipalsResolver( securityService );
     }
-
 }

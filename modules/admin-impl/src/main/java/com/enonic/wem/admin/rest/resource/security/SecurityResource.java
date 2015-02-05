@@ -15,6 +15,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
@@ -32,6 +34,7 @@ import com.enonic.wem.admin.rest.resource.security.json.PrincipalJson;
 import com.enonic.wem.admin.rest.resource.security.json.PrincipalsJson;
 import com.enonic.wem.admin.rest.resource.security.json.RoleJson;
 import com.enonic.wem.admin.rest.resource.security.json.UpdateGroupJson;
+import com.enonic.wem.admin.rest.resource.security.json.UpdatePasswordJson;
 import com.enonic.wem.admin.rest.resource.security.json.UpdateRoleJson;
 import com.enonic.wem.admin.rest.resource.security.json.UpdateUserJson;
 import com.enonic.wem.admin.rest.resource.security.json.UpdateUserStoreJson;
@@ -49,6 +52,7 @@ import com.enonic.wem.api.security.PrincipalRelationships;
 import com.enonic.wem.api.security.PrincipalType;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.Role;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStore;
@@ -64,7 +68,8 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "security")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class SecurityResource
     implements AdminResource
 {
@@ -281,6 +286,21 @@ public final class SecurityResource
     }
 
     @POST
+    @Path("principals/setPassword")
+    public UserJson setPassword( final UpdatePasswordJson params )
+    {
+        final PrincipalKey userKey = params.getUserKey();
+
+        if ( params.getPassword() != null )
+        {
+            final User user = securityService.setPassword( userKey, params.getPassword() );
+            return new UserJson( user );
+        }
+
+        throw new WebApplicationException( "Password has not been set." ) ;
+    }
+
+    @POST
     @Path("principals/updateGroup")
     public GroupJson updateGroup( final UpdateGroupJson params )
     {
@@ -347,9 +367,9 @@ public final class SecurityResource
         return PrincipalKeys.from( members );
     }
 
+    @Reference
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
     }
-
 }

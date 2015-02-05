@@ -14,7 +14,9 @@ module api.content {
 
         private displayName: string;
 
-        private draft: boolean;
+        private valid: boolean;
+
+        private requireValid: boolean;
 
         private thumbnail: Thumbnail;
 
@@ -25,7 +27,8 @@ module api.content {
         constructor(id: string) {
             super();
             this.id = id;
-            this.draft = false;
+            this.valid = false;
+            this.requireValid = false;
             this.setMethod("POST");
         }
 
@@ -58,8 +61,13 @@ module api.content {
             return this;
         }
 
-        setDraft(draft: boolean): UpdateContentRequest {
-            this.draft = draft;
+        setValid(valid: boolean): UpdateContentRequest {
+            this.valid = valid;
+            return this;
+        }
+
+        setRequireValid(requireValid: boolean): UpdateContentRequest {
+            this.requireValid = requireValid;
             return this;
         }
 
@@ -76,7 +84,8 @@ module api.content {
         getParams(): Object {
             return {
                 contentId: this.id,
-                draft: this.draft,
+                valid: this.valid,
+                requireValid: this.requireValid,
                 contentName: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.name.toString(),
                 data: this.data.toJson(),
                 meta: (this.meta || []).map((metadata: Metadata) => metadata.toJson()),

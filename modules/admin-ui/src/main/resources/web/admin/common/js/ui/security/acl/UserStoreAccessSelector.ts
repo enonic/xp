@@ -11,6 +11,7 @@ module api.ui.security.acl {
     export class UserStoreAccessSelector extends api.ui.tab.TabMenu {
 
         private static OPTIONS: UserStoreAccessSelectorOption[] = [
+            {value: UserStoreAccess.READ, name: 'Read'},
             {value: UserStoreAccess.CREATE_USERS, name: 'Create Users'},
             {value: UserStoreAccess.WRITE_USERS, name: 'Write Users'},
             {value: UserStoreAccess.USER_STORE_MANAGER, name: 'User Store Manager'},

@@ -15,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
@@ -27,10 +29,12 @@ import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
+import com.enonic.wem.api.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "schema/relationship")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class RelationshipTypeResource
     implements AdminResource
 {
@@ -120,6 +124,7 @@ public final class RelationshipTypeResource
         responseBuilder.cacheControl( cacheControl );
     }
 
+    @Reference
     public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
     {
         this.relationshipTypeService = relationshipTypeService;

@@ -33,6 +33,11 @@ public class FindNodesByParentCommand
         return new Builder();
     }
 
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
+    }
+
     public FindNodesByParentResult execute()
     {
         NodePath parentPath = params.getParentPath();
@@ -97,6 +102,11 @@ public class FindNodesByParentCommand
         public Builder()
         {
             super();
+        }
+
+        public Builder( final AbstractNodeCommand source )
+        {
+            super( source );
         }
 
         public Builder params( FindNodesByParentParams params )

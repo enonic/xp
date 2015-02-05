@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeComparison;
@@ -19,20 +18,20 @@ import static org.junit.Assert.*;
 public class CompareNodeCommandTest
     extends AbstractNodeTest
 {
-    private final Context stage = CTX_DEFAULT;
+    private final Context draft = CTX_DEFAULT;
 
-    private final Context prod = CTX_OTHER;
+    private final Context online = CTX_OTHER;
 
     @Test
     public void status_new()
         throws Exception
     {
-        final Node createdNode = stage.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.Status.NEW, comparison.getCompareStatus().getStatus() );
     }
@@ -41,30 +40,30 @@ public class CompareNodeCommandTest
     public void status_new_target()
         throws Exception
     {
-        final Node createdNode = prod.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = online.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.Status.NEW_TARGET, comparison.getCompareStatus().getStatus() );
     }
 
     @Test
-    public void status_deleted()
+    public void status_deleted_stage_yields_new_in_target()
         throws Exception
     {
-        final Node createdNode = prod.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = online.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        assertNotNull( prod.callWith( () -> getNodeById( createdNode.id() ) ) );
+        assertNotNull( online.callWith( () -> getNodeById( createdNode.id() ) ) );
 
-        prod.runWith( () -> doPushNode( WS_DEFAULT, createdNode ) );
+        online.runWith( () -> doPushNode( WS_DEFAULT, createdNode ) );
 
-        assertNotNull( stage.callWith( () -> getNodeById( createdNode.id() ) ) );
+        assertNotNull( draft.callWith( () -> getNodeById( createdNode.id() ) ) );
 
         DeleteNodeByIdCommand.create().
             nodeId( createdNode.id() ).
@@ -76,9 +75,9 @@ public class CompareNodeCommandTest
             build().
             execute();
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.Status.DELETED, comparison.getCompareStatus().getStatus() );
+        assertEquals( CompareStatus.Status.NEW_TARGET, comparison.getCompareStatus().getStatus() );
     }
 
 
@@ -86,14 +85,14 @@ public class CompareNodeCommandTest
     public void status_equal()
         throws Exception
     {
-        final Node createdNode = stage.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        stage.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
+        draft.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.Status.EQUAL, comparison.getCompareStatus().getStatus() );
     }
@@ -102,18 +101,18 @@ public class CompareNodeCommandTest
     public void status_newer()
         throws Exception
     {
-        final Node createdNode = stage.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        stage.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
+        draft.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
 
-        stage.runWith( () -> doUpdateNode( createdNode ) );
+        draft.runWith( () -> doUpdateNode( createdNode ) );
         refresh();
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.Status.NEWER, comparison.getCompareStatus().getStatus() );
     }
@@ -122,23 +121,18 @@ public class CompareNodeCommandTest
     public void status_older()
         throws Exception
     {
-        final Context prodContext = ContextBuilder.create().
-            workspace( WS_OTHER ).
-            repositoryId( TEST_REPO.getId() ).
-            build();
-
-        final Node createdNode = stage.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        stage.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
+        draft.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
 
-        prodContext.runWith( () -> doUpdateNode( createdNode ) );
+        online.runWith( () -> doUpdateNode( createdNode ) );
         refresh();
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.Status.OLDER, comparison.getCompareStatus().getStatus() );
     }
@@ -148,20 +142,20 @@ public class CompareNodeCommandTest
     public void status_moved_source()
         throws Exception
     {
-        final Node createdNode = stage.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        final Node mySecondNode = stage.callWith( () -> createNode( CreateNodeParams.create().
+        final Node mySecondNode = draft.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-second-node" ).
             build() ) );
 
-        stage.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
+        draft.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
 
-        stage.runWith( () -> MoveNodeCommand.create().
+        draft.runWith( () -> MoveNodeCommand.create().
             id( createdNode.id() ).
             newParent( mySecondNode.path() ).
             indexService( this.indexService ).
@@ -172,7 +166,7 @@ public class CompareNodeCommandTest
             build().
             execute() );
 
-        final NodeComparison comparison = stage.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.Status.MOVED, comparison.getCompareStatus().getStatus() );
     }

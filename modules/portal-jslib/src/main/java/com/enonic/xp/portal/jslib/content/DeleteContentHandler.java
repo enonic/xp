@@ -53,7 +53,9 @@ public final class DeleteContentHandler
 
     private boolean deleteByPath( final ContentPath path )
     {
-        final DeleteContentParams params = new DeleteContentParams().contentPath( path );
+        final DeleteContentParams params = DeleteContentParams.create().
+            contentPath( path ).
+            build();
         return doDelete( params );
     }
 

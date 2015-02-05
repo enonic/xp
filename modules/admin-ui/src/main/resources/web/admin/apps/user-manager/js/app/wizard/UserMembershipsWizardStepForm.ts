@@ -34,7 +34,7 @@ module app.wizard {
 
             var groupsLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP]);
             var rolesLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.ROLE]).
-                skipPrincipals([RoleKeys.EVERYONE, RoleKeys.OWNER]);
+                skipPrincipals([RoleKeys.EVERYONE]);
 
             this.groups = new PrincipalComboBox(groupsLoader);
             this.roles = new PrincipalComboBox(rolesLoader);

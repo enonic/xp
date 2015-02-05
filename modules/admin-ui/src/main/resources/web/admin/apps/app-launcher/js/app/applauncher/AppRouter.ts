@@ -42,8 +42,8 @@ module app.launcher {
             this.applications.forEach((application: api.app.Application, idx: number) => {
                 var appRoutPattern = application.getId() + '/:p1:/:p2:/:p3:'; // optional parameters in URL: action, id
                 crossroads.addRoute(appRoutPattern, (p1: string, p2: string, p3: string) => {
-
-                    var path: api.rest.Path = new api.rest.Path(<string[]>this.arrayWithoutNulls(Array.prototype.slice.call(arguments)));
+                    var pathValues = [p1, p2, p3].filter((p)=> p != undefined);
+                    var path: api.rest.Path = new api.rest.Path(pathValues);
                     this.appLauncher.loadApplication(application.setPath(path));
                 });
             });
@@ -55,15 +55,6 @@ module app.launcher {
             });
         }
 
-        private arrayWithoutNulls(array: any[]): any[] {
-            var arrayWithoutNulls: any[] = [];
-            for (var i = 0; i < array.length; i++) {
-                if (array[i] != null) {
-                    arrayWithoutNulls.push(array[i]);
-                }
-            }
-            return arrayWithoutNulls;
-        }
     }
 
 }

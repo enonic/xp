@@ -70,11 +70,9 @@ var expectedJson = {
         "displayName": "My Content",
         "draft": true,
         "hasChildren": false,
-        "isPageTemplate": false,
-        "isSite": false,
         "meta": {},
         "page": {},
-        "type": "system:unstructured"
+        "type": "base:unstructured"
     }, {
         "_createdTime": "1970-01-01T00:00:00Z",
         "_creator": "user:system:admin",
@@ -87,11 +85,9 @@ var expectedJson = {
         "displayName": "Other Content",
         "draft": true,
         "hasChildren": false,
-        "isPageTemplate": false,
-        "isSite": false,
         "meta": {},
         "page": {},
-        "type": "system:unstructured"
+        "type": "base:unstructured"
     }, {
         "_createdTime": "1970-01-01T00:00:00Z",
         "_creator": "user:system:admin",
@@ -104,11 +100,9 @@ var expectedJson = {
         "displayName": "Another Content",
         "draft": true,
         "hasChildren": false,
-        "isPageTemplate": false,
-        "isSite": false,
         "meta": {},
         "page": {},
-        "type": "system:unstructured"
+        "type": "base:unstructured"
     }],
     "total": 20
 };

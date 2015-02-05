@@ -36,10 +36,8 @@ var expectedJson = {
     "displayName": "My Content",
     "draft": true,
     "hasChildren": false,
-    "isPageTemplate": false,
-    "isSite": false,
     "meta": {
-        "mymodule:myschema": {
+        "myschema": {
             "a": "1"
         }
     },
@@ -83,7 +81,7 @@ var expectedJson = {
             }
         }
     },
-    "type": "system:unstructured"
+    "type": "base:unstructured"
 };
 
 exports.getContent = function () {

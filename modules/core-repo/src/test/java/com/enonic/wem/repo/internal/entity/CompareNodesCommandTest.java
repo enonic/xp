@@ -37,6 +37,8 @@ public class CompareNodesCommandTest
 
         doDeleteNode( node2.id() );
 
+        printWorkspaceIndex();
+
         final NodeComparisons result = CompareNodesCommand.create().
             nodeIds( NodeIds.from( node.id(), node2.id(), node3.id() ) ).
             workspaceService( this.workspaceService ).
@@ -45,7 +47,7 @@ public class CompareNodesCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getWithStatus( CompareStatus.Status.DELETED ).size() );
+        assertEquals( 1, result.getWithStatus( CompareStatus.Status.NEW_TARGET ).size() );
         assertEquals( 1, result.getWithStatus( CompareStatus.Status.NEW ).size() );
         assertEquals( 1, result.getWithStatus( CompareStatus.Status.EQUAL ).size() );
     }

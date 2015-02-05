@@ -97,9 +97,9 @@ module api.ui.dialog {
             this.contentPanel.removeChild(child);
         }
 
-        addAction(action: api.ui.Action, useDefault?: boolean, prepend?: boolean) {
+        addAction(action: api.ui.Action, useDefault?: boolean, prepend?: boolean): DialogButton {
             this.actions.push(action);
-            this.buttonRow.addAction(action, useDefault, prepend);
+            return this.buttonRow.addAction(action, useDefault, prepend);
         }
 
         show() {

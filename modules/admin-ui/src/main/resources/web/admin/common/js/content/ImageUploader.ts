@@ -10,6 +10,8 @@ module api.content {
 
         private images: api.dom.ImgEl[];
 
+        private initialWidth: number;
+
         constructor(config: ImageUploaderConfig) {
             this.images = [];
 
@@ -21,18 +23,35 @@ module api.content {
 
             super(config);
             this.addClass('image-uploader');
+
+            this.initialWidth = 0;
+            this.onShown(() => {
+                if(this.getEl().getWidth() == 0) {
+                    this.initialWidth = Math.max(this.getParentElement().getEl().getWidth(), this.initialWidth);
+                    this.getEl().setMaxWidthPx(this.initialWidth);
+                }
+            });
         }
 
         createResultItem(value: string): api.dom.DivEl {
+            this.initialWidth = this.getParentElement().getEl().getWidth();
             var container = new api.dom.DivEl();
 
             var imgUrl = new ContentImageUrlResolver().
                 setContentId(new api.content.ContentId(value)).
-                setSize(this.getEl().getWidth()).
+                setSize(this.initialWidth).
                 setTimestamp(new Date()).
                 resolve();
 
             var image = new api.dom.ImgEl(imgUrl);
+            this.getEl().setMaxWidthPx(image.getEl().getNaturalWidth());
+
+            image.onLoaded(() => {
+                this.getEl().setMaxWidthPx(image.getEl().getNaturalWidth());
+            });
+            image.onRemoved(() => {
+                this.getEl().setMaxWidthPx(this.initialWidth);
+            });
 
             image.onClicked((event: MouseEvent) => {
                 image.toggleClass('selected');
@@ -49,18 +68,6 @@ module api.content {
                     img.removeClass('selected');
                 });
             });
-
-            var toolbar = new api.dom.DivEl('toolbar');
-            container.appendChild(toolbar);
-
-            var crop = new Button().addClass("icon-crop2");
-            var rotateLeft = new Button().addClass("icon-rotate");
-            var rotateRight = new Button().addClass("icon-rotate2");
-            var flipHorizontal = new Button().addClass("icon-flip");
-            var flipVertical = new Button().addClass("icon-flip2");
-            var palette = new Button().addClass("icon-palette");
-
-            toolbar.appendChildren(crop, rotateLeft, rotateRight, flipHorizontal, flipVertical, palette);
 
             return container;
         }

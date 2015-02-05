@@ -9,6 +9,7 @@ module app.browse {
     import TreeNode = api.ui.treegrid.TreeNode;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
     import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
+    import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 
     export class ModuleTreeGrid extends TreeGrid<Module> {
 
@@ -51,7 +52,9 @@ module app.browse {
                             setFormatter(DateTimeFormatter.format).
                             build()
 
-                    ]).prependClasses("module-grid")
+                    ]).
+                    prependClasses("module-grid").
+                    setShowContextMenu(new TreeGridContextMenu(new ModuleBrowseActions(this)))
             );
 
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {

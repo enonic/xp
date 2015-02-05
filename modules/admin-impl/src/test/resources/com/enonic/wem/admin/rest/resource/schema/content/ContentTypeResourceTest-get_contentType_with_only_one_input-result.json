@@ -8,7 +8,7 @@
     "description": "My description",
     "displayName": "My ContentType",
     "editable": false,
-    "final": false,
+  "final": true,
     "form": {
         "formItems": [
             {
@@ -36,5 +36,5 @@
     "modifiedTime": null,
     "modifier": null,
     "name": "mymodule:my_cty",
-    "superType": "system:unstructured"
+  "superType": "base:unstructured"
 }

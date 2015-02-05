@@ -17,28 +17,28 @@ public class CreateRelationshipParamsTest
             @Override
             public Object getObjectX()
             {
-                return createRelationship( RelationshipTypeName.LIKE, ContentId.from( "1" ), ContentId.from( "2" ), "val1" );
+                return createRelationship( RelationshipTypeName.REFERENCE, ContentId.from( "1" ), ContentId.from( "2" ), "val1" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
                 return new Object[]{createRelationship( RelationshipTypeName.PARENT, ContentId.from( "1" ), ContentId.from( "2" ), "val1" ),
-                    createRelationship( RelationshipTypeName.LIKE, ContentId.from( "3" ), ContentId.from( "2" ), "val1" ),
-                    createRelationship( RelationshipTypeName.LIKE, ContentId.from( "1" ), ContentId.from( "3" ), "val1" ),
-                    createRelationship( RelationshipTypeName.LIKE, ContentId.from( "1" ), ContentId.from( "2" ), "otherValue" ),};
+                    createRelationship( RelationshipTypeName.REFERENCE, ContentId.from( "3" ), ContentId.from( "2" ), "val1" ),
+                    createRelationship( RelationshipTypeName.REFERENCE, ContentId.from( "1" ), ContentId.from( "3" ), "val1" ),
+                    createRelationship( RelationshipTypeName.REFERENCE, ContentId.from( "1" ), ContentId.from( "2" ), "otherValue" ),};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return createRelationship( RelationshipTypeName.LIKE, ContentId.from( "1" ), ContentId.from( "2" ), "val1" );
+                return createRelationship( RelationshipTypeName.REFERENCE, ContentId.from( "1" ), ContentId.from( "2" ), "val1" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return createRelationship( RelationshipTypeName.LIKE, ContentId.from( "1" ), ContentId.from( "2" ), "val1" );
+                return createRelationship( RelationshipTypeName.REFERENCE, ContentId.from( "1" ), ContentId.from( "2" ), "val1" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();

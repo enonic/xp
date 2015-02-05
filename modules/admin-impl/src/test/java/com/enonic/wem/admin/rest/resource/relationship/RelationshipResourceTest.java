@@ -35,7 +35,7 @@ public class RelationshipResourceTest
         Relationships relationships = Relationships.from( newRelationship().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
-            type( RelationshipTypeName.DEFAULT ).
+            type( RelationshipTypeName.REFERENCE ).
             build() );
 
         Mockito.when( this.relationshipService.getAll( isA( ContentId.class ) ) ).thenReturn( relationships );
@@ -51,10 +51,10 @@ public class RelationshipResourceTest
     {
         Relationships relationships = Relationships.from( newRelationship().fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
-            type( RelationshipTypeName.DEFAULT ).
+            type( RelationshipTypeName.REFERENCE ).
             build(), newRelationship().fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "333" ) ).
-            type( RelationshipTypeName.DEFAULT ).
+            type( RelationshipTypeName.REFERENCE ).
             build() );
 
         Mockito.when( this.relationshipService.getAll( isA( ContentId.class ) ) ).thenReturn( relationships );
@@ -98,7 +98,7 @@ public class RelationshipResourceTest
         throws Exception
     {
         RelationshipKey relationshipKey = RelationshipKey.newRelationshipKey().
-            type( RelationshipTypeName.LIKE ).
+            type( RelationshipTypeName.REFERENCE ).
             fromContent( ContentId.from( "123" ) ).
             toContent( ContentId.from( "321" ) ).
             build();
@@ -112,10 +112,6 @@ public class RelationshipResourceTest
                                                                                           MediaType.APPLICATION_JSON_TYPE ).post();
 
         Assert.assertEquals( 404, response.getStatus() );
-        Assert.assertEquals(
-            "Failed to update Relationship [RelationshipKey{fromContent=123, toContent=321, type=system:like, managingData=null}]:\n" +
-                "Failure #1: Relationship [RelationshipKey{fromContent=123, toContent=321, type=system:like, managingData=null}] was not found\n",
-            response.getAsString() );
     }
 
     @Override

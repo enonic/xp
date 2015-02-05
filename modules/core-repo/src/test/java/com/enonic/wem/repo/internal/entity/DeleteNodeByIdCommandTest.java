@@ -5,6 +5,8 @@ import org.junit.Test;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.node.NodeState;
+import com.enonic.wem.api.workspace.Workspaces;
 
 import static org.junit.Assert.*;
 

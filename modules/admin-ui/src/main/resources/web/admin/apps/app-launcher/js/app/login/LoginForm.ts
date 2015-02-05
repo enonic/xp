@@ -10,7 +10,7 @@ module app.login {
 
         private authenticator: Authenticator;
         private userStores: {[userStoreId: string]: UserStore;};
-        private onUserAuthenticatedHandler: (user: api.security.User) => void;
+        private onUserAuthenticatedHandler: (loginResult: api.security.auth.LoginResult) => void;
 
         constructor(authenticator: Authenticator) {
             super('login-form');
@@ -40,7 +40,7 @@ module app.login {
             })
         }
 
-        onUserAuthenticated(handler: (user: api.security.User) => void) {
+        onUserAuthenticated(handler: (loginResult: api.security.auth.LoginResult) => void) {
             this.onUserAuthenticatedHandler = handler;
         }
 
@@ -65,7 +65,7 @@ module app.login {
         private handleAuthenticateResponse(loginResult: api.security.auth.LoginResult) {
             if (loginResult.isAuthenticated()) {
                 if (this.onUserAuthenticatedHandler) {
-                    this.onUserAuthenticatedHandler(loginResult.getUser());
+                    this.onUserAuthenticatedHandler(loginResult);
                 }
                 this.passwordInput.setValue('');
                 this.messageContainer.setHtml('');

@@ -1,24 +1,21 @@
 module api.liveedit {
 
-    export class RegionComponentViewer extends api.ui.Viewer<api.content.page.region.Region> {
-
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class RegionComponentViewer extends api.ui.NamesAndIconViewer<api.content.page.region.Region> {
 
         constructor() {
             super();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(region: api.content.page.region.Region) {
-            super.setObject(region);
-            this.namesAndIconView.setMainName(region.getName().toString()).
-                setSubName(region.getPath().toString()).
-                setIconClass('live-edit-font-icon-region');
+        resolveDisplayName(object: api.content.page.region.Region): string {
+            return object.getName().toString();
         }
 
-        getPreferredHeight(): number {
-            return 50;
+        resolveSubName(object: api.content.page.region.Region, relativePath: boolean = false): string {
+            return object.getPath().toString();
+        }
+
+        resolveIconClass(object: api.content.page.region.Region): string {
+            return "live-edit-font-icon-region";
         }
     }
 

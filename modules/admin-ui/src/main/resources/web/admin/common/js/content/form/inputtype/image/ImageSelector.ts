@@ -210,6 +210,7 @@ module api.content.form.inputtype.image {
                 selectedOption.getOptionView().setOption(option);
 
                 this.setContentIdProperty(createdContent.getContentId());
+                this.validate(false);
             });
 
             this.uploadDialog.onUploadFailed((event: FileUploadFailedEvent<Content>) => {
@@ -278,6 +279,7 @@ module api.content.form.inputtype.image {
 
             this.selectedOptionsView.onValueChanged((event: api.form.inputtype.ValueChangedEvent) => {
                 this.propertyArray.set(event.getArrayIndex(), event.getNewValue());
+                this.validate(false);
             });
 
             var comboBoxConfig = <ComboBoxConfig<ImageSelectorDisplayValue>> {

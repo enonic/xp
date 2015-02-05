@@ -19,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.lang.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
@@ -102,6 +104,7 @@ import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.workspace.Workspaces;
@@ -111,7 +114,8 @@ import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class ContentResource
     implements AdminResource
 {
@@ -290,9 +294,9 @@ public final class ContentResource
 
         for ( final ContentPath contentToDelete : contentsToDeleteList )
         {
-            final DeleteContentParams deleteContent = new DeleteContentParams();
-            deleteContent.deleter( PrincipalKey.ofAnonymous() );
-            deleteContent.contentPath( contentToDelete );
+            final DeleteContentParams deleteContent = DeleteContentParams.create().
+                contentPath( contentToDelete ).
+                build();
 
             try
             {
@@ -315,7 +319,7 @@ public final class ContentResource
         final ContentIds contentIds = ContentIds.from( params.getIds() );
 
         final PushContentsResult result = contentService.push( PushContentParams.create().
-            target( ContentConstants.WORKSPACE_PROD ).
+            target( ContentConstants.WORKSPACE_ONLINE ).
             contentIds( contentIds ).
             includeChildren( true ).
             allowPublishOutsideSelection( true ).
@@ -560,7 +564,7 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final CompareContentResults compareResults =
-            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.WORKSPACE_PROD ) );
+            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.WORKSPACE_ONLINE ) );
 
         return new CompareContentResultsJson( compareResults );
     }
@@ -585,7 +589,7 @@ public final class ContentResource
     public GetActiveContentVersionsResultJson getActiveVersions( @QueryParam("id") final String id )
     {
         final GetActiveContentVersionsResult result = contentService.getActiveVersions( GetActiveContentVersionsParams.create().
-            workspaces( Workspaces.from( ContentConstants.WORKSPACE_STAGE, ContentConstants.WORKSPACE_PROD ) ).
+            workspaces( Workspaces.from( ContentConstants.WORKSPACE_DRAFT, ContentConstants.WORKSPACE_ONLINE ) ).
             contentId( ContentId.from( id ) ).
             build() );
 
@@ -641,21 +645,25 @@ public final class ContentResource
         return new ContentIconUrlResolver( this.contentTypeService );
     }
 
+    @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
     }
 
+    @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
         this.contentTypeService = contentTypeService;
     }
 
+    @Reference
     public void setMixinService( final MixinService mixinService )
     {
         this.mixinReferencesToFormItemsTransformer = new MixinReferencesToFormItemsTransformer( mixinService );
     }
 
+    @Reference
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;

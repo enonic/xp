@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.component.ComponentContext;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.form.Form;
@@ -155,8 +156,12 @@ public class ModuleResourceTest
         this.bundleContext = Mockito.mock( BundleContext.class );
 
         final ModuleResource resource = new ModuleResource();
+
+        final ComponentContext componentContext = Mockito.mock( ComponentContext.class );
+        Mockito.when( componentContext.getBundleContext() ).thenReturn( this.bundleContext );
+
         resource.setModuleService( this.moduleService );
-        resource.setBundleContext( this.bundleContext );
+        resource.initialize( componentContext );
 
         return resource;
     }

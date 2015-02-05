@@ -7,6 +7,13 @@ import static java.util.Objects.requireNonNull;
 public final class User
     extends Principal
 {
+
+    public final static User ANONYMOUS = User.create().
+        key( PrincipalKey.ofAnonymous() ).
+        displayName( "Anonymous User" ).
+        login( "anonymous" ).
+        build();
+
     private final String email;
 
     private final String login;

@@ -8,18 +8,17 @@ import com.enonic.wem.api.workspace.Workspace;
 
 public final class SystemConstants
 {
-    public static final UserStore SYSTEM_USERSTORE = UserStore.newUserStore().key( UserStoreKey.system() ).displayName( "System" ).build();
 
-    public static final Workspace WORKSPACE_USER_STORES = Workspace.create().
-        name( "userstores" ).
+    public static final Workspace WORKSPACE_SECURITY = Workspace.create().
+        name( "security" ).
         build();
 
     public static final Repository SYSTEM_REPO = Repository.create().
-        id( RepositoryId.from( "wem-system-repo" ) ).
+        id( RepositoryId.from( "system-repo" ) ).
         build();
 
-    public static final Context CONTEXT_USER_STORES = ContextBuilder.create().
-        workspace( WORKSPACE_USER_STORES ).
+    public static final Context CONTEXT_SECURITY = ContextBuilder.create().
+        workspace( WORKSPACE_SECURITY ).
         repositoryId( SYSTEM_REPO.getId() ).
         build();
 }

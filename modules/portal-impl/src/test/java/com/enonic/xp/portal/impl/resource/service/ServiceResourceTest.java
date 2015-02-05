@@ -39,7 +39,7 @@ public class ServiceResourceTest
     public void executeScript()
         throws Exception
     {
-        final MockHttpServletRequest request = newGetRequest( "/prod/path/to/content/_/service/demo/test" );
+        final MockHttpServletRequest request = newGetRequest( "/online/path/to/content/_/service/demo/test" );
         request.setQueryString( "a=b" );
         final MockHttpServletResponse response = executeRequest( request );
 

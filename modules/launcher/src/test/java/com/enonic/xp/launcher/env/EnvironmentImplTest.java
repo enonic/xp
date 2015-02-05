@@ -1,14 +1,13 @@
 package com.enonic.xp.launcher.env;
 
-import java.io.File;
 import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.enonic.wem.launcher.SharedConstants;
 import com.enonic.xp.launcher.LauncherException;
+import com.enonic.xp.launcher.SharedConstants;
 
 import static org.junit.Assert.*;
 
@@ -40,30 +39,11 @@ public class EnvironmentImplTest
     }
 
     @Test(expected = LauncherException.class)
-    public void testValidate_notValidInstallDir()
-        throws Exception
-    {
-        final EnvironmentImpl env = new EnvironmentImpl();
-        env.installDir = new File( this.temporaryFolder.getRoot(), "not-found" );
-        env.validate();
-    }
-
-    @Test(expected = LauncherException.class)
     public void testValidate_noHomeDir()
         throws Exception
     {
         final EnvironmentImpl env = new EnvironmentImpl();
         env.installDir = this.temporaryFolder.newFolder();
-        env.validate();
-    }
-
-    @Test(expected = LauncherException.class)
-    public void testValidate_notValidHomeDir()
-        throws Exception
-    {
-        final EnvironmentImpl env = new EnvironmentImpl();
-        env.installDir = this.temporaryFolder.newFolder();
-        env.homeDir = new File( this.temporaryFolder.getRoot(), "not-found" );
         env.validate();
     }
 

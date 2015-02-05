@@ -26,6 +26,7 @@
 ///<reference path='EmEl.ts' />
 ///<reference path='ImgEl.ts' />
 ///<reference path='SpanEl.ts' />
+///<reference path='FormItemEl.ts' />
 ///<reference path='ButtonEl.ts' />
 ///<reference path='PEl.ts' />
 ///<reference path='FormInputEl.ts' />

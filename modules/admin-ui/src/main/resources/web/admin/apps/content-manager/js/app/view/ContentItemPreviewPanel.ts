@@ -73,7 +73,7 @@ module app.view {
                             if (renderable) {
                                 this.getEl().removeClass("image-preview no-preview").addClass('page-preview');
                                 this.frame.setSrc(api.rendering.UriHelper.getPortalUri(item.getPath(), RenderingMode.PREVIEW,
-                                    api.content.Workspace.STAGE));
+                                    api.content.Workspace.DRAFT));
                             } else {
                                 this.getEl().removeClass("image-preview page-preview").addClass('no-preview');
                                 this.frame.setSrc("about:blank");

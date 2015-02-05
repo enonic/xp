@@ -9,6 +9,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.json.content.page.region.PartDescriptorJson;
 import com.enonic.wem.admin.json.content.page.region.PartDescriptorsJson;
@@ -18,10 +21,12 @@ import com.enonic.wem.api.content.page.region.PartDescriptor;
 import com.enonic.wem.api.content.page.region.PartDescriptorService;
 import com.enonic.wem.api.content.page.region.PartDescriptors;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/part/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class PartDescriptorResource
     implements AdminResource
 {
@@ -53,6 +58,7 @@ public final class PartDescriptorResource
         return new PartDescriptorsJson( descriptors );
     }
 
+    @Reference
     public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
     {
         this.partDescriptorService = partDescriptorService;

@@ -1,7 +1,12 @@
 package com.enonic.wem.repo.internal.entity;
 
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.ApplyNodePermissionsParams;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -23,6 +28,7 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodePaths;
 import com.enonic.wem.api.node.NodeQuery;
 import com.enonic.wem.api.node.NodeService;
+import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.node.NodeVersionId;
@@ -36,6 +42,7 @@ import com.enonic.wem.api.node.RootNode;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.SyncWorkResolverParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
+import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.blob.BlobStore;
@@ -43,9 +50,11 @@ import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexService;
 import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
+@Component(immediate = true)
 public class NodeServiceImpl
     implements NodeService
 {
@@ -60,6 +69,14 @@ public class NodeServiceImpl
     private QueryService queryService;
 
     private final BlobStore binaryBlobStore = new FileBlobStore( NodeConstants.binaryBlobStoreDir );
+
+    @Activate
+    public void initialize()
+    {
+        final RepositoryInitializer repoInitializer = new RepositoryInitializer( this.indexService );
+        repoInitializer.initializeRepository( ContentConstants.CONTENT_REPO );
+        repoInitializer.initializeRepository( SystemConstants.SYSTEM_REPO );
+    }
 
     @Override
     public Node getById( final NodeId id )
@@ -457,11 +474,26 @@ public class NodeServiceImpl
     }
 
     @Override
+    public Node setNodeState( final NodeId nodeId, final NodeState nodeState )
+    {
+        return SetNodeStateCommand.create().
+            nodeId( nodeId ).
+            nodeState( nodeState ).
+            versionService( this.versionService ).
+            queryService( this.queryService ).
+            workspaceService( this.workspaceService ).
+            nodeDao( this.nodeDao ).
+            indexService( this.indexService ).
+            build().
+            execute();
+    }
+
+    @Override
     public RootNode getRoot()
     {
         final Node node = doGetByPath( NodePath.ROOT, false );
 
-        if ( node instanceof RootNode )
+        if ( node instanceof RootNode || node == null )
         {
             return (RootNode) node;
         }
@@ -469,26 +501,31 @@ public class NodeServiceImpl
         throw new RuntimeException( "Expected node with path " + NodePath.ROOT.toString() + " to be of type RootNode, found " + node.id() );
     }
 
+    @Reference
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;
     }
 
+    @Reference
     public void setNodeDao( final NodeDao nodeDao )
     {
         this.nodeDao = nodeDao;
     }
 
+    @Reference
     public void setWorkspaceService( final WorkspaceService workspaceService )
     {
         this.workspaceService = workspaceService;
     }
 
+    @Reference
     public void setVersionService( final VersionService versionService )
     {
         this.versionService = versionService;
     }
 
+    @Reference
     public void setQueryService( final QueryService queryService )
     {
         this.queryService = queryService;

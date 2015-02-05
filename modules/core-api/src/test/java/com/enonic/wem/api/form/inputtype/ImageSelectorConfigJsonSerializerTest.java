@@ -32,7 +32,7 @@ public class ImageSelectorConfigJsonSerializerTest
     {
         // setup
         ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
-        builder.relationshipType( RelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.REFERENCE );
         ImageSelectorConfig config = builder.build();
 
         // exercise
@@ -60,7 +60,7 @@ public class ImageSelectorConfigJsonSerializerTest
     {
         // setup
         ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
-        builder.relationshipType( RelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.REFERENCE );
         ImageSelectorConfig expected = builder.build();
 
         // exercise

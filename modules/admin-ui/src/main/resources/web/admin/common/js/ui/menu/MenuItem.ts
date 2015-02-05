@@ -21,6 +21,10 @@ module api.ui.menu {
             });
         }
 
+        getAction(): api.ui.Action {
+            return this.action;
+        }
+
         setEnabled(value: boolean) {
             var el = this.getEl();
             el.setDisabled(!value);

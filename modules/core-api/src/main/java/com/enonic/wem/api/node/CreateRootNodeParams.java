@@ -43,7 +43,7 @@ public class CreateRootNodeParams
 
         private AccessControlList permissions = AccessControlList.of( AccessControlEntry.create().
             allowAll().
-            principal( RoleKeys.CONTENT_MANAGER ).
+            principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
             build(), AccessControlEntry.create().
             allowAll().
             principal( PrincipalKey.ofAnonymous() ).

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;
@@ -38,7 +39,7 @@ public final class PortalForwardHandler
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        if ( !req.isUserInRole( "admin-login" ) )
+        if ( !req.isUserInRole( RoleKeys.ADMIN_LOGIN_ID ) )
         {
             res.sendError( HttpServletResponse.SC_FORBIDDEN );
             return;

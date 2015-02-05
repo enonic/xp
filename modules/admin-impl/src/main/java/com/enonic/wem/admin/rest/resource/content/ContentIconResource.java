@@ -14,6 +14,8 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
@@ -25,15 +27,17 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Media;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.thumb.Thumbnail;
 
-import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleSquareFilter;
+import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleWidthFilter;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/icon")
 @Produces("image/*")
-@RolesAllowed("admin-login")
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
+@Component(immediate = true)
 public final class ContentIconResource
     implements AdminResource
 {
@@ -104,7 +108,7 @@ public final class ContentIconResource
             final ByteSource binary = contentService.getBinary( content.getId(), contentThumbnail.getBinaryReference() );
             if ( binary != null )
             {
-                ImageFilter filter = crop ? ScaleSquareFilter : ScaleMax;
+                ImageFilter filter = crop ? ScaleSquareFilter : ScaleWidthFilter;
                 final BufferedImage thumbnailImage = helper.readImage( binary, size, filter );
                 return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
             }
@@ -127,6 +131,7 @@ public final class ContentIconResource
         return ResolvedImage.unresolved();
     }
 
+    @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
