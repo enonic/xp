@@ -1,0 +1,12 @@
+apply from: "$rootDir/gradle/java.gradle"
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':core-api' )
+    testCompile project( path: ':core-api', configuration: 'testOutput' )
+    testCompile 'com.googlecode.pojosr:de.kalpatec.pojosr.framework:0.2.1'
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP Core - Schema'
+}

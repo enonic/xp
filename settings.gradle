@@ -1,3 +1,7 @@
+include 'core-api'
+include 'core-event'
+include 'core-module'
+include 'core-schema'
 
 include 'launcher'
 include 'distro'

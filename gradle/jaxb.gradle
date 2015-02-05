@@ -1,4 +1,6 @@
-apply plugin: 'com.github.jacobono.jaxb'
+configurations {
+    jaxb
+}
 
 dependencies {
     jaxb 'com.sun.xml.bind:jaxb-xjc:2.2.7-b41'
@@ -6,9 +8,27 @@ dependencies {
     jaxb 'javax.xml.bind:jaxb-api:2.2.7'
 }
 
-System.setProperty( 'javax.xml.accessExternalSchema', 'all' )
-
-jaxb {
-    xsdDir = "modules/${project.name}/src/main/xsd"
-    episodesDir = "modules/${project.name}/src/main/xsd/episodes"
+ext {
+    jaxbGeneratedSources = file( "$projectDir/src/main/generated-java" )
 }
+
+sourceSets.main.java.srcDirs += jaxbGeneratedSources
+
+task jaxb() {
+    inputs.dir file( "$projectDir/src/main/xsd" )
+    outputs.dir jaxbGeneratedSources
+
+    ant.taskdef( name: 'xjc', classname: 'com.sun.tools.xjc.XJCTask',
+                 classpath: configurations.jaxb.asPath )
+
+    doLast {
+        System.setProperty( 'javax.xml.accessExternalSchema', 'all' )
+        jaxbGeneratedSources.mkdirs()
+
+        ant.xjc( destdir: jaxbGeneratedSources ) {
+            schema( dir: 'src/main/xsd', includes: '**/*.xsd' )
+        }
+    }
+}
+
+compileJava.dependsOn += jaxb

@@ -1,4 +1,6 @@
-apply plugin: 'build.bundles'
+import com.enonic.build.bundles.BundlesPlugin
+
+apply plugin: BundlesPlugin
 
 configurations {
     lib
@@ -57,16 +59,16 @@ bundles {
     bundle 'com.enonic.osgi.bundles:elasticsearch:1.3.6_1', 30
 
     // Core app
-    bundle 'com.enonic.xp:core-api:5.0.0-SNAPSHOT', 30
-    bundle 'com.enonic.xp:core-event:5.0.0-SNAPSHOT', 30
-    bundle 'com.enonic.xp:core-image:5.0.0-SNAPSHOT', 30
-    bundle 'com.enonic.xp:core-module:5.0.0-SNAPSHOT', 30
-    bundle 'com.enonic.xp:core-schema:5.0.0-SNAPSHOT', 30
-    bundle 'com.enonic.xp:core-relationship:5.0.0-SNAPSHOT', 30
-    bundle 'com.enonic.xp:core-security:5.0.0-SNAPSHOT', 30
-    bundle 'com.enonic.xp:core-export:5.0.0-SNAPSHOT', 30
-    bundle 'com.enonic.xp:core-impl:5.0.0-SNAPSHOT', 30
-    bundle 'com.enonic.xp:core-repo:5.0.0-SNAPSHOT', 30
+    bundle project( ':core-api' ), 30
+    bundle project( ':core-event' ), 30
+    bundle project( ':core-module' ), 30
+    bundle project( ':core-schema' ), 30
+    //bundle 'com.enonic.xp:core-image:5.0.0-SNAPSHOT', 30
+    //bundle 'com.enonic.xp:core-relationship:5.0.0-SNAPSHOT', 30
+    //bundle 'com.enonic.xp:core-security:5.0.0-SNAPSHOT', 30
+    //bundle 'com.enonic.xp:core-export:5.0.0-SNAPSHOT', 30
+    //bundle 'com.enonic.xp:core-impl:5.0.0-SNAPSHOT', 30
+    //bundle 'com.enonic.xp:core-repo:5.0.0-SNAPSHOT', 30
 }
 
 prepareDevBundles {

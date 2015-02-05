@@ -17,6 +17,7 @@ final class BundleResolver
 
     public List<ResolvedBundleInfo> resolve()
     {
+        this.ext.getConfiguration().resolve();
         final ResolvedConfiguration config = this.ext.getConfiguration().getResolvedConfiguration();
         return config.getResolvedArtifacts().stream().map( this::resolve ).collect( Collectors.toList() );
     }
