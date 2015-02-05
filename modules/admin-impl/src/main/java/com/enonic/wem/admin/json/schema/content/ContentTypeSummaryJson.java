@@ -1,11 +1,15 @@
 package com.enonic.wem.admin.json.schema.content;
 
 import java.time.Instant;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.admin.json.ChangeTraceableJson;
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentTypeSummaryJson
@@ -15,10 +19,22 @@ public class ContentTypeSummaryJson
 
     private final String iconUrl;
 
+    private final ImmutableList<String> metadataMixinNames;
+
     public ContentTypeSummaryJson( final ContentType contentType, final ContentTypeIconUrlResolver iconUrlResolver )
     {
         this.contentType = contentType;
         this.iconUrl = iconUrlResolver.resolve( contentType );
+
+        ImmutableList.Builder<String> mixinNamesBuilder = new ImmutableList.Builder<>();
+        if ( this.contentType.getMetadata() != null )
+        {
+            for ( MixinName mixinName : this.contentType.getMetadata() )
+            {
+                mixinNamesBuilder.add( mixinName.toString() );
+            }
+        }
+        this.metadataMixinNames = mixinNamesBuilder.build();
     }
 
     public String getName()
@@ -84,6 +100,11 @@ public class ContentTypeSummaryJson
     public String getModifier()
     {
         return contentType.getModifier() != null ? contentType.getModifier().toString() : null;
+    }
+
+    public List<String> getMetadata()
+    {
+        return metadataMixinNames;
     }
 
     @Override

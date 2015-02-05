@@ -1,5 +1,7 @@
 module api.schema.content {
 
+    import MixinNames = api.schema.mixin.MixinNames;
+
     export class ContentTypeSummary extends api.schema.Schema implements api.Equitable {
 
         private allowChildContent: boolean;
@@ -16,6 +18,8 @@ module api.schema.content {
 
         private owner: string;
 
+        private metadata: MixinNames;
+
         constructor(builder: ContentTypeSummaryBuilder) {
             super(builder);
             this.allowChildContent = builder.allowChildContent;
@@ -25,6 +29,7 @@ module api.schema.content {
             this.contentDisplayNameScript = builder.contentDisplayNameScript;
             this.owner = builder.owner;
             this.modifier = builder.modifier;
+            this.metadata = builder.metadata;
         }
 
         getContentTypeName(): api.schema.content.ContentTypeName {
@@ -75,6 +80,10 @@ module api.schema.content {
             return this.modifier;
         }
 
+        getMetadata(): MixinNames {
+            return this.metadata;
+        }
+
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentTypeSummary)) {
@@ -108,6 +117,10 @@ module api.schema.content {
             }
 
             if (!ObjectHelper.stringEquals(this.owner, other.owner)) {
+                return false;
+            }
+
+            if (!ObjectHelper.equals(this.metadata, other.metadata)) {
                 return false;
             }
 
@@ -145,6 +158,8 @@ module api.schema.content {
 
         owner: string;
 
+        metadata: MixinNames;
+
         constructor(source?: ContentTypeSummary) {
             if (source) {
                 super(source);
@@ -155,6 +170,7 @@ module api.schema.content {
                 this.contentDisplayNameScript = source.getContentDisplayNameScript();
                 this.modifier = source.getModifier();
                 this.owner = source.getOwner();
+                this.metadata = source.getMetadata();
             }
         }
 
@@ -168,6 +184,7 @@ module api.schema.content {
             this.contentDisplayNameScript = json.contentDisplayNameScript;
             this.owner = json.owner;
             this.modifier = json.modifier;
+            this.metadata = MixinNames.create().fromStrings(json.metadata).build();
             return this;
         }
 

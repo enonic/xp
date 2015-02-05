@@ -53,6 +53,10 @@
     <xs:attribute name="mixin" type="xs:string" use="required"/>
   </xs:complexType>
 
+  <xs:complexType name="metadata">
+    <xs:attribute name="mixin" type="xs:string" use="required"/>
+  </xs:complexType>
+
   <xs:complexType name="form">
     <xs:complexContent>
       <xs:extension base="formItems">
@@ -151,6 +155,7 @@
       <xs:element minOccurs="0" name="is-abstract" type="xs:boolean"/>
       <xs:element minOccurs="0" name="is-final" type="xs:boolean"/>
       <xs:element minOccurs="0" name="allow-child-content" type="xs:boolean"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="metadata" type="metadata"/>
       <xs:element minOccurs="0" name="form" type="formItems"/>
     </xs:sequence>
   </xs:complexType>

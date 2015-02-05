@@ -108,9 +108,9 @@
 ///<reference path='module/json/_module.ts' />
 
 ///<reference path='schema/_module.ts' />
+///<reference path='schema/mixin/_module.ts'/>
 ///<reference path='schema/content/_module.ts' />
 ///<reference path='schema/content/inputtype/_module.ts' />
-///<reference path='schema/mixin/_module.ts'/>
 ///<reference path='schema/relationshiptype/_module.ts' />
 
 ///<reference path='thumb/_module.ts' />
