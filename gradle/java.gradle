@@ -12,8 +12,6 @@ compileGroovy {
     groovyOptions.encoding = 'utf-8'
 }
 
-buildDir = 'target'
-
 configurations {
     testOutput.extendsFrom( testCompile )
 }
