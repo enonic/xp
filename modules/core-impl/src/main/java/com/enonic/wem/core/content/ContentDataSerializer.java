@@ -64,7 +64,9 @@ public final class ContentDataSerializer
         contentAsData.ifNotNull().addString( OWNER, content.getOwner() != null ? content.getOwner().toString() : null );
         contentAsData.ifNotNull().addString( LANGUAGE, content.getLanguage() != null ? content.getLanguage().toLanguageTag() : null );
         contentAsData.ifNotNull().addInstant( MODIFIED_TIME, content.getModifiedTime() );
-        contentAsData.ifNotNull().addString( MODIFIER, content.getModifier().toString() );
+        contentAsData.ifNotNull().addString( MODIFIER, content.getModifier() != null
+            ? content.getModifier().toString()
+            : PrincipalKey.ofAnonymous().toString() );
         contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
         contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
