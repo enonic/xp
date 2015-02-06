@@ -1,6 +1,4 @@
 apply plugin: 'com.moowork.grunt'
-apply from: "$rootDir/gradle/java.gradle"
-apply from: "$rootDir/gradle/osgi.gradle"
 
 node {
     download = true
@@ -11,6 +9,7 @@ bundle {
 }
 
 task gruntAll( type: GruntTask, dependsOn: npmInstall ) {
+    description = 'Build admin UI resources (ts, css, etc).'
     inputs.files fileTree( dir: 'src/main/resources', exclude: '**/_all.*' )
     outputs.files fileTree( dir: 'src/main/resources', include: '**/_all.*' )
     args = ['all', 'karma']

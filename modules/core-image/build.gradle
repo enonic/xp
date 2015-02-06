@@ -1,6 +1,3 @@
-apply from: "$rootDir/gradle/java.gradle"
-apply from: "$rootDir/gradle/osgi.gradle"
-
 dependencies {
     compile project( ':core-api' )
     compile 'com.enonic.osgi.bundles:jhlabs-filters:2.0.235_1'

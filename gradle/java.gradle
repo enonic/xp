@@ -38,7 +38,12 @@ artifacts {
 sourceCompatibility = '1.8'
 targetCompatibility = sourceCompatibility
 
+task sourceJar( type: Jar ) {
+    from sourceSets.main.allJava
+}
+
 test {
     systemProperty 'java.awt.headless', 'true'
     jvmArgs '-Xmx2048m'
 }
+

@@ -80,6 +80,8 @@ prepareProdBundles {
 }
 
 task run( type: JavaExec, dependsOn: 'prepareDevBundles' ) {
+    group = 'distro'
+    description = 'Starts server in development mode.'
     main = 'com.enonic.xp.launcher.LauncherMain'
     classpath = configurations.lib
     debug = project.hasProperty( 'debug' )
