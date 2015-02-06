@@ -76,7 +76,11 @@ public final class FrameworkService
 
     private void setStartLevel( final int level, final FrameworkListener... listeners )
     {
-        getStartLevelService().setStartLevel( level, listeners );
+        final FrameworkStartLevel service = getStartLevelService();
+        if ( service.getStartLevel() != level )
+        {
+            getStartLevelService().setStartLevel( level, listeners );
+        }
     }
 
     private void doStart()

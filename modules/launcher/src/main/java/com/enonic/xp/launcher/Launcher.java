@@ -40,6 +40,8 @@ public final class Launcher
         final EnvironmentResolver resolver = new EnvironmentResolver( this.systemProperties );
         this.env = resolver.resolve();
         this.env.validate();
+
+        System.setProperty( XP_HOME_DIR, this.env.getHomeDir().toString() );
     }
 
     private void printBanner()
