@@ -1,0 +1,11 @@
+apply from: "$rootDir/gradle/java.gradle"
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':web-api' )
+    testCompile project( path: ':web-api', configuration: 'testOutput' )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP Web - Impl'
+}

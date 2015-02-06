@@ -9,6 +9,11 @@ include 'core-image'
 include 'core-export'
 include 'core-impl'
 
+include 'web-api'
+include 'web-impl'
+include 'web-jaxrs'
+include 'web-vhost'
+
 include 'launcher'
 include 'distro'
 
