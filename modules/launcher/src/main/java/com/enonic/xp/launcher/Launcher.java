@@ -13,6 +13,7 @@ import com.enonic.xp.launcher.logging.LogActivator;
 import com.enonic.xp.launcher.logging.LogConfigurator;
 import com.enonic.xp.launcher.provision.ProvisionActivator;
 import com.enonic.xp.launcher.util.BannerPrinter;
+import com.enonic.xp.launcher.watch.WatchActivator;
 
 public final class Launcher
     implements SharedConstants
@@ -72,12 +73,19 @@ public final class Launcher
         this.framework.config( this.config );
 
         addLogActivator();
+        addWatchActivator();
         addProvisionActivator();
     }
 
     private void addLogActivator()
     {
         final LogActivator activator = new LogActivator();
+        this.framework.activator( activator );
+    }
+
+    private void addWatchActivator()
+    {
+        final WatchActivator activator = new WatchActivator();
         this.framework.activator( activator );
     }
 

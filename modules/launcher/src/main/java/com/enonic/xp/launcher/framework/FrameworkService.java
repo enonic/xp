@@ -98,8 +98,8 @@ public final class FrameworkService
 
     private void setRunningStartLevel()
     {
-        // TODO: Load start-level from system.properties
-        setStartLevel( 20, event -> LOG.info( "Started Enonic XP in {} ms", ( System.currentTimeMillis() - this.startTime ) ) );
+        final int level = Integer.parseInt( this.config.get( FRAMEWORK_BEGINNING_STARTLEVEL ) );
+        setStartLevel( level, event -> LOG.info( "Started Enonic XP in {} ms", ( System.currentTimeMillis() - this.startTime ) ) );
     }
 
     public void stop()
