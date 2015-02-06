@@ -1,0 +1,11 @@
+import org.gradle.internal.jvm.Jvm
+
+def jvm = Jvm.current()
+def javaVersion = JavaVersion.current()
+
+// Check java version
+assert javaVersion.java8Compatible: "Must use a Java 8 compatible JVM to perform this build. Current JVM is ${jvm}."
+
+// Check gradle version
+assert gradle.gradleVersion =~ "2\\..+": "Gradle version must be 2.x. Current version is ${gradle.gradleVersion}."
+

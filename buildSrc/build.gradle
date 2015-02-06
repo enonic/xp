@@ -7,6 +7,7 @@ repositories {
 dependencies {
     compile 'org.dm.gradle:gradle-bundle-plugin:0.6.2'
     compile 'com.google.guava:guava:18.0'
+    compile "com.moowork.gradle:gradle-grunt-plugin:0.6"
 }
 
 sourceCompatibility = '1.8'

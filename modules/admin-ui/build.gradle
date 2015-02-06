@@ -1,6 +1,19 @@
+apply plugin: 'com.moowork.grunt'
 apply from: "$rootDir/gradle/java.gradle"
 apply from: "$rootDir/gradle/osgi.gradle"
+
+node {
+    download = true
+}
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Admin'
 }
+
+task gruntAll( type: GruntTask, dependsOn: npmInstall ) {
+    inputs.files fileTree( dir: 'src/main/resources', exclude: '**/_all.*' )
+    outputs.files fileTree( dir: 'src/main/resources', include: '**/_all.*' )
+    args = ['all', 'karma']
+}
+
+jar.dependsOn += gruntAll
