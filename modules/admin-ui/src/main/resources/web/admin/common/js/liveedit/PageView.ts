@@ -130,51 +130,43 @@ module api.liveedit {
                    !pageModel.getDefaultPageTemplate().getRegions().equals(pageModel.getRegions());
         }
 
-        isManagingContextMenu(): boolean {
-            return true;
+        showTooltip() {
+            if (!this.isTextEditMode() && !this.isLocked()) {
+                super.showTooltip();
+            }
         }
 
-        isManagingCursor(): boolean {
-            return true;
+        highlight() {
+            if (!this.isTextEditMode() && !this.isLocked()) {
+                super.highlight();
+            }
         }
 
-        isManagingTooltip(): boolean {
-            return true;
+        showCursor() {
+            if (!this.isTextEditMode() && !this.isLocked()) {
+                super.showCursor();
+            }
         }
 
-        isManagingShader(): boolean {
-            return true;
+        shade() {
+            if (!this.isEmpty()) {
+                super.shade();
+            }
         }
 
-        isManagingHighlighter(): boolean {
-            return true;
+        showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+            if (!this.isLocked()) {
+                super.showContextMenu(clickPosition, menuPosition);
+            }
+        }
+
+        unshade() {
+            if (!this.isLocked()) {
+                super.unshade();
+            }
         }
 
         private listenToMouseEvents() {
-            this.onMouseOverView(() => {
-                var hasSelectedView = this.hasSelectedView();
-
-                if (!this.isTextEditMode() && !hasSelectedView && !this.isLocked()) {
-                    this.showTooltip();
-                    this.highlight();
-                    this.showCursor();
-                }
-            });
-            this.onMouseLeaveView(() => {
-                var hasSelectedView = this.hasSelectedView();
-
-                if (!this.isTextEditMode() && !hasSelectedView && !this.isLocked()) {
-                    this.hideTooltip();
-                    this.unhighlight();
-                    this.resetCursor();
-                }
-            });
-
-            Shader.get().onClicked((event: MouseEvent) => {
-                if (!this.isLocked() && this.isSelected()) {
-                    this.deselect();
-                }
-            });
             Shader.get().onUnlockClicked((event: MouseEvent) => {
                 if (this.isLocked()) {
                     this.setLocked(false);
@@ -185,33 +177,18 @@ module api.liveedit {
         select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
             super.select(clickPosition, menuPosition);
 
-            if (!this.isLocked()) {
-                this.showContextMenu(clickPosition, menuPosition);
-            }
-            if (!this.isEmpty()) {
-                this.shade();
-            }
-
-            this.hideTooltip();
-            this.showCursor();
-
             new PageSelectedEvent(this).fire();
         }
 
-        deselect(silent?: boolean) {
-            super.deselect(silent);
 
-            if (!this.isEmpty()) {
-                this.unshade();
+        handleShaderClick(event: MouseEvent) {
+            if (!this.isLocked() && this.isSelected()) {
+                this.deselect();
             }
-
-            this.resetCursor();
-            this.hideContextMenu();
         }
 
         handleClick(event: MouseEvent) {
             event.stopPropagation();
-            event.preventDefault();
 
             if (this.isTextEditMode()) {
                 this.setTextEditMode(false);

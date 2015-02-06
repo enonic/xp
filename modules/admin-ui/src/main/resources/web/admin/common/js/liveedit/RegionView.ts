@@ -124,42 +124,6 @@ module api.liveedit {
             return actions;
         }
 
-        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-        private handleDragEnter(event: DragEvent) {
-            if (event.target === this.getHTMLElement()) {
-                console.log("ItemView.handleDragEnter", event, this.getHTMLElement());
-            }
-        }
-
-        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-        private handleDragLeave(event: DragEvent) {
-            if (event.target === this.getHTMLElement()) {
-                console.log("ItemView.handleDragLeave", event, this.getHTMLElement());
-            }
-        }
-
-        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-        private handleDragOver(event: DragEvent) {
-            //var itemId = ItemView.parseItemId(<HTMLElement>event.target);
-            if (event.target === this.getHTMLElement()) {
-                console.log("RegionView[" + this.toString() + "].handleDragOver: ", event.target, event.target);
-                event.preventDefault();
-            }
-        }
-
-        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-        private handleDrop(event: DragEvent) {
-            if (event.target === this.getHTMLElement()) {
-                //var itemId = ItemView.parseItemId(<HTMLElement>event.target);
-                console.log("RegionView[" + this.toString() + "].handleDrop: ", event.target, this.getHTMLElement());
-
-                event.preventDefault();
-
-                var data = event.dataTransfer.getData("Text");
-                //event.target.appendChild(document.getElementById(data));
-            }
-        }
-
         getParentItemView(): ItemView {
             return this.parentView;
         }
@@ -198,9 +162,33 @@ module api.liveedit {
             return this.getRegionName() ? this.getRegionName().toString() : "[No Name]";
         }
 
+        highlight() {
+            if (!this.getPageView().isTextEditMode()) {
+                super.highlight();
+            }
+        }
+
+        showCursor() {
+            if (!this.getPageView().isTextEditMode()) {
+                super.showCursor();
+            }
+        }
+
+        handleClick(event: MouseEvent) {
+            event.stopPropagation();
+
+            var pageView = this.getPageView();
+            if (pageView.isTextEditMode()) {
+                pageView.setTextEditMode(false);
+            } else {
+                super.handleClick(event);
+            }
+        }
+
         select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
-            new RegionSelectedEvent(this).fire();
             super.select(clickPosition, menuPosition);
+
+            new RegionSelectedEvent(this).fire();
         }
 
         toString() {
@@ -436,6 +424,42 @@ module api.liveedit {
                     this.doParseComponentViews(childElement)
                 }
             });
+        }
+
+        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
+        private handleDragEnter(event: DragEvent) {
+            if (event.target === this.getHTMLElement()) {
+                console.log("ItemView.handleDragEnter", event, this.getHTMLElement());
+            }
+        }
+
+        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
+        private handleDragLeave(event: DragEvent) {
+            if (event.target === this.getHTMLElement()) {
+                console.log("ItemView.handleDragLeave", event, this.getHTMLElement());
+            }
+        }
+
+        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
+        private handleDragOver(event: DragEvent) {
+            //var itemId = ItemView.parseItemId(<HTMLElement>event.target);
+            if (event.target === this.getHTMLElement()) {
+                console.log("RegionView[" + this.toString() + "].handleDragOver: ", event.target, event.target);
+                event.preventDefault();
+            }
+        }
+
+        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
+        private handleDrop(event: DragEvent) {
+            if (event.target === this.getHTMLElement()) {
+                //var itemId = ItemView.parseItemId(<HTMLElement>event.target);
+                console.log("RegionView[" + this.toString() + "].handleDrop: ", event.target, this.getHTMLElement());
+
+                event.preventDefault();
+
+                var data = event.dataTransfer.getData("Text");
+                //event.target.appendChild(document.getElementById(data));
+            }
         }
     }
 }

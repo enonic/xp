@@ -124,7 +124,7 @@ module api.liveedit {
             this.resetListener = () => {
                 // recreate the component view from scratch
                 // if the component has been reset
-
+                this.deselect();
                 var clone = this.clone();
                 this.replaceWith(clone);
                 clone.select();
