@@ -14,7 +14,6 @@ public final class HomeDir
     private HomeDir( final File dir )
     {
         this.dir = dir;
-        System.out.println( "!! HOME_DIR = " + this.dir );
     }
 
     public File toFile()

@@ -70,6 +70,9 @@ bundles {
     bundle project( ':core-image' ), 30
     bundle project( ':core-export' ), 30
     bundle project( ':core-impl' ), 30
+
+    // Web app
+    bundle project( ':web-api' ), 30
 }
 
 prepareDevBundles {
