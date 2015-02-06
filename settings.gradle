@@ -14,6 +14,14 @@ include 'web-impl'
 include 'web-jaxrs'
 include 'web-vhost'
 
+include 'portal-api'
+include 'portal-impl'
+include 'portal-jslib'
+include 'portal-mustache'
+include 'portal-script'
+include 'portal-thymeleaf'
+include 'portal-xslt'
+
 include 'launcher'
 include 'distro'
 
