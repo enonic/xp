@@ -10,11 +10,13 @@ import org.osgi.framework.startlevel.FrameworkStartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.launcher.SharedConstants;
 import com.enonic.xp.launcher.config.ConfigProperties;
+import com.enonic.xp.launcher.util.OsgiExportsBuilder;
 
 public final class FrameworkService
     implements SharedConstants
@@ -48,10 +50,46 @@ public final class FrameworkService
 
     private void createFramework()
     {
+        updateBootDelegation();
+        updateSystemPackagesExtra();
+
         final Map<String, Object> map = Maps.newHashMap();
         map.put( LOG_LOGGER_PROP, new FrameworkLogger() );
         map.putAll( this.config );
+
         this.felix = new Felix( map );
+    }
+
+    private void updateBootDelegation()
+    {
+        final String internalProp = this.config.get( INTERNAL_OSGI_BOOT_DELEGATION );
+        final String frameworkProp = this.config.get( FRAMEWORK_BOOTDELEGATION );
+        this.config.put( FRAMEWORK_BOOTDELEGATION, joinPackages( internalProp, frameworkProp ) );
+    }
+
+    private void updateSystemPackagesExtra()
+    {
+        final String internalProp = this.config.get( INTERNAL_OSGI_SYSTEM_PACKAGES );
+        final OsgiExportsBuilder builder = new OsgiExportsBuilder( getClass().getClassLoader() );
+        final String internalPackages = builder.expandExports( internalProp );
+
+        final String frameworkProp = this.config.get( FRAMEWORK_SYSTEMPACKAGES_EXTRA );
+        this.config.put( FRAMEWORK_SYSTEMPACKAGES_EXTRA, joinPackages( internalPackages, frameworkProp ) );
+    }
+
+    private String joinPackages( final String v1, final String v2 )
+    {
+        if ( Strings.isNullOrEmpty( v2 ) )
+        {
+            return v1;
+        }
+
+        if ( Strings.isNullOrEmpty( v1 ) )
+        {
+            return v2;
+        }
+
+        return v1 + "," + v2;
     }
 
     public void start()
