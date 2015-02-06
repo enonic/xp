@@ -22,6 +22,10 @@ include 'portal-script'
 include 'portal-thymeleaf'
 include 'portal-xslt'
 
+include 'admin-impl'
+include 'admin-event'
+include 'admin-ui'
+
 include 'launcher'
 include 'distro'
 

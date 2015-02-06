@@ -1,0 +1,6 @@
+apply from: "$rootDir/gradle/java.gradle"
+apply from: "$rootDir/gradle/osgi.gradle"
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP Admin'
+}
