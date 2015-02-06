@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPropertyNames;
 import com.enonic.wem.api.content.CreateContentParams;
@@ -42,11 +43,15 @@ public class ContentServiceImplTest_create
 
         final Content content = this.contentService.create( createContentParams );
 
-        assertNotNull( content.getName() );
-        assertNotNull( content.getCreatedTime() );
-        assertNotNull( content.getCreator() );
-        assertNotNull( content.getModifiedTime() );
-        assertNotNull( content.getModifier() );
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        assertNotNull( storedContent.getName() );
+        assertNotNull( storedContent.getCreatedTime() );
+        assertNotNull( storedContent.getCreator() );
+        assertNotNull( storedContent.getModifiedTime() );
+        assertNotNull( storedContent.getModifier() );
+        assertNotNull( storedContent.getChildOrder() );
+        assertEquals( ContentConstants.DEFAULT_CHILD_ORDER, storedContent.getChildOrder() );
     }
 
     @Test
@@ -67,7 +72,9 @@ public class ContentServiceImplTest_create
 
         final Content content = this.contentService.create( createContentParams );
 
-        final Attachments attachments = content.getAttachments();
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        final Attachments attachments = storedContent.getAttachments();
         assertEquals( 4, attachments.getSize() ); // original, small, medium, large
     }
 

@@ -48,6 +48,7 @@ public class ContentNodeTranslator
             indexConfigDocument( indexConfigDocument ).
             permissions( params.getPermissions() ).
             inheritPermissions( params.isInheritPermissions() ).
+            childOrder( params.getChildOrder() ).
             nodeType( ContentConstants.CONTENT_NODE_COLLECTION );
 
         for ( final CreateAttachment attachment : params.getCreateAttachments() )

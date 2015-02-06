@@ -2,8 +2,11 @@ package com.enonic.wem.api.content;
 
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeType;
+import com.enonic.wem.api.query.expr.FieldOrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.workspace.Workspace;
@@ -41,5 +44,9 @@ public class ContentConstants
     public static final NodePath CONTENT_ROOT_PATH = NodePath.newNodePath( CONTENT_ROOT_PARENT, CONTENT_ROOT_NAME ).build();
 
     public static final NodeType CONTENT_NODE_COLLECTION = NodeType.from( "content" );
+
+    public static final ChildOrder DEFAULT_CHILD_ORDER = ChildOrder.create().
+        add( FieldOrderExpr.create( ContentIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) ).
+        build();
 
 }

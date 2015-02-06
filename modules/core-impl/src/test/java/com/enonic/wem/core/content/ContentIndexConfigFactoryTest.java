@@ -2,6 +2,7 @@ package com.enonic.wem.core.content;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPropertyNames;
 import com.enonic.wem.api.content.CreateContentTranslatorParams;
@@ -37,6 +38,7 @@ public class ContentIndexConfigFactoryTest
             parent( ContentPath.ROOT ).
             contentData( data ).
             creator( PrincipalKey.ofAnonymous() ).
+            childOrder( ContentConstants.DEFAULT_CHILD_ORDER ).
             build();
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( createContentTranslatorParams );

@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -34,6 +35,8 @@ public final class CreateContentParams
 
     private final boolean inheritPermissions;
 
+    private final ChildOrder childOrder;
+
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
@@ -47,6 +50,7 @@ public final class CreateContentParams
         this.permissions = builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.createAttachments = builder.createAttachments;
+        this.childOrder = builder.childOrder;
     }
 
     public static Builder create()
@@ -109,6 +113,11 @@ public final class CreateContentParams
         return permissions;
     }
 
+    public ChildOrder getChildOrder()
+    {
+        return childOrder;
+    }
+
     public boolean isInheritPermissions()
     {
         return inheritPermissions;
@@ -132,13 +141,13 @@ public final class CreateContentParams
 
         private boolean requireValid;
 
-        private boolean valid;
-
         private AccessControlList permissions;
 
         private boolean inheritPermissions;
 
         private CreateAttachments createAttachments = CreateAttachments.empty();
+
+        private ChildOrder childOrder;
 
         private Builder()
         {
@@ -157,6 +166,7 @@ public final class CreateContentParams
             this.permissions = source.permissions;
             this.inheritPermissions = source.inheritPermissions;
             this.createAttachments = source.createAttachments;
+            this.childOrder = source.childOrder;
         }
 
         public Builder contentData( final PropertyTree data )
@@ -229,6 +239,12 @@ public final class CreateContentParams
         public Builder createAttachments( final CreateAttachments createAttachments )
         {
             this.createAttachments = createAttachments;
+            return this;
+        }
+
+        public Builder childOrder( final ChildOrder childOrder )
+        {
+            this.childOrder = childOrder;
             return this;
         }
 

@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -43,6 +44,8 @@ public class CreateContentTranslatorParams
 
     private final boolean inheritPermissions;
 
+    private final ChildOrder childOrder;
+
     private CreateContentTranslatorParams( Builder builder )
     {
         final Instant now = Instant.now();
@@ -62,6 +65,7 @@ public class CreateContentTranslatorParams
         this.permissions = builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.createAttachments = builder.createAttachments;
+        this.childOrder = builder.childOrder;
     }
 
     public static Builder create( final CreateContentParams source )
@@ -73,7 +77,6 @@ public class CreateContentTranslatorParams
     {
         return new Builder();
     }
-
 
     public PropertyTree getData()
     {
@@ -150,6 +153,11 @@ public class CreateContentTranslatorParams
         return inheritPermissions;
     }
 
+    public ChildOrder getChildOrder()
+    {
+        return childOrder;
+    }
+
     public static final class Builder
     {
         private PropertyTree data;
@@ -176,6 +184,8 @@ public class CreateContentTranslatorParams
 
         private CreateAttachments createAttachments = CreateAttachments.empty();
 
+        private ChildOrder childOrder;
+
         private Builder()
         {
         }
@@ -192,6 +202,7 @@ public class CreateContentTranslatorParams
             this.permissions = params.getPermissions();
             this.createAttachments = params.getCreateAttachments();
             this.inheritPermissions = params.isInheritPermissions();
+            this.childOrder = params.getChildOrder();
         }
 
         public Builder contentData( final PropertyTree data )
@@ -242,6 +253,11 @@ public class CreateContentTranslatorParams
             return this;
         }
 
+        public Builder childOrder( final ChildOrder childOrder )
+        {
+            this.childOrder = childOrder;
+            return this;
+        }
 
         public Builder parent( final ContentPath parentContentPath )
         {
@@ -284,6 +300,7 @@ public class CreateContentTranslatorParams
             Preconditions.checkNotNull( creator, "creator cannot be null" );
             Preconditions.checkNotNull( name, "name cannom be null" );
             Preconditions.checkNotNull( valid, "valid cannot be null" );
+            Preconditions.checkNotNull( childOrder, "childOrder cannot be null" );
         }
 
         public CreateContentTranslatorParams build()

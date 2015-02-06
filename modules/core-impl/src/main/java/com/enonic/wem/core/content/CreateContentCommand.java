@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.NamePrettyfier;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentCreatedEvent;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
@@ -79,9 +80,15 @@ final class CreateContentCommand
         builder.valid( checkIsValid( processedContent ) );
         populateName( builder );
         populateCreator( builder );
+        setChildOrder( builder );
         builder.owner( getDefaultOwner( processedContent ) );
 
         return builder.build();
+    }
+
+    private void setChildOrder( final CreateContentTranslatorParams.Builder builder )
+    {
+        builder.childOrder( this.params.getChildOrder() != null ? this.params.getChildOrder() : ContentConstants.DEFAULT_CHILD_ORDER );
     }
 
     private CreateContentParams runContentProcessors()
