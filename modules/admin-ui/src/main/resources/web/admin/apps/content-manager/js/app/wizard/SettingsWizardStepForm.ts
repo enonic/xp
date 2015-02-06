@@ -56,10 +56,10 @@ module app.wizard {
             api.util.assertNotNull(model, "Model can't be null");
 
             if (model.getOwner()) {
-                this.ownerCombo.setValue(model.getOwner().toString());
+                this.ownerCombo.setIgnoreNextFocus().setValue(model.getOwner().toString());
             }
             if (model.getLanguage()) {
-                this.localeCombo.setValue(model.getLanguage())
+                this.localeCombo.setIgnoreNextFocus().setValue(model.getLanguage())
             }
 
             // 2-way data binding
