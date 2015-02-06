@@ -1,14 +1,27 @@
 package com.enonic.wem.api.form;
 
 
+import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.Preconditions;
+
 public abstract class Layout
     extends FormItem
 {
+    private final String name;
+
     Layout( final String name )
     {
-        super( name );
+        Preconditions.checkNotNull( name, "a name is required for a Layout" );
+        Preconditions.checkArgument( StringUtils.isNotBlank( name ), "a name is required for a Layout" );
+        Preconditions.checkArgument( !name.contains( "." ), "name cannot contain punctations: " + name );
+        this.name = name;
     }
 
+    @Override
+    public String getName() {
+        return this.name;
+    }
 
     @Override
     public FormItemType getType()

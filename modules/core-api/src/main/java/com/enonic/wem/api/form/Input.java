@@ -3,6 +3,8 @@ package com.enonic.wem.api.form;
 
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.Property;
@@ -14,6 +16,8 @@ import static com.enonic.wem.api.form.Occurrences.newOccurrences;
 public final class Input
     extends FormItem
 {
+    private final String name;
+
     private final InputType type;
 
     private final String label;
@@ -34,8 +38,11 @@ public final class Input
 
     private Input( Builder builder )
     {
-        super( builder.name );
+        super( );
 
+        Preconditions.checkNotNull( builder.name, "a name is required for a Input" );
+        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a Input" );
+        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctations: " + builder.name );
         Preconditions.checkNotNull( builder.inputType, "inputType cannot be null" );
 
         if ( builder.inputType.requiresConfig() )
@@ -51,6 +58,7 @@ public final class Input
                                          builder.inputTypeConfig.getClass().getName() );
         }
 
+        this.name = builder.name;
         this.type = builder.inputType;
         this.label = builder.label;
         this.immutable = builder.immutable;
@@ -62,6 +70,11 @@ public final class Input
         this.inputTypeConfig = builder.inputTypeConfig;
 
         this.type.validateOccurrences( this.occurrences );
+    }
+    @Override
+    public String getName()
+    {
+        return name;
     }
 
     @Override
@@ -241,7 +254,7 @@ public final class Input
 
         public Builder( final Input source )
         {
-            this.name = source.getName();
+            this.name = source.name;
             this.inputType = source.type;
             this.label = source.label;
             this.occurrences = source.occurrences;
