@@ -37,12 +37,25 @@ public final class EnvironmentResolver
 
     private File resolveHomeDir( final File installDir )
     {
-        final String path = this.properties.get( XP_HOME_DIR );
+        final String propValue = this.properties.get( XP_HOME_DIR );
+        final String envValue = this.properties.getEnv( XP_HOME_DIR_ENV );
+
+        final String path = firstOf( propValue, envValue );
         if ( Strings.isNullOrEmpty( path ) )
         {
             return installDir != null ? new File( installDir, "home" ) : null;
         }
 
         return new File( path );
+    }
+
+    private String firstOf( final String value1, final String value2 )
+    {
+        if ( !Strings.isNullOrEmpty( value1 ) )
+        {
+            return value1;
+        }
+
+        return value2;
     }
 }
