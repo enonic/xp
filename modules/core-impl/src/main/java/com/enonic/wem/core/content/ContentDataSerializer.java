@@ -64,7 +64,6 @@ public final class ContentDataSerializer
 
         final Content content = params.getEditedContent();
         final CreateAttachments createAttachments = params.getCreateAttachments();
-        final PropertyTree existingData = params.getEditedContent().getData();
 
         contentAsData.setBoolean( ContentPropertyNames.VALID, content.isValid() );
         contentAsData.ifNotNull().addString( DISPLAY_NAME, content.getDisplayName() );

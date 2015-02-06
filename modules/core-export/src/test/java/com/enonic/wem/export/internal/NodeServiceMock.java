@@ -287,12 +287,6 @@ class NodeServiceMock
     }
 
     @Override
-    public void snapshot()
-    {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
-    }
-
-    @Override
     public int applyPermissions( final ApplyNodePermissionsParams params )
     {
         return 0;
@@ -325,5 +319,17 @@ class NodeServiceMock
     public NodeServiceMock()
     {
         super();
+    }
+
+    @Override
+    public void snapshot( final String snapshotName )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public void restore( final String snapshotName )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 }

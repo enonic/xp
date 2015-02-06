@@ -31,7 +31,9 @@ public interface IndexService
 
     public void refresh( final String... indexNames );
 
-    public void snapshot( final RepositoryId repositoryId );
+    public void snapshot( final RepositoryId repositoryId, final String snapshotName );
+
+    public void restore( final RepositoryId repositoryId, final String snapshotName );
 
 }
 

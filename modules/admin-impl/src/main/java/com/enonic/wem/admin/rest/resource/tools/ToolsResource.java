@@ -11,7 +11,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
-import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.core.initializer.StartupInitializer;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
@@ -22,23 +21,12 @@ public final class ToolsResource
 {
     private StartupInitializer startupInitializer;
 
-    private NodeService nodeService;
-
     @GET
     @Path("cleanData")
     public Response cleanData()
         throws Exception
     {
         this.startupInitializer.cleanData();
-        return redirectToIndex();
-    }
-
-    @GET
-    @Path("snapshot")
-    public Response snapshot()
-        throws Exception
-    {
-        this.nodeService.snapshot();
         return redirectToIndex();
     }
 
@@ -64,9 +52,4 @@ public final class ToolsResource
         this.startupInitializer = startupInitializer;
     }
 
-    @Reference
-    public void setNodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
-    }
 }

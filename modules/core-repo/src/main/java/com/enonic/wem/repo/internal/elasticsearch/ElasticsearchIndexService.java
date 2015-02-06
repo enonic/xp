@@ -221,9 +221,15 @@ public class ElasticsearchIndexService
     }
 
     @Override
-    public void snapshot( final RepositoryId repositoryId )
+    public void snapshot( final RepositoryId repositoryId, final String snapshotName )
     {
-        this.elasticsearchDao.snapshot( repositoryId.toString() );
+        this.elasticsearchDao.snapshot( repositoryId, snapshotName );
+    }
+
+    @Override
+    public void restore( final RepositoryId repositoryId, final String snapshotName )
+    {
+        this.elasticsearchDao.restore( repositoryId, snapshotName );
     }
 
     @Reference

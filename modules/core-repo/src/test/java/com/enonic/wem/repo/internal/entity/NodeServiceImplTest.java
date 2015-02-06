@@ -155,4 +155,24 @@ public class NodeServiceImplTest
         assertEquals( childOrder, node.getChildOrder() );
     }
 
+
+    @Test
+    public void snapshot_restore()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "myNode" ).
+            build() );
+
+        this.nodeService.snapshot( "my-snap" );
+
+        doDeleteNode( node.id() );
+
+        assertNull( getNodeById( node.id() ) );
+
+        this.nodeService.restore( "my-snap" );
+
+        assertNotNull( getNodeById( node.id() ) );
+    }
 }
