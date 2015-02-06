@@ -10,6 +10,7 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentState;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentTranslatorParams;
 import com.enonic.wem.api.content.UpdateContentTranslatorParams;
@@ -118,7 +119,8 @@ public class ContentNodeTranslator
             hasChildren( node.getHasChildren() ).
             childOrder( node.getChildOrder() ).
             permissions( node.getPermissions() ).
-            inheritPermissions( node.inheritsPermissions() );
+            inheritPermissions( node.inheritsPermissions() ).
+            contentState( ContentState.from( node.getNodeState().value() ) );
 
         return builder.build();
     }
