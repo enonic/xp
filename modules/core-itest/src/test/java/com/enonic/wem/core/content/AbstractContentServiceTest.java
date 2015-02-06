@@ -20,6 +20,7 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.User;
@@ -28,8 +29,6 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.core.media.MediaInfoServiceImpl;
 import com.enonic.wem.core.schema.content.BuiltinContentTypeProvider;
 import com.enonic.wem.core.schema.content.ContentTypeServiceImpl;
-import com.enonic.wem.core.schema.mixin.BuiltinMixinProvider;
-import com.enonic.wem.core.schema.mixin.MixinServiceImpl;
 import com.enonic.wem.event.internal.EventPublisherImpl;
 import com.enonic.wem.module.internal.ModuleRegistry;
 import com.enonic.wem.module.internal.ModuleServiceImpl;
@@ -63,6 +62,7 @@ public class AbstractContentServiceTest
 
     protected BlobStore binaryBlobStore;
 
+    protected MixinService mixinService;
 
     protected static final Branch WS_DEFAULT = Branch.create().
         name( "draft" ).
@@ -134,9 +134,7 @@ public class AbstractContentServiceTest
         this.nodeService.setVersionService( versionService );
         this.nodeService.setBranchService( branchService );
 
-        final MixinServiceImpl mixinService = new MixinServiceImpl();
-        final BuiltinMixinProvider mixinProvider = new BuiltinMixinProvider();
-        mixinService.addProvider( mixinProvider );
+        this.mixinService = Mockito.mock( MixinService.class );
 
         final ContentNodeTranslator contentNodeTranslator = new ContentNodeTranslator();
         contentNodeTranslator.setMixinService( mixinService );

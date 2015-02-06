@@ -83,7 +83,7 @@ public final class ContentDataSerializer
 
             for ( final Metadata metadata : content.getAllMetadata() )
             {
-                metadataSet.addSet( metadata.getName().getLocalName(), metadata.getData().getRoot().copy( existingData ) );
+                metadataSet.addSet( metadata.getName().getLocalName(), metadata.getData().getRoot().copy( contentAsData.getTree() ) );
             }
         }
 
