@@ -2,6 +2,7 @@ package com.enonic.xp.launcher.env;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Properties;
 
 public interface Environment
 {
@@ -12,4 +13,6 @@ public interface Environment
     public void validate();
 
     public Map<String, String> getAsMap();
+
+    public Properties getAsProperties();
 }

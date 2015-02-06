@@ -42,8 +42,7 @@ public final class Launcher
         this.env = resolver.resolve();
         this.env.validate();
 
-        System.setProperty( XP_HOME_DIR, this.env.getHomeDir().toString() );
-        System.setProperty( XP_INSTALL_DIR, this.env.getInstallDir().toString() );
+        System.getProperties().putAll( this.env.getAsMap() );
     }
 
     private void printBanner()
