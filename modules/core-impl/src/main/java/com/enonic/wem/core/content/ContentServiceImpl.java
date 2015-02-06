@@ -68,8 +68,10 @@ import com.enonic.wem.api.node.ReorderChildNodeParams;
 import com.enonic.wem.api.node.ReorderChildNodesParams;
 import com.enonic.wem.api.node.ReorderChildNodesResult;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
+import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.util.BinaryReference;
 
@@ -397,6 +399,24 @@ public class ContentServiceImpl
     @Override
     public Content move( final MoveContentParams params )
     {
+        final ContentPath destinationPath = params.getParentContentPath();
+        if ( !destinationPath.isRoot() )
+        {
+            final Content parent = this.getByPath( destinationPath );
+            if ( parent == null )
+            {
+                throw new IllegalArgumentException(
+                    "Content could not be moved. Children not allowed in destination [" + destinationPath.toString() + "]" );
+            }
+            final ContentType parentContentType =
+                contentTypeService.getByName( new GetContentTypeParams().contentTypeName( parent.getType() ) );
+            if ( !parentContentType.allowChildContent() )
+            {
+                throw new IllegalArgumentException(
+                    "Content could not be moved. Children not allowed in destination [" + destinationPath.toString() + "]" );
+            }
+        }
+
         try
         {
             final Node movedNode = nodeService.move( NodeId.from( params.getContentId() ),

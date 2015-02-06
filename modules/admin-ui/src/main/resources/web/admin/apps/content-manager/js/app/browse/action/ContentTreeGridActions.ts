@@ -4,6 +4,7 @@ module app.browse.action {
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
     import BrowseItem = api.app.browse.BrowseItem;
     import ContentSummary = api.content.ContentSummary;
+    import Content = api.content.Content;
 
     export class ContentTreeGridActions implements TreeGridActions<ContentSummary> {
 
@@ -67,19 +68,32 @@ module app.browse.action {
                 deferred.resolve(contentBrowseItems);
                 break;
             case 1:
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(!!contentSummaries[0]);
-                this.EDIT_CONTENT.setEnabled(!contentSummaries[0] ? false : contentSummaries[0].isEditable());
-                this.DELETE_CONTENT.setEnabled(!contentSummaries[0] ? false : contentSummaries[0].isDeletable());
+                var contentSummary = contentSummaries[0];
+                this.EDIT_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isEditable());
+                this.DELETE_CONTENT.setEnabled(!contentSummary ? false : contentSummary.isDeletable());
                 this.DUPLICATE_CONTENT.setEnabled(true);
                 this.MOVE_CONTENT.setEnabled(true);
                 this.SORT_CONTENT.setEnabled(true);
                 this.PUBLISH_CONTENT.setEnabled(true);
-                new api.content.page.IsRenderableRequest(contentSummaries[0].getContentId()).sendAndParse().
-                    then((renderable: boolean) => {
-                        this.PREVIEW_CONTENT.setEnabled(renderable);
-                        contentBrowseItems[0].setRenderable(renderable);
-                        deferred.resolve(contentBrowseItems);
-                    });
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                this.PREVIEW_CONTENT.setEnabled(false);
+                var parallelPromises: wemQ.Promise<any>[] = [
+                    new api.content.page.IsRenderableRequest(contentSummary.getContentId()).sendAndParse().
+                        then((renderable: boolean) => {
+                            this.PREVIEW_CONTENT.setEnabled(renderable);
+                            contentBrowseItems[0].setRenderable(renderable);
+                        }),
+                    // check if selected content allows children
+                    new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).
+                        sendAndParse().
+                        then((contentType: api.schema.content.ContentType) => {
+                            this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentType && contentType.isAllowChildContent());
+                        })
+                ];
+                wemQ.all(parallelPromises).spread<void>(() => {
+                    deferred.resolve(contentBrowseItems);
+                    return wemQ(null);
+                });
                 break;
             default:
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);

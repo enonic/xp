@@ -101,6 +101,24 @@ final class CreateContentCommand
         {
             throw new IllegalArgumentException( "Cannot create content with an abstract type [" + params.getType().toString() + "]" );
         }
+
+        final ContentPath parentPath = params.getParent();
+        if ( !parentPath.isRoot() )
+        {
+            final Content parent = getContent( parentPath );
+            if ( parent == null )
+            {
+                throw new IllegalArgumentException(
+                    "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );
+            }
+            final ContentType parentContentType =
+                contentTypeService.getByName( new GetContentTypeParams().contentTypeName( parent.getType() ) );
+            if ( !parentContentType.allowChildContent() )
+            {
+                throw new IllegalArgumentException(
+                    "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );
+            }
+        }
     }
 
     private PrincipalKey getDefaultOwner( final CreateContentParams createContentParams )

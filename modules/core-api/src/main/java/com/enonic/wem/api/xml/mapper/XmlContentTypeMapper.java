@@ -41,9 +41,19 @@ public final class XmlContentTypeMapper
         builder.description( xml.getDescription() );
         builder.contentDisplayNameScript( xml.getContentDisplayNameScript() );
         builder.superType( resolver.toContentTypeName( xml.getSuperType() ) );
-        builder.setAbstract( xml.isIsAbstract() != null && xml.isIsAbstract() );
-        builder.setFinal( xml.isIsFinal() != null && xml.isIsFinal() );
-        builder.allowChildContent( xml.isAllowChildContent() != null && xml.isAllowChildContent() );
+        if ( xml.isIsAbstract() != null )
+        {
+            builder.setAbstract( xml.isIsAbstract() );
+        }
+        if ( xml.isIsFinal() != null )
+        {
+            builder.setFinal( xml.isIsFinal() );
+        }
+        if ( xml.isAllowChildContent() != null )
+        {
+            builder.allowChildContent( xml.isAllowChildContent() );
+        }
+
         final ImmutableList.Builder<MixinName> metadataMixinNames = ImmutableList.builder();
         for ( XmlMetadata xmlMetadata : xml.getMetadata() )
         {
