@@ -77,7 +77,7 @@ public class IndexPath
 
         final IndexPath indexPath = (IndexPath) o;
 
-        if ( path != null ? !path.equals( indexPath.path ) : indexPath.path != null )
+        if ( path != null ? !path.equalsIgnoreCase( indexPath.path ) : indexPath.path != null )
         {
             return false;
         }

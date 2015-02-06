@@ -8,7 +8,7 @@ module api.query {
 
         static ALL: string = "_alltext";
 
-        static MODIFIED_TIME: string = "_modifiedTime"
+        static MODIFIED_TIME: string = "modifiedTime"
 
         static MANUAL_ORDER_VALUE: string = "_manualOrderValue";
 
