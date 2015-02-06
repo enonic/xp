@@ -17,4 +17,5 @@ dependencies {
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Api'
     instruction 'Export-Package', 'com.enonic.wem.api.*;-split-package:=first'
+    instruction 'Implementation-Version', project.version
 }
