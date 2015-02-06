@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.osgi.framework.Bundle;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.form.Form;
@@ -133,7 +133,7 @@ final class ModuleImpl
     @Override
     public String toString()
     {
-        return Objects.toStringHelper( this ).
+        return MoreObjects.toStringHelper( this ).
             add( "moduleKey", moduleKey ).
             add( "displayName", displayName ).
             add( "url", url ).

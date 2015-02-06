@@ -28,11 +28,11 @@ final class RelationshipTypeLoader
 {
     private final static Logger LOG = LoggerFactory.getLogger( RelationshipTypeLoader.class );
 
-    private final static Pattern PATTERN = Pattern.compile( ".*/relationship-type/([^/]+)/relationship-type\\.xml" );
+    private final static Pattern PATTERN = Pattern.compile( ".*/cms/relationship-types/([^/]+)/relationship-type\\.xml" );
 
     private final static String FILE = "relationship-type.xml";
 
-    private final static String DIRECTORY = "relationship-type";
+    private final static String DIRECTORY = "cms/relationship-types";
 
     private final Bundle bundle;
 

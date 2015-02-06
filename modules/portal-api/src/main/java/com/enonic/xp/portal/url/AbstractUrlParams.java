@@ -2,7 +2,7 @@ package com.enonic.xp.portal.url;
 
 import java.util.Collection;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -60,7 +60,7 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
         return values.iterator().next();
     }
 
-    protected void buildToString( final Objects.ToStringHelper helper )
+    protected void buildToString( final MoreObjects.ToStringHelper helper )
     {
         helper.omitNullValues();
         helper.add( "params", this.params );
@@ -75,7 +75,7 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
     @Override
     public final String toString()
     {
-        final Objects.ToStringHelper helper = Objects.toStringHelper( this );
+        final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper( this );
         buildToString( helper );
         return helper.toString();
     }

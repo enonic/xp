@@ -1,6 +1,6 @@
 package com.enonic.wem.api.content;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 import com.enonic.wem.api.event.Event;
 
@@ -22,7 +22,7 @@ public final class ContentPublishedEvent
     @Override
     public String toString()
     {
-        return Objects.toStringHelper( this ).
+        return MoreObjects.toStringHelper( this ).
             add( "contentId", this.contentId ).
             omitNullValues().
             toString();

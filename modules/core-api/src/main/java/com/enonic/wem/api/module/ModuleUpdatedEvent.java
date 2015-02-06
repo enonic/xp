@@ -1,6 +1,6 @@
 package com.enonic.wem.api.module;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 import com.enonic.wem.api.event.Event;
 
@@ -30,7 +30,7 @@ public final class ModuleUpdatedEvent
     @Override
     public String toString()
     {
-        return Objects.toStringHelper( this ).
+        return MoreObjects.toStringHelper( this ).
             add( "eventType", this.eventType ).
             add( "moduleKey", this.moduleKey ).
             omitNullValues().

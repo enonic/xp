@@ -80,7 +80,7 @@ public final class RelationshipKey
     @Override
     public String toString()
     {
-        return com.google.common.base.Objects.toStringHelper( this ).
+        return com.google.common.base.MoreObjects.toStringHelper( this ).
             add( "fromContent", fromContent ).
             add( "toContent", toContent ).
             add( "type", type ).

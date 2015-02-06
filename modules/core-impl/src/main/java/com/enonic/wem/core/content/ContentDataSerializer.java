@@ -199,7 +199,7 @@ public final class ContentDataSerializer
                 }
                 else
                 {
-                    LOG.warn( "Mixin [%s] could not be found", metadataLocalName );
+                    LOG.warn( "Mixin [" + metadataLocalName + "] could not be found" );
                 }
             }
             builder.metadata( metadatasBuilder.build() );
