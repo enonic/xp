@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch.workspace;
+package com.enonic.wem.repo.internal.elasticsearch.branch;
 
 import java.time.Instant;
 
@@ -15,64 +15,64 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.query.filter.ValueFilter;
+import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.branch.BranchDocumentId;
+import com.enonic.wem.repo.internal.branch.BranchService;
+import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.GetQuery;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.index.IndexType;
-import com.enonic.wem.repo.internal.index.query.NodeWorkspaceVersion;
+import com.enonic.wem.repo.internal.index.query.NodeBranchVersion;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
-import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
-import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
-import com.enonic.wem.repo.internal.workspace.WorkspaceDocumentId;
-import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
 @Component
-public class ElasticsearchWorkspaceService
-    implements WorkspaceService
+public class ElasticsearchBranchService
+    implements BranchService
 {
     private ElasticsearchDao elasticsearchDao;
 
     @Override
-    public void store( final StoreWorkspaceDocument storeWorkspaceDocument, final WorkspaceContext context )
+    public void store( final StoreBranchDocument storeBranchDocument, final BranchContext context )
     {
-        StoreWorkspaceDocumentCommand.create().
+        StoreBranchDocumentCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
-            workspace( context.getWorkspace() ).
+            branch( context.getBranch() ).
             repository( context.getRepositoryId() ).
-            document( storeWorkspaceDocument ).
+            document( storeBranchDocument ).
             build().
             execute();
     }
 
     @Override
-    public void delete( final NodeId nodeId, final WorkspaceContext context )
+    public void delete( final NodeId nodeId, final BranchContext context )
     {
         DeleteNodeVersionCommand.create().
             elasticsearchDao( this.elasticsearchDao ).
             repository( context.getRepositoryId() ).
-            workspace( context.getWorkspace() ).
+            branch( context.getBranch() ).
             nodeId( nodeId ).
             build().
             execute();
     }
 
     @Override
-    public NodeWorkspaceVersion get( final NodeId nodeId, final WorkspaceContext context )
+    public NodeBranchVersion get( final NodeId nodeId, final BranchContext context )
     {
-        final WorkspaceDocumentId workspaceDocumentId = new WorkspaceDocumentId( nodeId, context.getWorkspace() );
+        final BranchDocumentId branchDocumentId = new BranchDocumentId( nodeId, context.getBranch() );
 
         final GetResult getResult = this.elasticsearchDao.get( GetQuery.create().
-            id( workspaceDocumentId.toString() ).
+            id( branchDocumentId.toString() ).
             indexName( StorageNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ) ).
-            indexTypeName( IndexType.WORKSPACE.getName() ).
-            returnFields( ReturnFields.from( WorkspaceIndexPath.VERSION_ID, WorkspaceIndexPath.STATE, WorkspaceIndexPath.PATH,
-                                             WorkspaceIndexPath.TIMESTAMP ) ).
+            indexTypeName( IndexType.BRANCH.getName() ).
+            returnFields(
+                ReturnFields.from( BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP ) ).
             routing( nodeId.toString() ).
             build() );
 
@@ -87,22 +87,22 @@ public class ElasticsearchWorkspaceService
     }
 
     @Override
-    public NodeWorkspaceVersion get( final NodePath nodePath, final WorkspaceContext context )
+    public NodeBranchVersion get( final NodePath nodePath, final BranchContext context )
     {
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
             addQueryFilter( ValueFilter.create().
-                fieldName( WorkspaceIndexPath.PATH.getPath() ).
+                fieldName( BranchIndexPath.PATH.getPath() ).
                 addValue( Value.newString( nodePath.toString() ) ).
                 build() ).
             build();
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
             index( StorageNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ) ).
-            indexType( IndexType.WORKSPACE.getName() ).
+            indexType( IndexType.BRANCH.getName() ).
             query( queryBuilder ).
             size( 1 ).
-            setReturnFields( ReturnFields.from( WorkspaceIndexPath.VERSION_ID, WorkspaceIndexPath.STATE, WorkspaceIndexPath.PATH,
-                                                WorkspaceIndexPath.TIMESTAMP ) ).
+            setReturnFields(
+                ReturnFields.from( BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP ) ).
             build();
 
         final SearchResult searchResult = this.elasticsearchDao.find( query );
@@ -119,9 +119,9 @@ public class ElasticsearchWorkspaceService
         return createFromReturnValue( nodeReturnValue );
     }
 
-    private NodeWorkspaceVersion createFromReturnValue( final NodeReturnValue nodeReturnValue )
+    private NodeBranchVersion createFromReturnValue( final NodeReturnValue nodeReturnValue )
     {
-        return NodeWorkspaceVersion.create().
+        return NodeBranchVersion.create().
             timestamp( nodeReturnValue.timestamp ).
             nodePath( nodeReturnValue.nodePath ).
             nodeVersionId( nodeReturnValue.getNodeVersionId() ).
@@ -149,21 +149,20 @@ public class ElasticsearchWorkspaceService
 
         public static NodeReturnValue from( final SearchResultEntry searchResultEntry )
         {
-            final SearchResultFieldValue timestamp = searchResultEntry.getField( WorkspaceIndexPath.TIMESTAMP.getPath() );
-            final SearchResultFieldValue nodeVersionIdValue = searchResultEntry.getField( WorkspaceIndexPath.VERSION_ID.getPath() );
-            final SearchResultFieldValue nodePathValue = searchResultEntry.getField( WorkspaceIndexPath.PATH.getPath() );
-            final SearchResultFieldValue stateValue = searchResultEntry.getField( WorkspaceIndexPath.STATE.getPath() );
+            final SearchResultFieldValue timestamp = searchResultEntry.getField( BranchIndexPath.TIMESTAMP.getPath() );
+            final SearchResultFieldValue nodeVersionIdValue = searchResultEntry.getField( BranchIndexPath.VERSION_ID.getPath() );
+            final SearchResultFieldValue nodePathValue = searchResultEntry.getField( BranchIndexPath.PATH.getPath() );
+            final SearchResultFieldValue stateValue = searchResultEntry.getField( BranchIndexPath.STATE.getPath() );
 
             return createNodeReturnValue( timestamp, nodeVersionIdValue, nodePathValue, stateValue );
         }
 
         public static NodeReturnValue from( final GetResult getResult )
         {
-            final SearchResultFieldValue timestamp = getResult.getSearchResult().getField( WorkspaceIndexPath.TIMESTAMP.getPath() );
-            final SearchResultFieldValue nodeVersionIdValue =
-                getResult.getSearchResult().getField( WorkspaceIndexPath.VERSION_ID.getPath() );
-            final SearchResultFieldValue nodePathValue = getResult.getSearchResult().getField( WorkspaceIndexPath.PATH.getPath() );
-            final SearchResultFieldValue stateValue = getResult.getSearchResult().getField( WorkspaceIndexPath.STATE.getPath() );
+            final SearchResultFieldValue timestamp = getResult.getSearchResult().getField( BranchIndexPath.TIMESTAMP.getPath() );
+            final SearchResultFieldValue nodeVersionIdValue = getResult.getSearchResult().getField( BranchIndexPath.VERSION_ID.getPath() );
+            final SearchResultFieldValue nodePathValue = getResult.getSearchResult().getField( BranchIndexPath.PATH.getPath() );
+            final SearchResultFieldValue stateValue = getResult.getSearchResult().getField( BranchIndexPath.STATE.getPath() );
 
             return createNodeReturnValue( timestamp, nodeVersionIdValue, nodePathValue, stateValue );
         }
@@ -173,11 +172,10 @@ public class ElasticsearchWorkspaceService
                                                               final SearchResultFieldValue nodePathValue,
                                                               final SearchResultFieldValue stateValue )
         {
-            Preconditions.checkNotNull( timestamp, "Expected value '" + WorkspaceIndexPath.TIMESTAMP.getPath() + "' in getResult " );
-            Preconditions.checkNotNull( nodeVersionIdValue,
-                                        "Expected value '" + WorkspaceIndexPath.VERSION_ID.getPath() + "' in getResult " );
-            Preconditions.checkNotNull( nodePathValue, "Expected value '" + WorkspaceIndexPath.PATH.getPath() + "' in getResult " );
-            Preconditions.checkNotNull( stateValue, "Expected value '" + WorkspaceIndexPath.STATE.getPath() + "' in getResult " );
+            Preconditions.checkNotNull( timestamp, "Expected value '" + BranchIndexPath.TIMESTAMP.getPath() + "' in getResult " );
+            Preconditions.checkNotNull( nodeVersionIdValue, "Expected value '" + BranchIndexPath.VERSION_ID.getPath() + "' in getResult " );
+            Preconditions.checkNotNull( nodePathValue, "Expected value '" + BranchIndexPath.PATH.getPath() + "' in getResult " );
+            Preconditions.checkNotNull( stateValue, "Expected value '" + BranchIndexPath.STATE.getPath() + "' in getResult " );
 
             return new NodeReturnValue( Instant.ofEpochMilli( (Long) timestamp.getValue() ),
                                         NodePath.newPath( nodePathValue.getValue().toString() ).build(),

@@ -4,14 +4,14 @@ import java.util.concurrent.Callable;
 
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 public interface Context
     extends ScopeAttributes
 {
     public RepositoryId getRepositoryId();
 
-    public Workspace getWorkspace();
+    public Branch getBranch();
 
     public AuthenticationInfo getAuthInfo();
 

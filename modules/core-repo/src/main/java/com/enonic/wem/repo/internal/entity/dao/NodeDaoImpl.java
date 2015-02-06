@@ -23,11 +23,11 @@ import com.enonic.wem.api.node.RootNode;
 import com.enonic.wem.repo.internal.blob.Blob;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
+import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.NodeConstants;
 import com.enonic.wem.repo.internal.entity.json.NodeJsonSerializer;
-import com.enonic.wem.repo.internal.index.query.NodeWorkspaceVersion;
-import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
-import com.enonic.wem.repo.internal.workspace.WorkspaceService;
+import com.enonic.wem.repo.internal.index.query.NodeBranchVersion;
 
 @Component
 public class NodeDaoImpl
@@ -37,7 +37,7 @@ public class NodeDaoImpl
 
     private final BlobStore nodeBlobStore = new FileBlobStore( NodeConstants.nodeBlobStoreDir );
 
-    private WorkspaceService workspaceService;
+    private BranchService branchService;
 
     @Override
     public NodeVersionId store( final Node node )
@@ -128,24 +128,23 @@ public class NodeDaoImpl
             return node;
         }
 
-        final NodeWorkspaceVersion nodeWorkspaceVersion =
-            this.workspaceService.get( node.id(), WorkspaceContext.from( ContextAccessor.current() ) );
+        final NodeBranchVersion nodeBranchVersion = this.branchService.get( node.id(), BranchContext.from( ContextAccessor.current() ) );
 
-        final NodePath nodePath = nodeWorkspaceVersion.getNodePath();
+        final NodePath nodePath = nodeBranchVersion.getNodePath();
         final NodePath parentPath = nodePath.getParentPath();
         final NodeName nodeName = NodeName.from( nodePath.getLastElement().toString() );
 
         return Node.newNode( node ).
             parentPath( parentPath ).
             name( nodeName ).
-            nodeState( nodeWorkspaceVersion.getNodeState() ).
-            timestamp( nodeWorkspaceVersion.getTimestamp() ).
+            nodeState( nodeBranchVersion.getNodeState() ).
+            timestamp( nodeBranchVersion.getTimestamp() ).
             build();
     }
 
     @Reference
-    public void setWorkspaceService( final WorkspaceService workspaceService )
+    public void setBranchService( final BranchService branchService )
     {
-        this.workspaceService = workspaceService;
+        this.branchService = branchService;
     }
 }

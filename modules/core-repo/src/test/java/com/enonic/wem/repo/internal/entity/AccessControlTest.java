@@ -26,7 +26,7 @@ public class AccessControlTest
         this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setVersionService( versionService );
-        this.nodeService.setWorkspaceService( workspaceService );
+        this.nodeService.setBranchService( branchService );
     }
 
     @Test

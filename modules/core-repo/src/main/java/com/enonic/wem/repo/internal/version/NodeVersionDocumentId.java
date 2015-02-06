@@ -33,7 +33,7 @@ public class NodeVersionDocumentId
     {
         if ( !value.contains( SEPARATOR ) )
         {
-            throw new IllegalArgumentException( "Invalid format of workspace-key: " + value );
+            throw new IllegalArgumentException( "Invalid format of branch-key: " + value );
         }
 
         final Iterable<String> split = Splitter.on( SEPARATOR ).

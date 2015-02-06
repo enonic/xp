@@ -1,14 +1,14 @@
-package com.enonic.wem.repo.internal.elasticsearch.workspace;
+package com.enonic.wem.repo.internal.elasticsearch.branch;
 
 import com.enonic.wem.api.index.IndexPath;
 
-public class WorkspaceIndexPath
+public class BranchIndexPath
 {
     public static final IndexPath TIMESTAMP = IndexPath.from( "_timestamp" );
 
     public static final IndexPath VERSION_ID = IndexPath.from( "versionId" );
 
-    public static final IndexPath WORKSPACE_ID = IndexPath.from( "workspace" );
+    public static final IndexPath BRANCH_NAME = IndexPath.from( "branch" );
 
     public static final IndexPath NODE_ID = IndexPath.from( "nodeId" );
 

@@ -1,35 +1,35 @@
-package com.enonic.wem.repo.internal.elasticsearch.workspace;
+package com.enonic.wem.repo.internal.elasticsearch.branch;
 
 import org.junit.Test;
 
-import com.enonic.wem.repo.internal.workspace.WorkspaceDocumentId;
+import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 
 import static org.junit.Assert.*;
 
-public class StoreWorkspaceDocumentIdTest
+public class StoreBranchDocumentIdTest
 {
     @Test
     public void from()
         throws Exception
     {
-        final WorkspaceDocumentId id = WorkspaceDocumentId.from( "myBlobKey_myWorkspace" );
-        assertEquals( "myBlobKey_myWorkspace", id.getValue() );
+        final BranchDocumentId id = BranchDocumentId.from( "myBlobKey_myBranch" );
+        assertEquals( "myBlobKey_myBranch", id.getValue() );
         assertEquals( "myBlobKey", id.getNodeId().toString() );
-        assertEquals( "myWorkspace", id.getWorkspace().getName() );
+        assertEquals( "myBranch", id.getBranch().getName() );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void from_missing_ws()
         throws Exception
     {
-        WorkspaceDocumentId.from( "myBlobKey_" );
+        BranchDocumentId.from( "myBlobKey_" );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void from_missing_nodeId()
         throws Exception
     {
-        WorkspaceDocumentId.from( "_myWorkspace" );
+        BranchDocumentId.from( "_myBranch" );
     }
 
 
@@ -37,6 +37,6 @@ public class StoreWorkspaceDocumentIdTest
     public void from_missing_separator()
         throws Exception
     {
-        WorkspaceDocumentId.from( "myBlobKeymyWorkspace" );
+        BranchDocumentId.from( "myBlobKeymyBranch" );
     }
 }

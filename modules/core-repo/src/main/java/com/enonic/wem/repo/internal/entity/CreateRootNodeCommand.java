@@ -25,7 +25,7 @@ public class CreateRootNodeCommand
         StoreNodeCommand.create().
             node( rootNode ).
             queryService( this.queryService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).

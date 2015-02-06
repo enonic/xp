@@ -60,7 +60,7 @@ public class ResolveSyncWorkCommandTest
             includeChildren( true ).
             nodeId( null ).
             target( WS_OTHER ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
@@ -120,7 +120,7 @@ public class ResolveSyncWorkCommandTest
         final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             target( WS_OTHER ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
@@ -144,7 +144,7 @@ public class ResolveSyncWorkCommandTest
             nodeState( NodeState.PENDING_DELETE ).
             indexService( this.indexService ).
             queryService( this.queryService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             build().
@@ -193,7 +193,7 @@ public class ResolveSyncWorkCommandTest
         final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
             includeChildren( true ).
             target( WS_OTHER ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
@@ -248,7 +248,7 @@ public class ResolveSyncWorkCommandTest
             includeChildren( true ).
             nodeId( null ).
             target( WS_OTHER ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
@@ -348,7 +348,7 @@ public class ResolveSyncWorkCommandTest
             includeChildren( true ).
             nodeId( node1.id() ).
             target( WS_OTHER ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
@@ -424,7 +424,7 @@ public class ResolveSyncWorkCommandTest
             includeChildren( true ).
             nodeId( node1.id() ).
             target( WS_OTHER ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
@@ -498,7 +498,7 @@ public class ResolveSyncWorkCommandTest
             includeChildren( true ).
             nodeId( node1.id() ).
             target( WS_OTHER ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
@@ -549,7 +549,7 @@ public class ResolveSyncWorkCommandTest
             includeChildren( true ).
             nodeId( node1Duplicate.id() ).
             target( WS_OTHER ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
@@ -615,7 +615,7 @@ public class ResolveSyncWorkCommandTest
         return ResolveSyncWorkCommand.create().
             nodeId( nodeId ).
             target( WS_OTHER ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
@@ -861,7 +861,7 @@ public class ResolveSyncWorkCommandTest
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( NodeId.from( nodeId ) ).
@@ -879,7 +879,7 @@ public class ResolveSyncWorkCommandTest
             indexService( this.indexService ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             build().
             execute();
@@ -894,7 +894,7 @@ public class ResolveSyncWorkCommandTest
             indexService( indexService ).
             nodeDao( nodeDao ).
             queryService( queryService ).
-            workspaceService( workspaceService ).
+            branchService( branchService ).
             binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();

@@ -26,14 +26,14 @@ import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
-import com.enonic.wem.repo.internal.elasticsearch.workspace.ElasticsearchWorkspaceService;
+import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
@@ -47,7 +47,7 @@ public abstract class AbstractNodeTest
 
     protected ElasticsearchVersionService versionService;
 
-    protected ElasticsearchWorkspaceService workspaceService;
+    protected ElasticsearchBranchService branchService;
 
     protected ElasticsearchIndexService indexService;
 
@@ -61,22 +61,22 @@ public abstract class AbstractNodeTest
         user( TEST_DEFAULT_USER ).
         build();
 
-    protected static final Workspace WS_DEFAULT = Workspace.create().
+    protected static final Branch WS_DEFAULT = Branch.create().
         name( "draft" ).
         build();
 
-    protected static final Workspace WS_OTHER = Workspace.create().
+    protected static final Branch WS_OTHER = Branch.create().
         name( "online" ).
         build();
 
     protected static final Context CTX_DEFAULT = ContextBuilder.create().
-        workspace( WS_DEFAULT ).
+        branch( WS_DEFAULT ).
         repositoryId( TEST_REPO.getId() ).
         authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
 
     protected static final Context CTX_OTHER = ContextBuilder.create().
-        workspace( WS_OTHER ).
+        branch( WS_OTHER ).
         repositoryId( TEST_REPO.getId() ).
         authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
@@ -101,8 +101,8 @@ public abstract class AbstractNodeTest
         this.queryService = new ElasticsearchQueryService();
         this.queryService.setElasticsearchDao( elasticsearchDao );
 
-        this.workspaceService = new ElasticsearchWorkspaceService();
-        this.workspaceService.setElasticsearchDao( elasticsearchDao );
+        this.branchService = new ElasticsearchBranchService();
+        this.branchService.setElasticsearchDao( elasticsearchDao );
 
         this.versionService = new ElasticsearchVersionService();
         this.versionService.setElasticsearchDao( elasticsearchDao );
@@ -112,7 +112,7 @@ public abstract class AbstractNodeTest
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
         this.nodeDao = new NodeDaoImpl();
-        this.nodeDao.setWorkspaceService( this.workspaceService );
+        this.nodeDao.setBranchService( this.branchService );
 
         createContentRepository();
         waitForClusterHealth();
@@ -125,7 +125,7 @@ public abstract class AbstractNodeTest
         nodeService.setQueryService( queryService );
         nodeService.setNodeDao( nodeDao );
         nodeService.setVersionService( versionService );
-        nodeService.setWorkspaceService( workspaceService );
+        nodeService.setBranchService( branchService );
 
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
         repositoryInitializer.initializeRepository( repository );
@@ -140,7 +140,7 @@ public abstract class AbstractNodeTest
             queryService( this.queryService ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             binaryBlobStore( this.binaryBlobStore ).
             build().
@@ -156,7 +156,7 @@ public abstract class AbstractNodeTest
     protected Node createNode( final CreateNodeParams createNodeParams )
     {
         final Node createdNode = CreateNodeCommand.create().
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
             versionService( this.versionService ).
@@ -178,7 +178,7 @@ public abstract class AbstractNodeTest
             indexService( this.indexService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             id( nodeId ).
             resolveHasChild( false ).
@@ -193,7 +193,7 @@ public abstract class AbstractNodeTest
             indexService( this.indexService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             nodePath( nodePath ).
             resolveHasChild( false ).
@@ -207,7 +207,7 @@ public abstract class AbstractNodeTest
         return FindNodesByParentCommand.create().
             params( params ).
             queryService( queryService ).
-            workspaceService( workspaceService ).
+            branchService( branchService ).
             indexService( indexService ).
             versionService( versionService ).
             nodeDao( nodeDao ).
@@ -221,7 +221,7 @@ public abstract class AbstractNodeTest
             query( query ).
             queryService( this.queryService ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
             build().
@@ -233,9 +233,9 @@ public abstract class AbstractNodeTest
         printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getName() );
     }
 
-    void printWorkspaceIndex()
+    void printBranchIndex()
     {
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.WORKSPACE.getName() );
+        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.BRANCH.getName() );
     }
 
     void printVersionIndex()
@@ -243,17 +243,17 @@ public abstract class AbstractNodeTest
         printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
     }
 
-    protected PushNodesResult pushNodes( final Workspace target, final NodeId... nodeIds )
+    protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )
     {
         return doPushNodes( NodeIds.from( Arrays.asList( nodeIds ) ), target );
     }
 
-    protected PushNodesResult pushNodes( final NodeIds nodeIds, final Workspace target )
+    protected PushNodesResult pushNodes( final NodeIds nodeIds, final Branch target )
     {
         return doPushNodes( nodeIds, target );
     }
 
-    private PushNodesResult doPushNodes( final NodeIds nodeIds, final Workspace target )
+    private PushNodesResult doPushNodes( final NodeIds nodeIds, final Branch target )
     {
         return PushNodesCommand.create().
             ids( nodeIds ).
@@ -261,7 +261,7 @@ public abstract class AbstractNodeTest
             queryService( this.queryService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             indexService( this.indexService ).
             build().
             execute();
@@ -275,7 +275,7 @@ public abstract class AbstractNodeTest
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             build().
             execute();
     }

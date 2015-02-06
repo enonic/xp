@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch.workspace;
+package com.enonic.wem.repo.internal.elasticsearch.branch;
 
 import java.util.Collection;
 
@@ -12,7 +12,7 @@ import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 
-abstract class AbstractWorkspaceCommand
+abstract class AbstractBranchCommand
 {
     static final boolean DEFAULT_REFRESH = true;
 
@@ -20,7 +20,7 @@ abstract class AbstractWorkspaceCommand
 
     final RepositoryId repositoryId;
 
-    AbstractWorkspaceCommand( final Builder builder )
+    AbstractBranchCommand( final Builder builder )
     {
         this.elasticsearchDao = builder.elasticsearchDao;
         this.repositoryId = builder.repositoryId;
@@ -42,13 +42,13 @@ abstract class AbstractWorkspaceCommand
         return builder.build();
     }
 
-    BoolQueryBuilder joinWithWorkspaceQuery( final String workspaceName, final QueryBuilder specificQuery )
+    BoolQueryBuilder joinWithBranchQuery( final String branchName, final QueryBuilder specificQuery )
     {
         final BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
 
-        final TermQueryBuilder workspaceQuery = new TermQueryBuilder( WorkspaceIndexPath.WORKSPACE_ID.getPath(), workspaceName );
+        final TermQueryBuilder branchQuery = new TermQueryBuilder( BranchIndexPath.BRANCH_NAME.getPath(), branchName );
         boolQueryBuilder.must( specificQuery );
-        boolQueryBuilder.must( workspaceQuery );
+        boolQueryBuilder.must( branchQuery );
 
         return boolQueryBuilder;
     }

@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -11,7 +12,6 @@ import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.api.workspace.Workspace;
 
 import static org.junit.Assert.*;
 
@@ -67,7 +67,7 @@ public class CompareNodeCommandTest
 
         DeleteNodeByIdCommand.create().
             nodeId( createdNode.id() ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
@@ -159,7 +159,7 @@ public class CompareNodeCommandTest
             id( createdNode.id() ).
             newParent( mySecondNode.path() ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
@@ -172,13 +172,13 @@ public class CompareNodeCommandTest
     }
 
 
-    private NodeComparison doCompare( final Workspace workspace, final Node createdNode )
+    private NodeComparison doCompare( final Branch branch, final Node createdNode )
     {
         return CompareNodeCommand.create().
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeId( createdNode.id() ).
-            target( workspace ).
+            target( branch ).
             build().
             execute();
     }
@@ -194,7 +194,7 @@ public class CompareNodeCommandTest
             params( updateNodeParams ).
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
@@ -202,13 +202,13 @@ public class CompareNodeCommandTest
             execute();
     }
 
-    private PushNodesResult doPushNode( final Workspace workspace, final Node createdNode )
+    private PushNodesResult doPushNode( final Branch branch, final Node createdNode )
     {
         return PushNodesCommand.create().
             ids( NodeIds.from( createdNode.id() ) ).
-            target( workspace ).
+            target( branch ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).

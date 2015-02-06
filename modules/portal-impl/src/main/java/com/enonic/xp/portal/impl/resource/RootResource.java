@@ -5,9 +5,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;
@@ -21,17 +21,17 @@ public final class RootResource
     @Context
     protected HttpServletRequest rawRequest;
 
-    @Path("{workspace}")
-    public PageResource rootPage( @PathParam("workspace") final String workspace )
+    @Path("{branch}")
+    public PageResource rootPage( @PathParam("branch") final String branch )
     {
         final PortalContext parentContext = findParentContext();
 
         this.mode = findRenderMode( parentContext );
         this.baseUri = findBaseUri( parentContext );
         this.contentPath = ContentPath.from( "/" );
-        this.workspace = Workspace.from( workspace );
+        this.branch = Branch.from( branch );
 
-        ContextAccessor.current().getLocalScope().setAttribute( Workspace.from( workspace ) );
+        ContextAccessor.current().getLocalScope().setAttribute( Branch.from( branch ) );
         return initResource( new PageResource() );
     }
 

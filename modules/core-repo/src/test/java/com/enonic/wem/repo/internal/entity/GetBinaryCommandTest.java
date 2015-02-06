@@ -37,7 +37,7 @@ public class GetBinaryCommandTest
             nodeId( node.id() ).
             binaryReference( imageRef ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
             queryService( this.queryService ).
@@ -68,7 +68,7 @@ public class GetBinaryCommandTest
             nodeId( node.id() ).
             propertyPath( PropertyPath.from( "myBinary" ) ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
             queryService( this.queryService ).

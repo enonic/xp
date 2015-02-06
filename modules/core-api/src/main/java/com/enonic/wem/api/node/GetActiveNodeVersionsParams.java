@@ -1,17 +1,17 @@
 package com.enonic.wem.api.node;
 
-import com.enonic.wem.api.workspace.Workspaces;
+import com.enonic.wem.api.branch.Branches;
 
 public class GetActiveNodeVersionsParams
 {
     private final NodeId nodeId;
 
-    private final Workspaces workspaces;
+    private final Branches branches;
 
     private GetActiveNodeVersionsParams( Builder builder )
     {
         nodeId = builder.nodeId;
-        workspaces = builder.workspaces;
+        branches = builder.branches;
     }
 
     public static Builder create()
@@ -24,16 +24,16 @@ public class GetActiveNodeVersionsParams
         return nodeId;
     }
 
-    public Workspaces getWorkspaces()
+    public Branches getBranches()
     {
-        return workspaces;
+        return branches;
     }
 
     public static final class Builder
     {
         private NodeId nodeId;
 
-        private Workspaces workspaces;
+        private Branches branches;
 
         private Builder()
         {
@@ -45,9 +45,9 @@ public class GetActiveNodeVersionsParams
             return this;
         }
 
-        public Builder workspaces( final Workspaces workspaces )
+        public Builder branches( final Branches branches )
         {
-            this.workspaces = workspaces;
+            this.branches = branches;
             return this;
         }
 

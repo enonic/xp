@@ -86,7 +86,7 @@ public class GetNodeVersionsCommandTest
             params( updateNodeParams ).
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).

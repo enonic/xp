@@ -70,12 +70,6 @@ public class NodeChildOrderResolver
             return this;
         }
 
-        public Builder workspaceService( final QueryService queryService )
-        {
-            this.queryService = queryService;
-            return this;
-        }
-
         public Builder nodePath( final NodePath nodePath )
         {
             this.nodePath = nodePath;

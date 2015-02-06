@@ -2,7 +2,7 @@ package com.enonic.xp.portal;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 import static org.junit.Assert.*;
 
@@ -29,14 +29,14 @@ public class PortalContextTest
     }
 
     @Test
-    public void setWorkspace()
+    public void setBranch()
         throws Exception
     {
         final PortalContext request = new PortalContext();
-        assertEquals( PortalContext.DEFAULT_WORKSPACE, request.getWorkspace() );
+        assertEquals( PortalContext.DEFAULT_BRANCH, request.getBranch() );
 
-        request.setWorkspace( Workspace.from( "another" ) );
-        assertEquals( Workspace.from( "another" ), request.getWorkspace() );
+        request.setBranch( Branch.from( "another" ) );
+        assertEquals( Branch.from( "another" ), request.getBranch() );
     }
 
     @Test

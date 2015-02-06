@@ -1,15 +1,15 @@
-package com.enonic.wem.repo.internal.workspace;
+package com.enonic.wem.repo.internal.branch;
 
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeVersionId;
 
-public class StoreWorkspaceDocument
+public class StoreBranchDocument
 {
     private final Node node;
 
     private final NodeVersionId nodeVersionId;
 
-    private StoreWorkspaceDocument( final Builder builder )
+    private StoreBranchDocument( final Builder builder )
     {
         this.node = builder.node;
         this.nodeVersionId = builder.nodeVersionId;
@@ -48,9 +48,9 @@ public class StoreWorkspaceDocument
             return this;
         }
 
-        public StoreWorkspaceDocument build()
+        public StoreBranchDocument build()
         {
-            return new StoreWorkspaceDocument( this );
+            return new StoreBranchDocument( this );
         }
     }
 

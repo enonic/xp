@@ -503,7 +503,7 @@ public class ContentServiceImpl
             translator( this.contentNodeTranslator ).
             eventPublisher( this.eventPublisher ).
             contentId( params.getContentId() ).
-            workspaces( params.getWorkspaces() ).
+            branches( params.getBranches() ).
             build().
             execute();
     }

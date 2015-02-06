@@ -13,13 +13,13 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.region.Component;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public final class PortalContext
     implements PortalRequest
 {
-    public final static Workspace DEFAULT_WORKSPACE = ContentConstants.WORKSPACE_DRAFT;
+    public final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
 
     private String uri;
 
@@ -33,7 +33,7 @@ public final class PortalContext
 
     private RenderMode mode;
 
-    private Workspace workspace;
+    private Branch branch;
 
     private ContentPath contentPath;
 
@@ -61,7 +61,7 @@ public final class PortalContext
         this.baseUri = "";
         this.contentPath = ContentPath.from( "/" );
         this.mode = RenderMode.LIVE;
-        this.workspace = DEFAULT_WORKSPACE;
+        this.branch = DEFAULT_BRANCH;
         this.params = HashMultimap.create();
         this.formParams = HashMultimap.create();
         this.headers = HashMultimap.create();
@@ -81,9 +81,9 @@ public final class PortalContext
     }
 
     @Override
-    public Workspace getWorkspace()
+    public Branch getBranch()
     {
-        return workspace;
+        return branch;
     }
 
     @Override
@@ -119,9 +119,9 @@ public final class PortalContext
         this.mode = mode;
     }
 
-    public void setWorkspace( final Workspace workspace )
+    public void setBranch( final Branch branch )
     {
-        this.workspace = workspace;
+        this.branch = branch;
     }
 
     @Override

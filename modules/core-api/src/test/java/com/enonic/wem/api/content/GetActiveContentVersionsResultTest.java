@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.google.common.collect.UnmodifiableIterator;
 
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 import static org.junit.Assert.*;
 
@@ -23,8 +23,8 @@ public class GetActiveContentVersionsResultTest
             modified( now ).
             build();
 
-        final Workspace draft = Workspace.from( "draft" );
-        final Workspace online = Workspace.from( "online" );
+        final Branch draft = Branch.from( "draft" );
+        final Branch online = Branch.from( "online" );
 
         final GetActiveContentVersionsResult result = GetActiveContentVersionsResult.create().
             add( ActiveContentVersionEntry.from( draft, version ) ).
@@ -45,8 +45,8 @@ public class GetActiveContentVersionsResultTest
             modified( now ).
             build();
 
-        final Workspace draft = Workspace.from( "draft" );
-        final Workspace online = Workspace.from( "online" );
+        final Branch draft = Branch.from( "draft" );
+        final Branch online = Branch.from( "online" );
 
         final GetActiveContentVersionsResult result = GetActiveContentVersionsResult.create().
             add( ActiveContentVersionEntry.from( draft, version ) ).
@@ -64,9 +64,9 @@ public class GetActiveContentVersionsResultTest
         final Instant middle = Instant.parse( "2014-09-25T11:00:00.00Z" );
         final Instant newest = Instant.parse( "2014-09-25T12:00:00.00Z" );
 
-        final Workspace archive = Workspace.from( "archive" );
-        final Workspace draft = Workspace.from( "draft" );
-        final Workspace online = Workspace.from( "online" );
+        final Branch archive = Branch.from( "archive" );
+        final Branch draft = Branch.from( "draft" );
+        final Branch online = Branch.from( "online" );
 
         final ContentVersion oldVersion = ContentVersion.create().
             id( ContentVersionId.from( "b" ) ).
@@ -91,8 +91,8 @@ public class GetActiveContentVersionsResultTest
 
         final UnmodifiableIterator<ActiveContentVersionEntry> iterator = result.getActiveContentVersions().iterator();
 
-        assertEquals( draft, iterator.next().getWorkspace() );
-        assertEquals( online, iterator.next().getWorkspace() );
-        assertEquals( archive, iterator.next().getWorkspace() );
+        assertEquals( draft, iterator.next().getBranch() );
+        assertEquals( online, iterator.next().getBranch() );
+        assertEquals( archive, iterator.next().getBranch() );
     }
 }

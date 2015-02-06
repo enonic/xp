@@ -525,7 +525,7 @@ public class ContentResourceTest
         Mockito.when( contentService.delete( Mockito.eq( DeleteContentParams.create().
             contentPath( ContentPath.from( "/one" ) ).
             build() ) ) ).
-            thenThrow( new ContentNotFoundException( ContentPath.from( "/one" ), ContentConstants.WORKSPACE_DRAFT ) );
+            thenThrow( new ContentNotFoundException( ContentPath.from( "/one" ), ContentConstants.BRANCH_DRAFT ) );
 
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         Mockito.when( contentService.getByPath( Mockito.isA( ContentPath.class ) ) ).
@@ -614,7 +614,7 @@ public class ContentResourceTest
             ContentTypes.from( createContentType( "mymodule:my-type" ) ) );
 
         Exception e =
-            new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.WORKSPACE_DRAFT );
+            new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
 
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenThrow( e );
 
@@ -741,7 +741,7 @@ public class ContentResourceTest
     {
 
         final Exception e =
-            new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.WORKSPACE_DRAFT );
+            new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
 
         Mockito.when( contentService.duplicate( Mockito.isA( DuplicateContentParams.class ) ) ).
             thenThrow( e );

@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 final class ContextImpl
     implements Context
@@ -30,9 +30,9 @@ final class ContextImpl
     }
 
     @Override
-    public final Workspace getWorkspace()
+    public final Branch getBranch()
     {
-        return getAttribute( Workspace.class );
+        return getAttribute( Branch.class );
     }
 
     @Override

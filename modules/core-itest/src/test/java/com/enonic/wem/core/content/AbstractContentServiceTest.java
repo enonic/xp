@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.context.Context;
@@ -24,7 +25,6 @@ import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.core.media.MediaInfoServiceImpl;
 import com.enonic.wem.core.schema.content.BuiltinContentTypeProvider;
 import com.enonic.wem.core.schema.content.ContentTypeServiceImpl;
@@ -38,8 +38,8 @@ import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
+import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
-import com.enonic.wem.repo.internal.elasticsearch.workspace.ElasticsearchWorkspaceService;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
@@ -55,7 +55,7 @@ public class AbstractContentServiceTest
 
     private ElasticsearchVersionService versionService;
 
-    private ElasticsearchWorkspaceService workspaceService;
+    private ElasticsearchBranchService branchService;
 
     private ElasticsearchIndexService indexService;
 
@@ -64,11 +64,11 @@ public class AbstractContentServiceTest
     protected BlobStore binaryBlobStore;
 
 
-    protected static final Workspace WS_DEFAULT = Workspace.create().
+    protected static final Branch WS_DEFAULT = Branch.create().
         name( "draft" ).
         build();
 
-    protected static final Workspace WS_OTHER = Workspace.create().
+    protected static final Branch WS_OTHER = Branch.create().
         name( "online" ).
         build();
 
@@ -82,13 +82,13 @@ public class AbstractContentServiceTest
 
 
     protected static final Context CTX_DEFAULT = ContextBuilder.create().
-        workspace( WS_DEFAULT ).
+        branch( WS_DEFAULT ).
         repositoryId( TEST_REPO.getId() ).
         authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
 
     protected static final Context CTX_OTHER = ContextBuilder.create().
-        workspace( WS_OTHER ).
+        branch( WS_OTHER ).
         repositoryId( TEST_REPO.getId() ).
         authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
@@ -112,8 +112,8 @@ public class AbstractContentServiceTest
         this.queryService = new ElasticsearchQueryService();
         this.queryService.setElasticsearchDao( elasticsearchDao );
 
-        this.workspaceService = new ElasticsearchWorkspaceService();
-        this.workspaceService.setElasticsearchDao( elasticsearchDao );
+        this.branchService = new ElasticsearchBranchService();
+        this.branchService.setElasticsearchDao( elasticsearchDao );
 
         this.versionService = new ElasticsearchVersionService();
         this.versionService.setElasticsearchDao( elasticsearchDao );
@@ -123,7 +123,7 @@ public class AbstractContentServiceTest
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
         this.nodeDao = new NodeDaoImpl();
-        this.nodeDao.setWorkspaceService( this.workspaceService );
+        this.nodeDao.setBranchService( this.branchService );
 
         this.contentService = new ContentServiceImpl();
 
@@ -132,7 +132,7 @@ public class AbstractContentServiceTest
         this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setVersionService( versionService );
-        this.nodeService.setWorkspaceService( workspaceService );
+        this.nodeService.setBranchService( branchService );
 
         final MixinServiceImpl mixinService = new MixinServiceImpl();
         final BuiltinMixinProvider mixinProvider = new BuiltinMixinProvider();
@@ -182,7 +182,7 @@ public class AbstractContentServiceTest
         nodeService.setQueryService( queryService );
         nodeService.setNodeDao( nodeDao );
         nodeService.setVersionService( versionService );
-        nodeService.setWorkspaceService( workspaceService );
+        nodeService.setBranchService( branchService );
 
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
         repositoryInitializer.initializeRepository( repository );

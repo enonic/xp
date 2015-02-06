@@ -132,6 +132,7 @@ public final class CreateNodeCommand
         }
 
         final Node parentNode = doGetByPath( params.getParent(), false );
+
         if ( parentNode == null )
         {
             throw new NodeNotFoundException(

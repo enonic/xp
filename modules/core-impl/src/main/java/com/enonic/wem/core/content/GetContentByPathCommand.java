@@ -29,7 +29,7 @@ final class GetContentByPathCommand
 
         if ( node == null )
         {
-            throw new ContentNotFoundException( contentPath, ContextAccessor.current().getWorkspace() );
+            throw new ContentNotFoundException( contentPath, ContextAccessor.current().getBranch() );
         }
 
         return translator.fromNode( node );

@@ -38,7 +38,7 @@ public class ElasticsearchQueryServiceTest
         throws Exception
     {
         final IndexContext indexContext = IndexContext.create().
-            workspace( WS_DEFAULT ).
+            branch( WS_DEFAULT ).
             repositoryId( TEST_REPO.getId() ).
             principalsKeys( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ) ).
             build();
@@ -62,7 +62,7 @@ public class ElasticsearchQueryServiceTest
         throws Exception
     {
         final IndexContext indexContext = IndexContext.create().
-            workspace( WS_DEFAULT ).
+            branch( WS_DEFAULT ).
             repositoryId( TEST_REPO.getId() ).
             principalsKeys( PrincipalKeys.empty() ).
             build();
@@ -87,7 +87,7 @@ public class ElasticsearchQueryServiceTest
     {
 
         final IndexContext indexContext = IndexContext.create().
-            workspace( WS_DEFAULT ).
+            branch( WS_DEFAULT ).
             repositoryId( TEST_REPO.getId() ).
             principalsKeys( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ), PrincipalKey.from( "group:system:mygroup" ) ) ).
             build();
@@ -111,7 +111,7 @@ public class ElasticsearchQueryServiceTest
         throws Exception
     {
         final IndexContext indexContext = IndexContext.create().
-            workspace( WS_DEFAULT ).
+            branch( WS_DEFAULT ).
             repositoryId( TEST_REPO.getId() ).
             principalsKeys( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ) ).
             build();
@@ -135,7 +135,7 @@ public class ElasticsearchQueryServiceTest
         throws Exception
     {
         final IndexContext indexContext = IndexContext.create().
-            workspace( WS_DEFAULT ).
+            branch( WS_DEFAULT ).
             repositoryId( TEST_REPO.getId() ).
             principalsKeys( PrincipalKeys.from( PrincipalKey.from( "user:system:rmy" ) ) ).
             build();
@@ -155,7 +155,7 @@ public class ElasticsearchQueryServiceTest
         throws Exception
     {
         final IndexContext indexContext = IndexContext.create().
-            workspace( WS_DEFAULT ).
+            branch( WS_DEFAULT ).
             repositoryId( TEST_REPO.getId() ).
             principalsKeys( PrincipalKeys.from( PrincipalKey.ofAnonymous() ) ).
             build();

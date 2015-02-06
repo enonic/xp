@@ -10,6 +10,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.node.ApplyNodePermissionsParams;
 import com.enonic.wem.api.node.AttachedBinaries;
 import com.enonic.wem.api.node.AttachedBinary;
@@ -49,7 +50,6 @@ import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.SyncWorkResolverParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.util.BinaryReference;
-import com.enonic.wem.api.workspace.Workspace;
 
 class NodeServiceMock
     implements NodeService
@@ -130,7 +130,7 @@ class NodeServiceMock
     }
 
     @Override
-    public PushNodesResult push( final NodeIds ids, final Workspace target )
+    public PushNodesResult push( final NodeIds ids, final Branch target )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -239,13 +239,13 @@ class NodeServiceMock
     }
 
     @Override
-    public NodeComparison compare( final NodeId id, final Workspace target )
+    public NodeComparison compare( final NodeId id, final Branch target )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     @Override
-    public NodeComparisons compare( final NodeIds ids, final Workspace target )
+    public NodeComparisons compare( final NodeIds ids, final Branch target )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

@@ -88,7 +88,7 @@ public class ApplyNodePermissionsCommandTest
             params( params ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             indexService( this.indexService ).
             build().
@@ -190,7 +190,7 @@ public class ApplyNodePermissionsCommandTest
             params( params ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             indexService( this.indexService ).
             build().

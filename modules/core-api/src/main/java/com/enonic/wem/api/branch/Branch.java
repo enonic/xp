@@ -1,20 +1,20 @@
-package com.enonic.wem.api.workspace;
+package com.enonic.wem.api.branch;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-public final class Workspace
+public final class Branch
 {
     private final String name;
 
-    private Workspace( final Builder builder )
+    private Branch( final Builder builder )
     {
         this.name = builder.name;
     }
 
-    public static Workspace from( final String name )
+    public static Branch from( final String name )
     {
-        return Workspace.create().
+        return Branch.create().
             name( name ).
             build();
     }
@@ -48,8 +48,8 @@ public final class Workspace
             return false;
         }
 
-        final Workspace workspace = (Workspace) o;
-        return name.equals( workspace.name );
+        final Branch branch = (Branch) o;
+        return name.equals( branch.name );
     }
 
     @Override
@@ -77,9 +77,9 @@ public final class Workspace
             Preconditions.checkArgument( !Strings.isNullOrEmpty( this.name ) );
         }
 
-        public Workspace build()
+        public Branch build()
         {
-            return new Workspace( this );
+            return new Branch( this );
         }
     }
 }

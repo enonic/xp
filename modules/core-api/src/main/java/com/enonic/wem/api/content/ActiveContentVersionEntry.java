@@ -1,22 +1,22 @@
 package com.enonic.wem.api.content;
 
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 public class ActiveContentVersionEntry
     implements Comparable<ActiveContentVersionEntry>
 {
-    private final Workspace workspace;
+    private final Branch branch;
 
     private final ContentVersion contentVersion;
 
-    public final static ActiveContentVersionEntry from( final Workspace workspace, final ContentVersion contentVersion )
+    public final static ActiveContentVersionEntry from( final Branch branch, final ContentVersion contentVersion )
     {
-        return new ActiveContentVersionEntry( workspace, contentVersion );
+        return new ActiveContentVersionEntry( branch, contentVersion );
     }
 
-    private ActiveContentVersionEntry( final Workspace workspace, final ContentVersion contentVersion )
+    private ActiveContentVersionEntry( final Branch branch, final ContentVersion contentVersion )
     {
-        this.workspace = workspace;
+        this.branch = branch;
         this.contentVersion = contentVersion;
     }
 
@@ -25,9 +25,9 @@ public class ActiveContentVersionEntry
         return contentVersion;
     }
 
-    public Workspace getWorkspace()
+    public Branch getBranch()
     {
-        return workspace;
+        return branch;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ActiveContentVersionEntry
     {
         if ( this.contentVersion.equals( o.contentVersion ) )
         {
-            return this.workspace.getName().compareTo( o.workspace.getName() );
+            return this.branch.getName().compareTo( o.branch.getName() );
         }
 
         return this.contentVersion.compareTo( o.contentVersion );

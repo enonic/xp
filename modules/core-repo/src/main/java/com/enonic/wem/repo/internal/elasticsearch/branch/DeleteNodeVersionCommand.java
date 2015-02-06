@@ -1,24 +1,24 @@
-package com.enonic.wem.repo.internal.elasticsearch.workspace;
+package com.enonic.wem.repo.internal.elasticsearch.branch;
 
 import org.elasticsearch.action.delete.DeleteRequest;
 
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
-import com.enonic.wem.repo.internal.workspace.WorkspaceDocumentId;
+import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 
 public class DeleteNodeVersionCommand
-    extends AbstractWorkspaceCommand
+    extends AbstractBranchCommand
 {
-    private final Workspace workspace;
+    private final Branch branch;
 
     private final NodeId nodeId;
 
     private DeleteNodeVersionCommand( Builder builder )
     {
         super( builder );
-        workspace = builder.workspace;
+        branch = builder.branch;
         nodeId = builder.nodeId;
     }
 
@@ -31,8 +31,8 @@ public class DeleteNodeVersionCommand
     {
         DeleteRequest deleteRequest = new DeleteRequest().
             index( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
-            type( IndexType.WORKSPACE.getName() ).
-            id( new WorkspaceDocumentId( this.nodeId, this.workspace ).toString() ).
+            type( IndexType.BRANCH.getName() ).
+            id( new BranchDocumentId( this.nodeId, this.branch ).toString() ).
             refresh( DEFAULT_REFRESH );
 
         elasticsearchDao.delete( deleteRequest );
@@ -40,9 +40,9 @@ public class DeleteNodeVersionCommand
 
 
     static final class Builder
-        extends AbstractWorkspaceCommand.Builder<Builder>
+        extends AbstractBranchCommand.Builder<Builder>
     {
-        private Workspace workspace;
+        private Branch branch;
 
         private NodeId nodeId;
 
@@ -50,13 +50,13 @@ public class DeleteNodeVersionCommand
         {
         }
 
-        public Builder workspace( Workspace workspace )
+        public Builder branch( final Branch branch )
         {
-            this.workspace = workspace;
+            this.branch = branch;
             return this;
         }
 
-        public Builder nodeId( NodeId nodeId )
+        public Builder nodeId( final NodeId nodeId )
         {
             this.nodeId = nodeId;
             return this;

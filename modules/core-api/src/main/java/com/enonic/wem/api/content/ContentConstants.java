@@ -9,17 +9,17 @@ import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 public class ContentConstants
 {
     public static final String CONTENT_DEFAULT_ANALYZER = "content_default";
 
-    public static final Workspace WORKSPACE_DRAFT = Workspace.create().
+    public static final Branch BRANCH_DRAFT = Branch.create().
         name( "draft" ).
         build();
 
-    public static final Workspace WORKSPACE_ONLINE = Workspace.create().
+    public static final Branch BRANCH_ONLINE = Branch.create().
         name( "online" ).
         build();
 
@@ -28,12 +28,12 @@ public class ContentConstants
         build();
 
     public static final Context CONTEXT_DRAFT = ContextBuilder.create().
-        workspace( WORKSPACE_DRAFT ).
+        branch( BRANCH_DRAFT ).
         repositoryId( CONTENT_REPO.getId() ).
         build();
 
     public static final Context CONTEXT_ONLINE = ContextBuilder.create().
-        workspace( WORKSPACE_ONLINE ).
+        branch( BRANCH_ONLINE ).
         repositoryId( CONTENT_REPO.getId() ).
         build();
 

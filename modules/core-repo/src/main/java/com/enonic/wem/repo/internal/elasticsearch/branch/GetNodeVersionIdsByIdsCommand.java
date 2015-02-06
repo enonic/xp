@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch.workspace;
+package com.enonic.wem.repo.internal.elasticsearch.branch;
 
 import java.util.Map;
 import java.util.Set;
@@ -11,10 +11,11 @@ import org.elasticsearch.search.sort.SortOrder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeVersionIds;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.index.IndexType;
@@ -23,19 +24,18 @@ import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
-import com.enonic.wem.repo.internal.workspace.WorkspaceDocumentId;
 
 public class GetNodeVersionIdsByIdsCommand
-    extends AbstractWorkspaceCommand
+    extends AbstractBranchCommand
 {
-    private final Workspace workspace;
+    private final Branch branch;
 
     private final NodeIds nodeIds;
 
     private GetNodeVersionIdsByIdsCommand( final Builder builder )
     {
         super( builder );
-        workspace = builder.workspace;
+        branch = builder.branch;
         nodeIds = builder.nodeIds;
     }
 
@@ -46,7 +46,7 @@ public class GetNodeVersionIdsByIdsCommand
 
     NodeVersionIds execute()
     {
-        final String workspaceName = workspace.getName();
+        final String branchName = branch.getName();
 
         if ( nodeIds.isEmpty() )
         {
@@ -55,8 +55,8 @@ public class GetNodeVersionIdsByIdsCommand
 
         final ImmutableSet<String> nodeIdsAsStrings = nodeIds.getAsStrings();
 
-        final TermsQueryBuilder idsQuery = new TermsQueryBuilder( WorkspaceIndexPath.NODE_ID.getPath(), nodeIdsAsStrings );
-        final BoolQueryBuilder boolQueryBuilder = joinWithWorkspaceQuery( workspaceName, idsQuery );
+        final TermsQueryBuilder idsQuery = new TermsQueryBuilder( BranchIndexPath.NODE_ID.getPath(), nodeIdsAsStrings );
+        final BoolQueryBuilder boolQueryBuilder = joinWithBranchQuery( branchName, idsQuery );
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
             index( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
@@ -65,7 +65,7 @@ public class GetNodeVersionIdsByIdsCommand
             from( 0 ).
             size( this.nodeIds.getSize() ).
             addSortBuilder( new FieldSortBuilder( VersionIndexPath.TIMESTAMP.getPath() ).order( SortOrder.DESC ) ).
-            setReturnFields( ReturnFields.from( WorkspaceIndexPath.NODE_ID, WorkspaceIndexPath.VERSION_ID, WorkspaceIndexPath.NODE_ID ) ).
+            setReturnFields( ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.NODE_ID ) ).
             build();
 
         final SearchResult searchResult = elasticsearchDao.find( query );
@@ -76,18 +76,18 @@ public class GetNodeVersionIdsByIdsCommand
         }
 
         final Map<String, SearchResultFieldValue> orderedResultMap =
-            getSearchResultFieldsWithPreservedOrder( this.workspace, nodeIdsAsStrings, searchResult );
+            getSearchResultFieldsWithPreservedOrder( this.branch, nodeIdsAsStrings, searchResult );
 
         return fieldValuesToVersionIds( orderedResultMap.values() );
     }
 
 
-    private Map<String, SearchResultFieldValue> getSearchResultFieldsWithPreservedOrder( final Workspace workspace,
+    private Map<String, SearchResultFieldValue> getSearchResultFieldsWithPreservedOrder( final Branch branch,
                                                                                          final Set<String> nodeIdsAsStrings,
                                                                                          final SearchResult searchResult )
     {
         return Maps.asMap( nodeIdsAsStrings,
-                           new NodeIdToSearchResultFieldMapper( searchResult, WorkspaceIndexPath.VERSION_ID.getPath(), workspace ) );
+                           new NodeIdToSearchResultFieldMapper( searchResult, BranchIndexPath.VERSION_ID.getPath(), branch ) );
     }
 
     private final class NodeIdToSearchResultFieldMapper
@@ -97,30 +97,30 @@ public class GetNodeVersionIdsByIdsCommand
 
         private final String fieldName;
 
-        private final Workspace workspace;
+        private final Branch branch;
 
-        private NodeIdToSearchResultFieldMapper( final SearchResult searchResult, final String fieldName, final Workspace workspace )
+        private NodeIdToSearchResultFieldMapper( final SearchResult searchResult, final String fieldName, final Branch branch )
         {
             this.searchResult = searchResult;
             this.fieldName = fieldName;
-            this.workspace = workspace;
+            this.branch = branch;
         }
 
         @Override
         public SearchResultFieldValue apply( final String nodeId )
         {
-            final WorkspaceDocumentId workspaceDocumentId = new WorkspaceDocumentId( NodeId.from( nodeId ), this.workspace );
+            final BranchDocumentId branchDocumentId = new BranchDocumentId( NodeId.from( nodeId ), this.branch );
 
-            final SearchResultEntry entry = this.searchResult.getEntry( workspaceDocumentId.toString() );
+            final SearchResultEntry entry = this.searchResult.getEntry( branchDocumentId.toString() );
             return entry != null ? entry.getField( fieldName ) : null;
         }
     }
 
 
     public static final class Builder
-        extends AbstractWorkspaceCommand.Builder<Builder>
+        extends AbstractBranchCommand.Builder<Builder>
     {
-        private Workspace workspace;
+        private Branch branch;
 
         private NodeIds nodeIds;
 
@@ -128,9 +128,9 @@ public class GetNodeVersionIdsByIdsCommand
         {
         }
 
-        public Builder workspace( final Workspace workspace )
+        public Builder branch( final Branch branch )
         {
-            this.workspace = workspace;
+            this.branch = branch;
             return this;
         }
 

@@ -52,7 +52,7 @@ public class FindNodesByParentCommand
 
         final ChildOrder order = NodeChildOrderResolver.create().
             nodeDao( this.nodeDao ).
-            workspaceService( this.queryService ).
+            queryService( this.queryService ).
             nodePath( parentPath ).
             childOrder( params.getChildOrder() ).
             build().

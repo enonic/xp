@@ -1,14 +1,14 @@
 package com.enonic.wem.api.content;
 
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 public class CompareContentParams
 {
     private final ContentId contentId;
 
-    private final Workspace target;
+    private final Branch target;
 
-    public CompareContentParams( final ContentId contentId, final Workspace target )
+    public CompareContentParams( final ContentId contentId, final Branch target )
     {
         this.contentId = contentId;
         this.target = target;
@@ -19,7 +19,7 @@ public class CompareContentParams
         return contentId;
     }
 
-    public Workspace getTarget()
+    public Branch getTarget()
     {
         return target;
     }

@@ -55,8 +55,8 @@ public final class RepositoryInitializer
         final String storageIndexName = getStoreIndexName( repository );
         final String searchIndexName = getSearchIndexName( repository );
 
-        indexService.applyMapping( storageIndexName, IndexType.WORKSPACE.getName(),
-                                   RepositoryIndexMappingProvider.getWorkspaceMapping( repository ) );
+        indexService.applyMapping( storageIndexName, IndexType.BRANCH.getName(),
+                                   RepositoryIndexMappingProvider.getBranchMapping( repository ) );
 
         indexService.applyMapping( storageIndexName, IndexType.VERSION.getName(),
                                    RepositoryIndexMappingProvider.getVersionMapping( repository ) );

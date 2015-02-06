@@ -45,8 +45,8 @@ import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
+import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
-import com.enonic.wem.repo.internal.elasticsearch.workspace.ElasticsearchWorkspaceService;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
@@ -69,7 +69,7 @@ public class SecurityServiceImplTest
 
     private ElasticsearchVersionService versionService;
 
-    private ElasticsearchWorkspaceService workspaceService;
+    private ElasticsearchBranchService branchService;
 
     private ElasticsearchIndexService indexService;
 
@@ -87,11 +87,11 @@ public class SecurityServiceImplTest
 
         System.setProperty( "wem.home", WEM_HOME.getRoot().getPath() );
 
-        this.workspaceService = new ElasticsearchWorkspaceService();
-        this.workspaceService.setElasticsearchDao( elasticsearchDao );
+        this.branchService = new ElasticsearchBranchService();
+        this.branchService.setElasticsearchDao( elasticsearchDao );
 
         this.nodeDao = new NodeDaoImpl();
-        this.nodeDao.setWorkspaceService( this.workspaceService );
+        this.nodeDao.setBranchService( this.branchService );
 
         this.versionService = new ElasticsearchVersionService();
         this.versionService.setElasticsearchDao( elasticsearchDao );
@@ -108,7 +108,7 @@ public class SecurityServiceImplTest
         this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setVersionService( versionService );
-        this.nodeService.setWorkspaceService( workspaceService );
+        this.nodeService.setBranchService( branchService );
 
         securityService = new SecurityServiceImpl();
         securityService.setNodeService( this.nodeService );
@@ -719,7 +719,7 @@ public class SecurityServiceImplTest
         final Context context = ContextBuilder.create().
             authInfo( authInfo ).
             repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-            workspace( SystemConstants.WORKSPACE_SECURITY ).
+            branch( SystemConstants.BRANCH_SECURITY ).
             build();
         ContextAccessor.INSTANCE.set( context );
     }

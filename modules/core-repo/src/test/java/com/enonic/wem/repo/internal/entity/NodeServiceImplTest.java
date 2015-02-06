@@ -45,7 +45,7 @@ public class NodeServiceImplTest
         this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setVersionService( versionService );
-        this.nodeService.setWorkspaceService( workspaceService );
+        this.nodeService.setBranchService( branchService );
     }
 
     @Test
@@ -95,7 +95,7 @@ public class NodeServiceImplTest
                 user( user ).
                 principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
                 build() ).
-            workspace( WS_DEFAULT ).
+            branch( WS_DEFAULT ).
             repositoryId( TEST_REPO.getId() ).
             build();
 

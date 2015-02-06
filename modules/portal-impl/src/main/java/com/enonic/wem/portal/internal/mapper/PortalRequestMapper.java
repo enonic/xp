@@ -25,9 +25,9 @@ public final class PortalRequestMapper
         gen.value( "uri", this.request.getUri() );
         gen.value( "method", this.request.getMethod() );
         gen.value( "mode", Objects.toString( this.request.getMode(), null ) );
-        if ( this.request.getWorkspace() != null )
+        if ( this.request.getBranch() != null )
         {
-            gen.value( "workspace", this.request.getWorkspace().getName() );
+            gen.value( "branch", this.request.getBranch().getName() );
         }
 
         serializeMultimap( "params", gen, this.request.getParams() );

@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.elasticsearch.workspace;
+package com.enonic.wem.repo.internal.elasticsearch.branch;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +9,7 @@ import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeVersionIds;
 
 import static com.enonic.wem.repo.internal.TestContext.TEST_REPOSITORY;
-import static com.enonic.wem.repo.internal.TestContext.TEST_WORKSPACE;
+import static com.enonic.wem.repo.internal.TestContext.TEST_BRANCH;
 import static org.junit.Assert.*;
 
 public class GetNodeVersionIdsByIdsCommandTest
@@ -29,7 +29,7 @@ public class GetNodeVersionIdsByIdsCommandTest
     {
         final NodeVersionIds nodeVersionIds = GetNodeVersionIdsByIdsCommand.create().
             repository( TEST_REPOSITORY.getId() ).
-            workspace( TEST_WORKSPACE ).
+            branch( TEST_BRANCH ).
             nodeIds( NodeIds.empty() ).
             elasticsearchDao( this.elasticsearchDao ).
             build().

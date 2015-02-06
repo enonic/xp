@@ -5,13 +5,13 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.node.NodeComparisons;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 public class CompareContentsCommand
 {
     private final ContentIds contentIds;
 
-    private final Workspace target;
+    private final Branch target;
 
     private final NodeService nodeService;
 
@@ -39,7 +39,7 @@ public class CompareContentsCommand
     {
         private ContentIds contentIds;
 
-        private Workspace target;
+        private Branch target;
 
         private NodeService nodeService;
 
@@ -53,7 +53,7 @@ public class CompareContentsCommand
             return this;
         }
 
-        public Builder target( Workspace target )
+        public Builder target( Branch target )
         {
             this.target = target;
             return this;

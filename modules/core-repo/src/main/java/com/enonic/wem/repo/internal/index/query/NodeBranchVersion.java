@@ -6,7 +6,7 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionId;
 
-public class NodeWorkspaceVersion
+public class NodeBranchVersion
 {
     private final NodeVersionId nodeVersionId;
 
@@ -16,7 +16,7 @@ public class NodeWorkspaceVersion
 
     private final Instant timestamp;
 
-    private NodeWorkspaceVersion( Builder builder )
+    private NodeBranchVersion( Builder builder )
     {
         this.nodeVersionId = builder.nodeVersionId;
         this.nodeState = builder.state;
@@ -62,7 +62,7 @@ public class NodeWorkspaceVersion
             return false;
         }
 
-        final NodeWorkspaceVersion that = (NodeWorkspaceVersion) o;
+        final NodeBranchVersion that = (NodeBranchVersion) o;
 
         if ( nodePath != null ? !nodePath.equals( that.nodePath ) : that.nodePath != null )
         {
@@ -130,9 +130,9 @@ public class NodeWorkspaceVersion
             return this;
         }
 
-        public NodeWorkspaceVersion build()
+        public NodeBranchVersion build()
         {
-            return new NodeWorkspaceVersion( this );
+            return new NodeBranchVersion( this );
         }
     }
 }

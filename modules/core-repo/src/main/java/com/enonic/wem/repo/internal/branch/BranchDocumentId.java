@@ -1,14 +1,14 @@
-package com.enonic.wem.repo.internal.workspace;
+package com.enonic.wem.repo.internal.branch;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
 
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.node.NodeId;
 
-public class WorkspaceDocumentId
+public class BranchDocumentId
 {
     private static final String SEPARATOR = "_";
 
@@ -16,42 +16,42 @@ public class WorkspaceDocumentId
 
     private final NodeId nodeId;
 
-    private final Workspace workspace;
+    private final Branch branch;
 
-    public WorkspaceDocumentId( final NodeId nodeId, final Workspace workspace )
+    public BranchDocumentId( final NodeId nodeId, final Branch branch )
     {
         Preconditions.checkNotNull( nodeId );
-        Preconditions.checkNotNull( workspace );
+        Preconditions.checkNotNull( branch );
 
-        this.value = nodeId + SEPARATOR + workspace.getName();
+        this.value = nodeId + SEPARATOR + branch.getName();
         this.nodeId = nodeId;
-        this.workspace = workspace;
+        this.branch = branch;
     }
 
-    private WorkspaceDocumentId( final String value, final String nodeIdsAsString, final String workspaceName )
+    private BranchDocumentId( final String value, final String nodeIdsAsString, final String branchName )
     {
         this.value = value;
         this.nodeId = NodeId.from( nodeIdsAsString );
-        this.workspace = Workspace.from( workspaceName );
+        this.branch = Branch.from( branchName );
     }
 
-    public static WorkspaceDocumentId from( final String value )
+    public static BranchDocumentId from( final String value )
     {
         if ( !value.contains( SEPARATOR ) )
         {
-            throw new IllegalArgumentException( "Invalid format of workspace-key: " + value );
+            throw new IllegalArgumentException( "Invalid format of branch-key: " + value );
         }
 
         final Iterable<String> split = Splitter.on( SEPARATOR ).
             split( value );
 
         final String nodeIdAsString = Iterators.get( split.iterator(), 0 );
-        final String workspaceName = Iterators.get( split.iterator(), 1 );
+        final String branchName = Iterators.get( split.iterator(), 1 );
 
         Preconditions.checkArgument( !Strings.isNullOrEmpty( nodeIdAsString ) );
-        Preconditions.checkArgument( !Strings.isNullOrEmpty( workspaceName ) );
+        Preconditions.checkArgument( !Strings.isNullOrEmpty( branchName ) );
 
-        return new WorkspaceDocumentId( value, nodeIdAsString, workspaceName );
+        return new BranchDocumentId( value, nodeIdAsString, branchName );
     }
 
     public String getValue()
@@ -64,9 +64,9 @@ public class WorkspaceDocumentId
         return nodeId;
     }
 
-    public Workspace getWorkspace()
+    public Branch getBranch()
     {
-        return workspace;
+        return branch;
     }
 
     @Override

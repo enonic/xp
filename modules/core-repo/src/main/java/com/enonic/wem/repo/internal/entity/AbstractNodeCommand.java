@@ -24,11 +24,11 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.repo.internal.blob.BlobStore;
+import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexService;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.version.VersionService;
-import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
 abstract class AbstractNodeCommand
 {
@@ -39,7 +39,7 @@ abstract class AbstractNodeCommand
 
     final NodeDao nodeDao;
 
-    final WorkspaceService workspaceService;
+    final BranchService branchService;
 
     final VersionService versionService;
 
@@ -49,7 +49,7 @@ abstract class AbstractNodeCommand
     {
         this.indexService = builder.indexService;
         this.nodeDao = builder.nodeDao;
-        this.workspaceService = builder.workspaceService;
+        this.branchService = builder.branchService;
         this.versionService = builder.versionService;
         this.queryService = builder.queryService;
     }
@@ -185,7 +185,7 @@ abstract class AbstractNodeCommand
 
         NodeDao nodeDao;
 
-        WorkspaceService workspaceService;
+        BranchService branchService;
 
         VersionService versionService;
 
@@ -199,7 +199,7 @@ abstract class AbstractNodeCommand
         {
             this.indexService = source.indexService;
             this.nodeDao = source.nodeDao;
-            this.workspaceService = source.workspaceService;
+            this.branchService = source.branchService;
             this.queryService = source.queryService;
             this.versionService = source.versionService;
         }
@@ -212,9 +212,9 @@ abstract class AbstractNodeCommand
         }
 
         @SuppressWarnings("unchecked")
-        public B workspaceService( final WorkspaceService workspaceService )
+        public B branchService( final BranchService branchService )
         {
-            this.workspaceService = workspaceService;
+            this.branchService = branchService;
             return (B) this;
         }
 
@@ -242,10 +242,10 @@ abstract class AbstractNodeCommand
         void validate()
         {
             Preconditions.checkNotNull( indexService, "indexService not set" );
-            Preconditions.checkNotNull( versionService, "workspaceService not set" );
+            Preconditions.checkNotNull( versionService, "versionService not set" );
             Preconditions.checkNotNull( nodeDao, "nodeDao not set" );
-            Preconditions.checkNotNull( workspaceService, "workspaceService not set" );
-            Preconditions.checkNotNull( queryService, "workspaceService not set" );
+            Preconditions.checkNotNull( branchService, "branchService not set" );
+            Preconditions.checkNotNull( queryService, "queryService not set" );
         }
     }
 }

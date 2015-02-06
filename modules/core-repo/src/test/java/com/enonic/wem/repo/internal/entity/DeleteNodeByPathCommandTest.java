@@ -46,7 +46,7 @@ public class DeleteNodeByPathCommandTest
             indexService( this.indexService ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             build().
             execute();
 

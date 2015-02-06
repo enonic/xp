@@ -199,7 +199,7 @@ public class ElasticsearchIndexService
         final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( nodeVersionId ).
-            workspace( context.getWorkspace() ).
+            branch( context.getBranch() ).
             repositoryId( context.getRepositoryId() ).
             build().
             create();
@@ -211,7 +211,7 @@ public class ElasticsearchIndexService
     public void delete( final NodeId nodeId, final IndexContext context )
     {
         final String indexName = IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() );
-        final String indexType = context.getWorkspace().getName();
+        final String indexType = context.getBranch().getName();
 
         elasticsearchDao.delete( DeleteDocument.create().
             indexName( indexName ).

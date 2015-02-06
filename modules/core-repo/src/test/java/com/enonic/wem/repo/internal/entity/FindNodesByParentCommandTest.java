@@ -150,7 +150,7 @@ public class FindNodesByParentCommandTest
             params( FindNodesByParentParams.create().
                 parentPath( createdNode.path() ).
                 build() ).queryService( queryService ).
-            workspaceService( workspaceService ).
+            branchService( branchService ).
             indexService( indexService ).
             versionService( versionService ).
             nodeDao( nodeDao ).
@@ -203,7 +203,7 @@ public class FindNodesByParentCommandTest
                 parentPath( createdNode.path() ).
                 build() ).
             queryService( queryService ).
-            workspaceService( workspaceService ).
+            branchService( branchService ).
             indexService( indexService ).
             versionService( versionService ).
             nodeDao( nodeDao ).
@@ -225,7 +225,7 @@ public class FindNodesByParentCommandTest
                 childOrder( ChildOrder.from( "order ASC" ) ).
                 build() ).
             queryService( queryService ).
-            workspaceService( workspaceService ).
+            branchService( branchService ).
             indexService( indexService ).
             versionService( versionService ).
             nodeDao( nodeDao ).
@@ -261,7 +261,7 @@ public class FindNodesByParentCommandTest
                     build() ) ).
                 build() ).
             queryService( this.queryService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
