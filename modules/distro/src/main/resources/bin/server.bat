@@ -64,7 +64,7 @@ set CMD_LINE_ARGS=%$
 :execute
 @rem Setup the command line
 
-set XP_OPTS="%XP_OPTS% -Dxp.install=%APP_HOME%"
+set XP_OPTS=%XP_OPTS% -Dxp.install="%APP_HOME%"
 
 @rem Execute distro
 "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %XP_OPTS%  -classpath "%APP_HOME%\lib\*" com.enonic.xp.launcher.LauncherMain %CMD_LINE_ARGS%
