@@ -1,28 +1,9 @@
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
 
-publishing {
+uploadArchives {
     repositories {
-        maven {
-            url 'http://repo.enonic.net/artifactory/public'
+        mavenDeployer {
+            repository( url: 'http://repo.enonic.net/artifactory/public' )
         }
     }
 }
-
-task install( dependsOn: 'publishToMavenLocal' ) {
-    group = 'Publishing'
-    description = 'Alias for publishToMavenLocal.'
-}
-
-plugins.withId( 'java', {
-    publishing {
-        publications {
-            mavenJava( MavenPublication ) {
-                from components.java
-
-                artifact sourceJar {
-                    classifier "sources"
-                }
-            }
-        }
-    }
-} )

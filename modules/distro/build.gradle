@@ -1,6 +1,7 @@
 import com.enonic.build.bundles.BundlesPlugin
 
 apply plugin: BundlesPlugin
+apply plugin: 'distribution'
 
 configurations {
     lib
@@ -91,4 +92,39 @@ task run( type: JavaExec, dependsOn: 'prepareDevBundles' ) {
     {
         systemProperties['xp.home'] = project.getProperty( 'xp.home' )
     }
+}
+
+installDist.dependsOn += prepareProdBundles
+
+distTar {
+    compression = Compression.GZIP
+    extension = 'tar.gz'
+}
+
+distTar.dependsOn += installDist
+distZip.dependsOn += installDist
+
+distributions {
+    main {
+        contents {
+            into( 'bin' ) {
+                from( 'src/main/resources/bin' ) {
+                    include '*.sh'
+                    fileMode 0755
+                }
+            }
+            into( 'lib' ) {
+                from( configurations.lib )
+            }
+            into( 'system' ) {
+                from( "$buildDir/prod/system" )
+            }
+            from( 'src/main/resources' )
+        }
+    }
+}
+
+artifacts {
+    archives distTar
+    archives distZip
 }
