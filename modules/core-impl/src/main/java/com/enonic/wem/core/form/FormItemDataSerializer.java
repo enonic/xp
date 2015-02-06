@@ -8,9 +8,9 @@ import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.FormItemType;
+import com.enonic.wem.api.form.Inline;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.Layout;
-import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.form.Occurrences;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
@@ -49,9 +49,9 @@ public class FormItemDataSerializer
         {
             serializeInput( (Input) formItem, formItemAsSet );
         }
-        else if ( formItem instanceof MixinReference )
+        else if ( formItem instanceof Inline )
         {
-            serializeMixinReference( (MixinReference) formItem, formItemAsSet );
+            serializeInline( (Inline) formItem, formItemAsSet );
         }
         else if ( formItem instanceof FormItemSet )
         {
@@ -95,18 +95,17 @@ public class FormItemDataSerializer
         return DomHelper.serialize( doc );
     }
 
-    private void serializeMixinReference( final MixinReference mixinReference, final PropertySet mixinReferenceSet )
+    private void serializeInline( final Inline inline, final PropertySet inlineSet )
     {
-        mixinReferenceSet.setString( "name", mixinReference.getName() );
-        mixinReferenceSet.ifNotNull().setString( "mixinName",
-                                                 mixinReference.getMixinName() != null ? mixinReference.getMixinName().toString() : null );
+        inlineSet.setString( "name", inline.getName() );
+        inlineSet.ifNotNull().setString( "mixinName",
+                                                 inline.getMixinName() != null ? inline.getMixinName().toString() : null );
     }
 
-    MixinReference deserializeMixinReference( final PropertySet mixinReferenceAsSet )
+    Inline deserializeInline( final PropertySet inlineAsSet )
     {
-        final MixinReference.Builder builder = MixinReference.newMixinReference();
-        builder.name( mixinReferenceAsSet.getString( "name" ) );
-        builder.mixin( mixinReferenceAsSet.getString( "mixinName" ) );
+        final Inline.Builder builder = Inline.newInline();
+        builder.mixin( inlineAsSet.getString( "mixinName" ) );
         return builder.build();
     }
 
@@ -170,7 +169,7 @@ public class FormItemDataSerializer
         }
         else if ( type.equals( FormItemType.MIXIN_REFERENCE ) )
         {
-            return deserializeMixinReference( formItemPropertySet );
+            return deserializeInline( formItemPropertySet );
         }
         else
         {

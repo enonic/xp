@@ -22,7 +22,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.PageService;
 import com.enonic.wem.api.content.page.UpdatePageParams;
-import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
+import com.enonic.wem.api.form.InlinesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.RoleKeys;
@@ -39,7 +39,7 @@ public final class PageResource
 
     private ContentTypeService contentTypeService;
 
-    private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
+    private InlinesToFormItemsTransformer inlinesToFormItemsTransformer;
 
     private ContentPrincipalsResolver principalsResolver;
 
@@ -51,7 +51,7 @@ public final class PageResource
         final CreatePageParams command = params.getCreatePage();
         final Content updatedContent = this.pageService.create( command );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), inlinesToFormItemsTransformer, principalsResolver );
     }
 
     @POST
@@ -62,7 +62,7 @@ public final class PageResource
         final UpdatePageParams command = params.getUpdatePage();
         final Content updatedContent = this.pageService.update( command );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), inlinesToFormItemsTransformer, principalsResolver );
     }
 
     @GET
@@ -73,7 +73,7 @@ public final class PageResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         final Content updatedContent = this.pageService.delete( contentId );
 
-        return new ContentJson( updatedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), inlinesToFormItemsTransformer, principalsResolver );
     }
 
     private ContentIconUrlResolver newContentIconUrlResolver()
@@ -84,7 +84,7 @@ public final class PageResource
     @Reference
     public void setMixinService( final MixinService mixinService )
     {
-        this.mixinReferencesToFormItemsTransformer = new MixinReferencesToFormItemsTransformer( mixinService );
+        this.inlinesToFormItemsTransformer = new InlinesToFormItemsTransformer( mixinService );
     }
 
     @Reference

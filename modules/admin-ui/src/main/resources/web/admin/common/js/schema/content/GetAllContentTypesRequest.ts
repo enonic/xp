@@ -2,7 +2,7 @@ module api.schema.content {
 
     export class GetAllContentTypesRequest extends ContentTypeResourceRequest<ContentTypeSummaryListJson, ContentTypeSummary[]> {
 
-        private mixinReferencesToFormItems:boolean = true;
+        private inlinesToFormItems:boolean = true;
 
         constructor() {
             super();
@@ -11,7 +11,7 @@ module api.schema.content {
 
         getParams():Object {
             return {
-                mixinReferencesToFormItems: this.mixinReferencesToFormItems
+                inlinesToFormItems: this.inlinesToFormItems
             };
         }
 

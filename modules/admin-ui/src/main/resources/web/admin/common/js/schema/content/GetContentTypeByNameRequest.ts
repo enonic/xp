@@ -4,7 +4,7 @@ module api.schema.content {
 
         private name: ContentTypeName;
 
-        private mixinReferencesToFormItems: boolean = true;
+        private inlinesToFormItems: boolean = true;
 
         constructor(name: ContentTypeName) {
             super();
@@ -15,7 +15,7 @@ module api.schema.content {
         getParams(): Object {
             return {
                 name: this.name.toString(),
-                mixinReferencesToFormItems: this.mixinReferencesToFormItems
+                inlinesToFormItems: this.inlinesToFormItems
             };
         }
 

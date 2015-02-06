@@ -12,8 +12,8 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.FormItems;
+import com.enonic.wem.api.form.Inline;
 import com.enonic.wem.api.form.Input;
-import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.form.Occurrences;
 import com.enonic.wem.api.form.ValidationRegex;
 import com.enonic.wem.api.form.inputtype.InputType;
@@ -25,8 +25,8 @@ import com.enonic.wem.api.xml.model.XmlForm;
 import com.enonic.wem.api.xml.model.XmlFormItem;
 import com.enonic.wem.api.xml.model.XmlFormItemSet;
 import com.enonic.wem.api.xml.model.XmlFormItems;
+import com.enonic.wem.api.xml.model.XmlInline;
 import com.enonic.wem.api.xml.model.XmlInput;
-import com.enonic.wem.api.xml.model.XmlMixinReference;
 import com.enonic.wem.api.xml.model.XmlOccurrence;
 
 public final class XmlFormMapper
@@ -79,9 +79,9 @@ public final class XmlFormMapper
             return fromItemXml( (XmlFormItemSet) xml );
         }
 
-        if ( xml instanceof XmlMixinReference )
+        if ( xml instanceof XmlInline )
         {
-            return fromItemXml( (XmlMixinReference) xml );
+            return fromItemXml( (XmlInline) xml );
         }
 
         if ( xml instanceof XmlFieldSet )
@@ -124,11 +124,10 @@ public final class XmlFormMapper
         return builder.build();
     }
 
-    private static MixinReference fromItemXml( final XmlMixinReference xml )
+    private static Inline fromItemXml( final XmlInline xml )
     {
-        final MixinReference.Builder builder = MixinReference.newMixinReference();
-        builder.name( xml.getName() );
-        builder.mixin( xml.getReference() );
+        final Inline.Builder builder = Inline.newInline();
+        builder.mixin( xml.getMixin() );
         return builder.build();
     }
 
@@ -184,9 +183,9 @@ public final class XmlFormMapper
             return toItemXml( (FormItemSet) object );
         }
 
-        if ( object instanceof MixinReference )
+        if ( object instanceof Inline )
         {
-            return toItemXml( (MixinReference) object );
+            return toItemXml( (Inline) object );
         }
 
         if ( object instanceof FieldSet )
@@ -230,11 +229,10 @@ public final class XmlFormMapper
         return result;
     }
 
-    private static XmlMixinReference toItemXml( final MixinReference object )
+    private static XmlInline toItemXml( final Inline object )
     {
-        final XmlMixinReference result = new XmlMixinReference();
-        result.setName( object.getName() );
-        result.setReference( object.getMixinName().toString() );
+        final XmlInline result = new XmlInline();
+        result.setMixin( object.getMixinName().toString() );
         return result;
     }
 

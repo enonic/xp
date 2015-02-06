@@ -39,7 +39,5 @@
         <immutable>false</immutable>
       <occurrences minimum="0" maximum="1"/>
     </form-item-set>
-    <mixin-reference name="mixin">
-        <reference>mymodule:reference</reference>
-    </mixin-reference>
+  <inline mixin="mymodule:reference"/>
 </form>
