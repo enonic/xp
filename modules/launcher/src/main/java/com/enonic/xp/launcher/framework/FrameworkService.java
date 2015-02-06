@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.felix.framework.Felix;
 import org.osgi.framework.BundleActivator;
+import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,8 @@ public final class FrameworkService
     private ConfigProperties config;
 
     private final List<BundleActivator> activators;
+
+    private long startTime;
 
     public FrameworkService()
     {
@@ -52,7 +55,8 @@ public final class FrameworkService
 
     public void start()
     {
-        LOG.info( "Staring OSGi framework" );
+        this.startTime = System.currentTimeMillis();
+        LOG.info( "Starting Enonic XP..." );
 
         try
         {
@@ -65,25 +69,31 @@ public final class FrameworkService
         }
     }
 
+    private FrameworkStartLevel getStartLevelService()
+    {
+        return this.felix.adapt( FrameworkStartLevel.class );
+    }
+
+    private void setStartLevel( final int level, final FrameworkListener... listeners )
+    {
+        getStartLevelService().setStartLevel( level, listeners );
+    }
+
     private void doStart()
         throws Exception
     {
         this.felix.init();
         this.felix.start();
-        this.felix.adapt( FrameworkStartLevel.class ).setStartLevel( 1 );
 
+        setStartLevel( 1 );
         startActivators();
+        setRunningStartLevel();
+    }
 
-        this.felix.adapt( FrameworkStartLevel.class ).setStartLevel( 40 );
-
-        /*
-
-        final FrameworkStartLevel sl = this.felix.adapt( FrameworkStartLevel.class );
-        sl.setInitialBundleStartLevel( 1 );
-        sl.setStartLevel( 1 );
-
-        sl.setStartLevel( 30 );
-         */
+    private void setRunningStartLevel()
+    {
+        // TODO: Load start-level from system.properties
+        setStartLevel( 40, event -> LOG.info( "Started Enonic XP in {} ms", ( System.currentTimeMillis() - this.startTime ) ) );
     }
 
     public void stop()

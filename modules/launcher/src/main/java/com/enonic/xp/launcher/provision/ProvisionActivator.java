@@ -49,7 +49,7 @@ public final class ProvisionActivator
         }
         else
         {
-            LOG.info( "Bundles already installed. Skipping." );
+            LOG.debug( "Bundles already installed. Skipping." );
         }
     }
 
@@ -66,7 +66,7 @@ public final class ProvisionActivator
     private void installBundle( final BundleInfo info )
         throws Exception
     {
-        LOG.info( "Installing bundle {} at start-level {}", info.getLocation(), info.getLevel() );
+        LOG.debug( "Installing bundle {} at start-level {}", info.getLocation(), info.getLevel() );
 
         final URI uri = info.getUri( this.systemDir );
         final Bundle bundle = this.context.installBundle( uri.toString() );
