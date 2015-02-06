@@ -1,8 +1,10 @@
 module api.app.wizard {
 
-    export class WizardStepsValidityManager {
+    export class WizardValidityManager {
 
         private steps: WizardStep[];
+
+        private header: WizardHeader;
 
         private validityChangedListeners: {(event: WizardValidityChangedEvent):void}[] = [];
 
@@ -33,7 +35,18 @@ module api.app.wizard {
             }
         }
 
+        setHeader(header: WizardHeader) {
+            this.header = header;
+            this.header.onPropertyChanged((event) => {
+                this.notifyValidityChanged(this.header.isValid());
+            });
+        }
+
         isAllValid(): boolean {
+            if (this.header && !this.header.isValid()) {
+                return false;
+            }
+
             for (var i = 0; i < this.steps.length; i++) {
                 if (!this.steps[i].getStepForm().isValid()) {
                     return false;

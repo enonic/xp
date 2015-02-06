@@ -212,5 +212,9 @@ module api.app.wizard {
             }
         }
 
+        isValid(): boolean {
+            return !!this.displayNameEl.getValue() && !!this.nameEl.getValue();
+        }
+
     }
 }

@@ -7,7 +7,10 @@ module api.content {
         }
 
         resolveDisplayName(object: ContentSummary): string {
-            this.toggleClass("invalid", !object.isValid());
+            var contentName = object.getName(),
+                invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed();
+            this.toggleClass("invalid", invalid);
+
             return object.getDisplayName();
         }
 

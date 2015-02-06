@@ -24,9 +24,10 @@ module api.content {
                 uploadItem = object.getUploadItem();
 
             if (contentSummary) {
-                this.toggleClass("invalid", !contentSummary.isValid());
+                var contentName = contentSummary.getName(),
+                    invalid = !contentSummary.isValid() || !contentSummary.getDisplayName() || contentName.isUnnamed();
+                this.toggleClass("invalid", invalid);
 
-                var contentName = contentSummary.getName();
                 if (relativePath) {
                     return !contentName.isUnnamed() ? contentName.toString() :
                                                       api.ui.NamesAndIconViewer.EMPTY_SUB_NAME;
