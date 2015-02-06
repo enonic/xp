@@ -6,8 +6,6 @@ module api.content.page.region {
 
         public static PROPERTY_TEXT: string = "text";
 
-        private PLACEHOLDER_TEXT: string = "<h2>Article</h2>";
-
         constructor(builder?: TextComponentBuilder) {
             super(builder);
             if (builder) {
@@ -20,7 +18,7 @@ module api.content.page.region {
         }
 
         setText(value?: string, silent?: boolean) {
-            this.text = value || this.PLACEHOLDER_TEXT;
+            this.text = api.util.StringHelper.isBlank(value) ? undefined : value;
 
             if (!silent) {
                 this.notifyPropertyChanged(TextComponent.PROPERTY_TEXT);

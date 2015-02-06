@@ -320,9 +320,6 @@ module app.wizard.page {
         private liveEditListen() {
 
             this.liveEditPageProxy.onPageLocked((event: api.liveedit.PageLockedEvent) => {
-                if (this.contextWindow.isFloating() && !this.contextWindow.isShown()) {
-                    this.contextWindow.slideIn();
-                }
                 this.inspectPage();
             });
 

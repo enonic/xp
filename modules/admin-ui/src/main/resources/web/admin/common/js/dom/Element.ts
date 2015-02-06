@@ -300,6 +300,15 @@ module api.dom {
             return this.getEl().getAttribute('draggable') == 'true';
         }
 
+        setContentEditable(flag: boolean): ArticleEl {
+            this.getEl().setAttribute('contenteditable', flag ? 'true' : 'false');
+            return this;
+        }
+
+        isContentEditable(): boolean {
+            return this.getEl().getAttribute('contenteditable') == 'true';
+        }
+
         giveFocus(): boolean {
             if (!this.isVisible()) {
                 return false;
@@ -307,7 +316,7 @@ module api.dom {
             if (this.el.isDisabled()) {
                 return false;
             }
-            this.el.focuse();
+            this.el.focus();
             var gotFocus: boolean = document.activeElement == this.el.getHTMLElement();
             if (!gotFocus) {
                 console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api.ClassHelper.getClassName(this) +

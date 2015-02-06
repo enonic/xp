@@ -14,14 +14,11 @@
     }
   }
 
-  &.empty {
-    & > article:before {
-      content: 'Just start typing...';
-    }
-  }
-
   & > article {
+    min-height: 32px;
+    padding: 5px;
     .outline(0 none);
+    .box-sizing(content-box);
 
     & > *:first-child {
       margin-top: 0;
@@ -31,22 +28,21 @@
     }
   }
 
-  & > .text-placeholder {
-    font-size: 32px;
-    line-height: 37px;
-    font-family: Tahoma, Geneva, sans-serif;
-    vertical-align: middle;
-    color: #224E83;
+}
 
-    &:before {
-      font-family: 'icomoon' !important;
-      content: "\e449";
-    }
+.text-placeholder {
+  min-height: 32px;
+  padding: 5px;
 
-    .message {
-      position: relative;
-      display: none;
-    }
+  &:before {
+    position: static;
+    margin: 0;
+    font-size: 30px;
+    line-height: 32px;
+    color: @placeholder-icon;
+    font-family: @admin-font-family !important;
+    font-weight: bold;
+    content: 'Text';
   }
 
 }
