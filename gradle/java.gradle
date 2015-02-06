@@ -37,3 +37,8 @@ artifacts {
 
 sourceCompatibility = '1.8'
 targetCompatibility = sourceCompatibility
+
+test {
+    systemProperty 'java.awt.headless', 'true'
+    jvmArgs '-Xmx2048m'
+}
