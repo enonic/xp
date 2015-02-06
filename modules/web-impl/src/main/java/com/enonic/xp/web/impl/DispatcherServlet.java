@@ -2,28 +2,38 @@ package com.enonic.xp.web.impl;
 
 import java.io.IOException;
 
-import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.http.HttpService;
 
 import com.enonic.xp.web.handler.WebHandler;
 
-@Component(immediate = true, service = Servlet.class, property = "alias=/*")
+@Component(immediate = true)
 public final class DispatcherServlet
     extends HttpServlet
 {
     private final WebHandlerRegistry registry;
 
+    private HttpService httpService;
+
     public DispatcherServlet()
     {
         this.registry = new WebHandlerRegistry();
+    }
+
+    @Activate
+    public void initialize()
+        throws Exception
+    {
+        this.httpService.registerServlet( "/*", this, null, null );
     }
 
     @Override
@@ -60,5 +70,11 @@ public final class DispatcherServlet
     public void removeHandler( final WebHandler handler )
     {
         this.registry.remove( handler );
+    }
+
+    @Reference
+    public void setHttpService( final HttpService httpService )
+    {
+        this.httpService = httpService;
     }
 }

@@ -71,8 +71,14 @@ bundles {
     bundle project( ':core-export' ), 30
     bundle project( ':core-impl' ), 30
 
+    // Web app dependencies
+    bundle 'com.enonic.osgi.bundles:resteasy:3.0.8_1', 30
+
     // Web app
     bundle project( ':web-api' ), 30
+    bundle project( ':web-impl' ), 30
+    bundle project( ':web-vhost' ), 30
+    bundle project( ':web-jaxrs' ), 30
 }
 
 prepareDevBundles {

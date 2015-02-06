@@ -10,4 +10,5 @@ dependencies {
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Web - Api'
+    instruction 'Export-Package', 'com.enonic.xp.web.*'
 }
