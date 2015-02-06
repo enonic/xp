@@ -19,10 +19,10 @@ module api.liveedit.text {
 
         private editor: MediumEditorType;
 
-        public static debug = false;
+        public static debug = true;
 
         // special handling for click to allow dblclick event without triggering 2 clicks before it
-        public static DBL_CLICK_TIMEOUT = 200;
+        public static DBL_CLICK_TIMEOUT = 250;
         private singleClickTimer: number;
         private lastClicked: number;
 
@@ -88,19 +88,19 @@ module api.liveedit.text {
                 if (TextComponentView.debug) {
                     console.log('Article clicked', event);
                 }
-            });
-
-            // text component has a placeholder text
-            // that should be used instead of a regular one
-            this.article.setHtml(this.textComponent.getText());
+            })
         }
 
         private processChanges() {
             var text = this.article.getHtml();
+
             if (TextComponentView.debug) {
-                console.log('Processing editor contents:', text);
+                console.log('Processing editor contents: \n', text);
             }
-            this.textComponent.setText(text);
+            // strip tags to see if there is content
+            var processedText = text.replace(/(<([^>]+)>)/ig, "").trim();
+            //TODO: strip empty tags
+            this.textComponent.setText(processedText.length == 0 ? undefined : text);
         }
 
         isEmpty(): boolean {
@@ -115,15 +115,6 @@ module api.liveedit.text {
 
             duplicatedView.insertAfterEl(this);
             return duplicatedView;
-        }
-
-        private startPageTextEditMode() {
-            this.deselect();
-            var pageView = this.getPageView();
-            if (!pageView.isTextEditMode()) {
-                pageView.setTextEditMode(true);
-            }
-            this.giveFocus();
         }
 
         private doHandleDbClick(event: MouseEvent) {
@@ -151,12 +142,11 @@ module api.liveedit.text {
 
         handleClick(event: MouseEvent) {
             if (TextComponentView.debug) {
-                console.group('Handling click [' + this.getId() + ']');
+                console.group('Handling click [' + this.getId() + '] at ' + new Date().getTime());
                 console.log(event);
             }
 
             event.stopPropagation();
-            event.preventDefault();
 
             if (this.isEditMode()) {
                 if (TextComponentView.debug) {
@@ -207,7 +197,6 @@ module api.liveedit.text {
             }
 
             this.toggleClass('edit-mode', flag);
-            this.article.getEl().setAttribute('contenteditable', flag.toString());
             this.setDraggable(!flag);
 
             if (flag) {
@@ -288,7 +277,7 @@ module api.liveedit.text {
                 rangeIE.moveToElementText(text);
                 rangeIE.select();
             }
-            text.click();
+            text.click();  // for the medium editor to show toolbar
         }
 
         private deselectText() {
@@ -299,12 +288,20 @@ module api.liveedit.text {
             }
         }
 
-        giveFocus() {
-            if (this.isEditMode()) {
-                this.article.getHTMLElement().focus();
-                return true;
+        private startPageTextEditMode() {
+            this.deselect();
+            var pageView = this.getPageView();
+            if (!pageView.isTextEditMode()) {
+                pageView.setTextEditMode(true);
             }
-            return false;
+            this.giveFocus();
+        }
+
+        giveFocus() {
+            if (!this.isEditMode()) {
+                return false;
+            }
+            return this.article.giveFocus();
         }
 
         private createTextContextMenuActions(): api.ui.Action[] {

@@ -26,9 +26,9 @@
 ///<reference path='ItemViewContextMenu.ts' />
 ///<reference path='ItemViewContextMenuPosition.ts' />
 ///<reference path='RegionView.ts' />
-///<reference path='RegionDropzone.ts' />
 ///<reference path='RegionComponentViewer.ts' />
 ///<reference path='ItemViewPlaceholder.ts' />
+///<reference path='DragPlaceholder.ts' />
 ///<reference path='RegionPlaceholder.ts' />
 ///<reference path='ComponentPlaceholder.ts' />
 ///<reference path='ComponentView.ts' />

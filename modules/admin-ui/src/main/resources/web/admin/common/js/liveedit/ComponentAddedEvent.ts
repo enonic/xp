@@ -1,15 +1,14 @@
 module api.liveedit {
 
-    import RegionPath = api.content.page.region.RegionPath;
     import Component = api.content.page.region.Component;
 
     export class ComponentAddedEvent extends api.event.Event {
 
         private componentView: ComponentView<Component>;
 
-        setComponentView(componentView: ComponentView<Component>): ComponentAddedEvent {
+        constructor(componentView: ComponentView<Component>) {
+            super();
             this.componentView = componentView;
-            return this;
         }
 
         getComponentView(): ComponentView<Component> {

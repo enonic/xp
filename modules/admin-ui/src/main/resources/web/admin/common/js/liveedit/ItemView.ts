@@ -456,7 +456,6 @@ module api.liveedit {
 
         handleClick(event: MouseEvent) {
             event.stopPropagation();
-            event.preventDefault();
 
             if (!this.isSelected()) {
                 // we prevented mouse events to bubble up so if parent view is selected
@@ -693,9 +692,7 @@ module api.liveedit {
         }
 
         toString(): string {
-
-            var s = "id = " + this.getItemId() + ", type = '" + this.type.getShortName() + "'";
-            return s;
+            return this.getItemId().toNumber() + " : " + this.getType().getShortName()
         }
 
         static findParentItemViewAsHTMLElement(htmlElement: HTMLElement): HTMLElement {

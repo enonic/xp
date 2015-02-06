@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.url;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
@@ -43,7 +43,7 @@ public final class PageUrlParams
     }
 
     @Override
-    protected void buildToString( final Objects.ToStringHelper helper )
+    protected void buildToString( final MoreObjects.ToStringHelper helper )
     {
         super.buildToString( helper );
         helper.add( "id", this.id );

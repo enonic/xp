@@ -2,7 +2,7 @@ module api.liveedit {
 
     import Component = api.content.page.region.Component;
 
-    export class RegionDropzoneBuilder {
+    export class DragPlaceholderBuilder {
 
         itemType: ItemType;
 
@@ -14,38 +14,38 @@ module api.liveedit {
 
         componentView: ComponentView<Component>;
 
-        setItemType(value: ItemType): RegionDropzoneBuilder {
+        setItemType(value: ItemType): DragPlaceholderBuilder {
             this.itemType = value;
             return this;
         }
 
-        setDropAllowed(value: boolean): RegionDropzoneBuilder {
+        setDropAllowed(value: boolean): DragPlaceholderBuilder {
             this.dropAllowed = value;
             return this;
         }
 
-        setText(value: string): RegionDropzoneBuilder {
+        setText(value: string): DragPlaceholderBuilder {
             this.text = value;
             return this;
         }
 
-        setRegionView(value: RegionView): RegionDropzoneBuilder {
+        setRegionView(value: RegionView): DragPlaceholderBuilder {
             this.regionView = value;
             return this;
         }
 
-        setComponentView(value: ComponentView<Component>): RegionDropzoneBuilder {
+        setComponentView(value: ComponentView<Component>): DragPlaceholderBuilder {
             this.componentView = value;
             this.itemType = value.getType();
             return this;
         }
 
-        build(): RegionDropzone {
-            return new RegionDropzone(this);
+        build(): DragPlaceholder {
+            return new DragPlaceholder(this);
         }
     }
 
-    export class RegionDropzone extends api.dom.DivEl {
+    export class DragPlaceholder extends ItemViewPlaceholder {
 
         private itemType: ItemType;
 
@@ -59,8 +59,8 @@ module api.liveedit {
 
         private componentView: ComponentView<Component>;
 
-        constructor(builder: RegionDropzoneBuilder) {
-            super("region-dropzone");
+        constructor(builder: DragPlaceholderBuilder) {
+            super();
             this.itemType = builder.itemType;
             this.dropAllowed = builder.dropAllowed;
             this.text = api.util.StringHelper.format(builder.text, api.util.StringHelper.capitalize(this.itemType.getShortName()));
@@ -68,15 +68,16 @@ module api.liveedit {
             this.componentView = builder.componentView;
 
             this.message = new api.dom.DivEl("message");
-            this.message.setHtml(this.text);
+            if (builder.text) {
+                this.message.setHtml(this.text);
+            }
+            this.appendChild(this.message);
 
-            this.addClass(this.itemType.getShortName().toLowerCase());
+            this.addClass(this.itemType.getShortName().toLowerCase() + "-placeholder drag-placeholder");
 
             if (!this.dropAllowed) {
                 this.addClass("forbidden");
             }
-
-            this.appendChild(this.message);
         }
     }
 }

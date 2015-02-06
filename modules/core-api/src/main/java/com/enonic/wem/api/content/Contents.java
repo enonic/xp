@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.google.common.base.Function;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -106,7 +106,7 @@ public final class Contents
     @Override
     public String toString()
     {
-        final Objects.ToStringHelper s = Objects.toStringHelper( this );
+        final MoreObjects.ToStringHelper s = MoreObjects.toStringHelper( this );
         for ( final Content content : this )
         {
             s.add( "content", content.toString() );

@@ -13,7 +13,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import ItemView = api.liveedit.ItemView;
     import PageView = api.liveedit.PageView;
     import RegionView = api.liveedit.RegionView;
-    import RegionDropzoneBuilder = api.liveedit.RegionDropzoneBuilder;
+    import DragPlaceholderBuilder = api.liveedit.DragPlaceholderBuilder;
     import ComponentView = api.liveedit.ComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import ComponentItemType = api.liveedit.ComponentItemType;
@@ -27,6 +27,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
 
+    var debug = false;
+
     // jQuery sortable cursor position form to the drag helper.
     var CURSOR_AT: any = {left: 24, top: 24};
 
@@ -36,6 +38,8 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     var CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR: string = '[data-context-window-draggable="true"]';
 
     var ITEM_NOT_DRAGGABLE_SELECTOR: string = '.not-draggable';
+
+    var REGION_DRAGGED_OVER_CLASS: string = 'dragged-over';
 
     var SORTABLE_ITEMS_SELECTOR: string = createSortableItemsSelector();
 
@@ -81,7 +85,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             cursor: 'move',
             cursorAt: CURSOR_AT,
             scrollSensitivity: calculateScrollSensitivity(),
-            placeholder: 'live-edit-drop-target-placeholder',
+            placeholder: 'live-edit-drag-placeholder-container',
             helper: (event, helper) => api.ui.DragHelper.getHtml(),
             start: (event, ui) => handleSortStart(event, ui),
             over: (event, ui) => handleDragOver(event, ui),
@@ -113,7 +117,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     function handleSortStart(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 
-        console.log((_messageCounter++) + " DragDropSort.handleSortStart");
+        if (debug) {
+            console.log((_messageCounter++) + " DragDropSort.handleSortStart");
+        }
 
         var draggedComponentView = getComponentView(ui.item);
         var draggingOverRegionView: RegionView = getRegionView(ui.placeholder.parent());
@@ -124,20 +130,20 @@ module LiveEdit.component.dragdropsort.DragDropSort {
         if (!draggedComponentView) {
             api.util.assertState(!!_newItemItemType, "_newItemItemType should not have been null");
 
-            var dropZoneBuilder = new RegionDropzoneBuilder().
+            var dragPlaceholderBuilder = new DragPlaceholderBuilder().
                 setRegionView(draggingOverRegionView).
                 setItemType(_newItemItemType);
 
             if (isDraggingLayoutOverLayout(draggingOverRegionView, _newItemItemType)) {
                 api.ui.DragHelper.setDropAllowed(false);
-                dropZoneBuilder.setText("Layout within layout not allowed");
-                dropZoneBuilder.setDropAllowed(false);
+                dragPlaceholderBuilder.setText("Layout within layout not allowed");
+                dragPlaceholderBuilder.setDropAllowed(false);
             }
             else {
                 api.ui.DragHelper.setDropAllowed(true);
-                dropZoneBuilder.setDropAllowed(true);
+                dragPlaceholderBuilder.setDropAllowed(true);
             }
-            ui.placeholder.html(dropZoneBuilder.build().toString());
+            ui.placeholder.html(dragPlaceholderBuilder.build().toString());
 
             draggingOverRegionView.refreshEmptyState();
 
@@ -148,20 +154,20 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var parentRegionOfDraggedComponent = draggedComponentView.getParentItemView();
             parentRegionOfDraggedComponent.refreshEmptyState();
 
-            var dropZoneBuilder = new RegionDropzoneBuilder().
+            var dragPlaceholderBuilder = new DragPlaceholderBuilder().
                 setRegionView(draggingOverRegionView).
                 setComponentView(draggedComponentView);
 
             if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedComponentView.getType())) {
                 api.ui.DragHelper.setDropAllowed(false);
-                dropZoneBuilder.setText("Layout within layout not allowed");
-                dropZoneBuilder.setDropAllowed(false);
+                dragPlaceholderBuilder.setText("Layout within layout not allowed");
+                dragPlaceholderBuilder.setDropAllowed(false);
             }
             else {
                 api.ui.DragHelper.setDropAllowed(true);
-                dropZoneBuilder.setDropAllowed(true);
+                dragPlaceholderBuilder.setDropAllowed(true);
             }
-            ui.placeholder.html(dropZoneBuilder.build().toString());
+            ui.placeholder.html(dragPlaceholderBuilder.build().toString());
 
             //refreshSortable(); // TODO: Is it really needed? Trying without
         }
@@ -173,7 +179,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     function handleDragOver(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 
-        console.log((_messageCounter++) + " DragDropSort.handleDragOver");
+        if (debug) {
+            console.log((_messageCounter++) + " DragDropSort.handleDragOver");
+        }
 
         var draggingOverRegionView: RegionView = getRegionView(ui.placeholder.parent());
         api.util.assertState(!!draggingOverRegionView, "draggingOverRegionView not expected to be null");
@@ -183,22 +191,22 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             return;
         }
 
-        var dropZoneBuilder = new RegionDropzoneBuilder().
+        var dragPlaceholderBuilder = new DragPlaceholderBuilder().
             setRegionView(draggingOverRegionView).
             setComponentView(draggedComponentView);
 
         if (isDraggingLayoutOverLayout(draggingOverRegionView, draggedComponentView.getType())) {
             api.ui.DragHelper.setDropAllowed(false);
-            dropZoneBuilder.setText("Layout within layout not allowed");
-            dropZoneBuilder.setDropAllowed(false);
+            dragPlaceholderBuilder.setText("Layout within layout not allowed");
+            dragPlaceholderBuilder.setDropAllowed(false);
             api.ui.DragHelper.setDropAllowed(false);
         }
         else {
-            dropZoneBuilder.setDropAllowed(true);
+            dragPlaceholderBuilder.setDropAllowed(true);
             api.ui.DragHelper.setDropAllowed(true);
         }
 
-        ui.placeholder.html(dropZoneBuilder.build().toString());
+        ui.placeholder.html(dragPlaceholderBuilder.build().toString());
         draggingOverRegionView.refreshEmptyState();
 
         // Hinders drag out event being fired on parental regions
@@ -208,8 +216,14 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     function handleDragOut(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 
         // NB: Do not update drag helper status icon on drag out event, since it's fired after helper have been moved into another sortable list
-        console.log((_messageCounter++) + " DragDropSort.handleDragOut");
+        if (debug) {
+            console.log((_messageCounter++) + " DragDropSort.handleDragOut");
+        }
+
         if (ui.placeholder.parent().length == 0) {
+            if (debug) {
+                console.debug("DragDropSort.handleDragOut: skipping handling since ui.placeholder.parent() does not exist");
+            }
             return;
         }
 
@@ -221,8 +235,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function handleSortChange(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
-
-        console.log((_messageCounter++) + " DragDropSort.handleSortChange");
+        if (debug) {
+            console.log((_messageCounter++) + " DragDropSort.handleSortChange");
+        }
 
         var draggingOverRegionView: RegionView = getRegionView(ui.placeholder.parent());
         api.util.assertState(!!draggingOverRegionView, "draggingOverRegionView not expected to be null");
@@ -250,11 +265,14 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function handleSortUpdate(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
-
-        console.log((_messageCounter++) + " DragDropSort.handleSortUpdate");
+        if (debug) {
+            console.log((_messageCounter++) + " DragDropSort.handleSortUpdate");
+        }
 
         if (ui.item.parent().length == 0) {
-            console.debug("DragDropSort.handleSortUpdate: skipping handling since ui.item.parent() does not exist");
+            if (debug) {
+                console.debug("DragDropSort.handleSortUpdate: skipping handling since ui.item.parent() does not exist");
+            }
             return;
         }
 
@@ -294,8 +312,9 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
     // When sortable receives a new item
     function handleReceive(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
-
-        console.log((_messageCounter++) + " DragDropSort.handleReceive");
+        if (debug) {
+            console.log((_messageCounter++) + " DragDropSort.handleReceive");
+        }
 
         if (isItemDraggedFromContextWindow(ui.item)) {
             var liveEditPage = LiveEdit.LiveEditPage.get();
@@ -327,26 +346,30 @@ module LiveEdit.component.dragdropsort.DragDropSort {
     }
 
     function handleActivate(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
-
-        console.log((_messageCounter++) + " DragDropSort.handleActivate");
+        if (debug) {
+            console.log((_messageCounter++) + " DragDropSort.handleActivate");
+        }
 
     }
 
     function handleDeactivate(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
-
-        console.log((_messageCounter++) + " DragDropSort.handleDeactivate");
+        if (debug) {
+            console.log((_messageCounter++) + " DragDropSort.handleDeactivate");
+        }
 
     }
 
     function handleRemove(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
-
-        console.log((_messageCounter++) + " DragDropSort.handleRemove");
+        if (debug) {
+            console.log((_messageCounter++) + " DragDropSort.handleRemove");
+        }
 
     }
 
     function handleSortStop(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
-
-        console.log((_messageCounter++) + " DragDropSort.handleSortStop");
+        if (debug) {
+            console.log((_messageCounter++) + " DragDropSort.handleSortStop");
+        }
 
         _newItemItemType = null;
         _isDragging = false;

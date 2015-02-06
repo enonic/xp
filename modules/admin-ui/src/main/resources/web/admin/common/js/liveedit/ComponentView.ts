@@ -133,7 +133,6 @@ module api.liveedit {
             };
 
             this.setComponent(builder.component);
-            this.parentRegionView.registerComponentView(this, builder.positionIndex);
 
             // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
             //this.setDraggable(true);
@@ -168,8 +167,6 @@ module api.liveedit {
             actions.push(new api.ui.Action("Remove").onExecuted(() => {
                 this.deselect();
                 this.getParentItemView().removeComponentView(this);
-
-                new ComponentRemovedEvent(this).fire();
             }));
             actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
                 var duplicatedComponent = <COMPONENT> this.getComponent().duplicateComponent();
@@ -272,6 +269,14 @@ module api.liveedit {
             return clone;
         }
 
+        toString() {
+            var extra = "";
+            if (this.hasComponentPath()) {
+                extra = " : " + this.getComponentPath().toString();
+            }
+            return super.toString() + extra;
+        }
+
         duplicate(duplicate: COMPONENT): ComponentView<COMPONENT> {
             throw new Error("Must be implemented by inheritors");
         }
@@ -285,10 +290,10 @@ module api.liveedit {
             this.unregisterComponentListeners(this.component);
 
             this.parentRegionView.unregisterComponentView(this);
-            this.notifyItemViewRemoved(new ItemViewRemovedEvent(this));
+            this.notifyItemViewRemoved(this);
 
             this.parentRegionView.registerComponentView(replacement, index);
-            this.notifyItemViewAdded(new ItemViewAddedEvent(replacement));
+            this.notifyItemViewAdded(replacement);
         }
 
         moveToRegion(toRegionView: RegionView, precedingComponentView: ComponentView<Component>) {
@@ -329,7 +334,14 @@ module api.liveedit {
             this.itemViewAddedListeners.push(listener);
         }
 
-        notifyItemViewAdded(event: ItemViewAddedEvent) {
+        unItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
+            this.itemViewAddedListeners = this.itemViewAddedListeners.filter((curr) => {
+                return curr != listener;
+            })
+        }
+
+        notifyItemViewAdded(view: ItemView) {
+            var event = new ItemViewAddedEvent(view);
             this.itemViewAddedListeners.forEach((listener) => {
                 listener(event);
             });
@@ -339,11 +351,19 @@ module api.liveedit {
             this.itemViewRemovedListeners.push(listener);
         }
 
-        notifyItemViewRemoved(event: ItemViewRemovedEvent) {
+        unItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
+            this.itemViewRemovedListeners = this.itemViewRemovedListeners.filter((curr) => {
+                return curr != listener;
+            })
+        }
+
+        notifyItemViewRemoved(view: ItemView) {
+            var event = new ItemViewRemovedEvent(view);
             this.itemViewRemovedListeners.forEach((listener) => {
                 listener(event);
             });
         }
+
 
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
 

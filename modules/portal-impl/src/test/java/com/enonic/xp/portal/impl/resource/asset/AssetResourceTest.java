@@ -19,10 +19,10 @@ public class AssetResourceTest
     }
 
     @Test
-    public void getPublicResource_found()
+    public void getAssetResource_found()
         throws Exception
     {
-        addResource( "main.css", "demo:/public/css/main.css", "p {color:red;}" );
+        addResource( "main.css", "demo:/cms/assets/css/main.css", "p {color:red;}" );
 
         final MockHttpServletRequest request = newGetRequest( "/online/path/to/content/_/asset/demo/css/main.css" );
         final MockHttpServletResponse response = executeRequest( request );
@@ -33,7 +33,7 @@ public class AssetResourceTest
     }
 
     @Test
-    public void getPublicResource_moduleNotFound()
+    public void getAssetResource_moduleNotFound()
         throws Exception
     {
         final MockHttpServletRequest request = newGetRequest( "/online/path/to/content/_/asset/demo/css/main.css" );
@@ -44,7 +44,7 @@ public class AssetResourceTest
     }
 
     @Test
-    public void getPublicResource_fileNotFound()
+    public void getAssetResource_fileNotFound()
         throws Exception
     {
         addModule( "demo" );

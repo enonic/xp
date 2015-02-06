@@ -114,8 +114,12 @@ module LiveEdit {
 
             toRegion.addComponentView(componentView, atIndex);
 
-            new ComponentAddedEvent().setComponentView(componentView).fire();
-            componentView.select();
+            if (componentView.getType().equals(api.liveedit.text.TextItemType.get())) {
+                this.pageView.setTextEditMode(true);
+                componentView.giveFocus();
+            } else {
+                componentView.select();
+            }
         }
 
         createComponent(region: Region, type: ComponentType, precedingComponentView: ComponentView<Component>): Component {

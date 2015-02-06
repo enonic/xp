@@ -16,12 +16,12 @@ public class PartDescriptor
     public ResourceKey getComponentPath()
     {
         final DescriptorKey key = this.getKey();
-        return ResourceKey.from( key.getModuleKey(), "part/" + key.getName().toString() );
+        return ResourceKey.from( key.getModuleKey(), "cms/parts/" + key.getName().toString() );
     }
 
     public static ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getModuleKey(), "part/" + key.getName().toString() + "/part.xml" );
+        return ResourceKey.from( key.getModuleKey(), "cms/parts/" + key.getName().toString() + "/part.xml" );
     }
 
     public static PartDescriptor.Builder newPartDescriptor()

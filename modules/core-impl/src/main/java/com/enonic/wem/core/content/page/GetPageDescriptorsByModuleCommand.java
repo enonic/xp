@@ -16,7 +16,7 @@ import com.enonic.wem.api.module.ModuleService;
 final class GetPageDescriptorsByModuleCommand
     extends AbstractGetPageDescriptorCommand
 {
-    private final static Pattern PATTERN = Pattern.compile( "page/([^/]+)/page.xml" );
+    private final static Pattern PATTERN = Pattern.compile( "cms/pages/([^/]+)/page.xml" );
 
     private ModuleKey moduleKey;
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -105,7 +106,7 @@ public final class Form
     @Override
     public String toString()
     {
-        final Objects.ToStringHelper s = Objects.toStringHelper( this );
+        final MoreObjects.ToStringHelper s = MoreObjects.toStringHelper( this );
         s.add( "formItems", formItems );
         return s.toString();
     }

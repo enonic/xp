@@ -14,7 +14,7 @@ public final class ServiceResource
     public ServiceControllerResource controller( @PathParam("module") final String module, @PathParam("service") final String service )
     {
         final ModuleKey moduleKey = ModuleKey.from( module );
-        final ResourceKey scriptDir = ResourceKey.from( moduleKey, "service/" + service );
+        final ResourceKey scriptDir = ResourceKey.from( moduleKey, "cms/services/" + service );
 
         final ServiceControllerResource resource = initResource( new ServiceControllerResource() );
         resource.scriptDir = scriptDir;

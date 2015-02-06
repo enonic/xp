@@ -55,6 +55,12 @@ module api.liveedit {
 
         private unlockedScreenActions: api.ui.Action[];
 
+        private itemViewAddedListener: (event: ItemViewAddedEvent) => void;
+
+        private itemViewRemovedListener: (event: ItemViewRemovedEvent) => void;
+
+        public static debug;
+
         constructor(builder: PageViewBuilder) {
 
             this.liveEditModel = builder.liveEditModel;
@@ -64,6 +70,7 @@ module api.liveedit {
             this.viewsById = {};
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
+            PageView.debug = true;
 
 
             var resetAction = new api.ui.Action('Reset');
@@ -80,6 +87,14 @@ module api.liveedit {
             });
             this.unlockedScreenActions = [resetAction];
 
+            this.itemViewAddedListener = (event: ItemViewAddedEvent) => {
+                this.registerItemView(event.getView());
+
+                // adding anything should exit the text edit mode
+                this.exitTextEditModeIfNeeded();
+            };
+            this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => this.unregisterItemView(event.getView());
+
             super(new ItemViewBuilder().
                 setLiveEditModel(builder.liveEditModel).
                 setItemViewIdProducer(builder.itemViewProducer).
@@ -94,25 +109,12 @@ module api.liveedit {
             this.addClass('page-view');
 
             this.setTooltipObject(builder.liveEditModel.getContent());
+
             this.parseItemViews();
 
             this.appendChild(this.createTextModeToolbar());
 
             this.refreshEmptyState();
-
-            this.toItemViewArray().forEach((itemView: ItemView) => {
-                this.registerItemView(itemView);
-            });
-
-            this.regionViews.forEach((regionView: RegionView) => {
-                regionView.onItemViewAdded((event: ItemViewAddedEvent) => {
-                    this.registerItemView(event.getView());
-
-                    // adding anything should exit the text edit mode
-                    this.exitTextEditModeIfNeeded();
-                });
-                regionView.onItemViewRemoved((event: ItemViewRemovedEvent) => this.unregisterItemView(event.getView()));
-            });
 
             // lock page by default for every content that has not been modified except for page template
             if (!this.liveEditModel.getContent().isPageTemplate() && !this.isPageModified(this.pageModel)) {
@@ -289,8 +291,21 @@ module api.liveedit {
             return null;
         }
 
-        addRegion(regionView: RegionView) {
+        registerRegionView(regionView: RegionView) {
             this.regionViews.push(regionView);
+
+            regionView.onItemViewAdded(this.itemViewAddedListener);
+            regionView.onItemViewRemoved(this.itemViewRemovedListener);
+        }
+
+        unregisterRegionView(regionView: RegionView) {
+            var index = this.regionViews.indexOf(regionView);
+            if (index > -1) {
+                this.regionViews.splice(index, 1);
+
+                regionView.unItemViewAdded(this.itemViewAddedListener);
+                regionView.unItemViewRemoved(this.itemViewRemovedListener);
+            }
         }
 
         getRegions(): RegionView[] {
@@ -437,21 +452,9 @@ module api.liveedit {
 
         private registerItemView(view: ItemView) {
 
-            // logging...
-            var extra = "";
-            if (api.ObjectHelper.iFrameSafeInstanceOf(view, ComponentView)) {
-                var componentView = <ComponentView<Component>>view;
-                if (componentView.hasComponentPath()) {
-                    extra = componentView.getComponentPath().toString();
-                }
+            if (PageView.debug) {
+                console.debug("PageView.registerItemView: " + view.toString());
             }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(view, RegionView)) {
-                var regionView = <RegionView>view;
-                extra = regionView.getRegionPath().toString();
-            }
-
-            console.debug("PageView.registerItemView: " + view.getItemId().toNumber() + " : " + view.getType().getShortName() + " : " +
-                          extra);
 
             this.viewsById[view.getItemId().toNumber()] = view;
 
@@ -459,7 +462,11 @@ module api.liveedit {
         }
 
         private unregisterItemView(view: ItemView) {
-            console.debug("PageView.unregisterItemView: " + view.getItemId().toNumber());
+
+            if (PageView.debug) {
+                console.debug("PageView.unregisterItemView: " + view.toString());
+            }
+
             delete this.viewsById[view.getItemId().toNumber()];
 
             this.notifyItemViewRemoved(new ItemViewRemovedEvent(view));
@@ -467,6 +474,11 @@ module api.liveedit {
 
         private parseItemViews() {
             this.doParseItemViews();
+
+            // register everything that was parsed
+            this.toItemViewArray().forEach((itemView: ItemView) => {
+                this.registerItemView(itemView);
+            });
         }
 
         private doParseItemViews(parentElement?: api.dom.Element) {
@@ -482,15 +494,17 @@ module api.liveedit {
                 var itemType = ItemType.fromElement(childElement);
                 if (itemType) {
                     if (RegionItemType.get().equals(itemType)) {
+
                         var region = regions[regionIndex++];
                         if (region) {
+
                             var regionView = new RegionView(new RegionViewBuilder().
                                 setLiveEditModel(this.liveEditModel).
                                 setParentView(this).
                                 setRegion(region).
                                 setElement(childElement));
-                            this.addRegion(regionView);
-                            regionView.parseComponentViews();
+
+                            this.registerRegionView(regionView);
                         }
                     }
                     else {
