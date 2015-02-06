@@ -93,7 +93,7 @@ public class NodeServiceImplTest
         final Context context = ContextBuilder.create().
             authInfo( AuthenticationInfo.create().
                 user( user ).
-                principals( RoleKeys.CONTENT_MANAGER ).
+                principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
                 build() ).
             workspace( WS_DEFAULT ).
             repositoryId( TEST_REPO.getId() ).
@@ -128,7 +128,7 @@ public class NodeServiceImplTest
     {
 
         final ChildOrder childOrder = ChildOrder.create().
-            add( FieldOrderExpr.create( NodeIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) ).
+            add( FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
             add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).
             build();
 

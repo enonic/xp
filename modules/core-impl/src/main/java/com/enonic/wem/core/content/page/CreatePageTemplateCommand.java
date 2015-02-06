@@ -98,13 +98,14 @@ class CreatePageTemplateCommand
             supports( supports ).
             appendData( data.getRoot() );
 
-        final Content content = contentService.create( new CreateContentParams().
+        final Content content = contentService.create( CreateContentParams.create().
             name( name ).
             displayName( displayName ).
             owner( PrincipalKey.ofAnonymous() ).
             contentData( data ).
             type( ContentTypeName.pageTemplate() ).
-            parent( ContentPath.from( site, ContentServiceImpl.TEMPLATES_FOLDER_NAME ) ) );
+            parent( ContentPath.from( site, ContentServiceImpl.TEMPLATES_FOLDER_NAME ) ).
+            build() );
 
         return (PageTemplate) pageService.create( new CreatePageParams().
             content( content.getId() ).

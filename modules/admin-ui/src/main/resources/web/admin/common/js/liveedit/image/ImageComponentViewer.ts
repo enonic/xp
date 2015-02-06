@@ -1,24 +1,21 @@
 module api.liveedit.image {
 
-    export class ImageComponentViewer extends api.ui.Viewer<api.content.page.region.ImageComponent> {
-
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class ImageComponentViewer extends api.ui.NamesAndIconViewer<api.content.page.region.ImageComponent> {
 
         constructor() {
             super();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(imageComponent: api.content.page.region.ImageComponent) {
-            super.setObject(imageComponent);
-            this.namesAndIconView.setMainName(imageComponent.getName() ? imageComponent.getName().toString() : "").
-                setSubName(imageComponent.getPath().toString()).
-                setIconClass('live-edit-font-icon-image');
+        resolveDisplayName(object: api.content.page.region.ImageComponent): string {
+            return !!object.getName() ? object.getName().toString() : "";
         }
 
-        getPreferredHeight(): number {
-            return 50;
+        resolveSubName(object: api.content.page.region.ImageComponent, relativePath: boolean = false): string {
+            return object.getPath().toString();
+        }
+
+        resolveIconClass(object: api.content.page.region.ImageComponent): string {
+            return "live-edit-font-icon-image";
         }
 
     }

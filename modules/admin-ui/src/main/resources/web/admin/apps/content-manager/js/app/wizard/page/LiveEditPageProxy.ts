@@ -18,12 +18,14 @@ module app.wizard.page {
     import DraggingComponentViewCompletedEvent = api.liveedit.DraggingComponentViewCompletedEvent;
     import DraggingComponentViewCanceledEvent = api.liveedit.DraggingComponentViewCanceledEvent;
     import ItemFromContextWindowDroppedEvent = api.liveedit.ItemFromContextWindowDroppedEvent;
-    import PageSelectEvent = api.liveedit.PageSelectEvent;
-    import RegionSelectEvent = api.liveedit.RegionSelectEvent;
+    import PageSelectedEvent = api.liveedit.PageSelectedEvent;
+    import PageLockedEvent = api.liveedit.PageLockedEvent;
+    import PageTextModeStartedEvent = api.liveedit.PageTextModeStartedEvent;
+    import RegionSelectedEvent = api.liveedit.RegionSelectedEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
-    import ComponentRemoveEvent = api.liveedit.ComponentRemoveEvent;
-    import ComponentDuplicateEvent = api.liveedit.ComponentDuplicateEvent;
+    import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
+    import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
     import RepeatNextItemViewIdProducer = api.liveedit.RepeatNextItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
@@ -54,17 +56,21 @@ module app.wizard.page {
 
         private itemFromContextWindowDroppedListeners: {(event: ItemFromContextWindowDroppedEvent): void;}[] = [];
 
-        private pageSelectedListeners: {(event: PageSelectEvent): void;}[] = [];
+        private pageSelectedListeners: {(event: PageSelectedEvent): void;}[] = [];
 
-        private regionSelectedListeners: {(event: RegionSelectEvent): void;}[] = [];
+        private pageLockedListeners: {(event: PageLockedEvent): void;}[] = [];
+
+        private pageTextModeStartedListeners: {(event: PageTextModeStartedEvent): void;}[] = [];
+
+        private regionSelectedListeners: {(event: RegionSelectedEvent): void;}[] = [];
 
         private itemViewSelectedListeners: {(event: ItemViewSelectedEvent): void;}[] = [];
 
-        private deselectListeners: {(event: ItemViewDeselectEvent): void;}[] = [];
+        private itemViewDeselectedListeners: {(event: ItemViewDeselectEvent): void;}[] = [];
 
-        private componentRemovedListeners: {(event: ComponentRemoveEvent): void;}[] = [];
+        private componentRemovedListeners: {(event: ComponentRemovedEvent): void;}[] = [];
 
-        private componentDuplicatedListeners: {(event: ComponentDuplicateEvent): void;}[] = [];
+        private componentDuplicatedListeners: {(event: ComponentDuplicatedEvent): void;}[] = [];
 
         private liveEditPageViewReadyListeners: {(event: LiveEditPageViewReadyEvent): void;}[] = [];
 
@@ -247,19 +253,21 @@ module app.wizard.page {
 
             ItemFromContextWindowDroppedEvent.on(this.notifyItemFromContextWindowDropped.bind(this), this.liveEditWindow);
 
-            PageSelectEvent.on(this.notifyPageSelected.bind(this), this.liveEditWindow);
+            PageSelectedEvent.on(this.notifyPageSelected.bind(this), this.liveEditWindow);
 
-            RegionSelectEvent.on(this.notifyRegionSelected.bind(this), this.liveEditWindow);
+            PageLockedEvent.on(this.notifyPageLocked.bind(this), this.liveEditWindow);
 
-            ItemViewSelectedEvent.on((event: ItemViewSelectedEvent) => {
-                this.notifyItemViewSelected(event);
-            }, this.liveEditWindow);
+            PageTextModeStartedEvent.on(this.notifyPageTextModeStarted.bind(this), this.liveEditWindow);
 
-            ItemViewDeselectEvent.on(this.notifyDeselect.bind(this), this.liveEditWindow);
+            RegionSelectedEvent.on(this.notifyRegionSelected.bind(this), this.liveEditWindow);
 
-            ComponentRemoveEvent.on(this.notifyComponentRemoved.bind(this), this.liveEditWindow);
+            ItemViewSelectedEvent.on(this.notifyItemViewSelected.bind(this), this.liveEditWindow);
 
-            ComponentDuplicateEvent.on(this.notifyComponentDuplicated.bind(this), this.liveEditWindow);
+            ItemViewDeselectEvent.on(this.notifyItemViewDeselected.bind(this), this.liveEditWindow);
+
+            ComponentRemovedEvent.on(this.notifyComponentRemoved.bind(this), this.liveEditWindow);
+
+            ComponentDuplicatedEvent.on(this.notifyComponentDuplicated.bind(this), this.liveEditWindow);
 
             LiveEditPageViewReadyEvent.on(this.notifyLiveEditPageViewReady.bind(this), this.liveEditWindow);
 
@@ -333,27 +341,51 @@ module app.wizard.page {
             this.itemFromContextWindowDroppedListeners.forEach((listener) => listener(event));
         }
 
-        onPageSelected(listener: (event: PageSelectEvent) => void) {
+        onPageSelected(listener: (event: PageSelectedEvent) => void) {
             this.pageSelectedListeners.push(listener);
         }
 
-        unPageSelected(listener: (event: PageSelectEvent) => void) {
+        unPageSelected(listener: (event: PageSelectedEvent) => void) {
             this.pageSelectedListeners = this.pageSelectedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyPageSelected(event: PageSelectEvent) {
+        private notifyPageSelected(event: PageSelectedEvent) {
             this.pageSelectedListeners.forEach((listener) => listener(event));
         }
 
-        onRegionSelected(listener: {(event: RegionSelectEvent): void;}) {
+        onPageLocked(listener: (event: PageLockedEvent) => void) {
+            this.pageLockedListeners.push(listener);
+        }
+
+        unPageLocked(listener: (event: PageLockedEvent) => void) {
+            this.pageLockedListeners = this.pageLockedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyPageLocked(event: PageLockedEvent) {
+            this.pageLockedListeners.forEach((listener) => listener(event));
+        }
+
+        onPageTextModeStarted(listener: (event: PageTextModeStartedEvent) => void) {
+            this.pageTextModeStartedListeners.push(listener);
+        }
+
+        unPageTextModeStarted(listener: (event: PageTextModeStartedEvent) => void) {
+            this.pageTextModeStartedListeners = this.pageTextModeStartedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyPageTextModeStarted(event: PageTextModeStartedEvent) {
+            this.pageTextModeStartedListeners.forEach((listener) => listener(event));
+        }
+
+        onRegionSelected(listener: {(event: RegionSelectedEvent): void;}) {
             this.regionSelectedListeners.push(listener);
         }
 
-        unRegionSelected(listener: {(event: RegionSelectEvent): void;}) {
+        unRegionSelected(listener: {(event: RegionSelectedEvent): void;}) {
             this.regionSelectedListeners = this.regionSelectedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyRegionSelected(event: RegionSelectEvent) {
+        private notifyRegionSelected(event: RegionSelectedEvent) {
             this.regionSelectedListeners.forEach((listener) => listener(event));
         }
 
@@ -369,39 +401,39 @@ module app.wizard.page {
             this.itemViewSelectedListeners.forEach((listener) => listener(event));
         }
 
-        onDeselect(listener: {(event: ItemViewDeselectEvent): void;}) {
-            this.deselectListeners.push(listener);
+        onItemViewDeselected(listener: {(event: ItemViewDeselectEvent): void;}) {
+            this.itemViewDeselectedListeners.push(listener);
         }
 
-        unDeselect(listener: {(event: ItemViewDeselectEvent): void;}) {
-            this.deselectListeners = this.deselectListeners.filter((curr) => (curr != listener));
+        unItemViewDeselected(listener: {(event: ItemViewDeselectEvent): void;}) {
+            this.itemViewDeselectedListeners = this.itemViewDeselectedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyDeselect(event: ItemViewDeselectEvent) {
-            this.deselectListeners.forEach((listener) => listener(event));
+        private notifyItemViewDeselected(event: ItemViewDeselectEvent) {
+            this.itemViewDeselectedListeners.forEach((listener) => listener(event));
         }
 
-        onComponentRemoved(listener: {(event: ComponentRemoveEvent): void;}) {
+        onComponentRemoved(listener: {(event: ComponentRemovedEvent): void;}) {
             this.componentRemovedListeners.push(listener);
         }
 
-        unComponentRemoved(listener: {(event: ComponentRemoveEvent): void;}) {
+        unComponentRemoved(listener: {(event: ComponentRemovedEvent): void;}) {
             this.componentRemovedListeners = this.componentRemovedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyComponentRemoved(event: ComponentRemoveEvent) {
+        private notifyComponentRemoved(event: ComponentRemovedEvent) {
             this.componentRemovedListeners.forEach((listener) => listener(event));
         }
 
-        onComponentDuplicated(listener: {(event: ComponentDuplicateEvent): void;}) {
+        onComponentDuplicated(listener: {(event: ComponentDuplicatedEvent): void;}) {
             this.componentDuplicatedListeners.push(listener);
         }
 
-        unComponentDuplicated(listener: {(event: ComponentDuplicateEvent): void;}) {
+        unComponentDuplicated(listener: {(event: ComponentDuplicatedEvent): void;}) {
             this.componentDuplicatedListeners = this.componentDuplicatedListeners.filter((curr) => (curr != listener));
         }
 
-        private notifyComponentDuplicated(event: ComponentDuplicateEvent) {
+        private notifyComponentDuplicated(event: ComponentDuplicatedEvent) {
             this.componentDuplicatedListeners.forEach((listener) => listener(event));
         }
 

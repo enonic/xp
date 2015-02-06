@@ -116,7 +116,7 @@
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
     <config>
-      <relationship-type>system:like</relationship-type>
+      <relationship-type>system:reference</relationship-type>
     </config>
   </input>
   <input name="myImage" type="ImageSelector">
@@ -124,7 +124,7 @@
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
     <config>
-      <relationship-type>system:default</relationship-type>
+      <relationship-type>system:reference</relationship-type>
     </config>
   </input>
   <input name="myCustomInput" type="custom:DummyCustomInputType">

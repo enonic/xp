@@ -21,11 +21,10 @@ module app.browse {
         private moduleIconUrl: string;
 
         constructor() {
-            var treeGridContextMenu = new app.browse.ModuleTreeGridContextMenu();
-            this.moduleTreeGrid = new ModuleTreeGrid(); // TODO add contextMenu
 
-            this.browseActions = ModuleBrowseActions.init(this.moduleTreeGrid);
-            treeGridContextMenu.setActions(this.browseActions);
+            this.moduleTreeGrid = new ModuleTreeGrid();
+
+            this.browseActions = <app.browse.ModuleBrowseActions> this.moduleTreeGrid.getContextMenu().getActions();
 
             this.toolbar = new ModuleBrowseToolbar(this.browseActions);
             var browseItemPanel = components.detailPanel = new ModuleBrowseItemPanel();
@@ -35,12 +34,6 @@ module app.browse {
                 treeGrid: this.moduleTreeGrid,
                 browseItemPanel: browseItemPanel,
                 filterPanel: undefined
-            });
-
-            this.moduleTreeGrid.onSelectionChanged((currentSelection: TreeNode<Module>[], fullSelection: TreeNode<Module>[]) => {
-                this.browseActions.updateActionsEnabledState(<any[]>fullSelection.map((elem) => {
-                    return elem.getData();
-                }));
             });
 
             this.moduleIconUrl = api.util.UriHelper.getAdminUri('common/images/icons/icoMoon/128x128/puzzle.png');

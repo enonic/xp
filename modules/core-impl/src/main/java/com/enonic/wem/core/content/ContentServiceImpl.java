@@ -68,8 +68,10 @@ import com.enonic.wem.api.node.ReorderChildNodeParams;
 import com.enonic.wem.api.node.ReorderChildNodesParams;
 import com.enonic.wem.api.node.ReorderChildNodesResult;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
+import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.util.BinaryReference;
 
@@ -124,13 +126,14 @@ public class ContentServiceImpl
 
         MODULE_CONFIGS_DATA_SERIALIZER.toProperties( params.getModuleConfigs(), data.getRoot() );
 
-        final CreateContentParams createContentParams = new CreateContentParams().
+        final CreateContentParams createContentParams = CreateContentParams.create().
             type( ContentTypeName.site() ).
             parent( params.getParentContentPath() ).
             name( params.getName() ).
             displayName( params.getDisplayName() ).
             contentData( data ).
-            requireValid( params.isRequireValid() );
+            requireValid( params.isRequireValid() ).
+            build();
 
         final Site site = (Site) CreateContentCommand.create().
             nodeService( this.nodeService ).
@@ -143,14 +146,15 @@ public class ContentServiceImpl
             build().
             execute();
 
-        this.create( new CreateContentParams().
+        this.create( CreateContentParams.create().
             owner( site.getOwner() ).
             displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
             name( TEMPLATES_FOLDER_NAME ).
             parent( site.getPath() ).
             type( ContentTypeName.templateFolder() ).
             requireValid( true ).
-            contentData( new PropertyTree() ) );
+            contentData( new PropertyTree() ).
+            build() );
 
         return site;
     }
@@ -180,14 +184,15 @@ public class ContentServiceImpl
 
         if ( content instanceof Site )
         {
-            this.create( new CreateContentParams().
+            this.create( CreateContentParams.create().
                 owner( content.getOwner() ).
                 displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
                 name( TEMPLATES_FOLDER_NAME ).
                 parent( content.getPath() ).
                 type( ContentTypeName.templateFolder() ).
                 requireValid( true ).
-                contentData( new PropertyTree() ) );
+                contentData( new PropertyTree() ).
+                build() );
         }
 
         return content;
@@ -394,6 +399,24 @@ public class ContentServiceImpl
     @Override
     public Content move( final MoveContentParams params )
     {
+        final ContentPath destinationPath = params.getParentContentPath();
+        if ( !destinationPath.isRoot() )
+        {
+            final Content parent = this.getByPath( destinationPath );
+            if ( parent == null )
+            {
+                throw new IllegalArgumentException(
+                    "Content could not be moved. Children not allowed in destination [" + destinationPath.toString() + "]" );
+            }
+            final ContentType parentContentType =
+                contentTypeService.getByName( new GetContentTypeParams().contentTypeName( parent.getType() ) );
+            if ( !parentContentType.allowChildContent() )
+            {
+                throw new IllegalArgumentException(
+                    "Content could not be moved. Children not allowed in destination [" + destinationPath.toString() + "]" );
+            }
+        }
+
         try
         {
             final Node movedNode = nodeService.move( NodeId.from( params.getContentId() ),

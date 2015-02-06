@@ -169,7 +169,7 @@ module api.liveedit {
                 this.deselect();
                 this.getParentItemView().removeComponentView(this);
 
-                new ComponentRemoveEvent(this).fire();
+                new ComponentRemovedEvent(this).fire();
             }));
             actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
                 var duplicatedComponent = <COMPONENT> this.getComponent().duplicateComponent();
@@ -178,7 +178,7 @@ module api.liveedit {
                 duplicatedView.select();
                 duplicatedView.showLoadingSpinner();
 
-                new ComponentDuplicateEvent(this, duplicatedView).fire();
+                new ComponentDuplicatedEvent(this, duplicatedView).fire();
             }));
             return actions;
         }

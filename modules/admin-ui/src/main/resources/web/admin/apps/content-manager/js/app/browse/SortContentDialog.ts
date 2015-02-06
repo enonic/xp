@@ -67,7 +67,6 @@ module app.browse {
 
             this.sortAction = new SaveSortedContentAction(this);
 
-            this.setCancelAction(new api.ui.Action("Cancel", "esc"));
             this.addAction(this.sortAction);
 
             this.contentGrid = new app.browse.SortContentTreeGrid();
@@ -91,9 +90,6 @@ module app.browse {
             this.appendChild(this.contentGrid);
 
 
-            this.getCancelAction().onExecuted(()=> {
-                this.close();
-            });
             this.sortAction.onExecuted(() => {
 
                 if (this.curChildOrder.equals(this.parentContent.getChildOrder()) && !this.curChildOrder.isManual()) {

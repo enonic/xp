@@ -12,116 +12,51 @@ import com.enonic.wem.api.security.acl.AccessControlList;
 
 public final class CreateContentParams
 {
-    private PropertyTree data;
+    private final PropertyTree data;
 
-    private List<Metadata> metadata;
+    private final List<Metadata> metadata;
 
-    private ContentTypeName type;
+    private final ContentTypeName type;
 
-    private PrincipalKey owner;
+    private final PrincipalKey owner;
 
-    private String displayName;
+    private final String displayName;
 
-    private ContentName name;
+    private final ContentName name;
 
-    private ContentPath parentContentPath;
+    private final ContentPath parentContentPath;
 
-    private boolean requireValid;
+    private final boolean requireValid;
 
-    private boolean valid;
+    private final CreateAttachments createAttachments;
 
-    private CreateAttachments createAttachments = CreateAttachments.empty();
+    private final AccessControlList permissions;
 
-    private AccessControlList permissions;
+    private final boolean inheritPermissions;
 
-    private boolean inheritPermissions;
-
-    public CreateContentParams type( final ContentTypeName value )
+    private CreateContentParams( Builder builder )
     {
-        this.type = value;
-        return this;
+        this.data = builder.data;
+        this.metadata = builder.metadata;
+        this.type = builder.type;
+        this.owner = builder.owner;
+        this.displayName = builder.displayName;
+        this.name = builder.name;
+        this.parentContentPath = builder.parentPath;
+        this.requireValid = builder.requireValid;
+        this.permissions = builder.permissions;
+        this.inheritPermissions = builder.inheritPermissions;
+        this.createAttachments = builder.createAttachments;
     }
 
-    public CreateContentParams parent( final ContentPath parentContentPath )
+    public static Builder create()
     {
-        this.parentContentPath = parentContentPath;
-        return this;
+        return new Builder();
     }
 
-    public CreateContentParams contentData( final PropertyTree value )
+    public static Builder create( final CreateContentParams source )
     {
-        this.data = value;
-        return this;
-    }
-
-    public CreateContentParams metadata( final List<Metadata> metadata )
-    {
-        this.metadata = metadata;
-        return this;
-    }
-
-    public CreateContentParams createAttachments( final CreateAttachments value )
-    {
-        this.createAttachments = value;
-        return this;
-    }
-
-    public CreateContentParams owner( final PrincipalKey owner )
-    {
-        this.owner = owner;
-        return this;
-    }
-
-    public CreateContentParams displayName( final String displayName )
-    {
-        this.displayName = displayName;
-        return this;
-    }
-
-    public CreateContentParams name( final String name )
-    {
-        this.name = ContentName.from( name );
-        return this;
-    }
-
-    public CreateContentParams name( final ContentName name )
-    {
-        this.name = name;
-        return this;
-    }
-
-    public CreateContentParams requireValid( final boolean value )
-    {
-        this.requireValid = value;
-        return this;
-    }
-
-    public CreateContentParams permissions( final AccessControlList permissions )
-    {
-        this.permissions = permissions;
-        return this;
-    }
-
-    public CreateContentParams setInheritPermissions( final boolean inheritPermissions )
-    {
-        this.inheritPermissions = inheritPermissions;
-        return this;
-    }
-
-    public CreateContentParams valid( final boolean value )
-    {
-        this.valid = value;
-        return this;
-    }
-
-    public ContentPath getParent()
-    {
-        return parentContentPath;
-    }
-
-    public ContentTypeName getType()
-    {
-        return type;
+        return new Builder( source );
     }
 
     public PropertyTree getData()
@@ -134,9 +69,9 @@ public final class CreateContentParams
         return metadata;
     }
 
-    public CreateAttachments getCreateAttachments()
+    public ContentTypeName getType()
     {
-        return createAttachments;
+        return type;
     }
 
     public PrincipalKey getOwner()
@@ -154,9 +89,19 @@ public final class CreateContentParams
         return name;
     }
 
+    public ContentPath getParent()
+    {
+        return parentContentPath;
+    }
+
     public boolean isRequireValid()
     {
         return requireValid;
+    }
+
+    public CreateAttachments getCreateAttachments()
+    {
+        return createAttachments;
     }
 
     public AccessControlList getPermissions()
@@ -169,19 +114,139 @@ public final class CreateContentParams
         return inheritPermissions;
     }
 
-    public boolean isValid()
+    public static final class Builder
     {
-        return valid;
-    }
+        private PropertyTree data;
 
-    public void validate()
-    {
-        Preconditions.checkNotNull( parentContentPath, "parentContentPath cannot be null" );
-        Preconditions.checkArgument( parentContentPath.isAbsolute(), "parentContentPath must be absolute: " + parentContentPath );
-        Preconditions.checkNotNull( data, "data cannot be null" );
-        Preconditions.checkArgument( requireValid || this.parentContentPath != null, "parentContentPath cannot be null" );
-        Preconditions.checkNotNull( displayName, "displayName cannot be null" );
-        Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
-        Preconditions.checkNotNull( type, "type cannot be null" );
+        private List<Metadata> metadata;
+
+        private ContentTypeName type;
+
+        private PrincipalKey owner;
+
+        private String displayName;
+
+        private ContentName name;
+
+        private ContentPath parentPath;
+
+        private boolean requireValid;
+
+        private boolean valid;
+
+        private AccessControlList permissions;
+
+        private boolean inheritPermissions;
+
+        private CreateAttachments createAttachments = CreateAttachments.empty();
+
+        private Builder()
+        {
+        }
+
+        private Builder( final CreateContentParams source )
+        {
+            this.data = source.data;
+            this.metadata = source.metadata;
+            this.type = source.type;
+            this.owner = source.owner;
+            this.displayName = source.displayName;
+            this.name = source.name;
+            this.parentPath = source.parentContentPath;
+            this.requireValid = source.requireValid;
+            this.permissions = source.permissions;
+            this.inheritPermissions = source.inheritPermissions;
+            this.createAttachments = source.createAttachments;
+        }
+
+        public Builder contentData( final PropertyTree data )
+        {
+            this.data = data;
+            return this;
+        }
+
+        public Builder metadata( final List<Metadata> metadata )
+        {
+            this.metadata = metadata;
+            return this;
+        }
+
+        public Builder type( final ContentTypeName type )
+        {
+            this.type = type;
+            return this;
+        }
+
+        public Builder owner( final PrincipalKey owner )
+        {
+            this.owner = owner;
+            return this;
+        }
+
+        public Builder displayName( final String displayName )
+        {
+            this.displayName = displayName;
+            return this;
+        }
+
+        public Builder name( final ContentName name )
+        {
+            this.name = name;
+            return this;
+        }
+
+        public Builder name( final String name )
+        {
+            this.name = ContentName.from( name );
+            return this;
+        }
+
+
+        public Builder parent( final ContentPath parentContentPath )
+        {
+            this.parentPath = parentContentPath;
+            return this;
+        }
+
+        public Builder requireValid( final boolean requireValid )
+        {
+            this.requireValid = requireValid;
+            return this;
+        }
+
+        public Builder permissions( final AccessControlList permissions )
+        {
+            this.permissions = permissions;
+            return this;
+        }
+
+        public Builder inheritPermissions( final boolean inheritPermissions )
+        {
+            this.inheritPermissions = inheritPermissions;
+            return this;
+        }
+
+        public Builder createAttachments( final CreateAttachments createAttachments )
+        {
+            this.createAttachments = createAttachments;
+            return this;
+        }
+
+        private void validate()
+        {
+            Preconditions.checkNotNull( parentPath, "parentContentPath cannot be null" );
+            Preconditions.checkArgument( parentPath.isAbsolute(), "parentContentPath must be absolute: " + parentPath );
+            Preconditions.checkNotNull( data, "data cannot be null" );
+            Preconditions.checkArgument( requireValid || this.parentPath != null, "parentContentPath cannot be null" );
+            Preconditions.checkNotNull( displayName, "displayName cannot be null" );
+            Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
+            Preconditions.checkNotNull( type, "type cannot be null" );
+        }
+
+        public CreateContentParams build()
+        {
+            this.validate();
+            return new CreateContentParams( this );
+        }
     }
 }

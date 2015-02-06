@@ -1,13 +1,29 @@
 package com.enonic.wem.api.form.inputtype;
 
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.form.InvalidValueException;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
-public class ImageSelectorConfig
-    extends RelationshipConfig
+public final class ImageSelectorConfig
+    implements InputTypeConfig
 {
-    private ImageSelectorConfig( final Builder builder )
+    private final RelationshipTypeName relationshipType;
+
+    ImageSelectorConfig( final Builder builder )
     {
-        super( builder );
+        this.relationshipType = builder.relationshipType != null ? builder.relationshipType : RelationshipTypeName.REFERENCE;
+    }
+
+    public RelationshipTypeName getRelationshipType()
+    {
+        return relationshipType;
+    }
+
+    @Override
+    public void checkValidity( final Property property )
+        throws InvalidValueException
+    {
+
     }
 
     public static Builder newImageSelectorConfig()
@@ -15,9 +31,9 @@ public class ImageSelectorConfig
         return new Builder();
     }
 
-    public static class Builder
-        extends RelationshipConfig.Builder
+    public static final class Builder
     {
+        private RelationshipTypeName relationshipType;
 
         Builder()
         {
@@ -26,7 +42,7 @@ public class ImageSelectorConfig
 
         public Builder relationshipType( final RelationshipTypeName value )
         {
-            super.relationshipType( value );
+            relationshipType = value;
             return this;
         }
 

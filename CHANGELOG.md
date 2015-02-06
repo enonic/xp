@@ -2,16 +2,23 @@
 
 Bugfixes:
 
- - N/A
+ - Text Component - Improved initial mode when starting to edit (CMS-5043)
+ - Text Component - Editor selection hangs up (CMS-5059)
+ - Text Component - When in edit mode context window should always hide (CMS-5075)
 
 Features:
 
-  - N/A
+  - Fields (elements) "is-abstract", "is-final" and "allow-child-content" in content-type.xml made optional. The "is-built-in" field has been removed from content-type.xml. (CMS-5064)
+  - Fields "immutable" and "indexed from input-type in xml are made optional. (CMS-4878)
+  - Show available apps in home screen depending on user permissions. (CMS-5018)
+  - Automatically set owner to the user creating the content. (CMS-5074)
+  - Live Edit - Lock page by default (CMS-4827)
 
 Refactoring:
 
-  - N/A
-  
+  - Removed menu-item meta step Mixin from built-in types. (CMS-5045)
+  - Removed built-in relationship types "system:like" and "system:link". Renamed "system:default" to "system:reference". (CMS-5053)
+
 
 ## RC4 (2015-02-03)
 

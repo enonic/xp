@@ -6,8 +6,8 @@
   <super-type>mymodule:content</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
-  <is-built-in>false</is-built-in>
   <allow-child-content>true</allow-child-content>
+  <metadata mixin="mymodule:metadata"/>
   <form>
     <form-item-set name="mySet">
       <immutable>false</immutable>

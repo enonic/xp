@@ -6,11 +6,14 @@ module api.security.auth {
 
         private user: api.security.User;
 
+        private applications: string[];
+
         constructor(json: LoginResultJson) {
             this.authenticated = json.authenticated;
             if (json.user) {
                 this.user = api.security.User.fromJson(json.user);
             }
+            this.applications = json.applications || [];
         }
 
         isAuthenticated(): boolean {
@@ -21,5 +24,8 @@ module api.security.auth {
             return this.user;
         }
 
+        getApplications(): string[] {
+            return this.applications;
+        }
     }
 }

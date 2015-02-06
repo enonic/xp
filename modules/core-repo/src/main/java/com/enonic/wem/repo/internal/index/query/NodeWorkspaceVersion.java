@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.index.query;
 
+import java.time.Instant;
+
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionId;
@@ -12,11 +14,14 @@ public class NodeWorkspaceVersion
 
     private final NodePath nodePath;
 
+    private final Instant timestamp;
+
     private NodeWorkspaceVersion( Builder builder )
     {
-        nodeVersionId = builder.nodeVersionId;
-        nodeState = builder.state;
-        nodePath = builder.nodePath;
+        this.nodeVersionId = builder.nodeVersionId;
+        this.nodeState = builder.state;
+        this.nodePath = builder.nodePath;
+        this.timestamp = builder.timestamp;
     }
 
     public static Builder create()
@@ -39,6 +44,12 @@ public class NodeWorkspaceVersion
         return nodePath;
     }
 
+    public Instant getTimestamp()
+    {
+        return timestamp;
+    }
+
+
     @Override
     public boolean equals( final Object o )
     {
@@ -53,11 +64,19 @@ public class NodeWorkspaceVersion
 
         final NodeWorkspaceVersion that = (NodeWorkspaceVersion) o;
 
-        if ( nodeVersionId != null ? !nodeVersionId.equals( that.nodeVersionId ) : that.nodeVersionId != null )
+        if ( nodePath != null ? !nodePath.equals( that.nodePath ) : that.nodePath != null )
         {
             return false;
         }
         if ( nodeState != that.nodeState )
+        {
+            return false;
+        }
+        if ( nodeVersionId != null ? !nodeVersionId.equals( that.nodeVersionId ) : that.nodeVersionId != null )
+        {
+            return false;
+        }
+        if ( timestamp != null ? !timestamp.equals( that.timestamp ) : that.timestamp != null )
         {
             return false;
         }
@@ -81,6 +100,8 @@ public class NodeWorkspaceVersion
 
         private NodePath nodePath;
 
+        private Instant timestamp;
+
         private Builder()
         {
         }
@@ -100,6 +121,12 @@ public class NodeWorkspaceVersion
         public Builder nodePath( final NodePath nodePath )
         {
             this.nodePath = nodePath;
+            return this;
+        }
+
+        public Builder timestamp( final Instant timestamp )
+        {
+            this.timestamp = timestamp;
             return this;
         }
 

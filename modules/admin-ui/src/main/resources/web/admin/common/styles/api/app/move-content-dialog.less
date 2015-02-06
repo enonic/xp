@@ -1,6 +1,9 @@
 .move-content-dialog {
   width: 650px;
-  height: 300px;
+
+  @media screen and (min-height: 360px) {
+    height: 300px;
+  }
 
   .dialog-header {
     margin-bottom: 5px;
@@ -22,5 +25,7 @@
     position: absolute;
     bottom: 20px;
     right: 30px;
+
   }
+
 }

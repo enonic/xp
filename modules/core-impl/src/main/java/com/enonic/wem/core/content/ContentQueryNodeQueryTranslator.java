@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.ContentConstants;
+import com.enonic.wem.api.content.ContentPropertyNames;
 import com.enonic.wem.api.content.query.ContentQuery;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.node.NodeIndexPath;
@@ -16,8 +17,6 @@ class ContentQueryNodeQueryTranslator
         final NodeQuery.Builder builder = NodeQuery.create();
 
         doTranslate( contentQuery, builder );
-
-        // TODO: Add paths
 
         return builder.build();
     }

@@ -46,15 +46,15 @@ public final class CreateContentHandler
 
     private CreateContentParams createParams( final CommandRequest req )
     {
-        final CreateContentParams params = new CreateContentParams();
-        params.name( req.param( "name" ).value( String.class ) );
-        params.parent( contentPath( req.param( "parentPath" ).value( String.class ) ) );
-        params.displayName( req.param( "displayName" ).value( String.class ) );
-        params.requireValid( !req.param( "draft" ).value( Boolean.class ) );
-        params.type( contentTypeName( req.param( "contentType" ).value( String.class ) ) );
-        params.contentData( propertyTree( req.param( "data" ).map() ) );
-        params.metadata( metaDataList( req.param( "meta" ).map() ) );
-        return params;
+        return CreateContentParams.create().
+            name( req.param( "name" ).value( String.class ) ).
+            parent( contentPath( req.param( "parentPath" ).value( String.class ) ) ).
+            displayName( req.param( "displayName" ).value( String.class ) ).
+            requireValid( !req.param( "draft" ).value( Boolean.class ) ).
+            type( contentTypeName( req.param( "contentType" ).value( String.class ) ) ).
+            contentData( propertyTree( req.param( "data" ).map() ) ).
+            metadata( metaDataList( req.param( "meta" ).map() ) ).
+            build();
     }
 
     private ContentPath contentPath( final String value )

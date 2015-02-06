@@ -30,7 +30,7 @@ import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.security.RoleKeys;
 
-import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
+import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleWidthFilter;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/image")
@@ -96,7 +96,7 @@ public final class ContentImageResource
             final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );
             if ( binary != null )
             {
-                final BufferedImage contentImage = helper.readImage( binary, size, ScaleMax );
+                final BufferedImage contentImage = helper.readImage( binary, size, ScaleWidthFilter );
                 return new ResolvedImage( contentImage, attachment.getMimeType() );
             }
         }

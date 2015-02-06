@@ -275,6 +275,11 @@ module app.wizard {
                 then((modules: Module[]) => {
                     var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
 
+                    metadataMixinPromises = metadataMixinPromises.concat(
+                        this.contentType.getMetadata().map((name: MixinName) => {
+                            return new GetMixinByQualifiedNameRequest(name).sendAndParse();
+                    }));
+
                     modules.forEach((mdl: Module) => {
                         metadataMixinPromises = metadataMixinPromises.concat(
                             mdl.getMetaSteps().map((name: MixinName) => {
@@ -787,7 +792,6 @@ module app.wizard {
         }
 
         public checkContentCanBePublished(): boolean {
-
             if (!this.isContentFormValid) {
                 this.contentWizardStepForm.displayValidationErrors(true);
             }

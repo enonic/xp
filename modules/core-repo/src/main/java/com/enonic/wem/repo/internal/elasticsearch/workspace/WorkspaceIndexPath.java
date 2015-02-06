@@ -4,6 +4,8 @@ import com.enonic.wem.api.index.IndexPath;
 
 public class WorkspaceIndexPath
 {
+    public static final IndexPath TIMESTAMP = IndexPath.from( "_timestamp" );
+
     public static final IndexPath VERSION_ID = IndexPath.from( "versionId" );
 
     public static final IndexPath WORKSPACE_ID = IndexPath.from( "workspace" );

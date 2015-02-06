@@ -16,8 +16,6 @@ module app.wizard {
 
         private changePasswordButton: DialogButton;
 
-        private closeDialogButton: DialogButton;
-
         constructor() {
             super({
                 title: new api.ui.dialog.ModalDialogHeader("Change password")
@@ -64,11 +62,6 @@ module app.wizard {
         }
 
         private initializeActions() {
-
-            this.closeDialogButton = this.setCancelAction(new api.ui.Action("Cancel", "esc", true).onExecuted(() => {
-                this.close();
-            }));
-            this.closeDialogButton.setVisible(false);
 
             this.changePasswordButton = this.addAction(new api.ui.Action("Change Password", "").onExecuted(() => {
                 new api.security.SetUserPasswordRequest().

@@ -16,6 +16,8 @@ module api.app.view {
 
         private iconSize: number;
 
+        private renderable: boolean;
+
         constructor(model: M) {
             this.model = model;
         }
@@ -50,6 +52,11 @@ module api.app.view {
             return this;
         }
 
+        setRenderable(value: boolean): ViewItem<M> {
+            this.renderable = value;
+            return this;
+        }
+
         getModel(): M {
             return this.model;
         }
@@ -76,6 +83,10 @@ module api.app.view {
 
         getIconSize(): number {
             return this.iconSize;
+        }
+
+        isRenderable(): boolean {
+            return this.renderable;
         }
 
         equals(o: api.Equitable): boolean {

@@ -38,6 +38,29 @@ module api.ui.menu {
             return this;
         }
 
+        removeAction(action: api.ui.Action): ContextMenu {
+            var menuItem = this.getMenuItem(action);
+            if (menuItem) {
+                this.removeMenuItem(menuItem);
+                this.removeChild(menuItem);
+            }
+            return this;
+        }
+
+        removeActions(actions: api.ui.Action[]): ContextMenu {
+            actions.forEach((action: api.ui.Action) => {
+                this.removeAction(action);
+            });
+            return this;
+        }
+
+        setActions(actions: api.ui.Action[]): ContextMenu {
+            this.menuItems.length = 0;
+            this.removeChildren();
+            this.addActions(actions);
+            return this;
+        }
+
         setHideOnItemClick(hide: boolean): ContextMenu {
             this.hideOnItemClick = hide;
             return this;
@@ -89,6 +112,22 @@ module api.ui.menu {
             });
             this.menuItems.push(menuItem);
             return menuItem;
+        }
+
+        private removeMenuItem(menuItem: MenuItem) {
+            this.menuItems = this.menuItems.filter((item) => {
+                return item != menuItem;
+            })
+        }
+
+        private getMenuItem(action: api.ui.Action): MenuItem {
+            for (var i = 0; i < this.menuItems.length; i++) {
+                var menuItem = this.menuItems[i];
+                if (menuItem.getAction() == action) {
+                    return menuItem;
+                }
+            }
+            return undefined;
         }
 
         private hideMenuOnOutsideClick(evt: Event): void {

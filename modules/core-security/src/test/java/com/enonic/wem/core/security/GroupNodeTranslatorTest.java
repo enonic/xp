@@ -61,7 +61,6 @@ public class GroupNodeTranslatorTest
             id( NodeId.from( "id" ) ).
             name( PrincipalKeyNodeTranslator.toNodeName( groupKey ) ).
             data( rootDataSet ).
-            modifiedTime( Instant.now( clock ) ).
             build();
 
         final Group group = PrincipalNodeTranslator.groupFromNode( node );

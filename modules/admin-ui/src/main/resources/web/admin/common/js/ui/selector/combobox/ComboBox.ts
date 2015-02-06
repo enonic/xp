@@ -56,6 +56,8 @@ module api.ui.selector.combobox {
 
         private setNextInputFocusWhenMaxReached: boolean = true;
 
+        private ignoreNextFocus: boolean = false;
+
         private minWidth: number = -1;
 
         private optionSelectedListeners: {(event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>):void}[] = [];
@@ -178,6 +180,15 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.addOption(option);
         }
 
+        setIgnoreNextFocus(value: boolean): ComboBox<OPTION_DISPLAY_VALUE> {
+            this.ignoreNextFocus = value;
+            return this;
+        }
+
+        isIgnoreNextFocus(): boolean {
+            return this.ignoreNextFocus;
+        }
+
         /**
          * Invoked after
          */
@@ -285,7 +296,7 @@ module api.ui.selector.combobox {
 
             if (this.maximumOccurrencesReached()) {
                 this.input.setMaximumReached();
-                if (this.setNextInputFocusWhenMaxReached) {
+                if (this.setNextInputFocusWhenMaxReached && !this.ignoreNextFocus) {
                     api.dom.FormEl.moveFocusToNextFocusable(this.input);
                 }
                 this.dropdownHandle.setEnabled(false);
@@ -296,6 +307,7 @@ module api.ui.selector.combobox {
             if (this.maximumOccurrencesReached() && this.hideComboBoxWhenMaxReached) {
                 this.hide();
             }
+            this.ignoreNextFocus = false;
         }
 
         isOptionSelected(option: Option<OPTION_DISPLAY_VALUE>): boolean {

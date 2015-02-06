@@ -49,6 +49,9 @@ module api.liveedit {
             }
 
             this.menu = new api.ui.menu.ContextMenu(actions, false).setHideOnItemClick(false);
+            this.menu.onItemClicked((item: api.ui.menu.MenuItem) => {
+                this.hide();
+            });
             this.appendChild(this.menu);
 
             this.onClicked((e: MouseEvent) => {
@@ -71,6 +74,10 @@ module api.liveedit {
 
         moveBy(dx: number, dy: number) {
             this.menu.moveBy.call(this, dx, dy);
+        }
+
+        setActions(actions: api.ui.Action[]) {
+            this.menu.setActions(actions);
         }
 
         private startDrag(dragListener: (e: MouseEvent) => void, upListener: (e: MouseEvent) => void) {

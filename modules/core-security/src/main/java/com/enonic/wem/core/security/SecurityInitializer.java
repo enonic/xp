@@ -165,6 +165,12 @@ public final class SecurityInitializer
             build();
         addRole( createUserManagerAppRole );
 
+        final CreateRoleParams createUserManager = CreateRoleParams.create().
+            roleKey( RoleKeys.USER_MANAGER_ADMIN ).
+            displayName( "User Manager Administrator" ).
+            build();
+        addRole( createUserManager );
+
         final CreateRoleParams createContentManagerAppRole = CreateRoleParams.create().
             roleKey( RoleKeys.CONTENT_MANAGER_APP ).
             displayName( "Content Manager App" ).
@@ -172,7 +178,7 @@ public final class SecurityInitializer
         addRole( createContentManagerAppRole );
 
         final CreateRoleParams createContentManager = CreateRoleParams.create().
-            roleKey( RoleKeys.CONTENT_MANAGER ).
+            roleKey( RoleKeys.CONTENT_MANAGER_ADMIN ).
             displayName( "Content Manager Administrator" ).
             build();
         addRole( createContentManager );
@@ -190,7 +196,7 @@ public final class SecurityInitializer
         final CreateUserParams createSuperUser = CreateUserParams.create().
             userKey( SUPER_USER ).
             displayName( "Super User" ).
-            login( "admin" ). // TODO change to "su"
+            login( "su" ).
             password( "password" ).
             build();
         addUser( createSuperUser );

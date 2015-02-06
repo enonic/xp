@@ -3,7 +3,6 @@ package com.enonic.wem.repo.internal.entity.json;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 import org.junit.Test;
 
@@ -70,10 +69,6 @@ public class NodeJsonSerializerTest
             id( NodeId.from( "myId" ) ).
             parentPath( NodePath.ROOT ).
             name( NodeName.from( "my-name" ) ).
-            createdTime( LocalDateTime.of( 2013, 1, 2, 3, 4, 5, 0 ).toInstant( ZoneOffset.UTC ) ).
-            creator( PrincipalKey.from( "user:test:creator" ) ).
-            modifier( PrincipalKey.from( "user:test:modifier" ) ).
-            modifiedTime( LocalDateTime.of( 2013, 1, 2, 3, 4, 5, 0 ).toInstant( ZoneOffset.UTC ) ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).
                 defaultConfig( IndexConfig.MINIMAL ).

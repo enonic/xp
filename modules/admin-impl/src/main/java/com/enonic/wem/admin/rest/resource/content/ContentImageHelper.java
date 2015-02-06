@@ -7,8 +7,8 @@ import java.io.InputStream;
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.admin.rest.resource.BaseImageHelper;
-import com.enonic.wem.api.image.filter.ScaleMaxFilter;
 import com.enonic.wem.api.image.filter.ScaleSquareFilter;
+import com.enonic.wem.api.image.filter.ScaleWidthFilter;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.api.util.ImageHelper;
 
@@ -18,7 +18,7 @@ final class ContentImageHelper
     public enum ImageFilter
     {
         ScaleSquareFilter,
-        ScaleMax
+        ScaleWidthFilter
     }
 
     BufferedImage readImage( final ByteSource blob, final int size, final ImageFilter imageFilter )
@@ -36,15 +36,15 @@ final class ContentImageHelper
     private BufferedImage readImage( final InputStream inputStream, final int size, final ImageFilter imageFilter )
     {
         final BufferedImage image = ImageHelper.toBufferedImage( inputStream );
-        if(size > 0 && image.getWidth() >= size)
+        if(size > 0 && (image.getWidth() >= size))
         {
             switch ( imageFilter )
             {
                 case ScaleSquareFilter:
                     return new ScaleSquareFilter( size ).filter( image );
 
-                case ScaleMax:
-                    return new ScaleMaxFilter( size ).filter( image );
+                case ScaleWidthFilter:
+                    return new ScaleWidthFilter( size ).filter( image );
 
                 default:
                     throw new IllegalArgumentException( "Invalid image filter: " + imageFilter );

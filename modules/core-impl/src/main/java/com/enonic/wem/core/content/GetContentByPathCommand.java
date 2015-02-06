@@ -35,6 +35,11 @@ final class GetContentByPathCommand
         return translator.fromNode( node );
     }
 
+    static Builder create( final ContentPath contentPath, final AbstractContentCommand source )
+    {
+        return new Builder( contentPath, source );
+    }
+
     public static Builder create( final ContentPath contentPath )
     {
         return new Builder( contentPath );
@@ -47,6 +52,12 @@ final class GetContentByPathCommand
 
         public Builder( final ContentPath contentPath )
         {
+            this.contentPath = contentPath;
+        }
+
+        Builder( final ContentPath contentPath, AbstractContentCommand source )
+        {
+            super( source );
             this.contentPath = contentPath;
         }
 

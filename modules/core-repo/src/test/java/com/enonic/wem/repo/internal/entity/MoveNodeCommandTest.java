@@ -239,8 +239,6 @@ public class MoveNodeCommandTest
             setNodeId( NodeId.from( "newparent" ) ).
             build() );
 
-        printVersionIndex();
-
         assertEquals( 1, getVersions( node ).getHits() );
         assertEquals( 1, getVersions( child1 ).getHits() );
         assertEquals( 1, getVersions( child2 ).getHits() );
@@ -257,8 +255,6 @@ public class MoveNodeCommandTest
             newParent( newParent.path() ).
             build().
             execute();
-
-        printVersionIndex();
 
         assertEquals( 2, getVersions( node ).getHits() );
         assertEquals( 1, getVersions( child1 ).getHits() );

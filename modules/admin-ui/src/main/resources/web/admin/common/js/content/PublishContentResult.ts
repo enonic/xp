@@ -4,7 +4,7 @@ module api.content {
 
         successes: {id:string; name:string}[];
 
-        failures: {id:string; reason:string}[];
+        failures: {path:string; reason:string}[];
 
         deleted: string[];
     }

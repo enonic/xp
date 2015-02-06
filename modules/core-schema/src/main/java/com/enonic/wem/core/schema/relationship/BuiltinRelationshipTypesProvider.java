@@ -9,7 +9,6 @@ import org.osgi.service.component.annotations.Component;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
@@ -25,20 +24,13 @@ public final class BuiltinRelationshipTypesProvider
     private static final String RELATIONSHIP_TYPES_FOLDER = "relationship-types";
 
     // System Relationship Types
-    private static final RelationshipType DEFAULT =
-        createRelationshipType( RelationshipTypeName.DEFAULT, "Default", "relates to", "related of" );
+    private static final RelationshipType REFERENCE =
+        createRelationshipType( RelationshipTypeName.REFERENCE, "Reference", "references", "is referenced by" );
 
-    private static final RelationshipType PARENT = createRelationshipType( RelationshipTypeName.PARENT, "Parent", "parent of", "child of" );
+    private static final RelationshipType PARENT =
+        createRelationshipType( RelationshipTypeName.PARENT, "Parent", "is child of", "is parent of" );
 
-    private static final RelationshipType LINK = createRelationshipType( RelationshipTypeName.LINK, "Link", "links to", "linked by" );
-
-    private static final RelationshipType LIKE = createRelationshipType( RelationshipTypeName.LIKE, "Like", "likes", "liked by" );
-
-    private static final RelationshipType IMAGE =
-        createRelationshipType( RelationshipTypeName.IMAGE, "Image", "relates to image", "related of image",
-                                ContentTypeNames.from( ContentTypeName.imageMedia() ) );
-
-    private static final RelationshipType[] RELATIONSHIP_TYPES = {DEFAULT, PARENT, LINK, LIKE, IMAGE};
+    private static final RelationshipType[] RELATIONSHIP_TYPES = {REFERENCE, PARENT};
 
     private final RelationshipTypes types;
 

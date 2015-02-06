@@ -4,7 +4,6 @@
   <super-type>base:structured</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
-  <is-built-in>false</is-built-in>
   <allow-child-content>true</allow-child-content>
   <form>
     <input name="tag_unlimited" type="Tag">

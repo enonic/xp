@@ -175,7 +175,7 @@ module api.liveedit {
         }
 
         select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
-            new RegionSelectEvent(this).fire();
+            new RegionSelectedEvent(this).fire();
             super.select(clickPosition, menuPosition);
         }
 

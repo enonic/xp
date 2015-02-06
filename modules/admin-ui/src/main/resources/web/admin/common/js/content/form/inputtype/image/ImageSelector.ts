@@ -67,10 +67,10 @@ module api.content.form.inputtype.image {
             // requests aren't allowed until allowed contentTypes are specified
             this.contentRequestsAllowed = false;
 
-            this.relationshipTypeName = new RelationshipTypeName("default");
-
-            if (config.inputConfig.relationshipType != null) {
+            if (config.inputConfig.relationshipType) {
                 this.relationshipTypeName = new RelationshipTypeName(config.inputConfig.relationshipType);
+            } else {
+                this.relationshipTypeName = RelationshipTypeName.REFERENCE;
             }
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
@@ -151,7 +151,11 @@ module api.content.form.inputtype.image {
                 .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
                     this.comboBox.setInputIconUrl(relationshipType.getIconUrl());
-                    this.contentSummaryLoader.setAllowedContentTypes(relationshipType.getAllowedToTypes());
+                    var relationshipAllowedContentTypes = relationshipType.getAllowedToTypes() || [];
+                    var allowedContentTypes: string[] = relationshipAllowedContentTypes.length
+                        ? relationshipAllowedContentTypes
+                        : [ContentTypeName.IMAGE.toString()];
+                    this.contentSummaryLoader.setAllowedContentTypes(allowedContentTypes);
                     this.contentRequestsAllowed = true;
                     this.loadOptions("");
 

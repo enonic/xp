@@ -9,6 +9,7 @@ import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.xml.mapper.XmlContentTypeMapper;
 import com.enonic.wem.api.xml.model.XmlContentType;
 
@@ -30,9 +31,10 @@ public class XmlContentTypeSerializerTest
         set.add( layout );
 
         final ContentType.Builder contentTypeBuilder =
-            newContentType().name( "mymodule:all_schemas" ).addFormItem( set ).displayName( "All the Base Types" ).description(
-                "description" ).contentDisplayNameScript( "$('firstName') + ' ' + $('lastName')" ).superType(
-                ContentTypeName.from( "mymodule:content" ) ).setAbstract( false ).setFinal( true );
+            newContentType().name( "mymodule:all_schemas" ).addFormItem( set ).displayName( "All the Base Types" ).
+                metadata( MixinNames.from("mymodule:metadata") ).description( "description" ).contentDisplayNameScript(
+                "$('firstName') + ' ' + $('lastName')" ).superType( ContentTypeName.from( "mymodule:content" ) ).setAbstract(
+                false ).setFinal( true );
 
         final ContentType contentType = contentTypeBuilder.build();
 
@@ -59,6 +61,7 @@ public class XmlContentTypeSerializerTest
         assertEquals( "description", contentType.getDescription() );
         assertEquals( "$('firstName') + ' ' + $('lastName')", contentType.getContentDisplayNameScript() );
         assertEquals( "mymodule:content", contentType.getSuperType().toString() );
+        assertEquals( "[mymodule:metadata]", contentType.getMetadata().toString() );
         assertEquals( false, contentType.isAbstract() );
         assertEquals( true, contentType.isFinal() );
 

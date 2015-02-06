@@ -1,7 +1,10 @@
 var expectedJson = {
+
     "_id": "123456",
     "_name": "mycontent",
     "_path": "/a/b/mycontent",
+    "createdTime": "1975-01-08T00:00:00Z",
+    "creator": "user:system:anonymous",
     "data": {
         "a": 1,
         "b": 2,

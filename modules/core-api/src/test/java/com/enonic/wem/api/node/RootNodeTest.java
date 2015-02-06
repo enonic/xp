@@ -23,7 +23,7 @@ public class RootNodeTest
                 build() ).
             permissions( AccessControlList.of( AccessControlEntry.create().
                 allowAll().
-                principal( RoleKeys.CONTENT_MANAGER ).
+                principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
                 build() ) ).
             build();
 

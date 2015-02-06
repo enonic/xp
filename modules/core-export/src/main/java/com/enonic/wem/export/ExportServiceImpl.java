@@ -41,7 +41,7 @@ public class ExportServiceImpl
 
     private final AuthenticationInfo EXPORT_AUTH_INFO = AuthenticationInfo.create().
         user( User.ANONYMOUS ).
-        principals( RoleKeys.CONTENT_MANAGER ).
+        principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
         build();
 
     private final Context EXPORT_CONTEXT = ContextBuilder.create().

@@ -158,7 +158,7 @@ public class Content
 
     public PrincipalKey getCreator()
     {
-        return modifier;
+        return creator;
     }
 
     public PrincipalKey getModifier()
@@ -313,7 +313,6 @@ public class Content
             Objects.equals( data, other.data ) &&
             Objects.equals( metadata, other.metadata ) &&
             Objects.equals( page, other.page ) &&
-            Objects.equals( owner, other.owner ) &&
             Objects.equals( language, other.language );
     }
 
@@ -321,7 +320,7 @@ public class Content
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, metadata, page, owner,
+                             hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, metadata, page,
                              language );
     }
 

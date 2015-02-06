@@ -46,7 +46,8 @@ interface MediumEditorOptions {
 
 interface MediumEditorType {
 
-    new(elements: any[], options?: MediumEditorOptions): MediumEditorType;
+    new(elements: HTMLElement[], options?: MediumEditorOptions): MediumEditorType;
+    new(string, options?: MediumEditorOptions): MediumEditorType;
 
     deactivate(); // disables the editor
     activate(); // re-activates the editor
@@ -54,6 +55,10 @@ interface MediumEditorType {
 
     execAction(action: string, event: MouseEvent);
     checkActiveButtons();
+
+    isToolbarShown(): boolean;
+    hideToolbar();
+    showToolbar();
 
     onHideToolbar?: () => void;
     onShowToolbar?: () => void;

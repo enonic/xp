@@ -7,6 +7,9 @@ import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.page.CreatePageParams;
 import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.security.User;
 
 import static com.enonic.wem.api.content.page.Page.newPage;
 
@@ -40,11 +43,18 @@ final class CreatePageCommand
 
         final UpdateContentParams params = new UpdateContentParams().
             contentId( this.params.getContent() ).
+            modifier( getCurrentUser().getKey() ).
             editor( edit -> edit.page = page );
 
         return this.contentService.update( params );
     }
 
+    User getCurrentUser()
+    {
+        final Context context = ContextAccessor.current();
+
+        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
+    }
 
     public static final class Builder
     {

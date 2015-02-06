@@ -1,6 +1,5 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.time.Instant;
 import java.time.LocalDate;
 
 import org.junit.Test;
@@ -13,7 +12,6 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
@@ -75,8 +73,6 @@ public class NodeEditTest
             id( NodeId.from( "node" ) ).
             parentPath( NodePath.ROOT ).
             name( NodeName.from( "mynode" ) ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            createdTime( Instant.now() ).
             data( rootDataSet ).
             childOrder( ChildOrder.from( "modifiedTime DESC" ) ).
             indexConfigDocument( PatternIndexConfigDocument.create().

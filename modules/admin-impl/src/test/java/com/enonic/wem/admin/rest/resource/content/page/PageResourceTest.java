@@ -123,6 +123,7 @@ public class PageResourceTest
         return Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( "/" + name ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
             valid( true ).
             language( Locale.ENGLISH ).

@@ -806,6 +806,7 @@ public class ContentResourceTest
             name( name ).
             valid( true ).
             createdTime( Instant.parse( this.currentTime ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
             language( Locale.ENGLISH ).
             displayName( "My Content" ).
@@ -825,6 +826,7 @@ public class ContentResourceTest
             name( name ).
             valid( true ).
             createdTime( Instant.parse( this.currentTime ) ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
             language( Locale.ENGLISH ).
             displayName( "My Content" ).

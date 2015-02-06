@@ -67,7 +67,6 @@ public class UserNodeTranslatorTest
             id( NodeId.from( "id" ) ).
             name( PrincipalKeyNodeTranslator.toNodeName( userKey ) ).
             data( rootDataSet ).
-            modifiedTime( Instant.now( clock ) ).
             build();
 
         final User user = (User) PrincipalNodeTranslator.fromNode( node );

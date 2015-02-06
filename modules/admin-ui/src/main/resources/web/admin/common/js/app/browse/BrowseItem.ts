@@ -14,6 +14,8 @@ module api.app.browse {
 
         private iconClass: string;
 
+        private renderable: boolean;
+
         constructor(model: M) {
             this.model = model;
         }
@@ -43,6 +45,11 @@ module api.app.browse {
             return this;
         }
 
+        setRenderable(value: boolean): api.app.browse.BrowseItem<M> {
+            this.renderable = value;
+            return this;
+        }
+
         getIconClass(): string {
             return this.iconClass;
         }
@@ -66,12 +73,17 @@ module api.app.browse {
             return this.iconUrl;
         }
 
+        isRenderable(): boolean {
+            return this.renderable;
+        }
+
         toViewItem(): api.app.view.ViewItem<M> {
             return new api.app.view.ViewItem<M>(this.model)
                 .setIconUrl(this.iconUrl)
                 .setIconClass(this.iconClass)
                 .setDisplayName(this.displayName)
-                .setPath(this.path);
+                .setPath(this.path)
+                .setRenderable(this.isRenderable());
         }
 
         equals(o: api.Equitable): boolean {

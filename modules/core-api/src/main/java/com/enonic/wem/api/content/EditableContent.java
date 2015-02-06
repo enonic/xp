@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content;
 
 
+import java.time.Instant;
 import java.util.Locale;
 
 import com.enonic.wem.api.content.page.Page;
@@ -33,6 +34,14 @@ public class EditableContent
 
     public Locale language;
 
+    public PrincipalKey creator;
+
+    public Instant createdTime;
+
+    public PrincipalKey modifier;
+
+    public Instant modifiedTime;
+
     public EditableContent( final Content source )
     {
         this.source = source;
@@ -46,21 +55,25 @@ public class EditableContent
         this.permissions = source.getPermissions();
         this.owner = source.getOwner();
         this.language = source.getLanguage();
+        this.creator = source.getCreator();
+        this.createdTime = source.getCreatedTime();
     }
 
     public Content build()
     {
-        final Content.Builder builder = Content.newContent( this.source );
-        builder.displayName( displayName );
-        builder.data( data );
-        builder.metadata( metadata );
-        builder.page( page );
-        builder.valid( validated );
-        builder.thumbnail( thumbnail );
-        builder.inheritPermissions( inheritPermissions );
-        builder.permissions( permissions );
-        builder.owner( owner );
-        builder.language( language );
-        return builder.build();
+        return Content.newContent( this.source ).
+            displayName( displayName ).
+            data( data ).
+            metadata( metadata ).
+            page( page ).
+            valid( validated ).
+            thumbnail( thumbnail ).
+            inheritPermissions( inheritPermissions ).
+            permissions( permissions ).
+            owner( owner ).
+            language( language ).
+            creator( creator ).
+            createdTime( createdTime ).
+            build();
     }
 }

@@ -1,11 +1,9 @@
 var expectedJson = {
-    "_createdTime": "1970-01-01T00:00:00Z",
-    "_creator": "user:system:admin",
     "_id": "123456",
-    "_modifiedTime": "1970-01-01T00:00:00Z",
-    "_modifier": "user:system:admin",
     "_name": "mycontent",
     "_path": "/a/b/mycontent",
+    "createdTime": "1970-01-01T00:00:00Z",
+    "creator": "user:system:admin",
     "data": {
         "binaryReference": "abc",
         "boolean": [true, true, false],
@@ -41,6 +39,8 @@ var expectedJson = {
             "a": "1"
         }
     },
+    "modifiedTime": "1970-01-01T00:00:00Z",
+    "modifier": "user:system:admin",
     "page": {
         "config": {
             "a": "1"

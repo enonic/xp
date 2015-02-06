@@ -1,11 +1,8 @@
 package com.enonic.wem.api.node;
 
-import java.time.Instant;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.acl.AccessControlList;
 
 public class RootNode
@@ -17,8 +14,6 @@ public class RootNode
     {
         super( new Node.Builder().
             id( UUID ).
-            creator( RoleKeys.ADMIN ).
-            createdTime( Instant.now() ).
             parentPath( null ).
             name( RootNodeName.create() ).
             permissions( builder.permissions ).

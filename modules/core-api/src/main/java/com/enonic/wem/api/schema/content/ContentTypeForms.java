@@ -38,6 +38,7 @@ public class ContentTypeForms
         build();
 
     public static final Form MEDIA_IMAGE = Form.newForm().
+
         addFormItem( Input.newInput().name( "media" ).
             inputType( InputTypes.IMAGE_UPLOADER ).build() ).
         addFormItem( Input.newInput().name( "caption" ).

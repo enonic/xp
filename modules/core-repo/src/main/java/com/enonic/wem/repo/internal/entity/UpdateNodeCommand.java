@@ -1,8 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
 
-import java.time.Instant;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.node.AttachedBinaries;
@@ -82,15 +80,11 @@ public final class UpdateNodeCommand
 
     private Node createUpdatedNode( final Node editedNode )
     {
-        final Instant now = Instant.now();
-
         final NodePath parentPath = editedNode.path().getParentPath();
         final AccessControlList permissions =
             evaluatePermissions( parentPath, editedNode.inheritsPermissions(), editedNode.getPermissions() );
 
         final Node.Builder updateNodeBuilder = Node.newNode( editedNode ).
-            modifiedTime( now ).
-            modifier( getCurrentPrincipalKey() ).
             permissions( permissions );
         return updateNodeBuilder.build();
     }

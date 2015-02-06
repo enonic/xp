@@ -8,12 +8,12 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.ContentPropertyNames;
+import com.enonic.wem.api.content.CreateContentTranslatorParams;
 import com.enonic.wem.api.content.attachment.AttachmentNames;
 import com.enonic.wem.api.data.PropertyPath;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -65,13 +65,16 @@ public class ContentNodeTranslatorTest
         final PropertyTree contentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         contentData.setString( "test", "testValue" );
 
-        final CreateContentParams mycontent = new CreateContentParams().
+        final CreateContentTranslatorParams mycontent = CreateContentTranslatorParams.create().
             name( "mycontent" ).
+            displayName( "myDisplayName" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.from( "mymodule:my-content-type" ) ).
-            contentData( contentData );
+            contentData( contentData ).
+            creator( PrincipalKey.ofAnonymous() ).
+            build();
 
-        final CreateNodeParams createNode = translator.toCreateNode( mycontent );
+        final CreateNodeParams createNode = translator.toCreateNodeParams( mycontent );
 
         assertEquals( "testValue", createNode.getData().getString( CONTENT_DATA_PREFIX + ".test" ) );
     }
@@ -83,13 +86,16 @@ public class ContentNodeTranslatorTest
         final PropertyTree contentData = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         contentData.setString( "test", "testValue" );
 
-        final CreateContentParams mycontent = new CreateContentParams().
+        final CreateContentTranslatorParams mycontent = CreateContentTranslatorParams.create().
             name( "mycontent" ).
+            displayName( "myDisplayName" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.from( "mymodule:my-content-type" ) ).
-            contentData( contentData );
+            contentData( contentData ).
+            creator( PrincipalKey.ofAnonymous() ).
+            build();
 
-        final CreateNodeParams createNode = translator.toCreateNode( mycontent );
+        final CreateNodeParams createNode = translator.toCreateNodeParams( mycontent );
 
         final IndexConfigDocument indexConfigDocument = createNode.getIndexConfigDocument();
 
@@ -104,7 +110,7 @@ public class ContentNodeTranslatorTest
     public void translate_entityIndexConfig_disabled_for_form()
         throws Exception
     {
-        FormItemSet formItemSet = FormItemSet.newFormItemSet().
+        FormItemSet.newFormItemSet().
             name( "mySet" ).
             label( "My set" ).
             customText( "Custom text" ).
@@ -114,15 +120,16 @@ public class ContentNodeTranslatorTest
             addFormItem( Input.newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() ).
             build();
 
-        final Form form = Form.newForm().addFormItems( formItemSet.getFormItems() ).build();
-
-        final CreateContentParams mycontent = new CreateContentParams().
+        final CreateContentTranslatorParams mycontent = CreateContentTranslatorParams.create().
             name( "mycontent" ).
+            displayName( "myDisplayName" ).
+            creator( PrincipalKey.ofAnonymous() ).
             parent( ContentPath.ROOT ).
             contentData( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
-            type( ContentTypeName.from( "mymodule:my-content-type" ) );
+            type( ContentTypeName.from( "mymodule:my-content-type" ) ).
+            build();
 
-        final CreateNodeParams createNode = translator.toCreateNode( mycontent );
+        final CreateNodeParams createNode = translator.toCreateNodeParams( mycontent );
 
         final IndexConfigDocument indexConfigDocument = createNode.getIndexConfigDocument();
 
@@ -145,6 +152,7 @@ public class ContentNodeTranslatorTest
         data.addBoolean( "valid", true );
         data.addSet( "data" );
         data.addSet( "form" );
+        data.addString( ContentPropertyNames.CREATOR, "user:system:rmy" );
         PropertySet attachmentSet = data.addSet( "attachment" );
         attachmentSet.addString( "name", AttachmentNames.THUMBNAIL );
         attachmentSet.addString( "mimeType", "image/png" );
@@ -161,19 +169,6 @@ public class ContentNodeTranslatorTest
         Content content = translator.fromNode( node );
 
         Assert.assertNotNull( content.getThumbnail() );
-    }
-
-    @Test
-    public void test_create_node_with_empty_name()
-    {
-        final CreateContentParams mycontent = new CreateContentParams().
-            parent( ContentPath.ROOT ).
-            contentData( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
-            type( ContentTypeName.from( "mymodule:my-content-type" ) ).
-            displayName( "test Name" );
-        final CreateNodeParams createNodeParams = translator.toCreateNode( mycontent );
-        Assert.assertNotNull( createNodeParams );
-        Assert.assertEquals( createNodeParams.getName(), "test-name" );
     }
 
     @Test
@@ -196,6 +191,7 @@ public class ContentNodeTranslatorTest
         contentAsData.addBoolean( "valid", true );
         contentAsData.addSet( "data" );
         contentAsData.addSet( "form" );
+        contentAsData.addString( ContentPropertyNames.CREATOR, "user:system:rmy" );
 
         final Node node = Node.newNode().id( NodeId.from( "myId" ) ).
             parentPath( NodePath.ROOT ).

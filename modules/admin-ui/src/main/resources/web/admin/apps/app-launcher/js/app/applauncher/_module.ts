@@ -1,6 +1,5 @@
 ///<reference path='Applications.ts' />
 ///<reference path='AppTile.ts' />
-///<reference path='AppInfo.ts' />
 ///<reference path='AppSelectorListener.ts' />
 ///<reference path='AppSelector.ts' />
 ///<reference path='AppLauncher.ts' />

@@ -6,6 +6,7 @@ import com.google.common.base.Objects;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.BaseSchema;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 
 import static com.enonic.wem.api.form.Form.newForm;
 
@@ -26,6 +27,8 @@ public final class ContentType
 
     private final String contentDisplayNameScript;
 
+    private final MixinNames metadata;
+
     ContentType( final Builder builder )
     {
         super( builder );
@@ -44,6 +47,7 @@ public final class ContentType
         this.isBuiltIn = builder.isBuiltIn;
         this.form = builder.formBuilder.build();
         this.contentDisplayNameScript = builder.contentDisplayNameScript;
+        this.metadata = builder.metadata;
     }
 
     public static Builder newContentType()
@@ -96,6 +100,11 @@ public final class ContentType
         return contentDisplayNameScript;
     }
 
+    public MixinNames getMetadata()
+    {
+        return metadata;
+    }
+
 
     @Override
     public String toString()
@@ -104,6 +113,7 @@ public final class ContentType
         s.add( "name", getName() );
         s.add( "displayName", getDisplayName() );
         s.add( "description", getDescription() );
+        s.add( "metadata", metadata );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );
@@ -132,12 +142,17 @@ public final class ContentType
 
         private String contentDisplayNameScript;
 
+        private MixinNames metadata;
+
         private Builder()
         {
             super();
             formBuilder = newForm();
+            isAbstract = false;
+            isFinal = true;
             allowChildContent = true;
             isBuiltIn = false;
+            metadata = MixinNames.empty();
         }
 
         private Builder( final ContentType source )
@@ -153,6 +168,7 @@ public final class ContentType
                 this.formBuilder = newForm( source.form() );
             }
             this.contentDisplayNameScript = source.getContentDisplayNameScript();
+            this.metadata = source.metadata;
         }
 
         public Builder name( final ContentTypeName value )
@@ -230,6 +246,12 @@ public final class ContentType
         public Builder contentDisplayNameScript( final String contentDisplayNameScript )
         {
             this.contentDisplayNameScript = contentDisplayNameScript;
+            return this;
+        }
+
+        public Builder metadata( final MixinNames metadata )
+        {
+            this.metadata = metadata;
             return this;
         }
 

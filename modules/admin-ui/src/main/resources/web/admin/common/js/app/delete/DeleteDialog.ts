@@ -19,12 +19,6 @@ module api.app.remove {
 
             this.getEl().addClass("delete-dialog");
             this.appendChildToContentPanel(this.itemList);
-
-            this.setCancelAction(new CancelDeleteDialogAction());
-
-            this.getCancelAction().onExecuted(()=> {
-                this.close();
-            });
         }
 
         show() {

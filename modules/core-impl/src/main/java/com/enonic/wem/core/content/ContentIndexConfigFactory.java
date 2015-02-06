@@ -2,24 +2,24 @@ package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.CreateContentTranslatorParams;
 import com.enonic.wem.api.data.PropertyPath;
 import com.enonic.wem.api.index.IndexConfig;
 import com.enonic.wem.api.index.IndexConfigDocument;
 import com.enonic.wem.api.index.PatternIndexConfigDocument;
 
-import static com.enonic.wem.core.content.ContentPropertyNames.ATTACHMENT;
-import static com.enonic.wem.core.content.ContentPropertyNames.DATA;
-import static com.enonic.wem.core.content.ContentPropertyNames.FORM;
-import static com.enonic.wem.core.content.ContentPropertyNames.METADATA;
-import static com.enonic.wem.core.content.ContentPropertyNames.PAGE;
-import static com.enonic.wem.core.content.ContentPropertyNames.SITE;
-import static com.enonic.wem.core.content.ContentPropertyNames.TYPE;
-import static com.enonic.wem.core.content.ContentPropertyNames.VALID;
+import static com.enonic.wem.api.content.ContentPropertyNames.ATTACHMENT;
+import static com.enonic.wem.api.content.ContentPropertyNames.DATA;
+import static com.enonic.wem.api.content.ContentPropertyNames.FORM;
+import static com.enonic.wem.api.content.ContentPropertyNames.METADATA;
+import static com.enonic.wem.api.content.ContentPropertyNames.PAGE;
+import static com.enonic.wem.api.content.ContentPropertyNames.SITE;
+import static com.enonic.wem.api.content.ContentPropertyNames.TYPE;
+import static com.enonic.wem.api.content.ContentPropertyNames.VALID;
 
 class ContentIndexConfigFactory
 {
-    public static IndexConfigDocument create( final CreateContentParams params )
+    public static IndexConfigDocument create( final CreateContentTranslatorParams params )
     {
         return doCreateIndexConfig();
     }

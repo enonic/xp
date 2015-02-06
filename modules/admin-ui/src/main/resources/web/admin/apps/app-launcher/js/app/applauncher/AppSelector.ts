@@ -20,9 +20,7 @@ module app.launcher {
 
         private keyBindings: api.ui.KeyBinding[] = [];
 
-        private tilesPlaceholder:api.dom.DivEl;
-
-        private appTileSize:number = 110;
+        private tilesPlaceholder: api.dom.DivEl;
 
 
         constructor(applications: api.app.Application[]) {
@@ -93,7 +91,7 @@ module app.launcher {
             super.hide();
         }
 
-        getKeyBindings():api.ui.KeyBinding[] {
+        getKeyBindings(): api.ui.KeyBinding[] {
             return this.keyBindings;
         }
 
@@ -129,6 +127,17 @@ module app.launcher {
             while (i < n && !this.isAppTileVisible(idx));
 
             this.highlightAppTile(this.apps[idx], idx);
+        }
+
+        setAllowedApps(applications: api.app.Application[]) {
+            this.apps.forEach((application: api.app.Application) => {
+                var appTile = this.appTiles[application.getName()];
+                appTile.hide();
+            });
+            applications.forEach((application: api.app.Application) => {
+                var appTile = this.appTiles[application.getName()];
+                appTile.show();
+            });
         }
 
         private addAppTiles(applications: api.app.Application[], tilesPlaceholder: api.dom.DivEl) {
@@ -199,7 +208,7 @@ module app.launcher {
             }
         }
 
-        private getAppTileIndex(application: api.app.Application):number {
+        private getAppTileIndex(application: api.app.Application): number {
             var apps = app.launcher.Applications.getAllApps();
             for (var i = 0; i < apps.length; i++) {
                 if (apps[i] == application) {

@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -29,6 +30,13 @@ abstract class AbstractContentCommand
     Content getContent( final ContentId contentId )
     {
         return GetContentByIdCommand.create( contentId, this ).
+            build().
+            execute();
+    }
+
+    Content getContent( final ContentPath contentPath )
+    {
+        return GetContentByPathCommand.create( contentPath, this ).
             build().
             execute();
     }

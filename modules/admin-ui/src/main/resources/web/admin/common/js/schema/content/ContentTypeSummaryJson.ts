@@ -15,5 +15,7 @@ module api.schema.content {
         owner:string;
 
         modifier:string;
+
+        metadata:string[];
     }
 }

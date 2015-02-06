@@ -1,25 +1,21 @@
 module api.liveedit.text {
 
-    export class TextComponentViewer extends api.ui.Viewer<api.content.page.region.TextComponent> {
-
-        private namesAndIconView: api.app.NamesAndIconView;
+    export class TextComponentViewer extends api.ui.NamesAndIconViewer<api.content.page.region.TextComponent> {
 
         constructor() {
             super();
-            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            this.appendChild(this.namesAndIconView);
         }
 
-        setObject(textComponent: api.content.page.region.TextComponent) {
-            super.setObject(textComponent);
-            this.namesAndIconView.setMainName(textComponent.getText()).
-                setSubName(textComponent.getPath().toString()).
-                setIconClass('live-edit-font-icon-text');
-            return this;
+        resolveDisplayName(object: api.content.page.region.TextComponent): string {
+            return object.getText();
         }
 
-        getPreferredHeight(): number {
-            return 50;
+        resolveSubName(object: api.content.page.region.TextComponent, relativePath: boolean = false): string {
+            return object.getPath().toString();
+        }
+
+        resolveIconClass(object: api.content.page.region.TextComponent): string {
+            return "live-edit-font-icon-text";
         }
     }
 

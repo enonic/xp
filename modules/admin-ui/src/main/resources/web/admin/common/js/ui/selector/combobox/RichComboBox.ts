@@ -74,6 +74,15 @@ module api.ui.selector.combobox {
             this.addClass('rich-combobox');
         }
 
+        setIgnoreNextFocus(value: boolean = true): RichComboBox<OPTION_DISPLAY_VALUE> {
+            this.comboBox.setIgnoreNextFocus(value);
+            return this;
+        }
+
+        isIgnoreNextFocus(): boolean {
+            return this.comboBox.isIgnoreNextFocus();
+        }
+
         getSelectedDisplayValues(): OPTION_DISPLAY_VALUE[] {
             return this.comboBox.getSelectedOptions().map((option: Option<OPTION_DISPLAY_VALUE>) => {
                 return option.displayValue;
@@ -314,6 +323,9 @@ module api.ui.selector.combobox {
                     this.loader.unLoadedData(singleLoadListener);
                 };
                 this.loader.onLoadedData(singleLoadListener);
+                if(this.loader.isNotStarted()) {
+                    this.loader.load();
+                }
             }
             return this;
         }

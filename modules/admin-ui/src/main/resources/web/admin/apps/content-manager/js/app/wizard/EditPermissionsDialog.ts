@@ -74,11 +74,7 @@ module app.wizard {
             });
             this.addAction(this.applyAction, true);
 
-            this.setCancelAction(new api.ui.Action('Cancel', 'esc'));
-
             api.dom.Body.get().appendChild(this);
-
-            this.getCancelAction().onExecuted(()=> this.close());
 
             OpenEditPermissionsDialogEvent.on((event) => {
                 this.content = event.getContent();
