@@ -87,9 +87,10 @@ public final class FrameworkService
         throws Exception
     {
         this.felix.init();
+        getStartLevelService().setInitialBundleStartLevel( 1 );
         this.felix.start();
-
         setStartLevel( 1 );
+
         startActivators();
         setRunningStartLevel();
     }
@@ -97,7 +98,7 @@ public final class FrameworkService
     private void setRunningStartLevel()
     {
         // TODO: Load start-level from system.properties
-        setStartLevel( 40, event -> LOG.info( "Started Enonic XP in {} ms", ( System.currentTimeMillis() - this.startTime ) ) );
+        setStartLevel( 20, event -> LOG.info( "Started Enonic XP in {} ms", ( System.currentTimeMillis() - this.startTime ) ) );
     }
 
     public void stop()
