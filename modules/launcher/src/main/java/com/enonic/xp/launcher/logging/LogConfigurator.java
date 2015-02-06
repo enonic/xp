@@ -1,5 +1,7 @@
 package com.enonic.xp.launcher.logging;
 
+import org.slf4j.bridge.SLF4JBridgeHandler;
+
 import com.enonic.xp.launcher.env.Environment;
 
 public final class LogConfigurator
@@ -13,6 +15,6 @@ public final class LogConfigurator
 
     public void configure()
     {
-
+        SLF4JBridgeHandler.install();
     }
 }

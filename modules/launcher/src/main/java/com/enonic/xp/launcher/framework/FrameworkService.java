@@ -49,6 +49,7 @@ public final class FrameworkService
     private void createFramework()
     {
         final Map<String, Object> map = Maps.newHashMap();
+        map.put( LOG_LOGGER_PROP, new FrameworkLogger() );
         map.putAll( this.config );
         this.felix = new Felix( map );
     }
@@ -103,7 +104,7 @@ public final class FrameworkService
 
     public void stop()
     {
-        LOG.info( "Stopping OSGi framework" );
+        LOG.info( "Stopping server..." );
 
         try
         {
@@ -114,7 +115,7 @@ public final class FrameworkService
             LOG.error( e.getMessage(), e );
         }
 
-        LOG.info( "OSGi framework is stopped" );
+        LOG.info( "Server has been stopped" );
     }
 
     private void doStop()
