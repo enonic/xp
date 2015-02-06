@@ -6,4 +6,5 @@ dependencies {
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Impl'
+    instruction 'Export-Package', 'com.enonic.wem.core.*'
 }
