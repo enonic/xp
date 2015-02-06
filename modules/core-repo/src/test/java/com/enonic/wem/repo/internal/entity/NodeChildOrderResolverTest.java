@@ -22,7 +22,7 @@ public class NodeChildOrderResolverTest
 
         final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
             nodeDao( this.nodeDao ).
-            workspaceService( this.queryService ).
+            queryService( this.queryService ).
             nodePath( NodePath.newPath( "myPath" ).build() ).
             childOrder( childOrder ).
             build().
@@ -42,7 +42,7 @@ public class NodeChildOrderResolverTest
                 childOrder( childOrder ).
                 build() ).
             queryService( this.queryService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
@@ -52,7 +52,7 @@ public class NodeChildOrderResolverTest
         final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
             nodePath( NodePath.ROOT ).
             queryService( this.queryService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
@@ -77,7 +77,7 @@ public class NodeChildOrderResolverTest
         final ChildOrder resolvedOrder = NodeChildOrderResolver.create().
             nodePath( parent.path() ).
             queryService( this.queryService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).

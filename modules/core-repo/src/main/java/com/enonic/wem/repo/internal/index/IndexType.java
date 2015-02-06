@@ -3,7 +3,7 @@ package com.enonic.wem.repo.internal.index;
 public enum IndexType
 {
     _DEFAULT_,
-    WORKSPACE,
+    BRANCH,
     VERSION,
     NODE;
 

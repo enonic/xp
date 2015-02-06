@@ -20,15 +20,15 @@ import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpressions;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
-import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
+import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
+import com.enonic.wem.repo.internal.branch.BranchContext;
 
 public class PushNodesCommand
     extends AbstractNodeCommand
 {
-    private final Workspace target;
+    private final Branch target;
 
     private final NodeIds ids;
 
@@ -59,7 +59,7 @@ public class PushNodesCommand
             final NodeComparison nodeComparison = CompareNodeCommand.create().
                 nodeId( node.id() ).
                 versionService( this.versionService ).
-                workspaceService( this.workspaceService ).
+                branchService( this.branchService ).
                 target( this.target ).
                 build().
                 execute();
@@ -107,7 +107,7 @@ public class PushNodesCommand
         {
             ContextBuilder.create().
                 authInfo( context.getAuthInfo() ).
-                workspace( this.target ).
+                branch( this.target ).
                 repositoryId( context.getRepositoryId() ).
                 build().runWith( () -> updateNodeMetadata( child ) );
 
@@ -117,13 +117,13 @@ public class PushNodesCommand
 
     private void doPushNode( final Context context, final Node node, final NodeVersionId nodeVersionId )
     {
-        this.workspaceService.store( StoreWorkspaceDocument.create().
+        this.branchService.store( StoreBranchDocument.create().
             nodeVersionId( nodeVersionId ).
             node( node ).
-            build(), WorkspaceContext.from( this.target, context.getRepositoryId() ) );
+            build(), BranchContext.from( this.target, context.getRepositoryId() ) );
 
         this.indexService.store( node, nodeVersionId, IndexContext.create().
-            workspace( this.target ).
+            branch( this.target ).
             repositoryId( context.getRepositoryId() ).
             authInfo( context.getAuthInfo() ).
             build() );
@@ -152,7 +152,7 @@ public class PushNodesCommand
     {
         final ContextBuilder targetContext = ContextBuilder.create().
             repositoryId( currentContext.getRepositoryId() ).
-            workspace( target );
+            branch( target );
 
         if ( currentContext.getAuthInfo() != null )
         {
@@ -165,7 +165,7 @@ public class PushNodesCommand
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private Workspace target;
+        private Branch target;
 
         private NodeIds ids;
 
@@ -174,7 +174,7 @@ public class PushNodesCommand
             super();
         }
 
-        public Builder target( final Workspace target )
+        public Builder target( final Branch target )
         {
             this.target = target;
             return this;

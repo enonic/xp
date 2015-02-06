@@ -4,8 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.collect.Multimap;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.workspace.Workspace;
 
 public interface PortalRequest
 {
@@ -13,7 +13,7 @@ public interface PortalRequest
 
     public String getMethod();
 
-    public Workspace getWorkspace();
+    public Branch getBranch();
 
     public ContentPath getContentPath();
 

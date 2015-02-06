@@ -45,7 +45,7 @@ public class ReorderChildNodeCommandTest
             indexService( this.indexService ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             build().
             execute();
@@ -87,7 +87,7 @@ public class ReorderChildNodeCommandTest
             indexService( this.indexService ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             build().
             execute();
@@ -128,7 +128,7 @@ public class ReorderChildNodeCommandTest
             indexService( this.indexService ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             build().
             execute();
@@ -165,7 +165,7 @@ public class ReorderChildNodeCommandTest
             childOrder( ChildOrder.create().add( FieldOrderExpr.create( indexPath, direction ) ).build() ).
             nodeDao( nodeDao ).
             versionService( versionService ).
-            workspaceService( workspaceService ).
+            branchService( branchService ).
             queryService( queryService ).
             indexService( indexService ).
             build().

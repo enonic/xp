@@ -30,7 +30,7 @@ public class RenameNodeCommandTest
                 build() ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             indexService( this.indexService ).
             build().
@@ -84,7 +84,7 @@ public class RenameNodeCommandTest
                 build() ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             indexService( this.indexService ).
             build().

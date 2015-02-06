@@ -28,7 +28,7 @@ import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.SecurityService;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
 
@@ -84,7 +84,7 @@ public class PageResourceTest
         Content content = createPage( "content-id", "content-name", "mymodule:content-type" );
 
         Mockito.when( this.pageService.update( Mockito.isA( UpdatePageParams.class ) ) ).thenThrow(
-            new ContentNotFoundException( content.getId(), Workspace.from( "workspace" ) ) );
+            new ContentNotFoundException( content.getId(), Branch.from( "branch" ) ) );
 
         String jsonString = request().path( "content/page/update" ).
             entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

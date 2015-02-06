@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content;
 
-import java.time.Instant;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,8 +69,6 @@ final class UpdateContentCommand
         final boolean validated = validateEditedContent( editedContent );
 
         editedContent = Content.newContent( editedContent ).
-            modifier( this.params.getModifier() ).
-            modifiedTime( Instant.now() ).
             valid( validated ).
             build();
         editedContent = processContent( contentBeforeChange, editedContent );

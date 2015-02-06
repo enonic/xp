@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.resource.base;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.services.PortalServices;
 
@@ -12,7 +12,7 @@ public abstract class BaseResource
 {
     protected RenderMode mode;
 
-    protected Workspace workspace;
+    protected Branch branch;
 
     protected ContentPath contentPath;
 

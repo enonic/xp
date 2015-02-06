@@ -6,32 +6,32 @@ import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.node.NodeComparison;
 import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.repo.internal.index.query.NodeWorkspaceVersion;
+import com.enonic.wem.api.branch.Branch;
+import com.enonic.wem.repo.internal.index.query.NodeBranchVersion;
 import com.enonic.wem.repo.internal.version.VersionService;
-import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
-import com.enonic.wem.repo.internal.workspace.WorkspaceService;
+import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.branch.BranchService;
 
 public class AbstractCompareNodeCommand
 {
-    private final Workspace target;
+    private final Branch target;
 
     private final VersionService versionService;
 
-    private final WorkspaceService workspaceService;
+    private final BranchService branchService;
 
     AbstractCompareNodeCommand( Builder builder )
     {
         target = builder.target;
         versionService = builder.versionService;
-        this.workspaceService = builder.workspaceService;
+        this.branchService = builder.branchService;
     }
 
     NodeComparison doCompareNodeVersions( final Context context, final NodeId nodeId )
     {
-        final NodeWorkspaceVersion sourceWsVersion = this.workspaceService.get( nodeId, WorkspaceContext.from( context ) );
-        final NodeWorkspaceVersion targetWsVersion =
-            this.workspaceService.get( nodeId, WorkspaceContext.from( this.target, context.getRepositoryId() ) );
+        final NodeBranchVersion sourceWsVersion = this.branchService.get( nodeId, BranchContext.from( context ) );
+        final NodeBranchVersion targetWsVersion =
+            this.branchService.get( nodeId, BranchContext.from( this.target, context.getRepositoryId() ) );
 
         final CompareStatus compareStatus = CompareStatusResolver.create().
             repositoryId( context.getRepositoryId() ).
@@ -47,18 +47,18 @@ public class AbstractCompareNodeCommand
 
     public static class Builder<B extends Builder>
     {
-        private Workspace target;
+        private Branch target;
 
         private VersionService versionService;
 
-        private WorkspaceService workspaceService;
+        private BranchService branchService;
 
         Builder()
         {
         }
 
         @SuppressWarnings("unchecked")
-        public B target( final Workspace target )
+        public B target( final Branch target )
         {
             this.target = target;
             return (B) this;
@@ -72,9 +72,9 @@ public class AbstractCompareNodeCommand
         }
 
         @SuppressWarnings("unchecked")
-        public B workspaceService( final WorkspaceService workspaceService )
+        public B branchService( final BranchService branchService )
         {
-            this.workspaceService = workspaceService;
+            this.branchService = branchService;
             return (B) this;
         }
 

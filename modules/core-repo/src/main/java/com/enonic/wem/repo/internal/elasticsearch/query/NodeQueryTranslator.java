@@ -24,7 +24,7 @@ public class NodeQueryTranslator
 
         final ElasticsearchQuery.Builder queryBuilder = ElasticsearchQuery.create().
             index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
-            indexType( indexContext.getWorkspace().getName() ).
+            indexType( indexContext.getBranch().getName() ).
             query( queryWithQueryFilters ).
             setAggregations( AggregationQueryBuilderFactory.create( nodeQuery.getAggregationQueries() ) ).
             sortBuilders( SortQueryBuilderFactory.create( nodeQuery.getOrderBys() ) ).

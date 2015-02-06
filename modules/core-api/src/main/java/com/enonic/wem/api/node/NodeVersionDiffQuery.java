@@ -1,6 +1,6 @@
 package com.enonic.wem.api.node;
 
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 public class NodeVersionDiffQuery
 {
@@ -8,9 +8,9 @@ public class NodeVersionDiffQuery
 
     private final NodePath nodePath;
 
-    private final Workspace source;
+    private final Branch source;
 
-    private final Workspace target;
+    private final Branch target;
 
     private final int size;
 
@@ -31,12 +31,12 @@ public class NodeVersionDiffQuery
         return new Builder();
     }
 
-    public Workspace getSource()
+    public Branch getSource()
     {
         return source;
     }
 
-    public Workspace getTarget()
+    public Branch getTarget()
     {
         return target;
     }
@@ -62,9 +62,9 @@ public class NodeVersionDiffQuery
 
         private NodePath nodePath;
 
-        private Workspace source;
+        private Branch source;
 
-        private Workspace target;
+        private Branch target;
 
         private int size = -1;
 
@@ -86,13 +86,13 @@ public class NodeVersionDiffQuery
             return this;
         }
 
-        public Builder source( final Workspace source )
+        public Builder source( final Branch source )
         {
             this.source = source;
             return this;
         }
 
-        public Builder target( final Workspace target )
+        public Builder target( final Branch target )
         {
             this.target = target;
             return this;

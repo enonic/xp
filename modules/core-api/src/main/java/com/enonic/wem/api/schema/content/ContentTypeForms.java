@@ -2,6 +2,7 @@ package com.enonic.wem.api.schema.content;
 
 import java.util.LinkedHashMap;
 
+import com.enonic.wem.api.content.ContentPropertyNames;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
@@ -39,7 +40,7 @@ public class ContentTypeForms
 
     public static final Form MEDIA_IMAGE = Form.newForm().
 
-        addFormItem( Input.newInput().name( "media" ).
+        addFormItem( Input.newInput().name( ContentPropertyNames.MEDIA ).
             inputType( InputTypes.IMAGE_UPLOADER ).build() ).
         addFormItem( Input.newInput().name( "caption" ).
             inputType( InputTypes.TEXT_AREA ).
@@ -182,7 +183,7 @@ public class ContentTypeForms
         build();
 
     public static final Form MEDIA_DEFAULT = Form.newForm().
-        addFormItem( Input.newInput().name( "media" ).
+        addFormItem( Input.newInput().name( ContentPropertyNames.MEDIA ).
             inputType( InputTypes.FILE_UPLOADER ).build() ).
         build();
 

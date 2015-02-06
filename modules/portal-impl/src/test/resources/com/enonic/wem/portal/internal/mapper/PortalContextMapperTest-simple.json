@@ -2,7 +2,7 @@
   "uri": "/portal/live/online/a/b",
   "method": "GET",
   "mode": "live",
-  "workspace": "draft",
+  "branch": "draft",
   "params": {
     "param3": [
       "value3-B",

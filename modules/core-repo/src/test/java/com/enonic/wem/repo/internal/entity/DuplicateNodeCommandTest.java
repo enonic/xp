@@ -34,7 +34,7 @@ public class DuplicateNodeCommandTest
             indexService( indexService ).
             nodeDao( nodeDao ).
             queryService( queryService ).
-            workspaceService( workspaceService ).
+            branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
             build().
             execute();
@@ -65,7 +65,7 @@ public class DuplicateNodeCommandTest
             indexService( indexService ).
             nodeDao( nodeDao ).
             queryService( queryService ).
-            workspaceService( workspaceService ).
+            branchService( branchService ).
             binaryBlobStore( binaryBlobStore ).
             build().
             execute();
@@ -240,7 +240,7 @@ public class DuplicateNodeCommandTest
             indexService( indexService ).
             nodeDao( nodeDao ).
             queryService( queryService ).
-            workspaceService( workspaceService ).
+            branchService( branchService ).
             binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();

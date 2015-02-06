@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.DeleteContentParams;
@@ -13,7 +14,6 @@ import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.NodeState;
-import com.enonic.wem.api.workspace.Workspace;
 
 public class DeleteContentCommandTest
 {
@@ -45,7 +45,7 @@ public class DeleteContentCommandTest
         Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );
 
-        Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Workspace.class ) ) ).
+        Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
             thenReturn( new NodeComparison( id, new CompareStatus( CompareStatus.Status.NEW ) ) );
 
         Mockito.when( this.nodeService.deleteByPath( Mockito.mock( NodePath.class ) ) ).
@@ -78,7 +78,7 @@ public class DeleteContentCommandTest
         Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );
 
-        Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Workspace.class ) ) ).
+        Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
             thenReturn( new NodeComparison( id, new CompareStatus( CompareStatus.Status.EQUAL ) ) );
 
         Mockito.when( this.nodeService.deleteByPath( Mockito.mock( NodePath.class ) ) ).

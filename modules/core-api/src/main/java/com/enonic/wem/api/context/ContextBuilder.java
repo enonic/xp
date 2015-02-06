@@ -7,7 +7,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 public final class ContextBuilder
 {
@@ -30,12 +30,12 @@ public final class ContextBuilder
         return attribute( value );
     }
 
-    public ContextBuilder workspace( final String value )
+    public ContextBuilder branch( final String value )
     {
-        return workspace( Workspace.from( value ) );
+        return branch( Branch.from( value ) );
     }
 
-    public ContextBuilder workspace( final Workspace value )
+    public ContextBuilder branch( final Branch value )
     {
         return attribute( value );
     }

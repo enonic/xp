@@ -46,7 +46,7 @@ public class ExportServiceImpl
 
     private final Context EXPORT_CONTEXT = ContextBuilder.create().
         repositoryId( ContentConstants.CONTENT_REPO.getId() ).
-        workspace( ContentConstants.WORKSPACE_DRAFT ).
+        branch( ContentConstants.BRANCH_DRAFT ).
         authInfo( EXPORT_AUTH_INFO ).
         build();
 

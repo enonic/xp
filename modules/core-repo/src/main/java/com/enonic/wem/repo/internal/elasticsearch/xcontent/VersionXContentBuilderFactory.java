@@ -27,7 +27,7 @@ public class VersionXContentBuilderFactory
         }
         catch ( Exception e )
         {
-            throw new IndexException( "Failed to build xContent for WorkspaceDocument", e );
+            throw new IndexException( "Failed to build xContent for BranchDocument", e );
         }
 
     }

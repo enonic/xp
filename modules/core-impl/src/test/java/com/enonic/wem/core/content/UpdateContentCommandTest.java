@@ -57,7 +57,6 @@ public class UpdateContentCommandTest
         ContentId contentId = ContentId.from( "mycontent" );
 
         UpdateContentParams params = new UpdateContentParams().
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
             contentId( contentId ).
             editor( edit -> {
             } );
@@ -90,7 +89,6 @@ public class UpdateContentCommandTest
         Content existingContent = createContent( existingContentData );
 
         UpdateContentParams params = new UpdateContentParams().
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
             contentId( existingContent.getId() ).
             editor( edit -> {
             } );

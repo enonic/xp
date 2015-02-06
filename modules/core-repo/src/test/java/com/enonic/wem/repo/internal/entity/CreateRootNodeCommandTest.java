@@ -26,7 +26,7 @@ public class CreateRootNodeCommandTest
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             build().
             execute();
 

@@ -4,10 +4,10 @@ import org.junit.Before;
 
 import junit.framework.Assert;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.script.AbstractScriptTest;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.wem.script.command.CommandHandler;
@@ -26,7 +26,7 @@ public abstract class AbstractHandlerTest
     {
         this.context = new PortalContext();
         this.context.setMode( RenderMode.LIVE );
-        this.context.setWorkspace( Workspace.from( "draft" ) );
+        this.context.setBranch( Branch.from( "draft" ) );
         this.context.setModule( ModuleKey.from( "mymodule" ) );
         this.context.setBaseUri( "/portal" );
 

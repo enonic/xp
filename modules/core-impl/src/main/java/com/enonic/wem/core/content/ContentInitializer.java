@@ -106,7 +106,7 @@ public final class ContentInitializer
 
             LOG.info( "Created content root-node: " + root.path() );
 
-            nodeService.push( NodeIds.from( root.id() ), ContentConstants.WORKSPACE_ONLINE );
+            nodeService.push( NodeIds.from( root.id() ), ContentConstants.BRANCH_ONLINE );
         }
     }
 
@@ -149,7 +149,7 @@ public final class ContentInitializer
                 permissions( CONTENT_REPO_DEFAULT_ACL ).
                 build() );
 
-            nodeService.push( NodeIds.from( rootNode.id() ), ContentConstants.WORKSPACE_ONLINE );
+            nodeService.push( NodeIds.from( rootNode.id() ), ContentConstants.BRANCH_ONLINE );
 
             return rootNode;
         }

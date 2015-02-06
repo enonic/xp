@@ -6,6 +6,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.ApplyNodePermissionsParams;
@@ -44,15 +45,14 @@ import com.enonic.wem.api.node.SyncWorkResolverParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.security.SystemConstants;
 import com.enonic.wem.api.util.BinaryReference;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
+import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexService;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 import com.enonic.wem.repo.internal.version.VersionService;
-import com.enonic.wem.repo.internal.workspace.WorkspaceService;
 
 @Component(immediate = true)
 public class NodeServiceImpl
@@ -62,7 +62,7 @@ public class NodeServiceImpl
 
     private NodeDao nodeDao;
 
-    private WorkspaceService workspaceService;
+    private BranchService branchService;
 
     private VersionService versionService;
 
@@ -86,7 +86,7 @@ public class NodeServiceImpl
         if ( node == null )
         {
             throw new NodeNotFoundException(
-                "Node with id " + id + " not found in workspace " + ContextAccessor.current().getWorkspace().getName() );
+                "Node with id " + id + " not found in branch " + ContextAccessor.current().getBranch().getName() );
         }
 
         return node;
@@ -98,7 +98,7 @@ public class NodeServiceImpl
             id( id ).
             resolveHasChild( resolveHasChild ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
@@ -118,7 +118,7 @@ public class NodeServiceImpl
             nodePath( path ).
             resolveHasChild( resolveHasChild ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
@@ -136,7 +136,7 @@ public class NodeServiceImpl
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             build().
             execute();
     }
@@ -148,7 +148,7 @@ public class NodeServiceImpl
             paths( paths ).
             resolveHasChild( true ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
@@ -163,7 +163,7 @@ public class NodeServiceImpl
             params( params ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             indexService( this.indexService ).
             versionService( this.versionService ).
             build().
@@ -178,7 +178,7 @@ public class NodeServiceImpl
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             versionService( this.versionService ).
             build().
@@ -197,7 +197,7 @@ public class NodeServiceImpl
             params( params ).
             indexService( this.indexService ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
@@ -212,7 +212,7 @@ public class NodeServiceImpl
             params( params ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
@@ -227,7 +227,7 @@ public class NodeServiceImpl
             params( params ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             queryService( this.queryService ).
             build().
@@ -241,7 +241,7 @@ public class NodeServiceImpl
             nodeId( id ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             queryService( this.queryService ).
             build().
@@ -255,7 +255,7 @@ public class NodeServiceImpl
             nodePath( path ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             queryService( this.queryService ).
             build().
@@ -263,12 +263,12 @@ public class NodeServiceImpl
     }
 
     @Override
-    public PushNodesResult push( final NodeIds ids, final Workspace target )
+    public PushNodesResult push( final NodeIds ids, final Branch target )
     {
         return PushNodesCommand.create().
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             versionService( this.versionService ).
             ids( ids ).
@@ -284,7 +284,7 @@ public class NodeServiceImpl
             id( nodeId ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             indexService( this.indexService ).
             versionService( this.versionService ).
             binaryBlobStore( this.binaryBlobStore ).
@@ -300,7 +300,7 @@ public class NodeServiceImpl
             newParent( parentNodePath ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             indexService( this.indexService ).
             versionService( this.versionService ).
             build().
@@ -309,25 +309,25 @@ public class NodeServiceImpl
 
 
     @Override
-    public NodeComparison compare( final NodeId nodeId, final Workspace target )
+    public NodeComparison compare( final NodeId nodeId, final Branch target )
     {
         return CompareNodeCommand.create().
             nodeId( nodeId ).
             target( target ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             build().
             execute();
     }
 
     @Override
-    public NodeComparisons compare( final NodeIds nodeIds, final Workspace target )
+    public NodeComparisons compare( final NodeIds nodeIds, final Branch target )
     {
         return CompareNodesCommand.create().
             nodeIds( nodeIds ).
             target( target ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             build().
             execute();
     }
@@ -349,9 +349,9 @@ public class NodeServiceImpl
     {
         return GetActiveNodeVersionsCommand.create().
             nodeId( params.getNodeId() ).
-            workspaces( params.getWorkspaces() ).
+            branches( params.getBranches() ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             indexService( this.indexService ).
@@ -382,14 +382,14 @@ public class NodeServiceImpl
     public ResolveSyncWorkResult resolveSyncWork( final SyncWorkResolverParams params )
     {
         return ResolveSyncWorkCommand.create().
-            target( params.getWorkspace() ).
+            target( params.getBranch() ).
             nodeId( params.getNodeId() ).
             includeChildren( params.isIncludeChildren() ).
             indexService( indexService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             build().
             execute();
     }
@@ -400,7 +400,7 @@ public class NodeServiceImpl
         return SetNodeChildOrderCommand.create().
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             indexService( this.indexService ).
             childOrder( params.getChildOrder() ).
@@ -418,7 +418,7 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             build().
             execute();
     }
@@ -438,7 +438,7 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             build().
             execute();
     }
@@ -453,7 +453,7 @@ public class NodeServiceImpl
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             binaryBlobStore( this.binaryBlobStore ).
             build().
             execute();
@@ -465,7 +465,7 @@ public class NodeServiceImpl
         return CreateRootNodeCommand.create().
             params( params ).
             queryService( this.queryService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
@@ -481,7 +481,7 @@ public class NodeServiceImpl
             nodeState( nodeState ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
             build().
@@ -514,9 +514,9 @@ public class NodeServiceImpl
     }
 
     @Reference
-    public void setWorkspaceService( final WorkspaceService workspaceService )
+    public void setBranchService( final BranchService branchService )
     {
-        this.workspaceService = workspaceService;
+        this.branchService = branchService;
     }
 
     @Reference

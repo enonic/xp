@@ -12,12 +12,14 @@ import com.enonic.wem.api.content.ContentPropertyNames;
 import com.enonic.wem.api.content.CreateContentTranslatorParams;
 import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.Metadatas;
+import com.enonic.wem.api.content.UpdateContentTranslatorParams;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.AttachmentNames;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.data.PropertySet;
+import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
@@ -55,18 +57,22 @@ public final class ContentDataSerializer
         this.mixinService = mixinService;
     }
 
-    public void populatedEditedProperties( final Content content, final PropertySet contentAsData,
-                                           final CreateAttachments createAttachments )
+    public PropertyTree toNodeData( final UpdateContentTranslatorParams params )
     {
+        final PropertyTree newPropertyTree = new PropertyTree();
+        final PropertySet contentAsData = newPropertyTree.getRoot();
+
+        final Content content = params.getEditedContent();
+        final CreateAttachments createAttachments = params.getCreateAttachments();
+        final PropertyTree existingData = params.getEditedContent().getData();
+
         contentAsData.setBoolean( ContentPropertyNames.VALID, content.isValid() );
         contentAsData.ifNotNull().addString( DISPLAY_NAME, content.getDisplayName() );
         contentAsData.ifNotNull().addString( TYPE, content.getType().toString() );
         contentAsData.ifNotNull().addString( OWNER, content.getOwner() != null ? content.getOwner().toString() : null );
         contentAsData.ifNotNull().addString( LANGUAGE, content.getLanguage() != null ? content.getLanguage().toLanguageTag() : null );
         contentAsData.ifNotNull().addInstant( MODIFIED_TIME, content.getModifiedTime() );
-        contentAsData.ifNotNull().addString( MODIFIER, content.getModifier() != null
-            ? content.getModifier().toString()
-            : PrincipalKey.ofAnonymous().toString() );
+        contentAsData.ifNotNull().addString( MODIFIER, params.getModifier().toString() );
         contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
         contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
@@ -77,7 +83,7 @@ public final class ContentDataSerializer
 
             for ( final Metadata metadata : content.getAllMetadata() )
             {
-                metadataSet.addSet( metadata.getName().getLocalName(), metadata.getData().getRoot().copy( contentAsData.getTree() ) );
+                metadataSet.addSet( metadata.getName().getLocalName(), metadata.getData().getRoot().copy( existingData ) );
             }
         }
 
@@ -94,6 +100,8 @@ public final class ContentDataSerializer
         {
             PAGE_SERIALIZER.toData( content.getPage(), contentAsData );
         }
+
+        return newPropertyTree;
     }
 
     void toCreateNodeData( final CreateContentTranslatorParams params, final PropertySet contentAsData )

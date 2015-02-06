@@ -29,7 +29,7 @@ public class MoveNodeCommandTest
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).
@@ -58,7 +58,7 @@ public class MoveNodeCommandTest
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).
@@ -87,7 +87,7 @@ public class MoveNodeCommandTest
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).
@@ -122,7 +122,7 @@ public class MoveNodeCommandTest
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).
@@ -156,7 +156,7 @@ public class MoveNodeCommandTest
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).
@@ -191,7 +191,7 @@ public class MoveNodeCommandTest
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).
@@ -248,7 +248,7 @@ public class MoveNodeCommandTest
         final Node movedNode = MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).

@@ -3,8 +3,7 @@ package com.enonic.wem.api.node;
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.util.BinaryReference;
-import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.api.workspace.Workspaces;
+import com.enonic.wem.api.branch.Branch;
 
 public interface NodeService
 {
@@ -14,7 +13,7 @@ public interface NodeService
 
     Node rename( RenameNodeParams params );
 
-    PushNodesResult push( NodeIds ids, Workspace target );
+    PushNodesResult push( NodeIds ids, Branch target );
 
     Node deleteById( NodeId id );
 
@@ -36,9 +35,9 @@ public interface NodeService
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 
-    NodeComparison compare( NodeId id, Workspace target );
+    NodeComparison compare( NodeId id, Branch target );
 
-    NodeComparisons compare( NodeIds ids, Workspace target );
+    NodeComparisons compare( NodeIds ids, Branch target );
 
     FindNodeVersionsResult findVersions( GetNodeVersionsParams params );
 

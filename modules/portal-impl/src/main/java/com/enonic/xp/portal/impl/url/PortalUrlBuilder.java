@@ -8,8 +8,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.net.UrlEscapers;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
@@ -31,9 +31,9 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         return this.context.getBaseUri();
     }
 
-    private Workspace getWorkspace()
+    private Branch getBranch()
     {
-        return this.context.getWorkspace();
+        return this.context.getBranch();
     }
 
     public final void setParams( final T params )
@@ -113,7 +113,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         params.putAll( this.params.getParams() );
-        appendPart( url, getWorkspace().toString() );
+        appendPart( url, getBranch().toString() );
     }
 
     @Override

@@ -13,11 +13,11 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.io.Resources;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.script.AbstractScriptTest;
 import com.enonic.wem.script.ScriptExports;
 import com.enonic.xp.portal.PortalContext;
@@ -35,7 +35,7 @@ public class RenderViewHandlerTest
     {
         final PortalContext context = new PortalContext();
         context.setMode( RenderMode.LIVE );
-        context.setWorkspace( Workspace.from( "draft" ) );
+        context.setBranch( Branch.from( "draft" ) );
         context.setModule( ModuleKey.from( "mymodule" ) );
         context.setBaseUri( "/portal" );
 

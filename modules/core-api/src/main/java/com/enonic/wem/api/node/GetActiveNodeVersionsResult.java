@@ -5,11 +5,11 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 public class GetActiveNodeVersionsResult
 {
-    private final ImmutableMap<Workspace, NodeVersion> nodeVersions;
+    private final ImmutableMap<Branch, NodeVersion> nodeVersions;
 
     private GetActiveNodeVersionsResult( Builder builder )
     {
@@ -21,7 +21,7 @@ public class GetActiveNodeVersionsResult
         return new Builder();
     }
 
-    public ImmutableMap<Workspace, NodeVersion> getNodeVersions()
+    public ImmutableMap<Branch, NodeVersion> getNodeVersions()
     {
         return nodeVersions;
     }
@@ -29,15 +29,15 @@ public class GetActiveNodeVersionsResult
 
     public static final class Builder
     {
-        private final Map<Workspace, NodeVersion> nodeVersions = Maps.newHashMap();
+        private final Map<Branch, NodeVersion> nodeVersions = Maps.newHashMap();
 
         private Builder()
         {
         }
 
-        public Builder add( final Workspace workspace, final NodeVersion nodeVersion )
+        public Builder add( final Branch branch, final NodeVersion nodeVersion )
         {
-            this.nodeVersions.put( workspace, nodeVersion );
+            this.nodeVersions.put( branch, nodeVersion );
             return this;
         }
 

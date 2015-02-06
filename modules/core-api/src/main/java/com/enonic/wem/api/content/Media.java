@@ -18,7 +18,7 @@ public class Media
 
     public Attachment getMediaAttachment()
     {
-        final String mediaAttachmentName = getData().getString( "media" );
+        final String mediaAttachmentName = getData().getString( ContentPropertyNames.MEDIA );
         if ( mediaAttachmentName == null )
         {
             return null;

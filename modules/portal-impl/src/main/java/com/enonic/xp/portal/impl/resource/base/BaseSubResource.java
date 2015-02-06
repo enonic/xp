@@ -14,7 +14,7 @@ public abstract class BaseSubResource
         final T resource = this.resourceContext.initResource( instance );
         resource.mode = this.mode;
         resource.contentPath = this.contentPath;
-        resource.workspace = this.workspace;
+        resource.branch = this.branch;
         resource.baseUri = this.baseUri;
         resource.services = this.services;
         return resource;

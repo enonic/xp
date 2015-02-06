@@ -6,10 +6,10 @@ import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
-import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
 
 abstract class AbstractDeleteNodeCommand
     extends AbstractNodeCommand
@@ -49,17 +49,17 @@ abstract class AbstractDeleteNodeCommand
             nodeState( NodeState.PENDING_DELETE ).
             build();
 
-        workspaceService.store( StoreWorkspaceDocument.create().
+        branchService.store( StoreBranchDocument.create().
             nodeVersionId( nodeVersionId ).
             node( pendingNode ).
-            build(), WorkspaceContext.from( context ) );
+            build(), BranchContext.from( context ) );
 
         indexService.store( pendingNode, nodeVersionId, IndexContext.from( context ) );
     }
 
     private void doDelete( final Context context, final Node node, final NodeVersionId nodeVersionId )
     {
-        workspaceService.delete( node.id(), WorkspaceContext.from( context ) );
+        branchService.delete( node.id(), BranchContext.from( context ) );
 
         indexService.delete( node.id(), IndexContext.from( context ) );
     }

@@ -1,17 +1,17 @@
 package com.enonic.wem.api.repository;
 
-import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.api.workspace.Workspaces;
+import com.enonic.wem.api.branch.Branch;
+import com.enonic.wem.api.branch.Branches;
 
 public class Repository
 {
     private final RepositoryId id;
 
-    private final Workspaces workspaces;
+    private final Branches branches;
 
     private Repository( Builder builder )
     {
-        this.workspaces = builder.workspaces;
+        this.branches = builder.branches;
         this.id = builder.id;
     }
 
@@ -20,9 +20,9 @@ public class Repository
         return id;
     }
 
-    public Workspaces getWorkspaces()
+    public Branches getBranches()
     {
-        return workspaces;
+        return branches;
     }
 
     public static Builder create()
@@ -62,21 +62,21 @@ public class Repository
     {
         private RepositoryId id;
 
-        private Workspaces workspaces;
+        private Branches branches;
 
         private Builder()
         {
         }
 
-        public Builder workspaces( final Workspaces workspaces )
+        public Builder branches( final Branches branches )
         {
-            this.workspaces = workspaces;
+            this.branches = branches;
             return this;
         }
 
-        public Builder workspaces( final Workspace... workspaces )
+        public Builder branches( final Branch... branches )
         {
-            this.workspaces = Workspaces.from( workspaces );
+            this.branches = Branches.from( branches );
             return this;
         }
 

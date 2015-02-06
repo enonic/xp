@@ -5,14 +5,14 @@ import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.repo.internal.index.query.NodeWorkspaceVersion;
+import com.enonic.wem.repo.internal.index.query.NodeBranchVersion;
 import com.enonic.wem.repo.internal.version.VersionService;
 
 class CompareStatusResolver
 {
-    private final NodeWorkspaceVersion source;
+    private final NodeBranchVersion source;
 
-    private final NodeWorkspaceVersion target;
+    private final NodeBranchVersion target;
 
     private final VersionService versionService;
 
@@ -107,9 +107,9 @@ class CompareStatusResolver
 
     public static final class Builder
     {
-        private NodeWorkspaceVersion source;
+        private NodeBranchVersion source;
 
-        private NodeWorkspaceVersion target;
+        private NodeBranchVersion target;
 
         private VersionService versionService;
 
@@ -119,13 +119,13 @@ class CompareStatusResolver
         {
         }
 
-        public Builder source( NodeWorkspaceVersion source )
+        public Builder source( NodeBranchVersion source )
         {
             this.source = source;
             return this;
         }
 
-        public Builder target( NodeWorkspaceVersion target )
+        public Builder target( NodeBranchVersion target )
         {
             this.target = target;
             return this;

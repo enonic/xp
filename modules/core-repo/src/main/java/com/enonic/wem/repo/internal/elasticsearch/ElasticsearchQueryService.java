@@ -7,6 +7,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.data.Value;
@@ -21,7 +22,6 @@ import com.enonic.wem.api.node.NodeVersionIds;
 import com.enonic.wem.api.query.QueryException;
 import com.enonic.wem.api.query.expr.OrderExpressions;
 import com.enonic.wem.api.query.filter.ValueFilter;
-import com.enonic.wem.api.workspace.Workspace;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.NodeQueryTranslator;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
@@ -75,7 +75,7 @@ public class ElasticsearchQueryService
     {
         final GetResult result = elasticsearchDao.get( GetQuery.create().
             indexName( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
-            indexTypeName( indexContext.getWorkspace().getName() ).
+            indexTypeName( indexContext.getBranch().getName() ).
             returnFields( ReturnFields.from( NodeIndexPath.VERSION, NodeIndexPath.PERMISSIONS_READ ) ).
             id( nodeId.toString() ).
             build() );
@@ -105,7 +105,7 @@ public class ElasticsearchQueryService
     @Override
     public NodeVersionId get( final NodePath nodePath, final IndexContext indexContext )
     {
-        final Workspace workspace = indexContext.getWorkspace();
+        final Branch branch = indexContext.getBranch();
 
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
             addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
@@ -117,7 +117,7 @@ public class ElasticsearchQueryService
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
             index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
-            indexType( workspace.getName() ).
+            indexType( branch.getName() ).
             query( queryBuilder ).
             size( 1 ).
             setReturnFields( ReturnFields.from( NodeIndexPath.VERSION ) ).
@@ -142,7 +142,7 @@ public class ElasticsearchQueryService
         if ( versionKeyField == null )
         {
             throw new ElasticsearchDataException( "Field " + NodeIndexPath.VERSION.getPath() + " not found on node with path " +
-                                                      nodePath + " in workspace " + workspace );
+                                                      nodePath + " in branch " + branch );
         }
 
         return NodeVersionId.from( versionKeyField.getValue().toString() );
@@ -156,7 +156,7 @@ public class ElasticsearchQueryService
             return NodeVersionIds.empty();
         }
 
-        final Workspace workspace = indexContext.getWorkspace();
+        final Branch branch = indexContext.getBranch();
 
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
             addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
@@ -168,7 +168,7 @@ public class ElasticsearchQueryService
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
             index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
-            indexType( workspace.getName() ).
+            indexType( branch.getName() ).
             query( queryBuilder ).
             sortBuilders( SortQueryBuilderFactory.create( orderExprs ) ).
             setReturnFields( ReturnFields.from( NodeIndexPath.VERSION ) ).
@@ -200,7 +200,7 @@ public class ElasticsearchQueryService
             return NodeVersionIds.empty();
         }
 
-        final Workspace workspace = indexContext.getWorkspace();
+        final Branch branch = indexContext.getBranch();
 
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
             addQueryFilter( AclFilterBuilderFactory.create( indexContext.getPrincipalKeys() ) ).
@@ -212,7 +212,7 @@ public class ElasticsearchQueryService
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
             index( IndexNameResolver.resolveSearchIndexName( indexContext.getRepositoryId() ) ).
-            indexType( workspace.getName() ).
+            indexType( branch.getName() ).
             query( queryBuilder ).
             sortBuilders( SortQueryBuilderFactory.create( orderExprs ) ).
             setReturnFields( ReturnFields.from( NodeIndexPath.VERSION ) ).
@@ -246,7 +246,7 @@ public class ElasticsearchQueryService
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
             index( IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() ) ).
-            indexType( context.getWorkspace().getName() ).
+            indexType( context.getBranch().getName() ).
             query( queryBuilder ).
             build();
 

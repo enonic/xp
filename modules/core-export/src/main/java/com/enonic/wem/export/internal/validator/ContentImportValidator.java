@@ -6,6 +6,7 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPropertyNames;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
@@ -42,9 +43,28 @@ public class ContentImportValidator
             updatedData.setString( ContentPropertyNames.MODIFIER, getUser().getKey().toString() );
         }
 
+        validateChildOrder( original, builder );
+
         builder.data( updatedData );
 
         return builder.build();
+    }
+
+    private void validateChildOrder( final CreateNodeParams original, final CreateNodeParams.Builder builder )
+    {
+        final ChildOrder childOrder = original.getChildOrder();
+
+        if ( childOrder.getOrderExpressions() == null || childOrder.getOrderExpressions().isEmpty() )
+        {
+            builder.childOrder( ContentConstants.DEFAULT_CHILD_ORDER );
+        }
+        else
+        {
+            if ( childOrder.equals( ChildOrder.defaultOrder() ) )
+            {
+                builder.childOrder( ContentConstants.DEFAULT_CHILD_ORDER );
+            }
+        }
     }
 
     private User getUser()

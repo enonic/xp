@@ -48,6 +48,7 @@ public class ContentNodeTranslator
             indexConfigDocument( indexConfigDocument ).
             permissions( params.getPermissions() ).
             inheritPermissions( params.isInheritPermissions() ).
+            childOrder( params.getChildOrder() ).
             nodeType( ContentConstants.CONTENT_NODE_COLLECTION );
 
         for ( final CreateAttachment attachment : params.getCreateAttachments() )
@@ -63,7 +64,7 @@ public class ContentNodeTranslator
         final Content editedContent = params.getEditedContent();
         final CreateAttachments createAttachments = params.getCreateAttachments();
 
-        final NodeEditor nodeEditor = toNodeEditor( editedContent, createAttachments );
+        final NodeEditor nodeEditor = toNodeEditor( params );
 
         final UpdateNodeParams.Builder builder = UpdateNodeParams.create().
             id( NodeId.from( editedContent.getId() ) ).
@@ -122,17 +123,18 @@ public class ContentNodeTranslator
         return builder.build();
     }
 
-    private NodeEditor toNodeEditor( final Content content, final CreateAttachments createAttachments )
+    private NodeEditor toNodeEditor( final UpdateContentTranslatorParams params )
     {
-        final PropertyTree data = new PropertyTree();
-        contentSerializer.populatedEditedProperties( content, data.getRoot(), createAttachments );
+        final Content content = params.getEditedContent();
+
+        final PropertyTree nodeData = contentSerializer.toNodeData( params );
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( content );
 
         return editableNode -> {
             editableNode.name = NodeName.from( content.getName().toString() );
             editableNode.indexConfigDocument = indexConfigDocument;
-            editableNode.data = data;
+            editableNode.data = nodeData;
             editableNode.permissions = content.getPermissions();
             editableNode.inheritPermissions = content.inheritsPermissions();
         };

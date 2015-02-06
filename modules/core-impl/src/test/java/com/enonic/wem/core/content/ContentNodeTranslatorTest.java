@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPropertyNames;
 import com.enonic.wem.api.content.CreateContentTranslatorParams;
@@ -72,6 +73,7 @@ public class ContentNodeTranslatorTest
             type( ContentTypeName.from( "mymodule:my-content-type" ) ).
             contentData( contentData ).
             creator( PrincipalKey.ofAnonymous() ).
+            childOrder( ContentConstants.DEFAULT_CHILD_ORDER ).
             build();
 
         final CreateNodeParams createNode = translator.toCreateNodeParams( mycontent );
@@ -93,6 +95,7 @@ public class ContentNodeTranslatorTest
             type( ContentTypeName.from( "mymodule:my-content-type" ) ).
             contentData( contentData ).
             creator( PrincipalKey.ofAnonymous() ).
+            childOrder( ContentConstants.DEFAULT_CHILD_ORDER ).
             build();
 
         final CreateNodeParams createNode = translator.toCreateNodeParams( mycontent );
@@ -127,6 +130,7 @@ public class ContentNodeTranslatorTest
             parent( ContentPath.ROOT ).
             contentData( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
             type( ContentTypeName.from( "mymodule:my-content-type" ) ).
+            childOrder( ContentConstants.DEFAULT_CHILD_ORDER ).
             build();
 
         final CreateNodeParams createNode = translator.toCreateNodeParams( mycontent );

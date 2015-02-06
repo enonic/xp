@@ -140,7 +140,7 @@ public class SetNodeChildOrderCommandTest
             childOrder( childOrder ).
             nodeDao( nodeDao ).
             versionService( versionService ).
-            workspaceService( workspaceService ).
+            branchService( branchService ).
             queryService( queryService ).
             indexService( indexService ).
             build().
@@ -160,7 +160,7 @@ public class SetNodeChildOrderCommandTest
             childOrder( ChildOrder.create().add( FieldOrderExpr.create( path, direction ) ).build() ).
             nodeDao( nodeDao ).
             versionService( versionService ).
-            workspaceService( workspaceService ).
+            branchService( branchService ).
             queryService( queryService ).
             indexService( indexService ).
             build().

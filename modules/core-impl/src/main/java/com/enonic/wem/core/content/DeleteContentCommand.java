@@ -13,7 +13,7 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeComparison;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeState;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 
 final class DeleteContentCommand
@@ -57,16 +57,16 @@ final class DeleteContentCommand
     private CompareStatus.Status getCompareStatus( final Node nodeToDelete )
     {
         final Context context = ContextAccessor.current();
-        final Workspace currentWorkspace = context.getWorkspace();
+        final Branch currentBranch = context.getBranch();
 
         final NodeComparison compare;
-        if ( currentWorkspace.equals( ContentConstants.WORKSPACE_DRAFT ) )
+        if ( currentBranch.equals( ContentConstants.BRANCH_DRAFT ) )
         {
-            compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.WORKSPACE_ONLINE );
+            compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.BRANCH_ONLINE );
         }
         else
         {
-            compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.WORKSPACE_DRAFT );
+            compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.BRANCH_DRAFT );
         }
         return compare.getCompareStatus().getStatus();
     }

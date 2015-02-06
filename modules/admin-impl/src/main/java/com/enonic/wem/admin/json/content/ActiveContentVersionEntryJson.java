@@ -4,20 +4,20 @@ import com.enonic.wem.api.content.ActiveContentVersionEntry;
 
 public class ActiveContentVersionEntryJson
 {
-    private final String workspace;
+    private final String branch;
 
     private final ContentVersionJson contentVersion;
 
     public ActiveContentVersionEntryJson( final ActiveContentVersionEntry activeContentVersion )
     {
-        this.workspace = activeContentVersion.getWorkspace().getName();
+        this.branch = activeContentVersion.getBranch().getName();
         this.contentVersion = new ContentVersionJson( activeContentVersion.getContentVersion() );
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public String getWorkspace()
+    public String getBranch()
     {
-        return workspace;
+        return branch;
     }
 
     @SuppressWarnings("UnusedDeclaration")

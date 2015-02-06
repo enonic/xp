@@ -50,25 +50,25 @@ public final class SecurityInitializer
 
     public final void initialize()
     {
-        final String workspaceName = CONTEXT_SECURITY.getWorkspace().getName();
+        final String branchName = CONTEXT_SECURITY.getBranch().getName();
 
         runAsAdmin( () -> {
 
-            if ( isWorkspaceInitialized() )
+            if ( isBranchInitialized() )
             {
-                LOG.info( "Workspace [" + workspaceName + "] already initialized" );
+                LOG.info( "Branch [" + branchName + "] already initialized" );
                 return;
             }
 
-            LOG.info( "Initializing [" + workspaceName + "] workspace..." );
+            LOG.info( "Initializing [" + branchName + "] branch..." );
 
-            initializeUsersWorkspace();
+            initializeUsersBranch();
             initializeSystemUserStore();
 
             createRoles();
             createUsers();
 
-            LOG.info( "[" + workspaceName + "] workspace successfully initialized" );
+            LOG.info( "[" + branchName + "] branch successfully initialized" );
         } );
     }
 
@@ -79,12 +79,12 @@ public final class SecurityInitializer
         ContextBuilder.from( CONTEXT_SECURITY ).authInfo( authInfo ).build().runWith( runnable );
     }
 
-    private boolean isWorkspaceInitialized()
+    private boolean isBranchInitialized()
     {
         return this.nodeService.getRoot() != null;
     }
 
-    private void initializeUsersWorkspace()
+    private void initializeUsersBranch()
     {
         final AccessControlEntry adminFullAccess = AccessControlEntry.create().
             allowAll().

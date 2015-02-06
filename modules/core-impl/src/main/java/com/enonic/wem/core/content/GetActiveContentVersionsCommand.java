@@ -9,20 +9,20 @@ import com.enonic.wem.api.node.GetActiveNodeVersionsParams;
 import com.enonic.wem.api.node.GetActiveNodeVersionsResult;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeVersion;
-import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.api.workspace.Workspaces;
+import com.enonic.wem.api.branch.Branch;
+import com.enonic.wem.api.branch.Branches;
 
 public class GetActiveContentVersionsCommand
     extends AbstractContentCommand
 {
-    private final Workspaces workspaces;
+    private final Branches branches;
 
     private final ContentId contentId;
 
     private GetActiveContentVersionsCommand( final Builder builder )
     {
         super( builder );
-        workspaces = builder.workspaces;
+        branches = builder.branches;
         contentId = builder.contentId;
     }
 
@@ -37,18 +37,18 @@ public class GetActiveContentVersionsCommand
 
         final GetActiveNodeVersionsResult activeNodeVersions = this.nodeService.getActiveVersions( GetActiveNodeVersionsParams.create().
             nodeId( nodeId ).
-            workspaces( this.workspaces ).
+            branches( this.branches ).
             build() );
 
         final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.translator, this.nodeService );
 
         final GetActiveContentVersionsResult.Builder builder = GetActiveContentVersionsResult.create();
 
-        final ImmutableMap<Workspace, NodeVersion> nodeVersionsMap = activeNodeVersions.getNodeVersions();
-        for ( final Workspace workspace : nodeVersionsMap.keySet() )
+        final ImmutableMap<Branch, NodeVersion> nodeVersionsMap = activeNodeVersions.getNodeVersions();
+        for ( final Branch branch : nodeVersionsMap.keySet() )
         {
-            final NodeVersion nodeVersion = nodeVersionsMap.get( workspace );
-            builder.add( ActiveContentVersionEntry.from( workspace, contentVersionFactory.create( nodeVersion ) ) );
+            final NodeVersion nodeVersion = nodeVersionsMap.get( branch );
+            builder.add( ActiveContentVersionEntry.from( branch, contentVersionFactory.create( nodeVersion ) ) );
         }
 
         return builder.build();
@@ -57,7 +57,7 @@ public class GetActiveContentVersionsCommand
     public static final class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private Workspaces workspaces;
+        private Branches branches;
 
         private ContentId contentId;
 
@@ -65,9 +65,9 @@ public class GetActiveContentVersionsCommand
         {
         }
 
-        public Builder workspaces( final Workspaces workspaces )
+        public Builder branches( final Branches branches )
         {
-            this.workspaces = workspaces;
+            this.branches = branches;
             return this;
         }
 

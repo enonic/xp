@@ -15,7 +15,7 @@ public class PushNodesCommandTest
     extends AbstractNodeTest
 {
     @Test
-    public void push_to_other_workspace()
+    public void push_to_other_branch()
         throws Exception
     {
         final Node node = createNode( CreateNodeParams.create().
@@ -168,7 +168,7 @@ public class PushNodesCommandTest
             newParent( node2.path() ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             indexService( this.indexService ).
             versionService( this.versionService ).
             build().
@@ -245,7 +245,7 @@ public class PushNodesCommandTest
             indexService( this.indexService ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             build().
             execute();

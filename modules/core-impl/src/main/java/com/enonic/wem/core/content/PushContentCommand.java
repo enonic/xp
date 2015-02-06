@@ -2,6 +2,7 @@ package com.enonic.wem.core.content;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
@@ -19,14 +20,13 @@ import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.node.ResolveSyncWorkResult;
 import com.enonic.wem.api.node.ResolveSyncWorkResults;
 import com.enonic.wem.api.node.SyncWorkResolverParams;
-import com.enonic.wem.api.workspace.Workspace;
 
 public class PushContentCommand
     extends AbstractContentCommand
 {
     private final ContentIds contentIds;
 
-    private final Workspace target;
+    private final Branch target;
 
     private final PushContentStrategy strategy;
 
@@ -103,7 +103,7 @@ public class PushContentCommand
         return nodeService.resolveSyncWork( SyncWorkResolverParams.create().
             includeChildren( true ).
             nodeId( NodeId.from( contentId.toString() ) ).
-            workspace( this.target ).
+            branch( this.target ).
             build() );
     }
 
@@ -150,7 +150,7 @@ public class PushContentCommand
         deleteNodesInContext( result, currentContext );
 
         deleteNodesInContext( result, ContextBuilder.from( currentContext ).
-            workspace( target ).
+            branch( target ).
             build() );
 
         for ( final NodeId nodeId : result.getDelete() )
@@ -245,7 +245,7 @@ public class PushContentCommand
     {
         private ContentIds contentIds;
 
-        private Workspace target;
+        private Branch target;
 
         private PushContentStrategy strategy = PushContentStrategy.STRICT;
 
@@ -259,7 +259,7 @@ public class PushContentCommand
             return this;
         }
 
-        public Builder target( final Workspace target )
+        public Builder target( final Branch target )
         {
             this.target = target;
             return this;

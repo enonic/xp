@@ -1,12 +1,12 @@
 package com.enonic.wem.api.content;
 
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 public class PushContentParams
 {
     private final ContentIds contentIds;
 
-    private final Workspace target;
+    private final Branch target;
 
     private final boolean includeChildren;
 
@@ -30,7 +30,7 @@ public class PushContentParams
         return contentIds;
     }
 
-    public Workspace getTarget()
+    public Branch getTarget()
     {
         return target;
     }
@@ -49,7 +49,7 @@ public class PushContentParams
     {
         private ContentIds contentIds;
 
-        private Workspace target;
+        private Branch target;
 
         private boolean includeChildren = true;
 
@@ -65,7 +65,7 @@ public class PushContentParams
             return this;
         }
 
-        public Builder target( Workspace target )
+        public Builder target( Branch target )
         {
             this.target = target;
             return this;
