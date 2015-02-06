@@ -79,6 +79,21 @@ bundles {
     bundle project( ':web-impl' ), 30
     bundle project( ':web-vhost' ), 30
     bundle project( ':web-jaxrs' ), 30
+
+    // Portal app dependencies
+    bundle 'com.enonic.osgi.bundles:jmustache:1.9.0_1', 30
+    bundle 'com.enonic.osgi.bundles:thymeleaf:2.1.1_2', 30
+    bundle 'com.enonic.osgi.bundles:saxon-he:9.5.1_1', 30
+    bundle 'com.enonic.osgi.bundles:attoparser:1.3.0_1', 30
+    
+    // Portal app
+    bundle project( ':portal-api' ), 30
+    bundle project( ':portal-script' ), 30
+    bundle project( ':portal-mustache' ), 30
+    bundle project( ':portal-thymeleaf' ), 30
+    bundle project( ':portal-xslt' ), 30
+    bundle project( ':portal-jslib' ), 30
+    bundle project( ':portal-impl' ), 30
 }
 
 prepareDevBundles {
