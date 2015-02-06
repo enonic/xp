@@ -2,8 +2,8 @@ package com.enonic.wem.api.node;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.branch.Branch;
+import com.enonic.wem.api.util.BinaryReference;
 
 public interface NodeService
 {
@@ -53,7 +53,9 @@ public interface NodeService
 
     ResolveSyncWorkResult resolveSyncWork( SyncWorkResolverParams params );
 
-    void snapshot();
+    void snapshot( String snapshotName );
+
+    void restore( String snapshotName );
 
     int applyPermissions( ApplyNodePermissionsParams params );
 

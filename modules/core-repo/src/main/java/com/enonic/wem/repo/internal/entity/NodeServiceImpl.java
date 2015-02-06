@@ -424,9 +424,15 @@ public class NodeServiceImpl
     }
 
     @Override
-    public void snapshot()
+    public void snapshot( final String snapshotName )
     {
-        this.indexService.snapshot( ContextAccessor.current().getRepositoryId() );
+        this.indexService.snapshot( ContextAccessor.current().getRepositoryId(), snapshotName );
+    }
+
+    @Override
+    public void restore( final String snapshotName )
+    {
+        this.indexService.restore( ContextAccessor.current().getRepositoryId(), snapshotName );
     }
 
     @Override
