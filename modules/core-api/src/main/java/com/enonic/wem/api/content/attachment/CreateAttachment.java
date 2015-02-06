@@ -2,6 +2,7 @@ package com.enonic.wem.api.content.attachment;
 
 import org.apache.commons.io.FilenameUtils;
 
+import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.util.BinaryReference;
@@ -99,8 +100,15 @@ public class CreateAttachment
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( name );
+            Preconditions.checkNotNull( byteSource );
+        }
+
         public CreateAttachment build()
         {
+            this.validate();
             return new CreateAttachment( this );
         }
     }

@@ -94,10 +94,10 @@ abstract class AbstractContentCommand
 
         void validate()
         {
-            Preconditions.checkNotNull( nodeService );
-            Preconditions.checkNotNull( contentTypeService );
-            Preconditions.checkNotNull( translator );
-            Preconditions.checkNotNull( eventPublisher );
+            Preconditions.checkNotNull( nodeService, "nodeService cannot be null" );
+            Preconditions.checkNotNull( contentTypeService, "contentTypesService cannot be null" );
+            Preconditions.checkNotNull( translator, "translator cannot be null" );
+            Preconditions.checkNotNull( eventPublisher, "eventPublisher cannot be null" );
         }
     }
 
