@@ -5,6 +5,8 @@ import java.io.File;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 
+import com.enonic.wem.api.home.HomeDir;
+
 final class NodeSettingsBuilderImpl
     implements NodeSettingsBuilder
 {
@@ -23,8 +25,8 @@ final class NodeSettingsBuilderImpl
         builder.put( "cluster.name", "mycluster" );
         builder.put( "discovery.zen.ping.multicast.enabled", "false" );
 
-        final String karafHome = System.getProperty( "karaf.home" );
-        final File indexPath = new File( karafHome, "repo/index" );
+        final HomeDir xpHome = HomeDir.get();
+        final File indexPath = new File( xpHome.toFile(), "repo/index" );
         builder.put( "path", indexPath.getAbsolutePath() );
         builder.put( "path.data", new File( indexPath, "data" ).getAbsolutePath() );
         builder.put( "path.work", new File( indexPath, "work" ).getAbsolutePath() );

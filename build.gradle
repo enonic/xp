@@ -18,7 +18,8 @@ allprojects {
 
 ext {
     javaProjects = subprojects - project( ':distro' )
-    osgiProjects = javaProjects - project( ':launcher' )
+    itestProjects = subprojects.findAll { it.name.endsWith( '-itest' ) }
+    osgiProjects = javaProjects - project( ':launcher' ) - itestProjects
     mavenProjects = subprojects
 }
 

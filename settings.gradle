@@ -8,6 +8,7 @@ include 'core-security'
 include 'core-image'
 include 'core-export'
 include 'core-impl'
+include 'core-itest'
 
 include 'web-api'
 include 'web-impl'

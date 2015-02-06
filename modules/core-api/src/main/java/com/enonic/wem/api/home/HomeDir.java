@@ -2,19 +2,19 @@ package com.enonic.wem.api.home;
 
 import java.io.File;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+
+import com.google.common.base.Strings;
+
 public final class HomeDir
 {
-    private final static HomeDir CURRENT = new HomeDir();
-
     private final File dir;
 
-    private HomeDir()
+    private HomeDir( final File dir )
     {
-        this.dir = resolveHome();
-        if ( this.dir == null )
-        {
-            throw new IllegalArgumentException( "Home dir is not set. Set either wem.home or karaf.home." );
-        }
+        this.dir = dir;
+        System.out.println( "!! HOME_DIR = " + this.dir );
     }
 
     public File toFile()
@@ -29,28 +29,19 @@ public final class HomeDir
 
     public static HomeDir get()
     {
-        return CURRENT;
+        final BundleContext context = FrameworkUtil.getBundle( HomeDir.class ).getBundleContext();
+        return get( context );
     }
 
-    private File resolveHome()
+    public static HomeDir get( final BundleContext context )
     {
-        final File wemHome = resolveDir( "wem.home" );
-        if ( wemHome != null )
+        final String str = context.getProperty( "xp.home" );
+        if ( Strings.isNullOrEmpty( str ) )
         {
-            return wemHome;
+            throw new IllegalArgumentException( "Home dir [xp.home] is not set." );
         }
 
-        return resolveDir( "karaf.home" );
-    }
-
-    private File resolveDir( final String propName )
-    {
-        final String propValue = System.getProperty( propName );
-        if ( propValue == null )
-        {
-            return null;
-        }
-
-        return new File( propValue );
+        final File dir = new File( str );
+        return new HomeDir( dir );
     }
 }
