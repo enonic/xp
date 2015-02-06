@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-@Component(configurationPid = "com.enonic.wem.admin")
+@Component
 public final class ResourceLocatorImpl
     implements ResourceLocator, BundleListener
 {
@@ -46,12 +46,19 @@ public final class ResourceLocatorImpl
             addBundle( bundle );
         }
 
-        setResourcesDevDir( (String) context.getProperties().get( "resourcesDevDir" ) );
+        setResourcesDevDir();
     }
 
-    private void setResourcesDevDir( final String dir )
+    private void setResourcesDevDir()
     {
-        this.resourcesDevDir = Strings.isNullOrEmpty( dir ) ? null : new File( dir );
+        final String rootDir = this.context.getProperty( "xp.dev.projectDir" );
+        if ( Strings.isNullOrEmpty( rootDir ) )
+        {
+            return;
+        }
+
+        this.resourcesDevDir = new File( rootDir, "modules/admin-ui/src/main/resources" );
+        LOG.info( "Loading UI resources from bundle and project directory {}", this.resourcesDevDir );
     }
 
     @Deactivate

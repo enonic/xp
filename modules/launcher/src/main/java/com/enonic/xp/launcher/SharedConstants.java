@@ -11,7 +11,7 @@ public interface SharedConstants
 
     public static final String XP_HOME_DIR_ENV = "XP_HOME";
 
-    public static final String DEV_MODE = "dev.mode";
+    public static final String DEV_MODE = "xp.dev.mode";
 
-    public static final String DEV_BUNDLE_REFRESH = "dev.bundleRefresh";
+    public static final String DEV_BUNDLE_REFRESH = "xp.dev.bundleRefresh";
 }

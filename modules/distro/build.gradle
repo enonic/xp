@@ -125,7 +125,8 @@ task run( type: JavaExec, dependsOn: 'prepareDevBundles' ) {
 
     systemProperties['java.awt.headless'] = true
     systemProperties['xp.install'] = mkdir( "$buildDir/dev" )
-    systemProperties['dev.mode'] = true
+    systemProperties['xp.dev.mode'] = true
+    systemProperties['xp.dev.projectDir'] = project.rootDir.toString()
 
     if ( project.hasProperty( 'xp.home' ) )
     {
