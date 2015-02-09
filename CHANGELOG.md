@@ -15,6 +15,7 @@ Features:
   - Automatically set owner to the user creating the content. (CMS-5074)
   - Live Edit - Lock page by default (CMS-4827)
   - Added basic caching headers for assets in Live mode rendering. (CMS-5111)
+  - Text component - set "section" to root element (CMS-5125)
 
 Refactoring:
 

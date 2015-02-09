@@ -17,13 +17,13 @@ public final class TextRenderer
     implements Renderer<TextComponent>
 {
 
-    private static final String EMPTY_COMPONENT_EDIT_MODE_HTML = "<div data-live-edit-type=\"{0}\"><article></article></div>";
+    private static final String EMPTY_COMPONENT_EDIT_MODE_HTML = "<div data-live-edit-type=\"{0}\"><section></section></div>";
 
-    private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<article></article>";
+    private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<section></section>";
 
-    private static final String COMPONENT_EDIT_MODE_HTML = "<div data-live-edit-type=\"{0}\"><article>{1}</article></div>";
+    private static final String COMPONENT_EDIT_MODE_HTML = "<div data-live-edit-type=\"{0}\"><section>{1}</section></div>";
 
-    private static final String COMPONENT_PREVIEW_MODE_HTML = "<article>{0}</article>";
+    private static final String COMPONENT_PREVIEW_MODE_HTML = "<section>{0}</section>";
 
     @Override
     public Class<TextComponent> getType()
