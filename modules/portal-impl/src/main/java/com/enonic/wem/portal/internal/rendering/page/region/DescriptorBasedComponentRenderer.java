@@ -22,7 +22,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 {
     private static final String EMPTY_COMPONENT_EDIT_MODE_HTML = "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"></div>";
 
-    private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div></div>";
+    private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"></div>";
 
     private static final LiveEditAttributeInjection LIVE_EDIT_ATTRIBUTE_INJECTION = new LiveEditAttributeInjection();
 
@@ -46,10 +46,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
             context.setComponent( component );
             controllerScript.execute( context );
             final PortalResponse response = context.getResponse();
-            if ( getRenderingMode( context ) == RenderMode.EDIT )
-            {
-                LIVE_EDIT_ATTRIBUTE_INJECTION.injectLiveEditAttribute( response, component.getType() );
-            }
+            LIVE_EDIT_ATTRIBUTE_INJECTION.injectLiveEditAttribute( response, component.getType() );
             return new PortalResponseSerializer( response ).serialize();
         }
         finally
