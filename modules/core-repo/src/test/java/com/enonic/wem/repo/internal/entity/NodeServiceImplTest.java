@@ -159,7 +159,6 @@ public class NodeServiceImplTest
         assertEquals( childOrder, node.getChildOrder() );
     }
 
-
     @Test
     public void snapshot_restore()
         throws Exception

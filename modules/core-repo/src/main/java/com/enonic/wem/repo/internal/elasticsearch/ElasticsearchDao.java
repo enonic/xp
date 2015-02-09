@@ -7,6 +7,7 @@ import org.elasticsearch.action.index.IndexRequest;
 
 import com.enonic.wem.api.snapshot.RestoreParams;
 import com.enonic.wem.api.snapshot.RestoreResult;
+import com.enonic.wem.api.snapshot.SnapshotResults;
 import com.enonic.wem.api.snapshot.SnapshotParams;
 import com.enonic.wem.api.snapshot.SnapshotResult;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
@@ -33,5 +34,12 @@ public interface ElasticsearchDao
 
     public SnapshotResult snapshot( final SnapshotParams params );
 
-    public RestoreResult restore( final RestoreParams params );
+    public RestoreResult restoreSnapshot( final RestoreParams params );
+
+    public void deleteSnapshot( final String snapshotName );
+
+    public void deleteSnapshotRepository();
+
+    public SnapshotResults listSnapshots();
+
 }

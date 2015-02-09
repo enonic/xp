@@ -49,10 +49,13 @@ import com.enonic.wem.api.node.RootNode;
 import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.SyncWorkResolverParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
+import com.enonic.wem.api.snapshot.DeleteSnapshotParams;
+import com.enonic.wem.api.snapshot.DeleteSnapshotsResult;
 import com.enonic.wem.api.snapshot.RestoreParams;
 import com.enonic.wem.api.snapshot.RestoreResult;
 import com.enonic.wem.api.snapshot.SnapshotParams;
 import com.enonic.wem.api.snapshot.SnapshotResult;
+import com.enonic.wem.api.snapshot.SnapshotResults;
 import com.enonic.wem.api.util.BinaryReference;
 
 class NodeServiceMock
@@ -333,6 +336,24 @@ class NodeServiceMock
 
     @Override
     public RestoreResult restore( final RestoreParams params )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public SnapshotResults listSnapshots()
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public DeleteSnapshotsResult deleteSnapshot( final DeleteSnapshotParams param )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public void deleteSnapshotRespository()
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
