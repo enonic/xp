@@ -17,11 +17,14 @@ public class UpdateNodeParams
 
     private final BinaryAttachments binaryAttachments;
 
+    private final boolean dryRun;
+
     private UpdateNodeParams( final Builder builder )
     {
-        id = builder.id;
-        editor = builder.editor;
-        binaryAttachments = new BinaryAttachments( ImmutableSet.copyOf( builder.binaryAttachments ) );
+        this.id = builder.id;
+        this.editor = builder.editor;
+        this.binaryAttachments = new BinaryAttachments( ImmutableSet.copyOf( builder.binaryAttachments ) );
+        this.dryRun = builder.dryRun;
     }
 
     public BinaryAttachments getBinaryAttachments()
@@ -44,6 +47,11 @@ public class UpdateNodeParams
         return editor;
     }
 
+    public boolean isDryRun()
+    {
+        return dryRun;
+    }
+
     public static final class Builder
     {
         private NodeId id;
@@ -51,6 +59,8 @@ public class UpdateNodeParams
         private NodeEditor editor;
 
         private Set<BinaryAttachment> binaryAttachments = Sets.newHashSet();
+
+        private boolean dryRun = false;
 
         private Builder()
         {
@@ -77,6 +87,12 @@ public class UpdateNodeParams
         public Builder setBinaryAttachments( final BinaryAttachments binaryAttachments )
         {
             this.binaryAttachments = binaryAttachments.getSet();
+            return this;
+        }
+
+        public Builder dryRun( final boolean dryRun )
+        {
+            this.dryRun = dryRun;
             return this;
         }
 

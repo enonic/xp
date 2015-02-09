@@ -15,7 +15,7 @@ module api.liveedit.part {
 
         constructor() {
             super("part", <ItemTypeConfigJson>{
-                cssSelector: '[data-live-edit-type=part]',
+                cssSelector: '[data-portal-component-type=part]',
                 draggable: true,
                 cursor: 'move',
                 iconCls: 'live-edit-font-icon-part',

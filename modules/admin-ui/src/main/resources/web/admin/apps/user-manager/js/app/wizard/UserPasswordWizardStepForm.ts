@@ -10,6 +10,7 @@ module app.wizard {
     import FormItemBuilder = api.ui.form.FormItemBuilder;
     import Validators = api.ui.form.Validators;
     import FormItem = api.ui.form.FormItem;
+    import Fieldset = api.ui.form.Fieldset;
     import Button = api.ui.button.Button;
 
 
@@ -24,6 +25,8 @@ module app.wizard {
         private updatePasswordFormItem: FormItem;
 
         private principal: Principal;
+
+        private fieldSet: Fieldset;
 
 
         constructor() {
@@ -43,11 +46,15 @@ module app.wizard {
                 setLabel('Password').
                 build();
 
-            var fieldSet = new api.ui.form.Fieldset();
-            fieldSet.add(this.createPasswordFormItem);
-            fieldSet.add(this.updatePasswordFormItem);
+            this.fieldSet = new Fieldset();
+            this.fieldSet.add(this.createPasswordFormItem);
+            this.fieldSet.add(this.updatePasswordFormItem);
 
-            var passwordForm = new api.ui.form.Form().add(fieldSet);
+            var passwordForm = new api.ui.form.Form().add(this.fieldSet);
+
+            passwordForm.onValidityChanged((event: api.ValidityChangedEvent) => {
+                this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(event.isValid()));
+            });
 
             this.changePasswordButton.onClicked(() => {
                 new OpenChangePasswordDialogEvent(this.principal).fire();
@@ -63,16 +70,13 @@ module app.wizard {
         updatePrincipal(principal: Principal) {
             this.principal = principal;
             if(principal) {
-                this.createPasswordFormItem.setVisible(false);
+                this.fieldSet.removeItem(this.createPasswordFormItem);
                 this.updatePasswordFormItem.setVisible(true);
-            } else {
-                this.createPasswordFormItem.setVisible(true);
-                this.updatePasswordFormItem.setVisible(false);
             }
         }
 
         isValid(): boolean {
-            return !!this.password.getValue();
+            return !!this.principal || !!this.password.getValue();
         }
 
         getPassword(): string {

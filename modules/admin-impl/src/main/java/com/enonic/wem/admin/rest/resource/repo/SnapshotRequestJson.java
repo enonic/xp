@@ -3,27 +3,29 @@ package com.enonic.wem.admin.rest.resource.repo;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.wem.api.repository.RepositoryId;
+
 public class SnapshotRequestJson
 {
-    private String snapshotName;
+    private RepositoryId repositoryId;
 
-    private boolean overwrite;
+    private boolean skipIndexedData;
 
     @JsonCreator
-    public SnapshotRequestJson( @JsonProperty("snapshotName") final String snapshotName, //
-                                @JsonProperty("overwrite") final boolean overwrite )
+    public SnapshotRequestJson( @JsonProperty("repositoryId") final String repositoryId,
+                                @JsonProperty("skipIndexedData") final boolean skipIndexedData )
     {
-        this.snapshotName = snapshotName;
-        this.overwrite = overwrite;
+        this.repositoryId = RepositoryId.from( repositoryId );
+        this.skipIndexedData = skipIndexedData;
     }
 
-    public String getSnapshotName()
+    public RepositoryId getRepositoryId()
     {
-        return snapshotName;
+        return repositoryId;
     }
 
-    public boolean isOverwrite()
+    public boolean isSkipIndexedData()
     {
-        return overwrite;
+        return skipIndexedData;
     }
 }

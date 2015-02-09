@@ -5,6 +5,7 @@ Bugfixes:
  - Text Component - Improved initial mode when starting to edit (CMS-5043)
  - Text Component - Editor selection hangs up (CMS-5059)
  - Text Component - When in edit mode context window should always hide (CMS-5075)
+ - Enforced "allow-children" constraints from content types. (CMS-5050)
 
 Features:
 
@@ -13,11 +14,17 @@ Features:
   - Show available apps in home screen depending on user permissions. (CMS-5018)
   - Automatically set owner to the user creating the content. (CMS-5074)
   - Live Edit - Lock page by default (CMS-4827)
+  - Added basic caching headers for assets in Live mode rendering. (CMS-5111)
+  - Text component - set "section" to root element (CMS-5125)
+  - Filtered content types in Create Content dialogue based on site-hierarchy (CMS-5109)
+  - Automatic injection of component data attributes for layout, part, image and text components in Live Edit (CMS-5110)
+  - Media Types - Change FormIcon to use ContentResource.updateThumbnail instead of BlobResource.upload (CMS-4677)
 
 Refactoring:
 
   - Removed menu-item meta step Mixin from built-in types. (CMS-5045)
   - Removed built-in relationship types "system:like" and "system:link". Renamed "system:default" to "system:reference". (CMS-5053)
+  - Updated directory structure for modules. Added "cms" folder as parent for types, components and assets. (CMS-5047)
 
 
 ## RC4 (2015-02-03)

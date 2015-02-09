@@ -1,5 +1,7 @@
 module app.home {
 
+    import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
+
     export class HeaderPanel extends api.dom.DivEl {
 
         private installationHeader: api.dom.H1El;
@@ -10,9 +12,7 @@ module app.home {
 
         private userIcon: api.dom.ImgEl;
 
-        private logoutEl: api.dom.AEl;
-
-        private userName: api.dom.H2El;
+        private logonMenu: api.ui.tab.TabMenu;
 
         constructor() {
             super('header-panel');
@@ -25,29 +25,36 @@ module app.home {
             });
             this.returnButton.hide();
 
-            this.userName = new api.dom.H2El("user-name");
-            this.logoutEl = new api.dom.AEl("logout");
-            this.logoutEl.setHtml("logout");
-            this.logoutEl.hide();
-
-            this.logoutEl.onClicked(() => {
+            this.logonMenu = new api.ui.tab.TabMenu("tab-menu-logon");
+            this.logonMenu.hide();
+            var logoutMenuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel("Log out")).build();
+            logoutMenuItem.onClicked(() => {
                 new LogOutEvent().fire()
             });
+            this.logonMenu.addNavigationItem(logoutMenuItem);
+            this.logonMenu.onBlur((event) => {
+                console.log(event);
+                this.logonMenu.hide();
+            });
 
+            var hrefWrapperForTabmenu = new api.dom.AEl("tab-menu-logon-wrapper"); // to get onblur event
+            hrefWrapperForTabmenu.appendChild(this.logonMenu);
+            hrefWrapperForTabmenu.onBlur(() => {
+                this.logonMenu.hideMenu();
+            })
 
             this.appendChild(this.installationHeader);
             this.appendChild(this.returnButton);
-            this.appendChild(this.logoutEl);
-            this.appendChild(this.userName);
+            this.appendChild(hrefWrapperForTabmenu);
 
             app.home.LogInEvent.on((event) => {
-                this.userName.setHtml(event.getUser().getDisplayName());
-                this.logoutEl.show();
+                this.logonMenu.setButtonLabel(event.getUser().getDisplayName());
+                this.logonMenu.show();
                 //TODO: init icon for user
             });
 
             app.home.LogOutEvent.on((event) => {
-                this.logoutEl.hide();
+                this.logonMenu.hide();
             });
 
             new api.system.StatusRequest().send().done((response: api.rest.JsonResponse<api.system.StatusJson>) => {
@@ -55,17 +62,6 @@ module app.home {
                 this.installationHeader.setHtml(installationText);
             });
 
-            this.onShown(() => {
-                if (!this.userName) {
-                    new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
-                        if (loginResult.isAuthenticated()) {
-                            //TODO: init icon for user
-                            this.userName.setHtml(loginResult.getUser().getDisplayName());
-                            this.logoutEl.show();
-                        }
-                    });
-                }
-            });
         }
 
         enableReturnButton() {

@@ -36,7 +36,7 @@ module api.form {
 
         private previousValidityRecording: ValidationRecording;
 
-        private validityChangedListeners: {(event: ValidityChangedEvent) : void}[] = [];
+        private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
 
         constructor(config: InputViewConfig) {
             super(<FormItemViewConfig>{
@@ -190,7 +190,7 @@ module api.form {
             }
 
             if (!silent && recording.validityChanged(this.previousValidityRecording)) {
-                this.notifyFormValidityChanged(new ValidityChangedEvent(recording, validationRecordingPath));
+                this.notifyFormValidityChanged(new RecordingValidityChangedEvent(recording, validationRecordingPath));
             }
 
             this.renderValidationErrors(recording);
@@ -204,17 +204,17 @@ module api.form {
             return this.inputTypeView.giveFocus();
         }
 
-        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
             this.validityChangedListeners.push(listener);
         }
 
-        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
-            this.validityChangedListeners.filter((currentListener: (event: ValidityChangedEvent)=>void) => {
+        unValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
+            this.validityChangedListeners.filter((currentListener: (event: RecordingValidityChangedEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        private notifyFormValidityChanged(event: ValidityChangedEvent) {
+        private notifyFormValidityChanged(event: RecordingValidityChangedEvent) {
 
             /*console.log("InputView[ " + event.getOrigin().toString() + " ] validity changed");
              if (event.getRecording().isValid()) {
@@ -225,7 +225,7 @@ module api.form {
              event.getRecording().print();
              }*/
 
-            this.validityChangedListeners.forEach((listener: (event: ValidityChangedEvent)=>void) => {
+            this.validityChangedListeners.forEach((listener: (event: RecordingValidityChangedEvent)=>void) => {
                 listener(event);
             });
         }

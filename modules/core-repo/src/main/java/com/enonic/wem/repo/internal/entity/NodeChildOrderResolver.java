@@ -25,7 +25,7 @@ public class NodeChildOrderResolver
 
     public ChildOrder resolve()
     {
-        return runAsAdmin( this::doResolve );
+        return NodeHelper.runAsAdmin( this::doResolve );
     }
 
     private ChildOrder doResolve()

@@ -366,7 +366,7 @@ module app.browse {
                 this.updateNode(data, item.getId());
 
                 this.resetAndRender();
-                api.notify.showSuccess("Upload [" + item.getName() + "] finished");
+                api.notify.showFeedback(item.getMimeType() + " \"" + item.getName() + "\" created successfully");
             });
             item.onFailed(() => {
                 this.deleteNode(data);

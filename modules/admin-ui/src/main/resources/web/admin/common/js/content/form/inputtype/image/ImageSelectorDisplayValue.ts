@@ -59,6 +59,10 @@ module api.content.form.inputtype.image {
             return this.content ? this.content.getDisplayName() : null;
         }
 
+        getTypeLocaleName(): string {
+            return (this.content && this.content.getType()) ? this.content.getType().getLocalName() : null;
+        }
+
         getPath(): string {
             return this.content ? this.content.getPath().toString() : null;
         }

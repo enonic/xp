@@ -14,6 +14,8 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 
+import static com.enonic.wem.portal.internal.rendering.RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE;
+
 @Component(immediate = true, service = Renderer.class)
 public final class ImageRenderer
     implements Renderer<ImageComponent>
@@ -37,7 +39,7 @@ public final class ImageRenderer
         final StringBuilder s = new StringBuilder();
         if ( renderMode == RenderMode.EDIT )
         {
-            s.append( "<div data-live-edit-type=\"" ).append( component.getType().toString() ).append( "\">" );
+            s.append( "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"" ).append( component.getType().toString() ).append( "\">" );
         }
 
         if ( component.getImage() != null )

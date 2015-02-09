@@ -2,6 +2,7 @@ module api.content {
 
     import Thumbnail = api.thumb.Thumbnail;
     import PropertyIdProvider = api.data.PropertyIdProvider;
+    import ContentState = api.schema.content.ContentState;
 
     export class ContentSummary extends ContentIdBaseItem {
 
@@ -45,6 +46,8 @@ module api.content {
 
         private language: string;
 
+        private contentState: ContentState;
+
         constructor(builder: ContentSummaryBuilder) {
             super(builder);
             this.name = builder.name;
@@ -68,6 +71,7 @@ module api.content {
             this.editable = builder.editable;
             this.childOrder = builder.childOrder;
             this.language = builder.language;
+            this.contentState = builder.contentState;
         }
 
         getName(): ContentName {
@@ -170,6 +174,10 @@ module api.content {
             return this.language;
         }
 
+        getContentState(): ContentState {
+            return this.contentState;
+        }
+
         equals(o: api.Equitable): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ContentSummary)) {
@@ -239,6 +247,9 @@ module api.content {
             if (!api.ObjectHelper.stringEquals(this.language, other.language)) {
                 return false;
             }
+            if (!api.ObjectHelper.objectEquals(this.contentState, other.contentState)) {
+                return false;
+            }
             return true;
         }
 
@@ -297,6 +308,8 @@ module api.content {
 
         language: string;
 
+        contentState: ContentState;
+
         constructor(source?: ContentSummary) {
             super(source);
             if (source) {
@@ -320,6 +333,7 @@ module api.content {
                 this.editable = source.isEditable();
                 this.childOrder = source.getChildOrder();
                 this.language = source.getLanguage();
+                this.contentState = source.getContentState();
             }
         }
 
@@ -350,6 +364,8 @@ module api.content {
             this.editable = json.editable;
 
             this.childOrder = ChildOrder.fromJson(json.childOrder);
+
+            this.contentState = ContentState.fromString(json.contentState);
 
             return this;
         }

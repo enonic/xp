@@ -28,6 +28,8 @@ public class ContentSummaryJson
 
     private final ChildOrderJson childOrderJson;
 
+    private final String contentState;
+
     public ContentSummaryJson( final Content content, final ContentIconUrlResolver iconUrlResolver )
     {
         super( content.getId() );
@@ -38,6 +40,7 @@ public class ContentSummaryJson
         this.isPage = content.hasPage();
         this.deletable = !content.hasChildren();
         this.childOrderJson = content.getChildOrder() != null ? new ChildOrderJson( content.getChildOrder() ) : null;
+        this.contentState = content.getContentState().toString();
     }
 
     public String getIconUrl()
@@ -123,6 +126,11 @@ public class ContentSummaryJson
     public boolean getIsPage()
     {
         return isPage;
+    }
+
+    public String getContentState()
+    {
+        return this.contentState;
     }
 
     @Override

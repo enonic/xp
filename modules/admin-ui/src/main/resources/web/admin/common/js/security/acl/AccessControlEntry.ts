@@ -34,6 +34,10 @@ module api.security.acl {
             return this.principal.getDisplayName();
         }
 
+        getPrincipalTypeName(): string {
+            return this.principal.getTypeName();
+        }
+
         getAllowedPermissions(): Permission[] {
             return this.allowedPermissions;
         }

@@ -30,7 +30,7 @@ module app.browse {
 
         constructor() {
             super({
-                title: new api.ui.dialog.ModalDialogHeader("")
+                title: new api.ui.dialog.ModalDialogHeader("Default sorting")
             });
 
             var menu = new api.ui.tab.TabMenu();
@@ -42,7 +42,7 @@ module app.browse {
 
             this.sortContentMenu = new SortContentTabMenu();
             this.sortContentMenu.show();
-            this.appendChild(this.sortContentMenu);
+            this.appendChildToTitle(this.sortContentMenu);
 
             this.sortContentMenu.onSortOrderChanged(() => {
                 var newOrder = this.sortContentMenu.getSelectedNavigationItem().getChildOrder();
@@ -86,8 +86,8 @@ module app.browse {
 
             var header = new api.dom.H6El();
             header.setHtml("Sort content by selecting default sort above, or drag and drop for manual sorting");
-            this.appendChild(header);
-            this.appendChild(this.contentGrid);
+            this.appendChildToContentPanel(header);
+            this.appendChildToContentPanel(this.contentGrid);
 
 
             this.sortAction.onExecuted(() => {

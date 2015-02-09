@@ -15,7 +15,7 @@ module api.liveedit.text {
 
         constructor() {
             super("text", <ItemTypeConfigJson>{
-                cssSelector: '[data-live-edit-type=text]',
+                cssSelector: '[data-portal-component-type=text]',
                 draggable: true,
                 cursor: 'move',
                 iconCls: 'live-edit-font-icon-text',

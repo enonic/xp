@@ -44,6 +44,13 @@ import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.SyncWorkResolverParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.security.SystemConstants;
+import com.enonic.wem.api.snapshot.DeleteSnapshotParams;
+import com.enonic.wem.api.snapshot.DeleteSnapshotsResult;
+import com.enonic.wem.api.snapshot.RestoreParams;
+import com.enonic.wem.api.snapshot.RestoreResult;
+import com.enonic.wem.api.snapshot.SnapshotParams;
+import com.enonic.wem.api.snapshot.SnapshotResult;
+import com.enonic.wem.api.snapshot.SnapshotResults;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
@@ -52,6 +59,7 @@ import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexService;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
+import com.enonic.wem.repo.internal.snapshot.SnapshotService;
 import com.enonic.wem.repo.internal.version.VersionService;
 
 @Component(immediate = true)
@@ -69,6 +77,8 @@ public class NodeServiceImpl
     private QueryService queryService;
 
     private final BlobStore binaryBlobStore = new FileBlobStore( NodeConstants.binaryBlobStoreDir );
+
+    private SnapshotService snapshotService;
 
     @Activate
     public void initialize()
@@ -424,15 +434,33 @@ public class NodeServiceImpl
     }
 
     @Override
-    public void snapshot( final String snapshotName )
+    public SnapshotResult snapshot( final SnapshotParams params )
     {
-        this.indexService.snapshot( ContextAccessor.current().getRepositoryId(), snapshotName );
+        return this.snapshotService.snapshot( params );
     }
 
     @Override
-    public void restore( final String snapshotName )
+    public RestoreResult restore( final RestoreParams params )
     {
-        this.indexService.restore( ContextAccessor.current().getRepositoryId(), snapshotName );
+        return this.snapshotService.restore( params );
+    }
+
+    @Override
+    public DeleteSnapshotsResult deleteSnapshot( final DeleteSnapshotParams params )
+    {
+        return this.snapshotService.delete( params );
+    }
+
+    @Override
+    public SnapshotResults listSnapshots()
+    {
+        return this.snapshotService.list();
+    }
+
+    @Override
+    public void deleteSnapshotRespository()
+    {
+        this.snapshotService.deleteSnapshotRepository();
     }
 
     @Override
@@ -507,6 +535,18 @@ public class NodeServiceImpl
         throw new RuntimeException( "Expected node with path " + NodePath.ROOT.toString() + " to be of type RootNode, found " + node.id() );
     }
 
+    @Override
+    public boolean nodeExists( final NodeId nodeId )
+    {
+        return NodeHelper.runAsAdmin( () -> this.doGetById( nodeId, false ) ) != null;
+    }
+
+    @Override
+    public boolean nodeExists( final NodePath nodePath )
+    {
+        return NodeHelper.runAsAdmin( () -> this.doGetByPath( nodePath, false ) ) != null;
+    }
+
     @Reference
     public void setIndexService( final IndexService indexService )
     {
@@ -535,5 +575,11 @@ public class NodeServiceImpl
     public void setQueryService( final QueryService queryService )
     {
         this.queryService = queryService;
+    }
+
+    @Reference
+    public void setSnapshotService( final SnapshotService snapshotService )
+    {
+        this.snapshotService = snapshotService;
     }
 }

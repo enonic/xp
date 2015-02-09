@@ -2,6 +2,7 @@ module app.create {
 
     import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
     import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
+    import GetNearestSiteRequest = api.content.GetNearestSiteRequest;
     import ContentName = api.content.ContentName;
     import Content = api.content.Content;
     import ContentPath = api.content.ContentPath;
@@ -10,6 +11,8 @@ module app.create {
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import ContentType = api.schema.content.ContentType;
+    import Site =api.content.site.Site;
+    import ModuleKey = api.module.ModuleKey;
     import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
     import UploadItem = api.ui.uploader.UploadItem;
 
@@ -168,8 +171,17 @@ module app.create {
             this.contentList.setItems(filteredItems);
         }
 
-        private filterByParentContent(items: NewContentDialogListItem[]): NewContentDialogListItem[] {
-            var isRootContent: boolean = !this.parentContent;
+        private filterByParentContent(items: NewContentDialogListItem[], siteModuleKeys: ModuleKey[]): NewContentDialogListItem[] {
+            var typesAllowedEverywhere: {[key:string]: ContentTypeName} = {};
+            [ContentTypeName.UNSTRUCTURED, ContentTypeName.FOLDER, ContentTypeName.SITE,
+                ContentTypeName.SHORTCUT].forEach((contentTypeName: ContentTypeName) => {
+                    typesAllowedEverywhere[contentTypeName.toString()] = contentTypeName;
+                });
+            var siteModules: {[key:string]: ModuleKey} = {};
+            siteModuleKeys.forEach((moduleKey: ModuleKey) => {
+                siteModules[moduleKey.toString()] = moduleKey;
+            });
+
             var parentContentIsTemplateFolder = this.parentContent && this.parentContent.getType().isTemplateFolder();
             var parentContentIsSite = this.parentContent && this.parentContent.getType().isSite();
             var parentContentIsPageTemplate = this.parentContent && this.parentContent.getType().isPageTemplate();
@@ -183,20 +195,23 @@ module app.create {
                 else if (parentContentIsPageTemplate) {
                     return false; // children not allowed for page-template
                 }
-                else if (isRootContent && (contentTypeName.isTemplateFolder() || contentTypeName.isPageTemplate())) {
-                    return false; // page-template or template-folder not allowed at root level
+                else if (contentTypeName.isTemplateFolder()) {
+                    return parentContentIsSite; // template-folder only allowed under site
                 }
-                else if (contentTypeName.isTemplateFolder() && !parentContentIsSite) {
-                    return false; // template-folder only allowed under site
+                else if (contentTypeName.isPageTemplate()) {
+                    return parentContentIsTemplateFolder; // page-template only allowed under a template-folder
                 }
-                else if (contentTypeName.isPageTemplate() && !parentContentIsTemplateFolder) {
-                    return false; // page-template only allowed under a template-folder
+                else if (parentContentIsTemplateFolder) {
+                    return contentTypeName.isPageTemplate(); // in a template-folder allow only page-template
                 }
-                else if (parentContentIsTemplateFolder && !contentTypeName.isPageTemplate()) {
-                    return false; // in a template-folder allow only page-template
+                else if (typesAllowedEverywhere[contentTypeName.toString()]) {
+                    return true;
+                }
+                else if (siteModules[contentTypeName.getModuleKey().toString()]) {
+                    return true;
                 }
                 else {
-                    return true;
+                    return false;
                 }
 
             });
@@ -239,13 +254,18 @@ module app.create {
             this.contentListMask.show();
             this.recentListMask.show();
 
-            var contentTypesRequest = new GetAllContentTypesRequest();
+            var requests: wemQ.Promise<any>[] = [];
+            requests.push(new GetAllContentTypesRequest().sendAndParse());
+            if (this.parentContent) {
+                requests.push(new GetNearestSiteRequest(this.parentContent.getContentId()).sendAndParse());
+            }
 
-            wemQ.all([contentTypesRequest.sendAndParse()])
-                .spread((contentTypes: ContentTypeSummary[]) => {
-
+            wemQ.all(requests)
+                .spread((contentTypes: ContentTypeSummary[], parentSite: Site) => {
                     var listItems = this.createListItems(contentTypes);
-                    this.listItems = this.filterByParentContent(listItems);
+
+                    var siteModules: ModuleKey[] = parentSite ? parentSite.getModuleKeys() : [];
+                    this.listItems = this.filterByParentContent(listItems, siteModules);
 
                     if (this.listItems.length > 0) {
                         this.contentList.setItems(this.listItems);

@@ -10,6 +10,10 @@ module api.content.form.inputtype.image {
             return object.getDisplayName();
         }
 
+        resolveUnnamedDisplayName(object: ImageSelectorDisplayValue): string {
+            return object.getTypeLocaleName();
+        }
+
         resolveSubName(object: ImageSelectorDisplayValue, relativePath: boolean = false): string {
             return object.getPath();
         }

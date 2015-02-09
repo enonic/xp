@@ -13,7 +13,7 @@ module api.liveedit {
 
         constructor() {
             super("page", <ItemTypeConfigJson>{
-                cssSelector: '[data-live-edit-type=page]',
+                cssSelector: '[data-portal-component-type=page]',
                 draggable: false,
                 cursor: 'pointer',
                 iconCls: 'live-edit-font-icon-page',

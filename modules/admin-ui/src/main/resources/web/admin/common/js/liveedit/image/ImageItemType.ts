@@ -16,7 +16,7 @@ module api.liveedit.image {
 
         constructor() {
             super("image", <ItemTypeConfigJson>{
-                cssSelector: '[data-live-edit-type=image]',
+                cssSelector: '[data-portal-component-type=image]',
                 draggable: true,
                 cursor: 'move',
                 iconCls: 'live-edit-font-icon-image',

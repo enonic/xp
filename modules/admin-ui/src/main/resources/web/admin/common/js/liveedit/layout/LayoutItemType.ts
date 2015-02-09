@@ -16,7 +16,7 @@ module api.liveedit.layout {
 
         constructor() {
             super("layout", <ItemTypeConfigJson>{
-                cssSelector: '[data-live-edit-type=layout]',
+                cssSelector: '[data-portal-component-type=layout]',
                 draggable: true,
                 cursor: 'move',
                 iconCls: 'live-edit-font-icon-layout',

@@ -12,14 +12,19 @@ import com.enonic.wem.portal.internal.controller.PortalResponseSerializer;
 import com.enonic.wem.portal.internal.rendering.RenderResult;
 import com.enonic.wem.portal.internal.rendering.Renderer;
 import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
+
+import static com.enonic.wem.portal.internal.rendering.RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE;
 
 public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBasedComponent>
     implements Renderer<R>
 {
-    private static final String EMPTY_COMPONENT_EDIT_MODE_HTML = "<div data-live-edit-type=\"{0}\"></div>";
+    private static final String EMPTY_COMPONENT_EDIT_MODE_HTML = "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"></div>";
 
-    private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div></div>";
+    private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"></div>";
+
+    private static final LiveEditAttributeInjection LIVE_EDIT_ATTRIBUTE_INJECTION = new LiveEditAttributeInjection();
 
     protected ControllerScriptFactory controllerScriptFactory;
 
@@ -40,7 +45,9 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         {
             context.setComponent( component );
             controllerScript.execute( context );
-            return new PortalResponseSerializer( context.getResponse() ).serialize();
+            final PortalResponse response = context.getResponse();
+            LIVE_EDIT_ATTRIBUTE_INJECTION.injectLiveEditAttribute( response, component.getType() );
+            return new PortalResponseSerializer( response ).serialize();
         }
         finally
         {

@@ -79,7 +79,7 @@ module api.ui.tab {
             this.notifyLabelChangedListeners(newValue, oldValue);
         }
 
-        markInvalid(markInvalid: boolean) {
+        markInvalid(markInvalid: boolean = false) {
             this.toggleClass("invalid", markInvalid);
         }
 

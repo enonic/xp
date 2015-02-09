@@ -42,7 +42,7 @@
       float: left;
 
       .content-types-list {
-        max-height: 420px;
+        max-height: 480px;
         overflow-y: auto;
         overflow-x: hidden;
 
@@ -51,11 +51,11 @@
         }
 
         @media screen and (max-height: 540px) {
-          max-height: 150px;
+          max-height: 145px;
         }
 
         @media screen and (max-height: 360px) {
-          max-height: 70%;
+          max-height: 78%;
         }
 
         .content-types-list-item {
@@ -88,6 +88,11 @@
       .file-input {
         width: 100%;
         margin-bottom: 20px;
+
+        @media screen and (max-height: 360px) {
+          margin-bottom: 5px;
+        }
+
       }
     }
 
@@ -103,11 +108,13 @@
         margin: 0px 0px 20px;
         padding: 0 5px;
         line-height: 37px;
+
+        @media screen and (max-height: 360px) {
+          margin: 0px 0px 5px;
+        }
+
       }
 
-      .content-types-list {
-        height: 308px;
-      }
     }
 
   }
@@ -121,6 +128,10 @@
       text-align: center;
       color: @admin-font-gray1;
       content: 'Drop files here to upload';
+
+      @media screen and (max-height: 360px) {
+        line-height: 70px;
+      }
     }
 
   }
@@ -172,6 +183,16 @@
           .animation(pulsate, 4s);
         }
       }
+    }
+  }
+
+  &._0-240, &._240-360 {
+    section {
+      width: 100%
+    }
+
+    aside {
+      display: none;
     }
   }
 }

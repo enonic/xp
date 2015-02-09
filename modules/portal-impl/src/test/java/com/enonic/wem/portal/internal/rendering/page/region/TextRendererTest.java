@@ -51,7 +51,7 @@ public class TextRendererTest
         RenderResult result = renderer.render( textComponent, context );
 
         // verify
-        assertEquals( "<div data-live-edit-type=\"text\"><article></article></div>", result.getAsString() );
+        assertEquals( "<div data-portal-component-type=\"text\"><section></section></div>", result.getAsString() );
     }
 
     @Test
@@ -66,7 +66,7 @@ public class TextRendererTest
         RenderResult result = renderer.render( textComponent, context );
 
         // verify
-        assertEquals( "<article></article>", result.getAsString() );
+        assertEquals( "<section></section>", result.getAsString() );
     }
 
 
@@ -82,7 +82,7 @@ public class TextRendererTest
         RenderResult result = renderer.render( textComponent, context );
 
         // verify
-        assertEquals( "<article>" + text + "</article>", result.getAsString() );
+        assertEquals( "<section>" + text + "</section>", result.getAsString() );
     }
 
     @Test
@@ -98,6 +98,6 @@ public class TextRendererTest
         RenderResult result = renderer.render( textComponent, context );
 
         // verify
-        assertEquals( "<div data-live-edit-type=\"text\"><article>" + text + "</article></div>", result.getAsString() );
+        assertEquals( "<div data-portal-component-type=\"text\"><section>" + text + "</section></div>", result.getAsString() );
     }
 }

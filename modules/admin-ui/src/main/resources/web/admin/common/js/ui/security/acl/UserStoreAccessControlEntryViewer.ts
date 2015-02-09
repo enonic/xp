@@ -12,6 +12,10 @@ module api.ui.security.acl {
             return object.getPrincipalDisplayName();
         }
 
+        resolveUnnamedDisplayName(object: UserStoreAccessControlEntry): string {
+            return object.getPrincipalTypeName();
+        }
+
         resolveSubName(object: UserStoreAccessControlEntry, relativePath: boolean = false): string {
             return object.getPrincipalKey().toPath();
         }

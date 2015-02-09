@@ -1,12 +1,18 @@
 .cycle-button {
   position: absolute;
-  right: 60px;
-  top: 0;
+  right: 57px;
+  top: 5px;
   min-width: 85px;
   color: @admin-font-gray2;
   box-sizing: border-box;
 
   .notSelectable();
+
+  &.button {
+    border-color: @admin-font-gray1;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
 
   &.expanded {
     background-color: @admin-bg-light-gray !important;
@@ -38,10 +44,11 @@
   .drop-down-button {
     position: absolute;
     right:10px;
-    top:10px;
+    top: 6px;
     margin-left:10px;
     &:before {
       color: @admin-font-gray2;
+      font-size: 16px;
       &:hover {
         color: @admin-font-gray3;
       }
@@ -50,7 +57,8 @@
     &:hover {
       .icon-arrow-down();
     }
-    .icon-loop4();
+
+    .icon-loop5();
   }
 
 }

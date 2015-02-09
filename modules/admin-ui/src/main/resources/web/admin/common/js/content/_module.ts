@@ -74,4 +74,5 @@
 
 ///<reference path='MediaUploader.ts' />
 ///<reference path='ImageUploader.ts' />
+///<reference path='ThumbnailUploader.ts' />
 

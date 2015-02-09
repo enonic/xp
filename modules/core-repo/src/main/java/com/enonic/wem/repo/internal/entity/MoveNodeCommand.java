@@ -111,7 +111,7 @@ public class MoveNodeCommand
             checkExistingNode = false;
         }
 
-        final Node nodeToMove = Node.newNode( persistedNode ).
+        Node nodeToMove = Node.newNode( persistedNode ).
             name( nodeName ).
             parentPath( newParentPath ).
             indexConfigDocument( persistedNode.getIndexConfigDocument() ).
@@ -122,6 +122,12 @@ public class MoveNodeCommand
         // The node that is moved must be updated
         if ( nodeToMove.id().equals( this.nodeId ) )
         {
+            final boolean isRenaming = newParentPath.equals( persistedNode.parentPath() );
+            if ( !isRenaming )
+            {
+                // when moving a Node "inheritPermissions" must be set to false so the permissions are kept with the transfer
+                nodeToMove = Node.newNode( nodeToMove ).inheritPermissions( false ).build();
+            }
             movedNode = doStoreNode( nodeToMove );
         }
         else

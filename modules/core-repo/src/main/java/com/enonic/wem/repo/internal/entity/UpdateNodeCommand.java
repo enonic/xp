@@ -69,13 +69,19 @@ public final class UpdateNodeCommand
             attachedBinaries( updatedBinaries ).
             build() );
 
-        doStoreNode( updatedNode );
+        if ( !this.params.isDryRun() )
+        {
+            doStoreNode( updatedNode );
 
-        final Node nodeWithHashChildrenSet = NodeHasChildResolver.create().
-            queryService( this.queryService ).
-            build().
-            resolve( updatedNode );
-        return nodeWithHashChildrenSet;
+            return NodeHasChildResolver.create().
+                queryService( this.queryService ).
+                build().
+                resolve( updatedNode );
+        }
+        else
+        {
+            return updatedNode;
+        }
     }
 
     private Node createUpdatedNode( final Node editedNode )

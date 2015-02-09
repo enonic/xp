@@ -45,42 +45,48 @@ module api.app.bar {
 
         private moveTabs(timeout: number = 0) {
             clearInterval(this.timeoutHandler);
-            this.timeoutHandler = setTimeout(() => {
-                var width = this.getEl().getWidth(),
-                    barWidth = this.barEl.getEl().getWidth(),
-                    exactTabs = AppBarTabMenu.MAX_WIDTH < width ? Math.ceil(barWidth / AppBarTabMenu.TAB_WIDTH) || 1 : 1,
-                    barTabs = this.barEl.getChildren(),
-                    menuTabs = this.getMenuEl().getChildren(),
-                    tabsInBar = barTabs.length,
-                    tabsInMenu = menuTabs.length;
+            if (timeout > 0) {
+                this.timeoutHandler = setTimeout(this.moveTabsHandler.bind(this), timeout);
+            } else {
+                this.moveTabsHandler();
+            }
+        }
 
-                while (!(
-                        // escape condition
-                        exactTabs === tabsInBar ||
-                        (exactTabs > tabsInBar && tabsInMenu === 0)
-                    )) {
+        private moveTabsHandler() {
+            var width = this.getEl().getWidth(),
+                barWidth = this.barEl.getEl().getWidth(),
+                exactTabs = AppBarTabMenu.MAX_WIDTH < width ? Math.ceil(barWidth / AppBarTabMenu.TAB_WIDTH) || 1 : 1,
+                barTabs = this.barEl.getChildren(),
+                menuTabs = this.getMenuEl().getChildren(),
+                tabsInBar = barTabs.length,
+                tabsInMenu = menuTabs.length;
 
-                    if (exactTabs > tabsInBar) {
-                        if (tabsInMenu > 0) {
-                            var tabEl = this.getMenuEl().getFirstChild();
-                            this.getMenuEl().removeChild(tabEl);
-                            this.barEl.appendChild(tabEl);
-                            tabsInBar++;
-                            tabsInMenu--;
-                        }
-                    } else if (exactTabs < tabsInBar) {
-                        if (tabsInBar > 0) {
-                            var tabEl = this.barEl.getLastChild();
-                            this.barEl.removeChild(tabEl);
-                            this.getMenuEl().prependChild(tabEl);
-                            tabsInBar--;
-                            tabsInMenu++;
-                        }
+            while (!(
+                // escape condition
+                exactTabs === tabsInBar ||
+                (exactTabs > tabsInBar && tabsInMenu === 0)
+            )) {
+
+                if (exactTabs > tabsInBar) {
+                    if (tabsInMenu > 0) {
+                        var tabEl = this.getMenuEl().getFirstChild();
+                        this.getMenuEl().removeChild(tabEl);
+                        this.barEl.appendChild(tabEl);
+                        tabsInBar++;
+                        tabsInMenu--;
                     }
-
+                } else if (exactTabs < tabsInBar) {
+                    if (tabsInBar > 0) {
+                        var tabEl = this.barEl.getLastChild();
+                        this.barEl.removeChild(tabEl);
+                        this.getMenuEl().prependChild(tabEl);
+                        tabsInBar--;
+                        tabsInMenu++;
+                    }
                 }
-                this.updateTabMenuButtonVisibility();
-            }, timeout);
+            }
+
+            this.updateTabMenuButtonVisibility();
         }
 
         createTabMenuButton(): AppBarTabMenuButton {
@@ -101,6 +107,7 @@ module api.app.bar {
             this.appBarTabMenuButton.setEditing(tab.isEditing());
 
             this.moveTabs(0);
+            this.makeTabFirst(tab);
         }
 
         removeNavigationItem(tab: AppBarTabMenuItem) {
@@ -133,6 +140,31 @@ module api.app.bar {
             this.appBarTabMenuButton.setEditing(tab.isEditing());
 
             this.hideMenu();
+            this.moveTabs();
+            this.makeSelectedTabFirst(tab);
+        }
+
+        private makeSelectedTabFirst(tab: AppBarTabMenuItem) {
+            if (this.getMenuEl().hasChild(tab)) {
+                this.getMenuEl().removeChild(tab);
+                this.barEl.prependChild(tab);
+                this.moveTabs();
+            }
+        }
+
+        private makeTabFirst(tab: AppBarTabMenuItem) {
+            var canBeMoved;
+
+            if (canBeMoved = this.getMenuEl().hasChild(tab)) {
+                this.getMenuEl().removeChild(tab);
+            } else if (canBeMoved = this.barEl.hasChild(tab)) {
+                this.barEl.removeChild(tab);
+            }
+
+            if (canBeMoved) {
+                this.barEl.prependChild(tab);
+                this.moveTabs();
+            }
         }
 
         deselectNavigationItem() {

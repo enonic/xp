@@ -9,7 +9,7 @@ module api.app.wizard {
 
         persistedItem:any;
 
-        formIcon:FormIcon;
+        formIcon: any;
 
         mainToolbar:api.ui.toolbar.Toolbar;
 
@@ -407,11 +407,11 @@ module api.app.wizard {
             });
         }
 
-        onValidityChanged(listener: (event: WizardValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.validityManager.onValidityChanged(listener);
         }
 
-        unValidityChanged(listener: (event: WizardValidityChangedEvent)=>void) {
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.validityManager.onValidityChanged(listener);
         }
 

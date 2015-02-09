@@ -208,9 +208,9 @@ public final class ContentResource
             byteSource( getFileItemByteSource( mediaFile ) ).
             build();
 
-        final UpdateContentParams params = new UpdateContentParams();
-        params.contentId( ContentId.from( form.getAsString( "id" ) ) );
-        params.createAttachments( CreateAttachments.from( thumbnailAttachment ) );
+        final UpdateContentParams params = new UpdateContentParams().
+            contentId( ContentId.from( form.getAsString( "id" ) ) ).
+            createAttachments( CreateAttachments.from( thumbnailAttachment ) );
 
         final Content persistedContent = contentService.update( params );
 
@@ -231,30 +231,6 @@ public final class ContentResource
     public ContentJson move( final MoveContentJson params )
     {
         final Content contentForMove = this.contentService.getById( params.getContentId() );
-
-        if ( contentForMove.inheritsPermissions() )
-        {
-            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-            final PrincipalKey modifier =
-                authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
-
-            UpdateContentParams updateContentParams = new UpdateContentParams().
-                contentId( params.getContentId() ).
-                modifier( modifier ).
-                editor( edit -> {
-                    edit.inheritPermissions = false;
-                    edit.permissions = contentForMove.getPermissions();
-                } );
-
-            final Content updatedContent = contentService.update( updateContentParams );
-
-            contentService.applyPermissions( ApplyContentPermissionsParams.create().
-                contentId( params.getContentId() ).
-                overwriteChildPermissions( false ).
-                modifier( modifier ).
-                build() );
-        }
-
         final Content movedContent = contentService.move( new MoveContentParams( params.getContentId(), params.getParentContentPath() ) );
 
         return new ContentJson( movedContent, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );

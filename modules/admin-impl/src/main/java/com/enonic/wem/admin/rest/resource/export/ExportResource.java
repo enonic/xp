@@ -1,12 +1,11 @@
 package com.enonic.wem.admin.rest.resource.export;
 
-import java.net.URI;
 import java.nio.file.Paths;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -20,11 +19,10 @@ import com.enonic.wem.api.export.ExportService;
 import com.enonic.wem.api.export.ImportNodesParams;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.export.NodeImportResult;
-import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.vfs.VirtualFiles;
-import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Path(ResourceConstants.REST_ROOT + "export")
+@Produces(MediaType.APPLICATION_JSON)
 @Component(immediate = true)
 public class ExportResource
     implements AdminResource
@@ -33,39 +31,37 @@ public class ExportResource
 
     private Logger LOG = LoggerFactory.getLogger( ExportResource.class );
 
-    @GET
+    @POST
     @Path("export")
-    public Response exportNodes( @QueryParam("path") final String path, @QueryParam("name") final String name )
+    public NodeExportResultJson exportNodes( final ExportNodesRequestJson request )
         throws Exception
     {
         final NodeExportResult result = this.exportService.exportNodes( ExportNodesParams.create().
-            exportRoot( NodePath.newPath( path ).build() ).
-            exportName( name ).
+            exportRoot( request.getExportRoot() ).
+            exportName( request.getExportName() ).
+            dryRun( request.isDryRun() ).
+            includeNodeIds( request.isIncludeIds() ).
             build() );
 
-        LOG.info( result.toString() );
-
-        final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
-        return Response.temporaryRedirect( new URI( uri ) ).build();
+        return NodeExportResultJson.from( result );
     }
 
-    @GET
+    @POST
     @Path("import")
-    public Response importNodes( @QueryParam("exportRootPath") final String exportRootPath,
-                                 @QueryParam("importRoot") final String importRoot )
+    public NodeImportResultJson importNodes( final ImportNodesRequestJson request )
         throws Exception
     {
         final NodeImportResult result = this.exportService.importNodes( ImportNodesParams.create().
-            targetPath( NodePath.newPath( importRoot ).build() ).
-            source( VirtualFiles.from( Paths.get( exportRootPath ) ) ).
+            targetNodePath( request.getTargetNodePath() ).
+            source( VirtualFiles.from( Paths.get( request.getExportFilePath() ) ) ).
+            dryRun( request.isDryRun() ).
+            includeNodeIds( request.isImportWithIds() ).
             build() );
 
-        LOG.info( result.toString() );
-
-        final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
-        return Response.temporaryRedirect( new URI( uri ) ).build();
+        return NodeImportResultJson.from( result );
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     @Reference
     public void setExportService( final ExportService exportService )
     {

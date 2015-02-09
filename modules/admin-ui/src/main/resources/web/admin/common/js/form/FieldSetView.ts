@@ -129,14 +129,14 @@ module api.form {
             return recording;
         }
 
-        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
 
             this.formItemViews.forEach((formItemView: FormItemView)=> {
                 formItemView.onValidityChanged(listener);
             });
         }
 
-        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+        unValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
             this.formItemViews.forEach((formItemView: FormItemView)=> {
                 formItemView.unValidityChanged(listener);
             });

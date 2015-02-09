@@ -11,6 +11,7 @@ module api.ui.text {
         private originEmail: string;
 
         private status: string;
+
         private checkTimeout: number;
 
         private userStoreKey: api.security.UserStoreKey;
@@ -38,9 +39,14 @@ module api.ui.text {
                 }
 
                 this.checkTimeout = setTimeout((email) => this.checkAvailability(email), 500, this.input.getValue());
+
             });
             this.appendChild(this.input);
 
+        }
+
+        getInput(): InputEl {
+            return this.input;
         }
 
         getValue(): string {
@@ -89,10 +95,15 @@ module api.ui.text {
                 status = 'checking';
 
                 new CheckEmailAvailabilityRequest(email).setUserStoreKey(this.userStoreKey).sendAndParse().then((available: boolean) => {
-                    this.updateStatus((available || email === this.originEmail) ? 'available' : 'notavailable');
+                    var availability = available || email === this.originEmail;
+                    this.updateStatus(availability ? 'available' : 'notavailable');
+                    this.notifyValidityChanged(isValid && availability);
                 }).fail((reason) => {
+                    this.notifyValidityChanged(false);
                     this.updateStatus('error');
-                })
+                }).done();
+            } else {
+                this.notifyValidityChanged(isValid);
             }
 
             this.updateStatus(status);
@@ -106,6 +117,14 @@ module api.ui.text {
                 this.status = status;
                 this.addClass(this.status);
             }
+        }
+
+        isValid(): boolean {
+            return this.input.isValid();
+        }
+
+        validate(): boolean {
+            return this.input.validate();
         }
 
 

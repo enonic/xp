@@ -322,7 +322,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             var droppedElement = wemjq(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR);
             var regionHTMLElement = ComponentView.findParentRegionViewHTMLElement(droppedElement.get(0));
             var regionView = liveEditPage.getRegionViewByElement(regionHTMLElement);
-            var itemType: ComponentItemType = <ComponentItemType>ItemType.byShortName(droppedElement.data('live-edit-type'));
+            var itemType: ComponentItemType = <ComponentItemType>ItemType.byShortName(droppedElement.data('portal-component-type'));
 
             if (isDraggingLayoutOverLayout(regionView, itemType)) {
                 regionView.refreshEmptyState();

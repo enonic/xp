@@ -49,14 +49,14 @@ public final class CreateNodeCommand
         Preconditions.checkNotNull( params.getParent(), "Path of parent Node must be specified" );
         Preconditions.checkArgument( params.getParent().isAbsolute(), "Path to parent Node must be absolute: " + params.getParent() );
 
-        runAsAdmin( this::verifyNotExistsAlready );
-        runAsAdmin( this::verifyParentExists );
+        NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
+        NodeHelper.runAsAdmin( this::verifyParentExists );
 
         final PrincipalKey user = getCurrentPrincipalKey();
 
         final AccessControlList permissions = getAccessControlEntries( user );
 
-        final Long manualOrderValue = runAsAdmin( this::resolvePotentialManualOrderValue );
+        final Long manualOrderValue = NodeHelper.runAsAdmin( this::resolvePotentialManualOrderValue );
 
         final AttachedBinaries attachedBinaries = storeAndAttachBinaries();
 
@@ -76,7 +76,10 @@ public final class CreateNodeCommand
 
         final Node newNode = nodeBuilder.build();
 
-        this.doStoreNode( newNode );
+        if ( !this.params.isDryRun() )
+        {
+            this.doStoreNode( newNode );
+        }
 
         return newNode;
     }
@@ -100,8 +103,11 @@ public final class CreateNodeCommand
 
             try
             {
-                final Blob blob = this.binaryBlobStore.addRecord( binaryAttachment.getByteSource().openStream() );
-                builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey() ) );
+                if ( !this.params.isDryRun() )
+                {
+                    final Blob blob = this.binaryBlobStore.addRecord( binaryAttachment.getByteSource().openStream() );
+                    builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey() ) );
+                }
             }
             catch ( IOException e )
             {

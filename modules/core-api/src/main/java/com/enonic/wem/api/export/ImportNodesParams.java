@@ -11,11 +11,14 @@ public class ImportNodesParams
 
     private final VirtualFile source;
 
+    private final boolean importNodeids;
+
     private ImportNodesParams( final Builder builder )
     {
         this.targetPath = builder.targetPath;
         this.source = builder.source;
         this.dryRun = builder.dryRun;
+        this.importNodeids = builder.importNodeIds;
     }
 
     public NodePath getTargetPath()
@@ -33,6 +36,11 @@ public class ImportNodesParams
         return dryRun;
     }
 
+    public boolean isImportNodeids()
+    {
+        return importNodeids;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -46,11 +54,13 @@ public class ImportNodesParams
 
         private VirtualFile source;
 
+        private boolean importNodeIds;
+
         private Builder()
         {
         }
 
-        public Builder targetPath( NodePath targetPath )
+        public Builder targetNodePath( NodePath targetPath )
         {
             this.targetPath = targetPath;
             return this;
@@ -65,6 +75,12 @@ public class ImportNodesParams
         public Builder source( final VirtualFile source )
         {
             this.source = source;
+            return this;
+        }
+
+        public Builder includeNodeIds( final boolean importNodeIds )
+        {
+            this.importNodeIds = importNodeIds;
             return this;
         }
 
