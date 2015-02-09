@@ -1,79 +1,102 @@
-#!/bin/bash
+#!/bin/sh
 
-# Add default JVM options here. You can also use JAVA_OPTS or XP_OPTS to pass JVM options to this script.
-DEFAULT_JVM_OPTS=""
+DIRNAME=`dirname "$0"`
+PROGNAME=`basename "$0"`
 
-# App variables
-APP_NAME="EnonicXP"
-APP_BASE_NAME=`basename "$0"`
+XP_SCRIPT=$PROGNAME
+export XP_SCRIPT
+if [ -f "$DIRNAME/setenv.sh" ]; then
+  . "$DIRNAME/setenv.sh"
+fi
 
-warn ( ) {
-    echo "$*"
-}
-
-die ( ) {
-    echo
-    echo "$*"
-    echo
+die() {
+    warn "$*"
     exit 1
 }
 
-# OS specific support (must be 'true' or 'false').
-darwin=false
-case "`uname`" in
-  Darwin* )
-    darwin=true
-    ;;
-esac
-
-# Attempt to set APP_HOME
-# Resolve links: $0 may be a link
-PRG="$0"
-# Need this for relative symlinks.
-while [ -h "$PRG" ] ; do
-    ls=`ls -ld "$PRG"`
-    link=`expr "$ls" : '.*-> \(.*\)$'`
-    if expr "$link" : '/.*' > /dev/null; then
-        PRG="$link"
-    else
-        PRG=`dirname "$PRG"`"/$link"
-    fi
-done
-SAVED="`pwd`"
-cd "`dirname \"$PRG\"`/.." >&-
-APP_HOME="`pwd -P`"
-cd "$SAVED" >&-
-
-# Determine the Java command to use to start the JVM.
-if [ -n "$JAVA_HOME" ] ; then
-    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
-        # IBM's JDK on AIX uses strange locations for the executables
-        JAVACMD="$JAVA_HOME/jre/sh/java"
-    else
-        JAVACMD="$JAVA_HOME/bin/java"
-    fi
-    if [ ! -x "$JAVACMD" ] ; then
-        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
-        Please set the JAVA_HOME variable in your environment to match the
-        location of your Java installation."
-    fi
-else
-    JAVACMD="java"
-    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
-    Please set the JAVA_HOME variable in your environment to match the location of your Java installation."
-fi
-
-# For Darwin, add options to specify how the application appears in the dock
-if $darwin; then
-    XP_OPTS="$XP_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/logo.icns\""
-fi
-
-# Split up the JVM_OPTS And XP_OPTS values into an array, following the shell quoting and substitution rules
-function splitJvmOpts() {
-    JVM_OPTS=("$@")
+warn() {
+    echo "${PROGNAME}: $*"
 }
 
-XP_OPTS="$XP_OPTS -Dxp.install=$APP_HOME"
+detectOS() {
+    cygwin=false;
+    darwin=false;
+    case "`uname`" in
+        CYGWIN*)
+            cygwin=true
+            ;;
+        Darwin*)
+            darwin=true
+            ;;
+    esac
+}
 
-eval splitJvmOpts $DEFAULT_JVM_OPTS $JAVA_OPTS $XP_OPTS
-exec "$JAVACMD" "${JVM_OPTS[@]}" -classpath "$APP_HOME/lib/*" com.enonic.xp.launcher.LauncherMain "$@"
+locateJava() {
+    if [ -n "$JAVA_HOME" ] ; then
+        if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+            JAVACMD="$JAVA_HOME/jre/sh/java"
+        else
+            JAVACMD="$JAVA_HOME/bin/java"
+        fi
+        if [ ! -x "$JAVACMD" ] ; then
+            die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME."
+        fi
+    else
+        JAVACMD="java"
+        which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH."
+    fi
+}
+
+setupDefaults() {
+    DEFAULT_JAVA_OPTS="-Xms1024M -Xmx2048M"
+    DEFAULT_JAVA_DEBUG_OPTS="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"
+}
+
+setupOptions() {
+    if [ "x$JAVA_OPTS" = "x" ]; then
+        JAVA_OPTS="$DEFAULT_JAVA_OPTS"
+    fi
+    export JAVA_OPTS
+}
+
+setupDebugOptions() {
+    if [ "$XP_SCRIPT" == "server-debug.sh" ]; then
+        if [ "x$JAVA_DEBUG_OPTS" = "x" ]; then
+            JAVA_DEBUG_OPTS="$DEFAULT_JAVA_DEBUG_OPTS"
+        fi
+
+        JAVA_OPTS="$JAVA_DEBUG_OPTS $JAVA_OPTS"
+    fi
+}
+
+locateInstallDir() {
+    XP_INSTALL=`cd "$DIRNAME/.."; pwd`
+    if [ ! -d "$XP_INSTALL" ]; then
+        die "XP_INSTALL is not valid: $XP_INSTALL"
+    fi
+}
+
+init() {
+    detectOS
+    locateJava
+    setupDefaults
+    setupOptions
+    setupDebugOptions
+    locateInstallDir
+}
+
+run() {
+    EXEC="$JAVACMD $JAVA_OPTS"
+    EXEC="$EXEC -Dxp.install=$XP_INSTALL"
+    EXEC="$EXEC $XP_OPTS"
+    EXEC="$EXEC -classpath $XP_INSTALL/lib/*"
+    EXEC="$EXEC com.enonic.xp.launcher.LauncherMain $@"
+    exec $EXEC
+}
+
+main() {
+    init
+    run "$@"
+}
+
+main "$@"
