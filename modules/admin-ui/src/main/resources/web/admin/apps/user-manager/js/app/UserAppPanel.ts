@@ -83,6 +83,12 @@ module app {
                     tabMenuItem.setLabel(name, !<string>event.getNewValue());
                 }
             });
+
+            //tabMenuItem.markInvalid(!wizardPanel.getPersistedItem().isValid());
+
+            wizardPanel.onValidityChanged((event: api.ValidityChangedEvent) => {
+                tabMenuItem.markInvalid(!wizardPanel.isValid());
+            });
         }
 
         private handleGlobalEvents() {

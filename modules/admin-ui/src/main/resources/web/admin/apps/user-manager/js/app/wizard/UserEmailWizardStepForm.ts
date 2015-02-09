@@ -40,6 +40,10 @@ module app.wizard {
                 this.notifyBlurred(event);
             });
 
+            form.onValidityChanged((event: api.ValidityChangedEvent) => {
+                this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(event.isValid()));
+            });
+
             this.appendChild(form);
         }
 

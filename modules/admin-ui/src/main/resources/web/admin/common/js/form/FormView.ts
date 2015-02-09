@@ -79,7 +79,7 @@ module api.form {
                         this.notifyBlurred(event);
                     });
 
-                    formItemView.onValidityChanged((event: ValidityChangedEvent) => {
+                    formItemView.onValidityChanged((event: RecordingValidityChangedEvent) => {
 
                         if (!this.previousValidationRecording) {
                             this.previousValidationRecording = event.getRecording();
@@ -230,7 +230,7 @@ module api.form {
 
             this.formValidityChangedListeners.forEach((listener: (event: FormValidityChangedEvent)=>void)=> {
                 listener.call(this, event);
-            })
+            });
         }
 
         private notifyEditContentRequested(content: api.content.ContentSummary) {

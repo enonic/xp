@@ -41,7 +41,7 @@ module app {
             var contentWizardPanel = <app.wizard.ContentWizardPanel>wizardPanel;
             tabMenuItem.markInvalid(!contentWizardPanel.getPersistedItem().isValid());
 
-            contentWizardPanel.onValidityChanged((event: api.app.wizard.WizardValidityChangedEvent) => {
+            contentWizardPanel.onValidityChanged((event: api.ValidityChangedEvent) => {
                 tabMenuItem.markInvalid(!contentWizardPanel.isValid());
             });
         }

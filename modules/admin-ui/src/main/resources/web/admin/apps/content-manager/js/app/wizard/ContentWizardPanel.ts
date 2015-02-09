@@ -203,7 +203,7 @@ module app.wizard {
                 split: !!this.liveFormPanel
             }, () => {
 
-                this.onValidityChanged((event: api.app.wizard.WizardValidityChangedEvent) => {
+                this.onValidityChanged((event: api.ValidityChangedEvent) => {
                     this.isContentFormValid = this.isValid();
                     this.formIcon.toggleClass("invalid", !this.isValid());
                 });
