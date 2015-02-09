@@ -8,8 +8,10 @@ module api.content {
 
         resolveDisplayName(object: ContentSummary): string {
             var contentName = object.getName(),
-                invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed();
+                invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed(),
+                pendingDelete = object.getContentState().isPendingDelete();
             this.toggleClass("invalid", invalid);
+            this.toggleClass("pending-delete", pendingDelete);
 
             return object.getDisplayName();
         }

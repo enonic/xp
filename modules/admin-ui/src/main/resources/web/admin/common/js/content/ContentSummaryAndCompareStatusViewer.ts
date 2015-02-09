@@ -30,8 +30,10 @@ module api.content {
 
             if (contentSummary) {
                 var contentName = contentSummary.getName(),
-                    invalid = !contentSummary.isValid() || !contentSummary.getDisplayName() || contentName.isUnnamed();
+                    invalid = !contentSummary.isValid() || !contentSummary.getDisplayName() || contentName.isUnnamed(),
+                    pendingDelete = contentSummary.getContentState().isPendingDelete();
                 this.toggleClass("invalid", invalid);
+                this.toggleClass("pending-delete", pendingDelete);
 
                 if (relativePath) {
                     return !contentName.isUnnamed() ? contentName.toString() :
