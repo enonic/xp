@@ -27,6 +27,8 @@ module api.ui.uploader {
         url?: string;
         allowBrowse?: boolean;
         allowDrop?: boolean;
+        resultAlwaysVisisble?: boolean;         // never hide the result
+        dropzoneAlwaysVisible?: boolean;       // never hide the dropzone
         allowTypes?: {title: string; extensions: string}[];
         allowMultiSelection?: boolean;
         showInput?: boolean;
@@ -35,6 +37,8 @@ module api.ui.uploader {
         maximumOccurrences?: number;
         deferred?: boolean;
         params?: {[key:string]: any};
+        value?: string;
+        disabled?: boolean;
     }
 
     export class Uploader<MODEL> extends api.dom.FormInputEl {
@@ -62,6 +66,8 @@ module api.ui.uploader {
         private uploadFailedListeners: { (event: FileUploadFailedEvent<MODEL>):void }[] = [];
         private uploadResetListeners: {():void }[] = [];
 
+        public static debug: boolean = true;
+
         constructor(config: UploaderConfig) {
             super("div", "uploader");
 
@@ -73,11 +79,16 @@ module api.ui.uploader {
                 this.input.setPlaceholder("Paste URL to image here");
                 this.appendChild(this.input);
             }
+
+            if (config.value) {
+                this.value = config.value;
+            }
+
             // need the container to constrain plupload created dropzone
             this.dropzoneContainer = new api.dom.DivEl('dropzone-container');
             this.dropzone = new api.dom.AEl("dropzone");
             // id needed for plupload to init, adding timestamp in case of multiple occurrences on page
-            this.dropzone.setId('image-uploader-dropzone-' + new Date().getTime());
+            this.dropzone.setId('uploader-dropzone-' + new Date().getTime());
             this.dropzoneContainer.appendChild(this.dropzone);
             this.appendChild(this.dropzoneContainer);
 
@@ -111,26 +122,38 @@ module api.ui.uploader {
                 new KeyBinding('backspace', resetHandler)
             ]);
 
-            var initHandler = (event) => {
-                if (!this.uploader && this.config.url) {
-                    this.uploader = this.initUploader(this.dropzone.getId());
-
-                    if (this.value) {
-                        this.setValue(this.value);
-                    } else {
-                        this.setDropzoneVisible();
-                    }
+            if (this.config.disabled) {
+                if (Uploader.debug) {
+                    console.log('Skipping init, because of config.disabled = true', this);
                 }
-            };
-            if (this.config.deferred) {
-                this.onShown((event) => initHandler(event))
             } else {
-                this.onRendered((event) => initHandler(event));
+                if (this.config.deferred) {
+                    this.onShown((event) => this.initHandler.call(this, event));
+                } else {
+                    this.onRendered((event) => this.initHandler.call(this, event));
+                }
             }
 
             this.onRemoved((event) => {
-                this.uploader.destroy();
+                if (this.uploader) {
+                    this.uploader.destroy();
+                }
             });
+        }
+
+        private initHandler() {
+            if (Uploader.debug) {
+                console.log('Initing uploader', this);
+            }
+            if (!this.uploader && this.config.url) {
+                this.uploader = this.initUploader(this.dropzone.getId());
+
+                if (this.value) {
+                    this.setValue(this.value);
+                } else {
+                    this.setDropzoneVisible();
+                }
+            }
         }
 
         private initConfig(config: UploaderConfig) {
@@ -154,11 +177,20 @@ module api.ui.uploader {
             if (this.config.allowDrop == undefined) {
                 this.config.allowDrop = true;
             }
+            if (this.config.dropzoneAlwaysVisible == undefined) {
+                this.config.dropzoneAlwaysVisible = false;
+            }
+            if (this.config.resultAlwaysVisisble == undefined) {
+                this.config.resultAlwaysVisisble = false;
+            }
             if (this.config.allowTypes == undefined) {
                 this.config.allowTypes = [];
             }
             if (this.config.deferred == undefined) {
                 this.config.deferred = false;
+            }
+            if (this.config.disabled == undefined) {
+                this.config.disabled = false;
             }
         }
 
@@ -171,6 +203,9 @@ module api.ui.uploader {
         }
 
         setValue(value: string): Uploader<MODEL> {
+            if (Uploader.debug) {
+                console.log('Setting uploader value', value);
+            }
             this.value = value;
 
             if (value && this.config.showResult) {
@@ -178,7 +213,35 @@ module api.ui.uploader {
             } else {
                 this.setDropzoneVisible();
             }
+
+            var results = this.getResultContainer().removeChildren();
+
+            this.parseValues(value).forEach((val) => {
+                if (val) {
+                    results.appendChild(this.createResultItem(val));
+                }
+            });
             return this;
+        }
+
+        parseValues(jsonString: string): string[] {
+            try {
+                var o = JSON.parse(jsonString);
+
+                // Handle non-exception-throwing cases:
+                // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
+                // but... JSON.parse(null) returns 'null', and typeof null === "object",
+                if (o && typeof o === "object" && o.length) {
+                    return o;
+                }
+            } catch (e) { }
+
+            // Value is not JSON so just return it
+            return [jsonString];
+        }
+
+        createResultItem(value: string): api.dom.Element {
+            throw new Error('Should be overridden by inheritors');
         }
 
         setMaximumOccurrences(value: number): Uploader<MODEL> {
@@ -200,11 +263,14 @@ module api.ui.uploader {
         }
 
         private setDropzoneVisible(visible: boolean = true) {
+            if (!visible && this.config.dropzoneAlwaysVisible) {
+                return;
+            }
+
             if (visible) {
                 this.setProgressVisible(false);
                 this.setResultVisible(false);
             }
-
 
             if (this.input) {
                 this.input.setVisible(visible);
@@ -223,6 +289,10 @@ module api.ui.uploader {
         }
 
         private setResultVisible(visible: boolean = true) {
+            if (!visible && this.config.resultAlwaysVisisble) {
+                return;
+            }
+
             if (visible) {
                 this.setDropzoneVisible(false);
                 this.setProgressVisible(false);
@@ -232,10 +302,7 @@ module api.ui.uploader {
             this.resetBtn.setVisible(visible && this.config.showButtons);
         }
 
-        /**
-         * Called on file upload finished to create model from server response
-         * @param serverResponse
-         */
+
         createModel(serverResponse): MODEL {
             throw new Error('Should be overridden by inheritors');
         }
@@ -252,6 +319,47 @@ module api.ui.uploader {
                 this.config.params = params;
             }
             return this;
+        }
+
+        setEnabled(enabled: boolean): Uploader<MODEL> {
+            if (!enabled) {
+                this.dropzone.getEl().setAttribute('disabled', 'true');
+            } else {
+                this.dropzone.getEl().removeAttribute('disabled');
+            }
+
+            if (!enabled && this.uploader) {
+                if (Uploader.debug) {
+                    console.log('Disabling uploader', this);
+                }
+                this.uploader.destroy();
+                this.uploader = null;
+            } else if (enabled && !this.uploader) {
+                if (this.config.deferred) {
+                    if (this.isVisible()) {
+                        this.initHandler();
+                    } else {
+                        if (Uploader.debug) {
+                            console.log('Deferring enabling uploader until it\' shown', this);
+                        }
+                        this.onShown((event) => this.initHandler.call(this, event));
+                    }
+                } else {
+                    if (this.isRendered()) {
+                        this.initHandler();
+                    } else {
+                        if (Uploader.debug) {
+                            console.log('Deferring enabling uploader until it\' rendered', this);
+                        }
+                        this.onRendered((event) => this.initHandler.call(this, event));
+                    }
+                }
+            }
+            return this;
+        }
+
+        isEnabled(): boolean {
+            return this.uploader != null;
         }
 
         getParams(): {[key: string]: any} {
@@ -284,15 +392,21 @@ module api.ui.uploader {
                 drop_element: this.config.allowDrop ? elId : undefined,
                 flash_swf_url: api.util.UriHelper.getAdminUri('common/js/lib/plupload/js/Moxie.swf'),
                 silverlight_xap_url: api.util.UriHelper.getAdminUri('common/js/lib/plupload/js/Moxie.xap'),
-                filters: this.config.allowTypes
+                filters: {
+                    mime_types: this.config.allowTypes
+                }
             });
 
             uploader.bind('Init', (up, params) => {
-                //console.log('uploader init', up, params);
+                if (Uploader.debug) {
+                    console.log('uploader init', up, params);
+                }
             }, this);
 
             uploader.bind('FilesAdded', (up, files: PluploadFile[]) => {
-                //console.log('uploader files added', up, files);
+                if (Uploader.debug) {
+                    console.log('uploader files added', up, files);
+                }
 
                 if (this.config.maximumOccurrences > 0 && files.length > this.config.maximumOccurrences) {
                     files.splice(this.config.maximumOccurrences);
@@ -313,15 +427,21 @@ module api.ui.uploader {
             }, this);
 
             uploader.bind('QueueChanged', (up) => {
-                //console.log('uploader queue changed', up);
+                if (Uploader.debug) {
+                    console.log('uploader queue changed', up);
+                }
             }, this);
 
             uploader.bind('UploadFile', (up, file) => {
-                //console.log('uploader upload file', up, file);
+                if (Uploader.debug) {
+                    console.log('uploader upload file', up, file);
+                }
             }, this);
 
             uploader.bind('UploadProgress', (up, file: PluploadFile) => {
-                //console.log('uploader upload progress', up, file);
+                if (Uploader.debug) {
+                    console.log('uploader upload progress', up, file);
+                }
 
                 this.progress.setValue(file.percent);
 
@@ -333,7 +453,9 @@ module api.ui.uploader {
             }, this);
 
             uploader.bind('FileUploaded', (up, file: PluploadFile, response) => {
-                console.log('uploader file uploaded', up, file, response);
+                if (Uploader.debug) {
+                    console.log('uploader file uploaded', up, file, response);
+                }
 
                 if (response && response.status === 200) {
                     try {
@@ -351,7 +473,9 @@ module api.ui.uploader {
             }, this);
 
             uploader.bind('Error', (up, response) => {
-                console.log('uploader error', up, response);
+                if (Uploader.debug) {
+                    console.log('uploader error', up, response);
+                }
 
                 try {
                     var responseObj = JSON.parse(response.response);
@@ -369,7 +493,9 @@ module api.ui.uploader {
             }, this);
 
             uploader.bind('UploadComplete', (up, files) => {
-                console.log('uploader upload complete', up, files);
+                if (Uploader.debug) {
+                    console.log('uploader upload complete', up, files);
+                }
 
                 var values = [];
                 this.uploadedItems.forEach((item) => {
@@ -394,6 +520,10 @@ module api.ui.uploader {
 
         getResultContainer(): api.dom.DivEl {
             return this.resultContainer;
+        }
+
+        getDropzoneContainer(): api.dom.DivEl {
+            return this.dropzoneContainer;
         }
 
         onUploadStarted(listener: (event: FileUploadStartedEvent<MODEL>) => void) {

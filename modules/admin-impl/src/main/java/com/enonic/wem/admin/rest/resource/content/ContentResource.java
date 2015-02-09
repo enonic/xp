@@ -208,9 +208,9 @@ public final class ContentResource
             byteSource( getFileItemByteSource( mediaFile ) ).
             build();
 
-        final UpdateContentParams params = new UpdateContentParams();
-        params.contentId( ContentId.from( form.getAsString( "id" ) ) );
-        params.createAttachments( CreateAttachments.from( thumbnailAttachment ) );
+        final UpdateContentParams params = new UpdateContentParams().
+            contentId( ContentId.from( form.getAsString( "id" ) ) ).
+            createAttachments( CreateAttachments.from( thumbnailAttachment ) );
 
         final Content persistedContent = contentService.update( params );
 

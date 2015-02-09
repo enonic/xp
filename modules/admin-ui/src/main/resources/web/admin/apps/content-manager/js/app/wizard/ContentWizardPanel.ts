@@ -32,11 +32,12 @@ module app.wizard {
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import FormIcon = api.app.wizard.FormIcon;
+    import ThumbnailUploader = api.content.ThumbnailUploader;
+    import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
     import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
     import WizardStep = api.app.wizard.WizardStep;
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
-    import UploadFinishedEvent = api.app.wizard.UploadFinishedEvent;
 
     import Module = api.module.Module;
     import ModuleKey = api.module.ModuleKey;
@@ -59,7 +60,7 @@ module app.wizard {
 
         private contentType: ContentType;
 
-        private formIcon: FormIcon;
+        private thumbnailUploader: ThumbnailUploader;
 
         private contentWizardHeader: WizardHeaderWithDisplayNameAndName;
 
@@ -123,15 +124,11 @@ module app.wizard {
             this.contentWizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().
                 setDisplayNameGenerator(this.displayNameScriptExecutor).
                 build();
-            var iconUrl = ContentIconUrlResolver.default();
-            this.formIcon = new FormIcon(iconUrl, "Click to upload icon",
-                api.util.UriHelper.getRestUri("blob/upload"));
 
-            this.formIcon.onUploadFinished((event: UploadFinishedEvent) => {
-                // TODO: CMS-4677
-                //this.iconUploadItem = event.getUploadItem();
-                //this.formIcon.setSrc(api.util.UriHelper.getRestUri('blob/' + this.iconUploadItem.getBlobKey() + '?mimeType=' +
-                //                                                   event.getUploadItem().getMimeType()));
+            this.thumbnailUploader = new ThumbnailUploader({
+                name: 'thumbnail-uploader',
+                disabled: params.contentType.isImage(),
+                deferred: true
             });
 
             this.wizardActions = new app.wizard.action.ContentWizardActions(this);
@@ -163,7 +160,7 @@ module app.wizard {
 
             this.createSite = params.createSite;
             if (this.createSite || (params.persistedContent && params.persistedContent.isSite())) {
-                this.formIcon.addClass("site");
+                this.thumbnailUploader.addClass("site");
             }
 
             this.contentWizardStepForm = new ContentWizardStepForm();
@@ -195,7 +192,7 @@ module app.wizard {
             super({
                 tabId: params.tabId,
                 persistedItem: params.persistedContent,
-                formIcon: this.formIcon,
+                formIcon: this.thumbnailUploader,
                 mainToolbar: mainToolbar,
                 header: this.contentWizardHeader,
                 actions: this.wizardActions,
@@ -205,7 +202,7 @@ module app.wizard {
 
                 this.onValidityChanged((event: api.ValidityChangedEvent) => {
                     this.isContentFormValid = this.isValid();
-                    this.formIcon.toggleClass("invalid", !this.isValid());
+                    this.thumbnailUploader.toggleClass("invalid", !this.isValid());
                 });
 
                 this.addClass("content-wizard-panel");
@@ -278,7 +275,7 @@ module app.wizard {
                     metadataMixinPromises = metadataMixinPromises.concat(
                         this.contentType.getMetadata().map((name: MixinName) => {
                             return new GetMixinByQualifiedNameRequest(name).sendAndParse();
-                    }));
+                        }));
 
                     modules.forEach((mdl: Module) => {
                         metadataMixinPromises = metadataMixinPromises.concat(
@@ -338,13 +335,19 @@ module app.wizard {
         }
 
         layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
-            this.formIcon.setSrc(new ContentIconUrlResolver().setContent(persistedContent).setCrop(false).resolve());
-            this.formIcon.toggleClass("invalid", !persistedContent.isValid());
+            this.thumbnailUploader.
+                setValue(new ContentIconUrlResolver().setContent(persistedContent).setCrop(false).resolve()).
+                setEnabled(!persistedContent.isImage()).
+                setParams({
+                    id: persistedContent.getContentId().toString()
+                });
+
+            this.thumbnailUploader.toggleClass("invalid", !persistedContent.isValid());
 
             this.notifyValidityChanged(persistedContent.isValid());
 
             api.content.ContentSummaryAndCompareStatusFetcher.fetch(persistedContent.getContentId()).
-                then((contentSummaryAndCompareStatus:ContentSummaryAndCompareStatus) => {
+                then((contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus) => {
                     var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
                     this.contentWizardHeader.setIgnoreGenerateStatusForName(ignore);
                 }).done();

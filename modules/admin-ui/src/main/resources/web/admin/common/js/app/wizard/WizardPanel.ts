@@ -9,7 +9,7 @@ module api.app.wizard {
 
         persistedItem:any;
 
-        formIcon:FormIcon;
+        formIcon: any;
 
         mainToolbar:api.ui.toolbar.Toolbar;
 
