@@ -15,6 +15,10 @@ public interface SharedConstants
 
     public static final String DEV_BUNDLE_REFRESH = "xp.dev.bundleRefresh";
 
+    public static final String DEV_GROUP_ID = "xp.dev.groupId";
+
+    public static final String DEV_PROJECT_DIR = "xp.dev.projectDir";
+
     public static final String INTERNAL_OSGI_BOOT_DELEGATION = "internal.osgi.bootdelegation";
 
     public static final String INTERNAL_OSGI_SYSTEM_PACKAGES = "internal.osgi.system.packages";

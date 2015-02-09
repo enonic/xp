@@ -1,152 +1,78 @@
-import com.enonic.build.bundles.BundlesPlugin
-
-apply plugin: BundlesPlugin
+apply plugin: 'java-base'
 apply plugin: 'distribution'
 
 configurations {
     lib
+    bundle
+    bundle.transitive = false
 }
 
 dependencies {
     lib project( ':launcher' )
 }
 
-bundles {
-    // Core bundles
-    bundle 'org.apache.felix:org.apache.felix.metatype:1.0.10', 5
-    bundle 'org.apache.felix:org.apache.felix.eventadmin:1.4.2', 5
-    bundle 'org.apache.felix:org.apache.felix.configadmin:1.8.0', 5
-    bundle 'org.apache.felix:org.apache.felix.scr:1.8.2', 5
-    bundle 'org.apache.felix:org.apache.felix.fileinstall:3.4.2', 5
-    bundle 'org.ops4j.pax.url:pax-url-mvn:1.3.7', 5
-
-    // Shell bundles
-    bundle 'org.apache.felix:org.apache.felix.gogo.runtime:0.12.1', 10
-    bundle 'org.apache.felix:org.apache.felix.gogo.command:0.12.0', 10
-    bundle 'org.apache.felix:org.apache.felix.shell.remote:1.1.2', 11
-    bundle 'org.apache.felix:org.apache.felix.gogo.shell:0.10.0', 10
-
-    // Blueprint bundles
-    bundle 'org.ow2.asm:asm-all:5.0.3', 20
-    bundle 'org.apache.aries:org.apache.aries.util:1.1.0', 20
-    bundle 'org.apache.aries.proxy:org.apache.aries.proxy.api:1.0.1', 20
-    bundle 'org.apache.aries.proxy:org.apache.aries.proxy.impl:1.0.4', 20
-    bundle 'org.apache.aries.blueprint:org.apache.aries.blueprint.api:1.0.1', 20
-    bundle 'org.apache.aries.blueprint:org.apache.aries.blueprint.core:1.4.2', 20
-    bundle 'org.apache.aries.blueprint:org.apache.aries.blueprint.cm:1.0.5', 20
-    bundle 'org.apache.aries.blueprint:org.apache.aries.blueprint.cm:1.0.5', 20
-    bundle 'org.apache.aries.blueprint:org.apache.aries.blueprint.core.compatibility:1.0.0', 20
-    bundle 'org.apache.aries.quiesce:org.apache.aries.quiesce.api:1.0.0', 20
-
-    // Jetty
-    bundle 'org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0', 25
-    bundle 'org.apache.geronimo.specs:geronimo-annotation_1.1_spec:1.0.1', 25
-    bundle 'org.ops4j.pax.web:pax-web-jetty-bundle:4.0.0', 25
-
-    // Felix web console
-    bundle 'org.apache.felix:org.apache.felix.webconsole:4.2.4:all', 25
-    bundle 'org.apache.felix:org.apache.felix.webconsole.plugins.ds:1.0.0', 25
-
-    // Core app dependencies
-    bundle 'com.google.guava:guava:18.0', 30
-    bundle 'commons-lang:commons-lang:2.4', 30
-    bundle 'commons-io:commons-io:2.4', 30
-    bundle 'com.fasterxml.jackson.core:jackson-core:2.4.1', 30
-    bundle 'com.fasterxml.jackson.core:jackson-annotations:2.4.1', 30
-    bundle 'com.fasterxml.jackson.core:jackson-databind:2.4.1', 30
-    bundle 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.1', 30
-    bundle 'org.apache.tika:tika-core:1.6', 30
-    bundle 'org.apache.tika:tika-bundle:1.6', 30
-    bundle 'com.enonic.osgi.bundles:jparsec:2.1.0_1', 30
-    bundle 'com.enonic.osgi.bundles:jhlabs-filters:2.0.235_1', 30
-    bundle 'com.enonic.osgi.bundles:elasticsearch:1.3.6_1', 30
-
-    // Core app
-    bundle project( ':core-api' ), 30
-    bundle project( ':core-event' ), 30
-    bundle project( ':core-module' ), 30
-    bundle project( ':core-schema' ), 30
-    bundle project( ':core-repo' ), 30
-    bundle project( ':core-relationship' ), 30
-    bundle project( ':core-security' ), 30
-    bundle project( ':core-image' ), 30
-    bundle project( ':core-export' ), 30
-    bundle project( ':core-impl' ), 30
-
-    // Web app dependencies
-    bundle 'com.enonic.osgi.bundles:resteasy:3.0.8_1', 30
-
-    // Web app
-    bundle project( ':web-api' ), 30
-    bundle project( ':web-impl' ), 30
-    bundle project( ':web-vhost' ), 30
-    bundle project( ':web-jaxrs' ), 30
-
-    // Portal app dependencies
-    bundle 'com.enonic.osgi.bundles:jmustache:1.9.0_1', 30
-    bundle 'com.enonic.osgi.bundles:thymeleaf:2.1.1_2', 30
-    bundle 'com.enonic.osgi.bundles:saxon-he:9.5.1_1', 30
-    bundle 'com.enonic.osgi.bundles:attoparser:1.3.0_1', 30
-
-    // Portal app
-    bundle project( ':portal-api' ), 30
-    bundle project( ':portal-script' ), 30
-    bundle project( ':portal-mustache' ), 30
-    bundle project( ':portal-thymeleaf' ), 30
-    bundle project( ':portal-xslt' ), 30
-    bundle project( ':portal-jslib' ), 30
-    bundle project( ':portal-impl' ), 30
-
-    // Admin app dependencies
-    bundle 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.4.1', 30
-    bundle 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.4.1', 30
-    bundle 'commons-fileupload:commons-fileupload:1.3.1', 30
-
-    // Admin app
-    bundle project( ':admin-event' ), 30
-    bundle project( ':admin-ui' ), 30
-    bundle project( ':admin-impl' ), 30
+ext {
+    bundlesDir = file( "$buildDir/bundles" )
+    bundlesFile = file( "$projectDir/src/main/resources/system/bundles.xml" )
 }
 
-prepareDevBundles {
-    outputDir = mkdir( "$buildDir/dev/system" )
+def getProjectMappings()
+{
+    def map = [:]
+    project.rootProject.subprojects.each {
+        map["${it.group}:${it.name}:${it.version}"] = it
+    }
+    return map
 }
 
-prepareProdBundles {
-    outputDir = mkdir( "$buildDir/prod/system" )
+def expandGav( gav )
+{
+    def template = new groovy.text.SimpleTemplateEngine()
+    return template.createTemplate( gav ).make( project.properties ).toString();
 }
 
-task run( type: JavaExec, dependsOn: 'prepareDevBundles' ) {
-    group = 'distro'
-    description = 'Starts server in development mode.'
-    main = 'com.enonic.xp.launcher.LauncherMain'
-    classpath = configurations.lib
-    debug = project.hasProperty( 'debug' )
-    args = ['clean']
+def addBundleDependencies()
+{
+    def mappings = getProjectMappings()
+    def bundlesXml = new XmlSlurper().parse( bundlesFile )
 
-    systemProperties['java.awt.headless'] = true
-    systemProperties['xp.install'] = mkdir( "$buildDir/dev" )
-    systemProperties['xp.dev.mode'] = true
-    systemProperties['xp.dev.projectDir'] = project.rootDir.toString()
+    bundlesXml.bundle.each {
+        def gav = expandGav( it.text().trim() )
+        def dep = mappings[gav]
 
-    if ( project.hasProperty( 'xp.home' ) )
-    {
-        systemProperties['xp.home'] = project.getProperty( 'xp.home' )
+        if ( !dep )
+        {
+            dep = gav
+        }
+
+        dependencies.bundle dep
     }
 }
 
-installDist.dependsOn += prepareProdBundles
+addBundleDependencies();
 
-distTar {
-    compression = Compression.GZIP
-    extension = 'tar.gz'
+task copyBundles( type: Copy ) {
+    into bundlesDir
+    from configurations.bundle
+    rename { name ->
+        def artifacts = configurations.bundle.resolvedConfiguration.resolvedArtifacts
+        def artifact = artifacts.find { it.file.name == name }
+        def id = artifact.moduleVersion.id
+        def dir = id.group.replace( '.', '/' ) + "/${id.name}/${id.version}"
+        def fileName = "${id.name}-${id.version}"
+
+        if ( artifact.classifier != null )
+        {
+            fileName += '-' + artifact.classifier
+        }
+
+        return "${dir}/${fileName}.${artifact.extension}"
+    }
 }
-
-distTar.dependsOn += installDist
-distZip.dependsOn += installDist
 
 distributions {
     main {
+        baseName = 'enonic-xp'
         contents {
             into( 'bin' ) {
                 from( 'src/main/resources/bin' ) {
@@ -158,12 +84,24 @@ distributions {
                 from( configurations.lib )
             }
             into( 'system' ) {
-                from( "$buildDir/prod/system" )
+                from( bundlesDir )
+                from( bundlesFile ) {
+                    expand project.properties
+                }
             }
             from( 'src/main/resources' )
         }
     }
 }
+
+distTar {
+    compression = Compression.GZIP
+    extension = 'tar.gz'
+}
+
+installDist.dependsOn += copyBundles
+distTar.dependsOn += installDist
+distZip.dependsOn += installDist
 
 artifacts {
     archives distTar

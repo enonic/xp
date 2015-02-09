@@ -142,6 +142,7 @@ final class BundleWatcher
     private void doUpdate( final Bundle bundle )
         throws Exception
     {
+        LOG.info( "Updating changed bundle {}...", bundle.toString() );
         bundle.update();
         LOG.info( "Updated changed bundle {}", bundle.toString() );
     }
@@ -149,6 +150,7 @@ final class BundleWatcher
     private void refreshBundles( final List<Bundle> bundles )
     {
         final CountDownLatch latch = new CountDownLatch( 1 );
+        LOG.info( "Refreshing {} bundle(s)...", bundles.size() );
         this.wiring.refreshBundles( bundles, event -> latch.countDown() );
 
         try
@@ -159,14 +161,13 @@ final class BundleWatcher
         {
             // Do nothing
         }
+
+        LOG.info( "Refreshed {} bundle(s)", bundles.size() );
     }
 
     private void startIfNeeded( final List<Bundle> bundles )
     {
-        for ( final Bundle bundle : bundles )
-        {
-            startIfNeeded( bundle );
-        }
+        bundles.forEach( this::startIfNeeded );
     }
 
     private void startIfNeeded( final Bundle bundle )

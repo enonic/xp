@@ -12,6 +12,8 @@ import org.osgi.framework.wiring.BundleRevision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.launcher.config.ConfigProperties;
+
 public final class ProvisionActivator
     implements BundleActivator
 {
@@ -19,11 +21,14 @@ public final class ProvisionActivator
 
     private final File systemDir;
 
+    private final ConfigProperties config;
+
     private BundleContext context;
 
-    public ProvisionActivator( final File systemDir )
+    public ProvisionActivator( final File systemDir, final ConfigProperties config )
     {
         this.systemDir = systemDir;
+        this.config = config;
     }
 
     @Override
@@ -57,7 +62,7 @@ public final class ProvisionActivator
     private void installBundles()
         throws Exception
     {
-        final BundleInfoLoader loader = new BundleInfoLoader( this.systemDir );
+        final BundleInfoLoader2 loader = new BundleInfoLoader2( this.systemDir, this.config );
         final List<BundleInfo> list = loader.load();
 
         LOG.info( "Installing {} bundles...", list.size() );
@@ -70,7 +75,7 @@ public final class ProvisionActivator
     private void installBundle( final BundleInfo info )
         throws Exception
     {
-        LOG.debug( "Installing bundle {} at start-level {}", info.getLocation(), info.getLevel() );
+        LOG.info( "Installing bundle {} at start-level {}", info.getLocation(), info.getLevel() );
 
         final URI uri = info.getUri( this.systemDir );
         final Bundle bundle = this.context.installBundle( uri.toString() );

@@ -1,9 +1,12 @@
 package com.enonic.xp.launcher.config;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.felix.utils.properties.InterpolationHelper;
+
+import com.google.common.base.Strings;
 
 public final class ConfigProperties
     extends HashMap<String, String>
@@ -26,5 +29,17 @@ public final class ConfigProperties
     public void interpolate()
     {
         InterpolationHelper.performSubstitution( this );
+    }
+
+    public boolean getBoolean( final String key )
+    {
+        final String value = get( key );
+        return "true".equals( value );
+    }
+
+    public File getFile( final String key )
+    {
+        final String value = get( key );
+        return Strings.isNullOrEmpty( value ) ? null : new File( value );
     }
 }

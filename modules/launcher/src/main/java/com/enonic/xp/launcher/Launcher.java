@@ -99,7 +99,7 @@ public final class Launcher
     private void addProvisionActivator()
     {
         final File systemDir = new File( this.env.getInstallDir(), "system" );
-        final ProvisionActivator activator = new ProvisionActivator( systemDir );
+        final ProvisionActivator activator = new ProvisionActivator( systemDir, this.config );
         this.framework.activator( activator );
     }
 
