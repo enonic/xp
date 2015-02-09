@@ -23,18 +23,18 @@ module api.schema.content {
 
         static fromString(value: string): ContentState {
             if (value === ContentStateEnum[ContentStateEnum.PENDING_DELETE]) {
-                return ContentState.PENDING_DELETE();
+                return new ContentState(ContentStateEnum.PENDING_DELETE);
             } else {
-                return ContentState.DEFAULT();
+                return new ContentState(ContentStateEnum.DEFAULT);
             }
         }
 
-        static PENDING_DELETE(): ContentState {
-            return new ContentState(ContentStateEnum.PENDING_DELETE);
+        isDefault(): boolean {
+            return this.state === ContentStateEnum.DEFAULT;
         }
 
-        static DEFAULT(): ContentState {
-            return new ContentState(ContentStateEnum.DEFAULT);
+        isPendingDelete(): boolean {
+            return this.state === ContentStateEnum.PENDING_DELETE;
         }
 
     }
