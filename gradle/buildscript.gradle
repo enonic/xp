@@ -1,0 +1,8 @@
+repositories {
+    jcenter()
+}
+
+dependencies {
+    classpath 'org.dm.gradle:gradle-bundle-plugin:0.6.2'
+    classpath "com.moowork.gradle:gradle-grunt-plugin:0.6"
+}

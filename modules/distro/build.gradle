@@ -89,6 +89,10 @@ distributions {
                     expand project.properties
                 }
             }
+            from( 'src/main/resources' ) {
+                include 'README.txt'
+                expand project.properties
+            }
             from( 'src/main/resources' )
         }
     }
