@@ -10,6 +10,8 @@ module api.ui.form {
 
         private blurListeners: {(event: FocusEvent):void}[] = [];
 
+        private validityChangedListeners: {(event: ValidityChangedEvent):void}[] = [];
+
         constructor(className?: string) {
             super(className);
             this.formEl = new api.dom.FormEl("form");
@@ -22,9 +24,15 @@ module api.ui.form {
             fieldset.onFocus((event) => {
                 this.notifyFocused(event);
             });
+
             fieldset.onBlur((event) => {
                 this.notifyBlurred(event);
             });
+
+            fieldset.onValidityChanged((event) => {
+                this.notifyValidityChanged(event.isValid());
+            });
+
             this.fieldsets.push(fieldset);
             this.formEl.appendChild(fieldset);
             return this;
@@ -88,6 +96,22 @@ module api.ui.form {
             this.blurListeners.forEach((listener) => {
                 listener(event);
             })
+        }
+
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+            this.validityChangedListeners.push(listener);
+        }
+
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+            this.validityChangedListeners = this.validityChangedListeners.filter((curr) => {
+                return curr != listener;
+            });
+        }
+
+        notifyValidityChanged(valid: boolean) {
+            this.validityChangedListeners.forEach((listener: (event: ValidityChangedEvent)=>void)=> {
+                listener.call(this, new ValidityChangedEvent(valid));
+            });
         }
     }
 }

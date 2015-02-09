@@ -88,11 +88,11 @@ module api.form {
             })
         }
 
-        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
             //Should be implemented in child classes
         }
 
-        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+        unValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
             //Should be implemented in child classes
         }
     }

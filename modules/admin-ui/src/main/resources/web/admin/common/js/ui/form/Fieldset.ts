@@ -9,6 +9,8 @@ module api.ui.form {
 
         private blurListeners: {(event: FocusEvent):void}[] = [];
 
+        private validityChangedListeners: {(event: ValidityChangedEvent):void}[] = [];
+
         constructor(legend?: string) {
             super();
             if (legend) {
@@ -25,9 +27,23 @@ module api.ui.form {
             formItem.onBlur((event: FocusEvent) => {
                 this.notifyBlurred(event);
             });
+
+            formItem.onValidityChanged((event) => {
+                this.notifyValidityChanged(event.isValid());
+            });
+
             this.items.push(formItem);
 
             this.appendChild(formItem);
+        }
+
+        removeItem(formItem: FormItem) {
+            for (var i = 0; i < this.items.length; i++) {
+                if (this.items[i] === formItem) {
+                    this.items.splice(i, 1);
+                    this.removeChild(formItem);
+                }
+            }
         }
 
         validate(validationResult:ValidationResult, markInvalid?: boolean) {
@@ -86,6 +102,22 @@ module api.ui.form {
             this.blurListeners.forEach((listener) => {
                 listener(event);
             })
+        }
+
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+            this.validityChangedListeners.push(listener);
+        }
+
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+            this.validityChangedListeners = this.validityChangedListeners.filter((curr) => {
+                return curr != listener;
+            });
+        }
+
+        notifyValidityChanged(valid: boolean) {
+            this.validityChangedListeners.forEach((listener: (event: ValidityChangedEvent)=>void)=> {
+                listener.call(this, new ValidityChangedEvent(valid));
+            });
         }
     }
 }

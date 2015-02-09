@@ -10,7 +10,7 @@
 ///<reference path='Form.ts' />
 ///<reference path='FormItemFactory.ts' />
 ///<reference path='ValidationRecordingPath.ts' />
-///<reference path='ValidityChangedEvent.ts' />
+///<reference path='RecordingValidityChangedEvent.ts' />
 
 ///<reference path='ValidationRecording.ts' />
 

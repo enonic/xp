@@ -6,7 +6,7 @@ module api.app.wizard {
 
         private header: WizardHeader;
 
-        private validityChangedListeners: {(event: WizardValidityChangedEvent):void}[] = [];
+        private validityChangedListeners: {(event: ValidityChangedEvent):void}[] = [];
 
         constructor() {
             this.steps = [];
@@ -56,19 +56,19 @@ module api.app.wizard {
             return true;
         }
 
-        onValidityChanged(listener: (event: WizardValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.validityChangedListeners.push(listener);
         }
 
-        unValidityChanged(listener: (event: WizardValidityChangedEvent)=>void) {
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.validityChangedListeners = this.validityChangedListeners.filter((curr) => {
                 return curr != listener;
             });
         }
 
         notifyValidityChanged(valid: boolean) {
-            this.validityChangedListeners.forEach((listener: (event: WizardValidityChangedEvent)=>void)=> {
-                listener.call(this, new WizardValidityChangedEvent(valid));
+            this.validityChangedListeners.forEach((listener: (event: ValidityChangedEvent)=>void)=> {
+                listener.call(this, new ValidityChangedEvent(valid));
             });
         }
 

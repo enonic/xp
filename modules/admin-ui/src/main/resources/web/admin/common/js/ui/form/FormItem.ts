@@ -25,6 +25,7 @@ module api.ui.form {
             this.input.onBlur((event: FocusEvent) => {
                 this.notifyBlurred(event);
             });
+
             if (builder.getLabel()) {
                 this.label = new api.dom.LabelEl(builder.getLabel(), this.input);
                 if(Validators.required == builder.getValidator()) {
@@ -66,6 +67,18 @@ module api.ui.form {
                     this.error.setHtml(validationMessage || "");
                 }
             }
+        }
+
+        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+            this.input.onValidityChanged(listener);
+        }
+
+        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+            this.input.unValidityChanged(listener);
+        }
+
+        notifyValidityChanged(valid: boolean) {
+            this.input.notifyValidityChanged(valid);
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

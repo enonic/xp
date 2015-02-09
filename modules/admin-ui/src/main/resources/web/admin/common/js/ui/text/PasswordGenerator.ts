@@ -41,6 +41,7 @@ module api.ui.text {
             this.initFocusEvents(this.input);
             this.input.onInput((event: Event) => {
                 this.assessComplexity(this.input.getValue());
+                this.notifyValidityChanged(this.input.isValid());
             });
             inputWrapper.appendChild(this.input);
 
@@ -59,6 +60,7 @@ module api.ui.text {
             this.generateLink.onClicked((event: MouseEvent) => {
                 this.generatePassword();
                 this.assessComplexity(this.input.getValue());
+                this.notifyValidityChanged(this.input.isValid());
             });
             this.appendChild(this.generateLink);
         }

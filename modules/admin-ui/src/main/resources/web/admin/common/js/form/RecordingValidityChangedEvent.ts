@@ -1,6 +1,6 @@
 module api.form {
 
-    export class ValidityChangedEvent {
+    export class RecordingValidityChangedEvent {
 
         private origin: api.form.ValidationRecordingPath;
 
