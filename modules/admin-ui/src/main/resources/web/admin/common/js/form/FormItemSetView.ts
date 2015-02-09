@@ -36,7 +36,7 @@ module api.form {
 
         private validationViewer: api.form.ValidationRecordingViewer;
 
-        private validityChangedListeners: {(event: ValidityChangedEvent) : void}[] = [];
+        private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
 
         private previousValidationRecording: ValidationRecording;
 
@@ -107,7 +107,7 @@ module api.form {
 
                     if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(), FormItemSetOccurrenceView)) {
                         var addedFormItemSetOccurrenceView = <FormItemSetOccurrenceView>event.getOccurrenceView();
-                        addedFormItemSetOccurrenceView.onValidityChanged((event: ValidityChangedEvent) => {
+                        addedFormItemSetOccurrenceView.onValidityChanged((event: RecordingValidityChangedEvent) => {
                             this.handleFormItemSetOccurrenceViewValidityChanged(event);
                         });
                     }
@@ -123,7 +123,7 @@ module api.form {
                 });
 
                 this.formItemSetOccurrences.getOccurrenceViews().forEach((formItemSetOccurrenceView: FormItemSetOccurrenceView)=> {
-                    formItemSetOccurrenceView.onValidityChanged((event: ValidityChangedEvent) => {
+                    formItemSetOccurrenceView.onValidityChanged((event: RecordingValidityChangedEvent) => {
                         this.handleFormItemSetOccurrenceViewValidityChanged(event);
                     });
                 });
@@ -167,7 +167,7 @@ module api.form {
             return deferred.promise;
         }
 
-        private handleFormItemSetOccurrenceViewValidityChanged(event: ValidityChangedEvent) {
+        private handleFormItemSetOccurrenceViewValidityChanged(event: RecordingValidityChangedEvent) {
 
             if (!this.previousValidationRecording) {
                 return; // skip handling if not previousValidationRecording is not set
@@ -210,7 +210,7 @@ module api.form {
             this.renderValidationErrors(occurrenceRecording);
 
             if (previousValidState != this.previousValidationRecording.isValid()) {
-                this.notifyValidityChanged(new ValidityChangedEvent(this.previousValidationRecording,
+                this.notifyValidityChanged(new RecordingValidityChangedEvent(this.previousValidationRecording,
                     this.resolveValidationRecordingPath()));
             }
         }
@@ -285,7 +285,7 @@ module api.form {
             }
 
             if (!silent && wholeRecording.validityChanged(this.previousValidationRecording)) {
-                this.notifyValidityChanged(new ValidityChangedEvent(wholeRecording, validationRecordingPath));
+                this.notifyValidityChanged(new RecordingValidityChangedEvent(wholeRecording, validationRecordingPath));
             }
 
             // display only errors related to occurences
@@ -296,18 +296,18 @@ module api.form {
             return wholeRecording;
         }
 
-        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
             this.validityChangedListeners.push(listener);
         }
 
-        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
-            this.validityChangedListeners.filter((currentListener: (event: ValidityChangedEvent)=>void) => {
+        unValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
+            this.validityChangedListeners.filter((currentListener: (event: RecordingValidityChangedEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        private notifyValidityChanged(event: ValidityChangedEvent) {
-            this.validityChangedListeners.forEach((listener: (event: ValidityChangedEvent)=>void) => {
+        private notifyValidityChanged(event: RecordingValidityChangedEvent) {
+            this.validityChangedListeners.forEach((listener: (event: RecordingValidityChangedEvent)=>void) => {
                 listener(event);
             });
         }

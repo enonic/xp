@@ -24,6 +24,7 @@
 ///<reference path='AccessDeniedException.ts' />
 ///<reference path='DefaultErrorHandler.ts' />
 ///<reference path='PropertyChangedEvent.ts' />
+///<reference path='ValidityChangedEvent.ts' />
 ///<reference path='Client.ts' />
 
 ///<reference path='util/_module.ts' />
