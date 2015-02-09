@@ -29,7 +29,7 @@ module api.ui.dialog {
 
             this.config = config;
 
-            var wrapper = new api.dom.DivEl("wrapper");
+            var wrapper = new api.dom.DivEl("modal-dialog-content-wrapper");
             this.appendChild(wrapper);
 
             this.createCancelAction();
@@ -43,10 +43,10 @@ module api.ui.dialog {
             this.contentPanel = new ModalDialogContentPanel();
             wrapper.appendChild(this.contentPanel);
 
-            var push = new api.dom.DivEl("push");
+            var push = new api.dom.DivEl("modal-dialog-content-push");
             wrapper.appendChild(push);
 
-            var footer = new api.dom.DivEl("footer");
+            var footer = new api.dom.DivEl("modal-dialog-footer");
             this.appendChild(footer);
 
             this.buttonRow = new ModalDialogButtonRow();
