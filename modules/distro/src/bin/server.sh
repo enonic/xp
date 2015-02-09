@@ -86,12 +86,7 @@ init() {
 }
 
 run() {
-    EXEC="$JAVACMD $JAVA_OPTS"
-    EXEC="$EXEC -Dxp.install=$XP_INSTALL"
-    EXEC="$EXEC $XP_OPTS"
-    EXEC="$EXEC -classpath $XP_INSTALL/lib/*"
-    EXEC="$EXEC com.enonic.xp.launcher.LauncherMain $@"
-    exec $EXEC
+    exec "$JAVACMD" $JAVA_OPTS -Dxp.install="$XP_INSTALL" $XP_OPTS -classpath "$XP_INSTALL/lib/*" com.enonic.xp.launcher.LauncherMain "$@"
 }
 
 main() {

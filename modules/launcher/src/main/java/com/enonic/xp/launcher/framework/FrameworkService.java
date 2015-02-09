@@ -186,9 +186,4 @@ public final class FrameworkService
             activator.stop( this.felix.getBundleContext() );
         }
     }
-
-    public void setCleanState( final boolean state )
-    {
-        this.config.put( FRAMEWORK_STORAGE_CLEAN, state ? FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT : "none" );
-    }
 }
