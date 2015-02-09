@@ -31,5 +31,7 @@ module api.content.json {
         childOrder:ChildOrderJson;
 
         language: string;
+
+        contentState: string;
     }
 }
