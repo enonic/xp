@@ -38,7 +38,7 @@ final class BundleLocationResolver
         if ( isDevMode() )
         {
             final File file = findInProjectDir( gav );
-            if ( ( file != null ) && file.isFile() )
+            if ( file != null )
             {
                 return file.toURI().toString();
             }

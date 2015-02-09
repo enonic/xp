@@ -62,7 +62,7 @@ public final class ProvisionActivator
     private void installBundles()
         throws Exception
     {
-        final BundleInfoLoader2 loader = new BundleInfoLoader2( this.systemDir, this.config );
+        final BundleInfoLoader loader = new BundleInfoLoader( this.systemDir, this.config );
         final List<BundleInfo> list = loader.load();
 
         LOG.info( "Installing {} bundles...", list.size() );
@@ -75,7 +75,7 @@ public final class ProvisionActivator
     private void installBundle( final BundleInfo info )
         throws Exception
     {
-        LOG.info( "Installing bundle {} at start-level {}", info.getLocation(), info.getLevel() );
+        LOG.debug( "Installing bundle {} at start-level {}", info.getLocation(), info.getLevel() );
 
         final URI uri = info.getUri( this.systemDir );
         final Bundle bundle = this.context.installBundle( uri.toString() );

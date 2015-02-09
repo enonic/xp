@@ -31,6 +31,7 @@ public final class Launcher
     public Launcher( final String... args )
     {
         this.args = args;
+        applySystemPropertyArgs();
         this.systemProperties = SystemProperties.getDefault();
     }
 
@@ -132,5 +133,25 @@ public final class Launcher
         }
 
         return false;
+    }
+
+    private void applySystemPropertyArgs()
+    {
+        for ( final String arg : this.args )
+        {
+            if ( arg.startsWith( "-D" ) )
+            {
+                applySystemPropertyArg( arg.substring( 2 ) );
+            }
+        }
+    }
+
+    private void applySystemPropertyArg( final String arg )
+    {
+        final int pos = arg.indexOf( '=' );
+        if ( pos > 0 )
+        {
+            System.setProperty( arg.substring( 0, pos ).trim(), arg.substring( pos + 1 ).trim() );
+        }
     }
 }
