@@ -10,6 +10,11 @@ module app.browse {
             return object.getItemDisplayName();
         }
 
+        resolveUnnamedDisplayName(object: UserTreeGridItem): string {
+            return object.getPrincipal() ? object.getPrincipal().getTypeName()
+                                         : object.getUserStore() ? "User Strore" : "";
+        }
+
         resolveSubName(object: UserTreeGridItem, relativePath: boolean = false): string {
 
             switch (object.getType()) {

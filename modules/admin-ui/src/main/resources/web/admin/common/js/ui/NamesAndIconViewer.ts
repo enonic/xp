@@ -6,7 +6,7 @@ module api.ui {
     export class NamesAndIconViewer<OBJECT> extends api.ui.Viewer<OBJECT> {
 
         static EMPTY_DISPLAY_NAME: string = "<Display Name>";
-        static EMPTY_SUB_NAME: string     = "<name>";
+        static EMPTY_SUB_NAME: string     = "<unnamed>";
 
         private namesAndIconView: api.app.NamesAndIconView;
 
@@ -18,7 +18,7 @@ module api.ui {
         setObject(object: OBJECT, relativePath: boolean = false) {
             super.setObject(object);
 
-            var displayName = this.resolveDisplayName(object) || NamesAndIconViewer.EMPTY_DISPLAY_NAME,
+            var displayName = this.resolveDisplayName(object) || this.normalizeDisplayName(this.resolveUnnamedDisplayName(object)),
                 subName     = this.resolveSubName(object, relativePath) || NamesAndIconViewer.EMPTY_SUB_NAME,
                 subTitle    = this.resolveSubTitle(object),
                 iconClass   = this.resolveIconClass(object),
@@ -34,7 +34,16 @@ module api.ui {
             this.render();
         }
 
+        private normalizeDisplayName(displayName: string): string {
+            return api.util.StringHelper.isEmpty(displayName) ? NamesAndIconViewer.EMPTY_DISPLAY_NAME
+                                                              : "<Unnamed " + api.util.StringHelper.normalizeAll(displayName) + ">";
+        }
+
         resolveDisplayName(object: OBJECT): string {
+            return "";
+        }
+
+        resolveUnnamedDisplayName(object: OBJECT): string {
             return "";
         }
 

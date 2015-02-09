@@ -13,6 +13,10 @@ module api.ui.security.acl {
             return object.getPrincipalDisplayName();
         }
 
+        resolveUnnamedDisplayName(object: AccessControlEntry): string {
+            return object.getPrincipalTypeName();
+        }
+
         resolveSubName(object: AccessControlEntry, relativePath: boolean = false): string {
             return object.getPrincipalKey().toPath();
         }

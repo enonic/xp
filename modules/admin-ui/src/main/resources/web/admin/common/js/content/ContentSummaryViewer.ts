@@ -14,6 +14,10 @@ module api.content {
             return object.getDisplayName();
         }
 
+        resolveUnnamedDisplayName(object: ContentSummary): string {
+            return object.getType() ? object.getType().getLocalName() : "";
+        }
+
         resolveSubName(object: ContentSummary, relativePath: boolean = false): string {
             var contentName = object.getName();
             if (relativePath) {

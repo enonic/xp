@@ -33,7 +33,7 @@ module app {
             wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() === "displayName") {
                     var contentType = (<app.wizard.ContentWizardPanel>wizardPanel).getContentType(),
-                        name = <string>event.getNewValue() || "<Unnamed " + contentType.getDisplayName()  + ">";
+                        name = <string>event.getNewValue() || "<Unnamed " + api.util.StringHelper.normalizeAll(contentType.getDisplayName())  + ">";
                     tabMenuItem.setLabel(name, !<string>event.getNewValue());
                 }
             });
@@ -181,7 +181,7 @@ module app {
                             }
 
                             var contentType = (<app.wizard.ContentWizardPanel>wizard).getContentType(),
-                                name = content.getDisplayName() || "<Unnamed " + contentType.getDisplayName()  + ">";
+                                name = content.getDisplayName() || "<Unnamed " + api.util.StringHelper.normalizeAll(contentType.getDisplayName())  + ">";
 
                             tabMenuItem = new AppBarTabMenuItemBuilder().
                                 setLabel(name).
@@ -235,7 +235,7 @@ module app {
                         new api.schema.content.GetContentTypeByNameRequest(content.getType()).
                             sendAndParse().
                             then((contentType: api.schema.content.ContentType) => {
-                                tabMenuItem.setLabel("<Unnamed " + contentType.getDisplayName() + ">", true);
+                                tabMenuItem.setLabel("<Unnamed " + api.util.StringHelper.normalizeAll(contentType.getDisplayName()) + ">", true);
                             }).done();
                     }
 
