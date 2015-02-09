@@ -232,7 +232,10 @@ module app.browse {
                 status = new api.ui.ProgressBar(data.getUploadItem().getProgress()).toString();
             }
 
-            return status;
+            var statusEl = new api.dom.SpanEl(status.toLowerCase().replace(" ", "-"));
+            statusEl.getEl().setText(status);
+
+            return statusEl.toString();
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
