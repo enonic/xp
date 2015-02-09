@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.elasticsearch;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Set;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
@@ -33,9 +34,13 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 import com.enonic.wem.api.home.HomeDir;
 import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.api.snapshot.RestoreParams;
 import com.enonic.wem.api.snapshot.RestoreResult;
+import com.enonic.wem.api.snapshot.SnapshotParams;
 import com.enonic.wem.api.snapshot.SnapshotResult;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
@@ -190,22 +195,21 @@ public class ElasticsearchDaoImpl
         return searchResult.getResults().getTotalHits();
     }
 
-    public SnapshotResult snapshot( final RepositoryId repositoryId, final String snapshotName )
+    public SnapshotResult snapshot( final SnapshotParams params )
     {
         if ( !snapshotRepositoryExists() )
         {
             registerRepository();
         }
 
-        final String storageIndex = StorageNameResolver.resolveStorageIndexName( repositoryId );
-        final String searchIndex = IndexNameResolver.resolveSearchIndexName( repositoryId );
+        final Set<String> indices = getSnapshotIndexNames( params.getRepositoryId(), params.isIncludeIndexedData() );
 
         final CreateSnapshotRequestBuilder createRequest = new CreateSnapshotRequestBuilder( this.client.admin().cluster() ).
-            setIndices( storageIndex, searchIndex ).
+            setIndices( indices.toArray( new String[indices.size()] ) ).
             setIncludeGlobalState( false ).
             setWaitForCompletion( true ).
             setRepository( SNAPSHOT_REPOSITORY_NAME ).
-            setSnapshot( snapshotName ).
+            setSnapshot( params.getSnapshotName() ).
             setSettings( ImmutableSettings.settingsBuilder().
                 put( "ignore_unavailable", true ) );
 
@@ -215,46 +219,56 @@ public class ElasticsearchDaoImpl
         return SnapshotResultFactory.create( createSnapshotResponse );
     }
 
-    public RestoreResult restore( final RepositoryId repositoryId, final String snapshotName )
+    public RestoreResult restore( final RestoreParams params )
     {
-        final String storageIndex = StorageNameResolver.resolveStorageIndexName( repositoryId );
-        final String searchIndex = IndexNameResolver.resolveSearchIndexName( repositoryId );
-
         if ( !snapshotRepositoryExists() )
         {
             registerRepository();
         }
 
-        closeIndices( storageIndex, searchIndex );
+        final Set<String> indices = getSnapshotIndexNames( params.getRepositoryId(), params.isIncludeIndexedData() );
+
+        closeIndices( indices );
 
         final RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
             new RestoreSnapshotRequestBuilder( this.client.admin().cluster() ).
                 setRestoreGlobalState( false ).
-                setIndices( storageIndex, searchIndex ).
+                setIndices( indices.toArray( new String[indices.size()] ) ).
                 setRepository( SNAPSHOT_REPOSITORY_NAME ).
-                setSnapshot( snapshotName ).
+                setSnapshot( params.getSnapshotName() ).
                 setWaitForCompletion( true );
 
         final RestoreSnapshotResponse response =
             this.client.admin().cluster().restoreSnapshot( restoreSnapshotRequestBuilder.request() ).actionGet();
 
-        openIndices( storageIndex, searchIndex );
+        openIndices( indices );
 
         return RestoreResultFactory.create( response );
     }
 
-    private void openIndices( final String storageIndex, final String searchIndex )
+    private Set<String> getSnapshotIndexNames( final RepositoryId repositoryId, final boolean includeIndexedData )
+    {
+        final Set<String> indices = Sets.newHashSet();
+        indices.add( StorageNameResolver.resolveStorageIndexName( repositoryId ) );
+        if ( includeIndexedData )
+        {
+            indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
+        }
+        return indices;
+    }
+
+    private void openIndices( final Set<String> indexNames )
     {
         OpenIndexRequestBuilder openIndexRequestBuilder = new OpenIndexRequestBuilder( this.client.admin().indices() ).
-            setIndices( storageIndex, searchIndex );
+            setIndices( new String[indexNames.size()] );
 
         this.client.admin().indices().open( openIndexRequestBuilder.request() );
     }
 
-    private void closeIndices( final String storageIndex, final String searchIndex )
+    private void closeIndices( final Set<String> indexNames )
     {
         CloseIndexRequestBuilder closeIndexRequestBuilder = new CloseIndexRequestBuilder( this.client.admin().indices() ).
-            setIndices( storageIndex, searchIndex );
+            setIndices( indexNames.toArray( new String[indexNames.size()] ) );
 
         this.client.admin().indices().close( closeIndexRequestBuilder.request() );
     }

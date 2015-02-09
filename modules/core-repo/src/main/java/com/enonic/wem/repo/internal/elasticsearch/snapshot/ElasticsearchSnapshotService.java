@@ -3,7 +3,6 @@ package com.enonic.wem.repo.internal.elasticsearch.snapshot;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.snapshot.RestoreParams;
 import com.enonic.wem.api.snapshot.RestoreResult;
 import com.enonic.wem.api.snapshot.SnapshotParams;
@@ -19,25 +18,25 @@ public class ElasticsearchSnapshotService
     private ElasticsearchDao elasticsearchDao;
 
     @Override
-    public SnapshotResult snapshot( final RepositoryId repositoryId, final SnapshotParams snapshotParams )
+    public SnapshotResult snapshot( final SnapshotParams snapshotParams )
     {
-        return NodeHelper.runAsAdmin( () -> doSnapshot( repositoryId, snapshotParams ) );
+        return NodeHelper.runAsAdmin( () -> doSnapshot( snapshotParams ) );
     }
 
-    private SnapshotResult doSnapshot( final RepositoryId repositoryId, final SnapshotParams snapshotParams )
+    private SnapshotResult doSnapshot( final SnapshotParams snapshotParams )
     {
-        return this.elasticsearchDao.snapshot( repositoryId, snapshotParams.getSnapshotName() );
+        return this.elasticsearchDao.snapshot( snapshotParams );
     }
 
     @Override
-    public RestoreResult restore( final RepositoryId repositoryId, final RestoreParams restoreParams )
+    public RestoreResult restore( final RestoreParams restoreParams )
     {
-        return NodeHelper.runAsAdmin( () -> doRestore( repositoryId, restoreParams ) );
+        return NodeHelper.runAsAdmin( () -> doRestore( restoreParams ) );
     }
 
-    private RestoreResult doRestore( final RepositoryId repositoryId, final RestoreParams restoreParams )
+    private RestoreResult doRestore( final RestoreParams restoreParams )
     {
-        return this.elasticsearchDao.restore( repositoryId, restoreParams.getSnapshotName() );
+        return this.elasticsearchDao.restore( restoreParams );
     }
 
     @Reference

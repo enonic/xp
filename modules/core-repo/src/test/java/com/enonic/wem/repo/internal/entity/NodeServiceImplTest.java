@@ -171,6 +171,7 @@ public class NodeServiceImplTest
 
         final SnapshotResult result = this.nodeService.snapshot( SnapshotParams.create().
             snapshotName( "my-snapshot" ).
+            repositoryId( CTX_DEFAULT.getRepositoryId() ).
             build() );
 
         assertEquals( SnapshotResult.State.SUCCESS, result.getState() );
@@ -179,7 +180,9 @@ public class NodeServiceImplTest
 
         assertNull( getNodeById( node.id() ) );
 
-        this.nodeService.restore( RestoreParams.create().snapshotName( "my-snapshot" ).
+        this.nodeService.restore( RestoreParams.create().
+            snapshotName( "my-snapshot" ).
+            repositoryId( CTX_DEFAULT.getRepositoryId() ).
             build() );
 
         assertNotNull( getNodeById( node.id() ) );

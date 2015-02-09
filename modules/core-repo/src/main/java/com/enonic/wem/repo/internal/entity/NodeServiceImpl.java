@@ -433,13 +433,13 @@ public class NodeServiceImpl
     @Override
     public SnapshotResult snapshot( final SnapshotParams params )
     {
-        return this.snapshotService.snapshot( ContextAccessor.current().getRepositoryId(), params );
+        return this.snapshotService.snapshot( params );
     }
 
     @Override
     public RestoreResult restore( final RestoreParams params )
     {
-        return this.snapshotService.restore( ContextAccessor.current().getRepositoryId(), params );
+        return this.snapshotService.restore( params );
     }
 
     @Override

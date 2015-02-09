@@ -5,8 +5,9 @@ import java.util.Collection;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 
-import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.api.snapshot.RestoreParams;
 import com.enonic.wem.api.snapshot.RestoreResult;
+import com.enonic.wem.api.snapshot.SnapshotParams;
 import com.enonic.wem.api.snapshot.SnapshotResult;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
@@ -30,7 +31,7 @@ public interface ElasticsearchDao
 
     public long count( ElasticsearchQuery query );
 
-    public SnapshotResult snapshot( final RepositoryId repositoryId, final String snapshotName );
+    public SnapshotResult snapshot( final SnapshotParams params );
 
-    public RestoreResult restore( final RepositoryId repositoryId, final String snapshotName );
+    public RestoreResult restore( final RestoreParams params );
 }
