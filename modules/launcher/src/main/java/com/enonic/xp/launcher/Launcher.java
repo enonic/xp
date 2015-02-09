@@ -18,6 +18,8 @@ import com.enonic.xp.launcher.watch.WatchActivator;
 public final class Launcher
     implements SharedConstants
 {
+    private final String[] args;
+
     private final SystemProperties systemProperties;
 
     private Environment env;
@@ -26,8 +28,9 @@ public final class Launcher
 
     private FrameworkService framework;
 
-    public Launcher()
+    public Launcher( final String... args )
     {
+        this.args = args;
         this.systemProperties = SystemProperties.getDefault();
     }
 
@@ -71,6 +74,11 @@ public final class Launcher
         this.framework = new FrameworkService();
         this.framework.config( this.config );
 
+        if ( hasArg( "clean" ) )
+        {
+            this.framework.setCleanState( true );
+        }
+
         addLogActivator();
         addWatchActivator();
         addProvisionActivator();
@@ -111,5 +119,18 @@ public final class Launcher
     public void stop()
     {
         this.framework.stop();
+    }
+
+    private boolean hasArg( final String value )
+    {
+        for ( final String arg : this.args )
+        {
+            if ( value.equalsIgnoreCase( arg ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

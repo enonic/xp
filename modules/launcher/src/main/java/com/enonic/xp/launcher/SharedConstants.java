@@ -18,4 +18,8 @@ public interface SharedConstants
     public static final String INTERNAL_OSGI_BOOT_DELEGATION = "internal.osgi.bootdelegation";
 
     public static final String INTERNAL_OSGI_SYSTEM_PACKAGES = "internal.osgi.system.packages";
+
+    public static final String XP_OSGI_STARTLEVEL = "xp.osgi.startlevel";
+
+    public static final String XP_OSGI_STARTLEVEL_BUNDLE = "xp.osgi.startlevel.bundle";
 }

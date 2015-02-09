@@ -2,6 +2,7 @@ package com.enonic.xp.launcher.provision;
 
 import java.io.File;
 import java.net.URI;
+import java.util.List;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
@@ -49,7 +50,7 @@ public final class ProvisionActivator
         }
         else
         {
-            LOG.debug( "Bundles already installed. Skipping." );
+            LOG.info( "Bundles already installed. Skipping." );
         }
     }
 
@@ -57,7 +58,10 @@ public final class ProvisionActivator
         throws Exception
     {
         final BundleInfoLoader loader = new BundleInfoLoader( this.systemDir );
-        for ( final BundleInfo info : loader.load() )
+        final List<BundleInfo> list = loader.load();
+
+        LOG.info( "Installing {} bundles...", list.size() );
+        for ( final BundleInfo info : list )
         {
             installBundle( info );
         }

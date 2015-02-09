@@ -126,17 +126,22 @@ public final class FrameworkService
         throws Exception
     {
         this.felix.init();
-        getStartLevelService().setInitialBundleStartLevel( 1 );
         this.felix.start();
-        setStartLevel( 1 );
 
+        setBundleStartLevel();
         startActivators();
         setRunningStartLevel();
     }
 
+    private void setBundleStartLevel()
+    {
+        final int level = Integer.parseInt( this.config.get( XP_OSGI_STARTLEVEL_BUNDLE ) );
+        getStartLevelService().setInitialBundleStartLevel( level );
+    }
+
     private void setRunningStartLevel()
     {
-        final int level = Integer.parseInt( this.config.get( FRAMEWORK_BEGINNING_STARTLEVEL ) );
+        final int level = Integer.parseInt( this.config.get( XP_OSGI_STARTLEVEL ) );
         setStartLevel( level, event -> LOG.info( "Started Enonic XP in {} ms", ( System.currentTimeMillis() - this.startTime ) ) );
     }
 
@@ -180,5 +185,10 @@ public final class FrameworkService
         {
             activator.stop( this.felix.getBundleContext() );
         }
+    }
+
+    public void setCleanState( final boolean state )
+    {
+        this.config.put( FRAMEWORK_STORAGE_CLEAN, state ? FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT : "none" );
     }
 }
