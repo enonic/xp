@@ -23,7 +23,8 @@ module api.util {
         }
 
         static normalizeAll(str: string): string {
-            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : StringHelper.capitalizeAll(StringHelper.normalize(str));
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING
+                                             : StringHelper.capitalizeAll(StringHelper.normalize(str).toLowerCase());
         }
 
         static isUpperCase(str: string): boolean {

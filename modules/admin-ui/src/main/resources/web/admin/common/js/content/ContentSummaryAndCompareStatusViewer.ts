@@ -19,6 +19,11 @@ module api.content {
             return "";
         }
 
+        resolveUnnamedDisplayName(object: ContentSummaryAndCompareStatus): string {
+            var contentSummary = object.getContentSummary();
+            return (contentSummary && contentSummary.getType()) ? contentSummary.getType().getLocalName() : "";
+        }
+
         resolveSubName(object: ContentSummaryAndCompareStatus, relativePath: boolean = false): string {
             var contentSummary = object.getContentSummary(),
                 uploadItem = object.getUploadItem();

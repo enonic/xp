@@ -15,6 +15,10 @@ module api.ui.security {
             return object.getDisplayName();
         }
 
+        resolveUnnamedDisplayName(object: Principal): string {
+            return object.getTypeName();
+        }
+
         resolveSubName(object: Principal, relativePath: boolean = false): string {
             return object.getKey().toPath();
         }
