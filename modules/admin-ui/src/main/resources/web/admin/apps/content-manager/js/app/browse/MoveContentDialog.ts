@@ -21,17 +21,17 @@ module app.browse {
             this.contentPath = new api.dom.H6El().addClass("content-path");
             var descMessage = new api.dom.H6El().addClass("desc-message").
                 setHtml("Moves selected items with all children and current permissions to selected destination");
-            this.appendChild(this.contentPath);
-            this.appendChild(descMessage);
+            this.appendChildToContentPanel(this.contentPath);
+            this.appendChildToContentPanel(descMessage);
 
             this.contentComboBox = new api.content.ContentMoveComboBox();
             this.contentComboBox.addClass("content-selector");
-            this.appendChild(this.contentComboBox);
+            this.appendChildToContentPanel(this.contentComboBox);
 
             this.initializeActions();
 
             this.contentMoveMask = new api.ui.mask.LoadMask(this);
-            this.appendChild(this.contentMoveMask);
+            this.appendChildToContentPanel(this.contentMoveMask);
 
             OpenMoveDialogEvent.on((event) => {
 

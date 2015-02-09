@@ -61,10 +61,9 @@ html, body {
     width: 100%;
     height: 44px;
     padding: 6px 10px;
-    background: rgba(55, 55, 55, 0.1) top center; // @admin-bg-dark-gray
     background-size: cover;
     text-align: center;
-    overflow: hidden;
+    overflow-y: visible;
     z-index: 1;
     .box-sizing(border-box);
 
@@ -112,6 +111,28 @@ html, body {
 
       .icon-close2();
     }
+
+    a.tab-menu-logon-wrapper {
+      color: inherit;
+
+      .tab-menu-logon {
+        float: right;
+        margin-right: 10px;
+        margin-top: 0px;
+
+        .tab-menu-button {
+          background-color: transparent;
+        }
+
+        &.expanded {
+          .tab-menu-button {
+            background-color: @admin-bg-dark-gray;
+          }
+        }
+
+      }
+    }
+
   }
 
   /** Branding */
