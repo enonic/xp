@@ -46,6 +46,19 @@ module api.security {
             return this.type;
         }
 
+        getTypeName(): string {
+            switch (this.type) {
+                case PrincipalType.GROUP:
+                    return "Group";
+                case PrincipalType.USER:
+                    return "User";
+                case PrincipalType.ROLE:
+                    return "Role";
+                default:
+                    return "";
+            }
+        }
+
         isUser(): boolean {
             return this.type === PrincipalType.USER;
         }

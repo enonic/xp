@@ -34,6 +34,10 @@ module api.security.acl {
             return this.principal.getDisplayName();
         }
 
+        getPrincipalTypeName(): string {
+            return this.principal.getTypeName();
+        }
+
         equals(o: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, UserStoreAccessControlEntry)) {
                 return false;
