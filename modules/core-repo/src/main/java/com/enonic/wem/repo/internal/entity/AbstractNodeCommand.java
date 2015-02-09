@@ -157,22 +157,6 @@ abstract class AbstractNodeCommand
         return inheritPermissions ? getPermissions( parentPath ) : permissions;
     }
 
-    void runAsAdmin( final Runnable runnable )
-    {
-        ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( NodeConstants.NODE_SU_AUTH_INFO ).
-            build().
-            runWith( runnable );
-    }
-
-    <T> T runAsAdmin( final Callable<T> callable )
-    {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( NodeConstants.NODE_SU_AUTH_INFO ).
-            build().
-            callWith( callable );
-    }
-
     private AccessControlList getPermissions( final NodePath nodePath )
     {
         final Node node = doGetByPath( nodePath, false );

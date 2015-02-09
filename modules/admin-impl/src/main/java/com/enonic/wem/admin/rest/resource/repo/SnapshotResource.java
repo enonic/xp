@@ -1,10 +1,9 @@
 package com.enonic.wem.admin.rest.resource.repo;
 
-import java.net.URI;
-
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -12,9 +11,13 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.node.NodeService;
-import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.api.snapshot.RestoreParams;
+import com.enonic.wem.api.snapshot.RestoreResult;
+import com.enonic.wem.api.snapshot.SnapshotParams;
+import com.enonic.wem.api.snapshot.SnapshotResult;
 
 @Path(ResourceConstants.REST_ROOT + "repo")
+@Produces(MediaType.APPLICATION_JSON)
 @Component(immediate = true)
 public class SnapshotResource
     implements AdminResource
@@ -23,22 +26,26 @@ public class SnapshotResource
 
     @POST
     @Path("snapshot")
-    public Response snapshot( final SnapshotRequestJson snapshotRequestJson )
+    public SnapshotResultJson snapshot( final SnapshotRequestJson snapshotRequestJson )
         throws Exception
     {
-        this.nodeService.snapshot( snapshotRequestJson.getSnapshotName() );
-        final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
-        return Response.temporaryRedirect( new URI( uri ) ).build();
+        final SnapshotResult result = this.nodeService.snapshot( SnapshotParams.create().
+            snapshotName( snapshotRequestJson.getSnapshotName() ).
+            build() );
+
+        return SnapshotResultJson.from( result );
     }
 
     @POST
     @Path("restore")
-    public Response restore( final RestoreRequestJson restoreRequestJson )
+    public RestoreResultJson restore( final RestoreRequestJson restoreRequestJson )
         throws Exception
     {
-        this.nodeService.restore( restoreRequestJson.getSnapshotName() );
-        final String uri = ServletRequestUrlHelper.createUriWithHost( "/" );
-        return Response.temporaryRedirect( new URI( uri ) ).build();
+        final RestoreResult result = this.nodeService.restore( RestoreParams.create().
+            snapshotName( restoreRequestJson.getSnapshotName() ).
+            build() );
+
+        return RestoreResultJson.from( result );
     }
 
     @Reference

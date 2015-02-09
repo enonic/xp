@@ -32,6 +32,7 @@ import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
+import com.enonic.wem.repo.internal.elasticsearch.snapshot.ElasticsearchSnapshotService;
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
 import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
@@ -52,6 +53,8 @@ public abstract class AbstractNodeTest
     protected ElasticsearchIndexService indexService;
 
     protected ElasticsearchQueryService queryService;
+
+    protected ElasticsearchSnapshotService snapshotService;
 
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "test-user" ) ).login( "test-user" ).build();
@@ -111,6 +114,9 @@ public abstract class AbstractNodeTest
         this.indexService.setClient( client );
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
+        this.snapshotService = new ElasticsearchSnapshotService();
+        this.snapshotService.setElasticsearchDao( this.elasticsearchDao );
+
         this.nodeDao = new NodeDaoImpl();
         this.nodeDao.setBranchService( this.branchService );
 
@@ -126,6 +132,7 @@ public abstract class AbstractNodeTest
         nodeService.setNodeDao( nodeDao );
         nodeService.setVersionService( versionService );
         nodeService.setBranchService( branchService );
+        nodeService.setSnapshotService( this.snapshotService );
 
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
         repositoryInitializer.initializeRepository( repository );

@@ -9,7 +9,9 @@ import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRe
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
 import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
+import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
+import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
 import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -33,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.home.HomeDir;
 import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.api.snapshot.RestoreResult;
+import com.enonic.wem.api.snapshot.SnapshotResult;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
@@ -186,7 +190,7 @@ public class ElasticsearchDaoImpl
         return searchResult.getResults().getTotalHits();
     }
 
-    public void snapshot( final RepositoryId repositoryId, final String snapshotName )
+    public SnapshotResult snapshot( final RepositoryId repositoryId, final String snapshotName )
     {
         if ( !snapshotRepositoryExists() )
         {
@@ -205,10 +209,13 @@ public class ElasticsearchDaoImpl
             setSettings( ImmutableSettings.settingsBuilder().
                 put( "ignore_unavailable", true ) );
 
-        this.client.admin().cluster().createSnapshot( createRequest.request() ).actionGet();
+        final CreateSnapshotResponse createSnapshotResponse =
+            this.client.admin().cluster().createSnapshot( createRequest.request() ).actionGet();
+
+        return SnapshotResultFactory.create( createSnapshotResponse );
     }
 
-    public void restore( final RepositoryId repositoryId, final String snapshotName )
+    public RestoreResult restore( final RepositoryId repositoryId, final String snapshotName )
     {
         final String storageIndex = StorageNameResolver.resolveStorageIndexName( repositoryId );
         final String searchIndex = IndexNameResolver.resolveSearchIndexName( repositoryId );
@@ -218,25 +225,38 @@ public class ElasticsearchDaoImpl
             registerRepository();
         }
 
-        CloseIndexRequestBuilder closeIndexRequestBuilder = new CloseIndexRequestBuilder( this.client.admin().indices() ).
-            setIndices( storageIndex, searchIndex );
+        closeIndices( storageIndex, searchIndex );
 
-        this.client.admin().indices().close( closeIndexRequestBuilder.request() );
+        final RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
+            new RestoreSnapshotRequestBuilder( this.client.admin().cluster() ).
+                setRestoreGlobalState( false ).
+                setIndices( storageIndex, searchIndex ).
+                setRepository( SNAPSHOT_REPOSITORY_NAME ).
+                setSnapshot( snapshotName ).
+                setWaitForCompletion( true );
 
-        RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder = new RestoreSnapshotRequestBuilder( this.client.admin().cluster() ).
-            setRestoreGlobalState( false ).
-            setIndices( storageIndex, searchIndex ).
-            setRepository( SNAPSHOT_REPOSITORY_NAME ).
-            setSnapshot( snapshotName ).
-            setWaitForCompletion( true );
+        final RestoreSnapshotResponse response =
+            this.client.admin().cluster().restoreSnapshot( restoreSnapshotRequestBuilder.request() ).actionGet();
 
-        this.client.admin().cluster().restoreSnapshot( restoreSnapshotRequestBuilder.request() ).actionGet();
+        openIndices( storageIndex, searchIndex );
 
+        return RestoreResultFactory.create( response );
+    }
+
+    private void openIndices( final String storageIndex, final String searchIndex )
+    {
         OpenIndexRequestBuilder openIndexRequestBuilder = new OpenIndexRequestBuilder( this.client.admin().indices() ).
             setIndices( storageIndex, searchIndex );
 
         this.client.admin().indices().open( openIndexRequestBuilder.request() );
+    }
 
+    private void closeIndices( final String storageIndex, final String searchIndex )
+    {
+        CloseIndexRequestBuilder closeIndexRequestBuilder = new CloseIndexRequestBuilder( this.client.admin().indices() ).
+            setIndices( storageIndex, searchIndex );
+
+        this.client.admin().indices().close( closeIndexRequestBuilder.request() );
     }
 
     private boolean snapshotRepositoryExists()

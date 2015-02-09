@@ -2,6 +2,8 @@ package com.enonic.wem.admin.rest.resource.repo;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 public class SnapshotRequestJson
 {
@@ -13,7 +15,9 @@ public class SnapshotRequestJson
     public SnapshotRequestJson( @JsonProperty("snapshotName") final String snapshotName, //
                                 @JsonProperty("overwrite") final boolean overwrite )
     {
-        this.snapshotName = snapshotName;
+        Preconditions.checkArgument( !Strings.isNullOrEmpty( snapshotName ), "Snapshot name has to be given" );
+
+        this.snapshotName = snapshotName.toLowerCase();
         this.overwrite = overwrite;
     }
 

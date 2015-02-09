@@ -27,6 +27,9 @@ import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.wem.api.snapshot.RestoreParams;
+import com.enonic.wem.api.snapshot.SnapshotParams;
+import com.enonic.wem.api.snapshot.SnapshotResult;
 
 import static org.junit.Assert.*;
 
@@ -46,6 +49,7 @@ public class NodeServiceImplTest
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setVersionService( versionService );
         this.nodeService.setBranchService( branchService );
+        this.nodeService.setSnapshotService( this.snapshotService );
     }
 
     @Test
@@ -165,13 +169,18 @@ public class NodeServiceImplTest
             name( "myNode" ).
             build() );
 
-        this.nodeService.snapshot( "my-snap" );
+        final SnapshotResult result = this.nodeService.snapshot( SnapshotParams.create().
+            snapshotName( "my-snapshot" ).
+            build() );
+
+        assertEquals( SnapshotResult.State.SUCCESS, result.getState() );
 
         doDeleteNode( node.id() );
 
         assertNull( getNodeById( node.id() ) );
 
-        this.nodeService.restore( "my-snap" );
+        this.nodeService.restore( RestoreParams.create().snapshotName( "my-snapshot" ).
+            build() );
 
         assertNotNull( getNodeById( node.id() ) );
     }

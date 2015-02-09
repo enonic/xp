@@ -220,18 +220,6 @@ public class ElasticsearchIndexService
             build() );
     }
 
-    @Override
-    public void snapshot( final RepositoryId repositoryId, final String snapshotName )
-    {
-        this.elasticsearchDao.snapshot( repositoryId, snapshotName );
-    }
-
-    @Override
-    public void restore( final RepositoryId repositoryId, final String snapshotName )
-    {
-        this.elasticsearchDao.restore( repositoryId, snapshotName );
-    }
-
     @Reference
     public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
     {

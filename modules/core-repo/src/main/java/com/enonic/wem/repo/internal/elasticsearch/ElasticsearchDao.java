@@ -6,6 +6,8 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 
 import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.api.snapshot.RestoreResult;
+import com.enonic.wem.api.snapshot.SnapshotResult;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
@@ -28,7 +30,7 @@ public interface ElasticsearchDao
 
     public long count( ElasticsearchQuery query );
 
-    public void snapshot( final RepositoryId repositoryId, final String snapshotName );
+    public SnapshotResult snapshot( final RepositoryId repositoryId, final String snapshotName );
 
-    public void restore( final RepositoryId repositoryId, final String snapshotName );
+    public RestoreResult restore( final RepositoryId repositoryId, final String snapshotName );
 }
