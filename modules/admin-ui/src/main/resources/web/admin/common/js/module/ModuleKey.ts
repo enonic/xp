@@ -2,6 +2,10 @@ module api.module {
 
     export class ModuleKey implements api.Equitable {
 
+        static BASE: ModuleKey = ModuleKey.fromString('base');
+        static PORTAL: ModuleKey = ModuleKey.fromString('portal');
+        static MEDIA: ModuleKey = ModuleKey.fromString('media');
+
         private name: string;
 
         public static fromString(moduleName: string): ModuleKey {

@@ -16,6 +16,7 @@ Features:
   - Live Edit - Lock page by default (CMS-4827)
   - Added basic caching headers for assets in Live mode rendering. (CMS-5111)
   - Text component - set "section" to root element (CMS-5125)
+  - Filtered content types in Create Content dialogue based on site-hierarchy (CMS-5109)
 
 Refactoring:
 
