@@ -2,40 +2,41 @@ package com.enonic.xp.launcher.provision;
 
 import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.xp.launcher.SharedConstants;
 import com.enonic.xp.launcher.config.ConfigProperties;
 
 final class BundleLocationResolver
     implements SharedConstants
 {
+    private final static Logger LOG = LoggerFactory.getLogger( ProvisionActivator.class );
+
     private final File systemDir;
 
-    private final ConfigProperties config;
+    private final boolean devMode;
+
+    private final File projectDir;
+
+    private final String groupId;
 
     public BundleLocationResolver( final File systemDir, final ConfigProperties config )
     {
         this.systemDir = systemDir;
-        this.config = config;
-    }
+        this.projectDir = config.getFile( DEV_PROJECT_DIR );
+        this.devMode = config.getBoolean( DEV_MODE ) && ( this.projectDir != null );
+        this.groupId = config.get( DEV_GROUP_ID );
 
-    private boolean isDevMode()
-    {
-        return this.config.getBoolean( DEV_MODE );
-    }
-
-    private String getGroupId()
-    {
-        return this.config.get( DEV_GROUP_ID );
-    }
-
-    private File getProjectDir()
-    {
-        return this.config.getFile( DEV_PROJECT_DIR );
+        if ( this.devMode )
+        {
+            LOG.info( "Development mode is on. Loading [{}] bundles from [{}].", this.groupId, this.projectDir.getAbsolutePath() );
+        }
     }
 
     public String resolve( final String gav )
     {
-        if ( isDevMode() )
+        if ( this.devMode )
         {
             final File file = findInProjectDir( gav );
             if ( file != null )
@@ -81,18 +82,12 @@ final class BundleLocationResolver
     private File findInProjectDir( final String gav )
     {
         final String[] parts = gav.split( ":" );
-        if ( !parts[0].equals( getGroupId() ) )
+        if ( !parts[0].equals( this.groupId ) )
         {
             return null;
         }
 
-        final File projectDir = getProjectDir();
-        if ( projectDir == null )
-        {
-            return null;
-        }
-
-        final File modulesDir = new File( projectDir, "modules" );
+        final File modulesDir = new File( this.projectDir, "modules" );
         final File subProjectDir = new File( modulesDir, parts[1] );
         final File targetDir = new File( subProjectDir, "target" );
         final File libDir = new File( targetDir, "libs" );
