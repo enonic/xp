@@ -15,6 +15,8 @@ import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 
+import static com.enonic.wem.portal.internal.rendering.RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE;
+
 @Component(immediate = true, service = Renderer.class)
 public final class PageRenderer
     implements Renderer<Content>
@@ -56,7 +58,7 @@ public final class PageRenderer
             "</head>";
         if ( RenderMode.EDIT.equals( context.getMode() ) )
         {
-            html += "<body data-live-edit-type=\"page\"></body>";
+            html += "<body " + PORTAL_COMPONENT_ATTRIBUTE + "=\"page\"></body>";
         }
         else
         {

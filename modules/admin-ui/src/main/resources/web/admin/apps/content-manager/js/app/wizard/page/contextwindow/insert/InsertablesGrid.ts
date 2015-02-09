@@ -49,7 +49,7 @@ module app.wizard.page.contextwindow.insert {
 
         private buildRow(row: number, cell: number, value: any, columnDef: any, insertable: Insertable): api.dom.DivEl {
             var rowEl = new api.dom.DivEl();
-            rowEl.getEl().setData('live-edit-type', insertable.getName());
+            rowEl.getEl().setData('portal-component-type', insertable.getName());
             if (this.componentGridOptions.draggableRows) {
                 rowEl.getEl().setData('context-window-draggable', 'true');
             }

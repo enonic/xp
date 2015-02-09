@@ -17,6 +17,7 @@ Features:
   - Added basic caching headers for assets in Live mode rendering. (CMS-5111)
   - Text component - set "section" to root element (CMS-5125)
   - Filtered content types in Create Content dialogue based on site-hierarchy (CMS-5109)
+  - Automatic injection of component data attributes for layout, part, image and text components in Live Edit (CMS-5110)
 
 Refactoring:
 

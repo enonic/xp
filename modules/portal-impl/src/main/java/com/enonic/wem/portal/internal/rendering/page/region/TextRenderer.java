@@ -12,16 +12,19 @@ import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 
+import static com.enonic.wem.portal.internal.rendering.RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE;
+
 @Component(immediate = true, service = Renderer.class)
 public final class TextRenderer
     implements Renderer<TextComponent>
 {
 
-    private static final String EMPTY_COMPONENT_EDIT_MODE_HTML = "<div data-live-edit-type=\"{0}\"><section></section></div>";
+    private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
+        "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"><section></section></div>";
 
     private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<section></section>";
 
-    private static final String COMPONENT_EDIT_MODE_HTML = "<div data-live-edit-type=\"{0}\"><section>{1}</section></div>";
+    private static final String COMPONENT_EDIT_MODE_HTML = "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"><section>{1}</section></div>";
 
     private static final String COMPONENT_PREVIEW_MODE_HTML = "<section>{0}</section>";
 

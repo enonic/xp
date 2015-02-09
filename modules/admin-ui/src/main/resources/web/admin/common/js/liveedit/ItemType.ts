@@ -2,7 +2,7 @@ module api.liveedit {
 
     export class ItemType implements api.Equitable {
 
-        static ATTRIBUTE_TYPE = "live-edit-type";
+        static ATTRIBUTE_TYPE = "portal-component-type";
 
         private static shortNameToInstance: {[shortName: string]: ItemType} = {};
 
