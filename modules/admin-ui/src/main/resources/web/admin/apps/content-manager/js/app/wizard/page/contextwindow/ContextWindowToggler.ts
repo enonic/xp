@@ -4,7 +4,7 @@ module app.wizard.page.contextwindow {
 
         constructor() {
             super("");
-            this.addClass("icon-menu6 icon-large toggler");
+            this.addClass("icon-menu3 icon-medium toggler");
             this.setActive(false);
 
             ShowLiveEditEvent.on(() => {
