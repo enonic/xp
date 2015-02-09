@@ -82,6 +82,8 @@ module app.wizard {
 
                 this.open();
             });
+
+            this.addCancelButtonToBottom();
         }
 
         private applyPermissions() {

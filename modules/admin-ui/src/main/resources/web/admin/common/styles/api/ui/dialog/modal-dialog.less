@@ -65,7 +65,7 @@
   }
 
   .button {
-    &.cancel-button {
+    &.cancel-button-top {
       &:extend(.icon);
       .icon-close;
 
@@ -93,6 +93,12 @@
         box-shadow: 0px 0px 5px white;
         border: 1px solid white;
       }
+    }
+
+    &.cancel-button-bottom {
+      .button();
+      padding: 4px 19px 4px 19px;
+      margin-left: 11px;
     }
   }
 

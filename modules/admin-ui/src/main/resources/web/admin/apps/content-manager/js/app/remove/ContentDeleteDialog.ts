@@ -42,6 +42,8 @@ module app.remove {
                     new api.content.ContentDeletedEvent(deletedContents).fire();
                 });
             });
+
+            this.addCancelButtonToBottom();
         }
 
         setContentToDelete(contentModels: api.content.ContentSummary[]) {
