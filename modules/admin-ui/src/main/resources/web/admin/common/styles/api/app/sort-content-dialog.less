@@ -1,6 +1,14 @@
 .sort-content-dialog {
 
   @media screen and (max-height: 360px) {
+    .dialog-content {
+      height: 65%;
+
+      > h6 {
+        display: none;
+      }
+    }
+
     .sort-content-grid {
       height: 100%;
       .grid {
@@ -12,6 +20,11 @@
     }
   }
 
+  @media screen and (max-height: 540px) {
+    padding-top: 20px;
+    padding-bottom: 10px;
+  }
+
   .slick-viewport {
     max-height: 560px;
     overflow: auto;
@@ -21,13 +34,14 @@
     }
 
     @media screen and (max-height: 540px) {
-      max-height: 200px;
+      max-height: 155px;
     }
 
   }
   .drag-icon {
     cursor: move;
     font-size: 22px;
+    min-width: 30px;
   }
 
   .slick-reorder-proxy {
@@ -45,9 +59,9 @@
 
   h6 {
     font-size: 12.5px;
-    height: 40px;
-    margin-top: 30px;
+    margin-bottom: 10px;
   }
+
   .grid-canvas {
     position: static;
     min-height: 45px;
@@ -75,11 +89,28 @@
       z-index: 2;
     }
   }
+
+  .dialog-header {
+    h2 {
+      float: left;
+      margin-bottom: 20px;
+      margin-right: 26%;
+
+      @media screen and (max-height: 360px) {
+        margin-bottom: 10px;
+      }
+    }
+
+    @media screen and (max-height: 360px) {
+      margin-bottom: 5px;
+    }
+  }
+
+
   .sort-tab-menu {
-    position: absolute;
-    top: 23px;
-    left: 30px;
     width: 280px;
+    float: left;
+    margin: 0px;
 
     .tab-menu-button {
       background-color: #ffffff;
@@ -104,16 +135,6 @@
     }
   }
 
-  .dialog-buttons {
-    position: absolute;
-    top: 10px;
-    right: 30px;
-
-    @media screen and (max-height: 360px) {
-      top: 20px;
-    }
-  }
-
   .sort-content-grid {
     /*overflow: auto;*/
     /*max-height: 500px;*/
@@ -122,6 +143,48 @@
   }
   .toggle.icon {
     display: none !important;
+  }
+
+  &._0-240, &._240-360 {
+    .sort-tab-menu {
+      width: 230px;
+    }
+
+    .r1 {
+      width: 82%;
+    }
+
+    .r2 {
+      display: none;
+    }
+
+    .dialog-header {
+      h2 {
+        margin-right: 0px;
+      }
+    }
+
+    @media screen and (max-height: 540px) {
+      .dialog-content {
+
+        > h6 {
+          display: none;
+        }
+      }
+    }
+
+  }
+
+  &._360-540 {
+    @media screen and (max-height: 540px) {
+      .dialog-content {
+
+        > h6 {
+          display: none;
+        }
+      }
+
+    }
   }
 
 }

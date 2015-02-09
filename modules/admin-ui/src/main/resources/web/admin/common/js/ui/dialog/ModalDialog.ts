@@ -29,19 +29,28 @@ module api.ui.dialog {
 
             this.config = config;
 
+            var wrapper = new api.dom.DivEl("wrapper");
+            this.appendChild(wrapper);
+
             this.createCancelAction();
             this.cancelButton = this.createCancelButton();
 
-            this.appendChild(this.cancelButton);
+            wrapper.appendChild(this.cancelButton);
 
             this.title = this.config.title;
-            this.appendChild(this.title);
+            wrapper.appendChild(this.title);
 
             this.contentPanel = new ModalDialogContentPanel();
-            this.appendChild(this.contentPanel);
+            wrapper.appendChild(this.contentPanel);
+
+            var push = new api.dom.DivEl("push");
+            wrapper.appendChild(push);
+
+            var footer = new api.dom.DivEl("footer");
+            this.appendChild(footer);
 
             this.buttonRow = new ModalDialogButtonRow();
-            this.appendChild(this.buttonRow);
+            footer.appendChild(this.buttonRow);
 
             this.mouseClickListener = (event: MouseEvent) => {
                 if (this.isVisible()) {
@@ -91,6 +100,10 @@ module api.ui.dialog {
 
         appendChildToContentPanel(child: api.dom.Element) {
             this.contentPanel.appendChild(child);
+        }
+
+        appendChildToTitle(child: api.dom.Element) {
+            this.title.appendChild(child);
         }
 
         removeChildFromContentPanel(child: api.dom.Element) {
