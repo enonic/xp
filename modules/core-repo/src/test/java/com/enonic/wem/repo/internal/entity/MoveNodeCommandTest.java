@@ -9,6 +9,8 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeName;
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
 
 import static org.junit.Assert.*;
 
@@ -29,7 +31,7 @@ public class MoveNodeCommandTest
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).
@@ -58,7 +60,7 @@ public class MoveNodeCommandTest
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).
@@ -87,7 +89,7 @@ public class MoveNodeCommandTest
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).
@@ -122,7 +124,7 @@ public class MoveNodeCommandTest
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).
@@ -156,7 +158,7 @@ public class MoveNodeCommandTest
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).
@@ -191,7 +193,7 @@ public class MoveNodeCommandTest
         MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).
@@ -209,10 +211,18 @@ public class MoveNodeCommandTest
     public void move_with_children()
         throws Exception
     {
+        final Node parentNode = createNode( CreateNodeParams.create().
+            name( "myparent" ).
+            parent( NodePath.ROOT ).
+            setNodeId( NodeId.from( "myparent" ) ).
+            permissions( AccessControlList.of( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) ).
+            build() );
+
         final Node node = createNode( CreateNodeParams.create().
             name( "mynode" ).
-            parent( NodePath.ROOT ).
+            parent( parentNode.path() ).
             setNodeId( NodeId.from( "mynode" ) ).
+            inheritPermissions( true ).
             build() );
 
         final Node child1 = createNode( CreateNodeParams.create().
@@ -248,7 +258,7 @@ public class MoveNodeCommandTest
         final Node movedNode = MoveNodeCommand.create().
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             id( node.id() ).
@@ -272,6 +282,8 @@ public class MoveNodeCommandTest
         assertEquals( movedNode.path(), movedChild2.parentPath() );
         assertEquals( movedChild1.path(), movedChild1_1.parentPath() );
 
+        assertEquals( false, movedNode.inheritsPermissions() );
+        assertEquals( node.getPermissions(), movedNode.getPermissions() );
     }
 
     private FindNodeVersionsResult getVersions( final Node node )

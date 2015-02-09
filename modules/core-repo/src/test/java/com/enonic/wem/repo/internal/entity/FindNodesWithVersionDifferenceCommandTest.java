@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeIds;
@@ -10,7 +11,6 @@ import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.api.workspace.Workspace;
 
 import static org.junit.Assert.*;
 
@@ -43,7 +43,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             parent( NodePath.ROOT ).
             build() );
 
-        printWorkspaceIndex();
+        printBranchIndex();
 
         final Node child1 = createNode( CreateNodeParams.create().
             name( "mynode" ).
@@ -231,18 +231,18 @@ public class FindNodesWithVersionDifferenceCommandTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             build().
             execute();
     }
 
-    private NodeVersionDiffResult getDiff( final Workspace source, final Workspace target )
+    private NodeVersionDiffResult getDiff( final Branch source, final Branch target )
     {
         return getDiff( source, target, null );
     }
 
 
-    private NodeVersionDiffResult getDiff( final Workspace source, final Workspace target, final NodePath nodePath )
+    private NodeVersionDiffResult getDiff( final Branch source, final Branch target, final NodePath nodePath )
     {
         final NodeVersionDiffQuery.Builder queryBuilder = NodeVersionDiffQuery.create().
             target( target ).
@@ -271,7 +271,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             params( updateNodeParams ).
             queryService( this.queryService ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             binaryBlobStore( this.binaryBlobStore ).
@@ -279,13 +279,13 @@ public class FindNodesWithVersionDifferenceCommandTest
             execute();
     }
 
-    private PushNodesResult doPushNode( final Workspace target, final Node createdNode )
+    private PushNodesResult doPushNode( final Branch target, final Node createdNode )
     {
         return PushNodesCommand.create().
             ids( NodeIds.from( createdNode.id() ) ).
             target( target ).
             indexService( this.indexService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).

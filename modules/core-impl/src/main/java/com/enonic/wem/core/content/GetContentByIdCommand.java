@@ -33,7 +33,7 @@ final class GetContentByIdCommand
         }
         catch ( NoNodeWithIdFoundException | NodeNotFoundException e )
         {
-            throw new ContentNotFoundException( contentId, ContextAccessor.current().getWorkspace() );
+            throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
         }
         catch ( Exception e )
         {

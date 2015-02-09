@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableMap;
 
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 import static org.junit.Assert.*;
 
@@ -119,14 +119,14 @@ public class ContextImplTest
     }
 
     @Test
-    public void testWorkspace()
+    public void testBranch()
     {
         final ContextImpl context = createContext();
-        assertNull( context.getWorkspace() );
+        assertNull( context.getBranch() );
 
-        final Workspace value = Workspace.from( "workspace" );
+        final Branch value = Branch.from( "branch" );
         context.getLocalScope().setAttribute( value );
-        assertSame( value, context.getWorkspace() );
+        assertSame( value, context.getBranch() );
     }
 
     @Test

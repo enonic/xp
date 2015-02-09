@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.branch.Branches;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -11,7 +12,6 @@ import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.api.workspace.Workspaces;
 
 import static org.junit.Assert.*;
 
@@ -36,11 +36,11 @@ public class GetActiveNodeVersionsCommandTest
 
         final GetActiveNodeVersionsResult result = GetActiveNodeVersionsCommand.create().
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             nodeId( node.id() ).
-            workspaces( Workspaces.from( WS_DEFAULT, WS_OTHER ) ).
+            branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
             build().
             execute();
 
@@ -53,11 +53,11 @@ public class GetActiveNodeVersionsCommandTest
 
         final GetActiveNodeVersionsResult result2 = GetActiveNodeVersionsCommand.create().
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
             nodeId( node.id() ).
-            workspaces( Workspaces.from( WS_DEFAULT, WS_OTHER ) ).
+            branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
             build().
             execute();
 
@@ -79,7 +79,7 @@ public class GetActiveNodeVersionsCommandTest
             params( updateNodeParams ).
             indexService( this.indexService ).
             queryService( this.queryService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             binaryBlobStore( this.binaryBlobStore ).

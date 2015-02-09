@@ -3,7 +3,7 @@ package com.enonic.wem.api.context;
 import org.junit.Test;
 
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 import static org.junit.Assert.*;
 
@@ -18,7 +18,7 @@ public class ContextBuilderTest
     {
         final ContextBuilder builder = ContextBuilder.create();
         builder.repositoryId( "repository" );
-        builder.workspace( "workspace" );
+        builder.branch( "branch" );
 
         final AuthenticationInfo authInfo = AuthenticationInfo.unAuthenticated();
         builder.authInfo( authInfo );
@@ -31,7 +31,7 @@ public class ContextBuilderTest
         final Context context = builder.build();
         assertNotNull( context );
         assertEquals( "repository", context.getRepositoryId().toString() );
-        assertEquals( "workspace", context.getWorkspace().toString() );
+        assertEquals( "branch", context.getBranch().toString() );
         assertSame( authInfo, context.getAuthInfo() );
         assertEquals( "value1", context.getAttribute( "key1" ) );
         assertSame( sampleValue, context.getAttribute( SampleValue.class ) );
@@ -42,7 +42,7 @@ public class ContextBuilderTest
     {
         final Context old = ContextBuilder.create().
             repositoryId( "repository" ).
-            workspace( "workspace" ).
+            branch( "branch" ).
             attribute( "key1", "value1" ).
             build();
 
@@ -54,7 +54,7 @@ public class ContextBuilderTest
         final Context context = builder.build();
         assertNotNull( context );
         assertEquals( "repository", context.getRepositoryId().toString() );
-        assertEquals( "workspace", context.getWorkspace().toString() );
+        assertEquals( "branch", context.getBranch().toString() );
         assertEquals( AuthenticationInfo.unAuthenticated(), context.getAuthInfo() );
         assertEquals( "value1", context.getAttribute( "key1" ) );
         assertSame( sampleValue, context.getAttribute( SampleValue.class ) );
@@ -67,16 +67,16 @@ public class ContextBuilderTest
 
         final Context old = ContextBuilder.create().
             repositoryId( "repository" ).
-            workspace( "workspace" ).
+            branch( "branch" ).
             attribute( "key1", "value1" ).
             build();
 
-        final Workspace newWS = Workspace.from( "new" );
+        final Branch newWS = Branch.from( "new" );
         final Context newContext = ContextBuilder.from( old ).
-            workspace( newWS ).
+            branch( newWS ).
             build();
 
-        assertEquals( newWS, newContext.getWorkspace() );
+        assertEquals( newWS, newContext.getBranch() );
         assertEquals( "repository", newContext.getRepositoryId().toString() );
     }
 }

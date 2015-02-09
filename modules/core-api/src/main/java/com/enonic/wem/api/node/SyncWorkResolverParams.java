@@ -1,10 +1,10 @@
 package com.enonic.wem.api.node;
 
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 public class SyncWorkResolverParams
 {
-    private Workspace workspace;
+    private Branch branch;
 
     private NodeId nodeId;
 
@@ -12,14 +12,14 @@ public class SyncWorkResolverParams
 
     private SyncWorkResolverParams( Builder builder )
     {
-        workspace = builder.workspace;
+        branch = builder.branch;
         nodeId = builder.nodeId;
         includeChildren = builder.includeChildren;
     }
 
-    public Workspace getWorkspace()
+    public Branch getBranch()
     {
-        return workspace;
+        return branch;
     }
 
     public NodeId getNodeId()
@@ -40,7 +40,7 @@ public class SyncWorkResolverParams
 
     public static final class Builder
     {
-        private Workspace workspace;
+        private Branch branch;
 
         private NodeId nodeId;
 
@@ -50,19 +50,19 @@ public class SyncWorkResolverParams
         {
         }
 
-        public Builder workspace( Workspace workspace )
+        public Builder branch( final Branch branch )
         {
-            this.workspace = workspace;
+            this.branch = branch;
             return this;
         }
 
-        public Builder nodeId( NodeId nodeId )
+        public Builder nodeId( final NodeId nodeId )
         {
             this.nodeId = nodeId;
             return this;
         }
 
-        public Builder includeChildren( boolean includeChildren )
+        public Builder includeChildren( final boolean includeChildren )
         {
             this.includeChildren = includeChildren;
             return this;

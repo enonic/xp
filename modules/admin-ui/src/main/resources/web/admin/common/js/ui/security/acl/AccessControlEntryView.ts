@@ -13,6 +13,8 @@ module api.ui.security.acl {
         private accessSelector: AccessSelector;
         private permissionSelector: PermissionSelector;
 
+        private removeButton: api.dom.AEl;
+
         private valueChangedListeners: {(item: AccessControlEntry): void}[] = [];
         private editable: boolean = true;
 
@@ -24,11 +26,9 @@ module api.ui.security.acl {
             this.ace = ace;
 
             this.accessSelector = new AccessSelector();
-            this.appendChild(this.accessSelector);
 
-            var removeButton = new api.dom.AEl("icon-close");
-            removeButton.onClicked((event: MouseEvent) => this.notifyRemoveClicked(event));
-            this.appendChild(removeButton);
+            this.removeButton = new api.dom.AEl("icon-close");
+            this.removeButton.onClicked((event: MouseEvent) => this.notifyRemoveClicked(event));
 
             this.permissionSelector = new PermissionSelector();
             this.permissionSelector.onValueChanged((event: api.ui.ValueChangedEvent) => {
@@ -38,7 +38,7 @@ module api.ui.security.acl {
                 }));
                 this.notifyValueChanged(this.getAccessControlEntry());
             });
-            this.appendChild(this.permissionSelector);
+
             this.permissionSelector.setValue({allow: ace.getAllowedPermissions(), deny: ace.getDeniedPermissions()}, true);
             // this.toggleClass("dirty", !ace.isInherited());
 
@@ -54,6 +54,14 @@ module api.ui.security.acl {
             });
 
             this.setAccessControlEntry(this.ace, true);
+        }
+
+        doRender() {
+            super.doRender();
+            this.appendChild(this.accessSelector);
+            this.appendChild(this.removeButton);
+            this.appendChild(this.permissionSelector);
+            return true;
         }
 
         getPermissionSelector(): PermissionSelector {

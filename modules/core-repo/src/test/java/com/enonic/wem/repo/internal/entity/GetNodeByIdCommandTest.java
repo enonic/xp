@@ -33,7 +33,7 @@ public class GetNodeByIdCommandTest
             indexService( this.indexService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             id( createdNode.id() ).
             resolveHasChild( false ).
@@ -69,7 +69,7 @@ public class GetNodeByIdCommandTest
             indexService( this.indexService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             id( createdNode.id() ).
             resolveHasChild( false ).
@@ -100,7 +100,7 @@ public class GetNodeByIdCommandTest
             indexService( this.indexService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             id( createdNode.id() ).
             resolveHasChild( true ).
@@ -114,7 +114,7 @@ public class GetNodeByIdCommandTest
             indexService( this.indexService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             id( createdNode.id() ).
             resolveHasChild( false ).

@@ -35,7 +35,7 @@ public class GetNodesByIdsCommandTest
         final Nodes result = GetNodesByIdsCommand.create().
             ids( NodeIds.from( createdNode1.id(), createdNode2.id() ) ).
             resolveHasChild( true ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             versionService( this.versionService ).
             indexService( this.indexService ).
@@ -70,7 +70,7 @@ public class GetNodesByIdsCommandTest
         final Nodes result = GetNodesByIdsCommand.create().
             ids( NodeIds.from( createdNode1.id(), createdNode2.id() ) ).
             resolveHasChild( true ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             queryService( this.queryService ).
             versionService( this.versionService ).
             indexService( this.indexService ).

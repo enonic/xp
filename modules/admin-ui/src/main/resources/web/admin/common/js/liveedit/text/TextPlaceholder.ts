@@ -6,26 +6,12 @@ module api.liveedit.text {
     export class TextPlaceholder extends ComponentPlaceholder {
 
         private textView: TextComponentView;
-        private message: api.dom.DivEl;
 
         constructor(componentView: TextComponentView) {
             this.textView = componentView;
 
             super();
             this.addClass("text-placeholder");
-
-            this.message = new api.dom.DivEl("message");
-            this.message.setHtml("Click to edit");
-
-            this.appendChild(this.message);
-        }
-
-        select() {
-            this.message.show();
-        }
-
-        deselect() {
-            this.message.hide();
         }
 
     }

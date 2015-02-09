@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.time.Instant;
 import java.util.Arrays;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
@@ -81,7 +82,7 @@ public final class Icon
     @Override
     public String toString()
     {
-        return Objects.toStringHelper( this ).
+        return MoreObjects.toStringHelper( this ).
             add( "mimeType", mimeType ).
             add( "iconData", iconData ).
             add( "size", getSize() ).

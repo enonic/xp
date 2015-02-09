@@ -9,10 +9,10 @@ import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.workspace.WorkspaceIndexPath;
+import com.enonic.wem.repo.internal.elasticsearch.branch.BranchIndexPath;
 import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
@@ -32,10 +32,10 @@ class NodeVersionDiffCommand
 
     NodeVersionDiffResult execute()
     {
-        final String indexType = IndexType.WORKSPACE.getName();
+        final String indexType = IndexType.BRANCH.getName();
 
-        final Workspace sourceWs = this.query.getSource();
-        final Workspace targetWs = this.query.getTarget();
+        final Branch sourceWs = this.query.getSource();
+        final Branch targetWs = this.query.getTarget();
 
         final BoolQueryBuilder inSourceOnly = onlyInQuery( indexType, sourceWs, targetWs );
 
@@ -71,18 +71,18 @@ class NodeVersionDiffCommand
         return builder.build();
     }
 
-    private BoolQueryBuilder deletedOnlyQuery( final String indexType, final Workspace sourceWs, final Workspace targetWs )
+    private BoolQueryBuilder deletedOnlyQuery( final String indexType, final Branch sourceBranch, final Branch targetBranch )
     {
         return new BoolQueryBuilder().
-            must( deletedInWorkspace( indexType, sourceWs ) ).
-            mustNot( deletedInWorkspace( indexType, targetWs ) );
+            must( deletedInBranch( indexType, sourceBranch ) ).
+            mustNot( deletedInBranch( indexType, targetBranch ) );
     }
 
-    private BoolQueryBuilder onlyInQuery( final String indexType, final Workspace sourceWs, final Workspace targetWs )
+    private BoolQueryBuilder onlyInQuery( final String indexType, final Branch sourceWs, final Branch targetWs )
     {
         return new BoolQueryBuilder().
-            must( isInWorkspace( indexType, sourceWs ) ).
-            mustNot( isInWorkspace( indexType, targetWs ) );
+            must( isInBranch( indexType, sourceWs ) ).
+            mustNot( isInBranch( indexType, targetWs ) );
     }
 
     private BoolQueryBuilder wrapInPathQueryIfNecessary( final String indexType, final BoolQueryBuilder sourceTargetCompares )
@@ -108,30 +108,30 @@ class NodeVersionDiffCommand
 
     private HasChildQueryBuilder hasPath( final String indexType )
     {
-        return new HasChildQueryBuilder( indexType, new WildcardQueryBuilder( WorkspaceIndexPath.PATH.getPath(),
+        return new HasChildQueryBuilder( indexType, new WildcardQueryBuilder( BranchIndexPath.PATH.getPath(),
                                                                               this.query.getNodePath().toString() + "*" ) );
     }
 
-    private HasChildQueryBuilder deletedInWorkspace( final String indexType, final Workspace sourceWs )
+    private HasChildQueryBuilder deletedInBranch( final String indexType, final Branch sourceBranch )
     {
         return new HasChildQueryBuilder( indexType, new BoolQueryBuilder().
             must( isDeleted() ).
-            must( new TermQueryBuilder( WorkspaceIndexPath.WORKSPACE_ID.toString(), sourceWs.getName() ) ) );
+            must( new TermQueryBuilder( BranchIndexPath.BRANCH_NAME.toString(), sourceBranch.getName() ) ) );
     }
 
     private TermQueryBuilder isDeleted()
     {
-        return new TermQueryBuilder( WorkspaceIndexPath.STATE.toString(), NodeState.PENDING_DELETE.value() );
+        return new TermQueryBuilder( BranchIndexPath.STATE.toString(), NodeState.PENDING_DELETE.value() );
     }
 
-    private HasChildQueryBuilder isInWorkspace( final String indexType, final Workspace source1 )
+    private HasChildQueryBuilder isInBranch( final String indexType, final Branch source )
     {
-        return new HasChildQueryBuilder( indexType, createWsConstraint( source1 ) );
+        return new HasChildQueryBuilder( indexType, createWsConstraint( source ) );
     }
 
-    private TermQueryBuilder createWsConstraint( final Workspace ws )
+    private TermQueryBuilder createWsConstraint( final Branch branch )
     {
-        return new TermQueryBuilder( WorkspaceIndexPath.WORKSPACE_ID.toString(), ws );
+        return new TermQueryBuilder( BranchIndexPath.BRANCH_NAME.toString(), branch );
     }
 
     static Builder create()

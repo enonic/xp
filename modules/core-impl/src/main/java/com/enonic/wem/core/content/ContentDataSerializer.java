@@ -64,7 +64,6 @@ public final class ContentDataSerializer
 
         final Content content = params.getEditedContent();
         final CreateAttachments createAttachments = params.getCreateAttachments();
-        final PropertyTree existingData = params.getEditedContent().getData();
 
         contentAsData.setBoolean( ContentPropertyNames.VALID, content.isValid() );
         contentAsData.ifNotNull().addString( DISPLAY_NAME, content.getDisplayName() );
@@ -83,7 +82,7 @@ public final class ContentDataSerializer
 
             for ( final Metadata metadata : content.getAllMetadata() )
             {
-                metadataSet.addSet( metadata.getName().getLocalName(), metadata.getData().getRoot().copy( existingData ) );
+                metadataSet.addSet( metadata.getName().getLocalName(), metadata.getData().getRoot().copy( contentAsData.getTree() ) );
             }
         }
 
@@ -199,7 +198,7 @@ public final class ContentDataSerializer
                 }
                 else
                 {
-                    LOG.warn( "Mixin [%s] could not be found", metadataLocalName );
+                    LOG.warn( "Mixin [" + metadataLocalName + "] could not be found" );
                 }
             }
             builder.metadata( metadatasBuilder.build() );

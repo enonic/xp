@@ -31,7 +31,6 @@ public class BatchedNodeExportCommandTest
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Before
-
     public void setUp()
         throws Exception
     {

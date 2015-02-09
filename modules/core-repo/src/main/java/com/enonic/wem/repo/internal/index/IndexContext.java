@@ -1,30 +1,30 @@
 package com.enonic.wem.repo.internal.index;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.workspace.Workspace;
 
 public class IndexContext
 {
     private final RepositoryId repositoryId;
 
-    private final Workspace workspace;
+    private final Branch branch;
 
     private final PrincipalKeys principalsKeys;
 
     private IndexContext( Builder builder )
     {
         repositoryId = builder.repositoryId;
-        workspace = builder.workspace;
+        branch = builder.branch;
         principalsKeys = builder.principalsKeys;
     }
 
     public static IndexContext from( final Context context )
     {
         return IndexContext.create().
-            workspace( context.getWorkspace() ).
+            branch( context.getBranch() ).
             repositoryId( context.getRepositoryId() ).
             principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() ).
             build();
@@ -40,9 +40,9 @@ public class IndexContext
         return repositoryId;
     }
 
-    public Workspace getWorkspace()
+    public Branch getBranch()
     {
-        return workspace;
+        return branch;
     }
 
     public PrincipalKeys getPrincipalKeys()
@@ -54,7 +54,7 @@ public class IndexContext
     {
         private RepositoryId repositoryId;
 
-        private Workspace workspace;
+        private Branch branch;
 
         private PrincipalKeys principalsKeys;
 
@@ -68,9 +68,9 @@ public class IndexContext
             return this;
         }
 
-        public Builder workspace( final Workspace workspace )
+        public Builder branch( final Branch branch )
         {
-            this.workspace = workspace;
+            this.branch = branch;
             return this;
         }
 

@@ -55,7 +55,7 @@ public abstract class ControllerResource
         context.setMode( this.mode );
         context.setMethod( this.request.getMethod() );
         context.setBaseUri( this.baseUri );
-        context.setWorkspace( this.workspace );
+        context.setBranch( this.branch );
         final Multimap<String, String> contextHeaders = context.getHeaders();
         this.httpHeaders.getRequestHeaders().forEach( contextHeaders::putAll );
         setParams( context.getParams(), this.uriInfo.getQueryParameters() );

@@ -8,8 +8,8 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
-import com.enonic.wem.repo.internal.workspace.StoreWorkspaceDocument;
-import com.enonic.wem.repo.internal.workspace.WorkspaceContext;
+import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
+import com.enonic.wem.repo.internal.branch.BranchContext;
 
 public class StoreNodeCommand
     extends AbstractNodeCommand
@@ -46,10 +46,10 @@ public class StoreNodeCommand
             nodeVersionId = this.queryService.get( node.id(), IndexContext.from( context ) );
         }
 
-        this.workspaceService.store( StoreWorkspaceDocument.create().
+        this.branchService.store( StoreBranchDocument.create().
             node( node ).
             nodeVersionId( nodeVersionId ).
-            build(), WorkspaceContext.from( context ) );
+            build(), BranchContext.from( context ) );
 
         this.indexService.store( node, nodeVersionId, IndexContext.from( context ) );
 

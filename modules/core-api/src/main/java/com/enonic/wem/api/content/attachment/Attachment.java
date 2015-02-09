@@ -2,6 +2,7 @@ package com.enonic.wem.api.content.attachment;
 
 import org.apache.commons.io.FilenameUtils;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -91,7 +92,7 @@ public final class Attachment
     @Override
     public String toString()
     {
-        final Objects.ToStringHelper s = Objects.toStringHelper( this );
+        final MoreObjects.ToStringHelper s = MoreObjects.toStringHelper( this );
         s.add( "name", name );
         s.add( "mimeType", mimeType );
         s.add( "label", label );

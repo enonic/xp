@@ -6,46 +6,56 @@ module api.schema.content {
 
         // Built-in ContentTypes can be listed here
 //
-        static MEDIA = new ContentTypeName("base:media");
+        static UNSTRUCTURED = ContentTypeName.from(ModuleKey.BASE, "unstructured");
 
-        static MEDIA_TEXT = new ContentTypeName("media:text");
+        static FOLDER = ContentTypeName.from(ModuleKey.BASE, "folder");
 
-        static MEDIA_DATA = new ContentTypeName("media:data");
+        static SHORTCUT = ContentTypeName.from(ModuleKey.BASE, "shortcut");
 
-        static MEDIA_AUDIO = new ContentTypeName("media:audio");
+        static MEDIA = ContentTypeName.from(ModuleKey.BASE, "media");
 
-        static MEDIA_VIDEO = new ContentTypeName("media:video");
+        static MEDIA_TEXT = ContentTypeName.from(ModuleKey.MEDIA, "text");
 
-        static MEDIA_IMAGE = new ContentTypeName("media:image");
+        static MEDIA_DATA = ContentTypeName.from(ModuleKey.MEDIA, "data");
 
-        static MEDIA_VECTOR = new ContentTypeName("media:vector");
+        static MEDIA_AUDIO = ContentTypeName.from(ModuleKey.MEDIA, "audio");
 
-        static MEDIA_ARCHIVE = new ContentTypeName("media:archive");
+        static MEDIA_VIDEO = ContentTypeName.from(ModuleKey.MEDIA, "video");
 
-        static MEDIA_DOCUMENT = new ContentTypeName("media:document");
+        static MEDIA_IMAGE = ContentTypeName.from(ModuleKey.MEDIA, "image");
 
-        static MEDIA_SPREADSHEET = new ContentTypeName("media:spreadsheet");
+        static MEDIA_VECTOR = ContentTypeName.from(ModuleKey.MEDIA, "vector");
 
-        static MEDIA_PRESENTATION = new ContentTypeName("media:presentation");
+        static MEDIA_ARCHIVE = ContentTypeName.from(ModuleKey.MEDIA, "archive");
 
-        static MEDIA_CODE = new ContentTypeName("media:code");
+        static MEDIA_DOCUMENT = ContentTypeName.from(ModuleKey.MEDIA, "document");
 
-        static MEDIA_EXECUTABLE = new ContentTypeName("media:executable");
+        static MEDIA_SPREADSHEET = ContentTypeName.from(ModuleKey.MEDIA, "spreadsheet");
 
-        static MEDIA_UNKNOWN = new ContentTypeName("media:unknown");
+        static MEDIA_PRESENTATION = ContentTypeName.from(ModuleKey.MEDIA, "presentation");
 
-        static SITE = new ContentTypeName('portal:site');
+        static MEDIA_CODE = ContentTypeName.from(ModuleKey.MEDIA, "code");
 
-        static PAGE_TEMPLATE = new ContentTypeName('portal:page-template');
+        static MEDIA_EXECUTABLE = ContentTypeName.from(ModuleKey.MEDIA, "executable");
 
-        static TEMPLATE_FOLDER = new ContentTypeName('portal:template-folder');
+        static MEDIA_UNKNOWN = ContentTypeName.from(ModuleKey.MEDIA, "unknown");
 
-        static IMAGE = new ContentTypeName('media:image');
+        static SITE = ContentTypeName.from(ModuleKey.PORTAL, "site");
+
+        static PAGE_TEMPLATE = ContentTypeName.from(ModuleKey.PORTAL, "page-template");
+
+        static TEMPLATE_FOLDER = ContentTypeName.from(ModuleKey.PORTAL, "template-folder");
+
+        static IMAGE = ContentTypeName.from(ModuleKey.MEDIA, "image");
 
         constructor(name: string) {
             api.util.assertNotNull(name, "Content type name can't be null");
             var parts = name.split(api.module.ModuleBasedName.SEPARATOR);
             super(ModuleKey.fromString(parts[0]), parts[1]);
+        }
+
+        static from(moduleKey: api.module.ModuleKey, localName: string) {
+            return new ContentTypeName(moduleKey.toString() + ":" + localName);
         }
 
         isSite(): boolean {

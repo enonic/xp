@@ -35,7 +35,7 @@ final class UpdatePageCommand
 
         if ( content == null )
         {
-            throw new ContentNotFoundException( this.params.getContent(), ContextAccessor.current().getWorkspace() );
+            throw new ContentNotFoundException( this.params.getContent(), ContextAccessor.current().getBranch() );
         }
         if ( content.getPage() == null )
         {

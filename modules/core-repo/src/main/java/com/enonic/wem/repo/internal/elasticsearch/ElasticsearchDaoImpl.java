@@ -1,14 +1,20 @@
 package com.enonic.wem.repo.internal.elasticsearch;
 
-import java.time.Instant;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Set;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
 import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
+import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
+import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
+import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -28,7 +34,14 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 import com.enonic.wem.api.home.HomeDir;
+import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.api.snapshot.RestoreParams;
+import com.enonic.wem.api.snapshot.RestoreResult;
+import com.enonic.wem.api.snapshot.SnapshotParams;
+import com.enonic.wem.api.snapshot.SnapshotResult;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
@@ -39,6 +52,8 @@ import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 
 @Component
 public class ElasticsearchDaoImpl
@@ -55,6 +70,8 @@ public class ElasticsearchDaoImpl
     private final String deleteTimeout = "5s";
 
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexService.class );
+
+    private final static String SNAPSHOT_REPOSITORY_NAME = "enonic-xp-snapshot-repo";
 
     private Client client;
 
@@ -178,45 +195,87 @@ public class ElasticsearchDaoImpl
         return searchResult.getResults().getTotalHits();
     }
 
-    public void snapshot( final String name )
+    public SnapshotResult snapshot( final SnapshotParams params )
     {
-        if ( !snapshotRepositoryExists( name ) )
+        if ( !snapshotRepositoryExists() )
         {
-            createSnapshotRepository( name, createSnapshotRepoPath( name ) );
+            registerRepository();
         }
 
+        final Set<String> indices = getSnapshotIndexNames( params.getRepositoryId(), params.isIncludeIndexedData() );
+
         final CreateSnapshotRequestBuilder createRequest = new CreateSnapshotRequestBuilder( this.client.admin().cluster() ).
-            setIndices( "search-cms-repo", "storage-cms-repo" ).
+            setIndices( indices.toArray( new String[indices.size()] ) ).
             setIncludeGlobalState( false ).
             setWaitForCompletion( true ).
-            setRepository( name ).
-            setSnapshot( Instant.now().toString().toLowerCase() ).
+            setRepository( SNAPSHOT_REPOSITORY_NAME ).
+            setSnapshot( params.getSnapshotName() ).
             setSettings( ImmutableSettings.settingsBuilder().
                 put( "ignore_unavailable", true ) );
 
-        this.client.admin().cluster().createSnapshot( createRequest.request() ).actionGet();
+        final CreateSnapshotResponse createSnapshotResponse =
+            this.client.admin().cluster().createSnapshot( createRequest.request() ).actionGet();
+
+        return SnapshotResultFactory.create( createSnapshotResponse );
     }
 
-    public void restore( final String repositoryName, final String snapshotName )
+    public RestoreResult restore( final RestoreParams params )
     {
-        RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder = new RestoreSnapshotRequestBuilder( this.client.admin().cluster() ).
-            setRestoreGlobalState( false ).
-            setIndices( "search-cms-repo", "storage-cms-repo" ).
-            setRepository( repositoryName ).
-            setSnapshot( snapshotName ).
-            setWaitForCompletion( true );
+        if ( !snapshotRepositoryExists() )
+        {
+            registerRepository();
+        }
 
-        this.client.admin().cluster().restoreSnapshot( restoreSnapshotRequestBuilder.request() ).actionGet();
+        final Set<String> indices = getSnapshotIndexNames( params.getRepositoryId(), params.isIncludeIndexedData() );
+
+        closeIndices( indices );
+
+        final RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
+            new RestoreSnapshotRequestBuilder( this.client.admin().cluster() ).
+                setRestoreGlobalState( false ).
+                setIndices( indices.toArray( new String[indices.size()] ) ).
+                setRepository( SNAPSHOT_REPOSITORY_NAME ).
+                setSnapshot( params.getSnapshotName() ).
+                setWaitForCompletion( true );
+
+        final RestoreSnapshotResponse response =
+            this.client.admin().cluster().restoreSnapshot( restoreSnapshotRequestBuilder.request() ).actionGet();
+
+        openIndices( indices );
+
+        return RestoreResultFactory.create( response );
     }
 
-    private String createSnapshotRepoPath( final String name )
+    private Set<String> getSnapshotIndexNames( final RepositoryId repositoryId, final boolean includeIndexedData )
     {
-        return HomeDir.get().toString() + "/repo/snapshots/" + name;
+        final Set<String> indices = Sets.newHashSet();
+        indices.add( StorageNameResolver.resolveStorageIndexName( repositoryId ) );
+        if ( includeIndexedData )
+        {
+            indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
+        }
+        return indices;
     }
 
-    private boolean snapshotRepositoryExists( final String name )
+    private void openIndices( final Set<String> indexNames )
     {
-        final GetRepositoriesRequest getRepositoriesRequest = new GetRepositoriesRequest( new String[]{name} );
+        OpenIndexRequestBuilder openIndexRequestBuilder = new OpenIndexRequestBuilder( this.client.admin().indices() ).
+            setIndices( new String[indexNames.size()] );
+
+        this.client.admin().indices().open( openIndexRequestBuilder.request() );
+    }
+
+    private void closeIndices( final Set<String> indexNames )
+    {
+        CloseIndexRequestBuilder closeIndexRequestBuilder = new CloseIndexRequestBuilder( this.client.admin().indices() ).
+            setIndices( indexNames.toArray( new String[indexNames.size()] ) );
+
+        this.client.admin().indices().close( closeIndexRequestBuilder.request() );
+    }
+
+    private boolean snapshotRepositoryExists()
+    {
+        final GetRepositoriesRequest getRepositoriesRequest = new GetRepositoriesRequest( new String[]{SNAPSHOT_REPOSITORY_NAME} );
 
         try
         {
@@ -229,14 +288,17 @@ public class ElasticsearchDaoImpl
         }
     }
 
-    private void createSnapshotRepository( final String name, final String path )
+
+    private void registerRepository()
     {
+        final Path SNAPSHOT_PATH = Paths.get( HomeDir.get().toString(), "snapshots" );
+
         final PutRepositoryRequestBuilder requestBuilder = new PutRepositoryRequestBuilder( this.client.admin().cluster() ).
-            setName( name ).
+            setName( SNAPSHOT_REPOSITORY_NAME ).
             setType( "fs" ).
             setSettings( ImmutableSettings.settingsBuilder().
                 put( "compress", true ).
-                put( "location", path ).
+                put( "location", SNAPSHOT_PATH.toFile() ).
                 build() );
 
         this.client.admin().cluster().putRepository( requestBuilder.request() ).actionGet();

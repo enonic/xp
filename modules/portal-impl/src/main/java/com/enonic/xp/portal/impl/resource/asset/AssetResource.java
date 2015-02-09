@@ -1,16 +1,21 @@
 package com.enonic.xp.portal.impl.resource.asset;
 
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.util.MediaTypes;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
+
+import static com.google.common.primitives.Ints.checkedCast;
 
 public final class AssetResource
     extends BaseSubResource
@@ -41,10 +46,20 @@ public final class AssetResource
 
     private void resolveResourceUrl( final String path )
     {
-        this.resourceUrl = this.module.getResource( "public/" + path );
+        this.resourceUrl = this.module.getResource( "cms/assets/" + path );
         if ( this.resourceUrl == null )
         {
             throw notFound( "File [%s] not found in module [%s]", path, this.module.getKey().toString() );
+        }
+    }
+
+    private void setCacheHeaders( final Response.ResponseBuilder response )
+    {
+        if ( this.mode == RenderMode.LIVE )
+        {
+            final CacheControl cacheControl = new CacheControl();
+            cacheControl.setMaxAge( checkedCast( TimeUnit.MINUTES.toSeconds( 10 ) ) );
+            response.cacheControl( cacheControl );
         }
     }
 
@@ -52,6 +67,8 @@ public final class AssetResource
         throws Exception
     {
         final String type = MediaTypes.instance().fromFile( this.resourceUrl.toExternalForm() ).toString();
-        return Response.ok().type( type ).entity( this.resourceUrl.openStream() ).build();
+        final Response.ResponseBuilder response = Response.ok().type( type );
+        setCacheHeaders( response );
+        return response.entity( this.resourceUrl.openStream() ).build();
     }
 }

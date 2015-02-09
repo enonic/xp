@@ -65,7 +65,7 @@ public class GetNodeByPathCommandTest
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             build().
             execute();
     }

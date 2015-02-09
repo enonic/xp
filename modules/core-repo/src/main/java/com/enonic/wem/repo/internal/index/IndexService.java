@@ -31,7 +31,5 @@ public interface IndexService
 
     public void refresh( final String... indexNames );
 
-    public void snapshot( final RepositoryId repositoryId );
-
 }
 

@@ -44,13 +44,21 @@
   }
 }
 
-.noSelect() {
+.user-select(@value) {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.notSelectable() {
+  .user-select(none);
+}
+
+.selectable() {
+  .user-select(all);
 }
 
 .noAppearance() {

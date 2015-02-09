@@ -43,7 +43,7 @@ module api.form {
 
         private formItemSetOccurrencesContainer: api.dom.DivEl;
 
-        private validityChangedListeners: {(event: ValidityChangedEvent) : void}[] = [];
+        private validityChangedListeners: {(event: RecordingValidityChangedEvent) : void}[] = [];
 
         private previousValidationRecording: ValidationRecording;
 
@@ -92,7 +92,7 @@ module api.form {
                 this.validate(true);
 
                 this.formItemViews.forEach((formItemView: FormItemView) => {
-                    formItemView.onValidityChanged((event: ValidityChangedEvent) => {
+                    formItemView.onValidityChanged((event: RecordingValidityChangedEvent) => {
 
                         var previousValidState = this.previousValidationRecording.isValid();
                         if (event.isValid()) {
@@ -103,7 +103,7 @@ module api.form {
                         }
 
                         if (previousValidState != this.previousValidationRecording.isValid()) {
-                            this.notifyValidityChanged(new ValidityChangedEvent(this.previousValidationRecording,
+                            this.notifyValidityChanged(new RecordingValidityChangedEvent(this.previousValidationRecording,
                                 this.resolveValidationRecordingPath()));
                         }
                     });
@@ -188,24 +188,24 @@ module api.form {
 
             if (!silent) {
                 if (allRecordings.validityChanged(this.previousValidationRecording)) {
-                    this.notifyValidityChanged(new ValidityChangedEvent(allRecordings, this.resolveValidationRecordingPath()));
+                    this.notifyValidityChanged(new RecordingValidityChangedEvent(allRecordings, this.resolveValidationRecordingPath()));
                 }
             }
             this.previousValidationRecording = allRecordings;
             return allRecordings;
         }
 
-        onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
+        onValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
             this.validityChangedListeners.push(listener);
         }
 
-        unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
-            this.validityChangedListeners.filter((currentListener: (event: ValidityChangedEvent)=>void) => {
+        unValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
+            this.validityChangedListeners.filter((currentListener: (event: RecordingValidityChangedEvent)=>void) => {
                 return listener == currentListener;
             });
         }
 
-        private notifyValidityChanged(event: ValidityChangedEvent) {
+        private notifyValidityChanged(event: RecordingValidityChangedEvent) {
 
             /*console.log("FormItemSetOccurrenceView " + event.getOrigin().toString() + " validity changed: ");
              if (event.getRecording().isValid()) {
@@ -216,7 +216,7 @@ module api.form {
              event.getRecording().print();
              }*/
 
-            this.validityChangedListeners.forEach((listener: (event: ValidityChangedEvent)=>void) => {
+            this.validityChangedListeners.forEach((listener: (event: RecordingValidityChangedEvent)=>void) => {
                 listener(event);
             });
         }

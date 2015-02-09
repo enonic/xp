@@ -16,7 +16,7 @@ import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
@@ -28,7 +28,7 @@ class NodeStoreDocumentFactory
 
     private final NodeVersionId nodeVersionId;
 
-    private final Workspace workspace;
+    private final Branch branch;
 
     private final RepositoryId repositoryId;
 
@@ -40,7 +40,7 @@ class NodeStoreDocumentFactory
     {
         node = builder.node;
         nodeVersionId = builder.nodeVersionId;
-        workspace = builder.workspace;
+        branch = builder.branch;
         repositoryId = builder.repositoryId;
         this.refresh = builder.refresh;
         this.state = builder.state;
@@ -64,7 +64,7 @@ class NodeStoreDocumentFactory
         final StoreDocument.Builder builder = StoreDocument.create().
             id( this.node.id() ).
             indexName( IndexNameResolver.resolveSearchIndexName( this.repositoryId ) ).
-            indexTypeName( this.workspace.getName() ).
+            indexTypeName( this.branch.getName() ).
             analyzer( indexConfigDocument.getAnalyzer() ).
             refreshAfterOperation( this.refresh );
 
@@ -162,7 +162,7 @@ class NodeStoreDocumentFactory
 
         private NodeVersionId nodeVersionId;
 
-        private Workspace workspace;
+        private Branch branch;
 
         private RepositoryId repositoryId;
 
@@ -186,9 +186,9 @@ class NodeStoreDocumentFactory
             return this;
         }
 
-        public Builder workspace( Workspace workspace )
+        public Builder branch( Branch branch )
         {
-            this.workspace = workspace;
+            this.branch = branch;
             return this;
         }
 

@@ -15,14 +15,14 @@ module api.liveedit.text {
 
         private textComponent: TextComponent;
 
-        private article: api.dom.Element;
+        private rootElement: api.dom.Element;
 
         private editor: MediumEditorType;
 
         public static debug = false;
 
         // special handling for click to allow dblclick event without triggering 2 clicks before it
-        public static DBL_CLICK_TIMEOUT = 200;
+        public static DBL_CLICK_TIMEOUT = 250;
         private singleClickTimer: number;
         private lastClicked: number;
 
@@ -39,7 +39,7 @@ module api.liveedit.text {
 
             this.addClass('text-view');
 
-            this.initializeArticle();
+            this.initializeRootElement();
 
             this.onKeyDown(this.handleKey.bind(this));
             this.onKeyUp(this.handleKey.bind(this));
@@ -70,37 +70,31 @@ module api.liveedit.text {
             }
         }
 
-        private initializeArticle() {
+        private initializeRootElement() {
             for (var i = 0; i < this.getChildren().length; i++) {
                 var child = this.getChildren()[i];
-                if (child.getEl().getTagName().toUpperCase() == 'ARTICLE') {
-                    this.article = child;
+                if (child.getEl().getTagName().toUpperCase() == 'SECTION') {
+                    this.rootElement = child;
                     break;
                 }
             }
-            if (!this.article) {
+            if (!this.rootElement) {
                 // create it in case of new component
-                this.article = new api.dom.ArticleEl();
-                this.prependChild(this.article);
+                this.rootElement = new api.dom.SectionEl();
+                this.prependChild(this.rootElement);
             }
-
-            this.article.onClicked((event: MouseEvent) => {
-                if (TextComponentView.debug) {
-                    console.log('Article clicked', event);
-                }
-            });
-
-            // text component has a placeholder text
-            // that should be used instead of a regular one
-            this.article.setHtml(this.textComponent.getText());
         }
 
         private processChanges() {
-            var text = this.article.getHtml();
+            var text = this.rootElement.getHtml();
+
             if (TextComponentView.debug) {
-                console.log('Processing editor contents:', text);
+                console.log('Processing editor contents: \n', text);
             }
-            this.textComponent.setText(text);
+            // strip tags to see if there is content
+            var contentWithoutTags = text.replace(/(<([^>]+)>)/ig, "").trim();
+            //TODO: strip empty tags
+            this.textComponent.setText(contentWithoutTags.length == 0 ? undefined : text);
         }
 
         isEmpty(): boolean {
@@ -115,15 +109,6 @@ module api.liveedit.text {
 
             duplicatedView.insertAfterEl(this);
             return duplicatedView;
-        }
-
-        private startPageTextEditMode() {
-            this.deselect();
-            var pageView = this.getPageView();
-            if (!pageView.isTextEditMode()) {
-                pageView.setTextEditMode(true);
-            }
-            this.giveFocus();
         }
 
         private doHandleDbClick(event: MouseEvent) {
@@ -151,12 +136,11 @@ module api.liveedit.text {
 
         handleClick(event: MouseEvent) {
             if (TextComponentView.debug) {
-                console.group('Handling click [' + this.getId() + ']');
+                console.group('Handling click [' + this.getId() + '] at ' + new Date().getTime());
                 console.log(event);
             }
 
             event.stopPropagation();
-            event.preventDefault();
 
             if (this.isEditMode()) {
                 if (TextComponentView.debug) {
@@ -207,7 +191,6 @@ module api.liveedit.text {
             }
 
             this.toggleClass('edit-mode', flag);
-            this.article.getEl().setAttribute('contenteditable', flag.toString());
             this.setDraggable(!flag);
 
             if (flag) {
@@ -222,7 +205,7 @@ module api.liveedit.text {
 
         private createEditor(): MediumEditorType {
             var headersExtension = new MediumHeadersDropdownExtension();
-            var editor = new MediumEditor([this.article.getHTMLElement()], {
+            var editor = new MediumEditor([this.rootElement.getHTMLElement()], {
                 buttons: ['bold', 'italic', 'underline', 'strikethrough',
                     'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull',
                     'anchor',
@@ -275,7 +258,7 @@ module api.liveedit.text {
 
         private selectText() {
             var doc = document;
-            var text = this.article.getHTMLElement();
+            var text = this.rootElement.getHTMLElement();
 
             if (window['getSelection']) { // moz, opera, webkit
                 var selection = window['getSelection']();
@@ -288,7 +271,7 @@ module api.liveedit.text {
                 rangeIE.moveToElementText(text);
                 rangeIE.select();
             }
-            text.click();
+            text.click();  // for the medium editor to show toolbar
         }
 
         private deselectText() {
@@ -299,12 +282,20 @@ module api.liveedit.text {
             }
         }
 
-        giveFocus() {
-            if (this.isEditMode()) {
-                this.article.getHTMLElement().focus();
-                return true;
+        private startPageTextEditMode() {
+            this.deselect();
+            var pageView = this.getPageView();
+            if (!pageView.isTextEditMode()) {
+                pageView.setTextEditMode(true);
             }
-            return false;
+            this.giveFocus();
+        }
+
+        giveFocus() {
+            if (!this.isEditMode()) {
+                return false;
+            }
+            return this.rootElement.giveFocus();
         }
 
         private createTextContextMenuActions(): api.ui.Action[] {

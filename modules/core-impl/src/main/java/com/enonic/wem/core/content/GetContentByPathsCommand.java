@@ -37,7 +37,7 @@ final class GetContentByPathsCommand
         }
         catch ( NoNodeAtPathFoundException ex )
         {
-            throw new ContentNotFoundException( ContentPath.from( ex.getPath().toString() ), ContextAccessor.current().getWorkspace() );
+            throw new ContentNotFoundException( ContentPath.from( ex.getPath().toString() ), ContextAccessor.current().getBranch() );
         }
 
         return contents;

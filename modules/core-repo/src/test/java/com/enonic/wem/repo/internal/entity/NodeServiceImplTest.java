@@ -27,6 +27,9 @@ import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.wem.api.snapshot.RestoreParams;
+import com.enonic.wem.api.snapshot.SnapshotParams;
+import com.enonic.wem.api.snapshot.SnapshotResult;
 
 import static org.junit.Assert.*;
 
@@ -45,7 +48,8 @@ public class NodeServiceImplTest
         this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setVersionService( versionService );
-        this.nodeService.setWorkspaceService( workspaceService );
+        this.nodeService.setBranchService( branchService );
+        this.nodeService.setSnapshotService( this.snapshotService );
     }
 
     @Test
@@ -95,7 +99,7 @@ public class NodeServiceImplTest
                 user( user ).
                 principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
                 build() ).
-            workspace( WS_DEFAULT ).
+            branch( WS_DEFAULT ).
             repositoryId( TEST_REPO.getId() ).
             build();
 
@@ -155,4 +159,32 @@ public class NodeServiceImplTest
         assertEquals( childOrder, node.getChildOrder() );
     }
 
+
+    @Test
+    public void snapshot_restore()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "myNode" ).
+            build() );
+
+        final SnapshotResult result = this.nodeService.snapshot( SnapshotParams.create().
+            snapshotName( "my-snapshot" ).
+            repositoryId( CTX_DEFAULT.getRepositoryId() ).
+            build() );
+
+        assertEquals( SnapshotResult.State.SUCCESS, result.getState() );
+
+        doDeleteNode( node.id() );
+
+        assertNull( getNodeById( node.id() ) );
+
+        this.nodeService.restore( RestoreParams.create().
+            snapshotName( "my-snapshot" ).
+            repositoryId( CTX_DEFAULT.getRepositoryId() ).
+            build() );
+
+        assertNotNull( getNodeById( node.id() ) );
+    }
 }

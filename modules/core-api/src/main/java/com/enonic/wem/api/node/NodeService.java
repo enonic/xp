@@ -2,9 +2,12 @@ package com.enonic.wem.api.node;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.api.branch.Branch;
+import com.enonic.wem.api.snapshot.RestoreParams;
+import com.enonic.wem.api.snapshot.RestoreResult;
+import com.enonic.wem.api.snapshot.SnapshotParams;
+import com.enonic.wem.api.snapshot.SnapshotResult;
 import com.enonic.wem.api.util.BinaryReference;
-import com.enonic.wem.api.workspace.Workspace;
-import com.enonic.wem.api.workspace.Workspaces;
 
 public interface NodeService
 {
@@ -14,7 +17,7 @@ public interface NodeService
 
     Node rename( RenameNodeParams params );
 
-    PushNodesResult push( NodeIds ids, Workspace target );
+    PushNodesResult push( NodeIds ids, Branch target );
 
     Node deleteById( NodeId id );
 
@@ -36,9 +39,9 @@ public interface NodeService
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 
-    NodeComparison compare( NodeId id, Workspace target );
+    NodeComparison compare( NodeId id, Branch target );
 
-    NodeComparisons compare( NodeIds ids, Workspace target );
+    NodeComparisons compare( NodeIds ids, Branch target );
 
     FindNodeVersionsResult findVersions( GetNodeVersionsParams params );
 
@@ -54,7 +57,9 @@ public interface NodeService
 
     ResolveSyncWorkResult resolveSyncWork( SyncWorkResolverParams params );
 
-    void snapshot();
+    SnapshotResult snapshot( SnapshotParams params );
+
+    RestoreResult restore( RestoreParams params );
 
     int applyPermissions( ApplyNodePermissionsParams params );
 
@@ -65,4 +70,8 @@ public interface NodeService
     Node setNodeState( final NodeId nodeId, final NodeState nodeState );
 
     RootNode getRoot();
+
+    boolean nodeExists( final NodeId nodeId );
+
+    boolean nodeExists( final NodePath nodePath );
 }

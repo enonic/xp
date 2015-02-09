@@ -49,14 +49,14 @@ public final class CreateNodeCommand
         Preconditions.checkNotNull( params.getParent(), "Path of parent Node must be specified" );
         Preconditions.checkArgument( params.getParent().isAbsolute(), "Path to parent Node must be absolute: " + params.getParent() );
 
-        runAsAdmin( this::verifyNotExistsAlready );
-        runAsAdmin( this::verifyParentExists );
+        NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
+        NodeHelper.runAsAdmin( this::verifyParentExists );
 
         final PrincipalKey user = getCurrentPrincipalKey();
 
         final AccessControlList permissions = getAccessControlEntries( user );
 
-        final Long manualOrderValue = runAsAdmin( this::resolvePotentialManualOrderValue );
+        final Long manualOrderValue = NodeHelper.runAsAdmin( this::resolvePotentialManualOrderValue );
 
         final AttachedBinaries attachedBinaries = storeAndAttachBinaries();
 
@@ -132,6 +132,7 @@ public final class CreateNodeCommand
         }
 
         final Node parentNode = doGetByPath( params.getParent(), false );
+
         if ( parentNode == null )
         {
             throw new NodeNotFoundException(

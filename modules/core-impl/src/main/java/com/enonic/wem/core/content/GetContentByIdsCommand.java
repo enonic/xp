@@ -40,7 +40,7 @@ final class GetContentByIdsCommand
         catch ( NoNodeWithIdFoundException ex )
         {
             final ContentId contentId = ContentId.from( ex.getId().toString() );
-            throw new ContentNotFoundException( contentId, ContextAccessor.current().getWorkspace() );
+            throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
         }
 
         return contents;

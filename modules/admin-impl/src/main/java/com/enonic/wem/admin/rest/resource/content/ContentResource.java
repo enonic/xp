@@ -60,6 +60,7 @@ import com.enonic.wem.admin.rest.resource.content.json.ReorderChildJson;
 import com.enonic.wem.admin.rest.resource.content.json.ReorderChildrenJson;
 import com.enonic.wem.admin.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
+import com.enonic.wem.api.branch.Branches;
 import com.enonic.wem.api.content.ApplyContentPermissionsParams;
 import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.CompareContentsParams;
@@ -107,7 +108,6 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SecurityService;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.workspace.Workspaces;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 
@@ -231,30 +231,6 @@ public final class ContentResource
     public ContentJson move( final MoveContentJson params )
     {
         final Content contentForMove = this.contentService.getById( params.getContentId() );
-
-        if ( contentForMove.inheritsPermissions() )
-        {
-            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-            final PrincipalKey modifier =
-                authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
-
-            UpdateContentParams updateContentParams = new UpdateContentParams().
-                contentId( params.getContentId() ).
-                modifier( modifier ).
-                editor( edit -> {
-                    edit.inheritPermissions = false;
-                    edit.permissions = contentForMove.getPermissions();
-                } );
-
-            final Content updatedContent = contentService.update( updateContentParams );
-
-            contentService.applyPermissions( ApplyContentPermissionsParams.create().
-                contentId( params.getContentId() ).
-                overwriteChildPermissions( false ).
-                modifier( modifier ).
-                build() );
-        }
-
         final Content movedContent = contentService.move( new MoveContentParams( params.getContentId(), params.getParentContentPath() ) );
 
         return new ContentJson( movedContent, newContentIconUrlResolver(), inlinesToFormItemsTransformer, principalsResolver );
@@ -319,7 +295,7 @@ public final class ContentResource
         final ContentIds contentIds = ContentIds.from( params.getIds() );
 
         final PushContentsResult result = contentService.push( PushContentParams.create().
-            target( ContentConstants.WORKSPACE_ONLINE ).
+            target( ContentConstants.BRANCH_ONLINE ).
             contentIds( contentIds ).
             includeChildren( true ).
             allowPublishOutsideSelection( true ).
@@ -564,7 +540,7 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final CompareContentResults compareResults =
-            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.WORKSPACE_ONLINE ) );
+            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_ONLINE ) );
 
         return new CompareContentResultsJson( compareResults );
     }
@@ -589,7 +565,7 @@ public final class ContentResource
     public GetActiveContentVersionsResultJson getActiveVersions( @QueryParam("id") final String id )
     {
         final GetActiveContentVersionsResult result = contentService.getActiveVersions( GetActiveContentVersionsParams.create().
-            workspaces( Workspaces.from( ContentConstants.WORKSPACE_DRAFT, ContentConstants.WORKSPACE_ONLINE ) ).
+            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_ONLINE ) ).
             contentId( ContentId.from( id ) ).
             build() );
 

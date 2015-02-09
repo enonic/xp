@@ -9,7 +9,7 @@ public class RepositoryIndexMappingProvider
 
     private final static String STORAGE_MAPPING_FILE_PATTERN = "-mapping.json";
 
-    private final static String WORKSPACE = "-workspace";
+    private final static String BRANCH = "-branch";
 
     private final static String VERSION = "-version";
 
@@ -17,9 +17,9 @@ public class RepositoryIndexMappingProvider
 
     private final static String SEARCH = "-search";
 
-    public static String getWorkspaceMapping( final Repository repository )
+    public static String getBranchMapping( final Repository repository )
     {
-        return doGet( repository, PREFIX + repository.getId().toString() + WORKSPACE + STORAGE_MAPPING_FILE_PATTERN );
+        return doGet( repository, PREFIX + repository.getId().toString() + BRANCH + STORAGE_MAPPING_FILE_PATTERN );
     }
 
     public static String getVersionMapping( final Repository repository )

@@ -41,7 +41,7 @@ public class StoreNodeCommandTest
 
         StoreNodeCommand.create().
             node( updatedNode ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             indexService( this.indexService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).

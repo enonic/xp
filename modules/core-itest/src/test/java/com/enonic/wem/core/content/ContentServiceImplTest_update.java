@@ -1,19 +1,29 @@
 package com.enonic.wem.core.content;
 
-import org.junit.Test;
+import java.util.List;
 
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.core.schema.content.BuiltinContentTypeProvider;
 
+import static com.enonic.wem.api.form.Input.newInput;
+import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
 public class ContentServiceImplTest_update
@@ -124,5 +134,62 @@ public class ContentServiceImplTest_update
         assertEquals( "value-updated", storedContent.getData().getString( "testString" ) );
         assertEquals( "value", storedContent.getData().getString( "testString2" ) );
     }
+
+
+    @Test
+    public void update_with_metadata()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( "testString", "value" );
+        data.setString( "testString2", "value" );
+
+        final Mixin mixin = newMixin().name( "mymodule:my_mixin" ).
+            addFormItem( newInput().
+                name( "inputToBeMixedIn" ).
+                inputType( InputTypes.TEXT_LINE ).
+                build() ).
+            build();
+
+        Mockito.when( this.mixinService.getByName( Mockito.isA( MixinName.class ) ) ).
+            thenReturn( mixin );
+
+        Mockito.when( this.mixinService.getByLocalName( Mockito.isA( String.class ) ) ).
+            thenReturn( mixin );
+
+        final Metadata metadata = new Metadata( MixinName.from( "mymodule:my_mixin" ), new PropertyTree() );
+
+        List<Metadata> metadatas = Lists.newArrayList( metadata );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( data ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            permissions( AccessControlList.empty() ).
+            type( BuiltinContentTypeProvider.FOLDER.getName() ).
+            metadata( metadatas ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        assertTrue( content.hasMetadata() );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.
+            contentId( content.getId() ).
+            editor( edit -> {
+                final PropertyTree editData = edit.data;
+                editData.setString( "testString", "value-updated" );
+            } );
+
+        this.contentService.update( updateContentParams );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        assertEquals( "This is my content", storedContent.getDisplayName() );
+        assertEquals( "value-updated", storedContent.getData().getString( "testString" ) );
+        assertEquals( "value", storedContent.getData().getString( "testString2" ) );
+    }
+
 
 }

@@ -23,7 +23,7 @@ import com.enonic.wem.repo.internal.index.IndexValueType;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 
 import static com.enonic.wem.repo.internal.TestContext.TEST_REPOSITORY;
-import static com.enonic.wem.repo.internal.TestContext.TEST_WORKSPACE;
+import static com.enonic.wem.repo.internal.TestContext.TEST_BRANCH;
 import static org.junit.Assert.*;
 
 public class NodeStoreDocumentFactoryTest
@@ -41,7 +41,7 @@ public class NodeStoreDocumentFactoryTest
             NodeStoreDocumentFactory.createBuilder().
                 node( node ).
                 nodeVersionId( NodeVersionId.from( "test" ) ).
-                workspace( TEST_WORKSPACE ).
+                branch( TEST_BRANCH ).
                 repositoryId( TEST_REPOSITORY.getId() ).
                 build().
                 create();
@@ -65,7 +65,7 @@ public class NodeStoreDocumentFactoryTest
         final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( NodeVersionId.from( "test" ) ).
-            workspace( TEST_WORKSPACE ).
+            branch( TEST_BRANCH ).
             repositoryId( TEST_REPOSITORY.getId() ).
             build().
             create();
@@ -84,7 +84,7 @@ public class NodeStoreDocumentFactoryTest
         final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( NodeVersionId.from( "test" ) ).
-            workspace( TEST_WORKSPACE ).
+            branch( TEST_BRANCH ).
             repositoryId( TEST_REPOSITORY.getId() ).
             build().
             create();
@@ -110,7 +110,7 @@ public class NodeStoreDocumentFactoryTest
         final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( NodeVersionId.from( "test" ) ).
-            workspace( TEST_WORKSPACE ).
+            branch( TEST_BRANCH ).
             repositoryId( TEST_REPOSITORY.getId() ).
             build().
             create();
@@ -139,7 +139,7 @@ public class NodeStoreDocumentFactoryTest
         final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( NodeVersionId.from( "test" ) ).
-            workspace( TEST_WORKSPACE ).
+            branch( TEST_BRANCH ).
             repositoryId( TEST_REPOSITORY.getId() ).
             build().
             create();
@@ -167,7 +167,7 @@ public class NodeStoreDocumentFactoryTest
         final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( NodeVersionId.from( "test" ) ).
-            workspace( TEST_WORKSPACE ).
+            branch( TEST_BRANCH ).
             repositoryId( TEST_REPOSITORY.getId() ).
             build().
             create();
@@ -194,7 +194,7 @@ public class NodeStoreDocumentFactoryTest
         final Collection<StoreDocument> storeDocuments = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             nodeVersionId( NodeVersionId.from( "test" ) ).
-            workspace( TEST_WORKSPACE ).
+            branch( TEST_BRANCH ).
             repositoryId( TEST_REPOSITORY.getId() ).
             build().
             create();

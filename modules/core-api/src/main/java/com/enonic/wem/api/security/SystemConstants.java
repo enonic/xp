@@ -4,12 +4,12 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 public final class SystemConstants
 {
 
-    public static final Workspace WORKSPACE_SECURITY = Workspace.create().
+    public static final Branch BRANCH_SECURITY = Branch.create().
         name( "security" ).
         build();
 
@@ -18,7 +18,7 @@ public final class SystemConstants
         build();
 
     public static final Context CONTEXT_SECURITY = ContextBuilder.create().
-        workspace( WORKSPACE_SECURITY ).
+        branch( BRANCH_SECURITY ).
         repositoryId( SYSTEM_REPO.getId() ).
         build();
 }

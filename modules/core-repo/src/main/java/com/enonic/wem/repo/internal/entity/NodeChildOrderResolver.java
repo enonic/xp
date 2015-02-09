@@ -25,7 +25,7 @@ public class NodeChildOrderResolver
 
     public ChildOrder resolve()
     {
-        return runAsAdmin( this::doResolve );
+        return NodeHelper.runAsAdmin( this::doResolve );
     }
 
     private ChildOrder doResolve()
@@ -67,12 +67,6 @@ public class NodeChildOrderResolver
         public Builder nodeDao( final NodeDao nodeDao )
         {
             this.nodeDao = nodeDao;
-            return this;
-        }
-
-        public Builder workspaceService( final QueryService queryService )
-        {
-            this.queryService = queryService;
             return this;
         }
 

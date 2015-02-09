@@ -1,7 +1,7 @@
 package com.enonic.wem.api.schema.content;
 
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
@@ -109,7 +109,7 @@ public final class ContentType
     @Override
     public String toString()
     {
-        final Objects.ToStringHelper s = Objects.toStringHelper( this );
+        final MoreObjects.ToStringHelper s = MoreObjects.toStringHelper( this );
         s.add( "name", getName() );
         s.add( "displayName", getDisplayName() );
         s.add( "description", getDescription() );

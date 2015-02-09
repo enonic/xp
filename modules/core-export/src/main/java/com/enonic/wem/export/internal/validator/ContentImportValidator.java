@@ -60,7 +60,9 @@ public class ContentImportValidator
         }
         else
         {
-            if ( childOrder.equals( ChildOrder.defaultOrder() ) )
+            final ChildOrder oldDefaultChildOrder = ChildOrder.from( "_modifiedtime DESC" );
+
+            if ( childOrder.equals( ChildOrder.defaultOrder() ) || childOrder.equals( oldDefaultChildOrder ) )
             {
                 builder.childOrder( ContentConstants.DEFAULT_CHILD_ORDER );
             }

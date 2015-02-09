@@ -15,14 +15,14 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.node.ResolveSyncWorkResult;
-import com.enonic.wem.api.workspace.Workspace;
+import com.enonic.wem.api.branch.Branch;
 
 public class ResolveSyncWorkCommand
     extends AbstractNodeCommand
 {
     private final NodeId nodeId;
 
-    private final Workspace target;
+    private final Branch target;
 
     private final NodePath repositoryRoot;
 
@@ -78,7 +78,7 @@ public class ResolveSyncWorkCommand
             versionService( this.versionService ).
             query( NodeVersionDiffQuery.create().
                 target( target ).
-                source( ContextAccessor.current().getWorkspace() ).
+                source( ContextAccessor.current().getBranch() ).
                 nodePath( nodePath ).
                 build() ).
             build().
@@ -217,7 +217,7 @@ public class ResolveSyncWorkCommand
     {
         return CompareNodeCommand.create().
             target( this.target ).
-            workspaceService( this.workspaceService ).
+            branchService( this.branchService ).
             versionService( this.versionService ).
             nodeId( nodeId ).
             build().
@@ -291,7 +291,7 @@ public class ResolveSyncWorkCommand
     {
         private NodeId nodeId;
 
-        private Workspace target;
+        private Branch target;
 
         private boolean includeChildren = true;
 
@@ -313,7 +313,7 @@ public class ResolveSyncWorkCommand
             return this;
         }
 
-        public Builder target( final Workspace target )
+        public Builder target( final Branch target )
         {
             this.target = target;
             return this;
