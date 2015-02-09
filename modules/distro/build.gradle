@@ -13,7 +13,7 @@ dependencies {
 
 ext {
     bundlesDir = file( "$buildDir/bundles" )
-    bundlesFile = file( "$projectDir/src/main/resources/system/bundles.xml" )
+    bundlesFile = file( "$projectDir/src/system/bundles.xml" )
 }
 
 def getProjectMappings()
@@ -75,7 +75,7 @@ distributions {
         baseName = 'enonic-xp'
         contents {
             into( 'bin' ) {
-                from( 'src/main/resources/bin' ) {
+                from( 'src/bin' ) {
                     include '*.sh'
                     fileMode 0755
                 }
@@ -89,11 +89,11 @@ distributions {
                     expand project.properties
                 }
             }
-            from( 'src/main/resources' ) {
+            from( 'src' ) {
                 include 'README.txt'
                 expand project.properties
             }
-            from( 'src/main/resources' )
+            from( 'src' )
         }
     }
 }
