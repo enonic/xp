@@ -58,6 +58,8 @@ public class BatchedNodeExportCommand
 
     public NodeExportResult execute()
     {
+        this.result.dryRun( this.dryRun );
+
         if ( this.exportRootPath.isRoot() )
         {
             doExportChildNodes( this.exportRootPath );

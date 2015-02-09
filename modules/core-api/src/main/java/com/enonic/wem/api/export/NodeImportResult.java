@@ -19,12 +19,15 @@ public class NodeImportResult
 
     private List<String> exportedBinaries = Lists.newArrayList();
 
+    private final boolean dryRun;
+
     private NodeImportResult( final Builder builder )
     {
-        addedNodes = builder.addedNodes.build();
-        updateNodes = builder.updatedNodes.build();
+        this.addedNodes = builder.addedNodes.build();
+        this.updateNodes = builder.updatedNodes.build();
         this.importErrors = builder.importErrors;
         this.exportedBinaries = builder.exportedBinaries;
+        this.dryRun = builder.dryRun;
     }
 
     public List<ImportError> getImportErrors()
@@ -52,6 +55,16 @@ public class NodeImportResult
         return addedNodes;
     }
 
+    public NodePaths getUpdateNodes()
+    {
+        return updateNodes;
+    }
+
+    public boolean isDryRun()
+    {
+        return dryRun;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -77,6 +90,8 @@ public class NodeImportResult
         private final List<String> exportedBinaries = Lists.newArrayList();
 
         private final List<ImportError> importErrors = Lists.newArrayList();
+
+        private boolean dryRun = false;
 
         private Builder()
         {
@@ -112,6 +127,11 @@ public class NodeImportResult
             return this;
         }
 
+        public Builder dryRun( final boolean dryRun )
+        {
+            this.dryRun = dryRun;
+            return this;
+        }
 
         public NodeImportResult build()
         {

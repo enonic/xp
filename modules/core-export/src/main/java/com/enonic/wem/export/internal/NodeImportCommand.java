@@ -66,6 +66,8 @@ public class NodeImportCommand
 
     public NodeImportResult execute()
     {
+        this.result.dryRun( this.dryRun );
+
         verifyImportRoot();
 
         importFromDirectoryLayout( this.exportRoot );
@@ -77,9 +79,7 @@ public class NodeImportCommand
     {
         final Stream<VirtualFile> children = this.exportReader.getChildren( parentFolder );
 
-        children.forEach( ( child ) -> {
-            processNodeFolder( child, ProcessNodeSettings.create() );
-        } );
+        children.forEach( ( child ) -> processNodeFolder( child, ProcessNodeSettings.create() ) );
     }
 
     private void importFromManualOrder( final VirtualFile nodeFolder )
@@ -165,6 +165,7 @@ public class NodeImportCommand
             xmlNode( xmlNode ).
             binaryAttachments( binaryAttachments ).
             existingNode( existingNode ).
+            dryRun( this.dryRun ).
             build().
             execute();
 
@@ -186,6 +187,7 @@ public class NodeImportCommand
             importPath( importNodePath ).
             binaryAttachments( binaryAttachments ).
             importNodeIds( this.importNodeIds ).
+            dryRun( this.dryRun ).
             build().
             execute();
 

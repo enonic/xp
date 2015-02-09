@@ -13,16 +13,20 @@ public class UpdateNodeParamsFactory
 
     private final Node existingNode;
 
+    private final boolean dryRun;
+
     private UpdateNodeParamsFactory( final Builder builder )
     {
         this.xmlNode = builder.xmlNode;
         this.binaryAttachments = builder.binaryAttachments;
         this.existingNode = builder.existingNode;
+        this.dryRun = builder.dryRun;
     }
 
     public UpdateNodeParams execute()
     {
         final UpdateNodeParams.Builder builder = UpdateNodeParams.create().
+            dryRun( this.dryRun ).
             id( this.existingNode.id() ).
             setBinaryAttachments( binaryAttachments ).
             editor( editableNode -> {
@@ -46,6 +50,8 @@ public class UpdateNodeParamsFactory
 
         private Node existingNode;
 
+        private boolean dryRun = false;
+
         private Builder()
         {
         }
@@ -65,6 +71,12 @@ public class UpdateNodeParamsFactory
         public Builder binaryAttachments( BinaryAttachments binaryAttachments )
         {
             this.binaryAttachments = binaryAttachments;
+            return this;
+        }
+
+        public Builder dryRun( final boolean dryRun )
+        {
+            this.dryRun = dryRun;
             return this;
         }
 

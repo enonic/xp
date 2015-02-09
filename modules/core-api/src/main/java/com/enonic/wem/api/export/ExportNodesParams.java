@@ -12,11 +12,14 @@ public class ExportNodesParams
 
     private final boolean dryRun;
 
+    private final boolean includeNodeIds;
+
     private ExportNodesParams( Builder builder )
     {
-        exportName = builder.exportName;
-        exportRoot = builder.exportRoot;
-        dryRun = builder.dryRun;
+        this.exportName = builder.exportName;
+        this.exportRoot = builder.exportRoot;
+        this.dryRun = builder.dryRun;
+        this.includeNodeIds = builder.includeNodeIds;
     }
 
     public String getExportName()
@@ -48,6 +51,8 @@ public class ExportNodesParams
 
         private boolean dryRun = false;
 
+        private boolean includeNodeIds = true;
+
         private Builder()
         {
         }
@@ -58,7 +63,7 @@ public class ExportNodesParams
             return this;
         }
 
-        public Builder exportRoot( NodePath exportRoot )
+        public Builder exportRoot( final NodePath exportRoot )
         {
             this.exportRoot = exportRoot;
             return this;
@@ -67,6 +72,12 @@ public class ExportNodesParams
         public Builder dryRun( boolean dryRun )
         {
             this.dryRun = dryRun;
+            return this;
+        }
+
+        public Builder includeNodeIds( final boolean includeNodeIds )
+        {
+            this.includeNodeIds = includeNodeIds;
             return this;
         }
 

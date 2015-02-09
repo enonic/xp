@@ -24,6 +24,8 @@ public class CreateNodeParamsFactory
 
     private final boolean importNodeIds;
 
+    private final boolean dryRun;
+
     private CreateNodeParamsFactory( Builder builder )
     {
         this.xmlNode = builder.xmlNode;
@@ -31,6 +33,7 @@ public class CreateNodeParamsFactory
         this.processNodeSettings = builder.processNodeSettings;
         this.binaryAttachments = builder.binaryAttachments;
         this.importNodeIds = builder.importNodeIds;
+        this.dryRun = builder.dryRun;
     }
 
     public CreateNodeParams execute()
@@ -47,6 +50,7 @@ public class CreateNodeParamsFactory
             nodeType( NodeType.from( xmlNode.getNodeType() ) ).
             data( PropertyTreeXmlBuilder.build( xmlNode.getData() ) ).
             indexConfigDocument( IndexConfigDocumentXmlBuilder.build( xmlNode.getIndexConfigs() ) ).
+            dryRun( this.dryRun ).
             setBinaryAttachments( binaryAttachments );
 
         if ( importNodeIds && !Strings.isNullOrEmpty( xmlNode.getId() ) )
@@ -102,6 +106,8 @@ public class CreateNodeParamsFactory
 
         private boolean importNodeIds = true;
 
+        private boolean dryRun = false;
+
         private Builder()
         {
         }
@@ -133,6 +139,12 @@ public class CreateNodeParamsFactory
         public Builder importNodeIds( final boolean importNodeIds )
         {
             this.importNodeIds = importNodeIds;
+            return this;
+        }
+
+        public Builder dryRun( final boolean dryRun )
+        {
+            this.dryRun = dryRun;
             return this;
         }
 
