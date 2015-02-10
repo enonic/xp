@@ -371,7 +371,7 @@ module app.browse {
                 this.updateNode(data, item.getId());
 
                 this.resetAndRender();
-                api.notify.showFeedback(item.getMimeType() + " \"" + item.getName() + "\" created successfully");
+                api.notify.showFeedback(data.getContentSummary().getType().toString() + " \"" + item.getName() + "\" created successfully");
             });
             item.onFailed(() => {
                 this.deleteNode(data);
