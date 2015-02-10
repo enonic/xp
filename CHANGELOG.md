@@ -25,8 +25,7 @@ Refactoring:
   - Removed menu-item meta step Mixin from built-in types. (CMS-5045)
   - Removed built-in relationship types "system:like" and "system:link". Renamed "system:default" to "system:reference". (CMS-5053)
   - Updated directory structure for modules. Added "cms" folder as parent for types, components and assets. (CMS-5047)
-  - Renamed rename names for injecting eXtra data in content-type from <metadata mixin=xx to <x-data mixin="xxx">
-  - Renamed current "meta" property in Content API to "x", for eXtra data. (CMS-5134)
+  - Renamed "meta" property in Content API to "x", for eXtra data. (CMS-5134)
   - Renamed <metadata> tag in content-type.xml to <x-data>. Also renamed <meta-step> in module.xml to <x-data> and removed <content> wrapper tag. (CMS-5134)
 
 
