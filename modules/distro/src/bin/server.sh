@@ -2,6 +2,8 @@
 
 DIRNAME=`dirname "$0"`
 PROGNAME=`basename "$0"`
+ARG1=$1
+ARGS=$@
 
 XP_SCRIPT=$PROGNAME
 export XP_SCRIPT
@@ -60,7 +62,7 @@ setupOptions() {
 }
 
 setupDebugOptions() {
-    if [ "$XP_SCRIPT" == "server-debug.sh" ]; then
+    if [ "$ARG1" == "debug" ]; then
         if [ "x$JAVA_DEBUG_OPTS" = "x" ]; then
             JAVA_DEBUG_OPTS="$DEFAULT_JAVA_DEBUG_OPTS"
         fi
@@ -86,12 +88,12 @@ init() {
 }
 
 run() {
-    exec "$JAVACMD" $JAVA_OPTS -Dxp.install="$XP_INSTALL" $XP_OPTS -classpath "$XP_INSTALL/lib/*" com.enonic.xp.launcher.LauncherMain "$@"
+    exec "$JAVACMD" $JAVA_OPTS -Dxp.install="$XP_INSTALL" $XP_OPTS -classpath "$XP_INSTALL/lib/*" com.enonic.xp.launcher.LauncherMain $ARGS
 }
 
 main() {
     init
-    run "$@"
+    run
 }
 
-main "$@"
+main

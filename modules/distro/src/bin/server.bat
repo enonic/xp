@@ -7,7 +7,7 @@ set ARGS=%*
 
 SET XP_SCRIPT=%PROGNAME%
 if exist "%DIRNAME%setenv.bat" (
-  call "%DIRNAME%setenv.bat"
+call "%DIRNAME%setenv.bat"
 )
 
 if defined JAVA_HOME goto findJavaFromJavaHome
@@ -25,9 +25,7 @@ echo location of your Java installation.
 goto fail
 
 :findJavaFromJavaHome
-set JAVA_HOME=%JAVA_HOME:"=%
-set JAVA_EXE=%JAVA_HOME%/bin/java.exe
-
+set JAVA_EXE=%JAVA_HOME%\bin\java.exe
 if exist "%JAVA_EXE%" goto init
 
 echo.
@@ -46,10 +44,8 @@ set DEFAULT_JAVA_DEBUG_OPTS=-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,serv
 if "%JAVA_OPTS%" == "" set JAVA_OPTS=%DEFAULT_JAVA_OPTS%
 if "%JAVA_DEBUG_OPTS%" == "" set JAVA_DEBUG_OPTS=%DEFAULT_JAVA_DEBUG_OPTS%
 
-if "%XP_SCRIPT%" == "server-debug.bat" (
-    set JAVA_OPTS=%JAVA_DEBUG_OPTS% %JAVA_OPTS%
-)
+IF "%1"=="debug" set JAVA_OPTS=%JAVA_OPTS% %JAVA_DEBUG_OPTS%
 
 :execute
-"%JAVA_EXE% %JAVA_OPTS% -Dxp.install="%XP_INSTALL%" -classpath "%XP_INSTALL\lib\*" com.enonic.xp.launcher.LauncherMain %ARGS%
+"%JAVA_EXE%" %JAVA_OPTS% -Dxp.install="%XP_INSTALL%" %XP_OPTS% -classpath "%XP_INSTALL%\lib\*" com.enonic.xp.launcher.LauncherMain %ARGS%
 endlocal
