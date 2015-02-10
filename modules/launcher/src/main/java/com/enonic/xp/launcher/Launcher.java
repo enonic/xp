@@ -33,6 +33,7 @@ public final class Launcher
     public Launcher( final String... args )
     {
         this.args = args;
+        System.setProperty( "java.awt.headless", "true" );
         applySystemPropertyArgs();
         this.systemProperties = SystemProperties.getDefault();
     }
