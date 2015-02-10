@@ -1,5 +1,7 @@
 package com.enonic.wem.admin;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -18,6 +20,12 @@ public final class AdminHandler
         setPath( "/" );
         addSingleton( new AdminJaxRsFeature() );
         addRoleBasedSecurity();
+    }
+
+    @Override
+    protected boolean canHandle( final HttpServletRequest req )
+    {
+        return !req.getRequestURI().startsWith( "/osgi" ) && super.canHandle( req );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)

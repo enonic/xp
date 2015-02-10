@@ -33,7 +33,7 @@ public abstract class JaxRsHandler
     }
 
     @Override
-    protected final boolean canHandle( final HttpServletRequest req )
+    protected boolean canHandle( final HttpServletRequest req )
     {
         return req.getRequestURI().startsWith( this.path );
     }
