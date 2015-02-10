@@ -336,7 +336,7 @@ module app.wizard {
 
         layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
             this.thumbnailUploader.
-                setValue(new ContentIconUrlResolver().setContent(persistedContent).setCrop(false).resolve()).
+                setValue(new ContentIconUrlResolver().setContent(persistedContent).resolve()).
                 setEnabled(!persistedContent.isImage()).
                 setParams({
                     id: persistedContent.getContentId().toString()
