@@ -187,8 +187,9 @@ module app.browse {
 
         private statusFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
 
-            var data = node.getData();
-            var status;
+            var data = node.getData(),
+                status,
+                statusEl = new api.dom.SpanEl();
 
             if (!!data.getContentSummary()) {   // default node
                 var compareStatus: CompareStatus = CompareStatus[CompareStatus[value]];
@@ -228,12 +229,14 @@ module app.browse {
                     status = "Unknown"
                 }
 
+                if (!!CompareStatus[value]) {
+                    statusEl.addClass(CompareStatus[value].toLowerCase().replace("_", "-") || "unknown");
+                }
             } else if (!!data.getUploadItem()) {   // uploading node
                 status = new api.ui.ProgressBar(data.getUploadItem().getProgress()).toString();
             }
-            var statusEl = new api.dom.SpanEl(CompareStatus[value].toLowerCase().replace("_", "-"));
-            statusEl.getEl().setText(status);
 
+            statusEl.getEl().setText(status);
             return statusEl.toString();
         }
 
