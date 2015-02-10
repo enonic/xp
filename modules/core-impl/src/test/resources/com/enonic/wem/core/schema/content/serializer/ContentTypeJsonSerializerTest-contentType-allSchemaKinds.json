@@ -49,7 +49,7 @@
                         }
                     },
                     {
-                        "Inline": {
+                      "InlineMixin": {
                             "name": "myCommonInput",
                             "reference": "mymodule:my_shared_input"
                         }
