@@ -22,11 +22,11 @@ public final class TextRenderer
     private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
         "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"><section></section></div>";
 
-    private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<section></section>";
+    private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<section " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"></section>";
 
     private static final String COMPONENT_EDIT_MODE_HTML = "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"><section>{1}</section></div>";
 
-    private static final String COMPONENT_PREVIEW_MODE_HTML = "<section>{0}</section>";
+    private static final String COMPONENT_PREVIEW_MODE_HTML = "<section " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\">{1}</section>";
 
     @Override
     public Class<TextComponent> getType()
@@ -58,7 +58,8 @@ public final class TextRenderer
                 case LIVE:
                 case PREVIEW:
                 default:
-                    response.setBody( MessageFormat.format( COMPONENT_PREVIEW_MODE_HTML, textComponent.getText() ) );
+                    response.setBody(
+                        MessageFormat.format( COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString(), textComponent.getText() ) );
                     break;
             }
         }
@@ -77,7 +78,7 @@ public final class TextRenderer
                 break;
 
             case PREVIEW:
-                response.setBody( EMPTY_COMPONENT_PREVIEW_MODE_HTML );
+                response.setBody( MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString() ) );
                 break;
 
             case LIVE:

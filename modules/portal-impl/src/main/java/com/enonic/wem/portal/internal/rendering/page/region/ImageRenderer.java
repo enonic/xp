@@ -1,5 +1,7 @@
 package com.enonic.wem.portal.internal.rendering.page.region;
 
+import java.text.MessageFormat;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -20,6 +22,8 @@ import static com.enonic.wem.portal.internal.rendering.RenderingConstants.PORTAL
 public final class ImageRenderer
     implements Renderer<ImageComponent>
 {
+    private static final String EMPTY_IMAGE_HTML = "<figure " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"></figure>";
+
     private PortalUrlService urlService;
 
     @Override
@@ -36,29 +40,27 @@ public final class ImageRenderer
         response.setContentType( "text/html" );
         response.setPostProcess( false );
 
-        final StringBuilder s = new StringBuilder();
-        if ( renderMode == RenderMode.EDIT )
-        {
-            s.append( "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"" ).append( component.getType().toString() ).append( "\">" );
-        }
+        final StringBuilder html = new StringBuilder();
 
+        final String type = component.getType().toString();
         if ( component.getImage() != null )
         {
             final String imageUrl = buildUrl( context, component.getImage() );
-            s.append( "<figure>" );
-            s.append( "<img style=\"display: block; width: 100%\" src=\"" ).append( imageUrl ).append( "\"/>" );
+            html.append( "<figure " + PORTAL_COMPONENT_ATTRIBUTE + "=\"" + type + "\">" );
+            html.append( "<img style=\"width: 100%\" src=\"" ).append( imageUrl ).append( "\"/>" );
             if ( component.hasCaption() )
             {
-                s.append( "<figcaption>" ).append( component.getCaption() ).append( "</figcaption>" );
+                html.append( "<figcaption>" ).append( component.getCaption() ).append( "</figcaption>" );
             }
-            s.append( "</figure>" );
+            html.append( "</figure>" );
 
         }
-        if ( renderMode == RenderMode.EDIT )
+        else if ( renderMode == RenderMode.EDIT )
         {
-            s.append( "</div>" );
+            html.append( MessageFormat.format( EMPTY_IMAGE_HTML, type ) );
         }
-        response.setBody( s.toString() );
+
+        response.setBody( html.toString() );
         return new PortalResponseSerializer( response ).serialize();
     }
 
