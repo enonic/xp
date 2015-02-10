@@ -6,7 +6,7 @@ import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.form.Inline.newInline;
+import static com.enonic.wem.api.form.InlineMixin.newInlineMixin;
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
@@ -21,7 +21,7 @@ public class MixinTest
 
         final FormItemSet personFormItemSet = newFormItemSet().name( "person" ).addFormItem(
             newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
-            newInline( ageMixin ).build() ).build();
+            newInlineMixin( ageMixin ).build() ).build();
         Mixin personMixin = newMixin().name( "mymodule:person" ).addFormItem( personFormItemSet ).build();
 
         Mixin addressMixin = newMixin().name( "mymodule:address" ).addFormItem( newFormItemSet().name( "address" ).addFormItem(
@@ -31,7 +31,7 @@ public class MixinTest
 
         try
         {
-            personFormItemSet.add( newInline( addressMixin ).build() );
+            personFormItemSet.add( newInlineMixin( addressMixin ).build() );
         }
         catch ( Exception e )
         {

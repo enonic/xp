@@ -3,10 +3,6 @@ package com.enonic.wem.api.form;
 
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.base.Preconditions;
-
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
 
@@ -61,14 +57,14 @@ public abstract class FormItem
         return (Input) this;
     }
 
-    public Inline toInline()
+    public InlineMixin toInlineMixin()
     {
-        if ( !( this instanceof Inline ) )
+        if ( !( this instanceof InlineMixin ) )
         {
             throw new IllegalArgumentException(
-                "This FormItem [" + getName() + "] is not an Inline: " + this.getClass().getSimpleName() );
+                "This FormItem [" + getName() + "] is not an InlineMixin: " + this.getClass().getSimpleName() );
         }
-        return (Inline) this;
+        return (InlineMixin) this;
     }
 
     public FormItemSet toFormItemSet()

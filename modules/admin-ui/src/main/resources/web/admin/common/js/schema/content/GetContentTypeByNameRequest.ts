@@ -4,7 +4,7 @@ module api.schema.content {
 
         private name: ContentTypeName;
 
-        private inlinesToFormItems: boolean = true;
+        private inlineMixinsToFormItems: boolean = true;
 
         constructor(name: ContentTypeName) {
             super();
@@ -15,7 +15,7 @@ module api.schema.content {
         getParams(): Object {
             return {
                 name: this.name.toString(),
-                inlinesToFormItems: this.inlinesToFormItems
+                inlineMixinsToFormItems: this.inlineMixinsToFormItems
             };
         }
 

@@ -66,14 +66,14 @@ public final class Form
         return formItems.getInput( path );
     }
 
-    public Inline getInline( final String name )
+    public InlineMixin getInlineMixin( final String name )
     {
-        return formItems.getInline( FormItemPath.from( name ) );
+        return formItems.getInlineMixin( FormItemPath.from( name ) );
     }
 
-    public Inline getInline( final FormItemPath formItemPath )
+    public InlineMixin getInlineMixin( final FormItemPath formItemPath )
     {
-        return formItems.getInline( formItemPath );
+        return formItems.getInlineMixin( formItemPath );
     }
 
     public FormItems getFormItems()

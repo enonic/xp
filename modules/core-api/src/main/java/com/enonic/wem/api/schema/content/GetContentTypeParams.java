@@ -6,7 +6,7 @@ public class GetContentTypeParams
 {
     private ContentTypeName contentTypeName;
 
-    private boolean inlinesToFormItems = false;
+    private boolean inlineMixinsToFormItems = false;
 
     public static GetContentTypeParams from( final ContentTypeName contentTypeName )
     {
@@ -30,14 +30,14 @@ public class GetContentTypeParams
         return this;
     }
 
-    public boolean isInlinesToFormItems()
+    public boolean isInlineMixinsToFormItems()
     {
-        return inlinesToFormItems;
+        return inlineMixinsToFormItems;
     }
 
-    public GetContentTypeParams inlinesToFormItems( final boolean value )
+    public GetContentTypeParams inlineMixinsToFormItems( final boolean value )
     {
-        inlinesToFormItems = value;
+        inlineMixinsToFormItems = value;
         return this;
     }
 
@@ -60,7 +60,7 @@ public class GetContentTypeParams
 
         final GetContentTypeParams that = (GetContentTypeParams) o;
 
-        if ( inlinesToFormItems != that.inlinesToFormItems )
+        if ( inlineMixinsToFormItems != that.inlineMixinsToFormItems )
         {
             return false;
         }
@@ -76,7 +76,7 @@ public class GetContentTypeParams
     public int hashCode()
     {
         int result = contentTypeName.hashCode();
-        result = 31 * result + ( inlinesToFormItems ? 1 : 0 );
+        result = 31 * result + ( inlineMixinsToFormItems ? 1 : 0 );
         return result;
     }
 }

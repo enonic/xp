@@ -11,13 +11,13 @@ final class GetAllContentTypesCommand
     public ContentTypes execute()
     {
         final ContentTypes contentTypes = this.registry.getAll();
-        if ( !this.params.isInlinesToFormItems() )
+        if ( !this.params.isInlineMixinsToFormItems() )
         {
             return contentTypes;
         }
         else
         {
-            return transformInlines( contentTypes );
+            return transformInlineMixins( contentTypes );
         }
     }
 }

@@ -13,7 +13,7 @@ import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 
 import static com.enonic.wem.api.form.Form.newForm;
-import static com.enonic.wem.api.form.Inline.newInline;
+import static com.enonic.wem.api.form.InlineMixin.newInlineMixin;
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
@@ -42,7 +42,7 @@ public class ContentTypeServiceImpl_getAllTest
     }
 
     @Test
-    public void testGetAll_inlines()
+    public void testGetAll_inlineMixins()
         throws Exception
     {
         final String contentTypeName = "mymodule:my-contenttype-1";
@@ -54,7 +54,7 @@ public class ContentTypeServiceImpl_getAllTest
                 build() ).
             build();
 
-        final Form form = newForm().addFormItem( newInline( mixin ).build() ).build();
+        final Form form = newForm().addFormItem( newInlineMixin( mixin ).build() ).build();
 
         Mockito.when( this.mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
 
@@ -68,7 +68,7 @@ public class ContentTypeServiceImpl_getAllTest
 
         register( contentType );
 
-        final GetAllContentTypesParams params = new GetAllContentTypesParams().inlinesToFormItems( true );
+        final GetAllContentTypesParams params = new GetAllContentTypesParams().inlineMixinsToFormItems( true );
         final ContentTypes result = this.service.getAll( params );
 
         Mockito.verify( this.mixinService, Mockito.times( 1 ) ).getByName( Mockito.isA( MixinName.class ) );

@@ -14,7 +14,7 @@ import com.enonic.wem.api.aggregation.BucketAggregation;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.form.InlinesToFormItemsTransformer;
+import com.enonic.wem.api.form.InlineMixinsToFormItemsTransformer;
 
 public abstract class AbstractAggregationContentListJson<T extends ContentIdJson>
     extends AbstractContentListJson<T>
@@ -24,19 +24,19 @@ public abstract class AbstractAggregationContentListJson<T extends ContentIdJson
 
     public AbstractAggregationContentListJson( final Content content, final ContentListMetaData contentListMetaData,
                                                final Aggregations aggregations, final ContentIconUrlResolver iconUrlResolver,
-                                               final InlinesToFormItemsTransformer inlinesToFormItemsTransformer,
+                                               final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer,
                                                final ContentPrincipalsResolver contentPrincipalsResolver )
     {
         this( Contents.from( content ), contentListMetaData, ImmutableSet.copyOf( aggregations.getSet() ), iconUrlResolver,
-              inlinesToFormItemsTransformer, contentPrincipalsResolver );
+              inlineMixinsToFormItemsTransformer, contentPrincipalsResolver );
     }
 
     public AbstractAggregationContentListJson( final Contents contents, final ContentListMetaData contentListMetaData,
                                                final ImmutableSet<Aggregation> aggregations, final ContentIconUrlResolver iconUrlResolver,
-                                               final InlinesToFormItemsTransformer inlinesToFormItemsTransformer,
+                                               final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer,
                                                final ContentPrincipalsResolver contentPrincipalsResolver )
     {
-        super( contents, contentListMetaData, iconUrlResolver, inlinesToFormItemsTransformer, contentPrincipalsResolver );
+        super( contents, contentListMetaData, iconUrlResolver, inlineMixinsToFormItemsTransformer, contentPrincipalsResolver );
 
         ImmutableSet.Builder<AggregationJson> builder = ImmutableSet.builder();
 

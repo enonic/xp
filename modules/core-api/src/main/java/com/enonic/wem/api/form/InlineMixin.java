@@ -8,12 +8,12 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 
-public class Inline
+public class InlineMixin
     extends FormItem
 {
     private final MixinName mixinName;
 
-    private Inline( Builder builder )
+    private InlineMixin( Builder builder )
     {
         super(  );
 
@@ -49,7 +49,7 @@ public class Inline
             return false;
         }
 
-        final Inline that = (Inline) o;
+        final InlineMixin that = (InlineMixin) o;
         return super.equals( o ) && Objects.equals( this.mixinName, that.mixinName );
     }
 
@@ -59,23 +59,23 @@ public class Inline
         return Objects.hash( super.hashCode(), this.mixinName );
     }
 
-    public static Builder newInline()
+    public static Builder newInlineMixin()
     {
         return new Builder();
     }
 
     @Override
-    public Inline copy()
+    public InlineMixin copy()
     {
-        return newInline( this ).build();
+        return newInlineMixin( this ).build();
     }
 
-    public static Builder newInline( final Mixin mixin )
+    public static Builder newInlineMixin( final Mixin mixin )
     {
         return new Builder( mixin );
     }
 
-    public static Builder newInline( final Inline inline )
+    public static Builder newInlineMixin( final InlineMixin inline )
     {
         return new Builder( inline );
     }
@@ -89,7 +89,7 @@ public class Inline
             // default;
         }
 
-        public Builder( Inline source )
+        public Builder( InlineMixin source )
         {
             this.mixinName = source.mixinName;
         }
@@ -117,9 +117,9 @@ public class Inline
             return this;
         }
 
-        public Inline build()
+        public InlineMixin build()
         {
-            return new Inline( this );
+            return new InlineMixin( this );
         }
     }
 

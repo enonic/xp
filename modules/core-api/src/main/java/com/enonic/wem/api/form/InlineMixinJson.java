@@ -3,12 +3,12 @@ package com.enonic.wem.api.form;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @SuppressWarnings("UnusedDeclaration")
-public class InlineJson
+public class InlineMixinJson
     extends FormItemJson
 {
-    private final Inline inline;
+    private final InlineMixin inline;
 
-    public InlineJson( final Inline inline )
+    public InlineMixinJson( final InlineMixin inline )
     {
         this.inline = inline;
     }

@@ -72,14 +72,14 @@ public class FormItemDataSerializerTest
     @Test
     public void serializeFormItems_given_Inline()
     {
-        final Inline inline =
+        final InlineMixin inline =
             MixinRefnew PropertyTree(new PropertyTree.PredictivePropertyIdProvider())erence().name( "mymixinreference" ).mixin( "mymodule:mymixinreferencedto" ).build();
 
         PropertyTree generatedData = new PropertyTree();
 
         serializer.toData( inline, generatedData.getRoot() );
 
-        final Inline deserializedInline = serializer.deserializeInline( (DataSet) dataSet );
+        final InlineMixin deserializedInline = serializer.deserializeInlineMixin( (DataSet) dataSet );
 
         Assert.assertEquals( inline.getName(), deserializedInline.getName() );
         Assert.assertEquals( inline.getMixinName(), deserializedInline.getMixinName() );

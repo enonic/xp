@@ -6,11 +6,11 @@ import java.util.List;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinService;
 
-public class InlinesToFormItemsTransformer
+public class InlineMixinsToFormItemsTransformer
 {
     private final MixinService mixinService;
 
-    public InlinesToFormItemsTransformer( final MixinService mixinService )
+    public InlineMixinsToFormItemsTransformer( final MixinService mixinService )
     {
         this.mixinService = mixinService;
     }
@@ -32,9 +32,9 @@ public class InlinesToFormItemsTransformer
         final List<FormItem> formItems = new ArrayList<>();
         for ( final FormItem formItem : iterable )
         {
-            if ( formItem instanceof Inline )
+            if ( formItem instanceof InlineMixin )
             {
-                final Inline inline = (Inline) formItem;
+                final InlineMixin inline = (InlineMixin) formItem;
                 final Mixin mixin = mixinService.getByName( inline.getMixinName() );
                 if ( mixin != null )
                 {

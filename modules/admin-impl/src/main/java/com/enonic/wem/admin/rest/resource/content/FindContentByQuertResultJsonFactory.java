@@ -12,13 +12,13 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByQueryResult;
-import com.enonic.wem.api.form.InlinesToFormItemsTransformer;
+import com.enonic.wem.api.form.InlineMixinsToFormItemsTransformer;
 
 public class FindContentByQuertResultJsonFactory
 {
     public static AbstractContentQueryResultJson create( final FindContentByQueryResult contentQueryResult, final String expand,
                                                          final ContentIconUrlResolver iconUrlResolver,
-                                                         final InlinesToFormItemsTransformer inlinesToFormItemsTransformer,
+                                                         final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer,
                                                          final ContentPrincipalsResolver contentPrincipalsResolver )
     {
         final AbstractContentQueryResultJson.Builder builder;
@@ -42,18 +42,18 @@ public class FindContentByQuertResultJsonFactory
         }
 
         addAggregations( contentQueryResult.getAggregations(), builder );
-        addContents( contentQueryResult.getContents(), builder, inlinesToFormItemsTransformer );
+        addContents( contentQueryResult.getContents(), builder, inlineMixinsToFormItemsTransformer );
         setMetadata( metadata, builder );
 
         return builder.build();
     }
 
     private static void addContents( final Contents contents, final AbstractContentQueryResultJson.Builder builder,
-                                     final InlinesToFormItemsTransformer inlinesToFormItemsTransformer )
+                                     final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer )
     {
         for ( final Content content : contents )
         {
-            builder.addContent( content, inlinesToFormItemsTransformer );
+            builder.addContent( content, inlineMixinsToFormItemsTransformer );
         }
     }
 

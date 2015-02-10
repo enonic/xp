@@ -7,7 +7,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.admin.json.content.ContentIdJson;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.form.InlinesToFormItemsTransformer;
+import com.enonic.wem.api.form.InlineMixinsToFormItemsTransformer;
 
 public class ContentIdQueryResultJson
     extends AbstractContentQueryResultJson<ContentIdJson>
@@ -29,7 +29,7 @@ public class ContentIdQueryResultJson
         private Set<ContentIdJson> contents = Sets.newLinkedHashSet();
 
         public Builder addContent( final Content content,
-                                   final InlinesToFormItemsTransformer inlinesToFormItemsTransformer )
+                                   final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer )
         {
             this.contents.add( new ContentIdJson( content.getId() ) );
             return this;

@@ -12,7 +12,7 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.FormItems;
-import com.enonic.wem.api.form.Inline;
+import com.enonic.wem.api.form.InlineMixin;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.Occurrences;
 import com.enonic.wem.api.form.ValidationRegex;
@@ -124,9 +124,9 @@ public final class XmlFormMapper
         return builder.build();
     }
 
-    private static Inline fromItemXml( final XmlInline xml )
+    private static InlineMixin fromItemXml( final XmlInline xml )
     {
-        final Inline.Builder builder = Inline.newInline();
+        final InlineMixin.Builder builder = InlineMixin.newInlineMixin();
         builder.mixin( xml.getMixin() );
         return builder.build();
     }
@@ -183,9 +183,9 @@ public final class XmlFormMapper
             return toItemXml( (FormItemSet) object );
         }
 
-        if ( object instanceof Inline )
+        if ( object instanceof InlineMixin )
         {
-            return toItemXml( (Inline) object );
+            return toItemXml( (InlineMixin) object );
         }
 
         if ( object instanceof FieldSet )
@@ -229,7 +229,7 @@ public final class XmlFormMapper
         return result;
     }
 
-    private static XmlInline toItemXml( final Inline object )
+    private static XmlInline toItemXml( final InlineMixin object )
     {
         final XmlInline result = new XmlInline();
         result.setMixin( object.getMixinName().toString() );

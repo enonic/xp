@@ -2,16 +2,16 @@ package com.enonic.wem.api.schema.content;
 
 public class GetAllContentTypesParams
 {
-    private boolean inlinesToFormItems = false;
+    private boolean inlineMixinsToFormItems = false;
 
-    public boolean isInlinesToFormItems()
+    public boolean isInlineMixinsToFormItems()
     {
-        return inlinesToFormItems;
+        return inlineMixinsToFormItems;
     }
 
-    public GetAllContentTypesParams inlinesToFormItems( final boolean value )
+    public GetAllContentTypesParams inlineMixinsToFormItems( final boolean value )
     {
-        inlinesToFormItems = value;
+        inlineMixinsToFormItems = value;
         return this;
     }
 

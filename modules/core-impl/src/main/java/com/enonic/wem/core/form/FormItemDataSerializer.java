@@ -8,7 +8,7 @@ import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.FormItemType;
-import com.enonic.wem.api.form.Inline;
+import com.enonic.wem.api.form.InlineMixin;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.Layout;
 import com.enonic.wem.api.form.Occurrences;
@@ -49,9 +49,9 @@ public class FormItemDataSerializer
         {
             serializeInput( (Input) formItem, formItemAsSet );
         }
-        else if ( formItem instanceof Inline )
+        else if ( formItem instanceof InlineMixin )
         {
-            serializeInline( (Inline) formItem, formItemAsSet );
+            serializeInlineMixin( (InlineMixin) formItem, formItemAsSet );
         }
         else if ( formItem instanceof FormItemSet )
         {
@@ -95,16 +95,16 @@ public class FormItemDataSerializer
         return DomHelper.serialize( doc );
     }
 
-    private void serializeInline( final Inline inline, final PropertySet inlineSet )
+    private void serializeInlineMixin( final InlineMixin inline, final PropertySet inlineSet )
     {
         inlineSet.setString( "name", inline.getName() );
         inlineSet.ifNotNull().setString( "mixinName",
                                                  inline.getMixinName() != null ? inline.getMixinName().toString() : null );
     }
 
-    Inline deserializeInline( final PropertySet inlineAsSet )
+    InlineMixin deserializeInlineMixin( final PropertySet inlineAsSet )
     {
-        final Inline.Builder builder = Inline.newInline();
+        final InlineMixin.Builder builder = InlineMixin.newInlineMixin();
         builder.mixin( inlineAsSet.getString( "mixinName" ) );
         return builder.build();
     }
@@ -169,7 +169,7 @@ public class FormItemDataSerializer
         }
         else if ( type.equals( FormItemType.MIXIN_REFERENCE ) )
         {
-            return deserializeInline( formItemPropertySet );
+            return deserializeInlineMixin( formItemPropertySet );
         }
         else
         {

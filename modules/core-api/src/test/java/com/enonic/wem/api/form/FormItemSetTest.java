@@ -6,7 +6,6 @@ import org.junit.Test;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.form.Inline.newInline;
 import static com.enonic.wem.api.form.Input.newInput;
 import static org.junit.Assert.*;
 
@@ -27,17 +26,17 @@ public class FormItemSetTest
     }
 
     @Test
-    public void getInline()
+    public void getInlineMixin()
     {
         // setup
         FormItemSet formItemSet = newFormItemSet().name( "mySet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( newInline().mixin( "mymodule:mymixin" ).build() );
+        formItemSet.add( InlineMixin.newInlineMixin().mixin( "mymodule:mymixin" ).build() );
 
         // exercise
 
         // verify
-        assertEquals( "mySet.mymixin", formItemSet.getInline( "mymixin" ).getPath().toString() );
-        assertEquals( "mySet.mymixin", formItemSet.getInline( FormItemPath.from( "mymixin" ) ).getPath().toString() );
+        assertEquals( "mySet.mymixin", formItemSet.getInlineMixin( "mymixin" ).getPath().toString() );
+        assertEquals( "mySet.mymixin", formItemSet.getInlineMixin( FormItemPath.from( "mymixin" ) ).getPath().toString() );
     }
 
 

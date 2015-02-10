@@ -13,7 +13,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Metadata;
 import com.enonic.wem.api.data.PropertyArrayJson;
 import com.enonic.wem.api.data.PropertyTreeJson;
-import com.enonic.wem.api.form.InlinesToFormItemsTransformer;
+import com.enonic.wem.api.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.wem.api.security.Principals;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
@@ -35,7 +35,7 @@ public final class ContentJson
     private final boolean inheritPermissions;
 
     public ContentJson( final Content content, final ContentIconUrlResolver iconUrlResolver,
-                        final InlinesToFormItemsTransformer inlinesToFormItemsTransformer,
+                        final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer,
                         final ContentPrincipalsResolver contentPrincipalsResolver )
     {
         super( content, iconUrlResolver );
