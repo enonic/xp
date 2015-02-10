@@ -116,7 +116,7 @@ public abstract class Value
      */
     public java.lang.Long asLong()
     {
-        if ( object == null )
+        if ( object == null || "".equals( object ) )
         {
             return null;
         }
@@ -140,7 +140,7 @@ public abstract class Value
      */
     public java.lang.Double asDouble()
     {
-        if ( object == null )
+        if ( object == null || "".equals( object ) )
         {
             return null;
         }
