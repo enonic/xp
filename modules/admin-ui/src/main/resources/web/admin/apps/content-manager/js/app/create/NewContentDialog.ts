@@ -250,6 +250,11 @@ module app.create {
             this.mediaUploader.stop();
         }
 
+        close() {
+            this.fileInput.reset();
+            super.close();
+        }
+
         private loadContentTypes() {
             this.contentListMask.show();
             this.recentListMask.show();

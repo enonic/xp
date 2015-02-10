@@ -52,6 +52,10 @@ module api.dom {
             return this;
         }
 
+        reset() {
+            this.getEl().setValue("");
+        }
+
         /**
          * https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Forms_in_HTML
          * @returns {boolean}
