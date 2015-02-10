@@ -3,27 +3,14 @@ package com.enonic.wem.api.form;
 
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.base.Preconditions;
-
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
 
 public abstract class FormItem
 {
-    private final String name;
-
     private FormItems parent;
 
-    FormItem( final String name )
-    {
-        Preconditions.checkNotNull( name, "a name is required for a FormItem" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( name ), "a name is required for a FormItem" );
-        Preconditions.checkArgument( !name.contains( "." ), "name cannot contain punctations: " + name );
-
-        this.name = name;
-    }
+    public abstract String getName();
 
     public abstract FormItemType getType();
 
@@ -37,11 +24,6 @@ public abstract class FormItem
         return parent;
     }
 
-    public final String getName()
-    {
-        return name;
-    }
-
     public final FormItemPath getPath()
     {
         return resolvePath();
@@ -49,7 +31,7 @@ public abstract class FormItem
 
     FormItemPath resolvePath()
     {
-        return FormItemPath.from( resolveParentPath(), name );
+        return FormItemPath.from( resolveParentPath(), getName() );
     }
 
     final FormItemPath resolveParentPath()
@@ -75,14 +57,14 @@ public abstract class FormItem
         return (Input) this;
     }
 
-    public MixinReference toMixinReference()
+    public InlineMixin toInlineMixin()
     {
-        if ( !( this instanceof MixinReference ) )
+        if ( !( this instanceof InlineMixin ) )
         {
             throw new IllegalArgumentException(
-                "This FormItem [" + getName() + "] is not an MixinReference: " + this.getClass().getSimpleName() );
+                "This FormItem [" + getName() + "] is not an InlineMixin: " + this.getClass().getSimpleName() );
         }
-        return (MixinReference) this;
+        return (InlineMixin) this;
     }
 
     public FormItemSet toFormItemSet()
@@ -117,19 +99,19 @@ public abstract class FormItem
         }
 
         final FormItem that = (FormItem) o;
-        return Objects.equals( name, that.name );
+        return Objects.equals( getName(), that.getName() );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name );
+        return Objects.hash( getName() );
     }
 
     @Override
     public String toString()
     {
-        return name;
+        return getName();
     }
 
     static FormItem from( final FormItem formItem )

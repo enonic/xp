@@ -28,7 +28,7 @@ import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.content.page.PageTemplateSpec;
 import com.enonic.wem.api.content.page.PageTemplates;
-import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
+import com.enonic.wem.api.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
@@ -48,7 +48,7 @@ public final class PageTemplateResource
 
     private ContentTypeService contentTypeService;
 
-    private MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
+    private InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer;
 
     private ContentPrincipalsResolver principalsResolver;
 
@@ -58,7 +58,7 @@ public final class PageTemplateResource
     {
         final PageTemplateKey pageTemplateKey = PageTemplateKey.from( pageTemplateKeyAsString );
         final PageTemplate pageTemplate = pageTemplateService.getByKey( pageTemplateKey );
-        return new ContentJson( pageTemplate, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+        return new ContentJson( pageTemplate, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
     }
 
     @GET
@@ -74,7 +74,7 @@ public final class PageTemplateResource
             hits( pageTemplates.getSize() ).
             build();
         return new ContentListJson( pageTemplates.toContents(), metaData, newContentIconUrlResolver(),
-                                    mixinReferencesToFormItemsTransformer, principalsResolver );
+                                    inlineMixinsToFormItemsTransformer, principalsResolver );
     }
 
     @GET
@@ -91,7 +91,7 @@ public final class PageTemplateResource
             hits( filteredPageTemplates.getSize() ).
             build();
         return new ContentListJson( filteredPageTemplates.toContents(), metaData, newContentIconUrlResolver(),
-                                    mixinReferencesToFormItemsTransformer, principalsResolver );
+                                    inlineMixinsToFormItemsTransformer, principalsResolver );
     }
 
     @GET
@@ -109,7 +109,7 @@ public final class PageTemplateResource
         {
             return null;
         }
-        return new ContentJson( pageTemplate, newContentIconUrlResolver(), mixinReferencesToFormItemsTransformer, principalsResolver );
+        return new ContentJson( pageTemplate, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
     }
 
     @GET
@@ -174,7 +174,7 @@ public final class PageTemplateResource
     @Reference
     public void setMixinService( final MixinService mixinService )
     {
-        this.mixinReferencesToFormItemsTransformer = new MixinReferencesToFormItemsTransformer( mixinService );
+        this.inlineMixinsToFormItemsTransformer = new InlineMixinsToFormItemsTransformer( mixinService );
     }
 
     @Reference

@@ -20,13 +20,13 @@ final class GetContentTypesCommand
     private ContentTypes doExecute()
     {
         final ContentTypes contentTypes = getContentTypes( this.params.getContentTypeNames() );
-        if ( !this.params.isMixinReferencesToFormItems() )
+        if ( !this.params.isInlineMixinsToFormItems() )
         {
             return contentTypes;
         }
         else
         {
-            return transformMixinReferences( contentTypes );
+            return transformInlineMixins( contentTypes );
         }
     }
 

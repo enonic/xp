@@ -8,4 +8,4 @@
 
 ///<reference path="MixinJson.ts" />
 ///<reference path="MixinListJson.ts" />
-///<reference path="MixinReferenceJson.ts" />
+///<reference path="InlineJson.ts" />

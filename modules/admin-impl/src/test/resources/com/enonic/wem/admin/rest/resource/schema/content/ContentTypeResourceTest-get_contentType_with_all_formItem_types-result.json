@@ -111,8 +111,8 @@
                 }
             },
             {
-                "MixinReference": {
-                    "name": "myMixinReference",
+                "Inline": {
+                    "name" : "mymixin",
                     "reference": "mymodule:mymixin"
                 }
             }

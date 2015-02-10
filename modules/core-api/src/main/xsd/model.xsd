@@ -67,7 +67,7 @@
       </xs:annotation>
       <xs:choice maxOccurs="unbounded" minOccurs="0">
         <xs:element name="input" type="input"/>
-        <xs:element name="mixin-reference" type="mixinReference"/>
+        <xs:element name="inline" type="inline"/>
         <xs:element name="field-set" type="fieldSet"/>
         <xs:element name="form-item-set" type="formItemSet"/>
       </xs:choice>
@@ -88,13 +88,13 @@
           <xs:element minOccurs="0" name="config" type="xs:anyType"/>
         </xs:sequence>
         <xs:attribute name="type" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType abstract="true" name="formItem">
     <xs:sequence/>
-    <xs:attribute name="name" type="xs:string" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="occurrence">
@@ -103,12 +103,10 @@
     <xs:attribute name="maximum" type="xs:int" use="required"/>
   </xs:complexType>
 
-  <xs:complexType name="mixinReference">
+  <xs:complexType name="inline">
     <xs:complexContent>
       <xs:extension base="formItem">
-        <xs:sequence>
-          <xs:element name="reference" type="xs:string"/>
-        </xs:sequence>
+        <xs:attribute name="mixin" type="xs:string" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -120,6 +118,7 @@
           <xs:element minOccurs="0" name="label" type="xs:string"/>
           <xs:element minOccurs="0" name="items" type="formItems"/>
         </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -135,6 +134,7 @@
           <xs:element minOccurs="0" name="occurrences" type="occurrence"/>
           <xs:element minOccurs="0" name="items" type="formItems"/>
         </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

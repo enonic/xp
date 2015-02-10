@@ -48,17 +48,17 @@ public class FormJson
         return this.form;
     }
 
-    public static FormJson resolveJson( final Form form, final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
+    public static FormJson resolveJson( final Form form, final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer )
     {
         if ( form == null )
         {
             return null;
         }
-        if ( mixinReferencesToFormItemsTransformer == null )
+        if ( inlineMixinsToFormItemsTransformer == null )
         {
             return new FormJson( form );
         }
 
-        return new FormJson( mixinReferencesToFormItemsTransformer.transformForm( form ) );
+        return new FormJson( inlineMixinsToFormItemsTransformer.transformForm( form ) );
     }
 }

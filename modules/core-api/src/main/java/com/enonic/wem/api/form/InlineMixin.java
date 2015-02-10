@@ -8,14 +8,14 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 
-public class MixinReference
+public class InlineMixin
     extends FormItem
 {
     private final MixinName mixinName;
 
-    private MixinReference( Builder builder )
+    private InlineMixin( Builder builder )
     {
-        super( builder.name );
+        super(  );
 
         Preconditions.checkNotNull( builder.mixinName, "mixinName is required" );
         this.mixinName = builder.mixinName;
@@ -33,6 +33,11 @@ public class MixinReference
     }
 
     @Override
+    public String getName() {
+        return mixinName.getLocalName();
+    }
+
+    @Override
     public boolean equals( final Object o )
     {
         if ( this == o )
@@ -44,7 +49,7 @@ public class MixinReference
             return false;
         }
 
-        final MixinReference that = (MixinReference) o;
+        final InlineMixin that = (InlineMixin) o;
         return super.equals( o ) && Objects.equals( this.mixinName, that.mixinName );
     }
 
@@ -54,31 +59,29 @@ public class MixinReference
         return Objects.hash( super.hashCode(), this.mixinName );
     }
 
-    public static Builder newMixinReference()
+    public static Builder newInlineMixin()
     {
         return new Builder();
     }
 
     @Override
-    public MixinReference copy()
+    public InlineMixin copy()
     {
-        return newMixinReference( this ).build();
+        return newInlineMixin( this ).build();
     }
 
-    public static Builder newMixinReference( final Mixin mixin )
+    public static Builder newInlineMixin( final Mixin mixin )
     {
         return new Builder( mixin );
     }
 
-    public static Builder newMixinReference( final MixinReference mixinReference )
+    public static Builder newInlineMixin( final InlineMixin inline )
     {
-        return new Builder( mixinReference );
+        return new Builder( inline );
     }
 
     public static class Builder
     {
-        private String name;
-
         private MixinName mixinName;
 
         public Builder()
@@ -86,22 +89,14 @@ public class MixinReference
             // default;
         }
 
-        public Builder( MixinReference source )
+        public Builder( InlineMixin source )
         {
-            this.name = source.getName();
             this.mixinName = source.mixinName;
         }
 
         public Builder( final Mixin mixin )
         {
-            this.name = mixin.getName().toString();
             this.mixinName = mixin.getName();
-        }
-
-        public Builder name( String value )
-        {
-            this.name = value;
-            return this;
         }
 
         public Builder mixin( final Mixin mixin )
@@ -122,9 +117,9 @@ public class MixinReference
             return this;
         }
 
-        public MixinReference build()
+        public InlineMixin build()
         {
-            return new MixinReference( this );
+            return new InlineMixin( this );
         }
     }
 

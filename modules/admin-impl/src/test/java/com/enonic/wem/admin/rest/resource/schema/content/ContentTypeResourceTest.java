@@ -20,8 +20,8 @@ import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.InlineMixin;
 import com.enonic.wem.api.form.Input;
-import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
@@ -32,7 +32,6 @@ import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
-import static com.enonic.wem.api.form.MixinReference.newMixinReference;
 import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_LINE;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
@@ -87,7 +86,7 @@ public class ContentTypeResourceTest
 
         // execute
         String jsonString = request().path( "schema/content" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).queryParam(
-            "mixinReferencesToFormItems", "false" ).get().getAsString();
+            "inlineMixinsToFormItems", "false" ).get().getAsString();
 
         // verify
         assertJson( "ContentTypeResourceTest-get_contentType_with_only_one_input-result.json", jsonString );
@@ -135,8 +134,7 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        MixinReference myMixinReference = newMixinReference().
-            name( "myMixinReference" ).
+        InlineMixin myInline = InlineMixin.newInlineMixin().
             mixin( "mymodule:mymixin" ).
             build();
 
@@ -149,14 +147,14 @@ public class ContentTypeResourceTest
             addFormItem( myCustomInput ).
             addFormItem( myFieldSet ).
             addFormItem( myFormItemSet ).
-            addFormItem( myMixinReference ).
+            addFormItem( myInline ).
             build();
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         // execute
         String jsonString = request().path( "schema/content" ).queryParam( "name", MY_CTY_QUALIFIED_NAME.toString() ).queryParam(
-            "mixinReferencesToFormItems", "false" ).get().getAsString();
+            "inlineMixinsToFormItems", "false" ).get().getAsString();
 
         // verify
         assertJson( "ContentTypeResourceTest-get_contentType_with_all_formItem_types-result.json", jsonString );
@@ -188,7 +186,7 @@ public class ContentTypeResourceTest
             path( "schema/content/all" ).
             queryParam( "names", MY_CTY_QUALIFIED_NAME.toString() ).
             queryParam( "format", "JSON" ).
-            queryParam( "mixinReferencesToFormItems", "false" ).
+            queryParam( "inlineMixinsToFormItems", "false" ).
             get().getAsString();
 
         // verify

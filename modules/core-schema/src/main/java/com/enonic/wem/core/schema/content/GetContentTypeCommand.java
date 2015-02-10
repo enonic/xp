@@ -22,13 +22,13 @@ final class GetContentTypeCommand
             return null;
         }
 
-        if ( !this.params.isMixinReferencesToFormItems() )
+        if ( !this.params.isInlineMixinsToFormItems() )
         {
             return contentType;
         }
         else
         {
-            return transformMixinReferences( contentType );
+            return transformInlineMixins( contentType );
         }
     }
 }

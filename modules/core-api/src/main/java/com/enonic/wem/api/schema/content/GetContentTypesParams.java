@@ -7,7 +7,7 @@ public final class GetContentTypesParams
 {
     private ContentTypeNames contentTypeNames;
 
-    private boolean mixinReferencesToFormItems = false;
+    private boolean inlineMixinsToFormItems = false;
 
     public ContentTypeNames getContentTypeNames()
     {
@@ -20,14 +20,14 @@ public final class GetContentTypesParams
         return this;
     }
 
-    public boolean isMixinReferencesToFormItems()
+    public boolean isInlineMixinsToFormItems()
     {
-        return mixinReferencesToFormItems;
+        return inlineMixinsToFormItems;
     }
 
-    public GetContentTypesParams mixinReferencesToFormItems( final boolean value )
+    public GetContentTypesParams inlineMixinsToFormItems( final boolean value )
     {
-        mixinReferencesToFormItems = value;
+        inlineMixinsToFormItems = value;
         return this;
     }
 
