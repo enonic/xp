@@ -7,6 +7,7 @@ module app.login {
         private messageContainer: api.dom.DivEl;
         private userIdInput: api.ui.text.TextInput;
         private passwordInput: api.ui.text.PasswordInput;
+        private loginButton: api.ui.button.Button;
 
         private authenticator: Authenticator;
         private userStores: {[userStoreId: string]: UserStore;};
@@ -29,10 +30,19 @@ module app.login {
                 this.onInputTyped(event);
             });
 
+            this.loginButton = new api.ui.button.Button();
+            this.loginButton.addClass("login-button");
+            this.loginButton.setActive(false);
+            this.loginButton.onClicked(() => {
+                this.loginButtonClick();
+            })
+
+
             this.messageContainer = new api.dom.DivEl("message-container");
 
             this.appendChild(this.userIdInput);
             this.appendChild(this.passwordInput);
+            this.appendChild(this.loginButton);
             this.appendChild(this.messageContainer);
 
             this.onShown((event) => {
