@@ -46,7 +46,7 @@ class ContentVersionFactory
         final Content content = translator.fromNode( node );
 
         return ContentVersion.create().
-            comment( "Dummy comment" ).
+            comment( "No comments" ).
             displayName( content.getDisplayName() ).
             modified( content.getModifiedTime() ).
             modifier( content.getModifier() ).

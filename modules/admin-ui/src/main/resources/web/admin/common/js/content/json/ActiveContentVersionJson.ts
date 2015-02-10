@@ -2,7 +2,7 @@ module api.content.json {
 
     export interface ActiveContentVersionJson {
 
-        workspace: string;
+        branch: string;
 
         contentVersion: ContentVersionJson;
     }

@@ -34,6 +34,7 @@ module app.view {
                 setAutoLoad(false).
                 setCheckableRows(false).
                 setHotkeysEnabled(false).
+                setSelectedCellCssClass("").
                 setShowToolbar(false).
                 setColumns([
                     descColumn,
