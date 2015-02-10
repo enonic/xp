@@ -1,16 +1,16 @@
 package com.enonic.wem.api.security;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.branch.Branch;
 
 public final class SystemConstants
 {
 
     public static final Branch BRANCH_SECURITY = Branch.create().
-        name( "security" ).
+        name( "master" ).
         build();
 
     public static final Repository SYSTEM_REPO = Repository.create().

@@ -21,7 +21,7 @@ public class ErrorResourceTest
     public void error_noMesage()
         throws Exception
     {
-        final MockHttpServletRequest request = newGetRequest( "/online/path/to/content/_/error/500" );
+        final MockHttpServletRequest request = newGetRequest( "/master/path/to/content/_/error/500" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 500, response.getStatus() );
@@ -32,7 +32,7 @@ public class ErrorResourceTest
     public void error_withMesage()
         throws Exception
     {
-        final MockHttpServletRequest request = newGetRequest( "/online/path/to/content/_/error/404" );
+        final MockHttpServletRequest request = newGetRequest( "/master/path/to/content/_/error/404" );
         request.setQueryString( "message=Some%20error%20message" );
         final MockHttpServletResponse response = executeRequest( request );
 

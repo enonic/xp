@@ -20,7 +20,7 @@ public class CompareNodeCommandTest
 {
     private final Context draft = CTX_DEFAULT;
 
-    private final Context online = CTX_OTHER;
+    private final Context master = CTX_OTHER;
 
     @Test
     public void status_new()
@@ -40,7 +40,7 @@ public class CompareNodeCommandTest
     public void status_new_target()
         throws Exception
     {
-        final Node createdNode = online.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = master.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
@@ -54,14 +54,14 @@ public class CompareNodeCommandTest
     public void status_deleted_stage_yields_new_in_target()
         throws Exception
     {
-        final Node createdNode = online.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = master.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        assertNotNull( online.callWith( () -> getNodeById( createdNode.id() ) ) );
+        assertNotNull( master.callWith( () -> getNodeById( createdNode.id() ) ) );
 
-        online.runWith( () -> doPushNode( WS_DEFAULT, createdNode ) );
+        master.runWith( () -> doPushNode( WS_DEFAULT, createdNode ) );
 
         assertNotNull( draft.callWith( () -> getNodeById( createdNode.id() ) ) );
 
@@ -129,7 +129,7 @@ public class CompareNodeCommandTest
         draft.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
 
-        online.runWith( () -> doUpdateNode( createdNode ) );
+        master.runWith( () -> doUpdateNode( createdNode ) );
         refresh();
 
         final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );

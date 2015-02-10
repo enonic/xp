@@ -45,9 +45,9 @@ public class GetActiveNodeVersionsCommandTest
             execute();
 
         NodeVersion draft = result.getNodeVersions().get( WS_DEFAULT );
-        NodeVersion online = result.getNodeVersions().get( WS_OTHER );
+        NodeVersion master = result.getNodeVersions().get( WS_OTHER );
 
-        assertEquals( draft, online );
+        assertEquals( draft, master );
 
         updateNode( node, CTX_DEFAULT );
 
@@ -62,10 +62,10 @@ public class GetActiveNodeVersionsCommandTest
             execute();
 
         draft = result2.getNodeVersions().get( WS_DEFAULT );
-        online = result2.getNodeVersions().get( WS_OTHER );
+        master = result2.getNodeVersions().get( WS_OTHER );
 
-        assertTrue( !draft.equals( online ) );
-        assertTrue( draft.getTimestamp().isAfter( online.getTimestamp() ) );
+        assertTrue( !draft.equals( master ) );
+        assertTrue( draft.getTimestamp().isAfter( master.getTimestamp() ) );
     }
 
     private void updateNode( final Node node, Context context )

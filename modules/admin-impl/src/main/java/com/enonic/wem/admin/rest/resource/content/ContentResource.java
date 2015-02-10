@@ -295,7 +295,7 @@ public final class ContentResource
         final ContentIds contentIds = ContentIds.from( params.getIds() );
 
         final PushContentsResult result = contentService.push( PushContentParams.create().
-            target( ContentConstants.BRANCH_ONLINE ).
+            target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
             includeChildren( true ).
             allowPublishOutsideSelection( true ).
@@ -540,7 +540,7 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final CompareContentResults compareResults =
-            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_ONLINE ) );
+            contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
 
         return new CompareContentResultsJson( compareResults );
     }
@@ -565,7 +565,7 @@ public final class ContentResource
     public GetActiveContentVersionsResultJson getActiveVersions( @QueryParam("id") final String id )
     {
         final GetActiveContentVersionsResult result = contentService.getActiveVersions( GetActiveContentVersionsParams.create().
-            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_ONLINE ) ).
+            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
             contentId( ContentId.from( id ) ).
             build() );
 

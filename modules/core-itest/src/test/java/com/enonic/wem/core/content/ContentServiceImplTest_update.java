@@ -44,7 +44,6 @@ public class ContentServiceImplTest_update
             contentData( new PropertyTree() ).
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
-            permissions( AccessControlList.empty() ).
             type( ContentTypeName.folder() ).
             build();
 
@@ -77,7 +76,6 @@ public class ContentServiceImplTest_update
             contentData( new PropertyTree() ).
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
-            permissions( AccessControlList.empty() ).
             type( ContentTypeName.imageMedia() ).
             createAttachments( createAttachment( "cat", "image/jpg", image ) ).
             build();
@@ -112,7 +110,6 @@ public class ContentServiceImplTest_update
             contentData( data ).
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
-            permissions( AccessControlList.empty() ).
             type( BuiltinContentTypeProvider.FOLDER.getName() ).
             build();
 

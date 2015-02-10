@@ -69,7 +69,7 @@ public class AbstractContentServiceTest
         build();
 
     protected static final Branch WS_OTHER = Branch.create().
-        name( "online" ).
+        name( "master" ).
         build();
 
     public static final User TEST_DEFAULT_USER =
@@ -77,6 +77,7 @@ public class AbstractContentServiceTest
 
     public static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
         principals( RoleKeys.AUTHENTICATED ).
+        principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
         user( TEST_DEFAULT_USER ).
         build();
 

@@ -3,6 +3,7 @@ package com.enonic.wem.core.content;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentConstants;
@@ -13,7 +14,6 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeComparison;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeState;
-import com.enonic.wem.api.branch.Branch;
 
 
 final class DeleteContentCommand
@@ -62,7 +62,7 @@ final class DeleteContentCommand
         final NodeComparison compare;
         if ( currentBranch.equals( ContentConstants.BRANCH_DRAFT ) )
         {
-            compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.BRANCH_ONLINE );
+            compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.BRANCH_MASTER );
         }
         else
         {

@@ -24,11 +24,11 @@ public class GetActiveContentVersionsResultTest
             build();
 
         final Branch draft = Branch.from( "draft" );
-        final Branch online = Branch.from( "online" );
+        final Branch master = Branch.from( "master" );
 
         final GetActiveContentVersionsResult result = GetActiveContentVersionsResult.create().
             add( ActiveContentVersionEntry.from( draft, version ) ).
-            add( ActiveContentVersionEntry.from( online, version ) ).
+            add( ActiveContentVersionEntry.from( master, version ) ).
             build();
 
         assertEquals( 2, result.getActiveContentVersions().size() );
@@ -46,11 +46,11 @@ public class GetActiveContentVersionsResultTest
             build();
 
         final Branch draft = Branch.from( "draft" );
-        final Branch online = Branch.from( "online" );
+        final Branch master = Branch.from( "master" );
 
         final GetActiveContentVersionsResult result = GetActiveContentVersionsResult.create().
             add( ActiveContentVersionEntry.from( draft, version ) ).
-            add( ActiveContentVersionEntry.from( online, null ) ).
+            add( ActiveContentVersionEntry.from( master, null ) ).
             build();
 
         assertEquals( 1, result.getActiveContentVersions().size() );
@@ -66,7 +66,7 @@ public class GetActiveContentVersionsResultTest
 
         final Branch archive = Branch.from( "archive" );
         final Branch draft = Branch.from( "draft" );
-        final Branch online = Branch.from( "online" );
+        final Branch master = Branch.from( "master" );
 
         final ContentVersion oldVersion = ContentVersion.create().
             id( ContentVersionId.from( "b" ) ).
@@ -84,7 +84,7 @@ public class GetActiveContentVersionsResultTest
             build();
 
         final GetActiveContentVersionsResult result = GetActiveContentVersionsResult.create().
-            add( ActiveContentVersionEntry.from( online, oldVersion ) ).
+            add( ActiveContentVersionEntry.from( master, oldVersion ) ).
             add( ActiveContentVersionEntry.from( draft, newVersion ) ).
             add( ActiveContentVersionEntry.from( archive, oldestVersion ) ).
             build();
@@ -92,7 +92,7 @@ public class GetActiveContentVersionsResultTest
         final UnmodifiableIterator<ActiveContentVersionEntry> iterator = result.getActiveContentVersions().iterator();
 
         assertEquals( draft, iterator.next().getBranch() );
-        assertEquals( online, iterator.next().getBranch() );
+        assertEquals( master, iterator.next().getBranch() );
         assertEquals( archive, iterator.next().getBranch() );
     }
 }

@@ -49,7 +49,7 @@ public class PageResourceTest
             build();
         Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
 
-        MockHttpServletRequest request = newGetRequest( "/online/site/somepath/content" );
+        MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
         MockHttpServletResponse response = executeRequest( request );
 
         ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
@@ -66,7 +66,7 @@ public class PageResourceTest
     {
         Mockito.when( this.contentService.getByPath( Mockito.anyObject() ) ).thenReturn( null );
 
-        final MockHttpServletRequest request = newGetRequest( "/online/site/somepath/content" );
+        final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 404, response.getStatus() );
@@ -78,7 +78,7 @@ public class PageResourceTest
     {
         setupContentAndSite();
 
-        final MockHttpServletRequest request = newGetRequest( "/online/site/somepath/content" );
+        final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 404, response.getStatus() );
@@ -101,7 +101,7 @@ public class PageResourceTest
         final PortalContext newContext = new PortalContext();
         newContext.setMode( RenderMode.EDIT );
 
-        final MockHttpServletRequest request = newGetRequest( "/online/id" );
+        final MockHttpServletRequest request = newGetRequest( "/master/id" );
         PortalContextAccessor.set( request, newContext );
 
         final MockHttpServletResponse response = executeRequest( request );
