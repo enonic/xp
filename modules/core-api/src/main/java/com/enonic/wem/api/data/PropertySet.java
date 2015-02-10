@@ -657,6 +657,17 @@ public final class PropertySet
         return properties;
     }
 
+    public Property[] addStrings( final String name, final Collection<String> collValue )
+    {
+        Object[] values = collValue.toArray();
+        final Property[] properties = new Property[values.length];
+        for ( int i = 0; i < values.length; i++ )
+        {
+            properties[i] = this.addProperty( name, Value.newString( String.valueOf( values[i] ) ) );
+        }
+        return properties;
+    }
+
     // setting xml
 
     public Property setXml( final String path, final String value )

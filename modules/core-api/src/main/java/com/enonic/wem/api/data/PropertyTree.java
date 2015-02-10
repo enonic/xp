@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -389,6 +390,9 @@ public final class PropertyTree
 
     public Property[] addStrings( final String name, final String... value )
     {
+        return this.root.addStrings( name, value );
+    }
+    public Property[] addStrings( final String name, final Collection<String> value ) {
         return this.root.addStrings( name, value );
     }
 

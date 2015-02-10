@@ -13,6 +13,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinProvider;
@@ -59,6 +60,21 @@ public final class MixinServiceImpl
             public boolean test( final Mixin mixin )
             {
                 return mixin.getName().getModuleKey().equals( moduleKey );
+            }
+        } );
+
+        return Mixins.from( stream.collect( Collectors.toList() ) );
+    }
+
+    @Override
+    public Mixins getByContentType( final ContentType contentType )
+    {
+        final Stream<Mixin> stream = this.map.values().stream().filter( new Predicate<Mixin>()
+        {
+            @Override
+            public boolean test( final Mixin mixin )
+            {
+                return contentType.getMetadata().contains(  mixin.getName() );
             }
         } );
 

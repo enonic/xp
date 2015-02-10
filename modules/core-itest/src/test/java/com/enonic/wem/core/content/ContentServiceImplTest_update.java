@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.Metadata;
+import com.enonic.wem.api.content.Metadatas;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.data.PropertyTree;
@@ -156,7 +157,7 @@ public class ContentServiceImplTest_update
 
         final Metadata metadata = new Metadata( MixinName.from( "mymodule:my_mixin" ), new PropertyTree() );
 
-        List<Metadata> metadatas = Lists.newArrayList( metadata );
+        Metadatas metadatas = Metadatas.from( Lists.newArrayList( metadata ) );
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( data ).

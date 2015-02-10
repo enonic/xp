@@ -16,7 +16,7 @@ public class BuiltinMixinProviderTest
         final Mixins mixins = new BuiltinMixinProvider().get();
         assertEquals( 1, mixins.getSize() );
 
-        assertSchema( mixins.get( 0 ), MixinName.from( "media:image-metadata" ), false );
+        assertSchema( mixins.get( 0 ), MixinName.from( "media:image-info" ), false );
     }
 
     private void assertSchema( final Mixin schema, final MixinName name, final boolean hasIcon )

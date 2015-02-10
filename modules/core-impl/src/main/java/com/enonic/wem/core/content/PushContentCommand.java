@@ -254,10 +254,10 @@ public class PushContentCommand
         private boolean includeChildren = true;
 
         public Builder contentIds( final ContentIds contentIds )
-        {
-            this.contentIds = contentIds;
-            return this;
-        }
+    {
+        this.contentIds = contentIds;
+        return this;
+    }
 
         public Builder target( final Branch target )
         {

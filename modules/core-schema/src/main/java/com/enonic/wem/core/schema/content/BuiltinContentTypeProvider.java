@@ -16,6 +16,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeProvider;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.mixin.MixinNames;
+import com.enonic.wem.core.schema.mixin.BuiltinMixinProvider;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 
@@ -77,7 +78,8 @@ public final class BuiltinContentTypeProvider
 
     private static final ContentType MEDIA_IMAGE = createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).form( ContentTypeForms.MEDIA_IMAGE ).
-        metadata(MixinNames.from("media:image-metadata")).build();
+        metadata( MixinNames.from( BuiltinMixinProvider.IMAGE_INFO_METADATA_NAME, BuiltinMixinProvider.PHOTO_INFO_METADATA_NAME, BuiltinMixinProvider.GPS_INFO_METADATA_NAME
+        ) ).build();
 
     private static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).form( ContentTypeForms.MEDIA_DEFAULT ).build();

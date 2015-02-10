@@ -27,6 +27,10 @@ public final class MixinName
         return new MixinName( ModuleKey.from( moduleKey ), localName );
     }
 
+    public static String getSeparator() {
+        return SEPARATOR;
+    }
+
     @Override
     public int compareTo( final MixinName that )
     {

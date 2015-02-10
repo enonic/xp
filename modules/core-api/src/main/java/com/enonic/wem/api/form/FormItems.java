@@ -29,13 +29,17 @@ public final class FormItems
         this.containerFormItem = containerFormItem;
     }
 
-    FormItemPath getPath()
+    public FormItemPath getPath()
     {
         if ( containerFormItem == null )
         {
             return FormItemPath.ROOT;
         }
         return containerFormItem.getPath();
+    }
+
+    public FormItem getItemByName(String name) {
+        return this.formItemByName.get( name );
     }
 
     public void add( final FormItem formItem )

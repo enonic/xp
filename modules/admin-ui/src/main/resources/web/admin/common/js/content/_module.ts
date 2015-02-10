@@ -17,6 +17,7 @@
 ///<reference path='ContentByPathComparator.ts' />
 ///<reference path='MoveContentSummaryLoader.ts' />
 ///<reference path='Metadata.ts' />
+///<reference path='MetadataByMixinNameComparator.ts' />
 
 ///<reference path='ContentResourceRequest.ts' />
 ///<reference path='ApplyContentPermissionsRequest.ts' />
