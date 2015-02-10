@@ -51,7 +51,7 @@ public class TextRendererTest
         RenderResult result = renderer.render( textComponent, context );
 
         // verify
-        assertEquals( "<div data-live-edit-type=\"text\"><section></section></div>", result.getAsString() );
+        assertEquals( "<div data-portal-component-type=\"text\"><section></section></div>", result.getAsString() );
     }
 
     @Test
@@ -98,6 +98,6 @@ public class TextRendererTest
         RenderResult result = renderer.render( textComponent, context );
 
         // verify
-        assertEquals( "<div data-live-edit-type=\"text\"><section>" + text + "</section></div>", result.getAsString() );
+        assertEquals( "<div data-portal-component-type=\"text\"><section>" + text + "</section></div>", result.getAsString() );
     }
 }

@@ -70,6 +70,8 @@ public class Content
 
     private final Locale language;
 
+    private final ContentState contentState;
+
     protected Content( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
@@ -109,6 +111,7 @@ public class Content
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.language = builder.language;
+        this.contentState = builder.contentState == null ? ContentState.DEFAULT : builder.contentState;
     }
 
     public ContentPath getParentPath()
@@ -279,6 +282,11 @@ public class Content
         return language;
     }
 
+    public ContentState getContentState()
+    {
+        return contentState;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -313,7 +321,8 @@ public class Content
             Objects.equals( data, other.data ) &&
             Objects.equals( metadata, other.metadata ) &&
             Objects.equals( page, other.page ) &&
-            Objects.equals( language, other.language );
+            Objects.equals( language, other.language ) &&
+            Objects.equals( contentState, other.contentState );
     }
 
     @Override
@@ -321,7 +330,7 @@ public class Content
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
                              hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, metadata, page,
-                             language );
+                             language, contentState );
     }
 
     public static Builder newContent( final ContentTypeName type )
@@ -423,6 +432,8 @@ public class Content
 
         protected Locale language;
 
+        protected ContentState contentState;
+
         protected Builder()
         {
             this.data = new PropertyTree();
@@ -455,6 +466,7 @@ public class Content
             this.permissions = source.permissions;
             this.inheritPermissions = source.inheritPermissions;
             this.language = source.language;
+            this.contentState = source.contentState;
         }
 
         public Builder<BUILDER, C> parentPath( final ContentPath path )
@@ -620,6 +632,12 @@ public class Content
         public Builder<BUILDER, C> language( final Locale language )
         {
             this.language = language;
+            return this;
+        }
+
+        public Builder<BUILDER, C> contentState( final ContentState contentState )
+        {
+            this.contentState = contentState;
             return this;
         }
 

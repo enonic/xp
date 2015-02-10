@@ -231,8 +231,10 @@ module app.browse {
             } else if (!!data.getUploadItem()) {   // uploading node
                 status = new api.ui.ProgressBar(data.getUploadItem().getProgress()).toString();
             }
+            var statusEl = new api.dom.SpanEl(CompareStatus[value].toLowerCase().replace("_", "-"));
+            statusEl.getEl().setText(status);
 
-            return status;
+            return statusEl.toString();
         }
 
         private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
@@ -366,7 +368,7 @@ module app.browse {
                 this.updateNode(data, item.getId());
 
                 this.resetAndRender();
-                api.notify.showSuccess("Upload [" + item.getName() + "] finished");
+                api.notify.showFeedback(item.getMimeType() + " \"" + item.getName() + "\" created successfully");
             });
             item.onFailed(() => {
                 this.deleteNode(data);

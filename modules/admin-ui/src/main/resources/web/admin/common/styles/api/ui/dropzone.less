@@ -16,12 +16,21 @@
 }
 
 .dropzone-glow(@color: @admin-input-blue) {
-  border: 3px dashed @color;
-  background-color: lighten(@color, 20%);
 
-  &:hover,
-  &:focus {
-    border-color: darken(@color, 10%);
-    .box-shadow(0px 0px 5px darken(@color, 10%));
+  &:not([disabled]) {
+    border: 3px dashed @color;
+    background-color: lighten(@color, 20%);
+
+    &:hover,
+    &:focus {
+      border-color: darken(@color, 10%);
+      .box-shadow(0px 0px 5px darken(@color, 10%));
+    }
+  }
+
+  &[disabled] {
+    border: 3px dashed saturation(@color, 0);
+    background-color: saturation(lighten(@color, 20%), 0);
+    cursor: default;
   }
 }

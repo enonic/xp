@@ -8,7 +8,7 @@ import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.xml.mapper.XmlFormMapper;
 import com.enonic.wem.api.xml.model.XmlForm;
-import com.enonic.wem.api.xml.model.XmlMetaStep;
+import com.enonic.wem.api.xml.model.XmlMetadata;
 import com.enonic.wem.api.xml.model.XmlModule;
 import com.enonic.wem.api.xml.model.XmlVendor;
 import com.enonic.wem.api.xml.serializer.XmlSerializers;
@@ -35,10 +35,10 @@ final class ModuleXmlBuilder
             builder.vendorName( vendor.getName() );
         }
 
-        if ( xml.getContent() != null )
+        if ( xml.getXData() != null )
         {
             final ImmutableList.Builder<MixinName> metaStepMixinNames = ImmutableList.builder();
-            for ( XmlMetaStep xmlMetaStep : xml.getContent().getMetaStep() )
+            for ( XmlMetadata xmlMetaStep : xml.getXData() )
             {
                 final String mixinName = xmlMetaStep.getMixin();
                 final MixinName metadataSchemaName =

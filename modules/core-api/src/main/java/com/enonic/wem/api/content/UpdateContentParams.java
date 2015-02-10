@@ -50,7 +50,7 @@ public final class UpdateContentParams
     public void validate()
     {
         Preconditions.checkNotNull( contentId, "contentId cannot be null" );
-        Preconditions.checkNotNull( editor, "editor cannot be null" );
+        Preconditions.checkArgument( editor != null || createAttachments != null, "editor and createAttachments cannot be both null" );
     }
 
     public ContentEditor getEditor()

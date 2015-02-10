@@ -12,7 +12,7 @@ module api.liveedit {
 
         constructor() {
             super("region", <ItemTypeConfigJson>{
-                cssSelector: '[data-live-edit-type=region]',
+                cssSelector: '[data-portal-component-type=region]',
                 draggable: false,
                 cursor: 'pointer',
                 iconCls: 'live-edit-font-icon-region',

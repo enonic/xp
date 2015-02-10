@@ -44,10 +44,13 @@ import com.enonic.wem.api.node.SetNodeChildOrderParams;
 import com.enonic.wem.api.node.SyncWorkResolverParams;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.security.SystemConstants;
+import com.enonic.wem.api.snapshot.DeleteSnapshotParams;
+import com.enonic.wem.api.snapshot.DeleteSnapshotsResult;
 import com.enonic.wem.api.snapshot.RestoreParams;
 import com.enonic.wem.api.snapshot.RestoreResult;
 import com.enonic.wem.api.snapshot.SnapshotParams;
 import com.enonic.wem.api.snapshot.SnapshotResult;
+import com.enonic.wem.api.snapshot.SnapshotResults;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
@@ -440,6 +443,24 @@ public class NodeServiceImpl
     public RestoreResult restore( final RestoreParams params )
     {
         return this.snapshotService.restore( params );
+    }
+
+    @Override
+    public DeleteSnapshotsResult deleteSnapshot( final DeleteSnapshotParams params )
+    {
+        return this.snapshotService.delete( params );
+    }
+
+    @Override
+    public SnapshotResults listSnapshots()
+    {
+        return this.snapshotService.list();
+    }
+
+    @Override
+    public void deleteSnapshotRespository()
+    {
+        this.snapshotService.deleteSnapshotRepository();
     }
 
     @Override

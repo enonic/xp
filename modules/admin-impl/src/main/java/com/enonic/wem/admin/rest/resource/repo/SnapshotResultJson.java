@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.repo;
 
+import java.time.Instant;
 import java.util.Set;
 
 import com.enonic.wem.api.snapshot.SnapshotResult;
@@ -14,6 +15,7 @@ public class SnapshotResultJson
 
     private String name;
 
+    private Instant timestamp;
 
     private SnapshotResultJson()
     {
@@ -27,10 +29,10 @@ public class SnapshotResultJson
         snapshotResultJson.name = snapshotResult.getName();
         snapshotResultJson.reason = snapshotResult.getReason();
         snapshotResultJson.state = snapshotResult.getState().toString();
+        snapshotResultJson.timestamp = snapshotResult.getTimestamp();
 
         return snapshotResultJson;
     }
-
 
     public Set<String> getIndices()
     {
@@ -50,5 +52,10 @@ public class SnapshotResultJson
     public String getName()
     {
         return name;
+    }
+
+    public Instant getTimestamp()
+    {
+        return timestamp;
     }
 }

@@ -1,5 +1,6 @@
 .content-wizard-panel {
 
+  .thumbnail-uploader:before,
   .form-icon.invalid:before {
     position: absolute;
     content: "!";
@@ -14,6 +15,7 @@
     color: @admin-white;
     font-size: 14px;
     z-index: 1;
+    text-align: center;
   }
 
   .wizard-step-deck-panel {
@@ -44,12 +46,12 @@
     }
 
     &.toggle-live {
-        .live-form-panel {
-          width: 100% !important;
-        }
-        & > .splitter, .form-panel {
-          display: none;
-        }
+      .live-form-panel {
+        width: 100% !important;
+      }
+      & > .splitter, .form-panel {
+        display: none;
+      }
     }
 
     &.toggle-split {
@@ -69,7 +71,14 @@
 
     &:before {
       position: relative;
-      top: -5px;
+      top: 0px;
     }
+
+    &.icon-medium {
+      &:before {
+        font-size: 22px;
+      }
+    }
+
   }
 }

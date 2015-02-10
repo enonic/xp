@@ -10,10 +10,8 @@
     <url>http://www.enonic.com</url>
   </vendor>
 
-  <content>
-    <meta-step mixin="system:menu-item"/>
-    <meta-step mixin="mymodule:my-meta-mixin"/>
-  </content>
+  <x-data mixin="system:menu-item"/>
+  <x-data mixin="mymodule:my-meta-mixin"/>
 
   <config>
     <inline mixin="mymodule-1.0.0:other"/>

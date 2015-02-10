@@ -1,5 +1,6 @@
 package com.enonic.wem.api.snapshot;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
 
@@ -15,6 +16,8 @@ public class SnapshotResult
 
     private final String name;
 
+    private final Instant timestamp;
+
     public enum State
     {
         SUCCESS,
@@ -25,10 +28,11 @@ public class SnapshotResult
 
     private SnapshotResult( Builder builder )
     {
-        indices = builder.indices;
-        state = builder.state;
-        reason = builder.reason;
-        name = builder.name;
+        this.indices = builder.indices;
+        this.state = builder.state;
+        this.reason = builder.reason;
+        this.name = builder.name;
+        this.timestamp = builder.timestamp;
     }
 
     public Set<String> getIndices()
@@ -51,6 +55,11 @@ public class SnapshotResult
         return name;
     }
 
+    public Instant getTimestamp()
+    {
+        return timestamp;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -58,13 +67,15 @@ public class SnapshotResult
 
     public static final class Builder
     {
-        private Set<String> indices = Sets.newHashSet();
+        private final Set<String> indices = Sets.newHashSet();
 
         private State state;
 
         private String reason;
 
         private String name;
+
+        private Instant timestamp;
 
         private Builder()
         {
@@ -91,6 +102,12 @@ public class SnapshotResult
         public Builder name( final String name )
         {
             this.name = name;
+            return this;
+        }
+
+        public Builder timestamp( final Instant timestamp )
+        {
+            this.timestamp = timestamp;
             return this;
         }
 

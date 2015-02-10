@@ -19,14 +19,21 @@ module api.content {
             return "";
         }
 
+        resolveUnnamedDisplayName(object: ContentSummaryAndCompareStatus): string {
+            var contentSummary = object.getContentSummary();
+            return (contentSummary && contentSummary.getType()) ? contentSummary.getType().getLocalName() : "";
+        }
+
         resolveSubName(object: ContentSummaryAndCompareStatus, relativePath: boolean = false): string {
             var contentSummary = object.getContentSummary(),
                 uploadItem = object.getUploadItem();
 
             if (contentSummary) {
                 var contentName = contentSummary.getName(),
-                    invalid = !contentSummary.isValid() || !contentSummary.getDisplayName() || contentName.isUnnamed();
+                    invalid = !contentSummary.isValid() || !contentSummary.getDisplayName() || contentName.isUnnamed(),
+                    pendingDelete = contentSummary.getContentState().isPendingDelete();
                 this.toggleClass("invalid", invalid);
+                this.toggleClass("pending-delete", pendingDelete);
 
                 if (relativePath) {
                     return !contentName.isUnnamed() ? contentName.toString() :
@@ -54,7 +61,7 @@ module api.content {
 
         resolveIconUrl(object: ContentSummaryAndCompareStatus): string {
             var contentSummary = object.getContentSummary();
-            return !!contentSummary ? new ContentIconUrlResolver().setContent(contentSummary).setCrop(false).resolve() : "";
+            return !!contentSummary ? new ContentIconUrlResolver().setContent(contentSummary).resolve() : "";
         }
     }
 }

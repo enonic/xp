@@ -27,8 +27,8 @@ module app.wizard {
             var descMessage = new api.dom.H6El().addClass("desc-message").
                 setHtml("Password will be updated immediately after finishing");
 
-            this.appendChild(this.userPath);
-            this.appendChild(descMessage);
+            this.appendChildToContentPanel(this.userPath);
+            this.appendChildToContentPanel(descMessage);
 
             this.password = new PasswordGenerator();
             this.password.onInput(() => {
@@ -49,7 +49,7 @@ module app.wizard {
 
             var form = new api.ui.form.Form().add(fieldSet);
 
-            this.appendChild(form);
+            this.appendChildToContentPanel(form);
             this.initializeActions();
 
             OpenChangePasswordDialogEvent.on((event) => {

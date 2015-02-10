@@ -61,7 +61,7 @@ final class UpdateContentCommand
 
         Content editedContent = editContent( params.getEditor(), contentBeforeChange );
 
-        if ( contentBeforeChange.equals( editedContent ) )
+        if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null )
         {
             return contentBeforeChange;
         }
@@ -119,7 +119,10 @@ final class UpdateContentCommand
     private Content editContent( final ContentEditor editor, final Content original )
     {
         final EditableContent editableContent = new EditableContent( original );
-        editor.edit( editableContent );
+        if ( editor != null )
+        {
+            editor.edit( editableContent );
+        }
         return editableContent.build();
     }
 

@@ -30,8 +30,8 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.thumb.Thumbnail;
 
+import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMaxFilter;
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleSquareFilter;
-import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleWidthFilter;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/icon")
@@ -87,7 +87,7 @@ public final class ContentIconResource
                 final Media media = (Media) content;
                 if ( media.isImage() )
                 {
-                    resolvedImage = resolveResponseFromImageAttachment( media, size );
+                    resolvedImage = resolveResponseFromImageAttachment( media, size, crop );
                     if ( resolvedImage.isOK() )
                     {
                         return resolvedImage.toResponse();
@@ -108,7 +108,7 @@ public final class ContentIconResource
             final ByteSource binary = contentService.getBinary( content.getId(), contentThumbnail.getBinaryReference() );
             if ( binary != null )
             {
-                ImageFilter filter = crop ? ScaleSquareFilter : ScaleWidthFilter;
+                ImageFilter filter = crop ? ScaleSquareFilter : ScaleMaxFilter;
                 final BufferedImage thumbnailImage = helper.readImage( binary, size, filter );
                 return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
             }
@@ -116,7 +116,7 @@ public final class ContentIconResource
         return ResolvedImage.unresolved();
     }
 
-    private ResolvedImage resolveResponseFromImageAttachment( final Media media, final int size )
+    private ResolvedImage resolveResponseFromImageAttachment( final Media media, final int size, final boolean crop )
     {
         final Attachment attachment = media.getMediaAttachment();
         if ( attachment != null )
@@ -124,7 +124,8 @@ public final class ContentIconResource
             final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );
             if ( binary != null )
             {
-                final BufferedImage contentImage = helper.readImage( binary, size, ScaleSquareFilter );
+                ImageFilter filter = crop ? ScaleSquareFilter : ScaleMaxFilter;
+                final BufferedImage contentImage = helper.readImage( binary, size, filter );
                 return new ResolvedImage( contentImage, attachment.getMimeType() );
             }
         }

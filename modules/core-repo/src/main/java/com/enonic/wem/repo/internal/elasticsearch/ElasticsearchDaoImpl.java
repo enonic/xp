@@ -6,11 +6,15 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.admin.cluster.repositories.delete.DeleteRepositoryRequest;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
 import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
+import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
+import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
+import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
 import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
@@ -42,6 +46,7 @@ import com.enonic.wem.api.snapshot.RestoreParams;
 import com.enonic.wem.api.snapshot.RestoreResult;
 import com.enonic.wem.api.snapshot.SnapshotParams;
 import com.enonic.wem.api.snapshot.SnapshotResult;
+import com.enonic.wem.api.snapshot.SnapshotResults;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
@@ -197,10 +202,7 @@ public class ElasticsearchDaoImpl
 
     public SnapshotResult snapshot( final SnapshotParams params )
     {
-        if ( !snapshotRepositoryExists() )
-        {
-            registerRepository();
-        }
+        checkSnapshotRepository();
 
         final Set<String> indices = getSnapshotIndexNames( params.getRepositoryId(), params.isIncludeIndexedData() );
 
@@ -219,12 +221,9 @@ public class ElasticsearchDaoImpl
         return SnapshotResultFactory.create( createSnapshotResponse );
     }
 
-    public RestoreResult restore( final RestoreParams params )
+    public RestoreResult restoreSnapshot( final RestoreParams params )
     {
-        if ( !snapshotRepositoryExists() )
-        {
-            registerRepository();
-        }
+        checkSnapshotRepository();
 
         final Set<String> indices = getSnapshotIndexNames( params.getRepositoryId(), params.isIncludeIndexedData() );
 
@@ -244,6 +243,45 @@ public class ElasticsearchDaoImpl
         openIndices( indices );
 
         return RestoreResultFactory.create( response );
+    }
+
+    private void checkSnapshotRepository()
+    {
+        if ( !snapshotRepositoryExists() )
+        {
+            registerRepository();
+        }
+    }
+
+    @Override
+    public void deleteSnapshot( final String snapshotName )
+    {
+        checkSnapshotRepository();
+
+        final DeleteSnapshotRequest deleteSnapshotRequest = new DeleteSnapshotRequest( SNAPSHOT_REPOSITORY_NAME, snapshotName );
+
+        this.client.admin().cluster().deleteSnapshot( deleteSnapshotRequest ).actionGet();
+    }
+
+    @Override
+    public void deleteSnapshotRepository()
+    {
+        checkSnapshotRepository();
+
+        final DeleteRepositoryRequest deleteRepositoryRequest = new DeleteRepositoryRequest( SNAPSHOT_REPOSITORY_NAME );
+        this.client.admin().cluster().deleteRepository( deleteRepositoryRequest ).actionGet();
+    }
+
+    @Override
+    public SnapshotResults listSnapshots()
+    {
+        checkSnapshotRepository();
+
+        final GetSnapshotsRequest getSnapshotsRequest = new GetSnapshotsRequest( SNAPSHOT_REPOSITORY_NAME );
+
+        final GetSnapshotsResponse getSnapshotsResponse = this.client.admin().cluster().getSnapshots( getSnapshotsRequest ).actionGet();
+
+        return SnapshotResultsFactory.create( getSnapshotsResponse );
     }
 
     private Set<String> getSnapshotIndexNames( final RepositoryId repositoryId, final boolean includeIndexedData )

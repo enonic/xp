@@ -12,7 +12,7 @@ var expectedJson = {
     },
     "draft": true,
     "hasChildren": false,
-    "meta": {},
+    "x": {},
     "moduleConfigs": {
         "mymodule": {
             "Field": 42

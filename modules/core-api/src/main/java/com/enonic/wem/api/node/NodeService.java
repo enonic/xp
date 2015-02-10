@@ -3,10 +3,13 @@ package com.enonic.wem.api.node;
 import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.branch.Branch;
+import com.enonic.wem.api.snapshot.DeleteSnapshotParams;
+import com.enonic.wem.api.snapshot.DeleteSnapshotsResult;
 import com.enonic.wem.api.snapshot.RestoreParams;
 import com.enonic.wem.api.snapshot.RestoreResult;
 import com.enonic.wem.api.snapshot.SnapshotParams;
 import com.enonic.wem.api.snapshot.SnapshotResult;
+import com.enonic.wem.api.snapshot.SnapshotResults;
 import com.enonic.wem.api.util.BinaryReference;
 
 public interface NodeService
@@ -60,6 +63,12 @@ public interface NodeService
     SnapshotResult snapshot( SnapshotParams params );
 
     RestoreResult restore( RestoreParams params );
+
+    DeleteSnapshotsResult deleteSnapshot( final DeleteSnapshotParams param );
+
+    SnapshotResults listSnapshots();
+
+    void deleteSnapshotRespository();
 
     int applyPermissions( ApplyNodePermissionsParams params );
 

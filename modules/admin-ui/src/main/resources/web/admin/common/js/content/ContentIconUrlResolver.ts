@@ -4,15 +4,10 @@ module api.content {
 
         private content: ContentSummary;
 
-        private crop: boolean = true;
+        private crop: boolean;
 
         setContent(value: ContentSummary): ContentIconUrlResolver {
             this.content = value;
-            return this;
-        }
-
-        setCrop(value: boolean): ContentIconUrlResolver {
-            this.crop = value;
             return this;
         }
 
@@ -22,7 +17,12 @@ module api.content {
             if (!url) {
                 return null;
             }
-            url = this.appendParam("crop", this.crop ? "true" : "false", url);
+            // CMS-4677: using crop=false for images only by default
+            if (this.crop == undefined) {
+                this.crop = !this.content.isImage();
+            }
+
+            url = this.appendParam("crop", this.crop.toString(), url);
             return url;
         }
 

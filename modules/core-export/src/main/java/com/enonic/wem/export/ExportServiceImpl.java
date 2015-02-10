@@ -60,6 +60,7 @@ public class ExportServiceImpl
             nodeExportWriter( new FileExportWriter() ).
             exportHomePath( Paths.get( HomeDir.get().toString(), EXPORT_LOCATION_ROOT ) ).
             exportName( Strings.isNullOrEmpty( params.getExportName() ) ? generateExportName() : params.getExportName() ).
+            dryRun( params.isDryRun() ).
             build().
             execute() );
     }
@@ -77,6 +78,8 @@ public class ExportServiceImpl
             nodeService( this.nodeService ).
             exportRoot( params.getSource() ).
             importRoot( params.getTargetPath() ).
+            dryRun( params.isDryRun() ).
+            importNodeIds( params.isImportNodeids() ).
             build().
             execute() );
     }

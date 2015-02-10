@@ -18,7 +18,7 @@ var expectedJson = {
     "displayName": "My Content",
     "draft": true,
     "hasChildren": false,
-    "meta": {
+    "x": {
         "myschema": {
             "a": "1"
         }
