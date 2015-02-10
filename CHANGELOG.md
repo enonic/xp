@@ -6,6 +6,7 @@ Bugfixes:
  - Text Component - Editor selection hangs up (CMS-5059)
  - Text Component - When in edit mode context window should always hide (CMS-5075)
  - Enforced "allow-children" constraints from content types. (CMS-5050)
+ - Fixed issue updating references when duplicating content. (CMS-5141)
 
 Features:
 

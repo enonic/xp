@@ -27,6 +27,8 @@ module api.app.wizard {
 
         private pathEl: api.dom.SpanEl;
 
+        private nameElWrapper: api.dom.DivEl;
+
         private nameEl: api.ui.text.TextInput;
 
         private autoGenerateName: boolean = false;
@@ -37,6 +39,7 @@ module api.app.wizard {
 
         constructor(builder: WizardHeaderWithDisplayNameAndNameBuilder) {
             super();
+            this.addClass("wizard-header-with-display-name-and-name");
             this.displayNameGenerator = builder.displayNameGenerator;
             this.displayNameProgrammaticallySet = this.displayNameGenerator != null;
 
@@ -51,12 +54,14 @@ module api.app.wizard {
             this.pathEl.hide();
             this.appendChild(this.pathEl);
 
+            this.nameElWrapper = new api.dom.DivEl("name-wrapper");
             this.nameEl = api.ui.text.AutosizeTextInput.middle().setName('name').setForbiddenCharsRe(this.forbiddenChars);
             this.nameEl.setPlaceholder("<name>");
             this.nameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
                 this.notifyPropertyChanged("name", event.getOldValue(), event.getNewValue());
             });
-            this.appendChild(this.nameEl);
+            this.nameElWrapper.appendChild(this.nameEl);
+            this.appendChild(this.nameElWrapper);
 
             this.displayNameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
 
@@ -68,9 +73,9 @@ module api.app.wizard {
                     var generatedDisplayName = this.displayNameGenerator.execute();
 
                     this.displayNameProgrammaticallySet =
-                        generatedDisplayName == currentDisplayName ||
-                        generatedDisplayName.trim() === currentDisplayName ||
-                        api.util.StringHelper.isEmpty(currentDisplayName);
+                    generatedDisplayName == currentDisplayName ||
+                    generatedDisplayName.trim() === currentDisplayName ||
+                    api.util.StringHelper.isEmpty(currentDisplayName);
 
                     if (this.displayNameProgrammaticallySet) {
                         this.displayNameEl.addClass("generated");
@@ -170,9 +175,24 @@ module api.app.wizard {
             return api.Name.ensureValidName(value);
         }
 
-        setIgnoreGenerateStatusForName(value: boolean) {
+        private setIgnoreGenerateStatusForName(value: boolean) {
             this.ignoreGenerateStatusForName = value;
             this.updateNameGeneratedStatus();
+        }
+
+        disableNameGeneration(value: boolean) {
+            if (value) {
+                this.setAutoGenerationEnabled(false);
+                this.nameEl.getEl().setDisabled(true);
+                this.nameElWrapper.onClicked(() => {
+                    this.nameEl.getEl().setDisabled(false);
+                    this.nameEl.giveFocus();
+                });
+                this.nameEl.onBlur(() => {
+                    this.nameEl.getEl().setDisabled(true);
+                });
+            }
+            this.setIgnoreGenerateStatusForName(value);
         }
 
         private updateNameGeneratedStatus() {

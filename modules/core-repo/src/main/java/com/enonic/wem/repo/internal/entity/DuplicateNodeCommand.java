@@ -13,6 +13,7 @@ import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.UpdateNodeParams;
+import com.enonic.wem.api.util.Reference;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 
@@ -109,10 +110,11 @@ public class DuplicateNodeCommand
 
         for ( final Property property : node.data().getByValueType( ValueTypes.REFERENCE ) )
         {
-            if ( nodeReferenceUpdatesHolder.mustUpdate( property.getReference() ) )
+            final Reference reference = property.getReference();
+            if ( reference != null && nodeReferenceUpdatesHolder.mustUpdate( reference ) )
             {
                 changes = true;
-                data.setReference( property.getPath(), nodeReferenceUpdatesHolder.getNewReference( property.getReference() ) );
+                data.setReference( property.getPath(), nodeReferenceUpdatesHolder.getNewReference( reference ) );
             }
         }
 

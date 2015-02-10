@@ -330,6 +330,22 @@ module app.browse {
             return data.getId();
         }
 
+        deleteNodes(dataList: ContentSummaryAndCompareStatus[]): void {
+            var root = this.getRoot().getCurrentRoot(),
+                node: TreeNode<ContentSummaryAndCompareStatus>;
+
+            // Do not remove the items, that is not new and switched to "PENDING_DELETE"
+            dataList = dataList.filter((data) => {
+                node = root.findNode(this.getDataId(data));
+                if (node.getData().getCompareStatus() !== CompareStatus.NEW) {
+                    node.clearViewers();
+                    return false;
+                }
+                return true;
+            });
+            super.deleteNodes(dataList);
+        }
+
         updateContentNode(contentId: api.content.ContentId) {
             var root = this.getRoot().getCurrentRoot();
             var treeNode = root.findNode(contentId.toString());
@@ -371,7 +387,7 @@ module app.browse {
                 this.updateNode(data, item.getId());
 
                 this.resetAndRender();
-                api.notify.showFeedback(item.getMimeType() + " \"" + item.getName() + "\" created successfully");
+                api.notify.showFeedback(data.getContentSummary().getType().toString() + " \"" + item.getName() + "\" created successfully");
             });
             item.onFailed(() => {
                 this.deleteNode(data);

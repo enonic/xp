@@ -112,25 +112,21 @@ html, body {
       .icon-close2();
     }
 
-    a.tab-menu-logon-wrapper {
-      color: inherit;
+    .tab-menu-logon {
+      float: right;
+      margin-right: 10px;
+      margin-top: 0px;
 
-      .tab-menu-logon {
-        float: right;
-        margin-right: 10px;
-        margin-top: 0px;
-
-        .tab-menu-button {
-          background-color: transparent;
-        }
-
-        &.expanded {
-          .tab-menu-button {
-            background-color: @admin-bg-dark-gray;
-          }
-        }
-
+      .tab-menu-button {
+        background-color: transparent;
       }
+
+      &.expanded {
+        .tab-menu-button {
+          background-color: @admin-bg-dark-gray;
+        }
+      }
+
     }
 
   }
