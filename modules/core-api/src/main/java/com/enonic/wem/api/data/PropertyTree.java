@@ -392,8 +392,10 @@ public final class PropertyTree
     {
         return this.root.addStrings( name, value );
     }
-    public Property[] addStrings( final String name, final Collection<String> value ) {
-        return this.root.addStrings( name, value );
+
+    public Property[] addStrings( final String name, final Collection<String> values )
+    {
+        return this.root.addStrings( name, values );
     }
 
     // setting html part

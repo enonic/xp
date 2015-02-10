@@ -191,8 +191,9 @@ public final class ContentDataSerializer
             final Metadatas.Builder metadatasBuilder = Metadatas.builder();
             for ( final String metadataStringName : metadataSet.getPropertyNames() )
             {
-                final MixinName metadataName = metadataStringName.contains( MixinName.getSeparator() ) ? resolveMetadataByMixinName(
-                    MixinName.from( metadataStringName ) ) : resolveMetadataByLocalName( metadataStringName );
+                final MixinName metadataName = metadataStringName.contains( MixinName.SEPARATOR )
+                    ? resolveMetadataByMixinName( MixinName.from( metadataStringName ) )
+                    : resolveMetadataByLocalName( metadataStringName );
                 if ( metadataName != null )
                 {
                     metadatasBuilder.add( new Metadata( metadataName, metadataSet.getSet( metadataStringName ).toTree() ) );

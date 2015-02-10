@@ -657,15 +657,11 @@ public final class PropertySet
         return properties;
     }
 
-    public Property[] addStrings( final String name, final Collection<String> collValue )
+    public Property[] addStrings( final String name, final Collection<String> values )
     {
-        Object[] values = collValue.toArray();
-        final Property[] properties = new Property[values.length];
-        for ( int i = 0; i < values.length; i++ )
-        {
-            properties[i] = this.addProperty( name, Value.newString( String.valueOf( values[i] ) ) );
-        }
-        return properties;
+        return values.stream().
+            map( ( value ) -> addProperty( name, Value.newString( value ) ) ).
+            toArray( Property[]::new );
     }
 
     // setting xml

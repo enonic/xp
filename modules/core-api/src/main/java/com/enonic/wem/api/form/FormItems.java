@@ -38,7 +38,8 @@ public final class FormItems
         return containerFormItem.getPath();
     }
 
-    public FormItem getItemByName(String name) {
+    public FormItem getItemByName( String name )
+    {
         return this.formItemByName.get( name );
     }
 

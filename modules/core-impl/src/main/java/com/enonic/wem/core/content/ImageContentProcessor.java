@@ -3,10 +3,8 @@ package com.enonic.wem.core.content;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
@@ -19,15 +17,11 @@ import com.enonic.wem.api.content.Metadatas;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
-import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.data.PropertyTreeJson;
 import com.enonic.wem.api.data.ValueTypes;
 import com.enonic.wem.api.form.FormItem;
-import com.enonic.wem.api.form.FormItemPath;
 import com.enonic.wem.api.form.FormItemType;
 import com.enonic.wem.api.form.Input;
-import com.enonic.wem.api.form.inputtype.DateTime;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.image.filter.ScaleWidthFilter;
 import com.enonic.wem.api.media.MediaInfo;
@@ -43,8 +37,6 @@ import com.enonic.wem.api.util.ImageHelper;
 
 public final class ImageContentProcessor
 {
-    private static final String METADATA_PROPERTY_NAME = "metadata";
-
     private MixinService mixinService;
 
     private MediaInfo mediaInfo;
@@ -172,11 +164,11 @@ public final class ImageContentProcessor
 
         final Metadatas.Builder metadatasBuilder = Metadatas.builder();
 
-        Map<MixinName, Metadata> metadataMap = new HashMap<MixinName, Metadata>();
+        Map<MixinName, Metadata> metadataMap = new HashMap<>();
 
         for ( Map.Entry<String, Collection<String>> entry : mediaInfo.getMetadata().asMap().entrySet() )
         {
-            for ( Mixin mixin : mixins.getList() )
+            for ( Mixin mixin : mixins )
             {
 
                 final String formItemName = TikaFieldNameFormatter.getConformityName( entry.getKey() );
@@ -285,12 +277,13 @@ public final class ImageContentProcessor
             {
                 if ( "image-info".equals( metadata.getName().getLocalName() ) )
                 {
-                    if ( mediaInfo.getMetadata().get( "tiffImagelength" ).size() > 0 &&
-                        mediaInfo.getMetadata().get( "tiffImagewidth" ).size() > 0 )
+                    final Collection<String> tiffImageLengths = mediaInfo.getMetadata().get( "tiffImagelength" );
+                    final Collection<String> tiffImageWidths = mediaInfo.getMetadata().get( "tiffImagewidth" );
+                    if ( tiffImageLengths.size() > 0 && tiffImageWidths.size() > 0 )
                     {
-                        metadata.getData().addLong( "pixelSize", Long.valueOf(
-                            Integer.valueOf( mediaInfo.getMetadata().get( "tiffImagelength" ).toArray()[0].toString() ) *
-                                Integer.valueOf( mediaInfo.getMetadata().get( "tiffImagewidth" ).toArray()[0].toString() ) ) );
+                        final Integer tiffImageLength = Integer.valueOf( tiffImageLengths.toArray()[0].toString() );
+                        final Integer tiffImageWidth = Integer.valueOf( tiffImageWidths.toArray()[0].toString() );
+                        metadata.getData().addLong( "pixelSize", (long) tiffImageLength * tiffImageWidth );
                     }
                 }
                 if ( "gps-info".equals( metadata.getName().getLocalName() ) )

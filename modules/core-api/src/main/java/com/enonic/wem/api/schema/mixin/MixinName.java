@@ -10,6 +10,8 @@ public final class MixinName
     extends ModuleBasedName
     implements Comparable<MixinName>
 {
+    public final static String SEPARATOR = ModuleBasedName.SEPARATOR;
+
     private MixinName( final ModuleKey moduleKey, final String localName )
     {
         super( moduleKey, localName );
@@ -25,10 +27,6 @@ public final class MixinName
         final String moduleKey = StringUtils.substringBefore( mixinName, SEPARATOR );
         final String localName = StringUtils.substringAfter( mixinName, SEPARATOR );
         return new MixinName( ModuleKey.from( moduleKey ), localName );
-    }
-
-    public static String getSeparator() {
-        return SEPARATOR;
     }
 
     @Override
