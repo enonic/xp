@@ -8,6 +8,7 @@ import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.wiring.BundleRevision;
@@ -32,6 +33,14 @@ final class BundleWatcher
     {
         this.wiring = wiring;
         this.map = Maps.newConcurrentMap();
+    }
+
+    public void addAll( final BundleContext context )
+    {
+        for ( final Bundle bundle : context.getBundles() )
+        {
+            addBundle( bundle );
+        }
     }
 
     @Override

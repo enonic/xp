@@ -32,6 +32,7 @@ public final class WatchActivator
 
         final FrameworkWiring wiring = context.getBundle().adapt( FrameworkWiring.class );
         final BundleWatcher watcher = new BundleWatcher( wiring );
+        watcher.addAll( context );
 
         this.timer = new Timer( "BundleWatcher" );
         this.timer.schedule( watcher, interval, interval );
