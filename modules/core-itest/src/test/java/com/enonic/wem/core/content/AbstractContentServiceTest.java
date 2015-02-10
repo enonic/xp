@@ -41,7 +41,10 @@ import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchServ
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
+import com.enonic.wem.repo.internal.index.IndexType;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
+import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 
 public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
@@ -206,5 +209,18 @@ public class AbstractContentServiceTest
             build() );
     }
 
+    protected void printContentRepoIndex()
+    {
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getName() );
+    }
 
+    protected void printBranchIndex()
+    {
+        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.BRANCH.getName() );
+    }
+
+    protected void printVersionIndex()
+    {
+        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
+    }
 }

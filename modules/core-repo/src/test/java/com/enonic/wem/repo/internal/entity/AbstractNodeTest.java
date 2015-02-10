@@ -235,17 +235,17 @@ public abstract class AbstractNodeTest
             execute();
     }
 
-    void printContentRepoIndex()
+    protected void printContentRepoIndex()
     {
         printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getName() );
     }
 
-    void printBranchIndex()
+    protected void printBranchIndex()
     {
         printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.BRANCH.getName() );
     }
 
-    void printVersionIndex()
+    protected void printVersionIndex()
     {
         printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
     }

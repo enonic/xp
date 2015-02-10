@@ -80,7 +80,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    @Ignore(value = "This fails on my maching (srs). Need to investigate.")
+    @Ignore(value = "This fails on my machine (srs). Need to investigate.")
     public void create_media_image()
         throws Exception
     {
@@ -90,6 +90,8 @@ public class ContentServiceImplTest_create
             parent( ContentPath.ROOT );
 
         final Content content = this.contentService.create( createMediaParams );
+
+        printContentRepoIndex();
 
         final Content storedContent = this.contentService.getById( content.getId() );
 
