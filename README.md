@@ -1,31 +1,21 @@
-# Enonic WEM Community Edition
+# Enonic XP Community Edition
 
-Welcome to the home of Enonic WEM Community Edition. Here you will find all source code for the product.
+Welcome to the home of Enonic XP Community Edition. Here you will find all source code for the product.
 
 ## Building 
 
 Before trying to build the project, you need to verify that the following software are installed:
 
 * Java 8 for building and running.
-* [Apache Maven 3.x](http://maven.apache.org/download.cgi).
-* [NodeJS](http://nodejs.org/download/).
-* Node Package Manager (npm) - Usually installed together with NodeJS.
+* Gradle 2.x build system.
 
 Build all code and run all tests including integration tests:
 
-    mvn clean install
-
-Build all code skipping integration tests:
-
-    mvn -DskipITs clean install
+    gradle build
 
 Build all code skipping all tests:
 
-    mvn -DskipTests clean install
-
-Build all including javadoc and distribution (used for CI build):
-
-    mvn -P all clean install
+    gradle build -x test
 
 ## License
 
