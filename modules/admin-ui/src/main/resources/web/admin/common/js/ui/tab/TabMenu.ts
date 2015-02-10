@@ -40,9 +40,9 @@ module api.ui.tab {
             this.menuEl = new api.dom.UlEl("menu");
             this.appendChild(this.menuEl);
 
-            api.dom.Body.get().onClicked((event: MouseEvent) => new HideTabMenuEvent(this).fire());
-            HideTabMenuEvent.on((event) => {
-                if (event.getTabMenu() !== this) {
+
+            api.dom.Body.get().onClicked((event: MouseEvent) => {
+                if (!this.getEl().contains(<HTMLElement> event.target)) {
                     this.hideMenu();
                 }
             });
