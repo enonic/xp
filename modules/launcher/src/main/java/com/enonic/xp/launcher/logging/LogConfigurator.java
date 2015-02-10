@@ -57,7 +57,6 @@ public final class LogConfigurator
         throws Exception
     {
         final JoranConfigurator configurator = new JoranConfigurator();
-        configurator.getInterpretationContext().addSubstitutionProperties( this.env.getAsProperties() );
         configurator.setContext( context );
         context.reset();
         configurator.doConfigure( file );
