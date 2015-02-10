@@ -24,7 +24,7 @@ public final class XmlContentTypeMapper
         result.setIsAbstract( object.isAbstract() );
         result.setIsFinal( object.isFinal() );
         result.setAllowChildContent( object.allowChildContent() );
-        for(MixinName mixinName : object.getMetadata().getSet()) {
+        for(MixinName mixinName : object.getMetadata().getList()) {
             XmlMetadata metadata = new XmlMetadata(  );
             metadata.setMixin( Joiner.on( SEPARATOR ).join( mixinName.getModuleKey(), mixinName.getLocalName() ) );
             result.getXData().add( metadata );

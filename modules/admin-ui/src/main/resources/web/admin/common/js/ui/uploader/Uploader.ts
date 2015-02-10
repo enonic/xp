@@ -66,7 +66,7 @@ module api.ui.uploader {
         private uploadFailedListeners: { (event: FileUploadFailedEvent<MODEL>):void }[] = [];
         private uploadResetListeners: {():void }[] = [];
 
-        public static debug: boolean = true;
+        public static debug: boolean = false;
 
         constructor(config: UploaderConfig) {
             super("div", "uploader");
@@ -134,11 +134,7 @@ module api.ui.uploader {
                 }
             }
 
-            this.onRemoved((event) => {
-                if (this.uploader) {
-                    this.uploader.destroy();
-                }
-            });
+            this.onRemoved((event) => this.destroyHandler.call(this, event));
         }
 
         private initHandler() {
@@ -153,6 +149,16 @@ module api.ui.uploader {
                 } else {
                     this.setDropzoneVisible();
                 }
+            }
+        }
+
+        private destroyHandler() {
+            if (Uploader.debug) {
+                console.log('Destroying uploader', this);
+            }
+            if (this.uploader) {
+                this.uploader.destroy();
+                this.uploader = null;
             }
         }
 
@@ -204,7 +210,7 @@ module api.ui.uploader {
 
         setValue(value: string): Uploader<MODEL> {
             if (Uploader.debug) {
-                console.log('Setting uploader value', value);
+                console.log('Setting uploader value', value, this);
             }
             this.value = value;
 
@@ -332,10 +338,15 @@ module api.ui.uploader {
                 if (Uploader.debug) {
                     console.log('Disabling uploader', this);
                 }
-                this.uploader.destroy();
-                this.uploader = null;
+                this.destroyHandler();
+
             } else if (enabled && !this.uploader) {
+
+                if (Uploader.debug) {
+                    console.log('Enabling uploader', this);
+                }
                 if (this.config.deferred) {
+
                     if (this.isVisible()) {
                         this.initHandler();
                     } else {
@@ -345,6 +356,7 @@ module api.ui.uploader {
                         this.onShown((event) => this.initHandler.call(this, event));
                     }
                 } else {
+
                     if (this.isRendered()) {
                         this.initHandler();
                     } else {
@@ -374,6 +386,40 @@ module api.ui.uploader {
                 }
             }
             return null;
+        }
+
+        private isFolder(file: PluploadFile): boolean {
+            // there's no way to detect if uploaded file is a folder so this is as close as we can get
+            return file.size % 4096 == 0 && api.util.StringHelper.isEmpty(file.type);
+        }
+
+        private validateFiles(up, files: PluploadFile[]) {
+            // Check for folders
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                if (this.isFolder(file)) {
+                    if (Uploader.debug) {
+                        console.log('Removing folder [' + file.name + '] because it can\'t be uploaded', this);
+                    }
+
+                    files.splice(i, 1);
+                    up.splice(i, 1);
+                    api.notify.NotifyManager.get().showWarning('Folder [' + file.name + '] upload is not supported yet');
+                }
+            }
+
+            // Check for max allowed occurrences
+            if (this.config.maximumOccurrences > 0 && files.length > this.config.maximumOccurrences) {
+                if (Uploader.debug) {
+                    console.log('Max ' + this.config.maximumOccurrences + ' files allowed, removing the rest', this);
+                }
+
+                files.splice(this.config.maximumOccurrences);
+                up.splice(this.config.maximumOccurrences);
+                api.notify.NotifyManager.get().showWarning('Max ' + this.config.maximumOccurrences + ' files are allowed');
+            }
+
+            return files.length > 0;
         }
 
         private initUploader(elId: string) {
@@ -408,8 +454,11 @@ module api.ui.uploader {
                     console.log('uploader files added', up, files);
                 }
 
-                if (this.config.maximumOccurrences > 0 && files.length > this.config.maximumOccurrences) {
-                    files.splice(this.config.maximumOccurrences);
+                if (!this.validateFiles(up, files)) {
+                    if (Uploader.debug) {
+                        console.log('no valid files for upload found', up, files);
+                    }
+                    return;
                 }
 
                 files.forEach((file: PluploadFile) => {
@@ -483,6 +532,8 @@ module api.ui.uploader {
                     api.DefaultErrorHandler.handle(error);
                 } catch (e) {
                     console.warn("Failed to parse the response", response, e);
+                    var files = up.files.map((file: PluploadFile) => file.name);
+                    api.notify.NotifyManager.get().showError("File(s) [" + files.join(', ') + "] were not uploaded");
                 }
 
                 var uploadItem = this.findUploadItemById(response.file.id);

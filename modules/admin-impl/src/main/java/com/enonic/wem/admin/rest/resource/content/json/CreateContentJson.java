@@ -14,6 +14,7 @@ import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.Metadata;
+import com.enonic.wem.api.content.Metadatas;
 import com.enonic.wem.api.data.PropertyArrayJson;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.data.PropertyTreeJson;
@@ -43,12 +44,12 @@ public final class CreateContentJson
         final PropertyTree contentData = PropertyTreeJson.fromJson( dataJsonList );
         paramsBuilder.contentData( contentData );
 
-        final List<Metadata> metadataList = new ArrayList<>();
+        final Metadatas.Builder metadatasBuilder = Metadatas.builder();
         for ( MetadataJson metadataJson : metadataJsonList )
         {
-            metadataList.add( metadataJson.getMetadata() );
+            metadatasBuilder.add( metadataJson.getMetadata() );
         }
-        paramsBuilder.metadata( metadataList );
+        paramsBuilder.metadata( metadatasBuilder.build());
         paramsBuilder.inheritPermissions( true );
 
         this.createContent = paramsBuilder.build();

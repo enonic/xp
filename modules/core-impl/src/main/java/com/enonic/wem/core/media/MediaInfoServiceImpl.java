@@ -33,7 +33,6 @@ public final class MediaInfoServiceImpl
     public MediaInfo parseMediaInfo( final ByteSource byteSource )
     {
         final MediaInfo.Builder builder = MediaInfo.create();
-
         final Metadata metadata = parseMetadata( byteSource );
 
         // Get the detected media-type
@@ -45,6 +44,14 @@ public final class MediaInfoServiceImpl
         {
             final String value = metadata.get( name );
             builder.addMetadata( name, value );
+        }
+        try
+        {
+            builder.addMetadata( MediaInfo.MEDIA_SOURCE_SIZE, String.valueOf( byteSource.size() ) );
+        }
+        catch ( IOException e )
+        {
+            throw Exceptions.unchecked( e );
         }
 
         return builder.build();

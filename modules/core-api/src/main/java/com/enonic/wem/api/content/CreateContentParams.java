@@ -16,7 +16,7 @@ public final class CreateContentParams
 {
     private final PropertyTree data;
 
-    private final List<Metadata> metadata;
+    private final Metadatas metadata;
 
     private final ContentTypeName type;
 
@@ -72,7 +72,7 @@ public final class CreateContentParams
         return data;
     }
 
-    public List<Metadata> getMetadata()
+    public Metadatas getMetadata()
     {
         return metadata;
     }
@@ -136,7 +136,7 @@ public final class CreateContentParams
     {
         private PropertyTree data;
 
-        private List<Metadata> metadata;
+        private Metadatas metadata;
 
         private ContentTypeName type;
 
@@ -187,7 +187,7 @@ public final class CreateContentParams
             return this;
         }
 
-        public Builder metadata( final List<Metadata> metadata )
+        public Builder metadata( final Metadatas metadata )
         {
             this.metadata = metadata;
             return this;

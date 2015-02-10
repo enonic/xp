@@ -189,16 +189,18 @@ public final class ContentDataSerializer
         if ( metadataSet != null )
         {
             final Metadatas.Builder metadatasBuilder = Metadatas.builder();
-            for ( final String metadataLocalName : metadataSet.getPropertyNames() )
+            for ( final String metadataStringName : metadataSet.getPropertyNames() )
             {
-                final MixinName metadataName = resolveMetadataName( metadataLocalName );
+                final MixinName metadataName = metadataStringName.contains( MixinName.SEPARATOR )
+                    ? resolveMetadataByMixinName( MixinName.from( metadataStringName ) )
+                    : resolveMetadataByLocalName( metadataStringName );
                 if ( metadataName != null )
                 {
-                    metadatasBuilder.add( new Metadata( metadataName, metadataSet.getSet( metadataLocalName ).toTree() ) );
+                    metadatasBuilder.add( new Metadata( metadataName, metadataSet.getSet( metadataStringName ).toTree() ) );
                 }
                 else
                 {
-                    LOG.warn( "Mixin [" + metadataLocalName + "] could not be found" );
+                    LOG.warn( "Mixin [" + metadataStringName + "] could not be found" );
                 }
             }
             builder.metadata( metadatasBuilder.build() );
@@ -224,9 +226,15 @@ public final class ContentDataSerializer
         }
     }
 
-    private MixinName resolveMetadataName( final String metadataLocalName )
+    private MixinName resolveMetadataByLocalName( final String metadataLocalName )
     {
         final Mixin mixin = mixinService.getByLocalName( metadataLocalName );
+        return mixin != null ? mixin.getName() : null;
+    }
+
+    private MixinName resolveMetadataByMixinName( final MixinName name )
+    {
+        final Mixin mixin = mixinService.getByName( name );
         return mixin != null ? mixin.getName() : null;
     }
 

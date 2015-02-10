@@ -97,6 +97,7 @@ module api.ui.text {
         }
 
         reset(): FileInput {
+            this.textInput.reset();
             this.mediaUploader.reset();
             return this;
         }

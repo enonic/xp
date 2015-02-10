@@ -54,6 +54,9 @@ import com.enonic.wem.api.content.UpdateMediaParams;
 import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.ModuleConfigsDataSerializer;
 import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.exception.SystemException;
@@ -553,7 +556,15 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             build();
 
-        return CompletableFuture.supplyAsync( applyPermissionsCommand::execute, applyPermissionsExecutor );
+        final Context context = ContextAccessor.current();
+
+        return CompletableFuture.supplyAsync( () -> {
+            // set current context as background thread context
+            final Context futureContext = ContextBuilder.from( context ).build();
+
+            return futureContext.callWith( applyPermissionsCommand::execute );
+
+        }, applyPermissionsExecutor );
     }
 
     @Override

@@ -84,11 +84,11 @@ public final class UpdateContentJson
 
     private Metadatas parseMetadata( final List<MetadataJson> metadataJsonList )
     {
-        final List<Metadata> metadataList = new ArrayList<>();
+        final Metadatas.Builder metadatasBuilder = Metadatas.builder();
         for ( MetadataJson metadataJson : metadataJsonList )
         {
-            metadataList.add( metadataJson.getMetadata() );
+            metadatasBuilder.add( metadataJson.getMetadata() );
         }
-        return Metadatas.from( metadataList );
+        return metadatasBuilder.build();
     }
 }

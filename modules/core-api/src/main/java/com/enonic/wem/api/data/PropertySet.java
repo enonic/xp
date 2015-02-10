@@ -657,6 +657,13 @@ public final class PropertySet
         return properties;
     }
 
+    public Property[] addStrings( final String name, final Collection<String> values )
+    {
+        return values.stream().
+            map( ( value ) -> addProperty( name, Value.newString( value ) ) ).
+            toArray( Property[]::new );
+    }
+
     // setting xml
 
     public Property setXml( final String path, final String value )

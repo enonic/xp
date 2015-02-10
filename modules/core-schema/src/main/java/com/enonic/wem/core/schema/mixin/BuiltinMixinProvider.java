@@ -22,17 +22,31 @@ import com.enonic.wem.api.schema.mixin.Mixins;
 public final class BuiltinMixinProvider
     implements MixinProvider
 {
-    private static MixinName METADATA_NAME = MixinName.from( ModuleKey.from( "media" ), "image-metadata" );
+    public static MixinName IMAGE_INFO_METADATA_NAME = MixinName.from( ModuleKey.from( "media" ), "image-info" );
+    public static MixinName PHOTO_INFO_METADATA_NAME = MixinName.from( ModuleKey.from( "media" ), "photo-info" );
+    public static MixinName GPS_INFO_METADATA_NAME = MixinName.from( ModuleKey.from( "base" ), "gps-info" );
 
     private static final String MIXINS_FOLDER = "mixins";
 
-    private static final Mixin METADATA = Mixin.newMixin().
-        name( METADATA_NAME ).
-        displayName( "Metadata" ).
-        formItems( createMenuMixinForm() ).
+    private static final Mixin IMAGE_METADATA = Mixin.newMixin().
+        name( IMAGE_INFO_METADATA_NAME ).
+        displayName( "Image Info" ).
+        formItems( createImageInfoMixinForm() ).
         build();
 
-    private static final Mixin[] MIXINS = {METADATA};
+    private static final Mixin PHOTO_METADATA = Mixin.newMixin().
+        name( PHOTO_INFO_METADATA_NAME ).
+        displayName( "Photo Info" ).
+        formItems( createPhotoInfoMixinForm() ).
+        build();
+
+    private static final Mixin GPS_METADATA = Mixin.newMixin().
+        name( GPS_INFO_METADATA_NAME ).
+        displayName( "Gps Info" ).
+        formItems( createGpsInfoMixinForm() ).
+        build();
+
+    private static final Mixins MIXINS = Mixins.from( IMAGE_METADATA, PHOTO_METADATA, GPS_METADATA );
 
     private final Mixins mixins;
 
@@ -41,16 +55,73 @@ public final class BuiltinMixinProvider
         this.mixins = Mixins.from( generateSystemMixins() );
     }
 
-    private static FormItems createMenuMixinForm()
+    private static FormItems createImageInfoMixinForm()
     {
         final FormItems formItems = new FormItems();
-        formItems.add( Input.newInput().
-            name( "orientation" ).
-            label( "Orientation" ).
-            inputType( InputTypes.TEXT_LINE ).
-            occurrences( 0, 1 ).
-            build() );
+        formItems.add( createLong( "pixelSize", "Size (px)" ).occurrences( 0, 1 ).build() );
+        formItems.add( createLong( "imageHeight", "Height (px)" ).occurrences( 0, 1 ).build() );
+        formItems.add( createLong( "imageWidth", "Width (px)" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "contentType", "Content Type" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "description", "Description" ).occurrences( 0, 1 ).build());
+        formItems.add(createLong( "bytesize", "Size (bytes)" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "colorSpace", "Color Space" ).occurrences( 0, 0 ).build());
+        formItems.add(createTextLine( "fileSource", "File Source" ).occurrences( 0, 1 ).build());
+
         return formItems;
+    }
+
+    private static FormItems createGpsInfoMixinForm()
+    {
+        final FormItems formItems = new FormItems();
+        formItems.add(createGeoPoint( "geoPoint", "Geo Point" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "altitude", "Altitude" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "direction", "Direction" ).occurrences( 0, 1 ).build());
+
+        return formItems;
+    }
+
+    private static FormItems createPhotoInfoMixinForm()
+    {
+        final FormItems formItems = new FormItems();
+        formItems.add(createDate( "date", "Date" ).occurrences( 0, 1 ).build() );
+        formItems.add(createTextLine( "make", "Make" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "model", "Model" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "lens", "Lense" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "iso", "ISO" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "focalLength", "Focal Length" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "focalLength35", "Focal Length 35mm" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "exposureBias", "Exposure Bias" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "aperture", "Aperture" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "shutterTime", "Shutter Time" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "flash", "Flash" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "autoFlashCompensation", "Auto Flash Compensation" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "whiteBalance", "White Balance" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "exposureProgram", "Exposure Program" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "shootingMode", "Shooting Mode" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "meteringMode", "Metering Mode" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "exposureMode", "Exposure Mode" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "focusDistance", "Focus Distance" ).occurrences( 0, 1 ).build());
+        formItems.add(createTextLine( "orientation", "Orientation" ).occurrences( 0, 1 ).build());
+
+        return formItems;
+    }
+
+    private static Input.Builder createTextLine( final String name, final String label )
+    {
+        return Input.newInput().inputType( InputTypes.TEXT_LINE ).label( label ).name( name ).immutable( true );
+    }
+
+    private static Input.Builder createLong( final String name, final String label )
+    {
+        return Input.newInput().inputType( InputTypes.LONG ).label( label ).name( name ).immutable( true );
+    }
+    private static Input.Builder createDate( final String name, final String label )
+    {
+        return Input.newInput().inputType( InputTypes.DATE_TIME ).label( label ).name( name ).immutable( true );
+    }
+    private static Input.Builder createGeoPoint( final String name, final String label )
+    {
+        return Input.newInput().inputType( InputTypes.GEO_POINT).label( label ).name( name ).immutable( true );
     }
 
     private List<Mixin> generateSystemMixins()

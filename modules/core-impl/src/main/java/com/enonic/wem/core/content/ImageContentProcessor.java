@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
@@ -11,28 +12,45 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.content.ContentEditor;
 import com.enonic.wem.api.content.CreateContentParams;
+import com.enonic.wem.api.content.Metadata;
+import com.enonic.wem.api.content.Metadatas;
 import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.attachment.CreateAttachments;
-import com.enonic.wem.api.data.PropertySet;
+import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.data.ValueTypes;
+import com.enonic.wem.api.form.FormItem;
+import com.enonic.wem.api.form.FormItemType;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.image.filter.ScaleWidthFilter;
 import com.enonic.wem.api.media.MediaInfo;
+import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.util.Exceptions;
+import com.enonic.wem.api.util.GeoPoint;
 import com.enonic.wem.api.util.ImageHelper;
 
 public final class ImageContentProcessor
 {
-    private static final String METADATA_PROPERTY_NAME = "metadata";
+    private MixinService mixinService;
 
     private MediaInfo mediaInfo;
+
+    private ContentType contentType;
 
     private static final Scale[] scales =
         new Scale[]{new Scale( "small", 256 ), new Scale( "medium", 512 ), new Scale( "large", 1024 ), new Scale( "extra-large", 2048 )};
 
-    public ImageContentProcessor( final MediaInfo mediaInfo )
+    public ImageContentProcessor( final Builder builder )
     {
-        this.mediaInfo = mediaInfo;
+        this.mediaInfo = builder.mediaInfo;
+        this.contentType = builder.contentType;
+        this.mixinService = builder.mixinService;
     }
 
     public CreateContentParams processCreate( final CreateContentParams params )
@@ -54,12 +72,12 @@ public final class ImageContentProcessor
         {
             throw Exceptions.unchecked( e );
         }
+        Mixins contentMixins = mixinService.getByContentType( contentType );
 
-        final PropertySet rootSet = params.getData().getRoot();
-        final PropertySet metadataSet = rootSet.addSet( METADATA_PROPERTY_NAME );
+        Metadatas metadatas = null;
         if ( mediaInfo != null )
         {
-            applyMetadata( metadataSet, mediaInfo );
+            metadatas = extractMetadata( mediaInfo, contentMixins );
         }
 
         final CreateAttachments.Builder builder = CreateAttachments.builder();
@@ -67,7 +85,7 @@ public final class ImageContentProcessor
         builder.add( scaleImages( sourceImage, sourceAttachment ) );
 
         return CreateContentParams.create( params ).
-            createAttachments( builder.build() ).
+            createAttachments( builder.build() ).metadata( metadatas ).
             build();
     }
 
@@ -127,16 +145,10 @@ public final class ImageContentProcessor
         {
             editor = editable -> {
 
-                final PropertySet metadataSet;
-                if ( editable.data.hasProperty( METADATA_PROPERTY_NAME ) )
-                {
-                    metadataSet = editable.data.getSet( METADATA_PROPERTY_NAME );
-                }
-                else
-                {
-                    metadataSet = editable.data.addSet( METADATA_PROPERTY_NAME );
-                }
-                applyMetadata( metadataSet, mediaInfo );
+                Mixins contentMixins = mixinService.getByContentType( contentType );
+                Metadatas metadatas = extractMetadata( mediaInfo, contentMixins );
+                editable.metadata = metadatas;
+
             };
         }
         else
@@ -146,13 +158,143 @@ public final class ImageContentProcessor
         return new ProcessUpdateResult( processedCreateAttachments, editor );
     }
 
-    private void applyMetadata( final PropertySet parent, MediaInfo mediaInfo )
+
+    private Metadatas extractMetadata( MediaInfo mediaInfo, Mixins mixins )
     {
+
+        final Metadatas.Builder metadatasBuilder = Metadatas.builder();
+
+        Map<MixinName, Metadata> metadataMap = new HashMap<>();
+
         for ( Map.Entry<String, Collection<String>> entry : mediaInfo.getMetadata().asMap().entrySet() )
         {
-            for ( String value : entry.getValue() )
+            for ( Mixin mixin : mixins )
             {
-                parent.addString( entry.getKey(), value );
+
+                final String formItemName = TikaFieldNameFormatter.getConformityName( entry.getKey() );
+                final FormItem formItem = mixin.getFormItems().getItemByName( formItemName );
+                if ( formItem != null )
+                {
+
+                    Metadata metadata = metadataMap.get( mixin.getName() );
+
+                    if ( metadata == null )
+                    {
+                        metadata = new Metadata( mixin.getName(), new PropertyTree() );
+                        metadataMap.put( mixin.getName(), metadata );
+                        metadatasBuilder.add( metadata );
+                    }
+                    if ( FormItemType.INPUT.equals( formItem.getType() ) )
+                    {
+                        Input input = (Input) formItem;
+                        if ( InputTypes.DATE_TIME.equals( input.getInputType() ) )
+                        {
+                            metadata.getData().addLocalDateTime( formItemName,
+                                                                 ValueTypes.LOCAL_DATE_TIME.convert( entry.getValue().toArray()[0] ) );
+                        }
+                        else
+                        {
+                            metadata.getData().addStrings( formItemName, entry.getValue() );
+                        }
+                    }
+                }
+
+            }
+        }
+        TikaFieldNameFormatter.fillComputedFormItems( metadataMap.values(), mediaInfo );
+
+        return metadatasBuilder.build();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+
+        private MediaInfo mediaInfo;
+
+        private ContentType contentType;
+
+        private MixinService mixinService;
+
+        public Builder mediaInfo( final MediaInfo mediaInfo )
+        {
+            this.mediaInfo = mediaInfo;
+            return this;
+        }
+
+        public Builder contentType( final ContentType contentType )
+        {
+            this.contentType = contentType;
+            return this;
+        }
+
+        public Builder mixinService( final MixinService mixinService )
+        {
+            this.mixinService = mixinService;
+            return this;
+        }
+
+        public ImageContentProcessor build()
+        {
+            return new ImageContentProcessor( this );
+        }
+    }
+
+    private static class TikaFieldNameFormatter
+    {
+        private static final Map<String, String> fieldConformityMap = new HashMap<>();
+
+        static
+        {
+            fieldConformityMap.put( "tiffImagelength", "imageHeight" );
+            fieldConformityMap.put( "tiffImagewidth", "imageWidth" );
+            fieldConformityMap.put( "exposureBiasValue", "exposureBias" );
+            fieldConformityMap.put( "FNumber", "aperture" );
+            fieldConformityMap.put( "exposureTime", "shutterTime" );
+            fieldConformityMap.put( "subjectDistanceRange", "focusDistance" );
+            fieldConformityMap.put( "gpsAltitude", "altitude" );
+            fieldConformityMap.put( "gpsImgDirection", "direction" );
+            fieldConformityMap.put( "whiteBalanceMode", "whiteBalance" );
+            fieldConformityMap.put( "isoSpeedRatings", "iso" );
+        }
+
+        public static String getConformityName( String tikaFieldValue )
+        {
+            if ( fieldConformityMap.containsValue( tikaFieldValue ) )
+            {
+                return null;
+            }
+            return fieldConformityMap.containsKey( tikaFieldValue ) ? fieldConformityMap.get( tikaFieldValue ) : tikaFieldValue;
+        }
+
+        public static void fillComputedFormItems( Collection<Metadata> metadataList, MediaInfo mediaInfo )
+        {
+            for ( Metadata metadata : metadataList )
+            {
+                if ( "image-info".equals( metadata.getName().getLocalName() ) )
+                {
+                    final Collection<String> tiffImageLengths = mediaInfo.getMetadata().get( "tiffImagelength" );
+                    final Collection<String> tiffImageWidths = mediaInfo.getMetadata().get( "tiffImagewidth" );
+                    if ( tiffImageLengths.size() > 0 && tiffImageWidths.size() > 0 )
+                    {
+                        final Integer tiffImageLength = Integer.valueOf( tiffImageLengths.toArray()[0].toString() );
+                        final Integer tiffImageWidth = Integer.valueOf( tiffImageWidths.toArray()[0].toString() );
+                        metadata.getData().addLong( "pixelSize", (long) tiffImageLength * tiffImageWidth );
+                    }
+                }
+                if ( "gps-info".equals( metadata.getName().getLocalName() ) )
+                {
+                    if ( mediaInfo.getMetadata().get( "geoLat" ).size() > 0 && mediaInfo.getMetadata().get( "geoLong" ).size() > 0 )
+                    {
+                        metadata.getData().addGeoPoint( "geoPoint", new GeoPoint(
+                            Double.valueOf( mediaInfo.getMetadata().get( "geoLat" ).toArray()[0].toString() ),
+                            Double.valueOf( mediaInfo.getMetadata().get( "geoLong" ).toArray()[0].toString() ) ) );
+                    }
+                }
             }
         }
     }

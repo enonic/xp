@@ -13,6 +13,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.CreateContentParams;
 import com.enonic.wem.api.content.Metadata;
+import com.enonic.wem.api.content.Metadatas;
 import com.enonic.wem.api.data.PropertySet;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -53,7 +54,7 @@ public final class CreateContentHandler
             requireValid( !req.param( "draft" ).value( Boolean.class ) ).
             type( contentTypeName( req.param( "contentType" ).value( String.class ) ) ).
             contentData( propertyTree( req.param( "data" ).map() ) ).
-            metadata( metaDataList( req.param( "x" ).map() ) ).
+            metadata( metadatas( req.param( "x" ).map() ) ).
             build();
     }
 
@@ -137,24 +138,24 @@ public final class CreateContentHandler
         }
     }
 
-    private List<Metadata> metaDataList( final Map<String, Object> value )
+    private Metadatas metadatas( final Map<String, Object> value )
     {
         if ( value == null )
         {
             return null;
         }
 
-        final List<Metadata> list = Lists.newArrayList();
+        final Metadatas.Builder metadatasBuilder = Metadatas.builder();
         for ( final Map.Entry<String, Object> entry : value.entrySet() )
         {
             final Metadata item = metaData( entry.getKey(), entry.getValue() );
             if ( item != null )
             {
-                list.add( item );
+                metadatasBuilder.add( item );
             }
         }
 
-        return list;
+        return metadatasBuilder.build();
     }
 
     private Metadata metaData( final String localName, final Object value )

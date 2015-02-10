@@ -35,7 +35,7 @@ final class UpdateContentCommand
     {
         super( builder );
         this.params = builder.params;
-        this.proxyProcessor = new ProxyContentProcessor( builder.mediaInfo );
+        this.proxyProcessor = ProxyContentProcessor.create().mediaInfo( builder.mediaInfo ).build();
     }
 
     public static Builder create( final UpdateContentParams params )
@@ -72,7 +72,7 @@ final class UpdateContentCommand
             valid( validated ).
             build();
         editedContent = processContent( contentBeforeChange, editedContent );
-        editedContent = attachThumbnai( editedContent );
+        editedContent = attachThumbnail( editedContent );
 
         final UpdateContentTranslatorParams updateContentTranslatorParams = UpdateContentTranslatorParams.create().
             editedContent( editedContent ).
@@ -103,7 +103,7 @@ final class UpdateContentCommand
         return editedContent;
     }
 
-    private Content attachThumbnai( Content editedContent )
+    private Content attachThumbnail( Content editedContent )
     {
         if ( !editedContent.hasThumbnail() )
         {

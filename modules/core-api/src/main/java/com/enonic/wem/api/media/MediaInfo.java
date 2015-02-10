@@ -4,13 +4,17 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
+import com.enonic.wem.api.content.Metadata;
+import com.enonic.wem.api.content.Metadatas;
 import com.enonic.wem.api.form.FormItemName;
 
 public class MediaInfo
 {
     private String mediaType;
 
-    private ImmutableMultimap<String, String> metadata;
+    private Multimap<String, String> metadata;
+
+    public static final String MEDIA_SOURCE_SIZE = "bytesize";
 
     private MediaInfo( final Builder builder )
     {

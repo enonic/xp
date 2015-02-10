@@ -10,6 +10,8 @@ public final class MixinName
     extends ModuleBasedName
     implements Comparable<MixinName>
 {
+    public final static String SEPARATOR = ModuleBasedName.SEPARATOR;
+
     private MixinName( final ModuleKey moduleKey, final String localName )
     {
         super( moduleKey, localName );
