@@ -46,7 +46,7 @@ public class ComponentResourceTest
             build();
         Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
 
-        final MockHttpServletRequest request = newGetRequest( "/online/site/somepath/content/_/component/main-region/0" );
+        final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content/_/component/main-region/0" );
         final MockHttpServletResponse response = executeRequest( request );
 
         final ArgumentCaptor<PortalContext> jsContext = ArgumentCaptor.forClass( PortalContext.class );
@@ -64,7 +64,7 @@ public class ComponentResourceTest
     {
         setupNonPageContent();
 
-        final MockHttpServletRequest request = newGetRequest( "/online/site/somepath/content/_/component/main-region/0" );
+        final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content/_/component/main-region/0" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 404, response.getStatus() );
@@ -77,7 +77,7 @@ public class ComponentResourceTest
         setupContentAndSite();
         setupTemplates();
 
-        final MockHttpServletRequest request = newGetRequest( "/online/site/somepath/content/_/component/main-region/666" );
+        final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content/_/component/main-region/666" );
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 404, response.getStatus() );

@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content;
 
 import java.util.List;
+import java.util.Locale;
 
 import com.google.common.base.Preconditions;
 
@@ -37,6 +38,8 @@ public final class CreateContentParams
 
     private final ChildOrder childOrder;
 
+    private final Locale language;
+
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
@@ -51,6 +54,7 @@ public final class CreateContentParams
         this.inheritPermissions = builder.inheritPermissions;
         this.createAttachments = builder.createAttachments;
         this.childOrder = builder.childOrder;
+        this.language = builder.language;
     }
 
     public static Builder create()
@@ -123,6 +127,11 @@ public final class CreateContentParams
         return inheritPermissions;
     }
 
+    public Locale getLanguage()
+    {
+        return language;
+    }
+
     public static final class Builder
     {
         private PropertyTree data;
@@ -149,6 +158,8 @@ public final class CreateContentParams
 
         private ChildOrder childOrder;
 
+        private Locale language;
+
         private Builder()
         {
         }
@@ -167,6 +178,7 @@ public final class CreateContentParams
             this.inheritPermissions = source.inheritPermissions;
             this.createAttachments = source.createAttachments;
             this.childOrder = source.childOrder;
+            this.language = source.language;
         }
 
         public Builder contentData( final PropertyTree data )
@@ -245,6 +257,12 @@ public final class CreateContentParams
         public Builder childOrder( final ChildOrder childOrder )
         {
             this.childOrder = childOrder;
+            return this;
+        }
+
+        public Builder language( final Locale language )
+        {
+            this.language = language;
             return this;
         }
 

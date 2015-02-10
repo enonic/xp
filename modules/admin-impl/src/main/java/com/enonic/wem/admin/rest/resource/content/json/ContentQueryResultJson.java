@@ -9,7 +9,7 @@ import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.wem.admin.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
+import com.enonic.wem.api.form.InlineMixinsToFormItemsTransformer;
 
 public class ContentQueryResultJson
     extends AbstractContentQueryResultJson<ContentJson>
@@ -42,10 +42,10 @@ public class ContentQueryResultJson
         }
 
         public Builder addContent( final Content content,
-                                   final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
+                                   final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer )
         {
             this.contents.add(
-                new ContentJson( content, iconUrlResolver, mixinReferencesToFormItemsTransformer, contentPrincipalsResolver ) );
+                new ContentJson( content, iconUrlResolver, inlineMixinsToFormItemsTransformer, contentPrincipalsResolver ) );
             return this;
         }
 

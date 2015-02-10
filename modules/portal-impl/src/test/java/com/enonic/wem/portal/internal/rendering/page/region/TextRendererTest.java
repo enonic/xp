@@ -66,7 +66,7 @@ public class TextRendererTest
         RenderResult result = renderer.render( textComponent, context );
 
         // verify
-        assertEquals( "<section></section>", result.getAsString() );
+        assertEquals( "<section data-portal-component-type=\"text\"></section>", result.getAsString() );
     }
 
 
@@ -82,7 +82,7 @@ public class TextRendererTest
         RenderResult result = renderer.render( textComponent, context );
 
         // verify
-        assertEquals( "<section>" + text + "</section>", result.getAsString() );
+        assertEquals( "<section data-portal-component-type=\"text\">" + text + "</section>", result.getAsString() );
     }
 
     @Test

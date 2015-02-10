@@ -15,7 +15,7 @@ public class PortalContextMapperTest
         throws Exception
     {
         final PortalContext context = new PortalContext();
-        context.setUri( "/portal/live/online/a/b" );
+        context.setUri( "/portal/live/master/a/b" );
         context.setMethod( "GET" );
         context.getParams().put( "param1", "value1" );
         context.getParams().put( "param2", "value2" );

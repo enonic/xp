@@ -55,6 +55,8 @@ module app.browse {
                 this.input.setValue('');
             });
             this.addAction(this.installAction, true);
+
+            this.addCancelButtonToBottom();
         }
 
         show() {

@@ -6,12 +6,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.Preconditions;
+
 import static com.enonic.wem.api.form.Occurrences.newOccurrences;
 
 public class FormItemSet
     extends FormItem
     implements Iterable<FormItem>
 {
+    private final String name;
+
     private final String label;
 
     private final FormItems formItems;
@@ -26,8 +32,13 @@ public class FormItemSet
 
     private FormItemSet( Builder builder )
     {
-        super( builder.name );
+        super( );
 
+        Preconditions.checkNotNull( builder.name, "a name is required for a FormItemSet" );
+        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a FormItemSet" );
+        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctations: " + builder.name );
+
+        this.name = builder.name;
         this.label = builder.label;
         this.immutable = builder.immutable;
         this.occurrences = builder.occurrences;
@@ -38,6 +49,12 @@ public class FormItemSet
         {
             this.formItems.add( formItem );
         }
+    }
+
+    @Override
+    public String getName()
+    {
+        return name;
     }
 
     @Override
@@ -183,14 +200,14 @@ public class FormItemSet
         return formItems.getInput( path );
     }
 
-    public MixinReference getMixinReference( final String name )
+    public InlineMixin getInlineMixin( final String name )
     {
-        return formItems.getMixinReference( FormItemPath.from( name ) );
+        return formItems.getInlineMixin( FormItemPath.from( name ) );
     }
 
-    public MixinReference getMixinReference( final FormItemPath formItemPath )
+    public InlineMixin getInlineMixin( final FormItemPath formItemPath )
     {
-        return formItems.getMixinReference( formItemPath );
+        return formItems.getInlineMixin( formItemPath );
     }
 
     public Layout getLayout( final String name )
@@ -231,7 +248,7 @@ public class FormItemSet
 
         public Builder( final FormItemSet source )
         {
-            this.name = source.getName();
+            this.name = source.name;
             this.label = source.label;
             this.immutable = source.immutable;
             this.occurrences = source.occurrences;

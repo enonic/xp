@@ -27,7 +27,7 @@ Refactoring:
   - Updated directory structure for modules. Added "cms" folder as parent for types, components and assets. (CMS-5047)
   - Renamed "meta" property in Content API to "x", for eXtra data. (CMS-5134)
   - Renamed <metadata> tag in content-type.xml to <x-data>. Also renamed <meta-step> in module.xml to <x-data> and removed <content> wrapper tag. (CMS-5134)
-
+  - Replaced <mixin-ref> and child tag <reference> in content-type.xml, with a single <inline mixin="..."/> tag. (CMS-4796)
 
 ## RC4 (2015-02-03)
 

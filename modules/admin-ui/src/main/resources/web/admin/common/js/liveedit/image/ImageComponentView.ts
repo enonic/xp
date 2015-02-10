@@ -33,28 +33,23 @@ module api.liveedit.image {
 
         private initializeImage() {
 
-            for (var i = 0; i < this.getChildren().length; i++) {
-                var figure = this.getChildren()[i];
-                if (figure.getHTMLElement().tagName.toUpperCase() == 'FIGURE') {
-                    for (var j = 0; j < figure.getChildren().length; j++) {
-                        var image = figure.getChildren()[j];
-                        if (image.getHTMLElement().tagName.toUpperCase() == 'IMG') {
-                            this.image = image;
+            var figureElChildren = this.getChildren();
+            for (var i = 0; i < figureElChildren.length; i++) {
+                var image = figureElChildren[i];
+                if (image.getHTMLElement().tagName.toUpperCase() == 'IMG') {
+                    this.image = image;
 
-                            // no way to use ImgEl.onLoaded because all html tags are parsed as Element
-                            this.image.getEl().addEventListener("load", (event) => {
-                                // refresh shader and highlighter after image loaded
-                                // if it's still selected
-                                if (this.isSelected()) {
-                                    this.highlight();
-                                    this.shade();
-                                }
-                            });
+                    // no way to use ImgEl.onLoaded because all html tags are parsed as Element
+                    this.image.getEl().addEventListener("load", (event) => {
+                        // refresh shader and highlighter after image loaded
+                        // if it's still selected
+                        if (this.isSelected()) {
+                            this.highlight();
+                            this.shade();
                         }
-
-                        return;
-                    }
+                    });
                 }
+                return;
             }
         }
 

@@ -1,5 +1,7 @@
 package com.enonic.wem.core.content;
 
+import java.util.Locale;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +84,7 @@ final class CreateContentCommand
         populateCreator( builder );
         setChildOrder( builder );
         builder.owner( getDefaultOwner( processedContent ) );
+        populateLanguage( builder );
 
         return builder.build();
     }
@@ -125,6 +128,30 @@ final class CreateContentCommand
                 throw new IllegalArgumentException(
                     "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );
             }
+        }
+    }
+
+    private void populateLanguage( final CreateContentTranslatorParams.Builder builder )
+    {
+        Locale language = getDefaultLanguage( params );
+        if ( language != null )
+        {
+            builder.language( language );
+        }
+    }
+
+    private Locale getDefaultLanguage( final CreateContentParams createContentParams )
+    {
+        ContentPath parentPath = createContentParams.getParent();
+        if ( createContentParams.getLanguage() == null && !parentPath.isRoot() )
+        {
+            final Content parent = getContent( parentPath );
+
+            return parent != null ? parent.getLanguage() : null;
+        }
+        else
+        {
+            return createContentParams.getLanguage();
         }
     }
 

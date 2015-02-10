@@ -16,7 +16,6 @@ import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.data.PropertyTree;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.security.acl.AccessControlList;
 
 import static org.junit.Assert.*;
 
@@ -38,7 +37,6 @@ public class ContentServiceImplTest_create
             contentData( new PropertyTree() ).
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
-            permissions( AccessControlList.empty() ).
             type( ContentTypeName.folder() ).
             build();
 
@@ -66,7 +64,6 @@ public class ContentServiceImplTest_create
             contentData( new PropertyTree() ).
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
-            permissions( AccessControlList.empty() ).
             type( ContentTypeName.imageMedia() ).
             createAttachments( createAttachment( "cat", "image/jpeg", image ) ).
             build();

@@ -50,11 +50,11 @@ public final class ContentTypeResource
 
     @GET
     public ContentTypeJson get( @QueryParam("name") final String nameAsString,
-                                @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
+                                @QueryParam("inlineMixinsToFormItems") final Boolean inlineMixinsToFormItems )
     {
         final ContentTypeName name = ContentTypeName.from( nameAsString );
         final GetContentTypeParams getContentTypes = GetContentTypeParams.from( name ).
-            mixinReferencesToFormItems( mixinReferencesToFormItems );
+            inlineMixinsToFormItems( inlineMixinsToFormItems );
 
         final ContentType contentType = contentTypeService.getByName( getContentTypes );
         if ( contentType == null )
@@ -67,18 +67,18 @@ public final class ContentTypeResource
     @GET
     @Path("all")
     public ContentTypeSummaryListJson all(
-        @DefaultValue("false") @QueryParam("mixinReferencesToFormItems") final boolean mixinReferencesToFormItems )
+        @DefaultValue("false") @QueryParam("inlineMixinsToFormItems") final boolean inlineMixinsToFormItems )
     {
-        return list( mixinReferencesToFormItems );
+        return list( inlineMixinsToFormItems );
     }
 
     @GET
     @Path("list")
     public ContentTypeSummaryListJson list(
-        @DefaultValue("false") @QueryParam("mixinReferencesToFormItems") final boolean mixinReferencesToFormItems )
+        @DefaultValue("false") @QueryParam("inlineMixinsToFormItems") final boolean inlineMixinsToFormItems )
     {
 
-        final GetAllContentTypesParams getAll = new GetAllContentTypesParams().mixinReferencesToFormItems( mixinReferencesToFormItems );
+        final GetAllContentTypesParams getAll = new GetAllContentTypesParams().inlineMixinsToFormItems( inlineMixinsToFormItems );
         final ContentTypes contentTypes = contentTypeService.getAll( getAll );
 
         return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver );

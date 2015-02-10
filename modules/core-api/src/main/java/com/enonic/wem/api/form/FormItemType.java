@@ -22,7 +22,7 @@ public enum FormItemType
         {
             return LAYOUT;
         }
-        else if ( MixinReference.class.getSimpleName().equals( value ) )
+        else if ( InlineMixin.class.getSimpleName().equals( value ) )
         {
             return MIXIN_REFERENCE;
         }

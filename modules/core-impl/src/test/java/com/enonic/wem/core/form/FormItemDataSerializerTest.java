@@ -70,19 +70,19 @@ public class FormItemDataSerializerTest
 
 
     @Test
-    public void serializeFormItems_given_MixinReference()
+    public void serializeFormItems_given_Inline()
     {
-        final MixinReference mixinReference =
+        final InlineMixin inline =
             MixinRefnew PropertyTree(new PropertyTree.PredictivePropertyIdProvider())erence().name( "mymixinreference" ).mixin( "mymodule:mymixinreferencedto" ).build();
 
         PropertyTree generatedData = new PropertyTree();
 
-        serializer.toData( mixinReference, generatedData.getRoot() );
+        serializer.toData( inline, generatedData.getRoot() );
 
-        final MixinReference deserializedMixinReference = serializer.deserializeMixinReference( (DataSet) dataSet );
+        final InlineMixin deserializedInline = serializer.deserializeInlineMixin( (DataSet) dataSet );
 
-        Assert.assertEquals( mixinReference.getName(), deserializedMixinReference.getName() );
-        Assert.assertEquals( mixinReference.getMixinName(), deserializedMixinReference.getMixinName() );
+        Assert.assertEquals( inline.getName(), deserializedInline.getName() );
+        Assert.assertEquals( inline.getMixinName(), deserializedInline.getMixinName() );
     }
 
     private Input createInput( String name, InputType inputType )

@@ -71,7 +71,7 @@ public class PushContentCommandTest
             contentIds( ContentIds.from( ContentId.from( "s1" ), ContentId.from( "s2" ) ) ).
             resolveDependencies( true ).
             strategy( PushContentCommand.PushContentStrategy.STRICT ).
-            target( ContentConstants.BRANCH_ONLINE ).
+            target( ContentConstants.BRANCH_MASTER ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
@@ -108,7 +108,7 @@ public class PushContentCommandTest
             contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
             resolveDependencies( true ).
             strategy( PushContentCommand.PushContentStrategy.STRICT ).
-            target( ContentConstants.BRANCH_ONLINE ).
+            target( ContentConstants.BRANCH_MASTER ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
@@ -147,7 +147,7 @@ public class PushContentCommandTest
             contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
             resolveDependencies( true ).
             strategy( PushContentCommand.PushContentStrategy.ALLOW_PUBLISH_OUTSIDE_SELECTION ).
-            target( ContentConstants.BRANCH_ONLINE ).
+            target( ContentConstants.BRANCH_MASTER ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
@@ -187,7 +187,7 @@ public class PushContentCommandTest
             contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
             resolveDependencies( true ).
             strategy( PushContentCommand.PushContentStrategy.ALLOW_PUBLISH_OUTSIDE_SELECTION ).
-            target( ContentConstants.BRANCH_ONLINE ).
+            target( ContentConstants.BRANCH_MASTER ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
@@ -226,7 +226,7 @@ public class PushContentCommandTest
             contentIds( ContentIds.from( ContentId.from( "s1" ) ) ).
             resolveDependencies( true ).
             strategy( PushContentCommand.PushContentStrategy.ALLOW_PUBLISH_OUTSIDE_SELECTION ).
-            target( ContentConstants.BRANCH_ONLINE ).
+            target( ContentConstants.BRANCH_MASTER ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).

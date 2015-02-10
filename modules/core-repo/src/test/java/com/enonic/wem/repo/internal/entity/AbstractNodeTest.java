@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
@@ -26,15 +27,14 @@ import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
+import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
 import com.enonic.wem.repo.internal.elasticsearch.snapshot.ElasticsearchSnapshotService;
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
-import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
@@ -69,7 +69,7 @@ public abstract class AbstractNodeTest
         build();
 
     protected static final Branch WS_OTHER = Branch.create().
-        name( "online" ).
+        name( "master" ).
         build();
 
     protected static final Context CTX_DEFAULT = ContextBuilder.create().

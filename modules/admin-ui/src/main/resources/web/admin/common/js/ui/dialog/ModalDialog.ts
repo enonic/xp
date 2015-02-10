@@ -32,7 +32,7 @@ module api.ui.dialog {
             var wrapper = new api.dom.DivEl("modal-dialog-content-wrapper");
             this.appendChild(wrapper);
 
-            this.createCancelAction();
+            this.createDefaultCancelAction();
             this.cancelButton = this.createCancelButton();
 
             wrapper.appendChild(this.cancelButton);
@@ -79,9 +79,9 @@ module api.ui.dialog {
             });
         }
 
-        private createCancelAction() {
+        private createDefaultCancelAction() {
             var cancelAction = new api.ui.Action("Cancel", "esc");
-            cancelAction.setIconClass("cancel-button");
+            cancelAction.setIconClass("cancel-button-top");
             cancelAction.setLabel("");
             cancelAction.onExecuted(()=> {
                 this.close();
@@ -92,6 +92,15 @@ module api.ui.dialog {
 
         getCancelAction(): api.ui.Action {
             return this.cancelAction;
+        }
+
+        addCancelButtonToBottom() {
+            var cancelAction = new api.ui.Action("Cancel", "esc");
+            cancelAction.setIconClass("cancel-button-bottom");
+            cancelAction.onExecuted(()=> {
+                this.close();
+            });
+            this.addAction(cancelAction);
         }
 
         setTitle(value: string) {

@@ -8,6 +8,8 @@ module api.ui.locale {
 
         private removeClickedListeners: {(event: MouseEvent):void}[] = [];
 
+        private displayNamePattern = '{0} ({1})';
+
         constructor() {
             super();
             this.namesView = new api.app.NamesView();
@@ -17,7 +19,7 @@ module api.ui.locale {
         setObject(locale: Locale) {
             super.setObject(locale);
 
-            this.namesView.setMainName(locale.getDisplayName());
+            this.namesView.setMainName(api.util.StringHelper.format(this.displayNamePattern, locale.getDisplayName(), locale.getTag()));
         }
 
         getPreferredHeight(): number {

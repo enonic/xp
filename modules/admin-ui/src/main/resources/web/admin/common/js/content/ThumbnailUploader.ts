@@ -56,7 +56,7 @@ module api.content {
         }
 
         getModelValue(item: Content): string {
-            return this.iconUrlResolver.setContent(item).setCrop(false).resolve();
+            return this.iconUrlResolver.setContent(item).resolve();
         }
 
         createResultItem(value: string): api.dom.Element {

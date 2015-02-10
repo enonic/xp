@@ -1,5 +1,6 @@
 package com.enonic.wem.api.content;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.index.ChildOrder;
@@ -9,7 +10,6 @@ import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.branch.Branch;
 
 public class ContentConstants
 {
@@ -19,8 +19,8 @@ public class ContentConstants
         name( "draft" ).
         build();
 
-    public static final Branch BRANCH_ONLINE = Branch.create().
-        name( "online" ).
+    public static final Branch BRANCH_MASTER = Branch.create().
+        name( "master" ).
         build();
 
     public static final Repository CONTENT_REPO = Repository.create().
@@ -32,8 +32,8 @@ public class ContentConstants
         repositoryId( CONTENT_REPO.getId() ).
         build();
 
-    public static final Context CONTEXT_ONLINE = ContextBuilder.create().
-        branch( BRANCH_ONLINE ).
+    public static final Context CONTEXT_MASTER = ContextBuilder.create().
+        branch( BRANCH_MASTER ).
         repositoryId( CONTENT_REPO.getId() ).
         build();
 
