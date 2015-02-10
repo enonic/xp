@@ -88,8 +88,8 @@ module api.content {
             if (!api.ObjectHelper.equals(this.data, other.data)) {
                 return false;
             }
-
-            if (!api.ObjectHelper.arrayEquals(this.metadata, other.metadata)) {
+            var comparator = new api.content.MetadataByMixinNameComparator();
+            if (!api.ObjectHelper.arrayEquals(this.metadata.sort(comparator.compare), other.metadata.sort(comparator.compare))) {
                 return false;
             }
 

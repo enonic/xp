@@ -55,7 +55,9 @@ final class CreateContentCommand
     {
         validateContentTypeProperties();
 
-        final CreateContentParams processedContent = runContentProcessors();
+        ContentType type = this.contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
+
+        final CreateContentParams processedContent = runContentProcessors(type);
 
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedContent );
 
@@ -91,9 +93,14 @@ final class CreateContentCommand
         builder.childOrder( this.params.getChildOrder() != null ? this.params.getChildOrder() : ContentConstants.DEFAULT_CHILD_ORDER );
     }
 
-    private CreateContentParams runContentProcessors()
+    private CreateContentParams runContentProcessors(ContentType contentType)
     {
-        return new ProxyContentProcessor( mediaInfo ).processCreate( params );
+        return ProxyContentProcessor.create().
+            mediaInfo( mediaInfo ).
+            contentType( contentType ).
+            mixinService( mixinService ).
+            build().
+            processCreate( params );
     }
 
     private void validateContentTypeProperties()

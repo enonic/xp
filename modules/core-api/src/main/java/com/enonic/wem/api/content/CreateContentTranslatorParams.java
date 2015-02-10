@@ -16,7 +16,7 @@ public class CreateContentTranslatorParams
 {
     private final PropertyTree data;
 
-    private final List<Metadata> metadata;
+    private final Metadatas metadata;
 
     private final ContentTypeName type;
 
@@ -83,7 +83,7 @@ public class CreateContentTranslatorParams
         return data;
     }
 
-    public List<Metadata> getMetadata()
+    public Metadatas getMetadata()
     {
         return metadata;
     }
@@ -162,7 +162,7 @@ public class CreateContentTranslatorParams
     {
         private PropertyTree data;
 
-        private List<Metadata> metadata;
+        private Metadatas metadata;
 
         private ContentTypeName type;
 
@@ -211,7 +211,7 @@ public class CreateContentTranslatorParams
             return this;
         }
 
-        public Builder metadata( final List<Metadata> metadata )
+        public Builder metadata( final Metadatas metadata )
         {
             this.metadata = metadata;
             return this;
