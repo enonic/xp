@@ -14,9 +14,7 @@
   <x-data mixin="mymodule:my-meta-mixin"/>
 
   <config>
-    <mixin-reference name="test">
-      <reference>mymodule-1.0.0:other</reference>
-    </mixin-reference>
+    <inline mixin="mymodule-1.0.0:other"/>
   </config>
 
 </module>

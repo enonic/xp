@@ -2,16 +2,16 @@ package com.enonic.wem.api.schema.content;
 
 public class GetAllContentTypesParams
 {
-    private boolean mixinReferencesToFormItems = false;
+    private boolean inlinesToFormItems = false;
 
-    public boolean isMixinReferencesToFormItems()
+    public boolean isInlinesToFormItems()
     {
-        return mixinReferencesToFormItems;
+        return inlinesToFormItems;
     }
 
-    public GetAllContentTypesParams mixinReferencesToFormItems( final boolean value )
+    public GetAllContentTypesParams inlinesToFormItems( final boolean value )
     {
-        mixinReferencesToFormItems = value;
+        inlinesToFormItems = value;
         return this;
     }
 

@@ -84,10 +84,10 @@ public final class FormItems
             FormItemSet formItemSet = (FormItemSet) foundFormItem;
             return formItemSet.getFormItem( path.asNewWithoutFirstPathElement() );
         }
-        else if ( foundFormItem instanceof MixinReference )
+        else if ( foundFormItem instanceof Inline )
         {
-            throw new IllegalArgumentException( "Cannot get formItem [" + path + "] because it's past a MixinReference [" + foundFormItem +
-                                                    "], resolve the MixinReference first." );
+            throw new IllegalArgumentException( "Cannot get formItem [" + path + "] because it's past a Inline [" + foundFormItem +
+                                                    "], resolve the Inline first." );
         }
         else
         {
@@ -117,9 +117,9 @@ public final class FormItems
         return typeCast( getFormItem( path ), FormItemSet.class );
     }
 
-    MixinReference getMixinReference( final FormItemPath path )
+    Inline getInline( final FormItemPath path )
     {
-        return typeCast( getFormItem( path ), MixinReference.class );
+        return typeCast( getFormItem( path ), Inline.class );
     }
 
     Layout getLayout( final FormItemPath path )

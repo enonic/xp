@@ -9,7 +9,7 @@ import com.enonic.wem.admin.json.aggregation.AggregationJson;
 import com.enonic.wem.admin.json.content.ContentIdJson;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentListMetaData;
-import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
+import com.enonic.wem.api.form.InlinesToFormItemsTransformer;
 
 public abstract class AbstractContentQueryResultJson<T extends ContentIdJson>
 {
@@ -38,7 +38,7 @@ public abstract class AbstractContentQueryResultJson<T extends ContentIdJson>
         }
 
         public abstract T addContent( final Content content,
-                                      final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer );
+                                      final InlinesToFormItemsTransformer inlinesToFormItemsTransformer );
 
         public T setMetadata( final ContentListMetaData metadata )
         {

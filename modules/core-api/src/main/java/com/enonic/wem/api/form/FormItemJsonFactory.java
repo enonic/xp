@@ -16,9 +16,9 @@ public class FormItemJsonFactory
         {
             return new InputJson( (Input) formItem );
         }
-        else if ( formItem instanceof MixinReference )
+        else if ( formItem instanceof Inline )
         {
-            return new MixinReferenceJson( (MixinReference) formItem );
+            return new InlineJson( (Inline) formItem );
         }
         throw new IllegalArgumentException( "Unsupported FormItem: " + formItem.getClass().getSimpleName() );
     }

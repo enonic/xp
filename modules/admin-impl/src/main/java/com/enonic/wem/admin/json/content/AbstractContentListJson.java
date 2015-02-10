@@ -9,7 +9,7 @@ import com.enonic.wem.admin.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
+import com.enonic.wem.api.form.InlinesToFormItemsTransformer;
 
 
 @SuppressWarnings("UnusedDeclaration")
@@ -19,7 +19,7 @@ public abstract class AbstractContentListJson<T extends ContentIdJson>
 
     private final ContentListMetaDataJson metadata;
 
-    protected final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer;
+    protected final InlinesToFormItemsTransformer inlinesToFormItemsTransformer;
 
     protected final ContentPrincipalsResolver contentPrincipalsResolver;
 
@@ -27,20 +27,20 @@ public abstract class AbstractContentListJson<T extends ContentIdJson>
 
     public AbstractContentListJson( final Content content, ContentListMetaData contentListMetaData,
                                     final ContentIconUrlResolver iconUrlResolver,
-                                    final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer,
+                                    final InlinesToFormItemsTransformer inlinesToFormItemsTransformer,
                                     final ContentPrincipalsResolver contentPrincipalsResolver )
     {
-        this( Contents.from( content ), contentListMetaData, iconUrlResolver, mixinReferencesToFormItemsTransformer,
+        this( Contents.from( content ), contentListMetaData, iconUrlResolver, inlinesToFormItemsTransformer,
               contentPrincipalsResolver );
     }
 
     public AbstractContentListJson( final Contents contents, final ContentListMetaData contentListMetaData,
                                     final ContentIconUrlResolver iconUrlResolver,
-                                    final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer,
+                                    final InlinesToFormItemsTransformer inlinesToFormItemsTransformer,
                                     final ContentPrincipalsResolver contentPrincipalsResolver )
     {
         this.iconUrlResolver = iconUrlResolver;
-        this.mixinReferencesToFormItemsTransformer = mixinReferencesToFormItemsTransformer;
+        this.inlinesToFormItemsTransformer = inlinesToFormItemsTransformer;
         this.contentPrincipalsResolver = contentPrincipalsResolver;
         this.metadata = new ContentListMetaDataJson( contentListMetaData );
 

@@ -6,8 +6,8 @@ import org.junit.Test;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.form.Inline.newInline;
 import static com.enonic.wem.api.form.Input.newInput;
-import static com.enonic.wem.api.form.MixinReference.newMixinReference;
 import static org.junit.Assert.*;
 
 public class FormItemSetTest
@@ -27,17 +27,17 @@ public class FormItemSetTest
     }
 
     @Test
-    public void getMixinReference()
+    public void getInline()
     {
         // setup
         FormItemSet formItemSet = newFormItemSet().name( "mySet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( newMixinReference().name( "myMix" ).mixin( "mymodule:mymixin" ).build() );
+        formItemSet.add( newInline().mixin( "mymodule:mymixin" ).build() );
 
         // exercise
 
         // verify
-        assertEquals( "mySet.myMix", formItemSet.getMixinReference( "myMix" ).getPath().toString() );
-        assertEquals( "mySet.myMix", formItemSet.getMixinReference( FormItemPath.from( "myMix" ) ).getPath().toString() );
+        assertEquals( "mySet.mymixin", formItemSet.getInline( "mymixin" ).getPath().toString() );
+        assertEquals( "mySet.mymixin", formItemSet.getInline( FormItemPath.from( "mymixin" ) ).getPath().toString() );
     }
 
 

@@ -3,31 +3,31 @@ package com.enonic.wem.api.form;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @SuppressWarnings("UnusedDeclaration")
-public class MixinReferenceJson
+public class InlineJson
     extends FormItemJson
 {
-    private final MixinReference mixinReference;
+    private final Inline inline;
 
-    public MixinReferenceJson( final MixinReference mixinReference )
+    public InlineJson( final Inline inline )
     {
-        this.mixinReference = mixinReference;
+        this.inline = inline;
     }
 
     @JsonIgnore
     @Override
     public FormItem getFormItem()
     {
-        return mixinReference;
+        return inline;
     }
 
     @Override
     public String getName()
     {
-        return mixinReference.getName();
+        return inline.getName();
     }
 
     public String getReference()
     {
-        return mixinReference.getMixinName().toString();
+        return inline.getMixinName().toString();
     }
 }

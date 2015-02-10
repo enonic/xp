@@ -12,13 +12,13 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentListMetaData;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.FindContentByQueryResult;
-import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
+import com.enonic.wem.api.form.InlinesToFormItemsTransformer;
 
 public class FindContentByQuertResultJsonFactory
 {
     public static AbstractContentQueryResultJson create( final FindContentByQueryResult contentQueryResult, final String expand,
                                                          final ContentIconUrlResolver iconUrlResolver,
-                                                         final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer,
+                                                         final InlinesToFormItemsTransformer inlinesToFormItemsTransformer,
                                                          final ContentPrincipalsResolver contentPrincipalsResolver )
     {
         final AbstractContentQueryResultJson.Builder builder;
@@ -42,18 +42,18 @@ public class FindContentByQuertResultJsonFactory
         }
 
         addAggregations( contentQueryResult.getAggregations(), builder );
-        addContents( contentQueryResult.getContents(), builder, mixinReferencesToFormItemsTransformer );
+        addContents( contentQueryResult.getContents(), builder, inlinesToFormItemsTransformer );
         setMetadata( metadata, builder );
 
         return builder.build();
     }
 
     private static void addContents( final Contents contents, final AbstractContentQueryResultJson.Builder builder,
-                                     final MixinReferencesToFormItemsTransformer mixinReferencesToFormItemsTransformer )
+                                     final InlinesToFormItemsTransformer inlinesToFormItemsTransformer )
     {
         for ( final Content content : contents )
         {
-            builder.addContent( content, mixinReferencesToFormItemsTransformer );
+            builder.addContent( content, inlinesToFormItemsTransformer );
         }
     }
 

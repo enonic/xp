@@ -12,9 +12,7 @@
                     </input>
                 </items>
             </field-set>
-            <mixin-reference name="myCommonInput">
-                <reference>mymodule:my_shared_input</reference>
-            </mixin-reference>
+            <inline mixin="mymodule:my_shared_input"/>
         </items>
         <immutable>false</immutable>
         <occurrences minimum="0" maximum="1"/>
