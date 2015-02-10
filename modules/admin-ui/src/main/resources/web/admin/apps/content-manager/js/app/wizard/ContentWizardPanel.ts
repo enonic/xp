@@ -349,7 +349,7 @@ module app.wizard {
             api.content.ContentSummaryAndCompareStatusFetcher.fetch(persistedContent.getContentId()).
                 then((contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus) => {
                     var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
-                    this.contentWizardHeader.setIgnoreGenerateStatusForName(ignore);
+                    this.contentWizardHeader.disableNameGeneration(ignore);
                 }).done();
 
             var viewedContent;
@@ -629,9 +629,7 @@ module app.wizard {
 
             if (this.contentType.getContentTypeName().isMedia()) {
                 deferred.resolve(null);
-            }
-            else {
-
+            } else {
                 var formContext = this.createFormContext(null);
                 var form = this.contentType.getForm();
                 var data = new PropertyTree();
