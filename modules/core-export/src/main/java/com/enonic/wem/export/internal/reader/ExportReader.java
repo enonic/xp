@@ -53,13 +53,6 @@ public class ExportReader
         return orderFile;
     }
 
-    private VirtualFile createVFSPath( final VirtualFile nodeFolder, final String... paths )
-    {
-        final List<String> pathElements = PathUtils.joinPaths( paths );
-
-        return nodeFolder.resolve( Joiner.on( "/" ).join( pathElements ) );
-    }
-
     public VirtualFile getNodeSource( final VirtualFile nodeFolder )
     {
         final VirtualFile nodeVF = createVFSPath( nodeFolder, SYSTEM_FOLDER_NAME, NODE_XML_EXPORT_NAME );
@@ -72,4 +65,10 @@ public class ExportReader
         return nodeVF;
     }
 
+    private VirtualFile createVFSPath( final VirtualFile nodeFolder, final String... paths )
+    {
+        final List<String> pathElements = PathUtils.joinPaths( paths );
+
+        return nodeFolder.resolve( Joiner.on( "/" ).join( pathElements ) );
+    }
 }
