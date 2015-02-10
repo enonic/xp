@@ -32,20 +32,10 @@ module app.home {
                 new LogOutEvent().fire()
             });
             this.logonMenu.addNavigationItem(logoutMenuItem);
-            this.logonMenu.onBlur((event) => {
-                console.log(event);
-                this.logonMenu.hide();
-            });
-
-            var hrefWrapperForTabmenu = new api.dom.AEl("tab-menu-logon-wrapper"); // to get onblur event
-            hrefWrapperForTabmenu.appendChild(this.logonMenu);
-            hrefWrapperForTabmenu.onBlur(() => {
-                this.logonMenu.hideMenu();
-            })
 
             this.appendChild(this.installationHeader);
             this.appendChild(this.returnButton);
-            this.appendChild(hrefWrapperForTabmenu);
+            this.appendChild(this.logonMenu);
 
             app.home.LogInEvent.on((event) => {
                 this.logonMenu.setButtonLabel(event.getUser().getDisplayName());
