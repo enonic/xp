@@ -6,7 +6,7 @@ buildscript {
 }
 
 allprojects {
-    group = 'com.enonic.xp2'
+    group = 'com.enonic.xp'
 
     repositories {
         mavenLocal()
