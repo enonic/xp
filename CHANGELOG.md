@@ -20,6 +20,8 @@ Features:
   - Filtered content types in Create Content dialogue based on site-hierarchy (CMS-5109)
   - Automatic injection of component data attributes for layout, part, image and text components rendering. (CMS-5110)
   - Media Types - Change FormIcon to use ContentResource.updateThumbnail instead of BlobResource.upload (CMS-4677)
+  - New OSGi launcher (Karaf replacement). (CMS-4882)
+  - Moved to Gradle as build system. (CMS-4882)
 
 Refactoring:
 
