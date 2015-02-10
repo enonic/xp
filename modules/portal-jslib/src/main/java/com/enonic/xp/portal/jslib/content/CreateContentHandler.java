@@ -53,7 +53,7 @@ public final class CreateContentHandler
             requireValid( !req.param( "draft" ).value( Boolean.class ) ).
             type( contentTypeName( req.param( "contentType" ).value( String.class ) ) ).
             contentData( propertyTree( req.param( "data" ).map() ) ).
-            metadata( metaDataList( req.param( "meta" ).map() ) ).
+            metadata( metaDataList( req.param( "x" ).map() ) ).
             build();
     }
 

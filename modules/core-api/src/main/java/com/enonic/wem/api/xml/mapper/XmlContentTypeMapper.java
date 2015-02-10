@@ -27,7 +27,7 @@ public final class XmlContentTypeMapper
         for(MixinName mixinName : object.getMetadata().getSet()) {
             XmlMetadata metadata = new XmlMetadata(  );
             metadata.setMixin( Joiner.on( SEPARATOR ).join( mixinName.getModuleKey(), mixinName.getLocalName() ) );
-            result.getMetadata().add( metadata );
+            result.getXData().add( metadata );
         }
         result.setForm( XmlFormMapper.toItemsXml( object.form().getFormItems() ) );
         return result;
@@ -55,7 +55,7 @@ public final class XmlContentTypeMapper
         }
 
         final ImmutableList.Builder<MixinName> metadataMixinNames = ImmutableList.builder();
-        for ( XmlMetadata xmlMetadata : xml.getMetadata() )
+        for ( XmlMetadata xmlMetadata : xml.getXData() )
         {
             final String mixinName = xmlMetadata.getMixin();
             final MixinName metadataSchemaName =

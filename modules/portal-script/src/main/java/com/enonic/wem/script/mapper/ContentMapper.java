@@ -51,7 +51,7 @@ public final class ContentMapper
 
     private static void serializeMetaData( final MapGenerator gen, final Iterable<Metadata> values )
     {
-        gen.map( "meta" );
+        gen.map( "x" );
         for ( final Metadata value : values )
         {
             gen.map( value.getName().getLocalName() );
