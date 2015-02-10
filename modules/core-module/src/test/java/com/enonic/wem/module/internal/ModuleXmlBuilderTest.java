@@ -62,7 +62,7 @@ public class ModuleXmlBuilderTest
             vendorName( "Enonic" ).
             vendorUrl( "https://www.enonic.com" ).
             config( config ).
-            metaSteps( MixinNames.from( "mymodule:my-meta-mixin", "system:menu-item" ) ).
+            metaSteps( MixinNames.from( "system:menu-item", "mymodule:my-meta-mixin" ) ).
             build();
     }
 }
