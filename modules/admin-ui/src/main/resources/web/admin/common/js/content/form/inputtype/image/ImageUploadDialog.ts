@@ -47,6 +47,7 @@ module api.content.form.inputtype.image {
 
             api.dom.Body.get().appendChild(this);
 
+            this.addCancelButtonToBottom();
         }
 
         setMaximumOccurrences(value: number) {

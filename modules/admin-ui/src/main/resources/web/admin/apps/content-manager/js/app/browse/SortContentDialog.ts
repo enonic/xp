@@ -139,6 +139,8 @@ module app.browse {
                     });
             });
 
+            this.addCancelButtonToBottom();
+
         }
 
         open() {

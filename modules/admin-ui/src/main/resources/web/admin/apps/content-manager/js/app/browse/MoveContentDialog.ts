@@ -42,6 +42,8 @@ module app.browse {
 
                 this.open();
             });
+
+            this.addCancelButtonToBottom();
         }
 
 
