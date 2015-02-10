@@ -2,6 +2,7 @@ package com.enonic.wem.api.content;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 
 import com.google.common.base.Preconditions;
 
@@ -46,6 +47,8 @@ public class CreateContentTranslatorParams
 
     private final ChildOrder childOrder;
 
+    private final Locale language;
+
     private CreateContentTranslatorParams( Builder builder )
     {
         final Instant now = Instant.now();
@@ -66,6 +69,7 @@ public class CreateContentTranslatorParams
         this.inheritPermissions = builder.inheritPermissions;
         this.createAttachments = builder.createAttachments;
         this.childOrder = builder.childOrder;
+        this.language = builder.language;
     }
 
     public static Builder create( final CreateContentParams source )
@@ -158,6 +162,11 @@ public class CreateContentTranslatorParams
         return childOrder;
     }
 
+    public Locale getLanguage()
+    {
+        return language;
+    }
+
     public static final class Builder
     {
         private PropertyTree data;
@@ -186,6 +195,8 @@ public class CreateContentTranslatorParams
 
         private ChildOrder childOrder;
 
+        private Locale language;
+
         private Builder()
         {
         }
@@ -203,6 +214,7 @@ public class CreateContentTranslatorParams
             this.createAttachments = params.getCreateAttachments();
             this.inheritPermissions = params.isInheritPermissions();
             this.childOrder = params.getChildOrder();
+            this.language = params.getLanguage();
         }
 
         public Builder contentData( final PropertyTree data )
@@ -286,6 +298,12 @@ public class CreateContentTranslatorParams
         public Builder createAttachments( final CreateAttachments createAttachments )
         {
             this.createAttachments = createAttachments;
+            return this;
+        }
+
+        public Builder language( final Locale language )
+        {
+            this.language = language;
             return this;
         }
 

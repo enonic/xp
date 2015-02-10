@@ -112,10 +112,10 @@ public final class ContentDataSerializer
         contentAsData.ifNotNull().addString( CREATOR, params.getCreator().toString() );
         contentAsData.ifNotNull().addString( MODIFIER, params.getModifier().toString() );
         contentAsData.ifNotNull().addInstant( MODIFIED_TIME, params.getModifiedTime() );
-        contentAsData.ifNotNull().addString( ContentPropertyNames.OWNER,
-                                             PrincipalKey.ofAnonymous().equals( params.getOwner() ) || params.getOwner() == null
-                                                 ? null
-                                                 : params.getOwner().toString() );
+        contentAsData.ifNotNull().addString( OWNER, PrincipalKey.ofAnonymous().equals( params.getOwner() ) || params.getOwner() == null
+            ? null
+            : params.getOwner().toString() );
+        contentAsData.ifNotNull().addString( LANGUAGE, params.getLanguage() != null ? params.getLanguage().toLanguageTag() : null );
         contentAsData.addSet( DATA, params.getData().getRoot().copy( contentAsData.getTree() ) );
 
         if ( params.getMetadata() != null && !params.getMetadata().isEmpty() )
