@@ -7,3 +7,12 @@ uploadArchives {
         }
     }
 }
+
+task publishLocalArchives( type: Upload ) {
+    configuration = configurations.archives
+    repositories {
+        ivy {
+            artifactPattern "${rootProject.buildDir}/repo/${project.group.replaceAll( '\\.', '/' )}/[artifact]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
+        }
+    }
+}
