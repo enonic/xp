@@ -9,12 +9,14 @@ dependencies {
 }
 
 ext {
-    jaxbGeneratedSources = file( "$projectDir/src/main/generated-java" )
+    jaxbGeneratedSources = file( "$projectDir/src/main/java" )
 }
 
 sourceSets.main.java.srcDirs += jaxbGeneratedSources
 
 task jaxb() {
+    group = 'build'
+    description = 'Generates Java sources from XML schema definitions.'
     inputs.dir file( "$projectDir/src/main/xsd" )
     outputs.dir jaxbGeneratedSources
 
@@ -31,4 +33,3 @@ task jaxb() {
     }
 }
 
-compileJava.dependsOn += jaxb
