@@ -1,10 +1,8 @@
 module api.content {
 
-    import TreeNode = api.ui.treegrid.TreeNode;
-
     export class MetadataByMixinNameComparator implements api.Comparator<Metadata> {
 
-        compare(a:Metadata, b:Metadata):number {
+        compare(a: Metadata, b: Metadata): number {
             if (!a.getName()) {
                 return 1;
             } else {

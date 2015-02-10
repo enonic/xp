@@ -14,9 +14,11 @@ public class BuiltinMixinProviderTest
     public void testBuiltin()
     {
         final Mixins mixins = new BuiltinMixinProvider().get();
-        assertEquals( 1, mixins.getSize() );
+        assertEquals( 3, mixins.getSize() );
 
         assertSchema( mixins.get( 0 ), MixinName.from( "media:image-info" ), false );
+        assertSchema( mixins.get( 1 ), MixinName.from( "media:photo-info" ), false );
+        assertSchema( mixins.get( 2 ), MixinName.from( "base:gps-info" ), false );
     }
 
     private void assertSchema( final Mixin schema, final MixinName name, final boolean hasIcon )
