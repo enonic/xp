@@ -35,8 +35,8 @@ import static com.enonic.wem.api.content.ContentPropertyNames.CREATED_TIME;
 import static com.enonic.wem.api.content.ContentPropertyNames.CREATOR;
 import static com.enonic.wem.api.content.ContentPropertyNames.DATA;
 import static com.enonic.wem.api.content.ContentPropertyNames.DISPLAY_NAME;
+import static com.enonic.wem.api.content.ContentPropertyNames.EXTRA_DATA;
 import static com.enonic.wem.api.content.ContentPropertyNames.LANGUAGE;
-import static com.enonic.wem.api.content.ContentPropertyNames.META_STEPS;
 import static com.enonic.wem.api.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.wem.api.content.ContentPropertyNames.MODIFIER;
 import static com.enonic.wem.api.content.ContentPropertyNames.OWNER;
@@ -78,7 +78,7 @@ public final class ContentDataSerializer
 
         if ( content.hasMetadata() )
         {
-            final PropertySet metadataSet = contentAsData.addSet( ContentPropertyNames.META_STEPS );
+            final PropertySet metadataSet = contentAsData.addSet( ContentPropertyNames.EXTRA_DATA );
 
             for ( final Metadata metadata : content.getAllMetadata() )
             {
@@ -120,7 +120,7 @@ public final class ContentDataSerializer
 
         if ( params.getMetadata() != null && !params.getMetadata().isEmpty() )
         {
-            final PropertySet metaSet = contentAsData.addSet( META_STEPS );
+            final PropertySet metaSet = contentAsData.addSet( EXTRA_DATA );
             for ( final Metadata metadata : params.getMetadata() )
             {
                 metaSet.addSet( metadata.getName().toString(), metadata.getData().getRoot().copy( metaSet.getTree() ) );
@@ -185,7 +185,7 @@ public final class ContentDataSerializer
 
     private void addMetadata( final PropertySet contentAsSet, final Content.Builder builder )
     {
-        final PropertySet metadataSet = contentAsSet.getSet( META_STEPS );
+        final PropertySet metadataSet = contentAsSet.getSet( EXTRA_DATA );
         if ( metadataSet != null )
         {
             final Metadatas.Builder metadatasBuilder = Metadatas.builder();

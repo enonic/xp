@@ -111,7 +111,7 @@ public final class ModifyContentHandler
             target.data = propertyTree( (Map) data );
         }
 
-        final Object metadata = map.get( "meta" );
+        final Object metadata = map.get( "x" );
         if ( metadata instanceof Map )
         {
             target.metadata = metaDatas( (Map) metadata );

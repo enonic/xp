@@ -17,7 +17,7 @@ Features:
   - Added basic caching headers for assets in Live mode rendering. (CMS-5111)
   - Text component - set "section" to root element (CMS-5125)
   - Filtered content types in Create Content dialogue based on site-hierarchy (CMS-5109)
-  - Automatic injection of component data attributes for layout, part, image and text components in Live Edit (CMS-5110)
+  - Automatic injection of component data attributes for layout, part, image and text components rendering. (CMS-5110)
   - Media Types - Change FormIcon to use ContentResource.updateThumbnail instead of BlobResource.upload (CMS-4677)
 
 Refactoring:
@@ -25,6 +25,9 @@ Refactoring:
   - Removed menu-item meta step Mixin from built-in types. (CMS-5045)
   - Removed built-in relationship types "system:like" and "system:link". Renamed "system:default" to "system:reference". (CMS-5053)
   - Updated directory structure for modules. Added "cms" folder as parent for types, components and assets. (CMS-5047)
+  - Renamed rename names for injecting eXtra data in content-type from <metadata mixin=xx to <x-data mixin="xxx">
+  - Renamed current "meta" property in Content API to "x", for eXtra data. (CMS-5134)
+  - Renamed <metadata> tag in content-type.xml to <x-data>. Also renamed <meta-step> in module.xml to <x-data> and removed <content> wrapper tag. (CMS-5134)
 
 
 ## RC4 (2015-02-03)

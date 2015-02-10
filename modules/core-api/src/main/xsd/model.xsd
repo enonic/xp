@@ -30,7 +30,7 @@
       <xs:element minOccurs="0" name="display-name" type="xs:string"/>
       <xs:element minOccurs="0" name="url" type="xs:string"/>
       <xs:element minOccurs="0" name="vendor" type="vendor"/>
-      <xs:element minOccurs="0" name="content" type="metaSteps"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="x-data" type="metadata"/>
       <xs:element minOccurs="0" name="config" type="form"/>
     </xs:sequence>
   </xs:complexType>
@@ -39,13 +39,6 @@
     <xs:sequence>
       <xs:element name="name" type="xs:string"/>
       <xs:element name="url" type="xs:string"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="metaSteps">
-    <xs:sequence>
-      <xs:element maxOccurs="unbounded" minOccurs="0"
-                  name="meta-step" type="metaStep"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -155,7 +148,7 @@
       <xs:element minOccurs="0" name="is-abstract" type="xs:boolean"/>
       <xs:element minOccurs="0" name="is-final" type="xs:boolean"/>
       <xs:element minOccurs="0" name="allow-child-content" type="xs:boolean"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="metadata" type="metadata"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="x-data" type="metadata"/>
       <xs:element minOccurs="0" name="form" type="formItems"/>
     </xs:sequence>
   </xs:complexType>

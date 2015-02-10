@@ -18,7 +18,7 @@ public class ContentPropertyNames
 
     public static final String METADATA = "metadata";
 
-    public static final String META_STEPS = "meta";
+    public static final String EXTRA_DATA = "x";
 
     public static final String MEDIA = "media";
 

@@ -19,7 +19,7 @@ var expectedJson = {
     "displayName": "My Content",
     "draft": true,
     "hasChildren": false,
-    "meta": {
+    "x": {
         "test": {
             "a": 1
         }
@@ -46,7 +46,7 @@ exports.createContent = function () {
                 }
             }
         },
-        meta: {
+        x: {
             test: {
                 a: 1
             }
