@@ -67,14 +67,14 @@ module api.app.wizard {
 
                 this.displayNameEl.removeClass("generated");
 
-                var currentDisplayName = event.getNewValue();
+                var currentDisplayName = event.getNewValue() || "";
 
                 if (this.displayNameGenerator && this.displayNameGenerator.hasScript()) {
-                    var generatedDisplayName = this.displayNameGenerator.execute();
+                    var generatedDisplayName = this.displayNameGenerator.execute() || "";
 
                     this.displayNameProgrammaticallySet =
-                    generatedDisplayName == currentDisplayName ||
-                    generatedDisplayName.trim() === currentDisplayName ||
+                    generatedDisplayName.toLowerCase() === currentDisplayName.toLowerCase() ||
+                    generatedDisplayName.trim().toLowerCase() === currentDisplayName.toLowerCase() ||
                     api.util.StringHelper.isEmpty(currentDisplayName);
 
                     if (this.displayNameProgrammaticallySet) {
@@ -85,10 +85,10 @@ module api.app.wizard {
             });
 
             this.nameEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                var currentName = event.getNewValue();
-                var generatedName = this.generateName(this.getDisplayName());
+                var currentName = event.getNewValue() || "";
+                var displayName = this.getDisplayName() || "";
 
-                this.autoGenerateName = this.checkAutoGenerateName(currentName, generatedName);
+                this.autoGenerateName = this.checkAutoGenerateName(currentName, displayName);
 
                 this.updateNameGeneratedStatus();
             });
@@ -99,7 +99,9 @@ module api.app.wizard {
         }
 
         private checkAutoGenerateName(name: string, displayName: string): boolean {
-            return api.util.StringHelper.isEmpty(name) || displayName === name || name === this.generateName(displayName);
+            return api.util.StringHelper.isEmpty(name) ||
+                   displayName.toLowerCase() === name.toLowerCase() ||
+                   name.toLowerCase() === this.generateName(displayName).toLowerCase();
         }
 
         initNames(displayName: string, name: string, forceDisplayNameProgrammaticallySet: boolean) {
