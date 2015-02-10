@@ -3,6 +3,7 @@ package com.enonic.wem.export.util;
 import java.nio.file.FileSystems;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 
@@ -24,7 +25,7 @@ public class PathUtils
 
         final String separator = FileSystems.getDefault().getSeparator();
 
-        elements.addAll( Arrays.asList( path.split( separator ) ) );
+        elements.addAll( Arrays.asList( path.split( Pattern.quote( separator ) ) ) );
         return elements;
     }
 
