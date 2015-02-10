@@ -133,7 +133,7 @@ public class PropertyTreeXmlBuilder
         }
         else
         {
-            propertySet.addString( xmlProperty.getName(), xmlProperty.getValue() );
+            propertySet.addString( xmlProperty.getName(), XmlStringEscaper.unescapeContent( xmlProperty.getValue() ) );
         }
     }
 
@@ -198,7 +198,7 @@ public class PropertyTreeXmlBuilder
 
     private static void addLinkProperty( final XmlLinkProperty xmlProperty, final PropertySet propertySet )
     {
-        propertySet.addLink( xmlProperty.getName(), Link.from( xmlProperty.getValue() ) );
+        propertySet.addLink( xmlProperty.getName(), Link.from( XmlStringEscaper.unescapeContent( xmlProperty.getValue() ) ) );
     }
 
     private static void addGeoPointProperty( final XmlGeoPointProperty xmlProperty, final PropertySet propertySet )

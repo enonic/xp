@@ -2,6 +2,7 @@ package com.enonic.wem.export.internal.xml.mapper;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.export.internal.xml.XmlStringProperty;
+import com.enonic.wem.export.internal.xml.util.XmlStringEscaper;
 
 class StringPropertyMapper
 {
@@ -16,7 +17,7 @@ class StringPropertyMapper
         }
         else
         {
-            prop.setValue( property.getString() );
+            prop.setValue( XmlStringEscaper.escapeContent( property.getString() ) );
         }
 
         return prop;
