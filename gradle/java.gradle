@@ -1,15 +1,25 @@
 apply plugin: 'java'
 apply plugin: 'groovy'
 
+def defaultEncoding = 'UTF-8'
+
 compileJava {
-    options.encoding = 'utf-8'
+    options.encoding = defaultEncoding
     options.compilerArgs = ['-Xlint:-options']
 }
 
+compileTestJava {
+    options.encoding = defaultEncoding
+}
+
 compileGroovy {
-    options.encoding = 'utf-8'
+    options.encoding = defaultEncoding
     options.compilerArgs = ['-Xlint:-options']
     groovyOptions.encoding = 'utf-8'
+}
+
+compileTestGroovy {
+    options.encoding = defaultEncoding
 }
 
 configurations {
