@@ -85,7 +85,12 @@ public class VirtualFilePath
 
     public String getPath()
     {
-        return absolute ? SEPARATOR + Joiner.on( SEPARATOR ).join( elements ) : Joiner.on( SEPARATOR ).join( elements );
+        return absolute ? SEPARATOR + join() : join();
+    }
+
+    private String join()
+    {
+        return Joiner.on( SEPARATOR ).join( elements );
     }
 
     public List<String> getElements()
