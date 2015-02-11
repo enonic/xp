@@ -3,10 +3,12 @@ module app.wizard {
     import Content = api.content.Content;
     import AccessControlComboBox = api.ui.security.acl.AccessControlComboBox;
     import AccessControlEntry = api.security.acl.AccessControlEntry;
+    import AccessControlList = api.security.acl.AccessControlList;
 
     export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
 
         private content: Content;
+        private parentPermissions: AccessControlEntry[];
         private originalValues: AccessControlEntry[];
         private originalInherit: boolean;
 
@@ -77,18 +79,27 @@ module app.wizard {
 
             api.dom.Body.get().appendChild(this);
 
+            this.parentPermissions = [];
             OpenEditPermissionsDialogEvent.on((event) => {
                 this.content = event.getContent();
-                this.setUpDialog();
 
-                this.open();
+                this.getParentPermissions().then((parentPermissions: AccessControlList) => {
+                    this.parentPermissions = parentPermissions.getEntries();
+
+                    this.setUpDialog();
+
+                    this.open();
+
+                }).catch((reason: any) => {
+                    api.notify.showWarning('Could not read inherit permissions for content ' + this.content.getPath().toString());
+                }).done();
             });
 
             this.addCancelButtonToBottom();
         }
 
         private applyPermissions() {
-            var permissions = new api.security.acl.AccessControlList(this.getEntries());
+            var permissions = new AccessControlList(this.getEntries());
             var req = new api.content.ApplyContentPermissionsRequest().setId(this.content.getId()).
                 setInheritPermissions(this.inheritPermissionsCheck.isChecked()).
                 setPermissions(permissions).
@@ -124,7 +135,7 @@ module app.wizard {
 
         private layoutInheritedPermissions() {
             this.comboBox.clearSelection();
-            this.originalValues.forEach((item) => {
+            this.parentPermissions.forEach((item) => {
                 if (!this.comboBox.isSelected(item)) {
                     this.comboBox.select(item);
                 }
@@ -133,6 +144,29 @@ module app.wizard {
 
         private getEntries(): AccessControlEntry[] {
             return this.comboBox.getSelectedDisplayValues();
+        }
+
+        private getParentPermissions(): wemQ.Promise<AccessControlList> {
+            var deferred = wemQ.defer<AccessControlList>();
+
+            var parentPath = this.content.getPath().getParentPath();
+            if (parentPath && parentPath.isNotRoot()) {
+                new api.content.GetContentByPathRequest(parentPath).sendAndParse().then((content: Content) => {
+                    deferred.resolve(content.getPermissions());
+                }).catch((reason: any) => {
+                    deferred.reject(new Error("Inherit permissions for [" + this.content.getPath().toString() +
+                                              "] could not be retrieved"));
+                }).done();
+            } else {
+                new api.content.GetContentRootPermissionsRequest().sendAndParse().then((rootPermissions: AccessControlList) => {
+                    deferred.resolve(rootPermissions);
+                }).catch((reason: any) => {
+                    deferred.reject(new Error("Inherit permissions for [" + this.content.getPath().toString() +
+                                              "] could not be retrieved"));
+                }).done();
+            }
+
+            return deferred.promise;
         }
 
         show() {

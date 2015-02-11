@@ -26,6 +26,7 @@
 ///<reference path='GetContentSummaryByIdRequest' />
 ///<reference path='GetContentSummaryByIds' />
 ///<reference path='GetContentByPathRequest.ts' />
+///<reference path='GetContentRootPermissionsRequest.ts' />
 ///<reference path='CreateContentRequest.ts' />
 ///<reference path='OrderContentRequest.ts' />
 ///<reference path='OrderChildContentRequest.ts' />

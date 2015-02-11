@@ -1,6 +1,7 @@
 ///<reference path='ContentIdBaseItemJson.ts' />
 ///<reference path='ContentSummaryJson.ts' />
 ///<reference path='ContentJson.ts' />
+///<reference path='ContentPermissionsJson.ts' />
 ///<reference path='MetadataJson.ts' />
 ///<reference path='ContentQueryResultJson.ts' />
 ///<reference path='CompareContentResultJson.ts' />

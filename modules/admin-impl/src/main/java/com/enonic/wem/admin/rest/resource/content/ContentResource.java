@@ -38,6 +38,7 @@ import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.wem.admin.json.content.GetContentVersionsResultJson;
 import com.enonic.wem.admin.json.content.ReorderChildrenResultJson;
+import com.enonic.wem.admin.json.content.RootPermissionsJson;
 import com.enonic.wem.admin.json.content.attachment.AttachmentJson;
 import com.enonic.wem.admin.rest.exception.NotFoundWebException;
 import com.enonic.wem.admin.rest.multipart.MultipartForm;
@@ -109,6 +110,7 @@ import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.SecurityService;
+import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
@@ -247,8 +249,7 @@ public final class ContentResource
         final Content updatedContent = contentService.update( updateParams );
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
-            return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer,
-                                    principalsResolver );
+            return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
         }
 
         final RenameContentParams renameParams = json.getRenameContentParams();
@@ -324,6 +325,14 @@ public final class ContentResource
             build() );
 
         return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+    }
+
+    @GET
+    @Path("rootPermissions")
+    public RootPermissionsJson getRootPermissions()
+    {
+        final AccessControlList rootPermissions = contentService.getRootPermissions();
+        return new RootPermissionsJson( rootPermissions, principalsResolver );
     }
 
     @POST
@@ -487,7 +496,7 @@ public final class ContentResource
 
     @POST
     @Path("batch")
-    public AbstractContentListJson listBatched( final BatchContentJson json )
+    public ContentSummaryListJson listBatched( final BatchContentJson json )
     {
         final ContentPaths contentsToBatch = ContentPaths.from( json.getContentPaths() );
 
@@ -498,9 +507,7 @@ public final class ContentResource
             hits( contents.getSize() ).
             build();
 
-        final ContentSummaryListJson resultJson = new ContentSummaryListJson( contents, metaData, newContentIconUrlResolver() );
-
-        return resultJson;
+        return new ContentSummaryListJson( contents, metaData, newContentIconUrlResolver() );
     }
 
     private AbstractContentListJson doGetByParentPath( final String expandParam, final FindContentByParentParams params,

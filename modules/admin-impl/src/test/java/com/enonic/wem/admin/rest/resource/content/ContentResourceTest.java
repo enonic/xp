@@ -2,8 +2,6 @@ package com.enonic.wem.admin.rest.resource.content;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -46,11 +44,8 @@ import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyIdProviderAccessor;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.form.Input;
-import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -58,10 +53,6 @@ import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.content.GetContentTypesParams;
-import com.enonic.wem.api.schema.content.validator.DataValidationError;
-import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.schema.content.validator.MaximumOccurrencesValidationError;
-import com.enonic.wem.api.schema.content.validator.MissingRequiredValueValidationError;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.security.Principal;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -800,20 +791,28 @@ public class ContentResourceTest
         assertJson( "apply_content_permissions_success.json", jsonString );
     }
 
-    private DataValidationErrors createDataValidationErrors()
+    @Test
+    public void getPermissions()
+        throws Exception
     {
-        List<DataValidationError> errors = new ArrayList<>( 2 );
+        final User admin = User.create().displayName( "Admin" ).key( PrincipalKey.from( "user:system:admin" ) ).login( "admin" ).build();
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "user:system:admin" ) ) ).thenReturn(
+            Optional.of( admin ) );
+        final User anon = User.create().displayName( "Anonymous" ).key( PrincipalKey.ofAnonymous() ).login( "anonymous" ).build();
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn(
+            Optional.of( anon ) );
 
-        Input input = Input.newInput().name( "myInput" ).inputType( InputTypes.PHONE ).required( true ).maximumOccurrences( 3 ).build();
-        PropertyTree propertyTree = new PropertyTree();
-        Property property = propertyTree.setString( "myProperty", "myValue" );
+        final AccessControlList permissions =
+            AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.from( "user:system:admin" ) ).allowAll().build(),
+                                  AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build() );
+        Mockito.when( contentService.getRootPermissions() ).thenReturn( permissions );
 
-        errors.add( new MaximumOccurrencesValidationError( input, 5 ) );
-        errors.add( new MissingRequiredValueValidationError( input, property ) );
+        String jsonString = request().path( "content/rootPermissions" ).get().getAsString();
 
-        return DataValidationErrors.from( errors );
+        Mockito.verify( contentService, Mockito.times( 1 ) ).getRootPermissions();
+
+        assertJson( "get_content_root_permissions_success.json", jsonString );
     }
-
 
     private Content createContent( final String id, final String name, final String contentTypeName )
     {

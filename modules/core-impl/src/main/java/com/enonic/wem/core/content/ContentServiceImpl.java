@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -77,6 +78,12 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.wem.api.security.User;
+import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.util.BinaryReference;
 
 import static com.enonic.wem.core.content.ContentNodeHelper.translateNodePathToContentPath;
@@ -90,6 +97,15 @@ public class ContentServiceImpl
     public static final String TEMPLATES_FOLDER_NAME = "_templates";
 
     private static final String TEMPLATES_FOLDER_DISPLAY_NAME = "Templates";
+
+    private static final PrincipalKey DUMMY_CONTENT_SUPER_USER_KEY = PrincipalKey.ofUser( UserStoreKey.system(), "content-su" );
+
+    private static final User CONTENT_SUPER_USER = User.create().key( DUMMY_CONTENT_SUPER_USER_KEY ).login( "content" ).build();
+
+    private static final AuthenticationInfo CONTENT_SU_AUTH_INFO = AuthenticationInfo.create().
+        principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).
+        user( CONTENT_SUPER_USER ).
+        build();
 
     private static final ModuleConfigsDataSerializer MODULE_CONFIGS_DATA_SERIALIZER = new ModuleConfigsDataSerializer();
 
@@ -583,6 +599,23 @@ public class ContentServiceImpl
             return futureContext.callWith( applyPermissionsCommand::execute );
 
         }, applyPermissionsExecutor );
+    }
+
+    @Override
+    public AccessControlList getRootPermissions()
+    {
+        final ContentPath rootContentPath = ContentPath.ROOT;
+        final NodePath rootNodePath = ContentNodeHelper.translateContentPathToNodePath( rootContentPath );
+        final Node rootNode = runAsContentAdmin( () -> nodeService.getByPath( rootNodePath ) );
+        return rootNode != null ? rootNode.getPermissions() : AccessControlList.empty();
+    }
+
+    private <T> T runAsContentAdmin( final Callable<T> callable )
+    {
+        return ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( CONTENT_SU_AUTH_INFO ).
+            build().
+            callWith( callable );
     }
 
     @Override

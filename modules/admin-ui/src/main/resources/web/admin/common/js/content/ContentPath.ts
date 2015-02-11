@@ -63,13 +63,21 @@ module api.content {
             if (this.elements.length < 1) {
                 return null;
             }
-            var parentElemements: string[] = [];
+            var parentElements: string[] = [];
             this.elements.forEach((element: string, index: number)=> {
                 if (index < this.elements.length - 1) {
-                    parentElemements.push(element);
+                    parentElements.push(element);
                 }
             });
-            return new ContentPath(parentElemements);
+            return new ContentPath(parentElements);
+        }
+
+        isRoot(): boolean {
+            return this.equals(ContentPath.ROOT);
+        }
+
+        isNotRoot(): boolean {
+            return !this.equals(ContentPath.ROOT);
         }
 
         equals(o: api.Equitable): boolean {

@@ -6,6 +6,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.util.BinaryReference;
 
 public interface ContentService
@@ -62,4 +63,5 @@ public interface ContentService
 
     ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference );
 
+    AccessControlList getRootPermissions();
 }

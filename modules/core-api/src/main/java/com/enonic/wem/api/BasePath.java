@@ -66,9 +66,9 @@ public abstract class BasePath<PATH extends BasePath, ELEMENT extends BasePath.E
         return this.trailingDivider;
     }
 
-    public BasePath<PATH, ELEMENT, BUILDER> trimTrailingDivider()
+    public PATH trimTrailingDivider()
     {
-        return create( (PATH) this ).trailingDivider( false ).build();
+        return (PATH) create( (PATH) this ).trailingDivider( false ).build();
     }
 
     public int elementCount()

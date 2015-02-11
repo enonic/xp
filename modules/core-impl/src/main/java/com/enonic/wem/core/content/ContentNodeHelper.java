@@ -24,7 +24,7 @@ class ContentNodeHelper
 
     public static NodePath translateContentPathToNodePath( final ContentPath contentPath )
     {
-        return new NodePath( CONTENT_ROOT_NODE_NAME + "/" + contentPath.toString() ).asAbsolute();
+        return new NodePath( CONTENT_ROOT_NODE_NAME + contentPath.asAbsolute().toString() ).asAbsolute().trimTrailingDivider();
     }
 
     public static NodePaths translateContentPathsToNodePaths( final ContentPaths contentPaths )
