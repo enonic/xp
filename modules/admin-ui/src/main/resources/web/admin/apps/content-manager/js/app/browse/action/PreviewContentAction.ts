@@ -20,7 +20,7 @@ module app.browse.action {
 
         showPreviewDialog(content: api.content.ContentSummary) {
             window.open(api.rendering.UriHelper.getPortalUri(content.getPath().toString(), RenderingMode.PREVIEW,
-                api.content.Workspace.DRAFT), 'preview');
+                api.content.Workspace.DRAFT), 'preview').focus();
         }
     }
 }
