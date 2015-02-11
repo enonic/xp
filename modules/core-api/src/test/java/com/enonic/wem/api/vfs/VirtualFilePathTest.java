@@ -82,4 +82,40 @@ public class VirtualFilePathTest
         path.subtractPath( subtract ).getPath();
     }
 
+    @Test
+    public void join_strings()
+        throws Exception
+    {
+        final VirtualFilePath path = VirtualFilePath.from( "this/is/my/test" );
+
+        final VirtualFilePath joinedPath = path.join( "with", "appended", "elements" );
+
+        assertEquals( "this/is/my/test/with/appended/elements", joinedPath.getPath() );
+
+    }
+
+    @Test
+    public void join_strings_absolute()
+        throws Exception
+    {
+        final VirtualFilePath path = VirtualFilePath.from( "/this/is/my/test" );
+
+        final VirtualFilePath joinedPath = path.join( "with", "appended", "elements" );
+
+        assertEquals( "/this/is/my/test/with/appended/elements", joinedPath.getPath() );
+
+    }
+
+    @Test
+    public void join_strings_with_separator()
+        throws Exception
+    {
+        final VirtualFilePath path = VirtualFilePath.from( "/this/is/my/test" );
+
+        final VirtualFilePath joinedPath = path.join( "/with", "/appended", "/elements" );
+
+        assertEquals( "/this/is/my/test/with/appended/elements", joinedPath.getPath() );
+
+    }
+
 }

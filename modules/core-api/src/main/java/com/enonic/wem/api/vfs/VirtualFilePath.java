@@ -2,7 +2,6 @@ package com.enonic.wem.api.vfs;
 
 import java.nio.file.Path;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Joiner;
@@ -93,7 +92,7 @@ public class VirtualFilePath
         return Joiner.on( SEPARATOR ).join( elements );
     }
 
-    public List<String> getElements()
+    public LinkedList<String> getElements()
     {
         return elements;
     }
@@ -102,6 +101,35 @@ public class VirtualFilePath
     {
         return this.elements.getLast();
     }
+
+    public VirtualFilePath join( final VirtualFilePath... paths )
+    {
+        final Builder builder = VirtualFilePath.create().
+            addAll( this.elements ).
+            absolute( this.absolute );
+
+        for ( final VirtualFilePath virtualFilePath : paths )
+        {
+            builder.addAll( virtualFilePath.getElements() );
+        }
+
+        return builder.build();
+    }
+
+    public VirtualFilePath join( final String... elements )
+    {
+        final Builder builder = VirtualFilePath.create().
+            addAll( this.elements ).
+            absolute( this.absolute );
+
+        for ( final String element : elements )
+        {
+            builder.addAll( getPathElements( element, SEPARATOR ) );
+        }
+
+        return builder.build();
+    }
+
 
     int size()
     {
@@ -122,6 +150,12 @@ public class VirtualFilePath
         public Builder add( final String element )
         {
             this.elements.add( element );
+            return this;
+        }
+
+        public Builder addAll( final LinkedList<String> elements )
+        {
+            this.elements.addAll( elements );
             return this;
         }
 
