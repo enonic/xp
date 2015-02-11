@@ -37,7 +37,9 @@ module app.wizard {
                 skipPrincipals([RoleKeys.EVERYONE]);
 
             this.groups = new PrincipalComboBox(groupsLoader);
+            groupsLoader.load();
             this.roles = new PrincipalComboBox(rolesLoader);
+            rolesLoader.load();
 
             var groupsHandler = () => { this.groupsLoaded = true; this.selectMembership(); this.groups.unLoaded(groupsHandler); };
             var rolesHandler = () => { this.rolesLoaded = true; this.selectMembership(); this.roles.unLoaded(rolesHandler); };
