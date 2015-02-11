@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentChangeEvent;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentEditor;
 import com.enonic.wem.api.content.ContentUpdatedEvent;
@@ -84,6 +85,8 @@ final class UpdateContentCommand
         final Node editedNode = this.nodeService.update( updateNodeParams );
 
         eventPublisher.publish( new ContentUpdatedEvent( editedContent.getId() ) );
+
+        eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.UPDATE, editedContent.getPath() ) );
 
         return translator.fromNode( editedNode );
     }

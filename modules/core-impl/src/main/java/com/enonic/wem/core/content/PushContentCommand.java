@@ -1,25 +1,31 @@
 package com.enonic.wem.core.content;
 
+import java.util.List;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentChangeEvent;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
-import com.enonic.wem.api.content.ContentPublishedEvent;
+import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.GetContentByIdsParams;
 import com.enonic.wem.api.content.PushContentsResult;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
-import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.node.ResolveSyncWorkResult;
 import com.enonic.wem.api.node.ResolveSyncWorkResults;
 import com.enonic.wem.api.node.SyncWorkResolverParams;
+
+import static com.enonic.wem.core.content.ContentNodeHelper.translateNodePathToContentPath;
+import static java.util.stream.Collectors.toList;
 
 public class PushContentCommand
     extends AbstractContentCommand
@@ -137,9 +143,13 @@ public class PushContentCommand
 
     private void publishNodePublishedEvents( final PushNodesResult pushNodesResult )
     {
-        for ( final Node node : pushNodesResult.getSuccessfull() )
+        final List<ContentPath> publishedContentPaths = pushNodesResult.getSuccessfull().stream().
+            map( ( node ) -> translateNodePathToContentPath( node.path() ) ).
+            collect( toList() );
+        if ( !publishedContentPaths.isEmpty() )
         {
-            eventPublisher.publish( new ContentPublishedEvent( ContentId.from( node.id().toString() ) ) );
+            final ContentPaths contentPaths = ContentPaths.from( publishedContentPaths );
+            eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PUBLISH, contentPaths ) );
         }
     }
 
@@ -254,10 +264,10 @@ public class PushContentCommand
         private boolean includeChildren = true;
 
         public Builder contentIds( final ContentIds contentIds )
-    {
-        this.contentIds = contentIds;
-        return this;
-    }
+        {
+            this.contentIds = contentIds;
+            return this;
+        }
 
         public Builder target( final Branch target )
         {

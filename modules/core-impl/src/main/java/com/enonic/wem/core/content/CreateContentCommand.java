@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.NamePrettyfier;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
+import com.enonic.wem.api.content.ContentChangeEvent;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentCreatedEvent;
 import com.enonic.wem.api.content.ContentDataValidationException;
@@ -68,8 +69,11 @@ final class CreateContentCommand
         try
         {
             final Node createdNode = nodeService.create( createNodeParams );
+            final Content createdContent = translator.fromNode( createdNode );
             eventPublisher.publish( new ContentCreatedEvent( ContentId.from( createdNode.id().toString() ) ) );
-            return translator.fromNode( createdNode );
+            eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.CREATE, createdContent.getPath() ) );
+
+            return createdContent;
         }
         catch ( NodeAlreadyExistAtPathException e )
         {

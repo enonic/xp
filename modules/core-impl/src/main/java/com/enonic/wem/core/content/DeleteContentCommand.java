@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentChangeEvent;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.context.Context;
@@ -31,7 +32,12 @@ final class DeleteContentCommand
     {
         params.validate();
 
-        return doExecute();
+        final Content deletedContent = doExecute();
+        if ( deletedContent != null )
+        {
+            eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
+        }
+        return deletedContent;
     }
 
     private Content doExecute()

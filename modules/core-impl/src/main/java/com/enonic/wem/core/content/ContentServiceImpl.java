@@ -20,6 +20,7 @@ import com.enonic.wem.api.content.CompareContentResult;
 import com.enonic.wem.api.content.CompareContentResults;
 import com.enonic.wem.api.content.CompareContentsParams;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentChangeEvent;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -77,6 +78,8 @@ import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.util.BinaryReference;
+
+import static com.enonic.wem.core.content.ContentNodeHelper.translateNodePathToContentPath;
 
 @Component(immediate = true)
 public class ContentServiceImpl
@@ -253,6 +256,7 @@ public class ContentServiceImpl
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             params( params ).
             build().
             execute();
@@ -396,6 +400,9 @@ public class ContentServiceImpl
     {
         final Node createdNode = nodeService.duplicate( NodeId.from( params.getContentId() ) );
 
+        final ContentPath targetPath = translateNodePathToContentPath( createdNode.path() );
+        eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DUPLICATE, targetPath ) );
+
         return contentNodeTranslator.fromNode( createdNode );
     }
 
@@ -422,9 +429,20 @@ public class ContentServiceImpl
 
         try
         {
+            final Node sourceNode = nodeService.getById( NodeId.from( params.getContentId() ) );
+            if ( sourceNode == null )
+            {
+                throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
+            }
             final Node movedNode = nodeService.move( NodeId.from( params.getContentId() ),
                                                      NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
                                                          params.getParentContentPath().toString() ).build() );
+
+            final ContentChangeEvent event = ContentChangeEvent.create().
+                change( ContentChangeEvent.ContentChangeType.DELETE, translateNodePathToContentPath( sourceNode.path() ) ).
+                change( ContentChangeEvent.ContentChangeType.CREATE, translateNodePathToContentPath( movedNode.path() ) ).
+                build();
+            eventPublisher.publish( event );
 
             return contentNodeTranslator.fromNode( movedNode );
         }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 
+import com.enonic.wem.api.content.ContentChangeEvent;
 import com.enonic.wem.api.content.ContentCreatedEvent;
 import com.enonic.wem.api.content.ContentPublishedEvent;
 import com.enonic.wem.api.content.ContentUpdatedEvent;
@@ -15,6 +16,7 @@ import com.enonic.wem.api.event.EventListener;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;
 import com.enonic.wem.api.schema.content.ContentTypeDeletedEvent;
 import com.enonic.wem.api.schema.content.ContentTypeUpdatedEvent;
+import com.enonic.xp.admin.event.impl.json.ContentChangeEventJson;
 import com.enonic.xp.admin.event.impl.json.ContentCreatedEventJson;
 import com.enonic.xp.admin.event.impl.json.ContentPublishedEventJson;
 import com.enonic.xp.admin.event.impl.json.ContentTypeDeletedEventJson;
@@ -64,7 +66,11 @@ public final class EventListenerImpl
 
     private EventJson getEventJsonSerializer( final Event event )
     {
-        if ( event instanceof ModuleUpdatedEvent )
+        if ( event instanceof ContentChangeEvent )
+        {
+            return new ContentChangeEventJson( (ContentChangeEvent) event );
+        }
+        else if ( event instanceof ModuleUpdatedEvent )
         {
             return new ModuleUpdatedEventJson( (ModuleUpdatedEvent) event );
         }

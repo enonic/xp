@@ -97,6 +97,11 @@ module api.app {
             //if (eventType === 'ContentCreatedEvent') {
             //    return api.content.ContentCreatedEvent.fromJson(serverEventJson.event);
             //}
+            if (eventType === 'ContentChangeEvent') {
+                var contentChange = api.content.ContentServerEvent.fromJson(serverEventJson.event);
+                console.log('Server changes: ' + contentChange.toString());
+                return contentChange;
+            }
             if (eventType === 'ModuleUpdatedEvent') {
                 return api.module.ModuleUpdatedEvent.fromJson(serverEventJson.event);
             }

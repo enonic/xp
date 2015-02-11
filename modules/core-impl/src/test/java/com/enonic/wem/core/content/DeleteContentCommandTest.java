@@ -8,6 +8,7 @@ import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.DeleteContentParams;
+import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeComparison;
 import com.enonic.wem.api.node.NodeId;
@@ -21,6 +22,8 @@ public class DeleteContentCommandTest
 
     private ContentNodeTranslator translator;
 
+    private EventPublisher eventPublisher;
+
 
     @Before
     public void setUp()
@@ -28,6 +31,7 @@ public class DeleteContentCommandTest
     {
         this.nodeService = Mockito.mock( NodeService.class );
         this.translator = Mockito.mock( ContentNodeTranslator.class );
+        this.eventPublisher = Mockito.mock( EventPublisher.class );
     }
 
     @Test
@@ -57,6 +61,7 @@ public class DeleteContentCommandTest
                 build() ).
             nodeService( this.nodeService ).
             translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
@@ -90,6 +95,7 @@ public class DeleteContentCommandTest
                 build() ).
             nodeService( this.nodeService ).
             translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
 
