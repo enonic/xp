@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -19,11 +18,14 @@ import com.enonic.wem.api.util.Exceptions;
 final class LocalFile
     implements VirtualFile
 {
+    private final VirtualFilePath virtualFilePath;
+
     private final Path path;
 
     public LocalFile( final Path path )
     {
-        this.path = Paths.get( path.toString() );
+        this.virtualFilePath = VirtualFilePath.from( path );
+        this.path = path;
     }
 
     @Override
@@ -33,9 +35,9 @@ final class LocalFile
     }
 
     @Override
-    public String getPath()
+    public VirtualFilePath getPath()
     {
-        return this.path.toString();
+        return this.virtualFilePath;
     }
 
     @Override
@@ -43,7 +45,7 @@ final class LocalFile
     {
         try
         {
-            return this.path.toFile().toURI().toURL();
+            return this.path.toUri().toURL();
         }
         catch ( MalformedURLException e )
         {
@@ -120,4 +122,5 @@ final class LocalFile
     {
         return VirtualFiles.from( this.path.resolve( path ) );
     }
+
 }

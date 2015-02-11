@@ -1,12 +1,14 @@
-package com.enonic.wem.export.util;
+package com.enonic.wem.api.util;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.api.support.PathUtils;
+
 import static org.junit.Assert.*;
 
-public class PathUtilsTest
+public class PathUtilsTest_windows
 {
     private String os = System.getProperty( "os.name" );
 
@@ -17,7 +19,7 @@ public class PathUtilsTest
     }
 
     @Test
-    public void testName()
+    public void testWindowsUrls()
         throws Exception
     {
         assertEquals( "C:/path/to/stuff", PathUtils.removeLeadingWindowsSlash( "/C:/path/to/stuff" ) );

@@ -24,7 +24,7 @@ public final class VirtualFiles
 
     public static VirtualFile from( final ClassLoader classLoader )
     {
-        return new ClassLoderFile( classLoader, "/", true );
+        return new ClassLoaderFile( classLoader, "/", true );
     }
 
     public static VirtualFile from( final Class clazz )

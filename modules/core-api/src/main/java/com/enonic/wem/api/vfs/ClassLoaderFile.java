@@ -11,19 +11,22 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 
-final class ClassLoderFile
+final class ClassLoaderFile
     implements VirtualFile
 {
     private final ClassLoader loader;
 
     private final String path;
 
+    private final VirtualFilePath virtualFilePath;
+
     private URL url;
 
     private boolean folder;
 
-    public ClassLoderFile( final ClassLoader loader, final String path )
+    public ClassLoaderFile( final ClassLoader loader, final String path )
     {
+        this.virtualFilePath = VirtualFilePath.from( path );
         this.loader = loader;
         this.path = cleanPath( path );
         this.url = this.loader.getResource( path.substring( 1 ) );
@@ -36,7 +39,7 @@ final class ClassLoderFile
         }
     }
 
-    public ClassLoderFile( final ClassLoader loader, final String path, final boolean folder )
+    public ClassLoaderFile( final ClassLoader loader, final String path, final boolean folder )
     {
         this( loader, path );
         this.folder = true;
@@ -62,9 +65,9 @@ final class ClassLoderFile
     }
 
     @Override
-    public String getPath()
+    public VirtualFilePath getPath()
     {
-        return this.path;
+        return this.virtualFilePath;
     }
 
     @Override
@@ -140,6 +143,6 @@ final class ClassLoderFile
     @Override
     public VirtualFile resolve( final String path )
     {
-        return new ClassLoderFile( this.loader, this.path + "/" + path );
+        return new ClassLoaderFile( this.loader, this.path + "/" + path );
     }
 }

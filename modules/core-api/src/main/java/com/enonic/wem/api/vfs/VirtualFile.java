@@ -10,7 +10,10 @@ public interface VirtualFile
 {
     public String getName();
 
-    public String getPath();
+    /**
+     * @return a filesystem-independent path to the VirtualFile using '/' as separator
+     */
+    public VirtualFilePath getPath();
 
     public URL getUrl();
 
