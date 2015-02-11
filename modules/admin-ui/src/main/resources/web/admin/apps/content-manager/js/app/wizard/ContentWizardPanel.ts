@@ -350,6 +350,20 @@ module app.wizard {
                 then((contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus) => {
                     var ignore = contentSummaryAndCompareStatus.getCompareStatus() !== CompareStatus.NEW;
                     this.contentWizardHeader.disableNameGeneration(ignore);
+                    if (!ignore) {
+                        var publishHandler = (event: api.content.ContentPublishedEvent) => {
+                            if (this.getPersistedItem() && event.getContentId() &&
+                                (this.getPersistedItem().getId() === event.getContentId().toString())) {
+
+                                this.contentWizardHeader.disableNameGeneration(true);
+                                api.content.ContentPublishedEvent.un(publishHandler);
+                            }
+                        };
+                        api.content.ContentPublishedEvent.on(publishHandler);
+                        this.onClosed(() => {
+                            api.content.ContentPublishedEvent.un(publishHandler);
+                        });
+                    }
                 }).done();
 
             var viewedContent;
