@@ -11,3 +11,9 @@ dependencies {
     compile 'org.slf4j:log4j-over-slf4j:1.7.10'
     compile 'org.fusesource.jansi:jansi:1.11'
 }
+
+jar {
+    manifest {
+        attributes( ['Implementation-Version': project.version] )
+    }
+}

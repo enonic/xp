@@ -1,4 +1,19 @@
-## RC5 (unreleased)
+## GA (unreleased)
+
+Bugfixes:
+
+ - N/A
+
+Features:
+
+ - N/A
+
+Refactoring:
+
+ - N/A
+
+
+## RC5 (2015-02-11)
 
 Bugfixes:
 

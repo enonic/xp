@@ -21,8 +21,6 @@ public final class BannerPrinter
 
     private final static String PRODUCT = "Enonic WEM";
 
-    private final static String VERSION = "5.0.0-SNAPSHOT";
-
     private final Environment env;
 
     public BannerPrinter( final Environment env )
@@ -30,11 +28,17 @@ public final class BannerPrinter
         this.env = env;
     }
 
+    private String getVersion()
+    {
+        final String value = getClass().getPackage().getImplementationVersion();
+        return value != null ? value : "x.x.x";
+    }
+
     public void printBanner()
     {
         System.out.println();
         System.out.println( BANNER );
-        System.out.println( " # " + PRODUCT + " " + VERSION );
+        System.out.println( " # " + PRODUCT + " " + getVersion() );
         System.out.println( " # " + getFormattedJvmInfo() );
         System.out.println( " # " + getFormattedOsInfo() );
         System.out.println( " # Install directory is " + this.env.getInstallDir() );
