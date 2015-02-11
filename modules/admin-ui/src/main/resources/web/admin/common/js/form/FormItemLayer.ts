@@ -1,6 +1,7 @@
 module api.form {
 
     import PropertySet = api.data.PropertySet;
+    import PropertyArray = api.data.PropertyArray;
 
     export class FormItemLayer {
 
@@ -52,6 +53,11 @@ module api.form {
                 if (api.ObjectHelper.iFrameSafeInstanceOf(formItem, FormItemSet)) {
 
                     var formItemSet: FormItemSet = <FormItemSet>formItem;
+                    var propertyArray: PropertyArray = propertySet.getPropertyArray(formItemSet.getName());
+
+                    if (propertyArray && propertyArray.getSize() == 0) {
+                        this.context = FormContext.create().setShowEmptyFormItemSetOccurrences(false).build();
+                    }
                     var formItemSetView = new FormItemSetView(<FormItemSetViewConfig>{
                         context: this.context,
                         formItemSet: formItemSet,
@@ -96,9 +102,6 @@ module api.form {
             });
 
             return wemQ.all(layoutPromises).spread<void>(() => {
-                api.util.assert(this.formItems.length == this.formItemViews.length,
-                    "Not all FormItemView-s was created. Expected " + this.formItems.length + ", was: " + this.formItemViews.length);
-
                 return wemQ<void>(null);
             });
         }

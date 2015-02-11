@@ -101,6 +101,10 @@ module api.form {
             var layoutPromise = this.formItemSetOccurrences.layout();
             layoutPromise.then(() => {
 
+                this.formItemSetOccurrences.onOccurrenceRendered(() => {
+                    this.validate(false);
+                });
+
                 this.formItemSetOccurrences.onOccurrenceAdded((event: OccurrenceAddedEvent) => {
                     this.refresh();
                     wemjq(this.occurrenceViewsContainer.getHTMLElement()).sortable("refresh");
@@ -188,7 +192,7 @@ module api.form {
             var numberOfValids = 0;
             occurrenceViews.forEach((occurrenceView: FormItemSetOccurrenceView) => {
                 var recordingForOccurrence = occurrenceView.getLastValidationRecording();
-                if (recordingForOccurrence.isValid()) {
+                if (recordingForOccurrence && recordingForOccurrence.isValid()) {
                     numberOfValids++;
                 }
             });
@@ -212,6 +216,8 @@ module api.form {
             if (previousValidState != this.previousValidationRecording.isValid()) {
                 this.notifyValidityChanged(new RecordingValidityChangedEvent(this.previousValidationRecording,
                     this.resolveValidationRecordingPath()));
+            } else if (previousValidState != event.isValid()) {
+                this.notifyValidityChanged(event);
             }
         }
 
