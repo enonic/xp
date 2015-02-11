@@ -28,7 +28,7 @@ public class ClassLoaderVirtualFileTest
         assertNull( file.getCharSource() );
         assertNotNull( file.getUrl() );
         assertEquals( "", file.getName() );
-        assertEquals( "/", file.getPath() );
+        assertEquals( "/", file.getPath().getPath() );
         assertTrue( file.getUrl().toString().endsWith( "/root/" ) );
     }
 

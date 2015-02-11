@@ -17,8 +17,8 @@ public class NodeImportPathResolverTest
     {
 
         final NodePath resolvedPath =
-            NodeImportPathResolver.resolveNodeImportPath( VirtualFiles.from( Paths.get( "/var", "folder", "myExport", "mynode" ) ),
-                                                          VirtualFiles.from( Paths.get( "/var", "folder", "myExport" ) ),
+            NodeImportPathResolver.resolveNodeImportPath( VirtualFiles.from( Paths.get( "/var", "folder", "myExport", "mynode" ) ), //
+                                                          VirtualFiles.from( Paths.get( "/var", "folder", "myExport" ) ), //
                                                           NodePath.newNodePath( NodePath.ROOT, "myimport" ).build() );
 
         assertEquals( "/myimport/mynode", resolvedPath.toString() );
@@ -29,8 +29,9 @@ public class NodeImportPathResolverTest
         throws Exception
     {
         final NodePath resolvedPath = NodeImportPathResolver.resolveNodeImportPath(
-            VirtualFiles.from( Paths.get( "/var", "folder", "myExport", "mynode", "mychild" ) ),
-            VirtualFiles.from( Paths.get( "/var", "folder", "myExport" ) ), NodePath.newNodePath( NodePath.ROOT, "myimport" ).build() );
+            VirtualFiles.from( Paths.get( "/var", "folder", "myExport", "mynode", "mychild" ) ), //
+            VirtualFiles.from( Paths.get( "/var", "folder", "myExport" ) ), //
+            NodePath.newNodePath( NodePath.ROOT, "myimport" ).build() );
 
         assertEquals( "/myimport/mynode/mychild", resolvedPath.toString() );
         assertEquals( "/myimport/mynode", resolvedPath.getParentPath().toString() );
@@ -41,8 +42,9 @@ public class NodeImportPathResolverTest
         throws Exception
     {
         final NodePath resolvedPath =
-            NodeImportPathResolver.resolveNodeImportPath( VirtualFiles.from( Paths.get( "/var", "folder", "myExport", "mynode" ) ),
-                                                          VirtualFiles.from( Paths.get( "/var", "folder", "myExport" ) ), NodePath.ROOT );
+            NodeImportPathResolver.resolveNodeImportPath( VirtualFiles.from( Paths.get( "/var", "folder", "myExport", "mynode" ) ), //
+                                                          VirtualFiles.from( Paths.get( "/var", "folder", "myExport" ) ),//
+                                                          NodePath.ROOT );
 
         assertEquals( "/mynode", resolvedPath.toString() );
 

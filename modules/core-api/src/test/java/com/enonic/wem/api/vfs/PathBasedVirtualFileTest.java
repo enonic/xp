@@ -26,7 +26,7 @@ public class PathBasedVirtualFileTest
         assertNull( file.getCharSource() );
         assertNotNull( file.getUrl() );
         assertEquals( "root", file.getName() );
-        assertTrue( file.getPath().endsWith( "/root" ) );
+        assertTrue( file.getPath().getPath().endsWith( "/root" ) );
         assertTrue( file.getUrl().toString().endsWith( "/root/" ) );
     }
 
@@ -60,7 +60,7 @@ public class PathBasedVirtualFileTest
         assertNotNull( file.getChildren() );
         assertEquals( 0, file.getChildren().size() );
         assertEquals( "file1.txt", file.getName() );
-        assertTrue( file.getPath().endsWith( "/file1.txt" ) );
+        assertTrue( file.getPath().getPath().endsWith( "/file1.txt" ) );
 
         assertNotNull( file.getCharSource() );
         assertEquals( "contents of dir1/file1.txt", file.getCharSource().readFirstLine() );
@@ -94,7 +94,7 @@ public class PathBasedVirtualFileTest
         assertNull( file.getCharSource() );
         assertNotNull( file.getUrl() );
         assertEquals( "notFound", file.getName() );
-        assertTrue( file.getPath().endsWith( "/notFound" ) );
+        assertTrue( file.getPath().getPath().endsWith( "/notFound" ) );
         assertTrue( file.getUrl().toString().endsWith( "/notFound" ) );
     }
 }

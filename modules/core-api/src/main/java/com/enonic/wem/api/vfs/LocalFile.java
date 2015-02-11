@@ -18,13 +18,13 @@ import com.enonic.wem.api.util.Exceptions;
 final class LocalFile
     implements VirtualFile
 {
-    private final LocalFileName localFileName;
+    private final VirtualFilePath virtualFilePath;
 
     private final Path path;
 
     public LocalFile( final Path path )
     {
-        this.localFileName = LocalFileName.from( path );
+        this.virtualFilePath = VirtualFilePath.from( path );
         this.path = path;
     }
 
@@ -35,9 +35,9 @@ final class LocalFile
     }
 
     @Override
-    public String getPath()
+    public VirtualFilePath getPath()
     {
-        return this.localFileName.getPathAsString();
+        return this.virtualFilePath;
     }
 
     @Override
@@ -122,4 +122,5 @@ final class LocalFile
     {
         return VirtualFiles.from( this.path.resolve( path ) );
     }
+
 }

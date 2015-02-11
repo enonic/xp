@@ -23,8 +23,11 @@ class BundleResource
 
     private final String path;
 
+    private final VirtualFilePath virtualFilePath;
+
     public BundleResource( final Bundle bundle, final String path )
     {
+        this.virtualFilePath = VirtualFilePath.from( path );
         this.bundle = bundle;
         this.path = path;
     }
@@ -43,9 +46,9 @@ class BundleResource
     }
 
     @Override
-    public String getPath()
+    public VirtualFilePath getPath()
     {
-        return this.path;
+        return this.virtualFilePath;
     }
 
     @Override

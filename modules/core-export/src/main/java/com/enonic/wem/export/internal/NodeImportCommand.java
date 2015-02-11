@@ -237,7 +237,7 @@ public class NodeImportCommand
             final VirtualFile binary = exportReader.getBinarySource( nodeFile, binaryReference.toString() );
             builder.add( new BinaryAttachment( binaryReference, binary.getByteSource() ) );
 
-            result.addBinary( binary.getPath(), binaryReference );
+            result.addBinary( binary.getPath().getPath(), binaryReference );
         }
         catch ( Exception e )
         {
