@@ -22,6 +22,7 @@ import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentParams;
@@ -485,6 +486,25 @@ public class ContentResourceTest
         String jsonString = request().path( "content/list" ).queryParam( "expand", "none" ).get().getAsString();
 
         assertJson( "list_content_id.json", jsonString );
+    }
+
+    @Test
+    public void batch_content()
+        throws Exception
+    {
+
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+
+        Mockito.when( contentService.getByPaths( Mockito.isA( ContentPaths.class ) ) ).
+            thenReturn( Contents.from( aContent, bContent ) );
+
+        // Request 3 contents and receive 2 (1 should not be found)
+        String jsonString = request().path( "content/batch" ).
+            entity( readFromFile( "batch_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "batch_content_summary.json", jsonString );
     }
 
     @Test

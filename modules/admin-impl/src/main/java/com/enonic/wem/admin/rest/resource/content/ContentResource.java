@@ -44,6 +44,7 @@ import com.enonic.wem.admin.rest.multipart.MultipartForm;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.ApplyContentPermissionsJson;
+import com.enonic.wem.admin.rest.resource.content.json.BatchContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.CompareContentsJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentQueryJson;
@@ -73,6 +74,7 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateMediaParams;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.content.DuplicateContentParams;
@@ -481,6 +483,24 @@ public final class ContentResource
             build();
 
         return doGetByParentPath( expandParam, params, parentContentPath );
+    }
+
+    @POST
+    @Path("batch")
+    public AbstractContentListJson listBatched( final BatchContentJson json )
+    {
+        final ContentPaths contentsToBatch = ContentPaths.from( json.getContentPaths() );
+
+        final Contents contents = contentService.getByPaths( contentsToBatch );
+
+        final ContentListMetaData metaData = ContentListMetaData.create().
+            totalHits( contents.getSize() ).
+            hits( contents.getSize() ).
+            build();
+
+        final ContentSummaryListJson resultJson = new ContentSummaryListJson( contents, metaData, newContentIconUrlResolver() );
+
+        return resultJson;
     }
 
     private AbstractContentListJson doGetByParentPath( final String expandParam, final FindContentByParentParams params,
