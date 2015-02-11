@@ -88,12 +88,20 @@ module api.liveedit {
             this.unlockedScreenActions = [resetAction];
 
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => {
-                this.registerItemView(event.getView());
+                // register the view and all its child views (i.e layout with regions)
+                event.getView().toItemViewArray().forEach((itemView: ItemView) => {
+                    this.registerItemView(itemView);
+                });
 
                 // adding anything should exit the text edit mode
                 this.exitTextEditModeIfNeeded();
             };
-            this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => this.unregisterItemView(event.getView());
+            this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
+                // register the view and all its child views (i.e layout with regions)
+                event.getView().toItemViewArray().forEach((itemView: ItemView) => {
+                    this.unregisterItemView(itemView);
+                });
+            };
 
             super(new ItemViewBuilder().
                 setLiveEditModel(builder.liveEditModel).
@@ -268,6 +276,10 @@ module api.liveedit {
             return null;
         }
 
+        setParentItemView(itemView: ItemView) {
+            throw new Error("PageView is the topmost item view and cannot have a parent");
+        }
+
         registerRegionView(regionView: RegionView) {
             this.regionViews.push(regionView);
 
@@ -435,7 +447,7 @@ module api.liveedit {
 
             this.viewsById[view.getItemId().toNumber()] = view;
 
-            this.notifyItemViewAdded(new ItemViewAddedEvent(view));
+            this.notifyItemViewAdded(view);
         }
 
         private unregisterItemView(view: ItemView) {
@@ -446,7 +458,7 @@ module api.liveedit {
 
             delete this.viewsById[view.getItemId().toNumber()];
 
-            this.notifyItemViewRemoved(new ItemViewRemovedEvent(view));
+            this.notifyItemViewRemoved(view);
         }
 
         private parseItemViews() {
@@ -502,7 +514,8 @@ module api.liveedit {
             this.itemViewAddedListeners = this.itemViewAddedListeners.filter((current) => (current != listener));
         }
 
-        private notifyItemViewAdded(event: ItemViewAddedEvent) {
+        private notifyItemViewAdded(itemView: ItemView) {
+            var event = new ItemViewAddedEvent(itemView);
             this.itemViewAddedListeners.forEach((listener) => listener(event));
         }
 
@@ -514,7 +527,8 @@ module api.liveedit {
             this.itemViewRemovedListeners = this.itemViewRemovedListeners.filter((current) => (current != listener));
         }
 
-        private notifyItemViewRemoved(event: ItemViewRemovedEvent) {
+        private notifyItemViewRemoved(itemView: ItemView) {
+            var event = new ItemViewRemovedEvent(itemView);
             this.itemViewRemovedListeners.forEach((listener) => listener(event));
         }
     }

@@ -24,6 +24,7 @@ module app.wizard.page {
     import RegionSelectedEvent = api.liveedit.RegionSelectedEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
+    import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
@@ -67,6 +68,8 @@ module app.wizard.page {
         private itemViewSelectedListeners: {(event: ItemViewSelectedEvent): void;}[] = [];
 
         private itemViewDeselectedListeners: {(event: ItemViewDeselectEvent): void;}[] = [];
+
+        private componentAddedListeners: {(event: ComponentAddedEvent): void;}[] = [];
 
         private componentRemovedListeners: {(event: ComponentRemovedEvent): void;}[] = [];
 
@@ -265,6 +268,8 @@ module app.wizard.page {
 
             ItemViewDeselectEvent.on(this.notifyItemViewDeselected.bind(this), this.liveEditWindow);
 
+            ComponentAddedEvent.on(this.notifyComponentAdded.bind(this), this.liveEditWindow);
+
             ComponentRemovedEvent.on(this.notifyComponentRemoved.bind(this), this.liveEditWindow);
 
             ComponentDuplicatedEvent.on(this.notifyComponentDuplicated.bind(this), this.liveEditWindow);
@@ -411,6 +416,18 @@ module app.wizard.page {
 
         private notifyItemViewDeselected(event: ItemViewDeselectEvent) {
             this.itemViewDeselectedListeners.forEach((listener) => listener(event));
+        }
+
+        onComponentAdded(listener: {(event: ComponentAddedEvent): void;}) {
+            this.componentAddedListeners.push(listener);
+        }
+
+        unComponentAdded(listener: {(event: ComponentAddedEvent): void;}) {
+            this.componentAddedListeners = this.componentAddedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyComponentAdded(event: ComponentAddedEvent) {
+            this.componentAddedListeners.forEach((listener) => listener(event));
         }
 
         onComponentRemoved(listener: {(event: ComponentRemovedEvent): void;}) {

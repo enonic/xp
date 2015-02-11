@@ -175,6 +175,7 @@ module api.liveedit {
             this.onClicked(this.handleClick.bind(this));
             this.onContextMenu(this.handleClick.bind(this));
             this.onTouchStart(this.handleClick.bind(this));
+            this.onRemoved(this.invalidateContextMenu.bind(this));
 
 
             this.bindMouseListeners();
@@ -418,7 +419,7 @@ module api.liveedit {
             }
         }
 
-        deselectParent() {
+        private deselectParent() {
             for (var parent = this.parentItemView; parent; parent = parent.parentItemView) {
                 if (parent.isSelected()) {
                     parent.deselect();
@@ -483,6 +484,13 @@ module api.liveedit {
             }
         }
 
+        private invalidateContextMenu() {
+            if (this.contextMenu) {
+                this.contextMenu.remove();
+                this.contextMenu = null;
+            }
+        }
+
         private setItemId(value: ItemViewId) {
             this.getEl().setAttribute("data-" + ItemViewId.DATA_ATTRIBUTE, value.toString());
         }
@@ -508,7 +516,11 @@ module api.liveedit {
         }
 
         getParentItemView(): ItemView {
-            throw new Error("Must be implemented by inheritors");
+            return this.parentItemView;
+        }
+
+        setParentItemView(itemView: ItemView) {
+            this.parentItemView = itemView;
         }
 
         isSelected(): boolean {
@@ -517,13 +529,12 @@ module api.liveedit {
 
         select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
             this.getEl().setData("live-edit-selected", "true");
-
+            debugger;
             this.showContextMenu(clickPosition, menuPosition);
             this.hideTooltip();
             this.highlight();
             this.shade();
             this.showCursor();
-
 
             // selecting anything should exit the text edit mode
             this.stopTextEditMode();

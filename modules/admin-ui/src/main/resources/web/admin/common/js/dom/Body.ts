@@ -17,7 +17,7 @@ module api.dom {
                 setLoadExistingChildren(loadExistingChildren).
                 setParentElement(html));
 
-            html.registerChildElement(this, 0, true);
+            html.appendChild(this);
 
             this.init();
             this.childrenLoaded = loadExistingChildren;

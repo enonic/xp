@@ -71,13 +71,13 @@ module api.liveedit {
             return false;
         }
 
-
-        getParentPartComponentView(): PartComponentView {
+        getParentItemView(): PartComponentView {
             return this.parentPartComponentView;
         }
 
-        getParentItemView(): PartComponentView {
-            return this.parentPartComponentView;
+        setParentItemView(partView: PartComponentView) {
+            super.setParentItemView(partView);
+            this.parentPartComponentView = partView;
         }
 
         select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {

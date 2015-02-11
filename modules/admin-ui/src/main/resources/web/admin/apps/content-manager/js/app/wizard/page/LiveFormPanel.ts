@@ -56,6 +56,7 @@ module app.wizard.page {
     import RegionSelectedEvent = api.liveedit.RegionSelectedEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
     import ItemViewDeselectEvent = api.liveedit.ItemViewDeselectEvent;
+    import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
 
@@ -371,6 +372,10 @@ module app.wizard.page {
                 this.contextWindow.clearSelection();
             });
 
+            this.liveEditPageProxy.onComponentAdded((event: ComponentAddedEvent) => {
+                // do something when component is added
+            });
+
             this.liveEditPageProxy.onComponentRemoved((event: ComponentRemovedEvent) => {
 
                 var toggler = this.contentWizardPanel.getContextWindowToggler();
@@ -381,7 +386,7 @@ module app.wizard.page {
                 if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
                 }
-                event.getComponentView().getComponent().removeFromParent();
+
                 this.contextWindow.clearSelection();
             });
 

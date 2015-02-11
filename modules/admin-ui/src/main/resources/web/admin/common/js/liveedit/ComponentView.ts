@@ -247,6 +247,11 @@ module api.liveedit {
             return this.parentRegionView;
         }
 
+        setParentItemView(regionView: RegionView) {
+            super.setParentItemView(regionView);
+            this.parentRegionView = regionView;
+        }
+
         setMoving(value: boolean) {
             this.moving = value;
         }
@@ -282,6 +287,9 @@ module api.liveedit {
         }
 
         replaceWith(replacement: ComponentView<Component>) {
+            if (ComponentView.debug) {
+                console.log('ComponentView.replaceWith', this, replacement);
+            }
             super.replaceWith(replacement);
 
             var index = this.getParentItemView().getComponentViewIndex(this);
@@ -289,45 +297,49 @@ module api.liveedit {
             // unbind the old view from the component and bind the new one
             this.unregisterComponentListeners(this.component);
 
+            var parentRegionView = this.parentRegionView;
             this.parentRegionView.unregisterComponentView(this);
-            this.notifyItemViewRemoved(this);
-
-            this.parentRegionView.registerComponentView(replacement, index);
-            this.notifyItemViewAdded(replacement);
+            parentRegionView.registerComponentView(replacement, index);
         }
 
         moveToRegion(toRegionView: RegionView, precedingComponentView: ComponentView<Component>) {
+            if (ComponentView.debug) {
+                console.log('ComponentView.moveToRegion', this, this.parentRegionView, toRegionView);
+            }
 
             this.moving = false;
-            var precedingComponentIndex: number = -1;
+            var indexInNewParent = 0;
             var precedingComponent: Component = null;
+
             if (precedingComponentView) {
                 precedingComponent = precedingComponentView.getComponent();
-                precedingComponentIndex = precedingComponentView.getParentItemView().getComponentViewIndex(precedingComponentView);
+                indexInNewParent = precedingComponent.getIndex() + 1;
             }
 
-            var indexInNewParent = -1;
-            if (precedingComponentIndex >= 0) {
-                indexInNewParent = precedingComponentIndex + 1;
+            if (this.parentRegionView.getRegionPath().equals(toRegionView.getRegionPath()) &&
+                indexInNewParent == this.parentRegionView.getComponentViewIndex(this)) {
+
+                if (ComponentView.debug) {
+                    console.debug('Dropped in the same region at the same index, no need to move', this.parentRegionView, toRegionView);
+                }
+                return;
             }
-            this.getComponent().setName(this.getComponent().getName());
 
             // Unregister from previous region...
             // View
             this.parentRegionView.unregisterComponentView(this);
             // Data
             this.component.removeFromParent();
-            // Element
-            this.unregisterFromParentElement();
+            // DOM
+            this.remove();
 
             // Register with new region...
-            // Register Element only, since it's already added in DOM.
-            toRegionView.registerChildElement(this);
+            // DOM
+            toRegionView.insertChild(this, indexInNewParent);
             // Data
             toRegionView.getRegion().addComponentAfter(this.component, precedingComponent);
             // View
             toRegionView.registerComponentView(this, indexInNewParent);
-            this.parentRegionView = toRegionView;
         }
 
         onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {

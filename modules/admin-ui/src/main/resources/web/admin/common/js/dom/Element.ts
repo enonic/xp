@@ -347,10 +347,17 @@ module api.dom {
             return this.el.getHTMLElement();
         }
 
+
+        /*
+         *      Child manipulations
+         */
+
         insertChild<T extends Element>(child: T, index: number): Element {
             api.util.assertNotNull(child, 'Child cannot be null');
+
             this.el.insertChild(child.getEl().getHTMLElement(), index);
-            this.insert(child, this, index);
+
+            this.insertChildElement(child, this, index);
             return this;
         }
 
@@ -371,68 +378,20 @@ module api.dom {
 
         insertAfterEl(existing: Element): Element {
             api.util.assertNotNull(existing, 'Existing element cannot be null');
+            // get index before insertion !
+            var existingIndex = existing.getSiblingIndex();
             this.el.insertAfterEl(existing.el);
-            var parent = existing.parentElement;
-            var index = existing.getSiblingIndex() + 1;
-            return this.insert(this, parent, index);
+
+            return this.insertChildElement(this, existing.parentElement, existingIndex + 1);
         }
 
-        insertBeforeEl(existingEl: Element): Element {
-            api.util.assertNotNull(existingEl, 'Existing element cannot be null');
-            this.el.insertBeforeEl(existingEl.el);
-            var parent = existingEl.getParentElement();
-            var index = parent.getChildren().indexOf(existingEl);
-            return this.insert(this, parent, index);
-        }
+        insertBeforeEl(existing: Element): Element {
+            api.util.assertNotNull(existing, 'Existing element cannot be null');
+            // get index before insertion !
+            var existingIndex = existing.getSiblingIndex();
+            this.el.insertBeforeEl(existing.el);
 
-        replaceWith(replacement: Element) {
-            api.util.assertNotNull(replacement, 'replacement element cannot be null');
-
-            // Do the actual DOM replacement
-            replacement.el.insertAfterEl(this.el);
-
-            // Replace replacement's parent Element of this' parent Element
-            replacement.parentElement = this.parentElement;
-
-            // Replace this with replacement in the parent Element's children array
-            this.parentElement.registerChildElement(replacement, null, true);
-
-            // Run init of replacement if parentElement is rendered
-            if (this.parentElement.isRendered()) {
-                replacement.init();
-            }
-
-            // Remove this from parent (removes also from DOM)
-            this.remove();
-
-            replacement.notifyAdded();
-        }
-
-        wrapWithElement(wrapperElement: Element) {
-            api.util.assertNotNull(wrapperElement, 'wrapperElement cannot be null');
-            var parent = this.parentElement;
-            if (!parent) {
-                return;
-            }
-
-            var childPos = parent.children.indexOf(this);
-            parent.removeChild(this);
-            wrapperElement.appendChild(this);
-            // add wrapper to parent in the same position of the current element
-            parent.el.appendChild(wrapperElement.getEl().getHTMLElement());
-            parent.insert(this, wrapperElement, childPos);
-        }
-
-        private insert(child: Element, parent: Element, index: number): Element {
-            api.util.assertNotNull(child, 'Child element cannot be null');
-            api.util.assertNotNull(parent, 'Parent element cannot be null');
-            child.parentElement = parent;
-            parent.registerChildElement(child, index, true);
-            if (parent.isRendered()) {
-                child.init();
-            }
-            child.notifyAdded();
-            return this;
+            return this.insertChildElement(this, existing.getParentElement(), existingIndex);
         }
 
         hasChild(child: Element) {
@@ -440,12 +399,11 @@ module api.dom {
         }
 
         removeChild(child: Element): Element {
-            api.util.assertNotNull(child, "child cannot be null");
+            api.util.assertNotNull(child, "Child element to remove cannot be null");
 
-            this.removeFromChildren(child);
             child.getEl().remove();
-            child.parentElement = null;
-            child.notifyRemoved();
+            this.removeChildElement(child);
+
             return this;
         }
 
@@ -461,6 +419,58 @@ module api.dom {
             return this;
         }
 
+        private insertChildElement(child: Element, parent: Element, index?: number): Element {
+            api.util.assertNotNull(child, 'Child element to insert cannot be null');
+            api.util.assertNotNull(parent, 'Parent element cannot be null');
+
+            parent.registerChildElement(child, index);
+
+            if (parent.isRendered()) {
+                child.init();
+            }
+            child.notifyAdded();
+            return this;
+        }
+
+        private removeChildElement(child: Element): Element {
+            api.util.assertNotNull(child, 'Child element to insert cannot be null');
+
+            this.unregisterChildElement(child);
+
+            child.notifyRemoved();
+            return this;
+        }
+
+        private registerChildElement(child: Element, index?: number) {
+            if (!(child.getHTMLElement().parentElement === this.getHTMLElement())) {
+                throw new Error("Given child must be a child of this Element in DOM before it can be registered");
+            }
+            if (!index) {
+                index = child.el.getSiblingIndex();
+            }
+            this.children.splice(index, 0, child);
+            child.parentElement = this;
+        }
+
+        private unregisterChildElement(child: Element): number {
+            var childIndex = this.children.indexOf(child);
+            if (childIndex < 0) {
+                throw new Error("Child element to remove not found");
+            }
+            this.children.splice(childIndex, 1);
+            child.parentElement = null;
+            return childIndex;
+        }
+
+
+        /*
+         *      Self actions
+         */
+
+        contains(element: Element) {
+            return this.getEl().contains(element.getHTMLElement());
+        }
+
         remove(): Element {
             if (this.parentElement) {
                 this.parentElement.removeChild(this);
@@ -471,44 +481,40 @@ module api.dom {
             return this;
         }
 
-        /**
-         * Remove this element from parent element's array of children.
-         * NB: Does not remove this element from parent (DOM).
-         * @param silent whether no
-         */
-        unregisterFromParentElement(silent: boolean = false) {
-            this.parentElement.removeFromChildren(this);
-            this.parentElement = null;
-            if (!silent) {
-                this.notifyRemoved()
+        replaceWith(replacement: Element) {
+            api.util.assertNotNull(replacement, 'replacement element cannot be null');
+
+            // Do the actual DOM replacement
+            replacement.el.insertAfterEl(this.el);
+
+            // during these operation this.parentElement will become unavailable
+            var parent = this.parentElement;
+            var index = parent.unregisterChildElement(this);
+            parent.registerChildElement(replacement, index);
+
+            // Run init of replacement if parent is rendered
+            if (parent.isRendered()) {
+                replacement.init();
             }
+            replacement.notifyAdded();
+
+            // Remove this from DOM completely
+            this.remove();
         }
 
-        private removeFromChildren(child: Element) {
-            var childIndex = this.children.indexOf(child);
-            if (childIndex < 0) {
-                throw new Error("Child element to remove not found");
+        wrapWithElement(wrapperElement: Element) {
+            api.util.assertNotNull(wrapperElement, 'wrapperElement cannot be null');
+            var parent = this.parentElement;
+            if (!parent) {
+                return;
             }
-            this.children.splice(childIndex, 1);
-        }
 
-        /**
-         * Add given element to this element's array of children.
-         * * NB: Does not add given element to this element (DOM).
-         */
-        registerChildElement(child: Element, index?: number, silent: boolean = false) {
-            if (!(child.getHTMLElement().parentElement === this.getHTMLElement())) {
-                throw new Error("Given child must be a child of this Element in DOM before it can be registered");
-            }
-            if (!index) {
-                index = child.el.getSiblingIndex();
-            }
-            this.children.splice(index, 0, child);
-            child.parentElement = this;
-
-            if (!silent) {
-                child.notifyAdded();
-            }
+            var childPos = parent.children.indexOf(this);
+            parent.removeChild(this);
+            wrapperElement.appendChild(this);
+            // add wrapper to parent in the same position of the current element
+            parent.el.appendChild(wrapperElement.getEl().getHTMLElement());
+            parent.insertChildElement(this, wrapperElement, childPos);
         }
 
         getParentElement(): Element {
@@ -571,6 +577,11 @@ module api.dom {
             return this;
         }
 
+
+        /*
+         *      Event listeners
+         */
+
         onMouseEnter(handler: (e: MouseEvent)=>any) {
             if (typeof this.getHTMLElement().onmouseenter != "undefined") {
                 this.getEl().addEventListener('mouseenter', handler);
@@ -611,14 +622,6 @@ module api.dom {
 
         unMouseOut(listener: (event: MouseEvent) => void) {
             this.getEl().removeEventListener("mouseout", listener);
-        }
-
-        setBackgroundImgUrl(backgroundImgUrl: string) {
-            this.getHTMLElement().style.backgroundImage = "url('" + backgroundImgUrl + "')";
-        }
-
-        contains(element: Element) {
-            return this.getEl().contains(element.getHTMLElement());
         }
 
         onAdded(listener: (event: ElementAddedEvent) => void) {
@@ -733,7 +736,6 @@ module api.dom {
         unClicked(listener: (event: MouseEvent) => void) {
             this.getEl().removeEventListener("click", listener);
         }
-
 
         onDblClicked(listener: (event: MouseEvent) => void) {
             this.getEl().addEventListener("dblclick", listener);

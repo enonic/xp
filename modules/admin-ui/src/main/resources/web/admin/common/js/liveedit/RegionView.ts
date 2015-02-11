@@ -128,6 +128,11 @@ module api.liveedit {
             return this.parentView;
         }
 
+        setParentItemView(itemView: ItemView) {
+            super.setParentItemView(itemView);
+            this.parentView = itemView;
+        }
+
         setRegion(region: Region) {
             this.region = region;
             if (region) {
@@ -206,6 +211,8 @@ module api.liveedit {
             } else {
                 this.componentViews.push(componentView);
             }
+            componentView.setParentItemView(this);
+
             this.notifyItemViewAdded(componentView);
 
             componentView.onItemViewAdded(this.itemViewAddedListener);
@@ -221,6 +228,8 @@ module api.liveedit {
             var indexToRemove = this.getComponentViewIndex(componentView);
             if (indexToRemove >= 0) {
                 this.componentViews.splice(indexToRemove, 1);
+                componentView.setParentItemView(null);
+
                 this.notifyItemViewRemoved(componentView);
 
                 componentView.unItemViewAdded(this.itemViewAddedListener);

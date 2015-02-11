@@ -125,12 +125,7 @@ module api.liveedit.text {
                 return;
             }
 
-            if (!this.isSelected()) {
-                this.deselectParent();
-                this.select(!this.isEmpty() ? {x: event.pageX, y: event.pageY} : null);
-            } else {
-                this.deselect();
-            }
+            super.handleClick(event);
         }
 
 

@@ -169,16 +169,13 @@ module api.ui.image {
         setEnabled(isEnabled: boolean) {
             this.enabled = isEnabled;
             if (isEnabled) {
-                this.insertAfterEl(this.image);
-                this.image.unregisterFromParentElement(true);
+                this.image.replaceWith(this);
                 this.appendChild(this.image);
 
                 this.enableCanvas();
             } else {
-                this.image.unregisterFromParentElement(true);
-                this.image.insertBeforeEl(this);
-                this.unregisterFromParentElement(true);
-                this.getEl().remove();
+                this.removeChild(this.image);
+                this.replaceWith(this.image);
 
                 this.disableCanvas();
             }
