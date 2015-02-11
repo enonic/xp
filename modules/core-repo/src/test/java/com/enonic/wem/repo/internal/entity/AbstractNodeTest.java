@@ -10,6 +10,7 @@ import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
+import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -30,32 +31,18 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
 import com.enonic.wem.repo.internal.elasticsearch.snapshot.ElasticsearchSnapshotService;
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
-import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
 {
-    protected NodeDaoImpl nodeDao;
-
-    protected ElasticsearchVersionService versionService;
-
-    protected ElasticsearchBranchService branchService;
-
-    protected ElasticsearchIndexService indexService;
-
-    protected ElasticsearchQueryService queryService;
-
-    protected ElasticsearchSnapshotService snapshotService;
-
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "test-user" ) ).login( "test-user" ).build();
 
@@ -89,6 +76,18 @@ public abstract class AbstractNodeTest
 
     public BlobStore binaryBlobStore;
 
+    protected NodeDaoImpl nodeDao;
+
+    protected ElasticsearchVersionService versionService;
+
+    protected ElasticsearchBranchService branchService;
+
+    protected ElasticsearchIndexServiceInternal indexService;
+
+    protected ElasticsearchQueryService queryService;
+
+    protected ElasticsearchSnapshotService snapshotService;
+
     @Before
     public void setUp()
         throws Exception
@@ -110,7 +109,7 @@ public abstract class AbstractNodeTest
         this.versionService = new ElasticsearchVersionService();
         this.versionService.setElasticsearchDao( elasticsearchDao );
 
-        this.indexService = new ElasticsearchIndexService();
+        this.indexService = new ElasticsearchIndexServiceInternal();
         this.indexService.setClient( client );
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
@@ -127,7 +126,7 @@ public abstract class AbstractNodeTest
     void createRepository( final Repository repository )
     {
         NodeServiceImpl nodeService = new NodeServiceImpl();
-        nodeService.setIndexService( indexService );
+        nodeService.setIndexServiceInternal( indexService );
         nodeService.setQueryService( queryService );
         nodeService.setNodeDao( nodeDao );
         nodeService.setVersionService( versionService );
@@ -135,7 +134,7 @@ public abstract class AbstractNodeTest
         nodeService.setSnapshotService( this.snapshotService );
 
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
-        repositoryInitializer.initializeRepository( repository );
+        repositoryInitializer.initializeRepository( repository.getId() );
 
         refresh();
     }
@@ -242,12 +241,12 @@ public abstract class AbstractNodeTest
 
     protected void printBranchIndex()
     {
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.BRANCH.getName() );
+        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.BRANCH.getName() );
     }
 
     protected void printVersionIndex()
     {
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
+        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
     }
 
     protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )

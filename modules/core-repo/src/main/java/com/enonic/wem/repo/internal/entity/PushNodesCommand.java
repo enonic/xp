@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
@@ -20,10 +21,9 @@ import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpressions;
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
+import com.enonic.wem.repo.internal.index.IndexContext;
 
 public class PushNodesCommand
     extends AbstractNodeCommand
@@ -122,7 +122,7 @@ public class PushNodesCommand
             node( node ).
             build(), BranchContext.from( this.target, context.getRepositoryId() ) );
 
-        this.indexService.store( node, nodeVersionId, IndexContext.create().
+        this.indexServiceInternal.store( node, nodeVersionId, IndexContext.create().
             branch( this.target ).
             repositoryId( context.getRepositoryId() ).
             authInfo( context.getAuthInfo() ).

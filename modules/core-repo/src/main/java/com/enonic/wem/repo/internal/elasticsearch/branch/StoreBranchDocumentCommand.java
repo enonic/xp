@@ -4,12 +4,12 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Requests;
 
 import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.repo.internal.elasticsearch.xcontent.BranchXContentBuilderFactory;
-import com.enonic.wem.repo.internal.index.IndexType;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
-import com.enonic.wem.repo.internal.version.NodeVersionDocumentId;
-import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
+import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
+import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
+import com.enonic.wem.repo.internal.elasticsearch.xcontent.BranchXContentBuilderFactory;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.version.NodeVersionDocumentId;
 
 public class StoreBranchDocumentCommand
     extends AbstractBranchCommand
@@ -35,7 +35,7 @@ public class StoreBranchDocumentCommand
         final BranchDocumentId branchDocumentId = new BranchDocumentId( document.getNode().id(), this.branch );
 
         final IndexRequest publish = Requests.indexRequest().
-            index( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
+            index( IndexNameResolver.resolveStorageIndexName( repositoryId ) ).
             type( IndexType.BRANCH.getName() ).
             source( BranchXContentBuilderFactory.create( document, this.branch ) ).
             id( branchDocumentId.toString() ).

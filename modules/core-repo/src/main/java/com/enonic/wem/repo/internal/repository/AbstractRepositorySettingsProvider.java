@@ -6,12 +6,12 @@ import java.net.URL;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.repo.internal.index.IndexException;
 
 public class AbstractRepositorySettingsProvider
 {
-    protected static String doGet( final Repository repository, final String fileName )
+    protected static String doGet( final RepositoryId repositoryId, final String fileName )
     {
         try
         {
@@ -20,11 +20,11 @@ public class AbstractRepositorySettingsProvider
         }
         catch ( IOException e )
         {
-            throw new IndexException( "Failed to load settings for repositoryId " + repository.getId() + " from file: " + fileName, e );
+            throw new IndexException( "Failed to load settings for repositoryId " + repositoryId + " from file: " + fileName, e );
         }
         catch ( IllegalArgumentException e )
         {
-            throw new IndexException( "Settings for repositoryId " + repository.getId() + " from file: " + fileName + " not found", e );
+            throw new IndexException( "Settings for repositoryId " + repositoryId + " from file: " + fileName + " not found", e );
         }
     }
 

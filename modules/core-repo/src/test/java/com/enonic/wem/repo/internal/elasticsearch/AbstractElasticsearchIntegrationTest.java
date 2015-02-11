@@ -16,20 +16,19 @@ import com.enonic.wem.api.repository.RepositoryId;
 
 public abstract class AbstractElasticsearchIntegrationTest
 {
-    protected ElasticsearchDaoImpl elasticsearchDao;
-
-    protected ElasticsearchIndexService elasticsearchIndexService;
-
-    private EmbeddedElasticsearchServer server;
-
-    protected Client client;
-
-    private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
-
-
     protected static final Repository TEST_REPO = Repository.create().
         id( RepositoryId.from( "cms-repo" ) ).
         build();
+
+    private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
+
+    protected ElasticsearchDaoImpl elasticsearchDao;
+
+    protected ElasticsearchIndexServiceInternal elasticsearchIndexService;
+
+    protected Client client;
+
+    private EmbeddedElasticsearchServer server;
 
     @Before
     public void setUp()
@@ -41,7 +40,7 @@ public abstract class AbstractElasticsearchIntegrationTest
         this.elasticsearchDao = new ElasticsearchDaoImpl();
         this.elasticsearchDao.setClient( client );
 
-        this.elasticsearchIndexService = new ElasticsearchIndexService();
+        this.elasticsearchIndexService = new ElasticsearchIndexServiceInternal();
         elasticsearchIndexService.setElasticsearchDao( elasticsearchDao );
         elasticsearchIndexService.setClient( client );
     }

@@ -7,6 +7,7 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
 import com.enonic.wem.api.index.IndexPath;
+import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodeVersion;
@@ -15,11 +16,10 @@ import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
 
 class AbstractVersionsCommand
@@ -39,7 +39,7 @@ class AbstractVersionsCommand
         final TermQueryBuilder nodeIdQuery = new TermQueryBuilder( VersionIndexPath.NODE_ID.getPath(), id.toString() );
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
-            index( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
+            index( IndexNameResolver.resolveStorageIndexName( repositoryId ) ).
             indexType( IndexType.VERSION.getName() ).
             query( nodeIdQuery ).
             from( from ).

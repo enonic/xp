@@ -19,6 +19,7 @@ import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
+import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -35,46 +36,18 @@ import com.enonic.wem.module.internal.ModuleServiceImpl;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
 import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
-import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 
 public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
 {
-    protected ContentServiceImpl contentService;
-
-    protected NodeServiceImpl nodeService;
-
-    private NodeDaoImpl nodeDao;
-
-    private ElasticsearchVersionService versionService;
-
-    private ElasticsearchBranchService branchService;
-
-    private ElasticsearchIndexService indexService;
-
-    private ElasticsearchQueryService queryService;
-
-    protected BlobStore binaryBlobStore;
-
-    protected MixinService mixinService;
-
-    protected static final Branch WS_DEFAULT = Branch.create().
-        name( "draft" ).
-        build();
-
-    protected static final Branch WS_OTHER = Branch.create().
-        name( "master" ).
-        build();
-
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "test-user" ) ).login( "test-user" ).build();
 
@@ -84,6 +57,13 @@ public class AbstractContentServiceTest
         user( TEST_DEFAULT_USER ).
         build();
 
+    protected static final Branch WS_DEFAULT = Branch.create().
+        name( "draft" ).
+        build();
+
+    protected static final Branch WS_OTHER = Branch.create().
+        name( "master" ).
+        build();
 
     protected static final Context CTX_DEFAULT = ContextBuilder.create().
         branch( WS_DEFAULT ).
@@ -100,6 +80,23 @@ public class AbstractContentServiceTest
     @Rule
     public TemporaryFolder WEM_HOME = new TemporaryFolder();
 
+    protected ContentServiceImpl contentService;
+
+    protected NodeServiceImpl nodeService;
+
+    protected BlobStore binaryBlobStore;
+
+    protected MixinService mixinService;
+
+    private NodeDaoImpl nodeDao;
+
+    private ElasticsearchVersionService versionService;
+
+    private ElasticsearchBranchService branchService;
+
+    private ElasticsearchIndexServiceInternal indexService;
+
+    private ElasticsearchQueryService queryService;
 
     @Before
     public void setUp()
@@ -122,7 +119,7 @@ public class AbstractContentServiceTest
         this.versionService = new ElasticsearchVersionService();
         this.versionService.setElasticsearchDao( elasticsearchDao );
 
-        this.indexService = new ElasticsearchIndexService();
+        this.indexService = new ElasticsearchIndexServiceInternal();
         this.indexService.setClient( client );
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
@@ -132,7 +129,7 @@ public class AbstractContentServiceTest
         this.contentService = new ContentServiceImpl();
 
         this.nodeService = new NodeServiceImpl();
-        this.nodeService.setIndexService( indexService );
+        this.nodeService.setIndexServiceInternal( indexService );
         this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setVersionService( versionService );
@@ -180,14 +177,14 @@ public class AbstractContentServiceTest
     void createRepository( final Repository repository )
     {
         NodeServiceImpl nodeService = new NodeServiceImpl();
-        nodeService.setIndexService( indexService );
+        nodeService.setIndexServiceInternal( indexService );
         nodeService.setQueryService( queryService );
         nodeService.setNodeDao( nodeDao );
         nodeService.setVersionService( versionService );
         nodeService.setBranchService( branchService );
 
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
-        repositoryInitializer.initializeRepository( repository );
+        repositoryInitializer.initializeRepository( repository.getId() );
 
         refresh();
     }
@@ -217,11 +214,11 @@ public class AbstractContentServiceTest
 
     protected void printBranchIndex()
     {
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.BRANCH.getName() );
+        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.BRANCH.getName() );
     }
 
     protected void printVersionIndex()
     {
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
+        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
     }
 }

@@ -18,6 +18,11 @@ public class ReorderChildNodesCommand
         this.params = builder.params;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public ReorderChildNodesResult execute()
     {
         final ReorderChildNodesResult.Builder result = ReorderChildNodesResult.create();
@@ -34,7 +39,7 @@ public class ReorderChildNodesCommand
                 nodeDao( this.nodeDao ).
                 branchService( this.branchService ).
                 versionService( this.versionService ).
-                indexService( this.indexService ).
+                indexService( this.indexServiceInternal ).
                 parentNode( parentNode ).
                 nodeToMove( nodeToMove ).
                 nodeToMoveBefore( nodeToMoveBefore ).
@@ -45,11 +50,6 @@ public class ReorderChildNodesCommand
         }
 
         return result.build();
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public static class Builder

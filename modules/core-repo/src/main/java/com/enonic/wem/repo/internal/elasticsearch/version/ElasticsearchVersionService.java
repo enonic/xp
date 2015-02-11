@@ -5,6 +5,7 @@ import org.elasticsearch.client.Requests;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.api.node.FindNodeVersionsResult;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.NodeVersionDiffQuery;
@@ -13,8 +14,7 @@ import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.VersionXContentBuilderFactory;
-import com.enonic.wem.repo.internal.index.IndexType;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.version.GetVersionsQuery;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
 import com.enonic.wem.repo.internal.version.NodeVersionDocumentId;
@@ -32,7 +32,7 @@ public class ElasticsearchVersionService
     public void store( final NodeVersionDocument nodeVersionDocument, final RepositoryId repositoryId )
     {
         final IndexRequest versionsDocument = Requests.indexRequest().
-            index( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
+            index( IndexNameResolver.resolveStorageIndexName( repositoryId ) ).
             type( IndexType.VERSION.getName() ).
             source( VersionXContentBuilderFactory.create( nodeVersionDocument ) ).
             id( new NodeVersionDocumentId( nodeVersionDocument.getNodeId(), nodeVersionDocument.getNodeVersionId() ).toString() ).

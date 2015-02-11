@@ -10,13 +10,13 @@ import org.junit.Test;
 
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.index.IndexPath;
+import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.api.repository.Repository;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentOrderbyItem;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
-import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
@@ -51,9 +51,8 @@ public class OrderByValueResolverTest
     {
         final String indexName = IndexNameResolver.resolveSearchIndexName( repository.getId() );
         elasticsearchIndexService.createIndex( indexName, getContentRepoSearchDefaultSettings() );
-        elasticsearchIndexService.applyMapping( IndexNameResolver.resolveSearchIndexName( repository.getId() ),
-                                                IndexType._DEFAULT_.getName(),
-                                                RepositoryIndexMappingProvider.getSearchMappings( repository ) );
+        elasticsearchIndexService.applyMapping( IndexNameResolver.resolveSearchIndexName( repository.getId() ), IndexType.SEARCH,
+                                                RepositoryIndexMappingProvider.getSearchMappings( repository.getId() ) );
 
         assertTrue( indexExists( indexName ) );
     }

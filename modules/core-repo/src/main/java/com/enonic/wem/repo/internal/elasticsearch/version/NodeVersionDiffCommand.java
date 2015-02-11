@@ -5,18 +5,18 @@ import org.elasticsearch.index.query.HasChildQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
 
+import com.enonic.wem.api.branch.Branch;
+import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
-import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
-import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.branch.BranchIndexPath;
-import com.enonic.wem.repo.internal.index.IndexType;
+import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
 
 class NodeVersionDiffCommand
@@ -28,6 +28,11 @@ class NodeVersionDiffCommand
     {
         super( builder );
         query = builder.query;
+    }
+
+    static Builder create()
+    {
+        return new Builder();
     }
 
     NodeVersionDiffResult execute()
@@ -51,7 +56,7 @@ class NodeVersionDiffCommand
         final BoolQueryBuilder query = wrapInPathQueryIfNecessary( indexType, sourceTargetCompares );
 
         final ElasticsearchQuery esQuery = ElasticsearchQuery.create().
-            index( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
+            index( IndexNameResolver.resolveStorageIndexName( this.repositoryId ) ).
             indexType( IndexType.VERSION.getName() ).
             query( query ).
             setReturnFields( ReturnFields.from( VersionIndexPath.NODE_ID, VersionIndexPath.VERSION_ID, VersionIndexPath.TIMESTAMP ) ).
@@ -132,11 +137,6 @@ class NodeVersionDiffCommand
     private TermQueryBuilder createWsConstraint( final Branch branch )
     {
         return new TermQueryBuilder( BranchIndexPath.BRANCH_NAME.toString(), branch );
-    }
-
-    static Builder create()
-    {
-        return new Builder();
     }
 
     static final class Builder

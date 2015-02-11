@@ -54,14 +54,14 @@ abstract class AbstractDeleteNodeCommand
             node( pendingNode ).
             build(), BranchContext.from( context ) );
 
-        indexService.store( pendingNode, nodeVersionId, IndexContext.from( context ) );
+        indexServiceInternal.store( pendingNode, nodeVersionId, IndexContext.from( context ) );
     }
 
     private void doDelete( final Context context, final Node node, final NodeVersionId nodeVersionId )
     {
         branchService.delete( node.id(), BranchContext.from( context ) );
 
-        indexService.delete( node.id(), IndexContext.from( context ) );
+        indexServiceInternal.delete( node.id(), IndexContext.from( context ) );
     }
 
     public static class Builder<B extends Builder>

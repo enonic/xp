@@ -6,10 +6,10 @@ import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.version.NodeVersionDocument;
-import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
-import com.enonic.wem.repo.internal.branch.BranchContext;
 
 public class StoreNodeCommand
     extends AbstractNodeCommand
@@ -23,6 +23,16 @@ public class StoreNodeCommand
         super( builder );
         this.node = builder.node;
         this.updateMetadataOnly = builder.updateMetadataOnly;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
     }
 
     public Node execute()
@@ -51,22 +61,10 @@ public class StoreNodeCommand
             nodeVersionId( nodeVersionId ).
             build(), BranchContext.from( context ) );
 
-        this.indexService.store( node, nodeVersionId, IndexContext.from( context ) );
+        this.indexServiceInternal.store( node, nodeVersionId, IndexContext.from( context ) );
 
         return this.nodeDao.getByVersionId( nodeVersionId );
     }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
-    }
-
 
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>

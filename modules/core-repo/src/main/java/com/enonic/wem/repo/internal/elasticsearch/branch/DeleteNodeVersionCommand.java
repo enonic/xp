@@ -3,10 +3,10 @@ package com.enonic.wem.repo.internal.elasticsearch.branch;
 import org.elasticsearch.action.delete.DeleteRequest;
 
 import com.enonic.wem.api.branch.Branch;
+import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.repo.internal.index.IndexType;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 
 public class DeleteNodeVersionCommand
     extends AbstractBranchCommand
@@ -30,7 +30,7 @@ public class DeleteNodeVersionCommand
     void execute()
     {
         DeleteRequest deleteRequest = new DeleteRequest().
-            index( StorageNameResolver.resolveStorageIndexName( this.repositoryId ) ).
+            index( IndexNameResolver.resolveStorageIndexName( this.repositoryId ) ).
             type( IndexType.BRANCH.getName() ).
             id( new BranchDocumentId( this.nodeId, this.branch ).toString() ).
             refresh( DEFAULT_REFRESH );
