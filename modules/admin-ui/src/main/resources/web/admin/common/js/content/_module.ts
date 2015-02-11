@@ -36,6 +36,8 @@
 ///<reference path='ListContentByPathRequest.ts' />
 ///<reference path='DeleteContentRequest.ts' />
 ///<reference path='DeleteContentResult.ts' />
+///<reference path='BatchContentRequest.ts' />
+///<reference path='BatchContentResult.ts' />
 ///<reference path='ContentCreatedEvent.ts' />
 ///<reference path='ContentUpdatedEvent.ts' />
 ///<reference path='ContentDeletedEvent.ts' />
