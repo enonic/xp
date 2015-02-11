@@ -23,7 +23,7 @@
     float: right;
     width: 30px;
     padding: 0;
-    margin: 4px 0px 4px 24px;
+    margin: 4px 0px 4px 0px;
     border: 0 none;
     background-color: transparent;
     color: white;
@@ -92,12 +92,33 @@
   }
 }
 
-._0-240, ._240-360, ._360-540, ._540-720 {
-  .home-button {
-    .flex(0 0 48px);
+._0-240, ._240-360, ._360-540 {
 
-    span {
-      display: none;
+  .home-button {
+    padding-right: 0px;
+  }
+
+  &.tabs-present {
+    .home-button {
+      .flex(0 0 48px);
+
+      span {
+        display: none;
+      }
+    }
+  }
+
+  .tab-menu {
+    min-width: initial;
+  }
+}
+
+.tabs-present {
+  .appbar-tab-menu {
+    margin: 0px 24px 0px 0px;
+
+    ul.bar {
+      min-width: inherit;
     }
   }
 }

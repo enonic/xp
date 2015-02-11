@@ -1,5 +1,7 @@
 module api.app.bar {
 
+    import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
+
     export class AppBar extends api.dom.DivEl implements api.ui.ActionContainer {
 
         private application: Application;
@@ -36,7 +38,13 @@ module api.app.bar {
             });
 
             // Responsive events to update homeButton styles
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this);
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
+                if (this.tabMenu.countVisible() > 0) {
+                    this.addClass("tabs-present");
+                } else {
+                    this.removeClass("tabs-present");
+                }
+            });
             this.onRendered(() => {api.ui.responsive.ResponsiveManager.fireResizeEvent();});
 
         }

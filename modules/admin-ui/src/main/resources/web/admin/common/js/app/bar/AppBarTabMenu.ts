@@ -108,6 +108,8 @@ module api.app.bar {
 
             this.moveTabs(0);
             this.makeTabFirst(tab);
+
+            ResponsiveManager.fireResizeEvent();
         }
 
         removeNavigationItem(tab: AppBarTabMenuItem) {
@@ -120,6 +122,8 @@ module api.app.bar {
             }
 
             this.moveTabs(0);
+
+            ResponsiveManager.fireResizeEvent();
         }
 
         getNavigationItemById(tabId: AppBarTabId): AppBarTabMenuItem {
