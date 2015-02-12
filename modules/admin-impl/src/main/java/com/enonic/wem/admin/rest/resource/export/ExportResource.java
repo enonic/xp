@@ -15,12 +15,16 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.export.ExportNodesParams;
 import com.enonic.wem.api.export.ExportService;
 import com.enonic.wem.api.export.ImportNodesParams;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.wem.api.security.User;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.vfs.VirtualFiles;
 
 @Path(ResourceConstants.REST_ROOT + "export")
@@ -30,6 +34,11 @@ import com.enonic.wem.api.vfs.VirtualFiles;
 public class ExportResource
     implements AdminResource
 {
+    private final AuthenticationInfo EXPORT_AUTH_INFO = AuthenticationInfo.create().
+        user( User.ANONYMOUS ).
+        principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
+        build();
+
     private ExportService exportService;
 
     private Logger LOG = LoggerFactory.getLogger( ExportResource.class );
@@ -39,12 +48,19 @@ public class ExportResource
     public NodeExportResultJson exportNodes( final ExportNodesRequestJson request )
         throws Exception
     {
-        final NodeExportResult result = this.exportService.exportNodes( ExportNodesParams.create().
-            exportRoot( request.getExportRoot() ).
-            exportName( request.getExportName() ).
+
+        final Context runContext = ContextBuilder.create().
+            authInfo( EXPORT_AUTH_INFO ).
+            branch( request.getSourceRepoPath().getBranch() ).
+            repositoryId( request.getSourceRepoPath().getRepositoryId() ).
+            build();
+
+        final NodeExportResult result = runContext.callWith( () -> this.exportService.exportNodes( ExportNodesParams.create().
+            sourceNodePath( request.getSourceRepoPath().getNodePath() ).
+            targetDirectory( request.getTargetDirectory() ).
             dryRun( request.isDryRun() ).
             includeNodeIds( request.isIncludeIds() ).
-            build() );
+            build() ) );
 
         return NodeExportResultJson.from( result );
     }

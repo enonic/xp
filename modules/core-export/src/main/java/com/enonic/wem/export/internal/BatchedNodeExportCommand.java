@@ -4,6 +4,7 @@ import java.nio.file.Path;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.export.ExportError;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.node.AttachedBinary;
@@ -24,7 +25,9 @@ public class BatchedNodeExportCommand
 {
     private final static int DEFAULT_BATCH_SIZE = 100;
 
-    private final NodePath exportRootPath;
+    private final static String LINE_SEPARATOR = System.getProperty( "line.separator" );
+
+    private final NodePath sourceNodePath;
 
     private final int batchSize;
 
@@ -34,43 +37,50 @@ public class BatchedNodeExportCommand
 
     private final XmlNodeSerializer xmlNodeSerializer;
 
-    private final Path exportTargetPath;
+    private final Path targetDirectory;
 
     private final boolean dryRun;
 
     private final boolean exportNodeIds;
 
-    private final static String LINE_SEPARATOR = System.getProperty( "line.separator" );
-
     private final NodeExportResult.Builder result = NodeExportResult.create();
 
     private BatchedNodeExportCommand( final Builder builder )
     {
-        this.exportRootPath = builder.exportRootPath;
+        this.sourceNodePath = builder.sourceNodePath;
         this.batchSize = builder.batchSize;
         this.nodeService = builder.nodeService;
         this.exportWriter = builder.exportWriter;
         this.xmlNodeSerializer = builder.xmlNodeSerializer;
-        this.exportTargetPath = NodeExportPathResolver.resolveExportTargetPath( builder.exportHomePath, builder.exportName );
+        this.targetDirectory = builder.targetDirectory;
         this.dryRun = builder.dryRun;
         this.exportNodeIds = builder.exportNodeIds;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public NodeExportResult execute()
     {
         this.result.dryRun( this.dryRun );
 
-        if ( this.exportRootPath.isRoot() )
+        if ( this.sourceNodePath.isRoot() )
         {
-            doExportChildNodes( this.exportRootPath );
+            doExportChildNodes( this.sourceNodePath );
         }
         else
         {
-            final Node rootNode = this.nodeService.getByPath( this.exportRootPath );
+            final Node rootNode = this.nodeService.getByPath( this.sourceNodePath );
 
             if ( rootNode != null )
             {
                 exportNode( rootNode );
+            }
+            else
+            {
+                addRootNodeNotFoundError();
             }
         }
 
@@ -152,13 +162,13 @@ public class BatchedNodeExportCommand
     {
         final NodePath newParentPath;
 
-        if ( node.path().equals( this.exportRootPath ) )
+        if ( node.path().equals( this.sourceNodePath ) )
         {
             newParentPath = NodePath.ROOT;
         }
         else
         {
-            newParentPath = node.parentPath().removeFromBeginning( this.exportRootPath );
+            newParentPath = node.parentPath().removeFromBeginning( this.sourceNodePath );
         }
         return newParentPath;
     }
@@ -220,19 +230,20 @@ public class BatchedNodeExportCommand
 
     private Path resolveNodeDataFolder( final Node node )
     {
-        final Path nodeBasePath = NodeExportPathResolver.resolveNodeBasePath( this.exportTargetPath, node.path(), exportRootPath );
+        final Path nodeBasePath = NodeExportPathResolver.resolveNodeBasePath( this.targetDirectory, node.path(), sourceNodePath );
         return NodeExportPathResolver.resolveNodeDataFolder( nodeBasePath );
     }
 
-    public static Builder create()
+    private void addRootNodeNotFoundError()
     {
-        return new Builder();
+        result.addError( new ExportError(
+            "Node with path '" + this.sourceNodePath + "' not found in branch '" + ContextAccessor.current().getBranch().getName() +
+                "', nothing to export" ) );
     }
-
 
     public static final class Builder
     {
-        private NodePath exportRootPath;
+        private NodePath sourceNodePath;
 
         private int batchSize = DEFAULT_BATCH_SIZE;
 
@@ -242,9 +253,7 @@ public class BatchedNodeExportCommand
 
         private XmlNodeSerializer xmlNodeSerializer;
 
-        private Path exportHomePath;
-
-        private String exportName;
+        private Path targetDirectory;
 
         private boolean dryRun = false;
 
@@ -254,9 +263,9 @@ public class BatchedNodeExportCommand
         {
         }
 
-        public Builder exportRootNode( NodePath exportRootNode )
+        public Builder sourceNodePath( NodePath exportRootNode )
         {
-            this.exportRootPath = exportRootNode;
+            this.sourceNodePath = exportRootNode;
             return this;
         }
 
@@ -266,15 +275,9 @@ public class BatchedNodeExportCommand
             return this;
         }
 
-        public Builder exportHomePath( Path exportHomePath )
+        public Builder targetDirectory( Path targetDirectory )
         {
-            this.exportHomePath = exportHomePath;
-            return this;
-        }
-
-        public Builder exportName( final String exportName )
-        {
-            this.exportName = exportName;
+            this.targetDirectory = targetDirectory;
             return this;
         }
 

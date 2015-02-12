@@ -1,13 +1,9 @@
 package com.enonic.wem.export;
 
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.base.Strings;
 
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.context.Context;
@@ -17,7 +13,6 @@ import com.enonic.wem.api.export.ExportService;
 import com.enonic.wem.api.export.ImportNodesParams;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.export.NodeImportResult;
-import com.enonic.wem.api.home.HomeDir;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.User;
@@ -31,12 +26,6 @@ import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 public class ExportServiceImpl
     implements ExportService
 {
-    private static final String NODE_EXPORT_NAME_PREFIX = "node_";
-
-    private static final String EXPORT_LOCATION_ROOT = "exports";
-
-    private NodeService nodeService;
-
     private final XmlNodeSerializer xmlNodeSerializer = new XmlNodeSerializer();
 
     private final AuthenticationInfo EXPORT_AUTH_INFO = AuthenticationInfo.create().
@@ -50,24 +39,20 @@ public class ExportServiceImpl
         authInfo( EXPORT_AUTH_INFO ).
         build();
 
+    private NodeService nodeService;
+
     @Override
     public NodeExportResult exportNodes( final ExportNodesParams params )
     {
-        return EXPORT_CONTEXT.callWith( () -> BatchedNodeExportCommand.create().
+        return BatchedNodeExportCommand.create().
             xmlNodeSerializer( xmlNodeSerializer ).
-            exportRootNode( params.getExportRoot() ).
+            sourceNodePath( params.getSourceNodePath() ).
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            exportHomePath( Paths.get( HomeDir.get().toString(), EXPORT_LOCATION_ROOT ) ).
-            exportName( Strings.isNullOrEmpty( params.getExportName() ) ? generateExportName() : params.getExportName() ).
+            targetDirectory( Paths.get( params.getTargetDirectory() ) ).
             dryRun( params.isDryRun() ).
             build().
-            execute() );
-    }
-
-    private String generateExportName()
-    {
-        return NODE_EXPORT_NAME_PREFIX + LocalDateTime.now().format( DateTimeFormatter.ISO_LOCAL_DATE_TIME );
+            execute();
     }
 
     @Override

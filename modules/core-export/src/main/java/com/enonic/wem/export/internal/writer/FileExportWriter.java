@@ -26,7 +26,7 @@ public class FileExportWriter
         }
         catch ( IOException e )
         {
-            throw new ExportNodeException( "failed to create directory with path " + path.toString() );
+            throw new ExportNodeException( "failed to create directory with path " + path.toString() + ": " + e.toString(), e );
         }
     }
 
@@ -43,7 +43,7 @@ public class FileExportWriter
         }
         catch ( IOException e )
         {
-            throw new ExportNodeException( "failed to create file with path " + itemPath.toString(), e );
+            throw new ExportNodeException( "failed to create file with path " + itemPath.toString() + ": " + e.toString(), e );
         }
     }
 
@@ -58,7 +58,7 @@ public class FileExportWriter
         }
         catch ( IOException e )
         {
-            throw new ExportNodeException( "failed to write source to path " + itemPath.toString(), e );
+            throw new ExportNodeException( "failed to write source to path " + itemPath.toString() + ": " + e.toString(), e );
         }
     }
 }

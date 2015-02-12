@@ -2,38 +2,37 @@ package com.enonic.wem.admin.rest.resource.export;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.node.NodePath;
-
-public class ExportNodesRequestJson
+class ExportNodesRequestJson
 {
-    private NodePath exportRoot;
+    private final RepoPath sourceRepoPath;
 
-    private String exportName;
+    private final String targetDirectory;
 
-    private boolean includeIds;
+    private final boolean includeIds;
 
-    private boolean dryRun;
+    private final boolean dryRun;
 
 
-    public ExportNodesRequestJson( @JsonProperty("exportNodePath") final String exportNodePath, //
-                                   @JsonProperty("exportName") final String exportName, //
+    public ExportNodesRequestJson( @JsonProperty("sourceRepoPath") final String sourceRepoPath, //
+                                   @JsonProperty("targetDirectory") final String targetDirectory, //
                                    @JsonProperty("importWithIds") final Boolean includeIds, //
                                    @JsonProperty("dryRun") final Boolean dryRun )
     {
-        this.exportRoot = NodePath.newPath( exportNodePath ).build();
-        this.exportName = exportName;
+
+        this.sourceRepoPath = RepoPath.from( sourceRepoPath );
+        this.targetDirectory = targetDirectory;
         this.includeIds = includeIds != null ? includeIds : true;
         this.dryRun = dryRun != null ? dryRun : false;
     }
 
-    public NodePath getExportRoot()
+    public RepoPath getSourceRepoPath()
     {
-        return exportRoot;
+        return sourceRepoPath;
     }
 
-    public String getExportName()
+    public String getTargetDirectory()
     {
-        return exportName;
+        return targetDirectory;
     }
 
     public boolean isIncludeIds()

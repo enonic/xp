@@ -6,9 +6,9 @@ import com.enonic.wem.api.node.NodePath;
 
 public class ExportNodesParams
 {
-    private final String exportName;
+    private final String targetDirectory;
 
-    private final NodePath exportRoot;
+    private final NodePath sourceNodePath;
 
     private final boolean dryRun;
 
@@ -16,25 +16,10 @@ public class ExportNodesParams
 
     private ExportNodesParams( Builder builder )
     {
-        this.exportName = builder.exportName;
-        this.exportRoot = builder.exportRoot;
+        this.targetDirectory = builder.targetDirectory;
+        this.sourceNodePath = builder.sourceNodePath;
         this.dryRun = builder.dryRun;
         this.includeNodeIds = builder.includeNodeIds;
-    }
-
-    public String getExportName()
-    {
-        return exportName;
-    }
-
-    public NodePath getExportRoot()
-    {
-        return exportRoot;
-    }
-
-    public boolean isDryRun()
-    {
-        return dryRun;
     }
 
     public static Builder create()
@@ -42,12 +27,26 @@ public class ExportNodesParams
         return new Builder();
     }
 
+    public String getTargetDirectory()
+    {
+        return targetDirectory;
+    }
+
+    public NodePath getSourceNodePath()
+    {
+        return sourceNodePath;
+    }
+
+    public boolean isDryRun()
+    {
+        return dryRun;
+    }
 
     public static final class Builder
     {
-        private String exportName;
+        private String targetDirectory;
 
-        private NodePath exportRoot;
+        private NodePath sourceNodePath;
 
         private boolean dryRun = false;
 
@@ -57,15 +56,15 @@ public class ExportNodesParams
         {
         }
 
-        public Builder exportName( final String exportName )
+        public Builder targetDirectory( final String exportName )
         {
-            this.exportName = exportName;
+            this.targetDirectory = exportName;
             return this;
         }
 
-        public Builder exportRoot( final NodePath exportRoot )
+        public Builder sourceNodePath( final NodePath sourceNodePath )
         {
-            this.exportRoot = exportRoot;
+            this.sourceNodePath = sourceNodePath;
             return this;
         }
 
@@ -83,11 +82,13 @@ public class ExportNodesParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( exportRoot );
+            Preconditions.checkNotNull( targetDirectory );
+            Preconditions.checkNotNull( sourceNodePath );
         }
 
         public ExportNodesParams build()
         {
+            this.validate();
             return new ExportNodesParams( this );
         }
     }

@@ -16,11 +16,6 @@ public class NodeExportPathResolver
 
     public static final String ORDER_EXPORT_NAME = "manualChildOrder.txt";
 
-    public static Path resolveExportTargetPath( final Path basePath, final String exportName )
-    {
-        return Paths.get( basePath.toString(), exportName );
-    }
-
     public static Path resolveNodeBasePath( final Path exportFilePath, final NodePath nodePath, final NodePath exportRootNodePath )
     {
         final Path fullNodePath = Paths.get( nodePath.toString() );

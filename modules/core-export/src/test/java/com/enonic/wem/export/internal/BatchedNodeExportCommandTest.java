@@ -1,6 +1,7 @@
 package com.enonic.wem.export.internal;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,10 +26,10 @@ import static org.junit.Assert.*;
 
 public class BatchedNodeExportCommandTest
 {
-    private NodeService nodeService;
-
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    private NodeService nodeService;
 
     @Before
     public void setUp()
@@ -46,10 +47,9 @@ public class BatchedNodeExportCommandTest
         final NodeExportResult result = BatchedNodeExportCommand.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            exportRootNode( NodePath.ROOT ).
+            sourceNodePath( NodePath.ROOT ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            exportHomePath( this.temporaryFolder.getRoot().toPath() ).
-            exportName( "myExport" ).
+            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
 
@@ -74,10 +74,9 @@ public class BatchedNodeExportCommandTest
         final NodeExportResult result = BatchedNodeExportCommand.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            exportRootNode( NodePath.ROOT ).
+            sourceNodePath( NodePath.ROOT ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            exportHomePath( this.temporaryFolder.getRoot().toPath() ).
-            exportName( "myExport" ).
+            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
 
@@ -114,10 +113,9 @@ public class BatchedNodeExportCommandTest
         final NodeExportResult result = BatchedNodeExportCommand.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            exportRootNode( NodePath.ROOT ).
+            sourceNodePath( NodePath.ROOT ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            exportHomePath( this.temporaryFolder.getRoot().toPath() ).
-            exportName( "myExport" ).
+            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
 
@@ -143,10 +141,9 @@ public class BatchedNodeExportCommandTest
         final NodeExportResult result = BatchedNodeExportCommand.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            exportRootNode( NodePath.newPath( "/mynode/child1/child1_1" ).build() ).
+            sourceNodePath( NodePath.newPath( "/mynode/child1/child1_1" ).build() ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            exportHomePath( this.temporaryFolder.getRoot().toPath() ).
-            exportName( "myExport" ).
+            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
 
@@ -173,10 +170,9 @@ public class BatchedNodeExportCommandTest
         final NodeExportResult result = BatchedNodeExportCommand.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            exportRootNode( NodePath.newPath( "/mynode/child1" ).build() ).
+            sourceNodePath( NodePath.newPath( "/mynode/child1" ).build() ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            exportHomePath( this.temporaryFolder.getRoot().toPath() ).
-            exportName( "myExport" ).
+            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
 
@@ -209,10 +205,9 @@ public class BatchedNodeExportCommandTest
         final NodeExportResult result = BatchedNodeExportCommand.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            exportRootNode( NodePath.ROOT ).
+            sourceNodePath( NodePath.ROOT ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            exportHomePath( this.temporaryFolder.getRoot().toPath() ).
-            exportName( "myExport" ).
+            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
 
