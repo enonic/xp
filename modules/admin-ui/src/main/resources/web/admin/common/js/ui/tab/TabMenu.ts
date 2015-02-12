@@ -227,8 +227,6 @@ module api.ui.tab {
                 var newTab = this.getSelectedNavigationItem();
                 if (newTab) {
                     this.setButtonLabel(newTab.getLabel());
-                    this.updateActiveTab(newTab.getIndex());
-                    this.selectNavigationItem(newTab.getIndex());
                 }
             }
             this.notifyTabRemovedListeners(tab);
@@ -236,12 +234,21 @@ module api.ui.tab {
 
         removeNavigationItems() {
             this.tabs.forEach((tab: TabMenuItem) => {
-                this.removeNavigationItem(tab);
+                tab.remove();
+                this.notifyTabRemovedListeners(tab);
             });
+
+            if (this.countVisible() == 0) {
+                this.setButtonLabel("");
+                this.tabMenuButton.hide();
+                this.hideMenu();
+            }
+
+            this.selectedTab = -1;
             this.tabs = [];
         }
 
-        private updateActiveTab(tabIndex: number) {
+        updateActiveTab(tabIndex: number) {
             this.tabs.forEach((tab: TabMenuItem, index: number) => {
                 var activate = (tabIndex == index);
                 tab.setActive(activate);
