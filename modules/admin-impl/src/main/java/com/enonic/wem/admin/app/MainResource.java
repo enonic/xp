@@ -1,5 +1,7 @@
 package com.enonic.wem.admin.app;
 
+import java.net.URI;
+
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -29,10 +31,10 @@ public final class MainResource
     }
 
     @GET
-    public Response getIndexHtml()
+    public Response redirectToLoginPage()
         throws Exception
     {
-        return getResource( "index.html" );
+        return Response.temporaryRedirect( new URI( "/admin" )).build();
     }
 
     @GET
