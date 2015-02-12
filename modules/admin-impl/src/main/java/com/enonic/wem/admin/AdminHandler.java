@@ -19,7 +19,6 @@ public final class AdminHandler
         setOrder( MAX_ORDER - 20 );
         setPath( "/" );
         addSingleton( new AdminJaxRsFeature() );
-        addRoleBasedSecurity();
     }
 
     @Override

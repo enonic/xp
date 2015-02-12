@@ -4,7 +4,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.resteasy.plugins.interceptors.RoleBasedSecurityFeature;
 import org.osgi.service.component.annotations.Deactivate;
 
 import com.enonic.xp.web.handler.BaseWebHandler;
@@ -81,10 +80,5 @@ public abstract class JaxRsHandler
     {
         this.dispatcher.removeSingleton( instance );
         this.needsRefresh = true;
-    }
-
-    protected final void addRoleBasedSecurity()
-    {
-        addSingleton( new RoleBasedSecurityFeature() );
     }
 }
