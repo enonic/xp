@@ -10,6 +10,7 @@ module app.wizard {
         constructor() {
             super();
             this.getLabel().setValue("Has Role");
+            this.getLoader().load();
         }
 
         getPrincipalMembers(): PrincipalKey[] {

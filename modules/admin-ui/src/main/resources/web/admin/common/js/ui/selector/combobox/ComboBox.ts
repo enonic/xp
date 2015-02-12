@@ -334,15 +334,19 @@ module api.ui.selector.combobox {
             }
         }
 
-        clearSelection(ignoreEmpty: boolean = false, giveInputFocus: boolean = true) {
+        clearSelection(ignoreEmpty: boolean = false, giveInputFocus: boolean = true, forceClear: boolean = false) {
             var optionsMap = this.getDisplayedOptions().map((x) => x.value).join();
 
             var selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.getSelectedOptions();
             selectedOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
-                // removing selection only from filtered options
-                var filteredOption = optionsMap.search(option.value) >= 0 ? option : undefined;
-                if (filteredOption) {
+                if (forceClear) {
                     this.selectedOptionsView.removeOption(option, true);
+                } else {
+                    // removing selection only from filtered options
+                    var filteredOption = optionsMap.search(option.value) >= 0 ? option : undefined;
+                    if (filteredOption) {
+                        this.selectedOptionsView.removeOption(option, true);
+                    }
                 }
             });
 

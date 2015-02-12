@@ -4,15 +4,15 @@ import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
+import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
 
 class GetVersionCommand
@@ -24,6 +24,11 @@ class GetVersionCommand
     {
         super( builder );
         nodeVersionId = builder.nodeVersionId;
+    }
+
+    static Builder create()
+    {
+        return new Builder();
     }
 
     NodeVersion execute()
@@ -40,7 +45,7 @@ class GetVersionCommand
         final TermQueryBuilder blobKeyQuery = new TermQueryBuilder( VersionIndexPath.VERSION_ID.getPath(), nodeVersionId.toString() );
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
-            index( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
+            index( IndexNameResolver.resolveStorageIndexName( repositoryId ) ).
             indexType( IndexType.VERSION.getName() ).
             query( blobKeyQuery ).
             from( 0 ).
@@ -56,11 +61,6 @@ class GetVersionCommand
             throw new RuntimeException( "Did not find version entry with blobKey: " + nodeVersionId );
         }
         return searchResult;
-    }
-
-    static Builder create()
-    {
-        return new Builder();
     }
 
     static final class Builder

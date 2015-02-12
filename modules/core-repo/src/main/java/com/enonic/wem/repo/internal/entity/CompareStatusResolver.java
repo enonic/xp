@@ -5,7 +5,7 @@ import com.enonic.wem.api.node.NodeState;
 import com.enonic.wem.api.node.NodeVersion;
 import com.enonic.wem.api.node.NodeVersionId;
 import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.repo.internal.index.query.NodeBranchVersion;
+import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
 import com.enonic.wem.repo.internal.version.VersionService;
 
 class CompareStatusResolver

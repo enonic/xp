@@ -62,7 +62,7 @@ public class GetNodeByPathCommandTest
             nodePath( nodePath ).
             resolveHasChild( true ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             branchService( this.branchService ).

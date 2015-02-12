@@ -8,105 +8,105 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.index.IndexType;
+import com.enonic.wem.api.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.ClusterHealthStatus;
 import com.enonic.wem.repo.internal.elasticsearch.ClusterStatusCode;
-import com.enonic.wem.repo.internal.index.IndexService;
-import com.enonic.wem.repo.internal.index.IndexType;
+import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 
 public final class RepositoryInitializer
 {
-    private final IndexService indexService;
-
     private final static TimeValue CLUSTER_HEALTH_TIMEOUT_VALUE = TimeValue.timeValueSeconds( 10 );
 
     private final static Logger LOG = LoggerFactory.getLogger( RepositoryInitializer.class );
 
-    public RepositoryInitializer( final IndexService indexService )
+    private final IndexServiceInternal indexServiceInternal;
+
+    public RepositoryInitializer( final IndexServiceInternal indexServiceInternal )
     {
-        this.indexService = indexService;
+        this.indexServiceInternal = indexServiceInternal;
     }
 
-    public void initializeRepository( final Repository repository )
+    public void initializeRepository( final RepositoryId repositoryId )
     {
-        if ( !isInitialized( repository ) )
+        if ( !isInitialized( repositoryId ) )
         {
-            doInitializeRepo( repository );
+            doInitializeRepo( repositoryId );
         }
         else
         {
-            waitForInitialized( repository );
+            waitForInitialized( repositoryId );
         }
     }
 
-    private void doInitializeRepo( final Repository repository )
+    private void doInitializeRepo( final RepositoryId repositoryId )
     {
-        LOG.info( "Initializing repositoryId {}", repository.getId() );
+        LOG.info( "Initializing repositoryId {}", repositoryId );
 
-        final ClusterHealthStatus clusterHealth = indexService.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
+        final ClusterHealthStatus clusterHealth = indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
         if ( clusterHealth.isTimedOut() || !clusterHealth.getClusterStatusCode().equals( ClusterStatusCode.RED ) )
         {
-            deleteExistingRepoIndices( repository );
+            deleteExistingRepoIndices( repositoryId );
         }
 
-        createIndexes( repository );
+        createIndexes( repositoryId );
 
-        final String storageIndexName = getStoreIndexName( repository );
-        final String searchIndexName = getSearchIndexName( repository );
+        final String storageIndexName = getStoreIndexName( repositoryId );
+        final String searchIndexName = getSearchIndexName( repositoryId );
 
-        indexService.applyMapping( storageIndexName, IndexType.BRANCH.getName(),
-                                   RepositoryIndexMappingProvider.getBranchMapping( repository ) );
+        indexServiceInternal.applyMapping( storageIndexName, IndexType.BRANCH,
+                                           RepositoryIndexMappingProvider.getBranchMapping( repositoryId ) );
 
-        indexService.applyMapping( storageIndexName, IndexType.VERSION.getName(),
-                                   RepositoryIndexMappingProvider.getVersionMapping( repository ) );
+        indexServiceInternal.applyMapping( storageIndexName, IndexType.VERSION,
+                                           RepositoryIndexMappingProvider.getVersionMapping( repositoryId ) );
 
-        indexService.applyMapping( searchIndexName, IndexType._DEFAULT_.getName(),
-                                   RepositoryIndexMappingProvider.getSearchMappings( repository ) );
+        indexServiceInternal.applyMapping( searchIndexName, IndexType.SEARCH,
+                                           RepositoryIndexMappingProvider.getSearchMappings( repositoryId ) );
 
-        indexService.refresh( storageIndexName, searchIndexName );
+        indexServiceInternal.refresh( storageIndexName, searchIndexName );
     }
 
-    public void waitForInitialized( final Repository repository )
+    void waitForInitialized( final RepositoryId repositoryId )
     {
         LOG.info( "Waiting for cluster to be initialized" );
 
-        final String storageIndexName = getStoreIndexName( repository );
-        final String searchIndexName = getSearchIndexName( repository );
+        final String storageIndexName = getStoreIndexName( repositoryId );
+        final String searchIndexName = getSearchIndexName( repositoryId );
 
-        indexService.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE, storageIndexName, searchIndexName );
+        indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE, storageIndexName, searchIndexName );
     }
 
-    private void createIndexes( final Repository repository )
+    private void createIndexes( final RepositoryId repositoryId )
     {
-        LOG.info( "Create storage-index for repositoryId {}", repository.getId() );
-        final String storageIndexName = getStoreIndexName( repository );
-        final String storageIndexSettings = RepositoryStorageSettingsProvider.getSettings( repository );
-        indexService.createIndex( storageIndexName, storageIndexSettings );
+        LOG.info( "Create storage-index for repositoryId {}", repositoryId );
+        final String storageIndexName = getStoreIndexName( repositoryId );
+        final String storageIndexSettings = RepositoryStorageSettingsProvider.getSettings( repositoryId );
+        indexServiceInternal.createIndex( storageIndexName, storageIndexSettings );
 
-        LOG.info( "Create search-index for repositoryId {}", repository.getId() );
-        final String searchIndexName = getSearchIndexName( repository );
-        final String searchIndexSettings = RepositorySearchIndexSettingsProvider.getSettings( repository );
-        indexService.createIndex( searchIndexName, searchIndexSettings );
+        LOG.info( "Create search-index for repositoryId {}", repositoryId );
+        final String searchIndexName = getSearchIndexName( repositoryId );
+        final String searchIndexSettings = RepositorySearchIndexSettingsProvider.getSettings( repositoryId );
+        indexServiceInternal.createIndex( searchIndexName, searchIndexSettings );
     }
 
-    private void deleteExistingRepoIndices( final Repository repository )
+    private void deleteExistingRepoIndices( final RepositoryId repositoryId )
     {
-        if ( isInitialized( repository ) )
+        if ( isInitialized( repositoryId ) )
         {
             LOG.info( "Deleting existing repository indices" );
 
             final Set<String> repoIndexes = Sets.newHashSet();
 
-            repoIndexes.add( getStoreIndexName( repository ) );
-            repoIndexes.add( getSearchIndexName( repository ) );
+            repoIndexes.add( getStoreIndexName( repositoryId ) );
+            repoIndexes.add( getSearchIndexName( repositoryId ) );
 
             if ( !repoIndexes.isEmpty() )
             {
-                indexService.deleteIndices( repoIndexes );
+                indexServiceInternal.deleteIndices( repoIndexes.toArray( new String[repoIndexes.size()] ) );
             }
 
-            indexService.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
+            indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
         }
         else
         {
@@ -114,21 +114,21 @@ public final class RepositoryInitializer
         }
     }
 
-    private boolean isInitialized( final Repository repository )
+    private boolean isInitialized( final RepositoryId repositoryId )
     {
-        final String storageIndexName = getStoreIndexName( repository );
-        final String searchIndexName = getSearchIndexName( repository );
+        final String storageIndexName = getStoreIndexName( repositoryId );
+        final String searchIndexName = getSearchIndexName( repositoryId );
 
-        return indexService.indicesExists( storageIndexName, searchIndexName );
+        return indexServiceInternal.indicesExists( storageIndexName, searchIndexName );
     }
 
-    private String getStoreIndexName( final Repository repository )
+    private String getStoreIndexName( final RepositoryId repositoryId )
     {
-        return StorageNameResolver.resolveStorageIndexName( repository.getId() );
+        return IndexNameResolver.resolveStorageIndexName( repositoryId );
     }
 
-    private String getSearchIndexName( final Repository repository )
+    private String getSearchIndexName( final RepositoryId repositoryId )
     {
-        return IndexNameResolver.resolveSearchIndexName( repository.getId() );
+        return IndexNameResolver.resolveSearchIndexName( repositoryId );
     }
 }

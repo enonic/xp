@@ -1,25 +1,24 @@
 package com.enonic.wem.repo.internal.repository;
 
-import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 
 public class RepositoryStorageSettingsProvider
     extends AbstractRepositorySettingsProvider
 {
 
-    private final static String PREFIX = "/META-INF/index/settings/";
-
     public static final String STORAGE_SETTINGS_FILE_PATTERN = "-storage-settings.json";
 
+    private final static String PREFIX = "/META-INF/index/settings/";
 
-    public static String getSettings( final Repository repository )
+    public static String getSettings( final RepositoryId repositoryId )
     {
-        return doGet( repository, resolveFileName( repository ) );
+        return doGet( repositoryId, resolveFileName( repositoryId ) );
     }
 
 
-    private static String resolveFileName( final Repository repository )
+    private static String resolveFileName( final RepositoryId repositoryId )
     {
-        return ( PREFIX + repository.getId().toString() + STORAGE_SETTINGS_FILE_PATTERN );
+        return ( PREFIX + repositoryId.toString() + STORAGE_SETTINGS_FILE_PATTERN );
     }
 
 }

@@ -169,7 +169,7 @@ public class PushNodesCommandTest
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             build().
             execute();
@@ -242,7 +242,7 @@ public class PushNodesCommandTest
         MoveNodeCommand.create().
             id( node.id() ).
             newNodeName( NodeName.from( node.id().toString() + "edited" ) ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             queryService( this.queryService ).
             branchService( this.branchService ).

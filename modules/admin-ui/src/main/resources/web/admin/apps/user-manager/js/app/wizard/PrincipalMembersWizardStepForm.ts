@@ -20,14 +20,16 @@ module app.wizard {
 
         private principal: Principal;
 
+        private loader: PrincipalLoader;
+
         constructor(loadedHandler?: Function) {
             super();
 
             loadedHandler = loadedHandler || (() => {});
-            var loader = new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER]).
+            this.loader = new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER]).
                 skipPrincipals([PrincipalKey.ofAnonymous()]);
 
-            this.principals = new PrincipalComboBox(loader);
+            this.principals = new PrincipalComboBox(this.loader);
             var handler = () => { this.selectMembers(); loadedHandler(); this.principals.unLoaded(handler); };
             this.principals.onLoaded(handler);
 
@@ -94,6 +96,10 @@ module app.wizard {
 
         giveFocus(): boolean {
             return this.principals.giveFocus();
+        }
+
+        getLoader(): PrincipalLoader {
+            return this.loader;
         }
     }
 }

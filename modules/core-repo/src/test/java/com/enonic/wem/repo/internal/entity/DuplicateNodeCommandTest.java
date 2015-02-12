@@ -31,7 +31,7 @@ public class DuplicateNodeCommandTest
         final Node duplicatedNode = DuplicateNodeCommand.create().
             id( createdNode.id() ).
             versionService( versionService ).
-            indexService( indexService ).
+            indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
             queryService( queryService ).
             branchService( branchService ).
@@ -62,7 +62,7 @@ public class DuplicateNodeCommandTest
         final Node duplicatedNode = DuplicateNodeCommand.create().
             id( createdNode.id() ).
             versionService( versionService ).
-            indexService( indexService ).
+            indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
             queryService( queryService ).
             branchService( branchService ).
@@ -237,7 +237,7 @@ public class DuplicateNodeCommandTest
         return DuplicateNodeCommand.create().
             id( node1.id() ).
             versionService( versionService ).
-            indexService( indexService ).
+            indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
             queryService( queryService ).
             branchService( branchService ).

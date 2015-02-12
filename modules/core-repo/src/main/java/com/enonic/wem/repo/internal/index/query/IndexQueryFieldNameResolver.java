@@ -75,20 +75,20 @@ public class IndexQueryFieldNameResolver
     {
         if ( value.isDateType() )
         {
-            return appendIndexValueType( baseFieldName, IndexValueType.DATETIME );
+            return resolveDateTimeFieldName( baseFieldName );
         }
 
         if ( value.isNumericType() )
         {
-            return appendIndexValueType( baseFieldName, IndexValueType.NUMBER );
+            return resolveNumericFieldName( baseFieldName );
         }
 
         if ( value.isGeoPoint() )
         {
-            return appendIndexValueType( baseFieldName, IndexValueType.GEO_POINT );
+            return resolveGeoPointFieldName( baseFieldName );
         }
 
-        return baseFieldName;
+        return IndexFieldNameNormalizer.normalize( baseFieldName );
     }
 
     private static String appendIndexValueType( final String baseFieldName, final IndexValueType indexValueType )

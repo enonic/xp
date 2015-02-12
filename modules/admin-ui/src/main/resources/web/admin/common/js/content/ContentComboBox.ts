@@ -34,7 +34,7 @@ module api.content {
 
         setContent(content: ContentSummary) {
 
-            this.clearSelection(false, false);
+            this.clearSelection();
             if (content) {
                 var optionToSelect: Option<ContentSummary> = this.getOptionByValue(content.getContentId().toString());
                 if (!optionToSelect) {

@@ -30,7 +30,7 @@ public class GetNodeByIdCommandTest
 
         final Node fetchedNode = GetNodeByIdCommand.create().
             versionService( this.versionService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
@@ -66,7 +66,7 @@ public class GetNodeByIdCommandTest
 
         final Node fetchedNode = GetNodeByIdCommand.create().
             versionService( this.versionService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
@@ -97,7 +97,7 @@ public class GetNodeByIdCommandTest
 
         final Node fetchedNode = GetNodeByIdCommand.create().
             versionService( this.versionService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
@@ -111,7 +111,7 @@ public class GetNodeByIdCommandTest
 
         final Node fetchedNodeSkipResolve = GetNodeByIdCommand.create().
             versionService( this.versionService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).

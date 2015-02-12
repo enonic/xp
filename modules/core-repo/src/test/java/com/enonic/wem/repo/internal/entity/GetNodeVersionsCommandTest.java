@@ -85,7 +85,7 @@ public class GetNodeVersionsCommandTest
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).

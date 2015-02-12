@@ -142,7 +142,7 @@ public class SetNodeChildOrderCommandTest
             versionService( versionService ).
             branchService( branchService ).
             queryService( queryService ).
-            indexService( indexService ).
+            indexServiceInternal( indexServiceInternal ).
             build().
             execute();
     }
@@ -162,7 +162,7 @@ public class SetNodeChildOrderCommandTest
             versionService( versionService ).
             branchService( branchService ).
             queryService( queryService ).
-            indexService( indexService ).
+            indexServiceInternal( indexServiceInternal ).
             build().
             execute();
 

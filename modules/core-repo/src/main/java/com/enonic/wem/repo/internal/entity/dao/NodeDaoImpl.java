@@ -25,9 +25,9 @@ import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.branch.BranchContext;
 import com.enonic.wem.repo.internal.branch.BranchService;
+import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
 import com.enonic.wem.repo.internal.entity.NodeConstants;
 import com.enonic.wem.repo.internal.entity.json.NodeJsonSerializer;
-import com.enonic.wem.repo.internal.index.query.NodeBranchVersion;
 
 @Component
 public class NodeDaoImpl

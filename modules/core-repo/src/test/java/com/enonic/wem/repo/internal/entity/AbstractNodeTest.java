@@ -10,6 +10,7 @@ import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
+import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -30,32 +31,18 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
 import com.enonic.wem.repo.internal.elasticsearch.snapshot.ElasticsearchSnapshotService;
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
-import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
 {
-    protected NodeDaoImpl nodeDao;
-
-    protected ElasticsearchVersionService versionService;
-
-    protected ElasticsearchBranchService branchService;
-
-    protected ElasticsearchIndexService indexService;
-
-    protected ElasticsearchQueryService queryService;
-
-    protected ElasticsearchSnapshotService snapshotService;
-
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "test-user" ) ).login( "test-user" ).build();
 
@@ -89,6 +76,18 @@ public abstract class AbstractNodeTest
 
     public BlobStore binaryBlobStore;
 
+    protected NodeDaoImpl nodeDao;
+
+    protected ElasticsearchVersionService versionService;
+
+    protected ElasticsearchBranchService branchService;
+
+    protected ElasticsearchIndexServiceInternal indexServiceInternal;
+
+    protected ElasticsearchQueryService queryService;
+
+    protected ElasticsearchSnapshotService snapshotService;
+
     @Before
     public void setUp()
         throws Exception
@@ -110,9 +109,9 @@ public abstract class AbstractNodeTest
         this.versionService = new ElasticsearchVersionService();
         this.versionService.setElasticsearchDao( elasticsearchDao );
 
-        this.indexService = new ElasticsearchIndexService();
-        this.indexService.setClient( client );
-        this.indexService.setElasticsearchDao( elasticsearchDao );
+        this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
+        this.indexServiceInternal.setClient( client );
+        this.indexServiceInternal.setElasticsearchDao( elasticsearchDao );
 
         this.snapshotService = new ElasticsearchSnapshotService();
         this.snapshotService.setElasticsearchDao( this.elasticsearchDao );
@@ -127,15 +126,15 @@ public abstract class AbstractNodeTest
     void createRepository( final Repository repository )
     {
         NodeServiceImpl nodeService = new NodeServiceImpl();
-        nodeService.setIndexService( indexService );
+        nodeService.setIndexServiceInternal( indexServiceInternal );
         nodeService.setQueryService( queryService );
         nodeService.setNodeDao( nodeDao );
         nodeService.setVersionService( versionService );
         nodeService.setBranchService( branchService );
         nodeService.setSnapshotService( this.snapshotService );
 
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
-        repositoryInitializer.initializeRepository( repository );
+        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexServiceInternal );
+        repositoryInitializer.initializeRepository( repository.getId() );
 
         refresh();
     }
@@ -145,7 +144,7 @@ public abstract class AbstractNodeTest
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             versionService( this.versionService ).
@@ -165,7 +164,7 @@ public abstract class AbstractNodeTest
         final Node createdNode = CreateNodeCommand.create().
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
@@ -182,7 +181,7 @@ public abstract class AbstractNodeTest
     {
         return GetNodeByIdCommand.create().
             versionService( this.versionService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
@@ -197,7 +196,7 @@ public abstract class AbstractNodeTest
     {
         return GetNodeByPathCommand.create().
             versionService( this.versionService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
@@ -215,7 +214,7 @@ public abstract class AbstractNodeTest
             params( params ).
             queryService( queryService ).
             branchService( branchService ).
-            indexService( indexService ).
+            indexServiceInternal( indexServiceInternal ).
             versionService( versionService ).
             nodeDao( nodeDao ).
             build().
@@ -230,7 +229,7 @@ public abstract class AbstractNodeTest
             versionService( this.versionService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
     }
@@ -242,12 +241,12 @@ public abstract class AbstractNodeTest
 
     protected void printBranchIndex()
     {
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.BRANCH.getName() );
+        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.BRANCH.getName() );
     }
 
     protected void printVersionIndex()
     {
-        printAllIndexContent( StorageNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
+        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
     }
 
     protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )
@@ -269,7 +268,7 @@ public abstract class AbstractNodeTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
     }
@@ -279,7 +278,7 @@ public abstract class AbstractNodeTest
         return DeleteNodeByIdCommand.create().
             nodeId( nodeId ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             branchService( this.branchService ).

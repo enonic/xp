@@ -37,7 +37,7 @@ public class GetNodesByPathsCommandTest
             branchService( this.branchService ).
             queryService( this.queryService ).
             versionService( this.versionService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             build().
             execute();
@@ -55,7 +55,7 @@ public class GetNodesByPathsCommandTest
             branchService( this.branchService ).
             queryService( this.queryService ).
             versionService( this.versionService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             build().
             execute();

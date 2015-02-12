@@ -22,6 +22,8 @@ module app.wizard {
                 }
             });
             this.getLabel().setValue("Members");
+
+            this.getLoader().load();
         }
 
         getPrincipalMembers(): PrincipalKey[] {

@@ -43,7 +43,7 @@ import com.enonic.wem.api.security.auth.AuthenticationToken;
 import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
 import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexService;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
 import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
 import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
@@ -61,6 +61,9 @@ public class SecurityServiceImplTest
 {
     private static final UserStoreKey SYSTEM = UserStoreKey.system();
 
+    @Rule
+    public TemporaryFolder WEM_HOME = new TemporaryFolder();
+
     private SecurityServiceImpl securityService;
 
     private NodeServiceImpl nodeService;
@@ -71,12 +74,9 @@ public class SecurityServiceImplTest
 
     private ElasticsearchBranchService branchService;
 
-    private ElasticsearchIndexService indexService;
+    private ElasticsearchIndexServiceInternal indexService;
 
     private ElasticsearchQueryService queryService;
-
-    @Rule
-    public TemporaryFolder WEM_HOME = new TemporaryFolder();
 
     @Override
     @Before
@@ -96,7 +96,7 @@ public class SecurityServiceImplTest
         this.versionService = new ElasticsearchVersionService();
         this.versionService.setElasticsearchDao( elasticsearchDao );
 
-        this.indexService = new ElasticsearchIndexService();
+        this.indexService = new ElasticsearchIndexServiceInternal();
         this.indexService.setClient( client );
         this.indexService.setElasticsearchDao( elasticsearchDao );
 
@@ -104,7 +104,7 @@ public class SecurityServiceImplTest
         this.queryService.setElasticsearchDao( elasticsearchDao );
 
         this.nodeService = new NodeServiceImpl();
-        this.nodeService.setIndexService( indexService );
+        this.nodeService.setIndexServiceInternal( indexService );
         this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setVersionService( versionService );
@@ -139,7 +139,7 @@ public class SecurityServiceImplTest
     void createRepository( final Repository repository )
     {
         RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
-        repositoryInitializer.initializeRepository( repository );
+        repositoryInitializer.initializeRepository( repository.getId() );
 
         refresh();
 
@@ -708,11 +708,6 @@ public class SecurityServiceImplTest
         assertTrue( authInfo2.isAuthenticated() );
     }
 
-    private class CustomAuthenticationToken
-        extends AuthenticationToken
-    {
-    }
-
     private void runAsAdmin()
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.ANONYMOUS ).build();
@@ -722,6 +717,11 @@ public class SecurityServiceImplTest
             branch( SystemConstants.BRANCH_SECURITY ).
             build();
         ContextAccessor.INSTANCE.set( context );
+    }
+
+    private class CustomAuthenticationToken
+        extends AuthenticationToken
+    {
     }
 
 }

@@ -58,13 +58,16 @@ import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
 
 @Component
 public class ElasticsearchDaoImpl
     implements ElasticsearchDao
 {
     private static final boolean DEFAULT_REFRESH = true;
+
+    private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexServiceInternal.class );
+
+    private final static String SNAPSHOT_REPOSITORY_NAME = "enonic-xp-snapshot-repo";
 
     private final String searchPreference = "_local";
 
@@ -74,11 +77,16 @@ public class ElasticsearchDaoImpl
 
     private final String deleteTimeout = "5s";
 
-    private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexService.class );
-
-    private final static String SNAPSHOT_REPOSITORY_NAME = "enonic-xp-snapshot-repo";
-
     private Client client;
+
+    private static int safeLongToInt( long l )
+    {
+        if ( l < Integer.MIN_VALUE || l > Integer.MAX_VALUE )
+        {
+            throw new IllegalArgumentException( l + " cannot be cast to int without changing its value." );
+        }
+        return (int) l;
+    }
 
     public String store( final IndexRequest indexRequest )
     {
@@ -287,7 +295,8 @@ public class ElasticsearchDaoImpl
     private Set<String> getSnapshotIndexNames( final RepositoryId repositoryId, final boolean includeIndexedData )
     {
         final Set<String> indices = Sets.newHashSet();
-        indices.add( StorageNameResolver.resolveStorageIndexName( repositoryId ) );
+        indices.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
+
         if ( includeIndexedData )
         {
             indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
@@ -326,7 +335,6 @@ public class ElasticsearchDaoImpl
         }
     }
 
-
     private void registerRepository()
     {
         final Path SNAPSHOT_PATH = Paths.get( HomeDir.get().toString(), "snapshots" );
@@ -352,15 +360,6 @@ public class ElasticsearchDaoImpl
         {
             return query.getSize();
         }
-    }
-
-    private static int safeLongToInt( long l )
-    {
-        if ( l < Integer.MIN_VALUE || l > Integer.MAX_VALUE )
-        {
-            throw new IllegalArgumentException( l + " cannot be cast to int without changing its value." );
-        }
-        return (int) l;
     }
 
     @Reference

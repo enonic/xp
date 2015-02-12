@@ -117,7 +117,7 @@ public class FilterBuilderFactory
         final Value from = filter.getFrom();
         final Value to = filter.getTo();
 
-        if ( from == null & to == null )
+        if ( from == null && to == null )
         {
             return null;
         }

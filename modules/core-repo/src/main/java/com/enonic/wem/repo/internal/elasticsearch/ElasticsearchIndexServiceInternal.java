@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeVersionId;
@@ -36,20 +37,20 @@ import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.IndexException;
-import com.enonic.wem.repo.internal.index.IndexService;
+import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
+
 
 @Component
-public class ElasticsearchIndexService
-    implements IndexService
+public class ElasticsearchIndexServiceInternal
+    implements IndexServiceInternal
 {
 
-    private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexService.class );
+    private static final String ES_DEFAULT_INDEX_TYPE_NAME = "_default_";
+
+    private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexServiceInternal.class );
 
     private static final String INDICES_RESPONSE_TIMEOUT = "10s";
-
-    private ElasticsearchDao elasticsearchDao;
 
     private final static String deleteTimeout = "5s";
 
@@ -58,6 +59,8 @@ public class ElasticsearchIndexService
     private final static String applyMappingTimeout = "5s";
 
     private final static String existsTimeout = "5s";
+
+    private ElasticsearchDao elasticsearchDao;
 
     private Client client;
 
@@ -74,26 +77,7 @@ public class ElasticsearchIndexService
             actionGet();
     }
 
-    private ClusterHealthStatus doGetClusterHealth( final TimeValue timeout, final String... indexNames )
-    {
-        LOG.info( "Executing ClusterHealtRequest" );
-
-        ClusterHealthRequest request = indexNames != null ? new ClusterHealthRequest( indexNames ) : new ClusterHealthRequest();
-
-        request.waitForYellowStatus().timeout( timeout );
-
-        final Stopwatch timer = Stopwatch.createStarted();
-        final ClusterHealthResponse response = this.client.admin().cluster().health( request ).actionGet();
-        timer.stop();
-
-        LOG.info(
-            "ElasticSearch cluster '{}' health (timedOut={}, timeOutValue={}, used={}): Status={}, nodes={}, active shards={}, indices={}",
-            response.getClusterName(), response.isTimedOut(), timeout, timer.toString(), response.getStatus(), response.getNumberOfNodes(),
-            response.getActiveShards(), response.getIndices().keySet() );
-
-        return new ClusterHealthStatus( ClusterStatusCode.valueOf( response.getStatus().name() ), response.isTimedOut() );
-    }
-
+    @Override
     public void createIndex( final String indexName, final String settings )
     {
         LOG.info( "creating index {}", indexName );
@@ -114,15 +98,22 @@ public class ElasticsearchIndexService
         }
     }
 
-    public void applyMapping( final String indexName, final String indexType, final String mapping )
+    @Override
+    public void applyMapping( final String indexName, final IndexType indexType, final String mapping )
     {
         LOG.info( "Apply mapping for index {}", indexName );
 
-        PutMappingRequest mappingRequest = new PutMappingRequest( indexName ).type( indexType ).source( mapping );
+        PutMappingRequest mappingRequest = new PutMappingRequest( indexName ).
+            type( indexType.equals( IndexType.SEARCH ) ? ES_DEFAULT_INDEX_TYPE_NAME : indexType.getName() ).
+            source( mapping );
 
         try
         {
-            this.client.admin().indices().putMapping( mappingRequest ).actionGet( applyMappingTimeout );
+            this.client.admin().
+                indices().
+                putMapping( mappingRequest ).
+                actionGet( applyMappingTimeout );
+
             LOG.info( "Mapping for index {} applied", indexName );
         }
         catch ( ElasticsearchException e )
@@ -131,13 +122,14 @@ public class ElasticsearchIndexService
         }
     }
 
+    @Override
     public Set<String> getAllRepositoryIndices( final RepositoryId repositoryId )
     {
         IndicesStatsRequest indicesStatsRequest = new IndicesStatsRequest();
         indicesStatsRequest.listenerThreaded( false );
         indicesStatsRequest.clear();
 
-        final String storageName = StorageNameResolver.resolveStorageIndexName( repositoryId );
+        final String storageName = IndexNameResolver.resolveStorageIndexName( repositoryId );
         final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
 
         final IndicesStatsResponse response =
@@ -160,7 +152,7 @@ public class ElasticsearchIndexService
     }
 
     @Override
-    public void deleteIndices( final Collection<String> indexNames )
+    public void deleteIndices( String... indexNames )
     {
         for ( final String indexName : indexNames )
         {
@@ -177,6 +169,27 @@ public class ElasticsearchIndexService
 
         return response.isExists();
     }
+
+    private ClusterHealthStatus doGetClusterHealth( final TimeValue timeout, final String... indexNames )
+    {
+        LOG.info( "Executing ClusterHealtRequest" );
+
+        ClusterHealthRequest request = indexNames != null ? new ClusterHealthRequest( indexNames ) : new ClusterHealthRequest();
+
+        request.waitForYellowStatus().timeout( timeout );
+
+        final Stopwatch timer = Stopwatch.createStarted();
+        final ClusterHealthResponse response = this.client.admin().cluster().health( request ).actionGet();
+        timer.stop();
+
+        LOG.info(
+            "ElasticSearch cluster '{}' health (timedOut={}, timeOutValue={}, used={}): Status={}, nodes={}, active shards={}, indices={}",
+            response.getClusterName(), response.isTimedOut(), timeout, timer.toString(), response.getStatus(), response.getNumberOfNodes(),
+            response.getActiveShards(), response.getIndices().keySet() );
+
+        return new ClusterHealthStatus( ClusterStatusCode.valueOf( response.getStatus().name() ), response.isTimedOut() );
+    }
+
 
     private void doDeleteIndex( final String indexName )
     {

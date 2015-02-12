@@ -45,7 +45,7 @@ public class NodeChildOrderResolverTest
             branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
@@ -55,7 +55,7 @@ public class NodeChildOrderResolverTest
             branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             resolve();
 
@@ -80,7 +80,7 @@ public class NodeChildOrderResolverTest
             branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             resolve();
 

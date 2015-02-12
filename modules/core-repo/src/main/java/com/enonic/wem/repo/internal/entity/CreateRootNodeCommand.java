@@ -15,6 +15,16 @@ public class CreateRootNodeCommand
         this.params = builder.params;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
+    }
+
     public RootNode execute()
     {
         final RootNode rootNode = RootNode.create().
@@ -28,21 +38,11 @@ public class CreateRootNodeCommand
             branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
         return rootNode;
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
     }
 
     public static class Builder

@@ -24,9 +24,9 @@ module api.ui.locale {
             super(builder);
         }
 
-        clearSelection(ignoreEmpty: boolean = false) {
+        clearSelection() {
             this.getLoader().search("");
-            super.clearSelection(ignoreEmpty);
+            super.clearSelection();
         }
     }
 

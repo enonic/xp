@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.repository;
 
-import com.enonic.wem.api.repository.Repository;
+import com.enonic.wem.api.repository.RepositoryId;
 
 public class RepositoryIndexMappingProvider
     extends AbstractRepositorySettingsProvider
@@ -17,24 +17,24 @@ public class RepositoryIndexMappingProvider
 
     private final static String SEARCH = "-search";
 
-    public static String getBranchMapping( final Repository repository )
+    public static String getBranchMapping( final RepositoryId repositoryId )
     {
-        return doGet( repository, PREFIX + repository.getId().toString() + BRANCH + STORAGE_MAPPING_FILE_PATTERN );
+        return doGet( repositoryId, PREFIX + repositoryId.toString() + BRANCH + STORAGE_MAPPING_FILE_PATTERN );
     }
 
-    public static String getVersionMapping( final Repository repository )
+    public static String getVersionMapping( final RepositoryId repositoryId )
     {
-        return doGet( repository, PREFIX + repository.getId().toString() + VERSION + STORAGE_MAPPING_FILE_PATTERN );
+        return doGet( repositoryId, PREFIX + repositoryId.toString() + VERSION + STORAGE_MAPPING_FILE_PATTERN );
     }
 
-    public static String getNodeMapping( final Repository repository )
+    public static String getNodeMapping( final RepositoryId repositoryId )
     {
-        return doGet( repository, PREFIX + repository.getId().toString() + NODE + STORAGE_MAPPING_FILE_PATTERN );
+        return doGet( repositoryId, PREFIX + repositoryId.toString() + NODE + STORAGE_MAPPING_FILE_PATTERN );
     }
 
 
-    public static String getSearchMappings( final Repository repository )
+    public static String getSearchMappings( final RepositoryId repositoryId )
     {
-        return doGet( repository, PREFIX + repository.getId().toString() + SEARCH + STORAGE_MAPPING_FILE_PATTERN );
+        return doGet( repositoryId, PREFIX + repositoryId.toString() + SEARCH + STORAGE_MAPPING_FILE_PATTERN );
     }
 }

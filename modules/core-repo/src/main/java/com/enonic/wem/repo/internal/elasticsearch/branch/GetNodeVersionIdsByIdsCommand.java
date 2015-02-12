@@ -12,17 +12,17 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.branch.Branch;
+import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.NodeVersionIds;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.index.IndexType;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
 
 public class GetNodeVersionIdsByIdsCommand
@@ -59,7 +59,7 @@ public class GetNodeVersionIdsByIdsCommand
         final BoolQueryBuilder boolQueryBuilder = joinWithBranchQuery( branchName, idsQuery );
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
-            index( StorageNameResolver.resolveStorageIndexName( repositoryId ) ).
+            index( IndexNameResolver.resolveStorageIndexName( repositoryId ) ).
             indexType( IndexType.VERSION.getName() ).
             query( boolQueryBuilder ).
             from( 0 ).
@@ -90,33 +90,6 @@ public class GetNodeVersionIdsByIdsCommand
                            new NodeIdToSearchResultFieldMapper( searchResult, BranchIndexPath.VERSION_ID.getPath(), branch ) );
     }
 
-    private final class NodeIdToSearchResultFieldMapper
-        implements com.google.common.base.Function<String, SearchResultFieldValue>
-    {
-        private final SearchResult searchResult;
-
-        private final String fieldName;
-
-        private final Branch branch;
-
-        private NodeIdToSearchResultFieldMapper( final SearchResult searchResult, final String fieldName, final Branch branch )
-        {
-            this.searchResult = searchResult;
-            this.fieldName = fieldName;
-            this.branch = branch;
-        }
-
-        @Override
-        public SearchResultFieldValue apply( final String nodeId )
-        {
-            final BranchDocumentId branchDocumentId = new BranchDocumentId( NodeId.from( nodeId ), this.branch );
-
-            final SearchResultEntry entry = this.searchResult.getEntry( branchDocumentId.toString() );
-            return entry != null ? entry.getField( fieldName ) : null;
-        }
-    }
-
-
     public static final class Builder
         extends AbstractBranchCommand.Builder<Builder>
     {
@@ -143,6 +116,32 @@ public class GetNodeVersionIdsByIdsCommand
         public GetNodeVersionIdsByIdsCommand build()
         {
             return new GetNodeVersionIdsByIdsCommand( this );
+        }
+    }
+
+    private final class NodeIdToSearchResultFieldMapper
+        implements com.google.common.base.Function<String, SearchResultFieldValue>
+    {
+        private final SearchResult searchResult;
+
+        private final String fieldName;
+
+        private final Branch branch;
+
+        private NodeIdToSearchResultFieldMapper( final SearchResult searchResult, final String fieldName, final Branch branch )
+        {
+            this.searchResult = searchResult;
+            this.fieldName = fieldName;
+            this.branch = branch;
+        }
+
+        @Override
+        public SearchResultFieldValue apply( final String nodeId )
+        {
+            final BranchDocumentId branchDocumentId = new BranchDocumentId( NodeId.from( nodeId ), this.branch );
+
+            final SearchResultEntry entry = this.searchResult.getEntry( branchDocumentId.toString() );
+            return entry != null ? entry.getField( fieldName ) : null;
         }
     }
 }

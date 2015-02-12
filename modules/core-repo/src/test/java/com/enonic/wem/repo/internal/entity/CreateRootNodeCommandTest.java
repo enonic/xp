@@ -25,7 +25,7 @@ public class CreateRootNodeCommandTest
                     AccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).allowAll().build() ).build() ).
                 childOrder( ChildOrder.defaultOrder() ).
                 build() ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).

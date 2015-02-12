@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content;
 
-import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
@@ -15,7 +15,9 @@ import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.content.site.CreateSiteParams;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.mixin.Mixins;
 
 import static org.junit.Assert.*;
 
@@ -77,7 +79,6 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    @Ignore(value = "This fails on my machine (srs). Need to investigate.")
     public void create_media_image()
         throws Exception
     {
@@ -86,6 +87,7 @@ public class ContentServiceImplTest_create
             name( "Small cat" ).
             parent( ContentPath.ROOT );
 
+        Mockito.when( this.mixinService.getByContentType( Mockito.any( ContentType.class ) ) ).thenReturn( Mixins.empty() );
         final Content content = this.contentService.create( createMediaParams );
 
         printContentRepoIndex();

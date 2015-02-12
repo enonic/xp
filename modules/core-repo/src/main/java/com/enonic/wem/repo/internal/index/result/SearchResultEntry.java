@@ -26,6 +26,11 @@ public class SearchResultEntry
         this.fields = ImmutableMap.copyOf( builder.fields );
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public float getScore()
     {
         return score;
@@ -51,10 +56,23 @@ public class SearchResultEntry
         return doGetField( fieldName, false );
     }
 
-
     public SearchResultFieldValue getField( final String fieldName, final boolean failOnMissing )
     {
         return doGetField( fieldName, failOnMissing );
+    }
+
+    public String getStringValue( final String fieldName )
+    {
+        final SearchResultFieldValue searchResultFieldValue = doGetField( fieldName, true );
+
+        if ( searchResultFieldValue.getValue() == null )
+        {
+            return null;
+        }
+        else
+        {
+            return searchResultFieldValue.getValue().toString();
+        }
     }
 
     private SearchResultFieldValue doGetField( final String fieldName, final boolean failOnMissing )
@@ -71,10 +89,32 @@ public class SearchResultEntry
         return searchResultFieldValue;
     }
 
-
-    public static Builder create()
+    @Override
+    public boolean equals( final Object o )
     {
-        return new Builder();
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof SearchResultEntry ) )
+        {
+            return false;
+        }
+
+        final SearchResultEntry that = (SearchResultEntry) o;
+
+        if ( id != null ? !id.equals( that.id ) : that.id != null )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return id != null ? id.hashCode() : 0;
     }
 
     public static class Builder
@@ -121,33 +161,5 @@ public class SearchResultEntry
         {
             return new SearchResultEntry( this );
         }
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof SearchResultEntry ) )
-        {
-            return false;
-        }
-
-        final SearchResultEntry that = (SearchResultEntry) o;
-
-        if ( id != null ? !id.equals( that.id ) : that.id != null )
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return id != null ? id.hashCode() : 0;
     }
 }

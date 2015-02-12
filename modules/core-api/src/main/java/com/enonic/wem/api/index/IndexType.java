@@ -1,11 +1,10 @@
-package com.enonic.wem.repo.internal.index;
+package com.enonic.wem.api.index;
 
 public enum IndexType
 {
-    _DEFAULT_,
+    SEARCH,
     BRANCH,
-    VERSION,
-    NODE;
+    VERSION;
 
     public String getName()
     {

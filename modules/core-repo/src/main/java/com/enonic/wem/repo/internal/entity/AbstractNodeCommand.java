@@ -23,7 +23,7 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.branch.BranchService;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
-import com.enonic.wem.repo.internal.index.IndexService;
+import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.version.VersionService;
 
@@ -32,7 +32,7 @@ abstract class AbstractNodeCommand
     static final OrderExpressions DEFAULT_ORDER_EXPRESSIONS =
         OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) );
 
-    final IndexService indexService;
+    final IndexServiceInternal indexServiceInternal;
 
     final NodeDao nodeDao;
 
@@ -44,7 +44,7 @@ abstract class AbstractNodeCommand
 
     AbstractNodeCommand( final Builder builder )
     {
-        this.indexService = builder.indexService;
+        this.indexServiceInternal = builder.indexServiceInternal;
         this.nodeDao = builder.nodeDao;
         this.branchService = builder.branchService;
         this.versionService = builder.versionService;
@@ -168,7 +168,7 @@ abstract class AbstractNodeCommand
 
     public static abstract class Builder<B extends Builder>
     {
-        IndexService indexService;
+        IndexServiceInternal indexServiceInternal;
 
         NodeDao nodeDao;
 
@@ -184,7 +184,7 @@ abstract class AbstractNodeCommand
 
         Builder( final AbstractNodeCommand source )
         {
-            this.indexService = source.indexService;
+            this.indexServiceInternal = source.indexServiceInternal;
             this.nodeDao = source.nodeDao;
             this.branchService = source.branchService;
             this.queryService = source.queryService;
@@ -192,9 +192,9 @@ abstract class AbstractNodeCommand
         }
 
         @SuppressWarnings("unchecked")
-        public B indexService( final IndexService indexService )
+        public B indexServiceInternal( final IndexServiceInternal indexServiceInternal )
         {
-            this.indexService = indexService;
+            this.indexServiceInternal = indexServiceInternal;
             return (B) this;
         }
 
@@ -228,7 +228,7 @@ abstract class AbstractNodeCommand
 
         void validate()
         {
-            Preconditions.checkNotNull( indexService, "indexService not set" );
+            Preconditions.checkNotNull( indexServiceInternal, "indexService not set" );
             Preconditions.checkNotNull( versionService, "versionService not set" );
             Preconditions.checkNotNull( nodeDao, "nodeDao not set" );
             Preconditions.checkNotNull( branchService, "branchService not set" );

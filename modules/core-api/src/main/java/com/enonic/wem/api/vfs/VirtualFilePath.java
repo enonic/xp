@@ -11,11 +11,11 @@ import com.google.common.collect.Lists;
 
 public class VirtualFilePath
 {
+    private final static String SEPARATOR = "/";
+
     private final boolean absolute;
 
     private final LinkedList<String> elements;
-
-    private final static String SEPARATOR = "/";
 
     private VirtualFilePath( final Builder builder )
     {
@@ -41,6 +41,28 @@ public class VirtualFilePath
         return new VirtualFilePath( getPathElements( path.toString(), separator ), path.isAbsolute() );
     }
 
+    private static LinkedList<String> getPathElements( final String path, final String separator )
+    {
+        final LinkedList<String> elements = Lists.newLinkedList();
+
+        final String[] elementArray = path.split( Pattern.quote( separator ) );
+
+        for ( final String element : elementArray )
+        {
+            if ( !Strings.isNullOrEmpty( element ) )
+            {
+                elements.add( element );
+            }
+        }
+
+        return elements;
+    }
+
+    private static Builder create()
+    {
+        return new Builder();
+    }
+
     public VirtualFilePath subtractPath( final VirtualFilePath subtract )
     {
         Preconditions.checkArgument( this.elements.size() >= subtract.size(),
@@ -63,23 +85,6 @@ public class VirtualFilePath
         }
 
         return builder.build();
-    }
-
-    private static LinkedList<String> getPathElements( final String path, final String separator )
-    {
-        final LinkedList<String> elements = Lists.newLinkedList();
-
-        final String[] elementArray = path.split( Pattern.quote( separator ) );
-
-        for ( final String element : elementArray )
-        {
-            if ( !Strings.isNullOrEmpty( element ) )
-            {
-                elements.add( element );
-            }
-        }
-
-        return elements;
     }
 
     public String getPath()
@@ -130,15 +135,15 @@ public class VirtualFilePath
         return builder.build();
     }
 
-
     int size()
     {
         return this.elements.size();
     }
 
-    private static Builder create()
+    @Override
+    public String toString()
     {
-        return new Builder();
+        return this.getPath();
     }
 
     private static class Builder
@@ -171,5 +176,4 @@ public class VirtualFilePath
         }
 
     }
-
 }

@@ -10,6 +10,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeState;
@@ -24,13 +25,11 @@ import com.enonic.wem.repo.internal.elasticsearch.GetQuery;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
-import com.enonic.wem.repo.internal.index.IndexType;
-import com.enonic.wem.repo.internal.index.query.NodeBranchVersion;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
-import com.enonic.wem.repo.internal.repository.StorageNameResolver;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 
 @Component
 public class ElasticsearchBranchService
@@ -69,7 +68,7 @@ public class ElasticsearchBranchService
 
         final GetResult getResult = this.elasticsearchDao.get( GetQuery.create().
             id( branchDocumentId.toString() ).
-            indexName( StorageNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ) ).
+            indexName( IndexNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ) ).
             indexTypeName( IndexType.BRANCH.getName() ).
             returnFields(
                 ReturnFields.from( BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP ) ).
@@ -86,38 +85,34 @@ public class ElasticsearchBranchService
         return createFromReturnValue( nodeReturnValue );
     }
 
-    @Override
-    public NodeBranchVersion get( final NodePath nodePath, final BranchContext context )
+    public NodeBranchQueryResult findAll( final NodeBranchQuery nodeBranchQuery, final BranchContext context )
     {
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().
             addQueryFilter( ValueFilter.create().
-                fieldName( BranchIndexPath.PATH.getPath() ).
-                addValue( Value.newString( nodePath.toString() ) ).
+                fieldName( BranchIndexPath.BRANCH_NAME.getPath() ).
+                addValue( Value.newString( context.getBranch().getName() ) ).
                 build() ).
             build();
 
         final ElasticsearchQuery query = ElasticsearchQuery.create().
-            index( StorageNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ) ).
+            index( IndexNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ) ).
             indexType( IndexType.BRANCH.getName() ).
             query( queryBuilder ).
-            size( 1 ).
-            setReturnFields(
-                ReturnFields.from( BranchIndexPath.VERSION_ID, BranchIndexPath.STATE, BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP ) ).
+            size( nodeBranchQuery.getSize() ).
+            from( nodeBranchQuery.getFrom() ).
+            setReturnFields( ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID ) ).
             build();
 
         final SearchResult searchResult = this.elasticsearchDao.find( query );
 
         if ( searchResult.isEmpty() )
         {
-            return null;
+            return NodeBranchQueryResult.empty();
         }
 
-        final SearchResultEntry firstHit = searchResult.getResults().getFirstHit();
-
-        final NodeReturnValue nodeReturnValue = NodeReturnValue.from( firstHit );
-
-        return createFromReturnValue( nodeReturnValue );
+        return NodeBranchQueryResultFactory.create( searchResult );
     }
+
 
     private NodeBranchVersion createFromReturnValue( final NodeReturnValue nodeReturnValue )
     {
@@ -127,6 +122,12 @@ public class ElasticsearchBranchService
             nodeVersionId( nodeReturnValue.getNodeVersionId() ).
             nodeState( nodeReturnValue.getState() ).
             build();
+    }
+
+    @Reference
+    public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
+    {
+        this.elasticsearchDao = elasticsearchDao;
     }
 
     private static class NodeReturnValue
@@ -202,12 +203,6 @@ public class ElasticsearchBranchService
         {
             return timestamp;
         }
-    }
-
-    @Reference
-    public void setElasticsearchDao( final ElasticsearchDao elasticsearchDao )
-    {
-        this.elasticsearchDao = elasticsearchDao;
     }
 }
 

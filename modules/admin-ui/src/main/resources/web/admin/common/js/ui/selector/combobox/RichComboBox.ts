@@ -171,8 +171,8 @@ module api.ui.selector.combobox {
             this.comboBox.deselectOption(this.createOption(value));
         }
 
-        clearSelection(ignoreEmpty: boolean = false, giveInputFocus: boolean = true) {
-            this.comboBox.clearSelection(ignoreEmpty);
+        clearSelection(forceClear: boolean = false) {
+            this.comboBox.clearSelection(false, true, forceClear);
         }
 
         isSelected(value: OPTION_DISPLAY_VALUE): boolean {
@@ -323,7 +323,7 @@ module api.ui.selector.combobox {
                     this.loader.unLoadedData(singleLoadListener);
                 };
                 this.loader.onLoadedData(singleLoadListener);
-                if(this.loader.isNotStarted()) {
+                if (this.loader.isNotStarted()) {
                     this.loader.load();
                 }
             }
