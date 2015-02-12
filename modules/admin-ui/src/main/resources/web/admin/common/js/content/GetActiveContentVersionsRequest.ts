@@ -46,11 +46,11 @@ module api.content {
 
                 contentVersion = contentVersionsMap[contentVersionJson.id];
                 if (!contentVersion) {
-                    contentVersion = ContentVersion.fromJson(contentVersionJson, [activeContentVersion.workspace]);
+                    contentVersion = ContentVersion.fromJson(contentVersionJson, [activeContentVersion.branch]);
                     contentVersionsMap[contentVersion.id] = contentVersion;
                 } else {
                     // just add new workspace if already exists
-                    contentVersion.workspaces.push(activeContentVersion.workspace);
+                    contentVersion.workspaces.push(activeContentVersion.branch);
                 }
             });
 

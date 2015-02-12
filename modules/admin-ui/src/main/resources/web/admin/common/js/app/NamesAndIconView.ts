@@ -6,6 +6,8 @@ module api.app {
 
         addTitleAttribute: boolean = true;
 
+        appendIcon: boolean = true;
+
         setSize(size: NamesAndIconViewSize): NamesAndIconViewBuilder {
             this.size = size;
             return this;
@@ -13,6 +15,11 @@ module api.app {
 
         setAddTitleAttribute(addTitleAttribute: boolean): NamesAndIconViewBuilder {
             this.addTitleAttribute = addTitleAttribute;
+            return this;
+        }
+
+        setAppendIcon(appendIcon: boolean): NamesAndIconViewBuilder {
+            this.appendIcon = appendIcon;
             return this;
         }
 
@@ -41,15 +48,17 @@ module api.app {
                 this.addClass(sizeClassName);
             }
 
-            this.wrapperDivEl = new api.dom.DivEl("wrapper");
-            this.appendChild(this.wrapperDivEl);
+            if (builder.appendIcon) {
+                this.wrapperDivEl = new api.dom.DivEl("wrapper");
+                this.appendChild(this.wrapperDivEl);
 
-            this.iconImageEl = new api.dom.ImgEl(null, "icon");
-            this.wrapperDivEl.appendChild(this.iconImageEl);
+                this.iconImageEl = new api.dom.ImgEl(null, "icon");
+                this.wrapperDivEl.appendChild(this.iconImageEl);
 
-            this.iconDivEl = new api.dom.DivEl("icon");
-            this.wrapperDivEl.appendChild(this.iconDivEl);
-            this.iconDivEl.hide();
+                this.iconDivEl = new api.dom.DivEl("icon");
+                this.wrapperDivEl.appendChild(this.iconDivEl);
+                this.iconDivEl.hide();
+            }
 
             this.namesView = new api.app.NamesView(builder.addTitleAttribute);
             this.appendChild(this.namesView);
