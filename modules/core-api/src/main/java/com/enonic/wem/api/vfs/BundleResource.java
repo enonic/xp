@@ -15,8 +15,6 @@ import com.google.common.io.Resources;
 class BundleResource
     implements VirtualFile
 {
-    private final static String SEPARATOR = "/";
-
     private final static String PATTERN = "*";
 
     private final Bundle bundle;
@@ -114,33 +112,7 @@ class BundleResource
     @Override
     public VirtualFile resolve( final String path )
     {
-        return new BundleResource( this.bundle, this.bundle.getEntry( createAbsolutePath( path ) ).getPath() );
-    }
-
-    private String createAbsolutePath( final String path )
-    {
-        if ( path.startsWith( SEPARATOR ) )
-        {
-            if ( this.path.endsWith( SEPARATOR ) )
-            {
-                return this.path + path.replaceFirst( SEPARATOR, "" );
-            }
-            else
-            {
-                return this.path + path;
-            }
-        }
-        else
-        {
-            if ( this.path.endsWith( SEPARATOR ) )
-            {
-                return this.path + path;
-            }
-            else
-            {
-                return this.path + SEPARATOR + path;
-            }
-        }
+        return new BundleResource( this.bundle, this.bundle.getEntry( path ).getPath() );
     }
 
 }
