@@ -8,6 +8,7 @@ import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentChangeEvent;
 import com.enonic.wem.api.content.ContentConstants;
+import com.enonic.wem.api.content.ContentState;
 import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
@@ -33,7 +34,7 @@ final class DeleteContentCommand
         params.validate();
 
         final Content deletedContent = doExecute();
-        if ( deletedContent != null )
+        if ( deletedContent != null && deletedContent.getContentState() != ContentState.PENDING_DELETE )
         {
             eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
         }

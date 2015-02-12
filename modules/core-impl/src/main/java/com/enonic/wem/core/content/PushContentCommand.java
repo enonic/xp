@@ -1,5 +1,6 @@
 package com.enonic.wem.core.content;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -17,6 +18,7 @@ import com.enonic.wem.api.content.PushContentsResult;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
+import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIds;
 import com.enonic.wem.api.node.PushNodesResult;
@@ -157,26 +159,38 @@ public class PushContentCommand
     {
         final Context currentContext = ContextAccessor.current();
 
-        deleteNodesInContext( result, currentContext );
+        final List<ContentPath> deletedContents = new ArrayList<>();
+        deletedContents.addAll( deleteNodesInContext( result, currentContext ) );
 
-        deleteNodesInContext( result, ContextBuilder.from( currentContext ).
+        deletedContents.addAll( deleteNodesInContext( result, ContextBuilder.from( currentContext ).
             branch( target ).
-            build() );
+            build() ) );
 
         for ( final NodeId nodeId : result.getDelete() )
         {
             this.resultBuilder.addDeleted( ContentId.from( nodeId.toString() ) );
         }
 
+        if ( !deletedContents.isEmpty() )
+        {
+            eventPublisher.publish(
+                ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, ContentPaths.from( deletedContents ) ) );
+        }
     }
 
-    private void deleteNodesInContext( final ResolveSyncWorkResult result, final Context context )
+    private List<ContentPath> deleteNodesInContext( final ResolveSyncWorkResult result, final Context context )
     {
-        context.runWith( () -> {
+        return context.callWith( () -> {
+            final List<ContentPath> deletedNodes = new ArrayList<>();
             for ( final NodeId nodeId : result.getDelete() )
             {
-                nodeService.deleteById( nodeId );
+                final Node node = nodeService.deleteById( nodeId );
+                if ( node != null )
+                {
+                    deletedNodes.add( translateNodePathToContentPath( node.path() ) );
+                }
             }
+            return deletedNodes;
         } );
     }
 
