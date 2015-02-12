@@ -301,7 +301,7 @@ public final class SecurityServiceImpl
     {
         final PrincipalKeys principals = resolveMemberships( user.getKey() );
         return AuthenticationInfo.create().principals( principals ).
-            principals( PrincipalKey.ofAnonymous(), RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
+            principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
             user( user ).build();
     }
 
