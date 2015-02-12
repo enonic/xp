@@ -151,7 +151,7 @@ public class FindNodesByParentCommandTest
                 parentPath( createdNode.path() ).
                 build() ).queryService( queryService ).
             branchService( branchService ).
-            indexService( indexService ).
+            indexServiceInternal( indexServiceInternal ).
             versionService( versionService ).
             nodeDao( nodeDao ).
             build().
@@ -204,7 +204,7 @@ public class FindNodesByParentCommandTest
                 build() ).
             queryService( queryService ).
             branchService( branchService ).
-            indexService( indexService ).
+            indexServiceInternal( indexServiceInternal ).
             versionService( versionService ).
             nodeDao( nodeDao ).
             build().
@@ -226,7 +226,7 @@ public class FindNodesByParentCommandTest
                 build() ).
             queryService( queryService ).
             branchService( branchService ).
-            indexService( indexService ).
+            indexServiceInternal( indexServiceInternal ).
             versionService( versionService ).
             nodeDao( nodeDao ).
             build().
@@ -264,7 +264,7 @@ public class FindNodesByParentCommandTest
             branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 

@@ -77,7 +77,7 @@ public class GetActiveNodeVersionsCommandTest
 
         context.runWith( () -> UpdateNodeCommand.create().
             params( updateNodeParams ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).

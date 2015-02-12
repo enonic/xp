@@ -39,7 +39,7 @@ public class ReorderChildNodesCommand
                 nodeDao( this.nodeDao ).
                 branchService( this.branchService ).
                 versionService( this.versionService ).
-                indexService( this.indexServiceInternal ).
+                indexServiceInternal( this.indexServiceInternal ).
                 parentNode( parentNode ).
                 nodeToMove( nodeToMove ).
                 nodeToMoveBefore( nodeToMoveBefore ).

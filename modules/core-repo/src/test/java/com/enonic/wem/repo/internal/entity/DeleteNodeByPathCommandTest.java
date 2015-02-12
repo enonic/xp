@@ -43,7 +43,7 @@ public class DeleteNodeByPathCommandTest
         DeleteNodeByPathCommand.create().
             nodePath( node.path() ).
             versionService( this.versionService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).

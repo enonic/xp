@@ -1,8 +1,9 @@
 package com.enonic.wem.repo.internal.branch;
 
 import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.repo.internal.index.query.NodeBranchVersion;
+import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQuery;
+import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQueryResult;
+import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
 
 public interface BranchService
 {
@@ -12,5 +13,5 @@ public interface BranchService
 
     public NodeBranchVersion get( final NodeId nodeId, final BranchContext context );
 
-    public NodeBranchVersion get( final NodePath nodePath, final BranchContext context );
+    public NodeBranchQueryResult findAll( final NodeBranchQuery nodeBranchQuery, final BranchContext branchContext );
 }

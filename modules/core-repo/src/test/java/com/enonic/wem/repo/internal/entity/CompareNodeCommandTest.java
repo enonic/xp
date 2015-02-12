@@ -71,7 +71,7 @@ public class CompareNodeCommandTest
             queryService( this.queryService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
@@ -158,7 +158,7 @@ public class CompareNodeCommandTest
         draft.runWith( () -> MoveNodeCommand.create().
             id( createdNode.id() ).
             newParent( mySecondNode.path() ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
@@ -193,7 +193,7 @@ public class CompareNodeCommandTest
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
@@ -207,7 +207,7 @@ public class CompareNodeCommandTest
         return PushNodesCommand.create().
             ids( NodeIds.from( createdNode.id() ) ).
             target( branch ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).

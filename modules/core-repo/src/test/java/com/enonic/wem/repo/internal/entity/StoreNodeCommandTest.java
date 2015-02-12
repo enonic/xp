@@ -42,7 +42,7 @@ public class StoreNodeCommandTest
         StoreNodeCommand.create().
             node( updatedNode ).
             branchService( this.branchService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).

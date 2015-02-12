@@ -38,7 +38,7 @@ public class CreateRootNodeCommand
             branchService( this.branchService ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexServiceInternal ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 

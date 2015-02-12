@@ -67,7 +67,7 @@ public final class RepositoryInitializer
         indexServiceInternal.refresh( storageIndexName, searchIndexName );
     }
 
-    public void waitForInitialized( final RepositoryId repositoryId )
+    void waitForInitialized( final RepositoryId repositoryId )
     {
         LOG.info( "Waiting for cluster to be initialized" );
 
@@ -103,7 +103,7 @@ public final class RepositoryInitializer
 
             if ( !repoIndexes.isEmpty() )
             {
-                indexServiceInternal.deleteIndices( repoIndexes );
+                indexServiceInternal.deleteIndices( repoIndexes.toArray( new String[repoIndexes.size()] ) );
             }
 
             indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );

@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.repository;
 
 import com.enonic.wem.api.repository.RepositoryId;
 
-class RepositorySearchIndexSettingsProvider
+public class RepositorySearchIndexSettingsProvider
     extends AbstractRepositorySettingsProvider
 {
     private final static String PREFIX = "/META-INF/index/settings/";

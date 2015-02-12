@@ -46,7 +46,7 @@ public class ElasticsearchIndexServiceInternal
     implements IndexServiceInternal
 {
 
-    public static final String ES_DEFAULT_INDEX_TYPE_NAME = "_default_";
+    private static final String ES_DEFAULT_INDEX_TYPE_NAME = "_default_";
 
     private final static Logger LOG = LoggerFactory.getLogger( ElasticsearchIndexServiceInternal.class );
 
@@ -152,7 +152,7 @@ public class ElasticsearchIndexServiceInternal
     }
 
     @Override
-    public void deleteIndices( final Collection<String> indexNames )
+    public void deleteIndices( String... indexNames )
     {
         for ( final String indexName : indexNames )
         {
@@ -168,12 +168,6 @@ public class ElasticsearchIndexServiceInternal
         final IndicesExistsResponse response = client.admin().indices().exists( request ).actionGet( existsTimeout );
 
         return response.isExists();
-    }
-
-    @Override
-    public void reindex( final String... indexNames )
-    {
-
     }
 
     private ClusterHealthStatus doGetClusterHealth( final TimeValue timeout, final String... indexNames )

@@ -32,7 +32,7 @@ public class RenameNodeCommandTest
             versionService( this.versionService ).
             branchService( this.branchService ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
@@ -86,7 +86,7 @@ public class RenameNodeCommandTest
             versionService( this.versionService ).
             branchService( this.branchService ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 

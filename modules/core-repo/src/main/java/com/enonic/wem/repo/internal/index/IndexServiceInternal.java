@@ -1,6 +1,5 @@
 package com.enonic.wem.repo.internal.index;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.elasticsearch.common.unit.TimeValue;
@@ -16,7 +15,7 @@ public interface IndexServiceInternal
 {
     public void createIndex( final String indexName, final String settings );
 
-    public void deleteIndices( final Collection<String> indexNames );
+    public void deleteIndices( final String... indexNames );
 
     public boolean indicesExists( final String... indices );
 
@@ -31,8 +30,6 @@ public interface IndexServiceInternal
     public ClusterHealthStatus getClusterHealth( final TimeValue timeout, final String... indexNames );
 
     public void refresh( final String... indexNames );
-
-    public void reindex( final String... indexNames );
 
 }
 

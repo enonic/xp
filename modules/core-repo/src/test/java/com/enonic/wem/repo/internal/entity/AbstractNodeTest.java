@@ -82,7 +82,7 @@ public abstract class AbstractNodeTest
 
     protected ElasticsearchBranchService branchService;
 
-    protected ElasticsearchIndexServiceInternal indexService;
+    protected ElasticsearchIndexServiceInternal indexServiceInternal;
 
     protected ElasticsearchQueryService queryService;
 
@@ -109,9 +109,9 @@ public abstract class AbstractNodeTest
         this.versionService = new ElasticsearchVersionService();
         this.versionService.setElasticsearchDao( elasticsearchDao );
 
-        this.indexService = new ElasticsearchIndexServiceInternal();
-        this.indexService.setClient( client );
-        this.indexService.setElasticsearchDao( elasticsearchDao );
+        this.indexServiceInternal = new ElasticsearchIndexServiceInternal();
+        this.indexServiceInternal.setClient( client );
+        this.indexServiceInternal.setElasticsearchDao( elasticsearchDao );
 
         this.snapshotService = new ElasticsearchSnapshotService();
         this.snapshotService.setElasticsearchDao( this.elasticsearchDao );
@@ -126,14 +126,14 @@ public abstract class AbstractNodeTest
     void createRepository( final Repository repository )
     {
         NodeServiceImpl nodeService = new NodeServiceImpl();
-        nodeService.setIndexServiceInternal( indexService );
+        nodeService.setIndexServiceInternal( indexServiceInternal );
         nodeService.setQueryService( queryService );
         nodeService.setNodeDao( nodeDao );
         nodeService.setVersionService( versionService );
         nodeService.setBranchService( branchService );
         nodeService.setSnapshotService( this.snapshotService );
 
-        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexService );
+        RepositoryInitializer repositoryInitializer = new RepositoryInitializer( indexServiceInternal );
         repositoryInitializer.initializeRepository( repository.getId() );
 
         refresh();
@@ -144,7 +144,7 @@ public abstract class AbstractNodeTest
         return UpdateNodeCommand.create().
             params( updateNodeParams ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
             versionService( this.versionService ).
@@ -164,7 +164,7 @@ public abstract class AbstractNodeTest
         final Node createdNode = CreateNodeCommand.create().
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
@@ -181,7 +181,7 @@ public abstract class AbstractNodeTest
     {
         return GetNodeByIdCommand.create().
             versionService( this.versionService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
@@ -196,7 +196,7 @@ public abstract class AbstractNodeTest
     {
         return GetNodeByPathCommand.create().
             versionService( this.versionService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
@@ -214,7 +214,7 @@ public abstract class AbstractNodeTest
             params( params ).
             queryService( queryService ).
             branchService( branchService ).
-            indexService( indexService ).
+            indexServiceInternal( indexServiceInternal ).
             versionService( versionService ).
             nodeDao( nodeDao ).
             build().
@@ -229,7 +229,7 @@ public abstract class AbstractNodeTest
             versionService( this.versionService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
     }
@@ -268,7 +268,7 @@ public abstract class AbstractNodeTest
             versionService( this.versionService ).
             nodeDao( this.nodeDao ).
             branchService( this.branchService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
     }
@@ -278,7 +278,7 @@ public abstract class AbstractNodeTest
         return DeleteNodeByIdCommand.create().
             nodeId( nodeId ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             branchService( this.branchService ).

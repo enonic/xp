@@ -1,4 +1,4 @@
-package com.enonic.wem.repo.internal.index.query;
+package com.enonic.wem.repo.internal.elasticsearch.branch;
 
 import java.time.Instant;
 

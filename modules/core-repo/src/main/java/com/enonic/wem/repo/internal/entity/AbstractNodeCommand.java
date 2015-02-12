@@ -192,7 +192,7 @@ abstract class AbstractNodeCommand
         }
 
         @SuppressWarnings("unchecked")
-        public B indexService( final IndexServiceInternal indexServiceInternal )
+        public B indexServiceInternal( final IndexServiceInternal indexServiceInternal )
         {
             this.indexServiceInternal = indexServiceInternal;
             return (B) this;

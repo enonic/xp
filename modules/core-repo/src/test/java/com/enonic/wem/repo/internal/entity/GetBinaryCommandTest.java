@@ -39,7 +39,7 @@ public class GetBinaryCommandTest
             versionService( this.versionService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
             build().
@@ -70,7 +70,7 @@ public class GetBinaryCommandTest
             versionService( this.versionService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
             build().

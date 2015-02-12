@@ -64,7 +64,7 @@ public class ResolveSyncWorkCommandTest
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
@@ -124,7 +124,7 @@ public class ResolveSyncWorkCommandTest
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
@@ -142,7 +142,7 @@ public class ResolveSyncWorkCommandTest
         SetNodeStateCommand.create().
             nodeId( id ).
             nodeState( NodeState.PENDING_DELETE ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
@@ -197,7 +197,7 @@ public class ResolveSyncWorkCommandTest
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
@@ -252,7 +252,7 @@ public class ResolveSyncWorkCommandTest
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
@@ -352,7 +352,7 @@ public class ResolveSyncWorkCommandTest
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
@@ -428,7 +428,7 @@ public class ResolveSyncWorkCommandTest
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
@@ -502,7 +502,7 @@ public class ResolveSyncWorkCommandTest
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
@@ -553,7 +553,7 @@ public class ResolveSyncWorkCommandTest
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
@@ -619,7 +619,7 @@ public class ResolveSyncWorkCommandTest
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
     }
@@ -856,11 +856,11 @@ public class ResolveSyncWorkCommandTest
         updateNode( updateNodeParams );
     }
 
-    public void moveNode( final String nodeId, final NodePath newParent, final String newName )
+    void moveNode( final String nodeId, final NodePath newParent, final String newName )
     {
         MoveNodeCommand.create().
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
             versionService( this.versionService ).
@@ -876,7 +876,7 @@ public class ResolveSyncWorkCommandTest
         MoveNodeCommand.create().
             id( node.id() ).
             newNodeName( NodeName.from( node.id().toString() + "edited" ) ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             versionService( this.versionService ).
             queryService( this.queryService ).
             branchService( this.branchService ).
@@ -891,7 +891,7 @@ public class ResolveSyncWorkCommandTest
         return DuplicateNodeCommand.create().
             id( node1.id() ).
             versionService( versionService ).
-            indexService( indexService ).
+            indexServiceInternal( indexServiceInternal ).
             nodeDao( nodeDao ).
             queryService( queryService ).
             branchService( branchService ).

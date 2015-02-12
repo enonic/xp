@@ -86,7 +86,7 @@ public class UpdateNodeCommandTest
             binaryReference( binaryRef ).
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             queryService( this.queryService ).
             versionService( this.versionService ).
             binaryBlobStore( this.binaryBlobStore ).

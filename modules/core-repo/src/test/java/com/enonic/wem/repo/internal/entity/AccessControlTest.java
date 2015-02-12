@@ -22,7 +22,7 @@ public class AccessControlTest
     {
         super.setUp();
         this.nodeService = new NodeServiceImpl();
-        this.nodeService.setIndexServiceInternal( indexService );
+        this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setQueryService( queryService );
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setVersionService( versionService );

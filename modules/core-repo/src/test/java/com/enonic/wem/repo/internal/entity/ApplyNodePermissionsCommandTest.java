@@ -98,7 +98,7 @@ public class ApplyNodePermissionsCommandTest
             versionService( this.versionService ).
             branchService( this.branchService ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
@@ -205,7 +205,7 @@ public class ApplyNodePermissionsCommandTest
             versionService( this.versionService ).
             branchService( this.branchService ).
             queryService( this.queryService ).
-            indexService( this.indexService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
