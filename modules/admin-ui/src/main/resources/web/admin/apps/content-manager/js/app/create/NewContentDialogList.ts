@@ -35,6 +35,7 @@ module app.create {
                 .setDisplayIconLabel(item.isSite());
 
             var itemEl = new api.dom.LiEl('content-types-list-item' + (item.isSite() ? ' site' : ''));
+            itemEl.appendChild(new api.dom.AEl("navigation-item"));
             itemEl.appendChild(namesAndIconView);
             itemEl.onClicked((event: MouseEvent) => this.notifySelected(item));
             return itemEl;
