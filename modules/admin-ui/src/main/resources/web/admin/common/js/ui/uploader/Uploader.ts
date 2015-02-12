@@ -447,6 +447,8 @@ module api.ui.uploader {
                 if (Uploader.debug) {
                     console.log('uploader init', up, params);
                 }
+                this.disableInputFocus();
+
             }, this);
 
             uploader.bind('FilesAdded', (up, files: PluploadFile[]) => {
@@ -567,6 +569,14 @@ module api.ui.uploader {
             uploader.init();
 
             return uploader;
+        }
+
+        private disableInputFocus() {
+            var focusableElements: NodeListOf<HTMLInputElement> = this.getDropzoneContainer().getHTMLElement().getElementsByTagName("input");
+            for (var i = 0; i < focusableElements.length; i++) {
+                var el = <HTMLInputElement>focusableElements.item(i);
+                el.tabIndex = -1;
+            }
         }
 
         getResultContainer(): api.dom.DivEl {
