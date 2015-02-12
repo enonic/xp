@@ -31,7 +31,7 @@ module api.content.page.region {
 
             this.componentChangedEventHandler = (event) => {
                 if (Region.debug) {
-                    console.debug("Region[" + this.getPath().toString() + "].handleComponentChanged: ", event);
+                    console.debug(this.toString() + ".handleComponentChanged: ", event);
                 }
                 this.notifyRegionPropertyValueChanged("components");
             };
@@ -90,29 +90,29 @@ module api.content.page.region {
             return !this.components || this.components.length == 0;
         }
 
-        duplicateComponent(source: Component): Component {
-
-            var duplicateName = source.getName();
-
-            var duplicatedComponent = source.clone(true);
-            duplicatedComponent.setName(duplicateName);
-            this.addComponentAfter(duplicatedComponent, source);
-
-            return duplicatedComponent;
-        }
 
         addComponent(component: Component) {
+            if (Region.debug) {
+                console.debug(this.toString() + ".addComponent: " + component.toString());
+            }
+
             this.checkIllegalLayoutComponentWithinLayoutComponent(component, this.parent);
             this.components.push(component);
             component.setParent(this);
             component.setIndex(this.components.length - 1);
+
+            this.notifyComponentAdded(component.getPath());
+            this.registerComponentListeners(component);
         }
 
         /*
          *  Add component after target component. Component will only be added if target component is found.
          */
         addComponentAfter(component: Component, precedingComponent: Component) {
-
+            if (Region.debug) {
+                var extra = precedingComponent ? " after " + precedingComponent.toString() : "";
+                console.debug(this.toString() + ".addComponentAfter: " + component.toString() + extra);
+            }
             var precedingIndex = -1;
             if (precedingComponent != null) {
                 precedingIndex = precedingComponent.getIndex();
@@ -135,19 +135,19 @@ module api.content.page.region {
             });
 
             this.notifyComponentAdded(component.getPath());
-
             this.registerComponentListeners(component);
         }
 
         removeComponent(component: Component): Component {
-            if (!component) {
-                return null;
+            if (Region.debug) {
+                if (Region.debug) {
+                    console.debug(this.toString() + ".removeComponent: " + component.toString());
+                }
             }
 
             var componentIndex = component.getIndex();
             if (componentIndex == -1) {
-                throw new Error("Component [" + component.getPath().toString() + "] to remove does not exist in region: " +
-                                this.getPath().toString());
+                throw new Error(component.toString() + " to remove does not exist in " + this.toString());
             }
 
             var componentPath = component.getPath();
@@ -180,7 +180,9 @@ module api.content.page.region {
         }
 
         removeComponents() {
-
+            if (Region.debug) {
+                console.debug(this.toString() + ".removeComponents");
+            }
             while (this.components.length > 0) {
                 var component = this.components.pop();
                 var componentPath = component.getPath();
@@ -205,6 +207,10 @@ module api.content.page.region {
                 name: this.name,
                 components: componentJsons
             };
+        }
+
+        toString(): string {
+            return "Region[" + this.getPath().toString() + "]";
         }
 
         equals(o: api.Equitable): boolean {

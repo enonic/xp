@@ -94,16 +94,6 @@ module api.liveedit.layout {
             return !this.layoutComponent || this.layoutComponent.isEmpty();
         }
 
-        duplicate(duplicate: LayoutComponent): LayoutComponentView {
-
-            var duplicatedView = new LayoutComponentView(new LayoutComponentViewBuilder().
-                setParentRegionView(this.getParentItemView()).
-                setParentElement(this.getParentElement()).
-                setComponent(duplicate));
-            duplicatedView.insertAfterEl(this);
-            return duplicatedView;
-        }
-
         toItemViewArray(): ItemView[] {
 
             var array: ItemView[] = [];

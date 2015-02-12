@@ -3,6 +3,8 @@
 Bugfixes:
 
  - Fixed JavaScript require() function to search in /cms/lib/ for paths that are not absolute or local, instead of /lib/ .
+  - Live Edit - General stability improvements (CMS-5151)
+  - Live Edit - Region placeholder does not appear when deleting the only view in the region (CMS-5184)
 
 Features:
 

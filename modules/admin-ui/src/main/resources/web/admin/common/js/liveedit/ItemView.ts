@@ -529,7 +529,7 @@ module api.liveedit {
 
         select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
             this.getEl().setData("live-edit-selected", "true");
-            debugger;
+
             this.showContextMenu(clickPosition, menuPosition);
             this.hideTooltip();
             this.highlight();

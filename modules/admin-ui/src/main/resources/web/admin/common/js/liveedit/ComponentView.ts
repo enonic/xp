@@ -167,43 +167,20 @@ module api.liveedit {
             actions.push(new api.ui.Action("Remove").onExecuted(() => {
                 this.deselect();
                 this.getParentItemView().removeComponentView(this);
+                this.component.removeFromParent();
             }));
             actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
-                var duplicatedComponent = <COMPONENT> this.getComponent().duplicateComponent();
-                var duplicatedView = this.duplicate(duplicatedComponent);
                 this.deselect();
+
+                var duplicatedComponent = <COMPONENT> this.getComponent().duplicate();
+                var duplicatedView = this.duplicate(duplicatedComponent);
+
                 duplicatedView.select();
                 duplicatedView.showLoadingSpinner();
 
                 new ComponentDuplicatedEvent(this, duplicatedView).fire();
             }));
             return actions;
-        }
-
-        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-        private handleDragStart2(event: DragEvent) {
-
-            if (event.target === this.getHTMLElement()) {
-                event.dataTransfer.effectAllowed = "move";
-                //event.dataTransfer.setData('text/plain', 'This text may be dragged');
-                console.log("ComponentView[" + this.getItemId().toNumber() + "].handleDragStart", event, this.getHTMLElement());
-                this.hideTooltip();
-            }
-        }
-
-        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-        private handleDrag(event: DragEvent) {
-            if (event.target === this.getHTMLElement()) {
-                console.log("ComponentView[" + this.getItemId().toNumber() + "].handleDrag", event, this.getHTMLElement());
-            }
-        }
-
-        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-        private handleDragEnd(event: DragEvent) {
-            if (event.target === this.getHTMLElement()) {
-                console.log("ComponentView[" + this.getItemId().toNumber() + "].handleDragEnd", event, this.getHTMLElement());
-                //this.hideTooltip();
-            }
         }
 
         getType(): ComponentItemType {
@@ -274,16 +251,29 @@ module api.liveedit {
             return clone;
         }
 
+        duplicate(duplicate: COMPONENT): ComponentView<Component> {
+
+            var parentView = this.getParentItemView();
+            var index = parentView.getComponentViewIndex(this);
+
+            var duplicateView = this.getType().createView(
+                new CreateItemViewConfig<RegionView,Component>().
+                    setParentView(this.getParentItemView()).
+                    setParentElement(this.getParentElement()).
+                    setData(duplicate).
+                    setPositionIndex(index + 1));
+
+            parentView.addComponentView(duplicateView, index + 1);
+
+            return duplicateView;
+        }
+
         toString() {
             var extra = "";
             if (this.hasComponentPath()) {
                 extra = " : " + this.getComponentPath().toString();
             }
             return super.toString() + extra;
-        }
-
-        duplicate(duplicate: COMPONENT): ComponentView<COMPONENT> {
-            throw new Error("Must be implemented by inheritors");
         }
 
         replaceWith(replacement: ComponentView<Component>) {
@@ -398,6 +388,32 @@ module api.liveedit {
                 return null;
             }
             return ItemViewId.fromString(asString);
+        }
+
+        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
+        private handleDragStart2(event: DragEvent) {
+
+            if (event.target === this.getHTMLElement()) {
+                event.dataTransfer.effectAllowed = "move";
+                //event.dataTransfer.setData('text/plain', 'This text may be dragged');
+                console.log("ComponentView[" + this.getItemId().toNumber() + "].handleDragStart", event, this.getHTMLElement());
+                this.hideTooltip();
+            }
+        }
+
+        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
+        private handleDrag(event: DragEvent) {
+            if (event.target === this.getHTMLElement()) {
+                console.log("ComponentView[" + this.getItemId().toNumber() + "].handleDrag", event, this.getHTMLElement());
+            }
+        }
+
+        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
+        private handleDragEnd(event: DragEvent) {
+            if (event.target === this.getHTMLElement()) {
+                console.log("ComponentView[" + this.getItemId().toNumber() + "].handleDragEnd", event, this.getHTMLElement());
+                //this.hideTooltip();
+            }
         }
     }
 }

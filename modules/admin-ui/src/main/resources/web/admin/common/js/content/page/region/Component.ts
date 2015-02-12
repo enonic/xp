@@ -18,6 +18,8 @@ module api.content.page.region {
 
         private resetListeners: {(event: ComponentResetEvent):void}[] = [];
 
+        public static debug = false;
+
         constructor(builder: ComponentBuilder<any>) {
 
             this.name = builder.name;
@@ -70,10 +72,17 @@ module api.content.page.region {
             return this.parent;
         }
 
-        duplicateComponent(): Component {
+        duplicate(): Component {
+            if (Component.debug) {
+                console.debug(this.toString() + ".duplicate()");
+            }
+            var duplicateName = this.getName();
+            var duplicatedComponent = this.clone(true);
+            duplicatedComponent.setName(duplicateName);
 
-            var region = this.getParent();
-            return region.duplicateComponent(this);
+            this.getParent().addComponentAfter(duplicatedComponent, this);
+
+            return duplicatedComponent;
         }
 
         removeFromParent() {
@@ -82,6 +91,10 @@ module api.content.page.region {
 
         toJson(): ComponentTypeWrapperJson {
             throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+        }
+
+        toString(): string {
+            return "Component[" + (this.name ? this.name.toString() : "") + "]";
         }
 
         toComponentJson(): ComponentJson {

@@ -486,6 +486,7 @@ module api.dom {
 
             // Do the actual DOM replacement
             replacement.el.insertAfterEl(this.el);
+            replacement.notifyAdded();
 
             // during these operation this.parentElement will become unavailable
             var parent = this.parentElement;
@@ -496,10 +497,10 @@ module api.dom {
             if (parent.isRendered()) {
                 replacement.init();
             }
-            replacement.notifyAdded();
 
             // Remove this from DOM completely
-            this.remove();
+            this.getEl().remove();
+            this.notifyRemoved(this);
         }
 
         wrapWithElement(wrapperElement: Element) {

@@ -138,8 +138,20 @@ module api.liveedit {
             if (region) {
                 this.setTooltipObject(region);
 
-                region.onComponentAdded(() => this.refreshEmptyState());
-                region.onComponentRemoved(() => this.refreshEmptyState());
+                region.onComponentAdded((event: api.content.page.region.ComponentAddedEvent) => {
+                    if (RegionView.debug) {
+                        console.log('RegionView.handleComponentAdded: ' + event.getComponentPath().toString())
+                    }
+
+                    this.refreshEmptyState();
+                });
+                region.onComponentRemoved((event: api.content.page.region.ComponentRemovedEvent) => {
+                    if (RegionView.debug) {
+                        console.log('RegionView.handleComponentRemoved: ' + event.getComponentPath().toString())
+                    }
+
+                    this.refreshEmptyState();
+                });
 
                 var components = region.getComponents();
                 var componentViews = this.getComponentViews();

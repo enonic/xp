@@ -44,16 +44,6 @@ module api.liveedit.part {
             return !this.partComponent || this.partComponent.isEmpty();
         }
 
-        duplicate(duplicate: PartComponent): PartComponentView {
-
-            var duplicatedView = new PartComponentView(new PartComponentViewBuilder().
-                setParentRegionView(this.getParentItemView()).
-                setParentElement(this.getParentElement()).
-                setComponent(duplicate));
-            duplicatedView.insertAfterEl(this);
-            return duplicatedView;
-        }
-
         toItemViewArray(): ItemView[] {
 
             var array: ItemView[] = [];

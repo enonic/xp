@@ -101,16 +101,6 @@ module api.liveedit.text {
             return !this.textComponent || this.textComponent.isEmpty();
         }
 
-        duplicate(duplicate: TextComponent): TextComponentView {
-            var duplicatedView = new TextComponentView(new TextComponentViewBuilder().
-                setParentRegionView(this.getParentItemView()).
-                setParentElement(this.getParentElement()).
-                setComponent(duplicate));
-
-            duplicatedView.insertAfterEl(this);
-            return duplicatedView;
-        }
-
         private doHandleDbClick(event: MouseEvent) {
             if (this.isEditMode()) {
                 return;

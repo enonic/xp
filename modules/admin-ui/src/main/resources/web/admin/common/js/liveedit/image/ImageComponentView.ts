@@ -57,14 +57,5 @@ module api.liveedit.image {
             return !this.imageComponent || this.imageComponent.isEmpty();
         }
 
-        duplicate(duplicate: ImageComponent): ImageComponentView {
-            var duplicatedView = new ImageComponentView(new ImageComponentViewBuilder().
-                setParentRegionView(this.getParentItemView()).
-                setParentElement(this.getParentElement()).
-                setComponent(duplicate));
-            duplicatedView.insertAfterEl(this);
-            return duplicatedView;
-        }
-
     }
 }
