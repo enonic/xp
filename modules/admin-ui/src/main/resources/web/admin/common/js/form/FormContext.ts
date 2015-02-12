@@ -15,6 +15,10 @@ module api.form {
             return this.showEmptyFormItemSetOccurrences;
         }
 
+        static create(): FormContextBuilder {
+            return new FormContextBuilder();
+        }
+
         createInputTypeViewContext(inputTypeConfig: any, parentPropertyPath: PropertyPath,
                                    input: Input): api.form.inputtype.InputTypeViewContext<any> {
 

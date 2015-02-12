@@ -30,6 +30,8 @@ module api.form {
 
         private occurrenceAddedListeners: {(event: OccurrenceAddedEvent):void}[] = [];
 
+        private occurrenceRenderedListeners: {(event: OccurrenceRenderedEvent):void}[] = [];
+
         private occurrenceRemovedListeners: {(event: OccurrenceRemovedEvent):void}[] = [];
 
         private focusListeners: {(event: FocusEvent): void}[] = [];
@@ -45,6 +47,23 @@ module api.form {
 
         getAllowedOccurrences(): Occurrences {
             throw new Error("Must be implemented by inheritor");
+        }
+
+        onOccurrenceRendered(listener: (event: OccurrenceRenderedEvent)=>void) {
+            this.occurrenceRenderedListeners.push(listener);
+        }
+
+        unOccurrenceRendered(listener: (event: OccurrenceRenderedEvent)=>void) {
+            this.occurrenceRenderedListeners =
+            this.occurrenceRenderedListeners.filter((currentListener: (event: OccurrenceRenderedEvent)=>void)=> {
+                return listener != currentListener;
+            });
+        }
+
+        private notifyOccurrenceRendered(occurrence: FormItemOccurrence<V>, occurrenceView: V) {
+            this.occurrenceRenderedListeners.forEach((listener: (event: OccurrenceRenderedEvent)=>void)=> {
+                listener.call(this, new OccurrenceRenderedEvent(occurrence, occurrenceView))
+            });
         }
 
         onOccurrenceAdded(listener: (event: OccurrenceAddedEvent)=>void) {
@@ -217,7 +236,9 @@ module api.form {
             else {
                 this.occurrenceViewContainer.appendChild(occurrenceView);
             }
-            occurrenceView.layout();
+            occurrenceView.layout().then(() => {
+                this.notifyOccurrenceRendered(occurrence, occurrenceView);
+            }).done();
 
             this.occurrenceViews.splice(insertAtIndex, 0, occurrenceView);
 

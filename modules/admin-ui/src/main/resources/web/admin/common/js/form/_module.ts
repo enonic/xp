@@ -39,6 +39,7 @@
 ///<reference path='RemoveButtonClickedEvent.ts' />
 ///<reference path='OccurrenceRemovedEvent.ts' />
 ///<reference path='OccurrenceAddedEvent.ts' />
+///<reference path='OccurrenceRenderedEvent.ts' />
 
 ///<reference path='ValidationRecordingViewer.ts' />
 

@@ -152,6 +152,7 @@ module api.form {
                 var inputTypeViewNotManagingAdd = <api.form.inputtype.InputTypeViewNotManagingAdd<any>>this.inputTypeView;
                 this.addButton.setVisible(!inputTypeViewNotManagingAdd.maximumOccurrencesReached());
             }
+            this.validate(false);
         }
 
         private resolveValidationRecordingPath(): ValidationRecordingPath {
