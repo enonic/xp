@@ -30,7 +30,7 @@ module api.content.page.region {
 
         setDescriptor(descriptor: LayoutDescriptor) {
 
-            this.clearSelection(false, false);
+            this.clearSelection();
             if (descriptor) {
                 var optionToSelect: Option<LayoutDescriptor> = this.getOptionByValue(descriptor.getKey().toString());
                 if (!optionToSelect) {

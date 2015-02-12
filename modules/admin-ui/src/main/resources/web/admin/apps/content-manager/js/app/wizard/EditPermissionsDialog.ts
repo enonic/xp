@@ -114,7 +114,7 @@ module app.wizard {
         }
 
         private setUpDialog() {
-            this.comboBox.clearSelection();
+            this.comboBox.clearSelection(true);
             this.overwriteChildPermissionsCheck.setChecked(false);
 
             var contentPermissions = this.content.getPermissions();
@@ -134,7 +134,7 @@ module app.wizard {
         }
 
         private layoutInheritedPermissions() {
-            this.comboBox.clearSelection();
+            this.comboBox.clearSelection(true);
             this.parentPermissions.forEach((item) => {
                 if (!this.comboBox.isSelected(item)) {
                     this.comboBox.select(item);
