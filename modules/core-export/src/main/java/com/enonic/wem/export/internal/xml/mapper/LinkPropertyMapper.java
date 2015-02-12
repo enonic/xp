@@ -10,7 +10,15 @@ class LinkPropertyMapper
     {
         XmlLinkProperty prop = new XmlLinkProperty();
         prop.setName( property.getName() );
-        prop.setValue( XmlStringEscaper.escapeContent( property.getString() ) );
+
+        if ( property.hasNullValue() )
+        {
+            prop.setIsNull( true );
+        }
+        else
+        {
+            prop.setValue( XmlStringEscaper.escapeContent( property.getString() ) );
+        }
 
         return prop;
     }

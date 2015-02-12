@@ -15,11 +15,11 @@ public class NodeImportResult
 
     public final NodePaths updateNodes;
 
+    private final boolean dryRun;
+
     private List<ImportError> importErrors = Lists.newArrayList();
 
     private List<String> exportedBinaries = Lists.newArrayList();
-
-    private final boolean dryRun;
 
     private NodeImportResult( final Builder builder )
     {
@@ -28,6 +28,11 @@ public class NodeImportResult
         this.importErrors = builder.importErrors;
         this.exportedBinaries = builder.exportedBinaries;
         this.dryRun = builder.dryRun;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public List<ImportError> getImportErrors()
@@ -63,11 +68,6 @@ public class NodeImportResult
     public boolean isDryRun()
     {
         return dryRun;
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     @Override
@@ -141,17 +141,17 @@ public class NodeImportResult
 
     public static class ImportError
     {
-        private final Exception exception;
+        private final String exception;
 
         private final String message;
 
         public ImportError( final Exception exception, final String message )
         {
-            this.exception = exception;
+            this.exception = exception.toString();
             this.message = message;
         }
 
-        public Exception getException()
+        public String getException()
         {
             return exception;
         }

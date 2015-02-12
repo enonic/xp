@@ -1,7 +1,5 @@
 package com.enonic.wem.admin.rest.resource.export;
 
-import java.nio.file.Paths;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -10,12 +8,11 @@ import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.export.ExportNodesParams;
 import com.enonic.wem.api.export.ExportService;
@@ -23,9 +20,6 @@ import com.enonic.wem.api.export.ImportNodesParams;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.security.RoleKeys;
-import com.enonic.wem.api.security.User;
-import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.vfs.VirtualFiles;
 
 @Path(ResourceConstants.REST_ROOT + "export")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,33 +28,20 @@ import com.enonic.wem.api.vfs.VirtualFiles;
 public class ExportResource
     implements AdminResource
 {
-    private final AuthenticationInfo EXPORT_AUTH_INFO = AuthenticationInfo.create().
-        user( User.ANONYMOUS ).
-        principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
-        build();
-
     private ExportService exportService;
-
-    private Logger LOG = LoggerFactory.getLogger( ExportResource.class );
 
     @POST
     @Path("export")
     public NodeExportResultJson exportNodes( final ExportNodesRequestJson request )
         throws Exception
     {
-
-        final Context runContext = ContextBuilder.create().
-            authInfo( EXPORT_AUTH_INFO ).
-            branch( request.getSourceRepoPath().getBranch() ).
-            repositoryId( request.getSourceRepoPath().getRepositoryId() ).
-            build();
-
-        final NodeExportResult result = runContext.callWith( () -> this.exportService.exportNodes( ExportNodesParams.create().
-            sourceNodePath( request.getSourceRepoPath().getNodePath() ).
-            targetDirectory( request.getTargetDirectory() ).
-            dryRun( request.isDryRun() ).
-            includeNodeIds( request.isIncludeIds() ).
-            build() ) );
+        final NodeExportResult result =
+            getContext( request.getSourceRepoPath() ).callWith( () -> this.exportService.exportNodes( ExportNodesParams.create().
+                sourceNodePath( request.getSourceRepoPath().getNodePath() ).
+                targetDirectory( request.getTargetDirectory() ).
+                dryRun( request.isDryRun() ).
+                includeNodeIds( request.isIncludeIds() ).
+                build() ) );
 
         return NodeExportResultJson.from( result );
     }
@@ -70,14 +51,23 @@ public class ExportResource
     public NodeImportResultJson importNodes( final ImportNodesRequestJson request )
         throws Exception
     {
-        final NodeImportResult result = this.exportService.importNodes( ImportNodesParams.create().
-            targetNodePath( request.getTargetNodePath() ).
-            source( VirtualFiles.from( Paths.get( request.getExportFilePath() ) ) ).
-            dryRun( request.isDryRun() ).
-            includeNodeIds( request.isImportWithIds() ).
-            build() );
+        final NodeImportResult result =
+            getContext( request.getTargetRepoPath() ).callWith( () -> this.exportService.importNodes( ImportNodesParams.create().
+                sourceDirectory( request.getSourceDirectory() ).
+                targetNodePath( request.getTargetRepoPath().getNodePath() ).
+                dryRun( request.isDryRun() ).
+                includeNodeIds( request.isImportWithIds() ).
+                build() ) );
 
         return NodeImportResultJson.from( result );
+    }
+
+    private Context getContext( final RepoPath repoPath )
+    {
+        return ContextBuilder.from( ContextAccessor.current() ).
+            branch( repoPath.getBranch() ).
+            repositoryId( repoPath.getRepositoryId() ).
+            build();
     }
 
     @SuppressWarnings("UnusedDeclaration")

@@ -32,6 +32,10 @@ import com.enonic.wem.export.internal.xml.serializer.XmlNodeSerializer;
 
 public class NodeImportCommand
 {
+    private static final Long IMPORT_NODE_ORDER_START_VALUE = 0l;
+
+    private static final Long IMPORT_NODE_ORDER_SPACE = (long) Integer.MAX_VALUE;
+
     private final NodePath importRoot;
 
     private final NodeService nodeService;
@@ -46,10 +50,6 @@ public class NodeImportCommand
 
     private final NodeImportResult.Builder result = NodeImportResult.create();
 
-    private static final Long IMPORT_NODE_ORDER_START_VALUE = 0l;
-
-    private static final Long IMPORT_NODE_ORDER_SPACE = (long) Integer.MAX_VALUE;
-
     private final boolean importNodeIds;
 
     private final Set<ImportValidator> importValidators = Sets.newHashSet( new ContentImportValidator() );
@@ -62,6 +62,11 @@ public class NodeImportCommand
         this.importRoot = builder.importRoot;
         this.dryRun = builder.dryRun;
         this.importNodeIds = builder.importNodeIds;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public NodeImportResult execute()
@@ -122,19 +127,29 @@ public class NodeImportCommand
         {
             final Node node = processNodeSource( nodeFolder, processNodeSettings );
 
-            if ( !node.getChildOrder().isManualOrder() )
+            try
             {
-                importFromDirectoryLayout( nodeFolder );
+                if ( !node.getChildOrder().isManualOrder() )
+                {
+                    importFromDirectoryLayout( nodeFolder );
+                }
+                else
+                {
+                    importFromManualOrder( nodeFolder );
+                }
             }
-            else
+            catch ( Exception e )
             {
-                importFromManualOrder( nodeFolder );
+                result.addError( "Error when parsing children of " + node.path(), e );
             }
+
         }
         catch ( Exception e )
         {
-            result.addError( e );
+            result.addError( "Could not import node in forlder " + nodeFolder.getPath().getPath(), e );
         }
+
+
     }
 
     private Node processNodeSource( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )
@@ -274,11 +289,6 @@ public class NodeImportCommand
         return validatedCreateNodeParams;
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
     public static final class Builder
     {
         private NodePath importRoot;
@@ -297,13 +307,13 @@ public class NodeImportCommand
         {
         }
 
-        public Builder importRoot( NodePath nodePath )
+        public Builder targetNodePath( NodePath nodePath )
         {
             this.importRoot = nodePath;
             return this;
         }
 
-        public Builder exportRoot( VirtualFile exportRoot )
+        public Builder sourceDirectory( VirtualFile exportRoot )
         {
             this.exportRoot = exportRoot;
             return this;

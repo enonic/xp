@@ -1,6 +1,7 @@
 package com.enonic.wem.admin.rest.resource.export;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Preconditions;
 
 class ExportNodesRequestJson
 {
@@ -18,6 +19,8 @@ class ExportNodesRequestJson
                                    @JsonProperty("importWithIds") final Boolean includeIds, //
                                    @JsonProperty("dryRun") final Boolean dryRun )
     {
+        Preconditions.checkNotNull( sourceRepoPath, "sourceRepoPath not given" );
+        Preconditions.checkNotNull( targetDirectory, "targetDirectory not given" );
 
         this.sourceRepoPath = RepoPath.from( sourceRepoPath );
         this.targetDirectory = targetDirectory;

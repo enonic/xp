@@ -193,17 +193,38 @@ public class PropertyTreeXmlBuilder
 
     private static void addReferenceProperty( final XmlReferenceProperty xmlProperty, final PropertySet propertySet )
     {
-        propertySet.addReference( xmlProperty.getName(), Reference.from( xmlProperty.getValue() ) );
+        if ( xmlProperty.isIsNull() != null && xmlProperty.isIsNull() )
+        {
+            propertySet.addReference( xmlProperty.getName(), null );
+        }
+        else
+        {
+            propertySet.addReference( xmlProperty.getName(), Reference.from( xmlProperty.getValue() ) );
+        }
     }
 
     private static void addLinkProperty( final XmlLinkProperty xmlProperty, final PropertySet propertySet )
     {
-        propertySet.addLink( xmlProperty.getName(), Link.from( XmlStringEscaper.unescapeContent( xmlProperty.getValue() ) ) );
+        if ( xmlProperty.isIsNull() != null && xmlProperty.isIsNull() )
+        {
+            propertySet.addLink( xmlProperty.getName(), null );
+        }
+        else
+        {
+            propertySet.addLink( xmlProperty.getName(), Link.from( XmlStringEscaper.unescapeContent( xmlProperty.getValue() ) ) );
+        }
     }
 
     private static void addGeoPointProperty( final XmlGeoPointProperty xmlProperty, final PropertySet propertySet )
     {
-        propertySet.addGeoPoint( xmlProperty.getName(), GeoPoint.from( xmlProperty.getValue() ) );
+        if ( xmlProperty.isIsNull() != null && xmlProperty.isIsNull() )
+        {
+            propertySet.addGeoPoint( xmlProperty.getName(), null );
+        }
+        else
+        {
+            propertySet.addGeoPoint( xmlProperty.getName(), GeoPoint.from( xmlProperty.getValue() ) );
+        }
     }
 
     private static void addBinaryReferenceProperty( final XmlBinaryReferenceProperty xmlProperty, final PropertySet propertySet )

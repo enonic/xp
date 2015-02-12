@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.data.Property;
@@ -15,7 +16,6 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeVersionDiffQuery;
 import com.enonic.wem.api.node.NodeVersionDiffResult;
 import com.enonic.wem.api.node.ResolveSyncWorkResult;
-import com.enonic.wem.api.branch.Branch;
 
 public class ResolveSyncWorkCommand
     extends AbstractNodeCommand
@@ -143,7 +143,14 @@ public class ResolveSyncWorkCommand
 
         final Node node = doGetById( nodeId, false );
 
-        doResolveDiff( node, nodeId, resolveContext );
+        if ( node == null )
+        {
+            // does not exist in source workspace, skip
+        }
+        else
+        {
+            doResolveDiff( node, nodeId, resolveContext );
+        }
     }
 
     private void doResolveDiff( final Node node, final NodeId nodeId, final ResolveContext resolveContext )
@@ -255,11 +262,11 @@ public class ResolveSyncWorkCommand
 
     private static class ResolveContext
     {
+        private final NodeId contextNodeId;
+
         private boolean becauseParent = false;
 
         private boolean becauseReferredTo = false;
-
-        private final NodeId contextNodeId;
 
         private ResolveContext( final boolean becauseParent, final boolean becauseReferredTo, final NodeId contextNodeId )
         {

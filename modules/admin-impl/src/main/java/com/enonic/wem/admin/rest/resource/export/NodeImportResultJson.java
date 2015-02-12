@@ -17,7 +17,7 @@ public class NodeImportResultJson
 
     private List<String> importErrors = Lists.newArrayList();
 
-    private List<String> exportedBinaries = Lists.newArrayList();
+    private List<String> importedBinaries = Lists.newArrayList();
 
     public static NodeImportResultJson from( final NodeImportResult result )
     {
@@ -37,10 +37,10 @@ public class NodeImportResultJson
 
         for ( final NodeImportResult.ImportError importError : result.getImportErrors() )
         {
-            json.importErrors.add( importError.getException().toString() );
+            json.importErrors.add( importError.getMessage() + " - " + importError.getException() );
         }
 
-        json.exportedBinaries.addAll( result.getExportedBinaries() );
+        json.importedBinaries.addAll( result.getExportedBinaries() );
 
         return json;
     }
@@ -70,8 +70,8 @@ public class NodeImportResultJson
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public List<String> getExportedBinaries()
+    public List<String> getImportedBinaries()
     {
-        return exportedBinaries;
+        return importedBinaries;
     }
 }

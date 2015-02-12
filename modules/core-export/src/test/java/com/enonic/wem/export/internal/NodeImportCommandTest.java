@@ -58,8 +58,8 @@ public class NodeImportCommandTest
         final NodeImportResult result = NodeImportCommand.create().
             nodeService( importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( NodePath.ROOT ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -81,8 +81,8 @@ public class NodeImportCommandTest
         final NodeImportResult result = NodeImportCommand.create().
             nodeService( importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( NodePath.ROOT ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -108,8 +108,8 @@ public class NodeImportCommandTest
         final NodeImportResult result = NodeImportCommand.create().
             nodeService( importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( NodePath.ROOT ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -119,8 +119,8 @@ public class NodeImportCommandTest
         final NodeImportResult updateResult = NodeImportCommand.create().
             nodeService( importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( NodePath.ROOT ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -142,8 +142,8 @@ public class NodeImportCommandTest
         final NodeImportResult result = NodeImportCommand.create().
             nodeService( this.importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( NodePath.ROOT ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -175,8 +175,8 @@ public class NodeImportCommandTest
         final NodeImportResult result = NodeImportCommand.create().
             nodeService( this.importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( importRoot ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( importRoot ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -199,8 +199,8 @@ public class NodeImportCommandTest
         NodeImportCommand.create().
             nodeService( this.importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( importRoot ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( importRoot ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
     }
@@ -214,8 +214,8 @@ public class NodeImportCommandTest
         final NodeImportResult result = NodeImportCommand.create().
             nodeService( this.importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( NodePath.ROOT ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -237,8 +237,8 @@ public class NodeImportCommandTest
         final NodeImportResult result = NodeImportCommand.create().
             nodeService( this.importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( NodePath.ROOT ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -265,8 +265,8 @@ public class NodeImportCommandTest
         final NodeImportResult result = NodeImportCommand.create().
             nodeService( this.importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( NodePath.ROOT ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -296,8 +296,8 @@ public class NodeImportCommandTest
         final NodeImportResult result = NodeImportCommand.create().
             nodeService( this.importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( NodePath.ROOT ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -321,8 +321,8 @@ public class NodeImportCommandTest
         final NodeImportResult result = NodeImportCommand.create().
             nodeService( this.importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( NodePath.ROOT ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -340,8 +340,8 @@ public class NodeImportCommandTest
         final NodeImportResult result = NodeImportCommand.create().
             nodeService( this.importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( NodePath.ROOT ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 
@@ -370,8 +370,8 @@ public class NodeImportCommandTest
         final NodeImportResult result = NodeImportCommand.create().
             nodeService( this.importNodeService ).
             xmlNodeSerializer( new XmlNodeSerializer() ).
-            importRoot( NodePath.ROOT ).
-            exportRoot( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( Paths.get( this.temporaryFolder.getRoot().toPath().toString(), "myExport" ) ) ).
             build().
             execute();
 

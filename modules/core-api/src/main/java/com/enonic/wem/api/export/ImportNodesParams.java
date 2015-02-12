@@ -1,44 +1,23 @@
 package com.enonic.wem.api.export;
 
 import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.vfs.VirtualFile;
 
 public class ImportNodesParams
 {
-    private final NodePath targetPath;
+    private final NodePath targetNodePath;
 
     private final boolean dryRun;
 
-    private final VirtualFile source;
+    private final String sourceDirectory;
 
     private final boolean importNodeids;
 
     private ImportNodesParams( final Builder builder )
     {
-        this.targetPath = builder.targetPath;
-        this.source = builder.source;
+        this.targetNodePath = builder.targetNodePath;
+        this.sourceDirectory = builder.sourceDirectory;
         this.dryRun = builder.dryRun;
         this.importNodeids = builder.importNodeIds;
-    }
-
-    public NodePath getTargetPath()
-    {
-        return targetPath;
-    }
-
-    public VirtualFile getSource()
-    {
-        return source;
-    }
-
-    public boolean isDryRun()
-    {
-        return dryRun;
-    }
-
-    public boolean isImportNodeids()
-    {
-        return importNodeids;
     }
 
     public static Builder create()
@@ -46,13 +25,33 @@ public class ImportNodesParams
         return new Builder();
     }
 
+    public NodePath getTargetNodePath()
+    {
+        return targetNodePath;
+    }
+
+    public boolean isDryRun()
+    {
+        return dryRun;
+    }
+
+    public String getSourceDirectory()
+    {
+        return sourceDirectory;
+    }
+
+    public boolean isImportNodeids()
+    {
+        return importNodeids;
+    }
+
     public static final class Builder
     {
-        private NodePath targetPath;
+        private NodePath targetNodePath;
+
+        private String sourceDirectory;
 
         private boolean dryRun = false;
-
-        private VirtualFile source;
 
         private boolean importNodeIds;
 
@@ -60,9 +59,9 @@ public class ImportNodesParams
         {
         }
 
-        public Builder targetNodePath( NodePath targetPath )
+        public Builder targetNodePath( NodePath targetNodePath )
         {
-            this.targetPath = targetPath;
+            this.targetNodePath = targetNodePath;
             return this;
         }
 
@@ -72,9 +71,9 @@ public class ImportNodesParams
             return this;
         }
 
-        public Builder source( final VirtualFile source )
+        public Builder sourceDirectory( final String sourceDirectory )
         {
-            this.source = source;
+            this.sourceDirectory = sourceDirectory;
             return this;
         }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:enonic:xp:export:1.0"
-           targetNamespace="urn:enonic:xp:export:1.0" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.1"
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" version="1.0"
+           xmlns="urn:enonic:xp:export:1.0" targetNamespace="urn:enonic:xp:export:1.0" jaxb:version="2.1"
            elementFormDefault="qualified">
 
   <xs:annotation>
@@ -81,7 +81,7 @@
   <xs:complexType name="geoPointProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="property"/>
+        <xs:attributeGroup ref="nullableValueProperty"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -137,7 +137,7 @@
   <xs:complexType name="binaryReferenceProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="property"/>
+        <xs:attributeGroup ref="nullableValueProperty"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -161,7 +161,7 @@
   <xs:complexType name="linkProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="property"/>
+        <xs:attributeGroup ref="nullableValueProperty"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -169,7 +169,7 @@
   <xs:complexType name="referenceProperty">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attributeGroup ref="property"/>
+        <xs:attributeGroup ref="nullableValueProperty"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>

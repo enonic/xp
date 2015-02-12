@@ -2,6 +2,7 @@ package com.enonic.wem.export.internal.builder;
 
 import com.google.common.base.Strings;
 
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.BinaryAttachments;
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -9,6 +10,10 @@ import com.enonic.wem.api.node.InsertManualStrategy;
 import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeType;
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.export.internal.ProcessNodeSettings;
 import com.enonic.wem.export.internal.xml.XmlNode;
 
@@ -36,10 +41,17 @@ public class CreateNodeParamsFactory
         this.dryRun = builder.dryRun;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public CreateNodeParams execute()
     {
         final String nodeName = this.nodeImportPath.getLastElement().toString();
         final NodePath parentPath = this.nodeImportPath.getParentPath();
+
+        final AccessControlList permissions = resolvePermissions();
 
         final ChildOrder childOrder = getChildOrder( xmlNode );
 
@@ -51,6 +63,8 @@ public class CreateNodeParamsFactory
             data( PropertyTreeXmlBuilder.build( xmlNode.getData() ) ).
             indexConfigDocument( IndexConfigDocumentXmlBuilder.build( xmlNode.getIndexConfigs() ) ).
             dryRun( this.dryRun ).
+            //permissions( permissions ).
+                inheritPermissions( true ).
             setBinaryAttachments( binaryAttachments );
 
         if ( importNodeIds && !Strings.isNullOrEmpty( xmlNode.getId() ) )
@@ -61,6 +75,23 @@ public class CreateNodeParamsFactory
         setInsertManualSettings( builder );
 
         return builder.build();
+    }
+
+    private AccessControlList resolvePermissions()
+    {
+        final AccessControlList.Builder aclBuilder = AccessControlList.create();
+
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        for ( final PrincipalKey principal : authInfo.getPrincipals() )
+        {
+            aclBuilder.add( AccessControlEntry.create().
+                principal( principal ).
+                allowAll().
+                build() );
+        }
+
+        return aclBuilder.build();
     }
 
     private void setInsertManualSettings( final CreateNodeParams.Builder builder )
@@ -87,12 +118,6 @@ public class CreateNodeParamsFactory
 
         return ChildOrder.from( xmlNode.getChildOrder() );
     }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
 
     public static final class Builder
     {

@@ -2,40 +2,43 @@ package com.enonic.wem.admin.rest.resource.export;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.enonic.wem.api.node.NodePath;
+import com.google.common.base.Preconditions;
 
 public class ImportNodesRequestJson
 {
-    private String exportFilePath;
+    private final RepoPath targetRepoPath;
 
-    private NodePath targetNodePath;
+    private final String sourceDirectory;
 
-    private boolean dryRun;
+    private final boolean dryRun;
 
-    private boolean importWithIds = true;
+    private final boolean importWithIds;
 
     @JsonCreator
-    public ImportNodesRequestJson( @JsonProperty("exportFilePath") final String exportFilePath, //
-                                   @JsonProperty("targetNodePath") final String targetNodePath, //
+    public ImportNodesRequestJson( @JsonProperty("sourceDirectory") final String sourceDirectory, //
+                                   @JsonProperty("targetRepoPath") final String targetRepoPath, //
                                    @JsonProperty("importWithIds") final Boolean importWithIds, //
                                    @JsonProperty("dryRun") final Boolean dryRun )
 
     {
-        this.exportFilePath = exportFilePath;
-        this.targetNodePath = NodePath.newPath( targetNodePath ).build();
+
+        Preconditions.checkNotNull( sourceDirectory, "sourceDirectory not given" );
+        Preconditions.checkNotNull( targetRepoPath, "targetRepoPath not given" );
+
+        this.targetRepoPath = RepoPath.from( targetRepoPath );
+        this.sourceDirectory = sourceDirectory;
         this.dryRun = dryRun != null ? dryRun : false;
         this.importWithIds = importWithIds != null ? importWithIds : true;
     }
 
-    public String getExportFilePath()
+    public RepoPath getTargetRepoPath()
     {
-        return exportFilePath;
+        return targetRepoPath;
     }
 
-    public NodePath getTargetNodePath()
+    public String getSourceDirectory()
     {
-        return targetNodePath;
+        return sourceDirectory;
     }
 
     public boolean isDryRun()
