@@ -289,7 +289,7 @@ module app.create {
                     this.filterList();
                     this.contentListMask.hide();
                     this.recentListMask.hide();
-
+                    api.ui.responsive.ResponsiveManager.fireResizeEvent();
                 }).done();
         }
 
