@@ -232,11 +232,13 @@ module app.browse {
                 if (!!CompareStatus[value]) {
                     statusEl.addClass(CompareStatus[value].toLowerCase().replace("_", "-") || "unknown");
                 }
+
+                statusEl.getEl().setText(status);
             } else if (!!data.getUploadItem()) {   // uploading node
-                status = new api.ui.ProgressBar(data.getUploadItem().getProgress()).toString();
+                status = new api.ui.ProgressBar(data.getUploadItem().getProgress())
+                statusEl.appendChild(status);
             }
 
-            statusEl.getEl().setText(status);
             return statusEl.toString();
         }
 
