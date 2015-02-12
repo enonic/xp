@@ -329,17 +329,16 @@ module LiveEdit.component.dragdropsort.DragDropSort {
                 return;
             }
 
-            var precedingComponentView = resolvePrecedingComponentView(droppedElement.get(0));
-            var newComponent = liveEditPage.createComponent(regionView.getRegion(), itemType.toComponentType(),
-                precedingComponentView);
             var componentIndex = droppedElement.index();
+            droppedElement.remove();
+
+            var newComponent = liveEditPage.createComponent(itemType.toComponentType());
+
             var newComponentView = itemType.createView(new CreateItemViewConfig<RegionView,Component>().
                 setParentView(regionView).
                 setParentElement(regionView).
                 setData(newComponent).
                 setPositionIndex(componentIndex));
-
-            droppedElement.remove();
 
             liveEditPage.addComponentView(newComponentView, regionView, componentIndex);
         }

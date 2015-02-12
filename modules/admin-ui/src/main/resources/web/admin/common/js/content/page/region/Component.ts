@@ -18,8 +18,6 @@ module api.content.page.region {
 
         private resetListeners: {(event: ComponentResetEvent):void}[] = [];
 
-        public static debug = false;
-
         constructor(builder: ComponentBuilder<any>) {
 
             this.name = builder.name;
@@ -39,8 +37,12 @@ module api.content.page.region {
             return this.index;
         }
 
+        hasPath(): boolean {
+            return this.parent && this.index >= 0;
+        }
+
         getPath(): ComponentPath {
-            return ComponentPath.fromRegionPathAndComponentIndex(this.parent.getPath(), this.index);
+            return this.hasPath() ? ComponentPath.fromRegionPathAndComponentIndex(this.parent.getPath(), this.index) : null;
         }
 
         getName(): ComponentName {
@@ -73,19 +75,14 @@ module api.content.page.region {
         }
 
         duplicate(): Component {
-            if (Component.debug) {
-                console.debug(this.toString() + ".duplicate()");
-            }
             var duplicateName = this.getName();
             var duplicatedComponent = this.clone(true);
             duplicatedComponent.setName(duplicateName);
 
-            this.getParent().addComponentAfter(duplicatedComponent, this);
-
             return duplicatedComponent;
         }
 
-        removeFromParent() {
+        remove() {
             this.parent.removeComponent(this);
         }
 

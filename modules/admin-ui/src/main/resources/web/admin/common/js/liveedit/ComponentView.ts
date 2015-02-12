@@ -99,6 +99,8 @@ module api.liveedit {
 
         private resetListener: (event: ComponentResetEvent) => void;
 
+        public static debug: boolean = false;
+
         constructor(builder: ComponentViewBuilder<COMPONENT>) {
 
             this.itemViewAddedListeners = [];
@@ -166,8 +168,7 @@ module api.liveedit {
             }));
             actions.push(new api.ui.Action("Remove").onExecuted(() => {
                 this.deselect();
-                this.getParentItemView().removeComponentView(this);
-                this.component.removeFromParent();
+                this.remove();
             }));
             actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
                 this.deselect();
@@ -181,6 +182,16 @@ module api.liveedit {
                 new ComponentDuplicatedEvent(this, duplicatedView).fire();
             }));
             return actions;
+        }
+
+        remove(): ComponentView<Component> {
+            var parentView = this.getParentItemView();
+            if (parentView) {
+                parentView.removeComponentView(this);
+            } else {
+                super.remove();
+            }
+            return this;
         }
 
         getType(): ComponentItemType {
@@ -205,15 +216,11 @@ module api.liveedit {
         }
 
         hasComponentPath(): boolean {
-            return !this.component ? false : true;
+            return this.component && this.component.hasPath();
         }
 
         getComponentPath(): ComponentPath {
-
-            if (!this.component) {
-                return null;
-            }
-            return this.component.getPath();
+            return this.hasComponentPath() ? this.component.getPath() : null;
         }
 
         getName(): string {
@@ -316,20 +323,10 @@ module api.liveedit {
             }
 
             // Unregister from previous region...
-            // View
-            this.parentRegionView.unregisterComponentView(this);
-            // Data
-            this.component.removeFromParent();
-            // DOM
             this.remove();
 
             // Register with new region...
-            // DOM
-            toRegionView.insertChild(this, indexInNewParent);
-            // Data
-            toRegionView.getRegion().addComponentAfter(this.component, precedingComponent);
-            // View
-            toRegionView.registerComponentView(this, indexInNewParent);
+            toRegionView.addComponentView(this, indexInNewParent);
         }
 
         onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {

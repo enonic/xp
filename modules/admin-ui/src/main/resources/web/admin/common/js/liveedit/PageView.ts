@@ -330,7 +330,6 @@ module api.liveedit {
             return this.viewsById[id.toNumber()];
         }
 
-
         getItemViewsByType(type: ItemType): ItemView[] {
             var views: ItemView[] = [];
             for (var key in this.viewsById) {

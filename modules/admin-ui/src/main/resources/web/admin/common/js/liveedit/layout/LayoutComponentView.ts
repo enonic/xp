@@ -33,7 +33,7 @@ module api.liveedit.layout {
             this.regionViews = [];
             this.liveEditModel = builder.parentRegionView.liveEditModel;
             this.layoutComponent = builder.component;
-            LayoutComponentView.debug = true;
+            LayoutComponentView.debug = false;
 
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => this.notifyItemViewAdded(event.getView());
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => this.notifyItemViewRemoved(event.getView());
@@ -160,7 +160,7 @@ module api.liveedit.layout {
 
         private unregisterRegionView(regionView: RegionView) {
             if (LayoutComponentView.debug) {
-                console.log('LayoutComponentView.unregisterRegionView: ' + regionView.toString());
+                console.log('LayoutComponentView.unregisterRegionView: ' + regionView.toString(), this.regionViews);
             }
 
             var index = this.regionViews.indexOf(regionView);

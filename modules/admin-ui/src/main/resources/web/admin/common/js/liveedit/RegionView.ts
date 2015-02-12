@@ -67,7 +67,7 @@ module api.liveedit {
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
             this.parentView = builder.parentView;
-            RegionView.debug = true;
+            RegionView.debug = false;
 
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => this.notifyItemViewAdded(event.getView());
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
@@ -213,9 +213,8 @@ module api.liveedit {
         }
 
         registerComponentView(componentView: ComponentView<Component>, index: number) {
-
             if (RegionView.debug) {
-                console.log('RegionView.registerComponentView: ' + componentView.toString())
+                console.log('RegionView[' + this.toString() + '].registerComponentView: ' + componentView.toString() + " at " + index);
             }
 
             if (index >= 0) {
@@ -225,43 +224,59 @@ module api.liveedit {
             }
             componentView.setParentItemView(this);
 
-            this.notifyItemViewAdded(componentView);
-
             componentView.onItemViewAdded(this.itemViewAddedListener);
             componentView.onItemViewRemoved(this.itemViewRemovedListener);
+
+            this.notifyItemViewAdded(componentView);
         }
 
         unregisterComponentView(componentView: ComponentView<Component>) {
-
             if (RegionView.debug) {
-                console.log('RegionView.unregisterComponentView: ' + componentView.toString())
+                console.log('RegionView[' + this.toString() + '].unregisterComponentView: ' + componentView.toString())
             }
 
             var indexToRemove = this.getComponentViewIndex(componentView);
             if (indexToRemove >= 0) {
+
+                componentView.unItemViewAdded(this.itemViewAddedListener);
+                componentView.unItemViewRemoved(this.itemViewRemovedListener);
+
                 this.componentViews.splice(indexToRemove, 1);
                 componentView.setParentItemView(null);
 
                 this.notifyItemViewRemoved(componentView);
 
-                componentView.unItemViewAdded(this.itemViewAddedListener);
-                componentView.unItemViewRemoved(this.itemViewRemovedListener);
-            }
-            else {
+            } else {
+
                 throw new Error("Did not find ComponentView to remove: " + componentView.getItemId().toString());
             }
         }
 
-        addComponentView(componentView: ComponentView<Component>, positionIndex: number) {
-            this.insertChild(componentView, positionIndex);
-            this.registerComponentView(componentView, positionIndex);
+        addComponentView(componentView: ComponentView<Component>, index: number) {
+            if (RegionView.debug) {
+                console.log('RegionView[' + this.toString() + ']addComponentView: ' + componentView.toString() + " at " + index);
+            }
+            if (componentView.getComponent()) {
+                this.region.addComponent(componentView.getComponent(), index);
+            }
+
+            this.insertChild(componentView, index);
+            this.registerComponentView(componentView, index);
 
             new ComponentAddedEvent(componentView).fire();
         }
 
         removeComponentView(componentView: ComponentView<Component>) {
-            this.removeChild(componentView);
+            if (RegionView.debug) {
+                console.log('RegionView[' + this.toString() + '].removeComponentView: ' + componentView.toString())
+            }
+
             this.unregisterComponentView(componentView);
+            this.removeChild(componentView);
+
+            if (componentView.getComponent()) {
+                componentView.getComponent().remove();
+            }
 
             new ComponentRemovedEvent(componentView).fire();
         }
@@ -341,11 +356,14 @@ module api.liveedit {
         }
 
         empty() {
-            this.componentViews.forEach((componentView: ComponentView<Component>) => {
-                this.removeComponentView(componentView);
-            });
+            if (RegionView.debug) {
+                console.debug("RegionView[" + this.toString() + "].empty()", this.componentViews);
+            }
 
-            this.region.removeComponents();
+            while (this.componentViews.length > 0) {
+                // remove component modifies the components array so we can't rely on forEach
+                this.removeComponentView(this.componentViews[0]);
+            }
         }
 
         toItemViewArray(): ItemView[] {

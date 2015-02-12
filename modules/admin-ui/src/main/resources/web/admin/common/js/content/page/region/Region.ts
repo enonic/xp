@@ -27,7 +27,6 @@ module api.content.page.region {
         constructor(builder: RegionBuilder) {
             this.name = builder.name;
             this.parent = builder.parent;
-            this.components = builder.components;
 
             this.componentChangedEventHandler = (event) => {
                 if (Region.debug) {
@@ -38,32 +37,9 @@ module api.content.page.region {
 
             this.componentPropertyChangedEventHandler = (event) => this.forwardComponentPropertyChangedEvent(event);
 
-            this.components.forEach((component: Component, index: number) => {
-                this.checkIllegalLayoutComponentWithinLayoutComponent(component, this.parent);
-                component.setParent(this);
-                component.setIndex(index);
-
-                this.registerComponentListeners(component);
+            builder.components.forEach((component: Component) => {
+                this.registerComponent(component);
             });
-        }
-
-        private checkIllegalLayoutComponentWithinLayoutComponent(component: Component,
-                                                                 parent: LayoutComponent) {
-            var hasParentLayoutComponent = !parent ? false : true;
-            if (hasParentLayoutComponent && api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
-                throw new Error("Not allowed to have a LayoutComponent within a LayoutComponent: " +
-                                component.getPath().toString());
-            }
-        }
-
-        private registerComponentListeners(component: Component) {
-            component.onChanged(this.componentChangedEventHandler);
-            component.onPropertyChanged(this.componentPropertyChangedEventHandler);
-        }
-
-        private unregisterComponentListeners(component: Component) {
-            component.unChanged(this.componentChangedEventHandler);
-            component.unPropertyChanged(this.componentPropertyChangedEventHandler);
         }
 
         getName(): string {
@@ -90,80 +66,37 @@ module api.content.page.region {
             return !this.components || this.components.length == 0;
         }
 
+        empty() {
+            if (Region.debug) {
+                console.debug(this.toString() + ".empty()", this.components);
+            }
 
-        addComponent(component: Component) {
+            while (this.components.length > 0) {
+                // remove component modifies the components array so we can't rely on forEach
+                this.removeComponent(this.components[0]);
+            }
+        }
+
+        addComponent(component: Component, index?: number): Component {
             if (Region.debug) {
                 console.debug(this.toString() + ".addComponent: " + component.toString());
             }
 
-            this.checkIllegalLayoutComponentWithinLayoutComponent(component, this.parent);
-            this.components.push(component);
-            component.setParent(this);
-            component.setIndex(this.components.length - 1);
-
+            this.registerComponent(component, index);
             this.notifyComponentAdded(component.getPath());
-            this.registerComponentListeners(component);
-        }
 
-        /*
-         *  Add component after target component. Component will only be added if target component is found.
-         */
-        addComponentAfter(component: Component, precedingComponent: Component) {
-            if (Region.debug) {
-                var extra = precedingComponent ? " after " + precedingComponent.toString() : "";
-                console.debug(this.toString() + ".addComponentAfter: " + component.toString() + extra);
-            }
-            var precedingIndex = -1;
-            if (precedingComponent != null) {
-                precedingIndex = precedingComponent.getIndex();
-                if (precedingIndex == -1 && this.components.length > 1) {
-                    return -1;
-                }
-            }
-
-            component.setParent(this);
-
-            var index = 0;
-            if (precedingIndex > -1) {
-                index = precedingIndex + 1;
-            }
-            this.components.splice(index, 0, component);
-
-            // Update indexes
-            this.components.forEach((curr: Component, index: number) => {
-                curr.setIndex(index);
-            });
-
-            this.notifyComponentAdded(component.getPath());
-            this.registerComponentListeners(component);
+            return component;
         }
 
         removeComponent(component: Component): Component {
             if (Region.debug) {
-                if (Region.debug) {
-                    console.debug(this.toString() + ".removeComponent: " + component.toString());
-                }
+                console.debug(this.toString() + ".removeComponent: " + component.toString(), this.components);
             }
 
-            var componentIndex = component.getIndex();
-            if (componentIndex == -1) {
-                throw new Error(component.toString() + " to remove does not exist in " + this.toString());
-            }
-
-            var componentPath = component.getPath();
-
-            this.components.splice(componentIndex, 1);
-
-            // Update indexes
-            this.components.forEach((curr: Component, index: number) => {
-                curr.setIndex(index);
-            });
-
-            component.setParent(null);
-            component.setIndex(-1);
-
-            this.notifyComponentRemoved(componentPath);
-            this.unregisterComponentListeners(component);
+            // parent will be cleared on unregister so grab path before it
+            var path = component.getPath();
+            this.unregisterComponent(component);
+            this.notifyComponentRemoved(path);
 
             return component;
         }
@@ -177,22 +110,6 @@ module api.content.page.region {
             api.util.assertState(component.getIndex() == index,
                 "Index of Component is not as expected. Expected [" + index + "], was: " + component.getIndex());
             return component;
-        }
-
-        removeComponents() {
-            if (Region.debug) {
-                console.debug(this.toString() + ".removeComponents");
-            }
-            while (this.components.length > 0) {
-                var component = this.components.pop();
-                var componentPath = component.getPath();
-
-                this.notifyComponentRemoved(componentPath);
-                this.unregisterComponentListeners(component);
-
-                component.setParent(null);
-                component.setIndex(-1);
-            }
         }
 
         toJson(): RegionJson {
@@ -234,6 +151,63 @@ module api.content.page.region {
 
         clone(generateNewPropertyIds: boolean = false): Region {
             return new RegionBuilder(this, generateNewPropertyIds).build();
+        }
+
+        private checkIllegalLayoutComponentWithinLayoutComponent(component: Component, parent: LayoutComponent) {
+            if (!!parent && api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
+                throw new Error("Not allowed to have a LayoutComponent within a LayoutComponent: " +
+                                component.getPath().toString());
+            }
+        }
+
+        private refreshIndexes(start?: number) {
+            for (var i = Math.min(0, start); i < this.components.length; i++) {
+                this.components[i].setIndex(i);
+            }
+        }
+
+        private registerComponent(component: Component, index?: number) {
+            if (Region.debug) {
+                console.debug(this.toString() + ".registerComponent: " + component.toString() + " at " + component.getIndex());
+            }
+            this.checkIllegalLayoutComponentWithinLayoutComponent(component, this.parent);
+
+            if (index >= 0 && index < this.components.length) {
+
+                this.components.splice(index, 0, component);
+                // update indexes for inserted component and components after it
+                this.refreshIndexes(index);
+
+            } else {
+
+                this.components.push(component);
+                component.setIndex(this.components.length - 1);
+            }
+
+            component.setParent(this);
+
+            component.onChanged(this.componentChangedEventHandler);
+            component.onPropertyChanged(this.componentPropertyChangedEventHandler);
+        }
+
+        private unregisterComponent(component: Component) {
+            if (Region.debug) {
+                console.debug(this.toString() + ".unregisterComponent: " + component.toString(), this.components);
+            }
+            component.unChanged(this.componentChangedEventHandler);
+            component.unPropertyChanged(this.componentPropertyChangedEventHandler);
+
+            var index = component.getIndex();
+            if (index == -1) {
+                throw new Error(component.toString() + " to remove does not exist in " + this.toString());
+            }
+
+            this.components.splice(index, 1);
+            // update indexes for inserted component and components after it
+            this.refreshIndexes(index);
+
+            component.setParent(null);
+            component.setIndex(-1);
         }
 
         onChanged(listener: (event: BaseRegionChangedEvent)=>void) {

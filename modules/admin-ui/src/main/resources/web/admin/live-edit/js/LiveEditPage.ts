@@ -122,23 +122,17 @@ module LiveEdit {
             }
         }
 
-        createComponent(region: Region, type: ComponentType, precedingComponentView: ComponentView<Component>): Component {
+        createComponent(type: ComponentType): Component {
 
             var componentName = new ComponentName(api.util.StringHelper.capitalize(api.util.StringHelper.removeWhitespaces(type.getShortName())));
 
-            var builder = type.newComponentBuilder();
-            builder.setName(componentName);
+            var builder = type.newComponentBuilder().setName(componentName);
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedComponentBuilder)) {
                 (<DescriptorBasedComponentBuilder<DescriptorBasedComponent>>builder).setConfig(new PropertyTree(api.Client.get().getPropertyIdProvider()));
             }
-            var precedingComponent: Component = null;
-            if (precedingComponentView) {
-                precedingComponent = precedingComponentView.getComponent();
-            }
-            var component = builder.build();
-            region.addComponentAfter(component, precedingComponent);
-            return component;
+
+            return builder.build();
         }
     }
 }
