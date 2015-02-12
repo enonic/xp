@@ -2,6 +2,7 @@ package com.enonic.wem.admin.rest.resource.export;
 
 import java.nio.file.Paths;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -19,10 +20,12 @@ import com.enonic.wem.api.export.ExportService;
 import com.enonic.wem.api.export.ImportNodesParams;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.export.NodeImportResult;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.vfs.VirtualFiles;
 
 @Path(ResourceConstants.REST_ROOT + "export")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
 public class ExportResource
     implements AdminResource
