@@ -214,6 +214,7 @@ html, body {
       margin-top: 10px;
       color: white;
       text-align: center;
+      margin-left: 21px;
 
       .ellipsis();
     }
@@ -223,6 +224,8 @@ html, body {
       font-size: 12px;
       box-sizing: border-box;
       margin-bottom: 10px;
+      margin-top: 1px;
+      margin-left: 21px;
       border: 1px solid @admin-bg-light-gray;
       vertical-align: top;
       padding: 4px 9px;
@@ -241,6 +244,30 @@ html, body {
       margin-bottom: 0;
     }
 
+    .login-button {
+      .icon-arrow-right6;
+      background-color: transparent;
+      position: relative;
+      right: 26px;
+      padding: 3px 0px 0px 0px;
+      font-size: 20px;
+
+      &:hover:not(:disabled) {
+
+        &:before, span {
+          color: inherit;
+        }
+      }
+
+      &:focus:not(:disabled) {
+        box-shadow: none;
+        border: 1px solid transparent;
+      }
+
+      &:before {
+        color: inherit; // updates icons color
+      }
+    }
   }
 
 
