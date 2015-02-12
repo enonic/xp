@@ -1,8 +1,10 @@
 package com.enonic.wem.repo.internal.entity;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
+import com.enonic.wem.api.context.Context;
+import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.ApplyNodePermissionsParams;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
@@ -11,6 +13,7 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 
 import static com.enonic.wem.api.security.acl.Permission.CREATE;
 import static com.enonic.wem.api.security.acl.Permission.DELETE;
@@ -19,14 +22,19 @@ import static com.enonic.wem.api.security.acl.Permission.PUBLISH;
 import static com.enonic.wem.api.security.acl.Permission.READ;
 import static org.junit.Assert.*;
 
-@Ignore
+
 public class ApplyNodePermissionsCommandTest
     extends AbstractNodeTest
 {
 
     @Test
-    public void applyPermissionsWithOverwrite()
+    public void testApplyPermissionsWithOverwrite()
         throws Exception
+    {
+        runAs( PrincipalKey.ofAnonymous(), this::applyPermissionsWithOverwrite );
+    }
+
+    private void applyPermissionsWithOverwrite()
     {
         final UserStoreKey usk = UserStoreKey.system();
         final PrincipalKey user1 = PrincipalKey.ofUser( usk, "user1" );
@@ -118,8 +126,13 @@ public class ApplyNodePermissionsCommandTest
     }
 
     @Test
-    public void applyPermissionsWithMerge()
+    public void testApplyPermissionsWithMerge()
         throws Exception
+    {
+        runAs( PrincipalKey.ofAnonymous(), this::applyPermissionsWithMerge );
+    }
+
+    private void applyPermissionsWithMerge()
     {
         final UserStoreKey usk = UserStoreKey.system();
         final PrincipalKey user1 = PrincipalKey.ofUser( usk, "user1" );
@@ -220,5 +233,15 @@ public class ApplyNodePermissionsCommandTest
 
         final Node child1_2_2Updated = getNodeById( child1_2_2.id() );
         assertEquals( permissions, child1_2_2Updated.getPermissions() );
+    }
+
+    private void runAs( final PrincipalKey principal, final Runnable runnable )
+    {
+        final Context context = ContextAccessor.current();
+        final AuthenticationInfo authInfo = context.getAuthInfo();
+        ContextBuilder.from( context ).
+            authInfo( AuthenticationInfo.copyOf( authInfo ).principals( principal ).build() ).
+            build().
+            runWith( runnable );
     }
 }

@@ -62,6 +62,11 @@ public final class AuthenticationInfo
         return new Builder( true );
     }
 
+    public static Builder copyOf( final AuthenticationInfo authInfo )
+    {
+        return new Builder( authInfo );
+    }
+
     public static AuthenticationInfo unAuthenticated()
     {
         return new Builder( false ).principals( PrincipalKey.ofAnonymous(), RoleKeys.EVERYONE ).build();
@@ -79,6 +84,14 @@ public final class AuthenticationInfo
         {
             this.principals = ImmutableSet.builder();
             this.authenticated = authenticated;
+        }
+
+        private Builder( final AuthenticationInfo authInfo )
+        {
+            this.principals = ImmutableSet.builder();
+            this.user = authInfo.getUser();
+            this.authenticated = authInfo.isAuthenticated();
+            this.principals.addAll( authInfo.getPrincipals() );
         }
 
         public Builder user( final User user )
