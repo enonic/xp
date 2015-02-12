@@ -2,7 +2,7 @@
 
 Bugfixes:
 
- - N/A
+ - Fixed JavaScript require() function to search in /cms/lib/ for paths that are not absolute or local, instead of /lib/ .
 
 Features:
 
