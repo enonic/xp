@@ -82,6 +82,13 @@ module api.ui {
             this.shelves = [];
         }
 
+
+        public getActiveBindings(): KeyBinding[] {
+            return Object.keys(this.activeBindings).map((key) => {
+                return this.activeBindings[key];
+            });
+        }
+
         /*
          * Stores the current bindings on a new shelf and resets.
          */
@@ -110,7 +117,7 @@ module api.ui {
                 console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): unshelving... ");
             }
 
-            this.activeBindings ={};
+            this.activeBindings = {};
             Mousetrap.reset();
 
             for (var key in previousMousetraps) {
