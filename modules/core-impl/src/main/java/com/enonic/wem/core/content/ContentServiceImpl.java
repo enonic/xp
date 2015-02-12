@@ -78,10 +78,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
 import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.RoleKeys;
-import com.enonic.wem.api.security.User;
-import com.enonic.wem.api.security.UserStoreKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.util.BinaryReference;
@@ -97,15 +94,6 @@ public class ContentServiceImpl
     public static final String TEMPLATES_FOLDER_NAME = "_templates";
 
     private static final String TEMPLATES_FOLDER_DISPLAY_NAME = "Templates";
-
-    private static final PrincipalKey DUMMY_CONTENT_SUPER_USER_KEY = PrincipalKey.ofUser( UserStoreKey.system(), "content-su" );
-
-    private static final User CONTENT_SUPER_USER = User.create().key( DUMMY_CONTENT_SUPER_USER_KEY ).login( "content" ).build();
-
-    private static final AuthenticationInfo CONTENT_SU_AUTH_INFO = AuthenticationInfo.create().
-        principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).
-        user( CONTENT_SUPER_USER ).
-        build();
 
     private static final ModuleConfigsDataSerializer MODULE_CONFIGS_DATA_SERIALIZER = new ModuleConfigsDataSerializer();
 
@@ -612,8 +600,15 @@ public class ContentServiceImpl
 
     private <T> T runAsContentAdmin( final Callable<T> callable )
     {
+        final Context context = ContextAccessor.current();
+        final AuthenticationInfo authInfo = context.getAuthInfo();
+        if ( !authInfo.isAuthenticated() )
+        {
+            return context.callWith( callable );
+        }
+
         return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( CONTENT_SU_AUTH_INFO ).
+            authInfo( AuthenticationInfo.copyOf( authInfo ).principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).build() ).
             build().
             callWith( callable );
     }
