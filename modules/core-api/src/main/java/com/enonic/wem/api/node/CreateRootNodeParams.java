@@ -1,5 +1,7 @@
 package com.enonic.wem.api.node;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
@@ -16,6 +18,8 @@ public class CreateRootNodeParams
 
     private CreateRootNodeParams( Builder builder )
     {
+        Preconditions.checkNotNull( builder.permissions, "Missing permissions for root node" );
+        Preconditions.checkArgument( !builder.permissions.isEmpty(), "Missing permissions for root node" );
         childOrder = builder.childOrder;
         permissions = builder.permissions;
     }

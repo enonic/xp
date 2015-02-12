@@ -5,6 +5,8 @@ import org.junit.Test;
 import com.enonic.wem.api.index.ChildOrder;
 import com.enonic.wem.api.node.CreateRootNodeParams;
 import com.enonic.wem.api.node.RootNode;
+import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 
 import static org.junit.Assert.*;
@@ -19,7 +21,8 @@ public class CreateRootNodeCommandTest
     {
         final RootNode rootNode = CreateRootNodeCommand.create().
             params( CreateRootNodeParams.create().
-                permissions( AccessControlList.empty() ).
+                permissions( AccessControlList.create().add(
+                    AccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).allowAll().build() ).build() ).
                 childOrder( ChildOrder.defaultOrder() ).
                 build() ).
             indexService( this.indexService ).

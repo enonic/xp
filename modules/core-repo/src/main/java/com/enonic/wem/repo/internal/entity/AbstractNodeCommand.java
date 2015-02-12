@@ -1,11 +1,8 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.util.concurrent.Callable;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
@@ -154,13 +151,19 @@ abstract class AbstractNodeCommand
     AccessControlList evaluatePermissions( final NodePath parentPath, final boolean inheritPermissions,
                                            final AccessControlList permissions )
     {
-        return inheritPermissions ? getPermissions( parentPath ) : permissions;
-    }
-
-    private AccessControlList getPermissions( final NodePath nodePath )
-    {
-        final Node node = doGetByPath( nodePath, false );
-        return node != null ? node.getPermissions() : AccessControlList.empty();
+        if ( !inheritPermissions )
+        {
+            return permissions;
+        }
+        else
+        {
+            final Node node = NodeHelper.runAsAdmin( () -> doGetByPath( parentPath, false ) );
+            if ( node == null || node.getPermissions().isEmpty() )
+            {
+                throw new RuntimeException( "Could not evaluate permissions for node [" + parentPath.toString() + "]" );
+            }
+            return node.getPermissions();
+        }
     }
 
     public static abstract class Builder<B extends Builder>
