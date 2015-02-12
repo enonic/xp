@@ -227,6 +227,8 @@ module api.ui.tab {
                 var newTab = this.getSelectedNavigationItem();
                 if (newTab) {
                     this.setButtonLabel(newTab.getLabel());
+                    this.updateActiveTab(newTab.getIndex());
+                    this.selectNavigationItem(newTab.getIndex());
                 }
             }
             this.notifyTabRemovedListeners(tab);
