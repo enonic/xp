@@ -1,5 +1,7 @@
 package com.enonic.wem.admin.rest.resource.export;
 
+import java.nio.file.Paths;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -20,6 +22,7 @@ import com.enonic.wem.api.export.ImportNodesParams;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.wem.api.vfs.VirtualFiles;
 
 @Path(ResourceConstants.REST_ROOT + "export")
 @Produces(MediaType.APPLICATION_JSON)
@@ -53,7 +56,7 @@ public class ExportResource
     {
         final NodeImportResult result =
             getContext( request.getTargetRepoPath() ).callWith( () -> this.exportService.importNodes( ImportNodesParams.create().
-                sourceDirectory( request.getSourceDirectory() ).
+                source( VirtualFiles.from( Paths.get( request.getSourceDirectory() ) ) ).
                 targetNodePath( request.getTargetRepoPath().getNodePath() ).
                 dryRun( request.isDryRun() ).
                 includeNodeIds( request.isImportWithIds() ).

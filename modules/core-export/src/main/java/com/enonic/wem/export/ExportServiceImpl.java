@@ -11,7 +11,6 @@ import com.enonic.wem.api.export.ImportNodesParams;
 import com.enonic.wem.api.export.NodeExportResult;
 import com.enonic.wem.api.export.NodeImportResult;
 import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.vfs.VirtualFiles;
 import com.enonic.wem.export.internal.BatchedNodeExportCommand;
 import com.enonic.wem.export.internal.NodeImportCommand;
 import com.enonic.wem.export.internal.writer.FileExportWriter;
@@ -46,7 +45,7 @@ public class ExportServiceImpl
         return NodeImportCommand.create().
             xmlNodeSerializer( this.xmlNodeSerializer ).
             nodeService( this.nodeService ).
-            sourceDirectory( VirtualFiles.from( Paths.get( params.getSourceDirectory() ) ) ).
+            sourceDirectory( params.getSource() ).
             targetNodePath( params.getTargetNodePath() ).
             dryRun( params.isDryRun() ).
             importNodeIds( params.isImportNodeids() ).

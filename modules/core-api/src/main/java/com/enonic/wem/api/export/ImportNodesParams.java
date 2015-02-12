@@ -1,6 +1,7 @@
 package com.enonic.wem.api.export;
 
 import com.enonic.wem.api.node.NodePath;
+import com.enonic.wem.api.vfs.VirtualFile;
 
 public class ImportNodesParams
 {
@@ -8,14 +9,14 @@ public class ImportNodesParams
 
     private final boolean dryRun;
 
-    private final String sourceDirectory;
+    private final VirtualFile source;
 
     private final boolean importNodeids;
 
     private ImportNodesParams( final Builder builder )
     {
         this.targetNodePath = builder.targetNodePath;
-        this.sourceDirectory = builder.sourceDirectory;
+        this.source = builder.source;
         this.dryRun = builder.dryRun;
         this.importNodeids = builder.importNodeIds;
     }
@@ -35,9 +36,9 @@ public class ImportNodesParams
         return dryRun;
     }
 
-    public String getSourceDirectory()
+    public VirtualFile getSource()
     {
-        return sourceDirectory;
+        return source;
     }
 
     public boolean isImportNodeids()
@@ -49,7 +50,7 @@ public class ImportNodesParams
     {
         private NodePath targetNodePath;
 
-        private String sourceDirectory;
+        private VirtualFile source;
 
         private boolean dryRun = false;
 
@@ -71,9 +72,9 @@ public class ImportNodesParams
             return this;
         }
 
-        public Builder sourceDirectory( final String sourceDirectory )
+        public Builder source( final VirtualFile source )
         {
-            this.sourceDirectory = sourceDirectory;
+            this.source = source;
             return this;
         }
 
