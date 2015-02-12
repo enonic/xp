@@ -22,7 +22,7 @@ final class ResolvedImage
 
     boolean isOK()
     {
-        return image != null & mimeType != null;
+        return image != null && mimeType != null;
     }
 
     Response toResponse()
