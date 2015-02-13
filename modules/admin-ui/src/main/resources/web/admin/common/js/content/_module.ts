@@ -58,7 +58,7 @@
 ///<reference path='CompareContentResult.ts' />
 ///<reference path='CompareStatus.ts' />
 ///<reference path='CompareStatusJson.ts' />
-///<reference path='Workspace.ts' />
+///<reference path='Branch.ts' />
 ///<reference path='ContentSummaryAndCompareStatus.ts' />
 ///<reference path='ContentSummaryAndCompareStatusFetcher.ts' />
 ///<reference path='ContentSummaryAndCompareStatusViewer.ts' />

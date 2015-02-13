@@ -292,7 +292,7 @@ module app.wizard.page {
             var componentUrl = api.rendering.UriHelper.getComponentUri(this.content.getContentId().toString(),
                 componentView.getComponentPath().toString(),
                 RenderingMode.EDIT,
-                api.content.Workspace.DRAFT);
+                api.content.Branch.DRAFT);
 
             this.contentWizardPanel.saveChanges().
                 then(() => {

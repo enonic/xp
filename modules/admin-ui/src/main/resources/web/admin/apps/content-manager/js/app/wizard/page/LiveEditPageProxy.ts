@@ -8,7 +8,7 @@ module app.wizard.page {
     import Component = api.content.page.region.Component;
     import ImageUploadDialog = api.content.form.inputtype.image.ImageUploadDialog;
     import RenderingMode = api.rendering.RenderingMode;
-    import Workspace = api.content.Workspace;
+    import Workspace = api.content.Branch;
 
     import ComponentView = api.liveedit.ComponentView;
     import ImageOpenUploadDialogEvent = api.liveedit.ImageOpenUploadDialogEvent;

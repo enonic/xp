@@ -1,8 +1,8 @@
 module api.content {
 
-    export enum Workspace {
+    export enum Branch {
         DRAFT,
-        ONLINE
+        MASTER
     }
 
 

@@ -2,17 +2,17 @@ module api.rendering {
 
     export class UriHelper {
 
-        public static getPortalUri(path: string, renderingMode: RenderingMode, workspace: api.content.Workspace): string {
+        public static getPortalUri(path: string, renderingMode: RenderingMode, workspace: api.content.Branch): string {
             path = api.util.UriHelper.relativePath(path);
 
             var workspaceName: string;
 
             switch (workspace) {
-            case api.content.Workspace.DRAFT:
+            case api.content.Branch.DRAFT:
                 workspaceName = "draft";
                 break;
-            case api.content.Workspace.ONLINE:
-                workspaceName = "online";
+            case api.content.Branch.MASTER:
+                workspaceName = "master";
                 break;
             default:
                 workspaceName = "draft";
@@ -29,7 +29,7 @@ module api.rendering {
         }
 
         public static getComponentUri(contentId: string, componentPath: string, renderingMode: RenderingMode,
-                                      workspace: api.content.Workspace): string {
+                                      workspace: api.content.Branch): string {
             return UriHelper.getPortalUri(contentId + "/_/component/" + componentPath, renderingMode, workspace);
         }
 

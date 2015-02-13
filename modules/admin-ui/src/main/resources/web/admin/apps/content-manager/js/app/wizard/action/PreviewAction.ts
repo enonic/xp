@@ -24,7 +24,7 @@ module app.wizard.action {
 
         showPreviewDialog(content: api.content.Content) {
             window.open(api.rendering.UriHelper.getPortalUri(content.getPath().toString(), RenderingMode.PREVIEW,
-                api.content.Workspace.DRAFT), 'preview');
+                api.content.Branch.DRAFT), 'preview');
         }
 
     }
