@@ -24,7 +24,7 @@ final class LocalFile
 
     public LocalFile( final Path path )
     {
-        this.virtualFilePath = VirtualFilePath.from( path );
+        this.virtualFilePath = VirtualFilePaths.from( path );
         this.path = path;
     }
 

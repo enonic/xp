@@ -33,17 +33,17 @@ public class PathBasedVirtualFileTest
     @Test
     public void testResolve()
     {
-        final VirtualFile file1 = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePath.from( "dir1" ) );
+        final VirtualFile file1 = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePaths.from( "dir1", "/" ) );
         assertTrue( file1.exists() );
         assertFalse( file1.isFile() );
         assertTrue( file1.isFolder() );
 
-        final VirtualFile file2 = file1.resolve( VirtualFilePath.from( "file1.txt" ) );
+        final VirtualFile file2 = file1.resolve( VirtualFilePaths.from( "file1.txt", "/" ) );
         assertTrue( file2.exists() );
         assertTrue( file2.isFile() );
         assertFalse( file2.isFolder() );
 
-        final VirtualFile file3 = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePath.from( "dir1/file1.txt" ) );
+        final VirtualFile file3 = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePaths.from( "dir1/file1.txt", "/" ) );
         assertTrue( file3.exists() );
         assertTrue( file3.isFile() );
         assertFalse( file3.isFolder() );
@@ -53,7 +53,7 @@ public class PathBasedVirtualFileTest
     public void testFile()
         throws Exception
     {
-        final VirtualFile file = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePath.from( "dir1/file1.txt" ) );
+        final VirtualFile file = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePaths.from( "dir1/file1.txt", "/" ) );
         assertTrue( file.exists() );
         assertTrue( file.isFile() );
         assertFalse( file.isFolder() );
@@ -72,7 +72,7 @@ public class PathBasedVirtualFileTest
     @Test
     public void testGetChildren()
     {
-        final VirtualFile file = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePath.from( "dir2" ) );
+        final VirtualFile file = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePaths.from( "dir2", "/" ) );
 
         final List<VirtualFile> children = file.getChildren();
         assertNotNull( children );
@@ -86,7 +86,7 @@ public class PathBasedVirtualFileTest
     @Test
     public void testNotExists()
     {
-        final VirtualFile file = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePath.from( "notFound" ) );
+        final VirtualFile file = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePaths.from( "notFound", "/" ) );
         assertFalse( file.exists() );
         assertFalse( file.isFile() );
         assertFalse( file.isFolder() );

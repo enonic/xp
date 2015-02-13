@@ -26,7 +26,7 @@ final class ClassLoaderFile
 
     public ClassLoaderFile( final ClassLoader loader, final String path )
     {
-        this.virtualFilePath = VirtualFilePath.from( path );
+        this.virtualFilePath = VirtualFilePaths.from( path, "/" );
         this.loader = loader;
         this.path = cleanPath( path );
         this.url = this.loader.getResource( path.substring( 1 ) );

@@ -2,14 +2,13 @@ package com.enonic.wem.api.vfs;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
 
-public class DriveLetterFilePath
-    extends VirtualFilePath
+public class DriveLetterPath
+    extends VirtualFilePathImpl
 {
-    public DriveLetterFilePath( final LinkedList<String> elements )
+    public DriveLetterPath( final Path path )
     {
-        super( elements, true );
+        super( path );
     }
 
     @Override

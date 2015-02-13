@@ -21,7 +21,7 @@ import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.util.BinaryReference;
 import com.enonic.wem.api.vfs.VirtualFile;
-import com.enonic.wem.api.vfs.VirtualFilePath;
+import com.enonic.wem.api.vfs.VirtualFilePaths;
 import com.enonic.wem.export.internal.builder.CreateNodeParamsFactory;
 import com.enonic.wem.export.internal.builder.PropertyTreeXmlBuilder;
 import com.enonic.wem.export.internal.builder.UpdateNodeParamsFactory;
@@ -107,7 +107,7 @@ public class NodeImportCommand
 
         for ( final String childName : childNames )
         {
-            final VirtualFile child = nodeFolder.resolve( VirtualFilePath.from( childName ) );
+            final VirtualFile child = nodeFolder.resolve( VirtualFilePaths.from( childName, "/" ) );
 
             final ProcessNodeSettings.Builder processNodeSettings = ProcessNodeSettings.create().
                 insertManualStrategy( InsertManualStrategy.MANUAL ).
