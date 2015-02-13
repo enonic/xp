@@ -14,9 +14,9 @@ public class VirtualFilePaths
     {
         final String separator = path.getFileSystem().getSeparator();
 
-        if ( !path.isAbsolute() && path.startsWith( separator ) )
+        if ( path.isAbsolute() && !path.startsWith( separator ) )
         {
-            return new DriveLetterPath( path );
+            return new VirtualFileNonSlashAbsolutePath( path );
         }
         else
         {

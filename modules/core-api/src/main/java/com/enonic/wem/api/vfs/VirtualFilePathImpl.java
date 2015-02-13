@@ -13,37 +13,37 @@ import com.google.common.collect.Lists;
 public class VirtualFilePathImpl
     implements VirtualFilePath
 {
-    protected final static String SEPARATOR = "/";
+    final static String SEPARATOR = "/";
 
-    protected final boolean absolute;
+    final boolean absolute;
 
-    protected final LinkedList<String> elements;
+    final LinkedList<String> elements;
 
-    protected VirtualFilePathImpl( final Builder builder )
+    private VirtualFilePathImpl( final Builder builder )
     {
         this.absolute = builder.absolute;
         this.elements = builder.elements;
     }
 
-    protected VirtualFilePathImpl( final String path, final String separator )
+    VirtualFilePathImpl( final String path, final String separator )
     {
         this.absolute = path.startsWith( separator );
         this.elements = resolvePathElements( path, separator );
     }
 
-    protected VirtualFilePathImpl( final Path path )
+    VirtualFilePathImpl( final Path path )
     {
         this.absolute = path.isAbsolute();
         this.elements = resolvePathElements( path.toString(), path.getFileSystem().getSeparator() );
     }
 
-    protected VirtualFilePathImpl( final LinkedList<String> elements, final boolean absolute )
+    VirtualFilePathImpl( final LinkedList<String> elements, final boolean absolute )
     {
         this.absolute = absolute;
         this.elements = elements;
     }
 
-    private static LinkedList<String> resolvePathElements( final String path, final String separator )
+    static LinkedList<String> resolvePathElements( final String path, final String separator )
     {
         final LinkedList<String> elements = Lists.newLinkedList();
 
@@ -94,7 +94,7 @@ public class VirtualFilePathImpl
         return absolute ? SEPARATOR + join() : join();
     }
 
-    protected String join()
+    String join()
     {
         return Joiner.on( SEPARATOR ).join( elements );
     }
@@ -188,6 +188,5 @@ public class VirtualFilePathImpl
         {
             return new VirtualFilePathImpl( this );
         }
-
     }
 }
