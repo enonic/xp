@@ -23,7 +23,6 @@ import com.google.common.io.Resources;
 
 import com.enonic.wem.api.event.EventPublisher;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleBuilder;
 import com.enonic.wem.api.module.ModuleEventType;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleUpdatedEvent;

@@ -35,11 +35,13 @@ abstract class AbstractDescriptorServiceTest
     def Module createModule( final String moduleKey )
     {
         def key = ModuleKey.from( moduleKey )
-        def module = new ModuleBuilder().
+        def module = null;
+
+        /*new ModuleBuilder().
             moduleKey( key ).
             moduleVersion( ModuleVersion.from( "1.0.0" ) ).
             displayName( moduleKey.toUpperCase() ).
-            build();
+            build();*/
 
         this.moduleService.getModule( ModuleKey.from( moduleKey ) ) >> module
         return module;

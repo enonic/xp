@@ -35,4 +35,6 @@ public interface Module
     public Bundle getBundle();
 
     public MixinNames getMetaSteps();
+
+    // public <T> T getValue( Class<T> type, Callable<T> creator );
 }

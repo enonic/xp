@@ -2,7 +2,6 @@ package com.enonic.wem.module.internal;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.module.ModuleBuilder;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinNames;

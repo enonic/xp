@@ -1,11 +1,14 @@
-package com.enonic.wem.api.module;
+package com.enonic.wem.module.internal;
 
 import org.osgi.framework.Bundle;
 
 import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.mixin.MixinNames;
 
-public final class ModuleBuilder
+final class ModuleBuilder
 {
     private final ModuleImpl module;
 

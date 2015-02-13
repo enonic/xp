@@ -15,7 +15,6 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleBuilder;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleService;
 import com.enonic.wem.api.module.ModuleVersion;
@@ -33,7 +32,8 @@ public class ModuleResourceTest
         throws Exception
     {
         final Module module = createModule();
-        Mockito.when( this.moduleService.getAllModules() ).thenReturn( Modules.from( module ) );
+        final Modules modules = Modules.from( module );
+        Mockito.when( this.moduleService.getAllModules() ).thenReturn( modules );
 
         String response = request().
             path( "module/list" ).
@@ -137,16 +137,19 @@ public class ModuleResourceTest
         Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
         Mockito.when( bundle.getLastModified() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ).toEpochMilli() );
 
-        return new ModuleBuilder().
-            moduleKey( ModuleKey.from( "testmodule" ) ).
-            moduleVersion( ModuleVersion.from( "1.0.0" ) ).
-            displayName( "module display name" ).
-            url( "http://enonic.net" ).
-            vendorName( "Enonic" ).
-            vendorUrl( "https://www.enonic.com" ).
-            config( config ).
-            bundle( bundle ).
-            build();
+        final Module module = Mockito.mock( Module.class );
+        Mockito.when( module.getKey() ).thenReturn( ModuleKey.from( "testmodule" ) );
+        Mockito.when( module.getVersion() ).thenReturn( ModuleVersion.from( "1.0.0" ) );
+        Mockito.when( module.getDisplayName() ).thenReturn( "module display name" );
+        Mockito.when( module.getUrl() ).thenReturn( "http://enonic.net" );
+        Mockito.when( module.getVendorName() ).thenReturn( "Enonic" );
+        Mockito.when( module.getVendorUrl() ).thenReturn( "https://www.enonic.com" );
+        Mockito.when( module.getMinSystemVersion() ).thenReturn( "5.0" );
+        Mockito.when( module.getMaxSystemVersion() ).thenReturn( "5.1" );
+        Mockito.when( module.getBundle() ).thenReturn( bundle );
+        Mockito.when( module.getConfig() ).thenReturn( config );
+
+        return module;
     }
 
     @Override

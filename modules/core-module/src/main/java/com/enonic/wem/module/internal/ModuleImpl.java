@@ -1,4 +1,4 @@
-package com.enonic.wem.api.module;
+package com.enonic.wem.module.internal;
 
 import java.net.URL;
 import java.util.Enumeration;
@@ -10,6 +10,9 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.mixin.MixinNames;
 
 final class ModuleImpl
