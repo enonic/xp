@@ -4,6 +4,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jboss.resteasy.spi.UnhandledException;
 import org.osgi.service.component.annotations.Deactivate;
 
 import com.enonic.xp.web.handler.BaseWebHandler;
@@ -41,8 +42,18 @@ public abstract class JaxRsHandler
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        refreshIfNeeded( req.getServletContext() );
-        this.dispatcher.service( req.getMethod(), req, res, true );
+        try
+        {
+            refreshIfNeeded( req.getServletContext() );
+            this.dispatcher.service( req.getMethod(), req, res, true );
+        }
+        catch ( final UnhandledException e )
+        {
+            if ( !res.isCommitted() )
+            {
+                throw e;
+            }
+        }
     }
 
     @Deactivate
