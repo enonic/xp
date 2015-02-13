@@ -330,6 +330,7 @@ public class NodeImportCommandTest
         assertEquals( 1, result.getAddedNodes().getSize() );
     }
 
+    @Ignore
     @Test
     public void import_with_binary()
         throws Exception
