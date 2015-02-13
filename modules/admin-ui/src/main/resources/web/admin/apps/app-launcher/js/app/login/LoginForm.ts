@@ -78,13 +78,17 @@ module app.login {
                     this.onUserAuthenticatedHandler(loginResult);
                 }
                 this.passwordInput.setValue('');
-                this.messageContainer.setHtml('');
+                this.setMessage('');
             } else {
-                this.messageContainer.setHtml('Login failed!');
+                this.setMessage('Login failed!');
                 this.passwordInput.giveFocus();
                 this.userIdInput.addClass('invalid');
                 this.passwordInput.addClass('invalid');
             }
+        }
+
+        public setMessage(text: string) {
+            this.messageContainer.setHtml(text);
         }
 
         private onInputTyped(event: KeyboardEvent) {

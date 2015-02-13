@@ -17,17 +17,13 @@ module app.home {
             this.appendChild(this.installation);
 
             if (loadInstallation) {
-                new api.system.StatusRequest().send().done((response: api.rest.JsonResponse<api.system.StatusJson>) => {
-                    this.setInstallation(response.getResult().installation);
-                });
+                new api.system.StatusRequest().sendAndParse().then((status: api.system.StatusResult) => {
+                    this.setInstallation(status.getInstallation());
+                }).done();
             }
         }
 
-        getInstallation(): string {
-            return this.installation.getHtml();
-        }
-
-        setInstallation(installationText: string): void {
+        private setInstallation(installationText: string): void {
             this.installation.setHtml(installationText);
         }
 

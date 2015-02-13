@@ -47,10 +47,10 @@ module app.home {
                 this.logonMenu.hide();
             });
 
-            new api.system.StatusRequest().send().done((response: api.rest.JsonResponse<api.system.StatusJson>) => {
-                var installationText = response.getResult().installation ? response.getResult().installation : "Enonic experience platform";
+            new api.system.StatusRequest().sendAndParse().then((status: api.system.StatusResult) => {
+                var installationText = status.getInstallation() || "Enonic experience platform";
                 this.installationHeader.setHtml(installationText);
-            });
+            }).done();
 
         }
 

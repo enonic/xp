@@ -5,11 +5,13 @@ module app {
         private appLauncher: app.launcher.AppLauncher;
         private appSelector: app.launcher.AppSelector;
         private homeMainContainer: app.home.HomeMainContainer;
+        private loginForm: app.login.LoginForm;
         private serverEventsListener: api.app.ServerEventsListener;
+        private lostConnectionDetector: app.launcher.LostConnectionDetector;
         private appManager: api.app.AppManager;
 
         constructor() {
-
+            this.lostConnectionDetector = new app.launcher.LostConnectionDetector();
         }
 
         start() {
@@ -31,6 +33,9 @@ module app {
             this.appManager = api.app.AppManager.instance();
             this.serverEventsListener.onConnectionLost(this.onConnectionLost.bind(this));
             this.serverEventsListener.onConnectionRestored(this.onConnectionRestored.bind(this));
+            this.lostConnectionDetector.onConnectionLost(this.onConnectionRestored.bind(this));
+            this.lostConnectionDetector.onConnectionRestored(this.onConnectionRestored.bind(this));
+            this.lostConnectionDetector.onSessionExpired(this.handleSessionExpired.bind(this));
 
             app.home.LogOutEvent.on(this.onLogout.bind(this));
 
@@ -42,6 +47,7 @@ module app {
                 if (loginResult.isAuthenticated()) {
                     this.onUserAuthenticated(loginResult);
                 } else {
+                    this.lostConnectionDetector.setAuthenticated(false);
                     this.homeMainContainer.showLogin();
                 }
             }).catch((reason: any) => {
@@ -55,18 +61,19 @@ module app {
                 addLink('Documentation', 'http://www.enonic.com/docs').
                 addLink('About', 'https://enonic.com/en/home/enonic-cms');
 
-            var loginForm = new app.login.LoginForm(new app.login.AuthenticatorImpl());
-            loginForm.onUserAuthenticated(this.onUserAuthenticated.bind(this));
+            this.loginForm = new app.login.LoginForm(new app.login.AuthenticatorImpl());
+            this.loginForm.onUserAuthenticated(this.onUserAuthenticated.bind(this));
 
             return new app.home.HomeMainContainerBuilder().
                 setAppSelector(this.appSelector).
                 setLinksContainer(linksContainer).
-                setLoginForm(loginForm).
+                setLoginForm(this.loginForm).
                 build();
         }
 
         private onLogout() {
             this.serverEventsListener.stop();
+            this.lostConnectionDetector.stopPolling();
             this.appSelector.setAllowedApps([]);
             this.appLauncher.setAllowedApps([]);
             this.appManager.notifyConnectionRestored();
@@ -78,12 +85,14 @@ module app {
         }
 
         private onUserAuthenticated(loginResult: api.security.auth.LoginResult) {
+            this.lostConnectionDetector.setAuthenticated(loginResult.isAuthenticated());
             var allowedApps = app.launcher.Applications.getAppsByIds(loginResult.getApplications());
             this.appSelector.setAllowedApps(allowedApps);
             this.appLauncher.setAllowedApps(allowedApps);
             new app.home.LogInEvent(loginResult.getUser()).fire();
             this.homeMainContainer.showAppSelector();
             this.serverEventsListener.start();
+            this.lostConnectionDetector.startPolling();
         }
 
         private onConnectionRestored() {
@@ -92,15 +101,22 @@ module app {
 
         private onConnectionLost() {
             new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
+                this.lostConnectionDetector.setAuthenticated(loginResult.isAuthenticated());
                 if (!loginResult.isAuthenticated()) {
-                    this.onLogout();
-                    this.homeMainContainer.showLogin();
-                    this.appLauncher.showLauncherScreen();
+                    this.handleSessionExpired();
                 }
 
             }).catch((reason: any) => {
                 this.appManager.notifyConnectionLost();
             }).done();
+        }
+
+        private handleSessionExpired() {
+            this.onLogout();
+            this.homeMainContainer.showLogin();
+            this.appLauncher.showLauncherScreen();
+
+            this.loginForm.setMessage('Your session has expired.');
         }
     }
 

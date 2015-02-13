@@ -6,6 +6,8 @@ module api.rest {
 
         private method: string = "GET";
 
+        private timeoutMillis: number;
+
         constructor() {
             this.restPath = Path.fromString("admin/rest");
         }
@@ -26,6 +28,10 @@ module api.rest {
             throw new Error("Must be implemented by inheritors");
         }
 
+        setTimeout(timeoutMillis) {
+            this.timeoutMillis = timeoutMillis;
+        }
+
         /*
          * Override to ensure any validation of ResourceRequest before sending.
          */
@@ -40,11 +46,12 @@ module api.rest {
             var jsonRequest = new JsonRequest<RAW_JSON_TYPE>().
                 setMethod(this.method).
                 setParams(this.getParams()).
-                setPath(this.getRequestPath());
+                setPath(this.getRequestPath()).
+                setTimeout(this.timeoutMillis);
             return jsonRequest.send();
         }
 
-        sendAndParse():wemQ.Promise<PARSED_TYPE> {
+        sendAndParse(): wemQ.Promise<PARSED_TYPE> {
             throw new Error("sendAndParse method was not implemented");
         }
     }

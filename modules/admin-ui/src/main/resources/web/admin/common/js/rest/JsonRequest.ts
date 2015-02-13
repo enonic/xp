@@ -8,6 +8,8 @@ module api.rest {
 
         private params: Object;
 
+        private timeoutMillis: number = 10000;
+
         setPath(value: Path): JsonRequest<RAW_JSON_TYPE> {
             this.path = value;
             return this;
@@ -23,12 +25,17 @@ module api.rest {
             return this;
         }
 
+        setTimeout(timeoutMillis): JsonRequest<RAW_JSON_TYPE> {
+            this.timeoutMillis = timeoutMillis;
+            return this;
+        }
+
         send(): wemQ.Promise<JsonResponse<RAW_JSON_TYPE>> {
 
             var deferred = wemQ.defer<JsonResponse<RAW_JSON_TYPE>>();
 
             var request: XMLHttpRequest = new XMLHttpRequest();
-            request.timeout = 10000;
+            request.timeout = this.timeoutMillis;
             request.onreadystatechange = () => {
 
                 if (request.readyState === 4) {

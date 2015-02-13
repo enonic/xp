@@ -6,58 +6,49 @@ module app.launcher {
         private pollIntervalMs: number;
 
         private connected: boolean = true;
+        private authenticated: boolean = false;
 
         private connectionLostListeners: {():void}[] = [];
 
         private connectionRestoredListeners: {():void}[] = [];
 
-        constructor(pollIntervalMs: number = 5000) {
+        private sessionExpiredListeners: {():void}[] = [];
+
+        constructor(pollIntervalMs: number = 15000) {
             this.pollIntervalMs = pollIntervalMs;
-
-            var managerInstance = api.app.AppManager.instance();
-
-            this.onConnectionLost(() => {
-                managerInstance.notifyConnectionLost();
-            });
-
-            this.onConnectionRestored(() => {
-                managerInstance.notifyConnectionRestored();
-            });
         }
 
         startPolling() {
-
             this.stopPolling();
-            this.doPoll();
-            this.intervalId = setInterval(() => {
-                this.doPoll();
-            }, this.pollIntervalMs);
+            this.intervalId = setInterval(this.doPoll.bind(this), this.pollIntervalMs);
         }
 
         stopPolling() {
             clearInterval(this.intervalId);
         }
 
-        doPoll() {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', api.util.UriHelper.getRestUri('status'));
-            xhr.timeout = this.pollIntervalMs;
-            xhr.onreadystatechange = () => {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        if (!this.connected) {
-                            this.notifyConnectionRestored();
-                            this.connected = !this.connected;
-                        }
-                    } else {
-                        if (this.connected) {
-                            this.notifyConnectionLost();
-                            this.connected = !this.connected;
-                        }
-                    }
+        setAuthenticated(isAuthenticated: boolean) {
+            this.authenticated = isAuthenticated;
+        }
+
+        private doPoll() {
+            var request = new api.system.StatusRequest();
+            request.setTimeout(this.pollIntervalMs);
+            request.sendAndParse().then((status: api.system.StatusResult) => {
+                if (!this.connected) {
+                    this.notifyConnectionRestored();
+                    this.connected = !this.connected;
                 }
-            };
-            xhr.send(null);
+                if (this.authenticated && !status.isAuthenticated()) {
+                    this.notifySessionExpired();
+                }
+                this.authenticated = status.isAuthenticated();
+            }).catch((reason: any) => {
+                if (this.connected) {
+                    this.notifyConnectionLost();
+                    this.connected = !this.connected;
+                }
+            }).done();
         }
 
         onConnectionLost(listener: ()=>void) {
@@ -66,6 +57,10 @@ module app.launcher {
 
         onConnectionRestored(listener: ()=>void) {
             this.connectionRestoredListeners.push(listener);
+        }
+
+        onSessionExpired(listener: ()=>void) {
+            this.sessionExpiredListeners.push(listener);
         }
 
         unConnectionLost(listener: ()=>void) {
@@ -80,6 +75,12 @@ module app.launcher {
             })
         }
 
+        unSessionExpired(listener: ()=>void) {
+            this.sessionExpiredListeners = this.sessionExpiredListeners.filter((currentListener: ()=>void) => {
+                return currentListener != listener;
+            });
+        }
+
         private notifyConnectionLost() {
             this.connectionLostListeners.forEach((listener: ()=>void) => {
                 listener.call(this);
@@ -88,6 +89,12 @@ module app.launcher {
 
         private notifyConnectionRestored() {
             this.connectionRestoredListeners.forEach((listener: ()=>void) => {
+                listener.call(this);
+            });
+        }
+
+        private notifySessionExpired() {
+            this.sessionExpiredListeners.forEach((listener: ()=>void) => {
                 listener.call(this);
             });
         }
