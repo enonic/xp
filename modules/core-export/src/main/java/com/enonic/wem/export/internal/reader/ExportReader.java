@@ -14,6 +14,11 @@ import static com.enonic.wem.export.internal.ExportConstants.SYSTEM_FOLDER_NAME;
 
 public class ExportReader
 {
+    private static String getLastBitFromUrl( final URL url )
+    {
+        return url.toString().replaceFirst( ".*/([^/?]+).*", "$1" );
+    }
+
     public Stream<VirtualFile> getChildren( final VirtualFile parent )
     {
         return parent.getChildren().stream().
@@ -21,16 +26,11 @@ public class ExportReader
             filter( ( folder ) -> !getLastBitFromUrl( folder.getUrl() ).equals( SYSTEM_FOLDER_NAME ) );
     }
 
-    private static String getLastBitFromUrl( final URL url )
-    {
-        return url.toString().replaceFirst( ".*/([^/?]+).*", "$1" );
-    }
-
     public VirtualFile getBinarySource( final VirtualFile nodeFolder, final String binaryReferenceString )
     {
         final VirtualFilePath binaryFilePath = nodeFolder.getPath().join( SYSTEM_FOLDER_NAME, BINARY_FOLDER, binaryReferenceString );
 
-        final VirtualFile binaryFile = nodeFolder.resolve( binaryFilePath.getPath() );
+        final VirtualFile binaryFile = nodeFolder.resolve( binaryFilePath );
 
         if ( !binaryFile.exists() )
         {
@@ -44,7 +44,7 @@ public class ExportReader
     {
         final VirtualFilePath orderSourcePath = nodeFolder.getPath().join( SYSTEM_FOLDER_NAME, ORDER_EXPORT_NAME );
 
-        final VirtualFile orderFile = nodeFolder.resolve( orderSourcePath.getPath() );
+        final VirtualFile orderFile = nodeFolder.resolve( orderSourcePath );
 
         if ( !orderFile.exists() )
         {
@@ -58,7 +58,7 @@ public class ExportReader
     {
         final VirtualFilePath nodeSourcePath = nodeFolder.getPath().join( SYSTEM_FOLDER_NAME, NODE_XML_EXPORT_NAME );
 
-        final VirtualFile nodeVF = nodeFolder.resolve( nodeSourcePath.getPath() );
+        final VirtualFile nodeVF = nodeFolder.resolve( nodeSourcePath );
 
         if ( !nodeVF.exists() )
         {

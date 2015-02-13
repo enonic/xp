@@ -141,8 +141,8 @@ final class ClassLoaderFile
     }
 
     @Override
-    public VirtualFile resolve( final String path )
+    public VirtualFile resolve( final VirtualFilePath path )
     {
-        return new ClassLoaderFile( this.loader, this.path + "/" + path );
+        return new ClassLoaderFile( this.loader, this.path + "/" + path.getPath() );
     }
 }

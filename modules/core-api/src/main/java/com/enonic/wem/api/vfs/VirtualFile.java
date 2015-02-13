@@ -29,5 +29,5 @@ public interface VirtualFile
 
     public boolean exists();
 
-    public VirtualFile resolve( final String path );
+    public VirtualFile resolve( final VirtualFilePath path );
 }

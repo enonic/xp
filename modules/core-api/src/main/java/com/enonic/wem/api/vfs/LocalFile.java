@@ -118,9 +118,11 @@ final class LocalFile
     }
 
     @Override
-    public VirtualFile resolve( final String path )
+    public VirtualFile resolve( final VirtualFilePath virtualFilePath )
     {
-        return VirtualFiles.from( this.path.resolve( path ) );
+        final Path localPath = virtualFilePath.toLocalPath();
+
+        return VirtualFiles.from( this.path.resolve( localPath ) );
     }
 
 }

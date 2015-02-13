@@ -110,9 +110,9 @@ class BundleResource
     }
 
     @Override
-    public VirtualFile resolve( final String path )
+    public VirtualFile resolve( final VirtualFilePath path )
     {
-        return new BundleResource( this.bundle, this.bundle.getEntry( path ).getPath() );
+        return new BundleResource( this.bundle, this.bundle.getEntry( path.getPath() ).getPath() );
     }
 
 }

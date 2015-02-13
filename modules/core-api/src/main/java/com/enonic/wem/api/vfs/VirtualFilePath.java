@@ -1,6 +1,7 @@
 package com.enonic.wem.api.vfs;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
@@ -138,6 +139,18 @@ public class VirtualFilePath
     int size()
     {
         return this.elements.size();
+    }
+
+    public Path toLocalPath()
+    {
+        Path path = this.absolute ? Paths.get( "/" ) : Paths.get( "" );
+
+        for ( final String element : this.elements )
+        {
+            path = Paths.get( path.toString(), element );
+        }
+
+        return path;
     }
 
     @Override
