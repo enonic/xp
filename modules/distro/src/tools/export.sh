@@ -97,6 +97,9 @@ then
      PORT="8080"
 fi
 
+TARGETPATH=`cd "$TARGETPATH"; pwd`
+
 JSON="{\"sourceRepoPath\": \"$SOURCE\", \"targetDirectory\": \"$TARGETPATH\", \"importWithIds\": $INCLUDEIDS}"
 
+echo "Exporting to $TARGETPATH"
 eval "curl -u $AUTH -H \"Content-Type: application/json\" -XPOST 'http://$HOST:$PORT/admin/rest/export/export' -d '$JSON' $PRETTY"

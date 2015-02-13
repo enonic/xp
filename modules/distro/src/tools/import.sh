@@ -34,11 +34,11 @@ while getopts '?u:h:p:t:s:i:n' OPTION
 			    ;;
 			t)
 				tflag=1
-				TARGETPATH="$OPTARG"
+				TARGET_REPO_PATH="$OPTARG"
 				;;
 			s)
 				sflag=1
-				SOURCE="$OPTARG"
+				SOURCE_DIR="$OPTARG"
 				;;
 			i)
 				iflag=1
@@ -70,13 +70,13 @@ then
      exit 1
 fi
 
-if [[ -z $TARGETPATH ]]
+if [[ -z $TARGET_REPO_PATH ]]
 then
      usageShort
      exit 1
 fi
 
-if [[ -z $SOURCE ]]
+if [[ -z $SOURCE_DIR ]]
 then
      usageShort
      exit 1
@@ -97,6 +97,8 @@ then
      PORT="8080"
 fi
 
-JSON="{\"sourceDirectory\": \"$SOURCE\", \"targetRepoPath\": \"$TARGETPATH\", \"importWithIds\": $INCLUDEIDS}"
+SOURCE_DIR=`cd "$SOURCE_DIR"; pwd`
+
+JSON="{\"sourceDirectory\": \"$SOURCE_DIR\", \"targetRepoPath\": \"$TARGET_REPO_PATH\", \"importWithIds\": $INCLUDEIDS}"
 
 eval "curl -u $AUTH -H \"Content-Type: application/json\" -XPOST 'http://$HOST:$PORT/admin/rest/export/import' -d '$JSON' $PRETTY"
