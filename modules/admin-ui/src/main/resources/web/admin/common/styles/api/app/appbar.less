@@ -51,8 +51,7 @@
     .order(1);
 
     float: left;
-    line-height: 20px;
-    padding: 2px 30px 2px 0;
+    padding: 2px 30px 6px 0;
     border: 0;
     color: @admin-bg-light-gray;
     background-color: transparent;
@@ -62,7 +61,8 @@
     span {
       padding-left: 10px;
       font-size: 15px;
-      text-transform: uppercase
+      text-transform: uppercase;
+      line-height: inherit;
     }
 
     &:before {
@@ -102,6 +102,10 @@
     .home-button {
       .flex(0 0 48px);
 
+      &:before {
+        float: left;
+      }
+      
       span {
         display: none;
       }
