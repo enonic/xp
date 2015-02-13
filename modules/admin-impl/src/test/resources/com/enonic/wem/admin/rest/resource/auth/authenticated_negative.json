@@ -1,5 +1,9 @@
 {
   "applications": [],
   "authenticated": false,
+  "principals": [
+    "user:system:anonymous",
+    "role:system.everyone"
+  ],
   "user": null
 }

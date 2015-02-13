@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 
@@ -34,6 +36,16 @@ public final class LoginResultJson
     {
         final User user = authenticationInfo.getUser();
         return user == null ? null : new UserJson( user );
+    }
+
+    public String[] getPrincipals()
+    {
+        final PrincipalKeys principals = this.authenticationInfo.getPrincipals();
+        if ( principals == null )
+        {
+            return new String[0];
+        }
+        return principals.stream().map( PrincipalKey::toString ).toArray( String[]::new );
     }
 
     public String[] getApplications()

@@ -1,6 +1,10 @@
 {
   "applications": [],
   "authenticated": true,
+  "principals": [
+    "role:system.admin.login",
+    "user:system:user1"
+  ],
   "user": {
     "disabled": false,
     "displayName": "User 1",
