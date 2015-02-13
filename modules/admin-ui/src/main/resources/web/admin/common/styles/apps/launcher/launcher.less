@@ -228,7 +228,7 @@ html, body {
       margin-left: 21px;
       border: 1px solid @admin-bg-light-gray;
       vertical-align: top;
-      padding: 4px 9px;
+      padding: 4px 29px 4px 9px;
       background: none @admin-white !important;
       width: 200px;
 
@@ -244,6 +244,11 @@ html, body {
       margin-bottom: 0;
     }
 
+    .text-input {
+      min-height: initial;
+      margin-bottom: 13px;
+    }
+
     .login-button {
       .icon-arrow-right6;
       background-color: transparent;
@@ -251,6 +256,7 @@ html, body {
       right: 26px;
       padding: 3px 0px 0px 0px;
       font-size: 20px;
+      color: @form-button-bg;
 
       &:hover:not(:disabled) {
 
@@ -266,6 +272,10 @@ html, body {
 
       &:before {
         color: inherit; // updates icons color
+      }
+
+      span {
+        display: none;
       }
     }
   }
