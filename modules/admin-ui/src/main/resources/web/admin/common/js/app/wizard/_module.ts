@@ -1,6 +1,7 @@
 ///<reference path='DisplayNameGenerator.ts' />
 ///<reference path='SaveAction.ts' />
 ///<reference path='CloseAction.ts' />
+///<reference path='SaveAndCloseAction.ts' />
 ///<reference path='WizardActions.ts' />
 ///<reference path='FormIcon.ts' />
 ///<reference path='WizardHeader.ts' />

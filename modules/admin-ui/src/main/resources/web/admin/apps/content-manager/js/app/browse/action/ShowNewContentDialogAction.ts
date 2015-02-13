@@ -5,7 +5,7 @@ module app.browse.action {
     export class ShowNewContentDialogAction extends Action {
 
         constructor(grid: ContentTreeGrid) {
-            super("New", "mod+alt+n");
+            super("New", "alt+n");
             this.setEnabled(true);
             this.onExecuted(() => {
                 var contentSummaries: api.content.ContentSummary[]

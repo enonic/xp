@@ -44,7 +44,7 @@ module api.ui {
          * @param trigger Event type to hook on (mouse,focus)
          * @param side Side of the target where tooltip should be shown (top,left,right,bottom)
          */
-        constructor(target: api.dom.Element, text?: string, showDelay: number = 0, hideTimeout: number = 1000) {
+        constructor(target: api.dom.Element, text?: string, showDelay: number = 0, hideTimeout: number = 0) {
 
             this.targetEl = target;
             this.text = text;

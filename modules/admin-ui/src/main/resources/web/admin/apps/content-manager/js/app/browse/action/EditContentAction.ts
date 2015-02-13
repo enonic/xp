@@ -5,7 +5,7 @@ module app.browse.action {
     export class EditContentAction extends Action {
 
         constructor(grid: ContentTreeGrid) {
-            super("Edit", "f4");
+            super("Edit", "mod+e");
             this.setEnabled(false);
             this.onExecuted(() => {
                 var contentSummaries: api.content.ContentSummary[]

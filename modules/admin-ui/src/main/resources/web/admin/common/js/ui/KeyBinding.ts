@@ -1,16 +1,23 @@
 module api.ui {
 
+    export enum KeyBindingAction {
+        KEYDOWN,
+        KEYUP,
+        KEYPRESS
+    }
+
     export class KeyBinding {
 
         private combination: string;
 
         private callback: (e: ExtendedKeyboardEvent, combo: string) => boolean;
 
-        private action: string;
+        private action: KeyBindingAction;
 
         private global: boolean;
 
-        constructor(combination: string, callback?: (e: ExtendedKeyboardEvent, combo: string) => any, action?: string, global?: boolean) {
+        constructor(combination: string, callback?: (e: ExtendedKeyboardEvent, combo: string) => any, action?: KeyBindingAction,
+                    global?: boolean) {
 
             this.combination = combination;
             this.callback = callback;
@@ -23,7 +30,7 @@ module api.ui {
             return this;
         }
 
-        setAction(value: string): KeyBinding {
+        setAction(value: KeyBindingAction): KeyBinding {
             this.action = value;
             return this;
         }
@@ -41,7 +48,7 @@ module api.ui {
             return this.callback;
         }
 
-        getAction(): string {
+        getAction(): KeyBindingAction {
             return this.action;
         }
 

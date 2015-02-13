@@ -47,7 +47,15 @@ module api.app.browse.filter {
                 this.appendChild(this.searchField);
                 this.appendChild(this.clearFilter);
                 this.appendChild(this.aggregationContainer);
+
+                api.ui.KeyBindings.get().bindKey(new api.ui.KeyBinding("/", (e: ExtendedKeyboardEvent) => {
+                    setTimeout(this.giveFocusToSearch.bind(this), 100);
+                }).setGlobal(true));
             })
+        }
+
+        private giveFocusToSearch() {
+            this.searchField.giveFocus();
         }
 
         updateAggregations(aggregations: api.aggregation.Aggregation[], doUpdateAll?: boolean) {

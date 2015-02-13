@@ -6,6 +6,8 @@ module app.wizard.action {
 
         private close: api.ui.Action;
 
+        private saveAndClose: api.ui.Action;
+
         private delete: api.ui.Action;
 
         private duplicate: api.ui.Action;
@@ -27,6 +29,7 @@ module app.wizard.action {
             this.duplicate = new DuplicateContentAction(wizardPanel);
             this.delete = new DeleteContentAction(wizardPanel);
             this.close = new api.app.wizard.CloseAction(wizardPanel);
+            this.saveAndClose = new api.app.wizard.SaveAndCloseAction(wizardPanel);
             this.publish = new PublishAction(wizardPanel);
             this.preview = new PreviewAction(wizardPanel);
             this.showLiveEditAction = new ShowLiveEditAction(wizardPanel);
@@ -36,7 +39,7 @@ module app.wizard.action {
                 this.save, this.duplicate, this.delete,
                 this.close, this.publish, this.preview,
                 this.showLiveEditAction, this.showFormAction,
-                this.showSplitEditAction
+                this.showSplitEditAction, this.saveAndClose
             ];
         }
 
