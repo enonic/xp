@@ -3,7 +3,9 @@ package com.enonic.xp.portal.impl.url;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.script.mapper.ContentFixtures;
 import com.enonic.xp.portal.url.ImageUrlParams;
 
@@ -80,6 +82,19 @@ public class PortalUrlServiceImpl_imageUrlTest
         assertEquals( "/portal/draft/context/path/_/image/123456/mycontent", url );
     }
 
+    @Test
+    public void createUrl_withId_notFound()
+    {
+        createContentNotFound();
+
+        final ImageUrlParams params = new ImageUrlParams().
+            id( "123456" ).
+            context( this.context );
+
+        final String url = this.service.imageUrl( params );
+        assertEquals( "/portal/draft/context/path/_/error/404?message=Content+with+id+%5B123456%5D+was+not+found+in+branch+%5Bdraft%5D", url );
+    }
+
     private Content createContent()
     {
         final Content content = ContentFixtures.newContent();
@@ -87,4 +102,15 @@ public class PortalUrlServiceImpl_imageUrlTest
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
         return content;
     }
+
+    private Content createContentNotFound()
+    {
+        final Content content = ContentFixtures.newContent();
+        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenThrow(
+            new ContentNotFoundException( content.getPath(), Branch.from( "draft" ) ) );
+        Mockito.when( this.contentService.getById( content.getId() ) ).thenThrow(
+            new ContentNotFoundException( content.getId(), Branch.from( "draft" ) ) );
+        return content;
+    }
 }
+

@@ -10,6 +10,7 @@ import com.google.common.net.UrlEscapers;
 
 import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.ContentService;
+import com.enonic.wem.api.exception.NotFoundException;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
@@ -98,6 +99,18 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
     public final String build()
     {
+        try
+        {
+            return doBuild();
+        }
+        catch ( final Exception e )
+        {
+            return buildErrorUrl( e );
+        }
+    }
+
+    private String doBuild()
+    {
         final StringBuilder str = new StringBuilder();
         appendPart( str, getBaseUri() );
 
@@ -114,6 +127,40 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     {
         params.putAll( this.params.getParams() );
         appendPart( url, getBranch().toString() );
+    }
+
+    protected String buildErrorUrl( final Exception e )
+    {
+        if ( e instanceof NotFoundException )
+        {
+            return buildErrorUrl( 404, e.getMessage() );
+        }
+        else
+        {
+            return buildErrorUrl( 500, e.getMessage() );
+        }
+    }
+
+    protected final String buildErrorUrl( final int code, final String message )
+    {
+        final StringBuilder str = new StringBuilder();
+        appendPart( str, getBaseUri() );
+        appendPart( str, getBranch().toString() );
+        appendPart( str, this.context.getContentPath().toString() );
+        appendPart( str, "_" );
+        appendPart( str, "error" );
+        appendPart( str, String.valueOf( code ) );
+
+        final Multimap<String, String> params = HashMultimap.create();
+
+        if ( message != null )
+        {
+            params.put( "message", message );
+        }
+
+        appendParams( str, params.entries() );
+        final String uri = str.toString();
+        return ServletRequestUrlHelper.rewriteUri( uri );
     }
 
     @Override

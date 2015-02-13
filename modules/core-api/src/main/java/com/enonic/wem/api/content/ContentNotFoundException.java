@@ -23,7 +23,7 @@ public final class ContentNotFoundException
 
     public ContentNotFoundException( final ContentId contentId, final Branch branch )
     {
-        super( MessageFormat.format( "Content with id [{0}] was not found  in branch [{1}]", contentId.toString(), branch ) );
+        super( MessageFormat.format( "Content with id [{0}] was not found in branch [{1}]", contentId.toString(), branch ) );
     }
 
     public ContentNotFoundException( final ContentIds contentIds, final Branch branch )
