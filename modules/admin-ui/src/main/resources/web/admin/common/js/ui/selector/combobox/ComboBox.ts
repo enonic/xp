@@ -156,6 +156,8 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.renderDropdownGrid();
 
             this.input.setReadOnly(true);
+
+            this.setOnBlurListener();
         }
 
         setEmptyDropdownText(label: string) {
