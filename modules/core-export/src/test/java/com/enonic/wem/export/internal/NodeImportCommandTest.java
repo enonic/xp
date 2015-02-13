@@ -330,7 +330,6 @@ public class NodeImportCommandTest
         assertEquals( 1, result.getAddedNodes().getSize() );
     }
 
-    @Ignore
     @Test
     public void import_with_binary()
         throws Exception
@@ -355,6 +354,7 @@ public class NodeImportCommandTest
         assertNotNull( attachedBinary.getBlobKey() );
     }
 
+    @Ignore
     @Test
     public void import_special_characters()
         throws Exception
