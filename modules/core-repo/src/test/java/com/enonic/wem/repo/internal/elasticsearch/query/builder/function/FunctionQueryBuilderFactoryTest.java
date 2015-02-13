@@ -10,22 +10,18 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.query.expr.FunctionExpr;
 import com.enonic.wem.api.query.expr.ValueExpr;
-import com.enonic.wem.repo.internal.elasticsearch.query.builder.function.FunctionQueryBuilderFactory;
 
 import static org.junit.Assert.*;
 
 public class FunctionQueryBuilderFactoryTest
 {
-
     @Test
     public void test_fulltext()
     {
-        FunctionQueryBuilderFactory factory = new FunctionQueryBuilderFactory();
-
         List<ValueExpr> arguments =
             Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.string( "mySearchString" ), ValueExpr.string( "OR" ) );
 
-        final QueryBuilder fulltext = factory.create( new FunctionExpr( "fulltext", arguments ) );
+        final QueryBuilder fulltext = FunctionQueryBuilderFactory.create( new FunctionExpr( "fulltext", arguments ) );
 
         assertTrue( fulltext instanceof SimpleQueryStringBuilder );
     }
