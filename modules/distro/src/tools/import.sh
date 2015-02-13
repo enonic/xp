@@ -3,14 +3,14 @@
 # Usage info
 show_help() {
 cat << EOF
-Usage: ${0##*/} -u USER:PASSWORD -s SOURCE_REPO_PATH -t TARGET_DIR [-h HOSTNAME] [-p PORT] [-i true|false] [-n]
+Usage: ${0##*/} -u USER:PASSWORD -s SOURCE_DIR -t TARGET_REPO_PATH [-h HOSTNAME] [-p PORT] [-i true|false] [-n]
 
-Export node from a branch in a repository
+Import nodes from an export into a repository branch
 
 	-?				display this help and exit
 	-u USER:PASSWORD		user:password for basic authentication
-	-t TARGET_DIR			target directory to save export
-	-s SOURCE_REPO_PATH			path of data to export. Format: <repo-name>:<branch-name>:<node-path>. Sample: 'cms-repo:stage:/content'
+	-t TARGET_REPO_PATH			target path for import. Format: <repo-name>:<branch-name>:<node-path>. Sample: 'cms-repo:stage:/content'
+	-s SOURCE_DIR			path to exported files
 	-h HOSTNAME			hostname, defaults to localhost
 	-p PORT				port, defaults to 8080
 	-n                  enable nice format of output (requires python)
@@ -19,7 +19,7 @@ EOF
 }
 
 usageShort() {
-echo "Usage: ${0##*/} -u USER:PASSWORD -s SOURCE_REPO_PATH -t TARGET_DIR [-h HOSTNAME] [-p PORT] [-i true|false] [-n]"
+echo "Usage: ${0##*/} -u USER:PASSWORD -s SOURCE_DIR -t TARGET_REPO_PATH [-h HOSTNAME] [-p PORT] [-i true|false] [-n]"
 }
 
 PRETTY=""
@@ -48,11 +48,11 @@ while getopts '?u:h:p:t:s:i:n' OPTION
 				pflag=1
 				PORT="$OPTARG"
 				;;
-			h)
+            h)
 				hflag=1
 				HOST="$OPTARG"
 				;;
-			n)
+            n)
                 PRETTY="| python -mjson.tool"
                 ;;
 	  		\?)
@@ -97,6 +97,6 @@ then
      PORT="8080"
 fi
 
-JSON="{\"sourceRepoPath\": \"$SOURCE\", \"targetDirectory\": \"$TARGETPATH\", \"importWithIds\": $INCLUDEIDS}"
+JSON="{\"sourceDirectory\": \"$SOURCE\", \"targetRepoPath\": \"$TARGETPATH\", \"importWithIds\": $INCLUDEIDS}"
 
-eval "curl -u $AUTH -H \"Content-Type: application/json\" -XPOST 'http://$HOST:$PORT/admin/rest/export/export' -d '$JSON' $PRETTY"
+eval "curl -u $AUTH -H \"Content-Type: application/json\" -XPOST 'http://$HOST:$PORT/admin/rest/export/import' -d '$JSON' $PRETTY"
