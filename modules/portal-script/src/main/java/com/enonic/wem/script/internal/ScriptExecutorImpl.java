@@ -15,6 +15,7 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.script.ScriptValue;
+import com.enonic.wem.script.internal.bean.ModuleScriptInfo;
 import com.enonic.wem.script.internal.bean.ScriptValueFactoryImpl;
 import com.enonic.wem.script.internal.error.ErrorHelper;
 import com.enonic.wem.script.internal.function.CallFunction;
@@ -28,7 +29,7 @@ final class ScriptExecutorImpl
     implements ScriptExecutor
 {
     private final static String PRE_SCRIPT = "" + //
-        "(function(log,execute,require,resolve) {" + //
+        "(function(log,module,execute,require,resolve) {" + //
         "'use strict';" + //
         "var exports = {};";
 
@@ -111,8 +112,9 @@ final class ScriptExecutorImpl
             final RequireFunction require = new RequireFunction( script, this );
             final ScriptLogger logger = new ScriptLogger( script );
             final ExecuteFunction execute = new ExecuteFunction( script, this.invoker );
+            final ModuleScriptInfo moduleInfo = new ModuleScriptInfo( script.getModule() );
 
-            return func.call( this.global, logger, execute, require, resolve );
+            return func.call( this.global, logger, moduleInfo, execute, require, resolve );
         }
         catch ( final Exception e )
         {

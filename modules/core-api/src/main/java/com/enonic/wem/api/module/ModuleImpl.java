@@ -19,12 +19,16 @@ final class ModuleImpl
 
     protected ModuleVersion moduleVersion;
 
+    // TODO: Use Bundle-Name header.
     protected String displayName;
 
+    // TODO: Use X-Module-Url header.
     protected String url;
 
+    // TODO: Use X-Vendor-Name header.
     protected String vendorName;
 
+    // TODO: Use X-Vendor-Url header.
     protected String vendorUrl;
 
     protected Form config;
@@ -51,14 +55,14 @@ final class ModuleImpl
     @Override
     public String getMaxSystemVersion()
     {
-        // TODO: Introduce property
+        // TODO: Use X-System-Version header. VersionRange.
         return "5.1";
     }
 
     @Override
     public String getMinSystemVersion()
     {
-        // TODO: Introduce property
+        // TODO: Use X-System-Version header. VersionRange.
         return "5.0";
     }
 
