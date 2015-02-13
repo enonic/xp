@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
 
@@ -11,6 +13,8 @@ import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
 public final class VirtualHostConfigImpl
     implements VirtualHostConfig
 {
+    private final static Logger LOG = LoggerFactory.getLogger( VirtualHostConfigImpl.class );
+
     private boolean enabled;
 
     private VirtualHostMappings mappings;
@@ -39,5 +43,10 @@ public final class VirtualHostConfigImpl
         final VirtualHostConfigMap configMap = new VirtualHostConfigMap( config );
         this.enabled = configMap.isEnabled();
         this.mappings = configMap.buildMappings();
+
+        if ( this.enabled )
+        {
+            LOG.info( "Virtual host is enabled and mappings updated." );
+        }
     }
 }
