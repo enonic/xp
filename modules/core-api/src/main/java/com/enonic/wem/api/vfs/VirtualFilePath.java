@@ -12,11 +12,11 @@ import com.google.common.collect.Lists;
 
 public class VirtualFilePath
 {
-    private final static String SEPARATOR = "/";
+    protected final static String SEPARATOR = "/";
 
-    private final boolean absolute;
+    protected final boolean absolute;
 
-    private final LinkedList<String> elements;
+    protected final LinkedList<String> elements;
 
     private VirtualFilePath( final Builder builder )
     {
@@ -24,7 +24,7 @@ public class VirtualFilePath
         this.elements = builder.elements;
     }
 
-    private VirtualFilePath( final LinkedList<String> elements, final boolean absolute )
+    protected VirtualFilePath( final LinkedList<String> elements, final boolean absolute )
     {
         this.absolute = absolute;
         this.elements = elements;
@@ -32,17 +32,24 @@ public class VirtualFilePath
 
     public static VirtualFilePath from( final String path )
     {
-        return new VirtualFilePath( getPathElements( path, SEPARATOR ), path.startsWith( SEPARATOR ) );
+        return new VirtualFilePath( resolvePathElements( path, SEPARATOR ), path.startsWith( SEPARATOR ) );
     }
 
     public static VirtualFilePath from( final Path path )
     {
         final String separator = path.getFileSystem().getSeparator();
 
-        return new VirtualFilePath( getPathElements( path.toString(), separator ), path.isAbsolute() );
+        if ( !path.isAbsolute() && path.startsWith( separator ) )
+        {
+            return new DriveLetterFilePath( resolvePathElements( path.toString(), separator ) );
+        }
+        else
+        {
+            return new VirtualFilePath( resolvePathElements( path.toString(), separator ), path.isAbsolute() );
+        }
     }
 
-    private static LinkedList<String> getPathElements( final String path, final String separator )
+    private static LinkedList<String> resolvePathElements( final String path, final String separator )
     {
         final LinkedList<String> elements = Lists.newLinkedList();
 
@@ -93,7 +100,7 @@ public class VirtualFilePath
         return absolute ? SEPARATOR + join() : join();
     }
 
-    private String join()
+    protected String join()
     {
         return Joiner.on( SEPARATOR ).join( elements );
     }
@@ -130,7 +137,7 @@ public class VirtualFilePath
 
         for ( final String element : elements )
         {
-            builder.addAll( getPathElements( element, SEPARATOR ) );
+            builder.addAll( resolvePathElements( element, SEPARATOR ) );
         }
 
         return builder.build();
