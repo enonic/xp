@@ -102,5 +102,5 @@ SOURCE_DIR=`cd "$SOURCE_DIR"; pwd`
 
 JSON="{\"sourceDirectory\": \"$SOURCE_DIR\", \"targetRepoPath\": \"$TARGET_REPO_PATH\", \"importWithIds\": $INCLUDEIDS}"
 
-echo "Importing from directory $SOURCE_DIR to
+echo "Importing from directory $SOURCE_DIR to $TARGET_REPO_PATH"
 eval "curl -u $AUTH -H \"Content-Type: application/json\" -XPOST 'http://$HOST:$PORT/admin/rest/export/import' -d '$JSON' $PRETTY"

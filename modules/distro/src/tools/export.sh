@@ -57,7 +57,7 @@ while getopts '?u:h:p:t:s:i:n' OPTION
 			n)
                 PRETTY="| python -mjson.tool"
                 ;;
-	  		\?|--help)
+	  		\?)
 		    	show_help >&2
 		        exit 1
 				;;
@@ -99,9 +99,10 @@ then
      PORT="8080"
 fi
 
+
 TARGETPATH=`cd "$TARGETPATH"; pwd`
+echo "Exporting to $TARGETPATH"
 
 JSON="{\"sourceRepoPath\": \"$SOURCE\", \"targetDirectory\": \"$TARGETPATH\", \"importWithIds\": $INCLUDEIDS}"
 
-echo "Exporting to $TARGETPATH"
 eval "curl -u $AUTH -H \"Content-Type: application/json\" -XPOST 'http://$HOST:$PORT/admin/rest/export/export' -d '$JSON' $PRETTY"
