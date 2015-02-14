@@ -144,7 +144,7 @@ final class MixinLoader
     {
         final Mixin.Builder builder = Mixin.newMixin();
         final XmlMixin mixinXml = XmlSerializers.mixin().parse( serializedMixin );
-        XmlMixinMapper.fromXml( mixinXml, builder );
+        new XmlMixinMapper( this.moduleKey ).fromXml( mixinXml, builder );
         return builder;
     }
 }

@@ -2,6 +2,7 @@ package com.enonic.wem.api.form.inputtype;
 
 import org.w3c.dom.Element;
 
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.xml.DomBuilder;
 import com.enonic.wem.api.xml.DomHelper;
 
@@ -29,7 +30,7 @@ final class ComboBoxConfigXmlSerializer
     }
 
     @Override
-    public ComboBoxConfig parseConfig( final Element elem )
+    public ComboBoxConfig parseConfig( final ModuleKey currentModule, final Element elem )
     {
         final ComboBoxConfig.Builder builder = newComboBoxConfig();
         final Element optionsEl = DomHelper.getChildElementByTagName( elem, "options" );

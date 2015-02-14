@@ -9,6 +9,7 @@ import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.xml.mapper.XmlPageDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlPageDescriptor;
 
@@ -25,7 +26,7 @@ import static junit.framework.Assert.assertNotNull;
 public class XmlPageDescriptorSerializerTest
     extends BaseXmlSerializerTest
 {
-
+    private final static ModuleKey CURRENT_MODULE = ModuleKey.from( "mymodule" );
     @Test
     public void test_to_xml()
         throws Exception
@@ -79,7 +80,7 @@ public class XmlPageDescriptorSerializerTest
             key( DescriptorKey.from( "module:mypage" ) ).
             build();
 
-        final XmlPageDescriptor xml = XmlPageDescriptorMapper.toXml( pageDescriptor );
+        final XmlPageDescriptor xml = new XmlPageDescriptorMapper( CURRENT_MODULE ).toXml( pageDescriptor );
         final String result = XmlSerializers.pageDescriptor().serialize( xml );
 
         assertXml( "page-descriptor.xml", result );
@@ -95,7 +96,7 @@ public class XmlPageDescriptorSerializerTest
         builder.regions( RegionDescriptors.newRegionDescriptors().build() );
 
         final XmlPageDescriptor xmlObject = XmlSerializers.pageDescriptor().parse( xml );
-        XmlPageDescriptorMapper.fromXml( xmlObject, builder );
+        new XmlPageDescriptorMapper( CURRENT_MODULE ).fromXml( xmlObject, builder );
 
         final PageDescriptor pageDescriptor = builder.build();
 

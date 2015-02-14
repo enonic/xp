@@ -34,7 +34,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
 
         final XmlPartDescriptor xmlObject = XmlSerializers.partDescriptor().parse( descriptorXml );
-        XmlPartDescriptorMapper.fromXml( xmlObject, builder );
+        new XmlPartDescriptorMapper( resourceKey.getModule() ).fromXml( xmlObject, builder );
 
         builder.name( key.getName() ).key( key );
         return builder.build();

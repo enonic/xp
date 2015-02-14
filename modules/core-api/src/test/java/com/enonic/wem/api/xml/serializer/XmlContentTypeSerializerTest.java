@@ -21,6 +21,8 @@ import static junit.framework.Assert.assertEquals;
 public class XmlContentTypeSerializerTest
     extends BaseXmlSerializerTest
 {
+    private final static ModuleKey CURRENT_MODULE = ModuleKey.from( "mymodule" );
+
     @Test
     public void test_to_xml()
         throws Exception
@@ -32,13 +34,13 @@ public class XmlContentTypeSerializerTest
 
         final ContentType.Builder contentTypeBuilder =
             newContentType().name( "mymodule:all_schemas" ).addFormItem( set ).displayName( "All the Base Types" ).
-                metadata( MixinNames.from("mymodule:metadata") ).description( "description" ).contentDisplayNameScript(
+                metadata( MixinNames.from( "mymodule:metadata" ) ).description( "description" ).contentDisplayNameScript(
                 "$('firstName') + ' ' + $('lastName')" ).superType( ContentTypeName.from( "mymodule:content" ) ).setAbstract(
                 false ).setFinal( true );
 
         final ContentType contentType = contentTypeBuilder.build();
 
-        final XmlContentType xml = XmlContentTypeMapper.toXml( contentType );
+        final XmlContentType xml = new XmlContentTypeMapper( CURRENT_MODULE ).toXml( contentType );
         final String result = XmlSerializers.contentType().serialize( xml );
 
         assertXml( "content-type-to.xml", result );
@@ -53,7 +55,7 @@ public class XmlContentTypeSerializerTest
         builder.name( "mymodule:content-type" );
 
         final XmlContentType xmlObject = XmlSerializers.contentType().parse( xml );
-        XmlContentTypeMapper.fromXml( ModuleKey.from( "mymodule" ), xmlObject, builder );
+        new XmlContentTypeMapper( CURRENT_MODULE ).fromXml( xmlObject, builder );
 
         final ContentType contentType = builder.build();
         assertEquals( "mymodule:content-type", contentType.getName().toString() );

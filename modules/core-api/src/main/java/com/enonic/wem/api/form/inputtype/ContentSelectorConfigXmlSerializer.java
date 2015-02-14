@@ -5,8 +5,9 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Element;
 
+import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleRelativeResolver;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.xml.DomBuilder;
 import com.enonic.wem.api.xml.DomHelper;
 
@@ -38,14 +39,16 @@ final class ContentSelectorConfigXmlSerializer
     }
 
     @Override
-    public ContentSelectorConfig parseConfig( final Element elem )
+    public ContentSelectorConfig parseConfig( final ModuleKey currentModule, final Element elem )
     {
+        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( currentModule );
+
         final ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
         final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, RELATIONSHIP_TYPE_ELEMENT );
         final String text = DomHelper.getTextValue( relationshipTypeEl );
         if ( StringUtils.isNotBlank( text ) )
         {
-            builder.relationshipType( RelationshipTypeName.from( text ) );
+            builder.relationshipType( resolver.toRelationshipTypeName( text ) );
         }
 
         final List<Element> allowContentTypeEls = DomHelper.getChildElementsByTagName( elem, ALLOWED_CONTENT_TYPE_ELEMENT );
@@ -54,7 +57,7 @@ final class ContentSelectorConfigXmlSerializer
             final String allowContentTypeText = DomHelper.getTextValue( allowContentTypeEl );
             if ( StringUtils.isNotBlank( allowContentTypeText ) )
             {
-                builder.addAllowedContentType( ContentTypeName.from( allowContentTypeText ) );
+                builder.addAllowedContentType( resolver.toContentTypeName( allowContentTypeText ) );
             }
         }
 

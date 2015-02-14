@@ -34,7 +34,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         final LayoutDescriptor.Builder builder = LayoutDescriptor.newLayoutDescriptor();
 
         final XmlLayoutDescriptor xmlObject = XmlSerializers.layoutDescriptor().parse( descriptorXml );
-        XmlLayoutDescriptorMapper.fromXml( xmlObject, builder );
+        new XmlLayoutDescriptorMapper( resourceKey.getModule() ).fromXml( xmlObject, builder );
 
         builder.name( key.getName() ).key( key );
         return builder.build();

@@ -186,7 +186,7 @@ public abstract class RenderBaseResourceTest
         final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
 
         final XmlPageDescriptor xmlObject = XmlSerializers.pageDescriptor().parse( xml );
-        XmlPageDescriptorMapper.fromXml( xmlObject, builder );
+        new XmlPageDescriptorMapper( module ).fromXml( xmlObject, builder );
 
         return builder.
             key( key ).

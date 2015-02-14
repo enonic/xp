@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.support.XmlTestHelper;
 import com.enonic.wem.api.xml.DomHelper;
@@ -17,6 +18,8 @@ import static junit.framework.Assert.assertEquals;
 
 public class ImageSelectorConfigXmlSerializerTest
 {
+    private final static ModuleKey CURRENT_MODULE = ModuleKey.from( "mymodule" );
+
     private XmlTestHelper xmlHelper;
 
     private ImageSelectorConfigXmlSerializer serializer = new ImageSelectorConfigXmlSerializer();
@@ -53,7 +56,7 @@ public class ImageSelectorConfigXmlSerializerTest
         ImageSelectorConfig expected = builder.build();
 
         // exercise
-        ImageSelectorConfig parsed = serializer.parseConfig( xmlHelper.parseXml( "parseConfig.xml" ) );
+        ImageSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml( "parseConfig.xml" ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -76,7 +79,7 @@ public class ImageSelectorConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        ImageSelectorConfig parsed = serializer.parseConfig( DomHelper.parse( xml.toString() ) );
+        ImageSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -96,7 +99,7 @@ public class ImageSelectorConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        ImageSelectorConfig parsed = serializer.parseConfig( DomHelper.parse( xml.toString() ) );
+        ImageSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -113,7 +116,7 @@ public class ImageSelectorConfigXmlSerializerTest
         ImageSelectorConfig expected = ImageSelectorConfig.newImageSelectorConfig().build();
 
         // exercise
-        ImageSelectorConfig parsed = serializer.parseConfig( DomHelper.parse( xml.toString() ) );
+        ImageSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );

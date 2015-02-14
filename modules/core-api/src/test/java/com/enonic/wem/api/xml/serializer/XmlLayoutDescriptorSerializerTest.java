@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.content.page.region.LayoutDescriptor;
 import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.xml.mapper.XmlLayoutDescriptorMapper;
 import com.enonic.wem.api.xml.model.XmlLayoutDescriptor;
 
@@ -18,6 +19,7 @@ import static junit.framework.Assert.assertNotNull;
 public class XmlLayoutDescriptorSerializerTest
     extends BaseXmlSerializerTest
 {
+    private final static ModuleKey CURRENT_MODULE = ModuleKey.from( "mymodule" );
 
     @Test
     public void test_to_xml()
@@ -38,7 +40,7 @@ public class XmlLayoutDescriptorSerializerTest
             key( DescriptorKey.from( "module:mylayout" ) ).
             build();
 
-        XmlLayoutDescriptor xml = XmlLayoutDescriptorMapper.toXml( layoutDescriptor );
+        XmlLayoutDescriptor xml = new XmlLayoutDescriptorMapper( CURRENT_MODULE ).toXml( layoutDescriptor );
         final String result = XmlSerializers.layoutDescriptor().serialize( xml );
 
         assertXml( "layout-descriptor.xml", result );
@@ -54,7 +56,7 @@ public class XmlLayoutDescriptorSerializerTest
         builder.name( "mylayout" );
 
         XmlLayoutDescriptor xmlObject = XmlSerializers.layoutDescriptor().parse( xml );
-        XmlLayoutDescriptorMapper.fromXml( xmlObject, builder );
+        new XmlLayoutDescriptorMapper( CURRENT_MODULE ).fromXml( xmlObject, builder );
         LayoutDescriptor layoutDescriptor = builder.build();
 
         assertEquals( "A Layout", layoutDescriptor.getDisplayName() );

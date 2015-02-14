@@ -15,6 +15,8 @@ import static junit.framework.Assert.assertEquals;
 public class XmlRelationshipTypeSerializerTest
     extends BaseXmlSerializerTest
 {
+    private final static ModuleKey CURRENT_MODULE = ModuleKey.from( "mymodule" );
+
     @Test
     public void test_to_xml()
         throws Exception
@@ -29,7 +31,7 @@ public class XmlRelationshipTypeSerializerTest
             addAllowedToType( ContentTypeName.from( "mymodule:vehicle" ) ).
             build();
 
-        XmlRelationshipType xmlObject = XmlRelationshipTypeMapper.toXml( relationshipType );
+        XmlRelationshipType xmlObject = new XmlRelationshipTypeMapper( CURRENT_MODULE ).toXml( relationshipType );
         String result = XmlSerializers.relationshipType().serialize( xmlObject );
 
         assertXml( "relationship-type-to.xml", result );
@@ -43,7 +45,7 @@ public class XmlRelationshipTypeSerializerTest
         final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
 
         XmlRelationshipType xmlObject = XmlSerializers.relationshipType().parse( xml );
-        XmlRelationshipTypeMapper.fromXml( ModuleKey.from( "mymodule" ), xmlObject, builder );
+        new XmlRelationshipTypeMapper( CURRENT_MODULE ).fromXml( xmlObject, builder );
         builder.name( "mymodule:myreltype" );
         RelationshipType relationshipType = builder.build();
 

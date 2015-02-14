@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.support.XmlTestHelper;
@@ -16,6 +17,8 @@ import static junit.framework.Assert.assertEquals;
 
 public class ContentSelectorConfigXmlSerializerTest
 {
+    private final static ModuleKey CURRENT_MODULE = ModuleKey.from( "mymodule" );
+
     private XmlTestHelper xmlHelper;
 
     private ContentSelectorConfigXmlSerializer serializer = new ContentSelectorConfigXmlSerializer();
@@ -84,7 +87,7 @@ public class ContentSelectorConfigXmlSerializerTest
         ContentSelectorConfig expected = builder.build();
 
         // exercise
-        ContentSelectorConfig parsed = serializer.parseConfig( xmlHelper.parseXml( "parseConfig.xml" ) );
+        ContentSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml( "parseConfig.xml" ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -102,7 +105,7 @@ public class ContentSelectorConfigXmlSerializerTest
         ContentSelectorConfig expected = builder.build();
 
         // exercise
-        ContentSelectorConfig parsed = serializer.parseConfig( xmlHelper.parseXml( "parseFullConfig.xml" ) );
+        ContentSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, xmlHelper.parseXml( "parseFullConfig.xml" ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -124,7 +127,7 @@ public class ContentSelectorConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        ContentSelectorConfig parsed = serializer.parseConfig( DomHelper.parse( xml.toString() ) );
+        ContentSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -144,7 +147,7 @@ public class ContentSelectorConfigXmlSerializerTest
         xml.append( "</config>\n" );
 
         // exercise
-        ContentSelectorConfig parsed = serializer.parseConfig( DomHelper.parse( xml.toString() ) );
+        ContentSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );
@@ -162,7 +165,7 @@ public class ContentSelectorConfigXmlSerializerTest
 
 
         // exercise
-        ContentSelectorConfig parsed = serializer.parseConfig( DomHelper.parse( xml.toString() ) );
+        ContentSelectorConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );
 
         // verify
         assertEquals( expected.getRelationshipType(), parsed.getRelationshipType() );

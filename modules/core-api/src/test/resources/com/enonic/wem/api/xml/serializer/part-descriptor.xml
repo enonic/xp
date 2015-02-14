@@ -8,5 +8,6 @@
       <indexed>false</indexed>
       <occurrences minimum="0" maximum="1"/>
     </input>
+    <inline mixin="mymodule:link-urls"/>
   </config>
 </part-component>

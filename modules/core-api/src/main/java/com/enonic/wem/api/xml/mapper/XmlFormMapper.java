@@ -19,6 +19,7 @@ import com.enonic.wem.api.form.ValidationRegex;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.xml.XmlException;
 import com.enonic.wem.api.xml.model.XmlFieldSet;
 import com.enonic.wem.api.xml.model.XmlForm;
@@ -31,14 +32,21 @@ import com.enonic.wem.api.xml.model.XmlOccurrence;
 
 public final class XmlFormMapper
 {
-    public static XmlForm toXml( final Form object )
+    private final ModuleKey currentModule;
+
+    public XmlFormMapper( final ModuleKey currentModule )
+    {
+        this.currentModule = currentModule;
+    }
+
+    public XmlForm toXml( final Form object )
     {
         final XmlForm result = new XmlForm();
         result.getList().addAll( toItemsXml( object.getFormItems() ).getList() );
         return result;
     }
 
-    public static Form fromXml( final XmlForm xml )
+    public Form fromXml( final XmlForm xml )
     {
         final Form.Builder builder = Form.newForm();
 
@@ -50,12 +58,12 @@ public final class XmlFormMapper
         return builder.build();
     }
 
-    public static void fromXml( final XmlForm xml, final Form.Builder builder )
+    public void fromXml( final XmlForm xml, final Form.Builder builder )
     {
         builder.addFormItems( fromItemsXml( xml ) );
     }
 
-    public static List<FormItem> fromItemsXml( final XmlFormItems xml )
+    public List<FormItem> fromItemsXml( final XmlFormItems xml )
     {
         final List<FormItem> result = Lists.newArrayList();
         for ( final XmlFormItem item : xml.getList() )
@@ -67,7 +75,7 @@ public final class XmlFormMapper
         return result;
     }
 
-    private static FormItem fromItemXml( final XmlFormItem xml )
+    private FormItem fromItemXml( final XmlFormItem xml )
     {
         if ( xml instanceof XmlInput )
         {
@@ -92,7 +100,7 @@ public final class XmlFormMapper
         throw new XmlException( "Unknown item type [{0}]", xml.getClass() );
     }
 
-    private static Input fromItemXml( final XmlInput xml )
+    private Input fromItemXml( final XmlInput xml )
     {
         final InputType type = InputTypes.parse( xml.getType() );
 
@@ -111,7 +119,7 @@ public final class XmlFormMapper
         return builder.build();
     }
 
-    private static FormItemSet fromItemXml( final XmlFormItemSet xml )
+    private FormItemSet fromItemXml( final XmlFormItemSet xml )
     {
         final FormItemSet.Builder builder = FormItemSet.newFormItemSet();
         builder.name( xml.getName() );
@@ -124,14 +132,14 @@ public final class XmlFormMapper
         return builder.build();
     }
 
-    private static InlineMixin fromItemXml( final XmlInline xml )
+    private InlineMixin fromItemXml( final XmlInline xml )
     {
         final InlineMixin.Builder builder = InlineMixin.newInlineMixin();
         builder.mixin( xml.getMixin() );
         return builder.build();
     }
 
-    private static FieldSet fromItemXml( final XmlFieldSet xml )
+    private FieldSet fromItemXml( final XmlFieldSet xml )
     {
         final FieldSet.Builder builder = FieldSet.newFieldSet();
         builder.name( xml.getName() );
@@ -140,7 +148,7 @@ public final class XmlFormMapper
         return builder.build();
     }
 
-    private static Occurrences fromOccurenceXml( final XmlOccurrence xml )
+    private Occurrences fromOccurenceXml( final XmlOccurrence xml )
     {
         final Occurrences.Builder builder = Occurrences.newOccurrences();
         builder.minimum( xml.getMinimum() );
@@ -148,7 +156,7 @@ public final class XmlFormMapper
         return builder.build();
     }
 
-    private static InputTypeConfig fromConfigXml( final InputType type, final Object value )
+    private InputTypeConfig fromConfigXml( final InputType type, final Object value )
     {
         if ( !( value instanceof Element ) )
         {
@@ -156,10 +164,10 @@ public final class XmlFormMapper
         }
 
         final Element element = (Element) value;
-        return type.getInputTypeConfigXmlSerializer().parseConfig( element );
+        return type.getInputTypeConfigXmlSerializer().parseConfig( currentModule, element );
     }
 
-    public static XmlFormItems toItemsXml( final FormItems object )
+    public XmlFormItems toItemsXml( final FormItems object )
     {
         final XmlFormItems result = new XmlFormItems();
         for ( final FormItem item : object )
@@ -171,7 +179,7 @@ public final class XmlFormMapper
         return result;
     }
 
-    private static XmlFormItem toItemXml( final FormItem object )
+    private XmlFormItem toItemXml( final FormItem object )
     {
         if ( object instanceof Input )
         {
@@ -196,7 +204,7 @@ public final class XmlFormMapper
         throw new XmlException( "Unknown item type [{0}]", object.getClass() );
     }
 
-    private static XmlInput toItemXml( final Input object )
+    private XmlInput toItemXml( final Input object )
     {
         final InputType type = object.getInputType();
 
@@ -216,7 +224,7 @@ public final class XmlFormMapper
         return result;
     }
 
-    private static XmlFormItemSet toItemXml( final FormItemSet object )
+    private XmlFormItemSet toItemXml( final FormItemSet object )
     {
         final XmlFormItemSet result = new XmlFormItemSet();
         result.setName( object.getName() );
@@ -229,14 +237,14 @@ public final class XmlFormMapper
         return result;
     }
 
-    private static XmlInline toItemXml( final InlineMixin object )
+    private XmlInline toItemXml( final InlineMixin object )
     {
         final XmlInline result = new XmlInline();
         result.setMixin( object.getMixinName().toString() );
         return result;
     }
 
-    private static XmlFieldSet toItemXml( final FieldSet object )
+    private XmlFieldSet toItemXml( final FieldSet object )
     {
         final XmlFieldSet result = new XmlFieldSet();
         result.setName( object.getName() );
@@ -245,7 +253,7 @@ public final class XmlFormMapper
         return result;
     }
 
-    private static XmlOccurrence toOccurenceXml( final Occurrences object )
+    private XmlOccurrence toOccurenceXml( final Occurrences object )
     {
         final XmlOccurrence result = new XmlOccurrence();
         result.setMinimum( object.getMinimum() );
@@ -254,7 +262,7 @@ public final class XmlFormMapper
     }
 
     @SuppressWarnings("unchecked")
-    private static Object toConfigXml( final InputType type, final InputTypeConfig value )
+    private Object toConfigXml( final InputType type, final InputTypeConfig value )
     {
         if ( value == null )
         {

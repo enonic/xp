@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleRelativeResolver;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -12,7 +13,14 @@ import com.enonic.wem.api.xml.model.XmlRelationshipType;
 
 public final class XmlRelationshipTypeMapper
 {
-    public static XmlRelationshipType toXml( final RelationshipType object )
+    private final ModuleKey currentModule;
+
+    public XmlRelationshipTypeMapper( final ModuleKey currentModule )
+    {
+        this.currentModule = currentModule;
+    }
+
+    public XmlRelationshipType toXml( final RelationshipType object )
     {
         XmlRelationshipType result = new XmlRelationshipType();
         result.setDescription( object.getDescription() );
@@ -23,13 +31,13 @@ public final class XmlRelationshipTypeMapper
         return result;
     }
 
-    public static void fromXml( final ModuleKey currentModule, final XmlRelationshipType xml, final RelationshipType.Builder builder )
+    public void fromXml( final XmlRelationshipType xml, final RelationshipType.Builder builder )
     {
         builder.description( xml.getDescription() );
         builder.fromSemantic( xml.getFromSemantic() );
         builder.toSemantic( xml.getToSemantic() );
 
-        final XmlModuleRelativeResolver resolver = new XmlModuleRelativeResolver( currentModule );
+        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( currentModule );
         for ( final String ctyName : xml.getAllowedFromTypes().getContentType() )
         {
             builder.addAllowedFromType( resolver.toContentTypeName( ctyName ) );
@@ -41,21 +49,21 @@ public final class XmlRelationshipTypeMapper
         }
     }
 
-    private static XmlRelationshipType.AllowedFromTypes toAllowedFromTypes( final ContentTypeNames names )
+    private XmlRelationshipType.AllowedFromTypes toAllowedFromTypes( final ContentTypeNames names )
     {
         final XmlRelationshipType.AllowedFromTypes result = new XmlRelationshipType.AllowedFromTypes();
         result.getContentType().addAll( toXml( names ) );
         return result;
     }
 
-    private static XmlRelationshipType.AllowedToTypes toAllowedToTypes( final ContentTypeNames names )
+    private XmlRelationshipType.AllowedToTypes toAllowedToTypes( final ContentTypeNames names )
     {
         final XmlRelationshipType.AllowedToTypes result = new XmlRelationshipType.AllowedToTypes();
         result.getContentType().addAll( toXml( names ) );
         return result;
     }
 
-    private static List<String> toXml( final ContentTypeNames allowedFromTypes )
+    private List<String> toXml( final ContentTypeNames allowedFromTypes )
     {
         final List<String> result = Lists.newArrayList();
         for ( final ContentTypeName ctyName : allowedFromTypes )

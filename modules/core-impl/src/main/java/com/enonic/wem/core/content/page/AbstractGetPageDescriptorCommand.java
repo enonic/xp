@@ -19,7 +19,7 @@ abstract class AbstractGetPageDescriptorCommand
         final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
 
         final XmlPageDescriptor xmlObject = XmlSerializers.pageDescriptor().parse( descriptorXml );
-        XmlPageDescriptorMapper.fromXml( xmlObject, builder );
+        new XmlPageDescriptorMapper( resourceKey.getModule() ).fromXml( xmlObject, builder );
 
         builder.key( key );
 

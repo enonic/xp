@@ -50,7 +50,7 @@ final class ModuleXmlBuilder
         final XmlForm config = xml.getConfig();
         if ( config != null )
         {
-            builder.config( XmlFormMapper.fromXml( config ) );
+            builder.config( new XmlFormMapper( moduleKey ).fromXml( config ) );
         }
     }
 }

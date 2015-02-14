@@ -144,7 +144,7 @@ final class ContentTypeLoader
     {
         final ContentType.Builder builder = ContentType.newContentType();
         final XmlContentType contentTypeXml = XmlSerializers.contentType().parse( str );
-        XmlContentTypeMapper.fromXml( this.moduleKey, contentTypeXml, builder );
+        new XmlContentTypeMapper( this.moduleKey ).fromXml( contentTypeXml, builder );
         return builder;
     }
 }

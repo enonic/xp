@@ -2,6 +2,7 @@ package com.enonic.wem.api.form.inputtype;
 
 import org.w3c.dom.Element;
 
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.xml.DomBuilder;
 import com.enonic.wem.api.xml.DomHelper;
 
@@ -29,7 +30,7 @@ final class SingleSelectorConfigXmlSerializer
     }
 
     @Override
-    public InputTypeConfig parseConfig( final Element elem )
+    public InputTypeConfig parseConfig( final ModuleKey currentModule, final Element elem )
     {
         final SingleSelectorConfig.Builder builder = newSingleSelectorConfig();
 

@@ -3,7 +3,8 @@ package com.enonic.wem.api.form.inputtype;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Element;
 
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleRelativeResolver;
 import com.enonic.wem.api.xml.DomBuilder;
 import com.enonic.wem.api.xml.DomHelper;
 
@@ -27,17 +28,20 @@ final class ImageSelectorConfigXmlSerializer
     }
 
     @Override
-    public ImageSelectorConfig parseConfig( final Element elem )
+    public ImageSelectorConfig parseConfig( final ModuleKey currentModule, final Element elem )
     {
+        final ModuleRelativeResolver resolver = new ModuleRelativeResolver( currentModule );
+
         final ImageSelectorConfig.Builder builder = newImageSelectorConfig();
         final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, "relationship-type" );
 
         final String text = DomHelper.getTextValue( relationshipTypeEl );
         if ( text != null && StringUtils.isNotBlank( text ) )
         {
-            builder.relationshipType( RelationshipTypeName.from( text ) );
+            builder.relationshipType( resolver.toRelationshipTypeName( text ) );
         }
 
         return builder.build();
     }
+
 }

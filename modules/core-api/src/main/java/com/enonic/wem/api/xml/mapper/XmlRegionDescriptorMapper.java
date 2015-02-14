@@ -4,12 +4,20 @@ import java.util.List;
 
 import com.enonic.wem.api.content.page.region.RegionDescriptor;
 import com.enonic.wem.api.content.page.region.RegionDescriptors;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.xml.model.XmlRegionDescriptor;
 import com.enonic.wem.api.xml.model.XmlRegions;
 
 final class XmlRegionDescriptorMapper
 {
-    protected static RegionDescriptors fromXml( final XmlRegions regions )
+    private final ModuleKey currentModule;
+
+    public XmlRegionDescriptorMapper( final ModuleKey currentModule )
+    {
+        this.currentModule = currentModule;
+    }
+
+    protected RegionDescriptors fromXml( final XmlRegions regions )
     {
         final RegionDescriptors.Builder builder = RegionDescriptors.newRegionDescriptors();
 
@@ -21,7 +29,7 @@ final class XmlRegionDescriptorMapper
         return builder.build();
     }
 
-    private static void fromXml( final RegionDescriptors.Builder builder, final List<XmlRegionDescriptor> regions )
+    private void fromXml( final RegionDescriptors.Builder builder, final List<XmlRegionDescriptor> regions )
     {
         if ( regions != null )
         {
@@ -32,14 +40,14 @@ final class XmlRegionDescriptorMapper
         }
     }
 
-    protected static RegionDescriptor fromXml( final XmlRegionDescriptor descriptor )
+    protected RegionDescriptor fromXml( final XmlRegionDescriptor descriptor )
     {
         final RegionDescriptor.Builder builder = RegionDescriptor.newRegionDescriptor();
         builder.name( descriptor.getName() );
         return builder.build();
     }
 
-    protected static XmlRegions toXml( final RegionDescriptors object )
+    protected XmlRegions toXml( final RegionDescriptors object )
     {
         final XmlRegions result = new XmlRegions();
         for ( final RegionDescriptor descriptor : object )
@@ -49,7 +57,7 @@ final class XmlRegionDescriptorMapper
         return result;
     }
 
-    protected static XmlRegionDescriptor toXml( final RegionDescriptor object )
+    protected XmlRegionDescriptor toXml( final RegionDescriptor object )
     {
         final XmlRegionDescriptor result = new XmlRegionDescriptor();
         result.setName( object.getName() );
