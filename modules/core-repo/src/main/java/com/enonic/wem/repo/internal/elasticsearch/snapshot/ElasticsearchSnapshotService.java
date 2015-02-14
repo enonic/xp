@@ -3,6 +3,9 @@ package com.enonic.wem.repo.internal.elasticsearch.snapshot;
 import java.time.Instant;
 import java.util.Set;
 
+import org.elasticsearch.repositories.RepositoryMissingException;
+import org.elasticsearch.snapshots.SnapshotInfo;
+import org.elasticsearch.snapshots.SnapshotState;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -44,7 +47,40 @@ public class ElasticsearchSnapshotService
 
     private RestoreResult doRestore( final RestoreParams restoreParams )
     {
+
+        try
+        {
+            final SnapshotInfo snapshot = this.elasticsearchDao.getSnapshot( restoreParams.getSnapshotName() );
+
+            if ( snapshot.state().equals( SnapshotState.FAILED ) )
+            {
+                return buildRestoreFailedResult( restoreParams,
+                                                 "Failed to restore snapshot: Snapshot with name '" + restoreParams.getSnapshotName() +
+                                                     "' is not valid" );
+            }
+        }
+        catch ( RepositoryMissingException e )
+        {
+            return buildRestoreFailedResult( restoreParams,
+                                             "Failed to restore snapshot: Snapshot with name '" + restoreParams.getSnapshotName() +
+                                                 "' not found" );
+        }
+        catch ( Exception e )
+        {
+            return buildRestoreFailedResult( restoreParams, "Failed to restore snapshot: " + e.toString() );
+        }
+
         return this.elasticsearchDao.restoreSnapshot( restoreParams );
+    }
+
+    private RestoreResult buildRestoreFailedResult( final RestoreParams restoreParams, final String message )
+    {
+        return RestoreResult.create().
+            repositoryId( restoreParams.getRepositoryId() ).
+            name( restoreParams.getSnapshotName() ).
+            message( message ).
+            failed( true ).
+            build();
     }
 
     @Override

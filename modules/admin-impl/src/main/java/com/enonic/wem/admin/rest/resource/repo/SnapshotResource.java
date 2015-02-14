@@ -2,6 +2,7 @@ package com.enonic.wem.admin.rest.resource.repo;
 
 import java.time.Instant;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -15,6 +16,7 @@ import com.enonic.wem.admin.AdminResource;
 import com.enonic.wem.admin.rest.resource.ResourceConstants;
 import com.enonic.wem.api.node.NodeService;
 import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.snapshot.DeleteSnapshotParams;
 import com.enonic.wem.api.snapshot.DeleteSnapshotsResult;
 import com.enonic.wem.api.snapshot.RestoreParams;
@@ -25,11 +27,17 @@ import com.enonic.wem.api.snapshot.SnapshotResults;
 
 @Path(ResourceConstants.REST_ROOT + "repo")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed(RoleKeys.ADMIN_LOGIN_ID)
 @Component(immediate = true)
 public class SnapshotResource
     implements AdminResource
 {
     private NodeService nodeService;
+
+    private static String createSnapshotName( final RepositoryId repositoryId )
+    {
+        return ( repositoryId + Instant.now().toString() ).toLowerCase();
+    }
 
     @POST
     @Path("snapshot")
@@ -80,11 +88,6 @@ public class SnapshotResource
         final SnapshotResults snapshotResults = this.nodeService.listSnapshots();
 
         return SnapshotResultsJson.from( snapshotResults );
-    }
-
-    private static String createSnapshotName( final RepositoryId repositoryId )
-    {
-        return ( repositoryId + Instant.now().toString() ).toLowerCase();
     }
 
     @Reference

@@ -4,12 +4,13 @@ import java.util.Collection;
 
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.snapshots.SnapshotInfo;
 
 import com.enonic.wem.api.snapshot.RestoreParams;
 import com.enonic.wem.api.snapshot.RestoreResult;
-import com.enonic.wem.api.snapshot.SnapshotResults;
 import com.enonic.wem.api.snapshot.SnapshotParams;
 import com.enonic.wem.api.snapshot.SnapshotResult;
+import com.enonic.wem.api.snapshot.SnapshotResults;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
@@ -35,6 +36,8 @@ public interface ElasticsearchDao
     public SnapshotResult snapshot( final SnapshotParams params );
 
     public RestoreResult restoreSnapshot( final RestoreParams params );
+
+    public SnapshotInfo getSnapshot( final String snapshotName );
 
     public void deleteSnapshot( final String snapshotName );
 

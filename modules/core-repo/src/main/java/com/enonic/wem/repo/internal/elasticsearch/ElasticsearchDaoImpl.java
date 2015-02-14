@@ -14,6 +14,7 @@ import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotReq
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
+import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
@@ -30,9 +31,11 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.common.collect.ImmutableList;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.repositories.RepositoryException;
+import org.elasticsearch.snapshots.SnapshotInfo;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -233,24 +236,61 @@ public class ElasticsearchDaoImpl
     {
         checkSnapshotRepository();
 
-        final Set<String> indices = getSnapshotIndexNames( params.getRepositoryId(), params.isIncludeIndexedData() );
+        final RepositoryId repositoryId = params.getRepositoryId();
+        final Set<String> indices = getSnapshotIndexNames( repositoryId, params.isIncludeIndexedData() );
 
         closeIndices( indices );
 
-        final RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
-            new RestoreSnapshotRequestBuilder( this.client.admin().cluster() ).
-                setRestoreGlobalState( false ).
-                setIndices( indices.toArray( new String[indices.size()] ) ).
-                setRepository( SNAPSHOT_REPOSITORY_NAME ).
-                setSnapshot( params.getSnapshotName() ).
-                setWaitForCompletion( true );
+        final RestoreSnapshotResponse response;
+        try
+        {
+            final RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
+                new RestoreSnapshotRequestBuilder( this.client.admin().cluster() ).
+                    setRestoreGlobalState( false ).
+                    setIndices( indices.toArray( new String[indices.size()] ) ).
+                    setRepository( SNAPSHOT_REPOSITORY_NAME ).
+                    setSnapshot( params.getSnapshotName() ).
+                    setWaitForCompletion( true );
 
-        final RestoreSnapshotResponse response =
-            this.client.admin().cluster().restoreSnapshot( restoreSnapshotRequestBuilder.request() ).actionGet();
+            response = this.client.admin().cluster().restoreSnapshot( restoreSnapshotRequestBuilder.request() ).actionGet();
 
-        openIndices( indices );
+            return RestoreResultFactory.create( response, repositoryId );
+        }
+        catch ( ElasticsearchException e )
+        {
+            return RestoreResult.create().
+                repositoryId( repositoryId ).
+                indices( indices ).
+                failed( true ).
+                name( params.getSnapshotName() ).
+                message( "Could not restore snapshot: " + e.toString() + " to repository " + repositoryId ).
+                build();
+        }
+        finally
+        {
+            openIndices( indices );
+        }
+    }
 
-        return RestoreResultFactory.create( response );
+    public SnapshotInfo getSnapshot( final String snapshotName )
+    {
+        final GetSnapshotsRequestBuilder getSnapshotsRequestBuilder = new GetSnapshotsRequestBuilder( this.client.admin().cluster() ).
+            setRepository( SNAPSHOT_REPOSITORY_NAME ).
+            setSnapshots( snapshotName );
+
+        final GetSnapshotsResponse getSnapshotsResponse =
+            this.client.admin().cluster().getSnapshots( getSnapshotsRequestBuilder.request() ).actionGet();
+
+        final ImmutableList<SnapshotInfo> snapshots = getSnapshotsResponse.getSnapshots();
+
+        if ( snapshots.size() == 0 )
+        {
+            return null;
+        }
+        else
+        {
+            return snapshots.get( 0 );
+        }
     }
 
     private void checkSnapshotRepository()
@@ -295,6 +335,7 @@ public class ElasticsearchDaoImpl
     private Set<String> getSnapshotIndexNames( final RepositoryId repositoryId, final boolean includeIndexedData )
     {
         final Set<String> indices = Sets.newHashSet();
+
         indices.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
 
         if ( includeIndexedData )
@@ -306,18 +347,28 @@ public class ElasticsearchDaoImpl
 
     private void openIndices( final Set<String> indexNames )
     {
-        OpenIndexRequestBuilder openIndexRequestBuilder = new OpenIndexRequestBuilder( this.client.admin().indices() ).
-            setIndices( new String[indexNames.size()] );
+        for ( final String indexName : indexNames )
+        {
+            OpenIndexRequestBuilder openIndexRequestBuilder = new OpenIndexRequestBuilder( this.client.admin().indices() ).
+                setIndices( indexName );
 
-        this.client.admin().indices().open( openIndexRequestBuilder.request() );
+            this.client.admin().indices().open( openIndexRequestBuilder.request() ).actionGet();
+
+            LOG.info( "Opened index " + indexName );
+        }
     }
 
     private void closeIndices( final Set<String> indexNames )
     {
-        CloseIndexRequestBuilder closeIndexRequestBuilder = new CloseIndexRequestBuilder( this.client.admin().indices() ).
-            setIndices( indexNames.toArray( new String[indexNames.size()] ) );
+        for ( final String indexName : indexNames )
+        {
+            CloseIndexRequestBuilder closeIndexRequestBuilder = new CloseIndexRequestBuilder( this.client.admin().indices() ).
+                setIndices( indexName );
 
-        this.client.admin().indices().close( closeIndexRequestBuilder.request() );
+            this.client.admin().indices().close( closeIndexRequestBuilder.request() ).actionGet();
+
+            LOG.info( "Closed index " + indexName );
+        }
     }
 
     private boolean snapshotRepositoryExists()

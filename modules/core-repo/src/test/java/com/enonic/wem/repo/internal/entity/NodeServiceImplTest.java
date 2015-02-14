@@ -28,6 +28,7 @@ import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.api.snapshot.RestoreParams;
+import com.enonic.wem.api.snapshot.RestoreResult;
 import com.enonic.wem.api.snapshot.SnapshotParams;
 import com.enonic.wem.api.snapshot.SnapshotResult;
 
@@ -188,4 +189,26 @@ public class NodeServiceImplTest
 
         assertNotNull( getNodeById( node.id() ) );
     }
+
+    @Test
+    public void non_existing_snapshot()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "myNode" ).
+            build() );
+
+        assertNotNull( getNodeById( node.id() ) );
+
+        final RestoreResult result = this.nodeService.restore( RestoreParams.create().
+            snapshotName( "my-snapshot" ).
+            repositoryId( CTX_DEFAULT.getRepositoryId() ).
+            build() );
+
+        assertTrue( result.isFailed() );
+
+        assertNotNull( getNodeById( node.id() ) );
+    }
+
 }
