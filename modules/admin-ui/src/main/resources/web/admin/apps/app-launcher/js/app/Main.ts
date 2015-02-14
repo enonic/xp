@@ -9,6 +9,8 @@ module app {
         private serverEventsListener: api.app.ServerEventsListener;
         private lostConnectionDetector: app.launcher.LostConnectionDetector;
         private appManager: api.app.AppManager;
+        private authenticated: boolean = false;
+        private connectionLost: boolean = false;
 
         constructor() {
             this.lostConnectionDetector = new app.launcher.LostConnectionDetector();
@@ -33,7 +35,7 @@ module app {
             this.appManager = api.app.AppManager.instance();
             this.serverEventsListener.onConnectionLost(this.onConnectionLost.bind(this));
             this.serverEventsListener.onConnectionRestored(this.onConnectionRestored.bind(this));
-            this.lostConnectionDetector.onConnectionLost(this.onConnectionRestored.bind(this));
+            this.lostConnectionDetector.onConnectionLost(this.onConnectionLost.bind(this));
             this.lostConnectionDetector.onConnectionRestored(this.onConnectionRestored.bind(this));
             this.lostConnectionDetector.onSessionExpired(this.handleSessionExpired.bind(this));
 
@@ -45,6 +47,8 @@ module app {
         private initialIsAuthenticatedCheck() {
             new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
                 if (loginResult.isAuthenticated()) {
+                    this.authenticated = true;
+                    this.lostConnectionDetector.setAuthenticated(true);
                     this.onUserAuthenticated(loginResult);
                 } else {
                     this.lostConnectionDetector.setAuthenticated(false);
@@ -72,6 +76,8 @@ module app {
         }
 
         private onLogout() {
+            this.authenticated = false;
+            this.connectionLost = false;
             this.serverEventsListener.stop();
             this.lostConnectionDetector.stopPolling();
             this.appSelector.setAllowedApps([]);
@@ -97,17 +103,21 @@ module app {
 
         private onConnectionRestored() {
             this.appManager.notifyConnectionRestored();
+            this.connectionLost = false;
         }
 
         private onConnectionLost() {
             new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
                 this.lostConnectionDetector.setAuthenticated(loginResult.isAuthenticated());
-                if (!loginResult.isAuthenticated()) {
+                if (this.authenticated && !loginResult.isAuthenticated()) {
                     this.handleSessionExpired();
                 }
 
             }).catch((reason: any) => {
-                this.appManager.notifyConnectionLost();
+                if (!this.connectionLost) {
+                    this.connectionLost = true;
+                    this.appManager.notifyConnectionLost();
+                }
             }).done();
         }
 

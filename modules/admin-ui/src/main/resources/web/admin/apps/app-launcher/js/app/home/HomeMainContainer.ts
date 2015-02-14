@@ -62,6 +62,8 @@ module app.home {
 
         showLogin() {
             this.centerPanel.showLoginPanel();
+            this.brandingPanel.show();
+            this.headerPanel.hide();
         }
 
         showAppSelector() {
