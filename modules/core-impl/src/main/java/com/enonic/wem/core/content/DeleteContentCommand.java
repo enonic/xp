@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.CompareStatus;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentAccessException;
 import com.enonic.wem.api.content.ContentChangeEvent;
 import com.enonic.wem.api.content.ContentConstants;
 import com.enonic.wem.api.content.ContentState;
@@ -13,6 +14,7 @@ import com.enonic.wem.api.content.DeleteContentParams;
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeAccessException;
 import com.enonic.wem.api.node.NodeComparison;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeState;
@@ -33,12 +35,19 @@ final class DeleteContentCommand
     {
         params.validate();
 
-        final Content deletedContent = doExecute();
-        if ( deletedContent != null && deletedContent.getContentState() != ContentState.PENDING_DELETE )
+        try
         {
-            eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
+            final Content deletedContent = doExecute();
+            if ( deletedContent != null && deletedContent.getContentState() != ContentState.PENDING_DELETE )
+            {
+                eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
+            }
+            return deletedContent;
         }
-        return deletedContent;
+        catch ( NodeAccessException e )
+        {
+            throw new ContentAccessException( e );
+        }
     }
 
     private Content doExecute()

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentAccessException;
 import com.enonic.wem.api.content.ContentChangeEvent;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentEditor;
@@ -15,6 +16,7 @@ import com.enonic.wem.api.content.UpdateContentParams;
 import com.enonic.wem.api.content.UpdateContentTranslatorParams;
 import com.enonic.wem.api.media.MediaInfo;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeAccessException;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -52,8 +54,14 @@ final class UpdateContentCommand
     Content execute()
     {
         params.validate();
-
-        return doExecute();
+        try
+        {
+            return doExecute();
+        }
+        catch ( NodeAccessException e )
+        {
+            throw new ContentAccessException( e );
+        }
     }
 
     private Content doExecute()

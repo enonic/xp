@@ -10,6 +10,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.NamePrettyfier;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentAccessException;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentChangeEvent;
 import com.enonic.wem.api.content.ContentConstants;
@@ -24,6 +25,7 @@ import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.media.MediaInfo;
 import com.enonic.wem.api.node.CreateNodeParams;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeAccessException;
 import com.enonic.wem.api.node.NodeAlreadyExistAtPathException;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.GetContentTypeParams;
@@ -79,6 +81,10 @@ final class CreateContentCommand
         {
             throw new ContentAlreadyExistException(
                 ContentPath.from( createContentTranslatorParams.getParent(), createContentTranslatorParams.getName().toString() ) );
+        }
+        catch ( NodeAccessException e )
+        {
+            throw new ContentAccessException( e );
         }
     }
 

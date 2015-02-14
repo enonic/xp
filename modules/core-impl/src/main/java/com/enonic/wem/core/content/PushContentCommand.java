@@ -216,6 +216,11 @@ public class PushContentCommand
                     failedReason = PushContentsResult.FailedReason.PARENT_NOT_EXISTS;
                     break;
                 }
+                case ACCESS_DENIED:
+                {
+                    failedReason = PushContentsResult.FailedReason.ACCESS_DENIED;
+                    break;
+                }
                 default:
                 {
                     failedReason = PushContentsResult.FailedReason.UNKNOWN;

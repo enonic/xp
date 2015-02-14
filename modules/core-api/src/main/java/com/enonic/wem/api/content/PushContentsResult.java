@@ -76,6 +76,7 @@ public class PushContentsResult
     {
         CONTENT_NOT_VALID( "Content not valid" ),
         PARENT_NOT_EXISTS( "Parent content does not exist" ),
+        ACCESS_DENIED( "Not enough permissions to publish content" ),
         UNKNOWN( "Unknown" );
 
         private final String message;

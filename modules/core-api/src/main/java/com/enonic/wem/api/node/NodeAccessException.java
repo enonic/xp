@@ -19,7 +19,7 @@ public final class NodeAccessException
     {
         super( MessageFormat.format( "Access denied to [{0}] for [{1}] by user [{2}] {3}", nodePath, permission,
                                      user == null ? "unknown" : user.getKey(),
-                                     user != null && user.getDisplayName() != null ? "'" + user.getDisplayName() + "'" : "" ) );
+                                     user != null && user.getDisplayName() != null ? "''" + user.getDisplayName() + "''" : "" ) );
         this.user = user;
         this.nodePath = nodePath;
         this.permission = permission;
