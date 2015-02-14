@@ -5,5 +5,4 @@ dependencies {
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Portal - Script'
-    instruction 'Export-Package', '!com.enonic.wem.script.internal.*,com.enonic.wem.script.*'
 }
