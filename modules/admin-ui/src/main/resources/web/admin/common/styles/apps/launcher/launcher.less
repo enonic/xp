@@ -258,6 +258,11 @@ html, body {
       font-size: 20px;
       color: @form-button-bg;
 
+      &.invalid {
+        .animation(shake, .5s, 0s, linear, 1);
+      }
+
+
       &:hover:not(:disabled) {
 
         &:before, span {

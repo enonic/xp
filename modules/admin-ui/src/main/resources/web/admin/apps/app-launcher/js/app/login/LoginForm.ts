@@ -67,6 +67,7 @@ module app.login {
 
             this.userIdInput.removeClass('invalid');
             this.passwordInput.removeClass('invalid');
+            this.loginButton.removeClass('invalid');
 
             this.authenticator.authenticate(userName, password,
                 (loginResult: api.security.auth.LoginResult) => this.handleAuthenticateResponse(loginResult));
@@ -84,6 +85,7 @@ module app.login {
                 this.passwordInput.giveFocus();
                 this.userIdInput.addClass('invalid');
                 this.passwordInput.addClass('invalid');
+                this.loginButton.addClass('invalid');
             }
         }
 
