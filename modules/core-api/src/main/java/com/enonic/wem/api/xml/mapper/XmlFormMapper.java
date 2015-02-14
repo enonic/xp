@@ -20,6 +20,7 @@ import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleRelativeResolver;
 import com.enonic.wem.api.xml.XmlException;
 import com.enonic.wem.api.xml.model.XmlFieldSet;
 import com.enonic.wem.api.xml.model.XmlForm;
@@ -135,7 +136,7 @@ public final class XmlFormMapper
     private InlineMixin fromItemXml( final XmlInline xml )
     {
         final InlineMixin.Builder builder = InlineMixin.newInlineMixin();
-        builder.mixin( xml.getMixin() );
+        builder.mixin( new ModuleRelativeResolver( currentModule ).toMixinName( xml.getMixin() ) );
         return builder.build();
     }
 
