@@ -19,7 +19,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.xp.schema.impl.content.BuiltinContentTypeProvider;
+import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
 
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
