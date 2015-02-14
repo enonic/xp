@@ -36,11 +36,5 @@ public class DateRangeAggregationQueryTest
         final DateRange second = iterator.next();
 
         Assert.assertNotSame( first, second );
-
-        Assert.assertEquals( "myRange2", first.getKey() );
-        Assert.assertEquals( "myRange1", second.getKey() );
-
-        Assert.assertEquals( past, first.getFrom() );
-        Assert.assertEquals( future, second.getTo() );
     }
 }
