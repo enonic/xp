@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -21,7 +19,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.core.schema.content.BuiltinContentTypeProvider;
+import com.enonic.xp.schema.impl.content.BuiltinContentTypeProvider;
 
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
