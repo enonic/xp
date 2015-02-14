@@ -7,7 +7,7 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.script.AbstractMapSerializableTest;
+import com.enonic.xp.script.impl.AbstractMapSerializableTest;
 
 public class PageMapperTest
     extends AbstractMapSerializableTest

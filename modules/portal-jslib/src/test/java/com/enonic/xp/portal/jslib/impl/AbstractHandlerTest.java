@@ -8,7 +8,7 @@ import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.script.AbstractScriptTest;
+import com.enonic.xp.script.impl.AbstractScriptTest;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.PortalContext;

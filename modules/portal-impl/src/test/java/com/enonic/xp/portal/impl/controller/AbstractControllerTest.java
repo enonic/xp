@@ -8,7 +8,7 @@ import com.enonic.wem.api.resource.ResourceUrlTestHelper;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.wem.script.internal.ScriptServiceImpl;
+import com.enonic.xp.script.impl.ScriptServiceImpl;
 
 public abstract class AbstractControllerTest
 {
