@@ -104,6 +104,8 @@ module app.wizard {
 
         private contentNamedListeners: {(event: api.content.ContentNamedEvent):void}[];
 
+        private isSecurityWizardStepFormAllowed: boolean;
+
         /**
          * Whether constructor is being currently executed or not.
          */
@@ -113,6 +115,7 @@ module app.wizard {
 
             this.constructing = true;
             this.isContentFormValid = false;
+            this.isSecurityWizardStepFormAllowed = false;
 
             this.requireValid = false;
             this.contentNamedListeners = [];
@@ -268,8 +271,11 @@ module app.wizard {
 
             var moduleKeys = this.site ? this.site.getModuleKeys() : [];
             var modulePromises = moduleKeys.map((key: ModuleKey) => new api.module.GetModuleRequest(key).sendAndParse());
-            return wemQ.all(modulePromises).
-                then((modules: Module[]) => {
+
+            return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+                this.checkSecurityWizardStepFormAllowed(loginResult);
+                return wemQ.all(modulePromises);
+            }).then((modules: Module[]) => {
                     var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
 
                     metadataMixinPromises = metadataMixinPromises.concat(
@@ -301,7 +307,11 @@ module app.wizard {
                     });
                     this.settingsWizardStep = new WizardStep("Settings", this.settingsWizardStepForm);
                     steps.push(this.settingsWizardStep);
-                    steps.push(new WizardStep("Security", this.securityWizardStepForm));
+
+                    if(this.isSecurityWizardStepFormAllowed) {
+                        steps.push(new WizardStep("Security", this.securityWizardStepForm));
+                    }
+
 
                     this.setSteps(steps);
 
@@ -464,7 +474,10 @@ module app.wizard {
                 this.settingsWizardStepForm.layout(content);
                 this.settingsWizardStepForm.setModel(new ContentSettingsModel(content));
 
-                this.securityWizardStepForm.layout(content);
+                if(this.isSecurityWizardStepFormAllowed) {
+                    this.securityWizardStepForm.layout(content);
+                }
+
 
                 schemas.forEach((schema: Mixin, index: number) => {
                     var metadata = content.getMetadata(schema.getMixinName());
@@ -876,6 +889,37 @@ module app.wizard {
                 setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).
                 build();
             return formContext;
+        }
+
+        private checkSecurityWizardStepFormAllowed(loginResult: api.security.auth.LoginResult) {
+
+            var accessEntriesWithEditPermissions: api.security.acl.AccessControlEntry[] =  this.getPersistedItem().getPermissions().getEntries().filter((item: api.security.acl.AccessControlEntry) => {
+                if(item.isAllowed(api.security.acl.Permission.WRITE_PERMISSIONS))
+                    return true;
+                else
+                    return false;
+            });
+
+            loginResult.getPrincipals().some((principalKey: api.security.PrincipalKey) => {
+                if(api.security.RoleKeys.ADMIN.equals(principalKey) || this.isPrincipalAllowedToEditPermissions(principalKey, accessEntriesWithEditPermissions)) {
+                    this.isSecurityWizardStepFormAllowed = true;
+                    return true;
+                }
+            });
+
+
+        }
+
+        private isPrincipalAllowedToEditPermissions(prinipalKey: api.security.PrincipalKey, accessEntriesWithEditPermissions: api.security.acl.AccessControlEntry[]): boolean {
+            var result = false;
+            accessEntriesWithEditPermissions.some((entry: api.security.acl.AccessControlEntry) => {
+                if(entry.getPrincipalKey().equals(prinipalKey)) {
+                    result = true;
+                    return true;
+                }
+            });
+
+            return result;
         }
 
     }

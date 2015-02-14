@@ -4,5 +4,6 @@ module api.security {
 
         public static EVERYONE: PrincipalKey = PrincipalKey.ofRole('system.everyone');
 
+        public static ADMIN: PrincipalKey = PrincipalKey.ofRole('system.admin');
     }
 }
