@@ -3,25 +3,34 @@
 # Usage info
 show_help() {
 cat << EOF
-Usage: ${0##*/} -u USER:PASSWORD -s SOURCE_DIR -t TARGET_REPO_PATH [-h HOSTNAME] [-p PORT] [-i true|false] [-n]
+Usage: ${0##*/} [-?|--help] -u USER:PASSWORD -s SOURCE_DIR -t TARGET_REPO_PATH [-h HOSTNAME] [-p PORT] [-i true|false] [-n]
 
 Import nodes from an export into a repository branch
 
-	-?				display this help and exit
+	-?|--help			display this help and exit
 	-u USER:PASSWORD		user:password for basic authentication
 	-t TARGET_REPO_PATH		target path for import. Format: <repo-name>:<branch-name>:<node-path>.
-						Sample: 'cms-repo:draft:/content'
+						e.g 'cms-repo:draft:/content'
 	-s SOURCE_DIR			path to exported files
 	-h HOSTNAME			hostname, defaults to localhost
 	-p PORT				port, defaults to 8080
-	-n                  enable nice format of output (requires python)
+	-n                  		enable nice format of output (requires python)
 
 EOF
 }
 
 usageShort() {
-echo "Usage: ${0##*/} -? -u USER:PASSWORD -s SOURCE_DIR -t TARGET_REPO_PATH [-h HOSTNAME] [-p PORT] [-i true|false] [-n]"
+echo "Usage: ${0##*/} [-?|--help] -u USER:PASSWORD -s SOURCE_DIR -t TARGET_REPO_PATH [-h HOSTNAME] [-p PORT] [-i true|false] [-n]"
 }
+
+args=("$@")
+for element in "${args[@]}"; do
+	if [ "$element" == "--help" ]; then
+		 show_help
+            exit
+	fi
+done
+
 
 PRETTY=""
 

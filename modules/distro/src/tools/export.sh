@@ -3,11 +3,11 @@
 # Usage info
 show_help() {
 cat << EOF
-Usage: ${0##*/} -u USER:PASSWORD -s SOURCE_REPO_PATH -t TARGET_DIR [-h HOSTNAME] [-p PORT] [-i true|false] [-n]
+Usage: ${0##*/} [-?|--help] -u USER:PASSWORD -s SOURCE_REPO_PATH -t TARGET_DIR [-h HOSTNAME] [-p PORT] [-i true|false] [-n]
 
 Export node from a branch in a repository
 
-	-?				display this help and exit
+	-?|--help			display this help and exit
 	-u USER:PASSWORD		user:password for basic authentication
 	-t TARGET_DIR			target directory to save export
 	-s SOURCE_REPO_PATH			path of data to export. Format: <repo-name>:<branch-name>:<node-path>.
@@ -20,9 +20,16 @@ EOF
 }
 
 usageShort() {
-echo "Usage: ${0##*/} -u USER:PASSWORD -s SOURCE_REPO_PATH -t TARGET_DIR [-h HOSTNAME] [-p PORT] [-i true|false] [-n]"
+echo "Usage: ${0##*/} [-?|--help] -u USER:PASSWORD -s SOURCE_REPO_PATH -t TARGET_DIR [-h HOSTNAME] [-p PORT] [-i true|false] [-n]"
 }
 
+args=("$@")
+for element in "${args[@]}"; do
+	if [ "$element" == "--help" ]; then
+		 show_help
+            exit
+	fi
+done
 
 PRETTY=""
 
@@ -57,7 +64,7 @@ while getopts '?u:h:p:t:s:i:n' OPTION
 			n)
                 PRETTY="| python -mjson.tool"
                 ;;
-	  		\?)
+			\?)
 		    	show_help >&2
 		        exit 1
 				;;
@@ -100,8 +107,6 @@ then
 fi
 
 
-TARGETPATH=`cd "$TARGETPATH"; pwd`
-echo "Exporting to $TARGETPATH"
 
 JSON="{\"sourceRepoPath\": \"$SOURCE\", \"targetDirectory\": \"$TARGETPATH\", \"importWithIds\": $INCLUDEIDS}"
 
