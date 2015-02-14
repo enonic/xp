@@ -7,7 +7,7 @@
     <xs:appinfo>
       <jaxb:globalBindings generateElementClass="true"/>
       <jaxb:schemaBindings>
-        <jaxb:package name="com.enonic.wem.export.internal.xml"/>
+        <jaxb:package name="com.enonic.xp.core.impl.export.xml"/>
         <jaxb:nameXmlTransform>
           <jaxb:typeName prefix="Xml"/>
           <jaxb:elementName prefix="Xml" suffix="Elem"/>
