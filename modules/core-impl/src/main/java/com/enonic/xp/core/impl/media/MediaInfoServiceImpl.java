@@ -17,9 +17,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.media.MediaInfo;
-import com.enonic.wem.api.media.MediaInfoService;
-import com.enonic.wem.api.util.Exceptions;
+import com.enonic.xp.core.media.MediaInfo;
+import com.enonic.xp.core.media.MediaInfoService;
+import com.enonic.xp.core.util.Exceptions;
 
 @Component
 public final class MediaInfoServiceImpl

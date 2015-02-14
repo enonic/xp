@@ -2,11 +2,11 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.node.FindNodesByQueryResult;
-import com.enonic.wem.api.node.NodeQuery;
-import com.enonic.wem.api.node.Nodes;
-import com.enonic.wem.api.query.expr.OrderExpressions;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.node.FindNodesByQueryResult;
+import com.enonic.xp.core.node.NodeQuery;
+import com.enonic.xp.core.node.Nodes;
+import com.enonic.xp.core.query.expr.OrderExpressions;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 

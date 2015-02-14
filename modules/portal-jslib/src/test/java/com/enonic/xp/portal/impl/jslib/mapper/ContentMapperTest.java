@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.jslib.mapper;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.Content;
+import com.enonic.xp.core.content.Content;
 import com.enonic.xp.portal.impl.script.AbstractMapSerializableTest;
 import com.enonic.xp.portal.impl.jslib.ContentFixtures;
 

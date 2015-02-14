@@ -16,12 +16,12 @@ import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorsJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.region.LayoutDescriptor;
-import com.enonic.wem.api.content.page.region.LayoutDescriptorService;
-import com.enonic.wem.api.content.page.region.LayoutDescriptors;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.region.LayoutDescriptor;
+import com.enonic.xp.core.content.page.region.LayoutDescriptorService;
+import com.enonic.xp.core.content.page.region.LayoutDescriptors;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/layout/descriptor")
 @Produces(MediaType.APPLICATION_JSON)

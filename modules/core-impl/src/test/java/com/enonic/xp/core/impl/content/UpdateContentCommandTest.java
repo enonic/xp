@@ -7,25 +7,25 @@ import java.time.ZoneOffset;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.event.EventPublisher;
-import com.enonic.wem.api.media.MediaInfo;
-import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeNotFoundException;
-import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentNotFoundException;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.UpdateContentParams;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.event.EventPublisher;
+import com.enonic.xp.core.media.MediaInfo;
+import com.enonic.xp.core.module.ModuleService;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodeNotFoundException;
+import com.enonic.xp.core.node.NodeService;
+import com.enonic.xp.core.node.UpdateNodeParams;
+import com.enonic.xp.core.schema.content.ContentTypeService;
+import com.enonic.xp.core.schema.mixin.MixinService;
+import com.enonic.xp.core.security.PrincipalKey;
 
-import static com.enonic.wem.api.content.Content.newContent;
+import static com.enonic.xp.core.content.Content.newContent;
 
 public class UpdateContentCommandTest
 {

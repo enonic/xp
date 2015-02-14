@@ -7,17 +7,17 @@ import java.util.regex.Pattern;
 
 import com.google.common.collect.Collections2;
 
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.region.PartDescriptor;
-import com.enonic.wem.api.content.page.region.PartDescriptors;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.xml.mapper.XmlPartDescriptorMapper;
-import com.enonic.wem.api.xml.model.XmlPartDescriptor;
-import com.enonic.wem.api.xml.serializer.XmlSerializers;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.region.PartDescriptor;
+import com.enonic.xp.core.content.page.region.PartDescriptors;
+import com.enonic.xp.core.module.Module;
+import com.enonic.xp.core.module.ModuleService;
+import com.enonic.xp.core.module.Modules;
+import com.enonic.xp.core.resource.Resource;
+import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.core.xml.mapper.XmlPartDescriptorMapper;
+import com.enonic.xp.core.xml.model.XmlPartDescriptor;
+import com.enonic.xp.core.xml.serializer.XmlSerializers;
 
 abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescriptorCommand>
 {

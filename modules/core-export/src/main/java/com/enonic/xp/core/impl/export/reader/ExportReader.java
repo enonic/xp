@@ -3,9 +3,9 @@ package com.enonic.xp.core.impl.export.reader;
 import java.net.URL;
 import java.util.stream.Stream;
 
-import com.enonic.wem.api.export.ImportNodeException;
-import com.enonic.wem.api.vfs.VirtualFile;
-import com.enonic.wem.api.vfs.VirtualFilePath;
+import com.enonic.xp.core.export.ImportNodeException;
+import com.enonic.xp.core.vfs.VirtualFile;
+import com.enonic.xp.core.vfs.VirtualFilePath;
 
 import static com.enonic.xp.core.impl.export.ExportConstants.BINARY_FOLDER;
 import static com.enonic.xp.core.impl.export.ExportConstants.NODE_XML_EXPORT_NAME;

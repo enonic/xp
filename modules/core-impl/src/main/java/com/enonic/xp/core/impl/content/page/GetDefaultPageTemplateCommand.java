@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.content.page;
 
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PageTemplateSpec;
-import com.enonic.wem.api.content.page.PageTemplates;
-import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.core.content.page.PageTemplate;
+import com.enonic.xp.core.content.page.PageTemplateSpec;
+import com.enonic.xp.core.content.page.PageTemplates;
+import com.enonic.xp.core.schema.content.ContentTypeName;
 
 final class GetDefaultPageTemplateCommand
 {

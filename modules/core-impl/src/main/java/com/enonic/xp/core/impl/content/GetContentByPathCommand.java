@@ -2,12 +2,12 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodePath;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentNotFoundException;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodePath;
 
 final class GetContentByPathCommand
     extends AbstractContentCommand

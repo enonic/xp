@@ -3,15 +3,15 @@ package com.enonic.xp.core.impl.module;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.form.Input;
-import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.schema.mixin.MixinNames;
-import com.enonic.wem.api.support.SerializingTestHelper;
-import com.enonic.wem.api.xml.XmlException;
+import com.enonic.xp.core.form.Form;
+import com.enonic.xp.core.form.Input;
+import com.enonic.xp.core.form.inputtype.InputTypes;
+import com.enonic.xp.core.module.Module;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleVersion;
+import com.enonic.xp.core.schema.mixin.MixinNames;
+import com.enonic.xp.core.support.SerializingTestHelper;
+import com.enonic.xp.core.xml.XmlException;
 
 public class ModuleXmlBuilderTest
 {

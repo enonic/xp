@@ -11,11 +11,11 @@ import org.elasticsearch.search.sort.SortOrder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.index.IndexType;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeIds;
-import com.enonic.wem.api.node.NodeVersionIds;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.index.IndexType;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodeIds;
+import com.enonic.xp.core.node.NodeVersionIds;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;

@@ -2,10 +2,10 @@ package com.enonic.xp.portal.impl.xslt;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.module.ModuleKey;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;

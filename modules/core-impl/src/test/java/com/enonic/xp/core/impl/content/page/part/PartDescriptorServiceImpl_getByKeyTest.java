@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.content.page.part;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.region.PartDescriptor;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.region.PartDescriptor;
 
 public class PartDescriptorServiceImpl_getByKeyTest
     extends AbstractPartDescriptorServiceTest

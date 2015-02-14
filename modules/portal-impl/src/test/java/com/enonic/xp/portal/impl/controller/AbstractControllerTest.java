@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.controller;
 import org.junit.Before;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceUrlTestHelper;
+import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.core.resource.ResourceUrlTestHelper;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.PostProcessor;

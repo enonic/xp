@@ -4,10 +4,10 @@ import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.enonic.wem.api.index.IndexType;
-import com.enonic.wem.api.node.NodeVersion;
-import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.xp.core.index.IndexType;
+import com.enonic.xp.core.node.NodeVersion;
+import com.enonic.xp.core.node.NodeVersionId;
+import com.enonic.xp.core.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.wem.repo.internal.index.result.SearchResult;

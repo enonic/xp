@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleKey;
 
 public final class ModuleListParams
 {

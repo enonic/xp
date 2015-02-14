@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.export.xml.mapper;
 
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.ValueType;
-import com.enonic.wem.api.data.ValueTypes;
-import com.enonic.wem.api.export.ExportNodeException;
+import com.enonic.xp.core.data.Property;
+import com.enonic.xp.core.data.ValueType;
+import com.enonic.xp.core.data.ValueTypes;
+import com.enonic.xp.core.export.ExportNodeException;
 import com.enonic.xp.core.impl.export.xml.ObjectFactory;
 
 class XmlPropertyMapper

@@ -1,0 +1,42 @@
+package com.enonic.xp.core.form.inputtype;
+
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
+
+
+public class ImageSelectorConfigJsonSerializer
+    extends AbstractInputTypeConfigJsonSerializer<ImageSelectorConfig>
+{
+    public static final ImageSelectorConfigJsonSerializer DEFAULT = new ImageSelectorConfigJsonSerializer();
+
+    @Override
+    public JsonNode serializeConfig( final ImageSelectorConfig config, final ObjectMapper objectMapper )
+    {
+        final ObjectNode jsonConfig = objectMapper.createObjectNode();
+        if ( config.getRelationshipType() != null )
+        {
+            jsonConfig.put( "relationshipType", config.getRelationshipType().toString() );
+        }
+        else
+        {
+            jsonConfig.putNull( "relationshipType" );
+        }
+        return jsonConfig;
+    }
+
+    @Override
+    public ImageSelectorConfig parseConfig( final JsonNode inputTypeConfigNode )
+    {
+        final ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
+        final JsonNode relationshipTypeNode = inputTypeConfigNode.get( "relationshipType" );
+        if ( relationshipTypeNode != null && !relationshipTypeNode.isNull() )
+        {
+            builder.relationshipType( RelationshipTypeName.from( relationshipTypeNode.textValue() ) );
+        }
+        return builder.build();
+    }
+}

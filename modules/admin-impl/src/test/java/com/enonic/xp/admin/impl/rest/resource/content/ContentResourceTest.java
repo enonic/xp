@@ -13,57 +13,57 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.ApplyContentPermissionsParams;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentPaths;
-import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.content.DeleteContentParams;
-import com.enonic.wem.api.content.DuplicateContentParams;
-import com.enonic.wem.api.content.FindContentByParentParams;
-import com.enonic.wem.api.content.FindContentByParentResult;
-import com.enonic.wem.api.content.GetContentByIdsParams;
-import com.enonic.wem.api.content.Metadata;
-import com.enonic.wem.api.content.PushContentParams;
-import com.enonic.wem.api.content.PushContentsResult;
-import com.enonic.wem.api.content.RenameContentParams;
-import com.enonic.wem.api.content.UnableToDeleteContentException;
-import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageRegions;
-import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.region.PartComponent;
-import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.content.site.ModuleConfig;
-import com.enonic.wem.api.content.site.ModuleConfigs;
-import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.data.PropertyIdProviderAccessor;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.schema.content.GetContentTypesParams;
-import com.enonic.wem.api.schema.mixin.MixinName;
-import com.enonic.wem.api.security.Principal;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.SecurityService;
-import com.enonic.wem.api.security.User;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
-import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.core.content.ApplyContentPermissionsParams;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentConstants;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentNotFoundException;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.ContentPaths;
+import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.core.content.Contents;
+import com.enonic.xp.core.content.CreateContentParams;
+import com.enonic.xp.core.content.DeleteContentParams;
+import com.enonic.xp.core.content.DuplicateContentParams;
+import com.enonic.xp.core.content.FindContentByParentParams;
+import com.enonic.xp.core.content.FindContentByParentResult;
+import com.enonic.xp.core.content.GetContentByIdsParams;
+import com.enonic.xp.core.content.Metadata;
+import com.enonic.xp.core.content.PushContentParams;
+import com.enonic.xp.core.content.PushContentsResult;
+import com.enonic.xp.core.content.RenameContentParams;
+import com.enonic.xp.core.content.UnableToDeleteContentException;
+import com.enonic.xp.core.content.UpdateContentParams;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.Page;
+import com.enonic.xp.core.content.page.PageRegions;
+import com.enonic.xp.core.content.page.PageTemplateKey;
+import com.enonic.xp.core.content.page.region.PartComponent;
+import com.enonic.xp.core.content.page.region.Region;
+import com.enonic.xp.core.content.site.ModuleConfig;
+import com.enonic.xp.core.content.site.ModuleConfigs;
+import com.enonic.xp.core.content.site.Site;
+import com.enonic.xp.core.data.PropertyIdProviderAccessor;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.ContentTypeService;
+import com.enonic.xp.core.schema.content.ContentTypes;
+import com.enonic.xp.core.schema.content.GetContentTypeParams;
+import com.enonic.xp.core.schema.content.GetContentTypesParams;
+import com.enonic.xp.core.schema.mixin.MixinName;
+import com.enonic.xp.core.security.Principal;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.SecurityService;
+import com.enonic.xp.core.security.User;
+import com.enonic.xp.core.security.acl.AccessControlEntry;
+import com.enonic.xp.core.security.acl.AccessControlList;
 
-import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.content.site.Site.newSite;
-import static com.enonic.wem.api.security.acl.Permission.READ;
+import static com.enonic.xp.core.content.Content.newContent;
+import static com.enonic.xp.core.content.site.Site.newSite;
+import static com.enonic.xp.core.security.acl.Permission.READ;
 import static org.junit.Assert.*;
 
 public class ContentResourceTest
@@ -625,7 +625,7 @@ public class ContentResourceTest
             ContentTypes.from( createContentType( "mymodule:my-type" ) ) );
 
         Exception e =
-            new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
+            new ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
 
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenThrow( e );
 
@@ -752,7 +752,7 @@ public class ContentResourceTest
     {
 
         final Exception e =
-            new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
+            new ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
 
         Mockito.when( contentService.duplicate( Mockito.isA( DuplicateContentParams.class ) ) ).
             thenThrow( e );

@@ -3,8 +3,8 @@ package com.enonic.wem.repo.internal.elasticsearch;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
 import org.elasticsearch.snapshots.RestoreInfo;
 
-import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.snapshot.RestoreResult;
+import com.enonic.xp.core.repository.RepositoryId;
+import com.enonic.xp.core.snapshot.RestoreResult;
 
 public class RestoreResultFactory
 {

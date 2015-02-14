@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.enonic.xp.admin.impl.json.content.page.region.PageRegionsJson;
 import com.enonic.xp.admin.impl.json.content.page.region.RegionJson;
-import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.data.PropertyArrayJson;
-import com.enonic.wem.api.data.PropertyTreeJson;
+import com.enonic.xp.core.content.page.Page;
+import com.enonic.xp.core.data.PropertyArrayJson;
+import com.enonic.xp.core.data.PropertyTreeJson;
 
 @SuppressWarnings("UnusedDeclaration")
 public final class PageJson

@@ -5,9 +5,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.context.ContextAccessor;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;

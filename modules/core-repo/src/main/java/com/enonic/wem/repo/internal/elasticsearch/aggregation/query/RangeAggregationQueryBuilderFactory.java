@@ -2,10 +2,10 @@ package com.enonic.wem.repo.internal.elasticsearch.aggregation.query;
 
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 
-import com.enonic.wem.api.query.aggregation.AbstractRangeAggregationQuery;
-import com.enonic.wem.api.query.aggregation.DateRangeAggregationQuery;
-import com.enonic.wem.api.query.aggregation.GeoDistanceAggregationQuery;
-import com.enonic.wem.api.query.aggregation.NumericRangeAggregationQuery;
+import com.enonic.xp.core.query.aggregation.AbstractRangeAggregationQuery;
+import com.enonic.xp.core.query.aggregation.DateRangeAggregationQuery;
+import com.enonic.xp.core.query.aggregation.GeoDistanceAggregationQuery;
+import com.enonic.xp.core.query.aggregation.NumericRangeAggregationQuery;
 
 class RangeAggregationQueryBuilderFactory
 {

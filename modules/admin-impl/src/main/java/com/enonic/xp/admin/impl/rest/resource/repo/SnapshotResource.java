@@ -14,16 +14,16 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.security.RoleKeys;
-import com.enonic.wem.api.snapshot.DeleteSnapshotParams;
-import com.enonic.wem.api.snapshot.DeleteSnapshotsResult;
-import com.enonic.wem.api.snapshot.RestoreParams;
-import com.enonic.wem.api.snapshot.RestoreResult;
-import com.enonic.wem.api.snapshot.SnapshotParams;
-import com.enonic.wem.api.snapshot.SnapshotResult;
-import com.enonic.wem.api.snapshot.SnapshotResults;
+import com.enonic.xp.core.node.NodeService;
+import com.enonic.xp.core.repository.RepositoryId;
+import com.enonic.xp.core.security.RoleKeys;
+import com.enonic.xp.core.snapshot.DeleteSnapshotParams;
+import com.enonic.xp.core.snapshot.DeleteSnapshotsResult;
+import com.enonic.xp.core.snapshot.RestoreParams;
+import com.enonic.xp.core.snapshot.RestoreResult;
+import com.enonic.xp.core.snapshot.SnapshotParams;
+import com.enonic.xp.core.snapshot.SnapshotResult;
+import com.enonic.xp.core.snapshot.SnapshotResults;
 
 @Path(ResourceConstants.REST_ROOT + "repo")
 @Produces(MediaType.APPLICATION_JSON)

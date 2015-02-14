@@ -4,23 +4,23 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.form.FieldSet;
-import com.enonic.wem.api.form.FormItemSet;
-import com.enonic.wem.api.form.Input;
-import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.form.FieldSet;
+import com.enonic.xp.core.form.FormItemSet;
+import com.enonic.xp.core.form.Input;
+import com.enonic.xp.core.form.inputtype.InputTypes;
+import com.enonic.xp.core.module.ModuleService;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.ContentTypeService;
+import com.enonic.xp.core.schema.content.GetContentTypeParams;
+import com.enonic.xp.core.schema.content.validator.DataValidationErrors;
+import com.enonic.xp.core.schema.mixin.MixinService;
 
-import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.form.FieldSet.newFieldSet;
-import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.form.Input.newInput;
+import static com.enonic.xp.core.content.Content.newContent;
+import static com.enonic.xp.core.form.FieldSet.newFieldSet;
+import static com.enonic.xp.core.form.FormItemSet.newFormItemSet;
+import static com.enonic.xp.core.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class ValidateContentDataCommandTest

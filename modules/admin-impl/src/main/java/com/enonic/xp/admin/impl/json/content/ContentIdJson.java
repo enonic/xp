@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.json.content;
 
-import com.enonic.wem.api.content.ContentId;
+import com.enonic.xp.core.content.ContentId;
 
 public class ContentIdJson
 {

@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.event.impl.json;
 
-import com.enonic.wem.api.content.ContentChangeEvent;
+import com.enonic.xp.core.content.ContentChangeEvent;
 
 public final class ContentChangeEventJson
     implements EventJson

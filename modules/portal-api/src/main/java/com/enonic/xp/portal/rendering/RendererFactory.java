@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.rendering;
 
-import com.enonic.wem.api.rendering.Renderable;
+import com.enonic.xp.core.rendering.Renderable;
 
 public interface RendererFactory
 {

@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.relationship.Relationship;
-import com.enonic.wem.api.relationship.Relationships;
+import com.enonic.xp.core.relationship.Relationship;
+import com.enonic.xp.core.relationship.Relationships;
 
 public class RelationshipListJson
 {

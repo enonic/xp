@@ -7,8 +7,8 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.wem.api.Version;
-import com.enonic.wem.api.server.ServerInfo;
+import com.enonic.xp.core.Version;
+import com.enonic.xp.core.server.ServerInfo;
 
 @Component
 public final class ServerInfoImpl

@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.content.page.region.Component;
-import com.enonic.wem.api.content.page.region.Region;
+import com.enonic.xp.core.content.page.region.Component;
+import com.enonic.xp.core.content.page.region.Region;
 
 @SuppressWarnings("UnusedDeclaration")
 public class RegionJson

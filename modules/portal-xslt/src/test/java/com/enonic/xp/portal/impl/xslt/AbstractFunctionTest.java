@@ -13,12 +13,10 @@ import org.mockito.stubbing.Answer;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceUrlRegistry;
-import com.enonic.wem.api.resource.ResourceUrlTestHelper;
-import com.enonic.wem.api.xml.DomHelper;
-import com.enonic.xp.portal.impl.xslt.XsltProcessor;
-import com.enonic.xp.portal.impl.xslt.XsltProcessorFactory;
+import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.core.resource.ResourceUrlRegistry;
+import com.enonic.xp.core.resource.ResourceUrlTestHelper;
+import com.enonic.xp.core.xml.DomHelper;
 import com.enonic.xp.portal.url.PortalUrlService;
 
 import static org.junit.Assert.*;

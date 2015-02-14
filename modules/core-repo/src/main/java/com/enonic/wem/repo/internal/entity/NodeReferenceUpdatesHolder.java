@@ -5,8 +5,8 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.util.Reference;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.util.Reference;
 
 class NodeReferenceUpdatesHolder
 {

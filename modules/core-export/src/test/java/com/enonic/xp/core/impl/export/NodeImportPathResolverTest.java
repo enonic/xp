@@ -4,9 +4,8 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.vfs.VirtualFiles;
-import com.enonic.xp.core.impl.export.NodeImportPathResolver;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.vfs.VirtualFiles;
 
 import static org.junit.Assert.*;
 

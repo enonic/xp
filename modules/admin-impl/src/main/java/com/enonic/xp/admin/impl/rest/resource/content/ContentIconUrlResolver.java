@@ -2,10 +2,10 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.Media;
-import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.Media;
+import com.enonic.xp.core.content.attachment.Attachment;
+import com.enonic.xp.core.schema.content.ContentTypeService;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public final class ContentIconUrlResolver

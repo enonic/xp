@@ -3,11 +3,11 @@ package com.enonic.xp.portal.impl.jslib.content;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentService;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentNotFoundException;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.ContentService;
 import com.enonic.xp.portal.impl.jslib.ContentFixtures;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;

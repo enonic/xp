@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.function;
 
 import java.util.List;
 
-import com.enonic.wem.api.query.expr.ValueExpr;
+import com.enonic.xp.core.query.expr.ValueExpr;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.function.AbstractSimpleQueryStringFunction;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 

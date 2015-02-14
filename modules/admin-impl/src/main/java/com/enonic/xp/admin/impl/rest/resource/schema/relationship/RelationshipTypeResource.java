@@ -23,13 +23,13 @@ import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
-import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.schema.relationship.RelationshipType;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeService;
+import com.enonic.xp.core.schema.relationship.RelationshipTypes;
+import com.enonic.xp.core.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "schema/relationship")
 @Produces(MediaType.APPLICATION_JSON)

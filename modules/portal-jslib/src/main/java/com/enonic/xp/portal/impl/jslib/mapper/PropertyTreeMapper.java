@@ -3,7 +3,7 @@ package com.enonic.xp.portal.impl.jslib.mapper;
 import java.util.List;
 import java.util.Map;
 
-import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.xp.core.data.PropertyTree;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
 

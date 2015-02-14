@@ -7,9 +7,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.filter.FilterJson;
-import com.enonic.wem.api.content.query.ContentQuery;
-import com.enonic.wem.api.query.parser.QueryParser;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.xp.core.content.query.ContentQuery;
+import com.enonic.xp.core.query.parser.QueryParser;
+import com.enonic.xp.core.schema.content.ContentTypeNames;
 
 public class ContentQueryJson
 {

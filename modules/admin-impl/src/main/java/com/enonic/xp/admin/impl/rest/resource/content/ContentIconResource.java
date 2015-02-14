@@ -21,13 +21,13 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.Media;
-import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.security.RoleKeys;
-import com.enonic.wem.api.thumb.Thumbnail;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.core.content.Media;
+import com.enonic.xp.core.content.attachment.Attachment;
+import com.enonic.xp.core.security.RoleKeys;
+import com.enonic.xp.core.icon.Thumbnail;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/icon")

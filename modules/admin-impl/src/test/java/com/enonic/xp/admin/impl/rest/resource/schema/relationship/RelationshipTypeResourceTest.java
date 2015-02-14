@@ -14,14 +14,14 @@ import junit.framework.Assert;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
-import com.enonic.wem.api.schema.relationship.RelationshipTypes;
+import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.relationship.RelationshipType;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeService;
+import com.enonic.xp.core.schema.relationship.RelationshipTypes;
 
-import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
+import static com.enonic.xp.core.schema.relationship.RelationshipType.newRelationshipType;
 import static org.junit.Assert.*;
 
 public class RelationshipTypeResourceTest

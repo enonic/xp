@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.schema.relationship;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 
-import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.api.schema.relationship.RelationshipTypes;
+import com.enonic.xp.core.schema.relationship.RelationshipType;
+import com.enonic.xp.core.schema.relationship.RelationshipTypes;
 import com.enonic.xp.core.impl.schema.AbstractBundleTest;
 
 import static org.junit.Assert.*;

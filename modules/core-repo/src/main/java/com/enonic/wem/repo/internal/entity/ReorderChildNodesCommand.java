@@ -2,10 +2,10 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.ReorderChildNodeParams;
-import com.enonic.wem.api.node.ReorderChildNodesParams;
-import com.enonic.wem.api.node.ReorderChildNodesResult;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.ReorderChildNodeParams;
+import com.enonic.xp.core.node.ReorderChildNodesParams;
+import com.enonic.xp.core.node.ReorderChildNodesResult;
 
 public class ReorderChildNodesCommand
     extends AbstractNodeCommand

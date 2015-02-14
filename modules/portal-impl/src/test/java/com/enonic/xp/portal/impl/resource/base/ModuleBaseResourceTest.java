@@ -11,10 +11,10 @@ import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.xp.core.module.Module;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleService;
+import com.enonic.xp.core.resource.ResourceKey;
 
 public abstract class ModuleBaseResourceTest
     extends BaseResourceTest

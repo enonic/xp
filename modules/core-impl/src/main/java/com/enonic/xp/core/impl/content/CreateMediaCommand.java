@@ -2,15 +2,15 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.content.CreateMediaParams;
-import com.enonic.wem.api.content.attachment.CreateAttachment;
-import com.enonic.wem.api.content.attachment.CreateAttachments;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.media.MediaInfo;
-import com.enonic.wem.api.media.MediaInfoService;
-import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.CreateContentParams;
+import com.enonic.xp.core.content.CreateMediaParams;
+import com.enonic.xp.core.content.attachment.CreateAttachment;
+import com.enonic.xp.core.content.attachment.CreateAttachments;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.media.MediaInfo;
+import com.enonic.xp.core.media.MediaInfoService;
+import com.enonic.xp.core.schema.content.ContentTypeName;
 
 final class CreateMediaCommand
     extends AbstractCreatingOrUpdatingContentCommand

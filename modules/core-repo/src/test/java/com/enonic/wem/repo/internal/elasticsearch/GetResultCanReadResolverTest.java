@@ -4,9 +4,9 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.node.NodeIndexPath;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.PrincipalKeys;
+import com.enonic.xp.core.node.NodeIndexPath;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.PrincipalKeys;
 import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;

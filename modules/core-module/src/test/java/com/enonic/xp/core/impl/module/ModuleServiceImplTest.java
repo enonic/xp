@@ -6,12 +6,12 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ModuleNotFoundException;
-import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.module.Modules;
+import com.enonic.xp.core.module.Module;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleKeys;
+import com.enonic.xp.core.module.ModuleNotFoundException;
+import com.enonic.xp.core.module.ModuleVersion;
+import com.enonic.xp.core.module.Modules;
 
 import static org.junit.Assert.*;
 

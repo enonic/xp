@@ -1,9 +1,9 @@
 package com.enonic.xp.admin.impl.json.content;
 
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentListMetaData;
-import com.enonic.wem.api.content.Contents;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentListMetaData;
+import com.enonic.xp.core.content.Contents;
 
 public class ContentSummaryListJson
     extends AbstractContentListJson<ContentSummaryJson>

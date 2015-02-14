@@ -1,10 +1,10 @@
 package com.enonic.xp.core.impl.content.page.region;
 
 
-import com.enonic.wem.api.content.page.ComponentDataSerializer;
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.region.DescriptorBasedComponent;
-import com.enonic.wem.api.data.PropertySet;
+import com.enonic.xp.core.content.page.ComponentDataSerializer;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.region.DescriptorBasedComponent;
+import com.enonic.xp.core.data.PropertySet;
 
 public abstract class DescriptorBasedComponentDataSerializer<TO_DATA_INPUT extends DescriptorBasedComponent, FROM_DATA_OUTPUT extends DescriptorBasedComponent>
     extends ComponentDataSerializer<TO_DATA_INPUT, FROM_DATA_OUTPUT>

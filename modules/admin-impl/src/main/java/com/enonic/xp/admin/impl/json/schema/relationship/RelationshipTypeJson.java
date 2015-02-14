@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.relationship.RelationshipType;
 
 public class RelationshipTypeJson
     implements ItemJson

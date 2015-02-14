@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.schema.content.ContentTypeFilter;
-import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.ContentTypeFilter;
+import com.enonic.xp.core.schema.content.ContentTypeName;
 
 @SuppressWarnings("UnusedDeclaration")
 public final class ContentTypeFilterJson

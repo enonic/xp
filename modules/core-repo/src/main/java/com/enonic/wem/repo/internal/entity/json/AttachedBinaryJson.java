@@ -2,9 +2,9 @@ package com.enonic.wem.repo.internal.entity.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.node.AttachedBinary;
-import com.enonic.wem.api.util.BinaryReference;
+import com.enonic.xp.core.blob.BlobKey;
+import com.enonic.xp.core.node.AttachedBinary;
+import com.enonic.xp.core.util.BinaryReference;
 
 final class AttachedBinaryJson
 {

@@ -2,13 +2,12 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.region.ImageComponent;
-import com.enonic.wem.api.content.page.region.LayoutComponent;
-import com.enonic.wem.api.content.page.region.PartComponent;
-import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.data.PropertyIdProvider;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.xp.core.impl.content.page.region.RegionDataSerializer;
+import com.enonic.xp.core.content.page.region.ImageComponent;
+import com.enonic.xp.core.content.page.region.LayoutComponent;
+import com.enonic.xp.core.content.page.region.PartComponent;
+import com.enonic.xp.core.content.page.region.Region;
+import com.enonic.xp.core.data.PropertyIdProvider;
+import com.enonic.xp.core.data.PropertyTree;
 
 import static org.junit.Assert.*;
 

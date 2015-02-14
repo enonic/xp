@@ -4,7 +4,7 @@
  */
 package com.enonic.xp.core.impl.image.command;
 
-import com.enonic.wem.api.image.BuilderContext;
+import com.enonic.xp.core.image.BuilderContext;
 import com.enonic.xp.core.impl.image.effect.ColorizeFilter;
 
 public final class ColorizeFilterCommand

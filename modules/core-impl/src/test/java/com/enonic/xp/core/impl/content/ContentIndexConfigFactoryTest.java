@@ -2,17 +2,17 @@ package com.enonic.xp.core.impl.content;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentPropertyNames;
-import com.enonic.wem.api.content.CreateContentTranslatorParams;
-import com.enonic.wem.api.data.PropertyPath;
-import com.enonic.wem.api.data.PropertySet;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.index.IndexConfig;
-import com.enonic.wem.api.index.IndexConfigDocument;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.xp.core.content.ContentConstants;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.ContentPropertyNames;
+import com.enonic.xp.core.content.CreateContentTranslatorParams;
+import com.enonic.xp.core.data.PropertyPath;
+import com.enonic.xp.core.data.PropertySet;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.index.IndexConfig;
+import com.enonic.xp.core.index.IndexConfigDocument;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 

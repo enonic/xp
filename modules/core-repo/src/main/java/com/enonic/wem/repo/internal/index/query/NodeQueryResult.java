@@ -5,8 +5,8 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.aggregation.Aggregations;
-import com.enonic.wem.api.node.NodeIds;
+import com.enonic.xp.core.aggregation.Aggregations;
+import com.enonic.xp.core.node.NodeIds;
 
 public final class NodeQueryResult
 {

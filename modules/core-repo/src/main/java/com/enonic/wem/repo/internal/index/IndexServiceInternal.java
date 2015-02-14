@@ -4,11 +4,11 @@ import java.util.Set;
 
 import org.elasticsearch.common.unit.TimeValue;
 
-import com.enonic.wem.api.index.IndexType;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.xp.core.index.IndexType;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodeVersionId;
+import com.enonic.xp.core.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.ClusterHealthStatus;
 
 public interface IndexServiceInternal

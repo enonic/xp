@@ -3,8 +3,8 @@ package com.enonic.xp.admin.impl.json.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
-import com.enonic.wem.api.content.page.region.Descriptor;
-import com.enonic.wem.api.form.FormJson;
+import com.enonic.xp.core.content.page.region.Descriptor;
+import com.enonic.xp.core.form.FormJson;
 
 
 public abstract class DescriptorJson

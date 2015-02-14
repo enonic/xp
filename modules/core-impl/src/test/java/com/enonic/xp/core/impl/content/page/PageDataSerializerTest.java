@@ -2,14 +2,13 @@ package com.enonic.xp.core.impl.content.page;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageRegions;
-import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.region.PartComponent;
-import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.data.PropertyIdProvider;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.xp.core.impl.content.page.PageDataSerializer;
+import com.enonic.xp.core.content.page.Page;
+import com.enonic.xp.core.content.page.PageRegions;
+import com.enonic.xp.core.content.page.PageTemplateKey;
+import com.enonic.xp.core.content.page.region.PartComponent;
+import com.enonic.xp.core.content.page.region.Region;
+import com.enonic.xp.core.data.PropertyIdProvider;
+import com.enonic.xp.core.data.PropertyTree;
 
 import static org.junit.Assert.*;
 

@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.schema.content;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.schema.content.ContentTypes;
 
 import static org.junit.Assert.*;
 

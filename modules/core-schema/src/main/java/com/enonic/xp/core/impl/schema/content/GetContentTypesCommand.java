@@ -1,10 +1,10 @@
 package com.enonic.xp.core.impl.schema.content;
 
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.GetContentTypesParams;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.ContentTypeNames;
+import com.enonic.xp.core.schema.content.ContentTypes;
+import com.enonic.xp.core.schema.content.GetContentTypesParams;
 
 final class GetContentTypesCommand
     extends AbstractCommand

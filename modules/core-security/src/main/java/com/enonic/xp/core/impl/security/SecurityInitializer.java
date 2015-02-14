@@ -3,31 +3,31 @@ package com.enonic.xp.core.impl.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.api.context.ContextBuilder;
-import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.CreateRootNodeParams;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.security.CreateRoleParams;
-import com.enonic.wem.api.security.CreateUserParams;
-import com.enonic.wem.api.security.CreateUserStoreParams;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.PrincipalRelationship;
-import com.enonic.wem.api.security.RoleKeys;
-import com.enonic.wem.api.security.SecurityService;
-import com.enonic.wem.api.security.User;
-import com.enonic.wem.api.security.UserStoreKey;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
-import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.api.security.acl.Permission;
-import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
-import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
-import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.xp.core.context.ContextBuilder;
+import com.enonic.xp.core.index.ChildOrder;
+import com.enonic.xp.core.node.CreateNodeParams;
+import com.enonic.xp.core.node.CreateRootNodeParams;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.NodeService;
+import com.enonic.xp.core.security.CreateRoleParams;
+import com.enonic.xp.core.security.CreateUserParams;
+import com.enonic.xp.core.security.CreateUserStoreParams;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.PrincipalRelationship;
+import com.enonic.xp.core.security.RoleKeys;
+import com.enonic.xp.core.security.SecurityService;
+import com.enonic.xp.core.security.User;
+import com.enonic.xp.core.security.UserStoreKey;
+import com.enonic.xp.core.security.acl.AccessControlEntry;
+import com.enonic.xp.core.security.acl.AccessControlList;
+import com.enonic.xp.core.security.acl.Permission;
+import com.enonic.xp.core.security.acl.UserStoreAccessControlEntry;
+import com.enonic.xp.core.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.core.security.auth.AuthenticationInfo;
 
-import static com.enonic.wem.api.security.SystemConstants.CONTEXT_SECURITY;
-import static com.enonic.wem.api.security.acl.UserStoreAccess.ADMINISTRATOR;
-import static com.enonic.wem.api.security.acl.UserStoreAccess.READ;
+import static com.enonic.xp.core.security.SystemConstants.CONTEXT_SECURITY;
+import static com.enonic.xp.core.security.acl.UserStoreAccess.ADMINISTRATOR;
+import static com.enonic.xp.core.security.acl.UserStoreAccess.READ;
 
 public final class SecurityInitializer
 {

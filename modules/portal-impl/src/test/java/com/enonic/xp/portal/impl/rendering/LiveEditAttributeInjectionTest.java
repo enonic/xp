@@ -5,7 +5,7 @@ import org.junit.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.content.page.region.TextComponentType;
+import com.enonic.xp.core.content.page.region.TextComponentType;
 import com.enonic.xp.portal.PortalResponse;
 
 import static junit.framework.Assert.assertEquals;

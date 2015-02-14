@@ -1,0 +1,75 @@
+package com.enonic.xp.core.content;
+
+
+import java.time.LocalDate;
+
+import org.junit.Test;
+
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.Page;
+import com.enonic.xp.core.content.page.PageRegions;
+import com.enonic.xp.core.content.page.PageTemplateKey;
+import com.enonic.xp.core.data.PropertyTree;
+
+import static com.enonic.xp.core.content.Content.newContent;
+import static org.junit.Assert.*;
+
+public class ContentTest
+{
+    private static final ContentPath MY_CONTENT_PATH = ContentPath.from( "/mycontent" );
+
+    @Test(expected = IllegalArgumentException.class)
+    public void given_path_isRoot_then_IllegalArgumentException_is_thrown()
+    {
+        Content.newContent().path( ContentPath.ROOT ).build();
+    }
+
+    @Test
+    public void isRoot_given_path_with_one_element_then_true_is_returned()
+    {
+        Content content = Content.newContent().path( "/myroot" ).build();
+        assertEquals( true, content.isRoot() );
+    }
+
+    @Test
+    public void isRoot_given_path_with_more_than_one_element_then_false_is_returned()
+    {
+        Content content = Content.newContent().path( "/myroot/mysub" ).build();
+        assertEquals( false, content.isRoot() );
+    }
+
+    @Test
+    public void given_array_when_setting_data_of_another_type_to_array_then_exception_is_thrown()
+    {
+        // setup
+        Content content = newContent().path( MY_CONTENT_PATH ).build();
+        content.getData().setString( "myData", "Value 1" );
+
+        // exercise
+        try
+        {
+            content.getData().setLocalDate( "myData[1]", LocalDate.of( 2000, 1, 1 ) );
+            fail( "Expected exception" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof IllegalArgumentException );
+            assertEquals( "This PropertyArray expects only properties with value of type 'String', got: LocalDate", e.getMessage() );
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void given_a_controller_and_a_pageTemplate_when_build_then_IllegalArgumentException_is_thrown()
+    {
+        newContent().
+            path( MY_CONTENT_PATH ).
+            page( Page.newPage().
+                controller( DescriptorKey.from( "abc:abc" ) ).
+                template( PageTemplateKey.from( "123" ) ).
+                config( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
+                regions( PageRegions.newPageRegions().build() ).
+                build() ).build();
+    }
+}

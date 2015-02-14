@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.PushContentRequests;
-import com.enonic.wem.api.node.NodePublishRequest;
-import com.enonic.wem.api.node.NodePublishRequests;
-import com.enonic.wem.api.node.ResolveSyncWorkResult;
-import com.enonic.wem.api.node.ResolveSyncWorkResults;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.PushContentRequests;
+import com.enonic.xp.core.node.NodePublishRequest;
+import com.enonic.xp.core.node.NodePublishRequests;
+import com.enonic.xp.core.node.ResolveSyncWorkResult;
+import com.enonic.xp.core.node.ResolveSyncWorkResults;
 
 class PushContentRequestsFactory
 {

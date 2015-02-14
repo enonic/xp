@@ -1,10 +1,10 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.site.Site;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.core.content.site.Site;
 
 final class GetNearestSiteCommand
 {

@@ -8,8 +8,8 @@ import org.thymeleaf.exceptions.TemplateProcessingException;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceProblemException;
+import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.core.resource.ResourceProblemException;
 
 final class ThymeleafProcessor
 {

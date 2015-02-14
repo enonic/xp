@@ -6,9 +6,9 @@ import javax.servlet.http.HttpSession;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.context.ContextBuilder;
+import com.enonic.xp.core.content.ContentConstants;
+import com.enonic.xp.core.context.Context;
+import com.enonic.xp.core.context.ContextBuilder;
 import com.enonic.xp.web.handler.OncePerRequestHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;

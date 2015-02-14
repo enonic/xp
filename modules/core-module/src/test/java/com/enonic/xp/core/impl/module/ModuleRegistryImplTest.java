@@ -21,11 +21,11 @@ import de.kalpatec.pojosr.framework.PojoServiceRegistryFactoryImpl;
 import de.kalpatec.pojosr.framework.launch.BundleDescriptor;
 import de.kalpatec.pojosr.framework.launch.PojoServiceRegistry;
 
-import com.enonic.wem.api.event.Event;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleEventType;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleUpdatedEvent;
+import com.enonic.xp.core.event.Event;
+import com.enonic.xp.core.module.Module;
+import com.enonic.xp.core.module.ModuleEventType;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleUpdatedEvent;
 
 import static org.junit.Assert.*;
 

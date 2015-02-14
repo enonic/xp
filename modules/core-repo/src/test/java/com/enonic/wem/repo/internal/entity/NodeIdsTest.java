@@ -3,8 +3,8 @@ package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.support.AbstractEqualsTest;
-import com.enonic.wem.api.node.NodeIds;
+import com.enonic.xp.core.support.AbstractEqualsTest;
+import com.enonic.xp.core.node.NodeIds;
 
 import static junit.framework.Assert.assertEquals;
 

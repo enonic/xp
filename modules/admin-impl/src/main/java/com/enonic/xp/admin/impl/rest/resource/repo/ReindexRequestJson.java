@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.branch.Branches;
-import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.branch.Branches;
+import com.enonic.xp.core.repository.RepositoryId;
 
 class ReindexRequestJson
 {

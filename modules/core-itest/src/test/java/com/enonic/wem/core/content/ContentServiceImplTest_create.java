@@ -5,19 +5,19 @@ import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentPropertyNames;
-import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.content.CreateMediaParams;
-import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.api.content.site.CreateSiteParams;
-import com.enonic.wem.api.content.site.ModuleConfigs;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.mixin.Mixins;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentConstants;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.ContentPropertyNames;
+import com.enonic.xp.core.content.CreateContentParams;
+import com.enonic.xp.core.content.CreateMediaParams;
+import com.enonic.xp.core.content.attachment.Attachments;
+import com.enonic.xp.core.content.site.CreateSiteParams;
+import com.enonic.xp.core.content.site.ModuleConfigs;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.mixin.Mixins;
 
 import static org.junit.Assert.*;
 

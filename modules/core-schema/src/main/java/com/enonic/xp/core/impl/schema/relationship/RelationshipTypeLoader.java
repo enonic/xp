@@ -15,13 +15,13 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.api.xml.mapper.XmlRelationshipTypeMapper;
-import com.enonic.wem.api.xml.model.XmlRelationshipType;
-import com.enonic.wem.api.xml.serializer.XmlSerializers;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.schema.relationship.RelationshipType;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.core.schema.relationship.RelationshipTypes;
+import com.enonic.xp.core.xml.mapper.XmlRelationshipTypeMapper;
+import com.enonic.xp.core.xml.model.XmlRelationshipType;
+import com.enonic.xp.core.xml.serializer.XmlSerializers;
 import com.enonic.xp.core.impl.schema.IconLoader;
 
 final class RelationshipTypeLoader

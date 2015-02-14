@@ -5,8 +5,8 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.relationship.RelationshipTypeIconUrlResolver;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.api.schema.relationship.RelationshipTypes;
+import com.enonic.xp.core.schema.relationship.RelationshipType;
+import com.enonic.xp.core.schema.relationship.RelationshipTypes;
 
 public class RelationshipTypeListJson
 {

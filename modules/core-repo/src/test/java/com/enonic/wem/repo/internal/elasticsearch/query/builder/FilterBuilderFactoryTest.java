@@ -4,11 +4,11 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.query.filter.BooleanFilter;
-import com.enonic.wem.api.query.filter.ExistsFilter;
-import com.enonic.wem.api.query.filter.Filters;
-import com.enonic.wem.api.query.filter.ValueFilter;
+import com.enonic.xp.core.data.Value;
+import com.enonic.xp.core.query.filter.BooleanFilter;
+import com.enonic.xp.core.query.filter.ExistsFilter;
+import com.enonic.xp.core.query.filter.Filters;
+import com.enonic.xp.core.query.filter.ValueFilter;
 
 public class FilterBuilderFactoryTest
     extends BaseTestBuilderFactory

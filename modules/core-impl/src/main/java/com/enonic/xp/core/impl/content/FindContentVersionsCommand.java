@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentVersions;
-import com.enonic.wem.api.content.FindContentVersionsResult;
-import com.enonic.wem.api.node.FindNodeVersionsResult;
-import com.enonic.wem.api.node.GetNodeVersionsParams;
-import com.enonic.wem.api.node.NodeId;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentVersions;
+import com.enonic.xp.core.content.FindContentVersionsResult;
+import com.enonic.xp.core.node.FindNodeVersionsResult;
+import com.enonic.xp.core.node.GetNodeVersionsParams;
+import com.enonic.xp.core.node.NodeId;
 
 public class FindContentVersionsCommand
     extends AbstractContentCommand

@@ -12,10 +12,10 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.security.AuthHelper;
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.security.SecurityService;
-import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.session.Session;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.security.SecurityService;
+import com.enonic.xp.core.security.auth.AuthenticationInfo;
+import com.enonic.xp.core.session.Session;
 
 @Path(ResourceConstants.REST_ROOT + "auth")
 @Produces(MediaType.APPLICATION_JSON)

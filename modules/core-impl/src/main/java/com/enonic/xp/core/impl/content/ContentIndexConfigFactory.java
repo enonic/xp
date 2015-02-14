@@ -1,21 +1,21 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentConstants;
-import com.enonic.wem.api.content.CreateContentTranslatorParams;
-import com.enonic.wem.api.data.PropertyPath;
-import com.enonic.wem.api.index.IndexConfig;
-import com.enonic.wem.api.index.IndexConfigDocument;
-import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentConstants;
+import com.enonic.xp.core.content.CreateContentTranslatorParams;
+import com.enonic.xp.core.data.PropertyPath;
+import com.enonic.xp.core.index.IndexConfig;
+import com.enonic.xp.core.index.IndexConfigDocument;
+import com.enonic.xp.core.index.PatternIndexConfigDocument;
 
-import static com.enonic.wem.api.content.ContentPropertyNames.ATTACHMENT;
-import static com.enonic.wem.api.content.ContentPropertyNames.DATA;
-import static com.enonic.wem.api.content.ContentPropertyNames.FORM;
-import static com.enonic.wem.api.content.ContentPropertyNames.METADATA;
-import static com.enonic.wem.api.content.ContentPropertyNames.PAGE;
-import static com.enonic.wem.api.content.ContentPropertyNames.SITE;
-import static com.enonic.wem.api.content.ContentPropertyNames.TYPE;
-import static com.enonic.wem.api.content.ContentPropertyNames.VALID;
+import static com.enonic.xp.core.content.ContentPropertyNames.ATTACHMENT;
+import static com.enonic.xp.core.content.ContentPropertyNames.DATA;
+import static com.enonic.xp.core.content.ContentPropertyNames.FORM;
+import static com.enonic.xp.core.content.ContentPropertyNames.METADATA;
+import static com.enonic.xp.core.content.ContentPropertyNames.PAGE;
+import static com.enonic.xp.core.content.ContentPropertyNames.SITE;
+import static com.enonic.xp.core.content.ContentPropertyNames.TYPE;
+import static com.enonic.xp.core.content.ContentPropertyNames.VALID;
 
 class ContentIndexConfigFactory
 {

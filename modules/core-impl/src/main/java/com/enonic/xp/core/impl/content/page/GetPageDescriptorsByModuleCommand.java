@@ -6,12 +6,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.api.content.page.PageDescriptors;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleService;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.PageDescriptor;
+import com.enonic.xp.core.content.page.PageDescriptors;
+import com.enonic.xp.core.module.Module;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleService;
 
 final class GetPageDescriptorsByModuleCommand
     extends AbstractGetPageDescriptorCommand

@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
-import com.enonic.wem.api.node.NodeIds;
-import com.enonic.wem.api.node.NodeVersionIds;
+import com.enonic.xp.core.node.NodeIds;
+import com.enonic.xp.core.node.NodeVersionIds;
 
 import static com.enonic.wem.repo.internal.TestContext.TEST_REPOSITORY;
 import static com.enonic.wem.repo.internal.TestContext.TEST_BRANCH;

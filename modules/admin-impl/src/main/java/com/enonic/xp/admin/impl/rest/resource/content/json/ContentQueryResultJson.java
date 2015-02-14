@@ -8,8 +8,8 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.form.InlineMixinsToFormItemsTransformer;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.form.InlineMixinsToFormItemsTransformer;
 
 public class ContentQueryResultJson
     extends AbstractContentQueryResultJson<ContentJson>

@@ -3,10 +3,10 @@ package com.enonic.xp.portal.impl.rendering;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.region.Descriptor;
-import com.enonic.wem.api.content.page.region.LayoutComponent;
-import com.enonic.wem.api.content.page.region.LayoutDescriptorService;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.region.Descriptor;
+import com.enonic.xp.core.content.page.region.LayoutComponent;
+import com.enonic.xp.core.content.page.region.LayoutDescriptorService;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.rendering.Renderer;
 

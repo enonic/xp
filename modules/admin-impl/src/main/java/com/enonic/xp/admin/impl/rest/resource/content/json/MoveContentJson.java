@@ -1,8 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentPath;
 
 public class MoveContentJson
 {

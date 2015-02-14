@@ -7,10 +7,10 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
-import com.enonic.wem.api.form.FormItem;
-import com.enonic.wem.api.form.FormItemJson;
-import com.enonic.wem.api.form.FormItemJsonFactory;
-import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.xp.core.form.FormItem;
+import com.enonic.xp.core.form.FormItemJson;
+import com.enonic.xp.core.form.FormItemJsonFactory;
+import com.enonic.xp.core.schema.mixin.Mixin;
 
 public class MixinJson
     implements ItemJson

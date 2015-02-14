@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.PrincipalKeys;
-import com.enonic.wem.api.security.User;
-import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.PrincipalKeys;
+import com.enonic.xp.core.security.User;
+import com.enonic.xp.core.security.auth.AuthenticationInfo;
 
 public final class LoginResultJson
 {

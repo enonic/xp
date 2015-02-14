@@ -5,8 +5,8 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.node.NodeId;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.node.NodeId;
 
 public class BranchDocumentId
 {

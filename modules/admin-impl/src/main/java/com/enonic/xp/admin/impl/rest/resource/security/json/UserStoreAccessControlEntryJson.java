@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.security.Principal;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.acl.UserStoreAccess;
-import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
+import com.enonic.xp.core.security.Principal;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.acl.UserStoreAccess;
+import com.enonic.xp.core.security.acl.UserStoreAccessControlEntry;
 
 @SuppressWarnings("UnusedDeclaration")
 public final class UserStoreAccessControlEntryJson

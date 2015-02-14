@@ -12,8 +12,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageProducer;
 
-import com.enonic.wem.api.image.ImageFilter;
-import com.enonic.wem.api.image.ImageHelper;
+import com.enonic.xp.core.image.ImageFilter;
+import com.enonic.xp.core.image.ImageHelper;
 
 public final class AwtImageFilter
     implements ImageFilter

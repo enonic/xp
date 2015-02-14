@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceProblemException;
+import com.enonic.xp.core.resource.Resource;
+import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.core.resource.ResourceProblemException;
 
 final class ErrorPageBuilder
 {

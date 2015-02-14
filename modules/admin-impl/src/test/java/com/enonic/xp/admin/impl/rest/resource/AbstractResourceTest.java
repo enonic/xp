@@ -21,9 +21,9 @@ import com.enonic.xp.admin.impl.json.ObjectMapperHelper;
 import com.enonic.xp.admin.impl.rest.multipart.MultipartFormReader;
 import com.enonic.xp.admin.impl.rest.provider.JsonObjectProvider;
 import com.enonic.xp.admin.impl.rest.provider.JsonSerializableProvider;
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.session.SessionKey;
-import com.enonic.wem.api.session.SimpleSession;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.session.SessionKey;
+import com.enonic.xp.core.session.SimpleSession;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;

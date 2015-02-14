@@ -4,8 +4,8 @@ import java.util.Collection;
 
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 
-import com.enonic.wem.api.aggregation.BucketAggregation;
-import com.enonic.wem.api.aggregation.Buckets;
+import com.enonic.xp.core.aggregation.BucketAggregation;
+import com.enonic.xp.core.aggregation.Buckets;
 
 class HistogramAggregationFactory
     extends AggregationsFactory

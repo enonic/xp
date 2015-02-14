@@ -5,14 +5,14 @@ import java.time.Instant;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.content.Metadatas;
-import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.core.content.CreateContentParams;
+import com.enonic.xp.core.content.Metadatas;
+import com.enonic.xp.core.schema.mixin.Mixin;
+import com.enonic.xp.core.schema.mixin.MixinService;
+import com.enonic.xp.core.security.PrincipalKey;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
 

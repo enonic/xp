@@ -3,8 +3,8 @@ package com.enonic.wem.repo.internal.elasticsearch.branch;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Requests;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.index.IndexType;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.index.IndexType;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.elasticsearch.xcontent.BranchXContentBuilderFactory;

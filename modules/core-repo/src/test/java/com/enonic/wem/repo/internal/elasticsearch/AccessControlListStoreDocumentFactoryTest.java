@@ -4,10 +4,10 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
-import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.api.security.acl.Permission;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.acl.AccessControlEntry;
+import com.enonic.xp.core.security.acl.AccessControlList;
+import com.enonic.xp.core.security.acl.Permission;
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
 
 import static org.junit.Assert.*;

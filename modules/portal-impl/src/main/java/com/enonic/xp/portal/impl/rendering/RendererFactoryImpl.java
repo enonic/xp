@@ -9,7 +9,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.rendering.Renderable;
+import com.enonic.xp.core.rendering.Renderable;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
 

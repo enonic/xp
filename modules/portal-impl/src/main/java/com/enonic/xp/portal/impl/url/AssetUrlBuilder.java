@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleKey;
 import com.enonic.xp.portal.url.AssetUrlParams;
 
 final class AssetUrlBuilder

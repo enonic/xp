@@ -3,11 +3,11 @@ package com.enonic.xp.admin.event.impl;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.event.Event;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleUpdatedEvent;
+import com.enonic.xp.core.event.Event;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleUpdatedEvent;
 
-import static com.enonic.wem.api.module.ModuleEventType.INSTALLED;
+import static com.enonic.xp.core.module.ModuleEventType.INSTALLED;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;

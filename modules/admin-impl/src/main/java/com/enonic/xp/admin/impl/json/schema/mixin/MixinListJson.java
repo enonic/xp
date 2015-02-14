@@ -5,8 +5,8 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
-import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.Mixins;
+import com.enonic.xp.core.schema.mixin.Mixin;
+import com.enonic.xp.core.schema.mixin.Mixins;
 
 public class MixinListJson
 {

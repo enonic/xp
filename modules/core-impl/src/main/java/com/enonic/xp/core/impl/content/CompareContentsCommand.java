@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.wem.api.content.CompareContentResults;
-import com.enonic.wem.api.content.ContentIds;
-import com.enonic.wem.api.node.NodeComparisons;
-import com.enonic.wem.api.node.NodeIds;
-import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.branch.Branch;
+import com.enonic.xp.core.content.CompareContentResults;
+import com.enonic.xp.core.content.ContentIds;
+import com.enonic.xp.core.node.NodeComparisons;
+import com.enonic.xp.core.node.NodeIds;
+import com.enonic.xp.core.node.NodeService;
+import com.enonic.xp.core.branch.Branch;
 
 public class CompareContentsCommand
 {

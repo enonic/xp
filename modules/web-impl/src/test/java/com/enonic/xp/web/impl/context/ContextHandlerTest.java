@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.enonic.wem.api.context.ContextAccessor;
+import com.enonic.xp.core.context.ContextAccessor;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
 public class ContextHandlerTest

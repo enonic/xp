@@ -4,7 +4,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramBuilder;
 
-import com.enonic.wem.api.query.aggregation.DateHistogramAggregationQuery;
+import com.enonic.xp.core.query.aggregation.DateHistogramAggregationQuery;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 class DateHistogramAggregationQueryFactory

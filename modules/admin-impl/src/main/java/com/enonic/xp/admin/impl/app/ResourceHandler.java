@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.net.MediaType;
 
-import com.enonic.wem.api.util.MediaTypes;
+import com.enonic.xp.core.util.MediaTypes;
 
 final class ResourceHandler
 {

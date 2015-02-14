@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.json.aggregation;
 
 import java.time.Instant;
 
-import com.enonic.wem.api.aggregation.DateRangeBucket;
+import com.enonic.xp.core.aggregation.DateRangeBucket;
 
 public class DateRangeBucketJson
     extends BucketJson

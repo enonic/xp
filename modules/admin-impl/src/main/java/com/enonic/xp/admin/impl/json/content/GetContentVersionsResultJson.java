@@ -4,8 +4,8 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.content.ContentVersion;
-import com.enonic.wem.api.content.FindContentVersionsResult;
+import com.enonic.xp.core.content.ContentVersion;
+import com.enonic.xp.core.content.FindContentVersionsResult;
 
 public class GetContentVersionsResultJson
 {

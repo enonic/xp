@@ -4,10 +4,10 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
-import com.enonic.wem.api.aggregation.Aggregations;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentListMetaData;
-import com.enonic.wem.api.content.Contents;
+import com.enonic.xp.core.aggregation.Aggregations;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentListMetaData;
+import com.enonic.xp.core.content.Contents;
 
 public class AggregationContentSummaryListJson
     extends AbstractAggregationContentListJson<ContentSummaryJson>

@@ -12,8 +12,8 @@ import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
-import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.xp.core.resource.Resource;
+import com.enonic.xp.core.resource.ResourceKey;
 import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.portal.impl.script.bean.ModuleScriptInfo;
 import com.enonic.xp.portal.impl.script.bean.ScriptValueFactoryImpl;

@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.image.command;
 
-import com.enonic.wem.api.image.BuilderContext;
+import com.enonic.xp.core.image.BuilderContext;
 import com.enonic.xp.core.impl.image.effect.ScaleBlockFilter;
 
 public class ScaleBlockFilterCommand

@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.export.xml.mapper;
 
-import com.enonic.wem.api.export.ExportNodeException;
-import com.enonic.wem.api.node.Node;
+import com.enonic.xp.core.export.ExportNodeException;
+import com.enonic.xp.core.node.Node;
 import com.enonic.xp.core.impl.export.xml.XmlNode;
 
 public class XmlNodeMapper

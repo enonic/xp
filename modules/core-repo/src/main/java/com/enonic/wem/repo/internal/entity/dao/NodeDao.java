@@ -1,9 +1,9 @@
 package com.enonic.wem.repo.internal.entity.dao;
 
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.api.node.NodeVersionIds;
-import com.enonic.wem.api.node.Nodes;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeVersionId;
+import com.enonic.xp.core.node.NodeVersionIds;
+import com.enonic.xp.core.node.Nodes;
 
 public interface NodeDao
 {

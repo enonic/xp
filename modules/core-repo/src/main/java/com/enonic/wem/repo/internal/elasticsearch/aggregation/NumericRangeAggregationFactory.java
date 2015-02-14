@@ -4,9 +4,9 @@ import java.util.Collection;
 
 import org.elasticsearch.search.aggregations.bucket.range.Range;
 
-import com.enonic.wem.api.aggregation.BucketAggregation;
-import com.enonic.wem.api.aggregation.Buckets;
-import com.enonic.wem.api.aggregation.NumericRangeBucket;
+import com.enonic.xp.core.aggregation.BucketAggregation;
+import com.enonic.xp.core.aggregation.Buckets;
+import com.enonic.xp.core.aggregation.NumericRangeBucket;
 
 class NumericRangeAggregationFactory
     extends AggregationsFactory

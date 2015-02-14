@@ -7,7 +7,7 @@ import org.w3c.dom.Document;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.xml.DomHelper;
+import com.enonic.xp.core.xml.DomHelper;
 
 import static org.junit.Assert.*;
 

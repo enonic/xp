@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch.branch;
 
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodeVersionId;
 
 public class NodeBranchQueryResultEntry
 {

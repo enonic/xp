@@ -5,18 +5,18 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.index.IndexPath;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.FindNodesByParentParams;
-import com.enonic.wem.api.node.FindNodesByParentResult;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeIndexPath;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.query.expr.FieldOrderExpr;
-import com.enonic.wem.api.query.expr.OrderExpr;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.index.ChildOrder;
+import com.enonic.xp.core.index.IndexPath;
+import com.enonic.xp.core.node.CreateNodeParams;
+import com.enonic.xp.core.node.FindNodesByParentParams;
+import com.enonic.xp.core.node.FindNodesByParentResult;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodeIndexPath;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.query.expr.FieldOrderExpr;
+import com.enonic.xp.core.query.expr.OrderExpr;
 
 import static org.junit.Assert.*;
 

@@ -2,7 +2,7 @@ package com.enonic.xp.admin.event.impl.json;
 
 import java.time.Instant;
 
-import com.enonic.wem.api.schema.content.ContentTypeUpdatedEvent;
+import com.enonic.xp.core.schema.content.ContentTypeUpdatedEvent;
 
 public class ContentTypeUpdatedEventJson
     implements EventJson

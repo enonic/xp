@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.script;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.xp.core.resource.ResourceKey;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
 

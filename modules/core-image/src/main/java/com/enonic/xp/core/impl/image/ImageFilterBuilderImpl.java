@@ -6,9 +6,9 @@ package com.enonic.xp.core.impl.image;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.wem.api.image.BuilderContext;
-import com.enonic.wem.api.image.ImageFilter;
-import com.enonic.wem.api.image.ImageFilterBuilder;
+import com.enonic.xp.core.image.BuilderContext;
+import com.enonic.xp.core.image.ImageFilter;
+import com.enonic.xp.core.image.ImageFilterBuilder;
 import com.enonic.xp.core.impl.image.command.FilterCommand;
 import com.enonic.xp.core.impl.image.command.FilterCommandRegistry;
 import com.enonic.xp.core.impl.image.parser.FilterExpr;

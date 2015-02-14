@@ -2,13 +2,13 @@ package com.enonic.xp.core.impl.relationship;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.relationship.CreateRelationshipParams;
-import com.enonic.wem.api.relationship.RelationshipId;
-import com.enonic.wem.api.relationship.RelationshipNotFoundException;
-import com.enonic.wem.api.relationship.RelationshipService;
-import com.enonic.wem.api.relationship.Relationships;
-import com.enonic.wem.api.relationship.UpdateRelationshipParams;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.relationship.CreateRelationshipParams;
+import com.enonic.xp.core.relationship.RelationshipId;
+import com.enonic.xp.core.relationship.RelationshipNotFoundException;
+import com.enonic.xp.core.relationship.RelationshipService;
+import com.enonic.xp.core.relationship.Relationships;
+import com.enonic.xp.core.relationship.UpdateRelationshipParams;
 
 @Component
 public final class RelationshipServiceImpl

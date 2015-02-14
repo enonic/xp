@@ -1,11 +1,11 @@
 package com.enonic.wem.repo.internal.version;
 
-import com.enonic.wem.api.node.NodeVersionDiffQuery;
-import com.enonic.wem.api.node.NodeVersionDiffResult;
-import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.node.FindNodeVersionsResult;
-import com.enonic.wem.api.node.NodeVersion;
-import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.xp.core.node.NodeVersionDiffQuery;
+import com.enonic.xp.core.node.NodeVersionDiffResult;
+import com.enonic.xp.core.repository.RepositoryId;
+import com.enonic.xp.core.node.FindNodeVersionsResult;
+import com.enonic.xp.core.node.NodeVersion;
+import com.enonic.xp.core.node.NodeVersionId;
 
 public interface VersionService
 {

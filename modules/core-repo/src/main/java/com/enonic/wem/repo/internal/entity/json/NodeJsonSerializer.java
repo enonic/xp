@@ -10,9 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.RootNode;
-import com.enonic.wem.api.util.Exceptions;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.RootNode;
+import com.enonic.xp.core.util.Exceptions;
 
 public final class NodeJsonSerializer
 {

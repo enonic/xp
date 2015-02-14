@@ -20,15 +20,15 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.rest.exception.NotFoundWebException;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.Media;
-import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.security.RoleKeys;
-import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.api.util.ImageHelper;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.core.content.Media;
+import com.enonic.xp.core.content.attachment.Attachment;
+import com.enonic.xp.core.schema.content.ContentTypeService;
+import com.enonic.xp.core.security.RoleKeys;
+import com.enonic.xp.core.util.Exceptions;
+import com.enonic.xp.core.util.ImageHelper;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content/media")

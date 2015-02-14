@@ -22,11 +22,11 @@ import com.enonic.xp.admin.impl.rest.resource.module.json.ListModuleJson;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleInstallParams;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleListParams;
 import com.enonic.xp.admin.impl.rest.resource.module.json.ModuleSuccessJson;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.xp.core.module.Module;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleService;
+import com.enonic.xp.core.module.Modules;
+import com.enonic.xp.core.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "module")
 @Produces(MediaType.APPLICATION_JSON)

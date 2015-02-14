@@ -2,10 +2,10 @@ package com.enonic.xp.core.impl.content.page;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.UpdateContentParams;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.core.content.UpdateContentParams;
 
 final class DeletePageCommand
 {

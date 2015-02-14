@@ -2,7 +2,7 @@ package com.enonic.xp.portal.script.command;
 
 import java.util.Map;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.xp.core.resource.ResourceKey;
 
 // TODO: Rename to CommandContext and include setResult(..) and setResultAsJson(..)
 public interface CommandRequest

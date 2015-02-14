@@ -1,8 +1,8 @@
 package com.enonic.xp.admin.impl.json.schema.content;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
-import com.enonic.wem.api.form.FormJson;
-import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.xp.core.form.FormJson;
+import com.enonic.xp.core.schema.content.ContentType;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentTypeJson

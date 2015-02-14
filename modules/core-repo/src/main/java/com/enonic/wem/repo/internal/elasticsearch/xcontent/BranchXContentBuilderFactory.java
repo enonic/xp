@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.xcontent;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
-import com.enonic.wem.api.branch.Branch;
+import com.enonic.xp.core.branch.Branch;
 import com.enonic.wem.repo.internal.elasticsearch.branch.BranchIndexPath;
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;

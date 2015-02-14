@@ -13,11 +13,11 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.resource.ResourceProblemException;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.resource.ResourceProblemException;
 import com.enonic.xp.portal.impl.script.AbstractScriptTest;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.PortalContext;

@@ -4,10 +4,10 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.PushContentsResult;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.PushContentsResult;
 
 public class PublishContentResultJson
 {

@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.resource.service;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.xp.core.resource.ResourceKey;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.rendering.RenderResult;

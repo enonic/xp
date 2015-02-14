@@ -5,8 +5,8 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypes;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentTypeListJson

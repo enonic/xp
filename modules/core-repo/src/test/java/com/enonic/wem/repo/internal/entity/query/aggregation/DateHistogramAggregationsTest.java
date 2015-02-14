@@ -5,14 +5,14 @@ import java.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.aggregation.BucketAggregation;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.FindNodesByQueryResult;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeQuery;
-import com.enonic.wem.api.query.aggregation.DateHistogramAggregationQuery;
+import com.enonic.xp.core.aggregation.BucketAggregation;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.node.CreateNodeParams;
+import com.enonic.xp.core.node.FindNodesByQueryResult;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.NodeQuery;
+import com.enonic.xp.core.query.aggregation.DateHistogramAggregationQuery;
 import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 
 import static org.junit.Assert.*;

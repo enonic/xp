@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.security.json;
 
 
-import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.xp.core.security.PrincipalKey;
 
 public final class DeletePrincipalResultJson
 {

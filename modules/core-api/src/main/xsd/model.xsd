@@ -5,7 +5,7 @@
     <xs:appinfo>
       <jaxb:globalBindings generateElementClass="true"/>
       <jaxb:schemaBindings>
-        <jaxb:package name="com.enonic.wem.api.xml.model"/>
+        <jaxb:package name="com.enonic.xp.core.xml.model"/>
         <jaxb:nameXmlTransform>
           <jaxb:typeName prefix="Xml"/>
           <jaxb:elementName prefix="Xml" suffix="Elem"/>
@@ -106,7 +106,7 @@
   <xs:complexType name="inline">
     <xs:complexContent>
       <xs:extension base="formItem">
-        <xs:attribute name="mixin" type="xs:string" />
+        <xs:attribute name="mixin" type="xs:string"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

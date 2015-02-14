@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.auth;
 
-import com.enonic.wem.api.security.PrincipalKeys;
+import com.enonic.xp.core.security.PrincipalKeys;
 
 final class AdminApplication
 {

@@ -4,7 +4,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.json.filter;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import com.enonic.wem.api.query.filter.Filter;
+import com.enonic.xp.core.query.filter.Filter;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes({                                                                                                   //

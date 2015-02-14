@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.rendering;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.page.PageDescriptor;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.page.PageDescriptor;
 import com.enonic.xp.portal.impl.controller.ControllerScript;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;

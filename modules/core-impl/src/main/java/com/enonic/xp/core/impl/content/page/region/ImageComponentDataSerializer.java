@@ -1,10 +1,10 @@
 package com.enonic.xp.core.impl.content.page.region;
 
 
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.page.ComponentDataSerializer;
-import com.enonic.wem.api.content.page.region.ImageComponent;
-import com.enonic.wem.api.data.PropertySet;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.page.ComponentDataSerializer;
+import com.enonic.xp.core.content.page.region.ImageComponent;
+import com.enonic.xp.core.data.PropertySet;
 
 public class ImageComponentDataSerializer
     extends ComponentDataSerializer<ImageComponent, ImageComponent>

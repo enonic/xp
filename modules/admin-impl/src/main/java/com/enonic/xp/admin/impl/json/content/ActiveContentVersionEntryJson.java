@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.json.content;
 
-import com.enonic.wem.api.content.ActiveContentVersionEntry;
+import com.enonic.xp.core.content.ActiveContentVersionEntry;
 
 public class ActiveContentVersionEntryJson
 {

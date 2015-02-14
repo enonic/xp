@@ -1,12 +1,12 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.api.content.attachment.CreateAttachments;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.media.MediaInfo;
-import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.xp.core.content.CreateContentParams;
+import com.enonic.xp.core.content.UpdateContentParams;
+import com.enonic.xp.core.content.attachment.CreateAttachments;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.media.MediaInfo;
+import com.enonic.xp.core.schema.mixin.MixinService;
 
 class ProxyContentProcessor
 {

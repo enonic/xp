@@ -1,10 +1,10 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.relationship;
 
 
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
+import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.core.schema.relationship.RelationshipType;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeService;
 
 public final class RelationshipTypeIconResolver
 {

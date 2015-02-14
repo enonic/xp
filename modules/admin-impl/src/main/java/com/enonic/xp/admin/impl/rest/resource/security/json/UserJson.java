@@ -3,8 +3,8 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 
 import java.util.List;
 
-import com.enonic.wem.api.security.Principals;
-import com.enonic.wem.api.security.User;
+import com.enonic.xp.core.security.Principals;
+import com.enonic.xp.core.security.User;
 
 public final class UserJson
     extends PrincipalJson

@@ -1,14 +1,14 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.node.NoNodeWithIdFoundException;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeNotFoundException;
-import com.enonic.wem.api.util.Exceptions;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentNotFoundException;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.node.NoNodeWithIdFoundException;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodeNotFoundException;
+import com.enonic.xp.core.util.Exceptions;
 
 
 final class GetContentByIdCommand

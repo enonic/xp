@@ -2,9 +2,9 @@ package com.enonic.wem.repo.internal.elasticsearch.branch;
 
 import java.time.Instant;
 
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeState;
-import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.NodeState;
+import com.enonic.xp.core.node.NodeVersionId;
 
 public class NodeBranchVersion
 {

@@ -2,8 +2,8 @@ package com.enonic.xp.portal.impl.url;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
 import com.enonic.xp.portal.url.ImageUrlParams;
 
 final class ImageUrlBuilder

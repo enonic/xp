@@ -1,20 +1,20 @@
 package com.enonic.xp.core.impl.content.page;
 
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentName;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.content.page.CreatePageParams;
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.PageRegions;
-import com.enonic.wem.api.content.page.PageService;
-import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.security.PrincipalKey;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentName;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.core.content.CreateContentParams;
+import com.enonic.xp.core.content.page.CreatePageParams;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.PageRegions;
+import com.enonic.xp.core.content.page.PageService;
+import com.enonic.xp.core.content.page.PageTemplate;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.ContentTypeNames;
+import com.enonic.xp.core.security.PrincipalKey;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 
 class CreatePageTemplateCommand

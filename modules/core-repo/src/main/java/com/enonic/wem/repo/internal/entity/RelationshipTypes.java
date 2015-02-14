@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.support.AbstractImmutableEntityList;
+import com.enonic.xp.core.support.AbstractImmutableEntityList;
 
 public final class RelationshipTypes
     extends AbstractImmutableEntityList<RelationshipType>

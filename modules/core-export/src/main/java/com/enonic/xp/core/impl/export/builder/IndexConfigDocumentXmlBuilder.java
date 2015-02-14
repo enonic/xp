@@ -2,10 +2,10 @@ package com.enonic.xp.core.impl.export.builder;
 
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.data.PropertyPath;
-import com.enonic.wem.api.index.IndexConfigDocument;
-import com.enonic.wem.api.index.PathIndexConfig;
-import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.xp.core.data.PropertyPath;
+import com.enonic.xp.core.index.IndexConfigDocument;
+import com.enonic.xp.core.index.PathIndexConfig;
+import com.enonic.xp.core.index.PatternIndexConfigDocument;
 import com.enonic.xp.core.impl.export.xml.XmlIndexConfigs;
 import com.enonic.xp.core.impl.export.xml.XmlPathIndexConfig;
 

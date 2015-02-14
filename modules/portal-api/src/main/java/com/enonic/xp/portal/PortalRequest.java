@@ -4,8 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.content.ContentPath;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.content.ContentPath;
 
 public interface PortalRequest
 {

@@ -5,11 +5,11 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
-import com.enonic.wem.api.aggregation.Aggregations;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentListMetaData;
-import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.form.InlineMixinsToFormItemsTransformer;
+import com.enonic.xp.core.aggregation.Aggregations;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentListMetaData;
+import com.enonic.xp.core.content.Contents;
+import com.enonic.xp.core.form.InlineMixinsToFormItemsTransformer;
 
 public class AggregationsContentListJson
     extends AbstractAggregationContentListJson<ContentJson>

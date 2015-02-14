@@ -9,14 +9,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.admin.impl.json.content.MetadataJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
-import com.enonic.wem.api.content.ContentName;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.CreateContentParams;
-import com.enonic.wem.api.content.Metadatas;
-import com.enonic.wem.api.data.PropertyArrayJson;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.data.PropertyTreeJson;
-import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.xp.core.content.ContentName;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.CreateContentParams;
+import com.enonic.xp.core.content.Metadatas;
+import com.enonic.xp.core.data.PropertyArrayJson;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.data.PropertyTreeJson;
+import com.enonic.xp.core.schema.content.ContentTypeName;
 
 public final class CreateContentJson
 {

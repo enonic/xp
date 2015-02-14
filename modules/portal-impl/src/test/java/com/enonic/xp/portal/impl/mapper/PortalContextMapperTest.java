@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.mapper;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleKey;
 import com.enonic.xp.portal.impl.script.AbstractMapSerializableTest;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.impl.ContentFixtures;

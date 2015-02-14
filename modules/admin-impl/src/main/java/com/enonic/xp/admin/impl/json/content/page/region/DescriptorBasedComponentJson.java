@@ -3,9 +3,9 @@ package com.enonic.xp.admin.impl.json.content.page.region;
 
 import java.util.List;
 
-import com.enonic.wem.api.content.page.region.DescriptorBasedComponent;
-import com.enonic.wem.api.data.PropertyArrayJson;
-import com.enonic.wem.api.data.PropertyTreeJson;
+import com.enonic.xp.core.content.page.region.DescriptorBasedComponent;
+import com.enonic.xp.core.data.PropertyArrayJson;
+import com.enonic.xp.core.data.PropertyTreeJson;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class DescriptorBasedComponentJson<COMPONENT extends DescriptorBasedComponent>

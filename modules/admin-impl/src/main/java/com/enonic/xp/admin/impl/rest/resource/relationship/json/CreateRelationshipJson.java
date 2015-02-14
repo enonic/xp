@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.relationship.json;
 
-import com.enonic.wem.api.relationship.RelationshipKey;
+import com.enonic.xp.core.relationship.RelationshipKey;
 
 public class CreateRelationshipJson
 {

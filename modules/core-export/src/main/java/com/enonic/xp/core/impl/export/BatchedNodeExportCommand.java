@@ -4,17 +4,17 @@ import java.nio.file.Path;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.export.ExportError;
-import com.enonic.wem.api.export.NodeExportResult;
-import com.enonic.wem.api.node.AttachedBinary;
-import com.enonic.wem.api.node.FindNodesByParentParams;
-import com.enonic.wem.api.node.FindNodesByParentResult;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.node.Nodes;
-import com.enonic.wem.api.util.BinaryReference;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.export.ExportError;
+import com.enonic.xp.core.export.NodeExportResult;
+import com.enonic.xp.core.node.AttachedBinary;
+import com.enonic.xp.core.node.FindNodesByParentParams;
+import com.enonic.xp.core.node.FindNodesByParentResult;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.NodeService;
+import com.enonic.xp.core.node.Nodes;
+import com.enonic.xp.core.util.BinaryReference;
 import com.enonic.xp.core.impl.export.writer.ExportWriter;
 import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
 import com.enonic.xp.core.impl.export.xml.XmlNode;

@@ -5,12 +5,12 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ModuleNotFoundException;
-import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.api.module.Modules;
+import com.enonic.xp.core.module.Module;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleKeys;
+import com.enonic.xp.core.module.ModuleNotFoundException;
+import com.enonic.xp.core.module.ModuleService;
+import com.enonic.xp.core.module.Modules;
 
 @Component
 public final class ModuleServiceImpl

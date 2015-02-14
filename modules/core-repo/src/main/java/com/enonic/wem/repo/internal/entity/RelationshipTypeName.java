@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
 
-import com.enonic.wem.api.Name;
+import com.enonic.xp.core.name.Name;
 
 public final class RelationshipTypeName
 

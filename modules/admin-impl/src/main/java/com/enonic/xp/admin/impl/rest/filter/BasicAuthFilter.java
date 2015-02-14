@@ -11,7 +11,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.BaseEncoding;
 
 import com.enonic.xp.admin.impl.security.AuthHelper;
-import com.enonic.wem.api.security.SecurityService;
+import com.enonic.xp.core.security.SecurityService;
 
 @Priority(Priorities.AUTHENTICATION)
 final class BasicAuthFilter

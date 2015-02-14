@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.index.result;
 
-import com.enonic.wem.api.aggregation.Aggregations;
+import com.enonic.xp.core.aggregation.Aggregations;
 
 public class SearchResult
 {

@@ -11,14 +11,14 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.form.Input;
-import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.module.Modules;
+import com.enonic.xp.core.form.Form;
+import com.enonic.xp.core.form.Input;
+import com.enonic.xp.core.form.inputtype.InputTypes;
+import com.enonic.xp.core.module.Module;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleService;
+import com.enonic.xp.core.module.ModuleVersion;
+import com.enonic.xp.core.module.Modules;
 
 public class ModuleResourceTest
     extends AbstractResourceTest

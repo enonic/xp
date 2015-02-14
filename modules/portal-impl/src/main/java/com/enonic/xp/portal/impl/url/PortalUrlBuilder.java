@@ -8,9 +8,9 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.net.UrlEscapers;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.exception.NotFoundException;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.core.exception.NotFoundException;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;

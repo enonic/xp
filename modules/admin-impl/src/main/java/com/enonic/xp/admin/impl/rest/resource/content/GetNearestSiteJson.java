@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.content.ContentId;
+import com.enonic.xp.core.content.ContentId;
 
 public class GetNearestSiteJson
 {

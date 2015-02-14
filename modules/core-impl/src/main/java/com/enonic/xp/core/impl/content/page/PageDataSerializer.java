@@ -1,14 +1,14 @@
 package com.enonic.xp.core.impl.content.page;
 
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageRegions;
-import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.PropertySet;
-import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
-import com.enonic.wem.api.util.Reference;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.Page;
+import com.enonic.xp.core.content.page.PageRegions;
+import com.enonic.xp.core.content.page.PageTemplateKey;
+import com.enonic.xp.core.content.page.region.Region;
+import com.enonic.xp.core.data.Property;
+import com.enonic.xp.core.data.PropertySet;
+import com.enonic.xp.core.support.serializer.AbstractDataSetSerializer;
+import com.enonic.xp.core.util.Reference;
 import com.enonic.xp.core.impl.content.page.region.RegionDataSerializer;
 
 public class PageDataSerializer

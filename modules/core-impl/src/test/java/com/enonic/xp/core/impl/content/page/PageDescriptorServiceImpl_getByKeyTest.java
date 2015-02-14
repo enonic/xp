@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.content.page;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.PageDescriptor;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.PageDescriptor;
 
 public class PageDescriptorServiceImpl_getByKeyTest
     extends AbstractPageDescriptorServiceTest

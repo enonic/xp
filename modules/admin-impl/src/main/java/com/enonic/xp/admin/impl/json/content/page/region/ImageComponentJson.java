@@ -6,13 +6,13 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.page.region.ComponentName;
-import com.enonic.wem.api.content.page.region.ImageComponent;
-import com.enonic.wem.api.data.PropertyArrayJson;
-import com.enonic.wem.api.data.PropertyTreeJson;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.page.region.ComponentName;
+import com.enonic.xp.core.content.page.region.ImageComponent;
+import com.enonic.xp.core.data.PropertyArrayJson;
+import com.enonic.xp.core.data.PropertyTreeJson;
 
-import static com.enonic.wem.api.content.page.region.ImageComponent.newImageComponent;
+import static com.enonic.xp.core.content.page.region.ImageComponent.newImageComponent;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ImageComponentJson

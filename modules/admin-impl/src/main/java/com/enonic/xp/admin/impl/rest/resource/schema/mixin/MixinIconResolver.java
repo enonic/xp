@@ -1,10 +1,10 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.mixin;
 
 
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MixinName;
-import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.core.schema.mixin.Mixin;
+import com.enonic.xp.core.schema.mixin.MixinName;
+import com.enonic.xp.core.schema.mixin.MixinService;
 
 public final class MixinIconResolver
 {

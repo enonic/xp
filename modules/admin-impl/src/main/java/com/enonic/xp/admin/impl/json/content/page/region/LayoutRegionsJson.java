@@ -6,10 +6,10 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import com.enonic.wem.api.content.page.region.LayoutRegions;
-import com.enonic.wem.api.content.page.region.Region;
+import com.enonic.xp.core.content.page.region.LayoutRegions;
+import com.enonic.xp.core.content.page.region.Region;
 
-import static com.enonic.wem.api.content.page.region.LayoutRegions.newLayoutRegions;
+import static com.enonic.xp.core.content.page.region.LayoutRegions.newLayoutRegions;
 
 @SuppressWarnings("UnusedDeclaration")
 public class LayoutRegionsJson

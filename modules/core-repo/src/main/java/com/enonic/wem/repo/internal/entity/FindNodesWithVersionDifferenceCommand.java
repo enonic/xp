@@ -1,8 +1,8 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.node.NodeVersionDiffQuery;
-import com.enonic.wem.api.node.NodeVersionDiffResult;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.node.NodeVersionDiffQuery;
+import com.enonic.xp.core.node.NodeVersionDiffResult;
 import com.enonic.wem.repo.internal.version.VersionService;
 
 public class FindNodesWithVersionDifferenceCommand

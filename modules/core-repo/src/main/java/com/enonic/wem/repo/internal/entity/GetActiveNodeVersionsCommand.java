@@ -2,13 +2,13 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.branch.Branches;
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.node.GetActiveNodeVersionsResult;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.branch.Branches;
+import com.enonic.xp.core.context.Context;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.node.GetActiveNodeVersionsResult;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodeVersionId;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.version.VersionService;
 

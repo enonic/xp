@@ -5,8 +5,8 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.module.ModuleJson;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.Modules;
+import com.enonic.xp.core.module.Module;
+import com.enonic.xp.core.module.Modules;
 
 public class ListModuleJson
 {

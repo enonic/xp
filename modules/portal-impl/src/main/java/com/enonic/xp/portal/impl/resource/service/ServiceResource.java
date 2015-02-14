@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.resource.service;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.resource.ResourceKey;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 
 public final class ServiceResource

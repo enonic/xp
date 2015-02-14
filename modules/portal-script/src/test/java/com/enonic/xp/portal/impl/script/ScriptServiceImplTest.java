@@ -2,8 +2,8 @@ package com.enonic.xp.portal.impl.script;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceProblemException;
+import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.core.resource.ResourceProblemException;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
 

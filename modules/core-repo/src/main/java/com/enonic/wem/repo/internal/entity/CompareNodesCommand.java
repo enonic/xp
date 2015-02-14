@@ -1,11 +1,11 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.node.NodeComparison;
-import com.enonic.wem.api.node.NodeComparisons;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeIds;
+import com.enonic.xp.core.context.Context;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.node.NodeComparison;
+import com.enonic.xp.core.node.NodeComparisons;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodeIds;
 
 public class CompareNodesCommand
     extends AbstractCompareNodeCommand

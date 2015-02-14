@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.query.expr.DynamicOrderExpr;
-import com.enonic.wem.api.query.expr.FieldOrderExpr;
-import com.enonic.wem.api.query.expr.OrderExpr;
+import com.enonic.xp.core.index.ChildOrder;
+import com.enonic.xp.core.query.expr.DynamicOrderExpr;
+import com.enonic.xp.core.query.expr.FieldOrderExpr;
+import com.enonic.xp.core.query.expr.OrderExpr;
 
 public class ChildOrderJson
 {

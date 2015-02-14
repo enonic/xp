@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.security.json;
 
-import com.enonic.wem.api.security.UserStore;
+import com.enonic.xp.core.security.UserStore;
 
 @SuppressWarnings("UnusedDeclaration")
 public class UserStoreSummaryJson

@@ -1,10 +1,10 @@
 package com.enonic.wem.repo.internal.index;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.security.PrincipalKeys;
-import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.context.Context;
+import com.enonic.xp.core.repository.RepositoryId;
+import com.enonic.xp.core.security.PrincipalKeys;
+import com.enonic.xp.core.security.auth.AuthenticationInfo;
 
 public class IndexContext
 {

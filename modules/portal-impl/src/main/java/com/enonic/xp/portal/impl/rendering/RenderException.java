@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import com.enonic.wem.api.exception.BaseException;
+import com.enonic.xp.core.exception.BaseException;
 
 public final class RenderException
     extends BaseException

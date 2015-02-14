@@ -2,9 +2,9 @@ package com.enonic.wem.repo.internal.elasticsearch.branch;
 
 import org.elasticsearch.action.delete.DeleteRequest;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.index.IndexType;
-import com.enonic.wem.api.node.NodeId;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.index.IndexType;
+import com.enonic.xp.core.node.NodeId;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 

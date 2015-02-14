@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.image.effect;
 
 import java.awt.image.BufferedImage;
 
-import com.enonic.wem.api.image.filter.BaseImageFilter;
+import com.enonic.xp.core.image.filter.BaseImageFilter;
 
 public final class ScaleBlockFilter
         extends BaseImageFilter

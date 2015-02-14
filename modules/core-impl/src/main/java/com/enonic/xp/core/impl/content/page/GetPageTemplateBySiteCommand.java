@@ -1,13 +1,13 @@
 package com.enonic.xp.core.impl.content.page;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.FindContentByParentParams;
-import com.enonic.wem.api.content.FindContentByParentResult;
-import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PageTemplates;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.core.content.FindContentByParentParams;
+import com.enonic.xp.core.content.FindContentByParentResult;
+import com.enonic.xp.core.content.page.PageTemplate;
+import com.enonic.xp.core.content.page.PageTemplates;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 
 final class GetPageTemplateBySiteCommand

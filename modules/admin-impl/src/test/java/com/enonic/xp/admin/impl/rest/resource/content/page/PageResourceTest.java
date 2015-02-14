@@ -10,27 +10,27 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.page.CreatePageParams;
-import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageService;
-import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.UpdatePageParams;
-import com.enonic.wem.api.data.PropertyIdProviderAccessor;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.SecurityService;
-import com.enonic.wem.api.branch.Branch;
+import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentNotFoundException;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.page.CreatePageParams;
+import com.enonic.xp.core.content.page.Page;
+import com.enonic.xp.core.content.page.PageService;
+import com.enonic.xp.core.content.page.PageTemplateKey;
+import com.enonic.xp.core.content.page.UpdatePageParams;
+import com.enonic.xp.core.data.PropertyIdProviderAccessor;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.ContentTypeService;
+import com.enonic.xp.core.schema.content.GetContentTypeParams;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.SecurityService;
+import com.enonic.xp.core.branch.Branch;
 
-import static com.enonic.wem.api.content.page.PageRegions.newPageRegions;
+import static com.enonic.xp.core.content.page.PageRegions.newPageRegions;
 
 public class PageResourceTest
     extends AbstractResourceTest

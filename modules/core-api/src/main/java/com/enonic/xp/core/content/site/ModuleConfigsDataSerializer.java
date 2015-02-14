@@ -1,0 +1,34 @@
+package com.enonic.xp.core.content.site;
+
+
+import com.enonic.xp.core.data.Property;
+import com.enonic.xp.core.data.PropertySet;
+
+public class ModuleConfigsDataSerializer
+{
+    private final ModuleConfigDataSerializer moduleConfigSerializer = new ModuleConfigDataSerializer();
+
+    public void toProperties( final ModuleConfigs moduleConfigs, final PropertySet parentSet )
+    {
+        for ( final ModuleConfig moduleConfig : moduleConfigs )
+        {
+            moduleConfigSerializer.toData( moduleConfig, parentSet );
+        }
+    }
+
+    void toProperties( final ModuleConfig moduleConfig, final PropertySet parentSet )
+    {
+        moduleConfigSerializer.toData( moduleConfig, parentSet );
+    }
+
+    public ModuleConfigs.Builder fromProperties( final PropertySet data )
+    {
+        final ModuleConfigs.Builder builder = ModuleConfigs.builder();
+        for ( final Property moduleConfigAsProperty : data.getProperties( "moduleConfig" ) )
+        {
+            final ModuleConfig moduleConfig = moduleConfigSerializer.fromData( moduleConfigAsProperty.getSet() );
+            builder.add( moduleConfig );
+        }
+        return builder;
+    }
+}

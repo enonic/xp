@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.export.xml.mapper;
 
-import com.enonic.wem.api.index.IndexConfigDocument;
-import com.enonic.wem.api.index.PathIndexConfig;
-import com.enonic.wem.api.index.PatternIndexConfigDocument;
+import com.enonic.xp.core.index.IndexConfigDocument;
+import com.enonic.xp.core.index.PathIndexConfig;
+import com.enonic.xp.core.index.PatternIndexConfigDocument;
 import com.enonic.xp.core.impl.export.xml.XmlIndexConfigs;
 
 class XmlIndexConfigsMapper

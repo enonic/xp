@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.export.xml.mapper;
 
-import com.enonic.wem.api.data.Property;
+import com.enonic.xp.core.data.Property;
 import com.enonic.xp.core.impl.export.xml.XmlTimeProperty;
 import com.enonic.xp.core.impl.export.xml.util.XmlDateTimeConverter;
 

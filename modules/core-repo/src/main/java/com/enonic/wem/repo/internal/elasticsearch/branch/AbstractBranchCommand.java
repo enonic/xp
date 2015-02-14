@@ -6,9 +6,9 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
 
-import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.api.node.NodeVersionIds;
-import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.xp.core.node.NodeVersionId;
+import com.enonic.xp.core.node.NodeVersionIds;
+import com.enonic.xp.core.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchDao;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 

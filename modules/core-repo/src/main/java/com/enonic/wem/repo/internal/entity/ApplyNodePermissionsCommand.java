@@ -6,12 +6,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.node.ApplyNodePermissionsParams;
-import com.enonic.wem.api.node.FindNodesByParentParams;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.Nodes;
-import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.api.security.acl.Permission;
+import com.enonic.xp.core.node.ApplyNodePermissionsParams;
+import com.enonic.xp.core.node.FindNodesByParentParams;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.Nodes;
+import com.enonic.xp.core.security.acl.AccessControlList;
+import com.enonic.xp.core.security.acl.Permission;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 
 import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.contextUserHasPermission;

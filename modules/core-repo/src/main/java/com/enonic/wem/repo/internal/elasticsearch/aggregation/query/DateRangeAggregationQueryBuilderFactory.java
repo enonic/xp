@@ -5,8 +5,8 @@ import org.elasticsearch.search.aggregations.bucket.range.date.DateRangeBuilder;
 
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.query.aggregation.DateRange;
-import com.enonic.wem.api.query.aggregation.DateRangeAggregationQuery;
+import com.enonic.xp.core.query.aggregation.DateRange;
+import com.enonic.xp.core.query.aggregation.DateRangeAggregationQuery;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 class DateRangeAggregationQueryBuilderFactory

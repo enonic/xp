@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.script.bean;
 
-import com.enonic.wem.api.convert.Converters;
+import com.enonic.xp.core.convert.Converters;
 
 final class ScalarScriptValue
     extends AbstractScriptValue

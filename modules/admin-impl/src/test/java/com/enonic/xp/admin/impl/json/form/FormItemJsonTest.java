@@ -5,15 +5,15 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.form.FieldSet;
-import com.enonic.wem.api.form.FieldSetJson;
-import com.enonic.wem.api.form.FormItemJson;
-import com.enonic.wem.api.form.FormItemSet;
-import com.enonic.wem.api.form.FormItemSetJson;
-import com.enonic.wem.api.form.Input;
-import com.enonic.wem.api.form.InputJson;
-import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.support.JsonTestHelper;
+import com.enonic.xp.core.form.FieldSet;
+import com.enonic.xp.core.form.FieldSetJson;
+import com.enonic.xp.core.form.FormItemJson;
+import com.enonic.xp.core.form.FormItemSet;
+import com.enonic.xp.core.form.FormItemSetJson;
+import com.enonic.xp.core.form.Input;
+import com.enonic.xp.core.form.InputJson;
+import com.enonic.xp.core.form.inputtype.InputTypes;
+import com.enonic.xp.core.support.JsonTestHelper;
 
 import static junit.framework.Assert.assertEquals;
 

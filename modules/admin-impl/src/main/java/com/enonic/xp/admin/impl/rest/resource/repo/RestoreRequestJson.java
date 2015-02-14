@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.xp.core.repository.RepositoryId;
 
 public class RestoreRequestJson
 {

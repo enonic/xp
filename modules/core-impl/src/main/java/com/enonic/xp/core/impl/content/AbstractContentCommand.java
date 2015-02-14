@@ -2,12 +2,12 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.event.EventPublisher;
-import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.schema.content.ContentTypeService;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.event.EventPublisher;
+import com.enonic.xp.core.node.NodeService;
+import com.enonic.xp.core.schema.content.ContentTypeService;
 
 abstract class AbstractContentCommand
 {

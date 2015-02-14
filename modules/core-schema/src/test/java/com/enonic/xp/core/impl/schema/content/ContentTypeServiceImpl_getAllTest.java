@@ -3,19 +3,19 @@ package com.enonic.xp.core.impl.schema.content;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
-import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.xp.core.form.Form;
+import com.enonic.xp.core.form.inputtype.InputTypes;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.ContentTypes;
+import com.enonic.xp.core.schema.content.GetAllContentTypesParams;
+import com.enonic.xp.core.schema.mixin.Mixin;
+import com.enonic.xp.core.schema.mixin.MixinName;
 
-import static com.enonic.wem.api.form.Form.newForm;
-import static com.enonic.wem.api.form.InlineMixin.newInlineMixin;
-import static com.enonic.wem.api.form.Input.newInput;
-import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
+import static com.enonic.xp.core.form.Form.newForm;
+import static com.enonic.xp.core.form.InlineMixin.newInlineMixin;
+import static com.enonic.xp.core.form.Input.newInput;
+import static com.enonic.xp.core.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
 public class ContentTypeServiceImpl_getAllTest

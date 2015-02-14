@@ -9,23 +9,23 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.api.query.aggregation.AggregationQuery;
-import com.enonic.wem.api.query.aggregation.BucketAggregationQuery;
-import com.enonic.wem.api.query.aggregation.DateHistogramAggregationQuery;
-import com.enonic.wem.api.query.aggregation.DateRange;
-import com.enonic.wem.api.query.aggregation.DateRangeAggregationQuery;
-import com.enonic.wem.api.query.aggregation.HistogramAggregationQuery;
-import com.enonic.wem.api.query.aggregation.NumericRange;
-import com.enonic.wem.api.query.aggregation.NumericRangeAggregationQuery;
-import com.enonic.wem.api.query.aggregation.TermsAggregationQuery;
-import com.enonic.wem.api.query.aggregation.metric.StatsAggregationQuery;
+import com.enonic.xp.core.query.aggregation.AggregationQuery;
+import com.enonic.xp.core.query.aggregation.BucketAggregationQuery;
+import com.enonic.xp.core.query.aggregation.DateHistogramAggregationQuery;
+import com.enonic.xp.core.query.aggregation.DateRange;
+import com.enonic.xp.core.query.aggregation.DateRangeAggregationQuery;
+import com.enonic.xp.core.query.aggregation.HistogramAggregationQuery;
+import com.enonic.xp.core.query.aggregation.NumericRange;
+import com.enonic.xp.core.query.aggregation.NumericRangeAggregationQuery;
+import com.enonic.xp.core.query.aggregation.TermsAggregationQuery;
+import com.enonic.xp.core.query.aggregation.metric.StatsAggregationQuery;
 
-import static com.enonic.wem.api.query.aggregation.HistogramAggregationQuery.Order.COUNT_ASC;
-import static com.enonic.wem.api.query.aggregation.HistogramAggregationQuery.Order.COUNT_DESC;
-import static com.enonic.wem.api.query.aggregation.HistogramAggregationQuery.Order.KEY_ASC;
-import static com.enonic.wem.api.query.aggregation.HistogramAggregationQuery.Order.KEY_DESC;
-import static com.enonic.wem.api.query.aggregation.TermsAggregationQuery.Direction.ASC;
-import static com.enonic.wem.api.query.aggregation.TermsAggregationQuery.Direction.DESC;
+import static com.enonic.xp.core.query.aggregation.HistogramAggregationQuery.Order.COUNT_ASC;
+import static com.enonic.xp.core.query.aggregation.HistogramAggregationQuery.Order.COUNT_DESC;
+import static com.enonic.xp.core.query.aggregation.HistogramAggregationQuery.Order.KEY_ASC;
+import static com.enonic.xp.core.query.aggregation.HistogramAggregationQuery.Order.KEY_DESC;
+import static com.enonic.xp.core.query.aggregation.TermsAggregationQuery.Direction.ASC;
+import static com.enonic.xp.core.query.aggregation.TermsAggregationQuery.Direction.DESC;
 import static java.util.Collections.emptyList;
 
 @SuppressWarnings("unchecked")

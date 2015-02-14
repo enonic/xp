@@ -4,8 +4,8 @@
  */
 package com.enonic.xp.core.impl.image.command;
 
-import com.enonic.wem.api.image.BuilderContext;
-import com.enonic.wem.api.image.filter.ScaleWidthFilter;
+import com.enonic.xp.core.image.BuilderContext;
+import com.enonic.xp.core.image.filter.ScaleWidthFilter;
 
 public final class ScaleWidthFilterCommand
     extends FilterCommand

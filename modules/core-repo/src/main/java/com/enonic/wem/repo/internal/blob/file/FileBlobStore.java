@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
-import com.enonic.wem.api.blob.BlobKey;
-import com.enonic.wem.api.home.HomeDir;
+import com.enonic.xp.core.blob.BlobKey;
+import com.enonic.xp.core.home.HomeDir;
 import com.enonic.wem.repo.internal.blob.BlobKeyCreator;
 import com.enonic.wem.repo.internal.blob.BlobRecord;
 import com.enonic.wem.repo.internal.blob.BlobStore;

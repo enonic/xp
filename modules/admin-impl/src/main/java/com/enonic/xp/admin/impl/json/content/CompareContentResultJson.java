@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.json.content;
 
-import com.enonic.wem.api.content.CompareContentResult;
+import com.enonic.xp.core.content.CompareContentResult;
 
 public class CompareContentResultJson
 {

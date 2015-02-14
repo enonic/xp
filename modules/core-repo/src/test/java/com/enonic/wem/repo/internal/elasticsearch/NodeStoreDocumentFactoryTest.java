@@ -8,15 +8,15 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.index.IndexConfig;
-import com.enonic.wem.api.index.IndexPath;
-import com.enonic.wem.api.index.PatternIndexConfigDocument;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeName;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.index.IndexConfig;
+import com.enonic.xp.core.index.IndexPath;
+import com.enonic.xp.core.index.PatternIndexConfigDocument;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodeName;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.NodeVersionId;
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.index.IndexValueType;

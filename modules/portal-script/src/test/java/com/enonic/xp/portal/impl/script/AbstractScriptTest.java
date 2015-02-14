@@ -1,9 +1,9 @@
 package com.enonic.xp.portal.impl.script;
 
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.resource.ResourceUrlRegistry;
-import com.enonic.wem.api.resource.ResourceUrlTestHelper;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.core.resource.ResourceUrlRegistry;
+import com.enonic.xp.core.resource.ResourceUrlTestHelper;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.ScriptExports;
 

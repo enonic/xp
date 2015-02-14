@@ -2,9 +2,9 @@ package com.enonic.wem.repo.internal.elasticsearch.aggregation.query;
 
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 
-import com.enonic.wem.api.query.aggregation.AbstractHistogramAggregationQuery;
-import com.enonic.wem.api.query.aggregation.DateHistogramAggregationQuery;
-import com.enonic.wem.api.query.aggregation.HistogramAggregationQuery;
+import com.enonic.xp.core.query.aggregation.AbstractHistogramAggregationQuery;
+import com.enonic.xp.core.query.aggregation.DateHistogramAggregationQuery;
+import com.enonic.xp.core.query.aggregation.HistogramAggregationQuery;
 
 class HistogramAggregationQueryBuilderFactory
 {

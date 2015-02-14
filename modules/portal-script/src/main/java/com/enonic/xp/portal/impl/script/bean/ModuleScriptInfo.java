@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.script.bean;
 
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleKey;
 
 public final class ModuleScriptInfo
 {

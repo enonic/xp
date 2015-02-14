@@ -4,7 +4,7 @@ import java.util.Collections;
 
 import javax.script.Bindings;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.xp.core.resource.ResourceKey;
 import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
 import com.enonic.xp.portal.impl.script.invoker.CommandInvoker;
 import com.enonic.xp.portal.impl.script.invoker.CommandRequestImpl;

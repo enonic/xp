@@ -4,19 +4,19 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.context.ContextBuilder;
-import com.enonic.wem.api.security.RoleKeys;
-import com.enonic.wem.api.security.SecurityService;
-import com.enonic.wem.api.security.User;
-import com.enonic.wem.api.security.UserStore;
-import com.enonic.wem.api.security.UserStoreKey;
-import com.enonic.wem.api.security.UserStores;
-import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.security.auth.AuthenticationToken;
-import com.enonic.wem.api.security.auth.EmailPasswordAuthToken;
-import com.enonic.wem.api.security.auth.UsernamePasswordAuthToken;
-import com.enonic.wem.api.session.Session;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.context.ContextBuilder;
+import com.enonic.xp.core.security.RoleKeys;
+import com.enonic.xp.core.security.SecurityService;
+import com.enonic.xp.core.security.User;
+import com.enonic.xp.core.security.UserStore;
+import com.enonic.xp.core.security.UserStoreKey;
+import com.enonic.xp.core.security.UserStores;
+import com.enonic.xp.core.security.auth.AuthenticationInfo;
+import com.enonic.xp.core.security.auth.AuthenticationToken;
+import com.enonic.xp.core.security.auth.EmailPasswordAuthToken;
+import com.enonic.xp.core.security.auth.UsernamePasswordAuthToken;
+import com.enonic.xp.core.session.Session;
 
 public final class AuthHelper
 {

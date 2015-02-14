@@ -10,19 +10,19 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.context.LocalScope;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.RoleKeys;
-import com.enonic.wem.api.security.SecurityService;
-import com.enonic.wem.api.security.User;
-import com.enonic.wem.api.security.UserStore;
-import com.enonic.wem.api.security.UserStoreKey;
-import com.enonic.wem.api.security.UserStores;
-import com.enonic.wem.api.security.auth.AuthenticationInfo;
-import com.enonic.wem.api.security.auth.AuthenticationToken;
-import com.enonic.wem.api.session.SessionKey;
-import com.enonic.wem.api.session.SimpleSession;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.context.LocalScope;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.RoleKeys;
+import com.enonic.xp.core.security.SecurityService;
+import com.enonic.xp.core.security.User;
+import com.enonic.xp.core.security.UserStore;
+import com.enonic.xp.core.security.UserStoreKey;
+import com.enonic.xp.core.security.UserStores;
+import com.enonic.xp.core.security.auth.AuthenticationInfo;
+import com.enonic.xp.core.security.auth.AuthenticationToken;
+import com.enonic.xp.core.session.SessionKey;
+import com.enonic.xp.core.session.SimpleSession;
 
 public class AuthResourceTest
     extends AbstractResourceTest

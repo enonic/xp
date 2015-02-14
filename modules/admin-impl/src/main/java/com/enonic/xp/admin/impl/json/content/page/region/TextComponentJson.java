@@ -3,10 +3,10 @@ package com.enonic.xp.admin.impl.json.content.page.region;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.content.page.region.ComponentName;
-import com.enonic.wem.api.content.page.region.TextComponent;
+import com.enonic.xp.core.content.page.region.ComponentName;
+import com.enonic.xp.core.content.page.region.TextComponent;
 
-import static com.enonic.wem.api.content.page.region.TextComponent.newTextComponent;
+import static com.enonic.xp.core.content.page.region.TextComponent.newTextComponent;
 
 @SuppressWarnings("UnusedDeclaration")
 public class TextComponentJson

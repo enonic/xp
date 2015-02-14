@@ -6,17 +6,17 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.region.LayoutDescriptor;
-import com.enonic.wem.api.content.page.region.LayoutDescriptorService;
-import com.enonic.wem.api.content.page.region.LayoutDescriptors;
-import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.region.LayoutDescriptor;
+import com.enonic.xp.core.content.page.region.LayoutDescriptorService;
+import com.enonic.xp.core.content.page.region.LayoutDescriptors;
+import com.enonic.xp.core.form.Form;
+import com.enonic.xp.core.form.inputtype.InputTypes;
+import com.enonic.xp.core.module.ModuleKeys;
 
-import static com.enonic.wem.api.content.page.region.RegionDescriptor.newRegionDescriptor;
-import static com.enonic.wem.api.content.page.region.RegionDescriptors.newRegionDescriptors;
-import static com.enonic.wem.api.form.Input.newInput;
+import static com.enonic.xp.core.content.page.region.RegionDescriptor.newRegionDescriptor;
+import static com.enonic.xp.core.content.page.region.RegionDescriptors.newRegionDescriptors;
+import static com.enonic.xp.core.form.Input.newInput;
 
 public class LayoutDescriptorResourceTest
     extends AbstractResourceTest

@@ -1,13 +1,12 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.index.ChildOrder;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.NodeVersionId;
 import com.enonic.wem.repo.internal.entity.dao.NodeDao;
 import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.index.query.QueryService;
 
 public class NodeChildOrderResolver
     extends AbstractNodeCommand

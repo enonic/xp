@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.json.thumb;
 
 
-import com.enonic.wem.api.thumb.Thumbnail;
+import com.enonic.xp.core.icon.Thumbnail;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ThumbnailJson

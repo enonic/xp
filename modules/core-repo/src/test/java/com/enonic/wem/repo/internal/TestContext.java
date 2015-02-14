@@ -1,10 +1,10 @@
 package com.enonic.wem.repo.internal;
 
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.context.ContextBuilder;
-import com.enonic.wem.api.repository.Repository;
-import com.enonic.wem.api.repository.RepositoryId;
-import com.enonic.wem.api.branch.Branch;
+import com.enonic.xp.core.context.Context;
+import com.enonic.xp.core.context.ContextBuilder;
+import com.enonic.xp.core.repository.Repository;
+import com.enonic.xp.core.repository.RepositoryId;
+import com.enonic.xp.core.branch.Branch;
 
 public class TestContext
 {

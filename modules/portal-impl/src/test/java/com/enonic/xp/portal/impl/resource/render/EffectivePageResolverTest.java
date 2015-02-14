@@ -3,16 +3,16 @@ package com.enonic.xp.portal.impl.resource.render;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageRegions;
-import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PageTemplateKey;
-import com.enonic.wem.api.content.page.region.PartComponent;
-import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.Page;
+import com.enonic.xp.core.content.page.PageRegions;
+import com.enonic.xp.core.content.page.PageTemplate;
+import com.enonic.xp.core.content.page.PageTemplateKey;
+import com.enonic.xp.core.content.page.region.PartComponent;
+import com.enonic.xp.core.content.page.region.Region;
+import com.enonic.xp.core.data.PropertyTree;
 
 import static org.junit.Assert.*;
 

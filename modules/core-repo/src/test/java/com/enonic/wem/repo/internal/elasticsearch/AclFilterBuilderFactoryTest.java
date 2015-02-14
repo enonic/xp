@@ -2,13 +2,13 @@ package com.enonic.wem.repo.internal.elasticsearch;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.query.filter.Filter;
-import com.enonic.wem.api.query.filter.ValueFilter;
-import com.enonic.wem.api.security.Group;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.PrincipalKeys;
-import com.enonic.wem.api.security.Principals;
-import com.enonic.wem.api.security.User;
+import com.enonic.xp.core.query.filter.Filter;
+import com.enonic.xp.core.query.filter.ValueFilter;
+import com.enonic.xp.core.security.Group;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.PrincipalKeys;
+import com.enonic.xp.core.security.Principals;
+import com.enonic.xp.core.security.User;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
 
 import static org.junit.Assert.*;

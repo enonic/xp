@@ -3,8 +3,8 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.security.Principal;
-import com.enonic.wem.api.security.Principals;
+import com.enonic.xp.core.security.Principal;
+import com.enonic.xp.core.security.Principals;
 
 public class PrincipalsJson
 {

@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.controller;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.xp.core.resource.ResourceKey;
 
 public interface ControllerScriptFactory
 {

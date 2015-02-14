@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.content.page.region;
 
 
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.region.PartComponent;
-import com.enonic.wem.api.data.PropertySet;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.region.PartComponent;
+import com.enonic.xp.core.data.PropertySet;
 
 public class PartComponentDataSerializer
     extends DescriptorBasedComponentDataSerializer<PartComponent, PartComponent>

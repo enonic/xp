@@ -2,10 +2,10 @@ package com.enonic.xp.core.impl.schema.content;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.GetChildContentTypesParams;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.ContentTypes;
+import com.enonic.xp.core.schema.content.GetChildContentTypesParams;
 
 import static junit.framework.Assert.assertEquals;
 

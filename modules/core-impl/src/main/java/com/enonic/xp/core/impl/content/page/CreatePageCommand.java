@@ -2,16 +2,16 @@ package com.enonic.xp.core.impl.content.page;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.api.content.page.CreatePageParams;
-import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.security.User;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.core.content.UpdateContentParams;
+import com.enonic.xp.core.content.page.CreatePageParams;
+import com.enonic.xp.core.content.page.Page;
+import com.enonic.xp.core.context.Context;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.security.User;
 
-import static com.enonic.wem.api.content.page.Page.newPage;
+import static com.enonic.xp.core.content.page.Page.newPage;
 
 final class CreatePageCommand
 {

@@ -13,9 +13,9 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.image.BuilderContext;
-import com.enonic.wem.api.image.ImageFilter;
-import com.enonic.wem.api.image.ImageHelper;
+import com.enonic.xp.core.image.BuilderContext;
+import com.enonic.xp.core.image.ImageFilter;
+import com.enonic.xp.core.image.ImageHelper;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
 
 public final class ImageHandleResource

@@ -3,10 +3,10 @@ package com.enonic.xp.core.impl.content.page.layout;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.region.LayoutDescriptors;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.Modules;
+import com.enonic.xp.core.content.page.region.LayoutDescriptors;
+import com.enonic.xp.core.module.Module;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.Modules;
 
 public class LayoutDescriptorServiceImpl_getByModulesTest
     extends AbstractLayoutDescriptorServiceTest

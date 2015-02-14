@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch.branch;
 
-import com.enonic.wem.api.index.IndexPath;
+import com.enonic.xp.core.index.IndexPath;
 
 public class BranchIndexPath
 {

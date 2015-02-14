@@ -2,18 +2,18 @@ package com.enonic.xp.core.impl.export.builder;
 
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.node.BinaryAttachments;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.InsertManualStrategy;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeType;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
-import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.index.ChildOrder;
+import com.enonic.xp.core.node.BinaryAttachments;
+import com.enonic.xp.core.node.CreateNodeParams;
+import com.enonic.xp.core.node.InsertManualStrategy;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.NodeType;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.acl.AccessControlEntry;
+import com.enonic.xp.core.security.acl.AccessControlList;
+import com.enonic.xp.core.security.auth.AuthenticationInfo;
 import com.enonic.xp.core.impl.export.ProcessNodeSettings;
 import com.enonic.xp.core.impl.export.xml.XmlNode;
 

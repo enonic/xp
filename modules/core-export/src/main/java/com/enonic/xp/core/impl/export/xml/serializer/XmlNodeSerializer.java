@@ -11,9 +11,9 @@ import javax.xml.bind.Unmarshaller;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.export.ExportNodeException;
-import com.enonic.wem.api.util.Exceptions;
-import com.enonic.wem.api.xml.XmlException;
+import com.enonic.xp.core.export.ExportNodeException;
+import com.enonic.xp.core.util.Exceptions;
+import com.enonic.xp.core.xml.XmlException;
 import com.enonic.xp.core.impl.export.xml.ObjectFactory;
 import com.enonic.xp.core.impl.export.xml.XmlNode;
 import com.enonic.xp.core.impl.export.xml.XmlNodeElem;

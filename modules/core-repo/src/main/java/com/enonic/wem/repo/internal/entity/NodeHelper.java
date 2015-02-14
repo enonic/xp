@@ -2,8 +2,8 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.util.concurrent.Callable;
 
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.context.ContextBuilder;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.context.ContextBuilder;
 
 public class NodeHelper
 {

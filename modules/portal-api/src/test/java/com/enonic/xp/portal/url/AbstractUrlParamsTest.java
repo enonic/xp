@@ -2,9 +2,9 @@ package com.enonic.xp.portal.url;
 
 import org.junit.Before;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.module.ModuleKey;
 import com.enonic.xp.portal.PortalContext;
 
 public abstract class AbstractUrlParamsTest

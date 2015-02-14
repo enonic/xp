@@ -6,18 +6,18 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.data.PropertyArrayJson;
-import com.enonic.wem.api.data.PropertyTreeJson;
-import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.index.IndexConfigDocument;
-import com.enonic.wem.api.index.PatternIndexConfigDocument;
-import com.enonic.wem.api.node.AttachedBinaries;
-import com.enonic.wem.api.node.AttachedBinary;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeType;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
-import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.xp.core.data.PropertyArrayJson;
+import com.enonic.xp.core.data.PropertyTreeJson;
+import com.enonic.xp.core.index.ChildOrder;
+import com.enonic.xp.core.index.IndexConfigDocument;
+import com.enonic.xp.core.index.PatternIndexConfigDocument;
+import com.enonic.xp.core.node.AttachedBinaries;
+import com.enonic.xp.core.node.AttachedBinary;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodeType;
+import com.enonic.xp.core.security.acl.AccessControlEntry;
+import com.enonic.xp.core.security.acl.AccessControlList;
 
 final class NodeJson
 {

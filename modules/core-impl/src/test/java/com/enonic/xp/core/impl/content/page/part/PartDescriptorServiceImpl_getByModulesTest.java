@@ -3,10 +3,10 @@ package com.enonic.xp.core.impl.content.page.part;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.region.PartDescriptors;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.Modules;
+import com.enonic.xp.core.content.page.region.PartDescriptors;
+import com.enonic.xp.core.module.Module;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.Modules;
 
 public class PartDescriptorServiceImpl_getByModulesTest
     extends AbstractPartDescriptorServiceTest

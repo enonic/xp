@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 
-import com.enonic.wem.api.content.ContentId;
+import com.enonic.xp.core.content.ContentId;
 
 public class DuplicateContentJson
 {

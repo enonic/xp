@@ -9,16 +9,16 @@ import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeForms;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeProvider;
-import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.mixin.MixinNames;
+import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeForms;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.ContentTypeProvider;
+import com.enonic.xp.core.schema.content.ContentTypes;
+import com.enonic.xp.core.schema.mixin.MixinNames;
 import com.enonic.xp.core.impl.schema.mixin.BuiltinMixinProvider;
 
-import static com.enonic.wem.api.schema.content.ContentType.newContentType;
+import static com.enonic.xp.core.schema.content.ContentType.newContentType;
 
 @Component(immediate = true)
 public final class BuiltinContentTypeProvider

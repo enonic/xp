@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.index.IndexPath;
-import com.enonic.wem.api.query.expr.FieldOrderExpr;
-import com.enonic.wem.api.query.expr.OrderExpr;
+import com.enonic.xp.core.index.IndexPath;
+import com.enonic.xp.core.query.expr.FieldOrderExpr;
+import com.enonic.xp.core.query.expr.OrderExpr;
 
 public class FieldOrderExprJson
     extends OrderExprJson

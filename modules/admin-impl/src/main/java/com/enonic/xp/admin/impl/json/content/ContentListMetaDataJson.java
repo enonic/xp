@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.json.content;
 
-import com.enonic.wem.api.content.ContentListMetaData;
+import com.enonic.xp.core.content.ContentListMetaData;
 
 
 public class ContentListMetaDataJson

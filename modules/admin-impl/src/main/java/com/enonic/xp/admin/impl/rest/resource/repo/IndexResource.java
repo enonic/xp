@@ -10,9 +10,9 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.wem.api.index.IndexService;
-import com.enonic.wem.api.index.ReindexParams;
-import com.enonic.wem.api.index.ReindexResult;
+import com.enonic.xp.core.index.IndexService;
+import com.enonic.xp.core.index.ReindexParams;
+import com.enonic.xp.core.index.ReindexResult;
 
 @Path(ResourceConstants.REST_ROOT + "repo")
 @Produces(MediaType.APPLICATION_JSON)

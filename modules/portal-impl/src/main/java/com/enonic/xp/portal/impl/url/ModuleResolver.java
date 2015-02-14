@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleKey;
 import com.enonic.xp.portal.PortalContext;
 
 final class ModuleResolver

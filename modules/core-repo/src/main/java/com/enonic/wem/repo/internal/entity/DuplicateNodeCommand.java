@@ -2,18 +2,18 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.data.ValueTypes;
-import com.enonic.wem.api.node.AttachedBinary;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.FindNodesByParentParams;
-import com.enonic.wem.api.node.FindNodesByParentResult;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.api.util.Reference;
+import com.enonic.xp.core.data.Property;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.data.ValueTypes;
+import com.enonic.xp.core.node.AttachedBinary;
+import com.enonic.xp.core.node.CreateNodeParams;
+import com.enonic.xp.core.node.FindNodesByParentParams;
+import com.enonic.xp.core.node.FindNodesByParentResult;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.UpdateNodeParams;
+import com.enonic.xp.core.util.Reference;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 

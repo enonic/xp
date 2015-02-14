@@ -3,26 +3,26 @@ package com.enonic.wem.repo.internal.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.context.ContextBuilder;
-import com.enonic.wem.api.node.ApplyNodePermissionsParams;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.CreateRootNodeParams;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.UserStoreKey;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
-import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.xp.core.context.Context;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.context.ContextBuilder;
+import com.enonic.xp.core.node.ApplyNodePermissionsParams;
+import com.enonic.xp.core.node.CreateNodeParams;
+import com.enonic.xp.core.node.CreateRootNodeParams;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.UserStoreKey;
+import com.enonic.xp.core.security.acl.AccessControlEntry;
+import com.enonic.xp.core.security.acl.AccessControlList;
+import com.enonic.xp.core.security.auth.AuthenticationInfo;
 
-import static com.enonic.wem.api.security.acl.Permission.CREATE;
-import static com.enonic.wem.api.security.acl.Permission.DELETE;
-import static com.enonic.wem.api.security.acl.Permission.MODIFY;
-import static com.enonic.wem.api.security.acl.Permission.PUBLISH;
-import static com.enonic.wem.api.security.acl.Permission.READ;
-import static com.enonic.wem.api.security.acl.Permission.WRITE_PERMISSIONS;
+import static com.enonic.xp.core.security.acl.Permission.CREATE;
+import static com.enonic.xp.core.security.acl.Permission.DELETE;
+import static com.enonic.xp.core.security.acl.Permission.MODIFY;
+import static com.enonic.xp.core.security.acl.Permission.PUBLISH;
+import static com.enonic.xp.core.security.acl.Permission.READ;
+import static com.enonic.xp.core.security.acl.Permission.WRITE_PERMISSIONS;
 import static org.junit.Assert.*;
 
 

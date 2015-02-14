@@ -6,7 +6,7 @@ package com.enonic.xp.core.impl.image.command;
 
 import com.jhlabs.image.GrayscaleFilter;
 
-import com.enonic.wem.api.image.BuilderContext;
+import com.enonic.xp.core.image.BuilderContext;
 
 public final class GrayscaleFilterCommand
     extends FilterCommand

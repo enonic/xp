@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.Version;
-import com.enonic.wem.api.server.ServerInfo;
+import com.enonic.xp.core.Version;
+import com.enonic.xp.core.server.ServerInfo;
 
 public class StatusResourceTest
     extends AbstractResourceTest

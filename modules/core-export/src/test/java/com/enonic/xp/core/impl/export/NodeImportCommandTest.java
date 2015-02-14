@@ -14,16 +14,16 @@ import org.junit.rules.TemporaryFolder;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.wem.api.export.ImportNodeException;
-import com.enonic.wem.api.export.NodeImportResult;
-import com.enonic.wem.api.node.AttachedBinary;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.util.BinaryReference;
-import com.enonic.wem.api.vfs.VirtualFiles;
+import com.enonic.xp.core.export.ImportNodeException;
+import com.enonic.xp.core.export.NodeImportResult;
+import com.enonic.xp.core.node.AttachedBinary;
+import com.enonic.xp.core.node.CreateNodeParams;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.NodeService;
+import com.enonic.xp.core.util.BinaryReference;
+import com.enonic.xp.core.vfs.VirtualFiles;
 import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
 import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer;
 

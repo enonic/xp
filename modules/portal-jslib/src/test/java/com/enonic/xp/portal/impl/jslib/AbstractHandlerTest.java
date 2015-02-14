@@ -4,10 +4,10 @@ import org.junit.Before;
 
 import junit.framework.Assert;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.module.ModuleKey;
 import com.enonic.xp.portal.impl.script.AbstractScriptTest;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.command.CommandHandler;

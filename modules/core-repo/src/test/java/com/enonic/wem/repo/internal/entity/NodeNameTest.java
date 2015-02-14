@@ -2,8 +2,8 @@ package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.node.NodeName;
-import com.enonic.wem.api.support.AbstractEqualsTest;
+import com.enonic.xp.core.node.NodeName;
+import com.enonic.xp.core.support.AbstractEqualsTest;
 
 import static org.junit.Assert.*;
 

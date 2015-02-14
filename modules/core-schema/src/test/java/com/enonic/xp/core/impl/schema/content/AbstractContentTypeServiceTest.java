@@ -3,13 +3,12 @@ package com.enonic.xp.core.impl.schema.content;
 import org.junit.Before;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeProvider;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.ContentTypeProvider;
+import com.enonic.xp.core.schema.content.ContentTypeService;
+import com.enonic.xp.core.schema.content.ContentTypes;
+import com.enonic.xp.core.schema.mixin.MixinService;
 
 import static org.junit.Assert.*;
 

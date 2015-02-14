@@ -23,13 +23,13 @@ import com.enonic.xp.admin.impl.json.schema.mixin.MixinJson;
 import com.enonic.xp.admin.impl.json.schema.mixin.MixinListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MixinName;
-import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.api.schema.mixin.Mixins;
-import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.schema.mixin.Mixin;
+import com.enonic.xp.core.schema.mixin.MixinName;
+import com.enonic.xp.core.schema.mixin.MixinService;
+import com.enonic.xp.core.schema.mixin.Mixins;
+import com.enonic.xp.core.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "schema/mixin")
 @Produces(MediaType.APPLICATION_JSON)

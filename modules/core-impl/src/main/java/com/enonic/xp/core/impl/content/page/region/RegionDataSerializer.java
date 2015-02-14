@@ -1,12 +1,12 @@
 package com.enonic.xp.core.impl.content.page.region;
 
 
-import com.enonic.wem.api.content.page.region.Component;
-import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.api.data.PropertySet;
-import com.enonic.wem.api.support.serializer.AbstractDataSetSerializer;
+import com.enonic.xp.core.content.page.region.Component;
+import com.enonic.xp.core.content.page.region.Region;
+import com.enonic.xp.core.data.PropertySet;
+import com.enonic.xp.core.support.serializer.AbstractDataSetSerializer;
 
-import static com.enonic.wem.api.content.page.region.Region.newRegion;
+import static com.enonic.xp.core.content.page.region.Region.newRegion;
 
 public class RegionDataSerializer
     extends AbstractDataSetSerializer<Region, Region>

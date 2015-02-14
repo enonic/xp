@@ -6,14 +6,14 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.FindNodeVersionsResult;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeName;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeVersion;
-import com.enonic.wem.api.node.NodeVersions;
-import com.enonic.wem.api.node.UpdateNodeParams;
+import com.enonic.xp.core.node.CreateNodeParams;
+import com.enonic.xp.core.node.FindNodeVersionsResult;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeName;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.NodeVersion;
+import com.enonic.xp.core.node.NodeVersions;
+import com.enonic.xp.core.node.UpdateNodeParams;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;

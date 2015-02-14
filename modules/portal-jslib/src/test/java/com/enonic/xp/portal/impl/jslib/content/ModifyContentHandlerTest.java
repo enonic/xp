@@ -5,14 +5,14 @@ import org.mockito.Mockito;
 
 import junit.framework.Assert;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentEditor;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentService;
-import com.enonic.wem.api.content.EditableContent;
-import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentEditor;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.core.content.EditableContent;
+import com.enonic.xp.core.content.UpdateContentParams;
+import com.enonic.xp.core.schema.mixin.Mixin;
+import com.enonic.xp.core.schema.mixin.MixinService;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
 import com.enonic.xp.portal.impl.jslib.ContentFixtures;
 import com.enonic.xp.portal.script.command.CommandHandler;

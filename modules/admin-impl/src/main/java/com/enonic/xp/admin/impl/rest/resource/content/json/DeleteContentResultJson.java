@@ -4,7 +4,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.content.ContentPath;
+import com.enonic.xp.core.content.ContentPath;
 
 public class DeleteContentResultJson
 {

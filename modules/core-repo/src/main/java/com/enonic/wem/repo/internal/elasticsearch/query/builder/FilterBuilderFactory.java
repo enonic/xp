@@ -13,13 +13,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.query.filter.BooleanFilter;
-import com.enonic.wem.api.query.filter.ExistsFilter;
-import com.enonic.wem.api.query.filter.Filter;
-import com.enonic.wem.api.query.filter.Filters;
-import com.enonic.wem.api.query.filter.RangeFilter;
-import com.enonic.wem.api.query.filter.ValueFilter;
+import com.enonic.xp.core.data.Value;
+import com.enonic.xp.core.query.filter.BooleanFilter;
+import com.enonic.xp.core.query.filter.ExistsFilter;
+import com.enonic.xp.core.query.filter.Filter;
+import com.enonic.xp.core.query.filter.Filters;
+import com.enonic.xp.core.query.filter.RangeFilter;
+import com.enonic.xp.core.query.filter.ValueFilter;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 public class FilterBuilderFactory

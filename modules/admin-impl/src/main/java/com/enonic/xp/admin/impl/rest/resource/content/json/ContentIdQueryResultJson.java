@@ -6,8 +6,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.form.InlineMixinsToFormItemsTransformer;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.form.InlineMixinsToFormItemsTransformer;
 
 public class ContentIdQueryResultJson
     extends AbstractContentQueryResultJson<ContentIdJson>

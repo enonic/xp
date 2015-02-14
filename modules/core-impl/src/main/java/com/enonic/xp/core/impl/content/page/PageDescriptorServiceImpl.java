@@ -3,13 +3,13 @@ package com.enonic.xp.core.impl.content.page;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.api.content.page.PageDescriptorService;
-import com.enonic.wem.api.content.page.PageDescriptors;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ModuleService;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.PageDescriptor;
+import com.enonic.xp.core.content.page.PageDescriptorService;
+import com.enonic.xp.core.content.page.PageDescriptors;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleKeys;
+import com.enonic.xp.core.module.ModuleService;
 
 @Component(immediate = true)
 public final class PageDescriptorServiceImpl

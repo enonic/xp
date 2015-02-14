@@ -17,13 +17,13 @@ import com.enonic.xp.admin.impl.json.content.page.PageDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.PageDescriptorListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.page.part.GetByModulesParams;
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.api.content.page.PageDescriptorService;
-import com.enonic.wem.api.content.page.PageDescriptors;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.PageDescriptor;
+import com.enonic.xp.core.content.page.PageDescriptorService;
+import com.enonic.xp.core.content.page.PageDescriptors;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleKeys;
+import com.enonic.xp.core.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/descriptor")
 @Produces(MediaType.APPLICATION_JSON)

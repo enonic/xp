@@ -8,15 +8,15 @@ import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.form.FormItems;
-import com.enonic.wem.api.form.Input;
-import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MixinName;
-import com.enonic.wem.api.schema.mixin.MixinProvider;
-import com.enonic.wem.api.schema.mixin.Mixins;
+import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.core.form.FormItems;
+import com.enonic.xp.core.form.Input;
+import com.enonic.xp.core.form.inputtype.InputTypes;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.schema.mixin.Mixin;
+import com.enonic.xp.core.schema.mixin.MixinName;
+import com.enonic.xp.core.schema.mixin.MixinProvider;
+import com.enonic.xp.core.schema.mixin.Mixins;
 
 @Component(immediate = true)
 public final class BuiltinMixinProvider

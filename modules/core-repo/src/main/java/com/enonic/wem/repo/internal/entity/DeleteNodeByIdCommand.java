@@ -2,10 +2,10 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
+import com.enonic.xp.core.context.Context;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeId;
 
 public final class DeleteNodeByIdCommand
     extends AbstractDeleteNodeCommand

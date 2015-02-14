@@ -4,8 +4,8 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.content.CompareContentResult;
-import com.enonic.wem.api.content.CompareContentResults;
+import com.enonic.xp.core.content.CompareContentResult;
+import com.enonic.xp.core.content.CompareContentResults;
 
 public class CompareContentResultsJson
 {

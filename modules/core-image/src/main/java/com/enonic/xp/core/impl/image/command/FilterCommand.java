@@ -7,8 +7,8 @@ package com.enonic.xp.core.impl.image.command;
 import java.awt.image.BufferedImageOp;
 
 import com.enonic.xp.core.impl.image.AwtImageFilter;
-import com.enonic.wem.api.image.BuilderContext;
-import com.enonic.wem.api.image.ImageFilter;
+import com.enonic.xp.core.image.BuilderContext;
+import com.enonic.xp.core.image.ImageFilter;
 import com.enonic.xp.core.impl.image.OperationImageFilter;
 
 public abstract class FilterCommand

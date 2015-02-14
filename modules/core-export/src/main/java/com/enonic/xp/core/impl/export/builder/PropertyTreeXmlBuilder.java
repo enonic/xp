@@ -2,12 +2,12 @@ package com.enonic.xp.core.impl.export.builder;
 
 import java.util.List;
 
-import com.enonic.wem.api.data.PropertySet;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.util.BinaryReference;
-import com.enonic.wem.api.util.GeoPoint;
-import com.enonic.wem.api.util.Link;
-import com.enonic.wem.api.util.Reference;
+import com.enonic.xp.core.data.PropertySet;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.util.BinaryReference;
+import com.enonic.xp.core.util.GeoPoint;
+import com.enonic.xp.core.util.Link;
+import com.enonic.xp.core.util.Reference;
 import com.enonic.xp.core.impl.export.xml.XmlBinaryReferenceProperty;
 import com.enonic.xp.core.impl.export.xml.XmlBooleanProperty;
 import com.enonic.xp.core.impl.export.xml.XmlDateProperty;

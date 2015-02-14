@@ -6,8 +6,8 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.xp.core.resource.Resource;
+import com.enonic.xp.core.resource.ResourceKey;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptService;

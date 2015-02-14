@@ -3,15 +3,15 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.node.AttachedBinaries;
-import com.enonic.wem.api.node.EditableNode;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeNotFoundException;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.api.security.acl.Permission;
-import com.enonic.wem.api.util.Exceptions;
+import com.enonic.xp.core.node.AttachedBinaries;
+import com.enonic.xp.core.node.EditableNode;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeNotFoundException;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.UpdateNodeParams;
+import com.enonic.xp.core.security.acl.AccessControlList;
+import com.enonic.xp.core.security.acl.Permission;
+import com.enonic.xp.core.util.Exceptions;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 
 import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.requireContextUserPermission;

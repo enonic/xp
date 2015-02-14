@@ -7,13 +7,13 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.query.aggregation.AbstractHistogramAggregationQuery;
-import com.enonic.wem.api.query.aggregation.AbstractRangeAggregationQuery;
-import com.enonic.wem.api.query.aggregation.AggregationQueries;
-import com.enonic.wem.api.query.aggregation.AggregationQuery;
-import com.enonic.wem.api.query.aggregation.BucketAggregationQuery;
-import com.enonic.wem.api.query.aggregation.MetricAggregationQuery;
-import com.enonic.wem.api.query.aggregation.TermsAggregationQuery;
+import com.enonic.xp.core.query.aggregation.AbstractHistogramAggregationQuery;
+import com.enonic.xp.core.query.aggregation.AbstractRangeAggregationQuery;
+import com.enonic.xp.core.query.aggregation.AggregationQueries;
+import com.enonic.xp.core.query.aggregation.AggregationQuery;
+import com.enonic.xp.core.query.aggregation.BucketAggregationQuery;
+import com.enonic.xp.core.query.aggregation.MetricAggregationQuery;
+import com.enonic.xp.core.query.aggregation.TermsAggregationQuery;
 
 public class AggregationQueryBuilderFactory
 {

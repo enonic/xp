@@ -14,12 +14,12 @@ import org.osgi.framework.Bundle;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.form.Input;
-import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleVersion;
+import com.enonic.xp.core.form.Form;
+import com.enonic.xp.core.form.Input;
+import com.enonic.xp.core.form.inputtype.InputTypes;
+import com.enonic.xp.core.module.Module;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.module.ModuleVersion;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;

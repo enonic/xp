@@ -7,9 +7,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.PrincipalKeys;
-import com.enonic.wem.api.security.UpdateGroupParams;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.PrincipalKeys;
+import com.enonic.xp.core.security.UpdateGroupParams;
 
 import static java.util.stream.Collectors.toList;
 

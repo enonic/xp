@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.export.validator;
 
-import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.xp.core.node.CreateNodeParams;
 
 public interface ImportValidator
 {

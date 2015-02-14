@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.resource.render;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.page.Page;
+import com.enonic.xp.core.content.page.PageTemplate;
 
 final class EffectivePageResolver
 {

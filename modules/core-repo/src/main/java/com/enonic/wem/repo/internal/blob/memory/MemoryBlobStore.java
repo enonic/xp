@@ -8,7 +8,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.xp.core.blob.BlobKey;
 import com.enonic.wem.repo.internal.blob.BlobRecord;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.BlobStoreException;

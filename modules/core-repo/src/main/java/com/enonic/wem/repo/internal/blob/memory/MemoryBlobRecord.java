@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.blob.memory;
 
 import java.io.InputStream;
 
-import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.xp.core.blob.BlobKey;
 import com.enonic.wem.repo.internal.blob.BlobRecord;
 import com.enonic.wem.repo.internal.blob.BlobStoreException;
 

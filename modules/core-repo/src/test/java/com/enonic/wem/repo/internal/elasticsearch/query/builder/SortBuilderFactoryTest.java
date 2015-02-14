@@ -11,12 +11,12 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.query.expr.DynamicOrderExpr;
-import com.enonic.wem.api.query.expr.FieldExpr;
-import com.enonic.wem.api.query.expr.FieldOrderExpr;
-import com.enonic.wem.api.query.expr.FunctionExpr;
-import com.enonic.wem.api.query.expr.OrderExpr;
-import com.enonic.wem.api.query.expr.ValueExpr;
+import com.enonic.xp.core.query.expr.DynamicOrderExpr;
+import com.enonic.xp.core.query.expr.FieldExpr;
+import com.enonic.xp.core.query.expr.FieldOrderExpr;
+import com.enonic.xp.core.query.expr.FunctionExpr;
+import com.enonic.xp.core.query.expr.OrderExpr;
+import com.enonic.xp.core.query.expr.ValueExpr;
 
 public class SortBuilderFactoryTest
     extends BaseTestBuilderFactory

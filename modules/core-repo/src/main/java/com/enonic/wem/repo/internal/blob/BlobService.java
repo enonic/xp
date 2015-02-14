@@ -4,7 +4,7 @@ import java.io.InputStream;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.xp.core.blob.BlobKey;
 
 public interface BlobService
 {

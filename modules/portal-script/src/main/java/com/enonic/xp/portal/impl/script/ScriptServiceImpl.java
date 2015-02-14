@@ -13,7 +13,7 @@ import com.google.common.collect.Maps;
 
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.xp.core.resource.ResourceKey;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.xp.portal.script.ScriptService;

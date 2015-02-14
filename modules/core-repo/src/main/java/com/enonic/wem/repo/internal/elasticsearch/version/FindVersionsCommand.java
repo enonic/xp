@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.elasticsearch.version;
 
-import com.enonic.wem.api.node.FindNodeVersionsResult;
-import com.enonic.wem.api.node.NodeVersions;
+import com.enonic.xp.core.node.FindNodeVersionsResult;
+import com.enonic.xp.core.node.NodeVersions;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.version.GetVersionsQuery;

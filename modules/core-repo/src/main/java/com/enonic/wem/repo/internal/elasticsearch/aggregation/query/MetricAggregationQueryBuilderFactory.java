@@ -2,11 +2,11 @@ package com.enonic.wem.repo.internal.elasticsearch.aggregation.query;
 
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 
-import com.enonic.wem.api.query.aggregation.MetricAggregationQuery;
-import com.enonic.wem.api.query.aggregation.metric.MaxAggregationQuery;
-import com.enonic.wem.api.query.aggregation.metric.MinAggregationQuery;
-import com.enonic.wem.api.query.aggregation.metric.StatsAggregationQuery;
-import com.enonic.wem.api.query.aggregation.metric.ValueCountAggregationQuery;
+import com.enonic.xp.core.query.aggregation.MetricAggregationQuery;
+import com.enonic.xp.core.query.aggregation.metric.MaxAggregationQuery;
+import com.enonic.xp.core.query.aggregation.metric.MinAggregationQuery;
+import com.enonic.xp.core.query.aggregation.metric.StatsAggregationQuery;
+import com.enonic.xp.core.query.aggregation.metric.ValueCountAggregationQuery;
 
 class MetricAggregationQueryBuilderFactory
 {

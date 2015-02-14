@@ -5,15 +5,15 @@ import org.elasticsearch.index.query.FilteredQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
-import com.enonic.wem.api.query.expr.CompareExpr;
-import com.enonic.wem.api.query.expr.ConstraintExpr;
-import com.enonic.wem.api.query.expr.DynamicConstraintExpr;
-import com.enonic.wem.api.query.expr.Expression;
-import com.enonic.wem.api.query.expr.LogicalExpr;
-import com.enonic.wem.api.query.expr.NotExpr;
-import com.enonic.wem.api.query.expr.QueryExpr;
-import com.enonic.wem.api.query.filter.Filter;
-import com.enonic.wem.api.query.filter.Filters;
+import com.enonic.xp.core.query.expr.CompareExpr;
+import com.enonic.xp.core.query.expr.ConstraintExpr;
+import com.enonic.xp.core.query.expr.DynamicConstraintExpr;
+import com.enonic.xp.core.query.expr.Expression;
+import com.enonic.xp.core.query.expr.LogicalExpr;
+import com.enonic.xp.core.query.expr.NotExpr;
+import com.enonic.xp.core.query.expr.QueryExpr;
+import com.enonic.xp.core.query.filter.Filter;
+import com.enonic.xp.core.query.filter.Filters;
 
 public class QueryBuilderFactory
     extends AbstractQueryBuilderFactory

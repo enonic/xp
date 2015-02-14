@@ -5,7 +5,7 @@ import javax.script.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.api.resource.ResourceKey;
+import com.enonic.xp.core.resource.ResourceKey;
 
 public final class ScriptLogger
 {

@@ -5,18 +5,18 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeProvider;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
-import com.enonic.wem.api.schema.content.GetChildContentTypesParams;
-import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.schema.content.GetContentTypesParams;
-import com.enonic.wem.api.schema.content.validator.ContentTypeSuperTypeValidator;
-import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
-import com.enonic.wem.api.schema.mixin.MixinService;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeProvider;
+import com.enonic.xp.core.schema.content.ContentTypeService;
+import com.enonic.xp.core.schema.content.ContentTypes;
+import com.enonic.xp.core.schema.content.GetAllContentTypesParams;
+import com.enonic.xp.core.schema.content.GetChildContentTypesParams;
+import com.enonic.xp.core.schema.content.GetContentTypeParams;
+import com.enonic.xp.core.schema.content.GetContentTypesParams;
+import com.enonic.xp.core.schema.content.validator.ContentTypeSuperTypeValidator;
+import com.enonic.xp.core.schema.content.validator.ContentTypeValidationResult;
+import com.enonic.xp.core.schema.mixin.MixinService;
 
 @Component(immediate = true)
 public final class ContentTypeServiceImpl

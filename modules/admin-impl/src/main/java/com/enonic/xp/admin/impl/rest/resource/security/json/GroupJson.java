@@ -3,9 +3,9 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 
 import java.util.List;
 
-import com.enonic.wem.api.security.Group;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.PrincipalKeys;
+import com.enonic.xp.core.security.Group;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.PrincipalKeys;
 
 import static java.util.stream.Collectors.toList;
 

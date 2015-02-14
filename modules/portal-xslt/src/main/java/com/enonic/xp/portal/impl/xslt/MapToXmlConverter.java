@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
-import com.enonic.wem.api.xml.DomBuilder;
+import com.enonic.xp.core.xml.DomBuilder;
 
 final class MapToXmlConverter
 {

@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.wem.api.data.PropertyTree;
+import com.enonic.xp.core.data.PropertyTree;
 
 final class ImageFormDataBuilder
 {

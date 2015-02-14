@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.resource.base;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.content.ContentPath;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.content.ContentPath;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.services.PortalServices;
 

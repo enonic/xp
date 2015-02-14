@@ -8,14 +8,14 @@ import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeProvider;
-import com.enonic.wem.api.schema.relationship.RelationshipTypes;
+import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.core.schema.content.ContentTypeNames;
+import com.enonic.xp.core.schema.relationship.RelationshipType;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeProvider;
+import com.enonic.xp.core.schema.relationship.RelationshipTypes;
 
-import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
+import static com.enonic.xp.core.schema.relationship.RelationshipType.newRelationshipType;
 
 @Component(immediate = true)
 public final class BuiltinRelationshipTypesProvider

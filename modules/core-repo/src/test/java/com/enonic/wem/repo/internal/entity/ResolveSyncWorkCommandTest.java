@@ -3,19 +3,19 @@ package com.enonic.wem.repo.internal.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeIds;
-import com.enonic.wem.api.node.NodeName;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodePublishRequest;
-import com.enonic.wem.api.node.NodePublishRequests;
-import com.enonic.wem.api.node.NodeState;
-import com.enonic.wem.api.node.ResolveSyncWorkResult;
-import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.api.util.Reference;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.node.CreateNodeParams;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodeIds;
+import com.enonic.xp.core.node.NodeName;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.NodePublishRequest;
+import com.enonic.xp.core.node.NodePublishRequests;
+import com.enonic.xp.core.node.NodeState;
+import com.enonic.xp.core.node.ResolveSyncWorkResult;
+import com.enonic.xp.core.node.UpdateNodeParams;
+import com.enonic.xp.core.util.Reference;
 
 import static org.junit.Assert.*;
 

@@ -17,23 +17,23 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.form.FieldSet;
-import com.enonic.wem.api.form.FormItemSet;
-import com.enonic.wem.api.form.InlineMixin;
-import com.enonic.wem.api.form.Input;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
-import com.enonic.wem.api.schema.content.GetContentTypeParams;
+import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.core.form.FieldSet;
+import com.enonic.xp.core.form.FormItemSet;
+import com.enonic.xp.core.form.InlineMixin;
+import com.enonic.xp.core.form.Input;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.ContentTypeService;
+import com.enonic.xp.core.schema.content.ContentTypes;
+import com.enonic.xp.core.schema.content.GetAllContentTypesParams;
+import com.enonic.xp.core.schema.content.GetContentTypeParams;
 
-import static com.enonic.wem.api.form.FieldSet.newFieldSet;
-import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.form.Input.newInput;
-import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_LINE;
-import static com.enonic.wem.api.schema.content.ContentType.newContentType;
+import static com.enonic.xp.core.form.FieldSet.newFieldSet;
+import static com.enonic.xp.core.form.FormItemSet.newFormItemSet;
+import static com.enonic.xp.core.form.Input.newInput;
+import static com.enonic.xp.core.form.inputtype.InputTypes.TEXT_LINE;
+import static com.enonic.xp.core.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
 
 

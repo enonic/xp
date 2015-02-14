@@ -6,8 +6,8 @@ import org.elasticsearch.search.aggregations.bucket.range.geodistance.GeoDistanc
 
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.query.aggregation.DistanceRange;
-import com.enonic.wem.api.query.aggregation.GeoDistanceAggregationQuery;
+import com.enonic.xp.core.query.aggregation.DistanceRange;
+import com.enonic.xp.core.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 class GeoDistanceAggregationQueryBuilderFactory

@@ -12,13 +12,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.PropertyPath;
-import com.enonic.wem.api.relationship.Relationship;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.support.SerializingTestHelper;
-import com.enonic.xp.core.impl.relationship.RelationshipJsonSerializer;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.data.PropertyPath;
+import com.enonic.xp.core.relationship.Relationship;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.support.SerializingTestHelper;
 
 import static org.junit.Assert.*;
 

@@ -4,13 +4,13 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.ValueType;
-import com.enonic.wem.api.data.ValueTypes;
-import com.enonic.wem.api.index.IndexConfig;
-import com.enonic.wem.api.index.IndexPath;
-import com.enonic.wem.api.node.NodeIndexPath;
+import com.enonic.xp.core.data.Property;
+import com.enonic.xp.core.data.Value;
+import com.enonic.xp.core.data.ValueType;
+import com.enonic.xp.core.data.ValueTypes;
+import com.enonic.xp.core.index.IndexConfig;
+import com.enonic.xp.core.index.IndexPath;
+import com.enonic.xp.core.node.NodeIndexPath;
 import com.enonic.wem.repo.internal.elasticsearch.OrderbyValueResolver;
 
 public class StoreDocumentItemFactory

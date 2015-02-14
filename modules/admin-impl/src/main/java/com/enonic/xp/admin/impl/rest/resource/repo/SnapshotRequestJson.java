@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.repo;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.xp.core.repository.RepositoryId;
 
 public class SnapshotRequestJson
 {

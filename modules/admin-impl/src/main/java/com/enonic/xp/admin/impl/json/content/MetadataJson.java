@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.content.Metadata;
-import com.enonic.wem.api.data.PropertyArrayJson;
-import com.enonic.wem.api.data.PropertyTreeJson;
-import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.xp.core.content.Metadata;
+import com.enonic.xp.core.data.PropertyArrayJson;
+import com.enonic.xp.core.data.PropertyTreeJson;
+import com.enonic.xp.core.schema.mixin.MixinName;
 
 public class MetadataJson
 {

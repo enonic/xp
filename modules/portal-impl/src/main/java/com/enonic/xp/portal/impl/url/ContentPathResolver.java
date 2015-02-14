@@ -1,9 +1,9 @@
 package com.enonic.xp.portal.impl.url;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentService;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.ContentService;
 import com.enonic.xp.portal.PortalContext;
 
 final class ContentPathResolver

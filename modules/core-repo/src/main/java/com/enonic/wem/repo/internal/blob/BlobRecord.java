@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.blob;
 
 import java.io.InputStream;
 
-import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.xp.core.blob.BlobKey;
 
 public abstract class BlobRecord
     implements Blob

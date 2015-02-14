@@ -4,9 +4,9 @@ import java.util.Collection;
 
 import org.elasticsearch.search.aggregations.bucket.range.geodistance.GeoDistance;
 
-import com.enonic.wem.api.aggregation.BucketAggregation;
-import com.enonic.wem.api.aggregation.Buckets;
-import com.enonic.wem.api.aggregation.GeoDistanceRangeBucket;
+import com.enonic.xp.core.aggregation.BucketAggregation;
+import com.enonic.xp.core.aggregation.Buckets;
+import com.enonic.xp.core.aggregation.GeoDistanceRangeBucket;
 
 class GeoDistanceAggregationFactory
     extends AggregationsFactory

@@ -5,7 +5,7 @@ import java.time.Instant;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.wem.api.index.IndexPath;
+import com.enonic.xp.core.index.IndexPath;
 import com.enonic.wem.repo.internal.elasticsearch.FieldNameResolver;
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentAnalyzedItem;

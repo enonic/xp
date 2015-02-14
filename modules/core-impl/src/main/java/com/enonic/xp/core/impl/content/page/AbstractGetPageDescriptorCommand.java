@@ -1,12 +1,12 @@
 package com.enonic.xp.core.impl.content.page;
 
-import com.enonic.wem.api.content.page.DescriptorKey;
-import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.api.xml.mapper.XmlPageDescriptorMapper;
-import com.enonic.wem.api.xml.model.XmlPageDescriptor;
-import com.enonic.wem.api.xml.serializer.XmlSerializers;
+import com.enonic.xp.core.content.page.DescriptorKey;
+import com.enonic.xp.core.content.page.PageDescriptor;
+import com.enonic.xp.core.resource.Resource;
+import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.core.xml.mapper.XmlPageDescriptorMapper;
+import com.enonic.xp.core.xml.model.XmlPageDescriptor;
+import com.enonic.xp.core.xml.serializer.XmlSerializers;
 
 abstract class AbstractGetPageDescriptorCommand
 {

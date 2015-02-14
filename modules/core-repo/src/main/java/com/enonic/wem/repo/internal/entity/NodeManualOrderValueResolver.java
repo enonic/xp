@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.node.NodeId;
+import com.enonic.xp.core.node.NodeId;
 
 public class NodeManualOrderValueResolver
 {

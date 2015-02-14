@@ -5,8 +5,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.wem.api.query.aggregation.AggregationQuery;
-import com.enonic.wem.api.query.aggregation.DateRangeAggregationQuery;
+import com.enonic.xp.core.query.aggregation.AggregationQuery;
+import com.enonic.xp.core.query.aggregation.DateRangeAggregationQuery;
 
 public class DateRangeAggregationQueryJson
     extends AggregationQueryJson

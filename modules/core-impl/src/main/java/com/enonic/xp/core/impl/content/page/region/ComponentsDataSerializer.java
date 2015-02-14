@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.enonic.wem.api.content.page.region.Component;
-import com.enonic.wem.api.content.page.region.ComponentType;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.PropertySet;
-import com.enonic.wem.api.support.serializer.AbstractDataListSerializer;
+import com.enonic.xp.core.content.page.region.Component;
+import com.enonic.xp.core.content.page.region.ComponentType;
+import com.enonic.xp.core.data.Property;
+import com.enonic.xp.core.data.PropertySet;
+import com.enonic.xp.core.support.serializer.AbstractDataListSerializer;
 
 public class ComponentsDataSerializer
     extends AbstractDataListSerializer<Collection<Component>, List<Component>>

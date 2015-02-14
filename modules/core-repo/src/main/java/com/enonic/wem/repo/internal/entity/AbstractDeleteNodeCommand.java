@@ -3,11 +3,11 @@ package com.enonic.wem.repo.internal.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.node.FindNodesByParentParams;
-import com.enonic.wem.api.node.FindNodesByParentResult;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.security.acl.Permission;
+import com.enonic.xp.core.context.Context;
+import com.enonic.xp.core.node.FindNodesByParentParams;
+import com.enonic.xp.core.node.FindNodesByParentResult;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.security.acl.Permission;
 import com.enonic.wem.repo.internal.branch.BranchContext;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.QueryService;

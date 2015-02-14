@@ -3,15 +3,15 @@ package com.enonic.wem.repo.internal.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.FindNodeVersionsResult;
-import com.enonic.wem.api.node.MoveNodeException;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeName;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
-import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.xp.core.node.CreateNodeParams;
+import com.enonic.xp.core.node.FindNodeVersionsResult;
+import com.enonic.xp.core.node.MoveNodeException;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodeName;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.security.acl.AccessControlEntry;
+import com.enonic.xp.core.security.acl.AccessControlList;
 
 import static org.junit.Assert.*;
 

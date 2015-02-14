@@ -1,12 +1,12 @@
 package com.enonic.wem.repo.internal.snapshot;
 
-import com.enonic.wem.api.snapshot.DeleteSnapshotParams;
-import com.enonic.wem.api.snapshot.DeleteSnapshotsResult;
-import com.enonic.wem.api.snapshot.RestoreParams;
-import com.enonic.wem.api.snapshot.RestoreResult;
-import com.enonic.wem.api.snapshot.SnapshotResults;
-import com.enonic.wem.api.snapshot.SnapshotParams;
-import com.enonic.wem.api.snapshot.SnapshotResult;
+import com.enonic.xp.core.snapshot.DeleteSnapshotParams;
+import com.enonic.xp.core.snapshot.DeleteSnapshotsResult;
+import com.enonic.xp.core.snapshot.RestoreParams;
+import com.enonic.xp.core.snapshot.RestoreResult;
+import com.enonic.xp.core.snapshot.SnapshotResults;
+import com.enonic.xp.core.snapshot.SnapshotParams;
+import com.enonic.xp.core.snapshot.SnapshotResult;
 
 public interface SnapshotService
 {

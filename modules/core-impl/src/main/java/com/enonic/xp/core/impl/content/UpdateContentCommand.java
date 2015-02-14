@@ -5,25 +5,25 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentAccessException;
-import com.enonic.wem.api.content.ContentChangeEvent;
-import com.enonic.wem.api.content.ContentDataValidationException;
-import com.enonic.wem.api.content.ContentEditor;
-import com.enonic.wem.api.content.ContentUpdatedEvent;
-import com.enonic.wem.api.content.EditableContent;
-import com.enonic.wem.api.content.UpdateContentParams;
-import com.enonic.wem.api.content.UpdateContentTranslatorParams;
-import com.enonic.wem.api.media.MediaInfo;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeAccessException;
-import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.schema.content.validator.DataValidationError;
-import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.thumb.Thumbnail;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentAccessException;
+import com.enonic.xp.core.content.ContentChangeEvent;
+import com.enonic.xp.core.content.ContentDataValidationException;
+import com.enonic.xp.core.content.ContentEditor;
+import com.enonic.xp.core.content.ContentUpdatedEvent;
+import com.enonic.xp.core.content.EditableContent;
+import com.enonic.xp.core.content.UpdateContentParams;
+import com.enonic.xp.core.content.UpdateContentTranslatorParams;
+import com.enonic.xp.core.media.MediaInfo;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeAccessException;
+import com.enonic.xp.core.node.UpdateNodeParams;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.GetContentTypeParams;
+import com.enonic.xp.core.schema.content.validator.DataValidationError;
+import com.enonic.xp.core.schema.content.validator.DataValidationErrors;
+import com.enonic.xp.core.icon.Thumbnail;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand

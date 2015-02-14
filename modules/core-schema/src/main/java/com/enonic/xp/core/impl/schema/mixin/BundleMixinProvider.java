@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.schema.mixin;
 
 import org.osgi.framework.Bundle;
 
-import com.enonic.wem.api.schema.mixin.MixinProvider;
-import com.enonic.wem.api.schema.mixin.Mixins;
+import com.enonic.xp.core.schema.mixin.MixinProvider;
+import com.enonic.xp.core.schema.mixin.Mixins;
 
 public final class BundleMixinProvider
     implements MixinProvider

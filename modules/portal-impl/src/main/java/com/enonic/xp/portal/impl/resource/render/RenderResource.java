@@ -1,15 +1,15 @@
 package com.enonic.xp.portal.impl.resource.render;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.page.GetDefaultPageTemplateParams;
-import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.site.Site;
-import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.content.ContentNotFoundException;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.page.GetDefaultPageTemplateParams;
+import com.enonic.xp.core.content.page.Page;
+import com.enonic.xp.core.content.page.PageDescriptor;
+import com.enonic.xp.core.content.page.PageTemplate;
+import com.enonic.xp.core.content.site.Site;
+import com.enonic.xp.core.schema.content.ContentTypeName;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 

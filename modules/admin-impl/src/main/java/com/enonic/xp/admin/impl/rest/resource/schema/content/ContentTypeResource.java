@@ -23,15 +23,15 @@ import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.xp.admin.impl.rest.exception.NotFoundWebException;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeService;
-import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.GetAllContentTypesParams;
-import com.enonic.wem.api.schema.content.GetContentTypeParams;
-import com.enonic.wem.api.security.RoleKeys;
+import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.ContentTypeService;
+import com.enonic.xp.core.schema.content.ContentTypes;
+import com.enonic.xp.core.schema.content.GetAllContentTypesParams;
+import com.enonic.xp.core.schema.content.GetContentTypeParams;
+import com.enonic.xp.core.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "schema/content")
 @Produces("application/json")

@@ -8,24 +8,24 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.PropertySet;
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.Nodes;
-import com.enonic.wem.api.node.UpdateNodeParams;
-import com.enonic.wem.api.security.Group;
-import com.enonic.wem.api.security.Principal;
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.PrincipalRelationship;
-import com.enonic.wem.api.security.PrincipalRelationships;
-import com.enonic.wem.api.security.PrincipalType;
-import com.enonic.wem.api.security.Principals;
-import com.enonic.wem.api.security.Role;
-import com.enonic.wem.api.security.User;
+import com.enonic.xp.core.data.Property;
+import com.enonic.xp.core.data.PropertySet;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.data.Value;
+import com.enonic.xp.core.node.CreateNodeParams;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.Nodes;
+import com.enonic.xp.core.node.UpdateNodeParams;
+import com.enonic.xp.core.security.Group;
+import com.enonic.xp.core.security.Principal;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.PrincipalRelationship;
+import com.enonic.xp.core.security.PrincipalRelationships;
+import com.enonic.xp.core.security.PrincipalType;
+import com.enonic.xp.core.security.Principals;
+import com.enonic.xp.core.security.Role;
+import com.enonic.xp.core.security.User;
 
 abstract class PrincipalNodeTranslator
 {

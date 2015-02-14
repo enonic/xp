@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import com.enonic.wem.api.content.page.region.ComponentType;
+import com.enonic.xp.core.content.page.region.ComponentType;
 import com.enonic.xp.portal.PortalResponse;
 
 final class LiveEditAttributeInjection

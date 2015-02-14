@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.xp.core.blob.BlobKey;
 
 /**
  * Append-only store for binary streams. A blob store consists of a number

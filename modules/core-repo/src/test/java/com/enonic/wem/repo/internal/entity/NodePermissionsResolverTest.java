@@ -2,17 +2,17 @@ package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.security.PrincipalKey;
-import com.enonic.wem.api.security.User;
-import com.enonic.wem.api.security.UserStoreKey;
-import com.enonic.wem.api.security.acl.AccessControlEntry;
-import com.enonic.wem.api.security.acl.AccessControlList;
-import com.enonic.wem.api.security.auth.AuthenticationInfo;
+import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.core.security.User;
+import com.enonic.xp.core.security.UserStoreKey;
+import com.enonic.xp.core.security.acl.AccessControlEntry;
+import com.enonic.xp.core.security.acl.AccessControlList;
+import com.enonic.xp.core.security.auth.AuthenticationInfo;
 
-import static com.enonic.wem.api.security.acl.Permission.CREATE;
-import static com.enonic.wem.api.security.acl.Permission.MODIFY;
-import static com.enonic.wem.api.security.acl.Permission.PUBLISH;
-import static com.enonic.wem.api.security.acl.Permission.READ;
+import static com.enonic.xp.core.security.acl.Permission.CREATE;
+import static com.enonic.xp.core.security.acl.Permission.MODIFY;
+import static com.enonic.xp.core.security.acl.Permission.PUBLISH;
+import static com.enonic.xp.core.security.acl.Permission.READ;
 import static org.junit.Assert.*;
 
 public class NodePermissionsResolverTest

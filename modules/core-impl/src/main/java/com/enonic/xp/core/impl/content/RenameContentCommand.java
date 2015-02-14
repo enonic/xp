@@ -1,15 +1,15 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentAlreadyExistException;
-import com.enonic.wem.api.content.ContentChangeEvent;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.RenameContentParams;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeAlreadyExistAtPathException;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodeName;
-import com.enonic.wem.api.node.RenameNodeParams;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.ContentAlreadyExistException;
+import com.enonic.xp.core.content.ContentChangeEvent;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.RenameContentParams;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodeName;
+import com.enonic.xp.core.node.RenameNodeParams;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
 

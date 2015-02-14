@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.jslib.mapper;
 
-import com.enonic.wem.api.aggregation.Aggregations;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.Contents;
+import com.enonic.xp.core.aggregation.Aggregations;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.content.Contents;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
 

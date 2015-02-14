@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.api.content.ContentPath;
+import com.enonic.xp.core.content.ContentPath;
 import com.enonic.xp.portal.url.PageUrlParams;
 
 final class PageUrlBuilder

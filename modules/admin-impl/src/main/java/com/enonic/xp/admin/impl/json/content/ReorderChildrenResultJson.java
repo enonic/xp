@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.json.content;
 
-import com.enonic.wem.api.content.ReorderChildContentsResult;
+import com.enonic.xp.core.content.ReorderChildContentsResult;
 
 public class ReorderChildrenResultJson
 {

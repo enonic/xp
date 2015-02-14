@@ -12,12 +12,12 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeProvider;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeService;
-import com.enonic.wem.api.schema.relationship.RelationshipTypes;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.schema.relationship.RelationshipType;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeProvider;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeService;
+import com.enonic.xp.core.schema.relationship.RelationshipTypes;
 
 @Component(immediate = true)
 public final class RelationshipTypeServiceImpl

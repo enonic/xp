@@ -10,15 +10,15 @@ import org.junit.rules.TemporaryFolder;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.data.PropertyTree;
-import com.enonic.wem.api.export.NodeExportResult;
-import com.enonic.wem.api.index.ChildOrder;
-import com.enonic.wem.api.node.CreateNodeParams;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeName;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.util.BinaryReference;
+import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.core.export.NodeExportResult;
+import com.enonic.xp.core.index.ChildOrder;
+import com.enonic.xp.core.node.CreateNodeParams;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeName;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.NodeService;
+import com.enonic.xp.core.util.BinaryReference;
 import com.enonic.xp.core.impl.export.writer.FileExportWriter;
 import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer;
 

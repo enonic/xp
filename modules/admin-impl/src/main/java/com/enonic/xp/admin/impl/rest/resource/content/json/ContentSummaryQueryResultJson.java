@@ -7,8 +7,8 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.form.InlineMixinsToFormItemsTransformer;
+import com.enonic.xp.core.content.Content;
+import com.enonic.xp.core.form.InlineMixinsToFormItemsTransformer;
 
 public class ContentSummaryQueryResultJson
     extends AbstractContentQueryResultJson<ContentSummaryJson>

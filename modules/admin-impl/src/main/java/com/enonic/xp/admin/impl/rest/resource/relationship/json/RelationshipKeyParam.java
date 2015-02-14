@@ -1,8 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.relationship.json;
 
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.relationship.RelationshipKey;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.relationship.RelationshipKey;
+import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
 
 public class RelationshipKeyParam
 {

@@ -2,11 +2,11 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.context.Context;
-import com.enonic.wem.api.context.ContextAccessor;
-import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.api.schema.mixin.MixinService;
-import com.enonic.wem.api.security.User;
+import com.enonic.xp.core.context.Context;
+import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.core.module.ModuleService;
+import com.enonic.xp.core.schema.mixin.MixinService;
+import com.enonic.xp.core.security.User;
 
 class AbstractCreatingOrUpdatingContentCommand
     extends AbstractContentCommand

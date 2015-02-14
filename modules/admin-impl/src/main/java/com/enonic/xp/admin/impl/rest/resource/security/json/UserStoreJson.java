@@ -3,11 +3,11 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.security.Principal;
-import com.enonic.wem.api.security.Principals;
-import com.enonic.wem.api.security.UserStore;
-import com.enonic.wem.api.security.acl.UserStoreAccessControlEntry;
-import com.enonic.wem.api.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.core.security.Principal;
+import com.enonic.xp.core.security.Principals;
+import com.enonic.xp.core.security.UserStore;
+import com.enonic.xp.core.security.acl.UserStoreAccessControlEntry;
+import com.enonic.xp.core.security.acl.UserStoreAccessControlList;
 
 @SuppressWarnings("UnusedDeclaration")
 public final class UserStoreJson

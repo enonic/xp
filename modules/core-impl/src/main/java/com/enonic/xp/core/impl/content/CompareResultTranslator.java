@@ -1,10 +1,10 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.wem.api.content.CompareContentResult;
-import com.enonic.wem.api.content.CompareContentResults;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.node.NodeComparison;
-import com.enonic.wem.api.node.NodeComparisons;
+import com.enonic.xp.core.content.CompareContentResult;
+import com.enonic.xp.core.content.CompareContentResults;
+import com.enonic.xp.core.content.ContentId;
+import com.enonic.xp.core.node.NodeComparison;
+import com.enonic.xp.core.node.NodeComparisons;
 
 class CompareResultTranslator
 {

@@ -4,17 +4,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.branch.Branch;
-import com.enonic.wem.api.content.CompareStatus;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.DeleteContentParams;
-import com.enonic.wem.api.event.EventPublisher;
-import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeComparison;
-import com.enonic.wem.api.node.NodeId;
-import com.enonic.wem.api.node.NodePath;
-import com.enonic.wem.api.node.NodeService;
-import com.enonic.wem.api.node.NodeState;
+import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.core.content.CompareStatus;
+import com.enonic.xp.core.content.ContentPath;
+import com.enonic.xp.core.content.DeleteContentParams;
+import com.enonic.xp.core.event.EventPublisher;
+import com.enonic.xp.core.node.Node;
+import com.enonic.xp.core.node.NodeComparison;
+import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.core.node.NodeService;
+import com.enonic.xp.core.node.NodeState;
 
 public class DeleteContentCommandTest
 {
@@ -52,7 +52,7 @@ public class DeleteContentCommandTest
         Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
             thenReturn( new NodeComparison( id, new CompareStatus( CompareStatus.Status.NEW ) ) );
 
-        Mockito.when( this.nodeService.deleteByPath( Mockito.mock( NodePath.class ) ) ).
+        Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );
 
         DeleteContentCommand.create().
@@ -86,7 +86,7 @@ public class DeleteContentCommandTest
         Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
             thenReturn( new NodeComparison( id, new CompareStatus( CompareStatus.Status.EQUAL ) ) );
 
-        Mockito.when( this.nodeService.deleteByPath( Mockito.mock( NodePath.class ) ) ).
+        Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );
 
         DeleteContentCommand.create().

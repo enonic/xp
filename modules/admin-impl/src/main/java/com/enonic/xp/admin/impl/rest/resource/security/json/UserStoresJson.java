@@ -4,8 +4,8 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.api.security.UserStore;
-import com.enonic.wem.api.security.UserStores;
+import com.enonic.xp.core.security.UserStore;
+import com.enonic.xp.core.security.UserStores;
 
 public final class UserStoresJson
 {

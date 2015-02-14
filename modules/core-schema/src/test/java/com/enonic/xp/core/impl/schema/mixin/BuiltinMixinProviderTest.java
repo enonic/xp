@@ -2,10 +2,9 @@ package com.enonic.xp.core.impl.schema.mixin;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MixinName;
-import com.enonic.wem.api.schema.mixin.Mixins;
-import com.enonic.xp.core.impl.schema.mixin.BuiltinMixinProvider;
+import com.enonic.xp.core.schema.mixin.Mixin;
+import com.enonic.xp.core.schema.mixin.MixinName;
+import com.enonic.xp.core.schema.mixin.Mixins;
 
 import static org.junit.Assert.*;
 

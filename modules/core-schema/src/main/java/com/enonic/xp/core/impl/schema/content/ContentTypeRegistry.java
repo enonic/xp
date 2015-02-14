@@ -1,10 +1,10 @@
 package com.enonic.xp.core.impl.schema.content;
 
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeProvider;
-import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.core.schema.content.ContentType;
+import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.core.schema.content.ContentTypeProvider;
+import com.enonic.xp.core.schema.content.ContentTypes;
 
 interface ContentTypeRegistry
 {

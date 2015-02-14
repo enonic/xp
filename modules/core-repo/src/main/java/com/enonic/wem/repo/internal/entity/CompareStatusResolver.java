@@ -1,10 +1,10 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.wem.api.content.CompareStatus;
-import com.enonic.wem.api.node.NodeState;
-import com.enonic.wem.api.node.NodeVersion;
-import com.enonic.wem.api.node.NodeVersionId;
-import com.enonic.wem.api.repository.RepositoryId;
+import com.enonic.xp.core.content.CompareStatus;
+import com.enonic.xp.core.node.NodeState;
+import com.enonic.xp.core.node.NodeVersion;
+import com.enonic.xp.core.node.NodeVersionId;
+import com.enonic.xp.core.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
 import com.enonic.wem.repo.internal.version.VersionService;
 
