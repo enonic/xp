@@ -12,6 +12,7 @@ import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.index.IndexType;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.CreateRootNodeParams;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.FindNodesByQueryResult;
@@ -27,6 +28,8 @@ import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.RoleKeys;
 import com.enonic.wem.api.security.User;
 import com.enonic.wem.api.security.UserStoreKey;
+import com.enonic.wem.api.security.acl.AccessControlEntry;
+import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
@@ -137,6 +140,24 @@ public abstract class AbstractNodeTest
         repositoryInitializer.initializeRepository( repository.getId() );
 
         refresh();
+    }
+
+    protected Node createDefaultRootNode()
+    {
+        final AccessControlList rootPermissions =
+            AccessControlList.of( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() );
+        final CreateRootNodeParams createRootParams = CreateRootNodeParams.create().permissions( rootPermissions ).
+            build();
+
+        return CreateRootNodeCommand.create().
+            params( createRootParams ).
+            queryService( this.queryService ).
+            branchService( this.branchService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
     }
 
     protected Node updateNode( final UpdateNodeParams updateNodeParams )

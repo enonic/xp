@@ -1,5 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.index.ChildOrder;
@@ -14,6 +15,13 @@ import com.enonic.wem.api.security.acl.Permission;
 public class StoreNodeCommandTest
     extends AbstractNodeTest
 {
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
 
     @Test
     public void with_acl()

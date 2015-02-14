@@ -1,6 +1,8 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.node.Node;
+import com.enonic.wem.api.node.NodeAccessException;
 import com.enonic.wem.api.security.PrincipalKeys;
 import com.enonic.wem.api.security.acl.AccessControlList;
 import com.enonic.wem.api.security.acl.Permission;
@@ -8,14 +10,36 @@ import com.enonic.wem.api.security.auth.AuthenticationInfo;
 
 final class NodePermissionsResolver
 {
+    public static void requireContextUserPermission( final Permission permission, final Node node )
+        throws NodeAccessException
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        requireContextUserPermission( authInfo, permission, node );
+    }
 
-    public boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission, final Node node )
+    public static void requireContextUserPermission( final AuthenticationInfo authInfo, final Permission permission, final Node node )
+        throws NodeAccessException
+    {
+        final boolean hasPermission = userHasPermission( authInfo, permission, node );
+        if ( !hasPermission )
+        {
+            throw new NodeAccessException( authInfo.getUser(), node.path(), permission );
+        }
+    }
+
+    public static boolean contextUserHasPermission( final Permission permission, final Node node )
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        return userHasPermission( authInfo, permission, node );
+    }
+
+    public static boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission, final Node node )
     {
         return userHasPermission( authInfo, permission, node.getPermissions() );
     }
 
-    public boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission,
-                                      final AccessControlList nodePermissions )
+    public static boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission,
+                                             final AccessControlList nodePermissions )
     {
         final PrincipalKeys authInfoPrincipals = authInfo.getPrincipals();
         final PrincipalKeys principalsAllowed = nodePermissions.getPrincipalsWithPermission( permission );

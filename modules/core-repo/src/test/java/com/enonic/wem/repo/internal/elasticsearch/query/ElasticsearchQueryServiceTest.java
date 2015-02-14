@@ -31,6 +31,8 @@ public class ElasticsearchQueryServiceTest
         super.setUp();
         this.queryService = new ElasticsearchQueryService();
         this.queryService.setElasticsearchDao( this.elasticsearchDao );
+
+        this.createDefaultRootNode();
     }
 
     @Test

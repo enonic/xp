@@ -17,7 +17,6 @@ import static org.junit.Assert.*;
 
 public class NodePermissionsResolverTest
 {
-    private final NodePermissionsResolver resolver = new NodePermissionsResolver();
 
     private static final UserStoreKey USER_STORE_KEY = new UserStoreKey( "us" );
 
@@ -42,10 +41,10 @@ public class NodePermissionsResolverTest
             add( AccessControlEntry.create().principal( ROLE_C ).allow( MODIFY ).build() ).
             build();
 
-        assertFalse( resolver.userHasPermission( authInfo, READ, nodePermissions ) );
-        assertFalse( resolver.userHasPermission( authInfo, CREATE, nodePermissions ) );
-        assertFalse( resolver.userHasPermission( authInfo, MODIFY, nodePermissions ) );
-        assertFalse( resolver.userHasPermission( authInfo, PUBLISH, nodePermissions ) );
+        assertFalse( NodePermissionsResolver.userHasPermission( authInfo, READ, nodePermissions ) );
+        assertFalse( NodePermissionsResolver.userHasPermission( authInfo, CREATE, nodePermissions ) );
+        assertFalse( NodePermissionsResolver.userHasPermission( authInfo, MODIFY, nodePermissions ) );
+        assertFalse( NodePermissionsResolver.userHasPermission( authInfo, PUBLISH, nodePermissions ) );
     }
 
     @Test
@@ -63,10 +62,10 @@ public class NodePermissionsResolverTest
             add( AccessControlEntry.create().principal( ROLE_C ).allow( READ, MODIFY, CREATE ).build() ).
             build();
 
-        assertTrue( resolver.userHasPermission( authInfo, READ, nodePermissions ) );
-        assertTrue( resolver.userHasPermission( authInfo, CREATE, nodePermissions ) );
-        assertTrue( resolver.userHasPermission( authInfo, MODIFY, nodePermissions ) );
-        assertFalse( resolver.userHasPermission( authInfo, PUBLISH, nodePermissions ) );
+        assertTrue( NodePermissionsResolver.userHasPermission( authInfo, READ, nodePermissions ) );
+        assertTrue( NodePermissionsResolver.userHasPermission( authInfo, CREATE, nodePermissions ) );
+        assertTrue( NodePermissionsResolver.userHasPermission( authInfo, MODIFY, nodePermissions ) );
+        assertFalse( NodePermissionsResolver.userHasPermission( authInfo, PUBLISH, nodePermissions ) );
     }
 
     @Test
@@ -84,9 +83,9 @@ public class NodePermissionsResolverTest
             add( AccessControlEntry.create().principal( ROLE_C ).allow( MODIFY ).build() ).
             build();
 
-        assertTrue( resolver.userHasPermission( authInfo, READ, nodePermissions ) );
-        assertFalse( resolver.userHasPermission( authInfo, CREATE, nodePermissions ) );
-        assertTrue( resolver.userHasPermission( authInfo, MODIFY, nodePermissions ) );
-        assertFalse( resolver.userHasPermission( authInfo, PUBLISH, nodePermissions ) );
+        assertTrue( NodePermissionsResolver.userHasPermission( authInfo, READ, nodePermissions ) );
+        assertFalse( NodePermissionsResolver.userHasPermission( authInfo, CREATE, nodePermissions ) );
+        assertTrue( NodePermissionsResolver.userHasPermission( authInfo, MODIFY, nodePermissions ) );
+        assertFalse( NodePermissionsResolver.userHasPermission( authInfo, PUBLISH, nodePermissions ) );
     }
 }

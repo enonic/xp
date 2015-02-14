@@ -1,5 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.branch.Branches;
@@ -18,6 +19,14 @@ import static org.junit.Assert.*;
 public class GetActiveNodeVersionsCommandTest
     extends AbstractNodeTest
 {
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
+
     @Test
     public void get_active_versions()
         throws Exception

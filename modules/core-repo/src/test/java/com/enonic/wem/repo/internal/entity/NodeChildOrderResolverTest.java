@@ -1,5 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.index.ChildOrder;
@@ -13,6 +14,13 @@ import static org.junit.Assert.*;
 public class NodeChildOrderResolverTest
     extends AbstractNodeTest
 {
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
 
     @Test
     public void given_child_order_as_param()

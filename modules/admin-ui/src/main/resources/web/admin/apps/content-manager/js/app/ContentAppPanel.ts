@@ -33,7 +33,7 @@ module app {
             wizardPanel.getHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
                 if (event.getPropertyName() === "displayName") {
                     var contentType = (<app.wizard.ContentWizardPanel>wizardPanel).getContentType(),
-                        name = <string>event.getNewValue() || "<Unnamed " + this.convertName(contentType.getDisplayName())  + ">";
+                        name = <string>event.getNewValue() || "<Unnamed " + this.convertName(contentType.getDisplayName()) + ">";
                     tabMenuItem.setLabel(name, !<string>event.getNewValue());
                 }
             });
@@ -134,6 +134,11 @@ module app {
 
                 contentWizardPanelFactory.setCreateSite(newContentEvent.getContentType().isSite());
                 contentWizardPanelFactory.createForNew().then((wizard: app.wizard.ContentWizardPanel) => {
+                    if (!wizard.getPersistedItem()) {
+                        wizard.close(); // content could not be created
+                        return;
+                    }
+
                     tabMenuItem = new AppBarTabMenuItemBuilder().
                         setLabel("<New " + this.convertName(contentTypeSummary.getDisplayName()) + ">").
                         setTabId(tabId).
@@ -181,7 +186,7 @@ module app {
                             }
 
                             var contentType = (<app.wizard.ContentWizardPanel>wizard).getContentType(),
-                                name = content.getDisplayName() || "<Unnamed " + this.convertName(contentType.getDisplayName())  + ">";
+                                name = content.getDisplayName() || "<Unnamed " + this.convertName(contentType.getDisplayName()) + ">";
 
                             tabMenuItem = new AppBarTabMenuItemBuilder().
                                 setLabel(name).

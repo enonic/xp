@@ -1,15 +1,18 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.enonic.wem.api.context.Context;
 import com.enonic.wem.api.node.FindNodesByParentParams;
 import com.enonic.wem.api.node.FindNodesByParentResult;
 import com.enonic.wem.api.node.Node;
-import com.enonic.wem.api.node.NodeState;
-import com.enonic.wem.api.node.NodeVersionId;
+import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.repo.internal.branch.BranchContext;
-import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.QueryService;
+
+import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.requireContextUserPermission;
 
 abstract class AbstractDeleteNodeCommand
     extends AbstractNodeCommand
@@ -21,8 +24,23 @@ abstract class AbstractDeleteNodeCommand
 
     void deleteNodeWithChildren( final Node node, final Context context )
     {
-        final NodeVersionId nodeVersionId = this.queryService.get( node.id(), IndexContext.from( context ) );
 
+        final List<Node> nodesToDelete = new ArrayList<>();
+        resolveNodesToDelete( node, nodesToDelete );
+
+        for ( final Node child : nodesToDelete )
+        {
+            requireContextUserPermission( context.getAuthInfo(), Permission.DELETE, child );
+        }
+
+        for ( final Node child : nodesToDelete )
+        {
+            doDelete( context, child );
+        }
+    }
+
+    void resolveNodesToDelete( final Node node, final List<Node> nodes )
+    {
         final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( node.path() ).
             size( QueryService.GET_ALL_SIZE_FLAG ).
@@ -30,34 +48,13 @@ abstract class AbstractDeleteNodeCommand
 
         for ( final Node child : result.getNodes() )
         {
-            deleteNodeWithChildren( child, context );
+            resolveNodesToDelete( child, nodes );
         }
 
-       /* final Node deletedNode = Node.newNode( node ).
-            nodeState( NodeState.PENDING_DELETE ).
-            build();
-
-        setAsPendingDelete( context, nodeVersionId, deletedNode );
-        */
-
-        doDelete( context, node, nodeVersionId );
+        nodes.add( node );
     }
 
-    private void setAsPendingDelete( final Context context, final NodeVersionId nodeVersionId, final Node node )
-    {
-        final Node pendingNode = Node.newNode( node ).
-            nodeState( NodeState.PENDING_DELETE ).
-            build();
-
-        branchService.store( StoreBranchDocument.create().
-            nodeVersionId( nodeVersionId ).
-            node( pendingNode ).
-            build(), BranchContext.from( context ) );
-
-        indexServiceInternal.store( pendingNode, nodeVersionId, IndexContext.from( context ) );
-    }
-
-    private void doDelete( final Context context, final Node node, final NodeVersionId nodeVersionId )
+    private void doDelete( final Context context, final Node node )
     {
         branchService.delete( node.id(), BranchContext.from( context ) );
 

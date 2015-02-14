@@ -27,8 +27,11 @@ import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.NodeType;
 import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.repo.internal.blob.Blob;
 import com.enonic.wem.repo.internal.blob.BlobStore;
+
+import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.requireContextUserPermission;
 
 public final class CreateNodeCommand
     extends AbstractNodeCommand
@@ -50,7 +53,8 @@ public final class CreateNodeCommand
         Preconditions.checkArgument( params.getParent().isAbsolute(), "Path to parent Node must be absolute: " + params.getParent() );
 
         NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
-        NodeHelper.runAsAdmin( this::verifyParentExists );
+        final Node parentNode = NodeHelper.runAsAdmin( this::verifyParentExists );
+        requireContextUserPermission( Permission.CREATE, parentNode );
 
         final PrincipalKey user = getCurrentPrincipalKey();
 
@@ -130,11 +134,11 @@ public final class CreateNodeCommand
         return evaluatePermissions( params.getParent(), params.inheritPermissions(), paramPermissions );
     }
 
-    private void verifyParentExists()
+    private Node verifyParentExists()
     {
         if ( NodePath.ROOT.equals( params.getParent() ) )
         {
-            return;
+            return doGetByPath( NodePath.ROOT, false );
         }
 
         final Node parentNode = doGetByPath( params.getParent(), false );
@@ -144,6 +148,7 @@ public final class CreateNodeCommand
             throw new NodeNotFoundException(
                 "Cannot create node with name " + params.getName() + ", parent '" + params.getParent() + "' not found" );
         }
+        return parentNode;
     }
 
     private Long resolvePotentialManualOrderValue()

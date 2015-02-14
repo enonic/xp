@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.util.Iterator;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentConstants;
@@ -31,6 +32,14 @@ import static org.junit.Assert.*;
 public class NodeOrderTest
     extends AbstractNodeTest
 {
+
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
 
     @Test
     public void geo_distance_sorting()

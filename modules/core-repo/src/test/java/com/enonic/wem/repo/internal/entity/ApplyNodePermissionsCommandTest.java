@@ -1,5 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.context.Context;
@@ -7,6 +8,7 @@ import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.context.ContextBuilder;
 import com.enonic.wem.api.node.ApplyNodePermissionsParams;
 import com.enonic.wem.api.node.CreateNodeParams;
+import com.enonic.wem.api.node.CreateRootNodeParams;
 import com.enonic.wem.api.node.Node;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -27,6 +29,16 @@ public class ApplyNodePermissionsCommandTest
     extends AbstractNodeTest
 {
 
+    public static final UserStoreKey USK = UserStoreKey.system();
+
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
+
     @Test
     public void testApplyPermissionsWithOverwrite()
         throws Exception
@@ -36,15 +48,28 @@ public class ApplyNodePermissionsCommandTest
 
     private void applyPermissionsWithOverwrite()
     {
-        final UserStoreKey usk = UserStoreKey.system();
-        final PrincipalKey user1 = PrincipalKey.ofUser( usk, "user1" );
-        final PrincipalKey user2 = PrincipalKey.ofUser( usk, "user2" );
-        final PrincipalKey group1 = PrincipalKey.ofGroup( usk, "group1" );
+        final PrincipalKey user1 = PrincipalKey.ofUser( USK, "user1" );
+        final PrincipalKey user2 = PrincipalKey.ofUser( USK, "user2" );
+        final PrincipalKey group1 = PrincipalKey.ofGroup( USK, "group1" );
 
         final AccessControlList permissions =
             AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build(),
                                   AccessControlEntry.create().principal( user1 ).allow( READ, MODIFY ).build(),
                                   AccessControlEntry.create().principal( group1 ).allow( READ, CREATE, DELETE, MODIFY ).build() );
+
+        CreateRootNodeCommand.create().
+            params( CreateRootNodeParams.create().
+                permissions( AccessControlList.create().add(
+                    AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ).
+                    build() ).
+                build() ).
+            queryService( this.queryService ).
+            branchService( this.branchService ).
+            versionService( this.versionService ).
+            nodeDao( this.nodeDao ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
 
         final Node topNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -134,10 +159,9 @@ public class ApplyNodePermissionsCommandTest
 
     private void applyPermissionsWithMerge()
     {
-        final UserStoreKey usk = UserStoreKey.system();
-        final PrincipalKey user1 = PrincipalKey.ofUser( usk, "user1" );
-        final PrincipalKey user2 = PrincipalKey.ofUser( usk, "user2" );
-        final PrincipalKey group1 = PrincipalKey.ofGroup( usk, "group1" );
+        final PrincipalKey user1 = PrincipalKey.ofUser( USK, "user1" );
+        final PrincipalKey user2 = PrincipalKey.ofUser( USK, "user2" );
+        final PrincipalKey group1 = PrincipalKey.ofGroup( USK, "group1" );
         final AccessControlList permissions =
             AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build(),
                                   AccessControlEntry.create().principal( user1 ).allow( READ, MODIFY ).build(),
@@ -240,7 +264,7 @@ public class ApplyNodePermissionsCommandTest
         final Context context = ContextAccessor.current();
         final AuthenticationInfo authInfo = context.getAuthInfo();
         ContextBuilder.from( context ).
-            authInfo( AuthenticationInfo.copyOf( authInfo ).principals( principal ).build() ).
+            authInfo( AuthenticationInfo.copyOf( authInfo ).principals( principal, PrincipalKey.ofGroup( USK, "group1" ) ).build() ).
             build().
             runWith( runnable );
     }

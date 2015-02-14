@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.entity;
 import java.time.Instant;
 import java.util.Random;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.node.CreateNodeParams;
@@ -21,6 +22,14 @@ public class GetNodeVersionsCommandTest
     extends AbstractNodeTest
 {
     private final Random random = new Random();
+
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
 
     @Test
     public void get_single_version()

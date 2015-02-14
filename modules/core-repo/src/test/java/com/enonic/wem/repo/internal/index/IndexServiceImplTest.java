@@ -22,6 +22,8 @@ public class IndexServiceImplTest
 {
     private IndexServiceImpl indexService;
 
+    private Node rootNode;
+
     @Override
     @Before
     public void setUp()
@@ -32,6 +34,8 @@ public class IndexServiceImplTest
         this.indexService.setBranchService( this.branchService );
         this.indexService.setIndexServiceInternal( this.indexServiceInternal );
         this.indexService.setNodeDao( this.nodeDao );
+
+        this.rootNode = this.createDefaultRootNode();
     }
 
     @Test
@@ -49,9 +53,10 @@ public class IndexServiceImplTest
             initialize( true ).
             build() );
 
-        assertEquals( 1, result.getReindexNodes().getSize() );
+        assertEquals( 2, result.getReindexNodes().getSize() );
 
         assertNotNull( getNodeById( node.id() ) );
+        assertNotNull( getNodeById( rootNode.id() ) );
     }
 
     @Test
@@ -69,9 +74,10 @@ public class IndexServiceImplTest
             initialize( false ).
             build() );
 
-        assertEquals( 1, result.getReindexNodes().getSize() );
+        assertEquals( 2, result.getReindexNodes().getSize() );
 
         assertNotNull( getNodeById( node.id() ) );
+        assertNotNull( getNodeById( rootNode.id() ) );
     }
 
 
@@ -94,9 +100,10 @@ public class IndexServiceImplTest
             initialize( false ).
             build() );
 
-        assertEquals( 1, result.getReindexNodes().getSize() );
+        assertEquals( 2, result.getReindexNodes().getSize() );
 
         assertNotNull( getNodeById( node.id() ) );
+        assertNotNull( getNodeById( rootNode.id() ) );
     }
 
     @Test

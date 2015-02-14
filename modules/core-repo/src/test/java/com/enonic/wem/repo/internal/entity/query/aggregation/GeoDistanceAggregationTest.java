@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity.query.aggregation;
 
 import java.util.Iterator;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Strings;
@@ -42,6 +43,14 @@ public class GeoDistanceAggregationTest
     private static final GeoPoint NEW_YORK = GeoPoint.from( "40.7142700,-74.0059700" );
 
     private static final GeoPoint TRONDHEIM = GeoPoint.from( "63.4304900,10.3950600" );
+
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
 
     @Test
     public void ranges()

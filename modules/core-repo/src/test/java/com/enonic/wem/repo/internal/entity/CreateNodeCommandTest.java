@@ -1,5 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.io.ByteSource;
@@ -21,6 +22,14 @@ import static org.junit.Assert.*;
 public class CreateNodeCommandTest
     extends AbstractNodeTest
 {
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
+
     @Test
     public void populate_manual_order_value_and_insert_first()
         throws Exception

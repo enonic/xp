@@ -27,6 +27,8 @@ public class AccessControlTest
         this.nodeService.setNodeDao( nodeDao );
         this.nodeService.setVersionService( versionService );
         this.nodeService.setBranchService( branchService );
+
+        this.createDefaultRootNode();
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.PropertyTree;
@@ -21,6 +22,16 @@ import static org.junit.Assert.*;
 public class ResolveSyncWorkCommandTest
     extends AbstractNodeTest
 {
+
+    private Node rootNode;
+
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.rootNode = this.createDefaultRootNode();
+    }
 
     @Test
     public void diff_all_new()
@@ -69,12 +80,13 @@ public class ResolveSyncWorkCommandTest
             execute();
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
-        assertEquals( 5, nodePublishRequests.size() );
+        assertEquals( 6, nodePublishRequests.size() );
         assertNotNull( nodePublishRequests.get( node1.id() ) );
         assertNotNull( nodePublishRequests.get( node1_1.id() ) );
         assertNotNull( nodePublishRequests.get( node2.id() ) );
         assertNotNull( nodePublishRequests.get( node2_1.id() ) );
         assertNotNull( nodePublishRequests.get( node3.id() ) );
+        assertNotNull( nodePublishRequests.get( rootNode.id() ) );
     }
 
 
@@ -129,7 +141,8 @@ public class ResolveSyncWorkCommandTest
             execute();
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
-        assertEquals( 0, nodePublishRequests.size() );
+        assertEquals( 1, nodePublishRequests.size() );
+        assertNotNull( nodePublishRequests.get( rootNode.id() ) );
 
         final NodeIds deleted = result.getDelete();
         assertEquals( 2, deleted.getSize() );
@@ -202,7 +215,7 @@ public class ResolveSyncWorkCommandTest
             execute();
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
-        assertEquals( 2, nodePublishRequests.size() );
+        assertEquals( 3, nodePublishRequests.size() );
 
         final NodeIds deleted = result.getDelete();
         assertEquals( 0, deleted.getSize() );
@@ -257,9 +270,10 @@ public class ResolveSyncWorkCommandTest
             execute();
 
         final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
-        assertEquals( 2, nodePublishRequests.size() );
+        assertEquals( 3, nodePublishRequests.size() );
         assertNotNull( nodePublishRequests.get( node1_1.id() ) );
         assertNotNull( nodePublishRequests.get( node2_1.id() ) );
+        assertNotNull( nodePublishRequests.get( rootNode.id() ) );
     }
 
     @Test

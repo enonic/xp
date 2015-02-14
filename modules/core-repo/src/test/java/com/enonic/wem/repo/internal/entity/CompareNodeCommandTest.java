@@ -26,6 +26,8 @@ public class CompareNodeCommandTest
     public void status_new()
         throws Exception
     {
+        draft.callWith( this::createDefaultRootNode );
+
         final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
@@ -40,6 +42,8 @@ public class CompareNodeCommandTest
     public void status_new_target()
         throws Exception
     {
+        master.callWith( this::createDefaultRootNode );
+
         final Node createdNode = master.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
@@ -54,6 +58,8 @@ public class CompareNodeCommandTest
     public void status_deleted_stage_yields_new_in_target()
         throws Exception
     {
+        master.callWith( this::createDefaultRootNode );
+
         final Node createdNode = master.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
@@ -85,6 +91,8 @@ public class CompareNodeCommandTest
     public void status_equal()
         throws Exception
     {
+        draft.callWith( this::createDefaultRootNode );
+
         final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
@@ -101,6 +109,8 @@ public class CompareNodeCommandTest
     public void status_newer()
         throws Exception
     {
+        draft.callWith( this::createDefaultRootNode );
+
         final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
@@ -121,6 +131,8 @@ public class CompareNodeCommandTest
     public void status_older()
         throws Exception
     {
+        draft.callWith( this::createDefaultRootNode );
+
         final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
@@ -142,6 +154,8 @@ public class CompareNodeCommandTest
     public void status_moved_source()
         throws Exception
     {
+        draft.callWith( this::createDefaultRootNode );
+
         final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).

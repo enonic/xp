@@ -62,7 +62,8 @@ public class PushNodesResult
 
     public enum Reason
     {
-        PARENT_NOT_FOUND;
+        PARENT_NOT_FOUND,
+        ACCESS_DENIED
     }
 
     public static final class Failed

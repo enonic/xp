@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.entity.query.aggregation;
 import java.util.Iterator;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.aggregation.Aggregation;
@@ -25,6 +26,14 @@ import static junit.framework.Assert.assertTrue;
 public class StatsAggregationTest
     extends AbstractNodeTest
 {
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
+
     @Test
     public void terms_stats_aggregation()
         throws Exception

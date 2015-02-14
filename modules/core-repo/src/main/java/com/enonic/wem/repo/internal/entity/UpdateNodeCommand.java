@@ -10,8 +10,11 @@ import com.enonic.wem.api.node.NodeNotFoundException;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.UpdateNodeParams;
 import com.enonic.wem.api.security.acl.AccessControlList;
+import com.enonic.wem.api.security.acl.Permission;
 import com.enonic.wem.api.util.Exceptions;
 import com.enonic.wem.repo.internal.blob.BlobStore;
+
+import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.requireContextUserPermission;
 
 public final class UpdateNodeCommand
     extends AbstractNodeCommand
@@ -47,6 +50,7 @@ public final class UpdateNodeCommand
         {
             throw new NodeNotFoundException( "Cannot update node with id '" + params.getId() + "', node not found" );
         }
+        requireContextUserPermission( Permission.MODIFY, persistedNode );
 
         final EditableNode editableNode = new EditableNode( persistedNode );
         params.getEditor().edit( editableNode );

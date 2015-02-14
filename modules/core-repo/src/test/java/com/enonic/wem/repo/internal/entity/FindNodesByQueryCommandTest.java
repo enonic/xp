@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.entity;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.PropertySet;
@@ -31,6 +32,13 @@ import static org.junit.Assert.*;
 public class FindNodesByQueryCommandTest
     extends AbstractNodeTest
 {
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
 
     @Test
     public void get_by_parent()

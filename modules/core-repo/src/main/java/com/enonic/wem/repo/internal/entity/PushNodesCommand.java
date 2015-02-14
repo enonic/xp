@@ -21,6 +21,8 @@ import com.enonic.wem.api.node.PushNodesResult;
 import com.enonic.wem.api.query.expr.FieldOrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.api.query.expr.OrderExpressions;
+import com.enonic.wem.api.security.acl.Permission;
+import com.enonic.wem.api.security.auth.AuthenticationInfo;
 import com.enonic.wem.repo.internal.branch.BranchContext;
 import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;
@@ -48,6 +50,7 @@ public class PushNodesCommand
     public PushNodesResult execute()
     {
         final Context context = ContextAccessor.current();
+        final AuthenticationInfo authInfo = context.getAuthInfo();
 
         final Nodes nodes =
             doGetByIds( ids, OrderExpressions.from( FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC ) ), false );
@@ -64,9 +67,16 @@ public class PushNodesCommand
                 build().
                 execute();
 
+            if ( !NodePermissionsResolver.userHasPermission( authInfo, Permission.PUBLISH, node ) )
+            {
+                builder.addFailed( node, PushNodesResult.Reason.ACCESS_DENIED );
+                continue;
+            }
+
             if ( nodeComparison.getCompareStatus().getStatus().equals( CompareStatus.Status.EQUAL ) )
             {
                 builder.addSuccess( node );
+                continue;
             }
 
             final NodeVersionId nodeVersionId = this.queryService.get( node.id(), IndexContext.from( context ) );

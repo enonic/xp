@@ -1,5 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.branch.Branch;
@@ -17,6 +18,16 @@ import static org.junit.Assert.*;
 public class FindNodesWithVersionDifferenceCommandTest
     extends AbstractNodeTest
 {
+    private Node rootNode;
+
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.rootNode = this.createDefaultRootNode();
+    }
+
     @Test
     public void only_in_source()
         throws Exception
@@ -26,9 +37,10 @@ public class FindNodesWithVersionDifferenceCommandTest
             parent( NodePath.ROOT ).
             build() );
 
-        assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
+        assertEquals( 2, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
 
         doPushNode( WS_OTHER, node );
+        doPushNode( WS_OTHER, this.rootNode );
 
         assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
         assertEquals( 0, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
@@ -60,7 +72,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             parent( child1_1.path() ).
             build() );
 
-        assertEquals( 4, getDiff( WS_DEFAULT, WS_OTHER, NodePath.ROOT ).getNodesWithDifferences().getSize() );
+        assertEquals( 5, getDiff( WS_DEFAULT, WS_OTHER, NodePath.ROOT ).getNodesWithDifferences().getSize() );
         assertEquals( 4, getDiff( WS_DEFAULT, WS_OTHER, node.path() ).getNodesWithDifferences().getSize() );
         assertEquals( 3, getDiff( WS_DEFAULT, WS_OTHER, child1.path() ).getNodesWithDifferences().getSize() );
         assertEquals( 2, getDiff( WS_DEFAULT, WS_OTHER, child1_1.path() ).getNodesWithDifferences().getSize() );
@@ -82,6 +94,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             parent( NodePath.ROOT ).
             build() ) );
 
+        doPushNode( WS_OTHER, rootNode );
         doPushNode( WS_OTHER, node );
 
         assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
@@ -97,6 +110,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             parent( NodePath.ROOT ).
             build() );
 
+        doPushNode( WS_OTHER, rootNode );
         doPushNode( WS_OTHER, node );
 
         doUpdateNode( node );
@@ -114,6 +128,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             parent( NodePath.ROOT ).
             build() );
 
+        doPushNode( WS_OTHER, rootNode );
         doPushNode( WS_OTHER, node );
 
         CTX_OTHER.runWith( () -> doUpdateNode( node ) );
@@ -136,6 +151,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             parent( NodePath.ROOT ).
             build() );
 
+        doPushNode( WS_OTHER, rootNode );
         doPushNode( WS_OTHER, node );
         doPushNode( WS_OTHER, node2 );
 
@@ -161,6 +177,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             parent( NodePath.ROOT ).
             build() );
 
+        doPushNode( WS_OTHER, rootNode );
         doPushNode( WS_OTHER, node );
         doPushNode( WS_OTHER, node2 );
 
@@ -186,6 +203,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             parent( NodePath.ROOT ).
             build() );
 
+        doPushNode( WS_OTHER, rootNode );
         doPushNode( WS_OTHER, node );
         doPushNode( WS_OTHER, node2 );
 
@@ -211,6 +229,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             parent( NodePath.ROOT ).
             build() );
 
+        doPushNode( WS_OTHER, rootNode );
         doPushNode( WS_OTHER, node );
         doPushNode( WS_OTHER, node2 );
 

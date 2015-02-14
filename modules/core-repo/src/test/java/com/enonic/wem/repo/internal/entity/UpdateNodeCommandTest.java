@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.nio.charset.Charset;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.io.ByteSource;
@@ -20,6 +21,14 @@ import static org.junit.Assert.*;
 public class UpdateNodeCommandTest
     extends AbstractNodeTest
 {
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
+
     @Test
     public void add_new_binary()
         throws Exception

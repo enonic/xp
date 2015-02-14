@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity.query.aggregation;
 
 import java.util.Iterator;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.aggregation.Bucket;
@@ -21,6 +22,14 @@ import static org.junit.Assert.*;
 public class HistogramAggregationTest
     extends AbstractNodeTest
 {
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
+
     @Test
     public void intervals()
         throws Exception

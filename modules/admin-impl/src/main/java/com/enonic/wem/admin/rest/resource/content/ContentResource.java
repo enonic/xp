@@ -105,6 +105,7 @@ import com.enonic.wem.api.content.attachment.CreateAttachments;
 import com.enonic.wem.api.context.ContextAccessor;
 import com.enonic.wem.api.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.wem.api.index.ChildOrder;
+import com.enonic.wem.api.node.NodeAccessException;
 import com.enonic.wem.api.schema.content.ContentTypeService;
 import com.enonic.wem.api.schema.mixin.MixinService;
 import com.enonic.wem.api.security.PrincipalKey;
@@ -283,6 +284,10 @@ public final class ContentResource
                 jsonResult.addSuccess( contentToDelete );
             }
             catch ( ContentNotFoundException | UnableToDeleteContentException e )
+            {
+                jsonResult.addFailure( deleteContent.getContentPath(), e.getMessage() );
+            }
+            catch ( NodeAccessException e )
             {
                 jsonResult.addFailure( deleteContent.getContentPath(), e.getMessage() );
             }

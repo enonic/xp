@@ -15,7 +15,6 @@ import com.enonic.wem.api.node.NodeId;
 import com.enonic.wem.api.node.NodeIndexPath;
 import com.enonic.wem.api.node.NodePath;
 import com.enonic.wem.api.node.Nodes;
-import com.enonic.wem.api.security.PrincipalKey;
 import com.enonic.wem.api.security.acl.AccessControlEntry;
 import com.enonic.wem.api.security.acl.AccessControlList;
 
@@ -29,6 +28,8 @@ public class FindNodesByParentCommandTest
     public void getChildren()
         throws Exception
     {
+        this.createDefaultRootNode();
+
         final String nodeName = "my-node";
         final Node createdNode = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -59,6 +60,8 @@ public class FindNodesByParentCommandTest
     public void size()
         throws Exception
     {
+        this.createDefaultRootNode();
+
         final Node createdNode = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
@@ -87,6 +90,8 @@ public class FindNodesByParentCommandTest
     public void from()
         throws Exception
     {
+        this.createDefaultRootNode();
+
         final Node createdNode = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
@@ -136,6 +141,8 @@ public class FindNodesByParentCommandTest
     public void get_by_parent_one_child()
         throws Exception
     {
+        this.createDefaultRootNode();
+
         final Node createdNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
@@ -165,6 +172,8 @@ public class FindNodesByParentCommandTest
     public void get_children_order()
         throws Exception
     {
+        this.createDefaultRootNode();
+
         final Node createdNode = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "parent" ) ).
             name( "my-node" ).
@@ -257,7 +266,7 @@ public class FindNodesByParentCommandTest
                 childOrder( ChildOrder.from( "order ASC" ) ).
                 permissions( AccessControlList.of( AccessControlEntry.create().
                     allowAll().
-                    principal( PrincipalKey.ofAnonymous() ).
+                    principal( TEST_DEFAULT_USER.getKey() ).
                     build() ) ).
                 build() ).
             queryService( this.queryService ).

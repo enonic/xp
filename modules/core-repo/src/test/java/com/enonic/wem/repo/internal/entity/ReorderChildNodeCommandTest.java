@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.util.Iterator;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.PropertyTree;
@@ -22,6 +23,13 @@ import static org.junit.Assert.*;
 public class ReorderChildNodeCommandTest
     extends AbstractNodeTest
 {
+    @Before
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        this.createDefaultRootNode();
+    }
 
     @Test
     public void move_first()
