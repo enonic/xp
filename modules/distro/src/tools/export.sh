@@ -10,7 +10,8 @@ Export node from a branch in a repository
 	-?				display this help and exit
 	-u USER:PASSWORD		user:password for basic authentication
 	-t TARGET_DIR			target directory to save export
-	-s SOURCE_REPO_PATH			path of data to export. Format: <repo-name>:<branch-name>:<node-path>. Sample: 'cms-repo:stage:/content'
+	-s SOURCE_REPO_PATH			path of data to export. Format: <repo-name>:<branch-name>:<node-path>.
+						Sample: 'cms-repo:stage:/content'
 	-h HOSTNAME			hostname, defaults to localhost
 	-p PORT				port, defaults to 8080
 	-n                  enable nice format of output (requires python)
@@ -21,6 +22,7 @@ EOF
 usageShort() {
 echo "Usage: ${0##*/} -u USER:PASSWORD -s SOURCE_REPO_PATH -t TARGET_DIR [-h HOSTNAME] [-p PORT] [-i true|false] [-n]"
 }
+
 
 PRETTY=""
 
@@ -55,7 +57,7 @@ while getopts '?u:h:p:t:s:i:n' OPTION
 			n)
                 PRETTY="| python -mjson.tool"
                 ;;
-	  		\?)
+	  		\?|--help)
 		    	show_help >&2
 		        exit 1
 				;;

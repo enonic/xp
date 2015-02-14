@@ -9,7 +9,8 @@ Import nodes from an export into a repository branch
 
 	-?				display this help and exit
 	-u USER:PASSWORD		user:password for basic authentication
-	-t TARGET_REPO_PATH			target path for import. Format: <repo-name>:<branch-name>:<node-path>. Sample: 'cms-repo:stage:/content'
+	-t TARGET_REPO_PATH		target path for import. Format: <repo-name>:<branch-name>:<node-path>.
+						Sample: 'cms-repo:draft:/content'
 	-s SOURCE_DIR			path to exported files
 	-h HOSTNAME			hostname, defaults to localhost
 	-p PORT				port, defaults to 8080
@@ -19,7 +20,7 @@ EOF
 }
 
 usageShort() {
-echo "Usage: ${0##*/} -u USER:PASSWORD -s SOURCE_DIR -t TARGET_REPO_PATH [-h HOSTNAME] [-p PORT] [-i true|false] [-n]"
+echo "Usage: ${0##*/} -? -u USER:PASSWORD -s SOURCE_DIR -t TARGET_REPO_PATH [-h HOSTNAME] [-p PORT] [-i true|false] [-n]"
 }
 
 PRETTY=""
@@ -101,4 +102,5 @@ SOURCE_DIR=`cd "$SOURCE_DIR"; pwd`
 
 JSON="{\"sourceDirectory\": \"$SOURCE_DIR\", \"targetRepoPath\": \"$TARGET_REPO_PATH\", \"importWithIds\": $INCLUDEIDS}"
 
+echo "Importing from directory $SOURCE_DIR to
 eval "curl -u $AUTH -H \"Content-Type: application/json\" -XPOST 'http://$HOST:$PORT/admin/rest/export/import' -d '$JSON' $PRETTY"
