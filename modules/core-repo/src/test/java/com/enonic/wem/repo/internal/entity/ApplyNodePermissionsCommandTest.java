@@ -22,6 +22,7 @@ import static com.enonic.wem.api.security.acl.Permission.DELETE;
 import static com.enonic.wem.api.security.acl.Permission.MODIFY;
 import static com.enonic.wem.api.security.acl.Permission.PUBLISH;
 import static com.enonic.wem.api.security.acl.Permission.READ;
+import static com.enonic.wem.api.security.acl.Permission.WRITE_PERMISSIONS;
 import static org.junit.Assert.*;
 
 
@@ -88,8 +89,8 @@ public class ApplyNodePermissionsCommandTest
             parent( topNode.path() ).
             build() );
 
-        final AccessControlList child1_1_1Permissions =
-            AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build(),
+        final AccessControlList child1_1_1Permissions = AccessControlList.of(
+            AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ, WRITE_PERMISSIONS ).build(),
                                   AccessControlEntry.create().principal( user1 ).allow( READ, MODIFY ).build(),
                                   AccessControlEntry.create().principal( user2 ).allow( READ, CREATE, DELETE, MODIFY, PUBLISH ).build() );
         final Node child1_1_1 = createNode( CreateNodeParams.create().
@@ -162,8 +163,8 @@ public class ApplyNodePermissionsCommandTest
         final PrincipalKey user1 = PrincipalKey.ofUser( USK, "user1" );
         final PrincipalKey user2 = PrincipalKey.ofUser( USK, "user2" );
         final PrincipalKey group1 = PrincipalKey.ofGroup( USK, "group1" );
-        final AccessControlList permissions =
-            AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build(),
+        final AccessControlList permissions = AccessControlList.of(
+            AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ, WRITE_PERMISSIONS ).build(),
                                   AccessControlEntry.create().principal( user1 ).allow( READ, MODIFY ).build(),
                                   AccessControlEntry.create().principal( group1 ).allow( READ, CREATE, DELETE, MODIFY ).build() );
 
@@ -191,8 +192,8 @@ public class ApplyNodePermissionsCommandTest
             inheritPermissions( true ).
             build() );
 
-        final AccessControlList child1_1_1Permissions =
-            AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build(),
+        final AccessControlList child1_1_1Permissions = AccessControlList.of(
+            AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ, WRITE_PERMISSIONS ).build(),
                                   AccessControlEntry.create().principal( user1 ).allow( READ, MODIFY, DELETE ).build(),
                                   AccessControlEntry.create().principal( user2 ).allow( READ, CREATE, DELETE, MODIFY, PUBLISH ).build() );
         final Node child1_1_1 = createNode( CreateNodeParams.create().
@@ -247,7 +248,7 @@ public class ApplyNodePermissionsCommandTest
         assertEquals( permissions, child1_2Updated.getPermissions() );
 
         final Node child1_1_1Updated = getNodeById( child1_1_1.id() );
-        assertEquals( "[user:system:anonymous[+read], " +
+        assertEquals( "[user:system:anonymous[+read, +write_permissions], " +
                           "group:system:group1[+read, +create, +modify, +delete], " +
                           "user:system:user1[+read, +modify, +delete], " +
                           "user:system:user2[+read, +create, +modify, +delete, +publish]]", child1_1_1Updated.getPermissions().toString() );
