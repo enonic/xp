@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.resource;
 
 import com.enonic.xp.portal.impl.services.PortalServices;
-import com.enonic.xp.web.jaxrs2.JaxRsResourceFactory;
+import com.enonic.xp.web.jaxrs.JaxRsResourceFactory;
 
 public final class RootResourceFactory
     implements JaxRsResourceFactory<RootResource>

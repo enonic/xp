@@ -6,7 +6,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.portal.impl.resource.RootResourceFactory;
 import com.enonic.xp.portal.impl.services.PortalServices;
 import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.jaxrs2.JaxRsHandler;
+import com.enonic.xp.web.jaxrs.JaxRsHandler;
 
 @Component(immediate = true, service = WebHandler.class)
 public final class PortalHandler
