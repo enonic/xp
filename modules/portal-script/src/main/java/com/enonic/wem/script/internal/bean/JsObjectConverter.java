@@ -13,9 +13,7 @@ import jdk.nashorn.internal.objects.Global;
 import jdk.nashorn.internal.objects.NativeArray;
 
 import com.enonic.wem.script.internal.serializer.ScriptMapGenerator;
-import com.enonic.wem.script.internal.serializer.ScriptMapGenerator2;
 import com.enonic.wem.script.serializer.MapSerializable;
-import com.enonic.wem.script.serializer.MapSerializable2;
 
 public final class JsObjectConverter
 {
@@ -24,11 +22,6 @@ public final class JsObjectConverter
         if ( value instanceof MapSerializable )
         {
             return toJs( (MapSerializable) value );
-        }
-
-        if ( value instanceof MapSerializable2 )
-        {
-            return toJs( (MapSerializable2) value );
         }
 
         if ( value instanceof List )
@@ -55,13 +48,6 @@ public final class JsObjectConverter
         final ScriptMapGenerator generator = new ScriptMapGenerator();
         value.serialize( generator );
         return generator.getRoot();
-    }
-
-    private static Object toJs( final MapSerializable2 value )
-    {
-        final ScriptMapGenerator2 generator = new ScriptMapGenerator2();
-        value.serialize( generator );
-        return generator.getModel();
     }
 
     private static Object toJs( final List list )
