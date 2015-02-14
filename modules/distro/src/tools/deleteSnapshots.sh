@@ -4,11 +4,12 @@
 # Usage info
 show_help() {
 cat << EOF
-Usage: ${0##*/} [-?|--help] -u USER:PASSWORD [-h HOSTNAME] [-p PORT] [-i true|false] [-n]
+Usage: ${0##*/} [-?|--help] -b TIMESTAMP -u USER:PASSWORD [-h HOSTNAME] [-p PORT] [-i true|false] [-n]
 
-Returns a list of existing snapshots with name and status
+Deletes snapshots, either before a given timestamp or by name
 
 	-?|--help			display this help and exit
+	-b TIMESTAMP            all snaphots before (not including) this timestamp will be deleted
 	-u USER:PASSWORD		user:password for basic authentication
 	-n                  		enable nice format of output (requires python)
 	-h HOSTNAME			hostname, defaults to localhost
@@ -24,14 +25,22 @@ echo "Usage: ${0##*/} [-?|--help] -u USER:PASSWORD [-h HOSTNAME] [-p PORT] [-n]"
 PRETTY=""
 
 # Parse arguments
-while getopts '?u:h:p:n' OPTION
+while getopts '?u:h:p:b:n' OPTION
 	do
 		case $OPTION in
             u)
 				uflag=1
 				AUTH="$OPTARG"
 			    ;;
-           	p)
+            b)
+				uflag=1
+				BEFORE="$OPTARG"
+			    ;;
+            s)
+				rflag=1
+				SNAPSHOT="$OPTARG"
+				;;
+			p)
 				pflag=1
 				PORT="$OPTARG"
 				;;
@@ -68,5 +77,14 @@ then
      exit 1
 fi
 
+if [[ -z $BEFORE ]]
+then
+     usageShort
+     exit 1
+fi
 
-eval "curl -u $AUTH -XGET 'http://$HOST:$PORT/admin/rest/repo/list' | python -mjson.tool"
+JSON="{\"snapshotNames\": [], \"before\" : \"$BEFORE\"}"
+
+eval "curl -u $AUTH -H \"Content-Type: application/json\" -XPOST 'http://localhost:8080/admin/rest/repo/delete' -d '$JSON' | python -mjson.tool"
+
+

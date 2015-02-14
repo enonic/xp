@@ -6,11 +6,11 @@ import com.enonic.wem.api.snapshot.DeleteSnapshotsResult;
 
 public class DeleteSnapshotsResultJson
 {
-    private final Set<String> snapshots;
+    private final Set<String> deletedSnapshots;
 
-    private DeleteSnapshotsResultJson( final Set<String> snapshots )
+    private DeleteSnapshotsResultJson( final Set<String> deletedSnapshots )
     {
-        this.snapshots = snapshots;
+        this.deletedSnapshots = deletedSnapshots;
     }
 
     public static DeleteSnapshotsResultJson from( final DeleteSnapshotsResult result )
@@ -18,8 +18,8 @@ public class DeleteSnapshotsResultJson
         return new DeleteSnapshotsResultJson( result.getSet() );
     }
 
-    public Set<String> getSnapshots()
+    public Set<String> getDeletedSnapshots()
     {
-        return snapshots;
+        return deletedSnapshots;
     }
 }
