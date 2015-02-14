@@ -3,8 +3,8 @@ package com.enonic.xp.portal.mustache.impl;
 import org.osgi.service.component.annotations.Component;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.command.CommandHandler;
-import com.enonic.wem.script.command.CommandRequest;
+import com.enonic.xp.portal.script.command.CommandHandler;
+import com.enonic.xp.portal.script.command.CommandRequest;
 
 @Component(immediate = true)
 public final class RenderViewHandler

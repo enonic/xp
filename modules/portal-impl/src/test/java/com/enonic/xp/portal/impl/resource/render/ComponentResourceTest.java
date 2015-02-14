@@ -7,9 +7,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.wem.api.rendering.Renderable;
-import com.enonic.wem.portal.internal.rendering.RenderResult;
-import com.enonic.wem.portal.internal.rendering.Renderer;
-import com.enonic.wem.portal.internal.rendering.RendererFactory;
+import com.enonic.xp.portal.rendering.RenderResult;
+import com.enonic.xp.portal.rendering.Renderer;
+import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.portal.PortalContext;
 
 import static org.junit.Assert.*;

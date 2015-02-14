@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.page.region.PartComponent;
 import com.enonic.wem.api.content.page.region.Region;
-import com.enonic.wem.script.mapper.ContentFixtures;
+import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.ComponentUrlParams;
 
 import static org.junit.Assert.*;

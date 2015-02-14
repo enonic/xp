@@ -8,8 +8,8 @@ import com.enonic.wem.api.content.page.PageDescriptorService;
 import com.enonic.wem.api.content.page.PageTemplateService;
 import com.enonic.wem.api.image.ImageFilterBuilder;
 import com.enonic.wem.api.module.ModuleService;
-import com.enonic.wem.portal.internal.controller.ControllerScriptFactory;
-import com.enonic.wem.portal.internal.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.rendering.RendererFactory;
 
 @Component
 public final class PortalServicesImpl

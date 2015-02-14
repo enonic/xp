@@ -1,6 +1,6 @@
 package com.enonic.wem.script.internal.invoker;
 
-import com.enonic.wem.script.command.CommandRequest;
+import com.enonic.xp.portal.script.command.CommandRequest;
 
 public interface CommandInvoker
 {

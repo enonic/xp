@@ -5,6 +5,8 @@ import org.junit.Test;
 import com.google.common.base.Joiner;
 
 import com.enonic.wem.api.resource.ResourceProblemException;
+import com.enonic.xp.portal.script.ScriptExports;
+import com.enonic.xp.portal.script.ScriptValue;
 
 import static org.junit.Assert.*;
 

@@ -13,7 +13,7 @@ import jdk.nashorn.internal.objects.Global;
 import jdk.nashorn.internal.objects.NativeArray;
 
 import com.enonic.wem.script.internal.serializer.ScriptMapGenerator;
-import com.enonic.wem.script.serializer.MapSerializable;
+import com.enonic.xp.portal.script.serializer.MapSerializable;
 
 public final class JsObjectConverter
 {

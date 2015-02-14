@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.attachment.Attachments;
-import com.enonic.wem.script.mapper.ContentFixtures;
+import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 
 import static org.junit.Assert.*;

@@ -14,7 +14,7 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.ScriptValue;
+import com.enonic.xp.portal.script.ScriptValue;
 import com.enonic.wem.script.internal.bean.ModuleScriptInfo;
 import com.enonic.wem.script.internal.bean.ScriptValueFactoryImpl;
 import com.enonic.wem.script.internal.error.ErrorHelper;

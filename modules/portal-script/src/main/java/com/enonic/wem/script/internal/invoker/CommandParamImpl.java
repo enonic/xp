@@ -7,7 +7,7 @@ import java.util.function.Function;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.convert.Converters;
-import com.enonic.wem.script.command.CommandParam;
+import com.enonic.xp.portal.script.command.CommandParam;
 import com.enonic.wem.script.internal.bean.JsObjectConverter;
 
 final class CommandParamImpl

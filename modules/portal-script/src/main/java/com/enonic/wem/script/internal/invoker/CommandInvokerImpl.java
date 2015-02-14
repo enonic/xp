@@ -4,8 +4,8 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.script.command.CommandHandler;
-import com.enonic.wem.script.command.CommandRequest;
+import com.enonic.xp.portal.script.command.CommandHandler;
+import com.enonic.xp.portal.script.command.CommandRequest;
 import com.enonic.wem.script.internal.bean.JsObjectConverter;
 
 public final class CommandInvokerImpl

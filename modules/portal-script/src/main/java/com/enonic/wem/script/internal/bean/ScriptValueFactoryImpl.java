@@ -4,7 +4,7 @@ import jdk.nashorn.api.scripting.JSObject;
 import jdk.nashorn.api.scripting.ScriptUtils;
 import jdk.nashorn.internal.runtime.Undefined;
 
-import com.enonic.wem.script.ScriptValue;
+import com.enonic.xp.portal.script.ScriptValue;
 
 public final class ScriptValueFactoryImpl
     implements ScriptValueFactory

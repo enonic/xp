@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.branch.Branch;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.script.mapper.ContentFixtures;
+import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.PageUrlParams;
 
 import static org.junit.Assert.*;

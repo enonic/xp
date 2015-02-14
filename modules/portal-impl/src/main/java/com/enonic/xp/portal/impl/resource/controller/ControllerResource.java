@@ -15,7 +15,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.wem.portal.internal.rendering.RenderResult;
+import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.impl.resource.base.BaseResource;
 

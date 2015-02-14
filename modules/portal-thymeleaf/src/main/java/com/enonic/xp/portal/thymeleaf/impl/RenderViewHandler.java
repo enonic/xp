@@ -4,8 +4,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.command.CommandHandler;
-import com.enonic.wem.script.command.CommandRequest;
+import com.enonic.xp.portal.script.command.CommandHandler;
+import com.enonic.xp.portal.script.command.CommandRequest;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.url.PortalUrlService;
 

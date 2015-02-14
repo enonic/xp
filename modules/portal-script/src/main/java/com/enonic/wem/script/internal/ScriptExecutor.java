@@ -1,7 +1,7 @@
 package com.enonic.wem.script.internal;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.ScriptValue;
+import com.enonic.xp.portal.script.ScriptValue;
 
 public interface ScriptExecutor
 {

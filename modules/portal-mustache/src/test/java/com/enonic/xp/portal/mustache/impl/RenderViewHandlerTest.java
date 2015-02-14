@@ -15,8 +15,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.script.AbstractScriptTest;
-import com.enonic.wem.script.ScriptExports;
-import com.enonic.xp.portal.mustache.impl.RenderViewHandler;
+import com.enonic.xp.portal.script.ScriptExports;
 
 import static org.junit.Assert.*;
 

@@ -3,8 +3,8 @@ package com.enonic.wem.script.internal.invoker;
 import java.util.Map;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.command.CommandParam;
-import com.enonic.wem.script.command.CommandRequest;
+import com.enonic.xp.portal.script.command.CommandParam;
+import com.enonic.xp.portal.script.command.CommandRequest;
 
 public final class CommandRequestImpl
     implements CommandRequest

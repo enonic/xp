@@ -19,7 +19,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.script.AbstractScriptTest;
-import com.enonic.wem.script.ScriptExports;
+import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;

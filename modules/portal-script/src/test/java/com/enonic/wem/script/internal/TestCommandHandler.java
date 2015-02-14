@@ -2,8 +2,8 @@ package com.enonic.wem.script.internal;
 
 import java.util.function.Function;
 
-import com.enonic.wem.script.command.CommandHandler;
-import com.enonic.wem.script.command.CommandRequest;
+import com.enonic.xp.portal.script.command.CommandHandler;
+import com.enonic.xp.portal.script.command.CommandRequest;
 
 public final class TestCommandHandler
     implements CommandHandler

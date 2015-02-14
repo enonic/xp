@@ -5,7 +5,7 @@ import java.util.Set;
 
 import jdk.nashorn.api.scripting.JSObject;
 
-import com.enonic.wem.script.ScriptValue;
+import com.enonic.xp.portal.script.ScriptValue;
 
 final class ObjectScriptValue
     extends AbstractScriptValue

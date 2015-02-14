@@ -1,6 +1,6 @@
 package com.enonic.wem.script.internal.bean;
 
-import com.enonic.wem.script.ScriptValue;
+import com.enonic.xp.portal.script.ScriptValue;
 
 public interface ScriptValueFactory
 {

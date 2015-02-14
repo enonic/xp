@@ -14,10 +14,10 @@ import com.google.common.collect.Maps;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.ScriptExports;
-import com.enonic.wem.script.ScriptValue;
-import com.enonic.wem.script.ScriptService;
-import com.enonic.wem.script.command.CommandHandler;
+import com.enonic.xp.portal.script.ScriptExports;
+import com.enonic.xp.portal.script.ScriptValue;
+import com.enonic.xp.portal.script.ScriptService;
+import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.wem.script.internal.invoker.CommandInvokerImpl;
 
 @Component(immediate = true)

@@ -5,8 +5,8 @@ import org.junit.Test;
 import com.enonic.wem.api.resource.ResourceKey;
 import com.enonic.wem.api.resource.ResourceProblemException;
 import com.enonic.wem.script.AbstractScriptTest;
-import com.enonic.wem.script.ScriptExports;
-import com.enonic.wem.script.serializer.MapSerializable;
+import com.enonic.xp.portal.script.ScriptExports;
+import com.enonic.xp.portal.script.serializer.MapSerializable;
 
 import static org.junit.Assert.*;
 

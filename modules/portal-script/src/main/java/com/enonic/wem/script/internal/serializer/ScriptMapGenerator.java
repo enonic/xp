@@ -4,7 +4,7 @@ import jdk.nashorn.internal.objects.Global;
 import jdk.nashorn.internal.objects.NativeArray;
 import jdk.nashorn.internal.runtime.ScriptObject;
 
-import com.enonic.wem.script.serializer.MapGeneratorBase;
+import com.enonic.xp.portal.script.serializer.MapGeneratorBase;
 
 public final class ScriptMapGenerator
     extends MapGeneratorBase

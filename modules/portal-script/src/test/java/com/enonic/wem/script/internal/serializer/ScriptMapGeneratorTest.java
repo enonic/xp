@@ -7,8 +7,8 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.script.AbstractScriptTest;
-import com.enonic.wem.script.ScriptExports;
-import com.enonic.wem.script.serializer.MapSerializable;
+import com.enonic.xp.portal.script.ScriptExports;
+import com.enonic.xp.portal.script.serializer.MapSerializable;
 
 public class ScriptMapGeneratorTest
     extends AbstractScriptTest

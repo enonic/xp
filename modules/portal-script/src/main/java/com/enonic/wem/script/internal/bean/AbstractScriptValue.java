@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.script.ScriptValue;
+import com.enonic.xp.portal.script.ScriptValue;
 
 abstract class AbstractScriptValue
     implements ScriptValue

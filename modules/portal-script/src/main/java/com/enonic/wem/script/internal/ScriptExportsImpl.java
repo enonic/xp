@@ -1,8 +1,8 @@
 package com.enonic.wem.script.internal;
 
 import com.enonic.wem.api.resource.ResourceKey;
-import com.enonic.wem.script.ScriptExports;
-import com.enonic.wem.script.ScriptValue;
+import com.enonic.xp.portal.script.ScriptExports;
+import com.enonic.xp.portal.script.ScriptValue;
 
 final class ScriptExportsImpl
     implements ScriptExports

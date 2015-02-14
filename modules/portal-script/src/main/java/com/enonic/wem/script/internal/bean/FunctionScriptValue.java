@@ -2,7 +2,7 @@ package com.enonic.wem.script.internal.bean;
 
 import jdk.nashorn.api.scripting.JSObject;
 
-import com.enonic.wem.script.ScriptValue;
+import com.enonic.xp.portal.script.ScriptValue;
 
 final class FunctionScriptValue
     extends AbstractScriptValue

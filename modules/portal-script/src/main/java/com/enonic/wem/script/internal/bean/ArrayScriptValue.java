@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 
 import jdk.nashorn.api.scripting.JSObject;
 
-import com.enonic.wem.script.ScriptValue;
+import com.enonic.xp.portal.script.ScriptValue;
 
 final class ArrayScriptValue
     extends AbstractScriptValue
