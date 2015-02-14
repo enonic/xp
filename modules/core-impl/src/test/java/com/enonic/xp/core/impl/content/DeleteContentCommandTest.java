@@ -4,17 +4,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.core.branch.Branch;
-import com.enonic.xp.core.content.CompareStatus;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.DeleteContentParams;
-import com.enonic.xp.core.event.EventPublisher;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeComparison;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodeService;
-import com.enonic.xp.core.node.NodeState;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeComparison;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeState;
 
 public class DeleteContentCommandTest
 {

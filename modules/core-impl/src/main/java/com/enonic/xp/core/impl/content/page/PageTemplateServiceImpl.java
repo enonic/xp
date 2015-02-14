@@ -6,15 +6,15 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.ContentService;
-import com.enonic.xp.core.content.page.CreatePageTemplateParams;
-import com.enonic.xp.core.content.page.GetDefaultPageTemplateParams;
-import com.enonic.xp.core.content.page.PageService;
-import com.enonic.xp.core.content.page.PageTemplate;
-import com.enonic.xp.core.content.page.PageTemplateKey;
-import com.enonic.xp.core.content.page.PageTemplateService;
-import com.enonic.xp.core.content.page.PageTemplates;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.page.CreatePageTemplateParams;
+import com.enonic.xp.content.page.GetDefaultPageTemplateParams;
+import com.enonic.xp.content.page.PageService;
+import com.enonic.xp.content.page.PageTemplate;
+import com.enonic.xp.content.page.PageTemplateKey;
+import com.enonic.xp.content.page.PageTemplateService;
+import com.enonic.xp.content.page.PageTemplates;
 
 @Component(immediate = true)
 public final class PageTemplateServiceImpl

@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.core.data.Value;
-import com.enonic.xp.core.query.filter.Filter;
-import com.enonic.xp.core.query.filter.RangeFilter;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.query.filter.Filter;
+import com.enonic.xp.query.filter.RangeFilter;
 
 public class RangeFilterJson
     extends FilterJson

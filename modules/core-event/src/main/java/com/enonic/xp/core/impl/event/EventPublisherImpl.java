@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.event.Event;
-import com.enonic.xp.core.event.EventListener;
-import com.enonic.xp.core.event.EventPublisher;
+import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventListener;
+import com.enonic.xp.event.EventPublisher;
 
 @Component(immediate = true)
 public final class EventPublisherImpl

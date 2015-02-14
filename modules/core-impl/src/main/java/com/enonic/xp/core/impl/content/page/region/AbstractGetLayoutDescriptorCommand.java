@@ -7,17 +7,17 @@ import java.util.regex.Pattern;
 
 import com.google.common.collect.Collections2;
 
-import com.enonic.xp.core.content.page.DescriptorKey;
-import com.enonic.xp.core.content.page.region.LayoutDescriptor;
-import com.enonic.xp.core.content.page.region.LayoutDescriptors;
-import com.enonic.xp.core.module.Module;
-import com.enonic.xp.core.module.ModuleService;
-import com.enonic.xp.core.module.Modules;
-import com.enonic.xp.core.resource.Resource;
-import com.enonic.xp.core.resource.ResourceKey;
-import com.enonic.xp.core.xml.mapper.XmlLayoutDescriptorMapper;
-import com.enonic.xp.core.xml.model.XmlLayoutDescriptor;
-import com.enonic.xp.core.xml.serializer.XmlSerializers;
+import com.enonic.xp.content.page.DescriptorKey;
+import com.enonic.xp.content.page.region.LayoutDescriptor;
+import com.enonic.xp.content.page.region.LayoutDescriptors;
+import com.enonic.xp.module.Module;
+import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.module.Modules;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.xml.mapper.XmlLayoutDescriptorMapper;
+import com.enonic.xp.xml.model.XmlLayoutDescriptor;
+import com.enonic.xp.xml.serializer.XmlSerializers;
 
 abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDescriptorCommand>
 {

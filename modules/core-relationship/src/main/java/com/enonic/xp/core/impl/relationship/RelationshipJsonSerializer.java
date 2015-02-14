@@ -7,13 +7,13 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.data.PropertyPath;
-import com.enonic.xp.core.relationship.Relationship;
-import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
-import com.enonic.xp.core.support.serializer.AbstractJsonSerializer;
-import com.enonic.xp.core.support.serializer.JsonParsingException;
-import com.enonic.xp.core.support.serializer.JsonSerializerUtil;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.relationship.Relationship;
+import com.enonic.xp.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.support.serializer.AbstractJsonSerializer;
+import com.enonic.xp.support.serializer.JsonParsingException;
+import com.enonic.xp.support.serializer.JsonSerializerUtil;
 
 public final class RelationshipJsonSerializer
     extends AbstractJsonSerializer<Relationship>

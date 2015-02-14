@@ -9,7 +9,7 @@ import org.osgi.framework.Bundle;
 import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.icon.Icon;
 
 public final class IconLoader
 {

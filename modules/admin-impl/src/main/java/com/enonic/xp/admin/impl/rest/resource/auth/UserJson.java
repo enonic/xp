@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.auth;
 
 import java.time.Instant;
 
-import com.enonic.xp.core.security.User;
+import com.enonic.xp.security.User;
 
 public final class UserJson
 {

@@ -7,10 +7,10 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.enonic.xp.core.data.Property;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.index.IndexConfig;
-import com.enonic.xp.core.util.GeoPoint;
+import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.util.GeoPoint;
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentItemFactory;
 

@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch;
 
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
 
-import com.enonic.xp.core.snapshot.SnapshotResults;
+import com.enonic.xp.snapshot.SnapshotResults;
 
 class SnapshotResultsFactory
 {

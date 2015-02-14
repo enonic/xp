@@ -5,9 +5,9 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
 
-import com.enonic.xp.core.blob.BlobKey;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeVersionId;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersionId;
 
 public class NodeVersionDocumentId
 {

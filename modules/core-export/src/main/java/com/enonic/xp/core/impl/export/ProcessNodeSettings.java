@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.export;
 
-import com.enonic.xp.core.node.InsertManualStrategy;
+import com.enonic.xp.node.InsertManualStrategy;
 
 public class ProcessNodeSettings
 {

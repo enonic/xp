@@ -2,8 +2,8 @@ package com.enonic.wem.repo.internal.entity.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.core.data.PropertyPath;
-import com.enonic.xp.core.index.PathIndexConfig;
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.index.PathIndexConfig;
 
 final class PatternConfigJson
 {

@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import com.enonic.xp.core.query.aggregation.AggregationQuery;
+import com.enonic.xp.query.aggregation.AggregationQuery;
 
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)

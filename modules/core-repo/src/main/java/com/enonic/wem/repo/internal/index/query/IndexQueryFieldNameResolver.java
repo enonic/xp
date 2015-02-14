@@ -3,11 +3,11 @@ package com.enonic.wem.repo.internal.index.query;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.core.data.Value;
-import com.enonic.xp.core.query.expr.CompareExpr;
-import com.enonic.xp.core.query.expr.FieldExpr;
-import com.enonic.xp.core.query.expr.ValueExpr;
-import com.enonic.xp.core.query.filter.ValueFilter;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
 import com.enonic.wem.repo.internal.index.IndexValueType;
 

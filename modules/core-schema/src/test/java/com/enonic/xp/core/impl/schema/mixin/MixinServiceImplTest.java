@@ -3,10 +3,10 @@ package com.enonic.xp.core.impl.schema.mixin;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.schema.mixin.Mixin;
-import com.enonic.xp.core.schema.mixin.MixinProvider;
-import com.enonic.xp.core.schema.mixin.Mixins;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinProvider;
+import com.enonic.xp.schema.mixin.Mixins;
 
 import static org.junit.Assert.*;
 

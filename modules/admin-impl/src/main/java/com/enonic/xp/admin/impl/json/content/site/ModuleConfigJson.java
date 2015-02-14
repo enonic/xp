@@ -8,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.core.content.site.ModuleConfig;
-import com.enonic.xp.core.content.site.ModuleConfigs;
-import com.enonic.xp.core.data.PropertyArrayJson;
-import com.enonic.xp.core.data.PropertyTreeJson;
-import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.content.site.ModuleConfig;
+import com.enonic.xp.content.site.ModuleConfigs;
+import com.enonic.xp.data.PropertyArrayJson;
+import com.enonic.xp.data.PropertyTreeJson;
+import com.enonic.xp.module.ModuleKey;
 
 public class ModuleConfigJson
 {

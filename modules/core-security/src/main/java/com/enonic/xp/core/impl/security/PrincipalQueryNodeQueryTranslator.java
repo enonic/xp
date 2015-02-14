@@ -5,18 +5,18 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.xp.core.node.NodeIndexPath;
-import com.enonic.xp.core.node.NodeQuery;
-import com.enonic.xp.core.query.expr.DynamicConstraintExpr;
-import com.enonic.xp.core.query.expr.FunctionExpr;
-import com.enonic.xp.core.query.expr.LogicalExpr;
-import com.enonic.xp.core.query.expr.QueryExpr;
-import com.enonic.xp.core.query.expr.ValueExpr;
-import com.enonic.xp.core.query.filter.ValueFilter;
-import com.enonic.xp.core.security.PrincipalQuery;
-import com.enonic.xp.core.security.PrincipalType;
-import com.enonic.xp.core.security.UserStoreKey;
-import com.enonic.xp.core.security.UserStoreKeys;
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.query.expr.DynamicConstraintExpr;
+import com.enonic.xp.query.expr.FunctionExpr;
+import com.enonic.xp.query.expr.LogicalExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.security.PrincipalQuery;
+import com.enonic.xp.security.PrincipalType;
+import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.UserStoreKeys;
 
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.DISPLAY_NAME_KEY;
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.EMAIL_KEY;

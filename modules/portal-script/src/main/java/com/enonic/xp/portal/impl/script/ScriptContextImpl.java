@@ -4,7 +4,7 @@ import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.SimpleScriptContext;
 
-import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKey;
 
 final class ScriptContextImpl
     extends SimpleScriptContext

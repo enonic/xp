@@ -2,9 +2,9 @@ package com.enonic.wem.repo.internal.version;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodeVersionId;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
 
 public class NodeVersionDocument
 {

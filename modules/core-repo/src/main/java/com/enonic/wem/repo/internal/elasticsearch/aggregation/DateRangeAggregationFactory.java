@@ -4,9 +4,9 @@ import java.util.Collection;
 
 import org.elasticsearch.search.aggregations.bucket.range.date.DateRange;
 
-import com.enonic.xp.core.aggregation.BucketAggregation;
-import com.enonic.xp.core.aggregation.Buckets;
-import com.enonic.xp.core.aggregation.DateRangeBucket;
+import com.enonic.xp.aggregation.BucketAggregation;
+import com.enonic.xp.aggregation.Buckets;
+import com.enonic.xp.aggregation.DateRangeBucket;
 
 class DateRangeAggregationFactory
     extends AggregationsFactory

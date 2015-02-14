@@ -2,7 +2,7 @@ package com.enonic.xp.portal;
 
 import org.junit.Test;
 
-import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.branch.Branch;
 
 import static org.junit.Assert.*;
 

@@ -4,7 +4,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 
-import com.enonic.xp.core.query.aggregation.TermsAggregationQuery;
+import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 class TermsAggregationQueryBuilderFactory

@@ -7,10 +7,10 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.content.page.region.RegionDescriptorJson;
-import com.enonic.xp.core.form.FormJson;
-import com.enonic.xp.core.content.page.PageDescriptor;
-import com.enonic.xp.core.content.page.region.RegionDescriptor;
-import com.enonic.xp.core.content.page.region.RegionDescriptors;
+import com.enonic.xp.form.FormJson;
+import com.enonic.xp.content.page.PageDescriptor;
+import com.enonic.xp.content.page.region.RegionDescriptor;
+import com.enonic.xp.content.page.region.RegionDescriptors;
 
 public class PageDescriptorJson
     implements ItemJson

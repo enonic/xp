@@ -3,11 +3,11 @@ package com.enonic.xp.portal.impl.jslib.content;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.ContentNotFoundException;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.impl.jslib.mapper.ContentMapper;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;

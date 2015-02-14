@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.xp.core.content.ApplyContentPermissionsParams;
-import com.enonic.xp.core.node.ApplyNodePermissionsParams;
-import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.content.ApplyContentPermissionsParams;
+import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.NodeId;
 
 
 final class ApplyContentPermissionsCommand

@@ -3,10 +3,10 @@ package com.enonic.xp.portal.impl.url;
 import org.junit.Before;
 import org.mockito.Mockito;
 
-import com.enonic.xp.core.branch.Branch;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.ContentService;
-import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.PortalContext;
 
 public abstract class AbstractPortalUrlServiceImplTest

@@ -2,25 +2,25 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.content.Metadata;
-import com.enonic.xp.core.content.Metadatas;
-import com.enonic.xp.core.content.site.ModuleConfig;
-import com.enonic.xp.core.content.site.ModuleConfigs;
-import com.enonic.xp.core.content.site.ModuleConfigsDataSerializer;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.form.Form;
-import com.enonic.xp.core.module.Module;
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.module.ModuleService;
-import com.enonic.xp.core.schema.content.ContentType;
-import com.enonic.xp.core.schema.content.ContentTypeName;
-import com.enonic.xp.core.schema.content.ContentTypeService;
-import com.enonic.xp.core.schema.content.GetContentTypeParams;
-import com.enonic.xp.core.schema.content.validator.DataValidationErrors;
-import com.enonic.xp.core.schema.content.validator.OccurrenceValidator;
-import com.enonic.xp.core.schema.mixin.Mixin;
-import com.enonic.xp.core.schema.mixin.MixinName;
-import com.enonic.xp.core.schema.mixin.MixinService;
+import com.enonic.xp.content.Metadata;
+import com.enonic.xp.content.Metadatas;
+import com.enonic.xp.content.site.ModuleConfig;
+import com.enonic.xp.content.site.ModuleConfigs;
+import com.enonic.xp.content.site.ModuleConfigsDataSerializer;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.module.Module;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.content.validator.DataValidationErrors;
+import com.enonic.xp.schema.content.validator.OccurrenceValidator;
+import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinService;
 
 final class ValidateContentDataCommand
 {

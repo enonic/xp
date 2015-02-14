@@ -2,17 +2,17 @@ package com.enonic.xp.core.impl.content;
 
 import org.junit.Test;
 
-import com.enonic.xp.core.content.ContentConstants;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.ContentPropertyNames;
-import com.enonic.xp.core.content.CreateContentTranslatorParams;
-import com.enonic.xp.core.data.PropertyPath;
-import com.enonic.xp.core.data.PropertySet;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.index.IndexConfig;
-import com.enonic.xp.core.index.IndexConfigDocument;
-import com.enonic.xp.core.schema.content.ContentTypeName;
-import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 

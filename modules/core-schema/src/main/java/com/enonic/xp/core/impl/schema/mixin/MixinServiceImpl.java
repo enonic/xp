@@ -11,13 +11,13 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.schema.content.ContentType;
-import com.enonic.xp.core.schema.mixin.Mixin;
-import com.enonic.xp.core.schema.mixin.MixinName;
-import com.enonic.xp.core.schema.mixin.MixinProvider;
-import com.enonic.xp.core.schema.mixin.MixinService;
-import com.enonic.xp.core.schema.mixin.Mixins;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinProvider;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.mixin.Mixins;
 
 @Component(immediate = true)
 public final class MixinServiceImpl

@@ -2,14 +2,14 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.node.FindNodesByParentParams;
-import com.enonic.xp.core.node.FindNodesByParentResult;
-import com.enonic.xp.core.node.MoveNodeException;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeName;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.Nodes;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.MoveNodeException;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.Nodes;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 
 public class MoveNodeCommand

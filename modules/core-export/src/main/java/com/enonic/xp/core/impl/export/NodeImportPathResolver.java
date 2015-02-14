@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.export;
 
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.vfs.VirtualFile;
-import com.enonic.xp.core.vfs.VirtualFilePath;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.vfs.VirtualFile;
+import com.enonic.xp.vfs.VirtualFilePath;
 
 class NodeImportPathResolver
 {

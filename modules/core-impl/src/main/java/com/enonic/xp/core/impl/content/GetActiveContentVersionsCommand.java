@@ -2,15 +2,15 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.core.content.ActiveContentVersionEntry;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.GetActiveContentVersionsResult;
-import com.enonic.xp.core.node.GetActiveNodeVersionsParams;
-import com.enonic.xp.core.node.GetActiveNodeVersionsResult;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeVersion;
-import com.enonic.xp.core.branch.Branch;
-import com.enonic.xp.core.branch.Branches;
+import com.enonic.xp.content.ActiveContentVersionEntry;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.GetActiveContentVersionsResult;
+import com.enonic.xp.node.GetActiveNodeVersionsParams;
+import com.enonic.xp.node.GetActiveNodeVersionsResult;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 
 public class GetActiveContentVersionsCommand
     extends AbstractContentCommand

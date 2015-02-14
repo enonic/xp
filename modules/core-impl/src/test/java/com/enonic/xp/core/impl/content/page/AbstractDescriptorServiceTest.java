@@ -14,13 +14,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
-import com.enonic.xp.core.content.page.DescriptorKey;
-import com.enonic.xp.core.module.Module;
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.module.ModuleService;
-import com.enonic.xp.core.module.Modules;
-import com.enonic.xp.core.resource.ResourceKey;
-import com.enonic.xp.core.resource.ResourceUrlTestHelper;
+import com.enonic.xp.content.page.DescriptorKey;
+import com.enonic.xp.module.Module;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.module.Modules;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceUrlTestHelper;
 
 public abstract class AbstractDescriptorServiceTest
 {

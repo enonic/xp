@@ -4,12 +4,12 @@ import java.util.LinkedHashSet;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.index.ChildOrder;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeQuery;
-import com.enonic.xp.core.query.expr.QueryExpr;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 

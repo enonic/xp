@@ -4,11 +4,11 @@ import java.util.LinkedHashMap;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.core.content.page.region.ComponentType;
-import com.enonic.xp.core.content.page.region.ImageComponentType;
-import com.enonic.xp.core.content.page.region.LayoutComponentType;
-import com.enonic.xp.core.content.page.region.PartComponentType;
-import com.enonic.xp.core.content.page.region.TextComponentType;
+import com.enonic.xp.content.page.region.ComponentType;
+import com.enonic.xp.content.page.region.ImageComponentType;
+import com.enonic.xp.content.page.region.LayoutComponentType;
+import com.enonic.xp.content.page.region.PartComponentType;
+import com.enonic.xp.content.page.region.TextComponentType;
 
 final class ComponentTypes
 {

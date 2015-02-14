@@ -9,12 +9,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.admin.impl.json.content.page.region.PageRegionsJson;
 import com.enonic.xp.admin.impl.json.content.page.region.RegionJson;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.page.DescriptorKey;
-import com.enonic.xp.core.content.page.PageTemplateKey;
-import com.enonic.xp.core.content.page.UpdatePageParams;
-import com.enonic.xp.core.data.PropertyArrayJson;
-import com.enonic.xp.core.data.PropertyTreeJson;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.page.DescriptorKey;
+import com.enonic.xp.content.page.PageTemplateKey;
+import com.enonic.xp.content.page.UpdatePageParams;
+import com.enonic.xp.data.PropertyArrayJson;
+import com.enonic.xp.data.PropertyTreeJson;
 
 public class UpdatePageJson
 {

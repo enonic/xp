@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.mustache;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
 

@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.xp.core.node.CreateRootNodeParams;
-import com.enonic.xp.core.node.RootNode;
+import com.enonic.xp.node.CreateRootNodeParams;
+import com.enonic.xp.node.RootNode;
 
 public class CreateRootNodeCommand
     extends AbstractNodeCommand

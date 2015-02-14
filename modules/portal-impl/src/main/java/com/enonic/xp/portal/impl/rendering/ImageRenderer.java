@@ -5,8 +5,8 @@ import java.text.MessageFormat;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.page.region.ImageComponent;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.page.region.ImageComponent;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;

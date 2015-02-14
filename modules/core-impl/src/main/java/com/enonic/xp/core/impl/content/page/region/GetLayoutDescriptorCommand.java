@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-import com.enonic.xp.core.content.page.DescriptorKey;
-import com.enonic.xp.core.content.page.region.LayoutDescriptor;
-import com.enonic.xp.core.content.page.region.LayoutDescriptorNotFoundException;
-import com.enonic.xp.core.resource.ResourceNotFoundException;
+import com.enonic.xp.content.page.DescriptorKey;
+import com.enonic.xp.content.page.region.LayoutDescriptor;
+import com.enonic.xp.content.page.region.LayoutDescriptorNotFoundException;
+import com.enonic.xp.resource.ResourceNotFoundException;
 
 final class GetLayoutDescriptorCommand
     extends AbstractGetLayoutDescriptorCommand<GetLayoutDescriptorCommand>

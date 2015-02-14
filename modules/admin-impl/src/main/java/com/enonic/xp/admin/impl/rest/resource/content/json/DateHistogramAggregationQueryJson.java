@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.core.query.aggregation.AggregationQuery;
-import com.enonic.xp.core.query.aggregation.DateHistogramAggregationQuery;
+import com.enonic.xp.query.aggregation.AggregationQuery;
+import com.enonic.xp.query.aggregation.DateHistogramAggregationQuery;
 
 public class DateHistogramAggregationQueryJson
     extends AggregationQueryJson

@@ -1,11 +1,11 @@
 package com.acme;
 
 
-import com.enonic.xp.core.data.Property;
-import com.enonic.xp.core.data.Value;
-import com.enonic.xp.core.form.BreaksRequiredContractException;
-import com.enonic.xp.core.form.inputtype.InputTypeConfig;
-import com.enonic.xp.core.form.inputtype.InputTypeExtension;
+import com.enonic.xp.data.Property;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.form.BreaksRequiredContractException;
+import com.enonic.xp.form.inputtype.InputTypeConfig;
+import com.enonic.xp.form.inputtype.InputTypeExtension;
 
 public class DummyCustomInputType2
     extends InputTypeExtension

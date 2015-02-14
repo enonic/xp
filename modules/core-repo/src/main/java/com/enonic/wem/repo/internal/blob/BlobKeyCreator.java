@@ -10,8 +10,8 @@ import java.security.NoSuchAlgorithmException;
 
 import com.google.common.io.ByteStreams;
 
-import com.enonic.xp.core.blob.BlobKey;
-import com.enonic.xp.core.util.Exceptions;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.util.Exceptions;
 
 public final class BlobKeyCreator
 {

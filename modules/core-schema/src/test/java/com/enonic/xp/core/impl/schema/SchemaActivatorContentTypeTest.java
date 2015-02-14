@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.schema;
 
 import java.util.List;
 
-import com.enonic.xp.core.schema.content.ContentTypeProvider;
+import com.enonic.xp.schema.content.ContentTypeProvider;
 
 import static org.junit.Assert.*;
 

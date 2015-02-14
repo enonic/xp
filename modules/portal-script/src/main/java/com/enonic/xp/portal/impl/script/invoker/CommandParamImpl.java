@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.core.convert.Converters;
+import com.enonic.xp.convert.Converters;
 import com.enonic.xp.portal.script.command.CommandParam;
 import com.enonic.xp.portal.impl.script.bean.JsObjectConverter;
 

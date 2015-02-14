@@ -16,9 +16,9 @@ import javax.xml.transform.stream.StreamSource;
 import com.google.common.base.Throwables;
 import com.google.common.io.Closeables;
 
-import com.enonic.xp.core.resource.Resource;
-import com.enonic.xp.core.resource.ResourceKey;
-import com.enonic.xp.core.resource.ResourceProblemException;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProblemException;
 
 final class XsltProcessor
 {

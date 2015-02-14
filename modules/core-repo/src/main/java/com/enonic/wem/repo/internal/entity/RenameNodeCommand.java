@@ -2,11 +2,11 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeAlreadyExistAtPathException;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.RenameNodeParams;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RenameNodeParams;
 
 public final class RenameNodeCommand
     extends AbstractNodeCommand

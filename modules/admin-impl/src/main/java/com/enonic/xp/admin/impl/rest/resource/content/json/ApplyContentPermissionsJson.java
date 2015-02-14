@@ -7,9 +7,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.UpdateContentParams;
-import com.enonic.xp.core.security.acl.AccessControlList;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.security.acl.AccessControlList;
 
 public class ApplyContentPermissionsJson
 {

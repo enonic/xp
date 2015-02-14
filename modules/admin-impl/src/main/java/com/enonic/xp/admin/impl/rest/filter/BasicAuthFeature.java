@@ -10,7 +10,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.AdminResource;
-import com.enonic.xp.core.security.SecurityService;
+import com.enonic.xp.security.SecurityService;
 
 @Component(immediate = true)
 @Provider

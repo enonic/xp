@@ -7,25 +7,25 @@ import java.time.ZoneOffset;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.ContentNotFoundException;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.UpdateContentParams;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.event.EventPublisher;
-import com.enonic.xp.core.media.MediaInfo;
-import com.enonic.xp.core.module.ModuleService;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeNotFoundException;
-import com.enonic.xp.core.node.NodeService;
-import com.enonic.xp.core.node.UpdateNodeParams;
-import com.enonic.xp.core.schema.content.ContentTypeService;
-import com.enonic.xp.core.schema.mixin.MixinService;
-import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.media.MediaInfo;
+import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.security.PrincipalKey;
 
-import static com.enonic.xp.core.content.Content.newContent;
+import static com.enonic.xp.content.Content.newContent;
 
 public class UpdateContentCommandTest
 {

@@ -10,10 +10,10 @@ import org.elasticsearch.search.sort.SortOrder;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.query.expr.DynamicOrderExpr;
-import com.enonic.xp.core.query.expr.FieldOrderExpr;
-import com.enonic.xp.core.query.expr.OrderExpr;
-import com.enonic.xp.core.query.expr.OrderExpressions;
+import com.enonic.xp.query.expr.DynamicOrderExpr;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.function.DynamicSortBuilderFactory;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 

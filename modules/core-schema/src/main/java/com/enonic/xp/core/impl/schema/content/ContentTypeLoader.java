@@ -15,13 +15,13 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.schema.content.ContentType;
-import com.enonic.xp.core.schema.content.ContentTypeName;
-import com.enonic.xp.core.schema.content.ContentTypes;
-import com.enonic.xp.core.xml.mapper.XmlContentTypeMapper;
-import com.enonic.xp.core.xml.model.XmlContentType;
-import com.enonic.xp.core.xml.serializer.XmlSerializers;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypes;
+import com.enonic.xp.xml.mapper.XmlContentTypeMapper;
+import com.enonic.xp.xml.model.XmlContentType;
+import com.enonic.xp.xml.serializer.XmlSerializers;
 import com.enonic.xp.core.impl.schema.IconLoader;
 
 final class ContentTypeLoader

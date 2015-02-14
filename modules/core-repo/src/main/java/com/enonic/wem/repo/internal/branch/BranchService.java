@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.branch;
 
-import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.node.NodeId;
 import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQuery;
 import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchQueryResult;
 import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;

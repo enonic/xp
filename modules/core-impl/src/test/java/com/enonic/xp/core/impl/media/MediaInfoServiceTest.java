@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.core.media.MediaInfo;
+import com.enonic.xp.media.MediaInfo;
 
 import static org.junit.Assert.*;
 

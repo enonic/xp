@@ -1,15 +1,15 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.ContentVersion;
-import com.enonic.xp.core.content.ContentVersionId;
-import com.enonic.xp.core.content.ContentVersions;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeService;
-import com.enonic.xp.core.node.NodeVersion;
-import com.enonic.xp.core.node.NodeVersions;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentVersion;
+import com.enonic.xp.content.ContentVersionId;
+import com.enonic.xp.content.ContentVersions;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersions;
 
 class ContentVersionFactory
 {

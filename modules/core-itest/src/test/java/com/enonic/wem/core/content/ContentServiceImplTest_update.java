@@ -6,23 +6,23 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.CreateContentParams;
-import com.enonic.xp.core.content.Metadata;
-import com.enonic.xp.core.content.Metadatas;
-import com.enonic.xp.core.content.UpdateContentParams;
-import com.enonic.xp.core.content.attachment.Attachments;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.form.inputtype.InputTypes;
-import com.enonic.xp.core.schema.content.ContentTypeName;
-import com.enonic.xp.core.schema.mixin.Mixin;
-import com.enonic.xp.core.schema.mixin.MixinName;
-import com.enonic.xp.core.security.acl.AccessControlList;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.Metadata;
+import com.enonic.xp.content.Metadatas;
+import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.attachment.Attachments;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
 
-import static com.enonic.xp.core.form.Input.newInput;
-import static com.enonic.xp.core.schema.mixin.Mixin.newMixin;
+import static com.enonic.xp.form.Input.newInput;
+import static com.enonic.xp.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
 public class ContentServiceImplTest_update

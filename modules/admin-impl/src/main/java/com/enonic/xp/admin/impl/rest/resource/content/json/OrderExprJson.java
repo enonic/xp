@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import com.enonic.xp.core.query.expr.OrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes({                                                                                 //

@@ -7,8 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.core.session.Session;
-import com.enonic.xp.core.session.SessionKey;
+import com.enonic.xp.session.Session;
+import com.enonic.xp.session.SessionKey;
 
 final class SessionWrapper
     implements Session

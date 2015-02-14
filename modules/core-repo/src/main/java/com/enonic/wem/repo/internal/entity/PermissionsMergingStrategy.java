@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.xp.core.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.AccessControlList;
 
 interface PermissionsMergingStrategy
 {

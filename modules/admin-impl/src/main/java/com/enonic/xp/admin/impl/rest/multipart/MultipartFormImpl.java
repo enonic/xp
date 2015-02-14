@@ -8,7 +8,7 @@ import org.apache.commons.fileupload.FileItem;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.core.util.UnicodeFormNormalizer;
+import com.enonic.xp.util.UnicodeFormNormalizer;
 
 final class MultipartFormImpl
     implements MultipartForm

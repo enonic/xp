@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.core.query.aggregation.DateRange;
+import com.enonic.xp.query.aggregation.DateRange;
 
 public class DateRangeJson
 {

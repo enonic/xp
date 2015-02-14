@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.node.NodePath;
 
 public class MockNodeTree<T>
     implements Iterable<MockNodeTree<T>>

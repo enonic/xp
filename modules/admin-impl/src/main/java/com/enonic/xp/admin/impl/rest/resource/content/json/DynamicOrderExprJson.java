@@ -3,9 +3,9 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.core.query.expr.DynamicOrderExpr;
-import com.enonic.xp.core.query.expr.FunctionExpr;
-import com.enonic.xp.core.query.expr.OrderExpr;
+import com.enonic.xp.query.expr.DynamicOrderExpr;
+import com.enonic.xp.query.expr.FunctionExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 
 public class DynamicOrderExprJson
     extends OrderExprJson

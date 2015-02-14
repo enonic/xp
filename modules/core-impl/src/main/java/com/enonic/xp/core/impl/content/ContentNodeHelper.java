@@ -7,14 +7,14 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.ContentIds;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.ContentPaths;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeIds;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodePaths;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodePaths;
 
 class ContentNodeHelper
 {

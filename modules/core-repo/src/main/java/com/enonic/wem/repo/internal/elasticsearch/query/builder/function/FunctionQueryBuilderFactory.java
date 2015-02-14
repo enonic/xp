@@ -6,7 +6,7 @@ import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 
 import com.google.common.base.Strings;
 
-import com.enonic.xp.core.query.expr.FunctionExpr;
+import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.wem.repo.internal.elasticsearch.function.FulltextFunctionArguments;
 import com.enonic.wem.repo.internal.elasticsearch.function.NGramFunctionArguments;
 import com.enonic.wem.repo.internal.elasticsearch.function.WeightedQueryFieldName;

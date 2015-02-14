@@ -14,5 +14,5 @@ dependencies {
 
 bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Api'
-    instruction 'Export-Package', 'com.enonic.xp.core.*;-split-package:=first'
+    instruction 'Export-Package', 'com.enonic.xp.*;-split-package:=first'
 }

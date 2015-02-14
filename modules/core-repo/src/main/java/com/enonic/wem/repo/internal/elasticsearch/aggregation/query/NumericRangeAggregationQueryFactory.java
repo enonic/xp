@@ -5,8 +5,8 @@ import org.elasticsearch.search.aggregations.bucket.range.RangeBuilder;
 
 import com.google.common.base.Strings;
 
-import com.enonic.xp.core.query.aggregation.NumericRange;
-import com.enonic.xp.core.query.aggregation.NumericRangeAggregationQuery;
+import com.enonic.xp.query.aggregation.NumericRange;
+import com.enonic.xp.query.aggregation.NumericRangeAggregationQuery;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 class NumericRangeAggregationQueryFactory

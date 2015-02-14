@@ -5,8 +5,8 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeIds;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 
 public class NodeQueryResultSet
 {

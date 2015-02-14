@@ -8,8 +8,8 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.core.query.expr.FunctionExpr;
-import com.enonic.xp.core.query.expr.ValueExpr;
+import com.enonic.xp.query.expr.FunctionExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 
 import static org.junit.Assert.*;
 

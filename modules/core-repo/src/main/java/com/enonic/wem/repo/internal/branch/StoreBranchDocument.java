@@ -1,7 +1,7 @@
 package com.enonic.wem.repo.internal.branch;
 
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeVersionId;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeVersionId;
 
 public class StoreBranchDocument
 {

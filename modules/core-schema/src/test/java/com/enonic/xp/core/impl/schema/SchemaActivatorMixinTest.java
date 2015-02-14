@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.schema;
 
 import java.util.List;
 
-import com.enonic.xp.core.schema.mixin.MixinProvider;
+import com.enonic.xp.schema.mixin.MixinProvider;
 
 import static org.junit.Assert.*;
 

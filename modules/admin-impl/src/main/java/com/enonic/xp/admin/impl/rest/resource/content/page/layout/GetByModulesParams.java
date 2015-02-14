@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 
-import com.enonic.xp.core.module.ModuleKeys;
+import com.enonic.xp.module.ModuleKeys;
 
 public class GetByModulesParams
 {

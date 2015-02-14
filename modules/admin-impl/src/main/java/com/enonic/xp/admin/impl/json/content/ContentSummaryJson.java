@@ -7,7 +7,7 @@ import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.thumb.ThumbnailJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ChildOrderJson;
-import com.enonic.xp.core.content.Content;
+import com.enonic.xp.content.Content;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentSummaryJson

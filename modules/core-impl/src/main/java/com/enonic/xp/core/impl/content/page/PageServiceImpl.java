@@ -3,12 +3,12 @@ package com.enonic.xp.core.impl.content.page;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.ContentService;
-import com.enonic.xp.core.content.page.CreatePageParams;
-import com.enonic.xp.core.content.page.PageService;
-import com.enonic.xp.core.content.page.UpdatePageParams;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.page.CreatePageParams;
+import com.enonic.xp.content.page.PageService;
+import com.enonic.xp.content.page.UpdatePageParams;
 
 @Component(immediate = true)
 public final class PageServiceImpl

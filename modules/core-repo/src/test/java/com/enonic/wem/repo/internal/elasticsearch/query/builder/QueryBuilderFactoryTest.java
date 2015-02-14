@@ -4,10 +4,10 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.xp.core.data.Value;
-import com.enonic.xp.core.query.expr.QueryExpr;
-import com.enonic.xp.core.query.filter.ValueFilter;
-import com.enonic.xp.core.query.parser.QueryParser;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.query.parser.QueryParser;
 
 public class QueryBuilderFactoryTest
     extends BaseTestBuilderFactory

@@ -1,10 +1,10 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.Nodes;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.Nodes;
 
 public class NodeHasChildResolver
 {

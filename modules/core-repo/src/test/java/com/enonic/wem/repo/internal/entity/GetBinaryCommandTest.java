@@ -5,12 +5,12 @@ import org.junit.Test;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.core.data.PropertyPath;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.node.CreateNodeParams;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.util.BinaryReference;
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.Assert.*;
 

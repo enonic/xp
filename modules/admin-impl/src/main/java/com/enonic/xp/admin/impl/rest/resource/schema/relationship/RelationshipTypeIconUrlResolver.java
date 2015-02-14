@@ -1,9 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.relationship;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.IconUrlResolver;
-import com.enonic.xp.core.icon.Icon;
-import com.enonic.xp.core.schema.relationship.RelationshipType;
-import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.icon.Icon;
+import com.enonic.xp.schema.relationship.RelationshipType;
+import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
 public final class RelationshipTypeIconUrlResolver
     extends IconUrlResolver

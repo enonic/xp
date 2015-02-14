@@ -10,7 +10,7 @@ import java.awt.TexturePaint;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-import com.enonic.xp.core.image.filter.BaseImageFilter;
+import com.enonic.xp.image.filter.BaseImageFilter;
 
 public final class RectBorderFilter
     extends BaseImageFilter

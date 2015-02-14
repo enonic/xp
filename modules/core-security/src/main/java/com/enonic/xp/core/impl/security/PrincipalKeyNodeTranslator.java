@@ -4,15 +4,15 @@ import java.util.LinkedHashSet;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeName;
-import com.enonic.xp.core.node.Nodes;
-import com.enonic.xp.core.security.PrincipalKey;
-import com.enonic.xp.core.security.PrincipalKeys;
-import com.enonic.xp.core.security.PrincipalType;
-import com.enonic.xp.core.security.UserStoreKey;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.Nodes;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.PrincipalType;
+import com.enonic.xp.security.UserStoreKey;
 
 
 class PrincipalKeyNodeTranslator

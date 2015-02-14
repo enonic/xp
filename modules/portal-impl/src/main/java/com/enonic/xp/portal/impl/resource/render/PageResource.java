@@ -3,10 +3,10 @@ package com.enonic.xp.portal.impl.resource.render;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.page.Page;
-import com.enonic.xp.core.content.page.PageTemplate;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.page.Page;
+import com.enonic.xp.content.page.PageTemplate;
 import com.enonic.xp.portal.impl.resource.underscore.UnderscoreResource;
 
 public final class PageResource

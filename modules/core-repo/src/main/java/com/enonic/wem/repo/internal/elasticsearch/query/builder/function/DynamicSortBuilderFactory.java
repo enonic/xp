@@ -4,8 +4,8 @@ import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.enonic.xp.core.query.expr.DynamicOrderExpr;
-import com.enonic.xp.core.query.expr.FunctionExpr;
+import com.enonic.xp.query.expr.DynamicOrderExpr;
+import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.wem.repo.internal.elasticsearch.function.FunctionQueryBuilderException;
 import com.enonic.wem.repo.internal.elasticsearch.function.GeoDistanceSortFunctionArguments;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;

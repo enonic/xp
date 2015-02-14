@@ -2,10 +2,10 @@ package com.enonic.xp.portal.impl.url;
 
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.attachment.Attachment;
-import com.enonic.xp.core.content.attachment.Attachments;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.attachment.Attachment;
+import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 
 final class AttachmentUrlBuilder

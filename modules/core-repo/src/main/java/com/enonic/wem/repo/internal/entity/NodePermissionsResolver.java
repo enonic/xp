@@ -1,12 +1,12 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeAccessException;
-import com.enonic.xp.core.security.PrincipalKeys;
-import com.enonic.xp.core.security.acl.AccessControlList;
-import com.enonic.xp.core.security.acl.Permission;
-import com.enonic.xp.core.security.auth.AuthenticationInfo;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAccessException;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 final class NodePermissionsResolver
 {

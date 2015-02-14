@@ -5,7 +5,7 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 
-import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.node.NodePath;
 
 import static org.junit.Assert.*;
 

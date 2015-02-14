@@ -1,13 +1,13 @@
 package com.enonic.wem.repo.internal.index.query;
 
-import com.enonic.xp.core.query.expr.OrderExpressions;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeIds;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodePaths;
-import com.enonic.xp.core.node.NodeVersionId;
-import com.enonic.xp.core.node.NodeVersionIds;
-import com.enonic.xp.core.node.NodeQuery;
+import com.enonic.xp.query.expr.OrderExpressions;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodePaths;
+import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionIds;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.wem.repo.internal.index.IndexContext;
 
 public interface QueryService

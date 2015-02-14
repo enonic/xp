@@ -1,11 +1,11 @@
 package com.enonic.xp.portal.impl.resource.render;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.page.PageDescriptor;
-import com.enonic.xp.core.content.page.PageTemplate;
-import com.enonic.xp.core.content.page.region.Component;
-import com.enonic.xp.core.content.site.Site;
-import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.page.PageDescriptor;
+import com.enonic.xp.content.page.PageTemplate;
+import com.enonic.xp.content.page.region.Component;
+import com.enonic.xp.content.site.Site;
+import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.impl.resource.controller.ControllerResource;
 

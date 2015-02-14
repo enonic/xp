@@ -2,12 +2,12 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.event.EventPublisher;
-import com.enonic.xp.core.node.NodeService;
-import com.enonic.xp.core.schema.content.ContentTypeService;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.node.NodeService;
+import com.enonic.xp.schema.content.ContentTypeService;
 
 abstract class AbstractContentCommand
 {

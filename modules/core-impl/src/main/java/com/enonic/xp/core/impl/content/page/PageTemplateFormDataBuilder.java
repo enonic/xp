@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.content.page;
 
 
-import com.enonic.xp.core.data.PropertySet;
-import com.enonic.xp.core.schema.content.ContentTypeName;
-import com.enonic.xp.core.schema.content.ContentTypeNames;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeNames;
 
 class PageTemplateFormDataBuilder
 {

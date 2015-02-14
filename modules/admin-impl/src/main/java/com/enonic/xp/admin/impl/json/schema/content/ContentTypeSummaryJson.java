@@ -8,8 +8,8 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.admin.impl.json.ChangeTraceableJson;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
-import com.enonic.xp.core.schema.content.ContentType;
-import com.enonic.xp.core.schema.mixin.MixinName;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.mixin.MixinName;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentTypeSummaryJson

@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.event.impl.json;
 
-import com.enonic.xp.core.schema.content.ContentTypeDeletedEvent;
+import com.enonic.xp.schema.content.ContentTypeDeletedEvent;
 
 public class ContentTypeDeletedEventJson
     implements EventJson

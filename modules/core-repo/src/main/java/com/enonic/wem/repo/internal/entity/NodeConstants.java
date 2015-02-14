@@ -1,9 +1,9 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.xp.core.security.PrincipalKey;
-import com.enonic.xp.core.security.User;
-import com.enonic.xp.core.security.UserStoreKey;
-import com.enonic.xp.core.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class NodeConstants
 {

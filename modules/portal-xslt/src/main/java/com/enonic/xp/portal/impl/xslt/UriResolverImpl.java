@@ -7,7 +7,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
-import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKey;
 
 final class UriResolverImpl
     implements URIResolver

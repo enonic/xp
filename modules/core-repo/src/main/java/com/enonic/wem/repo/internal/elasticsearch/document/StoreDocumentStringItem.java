@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch.document;
 
-import com.enonic.xp.core.index.IndexPath;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.wem.repo.internal.index.IndexValueType;
 
 public class StoreDocumentStringItem

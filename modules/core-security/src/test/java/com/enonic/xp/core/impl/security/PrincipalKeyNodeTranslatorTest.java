@@ -6,13 +6,13 @@ import java.time.ZoneId;
 
 import org.junit.Test;
 
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeName;
-import com.enonic.xp.core.security.PrincipalKey;
-import com.enonic.xp.core.security.PrincipalType;
-import com.enonic.xp.core.security.User;
-import com.enonic.xp.core.security.UserStoreKey;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeName;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalType;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.UserStoreKey;
 
 import static org.junit.Assert.*;
 

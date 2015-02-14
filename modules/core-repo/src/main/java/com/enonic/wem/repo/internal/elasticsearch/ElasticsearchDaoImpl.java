@@ -43,13 +43,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.home.HomeDir;
-import com.enonic.xp.core.repository.RepositoryId;
-import com.enonic.xp.core.snapshot.RestoreParams;
-import com.enonic.xp.core.snapshot.RestoreResult;
-import com.enonic.xp.core.snapshot.SnapshotParams;
-import com.enonic.xp.core.snapshot.SnapshotResult;
-import com.enonic.xp.core.snapshot.SnapshotResults;
+import com.enonic.xp.home.HomeDir;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.snapshot.RestoreParams;
+import com.enonic.xp.snapshot.RestoreResult;
+import com.enonic.xp.snapshot.SnapshotParams;
+import com.enonic.xp.snapshot.SnapshotResult;
+import com.enonic.xp.snapshot.SnapshotResults;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;

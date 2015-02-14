@@ -10,9 +10,9 @@ import org.junit.runners.Parameterized;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.core.query.expr.CompareExpr;
-import com.enonic.xp.core.query.expr.FieldExpr;
-import com.enonic.xp.core.query.expr.ValueExpr;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 @RunWith(value = Parameterized.class)

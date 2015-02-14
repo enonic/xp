@@ -6,8 +6,8 @@ import java.io.InputStream;
 
 import com.google.common.io.ByteStreams;
 
-import com.enonic.xp.core.blob.BlobKey;
-import com.enonic.xp.core.util.Exceptions;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.util.Exceptions;
 import com.enonic.wem.repo.internal.blob.Blob;
 import com.enonic.wem.repo.internal.blob.BlobKeyCreator;
 

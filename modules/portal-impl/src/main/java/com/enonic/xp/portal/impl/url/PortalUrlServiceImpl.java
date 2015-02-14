@@ -3,7 +3,7 @@ package com.enonic.xp.portal.impl.url;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.core.content.ContentService;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;

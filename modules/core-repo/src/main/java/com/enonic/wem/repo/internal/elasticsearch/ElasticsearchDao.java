@@ -6,11 +6,11 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.snapshots.SnapshotInfo;
 
-import com.enonic.xp.core.snapshot.RestoreParams;
-import com.enonic.xp.core.snapshot.RestoreResult;
-import com.enonic.xp.core.snapshot.SnapshotParams;
-import com.enonic.xp.core.snapshot.SnapshotResult;
-import com.enonic.xp.core.snapshot.SnapshotResults;
+import com.enonic.xp.snapshot.RestoreParams;
+import com.enonic.xp.snapshot.RestoreResult;
+import com.enonic.xp.snapshot.SnapshotParams;
+import com.enonic.xp.snapshot.SnapshotResult;
+import com.enonic.xp.snapshot.SnapshotResults;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;

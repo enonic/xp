@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.elasticsearch;
 
-import com.enonic.xp.core.repository.Repository;
+import com.enonic.xp.repository.Repository;
 import com.enonic.wem.repo.internal.repository.AbstractRepositorySettingsProvider;
 
 class RepositoryTestSearchIndexSettingsProvider

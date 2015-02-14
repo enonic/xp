@@ -16,7 +16,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.enonic.xp.core.export.ExportNodeException;
+import com.enonic.xp.export.ExportNodeException;
 
 public class XmlDateTimeConverter
 {

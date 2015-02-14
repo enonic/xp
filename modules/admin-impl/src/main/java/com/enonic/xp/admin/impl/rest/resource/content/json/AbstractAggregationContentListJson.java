@@ -8,13 +8,13 @@ import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
-import com.enonic.xp.core.aggregation.Aggregation;
-import com.enonic.xp.core.aggregation.Aggregations;
-import com.enonic.xp.core.aggregation.BucketAggregation;
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentListMetaData;
-import com.enonic.xp.core.content.Contents;
-import com.enonic.xp.core.form.InlineMixinsToFormItemsTransformer;
+import com.enonic.xp.aggregation.Aggregation;
+import com.enonic.xp.aggregation.Aggregations;
+import com.enonic.xp.aggregation.BucketAggregation;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentListMetaData;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 
 public abstract class AbstractAggregationContentListJson<T extends ContentIdJson>
     extends AbstractContentListJson<T>

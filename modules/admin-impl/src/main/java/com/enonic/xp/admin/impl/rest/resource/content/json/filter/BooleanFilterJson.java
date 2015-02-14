@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.core.query.filter.BooleanFilter;
+import com.enonic.xp.query.filter.BooleanFilter;
 
 public class BooleanFilterJson
     extends FilterJson

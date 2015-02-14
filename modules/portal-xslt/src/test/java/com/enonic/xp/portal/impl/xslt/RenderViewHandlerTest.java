@@ -6,8 +6,8 @@ import org.junit.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.core.resource.ResourceProblemException;
-import com.enonic.xp.core.xml.DomHelper;
+import com.enonic.xp.resource.ResourceProblemException;
+import com.enonic.xp.xml.DomHelper;
 import com.enonic.xp.portal.impl.script.AbstractScriptTest;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;

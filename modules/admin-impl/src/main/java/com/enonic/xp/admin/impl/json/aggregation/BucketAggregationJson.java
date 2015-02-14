@@ -2,9 +2,9 @@ package com.enonic.xp.admin.impl.json.aggregation;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.core.aggregation.Bucket;
-import com.enonic.xp.core.aggregation.BucketAggregation;
-import com.enonic.xp.core.aggregation.DateRangeBucket;
+import com.enonic.xp.aggregation.Bucket;
+import com.enonic.xp.aggregation.BucketAggregation;
+import com.enonic.xp.aggregation.DateRangeBucket;
 
 public class BucketAggregationJson
     extends AggregationJson

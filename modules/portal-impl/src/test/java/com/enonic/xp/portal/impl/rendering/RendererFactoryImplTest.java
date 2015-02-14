@@ -2,10 +2,10 @@ package com.enonic.xp.portal.impl.rendering;
 
 import org.junit.Test;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.page.PageTemplate;
-import com.enonic.xp.core.rendering.Renderable;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.page.PageTemplate;
+import com.enonic.xp.rendering.Renderable;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;

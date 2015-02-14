@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.event.impl.json;
 
-import com.enonic.xp.core.content.ContentCreatedEvent;
+import com.enonic.xp.content.ContentCreatedEvent;
 
 public final class ContentCreatedEventJson
     implements EventJson

@@ -3,12 +3,12 @@ package com.enonic.xp.core.impl.schema.content;
 import org.junit.Before;
 import org.mockito.Mockito;
 
-import com.enonic.xp.core.schema.content.ContentType;
-import com.enonic.xp.core.schema.content.ContentTypeName;
-import com.enonic.xp.core.schema.content.ContentTypeProvider;
-import com.enonic.xp.core.schema.content.ContentTypeService;
-import com.enonic.xp.core.schema.content.ContentTypes;
-import com.enonic.xp.core.schema.mixin.MixinService;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeProvider;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.ContentTypes;
+import com.enonic.xp.schema.mixin.MixinService;
 
 import static org.junit.Assert.*;
 

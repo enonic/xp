@@ -3,8 +3,8 @@ package com.enonic.xp.web.impl.context;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.security.auth.AuthenticationInfo;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 final class HttpRequestDelegate
     extends HttpServletRequestWrapper

@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.script;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.core.resource.ResourceKey;
-import com.enonic.xp.core.resource.ResourceProblemException;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProblemException;
 
 import static org.junit.Assert.*;
 

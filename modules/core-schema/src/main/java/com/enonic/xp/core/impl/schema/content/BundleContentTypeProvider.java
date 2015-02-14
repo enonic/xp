@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.schema.content;
 
 import org.osgi.framework.Bundle;
 
-import com.enonic.xp.core.schema.content.ContentTypeProvider;
-import com.enonic.xp.core.schema.content.ContentTypes;
+import com.enonic.xp.schema.content.ContentTypeProvider;
+import com.enonic.xp.schema.content.ContentTypes;
 
 public final class BundleContentTypeProvider
     implements ContentTypeProvider

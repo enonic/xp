@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.core.schema.content.validator.DataValidationError;
-import com.enonic.xp.core.schema.content.validator.DataValidationErrors;
+import com.enonic.xp.schema.content.validator.DataValidationError;
+import com.enonic.xp.schema.content.validator.DataValidationErrors;
 
 public class ValidateContentJson
 {

@@ -5,12 +5,12 @@ import org.elasticsearch.index.query.HasChildQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
 
-import com.enonic.xp.core.branch.Branch;
-import com.enonic.xp.core.index.IndexType;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeState;
-import com.enonic.xp.core.node.NodeVersionDiffQuery;
-import com.enonic.xp.core.node.NodeVersionDiffResult;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.index.IndexType;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.NodeVersionDiffQuery;
+import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.branch.BranchIndexPath;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;

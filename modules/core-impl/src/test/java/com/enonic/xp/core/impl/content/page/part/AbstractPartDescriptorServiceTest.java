@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.content.page.part;
 
 import org.junit.Before;
 
-import com.enonic.xp.core.content.page.DescriptorKey;
-import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.content.page.DescriptorKey;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.core.impl.content.page.AbstractDescriptorServiceTest;
 import com.enonic.xp.core.impl.content.page.region.PartDescriptorServiceImpl;
 

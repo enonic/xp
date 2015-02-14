@@ -2,15 +2,15 @@ package com.enonic.xp.core.impl.content.page;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentNotFoundException;
-import com.enonic.xp.core.content.ContentService;
-import com.enonic.xp.core.content.UpdateContentParams;
-import com.enonic.xp.core.content.page.EditablePage;
-import com.enonic.xp.core.content.page.Page;
-import com.enonic.xp.core.content.page.PageNotFoundException;
-import com.enonic.xp.core.content.page.UpdatePageParams;
-import com.enonic.xp.core.context.ContextAccessor;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.page.EditablePage;
+import com.enonic.xp.content.page.Page;
+import com.enonic.xp.content.page.PageNotFoundException;
+import com.enonic.xp.content.page.UpdatePageParams;
+import com.enonic.xp.context.ContextAccessor;
 
 final class UpdatePageCommand
 {

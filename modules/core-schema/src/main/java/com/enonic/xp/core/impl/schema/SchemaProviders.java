@@ -9,9 +9,9 @@ import org.osgi.framework.ServiceRegistration;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.core.schema.content.ContentTypeProvider;
-import com.enonic.xp.core.schema.mixin.MixinProvider;
-import com.enonic.xp.core.schema.relationship.RelationshipTypeProvider;
+import com.enonic.xp.schema.content.ContentTypeProvider;
+import com.enonic.xp.schema.mixin.MixinProvider;
+import com.enonic.xp.schema.relationship.RelationshipTypeProvider;
 
 public final class SchemaProviders
 {

@@ -4,11 +4,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.ContentService;
-import com.enonic.xp.core.content.site.Site;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.site.Site;
 
 import static org.junit.Assert.*;
 

@@ -2,9 +2,9 @@ package com.enonic.xp.core.impl.schema.relationship;
 
 import org.junit.Test;
 
-import com.enonic.xp.core.schema.relationship.RelationshipType;
-import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
-import com.enonic.xp.core.schema.relationship.RelationshipTypes;
+import com.enonic.xp.schema.relationship.RelationshipType;
+import com.enonic.xp.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.schema.relationship.RelationshipTypes;
 
 import static org.junit.Assert.*;
 

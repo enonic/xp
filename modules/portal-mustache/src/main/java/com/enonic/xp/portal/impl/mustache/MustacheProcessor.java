@@ -7,9 +7,9 @@ import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.MustacheException;
 import com.samskivert.mustache.Template;
 
-import com.enonic.xp.core.resource.Resource;
-import com.enonic.xp.core.resource.ResourceKey;
-import com.enonic.xp.core.resource.ResourceProblemException;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProblemException;
 
 final class MustacheProcessor
 {

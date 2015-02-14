@@ -5,15 +5,15 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentConstants;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.page.PageDescriptor;
-import com.enonic.xp.core.content.page.PageTemplate;
-import com.enonic.xp.core.content.page.region.Component;
-import com.enonic.xp.core.content.site.Site;
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.branch.Branch;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.page.PageDescriptor;
+import com.enonic.xp.content.page.PageTemplate;
+import com.enonic.xp.content.page.region.Component;
+import com.enonic.xp.content.site.Site;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public final class PortalContext

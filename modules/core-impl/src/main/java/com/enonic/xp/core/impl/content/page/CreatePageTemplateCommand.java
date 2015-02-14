@@ -1,20 +1,20 @@
 package com.enonic.xp.core.impl.content.page;
 
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentName;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.ContentService;
-import com.enonic.xp.core.content.CreateContentParams;
-import com.enonic.xp.core.content.page.CreatePageParams;
-import com.enonic.xp.core.content.page.DescriptorKey;
-import com.enonic.xp.core.content.page.PageRegions;
-import com.enonic.xp.core.content.page.PageService;
-import com.enonic.xp.core.content.page.PageTemplate;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.schema.content.ContentTypeName;
-import com.enonic.xp.core.schema.content.ContentTypeNames;
-import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentName;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.page.CreatePageParams;
+import com.enonic.xp.content.page.DescriptorKey;
+import com.enonic.xp.content.page.PageRegions;
+import com.enonic.xp.content.page.PageService;
+import com.enonic.xp.content.page.PageTemplate;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeNames;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 
 class CreatePageTemplateCommand

@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.aggregation;
 
 import org.elasticsearch.search.aggregations.metrics.stats.Stats;
 
-import com.enonic.xp.core.aggregation.StatsAggregation;
+import com.enonic.xp.aggregation.StatsAggregation;
 
 class StatsAggregationFactory
     extends AggregationsFactory

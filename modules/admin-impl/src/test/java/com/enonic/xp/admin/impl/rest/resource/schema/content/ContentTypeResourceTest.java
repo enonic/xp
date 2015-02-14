@@ -17,23 +17,23 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
-import com.enonic.xp.core.icon.Icon;
-import com.enonic.xp.core.form.FieldSet;
-import com.enonic.xp.core.form.FormItemSet;
-import com.enonic.xp.core.form.InlineMixin;
-import com.enonic.xp.core.form.Input;
-import com.enonic.xp.core.schema.content.ContentType;
-import com.enonic.xp.core.schema.content.ContentTypeName;
-import com.enonic.xp.core.schema.content.ContentTypeService;
-import com.enonic.xp.core.schema.content.ContentTypes;
-import com.enonic.xp.core.schema.content.GetAllContentTypesParams;
-import com.enonic.xp.core.schema.content.GetContentTypeParams;
+import com.enonic.xp.icon.Icon;
+import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.InlineMixin;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.ContentTypes;
+import com.enonic.xp.schema.content.GetAllContentTypesParams;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 
-import static com.enonic.xp.core.form.FieldSet.newFieldSet;
-import static com.enonic.xp.core.form.FormItemSet.newFormItemSet;
-import static com.enonic.xp.core.form.Input.newInput;
-import static com.enonic.xp.core.form.inputtype.InputTypes.TEXT_LINE;
-import static com.enonic.xp.core.schema.content.ContentType.newContentType;
+import static com.enonic.xp.form.FieldSet.newFieldSet;
+import static com.enonic.xp.form.FormItemSet.newFormItemSet;
+import static com.enonic.xp.form.Input.newInput;
+import static com.enonic.xp.form.inputtype.InputTypes.TEXT_LINE;
+import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
 
 

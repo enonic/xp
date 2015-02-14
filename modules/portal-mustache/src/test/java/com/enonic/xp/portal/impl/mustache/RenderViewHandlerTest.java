@@ -13,7 +13,7 @@ import com.google.common.base.Joiner;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.core.resource.ResourceProblemException;
+import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.portal.impl.script.AbstractScriptTest;
 import com.enonic.xp.portal.script.ScriptExports;
 

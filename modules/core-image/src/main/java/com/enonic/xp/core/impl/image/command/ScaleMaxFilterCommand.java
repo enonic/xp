@@ -4,8 +4,8 @@
  */
 package com.enonic.xp.core.impl.image.command;
 
-import com.enonic.xp.core.image.BuilderContext;
-import com.enonic.xp.core.image.filter.ScaleMaxFilter;
+import com.enonic.xp.image.BuilderContext;
+import com.enonic.xp.image.filter.ScaleMaxFilter;
 
 public final class ScaleMaxFilterCommand
     extends FilterCommand

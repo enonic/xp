@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.content.page;
 
-import com.enonic.xp.core.content.page.DescriptorKey;
-import com.enonic.xp.core.content.page.PageDescriptor;
-import com.enonic.xp.core.content.page.PageDescriptorNotFoundException;
-import com.enonic.xp.core.resource.ResourceNotFoundException;
+import com.enonic.xp.content.page.DescriptorKey;
+import com.enonic.xp.content.page.PageDescriptor;
+import com.enonic.xp.content.page.PageDescriptorNotFoundException;
+import com.enonic.xp.resource.ResourceNotFoundException;
 
 final class GetPageDescriptorCommand
     extends AbstractGetPageDescriptorCommand

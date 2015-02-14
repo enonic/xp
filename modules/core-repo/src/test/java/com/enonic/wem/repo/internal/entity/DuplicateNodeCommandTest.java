@@ -3,15 +3,15 @@ package com.enonic.wem.repo.internal.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.node.CreateNodeParams;
-import com.enonic.xp.core.node.FindNodesByParentParams;
-import com.enonic.xp.core.node.FindNodesByParentResult;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.Nodes;
-import com.enonic.xp.core.util.Reference;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.Nodes;
+import com.enonic.xp.util.Reference;
 
 import static org.junit.Assert.*;
 

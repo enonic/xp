@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.json.content.attachment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import com.enonic.xp.core.content.attachment.Attachment;
+import com.enonic.xp.content.attachment.Attachment;
 
 @SuppressWarnings("UnusedDeclaration")
 public class AttachmentJson

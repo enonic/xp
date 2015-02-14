@@ -28,11 +28,11 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.index.IndexType;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeVersionId;
-import com.enonic.xp.core.repository.RepositoryId;
+import com.enonic.xp.index.IndexType;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;

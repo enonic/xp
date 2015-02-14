@@ -13,12 +13,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.core.content.PushContentException;
-import com.enonic.xp.core.context.Context;
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.exception.NotFoundException;
-import com.enonic.xp.core.security.PrincipalKey;
-import com.enonic.xp.core.security.auth.AuthenticationInfo;
+import com.enonic.xp.content.PushContentException;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.exception.NotFoundException;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Provider
 public final class JsonExceptionMapper

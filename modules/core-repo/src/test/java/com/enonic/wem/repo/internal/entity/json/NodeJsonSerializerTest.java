@@ -8,27 +8,27 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import com.enonic.xp.core.blob.BlobKey;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.index.ChildOrder;
-import com.enonic.xp.core.index.IndexConfig;
-import com.enonic.xp.core.index.IndexPath;
-import com.enonic.xp.core.index.PatternIndexConfigDocument;
-import com.enonic.xp.core.node.AttachedBinaries;
-import com.enonic.xp.core.node.AttachedBinary;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeName;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodeType;
-import com.enonic.xp.core.query.expr.FieldOrderExpr;
-import com.enonic.xp.core.query.expr.OrderExpr;
-import com.enonic.xp.core.security.PrincipalKey;
-import com.enonic.xp.core.security.UserStoreKey;
-import com.enonic.xp.core.security.acl.AccessControlEntry;
-import com.enonic.xp.core.security.acl.AccessControlList;
-import com.enonic.xp.core.security.acl.Permission;
-import com.enonic.xp.core.util.BinaryReference;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.index.PatternIndexConfigDocument;
+import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.node.AttachedBinary;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeType;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.Assert.*;
 

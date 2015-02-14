@@ -3,12 +3,12 @@ package com.enonic.xp.portal.impl.jslib.content;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.ContentService;
-import com.enonic.xp.core.content.Contents;
-import com.enonic.xp.core.content.FindContentByParentParams;
-import com.enonic.xp.core.content.FindContentByParentResult;
-import com.enonic.xp.core.index.ChildOrder;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.FindContentByParentParams;
+import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.portal.impl.jslib.ContentFixtures;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;

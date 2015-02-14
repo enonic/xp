@@ -1,10 +1,10 @@
 package com.enonic.xp.core.impl.schema.content;
 
-import com.enonic.xp.core.form.Form;
-import com.enonic.xp.core.form.InlineMixinsToFormItemsTransformer;
-import com.enonic.xp.core.schema.content.ContentType;
-import com.enonic.xp.core.schema.content.ContentTypes;
-import com.enonic.xp.core.schema.mixin.MixinService;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypes;
+import com.enonic.xp.schema.mixin.MixinService;
 
 abstract class AbstractCommand
 {

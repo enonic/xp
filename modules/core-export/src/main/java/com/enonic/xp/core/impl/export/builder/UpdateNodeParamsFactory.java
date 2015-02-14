@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.export.builder;
 
-import com.enonic.xp.core.node.BinaryAttachments;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.UpdateNodeParams;
+import com.enonic.xp.node.BinaryAttachments;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.core.impl.export.xml.XmlNode;
 
 public class UpdateNodeParamsFactory

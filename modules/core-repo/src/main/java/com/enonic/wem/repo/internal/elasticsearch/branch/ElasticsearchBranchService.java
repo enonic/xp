@@ -8,14 +8,14 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.data.Value;
-import com.enonic.xp.core.index.IndexType;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodeState;
-import com.enonic.xp.core.node.NodeVersionId;
-import com.enonic.xp.core.query.filter.ValueFilter;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.index.IndexType;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.wem.repo.internal.branch.BranchContext;
 import com.enonic.wem.repo.internal.branch.BranchDocumentId;
 import com.enonic.wem.repo.internal.branch.BranchService;

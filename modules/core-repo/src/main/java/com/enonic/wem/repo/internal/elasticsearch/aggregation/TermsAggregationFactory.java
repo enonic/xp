@@ -4,8 +4,8 @@ import java.util.Collection;
 
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 
-import com.enonic.xp.core.aggregation.BucketAggregation;
-import com.enonic.xp.core.aggregation.Buckets;
+import com.enonic.xp.aggregation.BucketAggregation;
+import com.enonic.xp.aggregation.Buckets;
 
 class TermsAggregationFactory
     extends AggregationsFactory

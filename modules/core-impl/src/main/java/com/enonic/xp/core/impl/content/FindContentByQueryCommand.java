@@ -2,11 +2,11 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.content.Contents;
-import com.enonic.xp.core.content.FindContentByQueryParams;
-import com.enonic.xp.core.content.FindContentByQueryResult;
-import com.enonic.xp.core.node.FindNodesByQueryResult;
-import com.enonic.xp.core.node.NodeQuery;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.FindContentByQueryParams;
+import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.NodeQuery;
 
 final class FindContentByQueryCommand
     extends AbstractContentCommand

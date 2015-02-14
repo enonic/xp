@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.schema.relationship;
 
 import org.osgi.framework.Bundle;
 
-import com.enonic.xp.core.schema.relationship.RelationshipTypeProvider;
-import com.enonic.xp.core.schema.relationship.RelationshipTypes;
+import com.enonic.xp.schema.relationship.RelationshipTypeProvider;
+import com.enonic.xp.schema.relationship.RelationshipTypes;
 
 public final class BundleRelationshipTypeProvider
     implements RelationshipTypeProvider

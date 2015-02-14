@@ -8,10 +8,10 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.core.data.Value;
-import com.enonic.xp.core.index.IndexPath;
-import com.enonic.xp.core.index.IndexType;
-import com.enonic.xp.core.repository.Repository;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.index.IndexType;
+import com.enonic.xp.repository.Repository;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentOrderbyItem;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;

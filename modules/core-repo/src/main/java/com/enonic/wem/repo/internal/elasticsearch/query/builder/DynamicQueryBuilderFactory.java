@@ -2,8 +2,8 @@ package com.enonic.wem.repo.internal.elasticsearch.query.builder;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
-import com.enonic.xp.core.query.expr.DynamicConstraintExpr;
-import com.enonic.xp.core.query.expr.FunctionExpr;
+import com.enonic.xp.query.expr.DynamicConstraintExpr;
+import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.function.FunctionQueryBuilderFactory;
 
 class DynamicQueryBuilderFactory

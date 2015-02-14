@@ -2,14 +2,14 @@ package com.enonic.xp.core.impl.export.validator;
 
 import java.time.Instant;
 
-import com.enonic.xp.core.content.ContentConstants;
-import com.enonic.xp.core.content.ContentPropertyNames;
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.index.ChildOrder;
-import com.enonic.xp.core.node.CreateNodeParams;
-import com.enonic.xp.core.security.User;
-import com.enonic.xp.core.security.auth.AuthenticationInfo;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class ContentImportValidator
     implements ImportValidator

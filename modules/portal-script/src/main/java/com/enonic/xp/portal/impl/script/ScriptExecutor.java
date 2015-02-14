@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.script;
 
-import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.portal.script.ScriptValue;
 
 public interface ScriptExecutor

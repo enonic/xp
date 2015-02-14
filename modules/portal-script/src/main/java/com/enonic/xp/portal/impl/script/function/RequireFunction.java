@@ -2,8 +2,8 @@ package com.enonic.xp.portal.impl.script.function;
 
 import javax.script.Bindings;
 
-import com.enonic.xp.core.resource.Resource;
-import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.portal.impl.script.ScriptExecutor;
 
 public final class RequireFunction

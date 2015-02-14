@@ -5,7 +5,7 @@ import java.time.Instant;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.elasticsearch.snapshots.SnapshotInfo;
 
-import com.enonic.xp.core.snapshot.SnapshotResult;
+import com.enonic.xp.snapshot.SnapshotResult;
 
 class SnapshotResultFactory
 {

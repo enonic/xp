@@ -5,10 +5,10 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.core.export.ExportError;
-import com.enonic.xp.core.export.NodeExportResult;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodePaths;
+import com.enonic.xp.export.ExportError;
+import com.enonic.xp.export.NodeExportResult;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodePaths;
 
 public class NodeExportResultJson
 {

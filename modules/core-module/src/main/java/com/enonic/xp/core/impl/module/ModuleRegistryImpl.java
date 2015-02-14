@@ -21,12 +21,12 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.core.event.EventPublisher;
-import com.enonic.xp.core.module.Module;
-import com.enonic.xp.core.module.ModuleEventType;
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.module.ModuleUpdatedEvent;
-import com.enonic.xp.core.module.ModuleVersion;
+import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.module.Module;
+import com.enonic.xp.module.ModuleEventType;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.module.ModuleUpdatedEvent;
+import com.enonic.xp.module.ModuleVersion;
 
 @Component(immediate = true)
 public final class ModuleRegistryImpl

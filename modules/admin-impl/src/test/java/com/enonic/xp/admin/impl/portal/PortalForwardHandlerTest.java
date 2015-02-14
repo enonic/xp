@@ -8,7 +8,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import junit.framework.Assert;
 
-import com.enonic.xp.core.security.RoleKeys;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;

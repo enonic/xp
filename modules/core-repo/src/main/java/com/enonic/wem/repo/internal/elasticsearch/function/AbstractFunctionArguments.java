@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.function;
 
 import java.util.List;
 
-import com.enonic.xp.core.query.expr.ValueExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 
 public abstract class AbstractFunctionArguments
 {

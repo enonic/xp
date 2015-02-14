@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.aggregation;
 
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 
-import com.enonic.xp.core.aggregation.SingleValueMetricAggregation;
+import com.enonic.xp.aggregation.SingleValueMetricAggregation;
 
 class ValueCountAggregationFactory
     extends AggregationsFactory

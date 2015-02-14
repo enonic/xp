@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.schema;
 
 import com.google.common.hash.Hashing;
 
-import com.enonic.xp.core.icon.Icon;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public abstract class IconUrlResolver

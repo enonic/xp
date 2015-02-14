@@ -7,9 +7,9 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.Nodes;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.Nodes;
 
 import static org.junit.Assert.*;
 

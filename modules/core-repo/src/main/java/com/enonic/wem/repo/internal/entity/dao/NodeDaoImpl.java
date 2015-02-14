@@ -10,16 +10,16 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteStreams;
 
-import com.enonic.xp.core.blob.BlobKey;
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeName;
-import com.enonic.xp.core.node.NodeNotFoundException;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodeVersionId;
-import com.enonic.xp.core.node.NodeVersionIds;
-import com.enonic.xp.core.node.Nodes;
-import com.enonic.xp.core.node.RootNode;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionIds;
+import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RootNode;
 import com.enonic.wem.repo.internal.blob.Blob;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;

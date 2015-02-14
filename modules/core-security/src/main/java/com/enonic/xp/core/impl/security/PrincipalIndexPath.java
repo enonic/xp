@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.security;
 
-import com.enonic.xp.core.index.IndexPath;
+import com.enonic.xp.index.IndexPath;
 
 class PrincipalIndexPath
 {

@@ -5,7 +5,7 @@
     <xs:appinfo>
       <jaxb:globalBindings generateElementClass="true"/>
       <jaxb:schemaBindings>
-        <jaxb:package name="com.enonic.xp.core.xml.model"/>
+        <jaxb:package name="com.enonic.xp.xml.model"/>
         <jaxb:nameXmlTransform>
           <jaxb:typeName prefix="Xml"/>
           <jaxb:elementName prefix="Xml" suffix="Elem"/>

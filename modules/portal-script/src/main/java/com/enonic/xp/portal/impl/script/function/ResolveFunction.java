@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.script.function;
 
 import javax.script.Bindings;
 
-import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKey;
 
 public final class ResolveFunction
     extends AbstractFunction

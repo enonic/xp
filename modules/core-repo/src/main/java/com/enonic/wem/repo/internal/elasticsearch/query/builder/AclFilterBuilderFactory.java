@@ -1,14 +1,14 @@
 package com.enonic.wem.repo.internal.elasticsearch.query.builder;
 
-import com.enonic.xp.core.context.Context;
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.data.Value;
-import com.enonic.xp.core.node.NodeIndexPath;
-import com.enonic.xp.core.query.filter.Filter;
-import com.enonic.xp.core.query.filter.ValueFilter;
-import com.enonic.xp.core.security.PrincipalKey;
-import com.enonic.xp.core.security.PrincipalKeys;
-import com.enonic.xp.core.security.auth.AuthenticationInfo;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.query.filter.Filter;
+import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.wem.repo.internal.entity.NodeConstants;
 
 public class AclFilterBuilderFactory

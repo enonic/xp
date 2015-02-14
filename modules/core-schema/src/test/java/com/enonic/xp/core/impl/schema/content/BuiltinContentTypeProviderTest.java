@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.schema.content;
 
 import org.junit.Test;
 
-import com.enonic.xp.core.schema.content.ContentType;
-import com.enonic.xp.core.schema.content.ContentTypes;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypes;
 
 import static org.junit.Assert.*;
 

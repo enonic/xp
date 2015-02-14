@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.core.export.ExportNodeException;
+import com.enonic.xp.export.ExportNodeException;
 
 public class FileExportWriter
     implements ExportWriter

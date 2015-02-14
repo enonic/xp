@@ -6,7 +6,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.blob.BlobKey;
+import com.enonic.xp.blob.BlobKey;
 
 public class BlobKeys
     implements Iterable<BlobKey>

@@ -7,7 +7,7 @@ package com.enonic.xp.core.impl.image;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 
-import com.enonic.xp.core.image.ImageFilter;
+import com.enonic.xp.image.ImageFilter;
 
 public final class OperationImageFilter
     implements ImageFilter

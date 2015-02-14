@@ -3,21 +3,21 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.branch.Branch;
-import com.enonic.xp.core.content.CompareStatus;
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentAccessException;
-import com.enonic.xp.core.content.ContentChangeEvent;
-import com.enonic.xp.core.content.ContentConstants;
-import com.enonic.xp.core.content.ContentState;
-import com.enonic.xp.core.content.DeleteContentParams;
-import com.enonic.xp.core.context.Context;
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeAccessException;
-import com.enonic.xp.core.node.NodeComparison;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodeState;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentAccessException;
+import com.enonic.xp.content.ContentChangeEvent;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentState;
+import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAccessException;
+import com.enonic.xp.node.NodeComparison;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeState;
 
 
 final class DeleteContentCommand

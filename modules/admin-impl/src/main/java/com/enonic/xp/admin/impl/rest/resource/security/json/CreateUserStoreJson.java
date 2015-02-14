@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.core.security.CreateUserStoreParams;
-import com.enonic.xp.core.security.UserStoreKey;
-import com.enonic.xp.core.security.acl.UserStoreAccessControlEntry;
-import com.enonic.xp.core.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.security.CreateUserStoreParams;
+import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
+import com.enonic.xp.security.acl.UserStoreAccessControlList;
 
 public final class CreateUserStoreJson
 {

@@ -5,9 +5,9 @@ import java.util.regex.Pattern;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.core.branch.Branch;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.repository.RepositoryId;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repository.RepositoryId;
 
 class RepoPath
 {

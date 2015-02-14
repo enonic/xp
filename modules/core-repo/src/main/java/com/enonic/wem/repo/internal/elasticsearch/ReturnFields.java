@@ -8,8 +8,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.index.IndexPath;
-import com.enonic.xp.core.support.AbstractImmutableEntitySet;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public class ReturnFields
     extends AbstractImmutableEntitySet<ReturnField>

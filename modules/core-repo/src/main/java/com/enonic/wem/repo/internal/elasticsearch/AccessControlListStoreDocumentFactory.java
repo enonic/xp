@@ -4,12 +4,12 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.index.IndexPath;
-import com.enonic.xp.core.node.NodeIndexPath;
-import com.enonic.xp.core.security.PrincipalKey;
-import com.enonic.xp.core.security.acl.AccessControlEntry;
-import com.enonic.xp.core.security.acl.AccessControlList;
-import com.enonic.xp.core.security.acl.Permission;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocumentStringItem;
 

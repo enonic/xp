@@ -17,16 +17,16 @@ import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.page.CreatePageParams;
-import com.enonic.xp.core.content.page.PageService;
-import com.enonic.xp.core.content.page.UpdatePageParams;
-import com.enonic.xp.core.form.InlineMixinsToFormItemsTransformer;
-import com.enonic.xp.core.schema.content.ContentTypeService;
-import com.enonic.xp.core.schema.mixin.MixinService;
-import com.enonic.xp.core.security.RoleKeys;
-import com.enonic.xp.core.security.SecurityService;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.page.CreatePageParams;
+import com.enonic.xp.content.page.PageService;
+import com.enonic.xp.content.page.UpdatePageParams;
+import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityService;
 
 @Path(ResourceConstants.REST_ROOT + "content/page")
 @Produces(MediaType.APPLICATION_JSON)

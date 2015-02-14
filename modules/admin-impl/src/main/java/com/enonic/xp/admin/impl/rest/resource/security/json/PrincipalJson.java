@@ -6,7 +6,7 @@ import java.time.Instant;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.core.security.Principal;
+import com.enonic.xp.security.Principal;
 
 @SuppressWarnings("UnusedDeclaration")
 public class PrincipalJson

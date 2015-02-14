@@ -4,9 +4,9 @@ import java.util.Collection;
 
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
 
-import com.enonic.xp.core.aggregation.BucketAggregation;
-import com.enonic.xp.core.aggregation.Buckets;
-import com.enonic.xp.core.aggregation.DateHistogramBucket;
+import com.enonic.xp.aggregation.BucketAggregation;
+import com.enonic.xp.aggregation.Buckets;
+import com.enonic.xp.aggregation.DateHistogramBucket;
 
 class DateHistogramAggregationFactory
     extends AggregationsFactory

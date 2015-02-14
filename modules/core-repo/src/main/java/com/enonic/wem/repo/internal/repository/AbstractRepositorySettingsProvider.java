@@ -6,7 +6,7 @@ import java.net.URL;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.core.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.wem.repo.internal.index.IndexException;
 
 public class AbstractRepositorySettingsProvider

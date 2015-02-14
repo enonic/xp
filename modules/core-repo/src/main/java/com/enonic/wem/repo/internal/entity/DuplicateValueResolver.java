@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Strings;
 
-import com.enonic.xp.core.node.NodeName;
+import com.enonic.xp.node.NodeName;
 
 public abstract class DuplicateValueResolver
 {

@@ -5,16 +5,16 @@ import org.junit.Test;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.index.ChildOrder;
-import com.enonic.xp.core.node.AttachedBinaries;
-import com.enonic.xp.core.node.CreateNodeParams;
-import com.enonic.xp.core.node.InsertManualStrategy;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeBinaryReferenceException;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.util.BinaryReference;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.InsertManualStrategy;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBinaryReferenceException;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.util.BinaryReference;
 
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;

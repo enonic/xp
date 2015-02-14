@@ -3,12 +3,12 @@ package com.enonic.wem.repo.internal.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.core.content.CompareStatus;
-import com.enonic.xp.core.node.CreateNodeParams;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeComparisons;
-import com.enonic.xp.core.node.NodeIds;
-import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeComparisons;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePath;
 
 import static junit.framework.Assert.assertEquals;
 

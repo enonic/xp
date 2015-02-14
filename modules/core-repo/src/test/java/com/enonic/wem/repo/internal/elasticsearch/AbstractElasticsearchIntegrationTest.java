@@ -11,8 +11,8 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.core.repository.Repository;
-import com.enonic.xp.core.repository.RepositoryId;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
 
 public abstract class AbstractElasticsearchIntegrationTest
 {

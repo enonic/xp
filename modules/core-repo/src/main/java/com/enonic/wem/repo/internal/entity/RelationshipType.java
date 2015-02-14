@@ -5,8 +5,8 @@ import java.time.Instant;
 
 import com.google.common.base.Objects;
 
-import com.enonic.xp.core.name.Name;
-import com.enonic.xp.core.icon.Thumbnail;
+import com.enonic.xp.name.Name;
+import com.enonic.xp.icon.Thumbnail;
 
 public final class RelationshipType
 {

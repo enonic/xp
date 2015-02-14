@@ -3,11 +3,11 @@ package com.enonic.wem.repo.internal.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.core.index.ChildOrder;
-import com.enonic.xp.core.node.CreateNodeParams;
-import com.enonic.xp.core.node.CreateRootNodeParams;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.CreateRootNodeParams;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodePath;
 
 import static org.junit.Assert.*;
 

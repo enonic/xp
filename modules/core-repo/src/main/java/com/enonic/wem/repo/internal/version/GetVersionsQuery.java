@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.version;
 
-import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.node.NodeId;
 
 public class GetVersionsQuery
 {

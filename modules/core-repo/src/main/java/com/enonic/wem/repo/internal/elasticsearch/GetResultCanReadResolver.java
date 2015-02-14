@@ -2,9 +2,9 @@ package com.enonic.wem.repo.internal.elasticsearch;
 
 import java.util.List;
 
-import com.enonic.xp.core.node.NodeIndexPath;
-import com.enonic.xp.core.security.PrincipalKey;
-import com.enonic.xp.core.security.PrincipalKeys;
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
 

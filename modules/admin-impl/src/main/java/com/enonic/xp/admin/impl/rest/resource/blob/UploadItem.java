@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.blob;
 
-import com.enonic.xp.core.blob.BlobKey;
+import com.enonic.xp.blob.BlobKey;
 
 final class UploadItem
 {

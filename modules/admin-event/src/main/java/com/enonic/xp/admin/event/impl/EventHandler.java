@@ -21,7 +21,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.core.security.RoleKeys;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;

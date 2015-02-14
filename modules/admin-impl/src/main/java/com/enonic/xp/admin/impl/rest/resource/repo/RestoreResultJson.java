@@ -2,7 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.repo;
 
 import java.util.Set;
 
-import com.enonic.xp.core.snapshot.RestoreResult;
+import com.enonic.xp.snapshot.RestoreResult;
 
 public class RestoreResultJson
 {

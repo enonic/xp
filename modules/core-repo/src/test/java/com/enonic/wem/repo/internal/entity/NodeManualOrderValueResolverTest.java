@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.node.NodeId;
 
 import static org.junit.Assert.*;
 

@@ -3,16 +3,16 @@ package com.enonic.wem.repo.internal.entity;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.core.branch.Branches;
-import com.enonic.xp.core.context.Context;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.node.CreateNodeParams;
-import com.enonic.xp.core.node.GetActiveNodeVersionsResult;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeIds;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodeVersion;
-import com.enonic.xp.core.node.UpdateNodeParams;
+import com.enonic.xp.branch.Branches;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.GetActiveNodeVersionsResult;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.UpdateNodeParams;
 
 import static org.junit.Assert.*;
 

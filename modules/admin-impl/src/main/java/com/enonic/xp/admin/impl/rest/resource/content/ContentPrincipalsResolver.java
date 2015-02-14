@@ -8,12 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.core.security.Principal;
-import com.enonic.xp.core.security.PrincipalKey;
-import com.enonic.xp.core.security.Principals;
-import com.enonic.xp.core.security.SecurityService;
-import com.enonic.xp.core.security.acl.AccessControlEntry;
-import com.enonic.xp.core.security.acl.AccessControlList;
+import com.enonic.xp.security.Principal;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.Principals;
+import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
 
 public final class ContentPrincipalsResolver
 {

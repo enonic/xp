@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.jslib.mapper;
 
-import com.enonic.xp.core.content.attachment.Attachment;
+import com.enonic.xp.content.attachment.Attachment;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
 

@@ -2,11 +2,11 @@ package com.enonic.xp.core.impl.module;
 
 import org.osgi.framework.Bundle;
 
-import com.enonic.xp.core.form.Form;
-import com.enonic.xp.core.module.Module;
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.module.ModuleVersion;
-import com.enonic.xp.core.schema.mixin.MixinNames;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.module.Module;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.module.ModuleVersion;
+import com.enonic.xp.schema.mixin.MixinNames;
 
 final class ModuleBuilder
 {

@@ -3,10 +3,10 @@ package com.enonic.xp.core.impl.schema.relationship;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.schema.relationship.RelationshipType;
-import com.enonic.xp.core.schema.relationship.RelationshipTypeProvider;
-import com.enonic.xp.core.schema.relationship.RelationshipTypes;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.schema.relationship.RelationshipType;
+import com.enonic.xp.schema.relationship.RelationshipTypeProvider;
+import com.enonic.xp.schema.relationship.RelationshipTypes;
 
 import static org.junit.Assert.*;
 

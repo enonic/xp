@@ -7,9 +7,9 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.json.aggregation.AggregationJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentListMetaData;
-import com.enonic.xp.core.form.InlineMixinsToFormItemsTransformer;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentListMetaData;
+import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 
 public abstract class AbstractContentQueryResultJson<T extends ContentIdJson>
 {

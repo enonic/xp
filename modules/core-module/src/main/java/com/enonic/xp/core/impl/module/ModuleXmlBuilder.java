@@ -2,15 +2,15 @@ package com.enonic.xp.core.impl.module;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.schema.mixin.MixinName;
-import com.enonic.xp.core.schema.mixin.MixinNames;
-import com.enonic.xp.core.xml.mapper.XmlFormMapper;
-import com.enonic.xp.core.xml.model.XmlForm;
-import com.enonic.xp.core.xml.model.XmlMetadata;
-import com.enonic.xp.core.xml.model.XmlModule;
-import com.enonic.xp.core.xml.model.XmlVendor;
-import com.enonic.xp.core.xml.serializer.XmlSerializers;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.xml.mapper.XmlFormMapper;
+import com.enonic.xp.xml.model.XmlForm;
+import com.enonic.xp.xml.model.XmlMetadata;
+import com.enonic.xp.xml.model.XmlModule;
+import com.enonic.xp.xml.model.XmlVendor;
+import com.enonic.xp.xml.serializer.XmlSerializers;
 
 final class ModuleXmlBuilder
 {

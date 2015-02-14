@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.script.invoker;
 
 import java.util.Map;
 
-import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.portal.script.command.CommandParam;
 import com.enonic.xp.portal.script.command.CommandRequest;
 

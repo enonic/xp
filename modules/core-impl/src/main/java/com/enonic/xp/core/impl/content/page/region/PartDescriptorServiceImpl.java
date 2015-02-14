@@ -3,13 +3,13 @@ package com.enonic.xp.core.impl.content.page.region;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.core.content.page.DescriptorKey;
-import com.enonic.xp.core.content.page.region.PartDescriptor;
-import com.enonic.xp.core.content.page.region.PartDescriptorService;
-import com.enonic.xp.core.content.page.region.PartDescriptors;
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.module.ModuleKeys;
-import com.enonic.xp.core.module.ModuleService;
+import com.enonic.xp.content.page.DescriptorKey;
+import com.enonic.xp.content.page.region.PartDescriptor;
+import com.enonic.xp.content.page.region.PartDescriptorService;
+import com.enonic.xp.content.page.region.PartDescriptors;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.module.ModuleKeys;
+import com.enonic.xp.module.ModuleService;
 
 @Component
 public final class PartDescriptorServiceImpl

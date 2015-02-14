@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.repository;
 
-import com.enonic.xp.core.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryId;
 
 public class RepositoryIndexMappingProvider
     extends AbstractRepositorySettingsProvider

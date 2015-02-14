@@ -4,9 +4,9 @@ import java.time.Instant;
 import java.util.Map;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
-import com.enonic.xp.core.relationship.Relationship;
-import com.enonic.xp.core.relationship.RelationshipId;
-import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.relationship.Relationship;
+import com.enonic.xp.relationship.RelationshipId;
+import com.enonic.xp.security.PrincipalKey;
 
 public class RelationshipJson
     implements ItemJson

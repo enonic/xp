@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.enonic.xp.core.impl.image.AwtImageFilter;
 import com.enonic.xp.core.impl.image.AwtImageFilterTest;
-import com.enonic.xp.core.image.ImageFilter;
+import com.enonic.xp.image.ImageFilter;
 
 import static org.junit.Assert.*;
 

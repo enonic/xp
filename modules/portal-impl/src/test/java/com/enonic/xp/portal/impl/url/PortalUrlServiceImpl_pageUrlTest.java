@@ -3,9 +3,9 @@ package com.enonic.xp.portal.impl.url;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.core.branch.Branch;
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentNotFoundException;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.PageUrlParams;
 

@@ -1,8 +1,8 @@
 package com.enonic.wem.repo.internal.entity;
 
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.node.FindNodeVersionsResult;
-import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.FindNodeVersionsResult;
+import com.enonic.xp.node.NodeId;
 import com.enonic.wem.repo.internal.version.GetVersionsQuery;
 import com.enonic.wem.repo.internal.version.VersionService;
 

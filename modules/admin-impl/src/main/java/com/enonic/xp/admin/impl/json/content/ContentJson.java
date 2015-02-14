@@ -9,14 +9,14 @@ import com.enonic.xp.admin.impl.json.content.page.PageJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AccessControlEntryJson;
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.Metadata;
-import com.enonic.xp.core.data.PropertyArrayJson;
-import com.enonic.xp.core.data.PropertyTreeJson;
-import com.enonic.xp.core.form.InlineMixinsToFormItemsTransformer;
-import com.enonic.xp.core.security.Principals;
-import com.enonic.xp.core.security.acl.AccessControlEntry;
-import com.enonic.xp.core.security.acl.AccessControlList;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.Metadata;
+import com.enonic.xp.data.PropertyArrayJson;
+import com.enonic.xp.data.PropertyTreeJson;
+import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
+import com.enonic.xp.security.Principals;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
 
 @SuppressWarnings("UnusedDeclaration")
 public final class ContentJson

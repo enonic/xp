@@ -1,13 +1,13 @@
 package com.enonic.xp.portal.impl.jslib.mapper;
 
-import com.enonic.xp.core.aggregation.Aggregation;
-import com.enonic.xp.core.aggregation.Aggregations;
-import com.enonic.xp.core.aggregation.Bucket;
-import com.enonic.xp.core.aggregation.BucketAggregation;
-import com.enonic.xp.core.aggregation.Buckets;
-import com.enonic.xp.core.aggregation.DateRangeBucket;
-import com.enonic.xp.core.aggregation.NumericRangeBucket;
-import com.enonic.xp.core.aggregation.StatsAggregation;
+import com.enonic.xp.aggregation.Aggregation;
+import com.enonic.xp.aggregation.Aggregations;
+import com.enonic.xp.aggregation.Bucket;
+import com.enonic.xp.aggregation.BucketAggregation;
+import com.enonic.xp.aggregation.Buckets;
+import com.enonic.xp.aggregation.DateRangeBucket;
+import com.enonic.xp.aggregation.NumericRangeBucket;
+import com.enonic.xp.aggregation.StatsAggregation;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
 

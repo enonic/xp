@@ -5,14 +5,14 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryR
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSummaryQueryResultJson;
-import com.enonic.xp.core.aggregation.Aggregation;
-import com.enonic.xp.core.aggregation.Aggregations;
-import com.enonic.xp.core.aggregation.BucketAggregation;
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentListMetaData;
-import com.enonic.xp.core.content.Contents;
-import com.enonic.xp.core.content.FindContentByQueryResult;
-import com.enonic.xp.core.form.InlineMixinsToFormItemsTransformer;
+import com.enonic.xp.aggregation.Aggregation;
+import com.enonic.xp.aggregation.Aggregations;
+import com.enonic.xp.aggregation.BucketAggregation;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentListMetaData;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 
 public class FindContentByQuertResultJsonFactory
 {

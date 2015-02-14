@@ -2,7 +2,7 @@ package com.enonic.wem.repo.internal.elasticsearch.aggregation;
 
 import org.elasticsearch.search.aggregations.metrics.max.Max;
 
-import com.enonic.xp.core.aggregation.SingleValueMetricAggregation;
+import com.enonic.xp.aggregation.SingleValueMetricAggregation;
 
 class MaxAggregationFactory
     extends AggregationsFactory

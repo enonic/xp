@@ -3,31 +3,31 @@ package com.enonic.xp.core.impl.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.core.context.ContextBuilder;
-import com.enonic.xp.core.index.ChildOrder;
-import com.enonic.xp.core.node.CreateNodeParams;
-import com.enonic.xp.core.node.CreateRootNodeParams;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodeService;
-import com.enonic.xp.core.security.CreateRoleParams;
-import com.enonic.xp.core.security.CreateUserParams;
-import com.enonic.xp.core.security.CreateUserStoreParams;
-import com.enonic.xp.core.security.PrincipalKey;
-import com.enonic.xp.core.security.PrincipalRelationship;
-import com.enonic.xp.core.security.RoleKeys;
-import com.enonic.xp.core.security.SecurityService;
-import com.enonic.xp.core.security.User;
-import com.enonic.xp.core.security.UserStoreKey;
-import com.enonic.xp.core.security.acl.AccessControlEntry;
-import com.enonic.xp.core.security.acl.AccessControlList;
-import com.enonic.xp.core.security.acl.Permission;
-import com.enonic.xp.core.security.acl.UserStoreAccessControlEntry;
-import com.enonic.xp.core.security.acl.UserStoreAccessControlList;
-import com.enonic.xp.core.security.auth.AuthenticationInfo;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.CreateRootNodeParams;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeService;
+import com.enonic.xp.security.CreateRoleParams;
+import com.enonic.xp.security.CreateUserParams;
+import com.enonic.xp.security.CreateUserStoreParams;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalRelationship;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
+import com.enonic.xp.security.acl.UserStoreAccessControlList;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
-import static com.enonic.xp.core.security.SystemConstants.CONTEXT_SECURITY;
-import static com.enonic.xp.core.security.acl.UserStoreAccess.ADMINISTRATOR;
-import static com.enonic.xp.core.security.acl.UserStoreAccess.READ;
+import static com.enonic.xp.security.SystemConstants.CONTEXT_SECURITY;
+import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
+import static com.enonic.xp.security.acl.UserStoreAccess.READ;
 
 public final class SecurityInitializer
 {

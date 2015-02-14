@@ -3,8 +3,8 @@ package com.enonic.xp.admin.impl.rest.resource.auth;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.xp.core.security.PrincipalKeys;
-import com.enonic.xp.core.security.RoleKeys;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleKeys;
 
 import static java.util.stream.Collectors.toList;
 

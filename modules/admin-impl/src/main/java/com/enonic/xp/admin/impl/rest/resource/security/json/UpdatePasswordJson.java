@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKey;
 
 public final class UpdatePasswordJson
 {

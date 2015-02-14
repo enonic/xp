@@ -21,7 +21,7 @@ import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.json.JsonResult;
 import com.enonic.xp.admin.impl.rest.multipart.MultipartForm;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.core.security.RoleKeys;
+import com.enonic.xp.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "blob")
 @Produces(MediaType.APPLICATION_JSON)

@@ -14,9 +14,9 @@ import org.elasticsearch.search.aggregations.metrics.min.Min;
 import org.elasticsearch.search.aggregations.metrics.stats.Stats;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 
-import com.enonic.xp.core.aggregation.Aggregations;
-import com.enonic.xp.core.aggregation.Bucket;
-import com.enonic.xp.core.aggregation.Buckets;
+import com.enonic.xp.aggregation.Aggregations;
+import com.enonic.xp.aggregation.Bucket;
+import com.enonic.xp.aggregation.Buckets;
 
 
 public class AggregationsFactory

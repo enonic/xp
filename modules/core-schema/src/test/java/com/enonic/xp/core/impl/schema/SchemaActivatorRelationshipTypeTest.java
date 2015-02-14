@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.schema;
 
 import java.util.List;
 
-import com.enonic.xp.core.schema.relationship.RelationshipTypeProvider;
+import com.enonic.xp.schema.relationship.RelationshipTypeProvider;
 
 import static org.junit.Assert.*;
 

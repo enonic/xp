@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.core.branch.Branch;
-import com.enonic.xp.core.index.ReindexResult;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.index.ReindexResult;
 
 class ReindexResultJsonFactory
 {

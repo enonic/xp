@@ -2,14 +2,14 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.content.Contents;
-import com.enonic.xp.core.content.FindContentByParentParams;
-import com.enonic.xp.core.content.FindContentByParentResult;
-import com.enonic.xp.core.node.FindNodesByParentParams;
-import com.enonic.xp.core.node.FindNodesByParentResult;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.Nodes;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.FindContentByParentParams;
+import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.Nodes;
 
 final class FindContentByParentCommand
     extends AbstractContentCommand

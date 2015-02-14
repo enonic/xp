@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.core.index.PatternIndexConfigDocument;
+import com.enonic.xp.index.PatternIndexConfigDocument;
 
 final class IndexConfigDocumentJson
 {

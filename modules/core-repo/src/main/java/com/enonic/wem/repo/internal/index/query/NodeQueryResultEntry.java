@@ -1,6 +1,6 @@
 package com.enonic.wem.repo.internal.index.query;
 
-import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.node.NodeId;
 
 public class NodeQueryResultEntry
 {

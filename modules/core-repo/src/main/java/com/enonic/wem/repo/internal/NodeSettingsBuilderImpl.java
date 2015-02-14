@@ -5,7 +5,7 @@ import java.io.File;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 
-import com.enonic.xp.core.home.HomeDir;
+import com.enonic.xp.home.HomeDir;
 
 final class NodeSettingsBuilderImpl
     implements NodeSettingsBuilder

@@ -2,10 +2,10 @@ package com.enonic.xp.admin.impl.json.content;
 
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentListMetaData;
-import com.enonic.xp.core.content.Contents;
-import com.enonic.xp.core.form.InlineMixinsToFormItemsTransformer;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentListMetaData;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentListJson

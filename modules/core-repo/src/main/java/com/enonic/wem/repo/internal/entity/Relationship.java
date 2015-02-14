@@ -7,9 +7,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.core.data.PropertyPath;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.security.PrincipalKey;
 
 public final class Relationship
 {

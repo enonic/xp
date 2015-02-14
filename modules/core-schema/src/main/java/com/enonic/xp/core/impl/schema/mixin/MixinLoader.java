@@ -15,13 +15,13 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.schema.mixin.Mixin;
-import com.enonic.xp.core.schema.mixin.MixinName;
-import com.enonic.xp.core.schema.mixin.Mixins;
-import com.enonic.xp.core.xml.mapper.XmlMixinMapper;
-import com.enonic.xp.core.xml.model.XmlMixin;
-import com.enonic.xp.core.xml.serializer.XmlSerializers;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.xml.mapper.XmlMixinMapper;
+import com.enonic.xp.xml.model.XmlMixin;
+import com.enonic.xp.xml.serializer.XmlSerializers;
 import com.enonic.xp.core.impl.schema.IconLoader;
 
 final class MixinLoader

@@ -1,10 +1,10 @@
 package com.enonic.xp.core.impl.export.xml.mapper;
 
 
-import com.enonic.xp.core.data.Property;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.data.ValueTypes;
-import com.enonic.xp.core.export.ExportNodeException;
+import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.export.ExportNodeException;
 import com.enonic.xp.core.impl.export.xml.ObjectFactory;
 import com.enonic.xp.core.impl.export.xml.XmlPropertyTree;
 

@@ -1,9 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.content;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.IconUrlResolver;
-import com.enonic.xp.core.icon.Icon;
-import com.enonic.xp.core.schema.content.ContentType;
-import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.icon.Icon;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
 
 public final class ContentTypeIconUrlResolver
     extends IconUrlResolver

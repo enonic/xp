@@ -5,9 +5,9 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.core.query.expr.CompareExpr;
-import com.enonic.xp.core.query.expr.FieldExpr;
-import com.enonic.xp.core.query.expr.ValueExpr;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 
 public class CompareQueryFactoryTest
     extends BaseTestBuilderFactory

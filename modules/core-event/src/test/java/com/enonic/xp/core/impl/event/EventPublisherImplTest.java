@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.event;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.core.event.Event;
-import com.enonic.xp.core.event.EventListener;
+import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventListener;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;

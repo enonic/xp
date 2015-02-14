@@ -3,13 +3,13 @@ package com.enonic.xp.portal.impl.resource.image;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.ContentName;
-import com.enonic.xp.core.content.ContentPath;
-import com.enonic.xp.core.content.Media;
-import com.enonic.xp.core.content.attachment.Attachment;
-import com.enonic.xp.core.util.MediaTypes;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentName;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.Media;
+import com.enonic.xp.content.attachment.Attachment;
+import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;

@@ -10,15 +10,15 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.ContentService;
-import com.enonic.xp.core.content.Media;
-import com.enonic.xp.core.content.attachment.Attachment;
-import com.enonic.xp.core.content.attachment.Attachments;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.schema.content.ContentTypeName;
-import com.enonic.xp.core.security.PrincipalKey;
-import com.enonic.xp.core.util.BinaryReference;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Media;
+import com.enonic.xp.content.attachment.Attachment;
+import com.enonic.xp.content.attachment.Attachments;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.portal.impl.resource.base.BaseResourceTest;
 
 import static org.junit.Assert.*;

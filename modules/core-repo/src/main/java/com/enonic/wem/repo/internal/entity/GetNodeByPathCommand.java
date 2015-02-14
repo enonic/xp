@@ -2,11 +2,11 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.context.Context;
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodeVersionId;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.wem.repo.internal.index.IndexContext;
 
 public class GetNodeByPathCommand

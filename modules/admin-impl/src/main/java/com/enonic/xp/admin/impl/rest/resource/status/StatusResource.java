@@ -14,11 +14,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.core.context.Context;
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.security.PrincipalKey;
-import com.enonic.xp.core.security.auth.AuthenticationInfo;
-import com.enonic.xp.core.server.ServerInfo;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.server.ServerInfo;
 
 @Path(ResourceConstants.REST_ROOT + "status")
 @Component(immediate = true)

@@ -2,9 +2,9 @@ package com.enonic.wem.repo.internal.elasticsearch.function;
 
 import java.util.List;
 
-import com.enonic.xp.core.data.Value;
-import com.enonic.xp.core.query.expr.ValueExpr;
-import com.enonic.xp.core.util.GeoPoint;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.util.GeoPoint;
 
 public class GeoDistanceSortFunctionArguments
     extends AbstractFunctionArguments

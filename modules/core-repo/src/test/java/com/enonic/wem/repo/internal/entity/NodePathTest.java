@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.enonic.xp.core.support.AbstractEqualsTest;
-import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.support.AbstractEqualsTest;
+import com.enonic.xp.node.NodePath;
 
 import static junit.framework.Assert.assertEquals;
 

@@ -5,13 +5,13 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.core.content.page.DescriptorKey;
-import com.enonic.xp.core.content.page.region.ComponentName;
-import com.enonic.xp.core.content.page.region.PartComponent;
-import com.enonic.xp.core.data.PropertyArrayJson;
-import com.enonic.xp.core.data.PropertyTreeJson;
+import com.enonic.xp.content.page.DescriptorKey;
+import com.enonic.xp.content.page.region.ComponentName;
+import com.enonic.xp.content.page.region.PartComponent;
+import com.enonic.xp.data.PropertyArrayJson;
+import com.enonic.xp.data.PropertyTreeJson;
 
-import static com.enonic.xp.core.content.page.region.PartComponent.newPartComponent;
+import static com.enonic.xp.content.page.region.PartComponent.newPartComponent;
 
 @SuppressWarnings("UnusedDeclaration")
 public class PartComponentJson

@@ -4,8 +4,8 @@
  */
 package com.enonic.xp.core.impl.image.command;
 
-import com.enonic.xp.core.image.BuilderContext;
-import com.enonic.xp.core.image.filter.ScaleSquareFilter;
+import com.enonic.xp.image.BuilderContext;
+import com.enonic.xp.image.filter.ScaleSquareFilter;
 
 public final class ScaleSquareFilterCommand
     extends FilterCommand

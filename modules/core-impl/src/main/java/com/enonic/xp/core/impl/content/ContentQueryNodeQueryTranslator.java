@@ -1,14 +1,14 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.xp.core.content.ContentConstants;
-import com.enonic.xp.core.content.ContentPropertyNames;
-import com.enonic.xp.core.content.query.ContentQuery;
-import com.enonic.xp.core.data.Value;
-import com.enonic.xp.core.node.NodeIndexPath;
-import com.enonic.xp.core.node.NodeQuery;
-import com.enonic.xp.core.query.filter.ValueFilter;
-import com.enonic.xp.core.schema.content.ContentTypeName;
-import com.enonic.xp.core.schema.content.ContentTypeNames;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.query.ContentQuery;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeNames;
 
 class ContentQueryNodeQueryTranslator
 {

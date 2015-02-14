@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.core.security.RoleKeys;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;

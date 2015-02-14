@@ -9,9 +9,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
-import com.enonic.xp.core.module.Module;
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.util.MediaTypes;
+import com.enonic.xp.module.Module;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
 

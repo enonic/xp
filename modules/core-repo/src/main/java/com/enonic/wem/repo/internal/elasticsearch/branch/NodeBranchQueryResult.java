@@ -5,9 +5,9 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeVersionId;
-import com.enonic.xp.core.support.AbstractImmutableEntitySet;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public class NodeBranchQueryResult
     extends AbstractImmutableEntitySet<NodeBranchQueryResultEntry>

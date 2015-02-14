@@ -9,19 +9,19 @@ import com.google.common.base.Strings;
 
 import junit.framework.Assert;
 
-import com.enonic.xp.core.aggregation.Bucket;
-import com.enonic.xp.core.aggregation.BucketAggregation;
-import com.enonic.xp.core.aggregation.Buckets;
-import com.enonic.xp.core.aggregation.GeoDistanceRangeBucket;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.node.CreateNodeParams;
-import com.enonic.xp.core.node.FindNodesByQueryResult;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodeQuery;
-import com.enonic.xp.core.query.aggregation.DistanceRange;
-import com.enonic.xp.core.query.aggregation.GeoDistanceAggregationQuery;
-import com.enonic.xp.core.util.GeoPoint;
+import com.enonic.xp.aggregation.Bucket;
+import com.enonic.xp.aggregation.BucketAggregation;
+import com.enonic.xp.aggregation.Buckets;
+import com.enonic.xp.aggregation.GeoDistanceRangeBucket;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.query.aggregation.DistanceRange;
+import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
+import com.enonic.xp.util.GeoPoint;
 import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 
 import static junit.framework.Assert.assertTrue;

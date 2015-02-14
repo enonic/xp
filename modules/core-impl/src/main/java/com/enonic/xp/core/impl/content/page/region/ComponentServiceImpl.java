@@ -2,12 +2,12 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.core.content.page.region.Component;
-import com.enonic.xp.core.content.page.region.ComponentName;
-import com.enonic.xp.core.content.page.region.ComponentService;
-import com.enonic.xp.core.content.page.region.LayoutDescriptorService;
-import com.enonic.xp.core.content.page.region.PartDescriptorService;
-import com.enonic.xp.core.module.ModuleKey;
+import com.enonic.xp.content.page.region.Component;
+import com.enonic.xp.content.page.region.ComponentName;
+import com.enonic.xp.content.page.region.ComponentService;
+import com.enonic.xp.content.page.region.LayoutDescriptorService;
+import com.enonic.xp.content.page.region.PartDescriptorService;
+import com.enonic.xp.module.ModuleKey;
 
 @org.osgi.service.component.annotations.Component
 public final class ComponentServiceImpl

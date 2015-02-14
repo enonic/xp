@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 
 import org.junit.Test;
 
-import com.enonic.xp.core.index.PatternIndexConfigDocument;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeName;
-import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.index.PatternIndexConfigDocument;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodePath;
 
 import static org.junit.Assert.*;
 

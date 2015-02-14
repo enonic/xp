@@ -3,8 +3,8 @@ package com.enonic.wem.repo.internal.entity;
 
 import java.util.Objects;
 
-import com.enonic.xp.core.data.PropertyPath;
-import com.enonic.xp.core.node.NodeId;
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.node.NodeId;
 
 /**
  * The natural key of a Relationship.

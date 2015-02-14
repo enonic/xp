@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.export.writer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.util.BinaryReference;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.util.BinaryReference;
 
 public class NodeExportPathResolver
 {

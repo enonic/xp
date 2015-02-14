@@ -4,9 +4,9 @@ import javax.script.ScriptException;
 
 import jdk.nashorn.api.scripting.NashornException;
 
-import com.enonic.xp.core.resource.ResourceKey;
-import com.enonic.xp.core.resource.ResourceProblemException;
-import com.enonic.xp.core.util.Exceptions;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProblemException;
+import com.enonic.xp.util.Exceptions;
 
 public final class ErrorHelper
 {

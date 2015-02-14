@@ -13,16 +13,16 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.core.context.Context;
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.context.ContextBuilder;
-import com.enonic.xp.core.export.ExportNodesParams;
-import com.enonic.xp.core.export.ExportService;
-import com.enonic.xp.core.export.ImportNodesParams;
-import com.enonic.xp.core.export.NodeExportResult;
-import com.enonic.xp.core.export.NodeImportResult;
-import com.enonic.xp.core.security.RoleKeys;
-import com.enonic.xp.core.vfs.VirtualFiles;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.export.ExportNodesParams;
+import com.enonic.xp.export.ExportService;
+import com.enonic.xp.export.ImportNodesParams;
+import com.enonic.xp.export.NodeExportResult;
+import com.enonic.xp.export.NodeImportResult;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.vfs.VirtualFiles;
 
 @Path(ResourceConstants.REST_ROOT + "export")
 @Produces(MediaType.APPLICATION_JSON)

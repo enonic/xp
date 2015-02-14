@@ -8,9 +8,9 @@ import org.osgi.framework.Bundle;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
-import com.enonic.xp.core.form.FormJson;
-import com.enonic.xp.core.module.Module;
-import com.enonic.xp.core.schema.mixin.MixinName;
+import com.enonic.xp.form.FormJson;
+import com.enonic.xp.module.Module;
+import com.enonic.xp.schema.mixin.MixinName;
 
 public class ModuleJson
     implements ItemJson

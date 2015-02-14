@@ -11,15 +11,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.admin.impl.json.content.MetadataJson;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.ContentName;
-import com.enonic.xp.core.content.Metadatas;
-import com.enonic.xp.core.content.RenameContentParams;
-import com.enonic.xp.core.content.UpdateContentParams;
-import com.enonic.xp.core.data.PropertyArrayJson;
-import com.enonic.xp.core.data.PropertyTree;
-import com.enonic.xp.core.data.PropertyTreeJson;
-import com.enonic.xp.core.security.PrincipalKey;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentName;
+import com.enonic.xp.content.Metadatas;
+import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.data.PropertyArrayJson;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.PropertyTreeJson;
+import com.enonic.xp.security.PrincipalKey;
 
 public final class UpdateContentJson
 {

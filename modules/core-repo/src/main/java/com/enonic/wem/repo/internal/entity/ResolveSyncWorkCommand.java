@@ -4,18 +4,18 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.branch.Branch;
-import com.enonic.xp.core.content.CompareStatus;
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.data.Property;
-import com.enonic.xp.core.data.ValueTypes;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeComparison;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodePath;
-import com.enonic.xp.core.node.NodeVersionDiffQuery;
-import com.enonic.xp.core.node.NodeVersionDiffResult;
-import com.enonic.xp.core.node.ResolveSyncWorkResult;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.Property;
+import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeComparison;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionDiffQuery;
+import com.enonic.xp.node.NodeVersionDiffResult;
+import com.enonic.xp.node.ResolveSyncWorkResult;
 
 public class ResolveSyncWorkCommand
     extends AbstractNodeCommand

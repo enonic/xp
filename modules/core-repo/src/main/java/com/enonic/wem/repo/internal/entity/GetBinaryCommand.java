@@ -3,12 +3,12 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.core.blob.BlobKey;
-import com.enonic.xp.core.data.PropertyPath;
-import com.enonic.xp.core.node.AttachedBinary;
-import com.enonic.xp.core.node.Node;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.util.BinaryReference;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.node.AttachedBinary;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 
 public class GetBinaryCommand

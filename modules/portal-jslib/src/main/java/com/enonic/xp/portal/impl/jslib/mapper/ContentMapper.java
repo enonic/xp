@@ -1,9 +1,9 @@
 package com.enonic.xp.portal.impl.jslib.mapper;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.Metadata;
-import com.enonic.xp.core.content.page.Page;
-import com.enonic.xp.core.data.PropertyTree;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.Metadata;
+import com.enonic.xp.content.page.Page;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
 

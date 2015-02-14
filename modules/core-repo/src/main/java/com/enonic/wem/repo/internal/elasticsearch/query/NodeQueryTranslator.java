@@ -2,11 +2,11 @@ package com.enonic.wem.repo.internal.elasticsearch.query;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
-import com.enonic.xp.core.data.Value;
-import com.enonic.xp.core.node.NodeIndexPath;
-import com.enonic.xp.core.node.NodeQuery;
-import com.enonic.xp.core.query.filter.Filter;
-import com.enonic.xp.core.query.filter.ValueFilter;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.query.filter.Filter;
+import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.wem.repo.internal.elasticsearch.aggregation.query.AggregationQueryBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
 import com.enonic.wem.repo.internal.elasticsearch.query.builder.FilterBuilderFactory;

@@ -1,11 +1,11 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.content;
 
 
-import com.enonic.xp.core.icon.Icon;
-import com.enonic.xp.core.schema.content.ContentType;
-import com.enonic.xp.core.schema.content.ContentTypeName;
-import com.enonic.xp.core.schema.content.ContentTypeService;
-import com.enonic.xp.core.schema.content.GetContentTypeParams;
+import com.enonic.xp.icon.Icon;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 
 public final class ContentTypeIconResolver
 {

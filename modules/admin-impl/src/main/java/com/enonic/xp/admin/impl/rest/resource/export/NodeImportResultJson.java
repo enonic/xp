@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.core.export.NodeImportResult;
-import com.enonic.xp.core.node.NodePath;
+import com.enonic.xp.export.NodeImportResult;
+import com.enonic.xp.node.NodePath;
 
 public class NodeImportResultJson
 {

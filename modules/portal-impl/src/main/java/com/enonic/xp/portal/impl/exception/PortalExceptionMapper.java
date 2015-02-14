@@ -8,7 +8,7 @@ import javax.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.core.exception.NotFoundException;
+import com.enonic.xp.exception.NotFoundException;
 
 @Provider
 public final class PortalExceptionMapper

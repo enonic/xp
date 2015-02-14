@@ -8,8 +8,8 @@ import javax.crypto.spec.PBEKeySpec;
 
 import com.google.common.base.Strings;
 
-import com.enonic.xp.core.util.Exceptions;
-import com.enonic.xp.core.util.HexEncoder;
+import com.enonic.xp.util.Exceptions;
+import com.enonic.xp.util.HexEncoder;
 
 final class PBKDF2Encoder
     implements PasswordEncoder

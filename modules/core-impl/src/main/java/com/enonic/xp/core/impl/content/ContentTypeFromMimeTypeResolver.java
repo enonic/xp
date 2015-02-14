@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.core.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeName;
 
 final class ContentTypeFromMimeTypeResolver
 {

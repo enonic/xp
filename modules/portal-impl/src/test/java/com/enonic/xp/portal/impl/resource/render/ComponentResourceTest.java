@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.enonic.xp.core.rendering.Renderable;
+import com.enonic.xp.rendering.Renderable;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;

@@ -6,16 +6,16 @@ import java.util.Set;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.content.ContentIds;
-import com.enonic.xp.core.content.ContentNotFoundException;
-import com.enonic.xp.core.content.Contents;
-import com.enonic.xp.core.content.GetContentByIdsParams;
-import com.enonic.xp.core.context.ContextAccessor;
-import com.enonic.xp.core.node.NoNodeWithIdFoundException;
-import com.enonic.xp.core.node.NodeId;
-import com.enonic.xp.core.node.NodeIds;
-import com.enonic.xp.core.node.Nodes;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.NoNodeWithIdFoundException;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.Nodes;
 
 
 final class GetContentByIdsCommand

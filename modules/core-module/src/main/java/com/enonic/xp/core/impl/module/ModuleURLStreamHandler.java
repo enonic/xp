@@ -18,8 +18,8 @@ import org.osgi.service.url.URLStreamHandlerService;
 
 import com.google.common.base.Strings;
 
-import com.enonic.xp.core.module.ModuleKey;
-import com.enonic.xp.core.resource.ResourceKey;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.resource.ResourceKey;
 
 import static org.osgi.framework.BundleEvent.INSTALLED;
 import static org.osgi.framework.BundleEvent.UNINSTALLED;

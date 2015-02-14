@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.security;
 
-import com.enonic.xp.core.content.ContentConstants;
-import com.enonic.xp.core.index.IndexConfig;
-import com.enonic.xp.core.index.IndexConfigDocument;
-import com.enonic.xp.core.index.PatternIndexConfigDocument;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.PatternIndexConfigDocument;
 
 class PrincipalIndexConfigFactory
 {

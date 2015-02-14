@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.security.json;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.core.security.UserStoreKey;
+import com.enonic.xp.security.UserStoreKey;
 
 @SuppressWarnings("UnusedDeclaration")
 public class UserStoreKeyJson

@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.resource.render;
 
-import com.enonic.xp.core.content.Content;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.PortalContext;

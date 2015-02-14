@@ -6,7 +6,7 @@ package com.enonic.xp.core.impl.image.effect;
 
 import java.awt.image.BufferedImage;
 
-import com.enonic.xp.core.image.filter.BaseImageFilter;
+import com.enonic.xp.image.filter.BaseImageFilter;
 
 public final class ScaleWideFilter
     extends BaseImageFilter

@@ -20,16 +20,16 @@ import com.enonic.xp.admin.impl.rest.resource.relationship.json.RelationshipCrea
 import com.enonic.xp.admin.impl.rest.resource.relationship.json.RelationshipListJson;
 import com.enonic.xp.admin.impl.rest.resource.relationship.json.RelationshipUpdateParams;
 import com.enonic.xp.admin.impl.rest.resource.relationship.json.UpdateRelationshipJson;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.relationship.CreateRelationshipParams;
-import com.enonic.xp.core.relationship.RelationshipKey;
-import com.enonic.xp.core.relationship.RelationshipService;
-import com.enonic.xp.core.relationship.Relationships;
-import com.enonic.xp.core.relationship.UpdateRelationshipFailureException;
-import com.enonic.xp.core.relationship.UpdateRelationshipParams;
-import com.enonic.xp.core.relationship.editor.RelationshipEditors;
-import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
-import com.enonic.xp.core.security.RoleKeys;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.relationship.CreateRelationshipParams;
+import com.enonic.xp.relationship.RelationshipKey;
+import com.enonic.xp.relationship.RelationshipService;
+import com.enonic.xp.relationship.Relationships;
+import com.enonic.xp.relationship.UpdateRelationshipFailureException;
+import com.enonic.xp.relationship.UpdateRelationshipParams;
+import com.enonic.xp.relationship.editor.RelationshipEditors;
+import com.enonic.xp.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "relationship")
 @Produces(MediaType.APPLICATION_JSON)

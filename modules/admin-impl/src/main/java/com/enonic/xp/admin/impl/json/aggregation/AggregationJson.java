@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.json.aggregation;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import com.enonic.xp.core.aggregation.Aggregation;
+import com.enonic.xp.aggregation.Aggregation;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes({@JsonSubTypes.Type(value = BucketAggregationJson.class, name = "BucketAggregation")})

@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.core.data.Value;
+import com.enonic.xp.data.Value;
 import com.enonic.wem.repo.internal.entity.NodeManualOrderValueResolver;
 
 import static org.junit.Assert.*;

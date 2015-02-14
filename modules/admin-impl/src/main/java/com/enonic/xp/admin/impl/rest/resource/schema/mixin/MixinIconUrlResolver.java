@@ -1,9 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.mixin;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.IconUrlResolver;
-import com.enonic.xp.core.icon.Icon;
-import com.enonic.xp.core.schema.mixin.Mixin;
-import com.enonic.xp.core.schema.mixin.MixinName;
+import com.enonic.xp.icon.Icon;
+import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinName;
 
 public final class MixinIconUrlResolver
     extends IconUrlResolver

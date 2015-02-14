@@ -8,19 +8,19 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
-import com.enonic.xp.core.content.ContentId;
-import com.enonic.xp.core.relationship.CreateRelationshipParams;
-import com.enonic.xp.core.relationship.RelationshipId;
-import com.enonic.xp.core.relationship.RelationshipKey;
-import com.enonic.xp.core.relationship.RelationshipNotFoundException;
-import com.enonic.xp.core.relationship.RelationshipService;
-import com.enonic.xp.core.relationship.Relationships;
-import com.enonic.xp.core.relationship.UpdateRelationshipFailureException;
-import com.enonic.xp.core.relationship.UpdateRelationshipParams;
-import com.enonic.xp.core.schema.relationship.RelationshipTypeName;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.relationship.CreateRelationshipParams;
+import com.enonic.xp.relationship.RelationshipId;
+import com.enonic.xp.relationship.RelationshipKey;
+import com.enonic.xp.relationship.RelationshipNotFoundException;
+import com.enonic.xp.relationship.RelationshipService;
+import com.enonic.xp.relationship.Relationships;
+import com.enonic.xp.relationship.UpdateRelationshipFailureException;
+import com.enonic.xp.relationship.UpdateRelationshipParams;
+import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
-import static com.enonic.xp.core.relationship.Relationship.newRelationship;
-import static com.enonic.xp.core.relationship.UpdateRelationshipFailureException.newUpdateRelationshipsResult;
+import static com.enonic.xp.relationship.Relationship.newRelationship;
+import static com.enonic.xp.relationship.UpdateRelationshipFailureException.newUpdateRelationshipsResult;
 import static org.mockito.Matchers.isA;
 
 public class RelationshipResourceTest

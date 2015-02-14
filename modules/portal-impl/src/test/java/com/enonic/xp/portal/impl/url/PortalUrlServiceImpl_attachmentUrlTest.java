@@ -3,9 +3,9 @@ package com.enonic.xp.portal.impl.url;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.core.content.Content;
-import com.enonic.xp.core.content.attachment.Attachment;
-import com.enonic.xp.core.content.attachment.Attachments;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.attachment.Attachment;
+import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 

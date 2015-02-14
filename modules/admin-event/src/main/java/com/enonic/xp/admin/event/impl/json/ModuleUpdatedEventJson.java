@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.event.impl.json;
 
-import com.enonic.xp.core.module.ModuleUpdatedEvent;
+import com.enonic.xp.module.ModuleUpdatedEvent;
 
 public final class ModuleUpdatedEventJson
     implements EventJson

@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.core.security.Principal;
+import com.enonic.xp.security.Principal;
 
 public final class PrincipalJson
 {

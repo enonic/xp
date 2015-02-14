@@ -10,7 +10,7 @@ import org.junit.rules.ExpectedException;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.core.query.expr.ValueExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.wem.repo.internal.elasticsearch.function.FulltextFunctionArguments;
 import com.enonic.wem.repo.internal.elasticsearch.function.FunctionQueryBuilderException;
 

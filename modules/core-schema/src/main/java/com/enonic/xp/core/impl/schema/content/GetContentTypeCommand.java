@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.schema.content;
 
-import com.enonic.xp.core.schema.content.ContentType;
-import com.enonic.xp.core.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 
 final class GetContentTypeCommand
     extends AbstractCommand
