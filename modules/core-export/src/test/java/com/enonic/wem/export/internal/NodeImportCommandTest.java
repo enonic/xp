@@ -6,14 +6,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-
-import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import com.enonic.wem.api.export.ImportNodeException;
 import com.enonic.wem.api.export.NodeImportResult;
@@ -354,7 +353,7 @@ public class NodeImportCommandTest
         assertNotNull( attachedBinary.getBlobKey() );
     }
 
-    @Ignore
+    @org.junit.Ignore
     @Test
     public void import_special_characters()
         throws Exception
