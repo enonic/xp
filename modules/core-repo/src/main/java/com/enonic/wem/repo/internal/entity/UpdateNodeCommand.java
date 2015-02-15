@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
@@ -12,9 +13,8 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.Exceptions;
-import com.enonic.wem.repo.internal.blob.BlobStore;
 
-import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.requireContextUserPermission;
+import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.requireContextUserPermissionOrAdmin;
 
 public final class UpdateNodeCommand
     extends AbstractNodeCommand
@@ -50,7 +50,7 @@ public final class UpdateNodeCommand
         {
             throw new NodeNotFoundException( "Cannot update node with id '" + params.getId() + "', node not found" );
         }
-        requireContextUserPermission( Permission.MODIFY, persistedNode );
+        requireContextUserPermissionOrAdmin( Permission.MODIFY, persistedNode );
 
         final EditableNode editableNode = new EditableNode( persistedNode );
         params.getEditor().edit( editableNode );
@@ -58,7 +58,7 @@ public final class UpdateNodeCommand
         if ( editableNode.inheritPermissions != persistedNode.inheritsPermissions() ||
             !persistedNode.getPermissions().equals( editableNode.permissions ) )
         {
-            requireContextUserPermission( Permission.WRITE_PERMISSIONS, persistedNode );
+            requireContextUserPermissionOrAdmin( Permission.WRITE_PERMISSIONS, persistedNode );
         }
         final AttachedBinaries updatedBinaries = UpdatedAttachedBinariesResolver.create().
             editableNode( editableNode ).

@@ -6,15 +6,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.wem.repo.internal.index.query.QueryService;
 
-import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.contextUserHasPermission;
+import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.contextUserHasPermissionOrAdmin;
 
 final class ApplyNodePermissionsCommand
     extends AbstractNodeCommand
@@ -64,7 +64,7 @@ final class ApplyNodePermissionsCommand
         int appliedNodeCount = 0;
         for ( Node child : children )
         {
-            if ( contextUserHasPermission( Permission.WRITE_PERMISSIONS, child ) )
+            if ( contextUserHasPermissionOrAdmin( Permission.WRITE_PERMISSIONS, child ) )
             {
                 final Node childApplied = applyNodePermissions( parentPermissions, child );
                 appliedNodeCount++;

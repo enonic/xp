@@ -4,6 +4,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -14,6 +15,17 @@ final class NodePermissionsResolver
         throws NodeAccessException
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        requireContextUserPermission( authInfo, permission, node );
+    }
+
+    public static void requireContextUserPermissionOrAdmin( final Permission permission, final Node node )
+        throws NodeAccessException
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        if ( authInfo.getPrincipals().contains( RoleKeys.ADMIN ) )
+        {
+            return;
+        }
         requireContextUserPermission( authInfo, permission, node );
     }
 
@@ -31,6 +43,12 @@ final class NodePermissionsResolver
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         return userHasPermission( authInfo, permission, node );
+    }
+
+    public static boolean contextUserHasPermissionOrAdmin( final Permission permission, final Node node )
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        return authInfo.getPrincipals().contains( RoleKeys.ADMIN ) || userHasPermission( authInfo, permission, node );
     }
 
     public static boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission, final Node node )
