@@ -1,5 +1,7 @@
 package com.enonic.xp;
 
+import com.google.common.base.Strings;
+
 public final class Version
 {
     private final static Version INSTANCE = new Version();
@@ -9,7 +11,8 @@ public final class Version
     private Version()
     {
         final String value = getClass().getPackage().getImplementationVersion();
-        this.version = value != null ? value : "x.x.x";
+        final String overrideValue = System.getProperty( "xp.version" );
+        this.version = Strings.isNullOrEmpty( overrideValue ) ? value : overrideValue;
     }
 
     public String getName()
