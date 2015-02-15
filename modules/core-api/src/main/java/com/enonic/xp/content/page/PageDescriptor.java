@@ -25,7 +25,7 @@ public final class PageDescriptor
         this.key = builder.key;
         this.displayName = builder.displayName;
         this.regions = builder.regions;
-        this.config = builder.config != null ? builder.config : Form.newForm().build();
+        this.config = builder.config;
     }
 
     public DescriptorKey getKey()
@@ -40,7 +40,7 @@ public final class PageDescriptor
 
     public ResourceKey getResourceKey()
     {
-        return ResourceKey.from( key.getModuleKey(), "cms/pages/" + key.getName().toString() );
+        return ResourceKey.from( key.getModuleKey(), "cms/pages/" + key.getName() );
     }
 
     public String getDisplayName()
@@ -60,12 +60,17 @@ public final class PageDescriptor
 
     public static ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getModuleKey(), "cms/pages/" + key.getName().toString() + "/page.xml" );
+        return ResourceKey.from( key.getModuleKey(), "cms/pages/" + key.getName() + "/page.xml" );
     }
-    
-    public static PageDescriptor.Builder newPageDescriptor()
+
+    public static PageDescriptor.Builder create()
     {
         return new Builder();
+    }
+
+    public static PageDescriptor.Builder copyOf( final PageDescriptor pageDescriptor )
+    {
+        return new Builder( pageDescriptor );
     }
 
     public static class Builder
@@ -77,6 +82,14 @@ public final class PageDescriptor
         private Form config;
 
         private RegionDescriptors regions;
+
+        private Builder( final PageDescriptor pageDescriptor )
+        {
+            this.key = pageDescriptor.getKey();
+            this.displayName = pageDescriptor.getDisplayName();
+            this.config = pageDescriptor.getConfig();
+            this.regions = pageDescriptor.getRegions();
+        }
 
         private Builder()
         {

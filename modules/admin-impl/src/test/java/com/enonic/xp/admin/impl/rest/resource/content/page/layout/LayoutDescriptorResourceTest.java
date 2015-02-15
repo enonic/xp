@@ -43,7 +43,7 @@ public class LayoutDescriptorResourceTest
             addFormItem( newInput().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
-        final LayoutDescriptor layoutDescriptor = LayoutDescriptor.newLayoutDescriptor().
+        final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
             name( "fancy-layout" ).
             displayName( "Fancy layout" ).
             config( layoutForm ).
@@ -70,7 +70,7 @@ public class LayoutDescriptorResourceTest
             addFormItem( newInput().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
-        final LayoutDescriptor layoutDescriptor1 = LayoutDescriptor.newLayoutDescriptor().
+        final LayoutDescriptor layoutDescriptor1 = LayoutDescriptor.create().
             name( "fancy-layout" ).
             displayName( "Fancy layout" ).
             config( layoutForm ).
@@ -81,7 +81,7 @@ public class LayoutDescriptorResourceTest
             key( DescriptorKey.from( "module:fancy-layout" ) ).
             build();
 
-        final LayoutDescriptor layoutDescriptor2 = LayoutDescriptor.newLayoutDescriptor().
+        final LayoutDescriptor layoutDescriptor2 = LayoutDescriptor.create().
             name( "putty-layout" ).
             displayName( "Putty layout" ).
             config( layoutForm ).

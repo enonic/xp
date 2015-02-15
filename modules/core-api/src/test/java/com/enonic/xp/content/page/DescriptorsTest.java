@@ -2,8 +2,6 @@ package com.enonic.xp.content.page;
 
 import org.junit.Test;
 
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.PageDescriptor;
 import com.enonic.xp.content.page.region.LayoutDescriptor;
 import com.enonic.xp.content.page.region.PartDescriptor;
 import com.enonic.xp.form.Form;
@@ -24,7 +22,7 @@ public class DescriptorsTest
             // add input of type region
                 build();
 
-        PageDescriptor pageDescriptor = PageDescriptor.newPageDescriptor().
+        PageDescriptor pageDescriptor = PageDescriptor.create().
             displayName( "Landing page" ).
             config( pageForm ).
             regions( newRegionDescriptors().build() ).
@@ -32,7 +30,7 @@ public class DescriptorsTest
             build();
 
         assertEquals( "Landing page", pageDescriptor.getDisplayName() );
-        assertEquals( "landing-page", pageDescriptor.getName().toString() );
+        assertEquals( "landing-page", pageDescriptor.getName() );
     }
 
     @Test
@@ -42,7 +40,7 @@ public class DescriptorsTest
             addFormItem( newInput().name( "width" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
-        PartDescriptor partDescriptor = PartDescriptor.newPartDescriptor().
+        PartDescriptor partDescriptor = PartDescriptor.create().
             name( "news-part" ).
             displayName( "News part" ).
             config( partForm ).
@@ -59,7 +57,7 @@ public class DescriptorsTest
             addFormItem( newInput().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
-        LayoutDescriptor layoutDescriptor = LayoutDescriptor.newLayoutDescriptor().
+        LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
             name( "fancy-layout" ).
             displayName( "Fancy layout" ).
             config( layoutForm ).

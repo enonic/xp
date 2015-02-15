@@ -10,11 +10,13 @@ import com.google.common.collect.Collections2;
 import com.enonic.xp.content.page.DescriptorKey;
 import com.enonic.xp.content.page.region.PartDescriptor;
 import com.enonic.xp.content.page.region.PartDescriptors;
+import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.xml.mapper.XmlPartDescriptorMapper;
 import com.enonic.xp.xml.model.XmlPartDescriptor;
 import com.enonic.xp.xml.serializer.XmlSerializers;
@@ -25,19 +27,25 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
 
     protected ModuleService moduleService;
 
+    private InlineMixinsToFormItemsTransformer inlineMixinsTransformer;
+
     protected final PartDescriptor getDescriptor( final DescriptorKey key )
     {
         final ResourceKey resourceKey = PartDescriptor.toResourceKey( key );
         final Resource resource = Resource.from( resourceKey );
 
         final String descriptorXml = resource.readString();
-        final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
+        final PartDescriptor.Builder builder = PartDescriptor.create();
 
         final XmlPartDescriptor xmlObject = XmlSerializers.partDescriptor().parse( descriptorXml );
         new XmlPartDescriptorMapper( resourceKey.getModule() ).fromXml( xmlObject, builder );
 
         builder.name( key.getName() ).key( key );
-        return builder.build();
+        final PartDescriptor partDescriptor = builder.build();
+
+        return PartDescriptor.copyOf( partDescriptor ).
+            config( inlineMixinsTransformer.transformForm( partDescriptor.getConfig() ) ).
+            build();
     }
 
     protected final PartDescriptors getDescriptorsFromModules( final Modules modules )
@@ -90,6 +98,13 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
     public final T moduleService( final ModuleService moduleService )
     {
         this.moduleService = moduleService;
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final T mixinService( final MixinService mixinService )
+    {
+        this.inlineMixinsTransformer = new InlineMixinsToFormItemsTransformer( mixinService );
         return (T) this;
     }
 }

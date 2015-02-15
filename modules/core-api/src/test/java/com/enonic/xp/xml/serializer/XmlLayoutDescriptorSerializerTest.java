@@ -29,7 +29,7 @@ public class XmlLayoutDescriptorSerializerTest
             addFormItem( newInput().name( "width" ).inputType( DOUBLE ).label( "Column width" ).build() ).
             build();
 
-        LayoutDescriptor layoutDescriptor = LayoutDescriptor.newLayoutDescriptor().
+        LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
             displayName( "A Layout" ).
             name( "mylayout" ).
             config( configForm ).
@@ -51,7 +51,7 @@ public class XmlLayoutDescriptorSerializerTest
         throws Exception
     {
         final String xml = readFromFile( "layout-descriptor.xml" );
-        final LayoutDescriptor.Builder builder = LayoutDescriptor.newLayoutDescriptor();
+        final LayoutDescriptor.Builder builder = LayoutDescriptor.create();
         builder.key( DescriptorKey.from( "module:mylayout" ) );
         builder.name( "mylayout" );
 

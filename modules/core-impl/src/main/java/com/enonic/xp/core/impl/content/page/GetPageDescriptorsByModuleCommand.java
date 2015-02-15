@@ -14,7 +14,7 @@ import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 
 final class GetPageDescriptorsByModuleCommand
-    extends AbstractGetPageDescriptorCommand
+    extends AbstractGetPageDescriptorCommand<GetPageDescriptorsByModuleCommand>
 {
     private final static Pattern PATTERN = Pattern.compile( "cms/pages/([^/]+)/page.xml" );
 

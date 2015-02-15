@@ -222,7 +222,7 @@ public final class ContentFixtures2
             addFormItem( newInput().name( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
-        return PageDescriptor.newPageDescriptor().
+        return PageDescriptor.create().
             displayName( "Landing page" ).
             config( pageForm ).
             regions( newRegionDescriptors().

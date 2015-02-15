@@ -69,7 +69,7 @@ public class XmlPageDescriptorSerializerTest
             addFormItem( myFormItemSet ).
             build();
 
-        PageDescriptor pageDescriptor = PageDescriptor.newPageDescriptor().
+        PageDescriptor pageDescriptor = PageDescriptor.create().
             displayName( "Landing page" ).
             config( pageForm ).
             regions( newRegionDescriptors().
@@ -91,7 +91,7 @@ public class XmlPageDescriptorSerializerTest
         throws Exception
     {
         final String xml = readFromFile( "page-descriptor.xml" );
-        final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
+        final PageDescriptor.Builder builder = PageDescriptor.create();
         builder.key( DescriptorKey.from( "module:mypage" ) );
         builder.regions( RegionDescriptors.newRegionDescriptors().build() );
 

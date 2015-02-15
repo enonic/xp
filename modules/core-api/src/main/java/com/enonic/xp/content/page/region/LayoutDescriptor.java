@@ -26,17 +26,22 @@ public class LayoutDescriptor
     public ResourceKey getComponentPath()
     {
         final DescriptorKey key = this.getKey();
-        return ResourceKey.from( key.getModuleKey(), "cms/layouts/" + key.getName().toString() );
+        return ResourceKey.from( key.getModuleKey(), "cms/layouts/" + key.getName() );
     }
 
-    public static LayoutDescriptor.Builder newLayoutDescriptor()
+    public static LayoutDescriptor.Builder create()
     {
         return new Builder();
     }
 
+    public static LayoutDescriptor.Builder copyOf( final LayoutDescriptor layoutDescriptor )
+    {
+        return new Builder( layoutDescriptor );
+    }
+
     public static ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getModuleKey(), "cms/layouts/" + key.getName().toString() + "/layout.xml" );
+        return ResourceKey.from( key.getModuleKey(), "cms/layouts/" + key.getName() + "/layout.xml" );
     }
 
     public static class Builder
@@ -46,6 +51,12 @@ public class LayoutDescriptor
 
         private Builder()
         {
+        }
+
+        private Builder( final LayoutDescriptor layoutDescriptor )
+        {
+            super( layoutDescriptor );
+            this.regions = layoutDescriptor.getRegions();
         }
 
         public Builder regions( final RegionDescriptors value )

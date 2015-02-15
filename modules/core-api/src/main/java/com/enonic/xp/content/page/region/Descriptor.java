@@ -25,7 +25,7 @@ public abstract class Descriptor<KEY extends DescriptorKey>
         this.key = (KEY) builder.key;
         this.name = builder.name;
         this.displayName = builder.displayName;
-        this.config = builder.config != null ? builder.config : Form.newForm().build();
+        this.config = builder.config;
     }
 
     public KEY getKey()
@@ -50,7 +50,7 @@ public abstract class Descriptor<KEY extends DescriptorKey>
 
     public abstract ResourceKey getComponentPath();
 
-    public abstract static class BaseDescriptorBuilder<T extends Descriptor.BaseDescriptorBuilder, KEY>
+    public abstract static class BaseDescriptorBuilder<T extends Descriptor.BaseDescriptorBuilder, KEY extends DescriptorKey>
     {
         protected KEY key;
 
@@ -59,6 +59,18 @@ public abstract class Descriptor<KEY extends DescriptorKey>
         protected String displayName;
 
         protected Form config;
+
+        protected BaseDescriptorBuilder()
+        {
+        }
+
+        protected BaseDescriptorBuilder( final Descriptor<KEY> descriptor )
+        {
+            this.key = descriptor.getKey();
+            this.name = descriptor.getName();
+            this.displayName = descriptor.getDisplayName();
+            this.config = descriptor.getConfig();
+        }
 
         public T key( final KEY key )
         {

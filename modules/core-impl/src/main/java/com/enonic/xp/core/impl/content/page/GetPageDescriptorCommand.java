@@ -6,7 +6,7 @@ import com.enonic.xp.content.page.PageDescriptorNotFoundException;
 import com.enonic.xp.resource.ResourceNotFoundException;
 
 final class GetPageDescriptorCommand
-    extends AbstractGetPageDescriptorCommand
+    extends AbstractGetPageDescriptorCommand<GetPageDescriptorCommand>
 {
     private DescriptorKey key;
 

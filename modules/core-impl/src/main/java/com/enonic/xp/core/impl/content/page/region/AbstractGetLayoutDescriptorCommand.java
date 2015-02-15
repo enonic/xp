@@ -10,11 +10,13 @@ import com.google.common.collect.Collections2;
 import com.enonic.xp.content.page.DescriptorKey;
 import com.enonic.xp.content.page.region.LayoutDescriptor;
 import com.enonic.xp.content.page.region.LayoutDescriptors;
+import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.xml.mapper.XmlLayoutDescriptorMapper;
 import com.enonic.xp.xml.model.XmlLayoutDescriptor;
 import com.enonic.xp.xml.serializer.XmlSerializers;
@@ -25,19 +27,25 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
 
     protected ModuleService moduleService;
 
+    private InlineMixinsToFormItemsTransformer inlineMixinsTransformer;
+
     protected final LayoutDescriptor getDescriptor( final DescriptorKey key )
     {
         final ResourceKey resourceKey = LayoutDescriptor.toResourceKey( key );
         final Resource resource = Resource.from( resourceKey );
 
         final String descriptorXml = resource.readString();
-        final LayoutDescriptor.Builder builder = LayoutDescriptor.newLayoutDescriptor();
+        final LayoutDescriptor.Builder builder = LayoutDescriptor.create();
 
         final XmlLayoutDescriptor xmlObject = XmlSerializers.layoutDescriptor().parse( descriptorXml );
         new XmlLayoutDescriptorMapper( resourceKey.getModule() ).fromXml( xmlObject, builder );
 
         builder.name( key.getName() ).key( key );
-        return builder.build();
+        final LayoutDescriptor layoutDescriptor = builder.build();
+
+        return LayoutDescriptor.copyOf( layoutDescriptor ).
+            config( inlineMixinsTransformer.transformForm( layoutDescriptor.getConfig() ) ).
+            build();
     }
 
     protected final LayoutDescriptors getDescriptorsFromModules( final Modules modules )
@@ -89,6 +97,13 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
     public final T moduleService( final ModuleService moduleService )
     {
         this.moduleService = moduleService;
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final T mixinService( final MixinService mixinService )
+    {
+        this.inlineMixinsTransformer = new InlineMixinsToFormItemsTransformer( mixinService );
         return (T) this;
     }
 }

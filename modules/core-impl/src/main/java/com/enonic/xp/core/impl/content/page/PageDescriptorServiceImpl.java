@@ -10,6 +10,7 @@ import com.enonic.xp.content.page.PageDescriptors;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.schema.mixin.MixinService;
 
 @Component(immediate = true)
 public final class PageDescriptorServiceImpl
@@ -17,26 +18,42 @@ public final class PageDescriptorServiceImpl
 {
     private ModuleService moduleService;
 
+    private MixinService mixinService;
+
     public PageDescriptor getByKey( final DescriptorKey key )
     {
-        return new GetPageDescriptorCommand().key( key ).execute();
+        return new GetPageDescriptorCommand().
+            mixinService( this.mixinService ).
+            key( key ).execute();
     }
 
     @Override
     public PageDescriptors getByModule( final ModuleKey moduleKey )
     {
-        return new GetPageDescriptorsByModuleCommand().moduleService( this.moduleService ).moduleKey( moduleKey ).execute();
+        return new GetPageDescriptorsByModuleCommand().
+            moduleService( this.moduleService ).
+            mixinService( this.mixinService ).
+            moduleKey( moduleKey ).execute();
     }
 
     @Override
     public PageDescriptors getByModules( final ModuleKeys moduleKeys )
     {
-        return new GetPageDescriptorsByModulesCommand().moduleService( this.moduleService ).moduleKeys( moduleKeys ).execute();
+        return new GetPageDescriptorsByModulesCommand().
+            moduleService( this.moduleService ).
+            mixinService( this.mixinService ).
+            moduleKeys( moduleKeys ).execute();
     }
 
     @Reference
     public void setModuleService( final ModuleService moduleService )
     {
         this.moduleService = moduleService;
+    }
+
+    @Reference
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
     }
 }

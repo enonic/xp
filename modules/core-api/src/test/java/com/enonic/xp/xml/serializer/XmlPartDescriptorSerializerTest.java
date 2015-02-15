@@ -29,7 +29,7 @@ public class XmlPartDescriptorSerializerTest
             addFormItem( newInlineMixin().mixin( "mymodule:link-urls" ).build() ).
             build();
 
-        PartDescriptor partDescriptor = PartDescriptor.newPartDescriptor().
+        PartDescriptor partDescriptor = PartDescriptor.create().
             displayName( "A Part" ).
             name( "mypart" ).
             config( configForm ).
@@ -47,7 +47,7 @@ public class XmlPartDescriptorSerializerTest
         throws Exception
     {
         final String xml = readFromFile( "part-descriptor.xml" );
-        final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
+        final PartDescriptor.Builder builder = PartDescriptor.create();
         builder.key( DescriptorKey.from( "module:mypart" ) );
         builder.name( "A part" );
 

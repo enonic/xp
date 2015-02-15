@@ -10,6 +10,7 @@ import com.enonic.xp.content.page.region.LayoutDescriptors;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.module.ModuleService;
+import com.enonic.xp.schema.mixin.MixinService;
 
 @Component
 public final class LayoutDescriptorServiceImpl
@@ -17,24 +18,41 @@ public final class LayoutDescriptorServiceImpl
 {
     private ModuleService moduleService;
 
+    private MixinService mixinService;
+
     public LayoutDescriptor getByKey( final DescriptorKey key )
     {
-        return new GetLayoutDescriptorCommand().key( key ).moduleService( this.moduleService ).execute();
+        return new GetLayoutDescriptorCommand().key( key ).
+            moduleService( this.moduleService ).
+            mixinService( this.mixinService ).
+            execute();
     }
 
     public LayoutDescriptors getByModule( final ModuleKey moduleKey )
     {
-        return new GetLayoutDescriptorsByModuleCommand().moduleService( this.moduleService ).moduleKey( moduleKey ).execute();
+        return new GetLayoutDescriptorsByModuleCommand().
+            moduleService( this.moduleService ).
+            mixinService( this.mixinService ).
+            moduleKey( moduleKey ).execute();
     }
 
     public LayoutDescriptors getByModules( final ModuleKeys moduleKeys )
     {
-        return new GetLayoutDescriptorsByModulesCommand().moduleService( this.moduleService ).moduleKeys( moduleKeys ).execute();
+        return new GetLayoutDescriptorsByModulesCommand().
+            moduleService( this.moduleService ).
+            mixinService( this.mixinService ).
+            moduleKeys( moduleKeys ).execute();
     }
 
     @Reference
     public void setModuleService( final ModuleService moduleService )
     {
         this.moduleService = moduleService;
+    }
+
+    @Reference
+    public void setMixinService( final MixinService mixinService )
+    {
+        this.mixinService = mixinService;
     }
 }
