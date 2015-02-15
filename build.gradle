@@ -40,3 +40,4 @@ configure( osgiProjects ) {
 configure( mavenProjects ) {
     apply from: "$rootDir/gradle/maven.gradle"
 }
+

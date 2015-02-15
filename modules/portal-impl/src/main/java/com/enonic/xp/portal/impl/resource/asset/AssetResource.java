@@ -9,11 +9,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
+import org.jboss.resteasy.annotations.GZIP;
+
 import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.resource.base.BaseSubResource;
+import com.enonic.xp.util.MediaTypes;
 
 import static com.google.common.primitives.Ints.checkedCast;
 
@@ -26,6 +28,7 @@ public final class AssetResource
 
     @GET
     @Path("{module}/{path:.+}")
+    @GZIP
     public Response handle( @PathParam("module") final String module, @PathParam("path") final String path )
         throws Exception
     {
