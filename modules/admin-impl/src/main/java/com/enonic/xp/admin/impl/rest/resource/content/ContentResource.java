@@ -67,6 +67,7 @@ import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -105,7 +106,6 @@ import com.enonic.xp.content.attachment.CreateAttachments;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
@@ -283,11 +283,7 @@ public final class ContentResource
                 contentService.delete( deleteContent );
                 jsonResult.addSuccess( contentToDelete );
             }
-            catch ( ContentNotFoundException | UnableToDeleteContentException e )
-            {
-                jsonResult.addFailure( deleteContent.getContentPath(), e.getMessage() );
-            }
-            catch ( NodeAccessException e )
+            catch ( ContentNotFoundException | UnableToDeleteContentException | ContentAccessException e )
             {
                 jsonResult.addFailure( deleteContent.getContentPath(), e.getMessage() );
             }

@@ -18,18 +18,17 @@ module app.remove {
                     deleteRequest.addContentPath(this.contentToDelete[i].getPath());
                 }
 
-                deleteRequest.send().done((jsonResponse: api.rest.JsonResponse<api.content.DeleteContentResult>) => {
+                deleteRequest.sendAndParse().then((result: api.content.DeleteContentResult) => {
 
-                    var result = jsonResponse.getResult(),
-                        paths = [],
+                    var paths = [],
                         deletedContents: api.content.ContentSummary[] = [];
 
-                    for (var i = 0; i < result.successes.length; i++) {
-                        var path = result.successes[i].path;
+                    for (var i = 0; i < result.getDeleted().length; i++) {
+                        var path = result.getDeleted()[i];
                         paths.push(path);
 
                         this.contentToDelete.forEach((content: api.content.ContentSummary) => {
-                            if (path == content.getPath().toString()) {
+                            if (content.getPath().equals(path)) {
                                 deletedContents.push(content);
                             }
                         })
@@ -37,10 +36,21 @@ module app.remove {
 
                     this.close();
 
-                    api.notify.showFeedback('Content [' + paths.join(', ') + '] deleted!');
+                    if (result.getDeleted().length > 0) {
+                        api.notify.showFeedback('Content [' + paths.map((path)=>path.toString()).join(', ') + '] deleted!');
+                        new api.content.ContentDeletedEvent(deletedContents).fire();
+                    } else {
+                        var reason = result.getDeleteFailures().length > 0 ? result.getDeleteFailures()[0].getReason() : '';
+                        api.notify.showWarning('Content could not be deleted. ' + reason);
+                    }
 
-                    new api.content.ContentDeletedEvent(deletedContents).fire();
-                });
+                }).catch((reason: any) => {
+                    if (reason && reason.message) {
+                        api.notify.showError(reason.message);
+                    } else {
+                        api.notify.showError('Content could not be deleted.');
+                    }
+                }).done();
             });
 
             this.addCancelButtonToBottom();

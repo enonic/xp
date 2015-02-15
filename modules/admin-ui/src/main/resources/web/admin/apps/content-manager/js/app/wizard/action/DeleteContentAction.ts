@@ -12,18 +12,25 @@ module app.wizard.action {
                         wizardPanel.close();
                         new api.content.DeleteContentRequest()
                             .addContentPath(wizardPanel.getPersistedItem().getPath())
-                            .send()
-                            .done((jsonResponse: api.rest.JsonResponse<any>) => {
-                                var json = jsonResponse.getJson();
-
-                                if (json.successes && json.successes.length > 0) {
-                                    var path = json.successes[0].path;
+                            .sendAndParse()
+                            .then((result: api.content.DeleteContentResult) => {
+                                if (result.getDeleted().length > 0) {
+                                    var path = result.getDeleted()[0].toString();
                                     var deletedContent = wizardPanel.getPersistedItem();
 
                                     api.notify.showFeedback('Content [' + path + '] deleted!');
                                     new api.content.ContentDeletedEvent([deletedContent]).fire();
+                                } else {
+                                    var reason = result.getDeleteFailures().length > 0 ? result.getDeleteFailures()[0].getReason() : '';
+                                    api.notify.showWarning('Content could not be deleted. ' + reason);
                                 }
-                            });
+                            }).catch((reason: any) => {
+                                if (reason && reason.message) {
+                                    api.notify.showError(reason.message);
+                                } else {
+                                    api.notify.showError('Content could not be deleted.');
+                                }
+                            }).done();
                     }).open();
             });
         }

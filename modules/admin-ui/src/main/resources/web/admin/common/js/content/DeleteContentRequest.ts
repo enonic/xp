@@ -1,6 +1,6 @@
 module api.content {
 
-    export class DeleteContentRequest extends ContentResourceRequest<DeleteContentResult, any> {
+    export class DeleteContentRequest extends ContentResourceRequest<DeleteContentResultJson, DeleteContentResult> {
 
         private contentPaths:ContentPath[] = [];
 
@@ -33,6 +33,16 @@ module api.content {
 
         getRequestPath():api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "delete");
+        }
+
+        sendAndParse(): wemQ.Promise<DeleteContentResult> {
+
+            return this.send().
+                then((response: api.rest.JsonResponse<DeleteContentResultJson>) => {
+
+                    return DeleteContentResult.fromJson(response.getResult());
+
+                });
         }
     }
 }
