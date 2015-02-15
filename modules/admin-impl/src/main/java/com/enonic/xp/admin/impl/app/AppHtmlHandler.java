@@ -13,10 +13,22 @@ final class AppHtmlHandler
 {
     private final Template template;
 
+    private final String version;
+
     public AppHtmlHandler()
     {
         final URL url = getClass().getResource( "app.html" );
         this.template = MustacheCompiler.getInstance().compile( url );
+
+        final String version = Version.get().getVersion();
+        if ( version.endsWith( "-SNAPSHOT" ) )
+        {
+            this.version = Long.toString( System.currentTimeMillis() );
+        }
+        else
+        {
+            this.version = version;
+        }
     }
 
     public String render( final String app )
@@ -28,7 +40,7 @@ final class AppHtmlHandler
 
         final String uri = baseUri.equals( "/" ) ? "" : baseUri;
         model.put( "baseUri", uri );
-        model.put( "assetsUri", uri + "/admin/assets/" + Version.get().getVersion() );
+        model.put( "assetsUri", uri + "/admin/assets/" + this.version );
 
         return this.template.execute( model );
     }

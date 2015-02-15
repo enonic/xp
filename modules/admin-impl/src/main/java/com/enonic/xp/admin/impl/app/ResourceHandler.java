@@ -17,18 +17,25 @@ final class ResourceHandler
 
     private ResourceLocator resourceLocator;
 
+    private final boolean devMode;
+
+    public ResourceHandler()
+    {
+        this.devMode = "true".equals( System.getProperty( "xp.dev.mode" ) );
+    }
+
     public Response handle( final String path )
         throws Exception
     {
-        return doHandle( path ).build();
+        return handle( path, false );
     }
 
-    public Response handle( final String version, final String path )
+    public Response handle( final String path, final boolean caching )
         throws Exception
     {
         final Response.ResponseBuilder builder = doHandle( path );
 
-        if ( !version.endsWith( "-SNAPSHOT" ) )
+        if ( caching && !this.devMode )
         {
             final CacheControl control = new CacheControl();
             control.setMaxAge( MAX_CACHE_AGE );

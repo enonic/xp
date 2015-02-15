@@ -53,7 +53,7 @@ public final class MainResource
     public Response getVersionedResource( @PathParam("version") final String version, @PathParam("path") final String path )
         throws Exception
     {
-        return this.resourceHandler.handle( version, "admin/" + path );
+        return this.resourceHandler.handle( "admin/" + path, true );
     }
 
     @GET
