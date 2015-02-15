@@ -37,6 +37,11 @@ public class ExportNodesParams
         return sourceNodePath;
     }
 
+    public boolean isIncludeNodeIds()
+    {
+        return includeNodeIds;
+    }
+
     public boolean isDryRun()
     {
         return dryRun;

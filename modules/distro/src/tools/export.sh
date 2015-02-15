@@ -12,6 +12,7 @@ Export node from a branch in a repository
 	-t TARGET_DIR			target directory to save export
 	-s SOURCE_REPO_PATH		path of data to export. Format: <repo-name>:<branch-name>:<node-path>.
 						Sample: 'cms-repo:stage:/content'
+	-i [true|false]		Include ids in data when exporting
 	-h HOSTNAME			hostname, defaults to localhost
 	-p PORT				port, defaults to 8080
 	-n                  		enable nice format of output (requires python)
