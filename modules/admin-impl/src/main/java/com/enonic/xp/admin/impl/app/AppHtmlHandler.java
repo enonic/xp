@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.samskivert.mustache.Template;
 
+import com.enonic.xp.Version;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 final class AppHtmlHandler
@@ -24,7 +25,10 @@ final class AppHtmlHandler
 
         final Map<String, Object> model = Maps.newHashMap();
         model.put( "app", app );
-        model.put( "baseUri", baseUri.equals( "/" ) ? "" : baseUri );
+
+        final String uri = baseUri.equals( "/" ) ? "" : baseUri;
+        model.put( "baseUri", uri );
+        model.put( "assetsUri", uri + "/admin/assets/" + Version.get().getVersion() );
 
         return this.template.execute( model );
     }

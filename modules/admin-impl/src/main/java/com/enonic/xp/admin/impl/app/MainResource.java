@@ -34,7 +34,7 @@ public final class MainResource
     public Response redirectToLoginPage()
         throws Exception
     {
-        return Response.temporaryRedirect( new URI( "/admin" )).build();
+        return Response.temporaryRedirect( new URI( "/admin" ) ).build();
     }
 
     @GET
@@ -43,6 +43,14 @@ public final class MainResource
         throws Exception
     {
         return this.resourceHandler.handle( path );
+    }
+
+    @GET
+    @Path("admin/assets/{version}/{path:.+}")
+    public Response getVersionedResource( @PathParam("version") final String version, @PathParam("path") final String path )
+        throws Exception
+    {
+        return this.resourceHandler.handle( version, "admin/" + path );
     }
 
     @GET
