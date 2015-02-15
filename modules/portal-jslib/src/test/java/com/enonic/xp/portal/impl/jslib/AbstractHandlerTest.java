@@ -1,19 +1,18 @@
 package com.enonic.xp.portal.impl.jslib;
 
+import org.junit.Assert;
 import org.junit.Before;
-
-import junit.framework.Assert;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.portal.impl.script.AbstractScriptTest;
-import com.enonic.xp.portal.script.ScriptExports;
-import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.impl.script.AbstractScriptTest;
+import com.enonic.xp.portal.script.ScriptExports;
+import com.enonic.xp.portal.script.command.CommandHandler;
 
 public abstract class AbstractHandlerTest
     extends AbstractScriptTest

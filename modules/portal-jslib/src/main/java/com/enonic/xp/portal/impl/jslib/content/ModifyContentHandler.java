@@ -22,11 +22,11 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.convert.Converters;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.portal.impl.jslib.mapper.ContentMapper;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
-import com.enonic.xp.portal.impl.jslib.mapper.ContentMapper;
+import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinService;
 
 @Component(immediate = true)
 public final class ModifyContentHandler
@@ -97,12 +97,6 @@ public final class ModifyContentHandler
         if ( displayName != null )
         {
             target.displayName = displayName;
-        }
-
-        final Boolean draft = Converters.convert( map.get( "draft" ), Boolean.class );
-        if ( draft != null )
-        {
-            target.validated = draft;
         }
 
         final Object data = map.get( "data" );

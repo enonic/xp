@@ -6,9 +6,9 @@ import java.util.Locale;
 
 import com.enonic.xp.content.page.Page;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.icon.Thumbnail;
 
 public class EditableContent
 {
@@ -22,7 +22,7 @@ public class EditableContent
 
     public Page page;
 
-    public boolean validated;
+    public boolean valid;
 
     public Thumbnail thumbnail;
 
@@ -49,7 +49,7 @@ public class EditableContent
         this.data = source.getData().copy();
         this.metadata = source.getAllMetadata().copy();
         this.page = source.hasPage() ? source.getPage().copy() : null;
-        this.validated = source.isValid();
+        this.valid = source.isValid();
         this.thumbnail = source.getThumbnail();
         this.inheritPermissions = source.inheritsPermissions();
         this.permissions = source.getPermissions();
@@ -66,7 +66,7 @@ public class EditableContent
             data( data ).
             metadata( metadata ).
             page( page ).
-            valid( validated ).
+            valid( valid ).
             thumbnail( thumbnail ).
             inheritPermissions( inheritPermissions ).
             permissions( permissions ).

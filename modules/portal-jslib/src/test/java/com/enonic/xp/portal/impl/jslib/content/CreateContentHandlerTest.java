@@ -10,11 +10,11 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.Metadatas;
+import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
+import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.portal.script.command.CommandHandler;
-import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
 
 public class CreateContentHandlerTest
     extends AbstractHandlerTest
@@ -58,7 +58,7 @@ public class CreateContentHandlerTest
         builder.name( params.getName() );
         builder.parentPath( params.getParent() );
         builder.displayName( params.getDisplayName() );
-        builder.valid( params.isRequireValid() );
+        builder.valid( false );
         builder.type( params.getType() );
         builder.data( params.getData() );
         builder.creator( PrincipalKey.ofAnonymous() );

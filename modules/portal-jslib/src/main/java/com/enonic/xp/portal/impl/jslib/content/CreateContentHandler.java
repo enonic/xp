@@ -13,12 +13,12 @@ import com.enonic.xp.content.Metadata;
 import com.enonic.xp.content.Metadatas;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.portal.impl.jslib.mapper.ContentMapper;
+import com.enonic.xp.portal.script.command.CommandHandler;
+import com.enonic.xp.portal.script.command.CommandRequest;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.portal.script.command.CommandHandler;
-import com.enonic.xp.portal.script.command.CommandRequest;
-import com.enonic.xp.portal.impl.jslib.mapper.ContentMapper;
 
 @Component(immediate = true)
 public final class CreateContentHandler
@@ -48,7 +48,8 @@ public final class CreateContentHandler
             name( req.param( "name" ).value( String.class ) ).
             parent( contentPath( req.param( "parentPath" ).value( String.class ) ) ).
             displayName( req.param( "displayName" ).value( String.class ) ).
-            requireValid( !req.param( "draft" ).value( Boolean.class ) ).
+            requireValid(
+                req.param( "requireValid" ).value( Boolean.class ) != null ? req.param( "requireValid" ).value( Boolean.class ) : false ).
             type( contentTypeName( req.param( "contentType" ).value( String.class ) ) ).
             contentData( propertyTree( req.param( "data" ).map() ) ).
             metadata( metadatas( req.param( "x" ).map() ) ).

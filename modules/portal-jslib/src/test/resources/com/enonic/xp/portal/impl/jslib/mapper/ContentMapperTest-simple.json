@@ -9,7 +9,7 @@
   "type": "base:unstructured",
   "displayName": "My Content",
   "hasChildren": false,
-  "draft": true,
+  "valid": false,
   "data": {
     "boolean": [
       true,

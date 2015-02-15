@@ -13,7 +13,6 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
-import com.enonic.xp.icon.Icon;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -46,6 +45,7 @@ import com.enonic.xp.content.site.ModuleConfigs;
 import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertyIdProviderAccessor;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -624,8 +624,7 @@ public class ContentResourceTest
         Mockito.when( contentTypeService.getByNames( Mockito.isA( GetContentTypesParams.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "mymodule:my-type" ) ) );
 
-        Exception e =
-            new ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
+        Exception e = new ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
 
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenThrow( e );
 
@@ -751,8 +750,7 @@ public class ContentResourceTest
         throws Exception
     {
 
-        final Exception e =
-            new ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
+        final Exception e = new ContentNotFoundException( ContentId.from( "content-id" ), ContentConstants.BRANCH_DRAFT );
 
         Mockito.when( contentService.duplicate( Mockito.isA( DuplicateContentParams.class ) ) ).
             thenThrow( e );

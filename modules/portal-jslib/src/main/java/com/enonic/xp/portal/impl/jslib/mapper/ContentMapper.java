@@ -17,12 +17,6 @@ public final class ContentMapper
         this.value = value;
     }
 
-    @Override
-    public void serialize( final MapGenerator gen )
-    {
-        serialize( gen, this.value );
-    }
-
     private static void serialize( final MapGenerator gen, final Content value )
     {
         gen.value( "_id", value.getId() );
@@ -35,7 +29,7 @@ public final class ContentMapper
         gen.value( "type", value.getType() );
         gen.value( "displayName", value.getDisplayName() );
         gen.value( "hasChildren", value.hasChildren() );
-        gen.value( "draft", !value.isValid() );
+        gen.value( "valid", value.isValid() );
 
         serializeData( gen, value.getData() );
         serializeMetaData( gen, value.getAllMetadata() );
@@ -69,5 +63,11 @@ public final class ContentMapper
             new PageMapper( value ).serialize( gen );
         }
         gen.end();
+    }
+
+    @Override
+    public void serialize( final MapGenerator gen )
+    {
+        serialize( gen, this.value );
     }
 }

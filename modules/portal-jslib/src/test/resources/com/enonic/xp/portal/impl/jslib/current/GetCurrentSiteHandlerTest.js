@@ -1,25 +1,25 @@
 var expectedJson = {
-    "_id": "100123",
-    "_name": "my-content",
-    "_path": "/my-content",
-    "data": {
-        "moduleConfig": {
-            "config": {
-                "Field": 42
+    "_id" : "100123",
+    "_name" : "my-content",
+    "_path" : "/my-content",
+    "data" : {
+        "moduleConfig" : {
+            "config" : {
+                "Field" : 42
             },
-            "moduleKey": "mymodule"
+            "moduleKey" : "mymodule"
         }
     },
-    "draft": true,
-    "hasChildren": false,
-    "x": {},
-    "moduleConfigs": {
-        "mymodule": {
-            "Field": 42
+    "hasChildren" : false,
+    "moduleConfigs" : {
+        "mymodule" : {
+            "Field" : 42
         }
     },
-    "page": {},
-    "type": "base:unstructured"
+    "page" : { },
+    "type" : "base:unstructured",
+    "valid" : false,
+    "x" : { }
 };
 
 exports.getCurrentSite = function () {

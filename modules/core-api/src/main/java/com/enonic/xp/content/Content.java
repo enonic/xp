@@ -14,13 +14,13 @@ import com.enonic.xp.content.page.PageTemplate;
 import com.enonic.xp.content.site.Site;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.rendering.Renderable;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.icon.Thumbnail;
 
 @SuppressWarnings("UnusedDeclaration")
 public class Content
@@ -112,6 +112,59 @@ public class Content
         this.inheritPermissions = builder.inheritPermissions;
         this.language = builder.language;
         this.contentState = builder.contentState == null ? ContentState.DEFAULT : builder.contentState;
+    }
+
+    public static Builder newContent( final ContentTypeName type )
+    {
+        if ( type.isPageTemplate() )
+        {
+            final PageTemplate.Builder builder = PageTemplate.newPageTemplate();
+            builder.type( type );
+            return builder;
+        }
+        else if ( type.isSite() )
+        {
+            Site.Builder builder = Site.newSite();
+            builder.type( type );
+            return builder;
+        }
+        else if ( type.isDescendantOfMedia() )
+        {
+            Media.Builder builder = Media.create();
+            builder.type( type );
+            return builder;
+        }
+        else
+        {
+            Builder builder = Content.newContent();
+            builder.type( type );
+            return builder;
+        }
+    }
+
+    public static Builder newContent()
+    {
+        return new Builder();
+    }
+
+    public static Builder newContent( final Content source )
+    {
+        if ( source instanceof PageTemplate )
+        {
+            return new PageTemplate.Builder( (PageTemplate) source );
+        }
+        else if ( source instanceof Site )
+        {
+            return new Site.Builder( (Site) source );
+        }
+        else if ( source instanceof Media )
+        {
+            return new Media.Builder( (Media) source );
+        }
+        else
+        {
+            return new Builder( source );
+        }
     }
 
     public ContentPath getParentPath()
@@ -333,59 +386,6 @@ public class Content
                              language, contentState );
     }
 
-    public static Builder newContent( final ContentTypeName type )
-    {
-        if ( type.isPageTemplate() )
-        {
-            final PageTemplate.Builder builder = PageTemplate.newPageTemplate();
-            builder.type( type );
-            return builder;
-        }
-        else if ( type.isSite() )
-        {
-            Site.Builder builder = Site.newSite();
-            builder.type( type );
-            return builder;
-        }
-        else if ( type.isDescendantOfMedia() )
-        {
-            Media.Builder builder = Media.create();
-            builder.type( type );
-            return builder;
-        }
-        else
-        {
-            Builder builder = Content.newContent();
-            builder.type( type );
-            return builder;
-        }
-    }
-
-    public static Builder newContent()
-    {
-        return new Builder();
-    }
-
-    public static Builder newContent( final Content source )
-    {
-        if ( source instanceof PageTemplate )
-        {
-            return new PageTemplate.Builder( (PageTemplate) source );
-        }
-        else if ( source instanceof Site )
-        {
-            return new Site.Builder( (Site) source );
-        }
-        else if ( source instanceof Media )
-        {
-            return new Media.Builder( (Media) source );
-        }
-        else
-        {
-            return new Builder( source );
-        }
-    }
-
     public static class Builder<BUILDER extends Builder, C extends Content>
     {
         protected ContentId id;
@@ -500,9 +500,9 @@ public class Content
             return this;
         }
 
-        public Builder<BUILDER, C> valid( final boolean validated )
+        public Builder<BUILDER, C> valid( final boolean valid )
         {
-            this.valid = validated;
+            this.valid = valid;
             return this;
         }
 
