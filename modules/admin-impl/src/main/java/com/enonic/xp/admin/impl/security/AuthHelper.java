@@ -36,7 +36,7 @@ public final class AuthHelper
             if ( !info.hasRole( RoleKeys.ADMIN_LOGIN ) )
             {
                 logout();
-                return AuthenticationInfo.unAuthenticated();
+                return info;
             }
 
             final Session session = ContextAccessor.current().getLocalScope().getSession();

@@ -13,6 +13,7 @@ import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.security.AuthHelper;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.Session;
@@ -39,6 +40,10 @@ public final class AuthResource
         final AuthHelper helper = new AuthHelper( this.securityService );
         final AuthenticationInfo authInfo = helper.login( login.getUser(), login.getPassword(), login.isRememberMe() );
 
+        if ( authInfo.isAuthenticated() && !authInfo.hasRole( RoleKeys.ADMIN_LOGIN ) )
+        {
+            return new LoginResultJson( AuthenticationInfo.unAuthenticated(), "Access Denied" );
+        }
         if ( !authInfo.isAuthenticated() )
         {
             return new LoginResultJson( AuthenticationInfo.unAuthenticated() );

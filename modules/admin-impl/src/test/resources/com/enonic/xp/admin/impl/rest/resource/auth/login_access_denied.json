@@ -1,7 +1,7 @@
 {
   "applications": [],
   "authenticated": false,
-  "message": null,
+  "message": "Access Denied",
   "principals": [
     "user:system:anonymous",
     "role:system.everyone"

@@ -151,7 +151,7 @@ public class AuthResourceTest
             entity( "{\"user\":\"user1\",\"password\":\"password\",\"rememberMe\":false}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "login_failed.json", jsonString );
+        assertJson( "login_access_denied.json", jsonString );
     }
 
     @Test

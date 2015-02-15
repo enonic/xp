@@ -10,6 +10,8 @@ module api.security.auth {
 
         private applications: string[];
 
+        private message: string;
+
         constructor(json: LoginResultJson) {
             this.authenticated = json.authenticated;
             if (json.user) {
@@ -18,6 +20,7 @@ module api.security.auth {
             this.applications = json.applications || [];
             this.principals = json.principals ?
                               json.principals.map((principal) => api.security.PrincipalKey.fromString(principal)) : [];
+            this.message = json.message;
         }
 
         isAuthenticated(): boolean {
@@ -34,6 +37,10 @@ module api.security.auth {
 
         getPrincipals(): api.security.PrincipalKey[] {
             return this.principals;
+        }
+
+        getMessage(): string {
+            return this.message;
         }
     }
 }

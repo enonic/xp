@@ -81,7 +81,7 @@ module app.login {
                 this.passwordInput.setValue('');
                 this.setMessage('');
             } else {
-                this.setMessage('Login failed!');
+                this.setMessage(loginResult.getMessage() || 'Login failed!');
                 this.passwordInput.giveFocus();
                 this.userIdInput.addClass('invalid');
                 this.passwordInput.addClass('invalid');

@@ -15,16 +15,27 @@ public final class LoginResultJson
 
     private final List<AdminApplication> applications;
 
+    private final String message;
+
     public LoginResultJson( final AuthenticationInfo authenticationInfo, final List<AdminApplication> applications )
     {
         this.authenticationInfo = authenticationInfo;
         this.applications = applications;
+        this.message = null;
     }
 
     public LoginResultJson( final AuthenticationInfo authenticationInfo )
     {
         this.authenticationInfo = authenticationInfo;
         this.applications = ImmutableList.of();
+        this.message = null;
+    }
+
+    public LoginResultJson( final AuthenticationInfo authenticationInfo, final String message )
+    {
+        this.authenticationInfo = authenticationInfo;
+        this.applications = ImmutableList.of();
+        this.message = message;
     }
 
     public boolean isAuthenticated()
@@ -51,5 +62,10 @@ public final class LoginResultJson
     public String[] getApplications()
     {
         return applications.stream().map( AdminApplication::getId ).toArray( String[]::new );
+    }
+
+    public String getMessage()
+    {
+        return message;
     }
 }

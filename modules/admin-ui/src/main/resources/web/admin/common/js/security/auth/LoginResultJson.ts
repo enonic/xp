@@ -9,5 +9,7 @@ module api.security.auth {
         applications: string[];
 
         principals: string[];
+
+        message?: string;
     }
 }

@@ -1,6 +1,7 @@
 {
   "applications": [],
   "authenticated": true,
+  "message": null,
   "principals": [
     "role:system.admin.login",
     "user:system:user1"
