@@ -110,7 +110,7 @@ public final class XmlFormMapper
         builder.label( xml.getLabel() );
         builder.customText( xml.getCustomText() );
         builder.helpText( xml.getHelpText() );
-        builder.occurrences( fromOccurenceXml( xml.getOccurrences() ) );
+        builder.occurrences( fromOccurrenceXml( xml.getOccurrences() ) );
         builder.immutable( xml.isImmutable() != null && xml.isImmutable() );
         builder.indexed( xml.isIndexed() != null && xml.isIndexed() );
         builder.inputType( type );
@@ -127,7 +127,7 @@ public final class XmlFormMapper
         builder.label( xml.getLabel() );
         builder.customText( xml.getCustomText() );
         builder.helpText( xml.getHelpText() );
-        builder.occurrences( fromOccurenceXml( xml.getOccurrences() ) );
+        builder.occurrences( fromOccurrenceXml( xml.getOccurrences() ) );
         builder.immutable( xml.isImmutable() != null && xml.isImmutable() );
         builder.addFormItems( fromItemsXml( xml.getItems() ) );
         return builder.build();
@@ -149,7 +149,7 @@ public final class XmlFormMapper
         return builder.build();
     }
 
-    private Occurrences fromOccurenceXml( final XmlOccurrence xml )
+    private Occurrences fromOccurrenceXml( final XmlOccurrence xml )
     {
         final Occurrences.Builder builder = Occurrences.newOccurrences();
         builder.minimum( xml.getMinimum() );
@@ -214,7 +214,7 @@ public final class XmlFormMapper
         result.setLabel( object.getLabel() );
         result.setCustomText( object.getCustomText() );
         result.setHelpText( object.getHelpText() );
-        result.setOccurrences( toOccurenceXml( object.getOccurrences() ) );
+        result.setOccurrences( toOccurrenceXml( object.getOccurrences() ) );
         result.setImmutable( object.isImmutable() );
         result.setIndexed( object.isIndexed() );
         result.setType( type.getName() );
@@ -232,7 +232,7 @@ public final class XmlFormMapper
         result.setLabel( object.getLabel() );
         result.setCustomText( object.getCustomText() );
         result.setHelpText( object.getHelpText() );
-        result.setOccurrences( toOccurenceXml( object.getOccurrences() ) );
+        result.setOccurrences( toOccurrenceXml( object.getOccurrences() ) );
         result.setImmutable( object.isImmutable() );
         result.setItems( toItemsXml( object.getFormItems() ) );
         return result;
@@ -254,7 +254,7 @@ public final class XmlFormMapper
         return result;
     }
 
-    private XmlOccurrence toOccurenceXml( final Occurrences object )
+    private XmlOccurrence toOccurrenceXml( final Occurrences object )
     {
         final XmlOccurrence result = new XmlOccurrence();
         result.setMinimum( object.getMinimum() );

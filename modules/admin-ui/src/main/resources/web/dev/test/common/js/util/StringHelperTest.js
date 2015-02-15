@@ -177,7 +177,7 @@ describe("api.util.StringHelperTest", function () {
             expect(sh.substringBetween(s, "to", "")).toBe("");
             expect(sh.substringBetween(s, "eat", "or")).toBe("");
         });
-        it("should return string between first occurence of left and right params", function () {
+        it("should return string between first occurrence of left and right params", function () {
             expect(sh.substringBetween("to be or not to eat bee ?", "to", "be")).toBe(" ");
         });
 

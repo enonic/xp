@@ -156,6 +156,11 @@ public class FieldSet
             return this;
         }
 
+        public Builder clearFormItems()
+        {
+            formItems.clear();
+            return this;
+        }
 
         public FieldSet build()
         {

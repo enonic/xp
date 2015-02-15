@@ -116,11 +116,11 @@ module api.form {
             return newOccurrenceView;
         }
 
-        showOccurences(show: boolean) {
+        showOccurrences(show: boolean) {
             var views = <FormItemSetOccurrenceView[]>this.getOccurrenceViews();
             this.occurrencesCollapsed = !show;
-            views.forEach((formItemSetOccurenceView: FormItemSetOccurrenceView) => {
-                formItemSetOccurenceView.showContainer(show);
+            views.forEach((formItemSetOccurrenceView: FormItemSetOccurrenceView) => {
+                formItemSetOccurrenceView.showContainer(show);
             });
         }
 

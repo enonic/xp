@@ -55,6 +55,13 @@ public class InlineMixinsToFormItemsTransformer
                 formItemSetBuilder.addFormItems( transform( (FormItemSet) formItem ) );
                 formItems.add( formItemSetBuilder.build() );
             }
+            else if ( formItem instanceof FieldSet )
+            {
+                final FieldSet.Builder formItemSetBuilder = FieldSet.newFieldSet( (FieldSet) formItem );
+                formItemSetBuilder.clearFormItems();
+                formItemSetBuilder.addFormItems( transform( (FieldSet) formItem ) );
+                formItems.add( formItemSetBuilder.build() );
+            }
             else
             {
                 formItems.add( formItem.copy() );

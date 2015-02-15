@@ -148,10 +148,10 @@ module api.form {
                 this.collapseButton.onClicked((event: MouseEvent) => {
                     if (this.formItemSetOccurrences.isCollapsed()) {
                         this.collapseButton.setHtml("Collapse");
-                        this.formItemSetOccurrences.showOccurences(true);
+                        this.formItemSetOccurrences.showOccurrences(true);
                     } else {
                         this.collapseButton.setHtml("Expand");
-                        this.formItemSetOccurrences.showOccurences(false);
+                        this.formItemSetOccurrences.showOccurrences(false);
                     }
 
                 });
@@ -270,7 +270,7 @@ module api.form {
             var wholeRecording = new ValidationRecording();
 
             var occurrenceViews = this.formItemSetOccurrences.getOccurrenceViews();
-            var occurenceRecording = new ValidationRecording();
+            var occurrenceRecording = new ValidationRecording();
 
             var numberOfValids = 0;
             occurrenceViews.forEach((occurrenceView: FormItemSetOccurrenceView) => {
@@ -283,19 +283,19 @@ module api.form {
 
             if (numberOfValids < this.formItemSet.getOccurrences().getMinimum()) {
                 wholeRecording.breaksMinimumOccurrences(validationRecordingPath);
-                occurenceRecording.breaksMinimumOccurrences(validationRecordingPath);
+                occurrenceRecording.breaksMinimumOccurrences(validationRecordingPath);
             }
             if (this.formItemSet.getOccurrences().maximumBreached(numberOfValids)) {
                 wholeRecording.breaksMaximumOccurrences(validationRecordingPath);
-                occurenceRecording.breaksMaximumOccurrences(validationRecordingPath);
+                occurrenceRecording.breaksMaximumOccurrences(validationRecordingPath);
             }
 
             if (!silent && wholeRecording.validityChanged(this.previousValidationRecording)) {
                 this.notifyValidityChanged(new RecordingValidityChangedEvent(wholeRecording, validationRecordingPath));
             }
 
-            // display only errors related to occurences
-            this.renderValidationErrors(occurenceRecording);
+            // display only errors related to occurrences
+            this.renderValidationErrors(occurrenceRecording);
 
             this.previousValidationRecording = wholeRecording;
 
