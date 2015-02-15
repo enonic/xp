@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Usage info
 show_help() {
