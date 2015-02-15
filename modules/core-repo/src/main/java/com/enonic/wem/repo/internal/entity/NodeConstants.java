@@ -1,6 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -16,7 +17,7 @@ public final class NodeConstants
     private static final User NODE_SUPER_USER = User.create().key( NODE_SUPER_USER_KEY ).login( "node" ).build();
 
     public static final AuthenticationInfo NODE_SU_AUTH_INFO = AuthenticationInfo.create().
-        principals( NODE_SUPER_USER_KEY ).
+        principals( NODE_SUPER_USER_KEY, RoleKeys.ADMIN ).
         user( NODE_SUPER_USER ).
         build();
 }

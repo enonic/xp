@@ -5,6 +5,8 @@ import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.blob.Blob;
+import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -28,8 +30,6 @@ import com.enonic.xp.node.NodeType;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.wem.repo.internal.blob.Blob;
-import com.enonic.wem.repo.internal.blob.BlobStore;
 
 import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.requireContextUserPermission;
 
@@ -47,6 +47,16 @@ public final class CreateNodeCommand
         this.binaryBlobStore = builder.binaryBlobStore;
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
+    }
+
     public Node execute()
     {
         Preconditions.checkNotNull( params.getParent(), "Path of parent Node must be specified" );
@@ -54,6 +64,13 @@ public final class CreateNodeCommand
 
         NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
         final Node parentNode = NodeHelper.runAsAdmin( this::verifyParentExists );
+
+        if ( parentNode == null )
+        {
+            throw new NodeNotFoundException(
+                "Parent node to node with name '" + params.getName() + "' with parent path '" + params.getParent() + "' not found" );
+        }
+
         requireContextUserPermission( Permission.CREATE, parentNode );
 
         final PrincipalKey user = getCurrentPrincipalKey();
@@ -261,16 +278,6 @@ public final class CreateNodeCommand
         {
             throw new NodeAlreadyExistAtPathException( nodePath );
         }
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
     }
 
     public static class Builder

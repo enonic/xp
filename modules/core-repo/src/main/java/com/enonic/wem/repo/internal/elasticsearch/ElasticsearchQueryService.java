@@ -7,6 +7,20 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.wem.repo.internal.elasticsearch.query.NodeQueryTranslator;
+import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
+import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
+import com.enonic.wem.repo.internal.elasticsearch.query.builder.SortQueryBuilderFactory;
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
+import com.enonic.wem.repo.internal.index.query.QueryResultFactory;
+import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.index.result.GetResult;
+import com.enonic.wem.repo.internal.index.result.SearchResult;
+import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
+import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -22,28 +36,14 @@ import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.query.QueryException;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.filter.ValueFilter;
-import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.wem.repo.internal.elasticsearch.query.NodeQueryTranslator;
-import com.enonic.wem.repo.internal.elasticsearch.query.builder.AclFilterBuilderFactory;
-import com.enonic.wem.repo.internal.elasticsearch.query.builder.QueryBuilderFactory;
-import com.enonic.wem.repo.internal.elasticsearch.query.builder.SortQueryBuilderFactory;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
-import com.enonic.wem.repo.internal.index.query.QueryResultFactory;
-import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.wem.repo.internal.index.result.GetResult;
-import com.enonic.wem.repo.internal.index.result.SearchResult;
-import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
-import com.enonic.wem.repo.internal.index.result.SearchResultFieldValue;
-import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 
 @Component
 public class ElasticsearchQueryService
     implements QueryService
 {
-    private ElasticsearchDao elasticsearchDao;
-
     private final QueryResultFactory queryResultFactory = new QueryResultFactory();
+
+    private ElasticsearchDao elasticsearchDao;
 
     @Override
     public NodeQueryResult find( final NodeQuery query, final IndexContext context )
@@ -85,6 +85,7 @@ public class ElasticsearchQueryService
             return null;
         }
 
+        // TODO: Fix so uses NodePermissionsResolver
         if ( !GetResultCanReadResolver.canRead( indexContext.getPrincipalKeys(), result ) )
         {
             return null;

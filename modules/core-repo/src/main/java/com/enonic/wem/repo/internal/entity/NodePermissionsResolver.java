@@ -9,13 +9,13 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-final class NodePermissionsResolver
+public final class NodePermissionsResolver
 {
     public static void requireContextUserPermission( final Permission permission, final Node node )
         throws NodeAccessException
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        requireContextUserPermission( authInfo, permission, node );
+        doRequireContextUserPermission( authInfo, permission, node );
     }
 
     public static void requireContextUserPermissionOrAdmin( final Permission permission, final Node node )
@@ -26,13 +26,18 @@ final class NodePermissionsResolver
         {
             return;
         }
-        requireContextUserPermission( authInfo, permission, node );
+        doRequireContextUserPermission( authInfo, permission, node );
     }
 
     public static void requireContextUserPermission( final AuthenticationInfo authInfo, final Permission permission, final Node node )
         throws NodeAccessException
     {
-        final boolean hasPermission = userHasPermission( authInfo, permission, node );
+        doRequireContextUserPermission( authInfo, permission, node );
+    }
+
+    private static void doRequireContextUserPermission( final AuthenticationInfo authInfo, final Permission permission, final Node node )
+    {
+        final boolean hasPermission = doUserHasPermission( authInfo, permission, node.getPermissions() );
         if ( !hasPermission )
         {
             throw new NodeAccessException( authInfo.getUser(), node.path(), permission );
@@ -53,12 +58,23 @@ final class NodePermissionsResolver
 
     public static boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission, final Node node )
     {
-        return userHasPermission( authInfo, permission, node.getPermissions() );
+        return doUserHasPermission( authInfo, permission, node.getPermissions() );
     }
 
     public static boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission,
                                              final AccessControlList nodePermissions )
     {
+        return doUserHasPermission( authInfo, permission, nodePermissions );
+    }
+
+    private static boolean doUserHasPermission( final AuthenticationInfo authInfo, final Permission permission,
+                                                final AccessControlList nodePermissions )
+    {
+        if ( authInfo.hasRole( RoleKeys.ADMIN ) )
+        {
+            return true;
+        }
+
         final PrincipalKeys authInfoPrincipals = authInfo.getPrincipals();
         final PrincipalKeys principalsAllowed = nodePermissions.getPrincipalsWithPermission( permission );
 

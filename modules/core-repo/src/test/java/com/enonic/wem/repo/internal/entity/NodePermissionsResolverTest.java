@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.entity;
 import org.junit.Test;
 
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -87,5 +88,28 @@ public class NodePermissionsResolverTest
         assertFalse( NodePermissionsResolver.userHasPermission( authInfo, CREATE, nodePermissions ) );
         assertTrue( NodePermissionsResolver.userHasPermission( authInfo, MODIFY, nodePermissions ) );
         assertFalse( NodePermissionsResolver.userHasPermission( authInfo, PUBLISH, nodePermissions ) );
+    }
+
+    @Test
+    public void system_admin_has_permission()
+        throws Exception
+    {
+
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().
+            user( User.create().key( USER_A ).login( "usera" ).build() ).
+            principals( RoleKeys.ADMIN ).
+            build();
+
+        final AccessControlList nodePermissions = AccessControlList.create().
+            add( AccessControlEntry.create().principal( USER_A ).allow( READ ).build() ).
+            add( AccessControlEntry.create().principal( GROUP_B ).allow( CREATE ).build() ).
+            add( AccessControlEntry.create().principal( ROLE_C ).allow( MODIFY ).build() ).
+            build();
+
+        assertTrue( NodePermissionsResolver.userHasPermission( authInfo, READ, nodePermissions ) );
+        assertTrue( NodePermissionsResolver.userHasPermission( authInfo, CREATE, nodePermissions ) );
+        assertTrue( NodePermissionsResolver.userHasPermission( authInfo, MODIFY, nodePermissions ) );
+        assertTrue( NodePermissionsResolver.userHasPermission( authInfo, PUBLISH, nodePermissions ) );
+
     }
 }
