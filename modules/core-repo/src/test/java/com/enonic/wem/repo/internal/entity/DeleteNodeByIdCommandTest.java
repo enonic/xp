@@ -68,4 +68,55 @@ public class DeleteNodeByIdCommandTest
         assertNull( getNodeById( childChildNode.id() ) );
     }
 
+    @Test
+    public void delete_with_children_other_on_level()
+        throws Exception
+    {
+        final Node parentNode = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            build() );
+        refresh();
+
+        final Node childNode = createNode( CreateNodeParams.create().
+            parent( parentNode.path() ).
+            name( "child1" ).
+            build() );
+        refresh();
+
+        final Node childNode2 = createNode( CreateNodeParams.create().
+            parent( parentNode.path() ).
+            name( "child2" ).
+            build() );
+        refresh();
+
+
+        final Node childChildNode = createNode( CreateNodeParams.create().
+            parent( childNode.path() ).
+            name( "child1-1" ).
+            build() );
+        refresh();
+
+        final Node childChildNode2 = createNode( CreateNodeParams.create().
+            parent( childNode2.path() ).
+            name( "child2-1" ).
+            build() );
+        refresh();
+
+
+        assertNotNull( getNodeById( parentNode.id() ) );
+        assertNotNull( getNodeById( childNode.id() ) );
+        assertNotNull( getNodeById( childNode2.id() ) );
+        assertNotNull( getNodeById( childChildNode.id() ) );
+        assertNotNull( getNodeById( childChildNode2.id() ) );
+
+        doDeleteNode( parentNode.id() );
+
+        assertNull( getNodeById( parentNode.id() ) );
+        assertNull( getNodeById( childNode.id() ) );
+        assertNull( getNodeById( childNode2.id() ) );
+        assertNull( getNodeById( childChildNode.id() ) );
+        assertNull( getNodeById( childChildNode2.id() ) );
+    }
+
 }
