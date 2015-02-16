@@ -62,8 +62,10 @@
     }
   },
   "x": {
-    "myschema": {
-      "a": "1"
+    "com-enonic-mymodule": {
+      "myschema": {
+        "a": "1"
+      }
     }
   },
   "page": {

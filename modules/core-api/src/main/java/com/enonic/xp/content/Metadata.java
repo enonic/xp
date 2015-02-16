@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.MixinName;
 
 public final class Metadata
@@ -34,6 +35,16 @@ public final class Metadata
     public MixinName getName()
     {
         return name;
+    }
+
+    public String getModulePrefix()
+    {
+        return name.getModuleKey() == null ? "" : name.getModuleKey().toString().replace( '.', '-' );
+    }
+
+    public static ModuleKey fromModulePrefix( final String modulePrefix )
+    {
+        return ModuleKey.from( modulePrefix.replace( '-', '.' ) );
     }
 
     public void setName( final MixinName name )

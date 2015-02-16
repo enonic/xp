@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -18,17 +16,16 @@ import com.enonic.xp.content.attachment.AttachmentNames;
 import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.content.attachment.CreateAttachment;
 import com.enonic.xp.content.attachment.CreateAttachments;
+import com.enonic.xp.core.impl.content.page.PageDataSerializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Exceptions;
-import com.enonic.xp.core.impl.content.page.PageDataSerializer;
 
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT;
 import static com.enonic.xp.content.ContentPropertyNames.CREATED_TIME;
@@ -46,15 +43,10 @@ import static com.enonic.xp.content.ContentPropertyNames.VALID;
 
 public final class ContentDataSerializer
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ContentDataSerializer.class );
-
     private static final PageDataSerializer PAGE_SERIALIZER = new PageDataSerializer( ContentPropertyNames.PAGE );
 
-    private final MixinService mixinService;
-
-    public ContentDataSerializer( final MixinService mixinService )
+    public ContentDataSerializer()
     {
-        this.mixinService = mixinService;
     }
 
     public PropertyTree toNodeData( final UpdateContentTranslatorParams params )
@@ -82,7 +74,13 @@ public final class ContentDataSerializer
 
             for ( final Metadata metadata : content.getAllMetadata() )
             {
-                metadataSet.addSet( metadata.getName().getLocalName(), metadata.getData().getRoot().copy( contentAsData.getTree() ) );
+                final String xDataModulePrefix = metadata.getModulePrefix();
+                PropertySet xDataModule = metadataSet.getSet( xDataModulePrefix );
+                if ( xDataModule == null )
+                {
+                    xDataModule = metadataSet.addSet( xDataModulePrefix );
+                }
+                xDataModule.addSet( metadata.getName().getLocalName(), metadata.getData().getRoot().copy( contentAsData.getTree() ) );
             }
         }
 
@@ -123,7 +121,13 @@ public final class ContentDataSerializer
             final PropertySet metaSet = contentAsData.addSet( EXTRA_DATA );
             for ( final Metadata metadata : params.getMetadata() )
             {
-                metaSet.addSet( metadata.getName().toString(), metadata.getData().getRoot().copy( metaSet.getTree() ) );
+                final String xDataModulePrefix = metadata.getModulePrefix();
+                PropertySet xDataModule = metaSet.getSet( xDataModulePrefix );
+                if ( xDataModule == null )
+                {
+                    xDataModule = metaSet.addSet( xDataModulePrefix );
+                }
+                xDataModule.addSet( metadata.getName().getLocalName(), metadata.getData().getRoot().copy( metaSet.getTree() ) );
             }
         }
 
@@ -189,20 +193,17 @@ public final class ContentDataSerializer
         if ( metadataSet != null )
         {
             final Metadatas.Builder metadatasBuilder = Metadatas.builder();
-            for ( final String metadataStringName : metadataSet.getPropertyNames() )
+            for ( final String metadataModulePrefix : metadataSet.getPropertyNames() )
             {
-                final MixinName metadataName = metadataStringName.contains( MixinName.SEPARATOR )
-                    ? resolveMetadataByMixinName( MixinName.from( metadataStringName ) )
-                    : resolveMetadataByLocalName( metadataStringName );
-                if ( metadataName != null )
+                final PropertySet xDataModule = metadataSet.getSet( metadataModulePrefix );
+                for ( final String metadataLocalName : xDataModule.getPropertyNames() )
                 {
-                    metadatasBuilder.add( new Metadata( metadataName, metadataSet.getSet( metadataStringName ).toTree() ) );
-                }
-                else
-                {
-                    LOG.warn( "Mixin [" + metadataStringName + "] could not be found" );
+                    final ModuleKey moduleKey = Metadata.fromModulePrefix( metadataModulePrefix );
+                    final MixinName metadataName = MixinName.from( moduleKey, metadataLocalName );
+                    metadatasBuilder.add( new Metadata( metadataName, xDataModule.getSet( metadataLocalName ).toTree() ) );
                 }
             }
+
             builder.metadata( metadatasBuilder.build() );
         }
     }
@@ -224,18 +225,6 @@ public final class ContentDataSerializer
         {
             builder.owner( PrincipalKey.from( owner ) );
         }
-    }
-
-    private MixinName resolveMetadataByLocalName( final String metadataLocalName )
-    {
-        final Mixin mixin = mixinService.getByLocalName( metadataLocalName );
-        return mixin != null ? mixin.getName() : null;
-    }
-
-    private MixinName resolveMetadataByMixinName( final MixinName name )
-    {
-        final Mixin mixin = mixinService.getByName( name );
-        return mixin != null ? mixin.getName() : null;
     }
 
     Attachments dataToAttachments( final Iterable<PropertySet> attachmentSets )

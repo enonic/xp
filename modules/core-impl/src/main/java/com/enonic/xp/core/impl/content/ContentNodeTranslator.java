@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,14 +25,13 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.schema.mixin.MixinService;
 
 @Component(immediate = true, service = ContentNodeTranslator.class)
 public class ContentNodeTranslator
 {
     private final static Logger LOG = LoggerFactory.getLogger( ContentNodeTranslator.class );
 
-    private ContentDataSerializer contentSerializer;
+    private ContentDataSerializer contentSerializer = new ContentDataSerializer();
 
     public CreateNodeParams toCreateNodeParams( final CreateContentTranslatorParams params )
     {
@@ -160,9 +158,4 @@ public class ContentNodeTranslator
         return NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements( parentContentPath.toString() ).build();
     }
 
-    @Reference
-    public void setMixinService( final MixinService mixinService )
-    {
-        this.contentSerializer = new ContentDataSerializer( mixinService );
-    }
 }

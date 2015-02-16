@@ -1,9 +1,15 @@
 package com.enonic.xp.portal.impl.jslib.mapper;
 
+import java.util.List;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.Metadata;
 import com.enonic.xp.content.page.Page;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.script.serializer.MapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
 
@@ -46,10 +52,27 @@ public final class ContentMapper
     private static void serializeMetaData( final MapGenerator gen, final Iterable<Metadata> values )
     {
         gen.map( "x" );
-        for ( final Metadata value : values )
+
+        final ListMultimap<ModuleKey, Metadata> metadatasByModule = ArrayListMultimap.create();
+        for ( Metadata metadata : values )
         {
-            gen.map( value.getName().getLocalName() );
-            new PropertyTreeMapper( value.getData() ).serialize( gen );
+            metadatasByModule.put( metadata.getName().getModuleKey(), metadata );
+        }
+
+        for ( final ModuleKey moduleKey : metadatasByModule.keys() )
+        {
+            final List<Metadata> metadatas = metadatasByModule.get( moduleKey );
+            if ( metadatas.isEmpty() )
+            {
+                continue;
+            }
+            gen.map( metadatas.get( 0 ).getModulePrefix() );
+            for ( final Metadata metadata : metadatas )
+            {
+                gen.map( metadata.getName().getLocalName() );
+                new PropertyTreeMapper( metadata.getData() ).serialize( gen );
+                gen.end();
+            }
             gen.end();
         }
         gen.end();

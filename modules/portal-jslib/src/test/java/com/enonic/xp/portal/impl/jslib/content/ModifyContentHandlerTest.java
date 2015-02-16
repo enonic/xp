@@ -11,11 +11,11 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
 import com.enonic.xp.portal.impl.jslib.ContentFixtures;
 import com.enonic.xp.portal.script.command.CommandHandler;
+import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinService;
 
 public class ModifyContentHandlerTest
     extends AbstractHandlerTest
@@ -42,10 +42,10 @@ public class ModifyContentHandlerTest
     public void modifyById()
         throws Exception
     {
-        final Mixin metaMixin = Mixin.newMixin().name( "mymodule:myschema" ).build();
-        Mockito.when( this.mixinService.getByLocalName( Mockito.eq( "myschema" ) ) ).thenReturn( metaMixin );
-        final Mixin metaMixin2 = Mixin.newMixin().name( "mymodule:other" ).build();
-        Mockito.when( this.mixinService.getByLocalName( Mockito.eq( "other" ) ) ).thenReturn( metaMixin2 );
+        final Mixin metaMixin = Mixin.newMixin().name( "com.enonic.mymodule:myschema" ).build();
+        Mockito.when( this.mixinService.getByName( Mockito.eq( metaMixin.getName() ) ) ).thenReturn( metaMixin );
+        final Mixin metaMixin2 = Mixin.newMixin().name( "com.enonic.mymodule:other" ).build();
+        Mockito.when( this.mixinService.getByName( Mockito.eq( metaMixin2.getName() ) ) ).thenReturn( metaMixin2 );
 
         Mockito.when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0] ) );
@@ -57,10 +57,10 @@ public class ModifyContentHandlerTest
     public void modifyByPath()
         throws Exception
     {
-        final Mixin metaMixin = Mixin.newMixin().name( "mymodule:myschema" ).build();
-        Mockito.when( this.mixinService.getByLocalName( Mockito.eq( "myschema" ) ) ).thenReturn( metaMixin );
-        final Mixin metaMixin2 = Mixin.newMixin().name( "mymodule:other" ).build();
-        Mockito.when( this.mixinService.getByLocalName( Mockito.eq( "other" ) ) ).thenReturn( metaMixin2 );
+        final Mixin metaMixin = Mixin.newMixin().name( "com.enonic.mymodule:myschema" ).build();
+        Mockito.when( this.mixinService.getByName( Mockito.eq( metaMixin.getName() ) ) ).thenReturn( metaMixin );
+        final Mixin metaMixin2 = Mixin.newMixin().name( "com.enonic.mymodule:other" ).build();
+        Mockito.when( this.mixinService.getByName( Mockito.eq( metaMixin2.getName() ) ) ).thenReturn( metaMixin2 );
 
         final Content content = ContentFixtures.newSmallContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );

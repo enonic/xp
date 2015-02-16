@@ -13,29 +13,6 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.attachment.CreateAttachment;
-import com.enonic.xp.content.attachment.CreateAttachments;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.index.IndexType;
-import com.enonic.xp.repository.Repository;
-import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
-import com.enonic.xp.core.impl.content.ContentInitializer;
-import com.enonic.xp.core.impl.content.ContentNodeTranslator;
-import com.enonic.xp.core.impl.content.ContentServiceImpl;
-import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
-import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
-import com.enonic.xp.core.impl.event.EventPublisherImpl;
-import com.enonic.xp.core.impl.module.ModuleRegistry;
-import com.enonic.xp.core.impl.module.ModuleServiceImpl;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
 import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
@@ -47,6 +24,29 @@ import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
 import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.attachment.CreateAttachment;
+import com.enonic.xp.content.attachment.CreateAttachments;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.content.ContentInitializer;
+import com.enonic.xp.core.impl.content.ContentNodeTranslator;
+import com.enonic.xp.core.impl.content.ContentServiceImpl;
+import com.enonic.xp.core.impl.event.EventPublisherImpl;
+import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
+import com.enonic.xp.core.impl.module.ModuleRegistry;
+import com.enonic.xp.core.impl.module.ModuleServiceImpl;
+import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
+import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.index.IndexType;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
@@ -141,7 +141,6 @@ public class AbstractContentServiceTest
         this.mixinService = Mockito.mock( MixinService.class );
 
         final ContentNodeTranslator contentNodeTranslator = new ContentNodeTranslator();
-        contentNodeTranslator.setMixinService( mixinService );
 
         final EventPublisherImpl eventPublisher = new EventPublisherImpl();
 

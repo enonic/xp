@@ -13,11 +13,13 @@ import com.enonic.xp.content.Metadata;
 import com.enonic.xp.content.Metadatas;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.portal.impl.jslib.mapper.ContentMapper;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 
 @Component(immediate = true)
@@ -52,7 +54,7 @@ public final class CreateContentHandler
                 req.param( "requireValid" ).value( Boolean.class ) != null ? req.param( "requireValid" ).value( Boolean.class ) : false ).
             type( contentTypeName( req.param( "contentType" ).value( String.class ) ) ).
             contentData( propertyTree( req.param( "data" ).map() ) ).
-            metadata( metadatas( req.param( "x" ).map() ) ).
+            metadata( metaDatas( req.param( "x" ).map() ) ).
             build();
     }
 
@@ -136,7 +138,7 @@ public final class CreateContentHandler
         }
     }
 
-    private Metadatas metadatas( final Map<String, Object> value )
+    private Metadatas metaDatas( final Map<String, Object> value )
     {
         if ( value == null )
         {
@@ -144,23 +146,35 @@ public final class CreateContentHandler
         }
 
         final Metadatas.Builder metadatasBuilder = Metadatas.builder();
-        for ( final Map.Entry<String, Object> entry : value.entrySet() )
+        for ( final String modulePrefix : value.keySet() )
         {
-            final Metadata item = metaData( entry.getKey(), entry.getValue() );
-            if ( item != null )
+            final ModuleKey moduleKey = Metadata.fromModulePrefix( modulePrefix );
+            final Object metadatasObject = value.get( modulePrefix );
+            if ( !( metadatasObject instanceof Map ) )
             {
-                metadatasBuilder.add( item );
+                continue;
+            }
+            final Map<String, Object> metadatas = (Map<String, Object>) metadatasObject;
+
+            for ( final String metadataName : metadatas.keySet() )
+            {
+                final MixinName mixinName = MixinName.from( moduleKey, metadataName );
+                final Metadata item = metaData( mixinName, metadatas.get( metadataName ) );
+                if ( item != null )
+                {
+                    metadatasBuilder.add( item );
+                }
             }
         }
 
         return metadatasBuilder.build();
     }
 
-    private Metadata metaData( final String localName, final Object value )
+    private Metadata metaData( final MixinName mixinName, final Object value )
     {
         if ( value instanceof Map )
         {
-            final Mixin mixin = mixinService.getByLocalName( localName );
+            final Mixin mixin = mixinService.getByName( mixinName );
             if ( mixin != null )
             {
                 return new Metadata( mixin.getName(), propertyTree( (Map) value ) );

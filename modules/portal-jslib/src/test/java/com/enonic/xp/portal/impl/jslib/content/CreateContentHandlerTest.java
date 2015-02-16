@@ -44,9 +44,9 @@ public class CreateContentHandlerTest
         Mockito.when( this.contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
-        final Mixin metaMixin = Mixin.newMixin().name( "mymodule:test" ).build();
+        final Mixin metaMixin = Mixin.newMixin().name( "com.enonic.mymodule:test" ).build();
 
-        Mockito.when( this.mixinService.getByLocalName( Mockito.eq( "test" ) ) ).thenReturn( metaMixin );
+        Mockito.when( this.mixinService.getByName( Mockito.eq( metaMixin.getName() ) ) ).thenReturn( metaMixin );
 
         execute( "createContent" );
     }

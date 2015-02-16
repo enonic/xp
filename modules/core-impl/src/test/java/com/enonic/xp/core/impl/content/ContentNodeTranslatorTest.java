@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.content.Content;
@@ -28,8 +27,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -50,13 +47,7 @@ public class ContentNodeTranslatorTest
     @Before
     public void before()
     {
-        final MixinService mixinService = Mockito.mock( MixinService.class );
-
-        final Mixin mixin = Mixin.newMixin().name( "mymodule:my-mixin" ).build();
-        Mockito.when( mixinService.getByLocalName( Mockito.anyString() ) ).thenReturn( mixin );
-
         translator = new ContentNodeTranslator();
-        translator.setMixinService( mixinService );
     }
 
     @Test
