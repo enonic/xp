@@ -389,9 +389,12 @@ module app.browse {
                 this.resetAndRender();
             });
             item.onUploaded((model: ContentSummary) => {
-                this.updateNode(data, item.getId());
+                var nodeToRemove = this.getRoot().getCurrentRoot().findNode(item.getId());
+                if (nodeToRemove) {
+                    nodeToRemove.remove();
+                    this.resetAndRender();
+                }
 
-                this.resetAndRender();
                 api.notify.showFeedback(data.getContentSummary().getType().toString() + " \"" + item.getName() + "\" created successfully");
             });
             item.onFailed(() => {
