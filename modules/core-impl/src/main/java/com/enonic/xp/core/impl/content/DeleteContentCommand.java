@@ -38,13 +38,18 @@ final class DeleteContentCommand
         try
         {
             final Content deletedContent = doExecute();
-            if ( deletedContent.getContentState() == ContentState.PENDING_DELETE )
+            if ( deletedContent != null )
             {
-                eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PENDING, deletedContent.getPath() ) );
-            }
-            else
-            {
-                eventPublisher.publish( ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
+                if ( deletedContent.getContentState() == ContentState.PENDING_DELETE )
+                {
+                    eventPublisher.publish(
+                        ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.PENDING, deletedContent.getPath() ) );
+                }
+                else
+                {
+                    eventPublisher.publish(
+                        ContentChangeEvent.from( ContentChangeEvent.ContentChangeType.DELETE, deletedContent.getPath() ) );
+                }
             }
             return deletedContent;
         }
