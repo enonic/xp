@@ -20,6 +20,7 @@ import com.enonic.xp.convert.Converters;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
+import com.enonic.xp.portal.impl.jslib.base.BaseContextHandler;
 import com.enonic.xp.portal.impl.jslib.mapper.ContentMapper;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
@@ -27,9 +28,9 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 
-@Component(immediate = true)
+@Component(immediate = true, service = CommandHandler.class)
 public final class ModifyContentHandler
-    implements CommandHandler
+    extends BaseContextHandler
 {
     private ContentService contentService;
 
@@ -42,7 +43,7 @@ public final class ModifyContentHandler
     }
 
     @Override
-    public Object execute( final CommandRequest req )
+    protected Object doExecute( final CommandRequest req )
     {
         final String key = req.param( "key" ).required().value( String.class );
         final Function<Object[], Object> editor = req.param( "editor" ).required().callback();

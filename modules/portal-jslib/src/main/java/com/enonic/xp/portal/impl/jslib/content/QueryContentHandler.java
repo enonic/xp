@@ -11,19 +11,20 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.query.ContentQuery;
+import com.enonic.xp.portal.impl.jslib.base.BaseContextHandler;
+import com.enonic.xp.portal.impl.jslib.mapper.ContentsResultMapper;
+import com.enonic.xp.portal.script.command.CommandHandler;
+import com.enonic.xp.portal.script.command.CommandRequest;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeNames;
-import com.enonic.xp.portal.impl.jslib.mapper.ContentsResultMapper;
-import com.enonic.xp.portal.script.command.CommandHandler;
-import com.enonic.xp.portal.script.command.CommandRequest;
 
-@Component(immediate = true)
+@Component(immediate = true, service = CommandHandler.class)
 public final class QueryContentHandler
-    implements CommandHandler
+    extends BaseContextHandler
 {
     private ContentService contentService;
 
@@ -34,7 +35,7 @@ public final class QueryContentHandler
     }
 
     @Override
-    public Object execute( final CommandRequest req )
+    protected Object doExecute( final CommandRequest req )
     {
         final int start = req.param( "start" ).value( Integer.class, 0 );
         final int count = req.param( "count" ).value( Integer.class, GetChildContentHandler.DEFAULT_COUNT );

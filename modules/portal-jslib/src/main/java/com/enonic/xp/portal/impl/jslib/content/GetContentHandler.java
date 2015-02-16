@@ -8,13 +8,14 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.portal.impl.jslib.base.BaseContextHandler;
 import com.enonic.xp.portal.impl.jslib.mapper.ContentMapper;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
 
-@Component(immediate = true)
+@Component(immediate = true, service = CommandHandler.class)
 public final class GetContentHandler
-    implements CommandHandler
+    extends BaseContextHandler
 {
     private ContentService contentService;
 
@@ -25,7 +26,7 @@ public final class GetContentHandler
     }
 
     @Override
-    public Object execute( final CommandRequest req )
+    protected Object doExecute( final CommandRequest req )
     {
         final String key = req.param( "key" ).required().value( String.class );
         if ( key.startsWith( "/" ) )

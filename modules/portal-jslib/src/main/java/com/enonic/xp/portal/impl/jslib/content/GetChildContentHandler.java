@@ -11,13 +11,14 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.portal.impl.jslib.base.BaseContextHandler;
 import com.enonic.xp.portal.impl.jslib.mapper.ContentsResultMapper;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
 
-@Component(immediate = true)
+@Component(immediate = true, service = CommandHandler.class)
 public final class GetChildContentHandler
-    implements CommandHandler
+    extends BaseContextHandler
 {
     static final int DEFAULT_COUNT = 10;
 
@@ -30,7 +31,7 @@ public final class GetChildContentHandler
     }
 
     @Override
-    public Object execute( final CommandRequest req )
+    protected Object doExecute( final CommandRequest req )
     {
         final String key = req.param( "key" ).required().value( String.class );
         final int start = req.param( "start" ).value( Integer.class, 0 );
