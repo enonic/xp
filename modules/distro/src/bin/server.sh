@@ -62,7 +62,7 @@ setupOptions() {
 }
 
 setupDebugOptions() {
-    if [ "$ARG1" == "debug" ]; then
+    if [ "$ARG1" = "debug" ]; then
         if [ "x$JAVA_DEBUG_OPTS" = "x" ]; then
             JAVA_DEBUG_OPTS="$DEFAULT_JAVA_DEBUG_OPTS"
         fi
