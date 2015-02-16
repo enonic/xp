@@ -6,13 +6,14 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.enonic.xp.rendering.Renderable;
-import com.enonic.xp.portal.rendering.RenderResult;
-import com.enonic.xp.portal.rendering.Renderer;
-import com.enonic.xp.portal.rendering.RendererFactory;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.rendering.RenderResult;
+import com.enonic.xp.portal.rendering.Renderer;
+import com.enonic.xp.portal.rendering.RendererFactory;
+import com.enonic.xp.rendering.Renderable;
 
 import static org.junit.Assert.*;
 
@@ -107,5 +108,18 @@ public class PageResourceTest
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 200, response.getStatus() );
+    }
+
+    @Test
+    public void getContentNotEnoughPermissions()
+        throws Exception
+    {
+        Mockito.when( this.contentService.getByPath( Mockito.anyObject() ) ).thenReturn( null );
+        Mockito.when( this.contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( true );
+
+        final MockHttpServletRequest request = newGetRequest( "/master/site/somepath/content" );
+        final MockHttpServletResponse response = executeRequest( request );
+
+        assertEquals( 403, response.getStatus() );
     }
 }

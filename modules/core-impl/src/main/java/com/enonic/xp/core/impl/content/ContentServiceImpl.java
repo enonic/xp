@@ -600,6 +600,18 @@ public class ContentServiceImpl
         return rootNode != null ? rootNode.getPermissions() : AccessControlList.empty();
     }
 
+    @Override
+    public boolean contentExists( final ContentId contentId )
+    {
+        return this.nodeService.nodeExists( NodeId.from( contentId ) );
+    }
+
+    @Override
+    public boolean contentExists( final ContentPath contentPath )
+    {
+        return this.nodeService.nodeExists( ContentNodeHelper.translateContentPathToNodePath( contentPath ) );
+    }
+
     private <T> T runAsContentAdmin( final Callable<T> callable )
     {
         final Context context = ContextAccessor.current();

@@ -29,4 +29,9 @@ public abstract class BaseResource
     {
         return new WebApplicationException( String.format( message, args ), Response.Status.NOT_FOUND );
     }
+
+    protected final WebApplicationException forbidden( final String message, final Object... args )
+    {
+        return new WebApplicationException( String.format( message, args ), Response.Status.FORBIDDEN );
+    }
 }

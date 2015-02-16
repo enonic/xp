@@ -61,7 +61,12 @@ public interface ContentService
 
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
-    ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference );
+    ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
 
     AccessControlList getRootPermissions();
+
+    boolean contentExists( ContentId contentId );
+
+    boolean contentExists( ContentPath contentPath );
+
 }
