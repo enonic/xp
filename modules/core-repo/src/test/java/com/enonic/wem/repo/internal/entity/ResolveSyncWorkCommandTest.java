@@ -799,6 +799,61 @@ public class ResolveSyncWorkCommandTest
         assertNode( nodePublishRequests, "b2_1" );
     }
 
+
+    /*
+ - S1 (New)
+     - A1 (New)
+     - A2 (New)
+         - A2_1 - Ref:B2_1 (New)
+ - S2 (New)
+     - B1 (New)
+     - B2 (New)
+         - B2_1 (New)
+  - S1d (New)
+    - A1d (New)
+    - A2d (New)
+         - A2_1d - Ref:B2_1 (New)
+
+    Duplicate S1, then publish S1
+    Should publish S1, A1, A2, A2_1, B2_1, B2, S2
+ */
+    @Test
+    public void publish_original_with_duplicate_do_not_publish_duplicate()
+        throws Exception
+    {
+        createS1S2Tree();
+
+        duplicateNode( getNodeById( NodeId.from( "s1" ) ) );
+
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( "s1" );
+
+        final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
+
+        assertEquals( 7, nodePublishRequests.size() );
+
+        assertNode( nodePublishRequests, "s1" );
+        assertNode( nodePublishRequests, "a2" );
+        assertNode( nodePublishRequests, "a2_1" );
+        assertNode( nodePublishRequests, "s2" );
+        assertNode( nodePublishRequests, "b2" );
+        assertNode( nodePublishRequests, "b2_1" );
+    }
+
+    @Test
+    public void publish_duplicate_of_original_do_not_publish_original()
+        throws Exception
+    {
+        createS1S2Tree();
+
+        final Node s1d = duplicateNode( getNodeById( NodeId.from( "s1" ) ) );
+
+        final ResolveSyncWorkResult result = getResolveSyncWorkResult( s1d.id() );
+
+        final NodePublishRequests nodePublishRequests = result.getNodePublishRequests();
+
+        assertEquals( 7, nodePublishRequests.size() );
+    }
+
     private void createS1S2Tree()
     {
         final Node s1 = createNode( CreateNodeParams.create().

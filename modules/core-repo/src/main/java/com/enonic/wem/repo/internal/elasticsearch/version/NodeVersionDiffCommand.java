@@ -5,12 +5,6 @@ import org.elasticsearch.index.query.HasChildQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.index.IndexType;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeState;
-import com.enonic.xp.node.NodeVersionDiffQuery;
-import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.wem.repo.internal.elasticsearch.ReturnFields;
 import com.enonic.wem.repo.internal.elasticsearch.branch.BranchIndexPath;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
@@ -18,6 +12,12 @@ import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.index.result.SearchResultEntry;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.version.VersionIndexPath;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.index.IndexType;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.NodeVersionDiffQuery;
+import com.enonic.xp.node.NodeVersionDiffResult;
 
 class NodeVersionDiffCommand
     extends AbstractVersionsCommand
@@ -64,6 +64,8 @@ class NodeVersionDiffCommand
             from( this.query.getFrom() ).
             build();
 
+        System.out.println( esQuery );
+
         final SearchResult searchResult = elasticsearchDao.find( esQuery );
 
         final NodeVersionDiffResult.Builder builder = NodeVersionDiffResult.create();
@@ -92,7 +94,7 @@ class NodeVersionDiffCommand
 
     private BoolQueryBuilder wrapInPathQueryIfNecessary( final String indexType, final BoolQueryBuilder sourceTargetCompares )
     {
-        if ( this.query.getNodePath() != null )
+        if ( this.query.getNodePath() != null && !this.query.getNodePath().isRoot() )
         {
             return new BoolQueryBuilder().
                 must( hasPath( indexType ) ).
@@ -113,8 +115,14 @@ class NodeVersionDiffCommand
 
     private HasChildQueryBuilder hasPath( final String indexType )
     {
-        return new HasChildQueryBuilder( indexType, new WildcardQueryBuilder( BranchIndexPath.PATH.getPath(),
-                                                                              this.query.getNodePath().toString() + "*" ) );
+        final String queryPath = this.query.getNodePath().toString();
+
+        final BoolQueryBuilder pathQuery = new BoolQueryBuilder().
+            should( new WildcardQueryBuilder( BranchIndexPath.PATH.getPath(),
+                                              queryPath.endsWith( "/" ) ? queryPath + "*" : queryPath + "/*" ) ).
+            should( new TermQueryBuilder( BranchIndexPath.PATH.getPath(), queryPath ) );
+
+        return new HasChildQueryBuilder( indexType, pathQuery );
     }
 
     private HasChildQueryBuilder deletedInBranch( final String indexType, final Branch sourceBranch )
