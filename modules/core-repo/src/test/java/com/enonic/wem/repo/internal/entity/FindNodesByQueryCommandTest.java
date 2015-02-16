@@ -6,22 +6,15 @@ import java.time.temporal.ChronoUnit;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
-import com.enonic.xp.index.IndexConfig;
-import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.DynamicConstraintExpr;
 import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.RangeFilter;
@@ -75,182 +68,7 @@ public class FindNodesByQueryCommandTest
         assertNotNull( result.getNodes().getNodeById( childNode1.id() ) );
     }
 
-    @Test
-    public void compare_eq()
-        throws Exception
-    {
-        final Node node1 = createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            build() );
 
-        createNode( CreateNodeParams.create().
-            name( "my-node-2" ).
-            parent( NodePath.ROOT ).
-            build() );
-
-        createNode( CreateNodeParams.create().
-            name( "child-node" ).
-            parent( node1.path() ).
-            build() );
-
-        final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( CompareExpr.eq( FieldExpr.from( NodeIndexPath.NAME ), ValueExpr.string( "my-node-1" ) ) ) ).
-            build();
-
-        final FindNodesByQueryResult result = doFindByQuery( query );
-
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node1.id() ) );
-    }
-
-    @Test
-    public void compare_gt()
-        throws Exception
-    {
-        final PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        data.setDouble( "my-value", 5.5 );
-
-        createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            build() );
-
-        final PropertyTree data2 = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
-        data2.setDouble( "my-value", 10.0 );
-
-        final Node node2 = createNode( CreateNodeParams.create().
-            name( "my-node-2" ).
-            parent( NodePath.ROOT ).
-            data( data2 ).
-            build() );
-
-        final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( CompareExpr.gt( FieldExpr.from( IndexPath.from( "my-value" ) ), ValueExpr.number( 7 ) ) ) ).
-            build();
-
-        final FindNodesByQueryResult result = doFindByQuery( query );
-
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node2.id() ) );
-    }
-
-    @Test
-    public void fulltext()
-        throws Exception
-    {
-        final Node node = createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            build() );
-
-        refresh();
-
-        final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
-                FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.NAME.getPath() ),
-                                   ValueExpr.string( "My node name is my-node-1" ), ValueExpr.string( "OR" ) ) ) ) ).
-            build();
-
-        final FindNodesByQueryResult result = doFindByQuery( query );
-
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node.id() ) );
-    }
-
-
-    @Test
-    public void norwegian_characters()
-        throws Exception
-    {
-        final PropertyTree data = new PropertyTree();
-        data.addString( "myProperty", "æ" );
-        final PropertySet userdata = data.addSet( "data" );
-        userdata.addString( "displayName", "ø å" );
-
-        final Node node = createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( "content_default" ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
-
-        refresh();
-
-        printContentRepoIndex();
-
-        final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
-                FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.ALL_TEXT.getPath() ), ValueExpr.string( "æ" ),
-                                   ValueExpr.string( "OR" ) ) ) ) ).
-            build();
-
-        final FindNodesByQueryResult result = doFindByQuery( query );
-
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node.id() ) );
-
-        final NodeQuery query2 = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
-                FunctionExpr.from( "fulltext", ValueExpr.string( "data.displayName" ), ValueExpr.string( "ø å" ),
-                                   ValueExpr.string( "OR" ) ) ) ) ).
-            build();
-
-        final FindNodesByQueryResult result2 = doFindByQuery( query2 );
-
-        assertEquals( 1, result2.getNodes().getSize() );
-        assertNotNull( result2.getNodes().getNodeById( node.id() ) );
-    }
-
-    @Test
-    public void norwegian_characters_check_asciifolding()
-        throws Exception
-    {
-        final PropertyTree data = new PropertyTree();
-        data.addString( "myProperty", "æ" );
-        final PropertySet userdata = data.addSet( "data" );
-        userdata.addString( "displayName", "ø å" );
-
-        final Node node = createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( "content_default" ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
-
-        refresh();
-
-        printContentRepoIndex();
-
-        final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
-                FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.ALL_TEXT.getPath() ), ValueExpr.string( "ae" ),
-                                   ValueExpr.string( "OR" ) ) ) ) ).
-            build();
-
-        final FindNodesByQueryResult result = doFindByQuery( query );
-
-        assertEquals( 1, result.getNodes().getSize() );
-        assertNotNull( result.getNodes().getNodeById( node.id() ) );
-
-        final NodeQuery query2 = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
-                FunctionExpr.from( "fulltext", ValueExpr.string( "data.displayName" ), ValueExpr.string( "o a" ),
-                                   ValueExpr.string( "OR" ) ) ) ) ).
-            build();
-
-        final FindNodesByQueryResult result2 = doFindByQuery( query2 );
-
-        assertEquals( 1, result2.getNodes().getSize() );
-        assertNotNull( result2.getNodes().getNodeById( node.id() ) );
-    }
 
     @Test
     public void query_number_different_field_name_case()
@@ -337,6 +155,53 @@ public class FindNodesByQueryCommandTest
         assertNotNull( result.getNodes().getNodeById( node1.id() ) );
         assertNotNull( result.getNodes().getNodeById( node3.id() ) );
         assertNull( result.getNodes().getNodeById( node2.id() ) );
+    }
+
+    @Test
+    public void nested_paths()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+
+        final String path1 = "test.string.with.path";
+        final String value1 = "myValue";
+
+        data.setString( path1, value1 );
+        final String path2 = "test.string.with.path2";
+        final String value2 = "myValue2";
+
+        data.setString( path2, value2 );
+
+        final Node node1 = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            name( "my-node-2" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            name( "child-node" ).
+            parent( node1.path() ).
+            build() );
+
+        queryAndAssert( path1, value1, node1 );
+        queryAndAssert( path2, value2, node1 );
+    }
+
+    private void queryAndAssert( final String path1, final String value1, final Node node1 )
+    {
+        final NodeQuery query = NodeQuery.create().
+            query( QueryExpr.from( CompareExpr.eq( FieldExpr.from( path1 ), ValueExpr.string( value1 ) ) ) ).
+            build();
+
+        final FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getNodes().getSize() );
+        assertNotNull( result.getNodes().getNodeById( node1.id() ) );
     }
 
 }

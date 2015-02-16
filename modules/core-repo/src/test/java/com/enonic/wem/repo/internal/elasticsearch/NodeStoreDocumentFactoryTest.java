@@ -8,6 +8,10 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
+import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
+import com.enonic.wem.repo.internal.index.IndexValueType;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
@@ -17,13 +21,9 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.wem.repo.internal.elasticsearch.document.AbstractStoreDocumentItem;
-import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
-import com.enonic.wem.repo.internal.index.IndexValueType;
-import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 
-import static com.enonic.wem.repo.internal.TestContext.TEST_REPOSITORY;
 import static com.enonic.wem.repo.internal.TestContext.TEST_BRANCH;
+import static com.enonic.wem.repo.internal.TestContext.TEST_REPOSITORY;
 import static org.junit.Assert.*;
 
 public class NodeStoreDocumentFactoryTest
@@ -174,8 +174,8 @@ public class NodeStoreDocumentFactoryTest
 
         final StoreDocument storeDocument = getIndexDocumentOfType( storeDocuments, "test" );
 
-        assertNotNull( getItemWithName( storeDocument, IndexPath.from( "a_b_c" ), IndexValueType.NUMBER ) );
-        assertNotNull( getItemWithName( storeDocument, IndexPath.from( "a_b_d" ), IndexValueType.DATETIME ) );
+        assertNotNull( getItemWithName( storeDocument, IndexPath.from( "a.b.c" ), IndexValueType.NUMBER ) );
+        assertNotNull( getItemWithName( storeDocument, IndexPath.from( "a.b.d" ), IndexValueType.DATETIME ) );
     }
 
     @Test

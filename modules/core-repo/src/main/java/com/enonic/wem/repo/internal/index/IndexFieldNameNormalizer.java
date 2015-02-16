@@ -20,7 +20,7 @@ public class IndexFieldNameNormalizer
         String normalized = path;
 
         normalized = normalized.toLowerCase().trim();
-        normalized = normalized.replace( FIELD_PATH_SEPARATOR, INDEX_PATH_SEPARATOR );
+       // normalized = normalized.replace( FIELD_PATH_SEPARATOR, INDEX_PATH_SEPARATOR );
 
         return normalized;
     }

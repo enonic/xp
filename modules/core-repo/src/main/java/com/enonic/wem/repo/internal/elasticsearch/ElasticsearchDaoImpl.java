@@ -43,13 +43,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.home.HomeDir;
-import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.snapshot.RestoreParams;
-import com.enonic.xp.snapshot.RestoreResult;
-import com.enonic.xp.snapshot.SnapshotParams;
-import com.enonic.xp.snapshot.SnapshotResult;
-import com.enonic.xp.snapshot.SnapshotResults;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.elasticsearch.query.ElasticsearchQuery;
@@ -61,6 +54,13 @@ import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.wem.repo.internal.index.result.GetResult;
 import com.enonic.wem.repo.internal.index.result.SearchResult;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.xp.home.HomeDir;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.snapshot.RestoreParams;
+import com.enonic.xp.snapshot.RestoreResult;
+import com.enonic.xp.snapshot.SnapshotParams;
+import com.enonic.xp.snapshot.SnapshotResult;
+import com.enonic.xp.snapshot.SnapshotResults;
 
 @Component
 public class ElasticsearchDaoImpl

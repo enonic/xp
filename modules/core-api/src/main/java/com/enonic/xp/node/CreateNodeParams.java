@@ -79,7 +79,7 @@ public class CreateNodeParams
             childOrder( node.getChildOrder() ).
             nodeType( node.getNodeType() ).
             name( node.name().toString() ).
-
+            inheritPermissions( node.inheritsPermissions() ).
             parent( node.parentPath() );
     }
 
@@ -153,6 +153,38 @@ public class CreateNodeParams
         return dryRun;
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final CreateNodeParams that = (CreateNodeParams) o;
+        return Objects.equals( nodeId, that.nodeId ) &&
+            Objects.equals( parent, that.parent ) &&
+            Objects.equals( name, that.name ) &&
+            Objects.equals( data, that.data ) &&
+            Objects.equals( indexConfigDocument, that.indexConfigDocument ) &&
+            Objects.equals( childOrder, that.childOrder ) &&
+            Objects.equals( permissions, that.permissions ) &&
+            Objects.equals( nodeType, that.nodeType ) &&
+            Objects.equals( binaryAttachments, that.binaryAttachments ) &&
+            inheritPermissions == that.inheritPermissions;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( parent, name, data, indexConfigDocument, childOrder, nodeId, permissions, inheritPermissions, nodeType,
+                             binaryAttachments );
+    }
+
     public static final class Builder
     {
         private NodePath parent;
@@ -177,14 +209,14 @@ public class CreateNodeParams
 
         private NodeType nodeType;
 
+        private Set<BinaryAttachment> binaryAttachments = Sets.newHashSet();
+
+        private boolean dryRun = false;
+
         private Builder()
         {
             this.inheritPermissions = false;
         }
-
-        private Set<BinaryAttachment> binaryAttachments = Sets.newHashSet();
-
-        private boolean dryRun = false;
 
         private Builder( final CreateNodeParams createNodeParams )
         {
@@ -194,6 +226,7 @@ public class CreateNodeParams
             this.indexConfigDocument = createNodeParams.indexConfigDocument;
             this.childOrder = createNodeParams.childOrder;
             this.nodeId = createNodeParams.nodeId;
+            this.permissions = createNodeParams.permissions;
             this.inheritPermissions = createNodeParams.inheritPermissions;
             this.insertManualStrategy = createNodeParams.insertManualStrategy;
             this.manualOrderValue = createNodeParams.manualOrderValue;
@@ -290,37 +323,5 @@ public class CreateNodeParams
         {
             return new CreateNodeParams( this );
         }
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final CreateNodeParams that = (CreateNodeParams) o;
-        return Objects.equals( nodeId, that.nodeId ) &&
-            Objects.equals( parent, that.parent ) &&
-            Objects.equals( name, that.name ) &&
-            Objects.equals( data, that.data ) &&
-            Objects.equals( indexConfigDocument, that.indexConfigDocument ) &&
-            Objects.equals( childOrder, that.childOrder ) &&
-            Objects.equals( permissions, that.permissions ) &&
-            Objects.equals( nodeType, that.nodeType ) &&
-            Objects.equals( binaryAttachments, that.binaryAttachments ) &&
-            inheritPermissions == that.inheritPermissions;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( parent, name, data, indexConfigDocument, childOrder, nodeId, permissions, inheritPermissions, nodeType,
-                             binaryAttachments );
     }
 }

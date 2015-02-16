@@ -6,11 +6,24 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
+import com.enonic.wem.repo.internal.blob.BlobStore;
+import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
+import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
+import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
+import com.enonic.wem.repo.internal.elasticsearch.snapshot.ElasticsearchSnapshotService;
+import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
+import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
+import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.IndexType;
+import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -31,17 +44,6 @@ import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.wem.repo.internal.blob.BlobStore;
-import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
-import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
-import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
-import com.enonic.wem.repo.internal.elasticsearch.snapshot.ElasticsearchSnapshotService;
-import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
-import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
-import com.enonic.wem.repo.internal.repository.IndexNameResolver;
-import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
@@ -182,6 +184,12 @@ public abstract class AbstractNodeTest
 
     protected Node createNode( final CreateNodeParams createNodeParams )
     {
+        final CreateNodeParams createParamsWithAnalyzer = CreateNodeParams.create( createNodeParams ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( ContentConstants.CONTENT_DEFAULT_ANALYZER ).
+                build() ).
+            build();
+
         final Node createdNode = CreateNodeCommand.create().
             branchService( this.branchService ).
             nodeDao( this.nodeDao ).
@@ -189,7 +197,7 @@ public abstract class AbstractNodeTest
             versionService( this.versionService ).
             queryService( this.queryService ).
             binaryBlobStore( this.binaryBlobStore ).
-            params( createNodeParams ).
+            params( createParamsWithAnalyzer ).
             build().
             execute();
 

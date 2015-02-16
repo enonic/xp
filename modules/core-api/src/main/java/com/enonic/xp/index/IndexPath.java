@@ -30,33 +30,6 @@ public class IndexPath
         return path;
     }
 
-    private static class IndexFieldNameNormalizer
-    {
-        private static final String FIELD_PATH_SEPARATOR = ".";
-
-        private static final String INDEX_PATH_SEPARATOR = "_";
-
-        public static String normalize( final String path )
-        {
-            return doNormalize( path );
-        }
-
-        private static String doNormalize( final String path )
-        {
-            String normalized = path;
-
-            normalized = normalized.toLowerCase().trim();
-            normalized = normalized.replace( FIELD_PATH_SEPARATOR, INDEX_PATH_SEPARATOR );
-
-            return normalized;
-        }
-
-        public static String[] normalize( final Collection<String> paths )
-        {
-            return Collections2.transform( paths, str -> doNormalize( str ) ).toArray( new String[paths.size()] );
-        }
-    }
-
     @Override
     public String toString()
     {
@@ -89,5 +62,32 @@ public class IndexPath
     public int hashCode()
     {
         return path != null ? path.hashCode() : 0;
+    }
+
+    private static class IndexFieldNameNormalizer
+    {
+        private static final String FIELD_PATH_SEPARATOR = ".";
+
+        private static final String INDEX_PATH_SEPARATOR = "_";
+
+        public static String normalize( final String path )
+        {
+            return doNormalize( path );
+        }
+
+        private static String doNormalize( final String path )
+        {
+            String normalized = path;
+
+            normalized = normalized.toLowerCase().trim();
+            //normalized = normalized.replace( FIELD_PATH_SEPARATOR, INDEX_PATH_SEPARATOR );
+
+            return normalized;
+        }
+
+        public static String[] normalize( final Collection<String> paths )
+        {
+            return Collections2.transform( paths, str -> doNormalize( str ) ).toArray( new String[paths.size()] );
+        }
     }
 }
