@@ -14,12 +14,15 @@ module app.browse {
 
     import ContentResponse = api.content.ContentResponse;
     import ContentSummary = api.content.ContentSummary;
+    import ContentPath = api.content.ContentPath;
     import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
     import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
     import CompareContentRequest = api.content.CompareContentRequest;
     import CompareContentResults = api.content.CompareContentResults;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import ContentSummaryAndCompareStatusFetcher = api.content.ContentSummaryAndCompareStatusFetcher;
+    import TreeNodesOfContentPath = api.content.TreeNodesOfContentPath;
+    import TreeNodeParentOfContent = api.content.TreeNodeParentOfContent;
 
     import ContentBrowseSearchEvent = app.browse.filter.ContentBrowseSearchEvent;
     import ContentBrowseResetEvent = app.browse.filter.ContentBrowseResetEvent;
@@ -422,6 +425,120 @@ module app.browse {
                         }).done();
                 }
             }
+        }
+
+        /*
+         * New API methods
+         */
+        findByPaths(paths: api.content.ContentPath[], useParent: boolean = false): TreeNodesOfContentPath[] {
+            var root = this.getRoot().getDefaultRoot().treeToList(false, false),
+                filter = this.getRoot().getFilteredRoot().treeToList(false, false),
+                all: TreeNode<ContentSummaryAndCompareStatus>[] = root.concat(filter),
+                result: TreeNodesOfContentPath[] = [];
+
+            for (var i = 0; i < paths.length; i++) {
+                var node = useParent
+                    ? new TreeNodesOfContentPath(paths[i].getParentPath(), paths[i])
+                    : new TreeNodesOfContentPath(paths[i]);
+                if (useParent && node.getPath().isRoot()) {
+                    node.getNodes().push(this.getRoot().getDefaultRoot());
+                } else {
+                    for (var j = 0; j < all.length; j++) {
+                        var path = (all[j].getData() && all[j].getData().getContentSummary())
+                            ? all[j].getData().getContentSummary().getPath()
+                            : null;
+                        if (path && path.equals(node.getPath())) {
+                            node.getNodes().push(all[j]);
+                        }
+                    }
+                }
+                if (node.hasNodes()) {
+                    result.push(node);
+                }
+            }
+
+            return result;
+        }
+
+
+        xAppendContentNode(relationship: TreeNodeParentOfContent, update: boolean = true): TreeNode<ContentSummaryAndCompareStatus> {
+            var appendedNode = this.dataToTreeNode(relationship.getData(), relationship.getNode());
+            relationship.getNode().addChild(appendedNode, true);
+
+            var data = relationship.getNode().getData();
+            if (data && relationship.getNode().hasChildren() && !data.getContentSummary().hasChildren()) {
+                data.setContentSummary(new ContentSummaryBuilder(data.getContentSummary()).setHasChildren(true).build());
+            }
+
+            relationship.getNode().clearViewers();
+            if (update) {
+                this.initAndRender();
+            }
+
+            return appendedNode;
+        }
+
+        xAppendContentNodes(relationships: TreeNodeParentOfContent[], update: boolean = true): TreeNode<ContentSummaryAndCompareStatus>[] {
+            var nodes = [];
+
+            relationships.forEach((relationship: TreeNodeParentOfContent) => {
+                nodes.push(this.xAppendContentNode(relationship, false));
+            });
+
+            if (update) {
+                this.initAndRender();
+            }
+
+            return nodes;
+        }
+
+        xDeleteContentNode(node: TreeNode<ContentSummaryAndCompareStatus>, update: boolean = true) {
+            var parentNode = node.getParent();
+
+            node.remove();
+
+            var data = !!parentNode ? parentNode.getData() : null;
+            if (data && !parentNode.hasChildren() && data.getContentSummary().hasChildren()) {
+                data.setContentSummary(new ContentSummaryBuilder(data.getContentSummary()).setHasChildren(false).build());
+            }
+
+            if (update) {
+                this.initAndRender();
+            }
+        }
+
+        xDeleteContentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[], update: boolean = true) {
+            nodes.forEach((node) => {
+                this.xDeleteContentNode(node, false);
+            });
+            if (update) {
+                this.initAndRender();
+            }
+        }
+
+        xPopulateWithChildren(source: TreeNode<ContentSummaryAndCompareStatus>, dest: TreeNode<ContentSummaryAndCompareStatus>) {
+            dest.setChildren(source.getChildren());
+            dest.setExpanded(source.isExpanded());
+            if (dest.getData() && dest.getData().getContentSummary()) {
+                dest.getData().setContentSummary(
+                    new ContentSummaryBuilder(dest.getData().getContentSummary()).setHasChildren(dest.hasChildren()).build()
+                );
+                this.updatePathsInChildren(dest);
+            }
+            dest.clearViewers();
+        }
+
+        updatePathsInChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
+            node.getChildren().forEach((child) => {
+                var nodeSummary = node.getData() ? node.getData().getContentSummary() : null,
+                    childSummary = child.getData() ? child.getData().getContentSummary() : null;
+                if (nodeSummary && childSummary) {
+                    var path = ContentPath.fromParent(nodeSummary.getPath(), childSummary.getPath().getName());
+                    child.getData().setContentSummary(new ContentSummaryBuilder(childSummary).setPath(path).build());
+                    child.clearViewers();
+                    this.updatePathsInChildren(child);
+                }
+            });
         }
     }
 }

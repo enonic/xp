@@ -6,7 +6,9 @@ module api.content {
         DUPLICATE,
         CREATE,
         UPDATE,
-        DELETE
+        DELETE,
+        PENDING,
+        RENAME
     }
 
     interface ContentServerEventItemJson {
@@ -44,18 +46,32 @@ module api.content {
         }
 
         static fromJson(json: ContentServerEventItemJson): ContentServerChange {
-            var type = json.t;
-            var contentEventType = ContentServerChangeType.UNKNOWN;
-            if (type === 'P') {
+            var contentEventType;
+
+            switch (json.t) {
+            case 'P':
                 contentEventType = ContentServerChangeType.PUBLISH;
-            } else if (type === 'C') {
+                break;
+            case 'C':
                 contentEventType = ContentServerChangeType.CREATE;
-            } else if (type === 'U') {
+                break;
+            case 'U':
                 contentEventType = ContentServerChangeType.UPDATE;
-            } else if (type === 'X') {
+                break;
+            case 'X':
                 contentEventType = ContentServerChangeType.DELETE;
-            } else if (type === 'D') {
+                break;
+            case 'D':
                 contentEventType = ContentServerChangeType.DUPLICATE;
+                break;
+            case 'A':
+                contentEventType = ContentServerChangeType.PENDING;
+                break;
+            case 'R':
+                contentEventType = ContentServerChangeType.RENAME;
+                break;
+            default:
+                contentEventType = ContentServerChangeType.UNKNOWN;
             }
             var contentPaths = json.p.map((contentPath) => api.content.ContentPath.fromString(contentPath));
             return new ContentServerChange(contentPaths, contentEventType);

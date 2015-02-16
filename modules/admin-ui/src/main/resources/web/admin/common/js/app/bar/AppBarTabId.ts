@@ -23,6 +23,10 @@ module api.app.bar {
             this.id = id;
         }
 
+        getId(): string {
+            return this.id;
+        }
+
         changeToEditMode(id: string) {
             this.mode = "edit";
             this.id = id;

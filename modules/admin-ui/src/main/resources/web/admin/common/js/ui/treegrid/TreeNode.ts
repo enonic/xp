@@ -160,6 +160,7 @@ module api.ui.treegrid {
             } else {
                 this.children.push(child);
             }
+            this.clearViewers();
             child.setParent(this);
         }
 
@@ -174,6 +175,14 @@ module api.ui.treegrid {
 
             if (this.children.length === 0) {
                 this.expanded = false;
+            }
+        }
+
+        remove() {
+            if (this.parent) {
+                this.parent.removeChild(this);
+                this.parent.clearViewers();
+                this.parent = null;
             }
         }
 

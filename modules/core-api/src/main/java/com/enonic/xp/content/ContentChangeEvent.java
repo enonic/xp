@@ -83,7 +83,9 @@ public final class ContentChangeEvent
         DUPLICATE( "D" ),
         CREATE( "C" ),
         UPDATE( "U" ),
-        DELETE( "X" );
+        DELETE( "X" ),
+        PENDING( "A" ),
+        RENAME( "R" );
 
         private final String id;
 

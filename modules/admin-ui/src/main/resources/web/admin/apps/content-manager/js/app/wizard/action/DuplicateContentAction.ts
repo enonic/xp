@@ -8,9 +8,8 @@ module app.wizard.action {
                 var source = wizardPanel.getPersistedItem();
                 new api.content.DuplicateContentRequest(source.getContentId()).
                     sendAndParse().then((content: api.content.Content) => {
-
+                        // TODO: Replace the returning content with an id
                         api.notify.showFeedback('Content [' + source.getPath() + '] was duplicated!');
-                        new api.content.ContentDuplicatedEvent(content, source, !wizardPanel.isLayingOutNew()).fire();
                     })
             });
         }

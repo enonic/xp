@@ -46,6 +46,10 @@ module api.content {
             return this.elements;
         }
 
+        getName(): string {
+            return this.elements[this.elements.length - 1];
+        }
+
         getLevel(): number {
             return this.elements.length;
         }

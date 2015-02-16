@@ -54,6 +54,7 @@ final class RenameContentCommand
         final Content content = getContent( params.getContentId() );
 
         final ContentChangeEvent event = ContentChangeEvent.create().
+            change( ContentChangeEvent.ContentChangeType.RENAME, translateNodePathToContentPath( existingNode.path() ) ).
             change( ContentChangeEvent.ContentChangeType.DELETE, translateNodePathToContentPath( existingNode.path() ) ).
             change( ContentChangeEvent.ContentChangeType.CREATE, content.getPath() ).
             build();

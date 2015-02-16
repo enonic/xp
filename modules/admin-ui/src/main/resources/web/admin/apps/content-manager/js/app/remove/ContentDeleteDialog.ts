@@ -38,7 +38,6 @@ module app.remove {
 
                     if (result.getDeleted().length > 0) {
                         api.notify.showFeedback('Content [' + paths.map((path)=>path.toString()).join(', ') + '] deleted!');
-                        new api.content.ContentDeletedEvent(deletedContents).fire();
                     } else {
                         var reason = result.getDeleteFailures().length > 0 ? result.getDeleteFailures()[0].getReason() : '';
                         api.notify.showWarning('Content could not be deleted. ' + reason);

@@ -1,16 +1,20 @@
 module api.content {
 
+    export interface ContentDeletedEventJson {
+        contentId: string;
+    }
+
     export class ContentDeletedEvent extends api.event.Event {
 
-        private contents: ContentSummary[];
+        private contentId: api.content.ContentId;
 
-        constructor(contents: ContentSummary[]) {
+        constructor(contentId: api.content.ContentId) {
             super();
-            this.contents = contents;
+            this.contentId = contentId;
         }
 
-        public getContents(): ContentSummary[] {
-            return this.contents;
+        public getContentId(): api.content.ContentId {
+            return this.contentId;
         }
 
         static on(handler: (event: ContentDeletedEvent) => void) {
@@ -19,6 +23,10 @@ module api.content {
 
         static un(handler?: (event: ContentDeletedEvent) => void) {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
+        }
+
+        static fromJson(json: ContentDeletedEventJson): ContentDeletedEvent {
+            return new ContentDeletedEvent(new ContentId(json.contentId));
         }
     }
 }

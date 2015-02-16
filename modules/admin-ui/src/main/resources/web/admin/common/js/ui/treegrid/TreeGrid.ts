@@ -934,6 +934,11 @@ module api.ui.treegrid {
             this.grid.renderGrid();
         }
 
+        initAndRender() {
+            this.initData(this.getRoot().getCurrentRoot().treeToList());
+            this.resetAndRender();
+        }
+
         refreshNodeData(parentNode: TreeNode<DATA>): wemQ.Promise<TreeNode<DATA>> {
             return null;
         }

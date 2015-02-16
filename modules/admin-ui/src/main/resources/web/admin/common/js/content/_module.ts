@@ -18,8 +18,11 @@
 ///<reference path='MoveContentSummaryLoader.ts' />
 ///<reference path='Metadata.ts' />
 ///<reference path='MetadataByMixinNameComparator.ts' />
+///<reference path='TreeNodesOfContentPath.ts' />
+///<reference path='TreeNodeParentOfContent.ts' />
 
 ///<reference path='ContentServerEvent.ts' />
+///<reference path='ContentChangeResult.ts' />
 ///<reference path='ContentResourceRequest.ts' />
 ///<reference path='ApplyContentPermissionsRequest.ts' />
 ///<reference path='GetContentByIdRequest.ts' />
@@ -43,8 +46,8 @@
 ///<reference path='BatchContentResult.ts' />
 ///<reference path='ContentCreatedEvent.ts' />
 ///<reference path='ContentUpdatedEvent.ts' />
-///<reference path='ContentDeletedEvent.ts' />
 ///<reference path='ContentPublishedEvent.ts' />
+///<reference path='ContentDeletedEvent.ts' />
 ///<reference path='ContentChildOrderUpdatedEvent.ts' />
 ///<reference path='ContentComboBox.ts' />
 ///<reference path='ContentMovedEvent.ts' />
@@ -67,7 +70,6 @@
 ///<reference path='ContentVersionViewer.ts' />
 ///<reference path='GetActiveContentVersionsRequest.ts' />
 ///<reference path='GetContentVersionsRequest.ts' />
-///<reference path='ContentDuplicatedEvent.ts' />
 ///<reference path='GetNearestSiteRequest.ts' />
 ///<reference path='ContentNamedEvent.ts' />
 ///<reference path='OrderChildMovement.ts' />
