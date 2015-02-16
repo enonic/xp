@@ -93,9 +93,9 @@ module app.home {
         private showBrowserWarningMessage() {
             if (!api.BrowserHelper.isAvailableBrowser()) {
                 if (api.BrowserHelper.isOldBrowser()) {
-                    api.notify.showError("Your browser version is not supported! Continue at own risk", false);
+                    api.notify.showError("Your browser version is obsolete. Please upgrade", false);
                 } else {
-                    api.notify.showError("Your browser has not been tested yet, try Firefox or Chrome", false);
+                    api.notify.showError("Your browser currently is not supported, try Firefox or Chrome", false);
                 }
             }
         }
