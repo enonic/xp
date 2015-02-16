@@ -8,10 +8,10 @@ import org.osgi.service.component.annotations.Component;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.icon.Icon;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -91,7 +91,7 @@ public final class BuiltinMixinProvider
         formItems.add(createTextLine( "focalLength", "Focal Length" ).occurrences( 0, 1 ).build());
         formItems.add(createTextLine( "focalLength35", "Focal Length 35mm" ).occurrences( 0, 1 ).build());
         formItems.add(createTextLine( "exposureBias", "Exposure Bias" ).occurrences( 0, 1 ).build());
-        formItems.add(createTextLine( "aperture", "Aperture" ).occurrences( 0, 1 ).build());
+        formItems.add( createTextLine( "aperture", "Aperture" ).occurrences( 0, 0 ).build() );
         formItems.add(createTextLine( "shutterTime", "Shutter Time" ).occurrences( 0, 1 ).build());
         formItems.add(createTextLine( "flash", "Flash" ).occurrences( 0, 1 ).build());
         formItems.add(createTextLine( "autoFlashCompensation", "Auto Flash Compensation" ).occurrences( 0, 1 ).build());
