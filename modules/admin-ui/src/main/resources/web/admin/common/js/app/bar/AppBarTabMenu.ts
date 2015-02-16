@@ -138,6 +138,18 @@ module api.app.bar {
             return null;
         }
 
+        getNavigationItemByIdValue(tabIdValue: string): AppBarTabMenuItem {
+            var items: api.ui.tab.TabMenuItem[] = this.getNavigationItems();
+            var item;
+            for (var i = 0; i < items.length; i++) {
+                item = <AppBarTabMenuItem>items[i];
+                if (item.getTabId().getId() === tabIdValue) {
+                    return item;
+                }
+            }
+            return null;
+        }
+
         selectNavigationItem(tabIndex: number) {
             super.selectNavigationItem(tabIndex);
             var tab = <AppBarTabMenuItem>this.getNavigationItem(tabIndex);

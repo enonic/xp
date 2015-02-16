@@ -390,6 +390,11 @@ module api.content {
             return this;
         }
 
+        setPath(path: ContentPath): ContentSummaryBuilder {
+            this.path = path;
+            return this;
+        }
+
         setType(value: api.schema.content.ContentTypeName): ContentSummaryBuilder {
             this.type = value;
             return this;

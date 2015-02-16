@@ -38,6 +38,31 @@ module api.content {
             return deferred.promise;
         }
 
+        static fetchByPaths(paths: ContentPath[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+
+            var deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
+
+            new BatchContentRequest().setContentPaths(paths).sendAndParse().then((response: ContentResponse<ContentSummary>) => {
+                var contentSummaries: ContentSummary[] = response.getContents();
+                CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then((compareResults: CompareContentResults) => {
+                    deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
+                });
+            });
+
+            return deferred.promise;
+        }
+
+        static fetchStatus(contentSummaries: ContentSummary[]): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
+
+            var deferred = wemQ.defer<ContentSummaryAndCompareStatus[]>();
+
+            CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then((compareResults: CompareContentResults) => {
+                deferred.resolve(ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries, compareResults));
+            });
+
+            return deferred.promise;
+        }
+
         static updateCompareStatus(contentSummaries: ContentSummary[],
                                    compareResults: CompareContentResults): ContentSummaryAndCompareStatus[] {
             var list: ContentSummaryAndCompareStatus[] = [];

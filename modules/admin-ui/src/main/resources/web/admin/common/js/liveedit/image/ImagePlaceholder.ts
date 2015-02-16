@@ -25,8 +25,6 @@ module api.liveedit.image {
                 if (event.getTargetImagePlaceholder() === this) {
                     var createdImage = event.getUploadedItem();
 
-                    new api.content.ContentCreatedEvent(createdImage.getContentId()).fire();
-
                     var component: ImageComponent = this.imageComponentView.getComponent();
                     component.setImage(createdImage.getContentId(), createdImage.getDisplayName());
                 }

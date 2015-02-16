@@ -632,7 +632,6 @@ module app.wizard {
 
             return new PersistNewContentRoutine(this).setCreateContentRequestProducer(this.produceCreateContentRequest).execute().then((content: Content) => {
                 api.notify.showFeedback('Content was created!');
-                new api.content.ContentCreatedEvent(content.getContentId()).fire();
                 return content;
             });
         }
@@ -714,15 +713,6 @@ module app.wizard {
                 setMetadata(viewedContent.getAllMetadata()).
                 setOwner(viewedContent.getOwner()).
                 setLanguage(viewedContent.getLanguage());
-
-            /* TODO: CMS-4677 if (this.iconUploadItem) {
-             var thumbnail = Thumbnail.create().
-             setBinaryReference(this.iconUploadItem.getBlobKey()).
-             setMimeType(this.iconUploadItem.getMimeType()).
-             setSize(this.iconUploadItem.getSize()).
-             build();
-             updateContentRequest.setThumbnail(thumbnail);
-             }*/
 
             return updateContentRequest;
         }

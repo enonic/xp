@@ -94,9 +94,6 @@ module api.app {
 
         private translateServerEvent(serverEventJson: ServerEventJson): api.event.Event {
             var eventType = serverEventJson.type;
-            //if (eventType === 'ContentCreatedEvent') {
-            //    return api.content.ContentCreatedEvent.fromJson(serverEventJson.event);
-            //}
             if (eventType === 'ContentChangeEvent') {
                 var contentChange = api.content.ContentServerEvent.fromJson(serverEventJson.event);
                 console.log('Server changes: ' + contentChange.toString());
@@ -105,16 +102,9 @@ module api.app {
             if (eventType === 'ModuleUpdatedEvent') {
                 return api.module.ModuleUpdatedEvent.fromJson(serverEventJson.event);
             }
-            //if (eventType === 'ContentUpdatedEvent') {
-            //    return api.content.ContentUpdatedEvent.fromJson(serverEventJson.event);
-            //}
-            if (eventType === 'ContentPublishedEvent') {
-                return api.content.ContentPublishedEvent.fromJson(serverEventJson.event);
-            }
-            else if (eventType === 'ContentTypeUpdatedEvent') {
+            if (eventType === 'ContentTypeUpdatedEvent') {
                 return api.schema.content.ContentTypeUpdatedEvent.fromJson(serverEventJson.event);
-            }
-            else if (eventType === 'ContentTypeDeletedEvent') {
+            } else if (eventType === 'ContentTypeDeletedEvent') {
                 return api.schema.content.ContentTypeDeletedEvent.fromJson(serverEventJson.event);
             }
             return null;

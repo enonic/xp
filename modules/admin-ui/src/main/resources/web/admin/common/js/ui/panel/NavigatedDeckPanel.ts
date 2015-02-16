@@ -46,5 +46,9 @@ module api.ui.panel {
             }
             return index;
         }
+
+        getNavigator(): api.ui.Navigator {
+            return this.navigator;
+        }
     }
 }

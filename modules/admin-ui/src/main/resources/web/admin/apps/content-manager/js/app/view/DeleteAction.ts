@@ -21,8 +21,6 @@ module app.view {
                                 if (result.getDeleted().length > 0) {
                                     var path = result.getDeleted()[0].toString();
                                     api.notify.showFeedback('Content [' + path + '] deleted!');
-
-                                    new api.content.ContentDeletedEvent([contentToDelete]).fire();
                                 } else {
                                     var reason = result.getDeleteFailures().length > 0 ? result.getDeleteFailures()[0].getReason() : '';
                                     api.notify.showWarning('Content could not be deleted. ' + reason);

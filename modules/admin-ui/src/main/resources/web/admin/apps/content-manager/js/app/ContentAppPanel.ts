@@ -102,6 +102,13 @@ module app {
             app.browse.MoveContentEvent.on((event) => {
                 this.handleMove(event);
             });
+
+            api.content.ContentDeletedEvent.on((event: api.content.ContentDeletedEvent) => {
+                var item = this.getNavigator().getNavigationItemByIdValue(event.getContentId().toString());
+                if (item) {
+                    item.getCloseAction().execute();
+                }
+            });
         }
 
         private handleUpdated(event: ContentUpdatedEvent) {

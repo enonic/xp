@@ -38,5 +38,9 @@ module api.app {
                 new ShowBrowsePanelEvent().fire();
             }
         }
+
+        getNavigator(): api.app.bar.AppBarTabMenu {
+            return <api.app.bar.AppBarTabMenu>super.getNavigator();
+        }
     }
 }
