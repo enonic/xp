@@ -1,0 +1,15 @@
+
+Licenses used by Enonic XP
+
+Most of the software used in this project is licensed as Apache 2.0 license.
+See http://www.apache.org/licenses/LICENSE-2.0 for license terms.
+
+Other software licenses used by this product:
+
+JDom
+Apache-style open source license
+http://www.jdom.org/docs/faq.html#a0030
+
+
+Artwork licenses used by this product:
+

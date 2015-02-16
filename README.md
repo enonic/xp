@@ -29,9 +29,9 @@ Commit the Java source changes to git.
 
 This software is licensed under AGPL 3.0 license. See full license terms [here](http://www.enonic.com/license). Also the distribution includes
 3rd party software components. The vast majority of these libraries are licensed under Apache 2.0. For a complete list please 
-read [NOTICE.txt](https://github.com/enonic/cms-ce/raw/master/modules/cms-distro/src/resources/NOTICE.txt).
+read [NOTICE.txt](https://github.com/enonic/xp/raw/master/NOTICE.txt).
 
-	Enonic CMS
+	Enonic XP
 	Copyright (C) 2000-2015 Enonic AS.
 
 	This program is free software: you can redistribute it and/or modify
@@ -46,3 +46,4 @@ read [NOTICE.txt](https://github.com/enonic/cms-ce/raw/master/modules/cms-distro
 
 	You should have received a copy of the GNU Affero General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
