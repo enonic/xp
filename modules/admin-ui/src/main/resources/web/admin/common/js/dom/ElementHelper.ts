@@ -497,6 +497,15 @@ module api.dom {
             return this;
         }
 
+        getTabIndex(): number {
+            return this.el.tabIndex;
+        }
+
+        setTabIndex(tabIndex: number): ElementHelper {
+            this.el.tabIndex = tabIndex;
+            return this;
+        }
+
         getFontSize(): string {
             return this.getComputedProperty('font-size');
         }

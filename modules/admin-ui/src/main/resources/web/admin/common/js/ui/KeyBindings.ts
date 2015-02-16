@@ -50,7 +50,8 @@ module api.ui {
                 Mousetrap.bind(binding.getCombination(), binding.getCallback(),
                     binding.getAction() ? KeyBindingAction[binding.getAction()].toLowerCase() : "");
             }
-            this.activeBindings[binding.getCombination() + binding.getAction()] = binding;
+            var bindingKey = binding.getAction() ? binding.getCombination() + "-" + binding.getAction() : binding.getCombination();
+            this.activeBindings[bindingKey] = binding;
         }
 
         public unbindKeys(bindings: KeyBinding[]) {

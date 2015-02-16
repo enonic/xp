@@ -228,6 +228,21 @@ module app.create {
             this.fileInput.setUploaderParams(params)
         }
 
+        open() {
+            super.open();
+            var keyBindings = [
+                new api.ui.KeyBinding('up', () => {
+                    api.dom.FormEl.moveFocusToPrevFocusable(api.dom.Element.fromHtmlElement(<HTMLElement>document.activeElement),
+                        "input,li");
+                }).setGlobal(true),
+                new api.ui.KeyBinding('down', () => {
+                    api.dom.FormEl.moveFocusToNextFocusable(api.dom.Element.fromHtmlElement(<HTMLElement>document.activeElement),
+                        "input,li");
+                }).setGlobal(true)];
+
+            api.ui.KeyBindings.get().bindKeys(keyBindings);
+        }
+
         show() {
             if (this.parentContent) {
                 this.contentDialogTitle.setPath(this.parentContent.getPath().toString());

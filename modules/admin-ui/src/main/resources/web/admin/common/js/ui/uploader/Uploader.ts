@@ -89,6 +89,8 @@ module api.ui.uploader {
             this.dropzone = new api.dom.AEl("dropzone");
             // id needed for plupload to init, adding timestamp in case of multiple occurrences on page
             this.dropzone.setId('uploader-dropzone-' + new Date().getTime());
+            this.dropzone.getEl().setTabIndex(-1);// for mac default settings
+            this.getEl().setTabIndex(0);
             this.dropzoneContainer.appendChild(this.dropzone);
             this.appendChild(this.dropzoneContainer);
 
@@ -112,6 +114,12 @@ module api.ui.uploader {
                 this.reset();
             });
             this.appendChild(this.resetBtn);
+
+            this.onKeyPressed((event: KeyboardEvent) => {
+                if (event.keyCode == 13) {
+                    wemjq(this.dropzone.getEl().getHTMLElement()).simulate("click");
+                }
+            });
 
             var resetHandler = () => {
                 this.reset();
