@@ -98,6 +98,10 @@ task copyResources( type: Copy ) {
         expand project.properties
     }
     from( 'src' )
+    from( rootDir ) {
+        include 'LICENSE.txt'
+        include 'NOTICE.txt'
+    }
 }
 
 task installDist( dependsOn: [copyResources, copyBundles] )
