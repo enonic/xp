@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.jslib.content.url;
+package com.enonic.xp.portal.impl.jslib.url;
 
 import java.util.Map;
 

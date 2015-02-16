@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.jslib.content.url;
+package com.enonic.xp.portal.impl.jslib.url;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

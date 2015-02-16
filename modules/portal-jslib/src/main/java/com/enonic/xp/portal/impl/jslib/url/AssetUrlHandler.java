@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.jslib.content.url;
+package com.enonic.xp.portal.impl.jslib.url;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -6,23 +6,23 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.script.command.CommandHandler;
-import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 
 @Component(immediate = true, service = CommandHandler.class)
-public final class ImageUrlHandler
+public final class AssetUrlHandler
     extends AbstractUrlHandler
 {
-    public ImageUrlHandler()
+    public AssetUrlHandler()
     {
-        super( "imageUrl" );
+        super( "assetUrl" );
     }
 
     @Override
     protected String buildUrl( final Multimap<String, String> map )
     {
-        final ImageUrlParams params = new ImageUrlParams().context( getContext() ).setAsMap( map );
-        return this.urlService.imageUrl( params );
+        final AssetUrlParams params = new AssetUrlParams().context( getContext() ).setAsMap( map );
+        return this.urlService.assetUrl( params );
     }
 
     @Override

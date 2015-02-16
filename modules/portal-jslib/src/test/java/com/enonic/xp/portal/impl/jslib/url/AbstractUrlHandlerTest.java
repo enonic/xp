@@ -4,7 +4,6 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import com.enonic.xp.portal.impl.jslib.content.url.AbstractUrlHandler;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
 import com.enonic.xp.portal.url.PortalUrlService;
