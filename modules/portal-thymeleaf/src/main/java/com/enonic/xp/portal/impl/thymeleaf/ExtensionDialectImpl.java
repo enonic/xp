@@ -20,6 +20,6 @@ final class ExtensionDialectImpl
     @Override
     public String getPrefix()
     {
-        return "wem";
+        return "portal";
     }
 }
