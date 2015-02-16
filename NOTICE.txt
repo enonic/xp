@@ -6,10 +6,29 @@ See http://www.apache.org/licenses/LICENSE-2.0 for license terms.
 
 Other software licenses used by this product:
 
-JDom
-Apache-style open source license
-http://www.jdom.org/docs/faq.html#a0030
+    OSGi Specifications
+    OSGi Specification License, Version 2.0.
+    http://www.osgi.org/Specifications/Licensing
 
+    SLF4J Libraries
+    MIT License
+    http://slf4j.org/license.html
+
+    JMustache
+    Liberal license from Michael Bayne
+    https://github.com/samskivert/jmustache/blob/master/LICENSE
+
+    Logback Libraries
+    Eclipse Public License - Version 1.0
+    https://www.eclipse.org/legal/epl-v10.html
+
+    Saxon HE
+    Mozilla Public License - Version 2.0
+    https://www.mozilla.org/MPL/2.0/
 
 Artwork licenses used by this product:
+
+    IcoMoon icons (Ultimate Pack)
+    Need seperate development licenses for developing software using the icons.
+    https://icomoon.io/#icons-icomoon/license
 
