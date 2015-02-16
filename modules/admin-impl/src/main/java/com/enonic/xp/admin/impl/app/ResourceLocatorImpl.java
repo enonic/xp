@@ -36,6 +36,13 @@ public final class ResourceLocatorImpl
         this.bundles = Lists.newCopyOnWriteArrayList();
     }
 
+    @Override
+    public boolean shouldCache()
+    {
+        final boolean devMode = "true".equals( this.context.getProperty( "xp.dev.mode" ) );
+        return !devMode;
+    }
+
     @Activate
     public void start( final ComponentContext context )
     {

@@ -17,13 +17,6 @@ final class ResourceHandler
 
     private ResourceLocator resourceLocator;
 
-    private final boolean devMode;
-
-    public ResourceHandler()
-    {
-        this.devMode = "true".equals( System.getProperty( "xp.dev.mode" ) );
-    }
-
     public Response handle( final String path )
         throws Exception
     {
@@ -35,7 +28,7 @@ final class ResourceHandler
     {
         final Response.ResponseBuilder builder = doHandle( path );
 
-        if ( caching && !this.devMode )
+        if ( caching && this.resourceLocator.shouldCache() )
         {
             final CacheControl control = new CacheControl();
             control.setMaxAge( MAX_CACHE_AGE );
@@ -69,11 +62,6 @@ final class ResourceHandler
     private InputStream findResource( final String path )
         throws Exception
     {
-        if ( this.resourceLocator == null )
-        {
-            return null;
-        }
-
         final String resourcePath = "/web" + ( path.startsWith( "/" ) ? path : ( "/" + path ) );
         final URL url = this.resourceLocator.findResource( resourcePath );
 
