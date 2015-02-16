@@ -19,7 +19,7 @@ public final class BannerPrinter
         " \\___|_| |_|\\___/|_| |_|_|\\___| /_/\\_\\ .__/ \n" +
         "                                     |_|    \n";
 
-    private final static String PRODUCT = "Enonic WEM";
+    private final static String PRODUCT = "Enonic XP";
 
     private final Environment env;
 
