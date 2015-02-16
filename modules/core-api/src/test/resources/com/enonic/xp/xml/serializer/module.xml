@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
 
-  <name>mymodule</name>
-  <version>1.0.0</version>
-  <display-name>My Test Module</display-name>
-
-  <vendor>
-    <name>Enonic</name>
-    <url>http://www.enonic.com</url>
-  </vendor>
-
   <x-data mixin="system:menu-item"/>
   <x-data mixin="mymodule:my-meta-mixin"/>
 

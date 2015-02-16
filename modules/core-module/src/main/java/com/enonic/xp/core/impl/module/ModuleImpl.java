@@ -22,17 +22,15 @@ final class ModuleImpl
 
     protected ModuleVersion moduleVersion;
 
-    // TODO: Use Bundle-Name header.
     protected String displayName;
 
-    // TODO: Use X-Module-Url header.
     protected String url;
 
-    // TODO: Use X-Vendor-Name header.
     protected String vendorName;
 
-    // TODO: Use X-Vendor-Url header.
     protected String vendorUrl;
+
+    protected String systemVersion;
 
     protected Form config;
 
@@ -53,6 +51,12 @@ final class ModuleImpl
     public String getDisplayName()
     {
         return displayName;
+    }
+
+    @Override
+    public String getSystemVersion()
+    {
+        return this.systemVersion;
     }
 
     @Override

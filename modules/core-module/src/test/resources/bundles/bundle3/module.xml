@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module>
-  <display-name>Module 3</display-name>
-  <url>http://enonic.net</url>
-  <vendor>
-    <name>Enonic</name>
-    <url>https://www.enonic.com</url>
-  </vendor>
   <config/>
 </module>

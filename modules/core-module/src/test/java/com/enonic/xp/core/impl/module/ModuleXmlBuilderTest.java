@@ -3,15 +3,9 @@ package com.enonic.xp.core.impl.module;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.xp.form.Form;
-import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleVersion;
-import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.support.SerializingTestHelper;
-import com.enonic.xp.xml.XmlException;
 
 public class ModuleXmlBuilderTest
 {
@@ -34,34 +28,13 @@ public class ModuleXmlBuilderTest
     public void testModuleXmlDeserialization()
     {
         final String xml = loadTestXml( "serialized-module.xml" );
-        ModuleKey key = ModuleKey.from( "mymodule" );
-        final ModuleBuilder module = new ModuleBuilder().
-            moduleKey( key ).
-            moduleVersion( ModuleVersion.from( "1.0.0" ) );
-        this.xmlBuilder.toModule( xml, module, key );
-        Assert.assertEquals( createModule().toString(), module.build().toString() );
-    }
+        final ModuleImpl module = new ModuleImpl();
+        module.moduleKey = ModuleKey.from( "mymodule" );
+        module.moduleVersion = ModuleVersion.from( "1.0.0" );
 
-    @Test(expected = XmlException.class)
-    public void testBadXmlModuleSerialization()
-    {
-        this.xmlBuilder.toModule( "<module><display-name/>", new ModuleBuilder(), ModuleKey.from( "testModuleKey" ) );
-    }
+        this.xmlBuilder.toModule( xml, module );
 
-    private Module createModule()
-    {
-        final Form config = Form.newForm().
-            addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            build();
-
-        return new ModuleBuilder().
-            moduleKey( ModuleKey.from( "mymodule" ) ).
-            displayName( "module display name" ).
-            url( "http://enonic.net" ).
-            vendorName( "Enonic" ).
-            vendorUrl( "https://www.enonic.com" ).
-            config( config ).
-            metaSteps( MixinNames.from( "system:menu-item", "mymodule:my-meta-mixin" ) ).
-            build();
+        Assert.assertNotNull( module.config );
+        Assert.assertNotNull( module.metaSteps );
     }
 }

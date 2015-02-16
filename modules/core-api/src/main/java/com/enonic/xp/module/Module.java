@@ -16,6 +16,8 @@ public interface Module
 
     public String getDisplayName();
 
+    public String getSystemVersion();
+
     public String getMaxSystemVersion();
 
     public String getMinSystemVersion();

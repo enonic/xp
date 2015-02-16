@@ -31,14 +31,14 @@ public class ModuleServiceImplTest
 
     private Module createModule( final String key )
     {
-        return new ModuleBuilder().
-            moduleKey( ModuleKey.from( key ) ).
-            moduleVersion( ModuleVersion.from( "1.0.0" ) ).
-            displayName( "module display name" ).
-            url( "http://enonic.net" ).
-            vendorName( "Enonic" ).
-            vendorUrl( "https://www.enonic.com" ).
-            build();
+        final ModuleImpl module = new ModuleImpl();
+        module.moduleKey = ModuleKey.from( key );
+        module.moduleVersion = ModuleVersion.from( "1.0.0" );
+        module.displayName = "module display name";
+        module.url = "http://enonic.net";
+        module.vendorName = "Enonic";
+        module.vendorUrl = "https://www.enonic.com";
+        return module;
     }
 
     @Test

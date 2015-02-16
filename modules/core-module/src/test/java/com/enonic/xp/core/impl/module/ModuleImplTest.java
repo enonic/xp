@@ -17,7 +17,6 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.module.Module;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleVersion;
 
@@ -45,15 +44,14 @@ public class ModuleImplTest
             addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
-        final Module module = new ModuleBuilder().
-            moduleKey( ModuleKey.from( "mymodule" ) ).
-            moduleVersion( ModuleVersion.from( "1.0.0" ) ).
-            displayName( "module display name" ).
-            url( "http://enonic.net" ).
-            vendorName( "Enonic" ).
-            vendorUrl( "https://www.enonic.com" ).
-            config( config ).
-            build();
+        final ModuleImpl module = new ModuleImpl();
+        module.moduleKey = ModuleKey.from( "mymodule" );
+        module.moduleVersion = ModuleVersion.from( "1.0.0" );
+        module.displayName = "module display name";
+        module.url = "http://enonic.net";
+        module.vendorName = "Enonic";
+        module.vendorUrl = "https://www.enonic.com";
+        module.config = config;
 
         assertEquals( "mymodule", module.getKey().toString() );
         assertEquals( "module display name", module.getDisplayName() );
@@ -66,11 +64,10 @@ public class ModuleImplTest
     @Test
     public void testGetResource()
     {
-        final Module module = new ModuleBuilder().
-            moduleKey( ModuleKey.from( "mymodule" ) ).
-            moduleVersion( ModuleVersion.from( "1.0.0" ) ).
-            bundle( bundle ).
-            build();
+        final ModuleImpl module = new ModuleImpl();
+        module.moduleKey = ModuleKey.from( "mymodule" );
+        module.moduleVersion = ModuleVersion.from( "1.0.0" );
+        module.bundle = this.bundle;
 
         assertNotNull( module.getResource( "module.xml" ) );
         assertNotNull( module.getResource( "cms/parts/mypart/part.xml" ) );
@@ -81,11 +78,10 @@ public class ModuleImplTest
     @Test
     public void testGetResourcePaths()
     {
-        final Module module = new ModuleBuilder().
-            moduleKey( ModuleKey.from( "mymodule" ) ).
-            moduleVersion( ModuleVersion.from( "1.0.0" ) ).
-            bundle( bundle ).
-            build();
+        final ModuleImpl module = new ModuleImpl();
+        module.moduleKey = ModuleKey.from( "mymodule" );
+        module.moduleVersion = ModuleVersion.from( "1.0.0" );
+        module.bundle = this.bundle;
 
         final Set<String> set = module.getResourcePaths();
         assertNotNull( set );
