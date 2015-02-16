@@ -336,14 +336,16 @@ module app.browse {
                 var pendingResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
                 return ContentSummaryAndCompareStatusFetcher.
-                    fetchStatus(pendingResult.map((el) => {
-                        return (el.getNodes().length > 0 && el.getNodes()[0].getData())
-                            ? el.getNodes()[0].getData().getContentSummary()
-                            : null;
-                    }).filter((el) => {
-                        return el !== null;
-                    })).
-                    then((data: ContentSummaryAndCompareStatus[]) => {
+                    fetchByPaths(pendingResult.
+                        map((el) => {
+                            return (el.getNodes().length > 0 && el.getNodes()[0].getData())
+                                ? el.getNodes()[0].getData().getContentSummary().getPath()
+                                : null;
+                        }).
+                        filter((el) => {
+                            return el !== null;
+                        })
+                ).then((data: ContentSummaryAndCompareStatus[]) => {
                         data.forEach((el) => {
                             for (var i = 0; i < pendingResult.length; i++) {
                                 if (pendingResult[i].getId() === el.getId()) {
