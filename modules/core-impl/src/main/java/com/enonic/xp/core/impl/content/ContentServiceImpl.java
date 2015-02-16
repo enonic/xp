@@ -603,13 +603,27 @@ public class ContentServiceImpl
     @Override
     public boolean contentExists( final ContentId contentId )
     {
-        return this.nodeService.nodeExists( NodeId.from( contentId ) );
+        try
+        {
+            return this.nodeService.nodeExists( NodeId.from( contentId ) );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            return false;
+        }
     }
 
     @Override
     public boolean contentExists( final ContentPath contentPath )
     {
-        return this.nodeService.nodeExists( ContentNodeHelper.translateContentPathToNodePath( contentPath ) );
+        try
+        {
+            return this.nodeService.nodeExists( ContentNodeHelper.translateContentPathToNodePath( contentPath ) );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            return false;
+        }
     }
 
     private <T> T runAsContentAdmin( final Callable<T> callable )
