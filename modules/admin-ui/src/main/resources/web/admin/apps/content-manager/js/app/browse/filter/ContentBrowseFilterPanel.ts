@@ -228,7 +228,7 @@ module app.browse.filter {
 
         private appendContentTypesAggregationQuery(contentQuery) {
             contentQuery.addAggregationQuery(this.createTermsAggregation((ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME),
-                QueryField.CONTENT_TYPE, 10));
+                QueryField.CONTENT_TYPE, 15));
         }
 
         private createTermsAggregation(name: string, fieldName: string, size: number): TermsAggregationQuery {

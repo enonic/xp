@@ -14,9 +14,6 @@ import com.enonic.xp.content.attachment.AttachmentNames;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.FormItemSet;
-import com.enonic.xp.form.Input;
-import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.AttachedBinaries;
@@ -36,7 +33,6 @@ import com.enonic.xp.util.BinaryReference;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.*;
 
 public class ContentNodeTranslatorTest
 {
@@ -98,41 +94,6 @@ public class ContentNodeTranslatorTest
         assertNotNull( configForData );
         assertEquals( true, configForData.isEnabled() );
         assertEquals( true, configForData.isDecideByType() );
-    }
-
-    @Test
-    public void translate_entityIndexConfig_disabled_for_form()
-        throws Exception
-    {
-        FormItemSet.newFormItemSet().
-            name( "mySet" ).
-            label( "My set" ).
-            customText( "Custom text" ).
-            helpText( "Help text" ).
-            occurrences( 0, 10 ).
-            addFormItem( Input.newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( Input.newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() ).
-            build();
-
-        final CreateContentTranslatorParams mycontent = CreateContentTranslatorParams.create().
-            name( "mycontent" ).
-            displayName( "myDisplayName" ).
-            creator( PrincipalKey.ofAnonymous() ).
-            parent( ContentPath.ROOT ).
-            contentData( new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() ) ).
-            type( ContentTypeName.from( "mymodule:my-content-type" ) ).
-            childOrder( ContentConstants.DEFAULT_CHILD_ORDER ).
-            build();
-
-        final CreateNodeParams createNode = translator.toCreateNodeParams( mycontent );
-
-        final IndexConfigDocument indexConfigDocument = createNode.getIndexConfigDocument();
-
-        final IndexConfig indexConfig =
-            indexConfigDocument.getConfigForPath( PropertyPath.from( "form.formItems.Input[0].inputType.name" ) );
-
-        assertNotNull( indexConfig );
-        assertTrue( !indexConfig.isEnabled() && !indexConfig.isFulltext() && !indexConfig.isnGram() );
     }
 
     @Test

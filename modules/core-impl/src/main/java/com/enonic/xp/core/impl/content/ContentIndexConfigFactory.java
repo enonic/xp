@@ -10,12 +10,10 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT;
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
-import static com.enonic.xp.content.ContentPropertyNames.FORM;
-import static com.enonic.xp.content.ContentPropertyNames.METADATA;
+import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
 import static com.enonic.xp.content.ContentPropertyNames.SITE;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
-import static com.enonic.xp.content.ContentPropertyNames.VALID;
 
 class ContentIndexConfigFactory
 {
@@ -33,15 +31,13 @@ class ContentIndexConfigFactory
     {
         final PatternIndexConfigDocument.Builder config = PatternIndexConfigDocument.create().
             analyzer( ContentConstants.CONTENT_DEFAULT_ANALYZER ).
-            add( PAGE, IndexConfig.NONE ).
+            add( PAGE, IndexConfig.MINIMAL ).
+            add( PropertyPath.from( PAGE, "regions" ), IndexConfig.NONE ).
             add( SITE, IndexConfig.NONE ).
-            add( VALID, IndexConfig.NONE ).
-            add( FORM, IndexConfig.NONE ).
             add( DATA, IndexConfig.BY_TYPE ).
             add( TYPE, IndexConfig.MINIMAL ).
-            add( ATTACHMENT, IndexConfig.NONE ).
-            add( PropertyPath.from( DATA, METADATA ), IndexConfig.NONE ).
-            add( PropertyPath.from( DATA, METADATA, "media" ), IndexConfig.MINIMAL ).
+            add( ATTACHMENT, IndexConfig.MINIMAL ).
+            add( PropertyPath.from( EXTRA_DATA ), IndexConfig.MINIMAL ).
             defaultConfig( IndexConfig.BY_TYPE );
 
         return config.build();

@@ -43,16 +43,15 @@ public class ContentIndexConfigFactoryTest
 
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( createContentTranslatorParams );
 
-        assertEquals( IndexConfig.NONE, indexConfigDocument.getConfigForPath(
-            PropertyPath.from( ContentPropertyNames.DATA, ContentPropertyNames.METADATA ) ) );
+        assertEquals( IndexConfig.MINIMAL, indexConfigDocument.getConfigForPath( PropertyPath.from( ContentPropertyNames.EXTRA_DATA ) ) );
+
+        assertEquals( IndexConfig.MINIMAL,
+                      indexConfigDocument.getConfigForPath( PropertyPath.from( ContentPropertyNames.EXTRA_DATA, "media" ) ) );
+
+        assertEquals( IndexConfig.MINIMAL,
+                      indexConfigDocument.getConfigForPath( PropertyPath.from( ContentPropertyNames.EXTRA_DATA, "subSet" ) ) );
 
         assertEquals( IndexConfig.MINIMAL, indexConfigDocument.getConfigForPath(
-            PropertyPath.from( ContentPropertyNames.DATA, ContentPropertyNames.METADATA, "media" ) ) );
-
-        assertEquals( IndexConfig.NONE, indexConfigDocument.getConfigForPath(
-            PropertyPath.from( ContentPropertyNames.DATA, ContentPropertyNames.METADATA, "subSet" ) ) );
-
-        assertEquals( IndexConfig.NONE, indexConfigDocument.getConfigForPath(
-            PropertyPath.from( ContentPropertyNames.DATA, ContentPropertyNames.METADATA, "subSet", "subSetValue" ) ) );
+            PropertyPath.from( ContentPropertyNames.EXTRA_DATA, "subSet", "subSetValue" ) ) );
     }
 }
