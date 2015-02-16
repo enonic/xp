@@ -6,6 +6,14 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.core.impl.export.builder.CreateNodeParamsFactory;
+import com.enonic.xp.core.impl.export.builder.PropertyTreeXmlBuilder;
+import com.enonic.xp.core.impl.export.builder.UpdateNodeParamsFactory;
+import com.enonic.xp.core.impl.export.reader.ExportReader;
+import com.enonic.xp.core.impl.export.validator.ContentImportValidator;
+import com.enonic.xp.core.impl.export.validator.ImportValidator;
+import com.enonic.xp.core.impl.export.xml.XmlNode;
+import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -22,14 +30,6 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFilePaths;
-import com.enonic.xp.core.impl.export.builder.CreateNodeParamsFactory;
-import com.enonic.xp.core.impl.export.builder.PropertyTreeXmlBuilder;
-import com.enonic.xp.core.impl.export.builder.UpdateNodeParamsFactory;
-import com.enonic.xp.core.impl.export.reader.ExportReader;
-import com.enonic.xp.core.impl.export.validator.ContentImportValidator;
-import com.enonic.xp.core.impl.export.validator.ImportValidator;
-import com.enonic.xp.core.impl.export.xml.XmlNode;
-import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer;
 
 public class NodeImportCommand
 {
@@ -147,7 +147,7 @@ public class NodeImportCommand
         }
         catch ( Exception e )
         {
-            result.addError( "Could not import node in forlder " + nodeFolder.getPath().getPath(), e );
+            result.addError( "Could not import node in folder " + nodeFolder.getPath().getPath(), e );
         }
 
 
