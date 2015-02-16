@@ -32,7 +32,7 @@ module app.login {
 
             this.loginButton = new api.ui.button.Button();
             this.loginButton.addClass("login-button");
-            this.loginButton.setActive(false);
+            this.loginButton.hide();
             this.loginButton.onClicked(() => {
                 this.loginButtonClick();
             })
@@ -40,13 +40,26 @@ module app.login {
 
             this.messageContainer = new api.dom.DivEl("message-container");
 
+            var passwordDiv = new api.dom.DivEl("password-container");
+            passwordDiv.appendChild(this.passwordInput);
+            passwordDiv.appendChild(this.loginButton);
+
             this.appendChild(this.userIdInput);
-            this.appendChild(this.passwordInput);
-            this.appendChild(this.loginButton);
+            this.appendChild(passwordDiv);
             this.appendChild(this.messageContainer);
 
             this.onShown((event) => {
                 this.userIdInput.giveFocus();
+                var checkLoginButtonInterval = setInterval(() => {  //workaround to show login button when browser autofills inputs
+                    if(this.checkFieldsNotEmpty()) {
+                        this.loginButton.show();
+                        clearInterval(checkLoginButtonInterval);
+                    } else {
+                        this.loginButton.hide();
+                    }
+                }, 100);
+
+
             })
         }
 
@@ -94,10 +107,29 @@ module app.login {
         }
 
         private onInputTyped(event: KeyboardEvent) {
-            var fieldsNotEmpty: boolean = (this.userIdInput.getValue() !== '') && (this.passwordInput.getValue() !== '');
-            if (fieldsNotEmpty && event.keyCode == 13) {
-                this.loginButtonClick();
+            this.userIdInput.removeClass('invalid');
+            this.passwordInput.removeClass('invalid');
+            this.loginButton.removeClass('invalid');
+
+
+            var fieldsNotEmpty: boolean = this.checkFieldsNotEmpty();
+
+            if(fieldsNotEmpty) {
+                this.loginButton.show();
+                if (event.keyCode == 13) {
+                    this.loginButtonClick();
+                } else {
+                    this.setMessage('');
+                }
+            } else {
+                this.loginButton.hide();
+                this.setMessage('');
             }
+        }
+
+        private checkFieldsNotEmpty(): boolean {
+            var fieldsNotEmpty: boolean = (this.userIdInput.getValue() !== '') && (this.passwordInput.getValue() !== '');
+            return fieldsNotEmpty;
         }
     }
 

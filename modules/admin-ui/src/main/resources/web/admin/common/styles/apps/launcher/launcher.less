@@ -214,7 +214,6 @@ html, body {
       margin-top: 10px;
       color: white;
       text-align: center;
-      margin-left: 21px;
 
       .ellipsis();
     }
@@ -224,11 +223,9 @@ html, body {
       font-size: 12px;
       box-sizing: border-box;
       margin-bottom: 10px;
-      margin-top: 1px;
-      margin-left: 21px;
       border: 1px solid @admin-bg-light-gray;
       vertical-align: top;
-      padding: 4px 29px 4px 9px;
+      padding: 4px 9px;
       background: none @admin-white !important;
       width: 200px;
 
@@ -241,7 +238,7 @@ html, body {
     }
 
     .password-input {
-      margin-bottom: 0;
+      padding-right: 35px;
     }
 
     .text-input {
@@ -252,9 +249,10 @@ html, body {
     .login-button {
       .icon-arrow-right6;
       background-color: transparent;
-      position: relative;
-      right: 26px;
-      padding: 3px 0px 0px 0px;
+      position: absolute;
+      right: 0px;
+      top: 0px;
+      padding: 3px;
       font-size: 20px;
       color: @form-button-bg;
 
@@ -282,6 +280,10 @@ html, body {
       span {
         display: none;
       }
+    }
+
+    .password-container {
+      position: relative;
     }
   }
 
