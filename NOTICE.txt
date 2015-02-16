@@ -26,6 +26,40 @@ Other software licenses used by this product:
     Mozilla Public License - Version 2.0
     https://www.mozilla.org/MPL/2.0/
 
+Javascript library licenses used by this product:
+
+    CodeMirror
+    Liberal license from Marijn Haverbeke
+    https://github.com/codemirror/CodeMirror/blob/master/LICENSE
+
+    MediumEditor
+    Very liberal license from Davi Ferreira
+    https://github.com/daviferreira/medium-editor/blob/master/LICENSE
+
+    Plupload
+    GNU General Public License - Version 2
+    http://www.plupload.com/license/gplv2
+
+    SlickGrid
+    MIT License
+    https://github.com/mleibman/SlickGrid/blob/master/MIT-LICENSE.txt
+
+    Crossroads.js
+    MIT License
+    http://millermedeiros.github.io/crossroads.js
+
+    Hasher
+    MIT License
+    http://github.com/millermedeiros/hasher
+
+    Signals
+    MIT License
+    http://millermedeiros.github.com/js-signals
+
+    JQuery
+    MIT License
+    https://jquery.org/license/
+
 Artwork licenses used by this product:
 
     IcoMoon icons (Ultimate Pack)
