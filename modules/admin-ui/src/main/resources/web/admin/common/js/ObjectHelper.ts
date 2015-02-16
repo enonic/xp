@@ -18,7 +18,7 @@ module api {
                 return true;
             }
 
-            if (obj.constructor.name === (<any>fn).name) {
+            if (Object.prototype.toString.call(obj) === (<any>fn).name) {
                 return true;
             }
 
@@ -33,7 +33,7 @@ module api {
                     return false;
                 }
             }
-            while (prototype.constructor.name !== (<any>fn).name);
+            while (Object.prototype.toString.call(obj) !== (<any>fn).name);
 
             return true;
         }

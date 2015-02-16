@@ -18,6 +18,7 @@
 ///<reference path='Class.ts' />
 ///<reference path='ObjectHelper.ts' />
 ///<reference path='ClassHelper.ts' />
+///<reference path='BrowserHelper.ts' />
 ///<reference path='Comparator.ts' />
 ///<reference path='Name.ts' />
 ///<reference path='Exception.ts' />

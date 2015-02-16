@@ -26,7 +26,9 @@ module api.rest {
         }
 
         setTimeout(timeoutMillis): JsonRequest<RAW_JSON_TYPE> {
-            this.timeoutMillis = timeoutMillis;
+            if (timeoutMillis) {
+                this.timeoutMillis = timeoutMillis;
+            }
             return this;
         }
 
@@ -35,7 +37,7 @@ module api.rest {
             var deferred = wemQ.defer<JsonResponse<RAW_JSON_TYPE>>();
 
             var request: XMLHttpRequest = new XMLHttpRequest();
-            request.timeout = this.timeoutMillis;
+
             request.onreadystatechange = () => {
 
                 if (request.readyState === 4) {
@@ -77,12 +79,14 @@ module api.rest {
         private prepareGETRequest(request: XMLHttpRequest) {
             var paramString = api.util.UriHelper.encodeUrlParams(this.params);
             request.open(this.method, api.util.UriHelper.getUri(this.path.toString()) + '?' + paramString, true);
+            request.timeout = this.timeoutMillis;
             request.setRequestHeader("Accept", "application/json");
             return request;
         }
 
         private preparePOSTRequest(request: XMLHttpRequest) {
             request.open(this.method, api.util.UriHelper.getUri(this.path.toString()), true);
+            request.timeout = this.timeoutMillis;
             request.setRequestHeader("Accept", "application/json");
             request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         }
