@@ -12,12 +12,12 @@ import static com.google.common.base.StandardSystemProperty.OS_VERSION;
 public final class BannerPrinter
 {
     private final static String BANNER = "" +
-        "  _____                   _       __  ______  \n" +
-        " | ____|_ __   ___  _ __ (_) ___  \\ \\/ /  _ \\ \n" +
-        " |  _| | '_ \\ / _ \\| '_ \\| |/ __|  \\  /| |_) |\n" +
-        " | |___| | | | (_) | | | | | (__   /  \\|  __/ \n" +
-        " |_____|_| |_|\\___/|_| |_|_|\\___| /_/\\_\\_|    \n" +
-        "                                              ";
+        "                        _                   \n" +
+        "  ___ _ __   ___  _ __ (_) ___  __  ___ __  \n" +
+        " / _ \\ '_ \\ / _ \\| '_ \\| |/ __| \\ \\/ / '_ \\ \n" +
+        "|  __/ | | | (_) | | | | | (__   >  <| |_) |\n" +
+        " \\___|_| |_|\\___/|_| |_|_|\\___| /_/\\_\\ .__/ \n" +
+        "                                     |_|    \n";
 
     private final static String PRODUCT = "Enonic WEM";
 
@@ -36,7 +36,6 @@ public final class BannerPrinter
 
     public void printBanner()
     {
-        System.out.println();
         System.out.println( BANNER );
         System.out.println( " # " + PRODUCT + " " + getVersion() );
         System.out.println( " # " + getFormattedJvmInfo() );
