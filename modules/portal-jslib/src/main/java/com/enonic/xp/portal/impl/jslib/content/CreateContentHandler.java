@@ -51,8 +51,7 @@ public final class CreateContentHandler
             name( req.param( "name" ).value( String.class ) ).
             parent( contentPath( req.param( "parentPath" ).value( String.class ) ) ).
             displayName( req.param( "displayName" ).value( String.class ) ).
-            requireValid(
-                req.param( "requireValid" ).value( Boolean.class ) != null ? req.param( "requireValid" ).value( Boolean.class ) : false ).
+            requireValid( req.param( "requireValid" ).value( Boolean.class, false ) ).
             type( contentTypeName( req.param( "contentType" ).value( String.class ) ) ).
             contentData( propertyTree( req.param( "data" ).map() ) ).
             metadata( metaDatas( req.param( "x" ).map() ) ).
