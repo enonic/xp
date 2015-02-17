@@ -17,8 +17,6 @@ Export node from a branch in a repository
 	-p PORT				port, defaults to 8080
 	-n                  		enable nice format of output (requires python)
 
-NOTE: Usually, its most convenient to export and import with node-path=/
-
 EOF
 }
 
