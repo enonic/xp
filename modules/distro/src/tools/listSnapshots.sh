@@ -1,6 +1,4 @@
-#!/bin/sh
-
-
+#!/bin/bash
 
 # Usage info
 show_help() {
