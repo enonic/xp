@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.core.impl.export.builder.CreateNodeParamsFactory;
@@ -29,6 +30,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFile;
+import com.enonic.xp.vfs.VirtualFilePath;
 import com.enonic.xp.vfs.VirtualFilePaths;
 
 public class NodeImportCommand
@@ -94,7 +96,9 @@ public class NodeImportCommand
 
         try
         {
-            childNames = processBinarySource( nodeFolder );
+            final List<String> relativeChildNames = processBinarySource( nodeFolder );
+            childNames = getChildrenAbsolutePaths( nodeFolder, relativeChildNames );
+
         }
         catch ( Exception e )
         {
@@ -121,6 +125,20 @@ public class NodeImportCommand
             currentManualOrderValue -= IMPORT_NODE_ORDER_SPACE;
         }
     }
+
+    private List<String> getChildrenAbsolutePaths( final VirtualFile parent, final List<String> childNames )
+    {
+        final List<String> children = Lists.newLinkedList();
+
+        for ( final String childName : childNames )
+        {
+            final VirtualFilePath join = parent.getPath().join( childName );
+            children.add( join.getPath() );
+        }
+
+        return children;
+    }
+
 
     private void processNodeFolder( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )
     {

@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Metadata;
@@ -24,6 +27,8 @@ import com.enonic.xp.schema.mixin.MixinService;
 
 final class ValidateContentDataCommand
 {
+    private final static Logger LOG = LoggerFactory.getLogger( ValidateContentDataCommand.class );
+
     private final ContentTypeService contentTypeService;
 
     private final MixinService mixinService;
@@ -115,6 +120,11 @@ final class ValidateContentDataCommand
                 final MixinName name = metadata.getName();
 
                 final Mixin mixin = this.mixinService.getByName( name );
+                if ( mixin == null )
+                {
+                    LOG.warn( "Mixin not found: '" + name );
+                    continue;
+                }
 
                 final Form mixinForm = Form.newForm().addFormItems( mixin.getFormItems() ).build();
 
