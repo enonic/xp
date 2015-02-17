@@ -11,7 +11,7 @@ Export node from a branch in a repository
 	-u USER:PASSWORD		user:password for basic authentication
 	-t TARGET_DIR			target directory to save export
 	-s SOURCE_REPO_PATH		path of data to export. Format: <repo-name>:<branch-name>:<node-path>.
-						Sample: 'cms-repo:stage:/content'
+						Sample: 'cms-repo:draft:/content'
 	-i [true|false]		Include ids in data when exporting
 	-h HOSTNAME			hostname, defaults to localhost
 	-p PORT				port, defaults to 8080
