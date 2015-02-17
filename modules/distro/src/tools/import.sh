@@ -10,11 +10,13 @@ Import nodes from an export into a repository branch
 	-?|--help			display this help and exit
 	-u USER:PASSWORD		user:password for basic authentication
 	-t TARGET_REPO_PATH		target path for import. Format: <repo-name>:<branch-name>:<node-path>.
-						e.g 'cms-repo:draft:/content'
+						e.g 'cms-repo:draft:/'
 	-s SOURCE_DIR			path to exported files
 	-h HOSTNAME			hostname, defaults to localhost
 	-p PORT				port, defaults to 8080
 	-n                  		enable nice format of output (requires python)
+
+NOTE: Usually, its most convenient to export and import with node-path=/
 
 EOF
 }
