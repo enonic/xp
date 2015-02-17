@@ -109,7 +109,7 @@ public abstract class RenderResource
         {
             return this.services.getContentService().getById( contentId );
         }
-        catch ( ContentNotFoundException e )
+        catch ( final Exception e )
         {
             return null;
         }
