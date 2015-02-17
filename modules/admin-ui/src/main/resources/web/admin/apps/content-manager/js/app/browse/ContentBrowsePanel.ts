@@ -250,6 +250,7 @@ module app.browse {
                         }
                         this.contentTreeGrid.initAndRender();
 
+                        isFiltered = true;
                         if (isFiltered) {
                             this.setFilterPanelRefreshNeeded(true);
                             window.setTimeout(() => {
@@ -318,6 +319,7 @@ module app.browse {
                 this.contentTreeGrid.xDeleteContentNodes(merged);
 
                 var isFiltered = this.contentTreeGrid.getRoot().isFiltered();
+                isFiltered = true;
                 if (isFiltered) {
                     this.setFilterPanelRefreshNeeded(true);
                     window.setTimeout(() => {
