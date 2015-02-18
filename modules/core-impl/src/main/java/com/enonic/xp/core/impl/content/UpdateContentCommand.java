@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentUpdatedEvent;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -23,7 +24,6 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.content.validator.DataValidationError;
 import com.enonic.xp.schema.content.validator.DataValidationErrors;
-import com.enonic.xp.icon.Thumbnail;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -32,13 +32,13 @@ final class UpdateContentCommand
 
     private final UpdateContentParams params;
 
-    private final ProxyContentProcessor proxyProcessor;
+    private final MediaInfo mediaInfo;
 
     private UpdateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.proxyProcessor = ProxyContentProcessor.create().mediaInfo( builder.mediaInfo ).build();
+        this.mediaInfo = builder.mediaInfo;
     }
 
     public static Builder create( final UpdateContentParams params )
@@ -76,11 +76,17 @@ final class UpdateContentCommand
         }
 
         final boolean validated = validateEditedContent( editedContent );
+        final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( contentBeforeChange.getType() ) );
+        final ProxyContentProcessor proxyProcessor = ProxyContentProcessor.create().
+            mediaInfo( this.mediaInfo ).
+            contentType( contentType ).
+            mixinService( mixinService ).
+            build();
 
         editedContent = Content.newContent( editedContent ).
             valid( validated ).
             build();
-        editedContent = processContent( contentBeforeChange, editedContent );
+        editedContent = processContent( proxyProcessor, contentBeforeChange, editedContent );
         editedContent = attachThumbnail( editedContent );
 
         final UpdateContentTranslatorParams updateContentTranslatorParams = UpdateContentTranslatorParams.create().
@@ -99,7 +105,7 @@ final class UpdateContentCommand
         return translator.fromNode( editedNode );
     }
 
-    private Content processContent( final Content contentBeforeChange, Content editedContent )
+    private Content processContent( final ProxyContentProcessor proxyProcessor, final Content contentBeforeChange, Content editedContent )
     {
         final ProcessUpdateResult processUpdateResult =
             proxyProcessor.processEdit( contentBeforeChange.getType(), params, params.getCreateAttachments() );

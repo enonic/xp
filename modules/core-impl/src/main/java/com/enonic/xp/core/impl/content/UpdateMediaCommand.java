@@ -74,6 +74,7 @@ final class UpdateMediaCommand
         return UpdateContentCommand.create( this ).
             params( updateParams ).
             mediaInfo( mediaInfo ).
+            contentTypeService( this.contentTypeService ).
             moduleService( this.moduleService ).
             mixinService( this.mixinService ).
             build().
