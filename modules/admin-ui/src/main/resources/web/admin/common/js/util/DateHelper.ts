@@ -60,6 +60,11 @@ module api.util {
             return yearAsString + "-" + this.padNumber(date.getUTCMonth() + 1) + "-" + this.padNumber(date.getUTCDate());
         }
 
+        public static formatDate(date: Date): string {
+            var yearAsString = "" + date.getFullYear();
+            return yearAsString + "-" + this.padNumber(date.getMonth() + 1) + "-" + this.padNumber(date.getDate());
+        }
+
         private static padNumber(num: number): string {
             return (num < 10 ? '0' : '') + num;
         }
@@ -70,6 +75,34 @@ module api.util {
                    this.padNumber(date.getUTCSeconds());
         }
 
+        public static parseDate(value: string): Date {
+            var dateStr = (value || '').trim();
+            if (dateStr.length < 8 || dateStr.length > 10) {
+                return null;
+            }
+            var parts = dateStr.split('-');
+            if (parts.length !== 3 || parts[0].length !== 4) {
+                return null;
+            }
+            var parsedYear: number = Number(parts[0]);
+            var parsedMonth: number = Number(parts[1]);
+            var parsedDayOfMonth: number = Number(parts[2]);
+
+            var date = new Date(parsedYear, parsedMonth - 1, parsedDayOfMonth);
+            return date.getFullYear() === parsedYear && date.getMonth() === (parsedMonth - 1) && date.getDate() === parsedDayOfMonth
+                ? date
+                : null;
+        }
+
+        /**
+         * E.g. numDaysInMonth(2015, 1) -> 28
+         * @param year
+         * @param month 0 based month number of the year. 0 == January , 11 == December
+         * @returns {number}
+         */
+        static numDaysInMonth(year: number, month: number): number {
+            return new Date(year, month + 1, 0).getDate();
+        }
     }
 
 }

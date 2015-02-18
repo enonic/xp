@@ -120,7 +120,7 @@ module api.ui.time {
         }
 
         isLastDayOfMonth(month: number): boolean {
-            var lastDateOfMonth = api.util.DateHelper.newUTCDate(this.date.getFullYear(), month + 1, 0);
+            var lastDateOfMonth = new Date(this.date.getFullYear(), month + 1, 0);
             return month == this.date.getMonth() && this.date.getDate() == lastDateOfMonth.getDate();
         }
 
@@ -133,7 +133,7 @@ module api.ui.time {
                 return this.previousDay;
             }
             else {
-                var prevDate = api.util.DateHelper.newUTCDate(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() - 1);
+                var prevDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() - 1);
                 this.previousDay = new CalendarDayBuilder().
                     setDate(prevDate).
                     setMonth(this.month).
@@ -148,7 +148,7 @@ module api.ui.time {
                 return this.nextDay;
             }
             else {
-                var nextDate = api.util.DateHelper.newUTCDate(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() + 1);
+                var nextDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() + 1);
                 this.nextDay = new CalendarDayBuilder().
                     setDate(nextDate).
                     setMonth(this.month).

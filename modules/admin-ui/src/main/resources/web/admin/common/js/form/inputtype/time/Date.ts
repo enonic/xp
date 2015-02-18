@@ -32,8 +32,8 @@ module api.content.form.inputtype.time {
                 var date = property.getLocalDate();
                 datePickerBuilder.
                     setSelectedDate(date).
-                    setYear(date.getUTCFullYear()).
-                    setMonth(date.getUTCMonth());
+                    setYear(date.getFullYear()).
+                    setMonth(date.getMonth());
             }
             var datePicker = datePickerBuilder.build();
             datePicker.onSelectedDateChanged((event: api.ui.time.SelectedDateChangedEvent) => {

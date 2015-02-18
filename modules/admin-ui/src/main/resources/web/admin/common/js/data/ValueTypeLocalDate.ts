@@ -39,16 +39,16 @@ module api.data {
             if (!this.isConvertible(value)) {
                 return this.newNullValue();
             }
-            var date = api.util.DateHelper.parseUTCDate(value);
+            var date = api.util.DateHelper.parseDate(value);
             return new Value(date, this);
         }
 
         toJsonValue(value: Value): string {
-            return value.isNull() ? null : api.util.DateHelper.formatUTCDate(value.getLocalDate());
+            return value.isNull() ? null : api.util.DateHelper.formatDate(value.getLocalDate());
         }
 
         valueToString(value: Value): string {
-            return api.util.DateHelper.formatUTCDate((<Date>value.getObject()));
+            return api.util.DateHelper.formatDate((<Date>value.getObject()));
         }
 
         valueEquals(a: Date, b: Date): boolean {

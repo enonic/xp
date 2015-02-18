@@ -145,22 +145,14 @@ module api.ui.time {
                     this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
                 }
                 else {
-                    var date = api.util.DateHelper.parseUTCDate(typedDate);
+                    var date = api.util.DateHelper.parseDate(typedDate);
                     if (date) {
-                        var correctlyTyped = api.util.DateHelper.formatUTCDate(date) == typedDate;
-                        if (correctlyTyped) {
-                            this.selectedDate = date;
-                            this.validUserInput = true;
-                            this.calendar.selectDate(date);
-                            this.notifySelectedDateChanged(new SelectedDateChangedEvent(date));
-                            if (!this.popup.isVisible()) {
-                                this.popup.show();
-                            }
-                        }
-                        else {
-                            this.selectedDate = null;
-                            this.validUserInput = false;
-                            this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
+                        this.selectedDate = date;
+                        this.validUserInput = true;
+                        this.calendar.selectDate(date);
+                        this.notifySelectedDateChanged(new SelectedDateChangedEvent(date));
+                        if (!this.popup.isVisible()) {
+                            this.popup.show();
                         }
                     }
                     else {
@@ -200,7 +192,7 @@ module api.ui.time {
         }
 
         private formatDate(date: Date): string {
-            return api.util.DateHelper.formatUTCDate(date);
+            return api.util.DateHelper.formatDate(date);
         }
 
         private updateInputStyling() {

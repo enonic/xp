@@ -66,8 +66,8 @@ module api.ui.time {
             super("calendar");
 
             var now = new Date();
-            this.year = builder.year || now.getUTCFullYear();
-            this.month = builder.month != undefined ? builder.month : now.getUTCMonth();
+            this.year = builder.year || now.getFullYear();
+            this.month = builder.month != undefined ? builder.month : now.getMonth();
             this.selectedDate = builder.selectedDate;
             this.startingDayOfWeek = builder.startingDayOfWeek || DaysOfWeek.MONDAY;
             this.interactive = builder.interactive;
@@ -77,8 +77,8 @@ module api.ui.time {
 
         public selectDate(value: Date) {
             if (value) {
-                this.year = value.getUTCFullYear();
-                this.month = value.getUTCMonth();
+                this.year = value.getFullYear();
+                this.month = value.getMonth();
                 this.selectedDate = value;
                 this.removeChildren();
 
@@ -93,8 +93,8 @@ module api.ui.time {
             else {
                 this.selectedDate = null;
                 var now = new Date();
-                this.year = now.getUTCFullYear();
-                this.month = now.getUTCMonth();
+                this.year = now.getFullYear();
+                this.month = now.getMonth();
             }
         }
 
@@ -142,7 +142,7 @@ module api.ui.time {
 
         private resolveDaysInMonth() {
             var calendarDays: CalendarDay[] = [];
-            var daysInMonth = api.util.DateHelper.newUTCDate(this.year, this.month, 0).getDate();
+            var daysInMonth = api.util.DateHelper.numDaysInMonth(this.year, this.month);
             var previousDay: CalendarDay = null;
             for (var i = 1; i <= daysInMonth; i++) {
                 var calendarDay = this.createCalendarDay(i, previousDay);
@@ -192,7 +192,7 @@ module api.ui.time {
 
         private createCalendarDay(dayOfMonth: number, previousDay: CalendarDay): CalendarDay {
 
-            var date = api.util.DateHelper.newUTCDate(this.year, this.month, dayOfMonth);
+            var date = new Date(this.year, this.month, dayOfMonth);
             var calendarDay = new CalendarDayBuilder().
                 setDate(date).
                 setMonth(this.month).
