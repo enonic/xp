@@ -1,23 +1,18 @@
 package com.enonic.wem.core.content;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.content.site.CreateSiteParams;
 import com.enonic.xp.content.site.ModuleConfigs;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.Mixins;
 
 import static org.junit.Assert.*;
 
@@ -78,31 +73,7 @@ public class ContentServiceImplTest_create
         assertEquals( 4, attachments.getSize() ); // original, small, medium, large
     }
 
-    @Test
-    public void create_media_image()
-        throws Exception
-    {
-        final CreateMediaParams createMediaParams = new CreateMediaParams();
-        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
-            name( "Small cat" ).
-            parent( ContentPath.ROOT );
 
-        Mockito.when( this.mixinService.getByContentType( Mockito.any( ContentType.class ) ) ).thenReturn( Mixins.empty() );
-        final Content content = this.contentService.create( createMediaParams );
-
-        printContentRepoIndex();
-
-        final Content storedContent = this.contentService.getById( content.getId() );
-
-        assertNotNull( storedContent.getName() );
-        assertNotNull( storedContent.getCreatedTime() );
-        assertNotNull( storedContent.getCreator() );
-        assertNotNull( storedContent.getModifiedTime() );
-        assertNotNull( storedContent.getModifier() );
-        assertNotNull( storedContent.getData().getString( ContentPropertyNames.MEDIA ) );
-        final Attachments attachments = storedContent.getAttachments();
-        assertEquals( 4, attachments.getSize() ); // original, small, medium, large
-    }
 
     @Test
     public void create_site()

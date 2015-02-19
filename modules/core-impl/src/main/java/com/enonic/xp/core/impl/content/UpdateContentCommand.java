@@ -34,11 +34,14 @@ final class UpdateContentCommand
 
     private final MediaInfo mediaInfo;
 
+    //private final ProxyContentProcessor proxyProcessor;
+
     private UpdateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfo = builder.mediaInfo;
+
     }
 
     public static Builder create( final UpdateContentParams params )
@@ -76,17 +79,11 @@ final class UpdateContentCommand
         }
 
         final boolean validated = validateEditedContent( editedContent );
-        final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( contentBeforeChange.getType() ) );
-        final ProxyContentProcessor proxyProcessor = ProxyContentProcessor.create().
-            mediaInfo( this.mediaInfo ).
-            contentType( contentType ).
-            mixinService( mixinService ).
-            build();
 
         editedContent = Content.newContent( editedContent ).
             valid( validated ).
             build();
-        editedContent = processContent( proxyProcessor, contentBeforeChange, editedContent );
+        editedContent = processContent( contentBeforeChange, editedContent );
         editedContent = attachThumbnail( editedContent );
 
         final UpdateContentTranslatorParams updateContentTranslatorParams = UpdateContentTranslatorParams.create().
@@ -105,10 +102,19 @@ final class UpdateContentCommand
         return translator.fromNode( editedNode );
     }
 
-    private Content processContent( final ProxyContentProcessor proxyProcessor, final Content contentBeforeChange, Content editedContent )
+    private Content processContent( final Content contentBeforeChange, Content editedContent )
     {
+
+        final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( editedContent.getType() ) );
+
+        final ProxyContentProcessor proxyContentProcessor = ProxyContentProcessor.create().
+            mediaInfo( this.mediaInfo ).
+            mixinService( this.mixinService ).
+            contentType( contentType ).
+            build();
+
         final ProcessUpdateResult processUpdateResult =
-            proxyProcessor.processEdit( contentBeforeChange.getType(), params, params.getCreateAttachments() );
+            proxyContentProcessor.processEdit( contentBeforeChange.getType(), params, params.getCreateAttachments() );
         if ( processUpdateResult != null )
         {
             if ( processUpdateResult.editor != null )

@@ -37,20 +37,25 @@ import com.enonic.xp.util.ImageHelper;
 
 public final class ImageContentProcessor
 {
+    private static final Scale[] scales =
+        new Scale[]{new Scale( "small", 256 ), new Scale( "medium", 512 ), new Scale( "large", 1024 ), new Scale( "extra-large", 2048 )};
+
     private MixinService mixinService;
 
     private MediaInfo mediaInfo;
 
     private ContentType contentType;
 
-    private static final Scale[] scales =
-        new Scale[]{new Scale( "small", 256 ), new Scale( "medium", 512 ), new Scale( "large", 1024 ), new Scale( "extra-large", 2048 )};
-
     public ImageContentProcessor( final Builder builder )
     {
         this.mediaInfo = builder.mediaInfo;
         this.contentType = builder.contentType;
         this.mixinService = builder.mixinService;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public CreateContentParams processCreate( final CreateContentParams params )
@@ -72,6 +77,7 @@ public final class ImageContentProcessor
         {
             throw Exceptions.unchecked( e );
         }
+
         Mixins contentMixins = mixinService.getByContentType( contentType );
 
         Metadatas metadatas = null;
@@ -158,7 +164,6 @@ public final class ImageContentProcessor
         return new ProcessUpdateResult( processedCreateAttachments, editor );
     }
 
-
     private Metadatas extractMetadata( MediaInfo mediaInfo, Mixins mixins )
     {
 
@@ -206,11 +211,6 @@ public final class ImageContentProcessor
         return metadatasBuilder.build();
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
     public static class Builder
     {
 
@@ -238,8 +238,15 @@ public final class ImageContentProcessor
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( this.mixinService );
+            Preconditions.checkNotNull( this.contentType );
+        }
+
         public ImageContentProcessor build()
         {
+            this.validate();
             return new ImageContentProcessor( this );
         }
     }

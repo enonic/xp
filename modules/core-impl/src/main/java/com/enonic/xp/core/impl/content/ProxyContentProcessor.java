@@ -1,11 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.attachment.CreateAttachments;
+import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.mixin.MixinService;
 
 class ProxyContentProcessor
@@ -18,7 +20,11 @@ class ProxyContentProcessor
             mediaInfo( builder.mediaInfo ).
             contentType( builder.contentType ).
             mixinService( builder.mixinService ).build();
+    }
 
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     CreateContentParams processCreate( final CreateContentParams params )
@@ -46,12 +52,8 @@ class ProxyContentProcessor
         }
     }
 
-    public static Builder create()
+    public static class Builder
     {
-        return new Builder();
-    }
-
-    public static class Builder {
 
         private MediaInfo mediaInfo;
 
@@ -77,8 +79,15 @@ class ProxyContentProcessor
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( this.contentType );
+            Preconditions.checkNotNull( this.mixinService );
+        }
+
         public ProxyContentProcessor build()
         {
+            this.validate();
             return new ProxyContentProcessor( this );
         }
     }
