@@ -74,7 +74,27 @@ module api.content {
             return this.inheritPermissions;
         }
 
-        equals(o: api.Equitable): boolean {
+        private trimPropertyTree(data: PropertyTree): PropertyTree {
+            var copy = data.copy();
+            copy.getRoot().removeEmptyValues();
+            return copy;
+        }
+
+        private trimMetadata(metadata: Metadata): Metadata {
+            var copy = metadata.clone();
+            copy.getData().getRoot().removeEmptyValues();
+            return copy;
+        }
+
+        private metadataEqualsIgnoreEmpty(metadata: Metadata[], otherMeta: Metadata[]): boolean {
+            metadata = metadata.map((m) => this.trimMetadata(m)).filter((m) => !m.getData().isEmpty());
+            otherMeta = otherMeta.map((m) => this.trimMetadata(m)).filter((m) => !m.getData().isEmpty());
+
+            var comparator = new api.content.MetadataByMixinNameComparator();
+            return api.ObjectHelper.arrayEquals(metadata.sort(comparator.compare), otherMeta.sort(comparator.compare));
+        }
+
+        equals(o: api.Equitable, ignoreEmptyValues: boolean = false): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Content)) {
                 return false;
             }
@@ -85,12 +105,25 @@ module api.content {
 
             var other = <Content>o;
 
-            if (!api.ObjectHelper.equals(this.data, other.data)) {
-                return false;
+            if (ignoreEmptyValues) {
+                if (!api.ObjectHelper.equals(this.trimPropertyTree(this.data), this.trimPropertyTree(other.data))) {
+                    return false;
+                }
+            } else {
+                if (!api.ObjectHelper.equals(this.data, other.data)) {
+                    return false;
+                }
             }
-            var comparator = new api.content.MetadataByMixinNameComparator();
-            if (!api.ObjectHelper.arrayEquals(this.metadata.sort(comparator.compare), other.metadata.sort(comparator.compare))) {
-                return false;
+
+            if (ignoreEmptyValues) {
+                if (!this.metadataEqualsIgnoreEmpty(this.metadata, other.metadata)) {
+                    return false;
+                }
+            } else {
+                var comparator = new api.content.MetadataByMixinNameComparator();
+                if (!api.ObjectHelper.arrayEquals(this.metadata.sort(comparator.compare), other.metadata.sort(comparator.compare))) {
+                    return false;
+                }
             }
 
             if (!api.ObjectHelper.equals(this.pageObj, other.pageObj)) {
@@ -105,7 +138,7 @@ module api.content {
                 return false;
             }
 
-            if (!api.ObjectHelper.booleanEquals(this.inheritPermissions, other.inheritPermissions)) {
+            if (this.inheritPermissions !== other.inheritPermissions) {
                 return false;
             }
 

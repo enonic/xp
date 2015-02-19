@@ -23,6 +23,7 @@ module app.wizard {
     import PageTemplate = api.content.page.PageTemplate;
     import PageDescriptor = api.content.page.PageDescriptor;
     import AccessControlList = api.security.acl.AccessControlList;
+    import AccessControlEntry = api.security.acl.AccessControlEntry;
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import IsRenderableRequest = api.content.page.IsRenderableRequest;
@@ -276,47 +277,47 @@ module app.wizard {
                 this.checkSecurityWizardStepFormAllowed(loginResult);
                 return wemQ.all(modulePromises);
             }).then((modules: Module[]) => {
-                    var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
+                var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
 
+                metadataMixinPromises = metadataMixinPromises.concat(
+                    this.contentType.getMetadata().map((name: MixinName) => {
+                        return new GetMixinByQualifiedNameRequest(name).sendAndParse();
+                    }));
+
+                modules.forEach((mdl: Module) => {
                     metadataMixinPromises = metadataMixinPromises.concat(
-                        this.contentType.getMetadata().map((name: MixinName) => {
+                        mdl.getMetaSteps().map((name: MixinName) => {
                             return new GetMixinByQualifiedNameRequest(name).sendAndParse();
-                        }));
-
-                    modules.forEach((mdl: Module) => {
-                        metadataMixinPromises = metadataMixinPromises.concat(
-                            mdl.getMetaSteps().map((name: MixinName) => {
-                                return new GetMixinByQualifiedNameRequest(name).sendAndParse();
-                            })
-                        );
-                    });
-
-                    return wemQ.all(metadataMixinPromises);
-                }).then((mixins: Mixin[]) => {
-                    var steps: WizardStep[] = [];
-
-                    this.contentWizardStep = new WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm)
-                    steps.push(this.contentWizardStep);
-
-                    mixins.forEach((mixin: Mixin, index: number) => {
-                        if (!this.metadataStepFormByName[mixin.getMixinName().toString()]) {
-                            var stepForm = new ContentWizardStepForm();
-                            this.metadataStepFormByName[mixin.getMixinName().toString()] = stepForm;
-                            steps.splice(index + 1, 0, new WizardStep(mixin.getDisplayName(), stepForm));
-                        }
-                    });
-                    this.settingsWizardStep = new WizardStep("Settings", this.settingsWizardStepForm);
-                    steps.push(this.settingsWizardStep);
-
-                    if(this.isSecurityWizardStepFormAllowed) {
-                        steps.push(new WizardStep("Security", this.securityWizardStepForm));
-                    }
-
-
-                    this.setSteps(steps);
-
-                    return mixins;
+                        })
+                    );
                 });
+
+                return wemQ.all(metadataMixinPromises);
+            }).then((mixins: Mixin[]) => {
+                var steps: WizardStep[] = [];
+
+                this.contentWizardStep = new WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm)
+                steps.push(this.contentWizardStep);
+
+                mixins.forEach((mixin: Mixin, index: number) => {
+                    if (!this.metadataStepFormByName[mixin.getMixinName().toString()]) {
+                        var stepForm = new ContentWizardStepForm();
+                        this.metadataStepFormByName[mixin.getMixinName().toString()] = stepForm;
+                        steps.splice(index + 1, 0, new WizardStep(mixin.getDisplayName(), stepForm));
+                    }
+                });
+                this.settingsWizardStep = new WizardStep("Settings", this.settingsWizardStepForm);
+                steps.push(this.settingsWizardStep);
+
+                if (this.isSecurityWizardStepFormAllowed) {
+                    steps.push(new WizardStep("Security", this.securityWizardStepForm));
+                }
+
+
+                this.setSteps(steps);
+
+                return mixins;
+            });
         }
 
         preLayoutNew(): wemQ.Promise<void> {
@@ -474,7 +475,7 @@ module app.wizard {
                 this.settingsWizardStepForm.layout(content);
                 this.settingsWizardStepForm.setModel(new ContentSettingsModel(content));
 
-                if(this.isSecurityWizardStepFormAllowed) {
+                if (this.isSecurityWizardStepFormAllowed) {
                     this.securityWizardStepForm.layout(content);
                 }
 
@@ -724,7 +725,7 @@ module app.wizard {
             } else {
 
                 var viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
-                return !viewedContent.equals(persistedContent);
+                return !viewedContent.equals(persistedContent, true);
             }
         }
 
@@ -883,27 +884,26 @@ module app.wizard {
 
         private checkSecurityWizardStepFormAllowed(loginResult: api.security.auth.LoginResult) {
 
-            var accessEntriesWithEditPermissions: api.security.acl.AccessControlEntry[] =  this.getPersistedItem().getPermissions().getEntries().filter((item: api.security.acl.AccessControlEntry) => {
-                if(item.isAllowed(api.security.acl.Permission.WRITE_PERMISSIONS))
-                    return true;
-                else
-                    return false;
+            var entries = this.getPersistedItem().getPermissions().getEntries();
+            var accessEntriesWithEditPermissions: AccessControlEntry[] = entries.filter((item: AccessControlEntry) => {
+                return item.isAllowed(api.security.acl.Permission.WRITE_PERMISSIONS);
             });
 
             loginResult.getPrincipals().some((principalKey: api.security.PrincipalKey) => {
-                if(api.security.RoleKeys.ADMIN.equals(principalKey) || this.isPrincipalAllowedToEditPermissions(principalKey, accessEntriesWithEditPermissions)) {
+                if (api.security.RoleKeys.ADMIN.equals(principalKey) ||
+                    this.isPrincipalAllowedToEditPermissions(principalKey, accessEntriesWithEditPermissions)) {
                     this.isSecurityWizardStepFormAllowed = true;
                     return true;
                 }
             });
 
-
         }
 
-        private isPrincipalAllowedToEditPermissions(prinipalKey: api.security.PrincipalKey, accessEntriesWithEditPermissions: api.security.acl.AccessControlEntry[]): boolean {
+        private isPrincipalAllowedToEditPermissions(principalKey: api.security.PrincipalKey,
+                                                    accessEntriesWithEditPermissions: AccessControlEntry[]): boolean {
             var result = false;
-            accessEntriesWithEditPermissions.some((entry: api.security.acl.AccessControlEntry) => {
-                if(entry.getPrincipalKey().equals(prinipalKey)) {
+            accessEntriesWithEditPermissions.some((entry: AccessControlEntry) => {
+                if (entry.getPrincipalKey().equals(principalKey)) {
                     result = true;
                     return true;
                 }

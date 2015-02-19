@@ -216,8 +216,66 @@ module api.data {
             if (array) {
                 array.remove(index);
             }
+            if (array.isEmpty()) {
+                delete this.propertyArrayByName[name];
+            }
         }
 
+        isEmpty(): boolean {
+            var isEmpty: boolean = true;
+            for (var name in this.propertyArrayByName) {
+                if (!isEmpty) {
+                    return isEmpty;
+                }
+                if (this.propertyArrayByName.hasOwnProperty(name)) {
+                    var propertyArray: PropertyArray = this.propertyArrayByName[name];
+                    propertyArray.forEach((property: Property) => {
+                        if (!isEmpty) {
+                            return;
+                        }
+                        var type = property.getType();
+                        if (property.hasNullValue()) {
+                            return;
+                        }
+                        if (type.equals(api.data.ValueTypes.STRING) && property.getValue().getString() === '') {
+                            return;
+                        }
+                        if (type.equals(api.data.ValueTypes.BOOLEAN) && property.getValue().getBoolean() === false) {
+                            return;
+                        }
+                        if (type.equals(api.data.ValueTypes.DATA) && !property.getValue().getPropertySet().isEmpty()) {
+                            return;
+                        }
+                        isEmpty = false;
+                    });
+                }
+            }
+            return isEmpty;
+        }
+
+        removeEmptyValues() {
+            this.doRemoveEmptyValues(this);
+        }
+
+        private doRemoveEmptyValues(propertySet: api.data.PropertySet) {
+            propertySet.forEach((property) => {
+                var type = property.getType();
+
+                if (property.hasNullValue()) {
+                    propertySet.removeProperty(property.getName(), property.getIndex())
+                }
+                else if (type.equals(api.data.ValueTypes.STRING) && (property.getValue().getString() === '')) {
+                    propertySet.removeProperty(property.getName(), property.getIndex())
+                }
+                else if (type.equals(api.data.ValueTypes.DATA)) {
+                    var propertySetValue = property.getValue().getPropertySet();
+                    this.doRemoveEmptyValues(propertySetValue);
+                    if (propertySetValue.isEmpty()) {
+                        propertySet.removeProperty(property.getName(), property.getIndex())
+                    }
+                }
+            });
+        }
 
         /**
          * Returns the number of child properties in this PropertySet (grand children and so on is not counted).
@@ -998,7 +1056,7 @@ module api.data {
             });
             return values;
         }
-        
+
         // TODO: Add methods for each type
     }
 }

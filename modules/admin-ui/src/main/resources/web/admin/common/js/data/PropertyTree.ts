@@ -704,5 +704,10 @@ module api.data {
             });
             return values;
         }
+
+        isEmpty(): boolean {
+            return this.root.isEmpty();
+            ;
+        }
     }
 }

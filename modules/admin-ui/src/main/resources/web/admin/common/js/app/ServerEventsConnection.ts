@@ -95,9 +95,7 @@ module api.app {
         private translateServerEvent(serverEventJson: ServerEventJson): api.event.Event {
             var eventType = serverEventJson.type;
             if (eventType === 'ContentChangeEvent') {
-                var contentChange = api.content.ContentServerEvent.fromJson(serverEventJson.event);
-                console.log('Server changes: ' + contentChange.toString());
-                return contentChange;
+                return api.content.ContentServerEvent.fromJson(serverEventJson.event);
             }
             if (eventType === 'ModuleUpdatedEvent') {
                 return api.module.ModuleUpdatedEvent.fromJson(serverEventJson.event);

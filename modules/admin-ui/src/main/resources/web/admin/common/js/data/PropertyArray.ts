@@ -244,6 +244,10 @@ module api.data {
             return this.array.length;
         }
 
+        public isEmpty(): boolean {
+            return this.array.length === 0;
+        }
+
         /**
          * Returns a copy of the array of properties.
          */

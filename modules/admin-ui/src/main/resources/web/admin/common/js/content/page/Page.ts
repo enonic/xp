@@ -69,11 +69,14 @@ module api.content.page {
             if (!api.ObjectHelper.equals(this.regions, other.regions)) {
                 return false;
             }
-            if (!api.ObjectHelper.equals(this.config, other.config)) {
-                return false;
-            }
 
-            return true;
+            if (!this.config && (!other.config || other.config.isEmpty())) {
+                return true;
+            }
+            if (!other.config && (!this.config || this.config.isEmpty())) {
+                return true;
+            }
+            return api.ObjectHelper.equals(this.config, other.config);
         }
 
         clone(): Page {
