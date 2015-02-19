@@ -14,6 +14,7 @@ module api.schema.content.inputtype {
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
+    import ModuleKey = api.module.ModuleKey;
 
     export class ContentTypeFilter extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
@@ -27,8 +28,11 @@ module api.schema.content.inputtype {
 
         private layoutInProgress: boolean;
 
+        private context:  ContentInputTypeViewContext<any>;
+
         constructor(context: ContentInputTypeViewContext<any>) {
             super('content-type-filter');
+            this.context = context;
         }
 
         getValueType(): ValueType {
@@ -61,6 +65,11 @@ module api.schema.content.inputtype {
             };
             this.combobox.onLoaded(selectProperties);
 
+            this.combobox.onLoaded((contentTypeArray: ContentTypeSummary[]) => {
+                this.combobox.getComboBox().removeAllOptions();
+                this.filterOptions(contentTypeArray);
+            });
+
             this.combobox.onOptionSelected((event: OptionSelectedEvent<ContentTypeSummary>) => {
                 if (this.layoutInProgress) {
                     return;
@@ -91,6 +100,61 @@ module api.schema.content.inputtype {
             return this.combobox.getSelectedDisplayValues().map((contentType: ContentTypeSummary) => {
                 return new Value(contentType.getContentTypeName().toString(), ValueTypes.STRING);
             });
+        }
+
+        private filterOptions(contentTypeArray: ContentTypeSummary[]) {
+            new api.content.GetNearestSiteRequest(this.context.site.getContentId()).sendAndParse().then((parentSite: api.content.site.Site) => {
+
+                var typesAllowedEverywhere: {[key:string]: ContentTypeName} = {};
+                [ContentTypeName.UNSTRUCTURED, ContentTypeName.FOLDER, ContentTypeName.SITE,
+                    ContentTypeName.SHORTCUT].forEach((contentTypeName: ContentTypeName) => {
+                        typesAllowedEverywhere[contentTypeName.toString()] = contentTypeName;
+                    });
+                var siteModules: {[key:string]: ModuleKey} = {};
+                parentSite.getModuleKeys().forEach((moduleKey: ModuleKey) => {
+                    siteModules[moduleKey.toString()] = moduleKey;
+                });
+
+                var result = contentTypeArray.filter((item: ContentTypeSummary) => {
+                    var contentTypeName = item.getContentTypeName();
+                    if (item.isAbstract()) {
+                        return false;
+                    }
+                    else if (contentTypeName.isDescendantOfMedia()) {
+                        return true;
+                    }
+                    else if (contentTypeName.isTemplateFolder()) {
+                        return true; // template-folder is allowed under site
+                    }
+                    else if (typesAllowedEverywhere[contentTypeName.toString()]) {
+                        return true;
+                    }
+                    else if (siteModules[contentTypeName.getModuleKey().toString()]) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+
+                });
+
+                result.sort(this.contentTypeSummaryComparator);
+                this.combobox.getComboBox().setOptions(this.combobox.createOptions(result));
+            });
+        }
+
+        private contentTypeSummaryComparator(item1: ContentTypeSummary, item2: ContentTypeSummary): number {
+            if (item1.getDisplayName().toLowerCase() > item2.getDisplayName().toLowerCase()) {
+                return 1;
+            } else if (item1.getDisplayName().toLowerCase() < item2.getDisplayName().toLowerCase()) {
+                return -1;
+            } else if (item1.getName() > item2.getName()) {
+                return 1;
+            } else if (item1.getName() < item2.getName()) {
+                return -1;
+            } else {
+                return 0;
+            }
         }
 
         validate(silent: boolean = true): InputValidationRecording {
