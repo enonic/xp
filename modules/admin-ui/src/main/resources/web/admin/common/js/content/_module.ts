@@ -13,6 +13,7 @@
 ///<reference path='Content.ts' />
 ///<reference path='ContentResponse.ts' />
 ///<reference path='ContentNodeByDisplayNameComparator.ts' />
+///<reference path='ContentSummaryByDisplayNameComparator' />
 ///<reference path='ContentNodeByModifiedTimeComparator.ts' />
 ///<reference path='ContentByPathComparator.ts' />
 ///<reference path='MoveContentSummaryLoader.ts' />
