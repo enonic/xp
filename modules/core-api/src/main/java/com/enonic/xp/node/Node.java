@@ -57,10 +57,10 @@ public class Node
         this.parentPath = builder.parentPath;
         this.nodeType = builder.nodeType;
         this.hasChildren = builder.hasChildren;
-        this.data = builder.data != null ? builder.data : new PropertyTree();
+        this.data = builder.data;
         this.childOrder = builder.childOrder;
         this.manualOrderValue = builder.manualOrderValue;
-        this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
+        this.permissions = builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.attachedBinaries = builder.attachedBinaries;
         this.nodeState = builder.nodeState;
