@@ -32,7 +32,7 @@ public class ContentTypeForms
             label( "Supports" ).
             helpText( "Choose which content types this page template supports" ).
             inputType( InputTypes.CONTENT_TYPE_FILTER ).
-            required( false ).
+            required( true ).
             multiple( true ).
             build() ).
         build();
