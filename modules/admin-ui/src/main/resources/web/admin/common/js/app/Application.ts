@@ -1,5 +1,11 @@
 module api.app {
 
+    export enum ApplicationShowStatus {
+        NOT_DISPLAYED,
+        PREPARING,
+        DISPLAYED
+    }
+
     export class Application {
         private id: string;
         private name: string;
@@ -8,6 +14,7 @@ module api.app {
         private fullSizeIcon: boolean;
         private openTabs: number;
         private appFrame: api.dom.IFrameEl;
+        private status: ApplicationShowStatus;
         private loaded: boolean;
         private path: api.rest.Path;
         private loadedListeners: {(): void}[] = [];
@@ -20,6 +27,7 @@ module api.app {
             this.iconUrl = icon;
             this.fullSizeIcon = iconImage;
             this.openTabs = 0;
+            this.status = ApplicationShowStatus.NOT_DISPLAYED;
         }
 
         static getApplication(): api.app.Application {
@@ -79,6 +87,14 @@ module api.app {
         hide() {
             if (this.appFrame) {
                 this.appFrame.hide();
+                this.status = ApplicationShowStatus.NOT_DISPLAYED;
+            }
+        }
+
+        show() {
+            if (this.appFrame) {
+                this.appFrame.show();
+                this.status = ApplicationShowStatus.DISPLAYED;
             }
         }
 
@@ -93,6 +109,10 @@ module api.app {
             return this;
         }
 
+        setDisplayingStatus(status: ApplicationShowStatus) {
+            this.status = status;
+        }
+
         setFullSizeIcon(value: boolean): Application {
             this.fullSizeIcon = value;
             return this;
@@ -105,6 +125,18 @@ module api.app {
 
         getPath(): api.rest.Path {
             return this.path;
+        }
+
+        isDisplayed(): boolean {
+            return ApplicationShowStatus.DISPLAYED == this.status;
+        }
+
+        isPreparing(): boolean {
+            return this.status == ApplicationShowStatus.PREPARING;
+        }
+
+        isNotDisplayed(): boolean {
+            return this.status == ApplicationShowStatus.NOT_DISPLAYED;
         }
 
         onLoaded(listener: () => void) {
