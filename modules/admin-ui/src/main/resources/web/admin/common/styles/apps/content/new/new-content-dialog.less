@@ -29,6 +29,22 @@
     }
   }
 
+  &.animated {
+    -webkit-transition: margin-top 1s; /* For Safari 3.1 to 6.0 */
+    transition: margin-top 1s;
+  }
+
+  &.hidden {
+    .dialog-content {
+      .column{
+        .content-types-list {
+//          max-height: 0px;
+        }
+      }
+    }
+
+  }
+
   .dialog-content {
     position: relative;
 
@@ -45,6 +61,9 @@
         max-height: 480px;
         overflow-y: auto;
         overflow-x: hidden;
+
+//        -webkit-transition: 1s; /* For Safari 3.1 to 6.0 */
+//        transition:  1s;
 
         @media screen and (max-height: 720px) {
           max-height: 308px;
