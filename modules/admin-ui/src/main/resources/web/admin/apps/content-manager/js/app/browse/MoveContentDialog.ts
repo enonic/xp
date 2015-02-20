@@ -89,6 +89,7 @@ module app.browse {
         show() {
             api.dom.Body.get().appendChild(this);
             super.show();
+            this.contentComboBox.giveFocus();
         }
 
         close() {
