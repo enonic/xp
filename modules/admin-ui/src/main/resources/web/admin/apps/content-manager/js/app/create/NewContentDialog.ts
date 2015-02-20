@@ -41,7 +41,7 @@ module app.create {
                 title: this.contentDialogTitle
             });
 
-            this.addClass("new-content-dialog hidden");
+            this.addClass("new-content-dialog");
 
             var section = new api.dom.SectionEl().setClass("column");
             this.appendChildToContentPanel(section);
@@ -74,9 +74,6 @@ module app.create {
             this.contentListMask = new api.ui.mask.LoadMask(this.contentList);
             this.recentListMask = new api.ui.mask.LoadMask(this.recentList);
 
-            //this.contentList.appendChild(this.contentListMask);
-            //this.recentList.appendChild(this.recentListMask);
-
             this.listItems = [];
 
             this.fileInput.onInput((event: Event) => {
@@ -96,7 +93,6 @@ module app.create {
                 this.closeAndFireEventFromContentType(event.getItem());
             });
 
-           // this.contentList.getEl().addEventListener("transitionend", () => api.ui.responsive.ResponsiveManager.fireResizeEvent());
         }
 
         private initMediaUploader() {
@@ -308,7 +304,6 @@ module app.create {
                     this.contentListMask.hide();
                     this.recentListMask.hide();
                     this.addClass("animated");
-                    this.removeClass("hidden");
                     api.ui.responsive.ResponsiveManager.fireResizeEvent();
                 }).done();
         }
