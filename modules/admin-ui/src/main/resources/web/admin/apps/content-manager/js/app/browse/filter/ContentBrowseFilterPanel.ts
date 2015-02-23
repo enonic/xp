@@ -91,25 +91,17 @@ module app.browse.filter {
             new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
                 setExpand(api.rest.Expand.SUMMARY).
                 sendAndParse().then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
-                    var serchStrValue: string = event.getSearchInputValues().getTextSearchFieldValue();
-                    if (serchStrValue != null && serchStrValue.length > 0) {
-                        contentQuery = new ContentQuery();
-                        this.appendFulltextSearch(event.getSearchInputValues(), contentQuery);
+                    var searchStrValue: string = event.getSearchInputValues().getTextSearchFieldValue();
+                    if (searchStrValue != null && searchStrValue.length > 0) {
+                        this.updateAggregations(contentQueryResult.getAggregations(), true);
+                        new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
 
-                        this.appendContentTypesAggregationQuery(contentQuery);
-                        this.appendLastModifiedAggregationQuery(contentQuery);
-
-                        return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).
-                            setExpand(api.rest.Expand.SUMMARY).
-                            sendAndParse().then((filterSearchResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
-                                this.updateAggregations(filterSearchResult.getAggregations(), true);
-                                new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
-                            });
                     } else {
-                        this.resetFacets(true, true);
                         if (event instanceof RefreshEvent) {// refresh without grid reload
+                            this.resetFacets(true, true);
                             new ContentBrowseRefreshEvent().fire();
                         } else {// in other cases - reset with grid reload
+                            this.updateAggregations(contentQueryResult.getAggregations(), false);
                             new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
                         }
                     }
@@ -135,7 +127,7 @@ module app.browse.filter {
                 }).done();
         }
 
-        private resetFacets(supressEvent?: boolean, doResetAll?: boolean) {
+        private resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
 
             var contentQuery: ContentQuery = this.buildAggregationsQuery(new QueryExpr(null));
 
@@ -144,7 +136,7 @@ module app.browse.filter {
 
                     this.updateAggregations(contentQueryResult.getAggregations(), doResetAll);
 
-                    if (!supressEvent) { // then fire usual reset event with content grid reloading
+                    if (!suppressEvent) { // then fire usual reset event with content grid reloading
                         new ContentBrowseResetEvent().fire();
                     }
                 }
