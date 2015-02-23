@@ -107,6 +107,10 @@ module api.ui.text {
             return this;
         }
 
+        getUploader(): MediaUploader{
+            return this.mediaUploader;
+        }
+
         onUploadStarted(listener: (event: FileUploadStartedEvent<Content>) => void) {
             this.mediaUploader.onUploadStarted(listener);
         }
