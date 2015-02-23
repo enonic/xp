@@ -1,11 +1,19 @@
 .region-view {
 
-  &.dragged-over {
-    &.empty > .region-placeholder {
-      display: none;
-    }
-    & > .drag-placeholder {
-      display: block;
+  &.dragging {
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    &.dragged-over {
+      background: lightgoldenrodyellow;
+
+      .drag-placeholder {
+        display: block;
+      }
+
+      &.empty > .region-placeholder {
+        display: none;
+      }
     }
   }
 
@@ -25,10 +33,6 @@
   }
 
   p {
-    margin: 0 0 10px;
-
-    &:last-child {
-      margin: 0;
-    }
+    margin: 0;
   }
 }

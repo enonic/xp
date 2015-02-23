@@ -1,6 +1,5 @@
 ///<reference path='lib/Mousetrap.d.ts' />
 ///<reference path='lib/jquery.d.ts' />
-///<reference path='lib/jquery.resize.d.ts' />
 ///<reference path='lib/jqueryui.d.ts' />
 ///<reference path='lib/jquery.simulate.d.ts' />
 ///<reference path='lib/codemirror.d.ts' />

@@ -878,6 +878,14 @@ module api.dom {
             this.getEl().removeEventListener("dragover", listener);
         }
 
+        onDragOut(listener: (event: DragEvent) => void) {
+            this.getEl().addEventListener("dragout", listener);
+        }
+
+        unDragOut(listener: (event: DragEvent) => void) {
+            this.getEl().removeEventListener("dragout", listener);
+        }
+
         onDragLeave(listener: (event: DragEvent) => void) {
             this.getEl().addEventListener("dragleave", listener);
         }

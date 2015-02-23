@@ -3,15 +3,9 @@ declare var CONFIG;
 declare var wemjq: JQueryStatic;
 
 
-new LiveEdit.LiveEditPage();
-
-wemjq(window).load(() => {
-
-    LiveEdit.component.dragdropsort.DragDropSort.init();
-
-});
-
 wemjq(document).ready(() => {
+
+    new LiveEdit.LiveEditPage();
 
     // Notify parent frame if any modifier except shift is pressed
     // For the parent shortcuts to work if the inner iframe has focus

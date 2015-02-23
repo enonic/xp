@@ -3,7 +3,7 @@ module api.liveedit {
     import Event = api.event.Event;
     import Component = api.content.page.region.Component;
 
-    export class DraggingComponentViewCanceledEvent extends Event {
+    export class ComponentViewDragCanceledEvent extends Event {
 
         private componentView: ComponentView<Component>;
 
@@ -16,11 +16,11 @@ module api.liveedit {
             return this.componentView;
         }
 
-        static on(handler: (event: DraggingComponentViewCompletedEvent) => void, contextWindow: Window = window) {
+        static on(handler: (event: ComponentViewDragStoppedEvent) => void, contextWindow: Window = window) {
             Event.bind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
 
-        static un(handler: (event: DraggingComponentViewCompletedEvent) => void, contextWindow: Window = window) {
+        static un(handler: (event: ComponentViewDragStoppedEvent) => void, contextWindow: Window = window) {
             Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
     }

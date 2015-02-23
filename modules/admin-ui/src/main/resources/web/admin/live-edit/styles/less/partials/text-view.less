@@ -1,5 +1,9 @@
 .text-view {
 
+  &.empty > section {
+    display: none;
+  }
+
   &.edit-mode {
 
     > .text-placeholder {
@@ -15,7 +19,6 @@
   }
 
   & > section {
-    min-height: 32px;
     padding: 5px;
     .outline(0 none);
     .box-sizing(content-box);
@@ -39,9 +42,8 @@
     margin: 0;
     font-size: 30px;
     line-height: 32px;
-    color: @placeholder-icon;
+    color: #b3c0d2;
     font-family: @admin-font-family !important;
-    font-weight: bold;
     content: 'Text';
   }
 

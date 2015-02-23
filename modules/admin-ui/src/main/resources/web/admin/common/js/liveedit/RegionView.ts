@@ -329,30 +329,11 @@ module api.liveedit {
                 })
         }
 
-        private hasComponentDropzone(): boolean {
-
-            var foundDropZone = false;
-            var child = this.getHTMLElement().firstChild;
-            while (child) {
-
-                if (api.ObjectHelper.iFrameSafeInstanceOf(child, HTMLElement)) {
-                    var childHtmlElement = new api.dom.ElementHelper(<HTMLElement> child);
-                    if (childHtmlElement.hasClass("drag-placeholder") ||
-                        childHtmlElement.hasClass("live-edit-drag-placeholder-container")) {
-                        if (childHtmlElement.getDisplay() != "none") {
-                            foundDropZone = true;
-                            break;
-                        }
-                    }
-                }
-
-                child = child.nextSibling;
-            }
-            return foundDropZone;
-        }
-
         isEmpty(): boolean {
-            return !this.hasComponentDropzone() && (!this.region || this.region.isEmpty() || this.hasOnlyMovingComponentViews());
+            var onlyMoving = this.hasOnlyMovingComponentViews();
+            var empty = !this.region || this.region.isEmpty();
+
+            return empty || onlyMoving;
         }
 
         empty() {

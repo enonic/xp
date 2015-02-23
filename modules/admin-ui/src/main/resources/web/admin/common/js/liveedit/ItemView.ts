@@ -394,8 +394,9 @@ module api.liveedit {
             throw new Error("Must be implemented by inheritors");
         }
 
-        refreshEmptyState() {
+        refreshEmptyState(): ItemView {
             this.toggleClass('empty', this.isEmpty());
+            return this;
         }
 
         handleClick(event: MouseEvent) {
@@ -637,16 +638,6 @@ module api.liveedit {
             }
 
             return parentHTMLElement;
-        }
-
-        static findPreviousItemView(htmlElement: HTMLElement): api.dom.ElementHelper {
-
-            var element = new api.dom.ElementHelper(htmlElement);
-            var previous = element.getPrevious();
-            while (previous != null && !previous.hasAttribute("data-" + ItemType.ATTRIBUTE_TYPE)) {
-                previous = previous.getPrevious();
-            }
-            return previous;
         }
 
         onMouseOverView(listener: () => void) {
