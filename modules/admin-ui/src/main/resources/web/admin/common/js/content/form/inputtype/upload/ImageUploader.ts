@@ -51,7 +51,7 @@ module api.content.form.inputtype.upload {
             }
 
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
-                property.setValue(ValueTypes.STRING.newValue(event.getUploadItem().getModel().getContentId().toString()));
+                property.setValue(this.imageUploader.getMediaValue(event.getUploadItem().getModel()));
             });
 
             this.imageUploader.onUploadReset(() => {
