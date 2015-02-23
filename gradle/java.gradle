@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'jacoco'
 
 def defaultEncoding = 'UTF-8'
 
@@ -47,5 +48,9 @@ targetCompatibility = sourceCompatibility
 test {
     systemProperty 'java.awt.headless', 'true'
     jvmArgs '-Xmx2048m'
-}
 
+    jacoco {
+        enabled = ( project.properties['ci.build'] == 'true' )
+        destinationFile = file( "${rootProject.buildDir}/jacoco/test.exec" )
+    }
+}

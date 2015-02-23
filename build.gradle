@@ -1,5 +1,6 @@
 apply plugin: 'java-base'
 apply from: "$rootDir/gradle/check.gradle"
+apply from: "$rootDir/gradle/sonar.gradle"
 
 buildscript {
     apply from: "$rootDir/gradle/buildscript.gradle", to: buildscript
@@ -17,15 +18,6 @@ allprojects {
     }
 
     buildDir = 'target'
-}
-
-if ( project.properties['ci.build'] == 'true' )
-{
-    apply from: "$rootDir/gradle/sonar.gradle"
-
-    allprojects {
-        apply plugin: 'jacoco'
-    }
 }
 
 ext {
