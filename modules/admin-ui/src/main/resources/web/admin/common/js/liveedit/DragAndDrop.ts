@@ -11,7 +11,7 @@ module api.liveedit {
 
     export class DragAndDrop {
 
-        public static debug = true;
+        public static debug = false;
 
         private static _messageCounter: number = 0;
 
@@ -253,7 +253,6 @@ module api.liveedit {
                 console.groupEnd();
             }
 
-            debugger;
             var regionView: RegionView = this.getRegionView(ui.item.parent());
 
             if (!DragHelper.get().isDropAllowed()) {
