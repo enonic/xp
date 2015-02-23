@@ -46,6 +46,10 @@ module api.content {
             return item.getId();
         }
 
+        getMediaValue(item: Content): api.data.Value {
+            return item.getContentData().getPropertyArray("media").getValue(0);
+        }
+
         createResultItem(value: string): api.dom.Element {
 
             var link = new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri('content/media/' + value), "_blank");
