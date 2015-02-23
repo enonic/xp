@@ -64,7 +64,7 @@ class NodeVersionDiffCommand
             from( this.query.getFrom() ).
             build();
 
-        System.out.println( esQuery );
+        //System.out.println( esQuery );
 
         final SearchResult searchResult = elasticsearchDao.find( esQuery );
 
