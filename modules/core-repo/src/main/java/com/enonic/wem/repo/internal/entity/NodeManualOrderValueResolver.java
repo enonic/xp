@@ -10,7 +10,7 @@ public class NodeManualOrderValueResolver
 {
     public static final Long ORDER_SPACE = (long) Integer.MAX_VALUE;
 
-    public static final Long START_ORDER_VALUE = 0l;
+    public static final Long START_ORDER_VALUE = 0L;
 
     public static LinkedHashSet<NodeIdOrderValue> resolve( final LinkedHashSet<NodeId> orderedNodeIds )
     {

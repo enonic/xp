@@ -35,7 +35,7 @@ import com.enonic.xp.vfs.VirtualFilePaths;
 
 public class NodeImportCommand
 {
-    private static final Long IMPORT_NODE_ORDER_START_VALUE = 0l;
+    private static final Long IMPORT_NODE_ORDER_START_VALUE = 0L;
 
     private static final Long IMPORT_NODE_ORDER_SPACE = (long) Integer.MAX_VALUE;
 

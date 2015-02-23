@@ -58,8 +58,7 @@ public final class InputTypeName
         }
 
         final InputTypeName other = (InputTypeName) o;
-
-        return Objects.equals( ref, other.ref ) && Objects.equals( ref, other.ref );
+        return Objects.equals( ref, other.ref );
     }
 
     @Override

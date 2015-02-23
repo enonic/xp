@@ -46,7 +46,7 @@ public class FindNodesByParentCommand
             parentPath = getPathFromId( params.getParentId() );
             if ( parentPath == null )
             {
-                return FindNodesByParentResult.create().nodes( Nodes.empty() ).totalHits( 0l ).hits( 0l ).build();
+                return FindNodesByParentResult.create().nodes( Nodes.empty() ).totalHits( 0L ).hits( 0L ).build();
             }
         }
 

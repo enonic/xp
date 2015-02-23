@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.export.builder;
 
+import com.enonic.xp.core.impl.export.xml.XmlNode;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.core.impl.export.xml.XmlNode;
 
 public class UpdateNodeParamsFactory
 {
@@ -29,9 +29,7 @@ public class UpdateNodeParamsFactory
             dryRun( this.dryRun ).
             id( this.existingNode.id() ).
             setBinaryAttachments( binaryAttachments ).
-            editor( editableNode -> {
-                editableNode.data = PropertyTreeXmlBuilder.build( xmlNode.getData() );
-            } );
+            editor( editableNode -> editableNode.data = PropertyTreeXmlBuilder.build( xmlNode.getData() ) );
 
         return builder.build();
     }
