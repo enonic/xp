@@ -12,14 +12,18 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.Metadata;
 import com.enonic.xp.content.Metadatas;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.attachment.AttachmentNames;
 import com.enonic.xp.content.attachment.Attachments;
+import com.enonic.xp.content.attachment.CreateAttachment;
+import com.enonic.xp.content.attachment.CreateAttachments;
+import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
 
 import static com.enonic.xp.form.Input.newInput;
 import static com.enonic.xp.schema.mixin.Mixin.newMixin;
@@ -187,5 +191,104 @@ public class ContentServiceImplTest_update
         assertEquals( "value", storedContent.getData().getString( "testString2" ) );
     }
 
+    @Test
+    public void update_content_with_thumbnail_keep_on_update()
+        throws Exception
+    {
+        final ByteSource thumbnail = loadImage( "cat-small.jpg" );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            contentData( new PropertyTree() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.contentId( content.getId() ).
+            editor( edit -> {
+                edit.displayName = "new display name";
+            } ).
+            createAttachments( CreateAttachments.from( CreateAttachment.create().
+                byteSource( thumbnail ).
+                name( AttachmentNames.THUMBNAIL ).
+                mimeType( "image/jpeg" ).
+                build() ) );
+
+        this.contentService.update( updateContentParams );
+
+        final Content updatedContent = this.contentService.getById( content.getId() );
+        assertNotNull( updatedContent.getThumbnail() );
+        assertEquals( thumbnail.size(), updatedContent.getThumbnail().getSize() );
+
+        final UpdateContentParams updateContentParams2 = new UpdateContentParams();
+        updateContentParams2.contentId( content.getId() ).
+            editor( edit -> {
+                edit.displayName = "brand new display name";
+            } );
+
+        this.contentService.update( updateContentParams2 );
+
+        final Content reUpdatedContent = this.contentService.getById( content.getId() );
+        assertNotNull( reUpdatedContent.getThumbnail() );
+        assertEquals( thumbnail.size(), reUpdatedContent.getThumbnail().getSize() );
+        assertEquals( "brand new display name", reUpdatedContent.getDisplayName() );
+    }
+
+    @Test
+    public void update_thumbnail()
+        throws Exception
+    {
+        final ByteSource thumbnail = loadImage( "cat-small.jpg" );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            contentData( new PropertyTree() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.contentId( content.getId() ).
+            editor( edit -> {
+                edit.displayName = "new display name";
+            } ).
+            createAttachments( CreateAttachments.from( CreateAttachment.create().
+                byteSource( thumbnail ).
+                name( AttachmentNames.THUMBNAIL ).
+                mimeType( "image/jpeg" ).
+                build() ) );
+
+        this.contentService.update( updateContentParams );
+
+        final Content updatedContent = this.contentService.getById( content.getId() );
+        assertNotNull( updatedContent.getThumbnail() );
+        assertEquals( thumbnail.size(), updatedContent.getThumbnail().getSize() );
+
+        final ByteSource newThumbnail = loadImage( "darth-small.jpg" );
+
+        final UpdateContentParams updateContentParams2 = new UpdateContentParams();
+        updateContentParams2.contentId( content.getId() ).
+            editor( edit -> {
+                edit.displayName = "yet another display name";
+            } ).
+            createAttachments( CreateAttachments.from( CreateAttachment.create().
+                byteSource( newThumbnail ).
+                name( AttachmentNames.THUMBNAIL ).
+                mimeType( "image/jpeg" ).
+                build() ) );
+
+        this.contentService.update( updateContentParams2 );
+
+        final Content reUpdatedContent = this.contentService.getById( content.getId() );
+
+        assertNotNull( reUpdatedContent.getThumbnail() );
+        final Thumbnail thumbnailAttachment = reUpdatedContent.getThumbnail();
+        assertEquals( newThumbnail.size(), thumbnailAttachment.getSize() );
+    }
 
 }

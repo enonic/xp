@@ -8,6 +8,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.attachment.Attachment;
 import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.Mixins;
@@ -75,7 +76,11 @@ public class ContentServiceImplTest_media
         final Attachments attachments = updatedContent.getAttachments();
 
         assertNotNull( attachments );
+        assertEquals( 3, attachments.getSize() );
+
+        for ( final Attachment attachment : attachments )
+        {
+            attachment.getName().startsWith( "darth-small" );
+        }
     }
-
-
 }

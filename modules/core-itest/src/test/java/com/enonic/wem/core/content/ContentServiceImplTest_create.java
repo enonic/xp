@@ -73,8 +73,6 @@ public class ContentServiceImplTest_create
         assertEquals( 4, attachments.getSize() ); // original, small, medium, large
     }
 
-
-
     @Test
     public void create_site()
         throws Exception
@@ -94,6 +92,5 @@ public class ContentServiceImplTest_create
         assertNotNull( content.getModifiedTime() );
         assertNotNull( content.getModifier() );
     }
-
 
 }
