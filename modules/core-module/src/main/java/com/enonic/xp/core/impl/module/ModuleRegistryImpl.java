@@ -103,7 +103,7 @@ public final class ModuleRegistryImpl
         {
             installModule( bundle );
         }
-        catch ( Throwable t )
+        catch ( final Exception t )
         {
             LOG.warn( "Unable to load module " + bundle.getSymbolicName(), t );
         }

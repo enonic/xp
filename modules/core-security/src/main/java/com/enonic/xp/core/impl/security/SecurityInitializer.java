@@ -215,7 +215,7 @@ public final class SecurityInitializer
                 LOG.info( "User created: " + createUser.getKey().toString() );
             }
         }
-        catch ( Throwable t )
+        catch ( final Exception t )
         {
             LOG.error( "Unable to initialize user: " + createUser.getKey().toString(), t );
         }
@@ -231,7 +231,7 @@ public final class SecurityInitializer
                 LOG.info( "Role created: " + createRoleParams.getKey().toString() );
             }
         }
-        catch ( Throwable t )
+        catch ( final Exception t )
         {
             LOG.error( "Unable to initialize role: " + createRoleParams.getKey().toString(), t );
         }
@@ -244,11 +244,10 @@ public final class SecurityInitializer
             securityService.addRelationship( PrincipalRelationship.from( container ).to( member ) );
             LOG.info( "Added " + member + " as member of " + container );
         }
-        catch ( Throwable t )
+        catch ( final Exception t )
         {
             LOG.error( "Unable to add member: " + container + " -> " + member, t );
         }
     }
-
 }
 

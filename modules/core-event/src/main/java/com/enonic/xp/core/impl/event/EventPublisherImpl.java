@@ -43,7 +43,7 @@ public final class EventPublisherImpl
         {
             eventListener.onEvent( event );
         }
-        catch ( final Throwable t )
+        catch ( final Exception t )
         {
             LOG.error( "Failed to deliver event [" + event.getClass().getName() + "] to [" + eventListener + "]", t );
         }
