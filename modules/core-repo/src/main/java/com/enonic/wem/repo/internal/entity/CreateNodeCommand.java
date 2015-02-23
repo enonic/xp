@@ -30,6 +30,7 @@ import com.enonic.xp.node.NodeType;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.util.Exceptions;
 
 import static com.enonic.wem.repo.internal.entity.NodePermissionsResolver.requireContextUserPermission;
 
@@ -130,9 +131,9 @@ public final class CreateNodeCommand
                     builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey() ) );
                 }
             }
-            catch ( IOException e )
+            catch ( final IOException e )
             {
-                e.printStackTrace();
+                throw Exceptions.unchecked( e );
             }
         }
 

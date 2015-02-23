@@ -51,4 +51,21 @@ final class BundleInfo
 
         return this.location.compareTo( o.location );
     }
+
+    @Override
+    public int hashCode()
+    {
+        return this.location.hashCode();
+    }
+
+    @Override
+    public boolean equals( final Object obj )
+    {
+        return ( obj instanceof BundleInfo ) && equals( (BundleInfo) obj );
+    }
+
+    private boolean equals( final BundleInfo obj )
+    {
+        return obj.location.equals( this.location ) && ( obj.level == this.level );
+    }
 }

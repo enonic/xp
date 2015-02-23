@@ -41,7 +41,7 @@ public class SearchResult
 
     public static class Builder
     {
-        public SearchResultEntries results = SearchResultEntries.create().build();
+        private SearchResultEntries results = SearchResultEntries.create().build();
 
         private Aggregations aggregations;
 
@@ -62,5 +62,4 @@ public class SearchResult
             return new SearchResult( this );
         }
     }
-
 }

@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.repo.internal.blob.Blob;
+import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyVisitor;
@@ -24,8 +26,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBinaryReferenceException;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.BinaryReferences;
-import com.enonic.wem.repo.internal.blob.Blob;
-import com.enonic.wem.repo.internal.blob.BlobStore;
+import com.enonic.xp.util.Exceptions;
 
 class UpdatedAttachedBinariesResolver
 {
@@ -52,10 +53,7 @@ class UpdatedAttachedBinariesResolver
 
         final BinaryReferences.Builder referenceBuilder = BinaryReferences.create();
 
-        for ( final BinaryReference binaryReference : referencesInEditedNode )
-        {
-            referenceBuilder.add( binaryReference );
-        }
+        referencesInEditedNode.forEach( referenceBuilder::add );
 
         this.currentBinaryReferences = referenceBuilder.build();
     }
@@ -139,9 +137,9 @@ class UpdatedAttachedBinariesResolver
             final Blob blob = this.blobStore.addRecord( newBinaryAttachment.getByteSource().openStream() );
             resolved.put( newBinaryAttachment.getReference(), new AttachedBinary( newBinaryAttachment.getReference(), blob.getKey() ) );
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
-            e.printStackTrace();
+            throw Exceptions.unchecked( e );
         }
     }
 
