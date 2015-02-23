@@ -91,6 +91,7 @@ public class ElasticsearchDaoImpl
         return (int) l;
     }
 
+    @Override
     public String store( final IndexRequest indexRequest )
     {
         final IndexResponse indexResponse = this.client.index( indexRequest ).
@@ -99,6 +100,7 @@ public class ElasticsearchDaoImpl
         return indexResponse.getId();
     }
 
+    @Override
     public void store( final Collection<StoreDocument> storeDocuments )
     {
         for ( StoreDocument storeDocument : storeDocuments )
@@ -118,11 +120,13 @@ public class ElasticsearchDaoImpl
         }
     }
 
+    @Override
     public boolean delete( final DeleteRequest deleteRequest )
     {
         return doDelete( deleteRequest );
     }
 
+    @Override
     public boolean delete( final DeleteDocument deleteDocument )
     {
         DeleteRequest deleteRequest = new DeleteRequest( deleteDocument.getIndexName() ).
@@ -141,6 +145,7 @@ public class ElasticsearchDaoImpl
         return deleteResponse.isFound();
     }
 
+    @Override
     public SearchResult find( final ElasticsearchQuery query )
     {
         final SearchRequestBuilder searchRequest = SearchRequestBuilderFactory.newFactory().
@@ -150,11 +155,10 @@ public class ElasticsearchDaoImpl
             build().
             create();
 
-        //System.out.println( searchRequest.toString() );
-
         return doSearchRequest( searchRequest );
     }
 
+    @Override
     public GetResult get( final GetQuery getQuery )
     {
         final GetRequest getRequest = new GetRequest( getQuery.getIndexName() ).
@@ -197,6 +201,7 @@ public class ElasticsearchDaoImpl
         }
     }
 
+    @Override
     public long count( final ElasticsearchQuery query )
     {
         SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
@@ -211,6 +216,7 @@ public class ElasticsearchDaoImpl
         return searchResult.getResults().getTotalHits();
     }
 
+    @Override
     public SnapshotResult snapshot( final SnapshotParams params )
     {
         checkSnapshotRepository();
@@ -232,6 +238,7 @@ public class ElasticsearchDaoImpl
         return SnapshotResultFactory.create( createSnapshotResponse );
     }
 
+    @Override
     public RestoreResult restoreSnapshot( final RestoreParams params )
     {
         checkSnapshotRepository();
@@ -272,6 +279,7 @@ public class ElasticsearchDaoImpl
         }
     }
 
+    @Override
     public SnapshotInfo getSnapshot( final String snapshotName )
     {
         final GetSnapshotsRequestBuilder getSnapshotsRequestBuilder = new GetSnapshotsRequestBuilder( this.client.admin().cluster() ).

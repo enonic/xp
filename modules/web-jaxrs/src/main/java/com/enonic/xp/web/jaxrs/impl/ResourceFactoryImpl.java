@@ -31,6 +31,7 @@ final class ResourceFactoryImpl
         this.propertyInjector = factory.getInjectorFactory().createPropertyInjector( this.resourceClass, factory );
     }
 
+    @Override
     public Object createResource( final HttpRequest request, final HttpResponse response, final ResteasyProviderFactory factory )
     {
         final Object instance = this.factory.newResource();
@@ -38,15 +39,18 @@ final class ResourceFactoryImpl
         return instance;
     }
 
+    @Override
     public void unregistered()
     {
     }
 
+    @Override
     public Class<?> getScannableClass()
     {
         return this.resourceClass.getClazz();
     }
 
+    @Override
     public void requestFinished( final HttpRequest request, final HttpResponse response, final Object resource )
     {
     }

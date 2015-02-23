@@ -38,16 +38,19 @@ final class ModuleImpl
 
     protected MixinNames metaSteps;
 
+    @Override
     public ModuleKey getKey()
     {
         return this.moduleKey;
     }
 
+    @Override
     public ModuleVersion getVersion()
     {
         return moduleVersion;
     }
 
+    @Override
     public String getDisplayName()
     {
         return displayName;
@@ -73,21 +76,25 @@ final class ModuleImpl
         return "5.0";
     }
 
+    @Override
     public String getUrl()
     {
         return url;
     }
 
+    @Override
     public String getVendorName()
     {
         return vendorName;
     }
 
+    @Override
     public String getVendorUrl()
     {
         return vendorUrl;
     }
 
+    @Override
     public Form getConfig()
     {
         return config;

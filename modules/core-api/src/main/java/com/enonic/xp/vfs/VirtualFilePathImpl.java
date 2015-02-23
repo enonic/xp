@@ -65,6 +65,7 @@ public class VirtualFilePathImpl
         return new Builder();
     }
 
+    @Override
     public VirtualFilePath subtractPath( final VirtualFilePath subtract )
     {
         Preconditions.checkArgument( this.elements.size() >= subtract.size(),
@@ -89,6 +90,7 @@ public class VirtualFilePathImpl
         return builder.build();
     }
 
+    @Override
     public String getPath()
     {
         return absolute ? SEPARATOR + join() : join();
@@ -99,16 +101,19 @@ public class VirtualFilePathImpl
         return Joiner.on( SEPARATOR ).join( elements );
     }
 
+    @Override
     public LinkedList<String> getElements()
     {
         return elements;
     }
 
+    @Override
     public String getName()
     {
         return this.elements.getLast();
     }
 
+    @Override
     public VirtualFilePath join( final VirtualFilePathImpl... paths )
     {
         final Builder builder = VirtualFilePathImpl.create().
@@ -123,6 +128,7 @@ public class VirtualFilePathImpl
         return builder.build();
     }
 
+    @Override
     public VirtualFilePath join( final String... elements )
     {
         final Builder builder = VirtualFilePathImpl.create().
@@ -137,11 +143,13 @@ public class VirtualFilePathImpl
         return builder.build();
     }
 
+    @Override
     public int size()
     {
         return this.elements.size();
     }
 
+    @Override
     public Path toLocalPath()
     {
         Path path = this.absolute ? Paths.get( "/" ) : Paths.get( "" );
