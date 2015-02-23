@@ -32,6 +32,9 @@ import com.enonic.xp.content.Metadata;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.ReorderChildContentsParams;
+import com.enonic.xp.content.ReorderChildContentsResult;
+import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.page.DescriptorKey;
@@ -810,6 +813,25 @@ public class ContentResourceTest
         Mockito.verify( contentService, Mockito.times( 1 ) ).getRootPermissions();
 
         assertJson( "get_content_root_permissions_success.json", jsonString );
+    }
+
+    @Test
+    public void reorderChildren()
+        throws Exception
+    {
+        final ReorderChildContentsParams reorderChildren = ReorderChildContentsParams.create().
+            add( ReorderChildParams.create().contentToMove( ContentId.from( "content-id-1" ) ).contentToMoveBefore(
+                ContentId.from( "content-id-2" ) ).build() ).
+            add( ReorderChildParams.create().contentToMove( ContentId.from( "content-id-3" ) ).build() ).
+            build();
+        final ReorderChildContentsResult result = new ReorderChildContentsResult( 2 );
+        Mockito.when( contentService.reorderChildren( Mockito.eq( reorderChildren ) ) ).thenReturn( result );
+
+        String jsonString = request().path( "content/reorderChildren" ).
+            entity( readFromFile( "reorder_children_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "reorder_children_success.json", jsonString );
     }
 
     private Content createContent( final String id, final String name, final String contentTypeName )

@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.support.AbstractId;
 import com.enonic.xp.util.Reference;
 
@@ -13,6 +15,8 @@ public class ContentId
 
     public static ContentId from( String id )
     {
+        Preconditions.checkNotNull( id, "ContentId cannot be null" );
+        Preconditions.checkArgument( !id.trim().isEmpty(), "ContentId cannot be blank" );
         return new ContentId( id );
     }
 

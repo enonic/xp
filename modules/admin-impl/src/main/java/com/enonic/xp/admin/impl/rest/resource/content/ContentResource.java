@@ -115,6 +115,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content")
@@ -356,9 +357,10 @@ public final class ContentResource
 
         for ( final ReorderChildJson reorderChildJson : params.getReorderChildren() )
         {
+            final String moveBefore = reorderChildJson.getMoveBefore();
             builder.add( ReorderChildParams.create().
                 contentToMove( ContentId.from( reorderChildJson.getContentId() ) ).
-                contentToMoveBefore( ContentId.from( reorderChildJson.getMoveBefore() ) ).
+                contentToMoveBefore( isBlank( moveBefore ) ? null : ContentId.from( moveBefore ) ).
                 build() );
         }
 

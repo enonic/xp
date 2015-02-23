@@ -1,6 +1,8 @@
 package com.enonic.xp.content;
 
-public class ReorderChildParams
+import java.util.Objects;
+
+public final class ReorderChildParams
 {
     private final ContentId contentToMove;
 
@@ -20,6 +22,28 @@ public class ReorderChildParams
     public ContentId getContentToMoveBefore()
     {
         return contentToMoveBefore;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof ReorderChildParams ) )
+        {
+            return false;
+        }
+
+        final ReorderChildParams that = (ReorderChildParams) o;
+        return Objects.equals( contentToMove, that.contentToMove ) && Objects.equals( contentToMoveBefore, that.contentToMoveBefore );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( contentToMove, contentToMoveBefore );
     }
 
     public static Builder create()
