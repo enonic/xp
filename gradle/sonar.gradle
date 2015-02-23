@@ -8,5 +8,6 @@ sonarRunner {
         property 'sonar.host.url', 'http://dev-docker1:9000'
         property 'sonar.jdbc.url', 'jdbc:postgresql://dev-docker1:5432/sonar'
         property 'sonar.jdbc.username', 'sonar'
+        property 'sonar.jdbc.password', project.properties['sonar.jdbc.password']
     }
 }
