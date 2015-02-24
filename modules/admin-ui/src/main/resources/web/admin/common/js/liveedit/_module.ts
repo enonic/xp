@@ -40,10 +40,10 @@
 ///<reference path='PageTextModeStartedEvent.ts' />
 ///<reference path='ImageOpenUploadDialogEvent.ts' />
 ///<reference path='ImageUploadedEvent.ts' />
-///<reference path='DraggingComponentViewStartedEvent.ts' />
-///<reference path='DraggingComponentViewCompletedEvent.ts' />
-///<reference path='DraggingComponentViewCanceledEvent.ts' />
-///<reference path='ItemFromContextWindowDroppedEvent.ts' />
+///<reference path='ComponentViewDragStartedEvent.ts' />
+///<reference path='ComponentViewDraggingStoppedEvent.ts' />
+///<reference path='ComponentViewDragCanceledEvent.ts' />
+///<reference path='ComponentViewDragDroppedEventEvent.ts' />
 ///<reference path='PageSelectedEvent.ts' />
 ///<reference path='RegionSelectedEvent.ts' />
 ///<reference path='ComponentAddedEvent.ts' />
@@ -53,3 +53,4 @@
 ///<reference path='ComponentLoadedEvent.ts' />
 ///<reference path='Position.ts' />
 ///<reference path='LiveEditPageViewReadyEvent.ts' />
+///<reference path='DragAndDrop.ts' />

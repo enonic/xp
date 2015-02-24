@@ -89,12 +89,24 @@ module api.liveedit {
 
             this.itemViewAddedListener = (event: ItemViewAddedEvent) => {
                 // register the view and all its child views (i.e layout with regions)
-                event.getView().toItemViewArray().forEach((itemView: ItemView) => {
+                var itemView = event.getView();
+                itemView.toItemViewArray().forEach((itemView: ItemView) => {
                     this.registerItemView(itemView);
                 });
 
-                // adding anything should exit the text edit mode
-                this.exitTextEditModeIfNeeded();
+                // adding anything except text should exit the text edit mode
+                if (itemView.getType().equals(api.liveedit.text.TextItemType.get())) {
+                    if (!this.isTextEditMode()) {
+                        this.setTextEditMode(true);
+                    }
+                    itemView.giveFocus();
+                } else {
+                    if (this.isTextEditMode()) {
+                        this.setTextEditMode(false);
+                    }
+                    itemView.select();
+                }
+
             };
             this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
                 // register the view and all its child views (i.e layout with regions)
@@ -358,15 +370,8 @@ module api.liveedit {
         }
 
         getRegionViewByElement(element: HTMLElement): RegionView {
-            api.util.assertNotNull(element, "element cannot be null");
 
-            var itemId = ItemView.parseItemId(element);
-            if (!itemId) {
-                return null;
-            }
-
-            var itemView = this.getItemViewById(itemId);
-            api.util.assertNotNull(itemView, "ItemView not found: " + itemId.toString());
+            var itemView = this.getItemViewByElement(element);
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, RegionView)) {
                 return <RegionView>itemView;
@@ -375,18 +380,13 @@ module api.liveedit {
         }
 
         getComponentViewByElement(element: HTMLElement): ComponentView<Component> {
-            api.util.assertNotNull(element, "element cannot be null");
 
-            var itemId = ItemView.parseItemId(element);
-            if (!itemId) {
-                return null;
-            }
+            var itemView = this.getItemViewByElement(element);
 
-            var itemView = this.getItemViewById(itemId);
-            api.util.assertNotNull(itemView, "ItemView not found: " + itemId.toString());
             if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
-                return <ComponentView<Component>>itemView;
+                return <ComponentView<Component>> itemView;
             }
+
             return null;
         }
 
@@ -432,11 +432,6 @@ module api.liveedit {
             return null;
         }
 
-        private exitTextEditModeIfNeeded() {
-            if (this.isTextEditMode()) {
-                this.setTextEditMode(false);
-            }
-        }
 
         private registerItemView(view: ItemView) {
 

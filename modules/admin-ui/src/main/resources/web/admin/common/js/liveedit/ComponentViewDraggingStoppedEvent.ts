@@ -3,13 +3,12 @@ module api.liveedit {
     import Event = api.event.Event;
     import Component = api.content.page.region.Component;
 
-    export class DraggingComponentViewCompletedEvent extends Event {
+    export class ComponentViewDragStoppedEvent extends Event {
 
         private componentView: ComponentView<Component>;
 
-        constructor(componentView: ComponentView<Component>) {
+        constructor(componentView?: ComponentView<Component>) {
             super();
-            api.util.assertNotNull(componentView, "componentView cannot be null");
             this.componentView = componentView;
         }
 
@@ -17,11 +16,11 @@ module api.liveedit {
             return this.componentView;
         }
 
-        static on(handler: (event: DraggingComponentViewCompletedEvent) => void, contextWindow: Window = window) {
+        static on(handler: (event: ComponentViewDragStoppedEvent) => void, contextWindow: Window = window) {
             Event.bind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
 
-        static un(handler: (event: DraggingComponentViewCompletedEvent) => void, contextWindow: Window = window) {
+        static un(handler: (event: ComponentViewDragStoppedEvent) => void, contextWindow: Window = window) {
             Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
         }
     }

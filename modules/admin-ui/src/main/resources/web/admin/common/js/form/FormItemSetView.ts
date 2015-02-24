@@ -73,7 +73,7 @@ module api.form {
                 tolerance: 'pointer',
                 handle: '.drag-control',
                 placeholder: 'form-item-set-drop-target-placeholder',
-                helper: (event, helper) => api.ui.DragHelper.getHtml(),
+                helper: (event, ui) => api.ui.DragHelper.get().getHTMLElement(),
                 start: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDStart(event, ui),
                 update: (event: Event, ui: JQueryUI.SortableUIParams) => this.handleDnDUpdate(event, ui)
             });

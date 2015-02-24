@@ -13,14 +13,9 @@ module api.liveedit {
             this.region = region;
 
             var dragComponentsHereEl = new api.dom.PEl();
-            dragComponentsHereEl.setHtml("Drop components here");
+            dragComponentsHereEl.setHtml("Drop here");
 
-            var componentTypeInfoText: string = api.util.StringHelper.capitalize(RegionItemType.get().getShortName()) + ': ' +
-                                                region.getName();
-            var typeInfoEl = new api.dom.PEl();
-            typeInfoEl.setHtml(componentTypeInfoText);
-
-            this.appendChildren(dragComponentsHereEl, typeInfoEl);
+            this.appendChild(dragComponentsHereEl);
         }
     }
 }

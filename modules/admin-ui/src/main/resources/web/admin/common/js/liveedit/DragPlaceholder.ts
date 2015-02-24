@@ -2,82 +2,92 @@ module api.liveedit {
 
     import Component = api.content.page.region.Component;
 
-    export class DragPlaceholderBuilder {
-
-        itemType: ItemType;
-
-        dropAllowed: boolean = true;
-
-        text: string = "Drop {0} here";
-
-        regionView: RegionView;
-
-        componentView: ComponentView<Component>;
-
-        setItemType(value: ItemType): DragPlaceholderBuilder {
-            this.itemType = value;
-            return this;
-        }
-
-        setDropAllowed(value: boolean): DragPlaceholderBuilder {
-            this.dropAllowed = value;
-            return this;
-        }
-
-        setText(value: string): DragPlaceholderBuilder {
-            this.text = value;
-            return this;
-        }
-
-        setRegionView(value: RegionView): DragPlaceholderBuilder {
-            this.regionView = value;
-            return this;
-        }
-
-        setComponentView(value: ComponentView<Component>): DragPlaceholderBuilder {
-            this.componentView = value;
-            this.itemType = value.getType();
-            return this;
-        }
-
-        build(): DragPlaceholder {
-            return new DragPlaceholder(this);
-        }
-    }
-
     export class DragPlaceholder extends ItemViewPlaceholder {
 
         private itemType: ItemType;
 
-        private dropAllowed: boolean;
-
-        private text: string;
+        private pattern: string = 'Drop {0} here';
 
         private regionView: RegionView;
 
-        private message: api.dom.DivEl;
+        private messageEl: api.dom.DivEl;
 
-        private componentView: ComponentView<Component>;
+        private static instance: DragPlaceholder;
 
-        constructor(builder: DragPlaceholderBuilder) {
-            super();
-            this.itemType = builder.itemType;
-            this.dropAllowed = builder.dropAllowed;
-            this.text = api.util.StringHelper.format(builder.text, api.util.StringHelper.capitalize(this.itemType.getShortName()));
-            this.regionView = builder.regionView;
-            this.componentView = builder.componentView;
+        public static debug = true;
 
-            this.message = new api.dom.DivEl("message");
-            if (builder.text) {
-                this.message.setHtml(this.text);
+        public static get(): DragPlaceholder {
+            if (!DragPlaceholder.instance) {
+                if (DragPlaceholder.debug) {
+                    console.log('DragPlaceholder.get() creating new instance');
+                }
+                DragPlaceholder.instance = new DragPlaceholder();
             }
-            this.appendChild(this.message);
-
-            this.addClass(this.itemType.getShortName().toLowerCase() + "-placeholder drag-placeholder");
-
-            if (!this.dropAllowed) {
-                this.addClass("forbidden");
-            }
+            return DragPlaceholder.instance;
         }
+
+        constructor() {
+            super();
+            this.setId('drag-placeholder').addClass('drag-placeholder');
+            this.messageEl = new api.dom.DivEl("message");
+            this.appendChild(this.messageEl);
+        }
+
+        setItemType(type: ItemType): DragPlaceholder {
+            if (DragPlaceholder.debug) {
+                console.log('DragPlaceholder.setItemType', type);
+            }
+            if (this.itemType) {
+                this.removeClass(this.itemType.getShortName() + '-placeholder');
+            }
+            this.itemType = type;
+            if (type) {
+                this.setText(this.getDefaultText());
+                this.addClass(type.getShortName() + '-placeholder');
+            } else {
+                this.setText('');
+            }
+            return this;
+        }
+
+        private getDefaultText() {
+            return api.util.StringHelper.format(this.pattern, api.util.StringHelper.capitalize(this.itemType.getShortName()));
+        }
+
+        setDropAllowed(allowed: boolean): DragPlaceholder {
+            if (DragPlaceholder.debug) {
+                console.log('DragPlaceholder.seDropAllowed: ' + allowed);
+            }
+            if (allowed && this.itemType) {
+                this.setText(this.getDefaultText());
+            }
+            this.toggleClass('drop-allowed', allowed);
+            return this;
+        }
+
+        setText(text: string): DragPlaceholder {
+            if (DragPlaceholder.debug) {
+                console.log('DragPlaceholder.setText: ' + text);
+            }
+            this.messageEl.setHtml(text);
+            return this;
+        }
+
+        setRegionView(regionView: RegionView): DragPlaceholder {
+            if (DragPlaceholder.debug) {
+                console.log('DragPlaceholder.setRegionView: ' + (regionView ? regionView.toString() : ''));
+            }
+            this.regionView = regionView;
+            this.setDropAllowed(!!regionView);
+            return this;
+        }
+
+        reset(): DragPlaceholder {
+            this.setItemType(null);
+            this.setRegionView(null);
+            return this;
+        }
+
+
     }
 }

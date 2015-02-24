@@ -1,5 +1,7 @@
 module app.wizard.page.contextwindow.insert {
 
+    import DragHelper = api.ui.DragHelper;
+
     export interface ComponentTypesPanelConfig {
 
         liveEditPage: app.wizard.page.LiveEditPageProxy;
@@ -7,7 +9,7 @@ module app.wizard.page.contextwindow.insert {
 
     export class InsertablesPanel extends api.ui.panel.Panel {
 
-        private liveEditPage: app.wizard.page.LiveEditPageProxy;
+        private liveEditPageProxy: app.wizard.page.LiveEditPageProxy;
 
         private insertablesGrid: InsertablesGrid;
 
@@ -15,11 +17,17 @@ module app.wizard.page.contextwindow.insert {
 
         private hideContextWindowRequestListeners: {(): void;}[] = [];
 
-        private draggable: any;
+        private overIFrame: boolean = false;
+
+        private iFrameDraggable: JQuery;
+
+        private contextWindowDraggable: JQuery;
+
+        public static debug = true;
 
         constructor(config: ComponentTypesPanelConfig) {
             super("insertables-panel");
-            this.liveEditPage = config.liveEditPage;
+            this.liveEditPageProxy = config.liveEditPage;
 
             var topDescription = new api.dom.PEl();
             topDescription.getEl().setInnerHtml('Drag and drop components into the page');
@@ -31,71 +39,110 @@ module app.wizard.page.contextwindow.insert {
             this.appendChild(this.insertablesGrid);
             this.insertablesDataView.setItems(Insertables.ALL, "name");
 
-            this.onRendered((event) => {
-                this.initComponentDraggables();
-            });
-
-            this.onShown(this.updateDraggables.bind(this));
-        }
-
-        initComponentDraggables() {
-            wemjq(this.liveEditPage.getIFrame().getHTMLElement()).droppable({
-                tolerance: 'pointer',
-                addClasses: false,
-                accept: '.comp',
-                scope: 'component',
-                over: (event: Event, ui: JQueryUI.DroppableEventUIParam) => {
-                    this.onDragOverIFrame(event, ui);
+            this.liveEditPageProxy.onComponentViewDragStopped(() => {
+                // Drop was performed on live edit page
+                if (this.contextWindowDraggable) {
+                    if (InsertablesPanel.debug) {
+                        console.log('Simulating mouse up for', this.contextWindowDraggable);
+                    }
+                    this.contextWindowDraggable.simulate('mouseup');
+                    this.contextWindowDraggable = null;
                 }
             });
 
-            this.liveEditPage.onItemFromContextWindowDropped(() => {
-                this.simulateMouseUpForDraggable();
-            });
+            this.onRendered(this.initializeDraggables.bind(this));
+            this.onRemoved(this.destroyDraggables.bind(this));
         }
 
-        private updateDraggables() {
+
+        private initializeDraggables() {
             var components = wemjq('[data-context-window-draggable="true"]:not(.ui-draggable)');
 
+            if (InsertablesPanel.debug) {
+                console.log('InsertablesPanel.initializeDraggables', components);
+            }
+
             components.draggable({
-                cursorAt: {left: -10, top: -15},
+                cursorAt: DragHelper.CURSOR_AT,
                 appendTo: 'body',
                 cursor: 'move',
                 revert: 'true',
                 distance: 10,
                 scope: 'component',
-                helper: () => api.ui.DragHelper.getHtml(),
-                start: (event: Event, ui: JQueryUI.DroppableEventUIParam) => this.handleDragStart(event, ui)
+                helper: (event, ui) => DragHelper.get().getHTMLElement(),
+                start: (event, ui) => this.handleDragStart(event, ui),
+                drag: (event, ui) => this.handleDrag(event, ui),
+                stop: (event, ui) => this.handleDragStop(event, ui)
             });
         }
 
-        private simulateMouseUpForDraggable() {
-            wemjq('[data-context-window-draggable="true"]').simulate('mouseup');
+        private destroyDraggables() {
+
         }
 
-        private handleDragStart(event: Event, ui: JQueryUI.DroppableEventUIParam) {
-            this.liveEditPage.showDragMask();
+        private handleDragStart(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
+            if (InsertablesPanel.debug) {
+                console.log('handle drag start', event, ui);
+            }
+            this.liveEditPageProxy.showDragMask();
+            this.contextWindowDraggable = wemjq(event.target);
         }
 
-        private onDragOverIFrame(event: Event, ui: JQueryUI.DroppableEventUIParam) {
+        private handleDrag(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
+            var over = this.isOverIFrame(event);
+            if (InsertablesPanel.debug) {
+                console.log('Handle drag', event);
+            }
+            if (this.overIFrame != over) {
+                if (over) {
+                    this.onEnterIFrame(event, ui);
+                } else {
+                    this.onLeftIFrame(event, ui);
+                }
+                this.overIFrame = over;
+            }
+        }
 
-            this.liveEditPage.hideDragMask();
+        private handleDragStop(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
+            if (InsertablesPanel.debug) {
+                console.log('handle drag stop', event, ui);
+            }
+            this.liveEditPageProxy.hideDragMask();
+            this.contextWindowDraggable = null;
+        }
 
-            var liveEditJQuery = this.liveEditPage.getLiveEditJQuery();
-            var clonedDraggable = liveEditJQuery(ui.draggable.clone());
+        private isOverIFrame(event: JQueryEventObject): boolean {
+            return event.originalEvent.target == this.liveEditPageProxy.getDragMask().getHTMLElement();
+        }
 
-            clonedDraggable.css({
-                'position': 'absolute',
-                'top': '-1000px'
-            });
+        private onLeftIFrame(event: Event, ui: JQueryUI.DraggableEventUIParams) {
+            if (InsertablesPanel.debug) {
+                console.log('Left LiveEdit');
+            }
+            this.liveEditPageProxy.showDragMask();
 
-            liveEditJQuery('body').append(clonedDraggable);
+            if (this.iFrameDraggable) {
+                this.iFrameDraggable.simulate('mouseup');
+                this.liveEditPageProxy.destroyDraggable(this.iFrameDraggable);
+                this.iFrameDraggable.remove();
+            }
 
-            ui.helper.hide(null);
+            ui.helper.show();
+        }
 
-            this.liveEditPage.createDraggable(clonedDraggable);
+        private onEnterIFrame(event: Event, ui: JQueryUI.DraggableEventUIParams) {
+            if (InsertablesPanel.debug) {
+                console.log('Left LiveEdit');
+            }
+            this.liveEditPageProxy.hideDragMask();
 
-            clonedDraggable.simulate('mousedown');
+            ui.helper.hide();
+
+            var livejq = this.liveEditPageProxy.getJQuery();
+            this.iFrameDraggable = livejq(event.target).clone();
+            livejq('body').append(this.iFrameDraggable);
+            this.liveEditPageProxy.createDraggable(this.iFrameDraggable);
+            this.iFrameDraggable.simulate('mousedown').hide();
 
             this.notifyHideContextWindowRequest();
         }

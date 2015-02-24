@@ -3,7 +3,6 @@
 
 ///<reference path='shared/DomHelper.ts' />
 
-///<reference path='dnd/DragDropSort.ts' />
 ///<reference path='LiveEditPage.ts' />
 
 ///<reference path='main.ts' />

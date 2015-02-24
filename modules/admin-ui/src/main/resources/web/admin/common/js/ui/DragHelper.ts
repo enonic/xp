@@ -1,27 +1,40 @@
 module api.ui {
 
-    export class DragHelper {
+    export class DragHelper extends api.dom.DivEl {
 
-        private static html = '<div id="drag-helper" class="drop-allowed" style="width: 48px; height: 48px; position: absolute;"></div>';
+        public static CURSOR_AT = {left: -10, top: -15};
 
-        public static getHtml():string {
-            return DragHelper.html;
+        private static instance: DragHelper;
+
+        public static debug = true;
+
+        public static get(): DragHelper {
+            if (!DragHelper.instance) {
+                DragHelper.instance = new DragHelper();
+            }
+            return DragHelper.instance;
         }
 
-        public static setDropAllowed(isAllowed: boolean) {
-            var helper: HTMLElement = document.getElementById('drag-helper');
+        constructor() {
+            super('drag-helper');
+            this.setId('drag-helper');
+        }
 
-            if (!helper) {
-                console.warn('There is no drag helper to change its state.');
-                return;
+        public setDropAllowed(allowed: boolean): DragHelper {
+            if (DragHelper.debug) {
+                console.log('DragHelper.setDropAllowed: ' + allowed.toString());
             }
+            this.toggleClass('drop-allowed', allowed);
+            return this;
+        }
 
-            var helperEl = new api.dom.ElementHelper(helper);
-            if (isAllowed) {
-                helperEl.removeClass("drop-not-allowed").addClass("drop-allowed");
-            } else {
-                helperEl.removeClass("drop-allowed").addClass("drop-not-allowed");
-            }
+        isDropAllowed(): boolean {
+            return this.hasClass('drop-allowed');
+        }
+
+        reset(): DragHelper {
+            this.setDropAllowed(false);
+            return this;
         }
 
     }

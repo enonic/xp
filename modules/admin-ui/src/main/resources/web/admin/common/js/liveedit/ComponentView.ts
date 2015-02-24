@@ -285,7 +285,7 @@ module api.liveedit {
 
         replaceWith(replacement: ComponentView<Component>) {
             if (ComponentView.debug) {
-                console.log('ComponentView.replaceWith', this, replacement);
+                console.log('ComponentView[' + this.toString() + '].replaceWith', this, replacement);
             }
             super.replaceWith(replacement);
 
@@ -299,22 +299,15 @@ module api.liveedit {
             parentRegionView.registerComponentView(replacement, index);
         }
 
-        moveToRegion(toRegionView: RegionView, precedingComponentView: ComponentView<Component>) {
+        moveToRegion(toRegionView: RegionView, toIndex: number) {
             if (ComponentView.debug) {
-                console.log('ComponentView.moveToRegion', this, this.parentRegionView, toRegionView);
+                console.log('ComponentView[' + this.toString() + '].moveToRegion', this, this.parentRegionView, toRegionView);
             }
 
             this.moving = false;
-            var indexInNewParent = 0;
-            var precedingComponent: Component = null;
-
-            if (precedingComponentView) {
-                precedingComponent = precedingComponentView.getComponent();
-                indexInNewParent = precedingComponent.getIndex() + 1;
-            }
 
             if (this.parentRegionView.getRegionPath().equals(toRegionView.getRegionPath()) &&
-                indexInNewParent == this.parentRegionView.getComponentViewIndex(this)) {
+                toIndex == this.parentRegionView.getComponentViewIndex(this)) {
 
                 if (ComponentView.debug) {
                     console.debug('Dropped in the same region at the same index, no need to move', this.parentRegionView, toRegionView);
@@ -326,7 +319,7 @@ module api.liveedit {
             this.remove();
 
             // Register with new region...
-            toRegionView.addComponentView(this, indexInNewParent);
+            toRegionView.addComponentView(this, toIndex);
         }
 
         onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
@@ -373,19 +366,6 @@ module api.liveedit {
             return parentItemView;
         }
 
-        static findPrecedingComponentItemViewId(htmlElement: HTMLElement): ItemViewId {
-
-            var previousItemView = ItemView.findPreviousItemView(htmlElement);
-            if (!previousItemView) {
-                return null;
-            }
-
-            var asString = previousItemView.getData(ItemViewId.DATA_ATTRIBUTE);
-            if (api.util.StringHelper.isEmpty(asString)) {
-                return null;
-            }
-            return ItemViewId.fromString(asString);
-        }
 
         // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
         private handleDragStart2(event: DragEvent) {

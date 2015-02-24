@@ -1,6 +1,8 @@
 #drag-helper {
   text-align: center;
-
+  width: 48px !important; // jQuery overrides it otherwise
+  height: 48px !important;
+  position: absolute;
   z-index: @z-index-draggable !important;
 
   &:before {
@@ -16,7 +18,7 @@
     color: white;
   }
 
-  &.drop-not-allowed {
+  &:not(.drop-allowed) {
     &:extend(.icon);
     .icon-blocked;
 
