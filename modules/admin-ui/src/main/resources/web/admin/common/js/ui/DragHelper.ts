@@ -6,7 +6,7 @@ module api.ui {
 
         private static instance: DragHelper;
 
-        public static debug = true;
+        public static debug = false;
 
         public static get(): DragHelper {
             if (!DragHelper.instance) {

@@ -366,8 +366,8 @@ module api.liveedit {
             if (!ui.placeholder || !ui.placeholder.parent()[0]) {
                 if (DragAndDrop.debug) {
                     console.log('DragAndDrop.handleDragOut skipping because there is no placeholder, probably item has been already dropped...');
-                    return;
                 }
+                return;
             }
 
             var regionView: RegionView = this.getRegionView(ui.placeholder.parent());
