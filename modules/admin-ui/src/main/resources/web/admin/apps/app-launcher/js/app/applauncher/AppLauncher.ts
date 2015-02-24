@@ -67,10 +67,13 @@ module app.launcher {
         }
 
         showApplication(application: api.app.Application): boolean {
-            if(application.isNotDisplayed()) {
+            if(!application.isPreparing()) {
                 this.doShowApplication(application).then((result:boolean) => {
+                    if(!result) {
+                        application.setDisplayingStatus(api.app.ApplicationShowStatus.NOT_DISPLAYED);
+                    }
                     return result;
-                }).catch((reason:any) => {
+                }).catch(() => {
                     application.setDisplayingStatus(api.app.ApplicationShowStatus.NOT_DISPLAYED);
                 }).done();
             } else {
