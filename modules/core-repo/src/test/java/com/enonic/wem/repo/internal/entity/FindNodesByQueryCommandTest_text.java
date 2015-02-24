@@ -188,5 +188,78 @@ public class FindNodesByQueryCommandTest_text
         assertNotNull( result.getNodes().getNodeById( node.id() ) );
     }
 
+    @Test
+    public void fulltext_fuzzy()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "title", "Levenshtein" );
+
+        final Node node = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( "content_default" ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build() );
+
+        refresh();
+
+        final NodeQuery query = NodeQuery.create().
+            query( QueryExpr.from( new DynamicConstraintExpr(
+                FunctionExpr.from( "fulltext", ValueExpr.string( "title" ), ValueExpr.string( "levvenstein~2" ),
+                                   ValueExpr.string( "AND" ) ) ) ) ).
+            build();
+
+        final FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getNodes().getSize() );
+        assertNotNull( result.getNodes().getNodeById( node.id() ) );
+    }
+
+    @Test
+    public void negate()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "title", "fisk kake" );
+
+        final Node node = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( "content_default" ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build() );
+
+        final PropertyTree data2 = new PropertyTree();
+        data2.addString( "title", "fisk båt" );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            name( "my-node-2" ).
+            parent( NodePath.ROOT ).
+            data( data2 ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( "content_default" ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build() );
+
+        final NodeQuery query = NodeQuery.create().
+            query( QueryExpr.from( new DynamicConstraintExpr(
+                FunctionExpr.from( "fulltext", ValueExpr.string( "title" ), ValueExpr.string( "fisk -båt" ),
+                                   ValueExpr.string( "AND" ) ) ) ) ).
+            build();
+
+        final FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getNodes().getSize() );
+        assertNotNull( result.getNodes().getNodeById( node.id() ) );
+    }
+
 
 }

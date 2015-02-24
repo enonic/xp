@@ -283,4 +283,28 @@ public class UpdateNodeCommandTest
         assertEquals( 1, updatedNode.getAttachedBinaries().getSize() );
     }
 
+    @Test
+    public void timestamp_updated_when_updating()
+    {
+        final PropertyTree data = new PropertyTree();
+
+        final Node node = createNode( CreateNodeParams.create().
+            name( "myNode" ).
+            data( data ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        updateNode( UpdateNodeParams.create().
+            id( node.id() ).
+            editor( toBeEdited -> {
+                toBeEdited.data.addString( "another", "stuff" );
+            } ).
+            build() );
+
+        final Node updatedNode = getNodeById( node.id() );
+
+        assertTrue( updatedNode.getTimestamp().isAfter( node.getTimestamp() ) );
+    }
+
+
 }

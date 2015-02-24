@@ -16,6 +16,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.util.BinaryReference;
 
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;
 
@@ -177,4 +178,19 @@ public class CreateNodeCommandTest
         assertNotNull( getNodeByPath( childNode.path() ) );
     }
 
+    @Test
+    public void timestamp_set()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            name( "myNode" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        assertNotNull( node.getTimestamp() );
+
+        final Node storedNode = getNodeById( node.id() );
+
+        assertNotNull( storedNode.getTimestamp() );
+    }
 }

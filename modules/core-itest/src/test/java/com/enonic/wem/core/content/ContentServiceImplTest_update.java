@@ -40,7 +40,7 @@ public class ContentServiceImplTest_update
     }
 
     @Test
-    public void update_content()
+    public void update_content_modified_time_updated()
         throws Exception
     {
         final CreateContentParams createContentParams = CreateContentParams.create().
@@ -60,13 +60,14 @@ public class ContentServiceImplTest_update
 
         this.contentService.update( updateContentParams );
 
-        final Content storedContent = this.contentService.getById( content.getId() );
+        final Content updatedContent = this.contentService.getById( content.getId() );
 
-        assertEquals( "new display name", storedContent.getDisplayName() );
-        assertNotNull( storedContent.getCreator() );
-        assertNotNull( storedContent.getCreatedTime() );
-        assertNotNull( storedContent.getModifier() );
-        assertNotNull( storedContent.getModifiedTime() );
+        assertEquals( "new display name", updatedContent.getDisplayName() );
+        assertNotNull( updatedContent.getCreator() );
+        assertNotNull( updatedContent.getCreatedTime() );
+        assertNotNull( updatedContent.getModifier() );
+        assertNotNull( updatedContent.getModifiedTime() );
+        assertTrue( updatedContent.getModifiedTime().isAfter( content.getModifiedTime() ) );
     }
 
     @Test

@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.time.Instant;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +87,7 @@ final class UpdateContentCommand
             build();
         editedContent = processContent( contentBeforeChange, editedContent );
         editedContent = attachThumbnail( editedContent );
+        editedContent = setModifiedTime( editedContent );
 
         final UpdateContentTranslatorParams updateContentTranslatorParams = UpdateContentTranslatorParams.create().
             editedContent( editedContent ).
@@ -126,14 +129,14 @@ final class UpdateContentCommand
         return editedContent;
     }
 
-    private Content attachThumbnail( Content editedContent )
+    private Content attachThumbnail( final Content editedContent )
     {
         if ( !editedContent.hasThumbnail() )
         {
             final Thumbnail mediaThumbnail = resolveMediaThumbnail( editedContent );
             if ( mediaThumbnail != null )
             {
-                editedContent = Content.newContent( editedContent ).thumbnail( mediaThumbnail ).build();
+                return Content.newContent( editedContent ).thumbnail( mediaThumbnail ).build();
             }
         }
         return editedContent;
@@ -147,6 +150,13 @@ final class UpdateContentCommand
             editor.edit( editableContent );
         }
         return editableContent.build();
+    }
+
+    private Content setModifiedTime( final Content content )
+    {
+        return Content.newContent( content ).
+            modifiedTime( Instant.now() ).
+            build();
     }
 
     private boolean validateEditedContent( final Content edited )

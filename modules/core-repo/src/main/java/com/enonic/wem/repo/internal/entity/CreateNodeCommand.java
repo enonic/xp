@@ -100,7 +100,7 @@ public final class CreateNodeCommand
 
         if ( !this.params.isDryRun() )
         {
-            this.doStoreNode( newNode );
+            return this.doStoreNode( newNode );
         }
 
         return newNode;
