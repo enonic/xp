@@ -109,8 +109,7 @@ module api.ui.time {
             if (!date || !time) {
                 return null;
             }
-            return api.util.DateHelper.newUTCDateTime(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
-                time.hour, time.minute);
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.hour, time.minute);
         }
 
         setSelectedTime(hours: number, minutes: number, silent?: boolean) {

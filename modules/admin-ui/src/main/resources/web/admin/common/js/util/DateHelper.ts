@@ -94,6 +94,46 @@ module api.util {
                 : null;
         }
 
+        private static parseTime(value: string): Time {
+            var dateStr = (value || '').trim();
+            if (dateStr.length != 5) {
+                return null;
+            }
+            var parts = dateStr.split(':');
+            if (parts.length !== 2) {
+                return null;
+            }
+            var hour: number = Number(parts[0]);
+            var minute: number = Number(parts[1]);
+            if (isNaN(hour) || isNaN(minute) || hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+                return null;
+            }
+            return {hour: hour, minute: minute};
+        }
+
+        static parseDateTime(value: string): Date {
+            var dateStr = (value || '').trim();
+            if (dateStr.length < 14 || dateStr.length > 16) {
+                return null;
+            }
+            var parts = dateStr.split(' ');
+            if (parts.length !== 2) {
+                return null;
+            }
+            var datePart = parts[0];
+            var timePart = parts[1];
+            var date = DateHelper.parseDate(datePart);
+            if (!date) {
+                return null;
+            }
+            var time = DateHelper.parseTime(timePart);
+            if (!time) {
+                return null;
+            }
+            date.setHours(time.hour, time.minute, 0, 0);
+            return date;
+        }
+
         /**
          * E.g. numDaysInMonth(2015, 1) -> 28
          * @param year
@@ -105,4 +145,8 @@ module api.util {
         }
     }
 
+    interface Time {
+        hour: number;
+        minute: number;
+    }
 }

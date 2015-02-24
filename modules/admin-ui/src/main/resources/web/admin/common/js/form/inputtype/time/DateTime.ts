@@ -30,11 +30,11 @@ module api.content.form.inputtype.time {
             if (property.hasNonNullValue()) {
                 var date = property.getLocalDateTime();
                 dateTimeBuilder.
-                    setYear(date.getUTCFullYear()).
-                    setMonth(date.getUTCMonth()).
+                    setYear(date.getFullYear()).
+                    setMonth(date.getMonth()).
                     setSelectedDate(date).
-                    setHours(date.getUTCHours()).
-                    setMinutes(date.getUTCMinutes());
+                    setHours(date.getHours()).
+                    setMinutes(date.getMinutes());
             }
 
             var dateTimePicker = new api.ui.time.DateTimePicker(dateTimeBuilder);
