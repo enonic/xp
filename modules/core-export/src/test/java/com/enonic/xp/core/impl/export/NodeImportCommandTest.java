@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -14,6 +13,8 @@ import org.junit.rules.TemporaryFolder;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
+import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer;
 import com.enonic.xp.export.ImportNodeException;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.AttachedBinary;
@@ -24,8 +25,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFiles;
-import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
-import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer;
 
 import static org.junit.Assert.*;
 
@@ -222,7 +221,6 @@ public class NodeImportCommandTest
         assertEquals( 0, result.getAddedNodes().getSize() );
     }
 
-    @Ignore
     @Test
     public void continue_on_error()
         throws Exception
