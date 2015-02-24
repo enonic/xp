@@ -22,7 +22,7 @@ module app {
 
             this.appSelector = new app.launcher.AppSelector(allApplications);
             this.appSelector.onAppSelected((event: app.launcher.AppSelectedEvent) => {
-                this.appLauncher.loadApplication(event.getApplication());
+                this.appLauncher.showApplication(event.getApplication());
             });
 
             this.homeMainContainer = this.createHomeMainContainer();

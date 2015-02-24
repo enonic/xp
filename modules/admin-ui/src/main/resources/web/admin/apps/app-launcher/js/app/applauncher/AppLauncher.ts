@@ -2,21 +2,21 @@ module app.launcher {
 
     export class AppLauncher {
 
-        private appManager: api.app.AppManager;
+        private appManager:api.app.AppManager;
 
-        private homeMainContainer: app.home.HomeMainContainer;
+        private homeMainContainer:app.home.HomeMainContainer;
 
-        private adminApplicationFrames: api.dom.DivEl;
+        private adminApplicationFrames:api.dom.DivEl;
 
-        private loadMask: api.ui.mask.LoadMask;
+        private loadMask:api.ui.mask.LoadMask;
 
-        private currentApplication: api.app.Application;
+        private currentApplication:api.app.Application;
 
-        private currentApplicationHash: string;
+        private currentApplicationHash:string;
 
-        private allowedApplications: {[id:string]:api.app.Application};
+        private allowedApplications:{[id:string]:api.app.Application};
 
-        constructor(mainContainer: app.home.HomeMainContainer) {
+        constructor(mainContainer:app.home.HomeMainContainer) {
             this.homeMainContainer = mainContainer;
             this.allowedApplications = {};
 
@@ -52,7 +52,7 @@ module app.launcher {
                 this.homeMainContainer.disableBranding();
                 this.homeMainContainer.giveFocus();
 
-                Applications.getAllApps().forEach((app: api.app.Application) => {
+                Applications.getAllApps().forEach((app:api.app.Application) => {
                     if (app != event.getApplication()) {
                         app.hide();
                     }
@@ -66,8 +66,22 @@ module app.launcher {
             });
         }
 
-        loadApplication(application: api.app.Application): wemQ.Promise<boolean> {
+        showApplication(application: api.app.Application): boolean {
+            if(application.isNotDisplayed()) {
+                this.doShowApplication(application).then((result:boolean) => {
+                    return result;
+                }).catch((reason:any) => {
+                    application.setDisplayingStatus(api.app.ApplicationShowStatus.NOT_DISPLAYED);
+                }).done();
+            } else {
+                return true;
+            }
+        }
+
+        private doShowApplication(application:api.app.Application): wemQ.Promise<boolean> {
             var deferred = wemQ.defer<boolean>();
+
+            application.setDisplayingStatus(api.app.ApplicationShowStatus.PREPARING);
 
             if (!this.isAllowedApp(application)) {
 
@@ -76,8 +90,7 @@ module app.launcher {
                     this.setAllowedApps(allowedApps);
 
                     if (loginResult.isAuthenticated() && this.isAllowedApp(application)) {
-                        this.doLoadApplication(application);
-                        deferred.resolve(true);
+                        return this.doLoadApplication(application);
 
                     } else {
                         this.showLauncherScreen();
@@ -90,42 +103,48 @@ module app.launcher {
                 }).done();
 
             } else {
-                this.doLoadApplication(application);
-                deferred.resolve(true);
+                return this.doLoadApplication(application);
             }
 
             return deferred.promise;
         }
 
-        private doLoadApplication(application: api.app.Application) {
-            Applications.getAllApps().forEach((app: api.app.Application) => {
-                if (app != application) {
+        private doLoadApplication(application:api.app.Application):wemQ.Promise<boolean> {
+            var deferred = wemQ.defer<boolean>();
+            Applications.getAllApps().forEach((app:api.app.Application) => {
+                if (app == application) {
+                    app.show();
+                } else {
                     app.hide();
                 }
             });
 
             if (!application.getAppUrl()) {
                 console.warn('Missing URL for app "' + application.getName() + '". Cannot be opened.');
-                return;
+                deferred.resolve(false);
             }
 
             api.ui.KeyBindings.get().reset();
             this.homeMainContainer.hide();
 
-            var appFrame: api.dom.IFrameEl = application.getAppFrame();
+            var appFrame:api.dom.IFrameEl = application.getAppFrame();
             if (application.isLoaded()) {
                 appFrame.show();
                 appFrame.giveFocus();
+                deferred.resolve(true);
             } else {
                 this.adminApplicationFrames.appendChild(appFrame);
                 this.loadMask.show();
                 application.onLoaded(() => {
                     this.loadMask.hide();
                     appFrame.giveFocus();
+                    deferred.resolve(true);
                 });
             }
             var type = api.app.AppLauncherEventType.Show;
             appFrame.postMessage(<api.app.AppLauncherEvent>{appLauncherEvent: api.app.AppLauncherEventType[type]});
+
+            return deferred.promise;
         }
 
         showLauncherScreen() {
@@ -143,14 +162,14 @@ module app.launcher {
             hasher.setHash(AppRouter.HOME_HASH_ID);
         }
 
-        setAllowedApps(applications: api.app.Application[]) {
+        setAllowedApps(applications:api.app.Application[]) {
             this.allowedApplications = {};
-            applications.forEach((application: api.app.Application) => {
+            applications.forEach((application:api.app.Application) => {
                 this.allowedApplications[application.getId()] = application;
             });
         }
 
-        private isAllowedApp(application: api.app.Application): boolean {
+        private isAllowedApp(application:api.app.Application):boolean {
             return !!this.allowedApplications[application.getId()];
         }
 

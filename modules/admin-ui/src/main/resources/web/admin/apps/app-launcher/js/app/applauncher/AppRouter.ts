@@ -44,7 +44,7 @@ module app.launcher {
                 crossroads.addRoute(appRoutPattern, (p1: string, p2: string, p3: string) => {
                     var pathValues = [p1, p2, p3].filter((p)=> p != undefined);
                     var path: api.rest.Path = new api.rest.Path(pathValues);
-                    this.appLauncher.loadApplication(application.setPath(path));
+                    this.appLauncher.showApplication(application.setPath(path));
                 });
             });
         }
