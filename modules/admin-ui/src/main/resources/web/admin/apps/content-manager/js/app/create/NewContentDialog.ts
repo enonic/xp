@@ -34,6 +34,8 @@ module app.create {
 
         private listItems: NewContentDialogListItem[];
 
+        private mockModalDialog: NewContentDialog; //used to calculate modal window height for smooth animation
+
         constructor() {
             this.contentDialogTitle = new NewContentDialogTitle("Create Content", "");
 
@@ -41,7 +43,7 @@ module app.create {
                 title: this.contentDialogTitle
             });
 
-            this.addClass("new-content-dialog");
+            this.addClass("new-content-dialog hidden");
 
             var section = new api.dom.SectionEl().setClass("column");
             this.appendChildToContentPanel(section);
@@ -260,6 +262,8 @@ module app.create {
         hide() {
             super.hide();
             this.mediaUploader.stop();
+            this.addClass("hidden");
+            this.removeClass("animated");
         }
 
         close() {
@@ -303,9 +307,38 @@ module app.create {
                     this.filterList();
                     this.contentListMask.hide();
                     this.recentListMask.hide();
-                    this.addClass("animated");
-                    api.ui.responsive.ResponsiveManager.fireResizeEvent();
+
+                    this.handleModalDialogAnimation();
                 }).done();
+        }
+
+        private showMockDialog() {
+            super.show();
+            this.removeClass("hidden");
+        }
+
+        private handleModalDialogAnimation() {
+            if(this.mockModalDialog == null) {
+                this.mockModalDialog = new NewContentDialog();
+                this.mockModalDialog.close = function() {
+                    this.hide();
+                }
+                this.getParentElement().appendChild(this.mockModalDialog);
+                this.mockModalDialog.addClass("mock-modal-dialog");
+            }
+
+            this.mockModalDialog.contentList.setItems(this.listItems);
+
+            if (this.parentContent) {
+                this.mockModalDialog.contentDialogTitle.setPath(this.parentContent.getPath().toString());
+            } else {
+                this.mockModalDialog.contentDialogTitle.setPath('');
+            }
+            this.mockModalDialog.showMockDialog();
+
+            this.addClass("animated");
+            this.removeClass("hidden");
+            this.getEl().setMarginTop("-" + ( this.mockModalDialog.getEl().getHeightWithBorder() / 2) + "px");
         }
 
         private createListItems(contentTypes: ContentTypeSummary[]): NewContentDialogListItem[] {
