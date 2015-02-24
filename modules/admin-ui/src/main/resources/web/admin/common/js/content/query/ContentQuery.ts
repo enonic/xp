@@ -2,6 +2,10 @@ module api.content.query {
 
     export class ContentQuery {
 
+        static POSTLOAD_SIZE = 10;
+
+        static DEFAULT_SIZE = 100;
+
         private queryExpr: api.query.expr.QueryExpr;
 
         private contentTypeNames: api.schema.content.ContentTypeName[] = [];
@@ -12,7 +16,7 @@ module api.content.query {
 
         private from: number = 0;
 
-        private size: number = 100;
+        private size: number = ContentQuery.DEFAULT_SIZE;
 
         setQueryExpr(queryExpr: api.query.expr.QueryExpr) {
             this.queryExpr = queryExpr;

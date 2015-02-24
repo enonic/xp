@@ -85,6 +85,8 @@ module app.browse.filter {
                 contentQuery.addQueryFilter(lastModifiedFilter);
             }
 
+            contentQuery.setSize(ContentQuery.POSTLOAD_SIZE);
+
             this.appendContentTypesAggregationQuery(contentQuery);
             this.appendLastModifiedAggregationQuery(contentQuery);
 

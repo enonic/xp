@@ -1,19 +1,21 @@
 module api.content {
 
+    import ContentQuery = api.content.query.ContentQuery;
+
     export class ContentQueryRequest<CONTENT_JSON extends json.ContentIdBaseItemJson,CONTENT extends ContentIdBaseItem>
     extends ContentResourceRequest<json.ContentQueryResultJson<CONTENT_JSON>, ContentQueryResult<CONTENT,CONTENT_JSON>> {
 
-        private contentQuery: api.content.query.ContentQuery;
+        private contentQuery: ContentQuery;
 
         private expand: api.rest.Expand = api.rest.Expand.SUMMARY;
 
-        constructor(contentQuery?: api.content.query.ContentQuery) {
+        constructor(contentQuery?: ContentQuery) {
             super();
             super.setMethod("POST");
             this.contentQuery = contentQuery;
         }
 
-        setContentQuery(contentQuery: api.content.query.ContentQuery) {
+        setContentQuery(contentQuery: ContentQuery) {
             this.contentQuery = contentQuery;
         }
 

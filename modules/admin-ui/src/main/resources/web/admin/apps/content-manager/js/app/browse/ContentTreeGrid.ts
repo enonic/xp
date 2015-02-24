@@ -287,6 +287,7 @@ module app.browse {
                 parentNode.getChildren().pop();
                 from--;
             }
+
             if (!this.isFiltered() || parentNode != this.getRoot().getCurrentRoot()) {
                 return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, ContentTreeGrid.MAX_FETCH_SIZE).
                     then((data: ContentResponse<ContentSummaryAndCompareStatus>) => {

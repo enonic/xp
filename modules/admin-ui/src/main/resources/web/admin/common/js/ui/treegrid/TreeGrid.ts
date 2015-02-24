@@ -35,8 +35,6 @@ module api.ui.treegrid {
 
         private root: TreeRoot<DATA>;
 
-        private stash: TreeNode<DATA>;
-
         private toolbar: TreeGridToolbar;
 
         private contextMenu: TreeGridContextMenu;
@@ -486,8 +484,6 @@ module api.ui.treegrid {
                 // replace with refresh in future
                 this.reload();
             }
-
-            this.stash = null;
         }
 
         selectAll() {
@@ -590,17 +586,6 @@ module api.ui.treegrid {
 
             nodesToUpdate.push(nodeToUpdate);
 
-            if (!!this.stash) {
-                stashedNodeToUpdate = this.stash.findNode(dataId);
-                // filter may have multiple occurrences
-                this.root.getCurrentRoot().getChildren().forEach((topNode) => {
-                    var match = topNode.findNode(dataId);
-                    if (!!match) {
-                        nodesToUpdate.push(match);
-                    }
-                });
-            }
-
             this.fetch(nodesToUpdate[0])
                 .then((data: DATA) => {
                     nodesToUpdate.forEach((node) => {
@@ -629,9 +614,6 @@ module api.ui.treegrid {
         }
 
         deleteNode(data: DATA, stashedParentNode?: TreeNode<DATA>): void {
-            if (!stashedParentNode && this.stash) {
-                this.deleteNode(data, this.stash);
-            }
             var root = stashedParentNode || this.root.getCurrentRoot(),
                 dataId = this.getDataId(data),
                 node: TreeNode<DATA>;
@@ -666,9 +648,6 @@ module api.ui.treegrid {
         appendNode(data: DATA, nextToSelection?: boolean, prepend: boolean = true, stashedParentNode?: TreeNode<DATA>): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
-            if (!stashedParentNode && this.stash) {
-                this.appendNode(data, nextToSelection, prepend, this.stash);
-            }
             var root = stashedParentNode || this.root.getCurrentRoot();
 
             var parentNode: TreeNode<DATA>;
@@ -763,11 +742,6 @@ module api.ui.treegrid {
             root.treeToList().forEach((child: TreeNode<DATA>) => {
                 this.refreshNodeData(child);
             });
-            if (this.stash) {
-                this.stash.treeToList().forEach((child: TreeNode<DATA>) => {
-                    this.refreshNodeData(child);
-                });
-            }
             this.notifyDataChanged(new DataChangedEvent<DATA>(deleted, DataChangedEvent.DELETED));
         }
 
@@ -926,7 +900,7 @@ module api.ui.treegrid {
         }
 
         isFiltered() {
-            return !!this.stash;
+            return this.root.isFiltered();
         }
 
         resetAndRender() {
