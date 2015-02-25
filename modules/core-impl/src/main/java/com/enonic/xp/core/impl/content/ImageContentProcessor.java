@@ -23,6 +23,7 @@ import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.filter.ScaleWidthFilter;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
@@ -33,7 +34,6 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.util.GeoPoint;
-import com.enonic.xp.util.ImageHelper;
 
 public final class ImageContentProcessor
 {

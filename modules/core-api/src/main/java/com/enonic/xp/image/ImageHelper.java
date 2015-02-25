@@ -8,6 +8,7 @@ import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
@@ -17,8 +18,59 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 
+import com.google.common.io.BaseEncoding;
+import com.google.common.io.ByteSource;
+
+import com.enonic.xp.util.Exceptions;
+
 public final class ImageHelper
 {
+    private ImageHelper()
+    {
+    }
+
+    public static String createImagePlaceholder( final int width, final int height )
+    {
+        try
+        {
+            final BufferedImage image = createImage( width, height, true );
+            final byte[] bytes = writeImage( image, "png", 100 );
+
+            final BaseEncoding encoding = BaseEncoding.base64();
+            return "data:image/png;base64," + encoding.encode( bytes );
+        }
+        catch ( final IOException e )
+        {
+            throw Exceptions.newRutime( "Failed to create image placeholder" ).withCause( e );
+        }
+    }
+
+    public static BufferedImage toBufferedImage( final InputStream inputStream )
+    {
+        try
+        {
+            return ImageIO.read( inputStream );
+        }
+        catch ( IOException e )
+        {
+            throw Exceptions.newRutime( "Failed to read BufferedImage from InputStream" ).withCause( e );
+        }
+    }
+
+    public static ByteSource toByteSource( final BufferedImage image, final String format )
+    {
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try
+        {
+            ImageIO.write( image, format, output );
+        }
+        catch ( final IOException e )
+        {
+            throw Exceptions.newRutime( "Failed to write BufferedImage to InputStream" ).withCause( e );
+        }
+        return ByteSource.wrap( output.toByteArray() );
+    }
+
     public static ImageWriter getWriterByFormat( final String format )
     {
         final Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName( format );
