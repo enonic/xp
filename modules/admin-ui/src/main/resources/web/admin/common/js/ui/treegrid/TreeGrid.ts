@@ -99,7 +99,7 @@ module api.ui.treegrid {
 
             this.grid.syncGridSelection(false);
 
-            this.actions = new TreeGridToolbarActions(this.grid);
+            this.actions = new TreeGridToolbarActions(this);
 
             this.onClicked(() => {
                 this.grid.focus();
@@ -270,7 +270,7 @@ module api.ui.treegrid {
                 this.notifySelectionChanged(event, rows.rows);
             });
 
-            if (this.toolbar) {
+           /* if (this.toolbar) {
                 this.gridData.onRowCountChanged(() => {
                     this.toolbar.refresh();
                 });
@@ -278,7 +278,7 @@ module api.ui.treegrid {
                 this.onSelectionChanged(() => {
                     this.toolbar.refresh();
                 });
-            }
+            }*/
         }
 
         private updateColumnsFormatter(columns: GridColumn<TreeNode<DATA>>[]) {
@@ -327,6 +327,10 @@ module api.ui.treegrid {
 
         setActive(active: boolean = true) {
             this.active = active;
+        }
+
+        getToolbar(): TreeGridToolbar {
+            return this.toolbar;
         }
 
         hasToolbar(): boolean {

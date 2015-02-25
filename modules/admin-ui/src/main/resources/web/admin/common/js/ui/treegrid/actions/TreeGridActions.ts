@@ -2,7 +2,7 @@ module api.ui.treegrid.actions {
 
     import Action = api.ui.Action;
 
-    export interface TreeGridActions<M extends api.Equitable> {
+    export interface TreeGridActions<M> {
 
         getAllActions(): Action[];
 
