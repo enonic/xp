@@ -193,8 +193,9 @@ module api.liveedit {
 
             this.onMouseOverView(() => {
                 var hasSelectedView = this.getPageView().hasSelectedView();
+                var isDragging = DragAndDrop.get().isDragging();
 
-                if (!hasSelectedView) {
+                if (!hasSelectedView && !isDragging) {
                     this.showTooltip();
                     this.showCursor();
                     this.highlight();
@@ -203,8 +204,9 @@ module api.liveedit {
 
             this.onMouseLeaveView(() => {
                 var hasSelectedView = this.getPageView().hasSelectedView();
+                var isDragging = DragAndDrop.get().isDragging();
 
-                if (!hasSelectedView) {
+                if (!hasSelectedView && !isDragging) {
                     this.hideTooltip();
                     this.resetCursor();
                     this.unhighlight();

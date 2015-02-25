@@ -157,7 +157,8 @@ module api.liveedit {
         }
 
         highlight() {
-            if (!this.isTextEditMode() && !this.isLocked()) {
+            var isDragging = DragAndDrop.get().isDragging();
+            if (!this.isTextEditMode() && !this.isLocked() && !isDragging) {
                 super.highlight();
             }
         }

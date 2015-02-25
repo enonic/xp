@@ -59,7 +59,8 @@ module api.liveedit.text {
         }
 
         highlight() {
-            if (!this.isEditMode()) {
+            var isDragging = DragAndDrop.get().isDragging();
+            if (!this.isEditMode() && !isDragging) {
                 super.highlight();
             }
         }
