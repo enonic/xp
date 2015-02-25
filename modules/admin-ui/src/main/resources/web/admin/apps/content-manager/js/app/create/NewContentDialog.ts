@@ -254,6 +254,16 @@ module app.create {
 
             this.mediaUploader.reset();
 
+            if(this.mockModalDialog == null) {
+                this.mockModalDialog = new NewContentDialog();
+                this.mockModalDialog.close = function() {
+                    wemjq(this.getEl().getHTMLElement()).hide();
+                }
+                this.getParentElement().appendChild(this.mockModalDialog);
+                this.mockModalDialog.addClass("mock-modal-dialog");
+                this.mockModalDialog.removeClass("hidden");
+            }
+
             // CMS-3711: reload content types each time when dialog is show.
             // It is slow but newly create content types are displayed.
             this.loadContentTypes();
@@ -313,19 +323,10 @@ module app.create {
         }
 
         private showMockDialog() {
-            super.show();
-            this.removeClass("hidden");
+            wemjq(this.getEl().getHTMLElement()).show();
         }
 
         private handleModalDialogAnimation() {
-            if(this.mockModalDialog == null) {
-                this.mockModalDialog = new NewContentDialog();
-                this.mockModalDialog.close = function() {
-                    this.hide();
-                }
-                this.getParentElement().appendChild(this.mockModalDialog);
-                this.mockModalDialog.addClass("mock-modal-dialog");
-            }
 
             this.mockModalDialog.contentList.setItems(this.listItems);
 
