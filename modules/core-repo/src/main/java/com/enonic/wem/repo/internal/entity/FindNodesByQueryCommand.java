@@ -2,13 +2,12 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.index.IndexContext;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
+import com.enonic.wem.repo.internal.index.query.NodeQueryResultEntry;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.Nodes;
-import com.enonic.xp.query.expr.OrderExpressions;
-import com.enonic.wem.repo.internal.index.IndexContext;
-import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 
 public class FindNodesByQueryCommand
     extends AbstractNodeCommand
@@ -28,17 +27,19 @@ public class FindNodesByQueryCommand
 
     public FindNodesByQueryResult execute()
     {
-
         final NodeQueryResult nodeQueryResult = queryService.find( query, IndexContext.from( ContextAccessor.current() ) );
 
-        final Nodes nodes = doGetByIds( nodeQueryResult.getNodeIds(), OrderExpressions.from( query.getOrderBys() ), true );
-
-        return FindNodesByQueryResult.create().
+        final FindNodesByQueryResult.Builder resultBuilder = FindNodesByQueryResult.create().
             hits( nodeQueryResult.getHits() ).
             totalHits( nodeQueryResult.getTotalHits() ).
-            aggregations( nodeQueryResult.getAggregations() ).
-            nodes( nodes ).
-            build();
+            aggregations( nodeQueryResult.getAggregations() );
+
+        for ( final NodeQueryResultEntry resultEntry : nodeQueryResult.getEntries() )
+        {
+            resultBuilder.addNode( doGetById( resultEntry.getId(), false ) );
+        }
+
+        return resultBuilder.build();
     }
 
     public static final class Builder

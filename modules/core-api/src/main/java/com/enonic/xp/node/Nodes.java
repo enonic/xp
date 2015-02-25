@@ -23,28 +23,6 @@ public final class Nodes
         this.map = Maps.uniqueIndex( set, new ToIdFunction() );
     }
 
-    private final static class ToIdFunction
-        implements Function<Node, NodeId>
-    {
-        @Override
-        public NodeId apply( final Node value )
-        {
-            return value.id();
-        }
-    }
-
-    public Node getNodeById( final NodeId nodeId )
-    {
-        return this.map.get( nodeId );
-    }
-
-    public NodePaths getPaths()
-    {
-        final Collection<NodePath> paths = Collections2.transform( this.set, new ToKeyFunction() );
-        return NodePaths.from( paths );
-    }
-
-
     public static Nodes empty()
     {
         final ImmutableSet<Node> set = ImmutableSet.of();
@@ -66,6 +44,32 @@ public final class Nodes
         return new Nodes( ImmutableSet.copyOf( nodes ) );
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public Node getNodeById( final NodeId nodeId )
+    {
+        return this.map.get( nodeId );
+    }
+
+    public NodePaths getPaths()
+    {
+        final Collection<NodePath> paths = Collections2.transform( this.set, new ToKeyFunction() );
+        return NodePaths.from( paths );
+    }
+
+    private final static class ToIdFunction
+        implements Function<Node, NodeId>
+    {
+        @Override
+        public NodeId apply( final Node value )
+        {
+            return value.id();
+        }
+    }
+
     private final static class ToKeyFunction
         implements Function<Node, NodePath>
     {
@@ -74,11 +78,6 @@ public final class Nodes
         {
             return value.path();
         }
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public static class Builder

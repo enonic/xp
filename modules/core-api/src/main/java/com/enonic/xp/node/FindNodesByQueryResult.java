@@ -1,5 +1,9 @@
 package com.enonic.xp.node;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
 import com.enonic.xp.aggregation.Aggregations;
 
 public class FindNodesByQueryResult
@@ -14,7 +18,7 @@ public class FindNodesByQueryResult
 
     private FindNodesByQueryResult( final Builder builder )
     {
-        this.nodes = builder.nodes;
+        this.nodes = Nodes.from( builder.nodes );
         this.totalHits = builder.totalHits;
         this.hits = builder.hits;
         this.aggregations = builder.aggregations;
@@ -27,7 +31,7 @@ public class FindNodesByQueryResult
 
     public Nodes getNodes()
     {
-        return nodes;
+        return this.nodes;
     }
 
     public Aggregations getAggregations()
@@ -47,7 +51,7 @@ public class FindNodesByQueryResult
 
     public static final class Builder
     {
-        private Nodes nodes;
+        private final Set<Node> nodes = Sets.newLinkedHashSet();
 
         private long totalHits;
 
@@ -65,9 +69,9 @@ public class FindNodesByQueryResult
             return this;
         }
 
-        public Builder nodes( Nodes nodes )
+        public Builder addNode( final Node node )
         {
-            this.nodes = nodes;
+            this.nodes.add( node );
             return this;
         }
 

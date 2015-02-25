@@ -37,6 +37,11 @@ public final class NodeQueryResult
         this.nodeQueryResultSet = NodeQueryResultSet.from( builder.entries );
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public long getTotalHits()
     {
         return totalHits;
@@ -57,11 +62,6 @@ public final class NodeQueryResult
         return aggregations;
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
     public NodeIds getNodeIds()
     {
         return nodeQueryResultSet.asNodeIds();
@@ -70,6 +70,11 @@ public final class NodeQueryResult
     public NodeQueryResultSet getNodeQueryResultSet()
     {
         return nodeQueryResultSet;
+    }
+
+    public ImmutableSet<NodeQueryResultEntry> getEntries()
+    {
+        return entries;
     }
 
     public static final class Builder
