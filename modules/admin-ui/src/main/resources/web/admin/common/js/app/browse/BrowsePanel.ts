@@ -74,6 +74,7 @@ module api.app.browse {
                 this.treeGrid.getContextMenu().getActions().updateActionsEnabledState(browseItems).
                     then((updatedBrowseItems: api.app.browse.BrowseItem<M>[]) => {
                         this.browseItemPanel.setItems(updatedBrowseItems);
+                        this.treeGrid.getToolbar().refresh(updatedBrowseItems.length);
                 });
             });
 

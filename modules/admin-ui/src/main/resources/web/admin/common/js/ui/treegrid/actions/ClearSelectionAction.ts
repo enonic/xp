@@ -1,16 +1,17 @@
 module api.ui.treegrid.actions {
 
     import Action = api.ui.Action;
-    import Grid = api.ui.grid.Grid;
 
-    export class ClearSelectionAction extends Action {
+    export class ClearSelectionAction<DATA> extends Action {
 
-        constructor(grid: Grid<TreeNode<Object>>) {
-            var selectionCount = grid.getSelectedRows().length;
-            super("Clear Selection (" + selectionCount + ")");
+        constructor(treeGrid: TreeGrid<DATA>, selectedItemsCount?: number) {
+            var label = "Clear Selection";
+            label += !!selectedItemsCount ? " (" + selectedItemsCount + ")" : "";
+            super(label);
             this.setEnabled(true);
             this.onExecuted(() => {
-                grid.clearSelection();
+                treeGrid.getRoot().clearStashedSelection();
+                treeGrid.getGrid().clearSelection();
             });
         }
     }
