@@ -46,7 +46,6 @@ module app.wizard.page.contextwindow.insert {
                         console.log('Simulating mouse up for', this.contextWindowDraggable);
                     }
                     this.contextWindowDraggable.simulate('mouseup');
-                    this.contextWindowDraggable = null;
                 }
             });
 
@@ -77,12 +76,14 @@ module app.wizard.page.contextwindow.insert {
         }
 
         private destroyDraggables() {
+            var components = wemjq('[data-context-window-draggable="true"]:not(.ui-draggable)');
 
+            components.draggable('destroy');
         }
 
         private handleDragStart(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
             if (InsertablesPanel.debug) {
-                console.log('handle drag start', event, ui);
+                console.log('InsertablesPanel.handleDragStart', event, ui);
             }
             this.liveEditPageProxy.showDragMask();
             this.contextWindowDraggable = wemjq(event.target);
@@ -90,9 +91,6 @@ module app.wizard.page.contextwindow.insert {
 
         private handleDrag(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
             var over = this.isOverIFrame(event);
-            if (InsertablesPanel.debug) {
-                console.log('Handle drag', event);
-            }
             if (this.overIFrame != over) {
                 if (over) {
                     this.onEnterIFrame(event, ui);
@@ -105,10 +103,17 @@ module app.wizard.page.contextwindow.insert {
 
         private handleDragStop(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
             if (InsertablesPanel.debug) {
-                console.log('handle drag stop', event, ui);
+                console.log('InsertablesPanel.handleDragStop', event, ui);
             }
             this.liveEditPageProxy.hideDragMask();
             this.contextWindowDraggable = null;
+
+            if (this.iFrameDraggable) {
+                this.iFrameDraggable.simulate('mouseup');
+                this.liveEditPageProxy.destroyDraggable(this.iFrameDraggable);
+                this.iFrameDraggable.remove();
+                this.iFrameDraggable = null;
+            }
         }
 
         private isOverIFrame(event: JQueryEventObject): boolean {
@@ -117,32 +122,41 @@ module app.wizard.page.contextwindow.insert {
 
         private onLeftIFrame(event: Event, ui: JQueryUI.DraggableEventUIParams) {
             if (InsertablesPanel.debug) {
-                console.log('Left LiveEdit');
+                console.log('InsertablesPanel.onLeftIFrame');
             }
             this.liveEditPageProxy.showDragMask();
 
             if (this.iFrameDraggable) {
-                this.iFrameDraggable.simulate('mouseup');
-                this.liveEditPageProxy.destroyDraggable(this.iFrameDraggable);
-                this.iFrameDraggable.remove();
+                var livejq = this.liveEditPageProxy.getJQuery();
+                // hide the helper of the iframe draggable,
+                // it's a function so call it to get element and wrap in jquery to hide
+                livejq(this.iFrameDraggable.draggable("option", "helper")()).hide();
             }
 
+            // and show the one in the parent
             ui.helper.show();
         }
 
         private onEnterIFrame(event: Event, ui: JQueryUI.DraggableEventUIParams) {
             if (InsertablesPanel.debug) {
-                console.log('Left LiveEdit');
+                console.log('InsertablesPanel.onEnterIFrame');
             }
             this.liveEditPageProxy.hideDragMask();
-
-            ui.helper.hide();
-
             var livejq = this.liveEditPageProxy.getJQuery();
-            this.iFrameDraggable = livejq(event.target).clone();
-            livejq('body').append(this.iFrameDraggable);
-            this.liveEditPageProxy.createDraggable(this.iFrameDraggable);
-            this.iFrameDraggable.simulate('mousedown').hide();
+
+            if (!this.iFrameDraggable) {
+                this.iFrameDraggable = livejq(event.target).clone();
+                livejq('body').append(this.iFrameDraggable);
+                this.liveEditPageProxy.createDraggable(this.iFrameDraggable);
+                this.iFrameDraggable.simulate('mousedown').hide();
+            }
+
+            // show the helper of the iframe draggable
+            // it's a function so call it to get element and wrap in jquery to show
+            livejq(this.iFrameDraggable.draggable("option", "helper")()).show();
+
+            // and hide the one in the parent
+            ui.helper.hide();
 
             this.notifyHideContextWindowRequest();
         }

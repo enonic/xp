@@ -34,6 +34,8 @@ module api.liveedit {
 
         private _isDragging: boolean = false;
 
+        private _wasDropped: boolean = false;
+
         private _newItemItemType: ItemType;
 
         private _draggedComponentView: ComponentView<Component>;
@@ -76,9 +78,6 @@ module api.liveedit {
             wemjq(this.REGION_SELECTOR).sortable('refresh');
         }
 
-        setSortableEnabled(enabled: boolean) {
-            wemjq(this.REGION_SELECTOR).sortable(enabled ? 'enable' : 'disable');
-        }
 
         private processMouseOverRegionView(regionView: RegionView) {
 
@@ -151,6 +150,11 @@ module api.liveedit {
             });
         }
 
+        // Used by the Context Window when dragging above the IFrame
+        destroyDraggable(jq: JQuery) {
+            jq.draggable("destroy");
+        }
+
         /*
          *  Sortable start is not fired in Firefox when dragging item from context window
          *  So listen for the draggable events as well
@@ -176,12 +180,11 @@ module api.liveedit {
                 console.groupEnd();
             }
 
-            this.notifyDragStopped(this._draggedComponentView);
-        }
+            if (!this._wasDropped) {
+                this.notifyCanceled(this._draggedComponentView);
+            }
 
-        // Used by the Context Window when dragging above the IFrame
-        destroyDraggable(jq: JQuery) {
-            jq.draggable("destroy");
+            this.notifyDragStopped(this._draggedComponentView);
         }
 
         /*
@@ -237,10 +240,7 @@ module api.liveedit {
                 console.groupEnd();
             }
 
-            // Helper is a singleton so don't remove it
             ui.helper.hide();
-            // As well as a placeholder
-            ui.placeholder.hide();
         }
 
         /*
@@ -454,6 +454,7 @@ module api.liveedit {
             }
 
             this._isDragging = true;
+            this._wasDropped = false;
             this.dragStartedListeners.forEach((curr) => {
                 curr(componentView);
             });
@@ -477,6 +478,7 @@ module api.liveedit {
             }
 
             this._isDragging = false;
+            DragHelper.get().reset();
             this.dragStoppedListeners.forEach((curr) => {
                 curr(componentView);
             });
@@ -503,6 +505,7 @@ module api.liveedit {
                 curr(componentView, regionView);
             });
 
+            this._wasDropped = true;
             new ComponentViewDragDroppedEvent(componentView, regionView).fire();
         }
 
