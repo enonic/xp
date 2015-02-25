@@ -232,7 +232,7 @@ module api.ui.selector.combobox {
             });
         }
 
-        createOptions(items: OPTION_DISPLAY_VALUE[]): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
+        private createOptions(items: OPTION_DISPLAY_VALUE[]): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
             var options = [];
             items.forEach((itemInst: OPTION_DISPLAY_VALUE) => {
                 options.push(this.createOption(itemInst));

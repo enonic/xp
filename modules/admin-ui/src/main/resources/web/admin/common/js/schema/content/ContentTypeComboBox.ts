@@ -2,8 +2,8 @@ module api.schema.content {
 
     export class ContentTypeComboBox extends api.ui.selector.combobox.RichComboBox<ContentTypeSummary> {
 
-        constructor(maximumOccurrences: number = 0) {
-            var loader = new ContentTypeSummaryLoader();
+        constructor(maximumOccurrences: number = 0, loader? : api.util.loader.BaseLoader<api.schema.content.ContentTypeSummaryListJson, ContentTypeSummary>) {
+            var loader = loader || new ContentTypeSummaryLoader();
             super(new api.ui.selector.combobox.RichComboBoxBuilder<ContentTypeSummary>()
                 .setLoader(loader)
                 .setSelectedOptionsView(new ContentTypeSelectedOptionsView())

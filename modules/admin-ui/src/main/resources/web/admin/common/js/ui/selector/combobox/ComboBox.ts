@@ -178,10 +178,6 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.setOptions(options, this.getSelectedOptions());
         }
 
-        removeAllOptions() {
-            this.comboBoxDropdown.removeAllOptions();
-        }
-
         addOption(option: Option<OPTION_DISPLAY_VALUE>) {
             this.comboBoxDropdown.addOption(option);
         }
