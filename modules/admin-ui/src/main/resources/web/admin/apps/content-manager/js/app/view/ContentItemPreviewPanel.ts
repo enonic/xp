@@ -51,6 +51,7 @@ module app.view {
             var imgSize = Math.max(this.getEl().getWidth(), this.getEl().getHeight());
             var imgUrl = new ContentImageUrlResolver().
                 setContentId(item.getModel().getContentId()).
+                setTimestamp(item.getModel().getModifiedTime()).
                 setSize(imgSize).resolve();
             this.image.setSrc(imgUrl);
         }
