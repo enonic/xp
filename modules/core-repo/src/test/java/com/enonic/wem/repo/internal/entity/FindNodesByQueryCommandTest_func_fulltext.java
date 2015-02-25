@@ -21,7 +21,7 @@ import com.enonic.xp.query.expr.ValueExpr;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
-public class FindNodesByQueryCommandTest_text
+public class FindNodesByQueryCommandTest_func_fulltext
     extends AbstractNodeTest
 {
     @Before
@@ -44,8 +44,6 @@ public class FindNodesByQueryCommandTest_text
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
-
-        refresh();
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(
