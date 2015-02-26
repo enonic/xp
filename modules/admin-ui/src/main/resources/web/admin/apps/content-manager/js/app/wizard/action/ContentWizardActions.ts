@@ -47,14 +47,12 @@ module app.wizard.action {
             this.save.setEnabled(true);
             this.duplicate.setEnabled(false);
             this.delete.setEnabled(false)
-            this.publish.setEnabled(true);
         }
 
         enableActionsForExisting(existing: api.content.Content) {
             this.save.setEnabled(existing.isEditable());
             this.duplicate.setEnabled(true);
             this.delete.setEnabled(existing.isDeletable());
-            this.publish.setEnabled(true);
         }
 
         getDeleteAction(): api.ui.Action {
