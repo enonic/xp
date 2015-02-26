@@ -276,6 +276,7 @@ module app.browse {
                             for (var i = 0; i < updateResult.length; i++) {
                                 if (updateResult[i].getId() === el.getId()) {
                                     updateResult[i].updateNodeData(el);
+                                    this.updateStatisticsPreview(el); // update preview item
                                     break;
                                 }
                             }
@@ -397,7 +398,19 @@ module app.browse {
             event.getUploadItems().forEach((item: UploadItem<ContentSummary>) => {
                 this.contentTreeGrid.appendUploadNode(item);
             });
+        }
 
+        private updateStatisticsPreview(el: ContentSummaryAndCompareStatus) {
+            var content = el.getContentSummary();
+            var previewItemPath =  this.getBrowseItemPanel().getStatisticsItemPath();
+            if (!!content && content.getPath().toString() == previewItemPath) {
+                var item = new BrowseItem<ContentSummary>(content).
+                    setId(content.getId()).
+                    setDisplayName(content.getDisplayName()).
+                    setPath(content.getPath().toString()).
+                    setIconUrl(new ContentIconUrlResolver().setContent(content).resolve());
+                this.getBrowseItemPanel().setStatisticsItem(item);
+            }
         }
     }
 

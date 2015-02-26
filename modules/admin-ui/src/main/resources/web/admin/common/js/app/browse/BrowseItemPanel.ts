@@ -48,6 +48,14 @@ module api.app.browse {
             }
         }
 
+        setStatisticsItem(item: BrowseItem<M>) {
+            this.itemStatisticsPanel.setItem(item.toViewItem());
+        }
+
+        getStatisticsItemPath(): string {
+            return this.itemStatisticsPanel.getItem().getPath();
+        }
+
         onDeselected(listener: (event: ItemDeselectedEvent<M>)=>void) {
             this.itemsSelectionPanel.onDeselected(listener);
         }
