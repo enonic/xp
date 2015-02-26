@@ -14,6 +14,7 @@ module api.schema.content.inputtype {
     import ContentTypeSummary = api.schema.content.ContentTypeSummary;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
+    import ModuleKey = api.module.ModuleKey;
 
     export class ContentTypeFilter extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
@@ -27,8 +28,11 @@ module api.schema.content.inputtype {
 
         private layoutInProgress: boolean;
 
+        private context:  ContentInputTypeViewContext<any>;
+
         constructor(context: ContentInputTypeViewContext<any>) {
             super('content-type-filter');
+            this.context = context;
         }
 
         getValueType(): ValueType {
@@ -46,7 +50,14 @@ module api.schema.content.inputtype {
             this.input = input;
             this.propertyArray = propertyArray;
 
-            this.combobox = new ContentTypeComboBox(input.getOccurrences().getMaximum());
+            if (this.context.formContext.getpersistedContent().getType().equals(ContentTypeName.PAGE_TEMPLATE)) {
+                this.combobox = new ContentTypeComboBox(input.getOccurrences().getMaximum(),
+                    new api.schema.content.PageTemplateContentTypeLoader(this.context.site.getContentId()).setComparator(
+                        new api.content.ContentSummaryByDisplayNameComparator()
+                    ));
+            } else {
+                this.combobox = new ContentTypeComboBox(input.getOccurrences().getMaximum());
+            }
 
             // select properties once when combobox has been loaded first time
             var selectProperties = (contentTypeArray: ContentTypeSummary[]) => {

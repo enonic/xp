@@ -17,7 +17,7 @@ module api.util.loader {
 
         private status: LoaderStatus = LoaderStatus.NOT_STARTED;
 
-        private results: OBJECT[];
+        results: OBJECT[];
 
         private searchString: string;
 
@@ -25,7 +25,7 @@ module api.util.loader {
 
         private loadingDataListeners: {(event: LoadingDataEvent):void}[] = [];
 
-        private comparator: Comparator<OBJECT>;
+        comparator: Comparator<OBJECT>;
 
         constructor(request: api.rest.ResourceRequest<JSON, OBJECT[]>) {
             this.setRequest(request);
