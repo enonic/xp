@@ -1,18 +1,18 @@
 module api.ui.treegrid.actions {
 
     import Action = api.ui.Action;
-    import Grid = api.ui.grid.Grid;
+    import TreeGrid = api.ui.treegrid.TreeGrid;
 
-    export class TreeGridToolbarActions<M extends api.Equitable> implements TreeGridActions<M> {
+    export class TreeGridToolbarActions<M> implements TreeGridActions<M> {
 
         public SELECT_ALL: api.ui.Action;
-        public CLEAR_SELECTION: api.ui.Action;
+        public CLEAR_SELECTION: ClearSelectionAction<M>;
 
         private actions: api.ui.Action[] = [];
 
-        constructor(grid: Grid<TreeNode<Object>>) {
+        constructor(grid: TreeGrid<M>, selectedItemsCount?: number) {
             this.SELECT_ALL = new SelectAllAction(grid);
-            this.CLEAR_SELECTION = new ClearSelectionAction(grid);
+            this.CLEAR_SELECTION = new ClearSelectionAction(grid, selectedItemsCount);
             this.actions.push(this.SELECT_ALL, this.CLEAR_SELECTION);
         }
 
