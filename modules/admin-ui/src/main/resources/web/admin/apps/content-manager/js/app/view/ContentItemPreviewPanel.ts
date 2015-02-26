@@ -1,6 +1,5 @@
 module app.view {
 
-    import IsRenderableRequest = api.content.page.IsRenderableRequest;
     import RenderingMode = api.rendering.RenderingMode;
     import ContentImageUrlResolver = api.content.ContentImageUrlResolver;
     import ViewItem = api.app.view.ViewItem;
@@ -56,6 +55,9 @@ module app.view {
         }
 
         public setItem(item: ViewItem<ContentSummary>) {
+            if (typeof item.isRenderable() === "undefined") {
+                return;
+            }
             if (!this.item || !item || !this.item.equals(item)) {
                 this.item = item;
                 if (item.getModel().getType().isImage()) {
