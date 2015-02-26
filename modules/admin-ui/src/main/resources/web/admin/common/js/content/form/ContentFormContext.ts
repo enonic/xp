@@ -39,6 +39,10 @@ module api.content.form {
             return this.parentContent.getPath();
         }
 
+        getPersistedContent(): api.content.Content {
+            return this.persistedContent;
+        }
+
         createInputTypeViewContext(inputTypeConfig: any, parentPropertyPath: PropertyPath,
                                    input: api.form.Input): api.form.inputtype.InputTypeViewContext<any> {
 
