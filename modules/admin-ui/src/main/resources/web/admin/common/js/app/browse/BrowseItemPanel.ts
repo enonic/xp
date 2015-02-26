@@ -52,8 +52,8 @@ module api.app.browse {
             this.itemStatisticsPanel.setItem(item.toViewItem());
         }
 
-        getStatisticsItemPath(): string {
-            return this.itemStatisticsPanel.getItem().getPath();
+        getStatisticsItem(): api.app.view.ViewItem<M> {
+            return this.itemStatisticsPanel.getItem();
         }
 
         onDeselected(listener: (event: ItemDeselectedEvent<M>)=>void) {

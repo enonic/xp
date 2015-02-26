@@ -402,13 +402,16 @@ module app.browse {
 
         private updateStatisticsPreview(el: ContentSummaryAndCompareStatus) {
             var content = el.getContentSummary();
-            var previewItemPath =  this.getBrowseItemPanel().getStatisticsItemPath();
-            if (!!content && content.getPath().toString() == previewItemPath) {
+            var previewItem = this.getBrowseItemPanel().getStatisticsItem();
+            var previewItemPath = previewItem.getPath();
+
+            if (!!content && content.getPath().toString() === previewItemPath) {
                 var item = new BrowseItem<ContentSummary>(content).
                     setId(content.getId()).
                     setDisplayName(content.getDisplayName()).
                     setPath(content.getPath().toString()).
-                    setIconUrl(new ContentIconUrlResolver().setContent(content).resolve());
+                    setIconUrl(new ContentIconUrlResolver().setContent(content).resolve()).
+                    setRenderable(previewItem.isRenderable());
                 this.getBrowseItemPanel().setStatisticsItem(item);
             }
         }
