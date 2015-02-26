@@ -377,14 +377,16 @@ module api.ui.treegrid {
                            !this.isVisible() ||   // TreeGrid is visible in tab
                            !this.isActive();      // TreeGrid is active
 
-            if (disabled) return;
+            if (disabled) {
+                return;
+            }
 
             var viewportRange = this.grid.getViewport(),
                 lastIndex = this.gridData.getItems().length - 1,
-                // first and last rows, that are visible in grid
+            // first and last rows, that are visible in grid
                 firstVisible = viewportRange.top,
                 lastVisible = Math.min(viewportRange.bottom, lastIndex),
-                // interval borders to search for the empty node
+            // interval borders to search for the empty node
                 from = firstVisible,
                 to = Math.min(lastVisible + this.loadBufferSize, lastIndex);
 
@@ -848,7 +850,7 @@ module api.ui.treegrid {
             this.triggerSelectionChangedListeners();
         }
 
-        private triggerSelectionChangedListeners() {
+        triggerSelectionChangedListeners() {
             for (var i in this.selectionChangeListeners) {
                 this.selectionChangeListeners[i](this.root.getCurrentSelection(), this.root.getFullSelection());
             }

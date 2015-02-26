@@ -115,6 +115,10 @@ module api.ui.treegrid {
             }
         }
 
+        hasParent(): boolean {
+            return !!this.parent;
+        }
+
         getRoot(): TreeNode<DATA> {
             var root = this,
                 parent = this.getParent();
