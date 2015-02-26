@@ -258,29 +258,30 @@ module api.data {
         }
 
         private doRemoveEmptyValues(propertySet: api.data.PropertySet) {
+            propertySet.forEach((property) => {
+                var type = property.getType();
+                if (property.hasNullValue()) {
+                    propertySet.removeProperty(property.getName(), property.getIndex())
+                }
+                else if (type.equals(api.data.ValueTypes.STRING) && (property.getValue().getString() === '')) {
+                    propertySet.removeProperty(property.getName(), property.getIndex())
+                }
+                else if (type.equals(api.data.ValueTypes.DATA)) {
+                    var propertySetValue = property.getValue().getPropertySet();
+                    this.doRemoveEmptyValues(propertySetValue);
+                    if (propertySetValue.isEmpty()) {
+                        propertySet.removeProperty(property.getName(), property.getIndex())
+                    }
+                }
+            });
+            this.removeEmptyArrays();
+        }
+
+        private removeEmptyArrays() {
             api.ObjectHelper.objectPropertyIterator(this.propertyArrayByName, (name: string, propertyArray: PropertyArray) => {
                 if (propertyArray.isEmpty()) {
                     delete this.propertyArrayByName[name];
-                    return;
                 }
-                propertyArray.forEach((property: Property, index: number) => {
-                    var type = property.getType();
-
-                    if (property.hasNullValue()) {
-                        propertySet.removeProperty(property.getName(), property.getIndex())
-                    }
-                    else if (type.equals(api.data.ValueTypes.STRING) && (property.getValue().getString() === '')) {
-                        propertySet.removeProperty(property.getName(), property.getIndex())
-                    }
-                    else if (type.equals(api.data.ValueTypes.DATA)) {
-                        var propertySetValue = property.getValue().getPropertySet();
-                        this.doRemoveEmptyValues(propertySetValue);
-                        if (propertySetValue.isEmpty()) {
-                            propertySet.removeProperty(property.getName(), property.getIndex())
-                        }
-                    }
-                });
-
             });
         }
 
