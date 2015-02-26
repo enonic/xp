@@ -2,8 +2,8 @@ package com.enonic.wem.repo.internal.elasticsearch.query.builder;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
-import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
+import com.enonic.xp.query.expr.CompareExpr;
 
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 
@@ -21,9 +21,9 @@ public class RangeQueryBuilderFactory
             case GTE:
                 return doBuildGT( compareExpr, true );
             case LT:
-                return doBuildGT( compareExpr, false );
+                return doBuildLT( compareExpr, false );
             case LTE:
-                return doBuildGT( compareExpr, true );
+                return doBuildLT( compareExpr, true );
             default:
                 throw new IllegalArgumentException( "Operator " + operator + " not expected in rangeQueryBuilder" );
         }
