@@ -35,9 +35,6 @@ module api.schema.content {
                         else if (contentTypeName.isDescendantOfMedia()) {
                             return true;
                         }
-                        else if (contentTypeName.isTemplateFolder()) {
-                            return true; // template-folder is allowed under site
-                        }
                         else if (typesAllowedEverywhere[contentTypeName.toString()]) {
                             return true;
                         }
