@@ -48,6 +48,9 @@
       <value>
         <xsl:value-of select="portal:componentUrl('_component=a','b=2')"/>
       </value>
+      <value>
+        <xsl:value-of select="portal:imagePlaceholder('width=10','height=10')"/>
+      </value>
     </output>
   </xsl:template>
 

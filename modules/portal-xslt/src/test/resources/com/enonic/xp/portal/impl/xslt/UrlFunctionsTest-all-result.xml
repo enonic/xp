@@ -1,16 +1,17 @@
 <output>
-  <value>PageUrlParams{params={a=[1]}, path=some/path}</value>
-  <value>PageUrlParams{params={a=[1], b=[2]}, path=some/path}</value>
-  <value>ImageUrlParams{params={}, id=123}</value>
-  <value>ImageUrlParams{params={b=[2], _name=[a]}}</value>
-  <value>AssetUrlParams{params={}, path=a}</value>
-  <value>AssetUrlParams{params={b=[2]}, path=a}</value>
-  <value>AttachmentUrlParams{params={}, name=myattachment.pdf, download=false}</value>
-  <value>AttachmentUrlParams{params={a=[1]}, name=myattachment.pdf, download=false}</value>
-  <value>AttachmentUrlParams{params={}, id=123, name=myattachment.pdf, download=false}</value>
-  <value>AttachmentUrlParams{params={}, id=123, label=source, download=false}</value>
-  <value>ServiceUrlParams{params={}, service=a}</value>
-  <value>ServiceUrlParams{params={b=[2]}, service=a}</value>
-  <value>ComponentUrlParams{params={}, component=a}</value>
-  <value>ComponentUrlParams{params={b=[2]}, component=a}</value>
+  <value>pageUrl({a=[1], _path=[some/path]})</value>
+  <value>pageUrl({a=[1], b=[2], _path=[some/path]})</value>
+  <value>imageUrl({_id=[123]})</value>
+  <value>imageUrl({b=[2], _name=[a]})</value>
+  <value>assetUrl({_path=[a]})</value>
+  <value>assetUrl({b=[2], _path=[a]})</value>
+  <value>attachmentUrl({_name=[myattachment.pdf]})</value>
+  <value>attachmentUrl({a=[1], _name=[myattachment.pdf]})</value>
+  <value>attachmentUrl({_name=[myattachment.pdf], _id=[123]})</value>
+  <value>attachmentUrl({_id=[123], _label=[source]})</value>
+  <value>serviceUrl({_service=[a]})</value>
+  <value>serviceUrl({b=[2], _service=[a]})</value>
+  <value>componentUrl({_component=[a]})</value>
+  <value>componentUrl({b=[2], _component=[a]})</value>
+  <value>imagePlaceholder({width=[10], height=[10]})</value>
 </output>

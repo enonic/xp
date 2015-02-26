@@ -3,11 +3,11 @@ package com.enonic.xp.portal.impl.thymeleaf;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
-import com.enonic.xp.portal.PortalContextAccessor;
-import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.view.ViewFunctionService;
+import com.enonic.xp.resource.ResourceKey;
 
 @Component(immediate = true)
 public final class RenderViewHandler
@@ -15,7 +15,7 @@ public final class RenderViewHandler
 {
     private final ThymeleafProcessorFactory factory;
 
-    private PortalUrlService urlService;
+    private ViewFunctionService viewFunctionService;
 
     public RenderViewHandler()
     {
@@ -39,15 +39,15 @@ public final class RenderViewHandler
     }
 
     @Reference
-    public void setUrlService( final PortalUrlService value )
+    public void setViewFunctionService( final ViewFunctionService value )
     {
-        this.urlService = value;
+        this.viewFunctionService = value;
     }
 
     private ThymeleafViewFunctions createViewFunctions()
     {
         final ThymeleafViewFunctions functions = new ThymeleafViewFunctions();
-        functions.urlService = this.urlService;
+        functions.viewFunctionService = this.viewFunctionService;
         functions.context = PortalContextAccessor.get();
         return functions;
     }

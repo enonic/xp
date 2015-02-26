@@ -17,13 +17,14 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.resource.ResourceProblemException;
-import com.enonic.xp.portal.impl.script.AbstractScriptTest;
-import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.impl.script.AbstractScriptTest;
+import com.enonic.xp.portal.script.ScriptExports;
+import com.enonic.xp.portal.view.ViewFunctionParams;
+import com.enonic.xp.portal.view.ViewFunctionService;
+import com.enonic.xp.resource.ResourceProblemException;
 
 import static org.junit.Assert.*;
 
@@ -44,7 +45,7 @@ public class RenderViewHandlerTest
         PortalContextAccessor.set( context );
 
         final RenderViewHandler handler = new RenderViewHandler();
-        handler.setUrlService( Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer ) );
+        handler.setViewFunctionService( Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer ) );
 
         addHandler( handler );
     }
@@ -52,7 +53,8 @@ public class RenderViewHandlerTest
     private Object urlAnswer( final InvocationOnMock invocation )
         throws Exception
     {
-        return invocation.getArguments()[0].toString();
+        final ViewFunctionParams params = (ViewFunctionParams) invocation.getArguments()[0];
+        return params.getName() + "(" + params.getArgs().toString() + ")";
     }
 
     private Object execute( final String method )

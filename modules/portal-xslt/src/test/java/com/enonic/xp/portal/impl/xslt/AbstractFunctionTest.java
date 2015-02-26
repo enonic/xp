@@ -13,11 +13,12 @@ import org.mockito.stubbing.Answer;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.portal.view.ViewFunctionParams;
+import com.enonic.xp.portal.view.ViewFunctionService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceUrlRegistry;
 import com.enonic.xp.resource.ResourceUrlTestHelper;
 import com.enonic.xp.xml.DomHelper;
-import com.enonic.xp.portal.url.PortalUrlService;
 
 import static org.junit.Assert.*;
 
@@ -32,7 +33,7 @@ public abstract class AbstractFunctionTest
         urlRegistry.modulesClassLoader( getClass().getClassLoader() );
 
         final XsltProcessorFactory factory = new XsltProcessorFactory();
-        factory.urlService = Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer );
+        factory.viewFunctionService = Mockito.mock( ViewFunctionService.class, (Answer) this::urlAnswer );
         factory.initialize();
 
         this.processor = factory.newProcessor();
@@ -41,7 +42,8 @@ public abstract class AbstractFunctionTest
     private Object urlAnswer( final InvocationOnMock invocation )
         throws Exception
     {
-        return invocation.getArguments()[0].toString();
+        final ViewFunctionParams params = (ViewFunctionParams) invocation.getArguments()[0];
+        return params.getName() + "(" + params.getArgs().toString() + ")";
     }
 
     protected final void processTemplate( final String baseName )

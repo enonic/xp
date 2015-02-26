@@ -5,12 +5,12 @@ import javax.xml.transform.TransformerFactory;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
 
-import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.impl.xslt.function.XsltFunctionLibrary;
+import com.enonic.xp.portal.view.ViewFunctionService;
 
 final class XsltProcessorFactory
 {
-    protected PortalUrlService urlService;
+    protected ViewFunctionService viewFunctionService;
 
     private Configuration configuration;
 
@@ -22,7 +22,7 @@ final class XsltProcessorFactory
         this.configuration.setVersionWarning( false );
         this.configuration.setCompileWithTracing( true );
         this.configuration.setValidationWarnings( true );
-        new XsltFunctionLibrary( this.urlService ).registerAll( this.configuration );
+        new XsltFunctionLibrary( this.viewFunctionService ).registerAll( this.configuration );
     }
 
     private TransformerFactory createTransformerFactory()

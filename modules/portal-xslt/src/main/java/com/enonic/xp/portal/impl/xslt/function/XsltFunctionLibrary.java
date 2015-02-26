@@ -2,30 +2,32 @@ package com.enonic.xp.portal.impl.xslt.function;
 
 import net.sf.saxon.Configuration;
 
-import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.view.ViewFunctionService;
 
 public final class XsltFunctionLibrary
 {
-    private final PortalUrlService urlService;
+    private final ViewFunctionService viewFunctionService;
 
-    public XsltFunctionLibrary( final PortalUrlService urlService )
+    public XsltFunctionLibrary( final ViewFunctionService viewFunctionService )
     {
-        this.urlService = urlService;
+        this.viewFunctionService = viewFunctionService;
     }
 
     public void registerAll( final Configuration config )
     {
-        register( config, new PageUrlFunction() );
-        register( config, new ImageUrlFunction() );
-        register( config, new AssetUrlFunction() );
-        register( config, new AttachmentUrlFunction() );
-        register( config, new ServiceUrlFunction() );
-        register( config, new ComponentUrlFunction() );
+        register( config, "pageUrl" );
+        register( config, "imageUrl" );
+        register( config, "assetUrl" );
+        register( config, "attachmentUrl" );
+        register( config, "serviceUrl" );
+        register( config, "componentUrl" );
+        register( config, "imagePlaceholder" );
     }
 
-    private void register( final Configuration config, final AbstractUrlFunction function )
+    private void register( final Configuration config, final String name )
     {
-        function.urlService = urlService;
+        final XsltViewFunction function = new XsltViewFunction( name );
+        function.service = this.viewFunctionService;
         config.registerExtensionFunction( function );
     }
 }

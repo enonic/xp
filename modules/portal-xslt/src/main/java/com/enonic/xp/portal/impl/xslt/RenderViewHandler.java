@@ -4,10 +4,10 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.portal.script.command.CommandRequest;
-import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.view.ViewFunctionService;
+import com.enonic.xp.resource.ResourceKey;
 
 @Component(immediate = true)
 public final class RenderViewHandler
@@ -42,8 +42,8 @@ public final class RenderViewHandler
     }
 
     @Reference
-    public void setUrlService( final PortalUrlService value )
+    public void setViewFunctionService( final ViewFunctionService value )
     {
-        this.factory.urlService = value;
+        this.factory.viewFunctionService = value;
     }
 }

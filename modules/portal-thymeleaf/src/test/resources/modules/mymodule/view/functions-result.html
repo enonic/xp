@@ -1,14 +1,15 @@
 <div>
-    <div>PageUrlParams{params={a=[1]}, path=some/path}</div>
-    <div>PageUrlParams{params={a=[1], b=[2]}, path=some/path}</div>
-    <div>ImageUrlParams{params={}, id=1}</div>
-    <div>ImageUrlParams{params={b=[2], _name=[a]}}</div>
-    <div>AssetUrlParams{params={}, path=a}</div>
-    <div>AssetUrlParams{params={b=[2]}, path=a}</div>
-    <div>AttachmentUrlParams{params={}, name=test, download=false}</div>
-    <div>AttachmentUrlParams{params={}, label=media, download=false}</div>
-    <div>ServiceUrlParams{params={}, service=a}</div>
-    <div>ServiceUrlParams{params={b=[2]}, service=a}</div>
-    <div>ComponentUrlParams{params={}, component=a}</div>
-    <div>ComponentUrlParams{params={b=[2]}, component=a}</div>
+    <div>pageUrl({a=[1], _path=[some/path]})</div>
+    <div>pageUrl({a=[1], b=[2], _path=[some/path]})</div>
+    <div>imageUrl({_id=[1]})</div>
+    <div>imageUrl({b=[2], _name=[a]})</div>
+    <div>assetUrl({_path=[a]})</div>
+    <div>assetUrl({b=[2], _path=[a]})</div>
+    <div>attachmentUrl({_name=[test]})</div>
+    <div>attachmentUrl({_label=[media]})</div>
+    <div>serviceUrl({_service=[a]})</div>
+    <div>serviceUrl({b=[2], _service=[a]})</div>
+    <div>componentUrl({_component=[a]})</div>
+    <div>componentUrl({b=[2], _component=[a]})</div>
+    <div>imagePlaceholder({width=[10], height=[20]})</div>
 </div>
