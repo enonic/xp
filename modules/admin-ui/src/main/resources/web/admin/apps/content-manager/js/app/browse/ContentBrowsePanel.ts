@@ -218,7 +218,7 @@ module app.browse {
                                             if (node.getDataId() === el.getId()) {
                                                 node.setData(el);
                                                 node.clearViewers();
-                                                this.contentTreeGrid.updatePathsInChildren(node);
+                                                this.contentTreeGrid.xUpdatePathsInChildren(node);
                                             }
                                         });
                                     } else {

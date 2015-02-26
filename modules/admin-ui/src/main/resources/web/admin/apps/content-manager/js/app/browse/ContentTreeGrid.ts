@@ -485,6 +485,10 @@ module app.browse {
         xAppendContentNodes(relationships: TreeNodeParentOfContent[], update: boolean = true): TreeNode<ContentSummaryAndCompareStatus>[] {
             var nodes = [];
 
+            this.xUpdateNodesData(relationships.map((el) => {
+                return el.getNode();
+            }));
+
             relationships.forEach((relationship: TreeNodeParentOfContent) => {
                 nodes.push(this.xAppendContentNode(relationship, false));
             });
@@ -496,7 +500,8 @@ module app.browse {
             return nodes;
         }
 
-        xDeleteContentNode(node: TreeNode<ContentSummaryAndCompareStatus>, update: boolean = true) {
+        xDeleteContentNode(node: TreeNode<ContentSummaryAndCompareStatus>,
+                           update: boolean = true): TreeNode<ContentSummaryAndCompareStatus> {
             var parentNode = node.getParent();
 
             node.remove();
@@ -509,15 +514,27 @@ module app.browse {
             if (update) {
                 this.initAndRender();
             }
+
+            return parentNode;
         }
 
-        xDeleteContentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[], update: boolean = true) {
+        xDeleteContentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[],
+                            update: boolean = true): TreeNode<ContentSummaryAndCompareStatus>[] {
+            var parentNodes = [],
+                parentNode;
+
             nodes.forEach((node) => {
-                this.xDeleteContentNode(node, false);
+                parentNode = this.xDeleteContentNode(node, false);
+                if (parentNode && parentNode.hasParent()) {
+                    parentNodes.push(parentNode);
+                }
             });
+
             if (update) {
                 this.initAndRender();
             }
+
+            return this.xUpdateNodesData(parentNodes);
         }
 
         xPopulateWithChildren(source: TreeNode<ContentSummaryAndCompareStatus>, dest: TreeNode<ContentSummaryAndCompareStatus>) {
@@ -527,12 +544,12 @@ module app.browse {
                 dest.getData().setContentSummary(
                     new ContentSummaryBuilder(dest.getData().getContentSummary()).setHasChildren(dest.hasChildren()).build()
                 );
-                this.updatePathsInChildren(dest);
+                this.xUpdatePathsInChildren(dest);
             }
             dest.clearViewers();
         }
 
-        updatePathsInChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
+        xUpdatePathsInChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
             node.getChildren().forEach((child) => {
                 var nodeSummary = node.getData() ? node.getData().getContentSummary() : null,
                     childSummary = child.getData() ? child.getData().getContentSummary() : null;
@@ -540,8 +557,71 @@ module app.browse {
                     var path = ContentPath.fromParent(nodeSummary.getPath(), childSummary.getPath().getName());
                     child.getData().setContentSummary(new ContentSummaryBuilder(childSummary).setPath(path).build());
                     child.clearViewers();
-                    this.updatePathsInChildren(child);
+                    this.xUpdatePathsInChildren(child);
                 }
+            });
+        }
+
+        /*
+         * Updates all of the remaining parents
+         * Triggers selection changed event to update toolbar
+         */
+        xUpdateNodesData(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): TreeNode<ContentSummaryAndCompareStatus>[] {
+
+            nodes = this.xFilterParentNodes(nodes);
+
+            var parallelPromises: wemQ.Promise<any>[] = [];
+
+            nodes.forEach((node) => {
+                if (!node.hasChildren()) {
+                    parallelPromises.push(
+                        new api.content.GetContentByIdRequest(node.getData().getContentSummary().getContentId()).
+                            sendAndParse().
+                            then((content: api.content.Content) => {
+                                node.getData().setContentSummary(content);
+                            })
+                    );
+                }
+            });
+
+            wemQ.all(parallelPromises).spread<void>(() => {
+                this.triggerSelectionChangedListeners();
+                return wemQ(null);
+            }).
+                catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
+                done();
+
+            return nodes;
+        }
+
+        /*
+         * Filters only the top parent nodes
+         * Parent nodes, that are the children of the other parents will be missed.
+         */
+        private xFilterParentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): TreeNode<ContentSummaryAndCompareStatus>[] {
+
+            return nodes.filter((node, index) => {
+                var result = true;
+
+                var path = node.getData() && node.getData().getContentSummary()
+                    ? node.getData().getContentSummary().getPath()
+                    : null;
+                if (path) {
+                    for (var i = 0; i < nodes.length; i++) {
+                        if (index === i) {
+                            continue;
+                        }
+
+                        var nodePath = nodes[i].getData() && nodes[i].getData().getContentSummary()
+                            ? nodes[i].getData().getContentSummary().getPath()
+                            : null;
+                        if (nodePath && (path.isChildOf(nodePath) || path.toString() === nodePath.toString())) {
+                            return false;
+                        }
+                    }
+                }
+
+                return result;
             });
         }
     }
