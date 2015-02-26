@@ -18,6 +18,20 @@
     min-height: 220px;
   }
 
+  &.mock-modal-dialog { //used to calculate modal dialog height
+    position: fixed;
+    left: -9999px;
+
+    .dialog-content {
+      .column {
+        .content-types-list {
+          .transition(none);
+        }
+      }
+    }
+
+  }
+
   .dialog-header .path {
     display: none;
     font-size: 16px;
@@ -26,6 +40,20 @@
       margin-right: 5px;
       content: 'In:';
       color: @admin-font-gray1;
+    }
+  }
+
+  &.animated {
+    .transition(margin-top 1s);
+  }
+
+  &.hidden {
+    .dialog-content {
+      .column {
+        .content-types-list {
+          max-height: 0px;
+        }
+      }
     }
   }
 
@@ -45,6 +73,8 @@
         max-height: 480px;
         overflow-y: auto;
         overflow-x: hidden;
+
+        .transition(max-height 2s);
 
         @media screen and (max-height: 720px) {
           max-height: 308px;
