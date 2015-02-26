@@ -34,12 +34,16 @@ module app.create {
 
         private listItems: NewContentDialogListItem[];
 
+        private uploaderEnabled: boolean;
+
         constructor() {
             this.contentDialogTitle = new NewContentDialogTitle("Create Content", "");
 
             super({
                 title: this.contentDialogTitle
             });
+
+            this.uploaderEnabled = true;
 
             this.addClass("new-content-dialog");
 
@@ -130,24 +134,31 @@ module app.create {
             // meaning that to know when we left some element
             // we need to compare it to the one currently dragged over
             this.onDragEnter((event: DragEvent) => {
-                var target = <HTMLElement> event.target;
+                if(this.uploaderEnabled) {
+                    var target = <HTMLElement> event.target;
 
-                if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
-                    uploaderContainer.show();
+                    if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
+                        uploaderContainer.show();
+                    }
+                    dragOverEl = target;
                 }
-                dragOverEl = target;
             });
 
             this.onDragLeave((event: DragEvent) => {
-                var targetEl = <HTMLElement> event.target;
+                if(this.uploaderEnabled) {
+                    var targetEl = <HTMLElement> event.target;
 
-                if (dragOverEl == targetEl) {
-                    uploaderContainer.hide();
+                    if (dragOverEl == targetEl) {
+                        uploaderContainer.hide();
+                    }
                 }
             });
 
             this.onDrop((event: DragEvent) => {
-                uploaderContainer.hide();
+                if(this.uploaderEnabled) {
+                    uploaderContainer.hide();
+                }
+
             });
         }
 
@@ -249,11 +260,21 @@ module app.create {
             } else {
                 this.contentDialogTitle.setPath('');
             }
+
+            this.uploaderEnabled = !this.parentContent || !this.parentContent.getType().isTemplateFolder();
+            this.mediaUploader.reset();
+            this.fileInput.reset();
+            this.mediaUploader.setEnabled(this.uploaderEnabled);
+            this.fileInput.getUploader().setEnabled(this.uploaderEnabled);
+
             super.show();
 
-            this.fileInput.reset().giveFocus();
-
-            this.mediaUploader.reset();
+            this.fileInput.giveFocus();
+            if(this.uploaderEnabled) {
+                this.removeClass("no-uploader");
+            } else {
+                this.addClass("no-uploader");
+            }
 
             // CMS-3711: reload content types each time when dialog is show.
             // It is slow but newly create content types are displayed.
