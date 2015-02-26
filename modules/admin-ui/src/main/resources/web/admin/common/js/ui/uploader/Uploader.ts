@@ -130,32 +130,33 @@ module api.ui.uploader {
                 new KeyBinding('backspace', resetHandler)
             ]);
 
-            if (this.config.disabled) {
-                if (Uploader.debug) {
-                    console.log('Skipping init, because of config.disabled = true', this);
-                }
+
+            if (this.config.deferred) {
+                this.onShown((event) => this.initHandler.call(this, event));
             } else {
-                if (this.config.deferred) {
-                    this.onShown((event) => this.initHandler.call(this, event));
-                } else {
-                    this.onRendered((event) => this.initHandler.call(this, event));
-                }
+                this.onRendered((event) => this.initHandler.call(this, event));
             }
 
             this.onRemoved((event) => this.destroyHandler.call(this, event));
         }
 
         private initHandler() {
-            if (Uploader.debug) {
-                console.log('Initing uploader', this);
-            }
-            if (!this.uploader && this.config.url) {
-                this.uploader = this.initUploader(this.dropzone.getId());
+            if (this.config.disabled) {
+                if (Uploader.debug) {
+                    console.log('Skipping init, because of config.disabled = true', this);
+                }
+            } else {
+                if (Uploader.debug) {
+                    console.log('Initing uploader', this);
+                }
+                if (!this.uploader && this.config.url) {
+                    this.uploader = this.initUploader(this.dropzone.getId());
 
-                if (this.value) {
-                    this.setValue(this.value);
-                } else {
-                    this.setDropzoneVisible();
+                    if (this.value) {
+                        this.setValue(this.value);
+                    } else {
+                        this.setDropzoneVisible();
+                    }
                 }
             }
         }
@@ -336,6 +337,8 @@ module api.ui.uploader {
         }
 
         setEnabled(enabled: boolean): Uploader<MODEL> {
+            this.config.disabled = !enabled;
+
             if (!enabled) {
                 this.dropzone.getEl().setAttribute('disabled', 'true');
             } else {
