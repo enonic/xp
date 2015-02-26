@@ -293,7 +293,11 @@ module api.dom {
         }
 
         setDraggable(value: boolean) {
-            this.getEl().setAttribute("draggable", value.toString());
+            if (value) {
+                this.getEl().setAttribute("draggable", value.toString());
+            } else {
+                this.getEl().removeAttribute("draggable");
+            }
         }
 
         isDraggable(): boolean {

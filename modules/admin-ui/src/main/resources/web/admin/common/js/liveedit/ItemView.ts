@@ -264,7 +264,7 @@ module api.liveedit {
         }
 
         setDraggable(value: boolean) {
-            super.setDraggable(value);
+            // do not call super.setDraggable
             // tells jquery drag n drop to ignore this draggable
             this.toggleClass('not-draggable', !value);
         }
