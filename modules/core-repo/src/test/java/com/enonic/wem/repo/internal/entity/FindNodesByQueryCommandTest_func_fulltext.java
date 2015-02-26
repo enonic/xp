@@ -1,7 +1,5 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.util.Iterator;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +20,6 @@ import com.enonic.xp.query.expr.DynamicConstraintExpr;
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.query.parser.QueryParser;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
@@ -315,34 +312,6 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
-    }
-
-    private void queryAndAssert( final String queryString, final int expected )
-    {
-        final FindNodesByQueryResult result = doQuery( queryString );
-
-        assertEquals( expected, result.getNodes().getSize() );
-    }
-
-    private FindNodesByQueryResult doQuery( final String queryString )
-    {
-        final NodeQuery query = NodeQuery.create().
-            query( QueryParser.parse( queryString ) ).
-            build();
-
-        return doFindByQuery( query );
-    }
-
-    private void assertOrder( final FindNodesByQueryResult result, String... ids )
-    {
-        assertEquals( ids.length, result.getHits() );
-
-        final Iterator<Node> iterator = result.getNodes().iterator();
-
-        for ( final String id : ids )
-        {
-            assertEquals( id, iterator.next().id().toString() );
-        }
     }
 
 }

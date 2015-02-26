@@ -3,10 +3,6 @@ package com.enonic.xp.query.expr;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.OrderExpr;
-
 public class FieldOrderExprTest
 {
     @Test

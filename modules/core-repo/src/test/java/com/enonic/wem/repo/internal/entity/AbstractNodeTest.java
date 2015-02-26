@@ -1,6 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,6 +37,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -44,6 +46,8 @@ import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+
+import static junit.framework.Assert.assertEquals;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
@@ -313,5 +317,33 @@ public abstract class AbstractNodeTest
             branchService( this.branchService ).
             build().
             execute();
+    }
+
+    protected void queryAndAssert( final String queryString, final int expected )
+    {
+        final FindNodesByQueryResult result = doQuery( queryString );
+
+        assertEquals( expected, result.getNodes().getSize() );
+    }
+
+    protected FindNodesByQueryResult doQuery( final String queryString )
+    {
+        final NodeQuery query = NodeQuery.create().
+            query( QueryParser.parse( queryString ) ).
+            build();
+
+        return doFindByQuery( query );
+    }
+
+    protected void assertOrder( final FindNodesByQueryResult result, String... ids )
+    {
+        assertEquals( ids.length, result.getHits() );
+
+        final Iterator<Node> iterator = result.getNodes().iterator();
+
+        for ( final String id : ids )
+        {
+            assertEquals( id, iterator.next().id().toString() );
+        }
     }
 }

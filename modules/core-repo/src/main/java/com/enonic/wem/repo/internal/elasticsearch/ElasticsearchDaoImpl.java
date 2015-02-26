@@ -155,7 +155,7 @@ public class ElasticsearchDaoImpl
             build().
             create();
 
-        //System.out.println( searchRequest.toString() );
+        System.out.println( searchRequest.toString() );
 
         return doSearchRequest( searchRequest );
     }
