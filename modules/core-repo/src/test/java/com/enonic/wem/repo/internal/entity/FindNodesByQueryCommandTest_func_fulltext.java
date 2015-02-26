@@ -1,7 +1,11 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.util.Iterator;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.common.base.Strings;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -10,6 +14,7 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
@@ -17,6 +22,7 @@ import com.enonic.xp.query.expr.DynamicConstraintExpr;
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.parser.QueryParser;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
@@ -237,7 +243,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
         final PropertyTree data2 = new PropertyTree();
         data2.addString( "title", "fisk båt" );
 
-        final Node node2 = createNode( CreateNodeParams.create().
+        createNode( CreateNodeParams.create().
             name( "my-node-2" ).
             parent( NodePath.ROOT ).
             data( data2 ).
@@ -259,5 +265,84 @@ public class FindNodesByQueryCommandTest_func_fulltext
         assertNotNull( result.getNodes().getNodeById( node.id() ) );
     }
 
+
+    @Test
+    public void boost_field()
+        throws Exception
+    {
+        createWithTitleAndDescription( "1", "fish", "fash" );
+        createWithTitleAndDescription( "2", "fosh", "basics and some fish other words not relevant" );
+        createWithTitleAndDescription( "3", "fash", "fish" );
+
+        assertOrder( doQuery( "fulltext('title, description^5', 'fish', 'AND')" ), "3", "1", "2" );
+        assertOrder( doQuery( "fulltext('title^5, description', 'fish', 'AND')" ), "1", "3", "2" );
+    }
+
+    @Test
+    public void ngram_not_fulltext()
+        throws Exception
+    {
+        createWithTitle( "1", "fishing techniques" );
+        createWithTitle( "2", "fishing time interrupted by fiance" );
+        createWithTitle( "3", "figure skating is better than fishing" );
+
+        final String queryString = "ngram('title', 'fi', 'AND') AND NOT fulltext('title', 'fiancé figure', 'OR')";
+
+        queryAndAssert( queryString, 1 );
+    }
+
+    private void createWithTitle( final String id, final String title )
+    {
+        createWithTitleAndDescription( id, title, null );
+    }
+
+    private void createWithTitleAndDescription( final String id, final String title, final String description )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "title", title );
+        if ( !Strings.isNullOrEmpty( description ) )
+        {
+            data.addString( "description", description );
+        }
+
+        createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( id ) ).
+            name( title ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( "content_default" ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build() );
+    }
+
+    private void queryAndAssert( final String queryString, final int expected )
+    {
+        final FindNodesByQueryResult result = doQuery( queryString );
+
+        assertEquals( expected, result.getNodes().getSize() );
+    }
+
+    private FindNodesByQueryResult doQuery( final String queryString )
+    {
+        final NodeQuery query = NodeQuery.create().
+            query( QueryParser.parse( queryString ) ).
+            build();
+
+        return doFindByQuery( query );
+    }
+
+    private void assertOrder( final FindNodesByQueryResult result, String... ids )
+    {
+        assertEquals( ids.length, result.getHits() );
+
+        final Iterator<Node> iterator = result.getNodes().iterator();
+
+        for ( final String id : ids )
+        {
+            assertEquals( id, iterator.next().id().toString() );
+        }
+    }
 
 }

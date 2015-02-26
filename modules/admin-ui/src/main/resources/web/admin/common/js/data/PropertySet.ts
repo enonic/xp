@@ -260,7 +260,6 @@ module api.data {
         private doRemoveEmptyValues(propertySet: api.data.PropertySet) {
             propertySet.forEach((property) => {
                 var type = property.getType();
-
                 if (property.hasNullValue()) {
                     propertySet.removeProperty(property.getName(), property.getIndex())
                 }
@@ -273,6 +272,15 @@ module api.data {
                     if (propertySetValue.isEmpty()) {
                         propertySet.removeProperty(property.getName(), property.getIndex())
                     }
+                }
+            });
+            this.removeEmptyArrays();
+        }
+
+        private removeEmptyArrays() {
+            api.ObjectHelper.objectPropertyIterator(this.propertyArrayByName, (name: string, propertyArray: PropertyArray) => {
+                if (propertyArray.isEmpty()) {
+                    delete this.propertyArrayByName[name];
                 }
             });
         }

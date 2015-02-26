@@ -69,7 +69,6 @@ public class FindNodesByQueryCommandTest
     }
 
 
-
     @Test
     public void query_number_different_field_name_case()
         throws Exception
