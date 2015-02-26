@@ -275,6 +275,7 @@ module app.wizard {
 
             return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
                 this.checkSecurityWizardStepFormAllowed(loginResult);
+                this.enablePublishIfAllowed(loginResult);
                 return wemQ.all(modulePromises);
             }).then((modules: Module[]) => {
                 var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
@@ -891,7 +892,7 @@ module app.wizard {
 
             loginResult.getPrincipals().some((principalKey: api.security.PrincipalKey) => {
                 if (api.security.RoleKeys.ADMIN.equals(principalKey) ||
-                    this.isPrincipalAllowedToEditPermissions(principalKey, accessEntriesWithEditPermissions)) {
+                    this.isPrincipalPresent(principalKey, accessEntriesWithEditPermissions)) {
                     this.isSecurityWizardStepFormAllowed = true;
                     return true;
                 }
@@ -899,10 +900,10 @@ module app.wizard {
 
         }
 
-        private isPrincipalAllowedToEditPermissions(principalKey: api.security.PrincipalKey,
-                                                    accessEntriesWithEditPermissions: AccessControlEntry[]): boolean {
+        private isPrincipalPresent(principalKey: api.security.PrincipalKey,
+                                                    accessEntriesToCheck: AccessControlEntry[]): boolean {
             var result = false;
-            accessEntriesWithEditPermissions.some((entry: AccessControlEntry) => {
+            accessEntriesToCheck.some((entry: AccessControlEntry) => {
                 if (entry.getPrincipalKey().equals(principalKey)) {
                     result = true;
                     return true;
@@ -910,6 +911,26 @@ module app.wizard {
             });
 
             return result;
+        }
+
+        /**
+         * Enables publish button if selected item has access entry with publish permission
+         * for at least one of user's principals or if user contains Admin principal.
+         * @param loginResult - user's authorisation state
+         */
+        private enablePublishIfAllowed(loginResult: api.security.auth.LoginResult) {
+            var entries = this.getPersistedItem().getPermissions().getEntries();
+            var accessEntriesWithPublishPermissions: AccessControlEntry[] = entries.filter((item: AccessControlEntry) => {
+                return item.isAllowed(api.security.acl.Permission.PUBLISH);
+            });
+
+            loginResult.getPrincipals().some((principalKey: api.security.PrincipalKey) => {
+                if (api.security.RoleKeys.ADMIN.equals(principalKey) ||
+                    this.isPrincipalPresent(principalKey, accessEntriesWithPublishPermissions)) {
+                    this.publishAction.setEnabled(true);
+                    return true;
+                }
+            });
         }
 
     }
