@@ -147,7 +147,7 @@ module app {
                     }
 
                     tabMenuItem = new AppBarTabMenuItemBuilder().
-                        setLabel("<New " + this.convertName(contentTypeSummary.getDisplayName()) + ">").
+                        setLabel("<Unnamed " + this.convertName(contentTypeSummary.getDisplayName()) + ">").
                         setTabId(tabId).
                         setCloseAction(wizard.getCloseAction()).
                         build();
