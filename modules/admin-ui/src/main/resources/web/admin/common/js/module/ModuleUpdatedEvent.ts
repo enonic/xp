@@ -1,5 +1,9 @@
 module api.module {
 
+    export enum ModuleUpdatedEventType {
+        INSTALLED, UNINSTALLED, RESOLVED, STARTING, STARTED, UPDATED, STOPPING, STOPPED, UNRESOLVED
+    }
+
     export interface ModuleUpdatedEventJson {
         eventType: string;
         moduleKey: string;
@@ -9,9 +13,9 @@ module api.module {
 
         private moduleKey: api.module.ModuleKey;
 
-        private eventType: string;
+        private eventType: ModuleUpdatedEventType;
 
-        constructor(moduleKey: api.module.ModuleKey, eventType: string) {
+        constructor(moduleKey: api.module.ModuleKey, eventType: ModuleUpdatedEventType) {
             super();
             this.moduleKey = moduleKey;
             this.eventType = eventType;
@@ -21,8 +25,15 @@ module api.module {
             return this.moduleKey;
         }
 
-        public getEventType(): string {
+        public getEventType(): ModuleUpdatedEventType {
             return this.eventType;
+        }
+
+        isNeedToUpdateModule(): boolean {
+            return ModuleUpdatedEventType.RESOLVED != this.eventType &&
+                ModuleUpdatedEventType.STARTING != this.eventType &&
+                ModuleUpdatedEventType.UNRESOLVED != this.eventType &&
+                ModuleUpdatedEventType.STOPPING != this.eventType;
         }
 
         static on(handler: (event: ModuleUpdatedEvent) => void) {
@@ -35,7 +46,7 @@ module api.module {
 
         static fromJson(json: ModuleUpdatedEventJson): ModuleUpdatedEvent {
             var moduleKey = api.module.ModuleKey.fromString(json.moduleKey);
-            var eventType = json.eventType;
+            var eventType = ModuleUpdatedEventType[json.eventType];
             return new ModuleUpdatedEvent(moduleKey, eventType);
         }
     }

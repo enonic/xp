@@ -47,7 +47,6 @@ module app {
         private initialIsAuthenticatedCheck() {
             new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
                 if (loginResult.isAuthenticated()) {
-                    this.authenticated = true;
                     this.lostConnectionDetector.setAuthenticated(true);
                     this.onUserAuthenticated(loginResult);
                 } else {
@@ -91,6 +90,10 @@ module app {
         }
 
         private onUserAuthenticated(loginResult: api.security.auth.LoginResult) {
+            if(this.authenticated) {
+                return;
+            }
+            this.authenticated = true;
             this.lostConnectionDetector.setAuthenticated(loginResult.isAuthenticated());
             var allowedApps = app.launcher.Applications.getAppsByIds(loginResult.getApplications());
             this.appSelector.setAllowedApps(allowedApps);

@@ -10,12 +10,12 @@ module api.module {
 
             ModuleUpdatedEvent.on((event: ModuleUpdatedEvent) => {
 
-                if (event.getEventType() == "STARTED") {
+                if (ModuleUpdatedEventType.STARTED == event.getEventType()) {
                     console.log(api.ClassHelper.getClassName(this) + " received ModuleUpdatedEvent STARTED, calling - loadByModule.. " +
                                 event.getModuleKey().toString());
                     this.loadByModule(event.getModuleKey());
                 }
-                else if (event.getEventType() == "STOPPED") {
+                else if (ModuleUpdatedEventType.STOPPED == event.getEventType()) {
                     console.log(api.ClassHelper.getClassName(this) + " received ModuleUpdatedEvent STOPPED - calling deleteByModuleKey.. " +
                                 event.getModuleKey().toString());
                     this.deleteByModuleKey(event.getModuleKey())
