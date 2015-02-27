@@ -5,7 +5,9 @@ import java.util.LinkedHashMap;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.form.inputtype.ContentSelectorConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
 public class ContentTypeForms
 {
@@ -34,6 +36,17 @@ public class ContentTypeForms
             inputType( InputTypes.CONTENT_TYPE_FILTER ).
             required( true ).
             multiple( true ).
+            build() ).
+        build();
+
+    public static final Form SHORTCUT = Form.newForm().
+        addFormItem( Input.newInput().
+            name( "target" ).
+            label( "Target" ).
+            helpText( "Choose shortcut target" ).
+            inputType( InputTypes.CONTENT_SELECTOR ).
+            inputTypeConfig( ContentSelectorConfig.create().relationshipType( RelationshipTypeName.REFERENCE ).build() ).
+            required( true ).
             build() ).
         build();
 

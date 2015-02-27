@@ -43,7 +43,7 @@ final class ContentSelectorConfigXmlSerializer
     {
         final ModuleRelativeResolver resolver = new ModuleRelativeResolver( currentModule );
 
-        final ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
+        final ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         final Element relationshipTypeEl = DomHelper.getChildElementByTagName( elem, RELATIONSHIP_TYPE_ELEMENT );
         final String text = DomHelper.getTextValue( relationshipTypeEl );
         if ( StringUtils.isNotBlank( text ) )

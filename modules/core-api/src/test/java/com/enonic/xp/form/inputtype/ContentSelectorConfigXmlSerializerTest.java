@@ -34,7 +34,7 @@ public class ContentSelectorConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
+        ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         ContentSelectorConfig config = builder.build();
 
@@ -50,7 +50,7 @@ public class ContentSelectorConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
+        ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         builder.addAllowedContentType( ContentTypeName.imageMedia() );
         builder.addAllowedContentType( ContentTypeName.videoMedia() );
@@ -68,7 +68,7 @@ public class ContentSelectorConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        ContentSelectorConfig config = ContentSelectorConfig.newRelationshipConfig().build();
+        ContentSelectorConfig config = ContentSelectorConfig.create().build();
 
         // exercise
         final Document doc = serializer.generate( config );
@@ -82,7 +82,7 @@ public class ContentSelectorConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
+        ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         ContentSelectorConfig expected = builder.build();
 
@@ -98,7 +98,7 @@ public class ContentSelectorConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
+        ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         builder.addAllowedContentType( ContentTypeName.imageMedia() );
         builder.addAllowedContentType( ContentTypeName.videoMedia() );
@@ -116,7 +116,7 @@ public class ContentSelectorConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
+        ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         ContentSelectorConfig expected = builder.build();
 
@@ -138,7 +138,7 @@ public class ContentSelectorConfigXmlSerializerTest
         throws IOException
     {
         // setup
-        ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
+        ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         ContentSelectorConfig expected = builder.build();
 
         StringBuilder xml = new StringBuilder();
@@ -161,7 +161,7 @@ public class ContentSelectorConfigXmlSerializerTest
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
         xml.append( "</config>\n" );
-        ContentSelectorConfig expected = ContentSelectorConfig.newRelationshipConfig().build();
+        ContentSelectorConfig expected = ContentSelectorConfig.create().build();
 
 
         // exercise

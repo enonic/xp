@@ -32,7 +32,7 @@ public class ContentSelectorConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
+        ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         ContentSelectorConfig config = builder.build();
 
@@ -48,7 +48,7 @@ public class ContentSelectorConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
+        ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         builder.addAllowedContentType( ContentTypeName.imageMedia() );
         builder.addAllowedContentType( ContentTypeName.videoMedia() );
@@ -66,7 +66,7 @@ public class ContentSelectorConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
+        ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         ContentSelectorConfig config = builder.build();
 
         // exercise
@@ -81,7 +81,7 @@ public class ContentSelectorConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
+        ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         ContentSelectorConfig expected = builder.build();
 
@@ -97,7 +97,7 @@ public class ContentSelectorConfigJsonSerializerTest
         throws IOException
     {
         // setup
-        ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
+        ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         builder.relationshipType( RelationshipTypeName.REFERENCE );
         builder.addAllowedContentType( ContentTypeName.imageMedia() ).addAllowedContentType( ContentTypeName.videoMedia() );
         ContentSelectorConfig expected = builder.build();
@@ -115,7 +115,7 @@ public class ContentSelectorConfigJsonSerializerTest
     {
         // setup
         String json = "{}";
-        ContentSelectorConfig expected = ContentSelectorConfig.newRelationshipConfig().build();
+        ContentSelectorConfig expected = ContentSelectorConfig.create().build();
 
         // exercise
         ContentSelectorConfig parsed = serializer.parseConfig( jsonHelper.stringToJson( json ) );

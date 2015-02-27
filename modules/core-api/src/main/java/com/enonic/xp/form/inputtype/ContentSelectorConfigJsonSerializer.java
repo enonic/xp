@@ -49,7 +49,7 @@ public class ContentSelectorConfigJsonSerializer
     @Override
     public ContentSelectorConfig parseConfig( final JsonNode inputTypeConfigNode )
     {
-        final ContentSelectorConfig.Builder builder = ContentSelectorConfig.newRelationshipConfig();
+        final ContentSelectorConfig.Builder builder = ContentSelectorConfig.create();
         final JsonNode relationshipTypeNode = inputTypeConfigNode.get( RELATIONSHIP_TYPE_KEY );
         if ( relationshipTypeNode != null && !relationshipTypeNode.isNull() )
         {
