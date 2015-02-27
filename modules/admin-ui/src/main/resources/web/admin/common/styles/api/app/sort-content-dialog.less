@@ -40,8 +40,8 @@
   }
   .drag-icon {
     cursor: move;
-    font-size: 22px;
     min-width: 30px;
+    padding-left: 10px;
   }
 
   .slick-reorder-proxy {
@@ -132,6 +132,49 @@
       white-space: pre;
       color: @admin-button-blue2;
       .ellipsis();
+    }
+
+    .dropdown-handle {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 37px;
+      height: 100%;
+      cursor: pointer;
+      z-index: 100;
+
+      &:after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        margin: -5px 0 0 -7px;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 10px solid @admin-dark-gray;
+      }
+
+      &.down:after {
+        border-top: 0px solid transparent;
+        border-bottom: 10px solid @admin-dark-gray;
+      }
+
+      &.disabled {
+        cursor: default;
+
+        &:after {
+          border-top: 10px solid @admin-medium-gray-border;
+        }
+
+        &.down:after {
+          border-top: 0px solid transparent;
+          border-bottom: 10px solid @admin-medium-gray-border;
+        }
+
+      }
+
     }
   }
 
