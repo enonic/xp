@@ -11,7 +11,7 @@ module api.ui.geo {
 
             this.validUserInput = true;
             this.geoLocationInput = new api.ui.text.TextInput();
-            this.geoLocationInput.getEl().setAttribute("title", "geo location").addClass("geo-point-input");
+            this.geoLocationInput.getEl().setAttribute("title", "latitude,longitude").addClass("geo-point-input");
 
             this.layoutItems();
 
@@ -37,7 +37,7 @@ module api.ui.geo {
             this.removeChildren();
 
             this.appendChild(this.geoLocationInput);
-            this.geoLocationInput.setPlaceholder(_i18n('geo location'));
+            this.geoLocationInput.setPlaceholder(_i18n('latitude,longitude'));
             return this;
         }
 
