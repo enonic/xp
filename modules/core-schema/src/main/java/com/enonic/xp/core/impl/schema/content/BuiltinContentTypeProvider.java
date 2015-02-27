@@ -59,7 +59,11 @@ public final class BuiltinContentTypeProvider
         build();
 
     private static final ContentType SHORTCUT = createSystemType( ContentTypeName.shortcut() ).
-        setFinal( true ).setAbstract( false ).build();
+        setFinal( true ).
+        setAbstract( false ).
+        form( ContentTypeForms.SHORTCUT ).
+        superType( ContentTypeName.shortcut() ).
+        build();
 
     private static final ContentType MEDIA = createSystemType( ContentTypeName.media() ).
         setFinal( false ).setAbstract( false ).allowChildContent( false ).build();

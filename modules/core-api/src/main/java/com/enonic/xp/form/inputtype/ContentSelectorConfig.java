@@ -36,7 +36,7 @@ public final class ContentSelectorConfig
 
     }
 
-    public static Builder newRelationshipConfig()
+    public static Builder create()
     {
         return new Builder();
     }
