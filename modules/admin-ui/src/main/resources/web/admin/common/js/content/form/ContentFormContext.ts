@@ -11,11 +11,18 @@ module api.content.form {
 
         private persistedContent: api.content.Content;
 
+        private contentTypeName: api.schema.content.ContentTypeName;
+
         constructor(builder: ContentFormContextBuilder) {
             super(builder);
             this.site = builder.site;
             this.parentContent = builder.parentContent;
             this.persistedContent = builder.persistedContent;
+            if (builder.contentTypeName) {
+                this.contentTypeName = builder.contentTypeName;
+            } else if (builder.persistedContent) {
+                this.contentTypeName = builder.persistedContent.getType();
+            }
         }
 
         getSite(): api.content.site.Site {
@@ -41,6 +48,10 @@ module api.content.form {
 
         getPersistedContent(): api.content.Content {
             return this.persistedContent;
+        }
+
+        getContentTypeName(): api.schema.content.ContentTypeName {
+            return this.contentTypeName;
         }
 
         createInputTypeViewContext(inputTypeConfig: any, parentPropertyPath: PropertyPath,
@@ -71,7 +82,7 @@ module api.content.form {
 
         persistedContent: api.content.Content;
 
-        attachments: api.content.attachment.Attachments;
+        contentTypeName: api.schema.content.ContentTypeName;
 
         public setSite(value: api.content.site.Site): ContentFormContextBuilder {
             this.site = value;
@@ -85,6 +96,11 @@ module api.content.form {
 
         public setPersistedContent(value: api.content.Content): ContentFormContextBuilder {
             this.persistedContent = value;
+            return this;
+        }
+
+        public setContentTypeName(value: api.schema.content.ContentTypeName): ContentFormContextBuilder {
+            this.contentTypeName = value;
             return this;
         }
 

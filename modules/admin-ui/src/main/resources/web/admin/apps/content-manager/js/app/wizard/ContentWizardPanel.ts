@@ -878,6 +878,7 @@ module app.wizard {
                 setSite(this.site).
                 setParentContent(this.parentContent).
                 setPersistedContent(content).
+                setContentTypeName(this.contentType ? this.contentType.getContentTypeName() : undefined).
                 setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).
                 build();
             return formContext;
@@ -901,7 +902,7 @@ module app.wizard {
         }
 
         private isPrincipalPresent(principalKey: api.security.PrincipalKey,
-                                                    accessEntriesToCheck: AccessControlEntry[]): boolean {
+                                   accessEntriesToCheck: AccessControlEntry[]): boolean {
             var result = false;
             accessEntriesToCheck.some((entry: AccessControlEntry) => {
                 if (entry.getPrincipalKey().equals(principalKey)) {

@@ -28,7 +28,7 @@ module api.schema.content.inputtype {
 
         private layoutInProgress: boolean;
 
-        private context:  ContentInputTypeViewContext<any>;
+        private context: ContentInputTypeViewContext<any>;
 
         constructor(context: ContentInputTypeViewContext<any>) {
             super('content-type-filter');
@@ -50,7 +50,7 @@ module api.schema.content.inputtype {
             this.input = input;
             this.propertyArray = propertyArray;
 
-            if (this.context.formContext.getPersistedContent().getType().equals(ContentTypeName.PAGE_TEMPLATE)) {
+            if (this.context.formContext.getContentTypeName().equals(ContentTypeName.PAGE_TEMPLATE)) {
                 this.combobox = new ContentTypeComboBox(input.getOccurrences().getMaximum(),
                     new api.schema.content.PageTemplateContentTypeLoader(this.context.site.getContentId()).setComparator(
                         new api.content.ContentSummaryByDisplayNameComparator()
@@ -66,7 +66,7 @@ module api.schema.content.inputtype {
                     var contentTypeName = property.getString();
                     this.combobox.getComboBox().setValue(contentTypeName);
                 });
-                
+
                 this.layoutInProgress = false;
                 this.combobox.unLoaded(selectProperties);
             };
