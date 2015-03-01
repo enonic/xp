@@ -1,0 +1,28 @@
+{
+  "permissions": [
+    {
+      "allow": ["READ"],
+      "deny": [],
+      "principal": {
+        "displayName": "Anonymous",
+        "key": "user:system:anonymous"
+      }
+    },
+    {
+      "allow": [
+        "READ",
+        "CREATE",
+        "MODIFY",
+        "DELETE",
+        "PUBLISH",
+        "READ_PERMISSIONS",
+        "WRITE_PERMISSIONS"
+      ],
+      "deny": [],
+      "principal": {
+        "displayName": "Admin",
+        "key": "user:system:admin"
+      }
+    }
+  ]
+}

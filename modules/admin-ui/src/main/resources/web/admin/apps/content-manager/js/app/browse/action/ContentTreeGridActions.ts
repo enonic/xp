@@ -5,6 +5,8 @@ module app.browse.action {
     import BrowseItem = api.app.browse.BrowseItem;
     import ContentSummary = api.content.ContentSummary;
     import Content = api.content.Content;
+    import AccessControlEntry = api.security.acl.AccessControlEntry;
+    import AccessControlList = api.security.acl.AccessControlList;
 
     export class ContentTreeGridActions implements TreeGridActions<ContentSummary> {
 
@@ -83,11 +85,22 @@ module app.browse.action {
                             this.PREVIEW_CONTENT.setEnabled(renderable);
                             contentBrowseItems[0].setRenderable(renderable);
                         }),
-                    // check if selected content allows children
+                    // check if selected content allows children and if user has create permission for it
                     new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).
                         sendAndParse().
                         then((contentType: api.schema.content.ContentType) => {
-                            this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentType && contentType.isAllowChildContent());
+                            var allowsChildren = (contentType && contentType.isAllowChildContent());
+                            var hasCreatePermission = false;
+                            new api.security.auth.IsAuthenticatedRequest().
+                                sendAndParse().
+                                then((loginResult: api.security.auth.LoginResult) => {
+                                    new api.content.GetContentPermissionsByPathRequest(contentSummary.getPath()).
+                                        sendAndParse().
+                                        then((accessControlList: AccessControlList) => {
+                                            hasCreatePermission = this.hasPermission(api.security.acl.Permission.CREATE, loginResult, accessControlList);
+                                            this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(allowsChildren && hasCreatePermission);
+                                        })
+                                })
                         })
                 ];
                 wemQ.all(parallelPromises).spread<void>(() => {
@@ -127,6 +140,38 @@ module app.browse.action {
                 }
             }
             return false;
+        }
+
+        private isPrincipalPresent(principalKey: api.security.PrincipalKey,
+                                   accessEntriesToCheck: AccessControlEntry[]): boolean {
+            var result = false;
+            accessEntriesToCheck.some((entry: AccessControlEntry) => {
+                if (entry.getPrincipalKey().equals(principalKey)) {
+                    result = true;
+                    return true;
+                }
+            });
+
+            return result;
+        }
+
+        private hasPermission(permission: api.security.acl.Permission,
+                              loginResult: api.security.auth.LoginResult,
+                              accessControlList: AccessControlList): boolean {
+            var result = false;
+            var entries = accessControlList.getEntries();
+            var accessEntriesWithGivenPermissions: AccessControlEntry[] = entries.filter((item: AccessControlEntry) => {
+                return item.isAllowed(permission);
+            });
+
+            loginResult.getPrincipals().some((principalKey: api.security.PrincipalKey) => {
+                if (api.security.RoleKeys.ADMIN.equals(principalKey) ||
+                    this.isPrincipalPresent(principalKey, accessEntriesWithGivenPermissions)) {
+                    result = true;
+                    return true;
+                }
+            });
+            return result;
         }
     }
 }

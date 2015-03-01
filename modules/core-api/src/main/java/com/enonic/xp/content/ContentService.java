@@ -47,6 +47,8 @@ public interface ContentService
 
     Content getByPath( ContentPath path );
 
+    AccessControlList getPermissionsByPath( ContentPath path );
+
     Contents getByPaths( ContentPaths paths );
 
     FindContentByParentResult findByParent( FindContentByParentParams params );
