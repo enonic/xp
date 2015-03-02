@@ -117,7 +117,7 @@ module app {
 
 
         private handleWizardCreated(wizard: UserItemWizardPanel<api.Equitable>, tabName: string) {
-            var tabMenuItem = new AppBarTabMenuItemBuilder().setLabel("<New " + tabName + ">").
+            var tabMenuItem = new AppBarTabMenuItemBuilder().setLabel("<Unnamed " + tabName + ">").
                 setTabId(wizard.getTabId()).
                 setCloseAction(wizard.getCloseAction()).
                 build();
