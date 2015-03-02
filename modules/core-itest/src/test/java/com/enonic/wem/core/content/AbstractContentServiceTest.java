@@ -2,6 +2,7 @@ package com.enonic.wem.core.content;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.parser.DefaultParser;
@@ -25,6 +26,9 @@ import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
 import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.attachment.CreateAttachment;
 import com.enonic.xp.content.attachment.CreateAttachments;
 import com.enonic.xp.context.Context;
@@ -39,8 +43,10 @@ import com.enonic.xp.core.impl.module.ModuleRegistry;
 import com.enonic.xp.core.impl.module.ModuleServiceImpl;
 import com.enonic.xp.core.impl.schema.content.BuiltinContentTypeProvider;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -222,5 +228,18 @@ public class AbstractContentServiceTest
     protected void printVersionIndex()
     {
         printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
+    }
+
+    protected Content createContent(ContentPath parentPath)
+        throws Exception {
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my test content #" + UUID.randomUUID().toString() ).
+            parent( parentPath ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        return this.contentService.create( createContentParams );
     }
 }

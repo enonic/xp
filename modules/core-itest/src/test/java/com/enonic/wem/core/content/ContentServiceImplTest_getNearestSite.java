@@ -93,16 +93,4 @@ public class ContentServiceImplTest_getNearestSite extends AbstractContentServic
         return this.contentService.create( createSiteParams );
     }
 
-    private Content createContent(ContentPath parentPath)
-        throws Exception {
-
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            parent( parentPath ).
-            type( ContentTypeName.folder() ).
-            build();
-
-        return this.contentService.create( createContentParams );
-    }
 }
