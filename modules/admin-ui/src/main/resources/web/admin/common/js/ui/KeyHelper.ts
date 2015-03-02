@@ -52,6 +52,10 @@ module api.ui {
                    event.keyCode === 91 || event.keyCode === 93; // Safari/Chrome
         }
 
+        static isTabKey(event: KeyboardEvent): boolean {
+            return event.keyCode === 9;
+        }
+
         static isModifierKey(event: KeyboardEvent): boolean {
             return KeyHelper.isControlKey(event) || KeyHelper.isShiftKey(event) || KeyHelper.isAltKey(event) || KeyHelper.isMetaKey(event);
         }

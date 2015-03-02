@@ -75,6 +75,13 @@ module api.ui.time {
 
         constructor(builder: DatePickerBuilder) {
             super('date-picker');
+
+            var onDatePickerShown = this.onDatePickerShown.bind(this);
+            DatePickerShownEvent.on(onDatePickerShown);
+            this.onRemoved((event: api.dom.ElementRemovedEvent) => {
+                DatePickerShownEvent.un(onDatePickerShown);
+            });
+
             this.validUserInput = true;
 
             this.input = api.ui.text.TextInput.middle();
@@ -99,6 +106,9 @@ module api.ui.time {
                 setCalendar(this.calendar).
                 setCloseOnOutsideClick(builder.closeOnOutsideClick);
             this.popup = popupBuilder.build();
+            this.popup.onShown(() => {
+                new DatePickerShownEvent(this).fire();
+            });
             wrapper.appendChild(this.popup);
 
             this.popupTrigger = new api.ui.button.Button();
@@ -161,10 +171,53 @@ module api.ui.time {
                         this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
                     }
                 }
-
                 this.updateInputStyling();
             });
 
+            this.popup.onKeyDown((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isTabKey(event)) {
+                    if(!(document.activeElement == this.input.getEl().getHTMLElement())) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        this.popup.hide();
+                        this.popupTrigger.giveFocus();
+                    }
+                }
+            });
+
+            this.input.onKeyDown((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isTabKey(event)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.popupTrigger.giveFocus();
+                }
+            });
+
+            this.popupTrigger.onKeyDown((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isTabKey(event)) {
+                    this.popup.hide();
+                }
+            });
+
+            api.dom.Body.get().onKeyDown((e: KeyboardEvent) => this.outsideTabListener(e));
+        }
+
+        // as popup blur and focus events behave incorrectly - we manually catch tab navigation event below
+        private outsideTabListener(e: KeyboardEvent) {
+            if (api.ui.KeyHelper.isTabKey(e) && !this.getEl().contains(<HTMLElement> e.target)) {
+                if (this.popup.isVisible()) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.popupTrigger.getEl().focus();
+                    this.popup.hide();
+                }
+            }
+        }
+
+        private onDatePickerShown(event: DatePickerShownEvent) {
+            if (event.getDatePicker() !== this) {
+                this.popup.hide();
+            }
         }
 
         hasValidUserInput(): boolean {
@@ -197,6 +250,29 @@ module api.ui.time {
 
         private updateInputStyling() {
             this.input.updateValidationStatusOnUserInput(this.validUserInput);
+        }
+
+    }
+
+    export class DatePickerShownEvent extends api.event.Event {
+
+        private datePicker: DatePicker;
+
+        constructor(datePicker: DatePicker) {
+            super();
+            this.datePicker = datePicker;
+        }
+
+        getDatePicker(): DatePicker {
+            return this.datePicker;
+        }
+
+        static on(handler: (event: DatePickerShownEvent) => void) {
+            api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
+        }
+
+        static un(handler?: (event: DatePickerShownEvent) => void) {
+            api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
 
     }
