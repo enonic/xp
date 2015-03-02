@@ -1,10 +1,8 @@
 package com.enonic.xp.xml.parser;
 
-import org.w3c.dom.Element;
-
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.xml.DomHelper;
+import com.enonic.xp.xml.DomElement;
 
 public final class XmlMixinParser
     extends XmlModelParser<XmlMixinParser>
@@ -18,15 +16,15 @@ public final class XmlMixinParser
     }
 
     @Override
-    protected void doParse( final Element root )
+    protected void doParse( final DomElement root )
         throws Exception
     {
         assertTagName( root, "mixin" );
-        this.builder.displayName( DomHelper.getChildElementValueByTagName( root, "display-name" ) );
-        this.builder.description( DomHelper.getChildElementValueByTagName( root, "description" ) );
+        this.builder.displayName( root.getChildValue( "display-name" ) );
+        this.builder.description( root.getChildValue( "description" ) );
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentModule );
-        final Form form = mapper.buildForm( DomHelper.getChildElementByTagName( root, "items" ) );
+        final Form form = mapper.buildForm( root.getChild( "items" ) );
         this.builder.formItems( form.getFormItems() );
     }
 }

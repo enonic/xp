@@ -4,12 +4,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.w3c.dom.Element;
-
 import com.enonic.xp.module.ModuleRelativeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipType;
-import com.enonic.xp.xml.DomHelper;
+import com.enonic.xp.xml.DomElement;
 
 public final class XmlRelationshipTypeParser
     extends XmlModelParser<XmlRelationshipTypeParser>
@@ -23,27 +21,27 @@ public final class XmlRelationshipTypeParser
     }
 
     @Override
-    protected void doParse( final Element root )
+    protected void doParse( final DomElement root )
         throws Exception
     {
         assertTagName( root, "relationship-type" );
-        this.builder.description( DomHelper.getChildElementValueByTagName( root, "description" ) );
-        this.builder.fromSemantic( DomHelper.getChildElementValueByTagName( root, "from-semantic" ) );
-        this.builder.toSemantic( DomHelper.getChildElementValueByTagName( root, "to-semantic" ) );
+        this.builder.description( root.getChildValue( "description" ) );
+        this.builder.fromSemantic( root.getChildValue( "from-semantic" ) );
+        this.builder.toSemantic( root.getChildValue( "to-semantic" ) );
         this.builder.setAllowedFromTypes( parseTypes( root, "allowed-from-types" ) );
         this.builder.setAllowedToTypes( parseTypes( root, "allowed-to-types" ) );
     }
 
-    private List<ContentTypeName> parseTypes( final Element root, final String name )
+    private List<ContentTypeName> parseTypes( final DomElement root, final String name )
     {
-        final Element types = DomHelper.getChildElementByTagName( root, name );
+        final DomElement types = root.getChild( name );
         if ( types == null )
         {
             return Collections.emptyList();
         }
 
         final ModuleRelativeResolver resolver = new ModuleRelativeResolver( this.currentModule );
-        return DomHelper.getChildElementsByTagName( types, "content-type" ).stream().map(
-            child -> resolver.toContentTypeName( DomHelper.getTextValue( child ) ) ).collect( Collectors.toList() );
+        return types.getChildren( "content-type" ).stream().map( child -> resolver.toContentTypeName( child.getValue() ) ).collect(
+            Collectors.toList() );
     }
 }

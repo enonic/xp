@@ -17,6 +17,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.schema.SchemaValidator;
 
 public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
@@ -84,7 +85,7 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
         final String ns = root.getNamespaceURI();
 
         final Document doc = validate( source, ns );
-        doParse( doc.getDocumentElement() );
+        doParse( DomElement.from( doc.getDocumentElement() ) );
         return typecastThis();
     }
 
@@ -98,10 +99,10 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
         return (Document) result.getNode();
     }
 
-    protected abstract void doParse( Element root )
+    protected abstract void doParse( DomElement root )
         throws Exception;
 
-    protected final void assertTagName( final Element elem, final String name )
+    protected final void assertTagName( final DomElement elem, final String name )
     {
         Preconditions.checkArgument( elem.getTagName().equals( name ), "Element [" + name + "] is required" );
     }

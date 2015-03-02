@@ -1,9 +1,7 @@
 package com.enonic.xp.xml.parser;
 
-import org.w3c.dom.Element;
-
 import com.enonic.xp.content.page.region.PartDescriptor;
-import com.enonic.xp.xml.DomHelper;
+import com.enonic.xp.xml.DomElement;
 
 public final class XmlPartDescriptorParser
     extends XmlModelParser<XmlPartDescriptorParser>
@@ -17,13 +15,13 @@ public final class XmlPartDescriptorParser
     }
 
     @Override
-    protected void doParse( final Element root )
+    protected void doParse( final DomElement root )
         throws Exception
     {
         assertTagName( root, "part-component" );
-        this.builder.displayName( DomHelper.getChildElementValueByTagName( root, "display-name" ) );
+        this.builder.displayName( root.getChildValue( "display-name" ) );
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentModule );
-        this.builder.config( mapper.buildForm( DomHelper.getChildElementByTagName( root, "config" ) ) );
+        this.builder.config( mapper.buildForm( root.getChild( "config" ) ) );
     }
 }

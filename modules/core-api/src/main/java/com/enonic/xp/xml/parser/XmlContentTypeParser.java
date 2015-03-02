@@ -2,15 +2,13 @@ package com.enonic.xp.xml.parser;
 
 import java.util.List;
 
-import org.w3c.dom.Element;
-
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.module.ModuleRelativeResolver;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
-import com.enonic.xp.xml.DomHelper;
+import com.enonic.xp.xml.DomElement;
 
 public final class XmlContentTypeParser
     extends XmlModelParser<XmlContentTypeParser>
@@ -26,34 +24,34 @@ public final class XmlContentTypeParser
     }
 
     @Override
-    protected void doParse( final Element root )
+    protected void doParse( final DomElement root )
         throws Exception
     {
         this.resolver = new ModuleRelativeResolver( this.currentModule );
 
         assertTagName( root, "content-type" );
-        this.builder.displayName( DomHelper.getChildElementValueByTagName( root, "display-name" ) );
-        this.builder.description( DomHelper.getChildElementValueByTagName( root, "description" ) );
+        this.builder.displayName( root.getChildValue( "display-name" ) );
+        this.builder.description( root.getChildValue( "description" ) );
 
-        this.builder.contentDisplayNameScript( DomHelper.getChildElementValueByTagName( root, "content-display-name-script" ) );
-        this.builder.superType( this.resolver.toContentTypeName( DomHelper.getChildElementValueByTagName( root, "super-type" ) ) );
+        this.builder.contentDisplayNameScript( root.getChildValue( "content-display-name-script" ) );
+        this.builder.superType( this.resolver.toContentTypeName( root.getChildValue( "super-type" ) ) );
 
-        this.builder.setAbstract( XmlParserHelper.getChildElementAsBoolean( root, "is-abstract", false ) );
-        this.builder.setFinal( XmlParserHelper.getChildElementAsBoolean( root, "is-final", false ) );
-        this.builder.allowChildContent( XmlParserHelper.getChildElementAsBoolean( root, "allow-child-content", false ) );
+        this.builder.setAbstract( root.getChildValueAs( "is-abstract", Boolean.class, false ) );
+        this.builder.setFinal( root.getChildValueAs( "is-final", Boolean.class, false ) );
+        this.builder.allowChildContent( root.getChildValueAs( "allow-child-content", Boolean.class, false ) );
 
         this.builder.metadata( buildMetaData( root ) );
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentModule );
-        this.builder.form( mapper.buildForm( DomHelper.getChildElementByTagName( root, "form" ) ) );
+        this.builder.form( mapper.buildForm( root.getChild( "form" ) ) );
     }
 
-    private MixinNames buildMetaData( final Element root )
+    private MixinNames buildMetaData( final DomElement root )
     {
         final List<MixinName> names = Lists.newArrayList();
-        for ( final Element child : DomHelper.getChildElementsByTagName( root, "x-data" ) )
+        for ( final DomElement child : root.getChildren( "x-data" ) )
         {
-            final String name = XmlParserHelper.getAttributeAsString( child, "mixin", null );
+            final String name = child.getAttribute( "mixin" );
             names.add( this.resolver.toMixinName( name ) );
         }
 

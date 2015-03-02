@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.w3c.dom.Element;
-
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
@@ -18,13 +16,8 @@ import com.enonic.xp.form.inputtype.InputTypeConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleRelativeResolver;
-import com.enonic.xp.xml.DomHelper;
+import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.XmlException;
-
-import static com.enonic.xp.xml.parser.XmlParserHelper.getAttributeAsInteger;
-import static com.enonic.xp.xml.parser.XmlParserHelper.getAttributeAsString;
-import static com.enonic.xp.xml.parser.XmlParserHelper.getChildElementAsBoolean;
-import static com.enonic.xp.xml.parser.XmlParserHelper.getChildElementAsString;
 
 final class XmlFormMapper
 {
@@ -35,7 +28,7 @@ final class XmlFormMapper
         this.currentModule = currentModule;
     }
 
-    public Form buildForm( final Element root )
+    public Form buildForm( final DomElement root )
     {
         final Form.Builder builder = Form.newForm();
         if ( root != null )
@@ -46,22 +39,22 @@ final class XmlFormMapper
         return builder.build();
     }
 
-    private void buildForm( final Element root, final Form.Builder builder )
+    private void buildForm( final DomElement root, final Form.Builder builder )
     {
         builder.addFormItems( buildItems( root ) );
     }
 
-    private List<FormItem> buildItems( final Element root )
+    private List<FormItem> buildItems( final DomElement root )
     {
         if ( root == null )
         {
             return Collections.emptyList();
         }
 
-        return DomHelper.getChildElements( root ).stream().map( this::buildItem ).collect( Collectors.toList() );
+        return root.getChildren().stream().map( this::buildItem ).collect( Collectors.toList() );
     }
 
-    private FormItem buildItem( final Element root )
+    private FormItem buildItem( final DomElement root )
     {
         final String tagName = root.getTagName();
         if ( tagName.equals( "input" ) )
@@ -87,70 +80,70 @@ final class XmlFormMapper
         throw new XmlException( "Unknown item type [{0}]", tagName );
     }
 
-    private Input buildInputItem( final Element root )
+    private Input buildInputItem( final DomElement root )
     {
         final Input.Builder builder = Input.newInput();
 
-        final InputType type = InputTypes.parse( getAttributeAsString( root, "type", null ) );
+        final InputType type = InputTypes.parse( root.getAttribute( "type" ) );
         builder.inputType( type );
 
-        builder.name( getAttributeAsString( root, "name", null ) );
-        builder.label( getChildElementAsString( root, "label", null ) );
-        builder.customText( getChildElementAsString( root, "custom-text", null ) );
-        builder.helpText( getChildElementAsString( root, "help-text", null ) );
-        builder.occurrences( buildOccurrence( DomHelper.getChildElementByTagName( root, "occurrences" ) ) );
-        builder.immutable( getChildElementAsBoolean( root, "immutable", false ) );
-        builder.indexed( getChildElementAsBoolean( root, "indexed", false ) );
-        builder.validationRegexp( getChildElementAsString( root, "validation-regexp", null ) );
-        builder.inputTypeConfig( fromConfigXml( type, DomHelper.getChildElementByTagName( root, "config" ) ) );
+        builder.name( root.getAttribute( "name" ) );
+        builder.label( root.getChildValue( "label" ) );
+        builder.customText( root.getChildValue( "custom-text" ) );
+        builder.helpText( root.getChildValue( "help-text" ) );
+        builder.occurrences( buildOccurrence( root.getChild( "occurrences" ) ) );
+        builder.immutable( root.getChildValueAs( "immutable", Boolean.class, false ) );
+        builder.indexed( root.getChildValueAs( "indexed", Boolean.class, false ) );
+        builder.validationRegexp( root.getChildValue( "validation-regexp" ) );
+        builder.inputTypeConfig( fromConfigXml( type, root.getChild( "config" ) ) );
 
         return builder.build();
     }
 
-    private FieldSet buildFieldSetItem( final Element root )
+    private FieldSet buildFieldSetItem( final DomElement root )
     {
         final FieldSet.Builder builder = FieldSet.newFieldSet();
-        builder.name( getAttributeAsString( root, "name", null ) );
-        builder.label( getChildElementAsString( root, "label", null ) );
-        builder.addFormItems( buildItems( DomHelper.getChildElementByTagName( root, "items" ) ) );
+        builder.name( root.getAttribute( "name" ) );
+        builder.label( root.getChildValue( "label" ) );
+        builder.addFormItems( buildItems( root.getChild( "items" ) ) );
         return builder.build();
     }
 
-    private InlineMixin buildInlineItem( final Element root )
+    private InlineMixin buildInlineItem( final DomElement root )
     {
         final InlineMixin.Builder builder = InlineMixin.newInlineMixin();
         builder.mixin( new ModuleRelativeResolver( this.currentModule ).toMixinName( root.getAttribute( "mixin" ) ) );
         return builder.build();
     }
 
-    private FormItemSet buildFormItemSetItem( final Element root )
+    private FormItemSet buildFormItemSetItem( final DomElement root )
     {
         final FormItemSet.Builder builder = FormItemSet.newFormItemSet();
-        builder.name( getAttributeAsString( root, "name", null ) );
-        builder.label( getChildElementAsString( root, "label", null ) );
-        builder.customText( getChildElementAsString( root, "custom-text", null ) );
-        builder.helpText( getChildElementAsString( root, "help-text", null ) );
-        builder.occurrences( buildOccurrence( DomHelper.getChildElementByTagName( root, "occurrences" ) ) );
-        builder.immutable( getChildElementAsBoolean( root, "immutable", false ) );
-        builder.addFormItems( buildItems( DomHelper.getChildElementByTagName( root, "items" ) ) );
+        builder.name( root.getAttribute( "name" ) );
+        builder.label( root.getChildValue( "label" ) );
+        builder.customText( root.getChildValue( "custom-text" ) );
+        builder.helpText( root.getChildValue( "help-text" ) );
+        builder.occurrences( buildOccurrence( root.getChild( "occurrences" ) ) );
+        builder.immutable( root.getChildValueAs( "immutable", Boolean.class, false ) );
+        builder.addFormItems( buildItems( root.getChild( "items" ) ) );
         return builder.build();
     }
 
-    private Occurrences buildOccurrence( final Element root )
+    private Occurrences buildOccurrence( final DomElement root )
     {
         final Occurrences.Builder builder = Occurrences.newOccurrences();
-        builder.minimum( getAttributeAsInteger( root, "minimum", 0 ) );
-        builder.maximum( getAttributeAsInteger( root, "maximum", 0 ) );
+        builder.minimum( root.getAttributeAs( "minimum", Integer.class, 0 ) );
+        builder.maximum( root.getAttributeAs( "maximum", Integer.class, 0 ) );
         return builder.build();
     }
 
-    private InputTypeConfig fromConfigXml( final InputType type, final Element value )
+    private InputTypeConfig fromConfigXml( final InputType type, final DomElement value )
     {
         if ( value == null )
         {
             return null;
         }
 
-        return type.getInputTypeConfigXmlSerializer().parseConfig( this.currentModule, value );
+        return type.getInputTypeConfigXmlSerializer().parseConfig( this.currentModule, value.getWrapped() );
     }
 }
