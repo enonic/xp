@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<relationship-type xmlns="urn:enonic:xp:model:1.0">
+  <description>description</description>
+  <from-semantic>likes</from-semantic>
+  <to-semantic>liked by</to-semantic>
+  <allowed-from-types>
+    <content-type>mymodule:animal</content-type>
+    <content-type>person</content-type>
+  </allowed-from-types>
+  <allowed-to-types>
+    <content-type>mymodule:vehicle</content-type>
+  </allowed-to-types>
+</relationship-type>

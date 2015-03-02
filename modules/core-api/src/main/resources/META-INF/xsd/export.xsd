@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0"
+           xmlns="urn:enonic:xp:export:1.0" targetNamespace="urn:enonic:xp:export:1.0"
+           elementFormDefault="qualified">
+
+  <xs:complexType name="node">
+    <xs:all>
+      <xs:element minOccurs="0" maxOccurs="1" name="id" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="childOrder" type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="nodeType" type="xs:string"/>
+      <xs:element name="data" type="propertyTree"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="indexConfigs" type="indexConfigs"/>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="propertyTree">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:choice>
+        <xs:element name="localDateTime" type="localDateTimeProperty"/>
+        <xs:element name="string" type="stringProperty"/>
+        <xs:element name="double" type="doubleProperty"/>
+        <xs:element name="long" type="longProperty"/>
+        <xs:element name="geoPoint" type="geoPointProperty"/>
+        <xs:element name="boolean" type="booleanProperty"/>
+        <xs:element name="dateTime" type="dateTimeProperty"/>
+        <xs:element name="localDate" type="dateProperty"/>
+        <xs:element name="localTime" type="timeProperty"/>
+        <xs:element name="binaryReference" type="binaryReferenceProperty"/>
+        <xs:element name="reference" type="referenceProperty"/>
+        <xs:element name="link" type="linkProperty"/>
+        <xs:element name="htmlPart" type="htmlPartProperty"/>
+        <xs:element name="xml" type="xmlProperty"/>
+        <xs:element name="property-set" type="propertySet"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:attributeGroup name="property">
+    <xs:attribute name="name" type="xs:string" use="required"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="nullableValueProperty">
+    <xs:attributeGroup ref="property"/>
+    <xs:attribute name="isNull" type="xs:boolean" use="optional"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="propertySet">
+    <xs:complexContent>
+      <xs:extension base="propertyTree">
+        <xs:attributeGroup ref="nullableValueProperty"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="stringProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="nullableValueProperty"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="geoPointProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="nullableValueProperty"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="doubleProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:double">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="longProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:long">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="booleanProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:boolean">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="dateTimeProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:dateTime">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="dateProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:date">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="timeProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:time">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="binaryReferenceProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="nullableValueProperty"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="htmlPartProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="nullableValueProperty"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="xmlProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="nullableValueProperty"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="linkProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="nullableValueProperty"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="referenceProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="nullableValueProperty"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="localDateTimeProperty">
+    <xs:simpleContent>
+      <xs:extension base="xs:dateTime">
+        <xs:attributeGroup ref="property"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="indexConfig">
+    <xs:sequence>
+      <xs:element name="decideByType" type="xs:boolean"/>
+      <xs:element name="enabled" type="xs:boolean"/>
+      <xs:element name="nGram" type="xs:boolean"/>
+      <xs:element name="fulltext" type="xs:boolean"/>
+      <xs:element name="includeInAllText" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="pathIndexConfig">
+    <xs:sequence>
+      <xs:element name="indexConfig" type="indexConfig"/>
+      <xs:element name="path" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="indexConfigs">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="analyzer" type="xs:string"/>
+      <xs:element minOccurs="1" maxOccurs="1" name="defaultConfig" type="indexConfig"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="pathIndexConfigs">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="pathIndexConfig" type="pathIndexConfig"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="node" type="node"/>
+
+</xs:schema>

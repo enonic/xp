@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<part-component xmlns="urn:enonic:xp:model:1.0">
+  <display-name>A Part</display-name>
+  <config>
+    <input type="Double" name="width">
+      <label>Column width</label>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <inline mixin="mymodule:link-urls"/>
+  </config>
+</part-component>
