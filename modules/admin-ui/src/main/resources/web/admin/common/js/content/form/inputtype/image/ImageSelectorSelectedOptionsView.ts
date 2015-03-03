@@ -58,7 +58,7 @@ module api.content.form.inputtype.image {
                 // clear the selection;
                 this.selection.length = 0;
                 this.updateSelectionToolbarLayout();
-
+                this.hideImageSelectorDialog();
             });
             this.appendChild(this.toolbar);
 
@@ -68,7 +68,6 @@ module api.content.form.inputtype.image {
         }
 
         createSelectedOption(option: Option<ImageSelectorDisplayValue>): SelectedOption<ImageSelectorDisplayValue> {
-
             return new SelectedOption<ImageSelectorDisplayValue>(new ImageSelectorSelectedOptionView(option), this.count());
         }
 
@@ -83,7 +82,7 @@ module api.content.form.inputtype.image {
             } else if (selectedOption) {
                 var displayValue = selectedOption.getOption().displayValue;
                 if (displayValue.getContentSummary() == null && option.displayValue.getContentSummary() != null) {
-                    this.updateUplodedOption(option);
+                    this.updateUploadedOption(option);
                     return true;
                 }
             }
@@ -99,15 +98,20 @@ module api.content.form.inputtype.image {
 
             optionView.onClicked((event: MouseEvent) => {
                 if (this.dialog.isVisible()) {
-                    this.hideImageSelectorDialog();
-                    if (optionView.getOption().displayValue != this.dialog.getContent()) {
+                    if(this.activeOption != selectedOption) {
+                        this.hideImageSelectorDialog();
                         this.showImageSelectorDialog(selectedOption);
-                        optionView.getCheckbox().giveFocus();
                     }
                 } else {
                     this.showImageSelectorDialog(selectedOption);
-                    optionView.getCheckbox().giveFocus();
                 }
+                this.uncheckOthers(selectedOption);
+                if(document.activeElement == optionView.getEl().getHTMLElement()) {
+                    optionView.getCheckbox().toggleChecked();
+                } else {
+                    optionView.getCheckbox().setChecked(true);
+                }
+                optionView.getCheckbox().giveFocus();
             });
 
             optionView.getCheckbox().onKeyPressed((event: KeyboardEvent) => {
@@ -135,11 +139,12 @@ module api.content.form.inputtype.image {
             });
 
             optionView.getCheckbox().onFocus((event: FocusEvent) => this.showImageSelectorDialog(selectedOption));
-            optionView.getCheckbox().onBlur((event: FocusEvent) => this.hideImageSelectorDialog());
+            //optionView.getCheckbox().onBlur((event: FocusEvent) => this.hideImageSelectorDialog());
 
             optionView.onChecked((view: ImageSelectorSelectedOptionView, checked: boolean) => {
                 if (checked) {
-                    this.selection.push(selectedOption);
+                    if(this.selection.indexOf(selectedOption) < 0)
+                        this.selection.push(selectedOption);
                 } else {
                     var index = this.selection.indexOf(selectedOption);
                     if (index > -1) {
@@ -158,7 +163,7 @@ module api.content.form.inputtype.image {
             optionView.insertBeforeEl(this.toolbar);
         }
 
-        updateUplodedOption(option: Option<ImageSelectorDisplayValue>) {
+        updateUploadedOption(option: Option<ImageSelectorDisplayValue>) {
             var selectedOption = this.getByOption(option);
             var content = option.displayValue.getContentSummary();
 
@@ -168,6 +173,16 @@ module api.content.form.inputtype.image {
             };
 
             selectedOption.getOptionView().setOption(newOption);
+        }
+
+        private uncheckOthers(option: SelectedOption<ImageSelectorDisplayValue>) {
+            var selectedOptions = this.getSelectedOptions();
+            for (var i = 0; i < selectedOptions.length; i++) {
+                var view = <ImageSelectorSelectedOptionView>selectedOptions[i].getOptionView();
+                if(i != option.getIndex()) {
+                    view.getCheckbox().setChecked(false);
+                }
+            }
         }
 
         private removeOptionViewAndRefocus(option: SelectedOption<ImageSelectorDisplayValue>) {
@@ -184,7 +199,11 @@ module api.content.form.inputtype.image {
         }
 
         private showImageSelectorDialog(option: SelectedOption<ImageSelectorDisplayValue>) {
+
             if (this.dialog) {
+                if(this.activeOption == option) {
+                    return;
+                }
                 this.dialog.remove();
             }
 
@@ -240,7 +259,10 @@ module api.content.form.inputtype.image {
 
         private hideImageSelectorDialog() {
             this.dialog.remove();
-            this.activeOption.getOptionView().removeClass('editing first-in-row last-in-row');
+            if(this.activeOption) {
+                this.activeOption.getOptionView().removeClass('editing first-in-row last-in-row');
+                this.activeOption = null;
+            }
             wemjq(this.getHTMLElement()).sortable("enable");
 
             api.dom.Body.get().unClicked(this.mouseClickListener);
