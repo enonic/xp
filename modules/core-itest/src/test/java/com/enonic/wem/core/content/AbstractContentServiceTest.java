@@ -97,6 +97,8 @@ public class AbstractContentServiceTest
 
     protected MixinService mixinService;
 
+    protected ContentNodeTranslator contentNodeTranslator;
+
     private NodeDaoImpl nodeDao;
 
     private ElasticsearchVersionService versionService;
@@ -146,7 +148,7 @@ public class AbstractContentServiceTest
 
         this.mixinService = Mockito.mock( MixinService.class );
 
-        final ContentNodeTranslator contentNodeTranslator = new ContentNodeTranslator();
+        this.contentNodeTranslator = new ContentNodeTranslator();
 
         final EventPublisherImpl eventPublisher = new EventPublisherImpl();
 
@@ -166,7 +168,7 @@ public class AbstractContentServiceTest
         this.contentService.setEventPublisher( eventPublisher );
         this.contentService.setMediaInfoService( mediaInfoService );
         this.contentService.setModuleService( moduleService );
-        this.contentService.setContentNodeTranslator( contentNodeTranslator );
+        this.contentService.setContentNodeTranslator( this.contentNodeTranslator );
         this.contentService.setContentTypeService( contentTypeService );
         this.contentService.setMixinService( mixinService );
 
