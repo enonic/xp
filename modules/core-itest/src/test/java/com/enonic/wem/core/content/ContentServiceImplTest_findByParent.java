@@ -9,6 +9,7 @@ import com.enonic.xp.content.FindContentByParentResult;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ContentServiceImplTest_findByParent extends AbstractContentServiceTest
 {
@@ -117,6 +118,105 @@ public class ContentServiceImplTest_findByParent extends AbstractContentServiceT
 
         assertNotNull( result );
         assertEquals( 0, result.getTotalHits() );
+
+    }
+
+    @Test
+    public void params_size_zero() throws Exception{
+
+        final Content parentContent = createContent(ContentPath.ROOT);
+        final Content content1 = createContent(parentContent.getPath());
+        final Content content2 = createContent(parentContent.getPath());
+        final Content content3 = createContent(parentContent.getPath());
+
+        final ContentPath parentContentPath = parentContent.getPath();
+
+        final FindContentByParentParams params = FindContentByParentParams.create().
+            from( 0 ).
+            size( 0 ).
+            parentPath( parentContentPath ).
+            build();
+
+        final FindContentByParentResult result = contentService.findByParent( params );
+
+        assertNotNull( result );
+        assertEquals( 0, result.getHits() );
+        assertEquals( 3, result.getTotalHits() );
+        assertTrue( result.getContents().isEmpty() );
+
+    }
+
+    @Test
+    public void params_size_one() throws Exception{
+
+        final Content parentContent = createContent(ContentPath.ROOT);
+        final Content content1 = createContent(parentContent.getPath());
+        final Content content2 = createContent(parentContent.getPath());
+        final Content content3 = createContent(parentContent.getPath());
+
+        final ContentPath parentContentPath = parentContent.getPath();
+
+        final FindContentByParentParams params = FindContentByParentParams.create().
+            from( 0 ).
+            size( 1 ).
+            parentPath( parentContentPath ).
+            build();
+
+        final FindContentByParentResult result = contentService.findByParent( params );
+
+        assertNotNull( result );
+        assertEquals( 1, result.getHits() );
+        assertEquals( 3, result.getTotalHits() );
+        assertEquals( 1, result.getContents().getSize() );
+
+    }
+
+    @Test
+    public void params_from_beyond() throws Exception{
+
+        final Content parentContent = createContent(ContentPath.ROOT);
+        final Content content1 = createContent(parentContent.getPath());
+        final Content content2 = createContent(parentContent.getPath());
+        final Content content3 = createContent(parentContent.getPath());
+
+        final ContentPath parentContentPath = parentContent.getPath();
+
+        final FindContentByParentParams params = FindContentByParentParams.create().
+            from( 10 ).
+            parentPath( parentContentPath ).
+            build();
+
+        final FindContentByParentResult result = contentService.findByParent( params );
+
+        assertNotNull( result );
+        assertEquals( 0, result.getHits() );
+        assertEquals( 3, result.getTotalHits() );
+        assertTrue( result.getContents().isEmpty() );
+
+    }
+
+    @Test
+    public void params_from() throws Exception{
+
+        final Content parentContent = createContent(ContentPath.ROOT);
+        final Content content1 = createContent(parentContent.getPath());
+        final Content content2 = createContent(parentContent.getPath());
+        final Content content3 = createContent(parentContent.getPath());
+        final Content content4 = createContent(parentContent.getPath());
+
+        final ContentPath parentContentPath = parentContent.getPath();
+
+        final FindContentByParentParams params = FindContentByParentParams.create().
+            from( 2 ).
+            parentPath( parentContentPath ).
+            build();
+
+        final FindContentByParentResult result = contentService.findByParent( params );
+
+        assertNotNull( result );
+        assertEquals( 2, result.getHits() );
+        assertEquals( 4, result.getTotalHits() );
+        assertEquals( 2, result.getContents().getSize() );
 
     }
 }
