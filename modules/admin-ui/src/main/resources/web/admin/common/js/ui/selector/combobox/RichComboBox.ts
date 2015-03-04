@@ -204,11 +204,6 @@ module api.ui.selector.combobox {
 
                 this.loader.search(event.getNewValue()).
                     then((result: OPTION_DISPLAY_VALUE[]) => {
-
-                        if (!this.comboBox.isDropdownShown()) {
-                            this.comboBox.showDropdown();
-                            this.comboBox.giveInputFocus();
-                        }
                         return result;
                     }).catch((reason: any) => {
                         api.DefaultErrorHandler.handle(reason);
