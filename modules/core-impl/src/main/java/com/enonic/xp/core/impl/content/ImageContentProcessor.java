@@ -37,7 +37,7 @@ import com.enonic.xp.util.GeoPoint;
 
 public final class ImageContentProcessor
 {
-    private static final Scale[] scales =
+    private static final Scale[] SCALES =
         new Scale[]{new Scale( "small", 256 ), new Scale( "medium", 512 ), new Scale( "large", 1024 ), new Scale( "extra-large", 2048 )};
 
     private MixinService mixinService;
@@ -98,7 +98,7 @@ public final class ImageContentProcessor
     private CreateAttachments scaleImages( final BufferedImage sourceImage, final CreateAttachment sourceAttachment )
     {
         final CreateAttachments.Builder attachments = CreateAttachments.builder();
-        for ( final Scale scale : scales )
+        for ( final Scale scale : SCALES )
         {
             // scale only if the scale is less than the original
             if ( scale.size < sourceImage.getWidth() )

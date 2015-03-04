@@ -81,20 +81,15 @@ public class ContentTypeForms
             inputType( InputTypes.FILE_UPLOADER ).build() ).
         build();
 
-    private final static LinkedHashMap<ContentTypeName, Form> formByName = new LinkedHashMap<>();
+    private final static LinkedHashMap<ContentTypeName, Form> FORM_BY_NAME = new LinkedHashMap<>();
 
     static
     {
-        formByName.put( ContentTypeName.pageTemplate(), PAGE_TEMPLATE );
+        FORM_BY_NAME.put( ContentTypeName.pageTemplate(), PAGE_TEMPLATE );
     }
 
     public static Form get( final ContentTypeName name )
     {
-        return formByName.get( name );
-    }
-
-    private static Input.Builder createImmutableTextLine( final String name )
-    {
-        return Input.newInput().inputType( InputTypes.TEXT_LINE ).label( name ).name( name ).immutable( true );
+        return FORM_BY_NAME.get( name );
     }
 }

@@ -37,7 +37,7 @@ import com.enonic.xp.icon.Thumbnail;
 public final class ContentIconResource
     implements AdminResource
 {
-    private static final ContentImageHelper helper = new ContentImageHelper();
+    private static final ContentImageHelper HELPER = new ContentImageHelper();
 
     private ContentService contentService;
 
@@ -105,8 +105,8 @@ public final class ContentIconResource
             if ( binary != null )
             {
                 ContentImageHelper.ImageFilter
-                    filter = crop ? ContentImageHelper.ImageFilter.ScaleSquareFilter : ContentImageHelper.ImageFilter.ScaleMaxFilter;
-                final BufferedImage thumbnailImage = helper.readImage( binary, size, filter );
+                    filter = crop ? ContentImageHelper.ImageFilter.SCALE_SQUARE_FILTER : ContentImageHelper.ImageFilter.SCALE_MAX_FILTER;
+                final BufferedImage thumbnailImage = HELPER.readImage( binary, size, filter );
                 return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
             }
         }
@@ -122,8 +122,8 @@ public final class ContentIconResource
             if ( binary != null )
             {
                 ContentImageHelper.ImageFilter
-                    filter = crop ? ContentImageHelper.ImageFilter.ScaleSquareFilter : ContentImageHelper.ImageFilter.ScaleMaxFilter;
-                final BufferedImage contentImage = helper.readImage( binary, size, filter );
+                    filter = crop ? ContentImageHelper.ImageFilter.SCALE_SQUARE_FILTER : ContentImageHelper.ImageFilter.SCALE_MAX_FILTER;
+                final BufferedImage contentImage = HELPER.readImage( binary, size, filter );
                 return new ResolvedImage( contentImage, attachment.getMimeType() );
             }
         }

@@ -1,7 +1,6 @@
 package com.enonic.xp.form.inputtype;
 
 
-import java.lang.*;
 import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
@@ -60,7 +59,7 @@ public final class InputTypes
 
     public static final InputType MODULE_CONFIGURATOR = new ModuleConfigurator();
 
-    private static final ImmutableList<InputType> inputTypes = new ImmutableList.Builder<InputType>().
+    private static final ImmutableList<InputType> INPUT_TYPES = new ImmutableList.Builder<InputType>().
         add( COLOR ).
         add( COMBO_BOX ).
         add( DATE ).
@@ -86,16 +85,13 @@ public final class InputTypes
         add( MODULE_CONFIGURATOR ).
         build();
 
-    private static LinkedHashMap<String, InputType> inputTypeByName = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, InputType> INPUT_TYPE_BY_NAME = new LinkedHashMap<>();
 
-    private static LinkedHashMap<String, InputType> inputTypeBySimpleClassName = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, InputType> INPUT_TYPE_BY_SIMPLE_CLASS_NAME = new LinkedHashMap<>();
 
     static
     {
-        for ( InputType inputType : inputTypes )
-        {
-            register( inputType );
-        }
+        INPUT_TYPES.forEach( com.enonic.xp.form.inputtype.InputTypes::register );
 
         registerDefaultInputType( ValueTypes.LOCAL_DATE, DATE );
         registerDefaultInputType( ValueTypes.LOCAL_TIME, TIME );
@@ -108,24 +104,24 @@ public final class InputTypes
 
     private static void register( InputType inputType )
     {
-        Object previous = inputTypeByName.put( inputType.getName(), inputType );
+        Object previous = INPUT_TYPE_BY_NAME.put( inputType.getName(), inputType );
         Preconditions.checkState( previous == null, "InputType already registered: " + inputType.getName() );
     }
 
     private static void registerDefaultInputType( ValueType valueType, InputType inputType )
     {
-        Object previousDataType = inputTypeBySimpleClassName.put( valueType.getClass().getSimpleName(), inputType );
+        Object previousDataType = INPUT_TYPE_BY_SIMPLE_CLASS_NAME.put( valueType.getClass().getSimpleName(), inputType );
         Preconditions.checkState( previousDataType == null, "Default InputType already registered for ValueType: " + valueType );
     }
 
     public static int size()
     {
-        return inputTypeByName.size();
+        return INPUT_TYPE_BY_NAME.size();
     }
 
     public static InputType parse( final String simpleClassName )
     {
-        for ( InputType inputType : inputTypeByName.values() )
+        for ( InputType inputType : INPUT_TYPE_BY_NAME.values() )
         {
             if ( inputType.getClass().getSimpleName().equals( simpleClassName ) )
             {
@@ -138,6 +134,6 @@ public final class InputTypes
 
     public static ImmutableList<InputType> list()
     {
-        return inputTypes;
+        return INPUT_TYPES;
     }
 }

@@ -40,7 +40,7 @@ public final class RelationshipTypeResource
 {
     private static final String DEFAULT_MIME_TYPE = "image/png";
 
-    private static final SchemaImageHelper helper = new SchemaImageHelper();
+    private static final SchemaImageHelper HELPER = new SchemaImageHelper();
 
     private RelationshipTypeService relationshipTypeService;
 
@@ -100,13 +100,13 @@ public final class RelationshipTypeResource
         final Response.ResponseBuilder responseBuilder;
         if ( icon == null )
         {
-            final BufferedImage defaultRelationshipTypeImage = helper.getDefaultRelationshipTypeImage( size );
+            final BufferedImage defaultRelationshipTypeImage = HELPER.getDefaultRelationshipTypeImage( size );
             responseBuilder = Response.ok( defaultRelationshipTypeImage, DEFAULT_MIME_TYPE );
             applyMaxAge( Integer.MAX_VALUE, responseBuilder );
         }
         else
         {
-            final BufferedImage image = helper.resizeImage( icon.asInputStream(), size );
+            final BufferedImage image = HELPER.resizeImage( icon.asInputStream(), size );
             responseBuilder = Response.ok( image, icon.getMimeType() );
             if ( StringUtils.isNotEmpty( hash ) )
             {

@@ -2,7 +2,8 @@ package com.enonic.xp.core.impl.export.builder;
 
 import com.google.common.base.Strings;
 
-import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.impl.export.ProcessNodeSettings;
+import com.enonic.xp.core.impl.export.xml.XmlNode;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
@@ -10,12 +11,6 @@ import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.acl.AccessControlEntry;
-import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.core.impl.export.ProcessNodeSettings;
-import com.enonic.xp.core.impl.export.xml.XmlNode;
 
 public class CreateNodeParamsFactory
 {
@@ -51,8 +46,6 @@ public class CreateNodeParamsFactory
         final String nodeName = this.nodeImportPath.getLastElement().toString();
         final NodePath parentPath = this.nodeImportPath.getParentPath();
 
-        final AccessControlList permissions = resolvePermissions();
-
         final ChildOrder childOrder = getChildOrder( xmlNode );
 
         final CreateNodeParams.Builder builder = CreateNodeParams.create().
@@ -63,8 +56,7 @@ public class CreateNodeParamsFactory
             data( PropertyTreeXmlBuilder.build( xmlNode.getData() ) ).
             indexConfigDocument( IndexConfigDocumentXmlBuilder.build( xmlNode.getIndexConfigs() ) ).
             dryRun( this.dryRun ).
-            //permissions( permissions ).
-                inheritPermissions( true ).
+            inheritPermissions( true ).
             setBinaryAttachments( binaryAttachments );
 
         if ( importNodeIds && !Strings.isNullOrEmpty( xmlNode.getId() ) )
@@ -75,23 +67,6 @@ public class CreateNodeParamsFactory
         setInsertManualSettings( builder );
 
         return builder.build();
-    }
-
-    private AccessControlList resolvePermissions()
-    {
-        final AccessControlList.Builder aclBuilder = AccessControlList.create();
-
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-
-        for ( final PrincipalKey principal : authInfo.getPrincipals() )
-        {
-            aclBuilder.add( AccessControlEntry.create().
-                principal( principal ).
-                allowAll().
-                build() );
-        }
-
-        return aclBuilder.build();
     }
 
     private void setInsertManualSettings( final CreateNodeParams.Builder builder )

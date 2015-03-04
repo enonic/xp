@@ -79,8 +79,8 @@ import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 
-import static com.enonic.xp.security.SystemConstants.CONTEXT_SECURITY;
 import static com.enonic.xp.core.impl.security.PrincipalKeyNodeTranslator.toNodeId;
+import static com.enonic.xp.security.SystemConstants.CONTEXT_SECURITY;
 
 @Component(immediate = true)
 public final class SecurityServiceImpl
@@ -90,7 +90,7 @@ public final class SecurityServiceImpl
 
     private NodeService nodeService;
 
-    private Clock clock;
+    private final Clock clock;
 
     public SecurityServiceImpl()
     {
@@ -197,15 +197,11 @@ public final class SecurityServiceImpl
         do
         {
             final Set<PrincipalKey> newMemberships = Sets.newHashSet();
-            for ( PrincipalKey principal : resolvedMemberships )
-            {
-                if ( !queriedMemberships.contains( principal ) )
-                {
-                    final PrincipalKeys indirectMemberships = queryDirectMemberships( principal );
-                    newMemberships.addAll( indirectMemberships.getSet() );
-                    queriedMemberships.add( principal );
-                }
-            }
+            resolvedMemberships.stream().filter( principal -> !queriedMemberships.contains( principal ) ).forEach( principal -> {
+                final PrincipalKeys indirectMemberships = queryDirectMemberships( principal );
+                newMemberships.addAll( indirectMemberships.getSet() );
+                queriedMemberships.add( principal );
+            } );
             resolvedMemberships.addAll( newMemberships );
         }
         while ( resolvedMemberships.size() > queriedMemberships.size() );
@@ -679,12 +675,13 @@ public final class SecurityServiceImpl
                 data( data ).
                 permissions( userStoreNodePermissions ).
                 build() );
-            final Node usersNode = nodeService.create( CreateNodeParams.create().
+
+            nodeService.create( CreateNodeParams.create().
                 parent( userStoreNode.path() ).
                 name( UserStoreNodeTranslator.USER_FOLDER_NODE_NAME ).
                 permissions( usersNodePermissions ).
                 build() );
-            final Node groupsNode = nodeService.create( CreateNodeParams.create().
+            nodeService.create( CreateNodeParams.create().
                 parent( userStoreNode.path() ).
                 name( UserStoreNodeTranslator.GROUP_FOLDER_NODE_NAME ).
                 permissions( groupsNodePermissions ).
@@ -791,10 +788,5 @@ public final class SecurityServiceImpl
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
-    }
-
-    public void setClock( final Clock clock )
-    {
-        this.clock = clock;
     }
 }

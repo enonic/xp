@@ -21,7 +21,7 @@ public final class FilterExprParserContext
 
     public FilterExprParserContext( String value )
     {
-        this.stringMap = new HashMap<String, String>();
+        this.stringMap = new HashMap<>();
         this.value = replaceStrings( this.stringMap, value );
     }
 
@@ -179,11 +179,11 @@ public final class FilterExprParserContext
 
     private Boolean parseBooleanValue( String str )
     {
-        if ( str.equals( "true" ) )
+        if ( "true".equals( str ) )
         {
             return Boolean.TRUE;
         }
-        else if ( str.equals( "false" ) )
+        else if ( "false".equals( str ) )
         {
             return Boolean.FALSE;
         }

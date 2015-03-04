@@ -35,7 +35,7 @@ public class NodeDaoImpl
 {
     private final NodeJsonSerializer nodeJsonSerializer = NodeJsonSerializer.create( false );
 
-    private final BlobStore nodeBlobStore = new FileBlobStore( NodeConstants.nodeBlobStoreDir );
+    private final BlobStore nodeBlobStore = new FileBlobStore( NodeConstants.NODE_BLOB_STORE_DIR );
 
     private BranchService branchService;
 

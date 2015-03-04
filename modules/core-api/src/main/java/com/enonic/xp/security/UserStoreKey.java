@@ -15,7 +15,7 @@ public final class UserStoreKey
     public UserStoreKey( final String id )
     {
         Preconditions.checkArgument( !StringUtils.isBlank( id ), "UserStoreKey cannot be blank: %s", id );
-        Preconditions.checkArgument( !RESERVED_USER_STORE_ID.equals( id.toLowerCase() ),
+        Preconditions.checkArgument( !RESERVED_USER_STORE_ID.equalsIgnoreCase( id ),
                                      "UserStoreKey id is reserved and cannot be used: %s", id );
         this.id = id;
     }

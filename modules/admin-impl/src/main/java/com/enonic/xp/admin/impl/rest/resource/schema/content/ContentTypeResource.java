@@ -40,7 +40,7 @@ import com.enonic.xp.security.RoleKeys;
 public final class ContentTypeResource
     implements AdminResource
 {
-    private static final SchemaImageHelper helper = new SchemaImageHelper();
+    private static final SchemaImageHelper HELPER = new SchemaImageHelper();
 
     private ContentTypeService contentTypeService;
 
@@ -106,7 +106,7 @@ public final class ContentTypeResource
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
 
-        final BufferedImage image = helper.resizeImage( icon.asInputStream(), size );
+        final BufferedImage image = HELPER.resizeImage( icon.asInputStream(), size );
         final Response.ResponseBuilder responseBuilder = Response.ok( image, icon.getMimeType() );
 
         if ( StringUtils.isNotEmpty( hash ) )

@@ -18,13 +18,13 @@ public enum ModuleEventType
     UNRESOLVED( BundleEvent.UNRESOLVED ),
     UNINSTALLED( BundleEvent.UNINSTALLED );
 
-    private static final Map<Integer, ModuleEventType> lookupTable = new HashMap<>();
+    private static final Map<Integer, ModuleEventType> LOOKUP_TABLE = new HashMap<>();
 
     static
     {
-        for ( ModuleEventType moduleEventType : ModuleEventType.values() )
+        for ( final ModuleEventType moduleEventType : ModuleEventType.values() )
         {
-            lookupTable.put( moduleEventType.bundleEventId, moduleEventType );
+            LOOKUP_TABLE.put( moduleEventType.bundleEventId, moduleEventType );
         }
     }
 
@@ -37,6 +37,6 @@ public enum ModuleEventType
 
     public static ModuleEventType fromBundleEvent( final BundleEvent bundle )
     {
-        return lookupTable.get( bundle.getType() );
+        return LOOKUP_TABLE.get( bundle.getType() );
     }
 }

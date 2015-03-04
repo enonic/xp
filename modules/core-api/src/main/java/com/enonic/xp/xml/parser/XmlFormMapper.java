@@ -57,22 +57,22 @@ final class XmlFormMapper
     private FormItem buildItem( final DomElement root )
     {
         final String tagName = root.getTagName();
-        if ( tagName.equals( "input" ) )
+        if ( "input".equals( tagName ) )
         {
             return buildInputItem( root );
         }
 
-        if ( tagName.equals( "field-set" ) )
+        if ( "field-set".equals( tagName ) )
         {
             return buildFieldSetItem( root );
         }
 
-        if ( tagName.equals( "inline" ) )
+        if ( "inline".equals( tagName ) )
         {
             return buildInlineItem( root );
         }
 
-        if ( tagName.equals( "form-item-set" ) )
+        if ( "form-item-set".equals( tagName ) )
         {
             return buildFormItemSetItem( root );
         }

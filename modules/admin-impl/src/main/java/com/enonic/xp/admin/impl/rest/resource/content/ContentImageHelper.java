@@ -17,8 +17,8 @@ final class ContentImageHelper
 {
     public enum ImageFilter
     {
-        ScaleSquareFilter,
-        ScaleMaxFilter
+        SCALE_SQUARE_FILTER,
+        SCALE_MAX_FILTER
     }
 
     BufferedImage readImage( final ByteSource blob, final int size, final ImageFilter imageFilter )
@@ -40,10 +40,10 @@ final class ContentImageHelper
         {
             switch ( imageFilter )
             {
-                case ScaleSquareFilter:
+                case SCALE_SQUARE_FILTER:
                     return new ScaleSquareFilter( size ).filter( image );
 
-                case ScaleMaxFilter:
+                case SCALE_MAX_FILTER:
                     return new ScaleMaxFilter( size ).filter( image );
 
                 default:

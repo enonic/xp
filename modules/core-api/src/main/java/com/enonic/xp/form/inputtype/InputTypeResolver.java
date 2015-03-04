@@ -3,13 +3,13 @@ package com.enonic.xp.form.inputtype;
 
 public class InputTypeResolver
 {
-    private final static InputTypeResolver instance = new InputTypeResolver();
+    private final static InputTypeResolver INSTANCE = new InputTypeResolver();
 
     private InputTypeExtensions inputTypeExtensions;
 
     public static InputTypeResolver get()
     {
-        return instance;
+        return INSTANCE;
     }
 
     public InputType resolve( final String inputTypeName )

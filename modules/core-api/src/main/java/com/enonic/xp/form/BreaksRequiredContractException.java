@@ -7,7 +7,7 @@ import com.enonic.xp.form.inputtype.InputType;
 public class BreaksRequiredContractException
     extends RuntimeException
 {
-    private Property property;
+    private final Property property;
 
     public BreaksRequiredContractException( final Property property, final InputType inputType )
     {
@@ -18,11 +18,13 @@ public class BreaksRequiredContractException
     public BreaksRequiredContractException( final Input missingInput )
     {
         super( buildMessage( missingInput ) );
+        this.property = null;
     }
 
     public BreaksRequiredContractException( final FormItemSet missingFormItemSet )
     {
         super( buildMessage( missingFormItemSet ) );
+        this.property = null;
     }
 
     public Property getProperty()

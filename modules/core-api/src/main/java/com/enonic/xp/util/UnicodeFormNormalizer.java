@@ -4,13 +4,13 @@ import java.text.Normalizer;
 
 public class UnicodeFormNormalizer
 {
-    private final static Normalizer.Form form = Normalizer.Form.NFC;
+    private final static Normalizer.Form FORM = Normalizer.Form.NFC;
 
-    public static final String normalize( final String value )
+    public static String normalize( final String value )
     {
-        if ( !Normalizer.isNormalized( value, form ) )
+        if ( !Normalizer.isNormalized( value, FORM ) )
         {
-            return Normalizer.normalize( value, form );
+            return Normalizer.normalize( value, FORM );
         }
         return value;
     }

@@ -30,7 +30,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.RoleKeys;
 
-import static com.enonic.xp.admin.impl.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMaxFilter;
+import static com.enonic.xp.admin.impl.rest.resource.content.ContentImageHelper.ImageFilter.SCALE_MAX_FILTER;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/image")
@@ -40,7 +40,7 @@ import static com.enonic.xp.admin.impl.rest.resource.content.ContentImageHelper.
 public final class ContentImageResource
     implements AdminResource
 {
-    private static final ContentImageHelper helper = new ContentImageHelper();
+    private static final ContentImageHelper HELPER = new ContentImageHelper();
 
     private ContentTypeService contentTypeService;
 
@@ -96,7 +96,7 @@ public final class ContentImageResource
             final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );
             if ( binary != null )
             {
-                final BufferedImage contentImage = helper.readImage( binary, size, ScaleMaxFilter );
+                final BufferedImage contentImage = HELPER.readImage( binary, size, SCALE_MAX_FILTER );
                 return new ResolvedImage( contentImage, attachment.getMimeType() );
             }
         }
@@ -111,7 +111,7 @@ public final class ContentImageResource
             return ResolvedImage.unresolved();
         }
 
-        final BufferedImage contentImage = helper.resizeImage( superContentTypeWithIcon.getIcon().asInputStream(), size );
+        final BufferedImage contentImage = HELPER.resizeImage( superContentTypeWithIcon.getIcon().asInputStream(), size );
         final String mimeType = superContentTypeWithIcon.getIcon().getMimeType();
 
         return new ResolvedImage( contentImage, mimeType );

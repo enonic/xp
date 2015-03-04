@@ -8,9 +8,9 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class NodeConstants
 {
-    public final static String binaryBlobStoreDir = "binary";
+    public final static String BINARY_BLOB_STORE_DIR = "binary";
 
-    public final static String nodeBlobStoreDir = "node";
+    public final static String NODE_BLOB_STORE_DIR = "node";
 
     public static final PrincipalKey NODE_SUPER_USER_KEY = PrincipalKey.ofUser( UserStoreKey.system(), "node-su" );
 

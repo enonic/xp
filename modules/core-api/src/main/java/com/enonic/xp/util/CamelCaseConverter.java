@@ -57,7 +57,7 @@ public class CamelCaseConverter
 
     private boolean startsWithUpperCase( final String s )
     {
-        return s.substring( 0, 1 ).toUpperCase().equals( s );
+        return s.substring( 0, 1 ).equalsIgnoreCase( s );
     }
 
     private String capitalizeFirst( final String s )

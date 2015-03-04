@@ -46,7 +46,7 @@ public final class ValueTypes
 
     public static final ValueType<BinaryReference> BINARY_REFERENCE = new ValueType.BinaryReference();
 
-    private static final Map<String, ValueType> typesByName = new HashMap<>();
+    private static final Map<String, ValueType> TYPES_BY_NAME = new HashMap<>();
 
     static
     {
@@ -69,13 +69,13 @@ public final class ValueTypes
 
     private static void register( ValueType valueType )
     {
-        Object previous = typesByName.put( valueType.getName(), valueType );
+        Object previous = TYPES_BY_NAME.put( valueType.getName(), valueType );
         Preconditions.checkState( previous == null, "ValueType already registered: " + valueType.getName() );
     }
 
     public static ValueType getByName( final String name )
     {
-        return typesByName.get( name );
+        return TYPES_BY_NAME.get( name );
     }
 
 }

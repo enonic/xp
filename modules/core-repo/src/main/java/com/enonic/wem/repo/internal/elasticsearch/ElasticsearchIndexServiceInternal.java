@@ -3,6 +3,7 @@ package com.enonic.wem.repo.internal.elasticsearch;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
@@ -28,17 +29,17 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.index.IndexType;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.wem.repo.internal.elasticsearch.document.DeleteDocument;
 import com.enonic.wem.repo.internal.elasticsearch.document.StoreDocument;
 import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.wem.repo.internal.index.IndexException;
 import com.enonic.wem.repo.internal.index.IndexServiceInternal;
 import com.enonic.wem.repo.internal.repository.IndexNameResolver;
+import com.enonic.xp.index.IndexType;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.repository.RepositoryId;
 
 
 @Component
@@ -52,13 +53,13 @@ public class ElasticsearchIndexServiceInternal
 
     private static final String INDICES_RESPONSE_TIMEOUT = "10s";
 
-    private final static String deleteTimeout = "5s";
+    private final static String DELETE_TIMEOUT = "5s";
 
-    private final static String createTimeout = "5s";
+    private final static String CREATE_TIMEOUT = "5s";
 
-    private final static String applyMappingTimeout = "5s";
+    private final static String APPLY_MAPPING_TIMEOUT = "5s";
 
-    private final static String existsTimeout = "5s";
+    private final static String EXISTS_TIMEOUT = "5s";
 
     private ElasticsearchDao elasticsearchDao;
 
@@ -88,7 +89,7 @@ public class ElasticsearchIndexServiceInternal
         try
         {
             final CreateIndexResponse createIndexResponse =
-                client.admin().indices().create( createIndexRequest ).actionGet( createTimeout );
+                client.admin().indices().create( createIndexRequest ).actionGet( CREATE_TIMEOUT );
 
             LOG.info( "Index {} created with status {}", indexName, createIndexResponse.isAcknowledged() );
         }
@@ -112,7 +113,7 @@ public class ElasticsearchIndexServiceInternal
             this.client.admin().
                 indices().
                 putMapping( mappingRequest ).
-                actionGet( applyMappingTimeout );
+                actionGet( APPLY_MAPPING_TIMEOUT );
 
             LOG.info( "Mapping for index {} applied", indexName );
         }
@@ -140,13 +141,9 @@ public class ElasticsearchIndexServiceInternal
         final Set<String> indexNames = Sets.newHashSet();
 
         // TODO as filter
-        for ( final String indexName : indicesMap.keySet() )
-        {
-            if ( indexName.startsWith( storageName ) || ( indexName.startsWith( searchIndexName ) ) )
-            {
-                indexNames.add( indexName );
-            }
-        }
+        indexNames.addAll( indicesMap.keySet().stream().filter(
+            indexName -> indexName.startsWith( storageName ) || ( indexName.startsWith( searchIndexName ) ) ).collect(
+            Collectors.toList() ) );
 
         return indexNames;
     }
@@ -165,7 +162,7 @@ public class ElasticsearchIndexServiceInternal
     {
         IndicesExistsRequest request = new IndicesExistsRequestBuilder( this.client.admin().indices() ).setIndices( indices ).request();
 
-        final IndicesExistsResponse response = client.admin().indices().exists( request ).actionGet( existsTimeout );
+        final IndicesExistsResponse response = client.admin().indices().exists( request ).actionGet( EXISTS_TIMEOUT );
 
         return response.isExists();
     }
@@ -197,7 +194,7 @@ public class ElasticsearchIndexServiceInternal
 
         try
         {
-            client.admin().indices().delete( req ).actionGet( deleteTimeout );
+            client.admin().indices().delete( req ).actionGet( DELETE_TIMEOUT );
             LOG.info( "Deleted index {}", indexName );
         }
         catch ( ElasticsearchException e )

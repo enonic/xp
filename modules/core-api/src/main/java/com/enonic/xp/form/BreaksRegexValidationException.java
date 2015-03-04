@@ -6,9 +6,9 @@ import com.enonic.xp.data.Property;
 public class BreaksRegexValidationException
     extends Exception
 {
-    private Property property;
+    private final Property property;
 
-    private String regex;
+    private final String regex;
 
     public BreaksRegexValidationException( final Property property, final String regex )
     {

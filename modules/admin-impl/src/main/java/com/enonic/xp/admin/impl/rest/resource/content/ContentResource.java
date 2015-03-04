@@ -145,8 +145,6 @@ public final class ContentResource
 
     private ContentPrincipalsResolver principalsResolver;
 
-    private SecurityService securityService;
-
     @POST
     @Path("create")
     public ContentJson create( final CreateContentJson params )
@@ -672,7 +670,6 @@ public final class ContentResource
     @Reference
     public void setSecurityService( final SecurityService securityService )
     {
-        this.securityService = securityService;
         this.principalsResolver = new ContentPrincipalsResolver( securityService );
     }
 }

@@ -66,7 +66,7 @@ import com.enonic.wem.repo.internal.version.VersionService;
 public class NodeServiceImpl
     implements NodeService
 {
-    private final BlobStore binaryBlobStore = new FileBlobStore( NodeConstants.binaryBlobStoreDir );
+    private final BlobStore binaryBlobStore = new FileBlobStore( NodeConstants.BINARY_BLOB_STORE_DIR );
 
     private IndexServiceInternal indexServiceInternal;
 
