@@ -199,10 +199,47 @@ module api.ui.time {
                         this.notifySelectedDateTimeChanged(new SelectedDateChangedEvent(null));
                     }
                 }
-
                 this.updateInputStyling();
             });
 
+            this.popup.onKeyDown((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isTabKey(event)) {
+                    if(!(document.activeElement == this.input.getEl().getHTMLElement())) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        this.popup.hide();
+                        this.popupTrigger.giveFocus();
+                    }
+                }
+            });
+
+            this.input.onKeyDown((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isTabKey(event)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.popupTrigger.giveFocus();
+                }
+            });
+
+            this.popupTrigger.onKeyDown((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isTabKey(event)) {
+                    this.popup.hide();
+                }
+            });
+
+            api.dom.Body.get().onKeyDown((e: KeyboardEvent) => this.outsideTabListener(e));
+        }
+
+        // as popup blur and focus events behave incorrectly - we manually catch tab navigation event below
+        private outsideTabListener(e: KeyboardEvent) {
+            if (api.ui.KeyHelper.isTabKey(e) && !this.getEl().contains(<HTMLElement> e.target)) {
+                if (this.popup.isVisible()) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.popupTrigger.getEl().focus();
+                    this.popup.hide();
+                }
+            }
         }
 
         private onDateTimePickerShown(event: DateTimePickerShownEvent) {
