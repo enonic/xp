@@ -117,9 +117,17 @@ module app.browse {
 
             this.fetchByKey(moduleKey)
                 .then((data: api.module.Module) => {
-               this.appendNode(data);
+               this.appendNode(data, true);
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
+            });
+        }
+
+        refreshNodeData(parentNode: TreeNode<Module>): wemQ.Promise<TreeNode<Module>> {
+            return this.fetchByKey(parentNode.getData().getModuleKey()).then((curModule: Module) => {
+                parentNode.setData(curModule);
+                this.refreshNode(parentNode);
+                return parentNode;
             });
         }
 

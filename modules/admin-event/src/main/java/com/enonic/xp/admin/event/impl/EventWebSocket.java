@@ -3,10 +3,7 @@ package com.enonic.xp.admin.event.impl;
 import java.io.IOException;
 
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.api.annotations.*;
 
 @WebSocket
 public final class EventWebSocket
@@ -29,6 +26,12 @@ public final class EventWebSocket
 
     @OnWebSocketClose
     public void onClose( final Session session, final int statusCode, final String reason )
+    {
+        this.webSocketManager.unregisterSocket( this );
+    }
+
+    @OnWebSocketError
+    public void onError( final Session session, final Throwable error )
     {
         this.webSocketManager.unregisterSocket( this );
     }

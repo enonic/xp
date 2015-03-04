@@ -9,6 +9,7 @@ module app.browse {
     import StartModuleRequest = api.module.StartModuleRequest;
     import StopModuleRequest = api.module.StopModuleRequest;
     import ModuleUpdatedEvent = api.module.ModuleUpdatedEvent;
+    import ModuleUpdatedEventType = api.module.ModuleUpdatedEventType;
 
     export class ModuleBrowsePanel extends api.app.browse.BrowsePanel<api.module.Module> {
 
@@ -95,11 +96,11 @@ module app.browse {
             });
 
             api.module.ModuleUpdatedEvent.on((event: ModuleUpdatedEvent) => {
-                if (event.getEventType() === 'INSTALLED') {
+                if (ModuleUpdatedEventType.INSTALLED == event.getEventType()) {
                     this.moduleTreeGrid.appendModuleNode(event.getModuleKey());
-                } else if (event.getEventType() === 'UNINSTALLED') {
+                } else if (ModuleUpdatedEventType.UNINSTALLED == event.getEventType()) {
                     this.moduleTreeGrid.deleteModuleNode(event.getModuleKey());
-                } else {
+                } else if (event.isNeedToUpdateModule()){
                     this.moduleTreeGrid.updateModuleNode(event.getModuleKey());
                 }
             });

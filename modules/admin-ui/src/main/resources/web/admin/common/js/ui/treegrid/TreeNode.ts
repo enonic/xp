@@ -177,7 +177,7 @@ module api.ui.treegrid {
             }
             this.children = children;
 
-            if (this.children.length === 0) {
+            if (this.children.length === 0 && !!this.getParent()) {
                 this.expanded = false;
             }
         }
