@@ -4,12 +4,15 @@ module app.browse {
     import FieldOrderExpr = api.content.FieldOrderExpr;
     import FieldOrderExprBuilder = api.content.FieldOrderExprBuilder;
     import ContentSummary = api.content.ContentSummary;
+    import DropdownHandle = api.ui.selector.DropdownHandle;
 
     export class SortContentTabMenu extends api.ui.tab.TabMenu {
 
         private sortOrderChangedListeners: {():void}[] = [];
 
         private navigationItems: SortContentTabMenuItems;
+
+        private dropdownHandle: DropdownHandle;
 
         constructor() {
             super("sort-tab-menu");
@@ -18,6 +21,28 @@ module app.browse {
             this.addNavigationItems(this.navigationItems.getAllItems());
             this.selectNavigationItem(0);
 
+            this.dropdownHandle = new DropdownHandle();
+            this.appendChild(this.dropdownHandle);
+            this.dropdownHandle.up();
+            this.dropdownHandle.onClicked((event: any) => {
+                if (this.isMenuVisible()) {
+                    this.hideMenu();
+                } else {
+                    this.showMenu();
+                }
+            });
+
+        }
+
+        hideMenu() {
+            super.hideMenu();
+            this.dropdownHandle.up();
+
+        }
+
+        showMenu() {
+            super.showMenu();
+            this.dropdownHandle.down();
         }
 
         selectNavigationItem(tabIndex: number) {

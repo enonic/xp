@@ -48,21 +48,21 @@ module app.browse {
                 setMinWidth(130).
                 setFormatter(this.nameFormatter).
                 build();
-            var compareStatusColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
-                setName("CompareStatus").
-                setId("compareStatus").
-                setField("compareContentResult.compareStatus").
-                setFormatter(this.statusFormatter).
-                setCssClass("status").
-                setMinWidth(75).
-                setMaxWidth(75).
+            var modifiedTimeColumn = new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().
+                setName("ModifiedTime").
+                setId("modifiedTime").
+                setField("contentSummary.modifiedTime").
+                setCssClass("modified").
+                setMinWidth(150).
+                setMaxWidth(170).
+                setFormatter(DateTimeFormatter.format).
                 build();
 
             super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().
                     setColumns([
                         dragColumn,
                         nameColumn,
-                        compareStatusColumn
+                        modifiedTimeColumn
                     ]).
                     setPartialLoadEnabled(true).
                     setCheckableRows(false).
