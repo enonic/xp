@@ -213,6 +213,10 @@ module api.content.form.inputtype.image {
 
                 selectedOption.getOptionView().setOption(option);
 
+                // checks newly uploaded image in Selected Options view
+                var optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView();
+                optionView.getCheckbox().setChecked(true);
+
                 this.setContentIdProperty(createdContent.getContentId());
                 this.validate(false);
             });
