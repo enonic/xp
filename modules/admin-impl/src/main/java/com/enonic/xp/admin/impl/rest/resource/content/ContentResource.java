@@ -339,10 +339,10 @@ public final class ContentResource
     @Path("setChildOrder")
     public ContentJson setChildOrder( final SetChildOrderJson params )
     {
-        final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
-            childOrder( params.getChildOrder().getChildOrder() ).
-            contentId( ContentId.from( params.getContentId() ) ).
-            build() );
+        final Content updatedContent = this.contentService.setChildOrder(SetContentChildOrderParams.create().
+                childOrder(params.getChildOrder().getChildOrder()).
+                contentId(ContentId.from(params.getContentId())).
+                build());
 
         return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
     }
@@ -362,7 +362,7 @@ public final class ContentResource
                 build() );
         }
 
-        final ReorderChildContentsResult result = this.contentService.reorderChildren( builder.build() );
+        final ReorderChildContentsResult result = this.contentService.reorderChildren(builder.build());
 
         return new ReorderChildrenResultJson( result );
     }
@@ -372,7 +372,7 @@ public final class ContentResource
                                   @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
 
-        final ContentId id = ContentId.from( idParam );
+        final ContentId id = ContentId.from(idParam);
         final Content content = contentService.getById( id );
 
         if ( content == null )
@@ -398,7 +398,7 @@ public final class ContentResource
     public ContentIdJson getByPath( @QueryParam("path") final String pathParam,
                                     @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
-        final Content content = contentService.getByPath( ContentPath.from( pathParam ) );
+        final Content content = contentService.getByPath(ContentPath.from(pathParam));
 
         if ( content == null )
         {
@@ -416,6 +416,14 @@ public final class ContentResource
         {
             return new ContentJson( content, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
         }
+    }
+
+    @GET
+    @Path("contentPermissions")
+    public RootPermissionsJson getPermissionsByPath( @QueryParam("path") final String pathParam )
+    {
+        final AccessControlList permissions = contentService.getPermissionsByPath( ContentPath.from( pathParam ) );
+        return new RootPermissionsJson( permissions, principalsResolver );
     }
 
     @POST

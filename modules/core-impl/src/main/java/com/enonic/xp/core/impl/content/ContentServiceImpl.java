@@ -338,6 +338,14 @@ public class ContentServiceImpl
     }
 
     @Override
+    public AccessControlList getPermissionsByPath( ContentPath path ) {
+        Content content = getByPath(path);
+        if(content != null && content.getPermissions() != null)
+            return content.getPermissions();
+        return AccessControlList.empty();
+    }
+
+    @Override
     public Contents getByPaths( final ContentPaths paths )
     {
         return GetContentByPathsCommand.create( paths ).
