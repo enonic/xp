@@ -288,6 +288,52 @@ public class FindNodesByQueryCommandTest_func_fulltext
         queryAndAssert( queryString, 1 );
     }
 
+    @Test
+    public void fulltext_wildcard_paths()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        final String path1 = "test.of.string-1.with.path-1";
+        final String value1 = "fisk ost pølse løk";
+        data.setString( path1, value1 );
+
+        createNode( CreateNodeParams.create().
+            name( "node1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( "content_default" ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build() );
+
+        final PropertyTree data2 = new PropertyTree();
+        final String path2 = "test.of.string-2.with.path-2";
+        final String value2 = "fisk ost pølse løk";
+        data2.setString( path2, value2 );
+
+        createNode( CreateNodeParams.create().
+            name( "node2" ).
+            parent( NodePath.ROOT ).
+            data( data2 ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( "content_default" ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build() );
+
+        queryAndAssert( "fulltext('test*', 'leter etter fisk', 'OR')", 2 );
+        queryAndAssert( "fulltext('test.*', 'leter etter fisk', 'OR')", 2 );
+        queryAndAssert( "fulltext('test.of*', 'leter etter fisk', 'OR')", 2 );
+        queryAndAssert( "fulltext('test.of.string*', 'leter etter fisk', 'OR')", 2 );
+        queryAndAssert( "fulltext('test.of.string-1.*', 'leter etter fisk', 'OR')", 1 );
+        queryAndAssert( "fulltext('test.of.string-2.*', 'leter etter fisk', 'OR')", 1 );
+        queryAndAssert( "fulltext('*path*', 'leter etter fisk', 'OR')", 2 );
+        queryAndAssert( "fulltext('*path', 'leter etter fisk', 'OR')", 0 );
+        queryAndAssert( "fulltext('*path-1', 'leter etter fisk', 'OR')", 1 );
+        queryAndAssert( "fulltext('*path-2', 'leter etter fisk', 'OR')", 1 );
+    }
+
     private void createWithTitle( final String id, final String title )
     {
         createWithTitleAndDescription( id, title, null );
