@@ -125,6 +125,7 @@ public class FindNodesByQueryCommandTest_compare
 
 
 
+    @Test
     public void compare_exists()
         throws Exception
     {
