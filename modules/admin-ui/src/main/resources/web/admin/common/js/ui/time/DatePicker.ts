@@ -86,9 +86,7 @@ module api.ui.time {
 
             this.input = api.ui.text.TextInput.middle();
             this.input.onClicked((e: MouseEvent) => {
-                //e.stopPropagation();
                 e.preventDefault();
-
                 this.popup.show();
             });
 
