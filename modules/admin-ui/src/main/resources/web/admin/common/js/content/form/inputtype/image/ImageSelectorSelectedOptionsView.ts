@@ -114,8 +114,9 @@ module api.content.form.inputtype.image {
                 optionView.getCheckbox().giveFocus();
             });
 
-            optionView.getCheckbox().onKeyDown((event: KeyboardEvent) => {
+            optionView.getCheckbox().onKeyPressed((event: KeyboardEvent) => {
                 var checkbox = optionView.getCheckbox();
+
                 switch (event.which) {
                 case 32: // Spacebar
                     var isChecked = !checkbox.isChecked();
@@ -133,14 +134,12 @@ module api.content.form.inputtype.image {
                 case 13: // Enter
                     this.notifyEditSelectedOptions([selectedOption]);
                     break;
-                case 9: // tab
-                    this.hideImageSelectorDialog();
-                    break;
                 }
                 event.stopPropagation();
             });
 
             optionView.getCheckbox().onFocus((event: FocusEvent) => this.showImageSelectorDialog(selectedOption));
+            //optionView.getCheckbox().onBlur((event: FocusEvent) => this.hideImageSelectorDialog());
 
             optionView.onChecked((view: ImageSelectorSelectedOptionView, checked: boolean) => {
                 if (checked) {
