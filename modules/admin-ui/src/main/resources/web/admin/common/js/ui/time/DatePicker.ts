@@ -86,9 +86,7 @@ module api.ui.time {
 
             this.input = api.ui.text.TextInput.middle();
             this.input.onClicked((e: MouseEvent) => {
-                e.stopPropagation();
                 e.preventDefault();
-
                 this.popup.show();
             });
 
@@ -104,7 +102,7 @@ module api.ui.time {
 
             var popupBuilder = new DatePickerPopupBuilder().
                 setCalendar(this.calendar).
-                setCloseOnOutsideClick(builder.closeOnOutsideClick);
+                setCloseOnOutsideClick(false);
             this.popup = popupBuilder.build();
             this.popup.onShown(() => {
                 new DatePickerShownEvent(this).fire();
@@ -118,7 +116,6 @@ module api.ui.time {
             this.appendChild(wrapper);
 
             this.popupTrigger.onClicked((e: MouseEvent) => {
-                e.stopPropagation();
                 e.preventDefault();
 
                 if (this.popup.isVisible()) {
@@ -186,10 +183,14 @@ module api.ui.time {
             });
 
             this.input.onKeyDown((event: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isTabKey(event)) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    this.popupTrigger.giveFocus();
+                if (api.ui.KeyHelper.isTabKey(event)) { // handles tab navigation events on date input
+                    if(!event.shiftKey) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        this.popupTrigger.giveFocus();
+                    } else {
+                        this.popup.hide();
+                    }
                 }
             });
 
@@ -199,11 +200,14 @@ module api.ui.time {
                 }
             });
 
-            api.dom.Body.get().onKeyDown((e: KeyboardEvent) => this.outsideTabListener(e));
+            api.dom.Body.get().onKeyDown((e: KeyboardEvent) => this.popupTabListener(e));
+            if (builder.closeOnOutsideClick){
+                api.dom.Body.get().onClicked((e: MouseEvent) => this.outsideClickListener(e));
+            }
         }
 
-        // as popup blur and focus events behave incorrectly - we manually catch tab navigation event below
-        private outsideTabListener(e: KeyboardEvent) {
+        // as popup blur and focus events behave incorrectly - we manually catch tab navigation event in popup below
+        private popupTabListener(e: KeyboardEvent) {
             if (api.ui.KeyHelper.isTabKey(e) && !this.getEl().contains(<HTMLElement> e.target)) {
                 if (this.popup.isVisible()) {
                     e.stopPropagation();
@@ -211,6 +215,12 @@ module api.ui.time {
                     this.popupTrigger.getEl().focus();
                     this.popup.hide();
                 }
+            }
+        }
+
+        private outsideClickListener(e: MouseEvent) {
+            if (!this.getEl().contains(<HTMLElement> e.target)) {
+                this.popup.hide();
             }
         }
 
