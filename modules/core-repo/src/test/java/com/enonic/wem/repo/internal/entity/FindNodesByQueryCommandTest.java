@@ -13,6 +13,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -99,7 +100,15 @@ public class FindNodesByQueryCommandTest
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( CompareExpr.eq( FieldExpr.from( "MYProperty" ), ValueExpr.number( 10l ) ) ) ).
-            addPostFilter( RangeFilter.create().fieldName( "MYProperty" ).from( Value.newLong( 0l ) ).to( Value.newLong( 15l ) ).build() ).
+            addPostFilter( RangeFilter.create().
+                fieldName( "MYProperty" ).
+                from( Value.newLong( 0l ) ).to( Value.newLong( 15l ) ).
+                build() ).
+            addAggregationQuery( TermsAggregationQuery.create( "categories" ).
+                fieldName( "myCategory" ).
+                orderDirection( TermsAggregationQuery.Direction.ASC ).
+                orderType( TermsAggregationQuery.Type.DOC_COUNT ).
+                build() ).
             build();
 
         final FindNodesByQueryResult result = doFindByQuery( query );

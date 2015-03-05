@@ -124,4 +124,69 @@ public class FindNodesByQueryCommandTest_compare
     }
 
 
+    @Test
+    public void compare_exists()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "myProperty", "myValue" );
+
+        final Node node1 = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            name( "my-node-2" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            name( "child-node" ).
+            parent( node1.path() ).
+            build() );
+
+        final FindNodesByQueryResult result = doQuery( "myProperty LIKE '*'" );
+
+        assertEquals( 1, result.getHits() );
+
+    }
+
+
+    @Test
+    public void compare_exists_2()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "myCategory", "article" );
+
+        final Node node1 = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            build() );
+
+        final PropertyTree data2 = new PropertyTree();
+        data2.addString( "myCategory", "document" );
+
+        createNode( CreateNodeParams.create().
+            name( "my-node-2" ).
+            parent( NodePath.ROOT ).
+            data( data2 ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            name( "child-node" ).
+            parent( node1.path() ).
+            build() );
+
+        printContentRepoIndex();
+
+        final FindNodesByQueryResult result = doQuery( "myCategory LIKE '*' AND NOT myCategory = 'article'" );
+        assertEquals( 1, result.getHits() );
+    }
+
+
 }
