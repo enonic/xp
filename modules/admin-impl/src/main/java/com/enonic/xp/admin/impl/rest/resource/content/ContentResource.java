@@ -339,10 +339,10 @@ public final class ContentResource
     @Path("setChildOrder")
     public ContentJson setChildOrder( final SetChildOrderJson params )
     {
-        final Content updatedContent = this.contentService.setChildOrder(SetContentChildOrderParams.create().
-                childOrder(params.getChildOrder().getChildOrder()).
-                contentId(ContentId.from(params.getContentId())).
-                build());
+        final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
+            childOrder( params.getChildOrder().getChildOrder() ).
+            contentId( ContentId.from( params.getContentId() ) ).
+            build() );
 
         return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
     }
