@@ -25,6 +25,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.content.ThumbnailParams;
 import com.enonic.xp.content.attachment.Attachment;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.icon.Thumbnail;
@@ -44,7 +45,7 @@ public final class ContentIconResource
     @GET
     @Path("{contentId}")
     public Response getContentIcon( @PathParam("contentId") final String contentIdAsString,
-                                    @QueryParam("size") @DefaultValue("128") final int size,
+                                    @QueryParam("size") @DefaultValue(ThumbnailParams.DEFAULT_ICON_SIZE) final int size,
                                     @QueryParam("crop") @DefaultValue("true") final boolean crop, @QueryParam("ts") final String timestamp )
         throws Exception
     {
@@ -61,7 +62,14 @@ public final class ContentIconResource
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
 
-        ResolvedImage resolvedImage = resolveResponseFromThumbnail( content, size, crop );
+
+        ResolvedImage resolvedImage = ResolvedImage.unresolved();
+
+        if(size == Integer.valueOf( ThumbnailParams.DEFAULT_ICON_SIZE ))
+        {
+            resolvedImage = resolveResponseFromThumbnail( content );
+        }
+
         if ( resolvedImage.isOK() )
         {
             final boolean cacheForever = StringUtils.isNotEmpty( timestamp );
@@ -95,7 +103,7 @@ public final class ContentIconResource
         throw new WebApplicationException( Response.Status.NOT_FOUND );
     }
 
-    private ResolvedImage resolveResponseFromThumbnail( final Content content, final int size, final boolean crop )
+    private ResolvedImage resolveResponseFromThumbnail( final Content content )
     {
         final Thumbnail contentThumbnail = content.getThumbnail();
 
@@ -104,9 +112,7 @@ public final class ContentIconResource
             final ByteSource binary = contentService.getBinary( content.getId(), contentThumbnail.getBinaryReference() );
             if ( binary != null )
             {
-                ContentImageHelper.ImageFilter
-                    filter = crop ? ContentImageHelper.ImageFilter.SCALE_SQUARE_FILTER : ContentImageHelper.ImageFilter.SCALE_MAX_FILTER;
-                final BufferedImage thumbnailImage = HELPER.readImage( binary, size, filter );
+                final BufferedImage thumbnailImage = HELPER.readImage( binary );
                 return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
             }
         }
@@ -115,7 +121,7 @@ public final class ContentIconResource
 
     private ResolvedImage resolveResponseFromImageAttachment( final Media media, final int size, final boolean crop )
     {
-        final Attachment attachment = media.getMediaAttachment();
+        final Attachment attachment = media.getMediaAttachment(size);
         if ( attachment != null )
         {
             final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );

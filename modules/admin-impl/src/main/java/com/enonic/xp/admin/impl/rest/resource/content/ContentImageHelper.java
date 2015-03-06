@@ -33,6 +33,18 @@ final class ContentImageHelper
         }
     }
 
+    BufferedImage readImage( final ByteSource blob )
+    {
+        try (final InputStream inputStream = blob.openStream())
+        {
+            return ImageHelper.toBufferedImage( inputStream );
+        }
+        catch ( IOException e )
+        {
+            throw Exceptions.unchecked( e );
+        }
+    }
+
     private BufferedImage readImage( final InputStream inputStream, final int size, final ImageFilter imageFilter )
     {
         final BufferedImage image = ImageHelper.toBufferedImage( inputStream );
