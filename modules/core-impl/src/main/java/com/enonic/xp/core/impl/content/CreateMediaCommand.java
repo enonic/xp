@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
+import com.enonic.xp.content.ThumbnailParams;
 import com.enonic.xp.content.attachment.CreateAttachment;
 import com.enonic.xp.content.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
@@ -67,6 +68,7 @@ final class CreateMediaCommand
             displayName( params.getName() ).
             contentData( data ).
             createAttachments( CreateAttachments.from( mediaAttachment ) ).
+            thumbnailParams( ThumbnailParams.create( resolvedTypeFromMimeType ) ).
             inheritPermissions( true ).
             build();
 

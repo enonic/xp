@@ -17,6 +17,8 @@ public final class UpdateContentParams
 
     private boolean requireValid;
 
+    private ThumbnailParams thumbnailParams;
+
     public UpdateContentParams editor( final ContentEditor editor )
     {
         this.editor = editor;
@@ -44,6 +46,12 @@ public final class UpdateContentParams
     public UpdateContentParams requireValid( final boolean value )
     {
         this.requireValid = value;
+        return this;
+    }
+
+    public UpdateContentParams thumbnailParams( final ThumbnailParams value )
+    {
+        this.thumbnailParams = value;
         return this;
     }
 
@@ -78,4 +86,6 @@ public final class UpdateContentParams
     {
         return requireValid;
     }
+
+    public ThumbnailParams getThumbnailParams() { return thumbnailParams; }
 }

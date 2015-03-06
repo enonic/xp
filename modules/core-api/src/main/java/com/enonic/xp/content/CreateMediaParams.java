@@ -14,6 +14,8 @@ public class CreateMediaParams
 
     private ByteSource byteSource;
 
+    private ThumbnailParams thumbnailParams;
+
     public CreateMediaParams parent( final ContentPath value )
     {
         this.parent = value;
@@ -35,6 +37,12 @@ public class CreateMediaParams
     public CreateMediaParams byteSource( final ByteSource value )
     {
         this.byteSource = value;
+        return this;
+    }
+
+    public CreateMediaParams thumbnailParams( final ThumbnailParams value )
+    {
+        this.thumbnailParams = value;
         return this;
     }
 
@@ -65,4 +73,6 @@ public class CreateMediaParams
     {
         return byteSource;
     }
+
+    public ThumbnailParams getThumbnailParams() { return thumbnailParams; }
 }

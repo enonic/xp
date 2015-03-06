@@ -39,6 +39,8 @@ public final class CreateContentParams
 
     private final Locale language;
 
+    private final ThumbnailParams thumbnailParams;
+
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
@@ -54,6 +56,7 @@ public final class CreateContentParams
         this.createAttachments = builder.createAttachments;
         this.childOrder = builder.childOrder;
         this.language = builder.language;
+        this.thumbnailParams = builder.thumbnailParams;
     }
 
     public static Builder create()
@@ -131,6 +134,8 @@ public final class CreateContentParams
         return language;
     }
 
+    public ThumbnailParams getThumbnailParams() { return thumbnailParams; }
+
     public static final class Builder
     {
         private PropertyTree data;
@@ -159,6 +164,8 @@ public final class CreateContentParams
 
         private Locale language;
 
+        private ThumbnailParams thumbnailParams;
+
         private Builder()
         {
         }
@@ -178,6 +185,7 @@ public final class CreateContentParams
             this.createAttachments = source.createAttachments;
             this.childOrder = source.childOrder;
             this.language = source.language;
+            this.thumbnailParams = source.thumbnailParams;
         }
 
         public Builder contentData( final PropertyTree data )
@@ -262,6 +270,12 @@ public final class CreateContentParams
         public Builder language( final Locale language )
         {
             this.language = language;
+            return this;
+        }
+
+        public Builder thumbnailParams( final ThumbnailParams thumbnailParams )
+        {
+            this.thumbnailParams = thumbnailParams;
             return this;
         }
 

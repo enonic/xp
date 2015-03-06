@@ -42,7 +42,7 @@ class ProxyContentProcessor
     ProcessUpdateResult processEdit( final ContentTypeName contentTypeName, final UpdateContentParams updateContentParams,
                                      final CreateAttachments createAttachments )
     {
-        if ( contentTypeName.isImageMedia() )
+        if ( contentTypeName.isImageMedia() || updateContentParams.getThumbnailParams() != null )
         {
             return imageHandler.processUpdate( updateContentParams, createAttachments );
         }

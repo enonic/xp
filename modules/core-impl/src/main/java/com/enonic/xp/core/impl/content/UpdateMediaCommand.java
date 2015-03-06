@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ThumbnailParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.attachment.CreateAttachment;
@@ -69,6 +70,7 @@ final class UpdateMediaCommand
         final UpdateContentParams updateParams = new UpdateContentParams().
             contentId( params.getContent() ).
             createAttachments( CreateAttachments.from( mediaAttachment ) ).
+            thumbnailParams( ThumbnailParams.create( type ) ).
             editor( editable -> editable.data = data );
 
         return UpdateContentCommand.create( this ).
