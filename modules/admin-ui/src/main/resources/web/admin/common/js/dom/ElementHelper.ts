@@ -77,7 +77,7 @@ module api.dom {
         }
 
         setInnerHtml(value: string): ElementHelper {
-            wemjq(this.el).html(value);
+            wemjq(this.el).html(api.util.StringHelper.escapeHtml(value));
             return this;
         }
 
