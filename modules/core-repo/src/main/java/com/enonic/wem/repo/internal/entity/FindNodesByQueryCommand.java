@@ -7,16 +7,20 @@ import com.enonic.wem.repo.internal.index.query.NodeQueryResult;
 import com.enonic.wem.repo.internal.index.query.NodeQueryResultEntry;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeQuery;
 
 public class FindNodesByQueryCommand
     extends AbstractNodeCommand
 {
+    private final boolean resolveHasChild;
+
     private final NodeQuery query;
 
     private FindNodesByQueryCommand( Builder builder )
     {
         super( builder );
+        resolveHasChild = builder.resolveHasChild;
         query = builder.query;
     }
 
@@ -34,9 +38,12 @@ public class FindNodesByQueryCommand
             totalHits( nodeQueryResult.getTotalHits() ).
             aggregations( nodeQueryResult.getAggregations() );
 
+        final NodeHasChildResolver resolver = NodeHasChildResolver.create().queryService( this.queryService ).build();
+
         for ( final NodeQueryResultEntry resultEntry : nodeQueryResult.getEntries() )
         {
-            resultBuilder.addNode( doGetById( resultEntry.getId(), false ) );
+            Node node = doGetById( resultEntry.getId(), false );
+            resultBuilder.addNode( this.resolveHasChild ? resolver.resolve( node ) : node );
         }
 
         return resultBuilder.build();
@@ -45,6 +52,8 @@ public class FindNodesByQueryCommand
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
+        private boolean resolveHasChild = true;
+
         private NodeQuery query;
 
         private Builder()
@@ -55,6 +64,12 @@ public class FindNodesByQueryCommand
         public Builder query( NodeQuery query )
         {
             this.query = query;
+            return this;
+        }
+
+        public Builder resolveHasChild( final boolean resolveHasChild )
+        {
+            this.resolveHasChild = resolveHasChild;
             return this;
         }
 
