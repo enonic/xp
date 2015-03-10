@@ -36,7 +36,7 @@ public class FindNodesByQueryCommand
 
         for ( final NodeQueryResultEntry resultEntry : nodeQueryResult.getEntries() )
         {
-            resultBuilder.addNode( doGetById( resultEntry.getId(), false ) );
+            resultBuilder.addNode( doGetById( resultEntry.getId(), true ) );
         }
 
         return resultBuilder.build();
