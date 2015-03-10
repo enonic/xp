@@ -16,13 +16,6 @@ class ContentQueryNodeQueryTranslator
     {
         final NodeQuery.Builder builder = NodeQuery.create();
 
-        doTranslate( contentQuery, builder );
-
-        return builder.build();
-    }
-
-    private static void doTranslate( final ContentQuery contentQuery, final NodeQuery.Builder builder )
-    {
         final ValueFilter contentCollectionFilter = ValueFilter.create().
             fieldName( NodeIndexPath.NODE_TYPE.getPath() ).
             addValue( Value.newString( ContentConstants.CONTENT_NODE_COLLECTION.getName() ) ).
@@ -36,6 +29,10 @@ class ContentQueryNodeQueryTranslator
             addQueryFilter( contentCollectionFilter );
 
         processContentTypesNames( contentQuery, builder );
+
+        builder.resolveHasChild( true );
+
+        return builder.build();
     }
 
     private static void processContentTypesNames( final ContentQuery contentQuery, final NodeQuery.Builder builder )

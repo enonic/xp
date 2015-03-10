@@ -38,6 +38,8 @@ public class NodeQuery
 
     private final boolean countOnly;
 
+    private final boolean resolveHasChild;
+
     private NodeQuery( final Builder builder )
     {
         this.query = builder.query;
@@ -51,6 +53,7 @@ public class NodeQuery
         this.path = builder.path;
         this.principals = builder.principals;
         this.countOnly = builder.countOnly;
+        resolveHasChild = builder.resolveHasChild;
     }
 
     public NodePath getParent()
@@ -110,6 +113,11 @@ public class NodeQuery
         return countOnly;
     }
 
+    public boolean resolveHasChild()
+    {
+        return resolveHasChild;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -136,6 +144,8 @@ public class NodeQuery
         private int size = 10;
 
         private boolean countOnly = false;
+
+        private boolean resolveHasChild = false;
 
         public Builder parent( final NodePath parent )
         {
@@ -207,6 +217,12 @@ public class NodeQuery
         public Builder addAggregationQuery( final AggregationQuery aggregationQuery )
         {
             this.aggregationQueries.add( aggregationQuery );
+            return this;
+        }
+
+        public Builder resolveHasChild( boolean resolveHasChild )
+        {
+            this.resolveHasChild = resolveHasChild;
             return this;
         }
 

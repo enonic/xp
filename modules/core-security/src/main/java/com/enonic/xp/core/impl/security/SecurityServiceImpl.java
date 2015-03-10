@@ -28,7 +28,6 @@ import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.node.FindNodesByQueryParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -214,18 +213,12 @@ public final class SecurityServiceImpl
     {
         try
         {
-            final FindNodesByQueryResult result =
-                callWithContext( () -> this.nodeService.findByQuery( FindNodesByQueryParams.create().nodeQuery( NodeQuery.create().
-                                                                                                                    addQueryFilter(
-                                                                                                                        ValueFilter.create().
-                                                                                                                            fieldName(
-                                                                                                                                PrincipalPropertyNames.MEMBER_KEY ).
-                                                                                                                            addValue(
-                                                                                                                                Value.newString(
-                                                                                                                                    member.toString() ) ).
-                                                                                                                            build() ).
-                                                                                                                    build() ).
-                    build() ) );
+            final FindNodesByQueryResult result = callWithContext( () -> this.nodeService.findByQuery( NodeQuery.create().
+                addQueryFilter( ValueFilter.create().
+                    fieldName( PrincipalPropertyNames.MEMBER_KEY ).
+                    addValue( Value.newString( member.toString() ) ).
+                    build() ).
+                build() ) );
 
             return PrincipalKeyNodeTranslator.fromNodes( result.getNodes() );
         }
@@ -325,8 +318,7 @@ public final class SecurityServiceImpl
         final CompareExpr userNameExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.LOGIN_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( username ) );
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
-        final FindNodesByQueryResult result = callWithContext( () -> nodeService.findByQuery(
-            FindNodesByQueryParams.create().nodeQuery( NodeQuery.create().query( query ).build() ).build() ) );
+        final FindNodesByQueryResult result = callWithContext( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
 
         if ( result.getNodes().getSize() > 1 )
         {
@@ -343,8 +335,7 @@ public final class SecurityServiceImpl
         final CompareExpr userNameExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.EMAIL_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( email ) );
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( userStoreExpr, userNameExpr ) );
-        final FindNodesByQueryResult result = callWithContext( () -> nodeService.findByQuery(
-            FindNodesByQueryParams.create().nodeQuery( NodeQuery.create().query( query ).build() ).build() ) );
+        final FindNodesByQueryResult result = callWithContext( () -> nodeService.findByQuery( NodeQuery.create().query( query ).build() ) );
 
         if ( result.getNodes().getSize() > 1 )
         {
@@ -645,8 +636,7 @@ public final class SecurityServiceImpl
         try
         {
             final NodeQuery nodeQueryBuilder = PrincipalQueryNodeQueryTranslator.translate( query );
-            final FindNodesByQueryResult result = callWithContext(
-                () -> this.nodeService.findByQuery( FindNodesByQueryParams.create().nodeQuery( nodeQueryBuilder ).build() ) );
+            final FindNodesByQueryResult result = callWithContext( () -> this.nodeService.findByQuery( nodeQueryBuilder ) );
 
             final Principals principals = PrincipalNodeTranslator.fromNodes( result.getNodes() );
             return PrincipalQueryResult.newResult().

@@ -24,7 +24,6 @@ import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.node.FindNodesByQueryParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
@@ -37,6 +36,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionDiffQuery;
@@ -181,11 +181,10 @@ public class NodeServiceImpl
     }
 
     @Override
-    public FindNodesByQueryResult findByQuery( FindNodesByQueryParams params )
+    public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery )
     {
         return FindNodesByQueryCommand.create().
-            query( params.getNodeQuery() ).
-            resolveHasChildren( params.isResolveHasChild() ).
+            query( nodeQuery ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).
