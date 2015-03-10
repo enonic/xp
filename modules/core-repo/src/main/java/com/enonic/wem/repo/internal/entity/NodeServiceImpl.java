@@ -6,6 +6,15 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.wem.repo.internal.blob.BlobStore;
+import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
+import com.enonic.wem.repo.internal.branch.BranchService;
+import com.enonic.wem.repo.internal.entity.dao.NodeDao;
+import com.enonic.wem.repo.internal.index.IndexServiceInternal;
+import com.enonic.wem.repo.internal.index.query.QueryService;
+import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
+import com.enonic.wem.repo.internal.snapshot.SnapshotService;
+import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
@@ -15,6 +24,7 @@ import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.FindNodeVersionsResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.FindNodesByQueryParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
@@ -27,7 +37,6 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionDiffQuery;
@@ -52,15 +61,6 @@ import com.enonic.xp.snapshot.SnapshotParams;
 import com.enonic.xp.snapshot.SnapshotResult;
 import com.enonic.xp.snapshot.SnapshotResults;
 import com.enonic.xp.util.BinaryReference;
-import com.enonic.wem.repo.internal.blob.BlobStore;
-import com.enonic.wem.repo.internal.blob.file.FileBlobStore;
-import com.enonic.wem.repo.internal.branch.BranchService;
-import com.enonic.wem.repo.internal.entity.dao.NodeDao;
-import com.enonic.wem.repo.internal.index.IndexServiceInternal;
-import com.enonic.wem.repo.internal.index.query.QueryService;
-import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
-import com.enonic.wem.repo.internal.snapshot.SnapshotService;
-import com.enonic.wem.repo.internal.version.VersionService;
 
 @Component(immediate = true)
 public class NodeServiceImpl
@@ -181,10 +181,11 @@ public class NodeServiceImpl
     }
 
     @Override
-    public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery )
+    public FindNodesByQueryResult findByQuery( FindNodesByQueryParams params )
     {
         return FindNodesByQueryCommand.create().
-            query( nodeQuery ).
+            query( params.getNodeQuery() ).
+            resolveHasChildren( params.isResolveHasChild() ).
             indexServiceInternal( this.indexServiceInternal ).
             nodeDao( this.nodeDao ).
             queryService( this.queryService ).

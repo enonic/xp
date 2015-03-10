@@ -40,7 +40,7 @@ public interface NodeService
 
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
-    FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
+    FindNodesByQueryResult findByQuery( FindNodesByQueryParams params );
 
     NodeComparison compare( NodeId id, Branch target );
 
