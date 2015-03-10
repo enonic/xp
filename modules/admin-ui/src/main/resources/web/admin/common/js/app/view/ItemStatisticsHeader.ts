@@ -47,7 +47,7 @@ module api.app.view {
 
             if (this.browseItem.getDisplayName()) {
                 this.headerTitleEl.getEl().
-                    setInnerHtml(this.browseItem.getDisplayName()).setAttribute("title", this.browseItem.getDisplayName());
+                    setInnerHtml(this.browseItem.getDisplayName(), true).setAttribute("title", this.browseItem.getDisplayName());
             } else {
                 this.headerTitleEl.getEl().setInnerHtml("").setAttribute("title", "");
             }
@@ -55,12 +55,12 @@ module api.app.view {
             this.headerPathEl.removeChildren();
             if (this.browseItem.getPath()) {
                 var path = new api.dom.SpanEl("parent-path");
-                path.getEl().setInnerHtml(this.browseItem.getPath());
+                path.getEl().setInnerHtml(this.browseItem.getPath(), true);
                 this.headerPathEl.appendChild(path);
             }
             if (this.browseItem.getPath()) {
                 var pathName = new api.dom.SpanEl("path-name");
-                pathName.getEl().setInnerHtml(this.browseItem.getPathName());
+                pathName.getEl().setInnerHtml(this.browseItem.getPathName(), true);
                 this.headerPathEl.appendChild(pathName);
             }
         }

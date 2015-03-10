@@ -21,7 +21,7 @@ module api.app {
         }
 
         setMainName(value: string): NamesView {
-            this.mainNameEl.getEl().setText(value);
+            this.mainNameEl.setHtml(value, true);
             if (this.addTitleAttribute) {
                 this.mainNameEl.getEl().setAttribute("title", value);
             }
@@ -29,7 +29,7 @@ module api.app {
         }
 
         setSubName(value: string, title?: string): NamesView {
-            this.subNameEl.getEl().setText(value);
+            this.subNameEl.setHtml(value, true);
             if (this.addTitleAttribute) {
                 this.subNameEl.getEl().setAttribute("title", title || value);
             }

@@ -76,8 +76,8 @@ module api.dom {
             return this;
         }
 
-        setInnerHtml(value: string): ElementHelper {
-            wemjq(this.el).html(value);
+        setInnerHtml(value: string, escapeHtml: boolean = false): ElementHelper {
+            wemjq(this.el).html(escapeHtml ? api.util.StringHelper.escapeHtml(value): value);
             return this;
         }
 
