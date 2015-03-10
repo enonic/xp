@@ -14,7 +14,9 @@ import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.Metadata;
 import com.enonic.xp.content.Metadatas;
+import com.enonic.xp.content.ThumbnailParams;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.attachment.AttachmentNames;
 import com.enonic.xp.content.attachment.CreateAttachment;
 import com.enonic.xp.content.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
@@ -24,6 +26,8 @@ import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.image.ImageHelper;
+import com.enonic.xp.image.filter.ScaleMaxFilter;
+import com.enonic.xp.image.filter.ScaleSquareFilter;
 import com.enonic.xp.image.filter.ScaleWidthFilter;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
@@ -90,9 +94,35 @@ public final class ImageContentProcessor
         builder.add( sourceAttachment );
         builder.add( scaleImages( sourceImage, sourceAttachment ) );
 
+        if(params.getThumbnailParams() != null)
+        {
+            generateThumbnail( sourceImage, sourceAttachment, params.getThumbnailParams(), builder );
+        }
+
+
         return CreateContentParams.create( params ).
             createAttachments( builder.build() ).metadata( metadatas ).
             build();
+    }
+
+    public void generateThumbnail(final BufferedImage sourceImage, final CreateAttachment sourceAttachment, final ThumbnailParams thumbnailParams, final CreateAttachments.Builder builder) {
+        final BufferedImage thumbnailImage;
+
+        if(thumbnailParams.getCrop())
+            thumbnailImage = new ScaleSquareFilter( thumbnailParams.getSize() ).filter( sourceImage );
+        else
+            thumbnailImage = new ScaleMaxFilter( thumbnailParams.getSize() ).filter( sourceImage );
+
+        final String imageFormat = sourceAttachment.getExtension();
+        final ByteSource scaledImageBytes = ImageHelper.toByteSource( thumbnailImage, imageFormat );
+        final CreateAttachment thumbnailImageAttachment = CreateAttachment.create().
+            mimeType( sourceAttachment.getMimeType() ).
+            name( AttachmentNames.THUMBNAIL ).
+            label( AttachmentNames.THUMBNAIL ).
+            byteSource( scaledImageBytes ).
+            build();
+
+        builder.add( thumbnailImageAttachment );
     }
 
     private CreateAttachments scaleImages( final BufferedImage sourceImage, final CreateAttachment sourceAttachment )
@@ -139,6 +169,10 @@ public final class ImageContentProcessor
             builder.add( sourceAttachment );
             builder.add( scaleImages( sourceImage, sourceAttachment ) );
 
+            if(params.getThumbnailParams() != null)
+            {
+                generateThumbnail( sourceImage, sourceAttachment, params.getThumbnailParams(), builder );
+            }
             processedCreateAttachments = builder.build();
         }
         else

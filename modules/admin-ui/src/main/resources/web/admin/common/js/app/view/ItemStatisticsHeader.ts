@@ -33,7 +33,7 @@ module api.app.view {
             var icon: HTMLImageElement = null;
             if (this.browseItem.getIconUrl()) {
                 var size = this.browseItem.getIconSize() || 64;
-                icon = api.util.loader.ImageLoader.get(this.browseItem.getIconUrl() + "?size=size", size, size);
+                icon = api.util.loader.ImageLoader.get(this.browseItem.getIconUrl(), size, size);
                 this.iconEl = <api.dom.ImgEl> new api.dom.Element(new api.dom.NewElementBuilder().
                     setTagName("img").
                     setHelper(new api.dom.ImgHelper(icon)));

@@ -96,6 +96,7 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.ThumbnailParams;
 import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
@@ -106,6 +107,7 @@ import com.enonic.xp.content.attachment.CreateAttachments;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
@@ -206,15 +208,17 @@ public final class ContentResource
     {
         final DiskFileItem mediaFile = (DiskFileItem) form.get( "file" );
 
-        final CreateAttachment thumbnailAttachment = CreateAttachment.create().
-            name( AttachmentNames.THUMBNAIL ).
+        final CreateAttachment sourceAttachment = CreateAttachment.create().
+            name( form.getAsString( "name" ) ).
             mimeType( mediaFile.getContentType() ).
+            label( "source" ).
             byteSource( getFileItemByteSource( mediaFile ) ).
             build();
 
         final UpdateContentParams params = new UpdateContentParams().
             contentId( ContentId.from( form.getAsString( "id" ) ) ).
-            createAttachments( CreateAttachments.from( thumbnailAttachment ) );
+            createAttachments( CreateAttachments.from( sourceAttachment ) ).
+            thumbnailParams( ThumbnailParams.create( ) );
 
         final Content persistedContent = contentService.update( params );
 
@@ -339,10 +343,10 @@ public final class ContentResource
     @Path("setChildOrder")
     public ContentJson setChildOrder( final SetChildOrderJson params )
     {
-        final Content updatedContent = this.contentService.setChildOrder(SetContentChildOrderParams.create().
-                childOrder(params.getChildOrder().getChildOrder()).
-                contentId(ContentId.from(params.getContentId())).
-                build());
+        final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
+            childOrder( params.getChildOrder().getChildOrder() ).
+            contentId( ContentId.from( params.getContentId() ) ).
+            build());
 
         return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
     }
@@ -362,7 +366,7 @@ public final class ContentResource
                 build() );
         }
 
-        final ReorderChildContentsResult result = this.contentService.reorderChildren(builder.build());
+        final ReorderChildContentsResult result = this.contentService.reorderChildren( builder.build());
 
         return new ReorderChildrenResultJson( result );
     }
@@ -398,7 +402,7 @@ public final class ContentResource
     public ContentIdJson getByPath( @QueryParam("path") final String pathParam,
                                     @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
-        final Content content = contentService.getByPath(ContentPath.from(pathParam));
+        final Content content = contentService.getByPath( ContentPath.from(pathParam));
 
         if ( content == null )
         {
