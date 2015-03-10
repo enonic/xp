@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.node.FindNodesByQueryParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeQuery;
 
@@ -28,7 +29,8 @@ final class FindContentByQueryCommand
     {
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.params.getContentQuery() );
 
-        final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
+        final FindNodesByQueryResult result =
+            nodeService.findByQuery( FindNodesByQueryParams.create().nodeQuery( nodeQuery ).resolveHasChild( true ).build() );
 
         Contents contents = this.translator.fromNodes( result.getNodes() );
 

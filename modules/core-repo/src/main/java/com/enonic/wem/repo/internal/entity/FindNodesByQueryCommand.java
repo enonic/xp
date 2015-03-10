@@ -14,10 +14,13 @@ public class FindNodesByQueryCommand
 {
     private final NodeQuery query;
 
+    private final boolean resolveHasChildren;
+
     private FindNodesByQueryCommand( Builder builder )
     {
         super( builder );
         query = builder.query;
+        resolveHasChildren = builder.resolveHasChildren;
     }
 
     public static Builder create()
@@ -36,7 +39,7 @@ public class FindNodesByQueryCommand
 
         for ( final NodeQueryResultEntry resultEntry : nodeQueryResult.getEntries() )
         {
-            resultBuilder.addNode( doGetById( resultEntry.getId(), false ) );
+            resultBuilder.addNode( doGetById( resultEntry.getId(), resolveHasChildren ) );
         }
 
         return resultBuilder.build();
@@ -47,14 +50,23 @@ public class FindNodesByQueryCommand
     {
         private NodeQuery query;
 
+        private boolean resolveHasChildren;
+
         private Builder()
         {
             super();
+            this.resolveHasChildren = false;
         }
 
         public Builder query( NodeQuery query )
         {
             this.query = query;
+            return this;
+        }
+
+        public Builder resolveHasChildren( boolean resolveHasChildren )
+        {
+            this.resolveHasChildren = resolveHasChildren;
             return this;
         }
 
