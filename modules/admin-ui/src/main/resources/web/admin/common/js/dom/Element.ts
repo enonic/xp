@@ -577,8 +577,8 @@ module api.dom {
             return this.getEl().getInnerHtml();
         }
 
-        setHtml(value: string): Element {
-            this.getEl().setInnerHtml(value);
+        setHtml(value: string, escapeHtml?: boolean): Element {
+            this.getEl().setInnerHtml(value, escapeHtml);
             return this;
         }
 

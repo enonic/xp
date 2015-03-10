@@ -127,6 +127,33 @@ describe("api.util.StringHelperTest", function () {
 
     });
 
+    describe("escapeHtml", function () {
+
+        it("should be empty for null", function () {
+            expect(sh.escapeHtml(null)).toBe("");
+        });
+        it("should be empty for empty", function () {
+            expect(sh.escapeHtml("")).toBe("");
+        });
+        it("should '&amp;' empty for '&'", function () {
+            expect(sh.escapeHtml("&")).toBe("&amp;");
+        });
+        it("should '&lt;' empty for '<'", function () {
+            expect(sh.escapeHtml("<")).toBe("&lt;");
+        });
+        it("should '&gt;' empty for '>'", function () {
+            expect(sh.escapeHtml(">")).toBe("&gt;");
+        });
+        it("should '&quot;' empty for '\"'", function () {
+            expect(sh.escapeHtml("\"")).toBe("&quot;");
+        });
+        it("should '&#x2F;' empty for '\/'", function () {
+            expect(sh.escapeHtml("\/")).toBe("&#x2F;");
+        });
+
+
+    });
+
     describe("removeCarriageChars", function () {
 
         it("should return empty string if invalid arguments are passed", function () {

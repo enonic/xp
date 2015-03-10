@@ -51,7 +51,7 @@ module api.ui.text {
 
         private updateSize() {
             if (this.isRendered()) {
-                this.clone.getEl().setInnerHtml(this.getValue() + " ");
+                this.clone.getEl().setInnerHtml(this.getValue() + " ", true);
                 this.getEl().setHeightPx(this.clone.getEl().getHeightWithBorder());
             }
         }

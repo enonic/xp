@@ -4,6 +4,15 @@ module api.util {
 
         static EMPTY_STRING = "";
 
+        static SAVE_CHAR_CODES = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+    };
+
         static limit(str: string, length: number, ending: string = "\u2026"): string {
             return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.substring(0, length) + ending;
         }
@@ -16,6 +25,12 @@ module api.util {
             return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/(?:^|\s)\S/g, function (ch) {
                 return ch.toUpperCase();
             });
+        }
+
+        static escapeHtml(str: string): string{
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/[&<>"'\/]/g,((char: string) => {
+                return StringHelper.SAVE_CHAR_CODES[char];
+            }));
         }
 
         static isUpperCase(str: string): boolean {

@@ -162,7 +162,7 @@ module app.browse {
         private typeFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
             var wrapper = new api.dom.SpanEl();
             wrapper.getEl().setTitle(value);
-            wrapper.getEl().setInnerHtml(value.toString().split(':')[1]);
+            wrapper.getEl().setInnerHtml(value.toString().split(':')[1], true);
             return wrapper.toString();
         }
 
@@ -182,7 +182,7 @@ module app.browse {
                     } else {
                         icon = new api.dom.DivEl("icon-menu3");
                     }
-                    wrapper.getEl().setInnerHtml(icon.toString());
+                    wrapper.getEl().setInnerHtml(icon.toString(), true);
                 }
             }
             return wrapper.toString();
