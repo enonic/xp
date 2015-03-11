@@ -37,6 +37,7 @@
 ///<reference path='ContentView.ts' />
 
 ///<reference path='PageLockedEvent.ts' />
+///<reference path='PageUnlockedEvent.ts' />
 ///<reference path='PageTextModeStartedEvent.ts' />
 ///<reference path='ImageOpenUploadDialogEvent.ts' />
 ///<reference path='ImageUploadedEvent.ts' />

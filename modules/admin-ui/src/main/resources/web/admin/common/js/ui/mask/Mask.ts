@@ -32,6 +32,11 @@ module api.ui.mask {
             }
         }
 
+        setTransparent(transparent: boolean): Mask {
+            this.toggleClass('transparent', transparent);
+            return this;
+        }
+
         private positionOver(masked: api.dom.Element) {
             var maskedEl = masked.getEl(),
                 maskEl = this.getEl(),
@@ -83,10 +88,6 @@ module api.ui.mask {
                 setLeftPx(maskedOffset.left).
                 setWidth(maskedDimensions.width).
                 setHeight(maskedDimensions.height);
-        }
-
-        getMasked(): api.dom.Element {
-            return this.masked;
         }
 
     }
