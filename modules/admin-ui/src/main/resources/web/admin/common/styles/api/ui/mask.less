@@ -1,8 +1,8 @@
 .mask {
   background-color: black;
-  opacity: 0.5;
   display: none;
   z-index: @z-index-mask;
+  .opacity(0.5);
 
   .mask-splash {
     position: absolute;
@@ -53,6 +53,10 @@
     top: 0;
     left: 0;
     background-color: white;
+  }
+
+  &.transparent {
+    .opacity(0);
   }
 
   &.small {

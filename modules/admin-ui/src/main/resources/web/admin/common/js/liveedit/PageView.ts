@@ -218,6 +218,10 @@ module api.liveedit {
             }
         }
 
+        setLockVisible(visible: boolean) {
+            this.toggleClass('force-locked', visible);
+        }
+
         isLocked() {
             return this.hasClass('locked');
         }
@@ -235,6 +239,8 @@ module api.liveedit {
                 if (!this.pageModel.isPageTemplate() || this.pageModel.getMode() == PageMode.AUTOMATIC) {
                     this.pageModel.initializePageFromDefault(this);
                 }
+
+                new PageUnlockedEvent(this).fire();
             }
         }
 
