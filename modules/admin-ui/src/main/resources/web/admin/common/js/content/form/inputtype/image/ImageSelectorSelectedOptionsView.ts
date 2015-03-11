@@ -135,7 +135,6 @@ module api.content.form.inputtype.image {
                     this.notifyEditSelectedOptions([selectedOption]);
                     break;
                 case 9: // tab
-                    debugger;
                     this.hideImageSelectorDialog();
                     break;
                 }
