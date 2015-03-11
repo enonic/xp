@@ -67,8 +67,20 @@
       color: @admin-font-gray3;
       cursor: pointer;
 
-      &.invalid, .label.unnamed {
-        color: @admin-red;
+      &.invalid .label:before {
+        display: inline-block;
+        content: "!";
+        width: 16px;
+        height: 16px;
+        padding: 2px;
+        margin: -3px 6px 0px -6px;
+        line-height: 16px;
+        border-radius: 10px;
+        background: @admin-red;
+        color: @admin-white;
+        font-size: 14px;
+        z-index: 1;
+        text-align: center;
       }
 
       &.active {
@@ -86,7 +98,6 @@
       .label {
         max-width: 290px;
         margin: 0 30px 0 10px;
-        display: block;
         .ellipsis();
       }
 
