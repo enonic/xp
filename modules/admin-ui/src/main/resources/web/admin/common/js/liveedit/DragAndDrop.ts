@@ -536,7 +536,7 @@ module api.liveedit {
             var helper = DragHelper.get();
             var placeholder = DragPlaceholder.get().setRegionView(enter ? regionView : null);
 
-            if (!enter) {
+            if (!enter || this.pageView.isLocked()) {
                 helper.setDropAllowed(false);
             } else if (this.isDraggingLayoutOverLayout(regionView, this.getItemType())) {
                 helper.setDropAllowed(false);

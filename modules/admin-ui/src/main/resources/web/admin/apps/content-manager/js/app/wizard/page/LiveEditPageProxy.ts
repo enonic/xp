@@ -20,6 +20,7 @@ module app.wizard.page {
     import ComponentViewDragDroppedEvent = api.liveedit.ComponentViewDragDroppedEvent;
     import PageSelectedEvent = api.liveedit.PageSelectedEvent;
     import PageLockedEvent = api.liveedit.PageLockedEvent;
+    import PageUnlockedEvent = api.liveedit.PageUnlockedEvent;
     import PageTextModeStartedEvent = api.liveedit.PageTextModeStartedEvent;
     import RegionSelectedEvent = api.liveedit.RegionSelectedEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
@@ -60,6 +61,8 @@ module app.wizard.page {
         private pageSelectedListeners: {(event: PageSelectedEvent): void;}[] = [];
 
         private pageLockedListeners: {(event: PageLockedEvent): void;}[] = [];
+
+        private pageUnlockedListeners: {(event: PageUnlockedEvent): void;}[] = [];
 
         private pageTextModeStartedListeners: {(event: PageTextModeStartedEvent): void;}[] = [];
 
@@ -140,14 +143,6 @@ module app.wizard.page {
 
         public destroyDraggable(item: JQuery) {
             this.liveEditWindow.api.liveedit.DragAndDrop.get().destroyDraggable(item);
-        }
-
-        public showDragMask() {
-            this.dragMask.show();
-        }
-
-        public hideDragMask() {
-            this.dragMask.hide();
         }
 
         public getDragMask(): api.ui.mask.DragMask {
@@ -267,6 +262,8 @@ module app.wizard.page {
 
             PageLockedEvent.on(this.notifyPageLocked.bind(this), this.liveEditWindow);
 
+            PageUnlockedEvent.on(this.notifyPageUnlocked.bind(this), this.liveEditWindow);
+
             PageTextModeStartedEvent.on(this.notifyPageTextModeStarted.bind(this), this.liveEditWindow);
 
             RegionSelectedEvent.on(this.notifyRegionSelected.bind(this), this.liveEditWindow);
@@ -371,6 +368,18 @@ module app.wizard.page {
 
         private notifyPageLocked(event: PageLockedEvent) {
             this.pageLockedListeners.forEach((listener) => listener(event));
+        }
+
+        onPageUnlocked(listener: (event: PageUnlockedEvent) => void) {
+            this.pageUnlockedListeners.push(listener);
+        }
+
+        unPageUnlocked(listener: (event: PageUnlockedEvent) => void) {
+            this.pageUnlockedListeners = this.pageUnlockedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyPageUnlocked(event: PageUnlockedEvent) {
+            this.pageUnlockedListeners.forEach((listener) => listener(event));
         }
 
         onPageTextModeStarted(listener: (event: PageTextModeStartedEvent) => void) {
