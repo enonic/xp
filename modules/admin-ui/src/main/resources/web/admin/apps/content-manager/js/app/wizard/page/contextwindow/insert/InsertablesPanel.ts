@@ -1,6 +1,8 @@
 module app.wizard.page.contextwindow.insert {
 
     import DragHelper = api.ui.DragHelper;
+    import PageView = api.liveedit.PageView;
+    import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
 
     export interface ComponentTypesPanelConfig {
 
@@ -17,13 +19,15 @@ module app.wizard.page.contextwindow.insert {
 
         private hideContextWindowRequestListeners: {(): void;}[] = [];
 
+        private pageView: PageView;
+
         private overIFrame: boolean = false;
 
         private iFrameDraggable: JQuery;
 
         private contextWindowDraggable: JQuery;
 
-        public static debug = false;
+        public static debug = true;
 
         constructor(config: ComponentTypesPanelConfig) {
             super("insertables-panel");
@@ -38,6 +42,14 @@ module app.wizard.page.contextwindow.insert {
 
             this.appendChild(this.insertablesGrid);
             this.insertablesDataView.setItems(Insertables.ALL, "name");
+
+            this.liveEditPageProxy.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
+                this.pageView = event.getPageView();
+                this.liveEditPageProxy.getDragMask().setTransparent(this.pageView.isLocked());
+            });
+
+            this.liveEditPageProxy.onPageLocked((event) => this.liveEditPageProxy.getDragMask().setTransparent(true));
+            this.liveEditPageProxy.onPageUnlocked((event) => this.liveEditPageProxy.getDragMask().setTransparent(false));
 
             this.liveEditPageProxy.onComponentViewDragStopped(() => {
                 // Drop was performed on live edit page
@@ -85,13 +97,19 @@ module app.wizard.page.contextwindow.insert {
             if (InsertablesPanel.debug) {
                 console.log('InsertablesPanel.handleDragStart', event, ui);
             }
-            this.liveEditPageProxy.showDragMask();
+
+            ui.helper.show();
+
+            this.liveEditPageProxy.getDragMask().show();
+
+            // force the lock mask to be shown
+            this.pageView.setLockVisible(true);
             this.contextWindowDraggable = wemjq(event.target);
         }
 
         private handleDrag(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
             var over = this.isOverIFrame(event);
-            if (this.overIFrame != over) {
+            if (!this.pageView.isLocked() && this.overIFrame != over) {
                 if (over) {
                     this.onEnterIFrame(event, ui);
                 } else {
@@ -105,7 +123,9 @@ module app.wizard.page.contextwindow.insert {
             if (InsertablesPanel.debug) {
                 console.log('InsertablesPanel.handleDragStop', event, ui);
             }
-            this.liveEditPageProxy.hideDragMask();
+            this.liveEditPageProxy.getDragMask().hide();
+            // remove forced lock mask
+            this.pageView.setLockVisible(false);
             this.contextWindowDraggable = null;
 
             if (this.iFrameDraggable) {
@@ -124,7 +144,7 @@ module app.wizard.page.contextwindow.insert {
             if (InsertablesPanel.debug) {
                 console.log('InsertablesPanel.onLeftIFrame');
             }
-            this.liveEditPageProxy.showDragMask();
+            this.liveEditPageProxy.getDragMask().show();
 
             if (this.iFrameDraggable) {
                 var livejq = this.liveEditPageProxy.getJQuery();
@@ -141,7 +161,7 @@ module app.wizard.page.contextwindow.insert {
             if (InsertablesPanel.debug) {
                 console.log('InsertablesPanel.onEnterIFrame');
             }
-            this.liveEditPageProxy.hideDragMask();
+            this.liveEditPageProxy.getDragMask().hide();
             var livejq = this.liveEditPageProxy.getJQuery();
 
             if (!this.iFrameDraggable) {
