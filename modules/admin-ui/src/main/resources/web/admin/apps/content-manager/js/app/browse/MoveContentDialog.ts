@@ -1,6 +1,8 @@
 module app.browse {
 
     import ContentPath = api.content.ContentPath;
+    import ContentType = api.schema.content.ContentType;
+    import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
 
     export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -34,13 +36,17 @@ module app.browse {
             this.appendChildToContentPanel(this.contentMoveMask);
 
             OpenMoveDialogEvent.on((event) => {
+                new GetContentTypeByNameRequest(event.getContent().getType()).sendAndParse().then((contentType: ContentType) => {
+                    this.movedContentSummary = event.getContent();
+                    this.contentComboBox.setFilterContentPath(this.movedContentSummary.getPath());
+                    this.contentComboBox.setFilterSourceContentType(contentType);
 
-                this.movedContentSummary = event.getContent();
-                this.contentComboBox.setFilterContentPath(this.movedContentSummary.getPath());
+                    this.contentPath.setHtml(event.getContent().getPath().toString());
+                    this.open();
 
-                this.contentPath.setHtml(event.getContent().getPath().toString());
-
-                this.open();
+                }).catch((reason)=> {
+                    api.notify.showError(reason.getMessage());
+                }).done();
             });
 
             this.addCancelButtonToBottom();
