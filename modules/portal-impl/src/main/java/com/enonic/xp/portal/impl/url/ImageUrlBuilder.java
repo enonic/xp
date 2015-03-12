@@ -19,8 +19,10 @@ final class ImageUrlBuilder
 
         final ContentId id = resolveId();
         final String name = resolveName( id );
+        final String scale = resolveScale();
 
         appendPart( url, id.toString() );
+        appendPart( url, scale );
         appendPart( url, name );
 
         addParamIfNeeded( params, "quality", this.params.getQuality() );
@@ -59,5 +61,17 @@ final class ImageUrlBuilder
             id( this.params.getId() ).
             path( this.params.getPath() ).
             resolve();
+    }
+
+    private String resolveScale()
+    {
+        if( this.params.getScale() != null) {
+            return this.params.getScale();
+        }
+        else
+        {
+            //throw param not found exception?
+            return null;
+        }
     }
 }

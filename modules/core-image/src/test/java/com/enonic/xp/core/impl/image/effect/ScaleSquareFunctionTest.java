@@ -9,17 +9,19 @@ import java.awt.image.BufferedImage;
 import org.junit.Test;
 
 import com.enonic.xp.image.ImageFilter;
+import com.enonic.xp.image.ImageScaleFunction;
+import com.enonic.xp.image.filter.ScaleSquareFunction;
 
 import static org.junit.Assert.*;
 
-public class ScaleHeightFilterTest
+public class ScaleSquareFunctionTest
     extends BaseImageFilterTest
 {
     @Test
     public void testDownscale()
     {
         BufferedImage scaled = scale( 100 );
-        assertEquals( 133, scaled.getWidth() );
+        assertEquals( 100, scaled.getWidth() );
         assertEquals( 100, scaled.getHeight() );
     }
 
@@ -27,13 +29,13 @@ public class ScaleHeightFilterTest
     public void testUpscale()
     {
         BufferedImage scaled = scale( 600 );
-        assertEquals( 800, scaled.getWidth() );
+        assertEquals( 600, scaled.getWidth() );
         assertEquals( 600, scaled.getHeight() );
     }
 
     private BufferedImage scale( int size )
     {
-        ImageFilter filter = new ScaleHeightFilter( size );
-        return filter.filter( getOpaque() );
+        ImageScaleFunction scaleFunction = new ScaleSquareFunction( size );
+        return scaleFunction.scale( getOpaque() );
     }
 }

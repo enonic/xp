@@ -6,8 +6,6 @@ package com.enonic.xp.core.impl.image.command;
 
 import com.jhlabs.image.BumpFilter;
 
-import com.enonic.xp.image.BuilderContext;
-
 public final class BumpFilterCommand
     extends FilterCommand
 {
@@ -16,7 +14,8 @@ public final class BumpFilterCommand
         super( "bump" );
     }
 
-    protected Object doBuild( BuilderContext context, Object[] args )
+    @Override
+    protected Object doBuild( Object[] args )
     {
         return new BumpFilter();
     }

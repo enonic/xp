@@ -6,8 +6,6 @@ package com.enonic.xp.core.impl.image.command;
 
 import com.jhlabs.image.GaussianFilter;
 
-import com.enonic.xp.image.BuilderContext;
-
 public final class BlurFilterCommand
     extends FilterCommand
 {
@@ -16,7 +14,8 @@ public final class BlurFilterCommand
         super( "blur" );
     }
 
-    protected Object doBuild( BuilderContext context, Object[] args )
+    @Override
+    protected Object doBuild( Object[] args )
     {
         GaussianFilter filter = new GaussianFilter();
         filter.setRadius( getIntArg( args, 0, 2 ) );

@@ -6,10 +6,11 @@ package com.enonic.xp.core.impl.image.effect;
 
 import java.awt.image.BufferedImage;
 
-import com.enonic.xp.image.filter.BaseImageFilter;
+import com.enonic.xp.image.ImageScaleFunction;
+import com.enonic.xp.image.filter.BaseImageProcessor;
 
-public final class ScaleWideFilter
-    extends BaseImageFilter
+public final class ScaleWideFunction
+    extends BaseImageProcessor implements ImageScaleFunction
 {
     private final int width;
 
@@ -17,14 +18,15 @@ public final class ScaleWideFilter
 
     private final float offset;
 
-    public ScaleWideFilter( int width, int height, float offset )
+    public ScaleWideFunction( int width, int height, float offset )
     {
         this.width = width;
         this.height = height;
         this.offset = Math.max( Math.min( offset, 1f ), 0 );
     }
 
-    public BufferedImage filter( BufferedImage source )
+    @Override
+    public BufferedImage scale( BufferedImage source )
     {
         int sourceWidth = source.getWidth();
         int sourceHeight = source.getHeight();

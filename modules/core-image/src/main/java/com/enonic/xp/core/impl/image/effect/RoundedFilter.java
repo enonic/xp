@@ -10,10 +10,11 @@ import java.awt.TexturePaint;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-import com.enonic.xp.image.filter.BaseImageFilter;
+import com.enonic.xp.image.ImageFilter;
+import com.enonic.xp.image.filter.BaseImageProcessor;
 
 public final class RoundedFilter
-    extends BaseImageFilter
+    extends BaseImageProcessor implements ImageFilter
 {
     private final int radius;
 
@@ -28,6 +29,7 @@ public final class RoundedFilter
         this.borderColor = borderColor;
     }
 
+    @Override
     public BufferedImage filter( BufferedImage source )
     {
         BufferedImage dest = createImage( source );

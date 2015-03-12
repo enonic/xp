@@ -4,7 +4,6 @@
  */
 package com.enonic.xp.core.impl.image.command;
 
-import com.enonic.xp.image.BuilderContext;
 import com.enonic.xp.core.impl.image.effect.HSBColorizeFilter;
 
 public final class HSBColorizeFilterCommand
@@ -15,7 +14,8 @@ public final class HSBColorizeFilterCommand
         super( "hsbcolorize" );
     }
 
-    protected Object doBuild( BuilderContext context, Object[] args )
+    @Override
+    protected Object doBuild( Object[] args )
     {
         return new HSBColorizeFilter( getIntArg( args, 0, 0xFFFFFF ) );
     }

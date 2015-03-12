@@ -6,8 +6,6 @@ package com.enonic.xp.core.impl.image.command;
 
 import com.jhlabs.image.RGBAdjustFilter;
 
-import com.enonic.xp.image.BuilderContext;
-
 public final class RGBAdjustFilterCommand
     extends FilterCommand
 {
@@ -16,7 +14,7 @@ public final class RGBAdjustFilterCommand
         super( "rgbadjust" );
     }
 
-    protected Object doBuild( BuilderContext context, Object[] args )
+    protected Object doBuild( Object[] args )
     {
         float r = getFloatArg( args, 0, 0f );
         float g = getFloatArg( args, 1, 0f );

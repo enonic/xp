@@ -9,32 +9,32 @@ import java.awt.image.BufferedImage;
 import org.junit.Test;
 
 import com.enonic.xp.image.ImageFilter;
-import com.enonic.xp.image.filter.ScaleWidthFilter;
+import com.enonic.xp.image.ImageScaleFunction;
 
 import static org.junit.Assert.*;
 
-public class ScaleWidthFilterTest
+public class ScaleHeightFunctionTest
     extends BaseImageFilterTest
 {
     @Test
     public void testDownscale()
     {
         BufferedImage scaled = scale( 100 );
-        assertEquals( 100, scaled.getWidth() );
-        assertEquals( 75, scaled.getHeight() );
+        assertEquals( 133, scaled.getWidth() );
+        assertEquals( 100, scaled.getHeight() );
     }
 
     @Test
     public void testUpscale()
     {
         BufferedImage scaled = scale( 600 );
-        assertEquals( 600, scaled.getWidth() );
-        assertEquals( 450, scaled.getHeight() );
+        assertEquals( 800, scaled.getWidth() );
+        assertEquals( 600, scaled.getHeight() );
     }
 
     private BufferedImage scale( int size )
     {
-        ImageFilter filter = new ScaleWidthFilter( size );
-        return filter.filter( getOpaque() );
+        ImageScaleFunction scaleFunction = new ScaleHeightFunction( size );
+        return scaleFunction.scale( getOpaque() );
     }
 }

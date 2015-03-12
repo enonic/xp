@@ -2,24 +2,25 @@ package com.enonic.xp.image.filter;
 
 import java.awt.image.BufferedImage;
 
-public final class ScaleMaxFilter
-    extends BaseImageFilter
+import com.enonic.xp.image.ImageScaleFunction;
+
+public final class ScaleWidthFunction
+    extends BaseImageProcessor implements ImageScaleFunction
 {
     private final int size;
 
-    public ScaleMaxFilter( int size )
+    public ScaleWidthFunction( int size )
     {
         this.size = size;
     }
 
-    public BufferedImage filter( BufferedImage source )
+    @Override
+    public BufferedImage scale( BufferedImage source )
     {
         int width = source.getWidth();
         int height = source.getHeight();
-        int max = Math.max( width, height );
-
-        float scale = (float) this.size / (float) max;
-        int newWidth = (int) ( (float) width * scale );
+        float scale = (float) this.size / (float) width;
+        int newWidth = this.size;
         int newHeight = (int) ( (float) height * scale );
 
         return getScaledInstance( source, newWidth, newHeight );
