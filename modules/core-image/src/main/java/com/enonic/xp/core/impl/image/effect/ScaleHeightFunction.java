@@ -6,19 +6,21 @@ package com.enonic.xp.core.impl.image.effect;
 
 import java.awt.image.BufferedImage;
 
-import com.enonic.xp.image.filter.BaseImageFilter;
+import com.enonic.xp.image.ImageScaleFunction;
+import com.enonic.xp.image.filter.BaseImageProcessor;
 
-public final class ScaleHeightFilter
-    extends BaseImageFilter
+public final class ScaleHeightFunction
+    extends BaseImageProcessor implements ImageScaleFunction
 {
     private final int size;
 
-    public ScaleHeightFilter( int size )
+    public ScaleHeightFunction( int size )
     {
         this.size = size;
     }
 
-    public BufferedImage filter( BufferedImage source )
+    @Override
+    public BufferedImage scale( BufferedImage source )
     {
         int width = source.getWidth();
         int height = source.getHeight();

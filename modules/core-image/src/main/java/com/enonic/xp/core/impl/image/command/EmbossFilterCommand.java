@@ -6,8 +6,6 @@ package com.enonic.xp.core.impl.image.command;
 
 import com.jhlabs.image.EmbossFilter;
 
-import com.enonic.xp.image.BuilderContext;
-
 public final class EmbossFilterCommand
     extends FilterCommand
 {
@@ -16,7 +14,7 @@ public final class EmbossFilterCommand
         super( "emboss" );
     }
 
-    protected Object doBuild( BuilderContext context, Object[] args )
+    protected Object doBuild( Object[] args )
     {
         return new EmbossFilter();
     }

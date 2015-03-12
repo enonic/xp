@@ -6,8 +6,6 @@ package com.enonic.xp.core.impl.image.command;
 
 import com.jhlabs.image.FlipFilter;
 
-import com.enonic.xp.image.BuilderContext;
-
 public final class Rotate270Command
     extends FilterCommand
 {
@@ -16,7 +14,7 @@ public final class Rotate270Command
         super( "rotate270" );
     }
 
-    protected Object doBuild( BuilderContext context, Object[] args )
+    protected Object doBuild( Object[] args )
     {
         return new FlipFilter( FlipFilter.FLIP_90CCW );
     }

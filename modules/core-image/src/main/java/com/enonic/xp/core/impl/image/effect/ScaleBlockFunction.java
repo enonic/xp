@@ -2,10 +2,11 @@ package com.enonic.xp.core.impl.image.effect;
 
 import java.awt.image.BufferedImage;
 
-import com.enonic.xp.image.filter.BaseImageFilter;
+import com.enonic.xp.image.ImageScaleFunction;
+import com.enonic.xp.image.filter.BaseImageProcessor;
 
-public final class ScaleBlockFilter
-        extends BaseImageFilter
+public final class ScaleBlockFunction
+        extends BaseImageProcessor implements ImageScaleFunction
 {
 
     private final int width;
@@ -16,7 +17,7 @@ public final class ScaleBlockFilter
 
     private final float yOffset;
 
-    public ScaleBlockFilter( int width, int height, float xOffset, float yOffset )
+    public ScaleBlockFunction( int width, int height, float xOffset, float yOffset )
     {
         this.width = width;
         this.height = height;
@@ -24,7 +25,8 @@ public final class ScaleBlockFilter
         this.yOffset = Math.max( Math.min( yOffset, 1f ), 0 );
     }
 
-    public BufferedImage filter( BufferedImage source )
+    @Override
+    public BufferedImage scale( BufferedImage source )
     {
         int sourceWidth = source.getWidth();
         int sourceHeight = source.getHeight();

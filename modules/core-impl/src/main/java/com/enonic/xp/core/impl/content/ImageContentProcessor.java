@@ -24,7 +24,9 @@ import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.image.ImageHelper;
-import com.enonic.xp.image.filter.ScaleWidthFilter;
+import com.enonic.xp.image.filter.ScaleMaxFunction;
+import com.enonic.xp.image.filter.ScaleSquareFunction;
+import com.enonic.xp.image.filter.ScaleWidthFunction;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -103,7 +105,7 @@ public final class ImageContentProcessor
             // scale only if the scale is less than the original
             if ( scale.size < sourceImage.getWidth() )
             {
-                final BufferedImage scaledImage = new ScaleWidthFilter( scale.size ).filter( sourceImage );
+                final BufferedImage scaledImage = new ScaleWidthFunction( scale.size ).scale( sourceImage );
                 final String imageFormat = sourceAttachment.getExtension();
                 final ByteSource scaledImageBytes = ImageHelper.toByteSource( scaledImage, imageFormat );
                 final String name = sourceAttachment.getNameWithoutExtension() + "_" + scale.label + "." + sourceAttachment.getExtension();
