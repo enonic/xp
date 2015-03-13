@@ -3,6 +3,8 @@ package com.enonic.wem.repo.internal.entity;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -11,6 +13,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
 import static org.junit.Assert.*;
@@ -238,6 +241,41 @@ public class DuplicateNodeCommandTest
         final Node dNode1_1 = getNodeByPath( NodePath.newNodePath( node1Duplicate.path(), node1_1.name().toString() ).build() );
 
         assertEquals( node1Duplicate.id(), dNode1_1.data().getReference( "node1-id" ).getNodeId() );
+    }
+
+    @Test
+    public void duplicateNodeWithAttachments()
+        throws Exception
+    {
+        final String nodeName = "my-node";
+
+        final PropertyTree data = new PropertyTree();
+        final BinaryReference binaryRef1 = BinaryReference.from( "image1.jpg" );
+        final BinaryReference binaryRef2 = BinaryReference.from( "image2.jpg" );
+        data.addBinaryReference( "my-image-1", binaryRef1 );
+        data.addBinaryReference( "my-image-2", binaryRef2 );
+
+        final Node createdNode = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( nodeName ).
+            data( data ).
+            attachBinary( binaryRef1, ByteSource.wrap( "this-is-the-binary-data-for-image1".getBytes() ) ).
+            attachBinary( binaryRef2, ByteSource.wrap( "this-is-the-binary-data-for-image2".getBytes() ) ).
+            build() );
+
+        final Node duplicatedNode = DuplicateNodeCommand.create().
+            id( createdNode.id() ).
+            versionService( versionService ).
+            indexServiceInternal( indexServiceInternal ).
+            nodeDao( nodeDao ).
+            queryService( queryService ).
+            branchService( branchService ).
+            binaryBlobStore( binaryBlobStore ).
+            build().
+            execute();
+
+        assertEquals( nodeName + "-" + DuplicateValueResolver.COPY_TOKEN, duplicatedNode.name().toString() );
+        assertEquals( 2, duplicatedNode.getAttachedBinaries().getSize() );
     }
 
     private Node duplicateNode( final Node node1 )

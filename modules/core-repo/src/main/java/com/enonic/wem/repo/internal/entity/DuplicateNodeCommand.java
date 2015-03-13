@@ -2,6 +2,8 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.blob.BlobStore;
+import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -14,10 +16,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.Reference;
-import com.enonic.wem.repo.internal.blob.BlobStore;
-import com.enonic.wem.repo.internal.index.query.QueryService;
 
-public class DuplicateNodeCommand
+public final class DuplicateNodeCommand
     extends AbstractNodeCommand
 {
     private final NodeId nodeId;
@@ -37,11 +37,11 @@ public class DuplicateNodeCommand
 
         final String newNodeName = resolveNewNodeName( existingNode );
 
-        final CreateNodeParams createNodeParams = CreateNodeParams.from( existingNode ).
-            name( newNodeName ).
-            build();
+        final CreateNodeParams.Builder createNodeParams = CreateNodeParams.from( existingNode ).
+            name( newNodeName );
+        attachBinaries( existingNode, createNodeParams );
 
-        final Node duplicatedNode = doCreateNode( createNodeParams, this.binaryBlobStore );
+        final Node duplicatedNode = doCreateNode( createNodeParams.build(), this.binaryBlobStore );
 
         final NodeReferenceUpdatesHolder.Builder builder = NodeReferenceUpdatesHolder.create().
             add( existingNode.id(), duplicatedNode.id() );

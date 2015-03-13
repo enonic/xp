@@ -21,8 +21,6 @@ public class CreateNodeParams
 
     private final PropertyTree data;
 
-    private final boolean ensureUniqueName = false;
-
     private final IndexConfigDocument indexConfigDocument;
 
     private final ChildOrder childOrder;
@@ -73,14 +71,14 @@ public class CreateNodeParams
     public static Builder from( final Node node )
     {
         return new Builder().
-            indexConfigDocument( node.getIndexConfigDocument() ).
-            permissions( node.getPermissions() ).
-            data( node.data() ).
-            childOrder( node.getChildOrder() ).
-            nodeType( node.getNodeType() ).
+            parent( node.parentPath() ).
             name( node.name().toString() ).
+            data( node.data() ).
+            indexConfigDocument( node.getIndexConfigDocument() ).
+            childOrder( node.getChildOrder() ).
+            permissions( node.getPermissions() ).
             inheritPermissions( node.inheritsPermissions() ).
-            parent( node.parentPath() );
+            nodeType( node.getNodeType() );
     }
 
     public String getName()

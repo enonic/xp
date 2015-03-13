@@ -18,8 +18,6 @@ public class Node
 
     private final NodeName name;
 
-    private final NodeId parentId;
-
     private final NodePath parentPath;
 
     private final NodeType nodeType;
@@ -53,7 +51,6 @@ public class Node
 
         this.id = builder.id;
         this.name = builder.name;
-        this.parentId = builder.parentId;
         this.parentPath = builder.parentPath;
         this.nodeType = builder.nodeType;
         this.hasChildren = builder.hasChildren;
@@ -113,11 +110,6 @@ public class Node
     public Instant getTimestamp()
     {
         return timestamp;
-    }
-
-    public NodeId getParentId()
-    {
-        return parentId;
     }
 
     public PropertyTree data()
@@ -201,8 +193,6 @@ public class Node
 
         private NodeName name;
 
-        private NodeId parentId;
-
         private NodePath parentPath;
 
         private Instant timestamp;
@@ -238,7 +228,6 @@ public class Node
             this.id = node.id;
             this.name = node.name;
             this.parentPath = node.parentPath;
-            this.parentId = node.parentId;
             this.nodeType = node.nodeType;
             this.hasChildren = node.hasChildren;
             this.data = node.data;
@@ -273,12 +262,6 @@ public class Node
         public Builder path( final String value )
         {
             this.parentPath = new NodePath( value );
-            return this;
-        }
-
-        public Builder parentId( final NodeId value )
-        {
-            this.parentId = value;
             return this;
         }
 
