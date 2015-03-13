@@ -27,6 +27,7 @@ public class RegionDataSerializer
         return propertyName;
     }
 
+    @Override
     public void toData( final Region region, final PropertySet parent )
     {
         final PropertySet asData = parent.addSet( propertyName );
@@ -35,6 +36,7 @@ public class RegionDataSerializer
         componentsSerializer.toData( region.getComponents(), asData );
     }
 
+    @Override
     public Region fromData( final PropertySet asData )
     {
         final Region.Builder region = newRegion();

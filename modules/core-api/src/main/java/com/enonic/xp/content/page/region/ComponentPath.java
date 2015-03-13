@@ -160,6 +160,7 @@ public final class ComponentPath
             return regionAndComponent.regionName + DIVIDER + regionAndComponent.componentIndex;
         }
 
+        @Override
         public String toString()
         {
             return this.refString;
@@ -180,6 +181,7 @@ public final class ComponentPath
             return new RegionName( str );
         }
 
+        @Override
         public String toString()
         {
             return this.name;
@@ -203,6 +205,7 @@ public final class ComponentPath
             return new ComponentIndex( Integer.valueOf( str ) );
         }
 
+        @Override
         public String toString()
         {
             return this.refString;

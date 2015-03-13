@@ -87,6 +87,7 @@ public final class PropertyArray
         }
     }
 
+    @Override
     public String toString()
     {
         final boolean isPropertySet = valueType.equals( ValueTypes.PROPERTY_SET );

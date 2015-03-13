@@ -64,6 +64,7 @@ public final class DeleteNodeByIdCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

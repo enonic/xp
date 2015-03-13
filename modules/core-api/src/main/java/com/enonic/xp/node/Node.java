@@ -171,6 +171,7 @@ public class Node
         Preconditions.checkNotNull( this.indexConfigDocument, "EntityIndexConfig must be set" );
     }
 
+    @Override
     public String toString()
     {
         return this.path.toString();

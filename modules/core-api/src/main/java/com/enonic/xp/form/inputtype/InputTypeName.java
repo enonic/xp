@@ -67,6 +67,7 @@ public final class InputTypeName
         return Objects.hash( ref );
     }
 
+    @Override
     public String toString()
     {
         return ref;

@@ -16,6 +16,7 @@ public final class BlurFilterCommand
         super( "blur" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         GaussianFilter filter = new GaussianFilter();

@@ -9,8 +9,10 @@ import com.enonic.xp.support.serializer.AbstractDataSetSerializer;
 public abstract class ComponentDataSerializer<TO_DATA_INPUT extends Component, FROM_DATA_OUTPUT extends Component>
     extends AbstractDataSetSerializer<TO_DATA_INPUT, FROM_DATA_OUTPUT>
 {
+    @Override
     public abstract void toData( final TO_DATA_INPUT component, final PropertySet parent );
 
+    @Override
     public abstract FROM_DATA_OUTPUT fromData( final PropertySet asData );
 
     protected void applyComponentToData( final Component component, final PropertySet asData )

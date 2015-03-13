@@ -23,16 +23,19 @@ public final class BlobKey
         this.key = new String( buffer );
     }
 
+    @Override
     public String toString()
     {
         return this.key;
     }
 
+    @Override
     public int hashCode()
     {
         return this.key.hashCode();
     }
 
+    @Override
     public boolean equals( final Object object )
     {
         return ( object instanceof BlobKey ) && this.key.equals( ( (BlobKey) object ).key );

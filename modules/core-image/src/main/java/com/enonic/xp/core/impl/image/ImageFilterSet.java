@@ -28,6 +28,7 @@ public final class ImageFilterSet
         }
     }
 
+    @Override
     public BufferedImage filter( BufferedImage source )
     {
         BufferedImage target = source;

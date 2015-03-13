@@ -20,6 +20,7 @@ public final class PageDescriptorServiceImpl
 
     private MixinService mixinService;
 
+    @Override
     public PageDescriptor getByKey( final DescriptorKey key )
     {
         return new GetPageDescriptorCommand().

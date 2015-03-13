@@ -31,16 +31,19 @@ public class ContentTypeValidationResult
         return errors.iterator();
     }
 
+    @Override
     public int hashCode()
     {
         return errors.hashCode();
     }
 
+    @Override
     public String toString()
     {
         return errors.toString();
     }
 
+    @Override
     public boolean equals( final Object o )
     {
         return ( o instanceof ContentTypeValidationResult ) && this.errors.equals( ( (ContentTypeValidationResult) o ).errors );

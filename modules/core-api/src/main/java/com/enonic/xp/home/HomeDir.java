@@ -18,6 +18,7 @@ public final class HomeDir
         return this.dir;
     }
 
+    @Override
     public String toString()
     {
         return this.dir.toString();

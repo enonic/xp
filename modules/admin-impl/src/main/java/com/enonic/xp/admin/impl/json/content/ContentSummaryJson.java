@@ -88,21 +88,25 @@ public class ContentSummaryJson
         return content.isRoot();
     }
 
+    @Override
     public Instant getCreatedTime()
     {
         return content.getCreatedTime();
     }
 
+    @Override
     public String getCreator()
     {
         return content.getCreator() != null ? content.getCreator().toString() : null;
     }
 
+    @Override
     public Instant getModifiedTime()
     {
         return content.getModifiedTime();
     }
 
+    @Override
     public String getModifier()
     {
         return content.getModifier() != null ? content.getModifier().toString() : null;

@@ -12,6 +12,7 @@ public abstract class ComponentType
         this.componentClass = componentClass;
     }
 
+    @Override
     public String toString()
     {
         return shortName;

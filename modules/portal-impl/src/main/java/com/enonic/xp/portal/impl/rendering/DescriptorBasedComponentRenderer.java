@@ -26,6 +26,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
     protected ControllerScriptFactory controllerScriptFactory;
 
+    @Override
     public final RenderResult render( final R component, final PortalContext context )
     {
         final Descriptor descriptor = resolveDescriptor( component );

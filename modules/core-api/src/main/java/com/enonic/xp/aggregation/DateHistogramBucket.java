@@ -38,6 +38,7 @@ public class DateHistogramBucket
             return this;
         }
 
+        @Override
         public DateHistogramBucket build()
         {
             return new DateHistogramBucket( this );

@@ -16,6 +16,7 @@ public final class SharpenFilterCommand
         super( "sharpen" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new SharpenFilter();

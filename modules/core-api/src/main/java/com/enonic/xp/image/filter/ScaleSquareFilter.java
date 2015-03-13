@@ -12,6 +12,7 @@ public final class ScaleSquareFilter
         this.size = size;
     }
 
+    @Override
     public BufferedImage filter( BufferedImage source )
     {
         int width = source.getWidth();

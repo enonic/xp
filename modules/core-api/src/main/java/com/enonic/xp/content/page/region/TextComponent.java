@@ -24,11 +24,13 @@ public class TextComponent
         return new Builder( source );
     }
 
+    @Override
     public Component copy()
     {
         return newTextComponent( this ).build();
     }
 
+    @Override
     public ComponentType getType()
     {
         return TextComponentType.INSTANCE;
@@ -88,6 +90,7 @@ public class TextComponent
             text = source.text;
         }
 
+        @Override
         public Builder name( ComponentName value )
         {
             this.name = value;

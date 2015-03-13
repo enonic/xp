@@ -28,6 +28,7 @@ public final class RoundedFilter
         this.borderColor = borderColor;
     }
 
+    @Override
     public BufferedImage filter( BufferedImage source )
     {
         BufferedImage dest = createImage( source );

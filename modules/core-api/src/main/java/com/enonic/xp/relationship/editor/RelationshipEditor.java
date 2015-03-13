@@ -10,5 +10,6 @@ public interface RelationshipEditor
      * @param relationship to be edited
      * @return updated relationship, null if it has not been updated.
      */
+    @Override
     public Relationship edit( Relationship relationship );
 }

@@ -23,6 +23,7 @@ public abstract class BlobRecord
     @Override
     public abstract long getLength();
 
+    @Override
     public abstract InputStream getStream()
         throws BlobStoreException;
 

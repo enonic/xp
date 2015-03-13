@@ -78,6 +78,7 @@ final class RenameContentCommand
             this.params = params;
         }
 
+        @Override
         void validate()
         {
             super.validate();

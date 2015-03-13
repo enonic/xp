@@ -16,6 +16,7 @@ public final class InvertFilterCommand
         super( "invert" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new InvertFilter();

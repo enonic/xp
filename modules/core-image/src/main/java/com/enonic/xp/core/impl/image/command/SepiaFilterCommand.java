@@ -15,6 +15,7 @@ public final class SepiaFilterCommand
         super( "sepia" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         int d = getIntArg( args, 0, 20 );

@@ -85,6 +85,7 @@ public class ElasticsearchBranchService
         return createFromReturnValue( nodeReturnValue );
     }
 
+    @Override
     public NodeBranchQueryResult findAll( final NodeBranchQuery nodeBranchQuery, final BranchContext context )
     {
         final QueryBuilder queryBuilder = QueryBuilderFactory.create().

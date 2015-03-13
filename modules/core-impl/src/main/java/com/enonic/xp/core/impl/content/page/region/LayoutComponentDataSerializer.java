@@ -13,6 +13,7 @@ public class LayoutComponentDataSerializer
 {
     private final RegionDataSerializer regionDataSerializer = new RegionDataSerializer();
 
+    @Override
     public void toData( final LayoutComponent component, final PropertySet parent )
     {
         final PropertySet asSet = parent.addSet( LayoutComponent.class.getSimpleName() );
@@ -26,6 +27,7 @@ public class LayoutComponentDataSerializer
         }
     }
 
+    @Override
     public LayoutComponent fromData( final PropertySet asData )
     {
         final LayoutComponent.Builder component = LayoutComponent.newLayoutComponent();
