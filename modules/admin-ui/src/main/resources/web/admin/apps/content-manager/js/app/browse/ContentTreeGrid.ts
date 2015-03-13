@@ -466,11 +466,16 @@ module app.browse {
 
 
         xAppendContentNode(relationship: TreeNodeParentOfContent, update: boolean = true): TreeNode<ContentSummaryAndCompareStatus> {
-            var appendedNode = this.dataToTreeNode(relationship.getData(), relationship.getNode());
-            relationship.getNode().addChild(appendedNode, true);
+            var appendedNode = this.dataToTreeNode(relationship.getData(), relationship.getNode()),
+                data = relationship.getNode().getData();
 
-            var data = relationship.getNode().getData();
-            if (data && relationship.getNode().hasChildren() && !data.getContentSummary().hasChildren()) {
+            if (!relationship.getNode().hasParent() ||
+                (data && relationship.getNode().hasChildren()) ||
+                (data && !relationship.getNode().hasChildren() && !data.getContentSummary().hasChildren())) {
+                relationship.getNode().addChild(appendedNode, true);
+            }
+
+            if (data && !data.getContentSummary().hasChildren()) {
                 data.setContentSummary(new ContentSummaryBuilder(data.getContentSummary()).setHasChildren(true).build());
             }
 
