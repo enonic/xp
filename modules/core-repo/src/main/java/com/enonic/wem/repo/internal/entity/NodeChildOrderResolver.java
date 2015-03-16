@@ -63,6 +63,7 @@ public class NodeChildOrderResolver
         {
         }
 
+        @Override
         public Builder nodeDao( final NodeDao nodeDao )
         {
             this.nodeDao = nodeDao;

@@ -18,6 +18,7 @@ public final class SepiaFilter
         this.canFilterIndexColorModel = true;
     }
 
+    @Override
     public int filterRGB( int x, int y, int rgb )
     {
         Color c = new Color( rgb );

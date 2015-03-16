@@ -81,6 +81,7 @@ final class FindContentByParentCommand
             this.params = params;
         }
 
+        @Override
         void validate()
         {
             super.validate();

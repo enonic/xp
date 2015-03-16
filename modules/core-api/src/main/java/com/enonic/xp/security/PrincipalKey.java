@@ -119,11 +119,13 @@ public final class PrincipalKey
         return refString;
     }
 
+    @Override
     public boolean equals( final Object o )
     {
         return ( o instanceof PrincipalKey ) && ( (PrincipalKey) o ).refString.equals( this.refString );
     }
 
+    @Override
     public int hashCode()
     {
         return this.refString.hashCode();

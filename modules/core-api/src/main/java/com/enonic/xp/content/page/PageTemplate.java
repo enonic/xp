@@ -176,6 +176,7 @@ public final class PageTemplate
             return this;
         }
 
+        @Override
         public PageTemplate build()
         {
             return new PageTemplate( this );

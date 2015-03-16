@@ -16,6 +16,7 @@ public final class BlockFilterCommand
         super( "block" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         BlockFilter filter = new BlockFilter();

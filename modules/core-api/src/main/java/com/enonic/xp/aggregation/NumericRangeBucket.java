@@ -52,6 +52,7 @@ public class NumericRangeBucket
             return this;
         }
 
+        @Override
         public NumericRangeBucket build()
         {
             return new NumericRangeBucket( this );

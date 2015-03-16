@@ -42,12 +42,14 @@ public class CompareNodeCommand
             return this;
         }
 
+        @Override
         protected void validate()
         {
             super.validate();
             Preconditions.checkNotNull( nodeId );
         }
 
+        @Override
         public CompareNodeCommand build()
         {
             this.validate();

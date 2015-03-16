@@ -20,6 +20,7 @@ final class FileBlobRecord
         this.file = file;
     }
 
+    @Override
     public long getLength()
     {
         return this.file.length();
@@ -30,6 +31,7 @@ final class FileBlobRecord
         return file;
     }
 
+    @Override
     public InputStream getStream()
         throws BlobStoreException
     {

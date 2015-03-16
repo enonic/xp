@@ -38,6 +38,7 @@ public class BooleanFilterJson
         this.booleanFilter = builder.build();
     }
 
+    @Override
     public BooleanFilter getFilter()
     {
         return booleanFilter;

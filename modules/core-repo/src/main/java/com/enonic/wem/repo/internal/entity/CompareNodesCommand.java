@@ -50,6 +50,7 @@ public class CompareNodesCommand
             return this;
         }
 
+        @Override
         public CompareNodesCommand build()
         {
             return new CompareNodesCommand( this );

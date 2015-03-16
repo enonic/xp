@@ -15,6 +15,7 @@ public final class ScaleHeightFilterCommand
         super( "scaleheight" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new ScaleHeightFilter( getIntArg( args, 0, 100 ) );

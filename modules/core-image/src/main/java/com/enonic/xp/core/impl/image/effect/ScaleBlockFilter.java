@@ -24,6 +24,7 @@ public final class ScaleBlockFilter
         this.yOffset = Math.max( Math.min( yOffset, 1f ), 0 );
     }
 
+    @Override
     public BufferedImage filter( BufferedImage source )
     {
         int sourceWidth = source.getWidth();

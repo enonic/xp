@@ -54,6 +54,7 @@ class AbstractCreatingOrUpdatingContentCommand
             return (B) this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

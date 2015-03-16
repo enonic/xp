@@ -24,6 +24,7 @@ public class VirtualFileNonSlashAbsolutePath
         return new Builder();
     }
 
+    @Override
     public String getPath()
     {
         return join();
@@ -42,6 +43,7 @@ public class VirtualFileNonSlashAbsolutePath
         return path;
     }
 
+    @Override
     public VirtualFileNonSlashAbsolutePath join( final String... elements )
     {
         final Builder builder = VirtualFileNonSlashAbsolutePath.create().

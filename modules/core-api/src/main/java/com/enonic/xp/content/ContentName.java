@@ -32,6 +32,7 @@ public class ContentName
                                          "An UnnamedContent must start with [" + UNNAMED_PREFIX + ": ]" + name );
         }
 
+        @Override
         public boolean isUnnamed()
         {
             return true;

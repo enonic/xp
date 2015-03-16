@@ -34,6 +34,7 @@ public final class Group
         }
 
 
+        @Override
         protected void validate()
         {
             super.validate();

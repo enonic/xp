@@ -76,6 +76,11 @@ module api.dom {
             return this;
         }
 
+        simulate(value: string): ElementHelper {
+            wemjq(<HTMLElement>this.el).simulate(value);
+            return this;
+        }
+
         setInnerHtml(value: string, escapeHtml: boolean = false): ElementHelper {
             wemjq(this.el).html(escapeHtml ? api.util.StringHelper.escapeHtml(value): value);
             return this;

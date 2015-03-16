@@ -53,6 +53,7 @@ public abstract class ModuleBasedName
         return refString.hashCode();
     }
 
+    @Override
     public String toString()
     {
         return refString;

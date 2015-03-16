@@ -16,6 +16,7 @@ public final class BumpFilterCommand
         super( "bump" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new BumpFilter();

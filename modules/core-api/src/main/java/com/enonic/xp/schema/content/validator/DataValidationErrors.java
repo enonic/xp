@@ -47,17 +47,20 @@ public final class DataValidationErrors
         return this.validationErrors.iterator();
     }
 
+    @Override
     public int hashCode()
     {
         return this.validationErrors.hashCode();
     }
 
+    @Override
     public boolean equals( final Object o )
     {
         return ( o instanceof DataValidationErrors ) && this.validationErrors.equals( ( (DataValidationErrors) o ).validationErrors );
     }
 
 
+    @Override
     public String toString()
     {
         return this.validationErrors.toString();

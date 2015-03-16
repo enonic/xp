@@ -61,6 +61,7 @@ final class GetContentByPathCommand
             this.contentPath = contentPath;
         }
 
+        @Override
         void validate()
         {
             super.validate();

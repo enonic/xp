@@ -15,6 +15,7 @@ public final class ScaleWideFilterCommand
         super( "scalewide" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new ScaleWideFilter( getIntArg( args, 0, 0 ), getIntArg( args, 1, 0 ), getFloatArg( args, 2, 0.5f ) );

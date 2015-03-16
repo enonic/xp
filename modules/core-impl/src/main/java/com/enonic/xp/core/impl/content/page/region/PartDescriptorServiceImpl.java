@@ -20,6 +20,7 @@ public final class PartDescriptorServiceImpl
 
     private MixinService mixinService;
 
+    @Override
     public PartDescriptor getByKey( final DescriptorKey key )
     {
         return new GetPartDescriptorCommand().
@@ -28,6 +29,7 @@ public final class PartDescriptorServiceImpl
             key( key ).execute();
     }
 
+    @Override
     public PartDescriptors getByModule( final ModuleKey moduleKey )
     {
         return new GetPartDescriptorsByModuleCommand().
@@ -36,6 +38,7 @@ public final class PartDescriptorServiceImpl
             moduleKey( moduleKey ).execute();
     }
 
+    @Override
     public PartDescriptors getByModules( final ModuleKeys moduleKeys )
     {
         return new GetPartDescriptorsByModulesCommand().

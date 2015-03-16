@@ -132,6 +132,7 @@ public final class FormItems
         return typeCast( getFormItem( path ), Layout.class );
     }
 
+    @Override
     public Iterator<FormItem> iterator()
     {
         return formItemByName.values().iterator();

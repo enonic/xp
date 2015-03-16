@@ -99,6 +99,7 @@ final class UpdateMediaCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             Preconditions.checkNotNull( params );

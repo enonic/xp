@@ -82,6 +82,7 @@ public class GetNodeByPathCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

@@ -9,6 +9,7 @@ public class TextComponentDataSerializer
     extends ComponentDataSerializer<TextComponent, TextComponent>
 {
 
+    @Override
     public void toData( final TextComponent component, final PropertySet parent )
     {
         final PropertySet asData = parent.addSet( TextComponent.class.getSimpleName() );
@@ -19,6 +20,7 @@ public class TextComponentDataSerializer
         }
     }
 
+    @Override
     public TextComponent fromData( final PropertySet asData )
     {
         TextComponent.Builder component = TextComponent.newTextComponent();

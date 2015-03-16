@@ -11,6 +11,7 @@ public class RootNodeName
         super( "" );
     }
 
+    @Override
     protected void doValidateName( final String name )
     {
         Preconditions.checkArgument( "".equals( name ) );

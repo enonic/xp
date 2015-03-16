@@ -58,6 +58,7 @@ public class FindNodesByQueryCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();
