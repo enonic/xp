@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-public class NodeType
+public final class NodeType
 {
     public final static NodeType DEFAULT_NODE_COLLECTION = NodeType.from( "default" );
 

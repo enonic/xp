@@ -8,7 +8,7 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.util.Reference;
 
-class NodeReferenceUpdatesHolder
+final class NodeReferenceUpdatesHolder
 {
     private ImmutableMap<NodeId, NodeId> references;
 
