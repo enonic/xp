@@ -16,6 +16,7 @@ public final class EmbossFilterCommand
         super( "emboss" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new EmbossFilter();

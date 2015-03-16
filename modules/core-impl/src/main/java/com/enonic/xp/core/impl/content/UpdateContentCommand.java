@@ -237,6 +237,7 @@ final class UpdateContentCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

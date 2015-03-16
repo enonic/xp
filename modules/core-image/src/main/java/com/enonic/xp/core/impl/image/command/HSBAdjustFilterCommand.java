@@ -16,6 +16,7 @@ public final class HSBAdjustFilterCommand
         super( "hsbadjust" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         float h = getFloatArg( args, 0, 0f );

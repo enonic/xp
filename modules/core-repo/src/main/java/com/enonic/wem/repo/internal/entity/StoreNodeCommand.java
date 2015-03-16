@@ -95,6 +95,7 @@ public class StoreNodeCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

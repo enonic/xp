@@ -18,6 +18,7 @@ public final class ScaleHeightFilter
         this.size = size;
     }
 
+    @Override
     public BufferedImage filter( BufferedImage source )
     {
         int width = source.getWidth();

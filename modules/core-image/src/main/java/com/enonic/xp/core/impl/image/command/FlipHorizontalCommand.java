@@ -16,6 +16,7 @@ public final class FlipHorizontalCommand
         super( "fliph" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new FlipFilter( FlipFilter.FLIP_H );

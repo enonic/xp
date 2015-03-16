@@ -11,6 +11,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public class ContentImportValidator
     implements ImportValidator
 {
+    @Override
     public CreateNodeParams ensureValid( final CreateNodeParams original )
     {
 

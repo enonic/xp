@@ -16,6 +16,7 @@ public final class Rotate90Command
         super( "rotate90" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new FlipFilter( FlipFilter.FLIP_90CW );

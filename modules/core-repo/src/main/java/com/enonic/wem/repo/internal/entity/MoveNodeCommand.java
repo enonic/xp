@@ -232,6 +232,7 @@ public class MoveNodeCommand
             return new MoveNodeCommand( this );
         }
 
+        @Override
         void validate()
         {
             super.validate();

@@ -20,6 +20,7 @@ public final class LayoutDescriptorServiceImpl
 
     private MixinService mixinService;
 
+    @Override
     public LayoutDescriptor getByKey( final DescriptorKey key )
     {
         return new GetLayoutDescriptorCommand().key( key ).
@@ -28,6 +29,7 @@ public final class LayoutDescriptorServiceImpl
             execute();
     }
 
+    @Override
     public LayoutDescriptors getByModule( final ModuleKey moduleKey )
     {
         return new GetLayoutDescriptorsByModuleCommand().
@@ -36,6 +38,7 @@ public final class LayoutDescriptorServiceImpl
             moduleKey( moduleKey ).execute();
     }
 
+    @Override
     public LayoutDescriptors getByModules( final ModuleKeys moduleKeys )
     {
         return new GetLayoutDescriptorsByModulesCommand().

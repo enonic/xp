@@ -15,6 +15,7 @@ final class SingleSelector
         super( SingleSelectorConfig.class );
     }
 
+    @Override
     public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
         return SingleSelectorConfigJsonSerializer.DEFAULT;

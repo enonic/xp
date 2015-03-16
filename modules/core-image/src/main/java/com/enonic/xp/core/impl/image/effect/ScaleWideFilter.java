@@ -24,6 +24,7 @@ public final class ScaleWideFilter
         this.offset = Math.max( Math.min( offset, 1f ), 0 );
     }
 
+    @Override
     public BufferedImage filter( BufferedImage source )
     {
         int sourceWidth = source.getWidth();

@@ -9,6 +9,7 @@ import com.enonic.xp.data.PropertySet;
 public class ImageComponentDataSerializer
     extends ComponentDataSerializer<ImageComponent, ImageComponent>
 {
+    @Override
     public void toData( final ImageComponent component, final PropertySet parent )
     {
         final PropertySet asData = parent.addSet( ImageComponent.class.getSimpleName() );
@@ -23,6 +24,7 @@ public class ImageComponentDataSerializer
         }
     }
 
+    @Override
     public ImageComponent fromData( final PropertySet asData )
     {
         ImageComponent.Builder component = ImageComponent.newImageComponent();

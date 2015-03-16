@@ -43,6 +43,7 @@ public final class RegionDescriptor
         return Objects.hash( name );
     }
 
+    @Override
     public String toString()
     {
         return name;

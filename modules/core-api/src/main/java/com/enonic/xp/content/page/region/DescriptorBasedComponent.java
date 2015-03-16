@@ -80,6 +80,7 @@ public abstract class DescriptorBasedComponent
             this.descrpitor = source.getDescriptor();
         }
 
+        @Override
         public Builder name( ComponentName value )
         {
             this.name = value;

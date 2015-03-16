@@ -41,6 +41,7 @@ public class ContentQueryResultJson
             this.contentPrincipalsResolver = contentPrincipalsResolver;
         }
 
+        @Override
         public Builder addContent( final Content content,
                                    final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer )
         {
@@ -49,6 +50,7 @@ public class ContentQueryResultJson
             return this;
         }
 
+        @Override
         public ContentQueryResultJson build()
         {
             return new ContentQueryResultJson( this );

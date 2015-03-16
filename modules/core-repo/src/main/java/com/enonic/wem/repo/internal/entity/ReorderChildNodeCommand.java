@@ -182,6 +182,7 @@ public class ReorderChildNodeCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

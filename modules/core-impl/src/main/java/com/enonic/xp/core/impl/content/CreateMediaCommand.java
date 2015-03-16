@@ -105,6 +105,7 @@ final class CreateMediaCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             Preconditions.checkNotNull( params, "params must be given" );

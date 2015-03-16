@@ -33,6 +33,7 @@ public final class Role
             super( role );
         }
 
+        @Override
         protected void validate()
         {
             super.validate();

@@ -99,6 +99,7 @@ public class SetNodeChildOrderCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

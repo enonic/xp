@@ -36,6 +36,7 @@ public final class FileBlobStore
         mkdirs( this.dir, true );
     }
 
+    @Override
     public BlobRecord getRecord( final BlobKey key )
         throws BlobStoreException
     {
@@ -48,6 +49,7 @@ public final class FileBlobStore
         return new FileBlobRecord( key, file );
     }
 
+    @Override
     public BlobRecord addRecord( final InputStream in )
         throws BlobStoreException
     {
@@ -86,6 +88,7 @@ public final class FileBlobStore
         return new FileBlobRecord( key, file );
     }
 
+    @Override
     public Iterable<BlobKey> getAllKeys()
         throws BlobStoreException
     {
@@ -105,6 +108,7 @@ public final class FileBlobStore
         return identifiers;
     }
 
+    @Override
     public boolean deleteRecord( final BlobKey key )
         throws BlobStoreException
     {

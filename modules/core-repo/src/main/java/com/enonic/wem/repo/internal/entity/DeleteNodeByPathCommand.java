@@ -53,6 +53,7 @@ final class DeleteNodeByPathCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

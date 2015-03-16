@@ -16,6 +16,7 @@ public class ComponentsDataSerializer
 {
     private final static ComponentDataSerializerProvider COMPONENT_DATA_SERIALIZER_FACTORY = new ComponentDataSerializerProvider();
 
+    @Override
     public void toData( final Collection<Component> components, final PropertySet parent )
     {
         for ( final Component component : components )
@@ -27,6 +28,7 @@ public class ComponentsDataSerializer
         }
     }
 
+    @Override
     public List<Component> fromData( final Iterable<Property> componentProperties )
     {
         final List<Component> componentList = new ArrayList<>();

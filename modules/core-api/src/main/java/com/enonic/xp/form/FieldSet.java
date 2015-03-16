@@ -57,6 +57,7 @@ public class FieldSet
         return formItems;
     }
 
+    @Override
     public FormItem getFormItem( final String name )
     {
         return formItems.getFormItem( FormItemPath.from( name ) );

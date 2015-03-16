@@ -186,6 +186,7 @@ public final class DuplicateNodeCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

@@ -44,6 +44,7 @@ final class ApplyContentPermissionsCommand
             this.params = params;
         }
 
+        @Override
         void validate()
         {
             super.validate();

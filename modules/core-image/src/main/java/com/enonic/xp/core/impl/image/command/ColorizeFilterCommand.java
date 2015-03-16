@@ -15,6 +15,7 @@ public final class ColorizeFilterCommand
         super( "colorize" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         float r = getFloatArg( args, 0, 1f );

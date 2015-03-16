@@ -19,6 +19,7 @@ public final class OperationImageFilter
         this.operation = operation;
     }
 
+    @Override
     public BufferedImage filter( BufferedImage source )
     {
         return this.operation.filter( source, null );

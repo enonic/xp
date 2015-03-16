@@ -144,6 +144,7 @@ public final class PropertyPath
         return elements.size();
     }
 
+    @Override
     public Iterator<Element> iterator()
     {
         return elements.iterator();

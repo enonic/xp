@@ -52,11 +52,13 @@ public class ContentTypeSummaryJson
         return contentType.getDescription();
     }
 
+    @Override
     public Instant getCreatedTime()
     {
         return contentType.getCreatedTime();
     }
 
+    @Override
     public Instant getModifiedTime()
     {
         return contentType.getModifiedTime();
@@ -92,11 +94,13 @@ public class ContentTypeSummaryJson
         return contentType.allowChildContent();
     }
 
+    @Override
     public String getCreator()
     {
         return contentType.getCreator() != null ? contentType.getCreator().toString() : null;
     }
 
+    @Override
     public String getModifier()
     {
         return contentType.getModifier() != null ? contentType.getModifier().toString() : null;

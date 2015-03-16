@@ -72,6 +72,7 @@ public class GetNodesByPathsCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

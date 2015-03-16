@@ -304,6 +304,7 @@ public final class NodePath
             return Objects.hash( this.name );
         }
 
+        @Override
         public String toString()
         {
             return name;

@@ -86,6 +86,7 @@ public class GetNodesByIdsCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

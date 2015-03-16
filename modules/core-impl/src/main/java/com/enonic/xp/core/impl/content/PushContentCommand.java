@@ -312,6 +312,7 @@ public class PushContentCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

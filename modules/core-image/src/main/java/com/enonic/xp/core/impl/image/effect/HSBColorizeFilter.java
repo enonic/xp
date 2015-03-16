@@ -29,6 +29,7 @@ public final class HSBColorizeFilter
         canFilterIndexColorModel = true;
     }
 
+    @Override
     public int filterRGB( int x, int y, int rgb )
     {
         int alpha = ( rgb >> 24 ) & 0xff;

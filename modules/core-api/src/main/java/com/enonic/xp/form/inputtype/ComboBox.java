@@ -15,6 +15,7 @@ final class ComboBox
         super( ComboBoxConfig.class );
     }
 
+    @Override
     public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
         return ComboBoxConfigJsonSerializer.DEFAULT;
