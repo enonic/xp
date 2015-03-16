@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.script.bean;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -11,12 +12,16 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import jdk.nashorn.api.scripting.ScriptUtils;
 import jdk.nashorn.internal.objects.Global;
 import jdk.nashorn.internal.objects.NativeArray;
+import jdk.nashorn.internal.runtime.ScriptObject;
 
 import com.enonic.xp.portal.impl.script.serializer.ScriptMapGenerator;
 import com.enonic.xp.portal.script.serializer.MapSerializable;
+import com.enonic.xp.util.Exceptions;
 
 public final class JsObjectConverter
 {
+    private final static Method WRAP_METHOD = findWrapMethod();
+
     public static Object toJs( final Object value )
     {
         if ( value instanceof MapSerializable )
@@ -73,10 +78,27 @@ public final class JsObjectConverter
 
     private static Object toObject( final Object source )
     {
-        final Object object = ScriptUtils.wrap( source );
+        final Object object = wrap( source );
         if ( object instanceof ScriptObjectMirror )
         {
             return toObject( (ScriptObjectMirror) object );
+        }
+
+        return source;
+    }
+
+    private static Object wrap( final Object source )
+    {
+        if ( source instanceof ScriptObject )
+        {
+            try
+            {
+                return WRAP_METHOD.invoke( null, source );
+            }
+            catch ( final Exception e )
+            {
+                return Exceptions.unchecked( e );
+            }
         }
 
         return source;
@@ -115,7 +137,7 @@ public final class JsObjectConverter
 
     public static Map<String, Object> toMap( final Object source )
     {
-        final Object object = ScriptUtils.wrap( source );
+        final Object object = wrap( source );
         if ( object instanceof ScriptObjectMirror )
         {
             return toMap( (ScriptObjectMirror) object );
@@ -142,5 +164,18 @@ public final class JsObjectConverter
     private static Function<Object[], Object> toFunction( final ScriptObjectMirror source )
     {
         return arg -> toObject( source.call( source, arg ) );
+    }
+
+    private static Method findWrapMethod()
+    {
+        for ( final Method method : ScriptUtils.class.getMethods() )
+        {
+            if ( method.getName().equals( "wrap" ) )
+            {
+                return method;
+            }
+        }
+
+        throw new IllegalArgumentException( "Could not find wrap method on " + ScriptUtils.class.getName() );
     }
 }
