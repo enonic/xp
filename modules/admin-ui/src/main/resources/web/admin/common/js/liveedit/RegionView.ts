@@ -51,6 +51,8 @@ module api.liveedit {
 
         private componentViews: ComponentView<Component>[];
 
+        private componentIndex: number;
+
         private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
 
         private itemViewRemovedListeners: {(event: ItemViewRemovedEvent) : void}[];
@@ -64,6 +66,7 @@ module api.liveedit {
         constructor(builder: RegionViewBuilder) {
 
             this.componentViews = [];
+            this.componentIndex = 0;
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
             this.parentView = builder.parentView;
@@ -423,26 +426,27 @@ module api.liveedit {
 
             var children = parentElement ? parentElement.getChildren() : this.getChildren();
             var region = this.getRegion();
-            var componentCount = 0;
+
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
                 if (itemType) {
                     api.util.assert(itemType.isComponentType(),
                         "Expected ItemView beneath a Region to be a Component: " + itemType.getShortName());
-
-                    var component = region.getComponentByIndex(componentCount++);
+                    // components may be nested on different levels so use region wide var for count
+                    var component = region.getComponentByIndex(this.componentIndex++);
                     if (component) {
+
                         var componentView = <ComponentView<Component>> itemType.createView(new CreateItemViewConfig().
                             setParentView(this).
                             setData(component).
                             setElement(childElement).
                             setParentElement(parentElement ? parentElement : this));
 
-                        this.registerComponentView(componentView, componentCount);
+                        this.registerComponentView(componentView, this.componentIndex);
                     }
                 }
                 else {
-                    this.doParseComponentViews(childElement)
+                    this.doParseComponentViews(childElement);
                 }
             });
         }
