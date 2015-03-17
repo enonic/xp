@@ -47,6 +47,8 @@ module api.liveedit {
 
         private regionViews: RegionView[];
 
+        private regionIndex: number;
+
         private viewsById: {[s:number] : ItemView;};
 
         private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
@@ -67,6 +69,7 @@ module api.liveedit {
             this.pageModel = builder.liveEditModel.getPageModel();
             this.pageModel.onPropertyChanged(() => this.refreshEmptyState());
             this.regionViews = [];
+            this.regionIndex = 0;
             this.viewsById = {};
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
@@ -479,15 +482,14 @@ module api.liveedit {
             }
             var regions: Region[] = pageRegions.getRegions();
             var children = parentElement ? parentElement.getChildren() : this.getChildren();
-            var regionIndex = 0;
+
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
                 if (itemType) {
                     if (RegionItemType.get().equals(itemType)) {
-
-                        var region = regions[regionIndex++];
+                        // regions may be nested on different levels so use page wide var for count
+                        var region = regions[this.regionIndex++];
                         if (region) {
-
                             var regionView = new RegionView(new RegionViewBuilder().
                                 setLiveEditModel(this.liveEditModel).
                                 setParentView(this).
@@ -496,12 +498,10 @@ module api.liveedit {
 
                             this.registerRegionView(regionView);
                         }
-                    }
-                    else {
+                    } else {
                         this.doParseItemViews(childElement);
                     }
-                }
-                else {
+                } else {
                     this.doParseItemViews(childElement);
                 }
             });
