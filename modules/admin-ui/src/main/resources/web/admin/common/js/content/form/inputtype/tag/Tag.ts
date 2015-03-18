@@ -87,7 +87,6 @@ module api.content.form.inputtype.tag {
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
-            debugger;
             var recording = new api.form.inputtype.InputValidationRecording();
 
             var numberOfValids = this.tags.countTags();
