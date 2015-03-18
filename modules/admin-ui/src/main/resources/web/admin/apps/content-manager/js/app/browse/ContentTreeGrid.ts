@@ -159,13 +159,6 @@ module app.browse {
             });
         }
 
-        private typeFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-            var wrapper = new api.dom.SpanEl();
-            wrapper.getEl().setTitle(value);
-            wrapper.getEl().setInnerHtml(value.toString().split(':')[1], true);
-            return wrapper.toString();
-        }
-
         private orderFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
             var wrapper = new api.dom.SpanEl();
             wrapper.getEl().setTitle(value);
@@ -182,7 +175,7 @@ module app.browse {
                     } else {
                         icon = new api.dom.DivEl("icon-menu3");
                     }
-                    wrapper.getEl().setInnerHtml(icon.toString(), true);
+                    wrapper.getEl().setInnerHtml(icon.toString());
                 }
             }
             return wrapper.toString();
