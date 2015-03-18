@@ -75,17 +75,19 @@ module api.content.form.inputtype.tag {
                 else {
                     this.propertyArray.add(value);
                 }
+                this.validate(false);
             });
 
             this.tags.onTagRemoved((event) => {
                 this.propertyArray.remove(event.getIndex());
+                this.validate(false);
             });
 
             return wemQ<void>(null);
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
-
+            debugger;
             var recording = new api.form.inputtype.InputValidationRecording();
 
             var numberOfValids = this.tags.countTags();
