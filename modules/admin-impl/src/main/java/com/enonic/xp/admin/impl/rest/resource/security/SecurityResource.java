@@ -159,7 +159,7 @@ public final class SecurityResource
     }
 
     @GET
-    @Path("principals/{key: ((role)(:|%3A)([^:(%3A)]+))|((user|group)(:|%3A)([^:(%3A)]+)(:|%3A)([^:(%3A)]+))}")
+    @Path("principals/{key: ((role)(:|%3A)((?!%3A)\\S)+ )|((user|group)((:|%3A)((?!%3A)\\S)+){2})}")
     public PrincipalJson getPrincipalByKey( @PathParam("key") final String keyParam,
                                             @QueryParam("memberships") final String resolveMembershipsParam )
     {
