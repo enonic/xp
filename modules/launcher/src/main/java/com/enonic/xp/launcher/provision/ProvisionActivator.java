@@ -12,6 +12,8 @@ import org.osgi.framework.wiring.BundleRevision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 import com.enonic.xp.launcher.config.ConfigProperties;
 
 public final class ProvisionActivator
@@ -49,19 +51,14 @@ public final class ProvisionActivator
     private void doStart()
         throws Exception
     {
-        if ( this.context.getBundles().length == 1 )
-        {
-            installBundles();
-        }
-        else
-        {
-            LOG.info( "Bundles already installed. Skipping." );
-        }
+        installBundles();
     }
 
     private void installBundles()
         throws Exception
     {
+        removeSystemBundles();
+
         final BundleInfoLoader loader = new BundleInfoLoader( this.systemDir, this.config );
         final List<BundleInfo> list = loader.load();
 
@@ -89,5 +86,30 @@ public final class ProvisionActivator
     private boolean isFragmentBundle( final Bundle bundle )
     {
         return ( bundle.adapt( BundleRevision.class ).getTypes() & BundleRevision.TYPE_FRAGMENT ) != 0;
+    }
+
+    private void removeSystemBundles()
+        throws Exception
+    {
+        LOG.debug( "Uninstalling old system bundles..." );
+        for ( final Bundle bundle : this.context.getBundles() )
+        {
+            removeSystemBundle( bundle );
+        }
+    }
+
+    private void removeSystemBundle( final Bundle bundle )
+        throws Exception
+    {
+        final String location = bundle.getLocation();
+        if ( Strings.isNullOrEmpty( location ) )
+        {
+            return;
+        }
+
+        if ( location.startsWith( this.systemDir.toURI().toString() ) )
+        {
+            bundle.uninstall();
+        }
     }
 }
