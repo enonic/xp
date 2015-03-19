@@ -9,9 +9,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -37,14 +34,6 @@ public final class ModuleResource
 {
     private ModuleService moduleService;
 
-    private BundleContext bundleContext;
-
-    @Activate
-    public void initialize( final ComponentContext context )
-    {
-        this.bundleContext = context.getBundleContext();
-    }
-
     @GET
     @Path("list")
     public ListModuleJson list()
@@ -66,11 +55,7 @@ public final class ModuleResource
     public ModuleSuccessJson start( final ModuleListParams params )
         throws Exception
     {
-        for ( final ModuleKey key : params.getModuleKeys() )
-        {
-            this.moduleService.getModule( key ).getBundle().start();
-        }
-
+        params.getModuleKeys().forEach( this.moduleService::startModule );
         return new ModuleSuccessJson();
     }
 
@@ -80,11 +65,7 @@ public final class ModuleResource
     public ModuleSuccessJson stop( final ModuleListParams params )
         throws Exception
     {
-        for ( final ModuleKey key : params.getModuleKeys() )
-        {
-            this.moduleService.getModule( key ).getBundle().stop();
-        }
-
+        params.getModuleKeys().forEach( this.moduleService::stopModule );
         return new ModuleSuccessJson();
     }
 
@@ -94,11 +75,7 @@ public final class ModuleResource
     public ModuleSuccessJson update( final ModuleListParams params )
         throws Exception
     {
-        for ( final ModuleKey key : params.getModuleKeys() )
-        {
-            this.moduleService.getModule( key ).getBundle().update();
-        }
-
+        params.getModuleKeys().forEach( this.moduleService::updateModule );
         return new ModuleSuccessJson();
     }
 
@@ -108,11 +85,7 @@ public final class ModuleResource
     public ModuleSuccessJson uninstall( final ModuleListParams params )
         throws Exception
     {
-        for ( final ModuleKey key : params.getModuleKeys() )
-        {
-            this.moduleService.getModule( key ).getBundle().uninstall();
-        }
-
+        params.getModuleKeys().forEach( this.moduleService::uninstallModule );
         return new ModuleSuccessJson();
     }
 
@@ -122,7 +95,7 @@ public final class ModuleResource
     public ModuleSuccessJson install( final ModuleInstallParams params )
         throws Exception
     {
-        this.bundleContext.installBundle( params.getUrl() );
+        this.moduleService.installModule( params.getUrl() );
         return new ModuleSuccessJson();
     }
 

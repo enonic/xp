@@ -6,9 +6,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.ComponentContext;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.form.Form;
@@ -24,8 +21,6 @@ public class ModuleResourceTest
     extends AbstractResourceTest
 {
     private ModuleService moduleService;
-
-    private BundleContext bundleContext;
 
     @Test
     public void get_module_list()
@@ -59,60 +54,48 @@ public class ModuleResourceTest
     public void start_module()
         throws Exception
     {
-        final Module module = createModule();
-        Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
-
         request().
             path( "module/start" ).
             entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( module.getBundle() ).start();
+        Mockito.verify( this.moduleService ).startModule( ModuleKey.from( "testmodule" ) );
     }
 
     @Test
     public void stop_module()
         throws Exception
     {
-        final Module module = createModule();
-        Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
-
         request().
             path( "module/stop" ).
             entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( module.getBundle() ).stop();
+        Mockito.verify( this.moduleService ).stopModule( ModuleKey.from( "testmodule" ) );
     }
 
     @Test
     public void update_module()
         throws Exception
     {
-        final Module module = createModule();
-        Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
-
         request().
             path( "module/update" ).
             entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( module.getBundle() ).update();
+        Mockito.verify( this.moduleService ).updateModule( ModuleKey.from( "testmodule" ) );
     }
 
     @Test
     public void uninstall_module()
         throws Exception
     {
-        final Module module = createModule();
-        Mockito.when( this.moduleService.getModule( Mockito.isA( ModuleKey.class ) ) ).thenReturn( module );
-
         request().
             path( "module/uninstall" ).
             entity( "{\"key\":[\"testmodule\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( module.getBundle() ).uninstall();
+        Mockito.verify( this.moduleService ).uninstallModule( ModuleKey.from( "testmodule" ) );
     }
 
     @Test
@@ -124,7 +107,7 @@ public class ModuleResourceTest
             entity( "{\"url\":\"http://some.host/some.path\"}", MediaType.APPLICATION_JSON_TYPE ).
             post();
 
-        Mockito.verify( this.bundleContext ).installBundle( "http://some.host/some.path" );
+        Mockito.verify( this.moduleService ).installModule( "http://some.host/some.path" );
     }
 
     private Module createModule()
@@ -132,10 +115,6 @@ public class ModuleResourceTest
         final Form config = Form.newForm().
             addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
-
-        final Bundle bundle = Mockito.mock( Bundle.class );
-        Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
-        Mockito.when( bundle.getLastModified() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ).toEpochMilli() );
 
         final Module module = Mockito.mock( Module.class );
         Mockito.when( module.getKey() ).thenReturn( ModuleKey.from( "testmodule" ) );
@@ -146,7 +125,8 @@ public class ModuleResourceTest
         Mockito.when( module.getVendorUrl() ).thenReturn( "https://www.enonic.com" );
         Mockito.when( module.getMinSystemVersion() ).thenReturn( "5.0" );
         Mockito.when( module.getMaxSystemVersion() ).thenReturn( "5.1" );
-        Mockito.when( module.getBundle() ).thenReturn( bundle );
+        Mockito.when( module.isStarted() ).thenReturn( true );
+        Mockito.when( module.getModifiedTime() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ) );
         Mockito.when( module.getConfig() ).thenReturn( config );
 
         return module;
@@ -156,15 +136,9 @@ public class ModuleResourceTest
     protected Object getResourceInstance()
     {
         this.moduleService = Mockito.mock( ModuleService.class );
-        this.bundleContext = Mockito.mock( BundleContext.class );
 
         final ModuleResource resource = new ModuleResource();
-
-        final ComponentContext componentContext = Mockito.mock( ComponentContext.class );
-        Mockito.when( componentContext.getBundleContext() ).thenReturn( this.bundleContext );
-
         resource.setModuleService( this.moduleService );
-        resource.initialize( componentContext );
 
         return resource;
     }
