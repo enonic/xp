@@ -134,7 +134,7 @@ public final class Launcher
             return;
         }
 
-        final File workDir = new File( this.env.getHomeDir(), "work" );
+        final File workDir = new File( this.env.getInstallDir(), "work" );
         FileUtils.deleteDirectory( workDir );
     }
 
