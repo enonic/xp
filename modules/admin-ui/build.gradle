@@ -11,6 +11,7 @@ bundle {
 task cleanSourceFiles( type: Delete ) {
     description = 'Clean source files that is used by Grunt.'
     delete fileTree( dir: 'src/main/resources', includes: ['**/_all.*'] )
+    delete fileTree( dir: '.', includes: ['*.tmp.txt'] )
 }
 
 task gruntAll( type: GruntTask, dependsOn: npmInstall ) {
