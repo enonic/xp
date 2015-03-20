@@ -41,6 +41,7 @@ final class AppHtmlHandler
         final String uri = baseUri.equals( "/" ) ? "" : baseUri;
         model.put( "baseUri", uri );
         model.put( "assetsUri", uri + "/admin/assets/" + this.version );
+        model.put( "xpVersion", this.version );
 
         return this.template.execute( model );
     }
