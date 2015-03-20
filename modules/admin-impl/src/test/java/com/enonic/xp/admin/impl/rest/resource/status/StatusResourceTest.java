@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
-import com.enonic.xp.Version;
 import com.enonic.xp.server.ServerInfo;
 
 public class StatusResourceTest
@@ -25,10 +24,13 @@ public class StatusResourceTest
     public void testGetStatus()
         throws Exception
     {
-        Mockito.when( this.serverInfo.getVersion() ).thenReturn( "5.0.0" );
+        System.setProperty( "xp.version", "5.0.0" );
+        System.setProperty( "xp.build.hash", "123" );
+        System.setProperty( "xp.build.timestamp", "456" );
+        System.setProperty( "xp.build.number", "789" );
+
         Mockito.when( this.serverInfo.getName() ).thenReturn( "production" );
 
-        Version.get().setVersion( "5.0.0" );
         final String json = request().path( "/status" ).get().getAsString();
         assertJson( "status_ok.json", json );
     }

@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.context.Context;
@@ -31,8 +32,13 @@ public final class StatusResource
     @Produces(MediaType.APPLICATION_JSON)
     public ObjectNode getStatus()
     {
+        final VersionInfo version = VersionInfo.get();
+
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        json.put( "version", this.serverInfo.getVersion() );
+        json.put( "version", version.getVersion() );
+        json.put( "buildHash", version.getBuildHash() );
+        json.put( "buildTimestamp", version.getBuildTimestamp() );
+        json.put( "buildNumber", version.getBuildNumber() );
         json.put( "installation", this.serverInfo.getName() );
         json.set( "context", createContextJson() );
         return json;
