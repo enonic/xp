@@ -21,7 +21,7 @@ final class AppHtmlHandler
         this.template = MustacheCompiler.getInstance().compile( url );
 
         final VersionInfo version = VersionInfo.get();
-        if ( version.isSnapshotVersion() )
+        if ( version.isSnapshot() )
         {
             this.version = Long.toString( System.currentTimeMillis() );
         }

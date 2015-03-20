@@ -9,4 +9,6 @@ public interface ServerInfo
     public File getHomeDir();
 
     public File getInstallDir();
+
+    public BuildInfo getBuildInfo();
 }

@@ -8,33 +8,32 @@ import com.enonic.xp.server.VersionInfo;
 public class VersionInfoTest
 {
     @Test
-    public void testEmpty()
+    public void testDefault()
     {
-        System.setProperty( "xp.version", "" );
-        System.setProperty( "xp.build.hash", "" );
-        System.setProperty( "xp.build.number", "" );
-
+        VersionInfo.setDefault();
         final VersionInfo info = VersionInfo.get();
         Assert.assertEquals( "0.0.0-SNAPSHOT", info.getVersion() );
-        Assert.assertEquals( "N/A", info.getBuildHash() );
-        Assert.assertEquals( "N/A", info.getBuildNumber() );
-        Assert.assertEquals( "N/A", info.getBuildBranch() );
-        Assert.assertTrue( info.isSnapshotVersion() );
+        Assert.assertEquals( "0.0.0-SNAPSHOT", info.toString() );
+        Assert.assertTrue( info.isSnapshot() );
     }
 
     @Test
-    public void testPropertiesSet()
+    public void testSnapshot()
     {
-        System.setProperty( "xp.version", "5.0.0" );
-        System.setProperty( "xp.build.hash", "123" );
-        System.setProperty( "xp.build.number", "789" );
-        System.setProperty( "xp.build.branch", "master" );
-
+        VersionInfo.set( "1.1.1-SNAPSHOT" );
         final VersionInfo info = VersionInfo.get();
-        Assert.assertEquals( "5.0.0", info.getVersion() );
-        Assert.assertEquals( "123", info.getBuildHash() );
-        Assert.assertEquals( "789", info.getBuildNumber() );
-        Assert.assertEquals( "master", info.getBuildBranch() );
-        Assert.assertFalse( info.isSnapshotVersion() );
+        Assert.assertEquals( "1.1.1-SNAPSHOT", info.getVersion() );
+        Assert.assertEquals( "1.1.1-SNAPSHOT", info.toString() );
+        Assert.assertTrue( info.isSnapshot() );
+    }
+
+    @Test
+    public void testRelease()
+    {
+        VersionInfo.set( "1.1.1" );
+        final VersionInfo info = VersionInfo.get();
+        Assert.assertEquals( "1.1.1", info.getVersion() );
+        Assert.assertEquals( "1.1.1", info.toString() );
+        Assert.assertFalse( info.isSnapshot() );
     }
 }
