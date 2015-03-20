@@ -7,17 +7,16 @@ import java.time.ZoneOffset;
 
 import javax.ws.rs.core.Response;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.Resources;
 
-import junit.framework.Assert;
-
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
-import com.enonic.xp.icon.Icon;
 import com.enonic.xp.form.inputtype.InputTypes;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -80,7 +79,6 @@ public class MixinResourceTest
 
         final MockRestResponse response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get();
         Assert.assertEquals( 404, response.getStatus() );
-        Assert.assertEquals( "Mixin [mymodule:input_text_1] was not found.", response.getAsString() );
     }
 
     @Test

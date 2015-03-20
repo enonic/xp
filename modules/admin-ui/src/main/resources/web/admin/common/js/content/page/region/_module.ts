@@ -41,7 +41,6 @@
 ///<reference path='GetPartDescriptorsByModulesRequest.ts' />
 ///<reference path='GetPartDescriptorsByModuleRequest.ts' />
 ///<reference path='GetPartDescriptorByKeyRequest.ts' />
-///<reference path='DefaultPartDescriptorResolver.ts' />
 ///<reference path='PartDescriptorCache.ts' />
 
 ///<reference path='LayoutDescriptorJson.ts' />
@@ -58,7 +57,6 @@
 ///<reference path='GetLayoutDescriptorsByModuleRequest.ts' />
 ///<reference path='GetLayoutDescriptorsByModulesRequest.ts' />
 ///<reference path='GetLayoutDescriptorByKeyRequest.ts' />
-///<reference path='DefaultLayoutDescriptorResolver.ts' />
 ///<reference path='LayoutDescriptorDropdown.ts' />
 ///<reference path='LayoutRegionsMerger.ts' />
 ///<reference path='LayoutDescriptorCache.ts' />

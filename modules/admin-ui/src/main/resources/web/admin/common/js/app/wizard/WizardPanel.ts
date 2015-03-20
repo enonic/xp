@@ -67,7 +67,7 @@ module api.app.wizard {
 
         private validityManager: WizardValidityManager;
 
-        constructor(params: WizardPanelParams, callback: Function) {
+        constructor(params: WizardPanelParams, onSuccess: () => void, onError?: (reason: any) => void) {
             super("wizard-panel");
             this.validityManager = new WizardValidityManager();
 
@@ -123,15 +123,31 @@ module api.app.wizard {
             if (this.layingOutNew) {
                 this.preLayoutNew().
                     then(() => this.layoutNew()).
-                    then(() => this.postLayoutNew()).
-                    catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
-                    finally(()=> callback()).
+                    then(() => {
+                        this.postLayoutNew();
+                        onSuccess();
+                    }).
+                    catch((reason: any) => {
+                        if (onError) {
+                            onError(reason);
+                        } else {
+                            api.DefaultErrorHandler.handle(reason);
+                        }
+                    }).
                     done(() => this.validityManager.notifyValidityChanged(this.isValid()));
             } else {
                 this.startLayoutPersistedItem(this.persistedItem).
-                    then(() => this.postLayoutPersisted(this.persistedItem)).
-                    catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
-                    finally(() => callback()).
+                    then(() => {
+                        this.postLayoutPersisted(this.persistedItem);
+                        onSuccess();
+                    }).
+                    catch((reason: any) => {
+                        if (onError) {
+                            onError(reason);
+                        } else {
+                            api.DefaultErrorHandler.handle(reason);
+                        }
+                    }).
                     done(() => this.validityManager.notifyValidityChanged(this.isValid()));
             }
 
@@ -229,7 +245,8 @@ module api.app.wizard {
         insertStepBefore(stepToInsert: WizardStep, beforeStep: WizardStep) {
             var indexOfBeforeStep = this.steps.indexOf(beforeStep);
             this.steps.splice(indexOfBeforeStep, 0, stepToInsert);
-            this.stepsPanel.insertNavigablePanel(stepToInsert.getTabBarItem(), stepToInsert.getStepForm(), stepToInsert.getTabBarItem().getLabel(), indexOfBeforeStep);
+            this.stepsPanel.insertNavigablePanel(stepToInsert.getTabBarItem(), stepToInsert.getStepForm(),
+                stepToInsert.getTabBarItem().getLabel(), indexOfBeforeStep);
             this.validityManager.addItem(stepToInsert);
         }
 

@@ -2,6 +2,9 @@ module api.module {
 
     export class Module extends api.item.BaseItem {
 
+        static STATE_STARTED = 'started';
+        static STATE_STOPPED = 'stopped';
+
         private moduleKey: ModuleKey;
 
         private displayName: string;
@@ -75,6 +78,10 @@ module api.module {
 
         getState(): string {
             return this.state;
+        }
+
+        isStarted(): boolean {
+            return this.state === Module.STATE_STARTED;
         }
 
         hasChildren(): boolean {
