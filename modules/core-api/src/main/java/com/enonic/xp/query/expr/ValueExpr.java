@@ -17,6 +17,46 @@ public final class ValueExpr
         this.value = value;
     }
 
+    public static ValueExpr string( final String value )
+    {
+        return new ValueExpr( Value.newString( value ) );
+    }
+
+    public static ValueExpr number( final Number value )
+    {
+        return new ValueExpr( Value.newDouble( value.doubleValue() ) );
+    }
+
+    public static ValueExpr instant( final String value )
+    {
+        return new ValueExpr( Value.newInstant( ValueTypes.DATE_TIME.convert( value ) ) );
+    }
+
+    public static ValueExpr dateTime( final String value )
+    {
+        return new ValueExpr( Value.newInstant( Instant.from( DateTimeFormatter.ISO_DATE_TIME.parse( value ) ) ) );
+    }
+
+    public static ValueExpr localDateTime( final String value )
+    {
+        return new ValueExpr( Value.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) ) );
+    }
+
+    public static ValueExpr time( final String value )
+    {
+        return new ValueExpr( Value.newLocalTime( ValueTypes.LOCAL_TIME.convert( value ) ) );
+    }
+
+    public static ValueExpr date( final String value )
+    {
+        return new ValueExpr( Value.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) ) );
+    }
+
+    public static ValueExpr geoPoint( final String value )
+    {
+        return new ValueExpr( Value.newGeoPoint( ValueTypes.GEO_POINT.convert( value ) ) );
+    }
+
     public Value getValue()
     {
         return this.value;
@@ -59,40 +99,5 @@ public final class ValueExpr
         {
             return "'" + value + "'";
         }
-    }
-
-    public static ValueExpr string( final String value )
-    {
-        return new ValueExpr( Value.newString( value ) );
-    }
-
-    public static ValueExpr number( final Number value )
-    {
-        return new ValueExpr( Value.newDouble( value.doubleValue() ) );
-    }
-
-    public static ValueExpr instant( final String value )
-    {
-        return new ValueExpr( Value.newInstant( ValueTypes.DATE_TIME.convert( value ) ) );
-    }
-
-    public static ValueExpr dateTime( final String value )
-    {
-        return new ValueExpr( Value.newInstant( Instant.from( DateTimeFormatter.ISO_DATE_TIME.parse( value ) ) ) );
-    }
-
-    public static ValueExpr localDateTime( final String value )
-    {
-        return new ValueExpr( Value.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) ) );
-    }
-
-    public static ValueExpr time( final String value )
-    {
-        return new ValueExpr( Value.newLocalTime( ValueTypes.LOCAL_TIME.convert( value ) ) );
-    }
-
-    public static ValueExpr geoPoint( final String value )
-    {
-        return new ValueExpr( Value.newGeoPoint( ValueTypes.GEO_POINT.convert( value ) ) );
     }
 }

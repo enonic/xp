@@ -32,6 +32,11 @@ final class StaticFunctions
         return ValueExpr.time( arg.getValue().asString() );
     }
 
+    private static ValueExpr date( final ValueExpr arg )
+    {
+        return ValueExpr.date( arg.getValue().asString() );
+    }
+
     public static ValueExpr execute( final FunctionExpr function )
     {
         return execute( function.getName(), function.getArguments() );
@@ -52,6 +57,11 @@ final class StaticFunctions
         if ( name.equals( "time" ) && ( args.size() == 1 ) )
         {
             return time( args.get( 0 ) );
+        }
+
+        if ( name.equals( "date" ) && ( args.size() == 1 ) )
+        {
+            return date( args.get( 0 ) );
         }
 
         if ( name.equals( "dateTime" ) && ( args.size() == 1 ) )
