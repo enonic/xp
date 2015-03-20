@@ -44,11 +44,11 @@ public final class QueryParser
         }
     }
 
-    private ConstraintExpr doParseConstraint( final String contstraintsExpression )
+    private ConstraintExpr doParseConstraint( final String constraintExpression )
     {
         try
         {
-            return this.grammar.constraintExpressionsGrammar().parse( contstraintsExpression );
+            return this.grammar.constraintExpressionsGrammar().parse( constraintExpression );
         }
         catch ( final ParserException e )
         {

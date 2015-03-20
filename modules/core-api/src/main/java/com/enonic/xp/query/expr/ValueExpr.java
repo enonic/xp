@@ -1,5 +1,8 @@
 package com.enonic.xp.query.expr;
 
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
@@ -71,6 +74,21 @@ public final class ValueExpr
     public static ValueExpr instant( final String value )
     {
         return new ValueExpr( Value.newInstant( ValueTypes.DATE_TIME.convert( value ) ) );
+    }
+
+    public static ValueExpr dateTime( final String value )
+    {
+        return new ValueExpr( Value.newInstant( Instant.from( DateTimeFormatter.ISO_DATE_TIME.parse( value ) ) ) );
+    }
+
+    public static ValueExpr localDateTime( final String value )
+    {
+        return new ValueExpr( Value.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) ) );
+    }
+
+    public static ValueExpr time( final String value )
+    {
+        return new ValueExpr( Value.newLocalTime( ValueTypes.LOCAL_TIME.convert( value ) ) );
     }
 
     public static ValueExpr geoPoint( final String value )
