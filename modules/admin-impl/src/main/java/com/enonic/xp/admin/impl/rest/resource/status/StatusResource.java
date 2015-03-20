@@ -19,6 +19,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.ServerInfo;
+import com.enonic.xp.server.VersionInfo;
 
 @Path(ResourceConstants.REST_ROOT + "status")
 @Component(immediate = true)
@@ -31,8 +32,12 @@ public final class StatusResource
     @Produces(MediaType.APPLICATION_JSON)
     public ObjectNode getStatus()
     {
+        final VersionInfo version = VersionInfo.get();
+
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        json.put( "version", this.serverInfo.getVersion() );
+        json.put( "version", version.getVersion() );
+        json.put( "buildHash", version.getBuildHash() );
+        json.put( "buildNumber", version.getBuildNumber() );
         json.put( "installation", this.serverInfo.getName() );
         json.set( "context", createContextJson() );
         return json;

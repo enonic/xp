@@ -12,8 +12,16 @@ dependencies {
     compile 'org.fusesource.jansi:jansi:1.11'
 }
 
-jar {
-    manifest {
-        attributes( ['Implementation-Version': project.version] )
+def getOrDefault( String name, String defValue = '' )
+{
+    def value = project.properties[name]
+    return value != null ? value : defValue
+}
+
+processResources {
+    filesMatching( '**/version.properties' ) {
+        expand( [version    : project.version,
+                 buildHash  : getOrDefault( 'buildHash' ),
+                 buildNumber: getOrDefault( 'buildNumber' )] )
     }
 }

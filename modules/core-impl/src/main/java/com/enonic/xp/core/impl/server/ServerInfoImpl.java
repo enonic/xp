@@ -7,7 +7,6 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.Version;
 import com.enonic.xp.server.ServerInfo;
 
 @Component
@@ -26,12 +25,6 @@ public final class ServerInfoImpl
     public String getName()
     {
         return this.context.getProperty( "xp.name" );
-    }
-
-    @Override
-    public String getVersion()
-    {
-        return Version.get().getVersion();
     }
 
     @Override

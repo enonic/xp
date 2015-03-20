@@ -23,26 +23,29 @@ public final class BannerPrinter
 
     private final Environment env;
 
-    public BannerPrinter( final Environment env )
+    private final BuildVersionInfo version;
+
+    public BannerPrinter( final Environment env, final BuildVersionInfo version )
     {
         this.env = env;
-    }
-
-    private String getVersion()
-    {
-        final String value = getClass().getPackage().getImplementationVersion();
-        return value != null ? value : "x.x.x";
+        this.version = version;
     }
 
     public void printBanner()
     {
         System.out.println( BANNER );
-        System.out.println( " # " + PRODUCT + " " + getVersion() );
+        System.out.println( " # " + PRODUCT + " " + getFormattedVersion() );
         System.out.println( " # " + getFormattedJvmInfo() );
         System.out.println( " # " + getFormattedOsInfo() );
         System.out.println( " # Install directory is " + this.env.getInstallDir() );
         System.out.println( " # Home directory is " + this.env.getHomeDir() );
         System.out.println();
+    }
+
+    private String getFormattedVersion()
+    {
+        return String.format( "%s (build = %s, hash = %s)", this.version.getVersion(), this.version.getBuildNumber(),
+                              this.version.getBuildHash() );
     }
 
     private String getFormattedJvmInfo()

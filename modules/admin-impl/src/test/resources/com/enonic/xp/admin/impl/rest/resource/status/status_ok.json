@@ -1,5 +1,7 @@
 {
   "version": "5.0.0",
+  "buildHash": "123",
+  "buildNumber": "789",
   "installation": "production",
   "context": {
     "authenticated": false,
