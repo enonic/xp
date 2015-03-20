@@ -23,6 +23,8 @@ module api.util {
             if (!api.ObjectHelper.stringEquals(this.value, other.value)) {
                 return false;
             }
+
+            return true;
         }
 
         toString(): string {
