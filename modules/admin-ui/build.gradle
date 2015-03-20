@@ -8,6 +8,11 @@ bundle {
     instruction 'Bundle-Name', 'Enonic XP Admin'
 }
 
+task cleanSourceFiles( type: Delete ) {
+    description = 'Clean source files that is used by Grunt.'
+    delete fileTree( dir: 'src/main/resources', includes: ['**/_all.*'] )
+}
+
 task gruntAll( type: GruntTask, dependsOn: npmInstall ) {
     description = 'Build admin UI resources (ts, css, etc).'
     inputs.files fileTree( dir: 'src/main/resources', exclude: '**/_all.*' )
@@ -16,3 +21,4 @@ task gruntAll( type: GruntTask, dependsOn: npmInstall ) {
 }
 
 jar.dependsOn += gruntAll
+clean.dependsOn += cleanSourceFiles
