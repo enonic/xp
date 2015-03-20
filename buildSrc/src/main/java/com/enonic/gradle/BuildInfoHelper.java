@@ -15,7 +15,7 @@ import org.eclipse.jgit.revwalk.RevWalk;
 
 public final class BuildInfoHelper
 {
-    private final static DateFormat DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd'T'hh:mm:ssZ" );
+    private final static DateFormat DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssZ" );
 
     public static BuildInfo extract( final File baseDir )
         throws Exception
