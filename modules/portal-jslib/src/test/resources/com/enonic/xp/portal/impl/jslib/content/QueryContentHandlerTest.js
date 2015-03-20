@@ -147,8 +147,9 @@ exports.query = function () {
                 "by_month": {
                     "date_histogram": {
                         "field": "init_date",
-                        "interval": "1m",
-                        "minDocCount": 0
+                        "interval": "1M",
+                        "minDocCount": 0,
+                        "format": "MM-yyy"
                     }
                 },
                 "price_ranges": {

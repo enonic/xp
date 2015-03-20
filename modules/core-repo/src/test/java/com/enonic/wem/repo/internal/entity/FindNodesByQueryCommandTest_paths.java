@@ -1,7 +1,6 @@
 package com.enonic.wem.repo.internal.entity;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
@@ -43,12 +42,9 @@ public class FindNodesByQueryCommandTest_paths
         queryAndAssert( "_path = '/rootNode/node3/node3_1'", 1 );
     }
 
-    @Ignore
     @Test
-    public void path_wildcard()
-        throws Exception
+    public void parent_and_name()
     {
-
         final Node rootNode = createNodeWithPath( NodePath.ROOT, "rootNode" );
         final Node node1 = createNodeWithPath( rootNode.path(), "node1" );
         final Node node2 = createNodeWithPath( rootNode.path(), "node2" );
@@ -59,12 +55,8 @@ public class FindNodesByQueryCommandTest_paths
 
         printContentRepoIndex();
 
-        queryAndAssert( "_path LIKE '/rootNode*'", 6 );
-        queryAndAssert( "_path LIKE '/rootNode/node1/*'", 1 );
-        queryAndAssert( "_path LIKE '/rootNode/node2/*'", 1 );
-        queryAndAssert( "_path LIKE '/rootNode/node3/*'", 1 );
-        queryAndAssert( "_path LIKE '/rootNode/node1/node1_1'", 1 );
-
+        queryAndAssert( "_name = 'node1'", 1 );
+        queryAndAssert( "_parentPath = '/rootNode' AND _name = 'node1'", 1 );
     }
 
 

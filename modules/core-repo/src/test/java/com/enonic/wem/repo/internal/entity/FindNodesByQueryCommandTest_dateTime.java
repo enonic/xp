@@ -1,13 +1,9 @@
 package com.enonic.wem.repo.internal.entity;
 
-import java.text.DateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-
-import javax.swing.text.DateFormatter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,22 +37,6 @@ public class FindNodesByQueryCommandTest_dateTime
         queryAndAssert( "myInstant > instant('2015-02-26T12:00:00Z')", 1 );
         queryAndAssert( "myInstant >= instant('2015-02-26T12:00:00Z')", 2 );
     }
-
-    @Test
-    public void instant_with_timezone()
-        throws Exception
-    {
-        createNodeWithInstant( Instant.from( DateTimeFormatter.ISO_DATE_TIME.parse( "2015-02-26T12:00:00+01:00" ) ), "node1",
-                               NodePath.ROOT );
-        createNodeWithInstant( Instant.from( DateTimeFormatter.ISO_DATE_TIME.parse( "2015-02-26T13:00:00+02:00" ) ), "node2",
-                               NodePath.ROOT );
-        createNodeWithInstant( Instant.parse( "2015-02-26T13:00:00Z" ), "node3", NodePath.ROOT );
-
-        queryAndAssert( "myInstant = instant('2015-02-26T11:00:00Z')", 2 );
-        queryAndAssert( "myInstant = dateTime('2015-02-26T12:00:00+01:00')", 2 );
-        queryAndAssert( "myInstant = dateTime('2015-02-26T13:00:00+02:00')", 2 );
-    }
-
 
     @Test
     public void localDate()
