@@ -21,5 +21,10 @@ task gruntAll( type: GruntTask, dependsOn: npmInstall ) {
     args = ['all'] //, 'karma'
 }
 
-jar.dependsOn += gruntAll
+task copyAll( type: Copy, dependsOn: gruntAll ) {
+    from 'src/main/resources'
+    into "$buildDir/resources/main"
+}
+
+jar.dependsOn += copyAll
 clean.dependsOn += cleanSourceFiles
