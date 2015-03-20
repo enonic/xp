@@ -22,6 +22,7 @@ processResources {
     filesMatching( '**/version.properties' ) {
         expand( [version    : project.version,
                  buildHash  : getOrDefault( 'buildHash' ),
-                 buildNumber: getOrDefault( 'buildNumber' )] )
+                 buildNumber: getOrDefault( 'buildNumber' ),
+                 buildBranch: getOrDefault( 'buildBranch' )] )
     }
 }

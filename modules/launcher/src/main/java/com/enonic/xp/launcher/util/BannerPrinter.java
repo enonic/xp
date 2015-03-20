@@ -44,8 +44,8 @@ public final class BannerPrinter
 
     private String getFormattedVersion()
     {
-        return String.format( "%s (build = %s, hash = %s)", this.version.getVersion(), this.version.getBuildNumber(),
-                              this.version.getBuildHash() );
+        return String.format( "%s (build = %s, hash = %s, branch = %s)", this.version.getVersion(), this.version.getBuildNumber(),
+                              this.version.getBuildHash(), this.version.getBuildBranch() );
     }
 
     private String getFormattedJvmInfo()

@@ -27,6 +27,7 @@ public class StatusResourceTest
         System.setProperty( "xp.version", "5.0.0" );
         System.setProperty( "xp.build.hash", "123" );
         System.setProperty( "xp.build.number", "789" );
+        System.setProperty( "xp.build.branch", "master" );
 
         Mockito.when( this.serverInfo.getName() ).thenReturn( "production" );
 

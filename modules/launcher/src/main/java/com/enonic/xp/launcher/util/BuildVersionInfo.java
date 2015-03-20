@@ -32,6 +32,11 @@ public final class BuildVersionInfo
         return getProperty( "xp.build.number", "N/A" );
     }
 
+    public String getBuildBranch()
+    {
+        return getProperty( "xp.build.branch", "N/A" );
+    }
+
     public Map<String, String> getAsMap()
     {
         return Maps.fromProperties( this.props );

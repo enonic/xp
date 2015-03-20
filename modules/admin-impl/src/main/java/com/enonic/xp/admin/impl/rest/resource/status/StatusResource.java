@@ -38,6 +38,7 @@ public final class StatusResource
         json.put( "version", version.getVersion() );
         json.put( "buildHash", version.getBuildHash() );
         json.put( "buildNumber", version.getBuildNumber() );
+        json.put( "buildBranch", version.getBuildBranch() );
         json.put( "installation", this.serverInfo.getName() );
         json.set( "context", createContextJson() );
         return json;

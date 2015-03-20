@@ -10,17 +10,22 @@ public final class VersionInfo
 
     private final static String BUILD_NUMBER_PROP = "xp.build.number";
 
+    private final static String BUILD_BRANCH_PROP = "xp.build.branch";
+
     private final String version;
 
     private final String buildHash;
 
     private final String buildNumber;
 
+    private final String buildBranch;
+
     private VersionInfo()
     {
         this.version = getProperty( VERSION_PROP, "0.0.0-SNAPSHOT" );
         this.buildHash = getProperty( BUILD_HASH_PROP, "N/A" );
         this.buildNumber = getProperty( BUILD_NUMBER_PROP, "N/A" );
+        this.buildBranch = getProperty( BUILD_BRANCH_PROP, "N/A" );
     }
 
     public String getVersion()
@@ -36,6 +41,11 @@ public final class VersionInfo
     public String getBuildNumber()
     {
         return this.buildNumber;
+    }
+
+    public String getBuildBranch()
+    {
+        return this.buildBranch;
     }
 
     public boolean isSnapshotVersion()
