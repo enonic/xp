@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -11,7 +12,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -29,6 +29,8 @@ import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.Exceptions;
+
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content/media")
@@ -85,14 +87,22 @@ public final class ContentMediaResource
         else
         {
             final ByteSource binary = contentService.getBinary( contentId, attachment.getBinaryReference() );
-            return Response.ok( binary.openStream(), attachment.getMimeType() ).build();
+            Response.ResponseBuilder response = Response.ok( binary.openStream(), attachment.getMimeType() );
+
+            final String fileName = attachment.getName();
+            if ( isNotEmpty( fileName ) )
+            {
+                response = response.header( "Content-Disposition", "attachment; filename=\"" + fileName + "\"; filename*=UTF-8''" +
+                    URLEncoder.encode( fileName, "UTF-8" ) );
+            }
+            return response.build();
         }
     }
 
     private Attachment resolveAttachment( final String identifier, final Media media )
     {
         Attachment attachment;
-        if ( StringUtils.isNotEmpty( identifier ) )
+        if ( isNotEmpty( identifier ) )
         {
             attachment = media.getAttachments().byName( identifier );
             if ( attachment == null )
