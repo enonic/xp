@@ -34,8 +34,7 @@ public final class BannerPrinter
     public void printBanner()
     {
         System.out.println( BANNER );
-        System.out.println( " # " + PRODUCT + " " + this.version.getVersion() );
-        System.out.println( " # " + getFormattedBuildInfo() );
+        System.out.println( " # " + PRODUCT + " " + getFormattedVersion() );
         System.out.println( " # " + getFormattedJvmInfo() );
         System.out.println( " # " + getFormattedOsInfo() );
         System.out.println( " # Install directory is " + this.env.getInstallDir() );
@@ -43,9 +42,9 @@ public final class BannerPrinter
         System.out.println();
     }
 
-    private String getFormattedBuildInfo()
+    private String getFormattedVersion()
     {
-        return String.format( "Build %s (timestamp = %s, hash = %s)", this.version.getBuildNumber(), this.version.getBuildTimestamp(),
+        return String.format( "%s (build = %s, hash = %s)", this.version.getVersion(), this.version.getBuildNumber(),
                               this.version.getBuildHash() );
     }
 

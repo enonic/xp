@@ -8,15 +8,11 @@ public final class VersionInfo
 
     private final static String BUILD_HASH_PROP = "xp.build.hash";
 
-    private final static String BUILD_TIMESTAMP_PROP = "xp.build.timestamp";
-
     private final static String BUILD_NUMBER_PROP = "xp.build.number";
 
     private final String version;
 
     private final String buildHash;
-
-    private final String buildTimestamp;
 
     private final String buildNumber;
 
@@ -24,7 +20,6 @@ public final class VersionInfo
     {
         this.version = getProperty( VERSION_PROP, "0.0.0-SNAPSHOT" );
         this.buildHash = getProperty( BUILD_HASH_PROP, "N/A" );
-        this.buildTimestamp = getProperty( BUILD_TIMESTAMP_PROP, "N/A" );
         this.buildNumber = getProperty( BUILD_NUMBER_PROP, "N/A" );
     }
 
@@ -36,11 +31,6 @@ public final class VersionInfo
     public String getBuildHash()
     {
         return this.buildHash;
-    }
-
-    public String getBuildTimestamp()
-    {
-        return this.buildTimestamp;
     }
 
     public String getBuildNumber()

@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.context.Context;
@@ -20,6 +19,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.ServerInfo;
+import com.enonic.xp.server.VersionInfo;
 
 @Path(ResourceConstants.REST_ROOT + "status")
 @Component(immediate = true)
@@ -37,7 +37,6 @@ public final class StatusResource
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
         json.put( "version", version.getVersion() );
         json.put( "buildHash", version.getBuildHash() );
-        json.put( "buildTimestamp", version.getBuildTimestamp() );
         json.put( "buildNumber", version.getBuildNumber() );
         json.put( "installation", this.serverInfo.getName() );
         json.set( "context", createContextJson() );

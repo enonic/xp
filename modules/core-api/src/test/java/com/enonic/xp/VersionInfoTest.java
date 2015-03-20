@@ -12,13 +12,11 @@ public class VersionInfoTest
     {
         System.setProperty( "xp.version", "" );
         System.setProperty( "xp.build.hash", "" );
-        System.setProperty( "xp.build.timestamp", "" );
         System.setProperty( "xp.build.number", "" );
 
         final VersionInfo info = VersionInfo.get();
         Assert.assertEquals( "0.0.0-SNAPSHOT", info.getVersion() );
         Assert.assertEquals( "N/A", info.getBuildHash() );
-        Assert.assertEquals( "N/A", info.getBuildTimestamp() );
         Assert.assertEquals( "N/A", info.getBuildNumber() );
         Assert.assertTrue( info.isSnapshotVersion() );
     }
@@ -28,13 +26,11 @@ public class VersionInfoTest
     {
         System.setProperty( "xp.version", "5.0.0" );
         System.setProperty( "xp.build.hash", "123" );
-        System.setProperty( "xp.build.timestamp", "456" );
         System.setProperty( "xp.build.number", "789" );
 
         final VersionInfo info = VersionInfo.get();
         Assert.assertEquals( "5.0.0", info.getVersion() );
         Assert.assertEquals( "123", info.getBuildHash() );
-        Assert.assertEquals( "456", info.getBuildTimestamp() );
         Assert.assertEquals( "789", info.getBuildNumber() );
         Assert.assertFalse( info.isSnapshotVersion() );
     }

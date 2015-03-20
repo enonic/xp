@@ -26,7 +26,6 @@ public class StatusResourceTest
     {
         System.setProperty( "xp.version", "5.0.0" );
         System.setProperty( "xp.build.hash", "123" );
-        System.setProperty( "xp.build.timestamp", "456" );
         System.setProperty( "xp.build.number", "789" );
 
         Mockito.when( this.serverInfo.getName() ).thenReturn( "production" );

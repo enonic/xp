@@ -27,11 +27,6 @@ public final class BuildVersionInfo
         return getProperty( "xp.build.hash", "N/A" );
     }
 
-    public String getBuildTimestamp()
-    {
-        return getProperty( "xp.build.timestamp", "N/A" );
-    }
-
     public String getBuildNumber()
     {
         return getProperty( "xp.build.number", "N/A" );

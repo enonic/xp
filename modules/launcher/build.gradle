@@ -20,9 +20,8 @@ def getOrDefault( String name, String defValue = '' )
 
 processResources {
     filesMatching( '**/version.properties' ) {
-        expand( [version       : project.version,
-                 buildHash     : getOrDefault( 'buildHash' ),
-                 buildNumber   : getOrDefault( 'buildNumber' ),
-                 buildTimestamp: getOrDefault( 'buildTimestamp' )] )
+        expand( [version    : project.version,
+                 buildHash  : getOrDefault( 'buildHash' ),
+                 buildNumber: getOrDefault( 'buildNumber' )] )
     }
 }
