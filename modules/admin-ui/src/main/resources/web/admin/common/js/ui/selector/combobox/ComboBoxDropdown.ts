@@ -64,8 +64,21 @@ module api.ui.selector.combobox {
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[], selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = []) {
 
-            this.dropdownGrid.setOptions(options);
+            selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
+                if(selectedOption.readOnly)
+                {
+                    for(var i = 0; i < options.length; i++ )
+                    {
+                        if(selectedOption.value == options[i].value)
+                        {
+                            options[i].readOnly = true;
+                            break;
+                        }
+                    }
+                }
+            });
 
+            this.dropdownGrid.setOptions(options);
             if (this.isDropdownShown()) {
                 this.showDropdown(selectedOptions);
             }
@@ -114,6 +127,7 @@ module api.ui.selector.combobox {
                 this.dropdownGrid.show();
                 this.dropdownGrid.adjustGridHeight();
                 this.dropdownGrid.markSelections(selectedOptions);
+                this.dropdownGrid.markReadOnly(selectedOptions);
             } else {
                 this.dropdownGrid.hide();
                 this.emptyDropdown.getEl().setInnerHtml("No matching items");

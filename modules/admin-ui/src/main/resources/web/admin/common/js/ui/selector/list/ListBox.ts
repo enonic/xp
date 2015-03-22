@@ -57,6 +57,16 @@ module api.ui.selector.list {
             }
         }
 
+        addItemReadOnly(...items: I[]) {
+            this.items = this.items.concat(items);
+            items.forEach((item) => {
+                this.addItemView(item, true);
+            });
+            if (items.length > 0) {
+                this.notifyItemsAdded(items);
+            }
+        }
+
         removeItem(...items: I[]) {
             var itemsRemoved: I[] = [];
             this.items = this.items.filter((item) => {
@@ -78,7 +88,7 @@ module api.ui.selector.list {
             return this.items.length;
         }
 
-        createItemView(item: I): api.dom.Element {
+        createItemView(item: I, readOnly: boolean): api.dom.Element {
             throw new Error("You must override createListItem to create views for list items");
         }
 
@@ -112,8 +122,16 @@ module api.ui.selector.list {
             }
         }
 
-        private addItemView(item: I) {
-            var itemView = this.createItemView(item);
+        private addItemView(item: I, readOnly: boolean = false) {
+            if(readOnly)
+            {
+                var itemView = this.createItemView(item, readOnly);
+            }
+            else
+            {
+                var itemView = this.createItemView(item, false);
+            }
+
             this.itemViews[this.getItemId(item)] = itemView;
             this.appendChild(itemView);
         }
