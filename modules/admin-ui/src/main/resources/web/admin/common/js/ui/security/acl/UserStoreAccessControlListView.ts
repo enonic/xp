@@ -14,7 +14,7 @@ module api.ui.security.acl {
             super('access-control-list' + (className ? " " + className : ""));
         }
 
-        createItemView(entry: UserStoreAccessControlEntry): UserStoreAccessControlEntryView {
+        createItemView(entry: UserStoreAccessControlEntry, readOnly: boolean): UserStoreAccessControlEntryView {
             var itemView = new UserStoreAccessControlEntryView(entry);
             itemView.setEditable(this.itemsEditable);
             itemView.onRemoveClicked(() => {
@@ -23,6 +23,12 @@ module api.ui.security.acl {
             itemView.onValueChanged((item: UserStoreAccessControlEntry) => {
                 this.notifyItemValueChanged(item);
             });
+
+            if(readOnly)
+            {
+                itemView.setEditable(false);
+            }
+
             return itemView;
         }
 

@@ -38,6 +38,7 @@
     cursor: pointer;
     font-size: 12px;
     display: block;
+    text-decoration: none;
   }
 
   .permission-selector {
@@ -82,6 +83,15 @@
       padding: 40px 4px 4px;
     }
 
+  }
+
+  &.readonly {
+    opacity: 0.5;
+
+    .icon-close {
+      cursor: default;
+
+    }
   }
 
 }
