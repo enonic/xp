@@ -91,11 +91,12 @@ module api.ui.security.acl {
             throw new Error('Not supported, use createItemView instead');
         }
 
-        createItemView(entry: UserStoreAccessControlEntry): UserStoreACESelectedOptionView {
+        createItemView(entry: UserStoreAccessControlEntry, readOnly: boolean): UserStoreACESelectedOptionView {
 
             var option = {
                 displayValue: entry,
-                value: this.getItemId(entry)
+                value: this.getItemId(entry),
+                readOnly: readOnly
             };
             var itemView = new UserStoreACESelectedOptionView(option);
             itemView.onValueChanged((item: UserStoreAccessControlEntry) => {
@@ -112,6 +113,11 @@ module api.ui.security.acl {
                 this.removeOption(option, false);
             });
 
+            if(readOnly)
+            {
+                itemView.setEditable(false);
+            }
+
             // keep track of selected options for SelectedOptionsView
             this.list.push(selectedOption);
             return itemView;
@@ -119,7 +125,15 @@ module api.ui.security.acl {
 
 
         addOption(option: Option<UserStoreAccessControlEntry>): boolean {
-            this.addItem(option.displayValue);
+            if(option.readOnly)
+            {
+                this.addItemReadOnly(option.displayValue)
+            }
+            else
+            {
+                this.addItem(option.displayValue);
+            }
+
             return true;
         }
 

@@ -239,7 +239,7 @@ module api.ui.selector.combobox {
 
         handleRowSelected(index: number) {
             var option = this.getOptionByRow(index);
-            if (option != null) {
+            if (option != null && !option.readOnly) {
                 if (!this.isOptionSelected(option)) {
                     this.selectOption(option);
                 } else {

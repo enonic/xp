@@ -15,6 +15,7 @@ module app.wizard {
 
         private userStoreToEdit: UserStore;
 
+        private defaultUserStore: UserStore;
 
         setUserStore(value: UserStore): UserStoreWizardPanelFactory {
             this.userStore = value;
@@ -35,7 +36,10 @@ module app.wizard {
 
             this.creatingForNew = true;
 
-            return this.newUserStoreWizardPanelForNew();
+            return this.loadDefaultUserStore().then((defaultUserStore: UserStore) => {
+                this.defaultUserStore = defaultUserStore;
+                return this.newUserStoreWizardPanelForNew();
+            });
         }
 
         createForEdit(): wemQ.Promise<UserStoreWizardPanel> {
@@ -44,12 +48,19 @@ module app.wizard {
 
             return this.loadUserStoreToEdit().then((loadedUserStoreToEdit: UserStore) => {
                 this.userStoreToEdit = loadedUserStoreToEdit;
-                return this.newUserStoreWizardPanelForEdit();
+                return this.loadDefaultUserStore().then((defaultUserStore: UserStore) => {
+                    this.defaultUserStore = defaultUserStore;
+                    return this.newUserStoreWizardPanelForEdit();
+                });
             });
         }
 
         private loadUserStoreToEdit(): wemQ.Promise<UserStore> {
             return new api.security.GetUserStoreByKeyRequest(this.userStoreKey).sendAndParse();
+        }
+
+        private loadDefaultUserStore(): wemQ.Promise<UserStore> {
+            return new api.security.GetDefaultUserStoreRequest().sendAndParse();
         }
 
         private newUserStoreWizardPanelForNew(): wemQ.Promise<app.wizard.UserStoreWizardPanel> {
@@ -58,6 +69,7 @@ module app.wizard {
 
             var wizardParams = new app.wizard.UserStoreWizardPanelParams().
                 setUserStoreKey(this.userStoreKey).
+                setDefaultUserStore(this.defaultUserStore).
                 setAppBarTabId(this.appBarTabId);
 
             this.resolveUserStoreWizardPanel(deferred, wizardParams);
@@ -72,6 +84,7 @@ module app.wizard {
             var wizardParams = new UserStoreWizardPanelParams().
                 setUserStoreKey(this.userStoreKey).
                 setUserStore(this.userStoreToEdit).
+                setDefaultUserStore(this.defaultUserStore).
                 setAppBarTabId(this.appBarTabId);
 
             this.resolveUserStoreWizardPanel(deferred, wizardParams);

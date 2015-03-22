@@ -220,6 +220,21 @@ module api.ui.selector {
             }
         }
 
+        markReadOnly(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
+
+            var stylesHash: Slick.CellCssStylesHash = {};
+            var rows: number[] = [];
+            selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
+                if(selectedOption.readOnly)
+                {
+                    var row = this.gridData.getRowById(selectedOption.value);
+                    rows.push(row);
+                    stylesHash[row] = {_checkbox_selector: "readonly" ,option: "readonly"};
+                }
+            });
+            this.grid.setCellCssStyles("readonly", stylesHash);
+        }
+
         hasActiveRow(): boolean {
             var activeCell = this.grid.getActiveCell();
             if (activeCell) {
