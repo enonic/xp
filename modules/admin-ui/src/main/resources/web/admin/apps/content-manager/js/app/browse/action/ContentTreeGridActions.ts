@@ -106,7 +106,7 @@ module app.browse.action {
                 wemQ.all(parallelPromises).spread<void>(() => {
                     deferred.resolve(contentBrowseItems);
                     return wemQ(null);
-                });
+                }).done();
                 break;
             default:
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);

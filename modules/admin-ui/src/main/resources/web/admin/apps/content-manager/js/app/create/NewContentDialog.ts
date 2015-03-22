@@ -46,7 +46,7 @@ module app.create {
             });
 
             this.uploaderEnabled = true;
-            
+
             this.addClass("new-content-dialog hidden");
 
             var section = new api.dom.SectionEl().setClass("column");
@@ -133,7 +133,7 @@ module app.create {
             // meaning that to know when we left some element
             // we need to compare it to the one currently dragged over
             this.onDragEnter((event: DragEvent) => {
-                if(this.uploaderEnabled) {
+                if (this.uploaderEnabled) {
                     var target = <HTMLElement> event.target;
 
                     if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
@@ -144,7 +144,7 @@ module app.create {
             });
 
             this.onDragLeave((event: DragEvent) => {
-                if(this.uploaderEnabled) {
+                if (this.uploaderEnabled) {
                     var targetEl = <HTMLElement> event.target;
 
                     if (dragOverEl == targetEl) {
@@ -154,7 +154,7 @@ module app.create {
             });
 
             this.onDrop((event: DragEvent) => {
-                if(this.uploaderEnabled) {
+                if (this.uploaderEnabled) {
                     uploaderContainer.hide();
                 }
 
@@ -182,49 +182,10 @@ module app.create {
         }
 
         private filterByParentContent(items: NewContentDialogListItem[], siteModuleKeys: ModuleKey[]): NewContentDialogListItem[] {
-            var typesAllowedEverywhere: {[key:string]: ContentTypeName} = {};
-            [ContentTypeName.UNSTRUCTURED, ContentTypeName.FOLDER, ContentTypeName.SITE,
-                ContentTypeName.SHORTCUT].forEach((contentTypeName: ContentTypeName) => {
-                    typesAllowedEverywhere[contentTypeName.toString()] = contentTypeName;
-                });
-            var siteModules: {[key:string]: ModuleKey} = {};
-            siteModuleKeys.forEach((moduleKey: ModuleKey) => {
-                siteModules[moduleKey.toString()] = moduleKey;
-            });
-
-            var parentContentIsTemplateFolder = this.parentContent && this.parentContent.getType().isTemplateFolder();
-            var parentContentIsSite = this.parentContent && this.parentContent.getType().isSite();
-            var parentContentIsPageTemplate = this.parentContent && this.parentContent.getType().isPageTemplate();
-
-            return items.filter((item: NewContentDialogListItem) => {
-                var contentType = item.getContentType();
-                var contentTypeName = contentType.getContentTypeName();
-                if (contentType.isAbstract()) {
-                    return false;
-                }
-                else if (parentContentIsPageTemplate) {
-                    return false; // children not allowed for page-template
-                }
-                else if (contentTypeName.isTemplateFolder()) {
-                    return parentContentIsSite; // template-folder only allowed under site
-                }
-                else if (contentTypeName.isPageTemplate()) {
-                    return parentContentIsTemplateFolder; // page-template only allowed under a template-folder
-                }
-                else if (parentContentIsTemplateFolder) {
-                    return contentTypeName.isPageTemplate(); // in a template-folder allow only page-template
-                }
-                else if (typesAllowedEverywhere[contentTypeName.toString()]) {
-                    return true;
-                }
-                else if (siteModules[contentTypeName.getModuleKey().toString()]) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-
-            });
+            var createContentFilter = new api.content.CreateContentFilter().siteModulesFilter(siteModuleKeys);
+            return items.filter((item: NewContentDialogListItem) =>
+                    createContentFilter.isCreateContentAllowed(this.parentContent, item.getContentType())
+            );
         }
 
         setParentContent(parent: api.content.Content) {
@@ -269,17 +230,17 @@ module app.create {
             super.show();
 
             this.fileInput.giveFocus();
-            if(this.uploaderEnabled) {
+            if (this.uploaderEnabled) {
                 this.removeClass("no-uploader");
             } else {
                 this.addClass("no-uploader");
             }
 
-            if(this.mockModalDialog == null) {
+            if (this.mockModalDialog == null) {
                 this.mockModalDialog = new NewContentDialog();
-                this.mockModalDialog.close = function() {
+                this.mockModalDialog.close = function () {
                     wemjq(this.getEl().getHTMLElement()).hide();
-                }
+                };
                 this.getParentElement().appendChild(this.mockModalDialog);
                 this.mockModalDialog.addClass("mock-modal-dialog");
                 this.mockModalDialog.removeClass("hidden");
