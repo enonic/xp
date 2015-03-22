@@ -49,6 +49,7 @@ final class ContentTypeFromMimeTypeResolver
         // Archive
         MAP.put( "application/zip", ContentTypeName.archiveMedia() );
         MAP.put( "application/gzip", ContentTypeName.archiveMedia() );
+        MAP.put( "application/octet-stream", ContentTypeName.archiveMedia() );
 
         // Text
         MAP.put( "text/plain", ContentTypeName.textMedia() );
@@ -74,6 +75,11 @@ final class ContentTypeFromMimeTypeResolver
         MAP.put( "application/pdf", ContentTypeName.documentMedia() );
         MAP.put( "application/postscript", ContentTypeName.documentMedia() );
         MAP.put( "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ContentTypeName.documentMedia() );
+        MAP.put( "application/vnd.openxmlformats-officedocument.presentationml.presentation", ContentTypeName.documentMedia() );
+        MAP.put( "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ContentTypeName.documentMedia() );
+        MAP.put( "application/vnd.oasis.opendocument.text", ContentTypeName.documentMedia() );
+        MAP.put( "application/vnd.ms-excel", ContentTypeName.documentMedia() );
+        MAP.put( "application/msword", ContentTypeName.documentMedia() );
 
         // Executable
         // TODO
