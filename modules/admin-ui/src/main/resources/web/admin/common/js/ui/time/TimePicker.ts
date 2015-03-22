@@ -45,9 +45,7 @@ module api.ui.time {
 
             this.input = api.ui.text.TextInput.middle();
             this.input.onClicked((e: MouseEvent) => {
-                e.stopPropagation();
                 e.preventDefault();
-
                 this.popup.show();
             });
 
@@ -83,7 +81,7 @@ module api.ui.time {
             var popupBuilder = new TimePickerPopupBuilder().
                 setHours(builder.hours).
                 setMinutes(builder.minutes).
-                setCloseOnOutsideClick(builder.closeOnOutsideClick);
+                setCloseOnOutsideClick(false);
             this.popup = popupBuilder.build();
             wrapper.appendChild(this.popup);
 
@@ -94,7 +92,6 @@ module api.ui.time {
             this.appendChild(wrapper);
 
             this.popupTrigger.onClicked((e: MouseEvent) => {
-                e.stopPropagation();
                 e.preventDefault();
 
                 if (this.popup.isVisible()) {
@@ -117,6 +114,58 @@ module api.ui.time {
                 this.updateInputStyling();
             });
 
+            this.popup.onKeyDown((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isTabKey(event)) {
+                    if(!(document.activeElement == this.input.getEl().getHTMLElement())) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        this.popup.hide();
+                        this.popupTrigger.giveFocus();
+                    }
+                }
+            });
+
+            this.input.onKeyDown((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isTabKey(event)) { // handles tab navigation events on date input
+                    if(!event.shiftKey) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        this.popupTrigger.giveFocus();
+                    } else {
+                        this.popup.hide();
+                    }
+                }
+            });
+
+            this.popupTrigger.onKeyDown((event: KeyboardEvent) => {
+                if (api.ui.KeyHelper.isTabKey(event)) {
+                    this.popup.hide();
+                }
+            });
+
+            api.dom.Body.get().onKeyDown((e: KeyboardEvent) => this.popupTabListener(e));
+            if (builder.closeOnOutsideClick){
+                api.dom.Body.get().onClicked((e: MouseEvent) => this.outsideClickListener(e));
+            }
+
+        }
+
+        // as popup blur and focus events behave incorrectly - we manually catch tab navigation event in popup below
+        private popupTabListener(e: KeyboardEvent) {
+            if (api.ui.KeyHelper.isTabKey(e) && !this.getEl().contains(<HTMLElement> e.target)) {
+                if (this.popup.isVisible()) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.popupTrigger.getEl().focus();
+                    this.popup.hide();
+                }
+            }
+        }
+
+        private outsideClickListener(e: MouseEvent) {
+            if (!this.getEl().contains(<HTMLElement> e.target)) {
+                this.popup.hide();
+            }
         }
 
         hasValidUserInput(): boolean {
