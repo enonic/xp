@@ -4,8 +4,15 @@ module app.wizard {
 
         userStore: api.security.UserStore;
 
+        defaultUserStore: api.security.UserStore;
+
         setUserStore(value: api.security.UserStore): UserStoreWizardPanelParams {
             this.userStore = value;
+            return this;
+        }
+
+        setDefaultUserStore(value: api.security.UserStore): UserStoreWizardPanelParams {
+            this.defaultUserStore = value;
             return this;
         }
 

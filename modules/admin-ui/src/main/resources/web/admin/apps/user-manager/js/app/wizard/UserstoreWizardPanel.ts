@@ -21,7 +21,7 @@ module app.wizard {
 
         private permissionsWizardStepForm: SecurityWizardStepForm;
 
-        private userStore: UserStoreKey;
+        private defaultUserStore: UserStore;
 
         isUserStoreFormValid: boolean;
         userStorePath: string;
@@ -38,6 +38,7 @@ module app.wizard {
             this.userStoreNamedListeners = [];
 
             this.userStorePath = params.persistedPath;
+            this.defaultUserStore = params.defaultUserStore;
 
             var iconUrl = api.dom.ImgEl.PLACEHOLDER;
             this.formIcon = new FormIcon(iconUrl, "Click to upload icon");
@@ -152,6 +153,7 @@ module app.wizard {
             var deferred = wemQ.defer<void>();
 
             this.wizardHeader.initNames("", this.userStorePath, false);
+            this.permissionsWizardStepForm.layoutReadOnly(this.defaultUserStore);
 
             deferred.resolve(null);
             return deferred.promise;
@@ -187,7 +189,7 @@ module app.wizard {
             var deferred = wemQ.defer<void>();
 
             this.wizardHeader.initNames(existing.getDisplayName(), existing.getKey().getId(), false);
-            this.permissionsWizardStepForm.layout(existing);
+            this.permissionsWizardStepForm.layout(existing, this.defaultUserStore);
 
             deferred.resolve(null);
             return deferred.promise;
@@ -225,10 +227,10 @@ module app.wizard {
             if (persistedUserStore == undefined) {
                 return this.wizardHeader.getName() !== "" ||
                     this.wizardHeader.getDisplayName() !== "" ||
-                    this.permissionsWizardStepForm.getPermissions().getEntries().length !== 0;
+                    !this.permissionsWizardStepForm.getPermissions().equals(this.defaultUserStore.getPermissions());
             } else {
                 var viewedUserStore = this.assembleViewedUserStore();
-                return !viewedUserStore.equals(this.getPersistedItem());
+                return !this.getPersistedItem().equals(viewedUserStore);
             }
         }
 

@@ -1,9 +1,6 @@
 module app.wizard {
 
     import UserStoreAccessControlList = api.security.acl.UserStoreAccessControlList;
-    import UserStoreAccessControlListView = api.ui.security.acl.UserStoreAccessControlListView;
-    import UserStoreAccessControlEntryView = api.ui.security.acl.UserStoreAccessControlEntryView;
-    import UserStoreAccessControlEntry = api.security.acl.UserStoreAccessControlEntry;
     import UserStoreAccessControlComboBox = api.ui.security.acl.UserStoreAccessControlComboBox;
     import Content = api.content.Content;
     import UserStore = api.security.UserStore;
@@ -52,13 +49,33 @@ module app.wizard {
 
         }
 
-        layout(userStore: UserStore) {
+        layout(userStore: UserStore, defaultUserStore: UserStore) {
+            this.userStore = userStore;
+
+            this.comboBox.clearSelection();
+
+            if(defaultUserStore)
+            {
+                defaultUserStore.getPermissions().getEntries().forEach((item) => {
+                    this.comboBox.selectReadOnly(item);
+                });
+            }
+
+            userStore.getPermissions().getEntries().forEach((item) => {
+                if (!this.comboBox.isSelected(item)) {
+                    this.comboBox.select(item);
+                }
+            });
+
+        }
+
+        layoutReadOnly(userStore: UserStore) {
             this.userStore = userStore;
 
             this.comboBox.clearSelection();
             userStore.getPermissions().getEntries().forEach((item) => {
                 if (!this.comboBox.isSelected(item)) {
-                    this.comboBox.select(item);
+                    this.comboBox.selectReadOnly(item);
                 }
             });
 
