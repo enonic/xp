@@ -16,6 +16,7 @@
 ///<reference path="SecurityResourceRequest.ts"/>
 ///<reference path="ListUserStoresRequest.ts"/>
 ///<reference path="GetUserStoreByKeyRequest.ts"/>
+///<reference path="GetDefaultUserStoreRequest.ts"/>
 ///<reference path="PrincipalListJson.ts"/>
 ///<reference path="FindPrincipalsRequest.ts"/>
 ///<reference path="GetPrincipalByKeyRequest.ts"/>
