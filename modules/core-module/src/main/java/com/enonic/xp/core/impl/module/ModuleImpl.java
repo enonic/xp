@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.module;
 
 import java.net.URL;
+import java.time.Instant;
 import java.util.Enumeration;
 import java.util.Set;
 
@@ -132,6 +133,18 @@ final class ModuleImpl
         final Set<String> set = Sets.newHashSet();
         findResourcePaths( set, this.bundle, "/" );
         return set;
+    }
+
+    @Override
+    public Instant getModifiedTime()
+    {
+        return Instant.ofEpochMilli( this.bundle.getLastModified() );
+    }
+
+    @Override
+    public boolean isStarted()
+    {
+        return this.bundle.getState() == Bundle.ACTIVE;
     }
 
     private void findResourcePaths( final Set<String> set, final Bundle bundle, final String parentPath )
