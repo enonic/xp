@@ -20,7 +20,6 @@ module api.content.form.inputtype.time {
 
         constructor(config: api.form.inputtype.InputTypeViewContext<DateTimeConfig>) {
             super(config);
-            debugger;
             if (config.inputConfig.withTimezone && <any>config.inputConfig.withTimezone == 'true') {
                 this.withTimezone = true;
                 this.valueType = ValueTypes.DATE_TIME;
@@ -38,7 +37,6 @@ module api.content.form.inputtype.time {
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
             var dateTimeBuilder = new api.ui.time.DateTimePickerBuilder();
-            debugger;
             if (property.hasNonNullValue()) {
                 var date;
                 if(this.valueType == ValueTypes.DATE_TIME) {
@@ -57,7 +55,6 @@ module api.content.form.inputtype.time {
 
             var dateTimePicker = new api.ui.time.DateTimePicker(dateTimeBuilder);
             dateTimePicker.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                debugger;
                 var newValue = new Value(event.getDate(), this.valueType);
                 property.setValue(newValue);
             });
