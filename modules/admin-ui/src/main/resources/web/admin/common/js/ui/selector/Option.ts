@@ -8,6 +8,8 @@ module api.ui.selector {
 
         indices?: string[];
 
+        readOnly?: boolean;
+
     }
 
 }

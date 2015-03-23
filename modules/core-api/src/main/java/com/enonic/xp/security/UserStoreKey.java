@@ -8,6 +8,8 @@ public final class UserStoreKey
 {
     private final static UserStoreKey SYSTEM = new UserStoreKey( "system" );
 
+    private final static UserStoreKey DEFAULT = new UserStoreKey( "default" );
+
     private final static String RESERVED_USER_STORE_ID = PrincipalKey.ROLES_NODE_NAME;
 
     private final String id;
@@ -50,5 +52,10 @@ public final class UserStoreKey
     public static UserStoreKey system()
     {
         return SYSTEM;
+    }
+
+    public static UserStoreKey createDefault()
+    {
+        return DEFAULT;
     }
 }

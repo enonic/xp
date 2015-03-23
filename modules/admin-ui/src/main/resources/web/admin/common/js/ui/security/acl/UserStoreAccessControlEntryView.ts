@@ -13,6 +13,7 @@ module api.ui.security.acl {
 
         private accessSelector: UserStoreAccessSelector;
 
+        private removeButton: api.dom.AEl;
         private valueChangedListeners: {(item: UserStoreAccessControlEntry): void}[] = [];
         private editable: boolean = true;
 
@@ -22,21 +23,23 @@ module api.ui.security.acl {
             //this.toggleClass('inherited', ace.isInherited());
 
             this.ace = ace;
-            if (!this.ace.getAccess()) {
+            if (isNaN(this.ace.getAccess())) {
                 this.ace.setAccess(UserStoreAccess[UserStoreAccess.CREATE_USERS]);
             }
 
 
             this.accessSelector = new UserStoreAccessSelector();
-            this.appendChild(this.accessSelector);
-
             this.accessSelector.onValueChanged((event: ValueChangedEvent) => {
                 this.ace.setAccess(event.getNewValue());
             })
 
-            var removeButton = new api.dom.AEl("icon-close");
-            removeButton.onClicked((event: MouseEvent) => this.notifyRemoveClicked(event));
-            this.appendChild(removeButton);
+            this.removeButton = new api.dom.AEl("icon-close");
+            this.removeButton.onClicked((event: MouseEvent) => {
+                if(this.editable)
+                {
+                    this.notifyRemoveClicked(event);
+                }
+            });
 
             this.setUserStoreAccessControlEntry(this.ace, true);
 
@@ -50,6 +53,14 @@ module api.ui.security.acl {
             if (editable != this.editable) {
                 this.accessSelector.setEnabled(editable);
                 this.editable = editable;
+            }
+
+            if(this.editable) {
+                this.removeClass("readonly");
+            }
+            else
+            {
+                this.addClass("readonly");
             }
         }
 
@@ -91,6 +102,12 @@ module api.ui.security.acl {
             return ace;
         }
 
+        doRender() {
+            super.doRender();
+            this.appendChild(this.accessSelector);
+            this.appendChild(this.removeButton);
+            return true;
+        }
     }
 
 }
