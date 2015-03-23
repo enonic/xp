@@ -4,23 +4,18 @@ import com.google.common.base.Strings;
 
 public final class VersionInfo
 {
-    private final static String VERSION_PROP = "xp.version";
+    private static VersionInfo INSTANCE;
 
-    private final static String BUILD_HASH_PROP = "xp.build.hash";
-
-    private final static String BUILD_NUMBER_PROP = "xp.build.number";
+    static
+    {
+        setDefault();
+    }
 
     private final String version;
 
-    private final String buildHash;
-
-    private final String buildNumber;
-
-    private VersionInfo()
+    private VersionInfo( final String version )
     {
-        this.version = getProperty( VERSION_PROP, "0.0.0-SNAPSHOT" );
-        this.buildHash = getProperty( BUILD_HASH_PROP, "N/A" );
-        this.buildNumber = getProperty( BUILD_NUMBER_PROP, "N/A" );
+        this.version = version.trim();
     }
 
     public String getVersion()
@@ -28,29 +23,35 @@ public final class VersionInfo
         return this.version;
     }
 
-    public String getBuildHash()
-    {
-        return this.buildHash;
-    }
-
-    public String getBuildNumber()
-    {
-        return this.buildNumber;
-    }
-
-    public boolean isSnapshotVersion()
+    public boolean isSnapshot()
     {
         return this.version.endsWith( "SNAPSHOT" );
     }
 
-    private static String getProperty( final String name, final String defValue )
+    @Override
+    public String toString()
     {
-        final String value = System.getProperty( name );
-        return Strings.isNullOrEmpty( value ) ? defValue : value.trim();
+        return this.version;
     }
 
     public static VersionInfo get()
     {
-        return new VersionInfo();
+        return INSTANCE;
+    }
+
+    public static void set( final String version )
+    {
+        INSTANCE = new VersionInfo( version );
+    }
+
+    public static void setDefault()
+    {
+        set( findVersion() );
+    }
+
+    private static String findVersion()
+    {
+        final String value = VersionInfo.class.getPackage().getImplementationVersion();
+        return Strings.isNullOrEmpty( value ) ? "0.0.0-SNAPSHOT" : value;
     }
 }

@@ -19,7 +19,8 @@ public final class BuildVersionInfo
 
     public String getVersion()
     {
-        return getProperty( "xp.version", "0.0.0-SNAPSHOT" );
+        final String value = getClass().getPackage().getImplementationVersion();
+        return Strings.isNullOrEmpty( value ) ? "0.0.0-SNAPSHOT" : value;
     }
 
     public String getBuildHash()
@@ -27,9 +28,14 @@ public final class BuildVersionInfo
         return getProperty( "xp.build.hash", "N/A" );
     }
 
-    public String getBuildNumber()
+    public String getBuildTimestamp()
     {
-        return getProperty( "xp.build.number", "N/A" );
+        return getProperty( "xp.build.timestamp", "N/A" );
+    }
+
+    public String getBuildBranch()
+    {
+        return getProperty( "xp.build.branch", "N/A" );
     }
 
     public Map<String, String> getAsMap()
@@ -53,7 +59,7 @@ public final class BuildVersionInfo
         try
         {
             final Properties props = new Properties();
-            props.load( BuildVersionInfo.class.getResourceAsStream( "/META-INF/version.properties" ) );
+            props.load( BuildVersionInfo.class.getResourceAsStream( "/META-INF/build.properties" ) );
             return props;
         }
         catch ( final Exception e )

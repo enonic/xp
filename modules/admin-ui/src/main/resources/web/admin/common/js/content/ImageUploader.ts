@@ -31,6 +31,10 @@ module api.content {
                     this.getEl().setMaxWidthPx(this.initialWidth);
                 }
             });
+
+            this.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
+                new api.app.wizard.ContentWizardImageUploadedEvent(event.getUploadItem().getModel(), this).fire();
+            });
         }
 
         createResultItem(value: string): api.dom.DivEl {

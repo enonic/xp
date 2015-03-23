@@ -7,6 +7,7 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.xp.server.BuildInfo;
 import com.enonic.xp.server.ServerInfo;
 
 @Component
@@ -37,5 +38,11 @@ public final class ServerInfoImpl
     public File getInstallDir()
     {
         return new File( this.context.getProperty( "xp.install" ) );
+    }
+
+    @Override
+    public BuildInfo getBuildInfo()
+    {
+        return new BuildInfoImpl( this.context );
     }
 }

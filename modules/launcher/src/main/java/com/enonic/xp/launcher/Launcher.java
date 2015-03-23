@@ -54,7 +54,6 @@ public final class Launcher
         this.env.validate();
 
         System.getProperties().putAll( this.env.getAsMap() );
-        System.getProperties().putAll( this.version.getAsMap() );
     }
 
     private void printBanner()
@@ -69,6 +68,7 @@ public final class Launcher
         final ConfigLoader loader = new ConfigLoader( this.env );
         this.config = loader.load();
         this.config.putAll( this.systemProperties );
+        this.config.putAll( this.version.getAsMap() );
         this.config.interpolate();
     }
 

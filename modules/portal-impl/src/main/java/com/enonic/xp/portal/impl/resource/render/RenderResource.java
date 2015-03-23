@@ -23,7 +23,7 @@ public abstract class RenderResource
 
         if ( site == null )
         {
-            throw notFound( "Site for content [%s] not found", content.getPath() );
+            throw notFound( "Site for content [%s] not found", content.getPath() );
         }
 
         return site;

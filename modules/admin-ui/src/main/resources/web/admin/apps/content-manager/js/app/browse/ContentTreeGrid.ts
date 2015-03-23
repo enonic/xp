@@ -98,16 +98,16 @@ module app.browse {
                     } else if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._360_540)) {
                         this.getGrid().setColumns([nameColumn, orderColumn, modifiedTimeColumn]);
                     } else {
+                        if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._540_720)) {
+                            modifiedTimeColumn.setMaxWidth(100);
+                            modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
+                        } else {
+                            modifiedTimeColumn.setMaxWidth(170);
+                            modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
+                        }
                         this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
                     }
 
-                    if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._540_720)) {
-                        modifiedTimeColumn.setMaxWidth(100);
-                        modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
-                    } else {
-                        modifiedTimeColumn.setMaxWidth(170);
-                        modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
-                    }
                 } else {
                     this.getGrid().resizeCanvas();
                 }
@@ -459,11 +459,16 @@ module app.browse {
 
 
         xAppendContentNode(relationship: TreeNodeParentOfContent, update: boolean = true): TreeNode<ContentSummaryAndCompareStatus> {
-            var appendedNode = this.dataToTreeNode(relationship.getData(), relationship.getNode());
-            relationship.getNode().addChild(appendedNode, true);
+            var appendedNode = this.dataToTreeNode(relationship.getData(), relationship.getNode()),
+                data = relationship.getNode().getData();
 
-            var data = relationship.getNode().getData();
-            if (data && relationship.getNode().hasChildren() && !data.getContentSummary().hasChildren()) {
+            if (!relationship.getNode().hasParent() ||
+                (data && relationship.getNode().hasChildren()) ||
+                (data && !relationship.getNode().hasChildren() && !data.getContentSummary().hasChildren())) {
+                relationship.getNode().addChild(appendedNode, true);
+            }
+
+            if (data && !data.getContentSummary().hasChildren()) {
                 data.setContentSummary(new ContentSummaryBuilder(data.getContentSummary()).setHasChildren(true).build());
             }
 

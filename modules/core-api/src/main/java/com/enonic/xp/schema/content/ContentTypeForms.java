@@ -9,7 +9,7 @@ import com.enonic.xp.form.inputtype.ContentSelectorConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
-public class ContentTypeForms
+public final class ContentTypeForms
 {
     public static final Form SITE = Form.newForm().
         addFormItem( Input.newInput().
@@ -39,9 +39,11 @@ public class ContentTypeForms
             build() ).
         build();
 
+    public static final String SHORTCUT_TARGET_PROPERTY = "target";
+
     public static final Form SHORTCUT = Form.newForm().
         addFormItem( Input.newInput().
-            name( "target" ).
+            name( SHORTCUT_TARGET_PROPERTY ).
             label( "Target" ).
             helpText( "Choose shortcut target" ).
             inputType( InputTypes.CONTENT_SELECTOR ).
