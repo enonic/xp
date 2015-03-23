@@ -23,6 +23,19 @@ module app.home {
             return this;
         }
 
+        addText(linkText: string): LinksContainer {
+            if (this.links.length > 0) {
+                this.addSeparator();
+            }
+
+            var spanEl = new api.dom.SpanEl();
+            spanEl.setHtml(linkText);
+            this.appendChild(spanEl);
+            this.links.push({text: linkText, url: ''});
+
+            return this;
+        }
+
         private addSeparator() {
             var d = document.createElement('div');
             d.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';

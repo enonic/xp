@@ -15,6 +15,7 @@ import com.enonic.xp.launcher.logging.LogActivator;
 import com.enonic.xp.launcher.logging.LogConfigurator;
 import com.enonic.xp.launcher.provision.ProvisionActivator;
 import com.enonic.xp.launcher.util.BannerPrinter;
+import com.enonic.xp.launcher.util.BuildVersionInfo;
 import com.enonic.xp.launcher.watch.WatchActivator;
 
 public final class Launcher
@@ -23,6 +24,8 @@ public final class Launcher
     private final String[] args;
 
     private final SystemProperties systemProperties;
+
+    private final BuildVersionInfo version;
 
     private Environment env;
 
@@ -36,6 +39,7 @@ public final class Launcher
         System.setProperty( "java.awt.headless", "true" );
         applySystemPropertyArgs();
         this.systemProperties = SystemProperties.getDefault();
+        this.version = BuildVersionInfo.load();
     }
 
     private void checkRequirements()
@@ -54,7 +58,7 @@ public final class Launcher
 
     private void printBanner()
     {
-        final BannerPrinter banner = new BannerPrinter( this.env );
+        final BannerPrinter banner = new BannerPrinter( this.env, this.version );
         banner.printBanner();
     }
 
@@ -64,6 +68,7 @@ public final class Launcher
         final ConfigLoader loader = new ConfigLoader( this.env );
         this.config = loader.load();
         this.config.putAll( this.systemProperties );
+        this.config.putAll( this.version.getAsMap() );
         this.config.interpolate();
     }
 
@@ -129,7 +134,7 @@ public final class Launcher
             return;
         }
 
-        final File workDir = new File( this.env.getHomeDir(), "work" );
+        final File workDir = new File( this.env.getInstallDir(), "work" );
         FileUtils.deleteDirectory( workDir );
     }
 

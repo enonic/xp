@@ -60,9 +60,9 @@ module app {
 
         private createHomeMainContainer(): app.home.HomeMainContainer {
             var linksContainer = new app.home.LinksContainer().
-                addLink('Community', 'http://www.enonic.com/community').
-                addLink('Documentation', 'http://www.enonic.com/docs').
-                addLink('About', 'https://enonic.com/en/home/enonic-cms');
+                addLink('Community', 'https://enonic.com/community').
+                addLink('Documentation', 'https://enonic.com/docs/latest/').
+                addText('v' + CONFIG.xpVersion);
 
             this.loginForm = new app.login.LoginForm(new app.login.AuthenticatorImpl());
             this.loginForm.onUserAuthenticated(this.onUserAuthenticated.bind(this));
@@ -90,7 +90,7 @@ module app {
         }
 
         private onUserAuthenticated(loginResult: api.security.auth.LoginResult) {
-            if(this.authenticated) {
+            if (this.authenticated) {
                 return;
             }
             this.authenticated = true;

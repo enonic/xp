@@ -6,7 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import com.samskivert.mustache.Template;
 
-import com.enonic.xp.Version;
+import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 final class AppHtmlHandler
@@ -20,14 +20,14 @@ final class AppHtmlHandler
         final URL url = getClass().getResource( "app.html" );
         this.template = MustacheCompiler.getInstance().compile( url );
 
-        final String version = Version.get().getVersion();
-        if ( version.endsWith( "-SNAPSHOT" ) )
+        final VersionInfo version = VersionInfo.get();
+        if ( version.isSnapshot() )
         {
             this.version = Long.toString( System.currentTimeMillis() );
         }
         else
         {
-            this.version = version;
+            this.version = version.getVersion();
         }
     }
 
@@ -41,6 +41,7 @@ final class AppHtmlHandler
         final String uri = baseUri.equals( "/" ) ? "" : baseUri;
         model.put( "baseUri", uri );
         model.put( "assetsUri", uri + "/admin/assets/" + this.version );
+        model.put( "xpVersion", VersionInfo.get().getVersion() );
 
         return this.template.execute( model );
     }

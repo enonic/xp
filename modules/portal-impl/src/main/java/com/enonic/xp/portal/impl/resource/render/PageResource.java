@@ -4,10 +4,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.page.Page;
 import com.enonic.xp.content.page.PageTemplate;
 import com.enonic.xp.portal.impl.resource.underscore.UnderscoreResource;
+import com.enonic.xp.schema.content.ContentTypeForms;
+import com.enonic.xp.util.Reference;
 
 public final class PageResource
     extends RenderResource
@@ -26,13 +29,17 @@ public final class PageResource
     }
 
     @Path("{path:.*}")
-    public PageControllerResource page( @PathParam("path") final String path )
+    public RendererControllerResource page( @PathParam("path") final String path )
     {
         this.contentPath = ContentPath.from( "/" + path );
 
         final PageControllerResource resource = initResource( new PageControllerResource() );
 
         resource.content = getContent( this.contentPath.toString() );
+        if ( resource.content.getType().isShortcut() )
+        {
+            return shortcut( resource.content );
+        }
         resource.site = getSite( resource.content );
 
         if ( resource.content instanceof PageTemplate )
@@ -71,5 +78,17 @@ public final class PageResource
         resource.content = effectiveContent;
         resource.renderer = this.services.getRendererFactory().getRenderer( effectiveContent );
         return resource;
+    }
+
+    private ShortcutControllerResource shortcut( final Content content )
+    {
+        final Reference shortcutTarget = content.getData().
+            getProperty( ContentTypeForms.SHORTCUT_TARGET_PROPERTY ).getReference();
+        if ( shortcutTarget == null || shortcutTarget.getNodeId() == null )
+        {
+            throw notFound( "Missing shortcut target" );
+        }
+        final ContentId target = ContentId.from( shortcutTarget );
+        return initResource( new ShortcutControllerResource( target ) );
     }
 }

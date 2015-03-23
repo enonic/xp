@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.module;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -11,12 +14,21 @@ import com.enonic.xp.module.ModuleKeys;
 import com.enonic.xp.module.ModuleNotFoundException;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
+import com.enonic.xp.util.Exceptions;
 
 @Component
 public final class ModuleServiceImpl
     implements ModuleService
 {
     private ModuleRegistry registry;
+
+    private BundleContext bundleContext;
+
+    @Activate
+    public void initialize( final ComponentContext context )
+    {
+        this.bundleContext = context.getBundleContext();
+    }
 
     @Override
     public Module getModule( final ModuleKey key )
@@ -49,6 +61,92 @@ public final class ModuleServiceImpl
     public Modules getAllModules()
     {
         return Modules.from( this.registry.getAll() );
+    }
+
+    @Override
+    public void installModule( final String url )
+    {
+        try
+        {
+            this.bundleContext.installBundle( url );
+        }
+        catch ( final Exception e )
+        {
+            throw Exceptions.unchecked( e );
+        }
+    }
+
+    @Override
+    public void startModule( final ModuleKey key )
+    {
+        startModule( getModule( key ) );
+
+    }
+
+    @Override
+    public void stopModule( final ModuleKey key )
+    {
+        stopModule( getModule( key ) );
+    }
+
+    @Override
+    public void updateModule( final ModuleKey key )
+    {
+        updateModule( getModule( key ) );
+    }
+
+    @Override
+    public void uninstallModule( final ModuleKey key )
+    {
+        uninstallModule( getModule( key ) );
+    }
+
+    private void startModule( final Module module )
+    {
+        try
+        {
+            module.getBundle().start();
+        }
+        catch ( final Exception e )
+        {
+            throw Exceptions.unchecked( e );
+        }
+    }
+
+    private void stopModule( final Module module )
+    {
+        try
+        {
+            module.getBundle().stop();
+        }
+        catch ( final Exception e )
+        {
+            throw Exceptions.unchecked( e );
+        }
+    }
+
+    private void updateModule( final Module module )
+    {
+        try
+        {
+            module.getBundle().update();
+        }
+        catch ( final Exception e )
+        {
+            throw Exceptions.unchecked( e );
+        }
+    }
+
+    private void uninstallModule( final Module module )
+    {
+        try
+        {
+            module.getBundle().uninstall();
+        }
+        catch ( final Exception e )
+        {
+            throw Exceptions.unchecked( e );
+        }
     }
 
     @Reference

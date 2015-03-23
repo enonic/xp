@@ -3,6 +3,9 @@ module api.content {
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
     import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
     import QueryField = api.query.QueryField;
+    import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
+    import ContentType = api.schema.content.ContentType;
+    import ContentTypeName = api.schema.content.ContentTypeName;
 
     export class MoveContentSummaryLoader extends api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary> {
 
@@ -12,10 +15,9 @@ module api.content {
 
         private filterContentPath: ContentPath;
 
-        private contentByPathComparator;
+        private filterSourceContentType: ContentType;
 
         constructor() {
-            this.contentByPathComparator = new ContentByPathComparator()
             this.contentSummaryRequest = new ContentSummaryRequest();
             super(this.contentSummaryRequest);
         }
@@ -26,6 +28,10 @@ module api.content {
 
         setFilterContentPath(filterContentPath: ContentPath) {
             this.filterContentPath = filterContentPath;
+        }
+
+        setFilterSourceContentType(filterSourceContentType: ContentType) {
+            this.filterSourceContentType = filterSourceContentType;
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
@@ -41,27 +47,47 @@ module api.content {
             this.notifyLoadingData();
 
             return this.sendRequest().then((contents: ContentSummary[]) => {
+                var deferred = wemQ.defer<ContentSummary[]>();
 
-                contents = this.filterContent(contents);
-                if (contents && contents.length > 0) {
-                    contents.sort(this.contentByPathComparator.compare);
-                    this.notifyLoadedData(contents);
-                }
-                if (this.preservedSearchString) {
-                    this.search(this.preservedSearchString);
-                    this.preservedSearchString = null;
-                }
-                return contents;
+                var allContentTypes = contents.map((content)=> content.getType());
+                var contentTypes = api.util.ArrayHelper.removeDuplicates(allContentTypes, (ct) => ct.toString());
+                var contentTypeRequests = contentTypes.map((contentType)=> new GetContentTypeByNameRequest(contentType).sendAndParse());
+
+                wemQ.all(contentTypeRequests).
+                    spread((...contentTypes: ContentType[]) => {
+                        contents = this.filterContent(contents, contentTypes);
+                        if (contents && contents.length > 0) {
+                            contents.sort(new ContentByPathComparator().compare);
+                            this.notifyLoadedData(contents);
+                        } else {
+                            this.notifyLoadedData([]);
+                        }
+                        if (this.preservedSearchString) {
+                            this.search(this.preservedSearchString);
+                            this.preservedSearchString = null;
+                        }
+                        deferred.resolve(contents);
+                    }).
+                    catch((reason: any) => deferred.reject(reason)).
+                    done();
+
+                return deferred.promise;
             });
         }
 
-        private filterContent(contents: ContentSummary[]): ContentSummary[] {
+        private filterContent(contents: ContentSummary[], contentTypes: ContentType[]): ContentSummary[] {
+            var contentTypeAllowsChild: { [s: string]: boolean; } = {};
+            contentTypes.forEach((contentType)=> contentTypeAllowsChild[contentType.getName()] = contentType.isAllowChildContent());
+
+            var createContentFilter = new api.content.CreateContentFilter();
             if (!!this.filterContentPath) {
-                return contents.filter((content: ContentSummary) => (
-                                                                        !content.getPath().isDescendantOf(this.filterContentPath)) &&
-                                                                    !this.filterContentPath.isChildOf(content.getPath()) &&
-                                                                    !this.filterContentPath.equals(content.getPath())
-                );
+
+                return contents.filter((content: ContentSummary) => {
+                    return !content.getPath().isDescendantOf(this.filterContentPath) &&
+                           !this.filterContentPath.isChildOf(content.getPath()) && !this.filterContentPath.equals(content.getPath()) &&
+                           contentTypeAllowsChild[content.getType().toString()] &&
+                           createContentFilter.isCreateContentAllowed(content, this.filterSourceContentType);
+                });
             }
             return [];
         }
