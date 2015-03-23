@@ -128,12 +128,9 @@ public class MoveNodeCommand
                 // when moving a Node "inheritPermissions" must be set to false so the permissions are kept with the transfer
                 nodeToMove = Node.newNode( nodeToMove ).inheritPermissions( false ).build();
             }
-            movedNode = doStoreNode( nodeToMove );
         }
-        else
-        {
-            movedNode = updateNodeMetadata( nodeToMove );
-        }
+
+        movedNode = doStoreNode( nodeToMove );
 
         if ( persistedNode.getHasChildren() )
         {
