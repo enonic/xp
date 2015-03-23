@@ -40,7 +40,7 @@ public class InputJson
         builder.validationRegexp( validationRegexp );
         builder.occurrences( occurrences.getOccurrences() );
         builder.inputType( inputType.getInputType() );
-        if ( inputType.getInputType().requiresConfig() )
+        if ( inputType.getInputType().requiresConfig() && inputType.getInputType().getInputTypeConfigJsonSerializer() != null)
         {
             builder.inputTypeConfig( inputType.getInputType().getInputTypeConfigJsonSerializer().parseConfig( configObject ) );
         }
