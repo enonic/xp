@@ -21,6 +21,18 @@ final class Date
     }
 
     @Override
+    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    {
+        return DateTimeConfigJsonSerializer.DEFAULT;
+    }
+
+    @Override
+    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    {
+        return DateTimeConfigXmlSerializer.DEFAULT;
+    }
+
+    @Override
     public Value newValue( final String value )
     {
         return Value.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) );
