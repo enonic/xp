@@ -11,6 +11,7 @@ module app.wizard {
     import Attachment = api.content.attachment.Attachment;
     import Thumbnail = api.thumb.Thumbnail;
     import ContentName = api.content.ContentName;
+    import ContentUnnamed = api.content.ContentUnnamed;
     import CreateContentRequest = api.content.CreateContentRequest;
     import UpdateContentRequest = api.content.UpdateContentRequest;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
@@ -208,6 +209,7 @@ module app.wizard {
                 this.onValidityChanged((event: api.ValidityChangedEvent) => {
                     this.isContentFormValid = this.isValid();
                     this.thumbnailUploader.toggleClass("invalid", !this.isValid());
+                    this.publishAction.setEnabled(this.isValid());
                 });
 
                 this.addClass("content-wizard-panel");
@@ -812,12 +814,14 @@ module app.wizard {
         }
 
         private resolveContentNameForUpdateRequest(): ContentName {
-            if (api.util.StringHelper.isEmpty(this.contentWizardHeader.getName()) && this.getPersistedItem().getName().isUnnamed()) {
-                return this.getPersistedItem().getName();
+            if (api.util.StringHelper.isEmpty(this.contentWizardHeader.getName())) {
+                if(this.getPersistedItem().getName().isUnnamed()) {
+                    return this.getPersistedItem().getName();
+                } else {
+                    return ContentUnnamed.newUnnamed();
+                }
             }
-            else {
-                return ContentName.fromString(this.contentWizardHeader.getName());
-            }
+            return ContentName.fromString(this.contentWizardHeader.getName());
         }
 
         setRequireValid(requireValid: boolean) {
