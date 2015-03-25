@@ -11,6 +11,7 @@ module app.wizard {
     import Attachment = api.content.attachment.Attachment;
     import Thumbnail = api.thumb.Thumbnail;
     import ContentName = api.content.ContentName;
+    import ContentUnnamed = api.content.ContentUnnamed;
     import CreateContentRequest = api.content.CreateContentRequest;
     import UpdateContentRequest = api.content.UpdateContentRequest;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
@@ -113,7 +114,7 @@ module app.wizard {
          */
         private constructing: boolean;
 
-        constructor(params: ContentWizardPanelParams, callback: (wizard: ContentWizardPanel) => void) {
+        constructor(params: ContentWizardPanelParams, onSuccess: (wizard: ContentWizardPanel) => void, onError?: (reason: any) => void) {
 
             this.constructing = true;
             this.isContentFormValid = false;
@@ -208,6 +209,7 @@ module app.wizard {
                 this.onValidityChanged((event: api.ValidityChangedEvent) => {
                     this.isContentFormValid = this.isValid();
                     this.thumbnailUploader.toggleClass("invalid", !this.isValid());
+                    this.publishAction.setEnabled(this.isValid());
                 });
 
                 this.addClass("content-wizard-panel");
@@ -248,8 +250,8 @@ module app.wizard {
 
                 this.constructing = false;
 
-                callback(this);
-            });
+                onSuccess(this);
+            }, onError);
         }
 
         getContentType(): ContentType {
@@ -274,23 +276,34 @@ module app.wizard {
         private createSteps(): wemQ.Promise<Mixin[]> {
 
             var moduleKeys = this.site ? this.site.getModuleKeys() : [];
-            var modulePromises = moduleKeys.map((key: ModuleKey) => new api.module.GetModuleRequest(key).sendAndParse());
+            var modulePromises = moduleKeys.map((key: ModuleKey) => this.fetchModule(key));
+
             return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
                 this.checkSecurityWizardStepFormAllowed(loginResult);
                 this.enablePublishIfAllowed(loginResult);
                 return wemQ.all(modulePromises);
             }).then((modules: Module[]) => {
-                var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
+                for (var i = 0; i < modules.length; i++) {
+                    var mdl = modules[i];
+                    if (!mdl.isStarted()) {
+                        var deferred = wemQ.defer<Mixin[]>();
+                        deferred.reject(new api.Exception("Content cannot be opened. Required module '" + mdl.getDisplayName() +
+                                                          "' is not started.",
+                            api.ExceptionType.WARNING));
+                        return deferred.promise;
+                    }
+                }
 
+                var metadataMixinPromises: wemQ.Promise<Mixin>[] = [];
                 metadataMixinPromises = metadataMixinPromises.concat(
                     this.contentType.getMetadata().map((name: MixinName) => {
-                        return new GetMixinByQualifiedNameRequest(name).sendAndParse();
+                        return this.fetchMixin(name);
                     }));
 
                 modules.forEach((mdl: Module) => {
                     metadataMixinPromises = metadataMixinPromises.concat(
                         mdl.getMetaSteps().map((name: MixinName) => {
-                            return new GetMixinByQualifiedNameRequest(name).sendAndParse();
+                            return this.fetchMixin(name);
                         })
                     );
                 });
@@ -299,7 +312,7 @@ module app.wizard {
             }).then((mixins: Mixin[]) => {
                 var steps: WizardStep[] = [];
 
-                this.contentWizardStep = new WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm)
+                this.contentWizardStep = new WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm);
                 steps.push(this.contentWizardStep);
 
                 mixins.forEach((mixin: Mixin, index: number) => {
@@ -321,6 +334,30 @@ module app.wizard {
 
                 return mixins;
             });
+        }
+
+        private fetchMixin(name: MixinName): wemQ.Promise<Mixin> {
+            var deferred = wemQ.defer<Mixin>();
+            new GetMixinByQualifiedNameRequest(name).sendAndParse().
+                then((mixin) => {
+                    deferred.resolve(mixin);
+                }).catch((reason) => {
+                    deferred.reject(new api.Exception("Content cannot be opened. Required mixin '" + name.toString() + "' not found.",
+                        api.ExceptionType.WARNING));
+                }).done();
+            return deferred.promise;
+        }
+
+        private fetchModule(key: ModuleKey): wemQ.Promise<Module> {
+            var deferred = wemQ.defer<Module>();
+            new api.module.GetModuleRequest(key).sendAndParse().
+                then((mod) => {
+                    deferred.resolve(mod);
+                }).catch((reason) => {
+                    deferred.reject(new api.Exception("Content cannot be opened. Required module '" + key.toString() + "' not found.",
+                        api.ExceptionType.WARNING));
+                }).done();
+            return deferred.promise;
         }
 
         preLayoutNew(): wemQ.Promise<void> {
@@ -373,9 +410,8 @@ module app.wizard {
                 }).done();
 
             var viewedContent;
+            var deferred = wemQ.defer<void>();
             if (!this.constructing) {
-
-                var deferred = wemQ.defer<void>();
 
                 viewedContent = this.assembleViewedContent(persistedContent.newBuilder()).build();
                 if (viewedContent.equals(persistedContent)) {
@@ -422,11 +458,15 @@ module app.wizard {
                 }
 
                 deferred.resolve(null);
-                return deferred.promise;
+            } else {
+                this.doLayoutPersistedItem(persistedContent.clone())
+                    .then(()=> {
+                        deferred.resolve(null);
+                    }).catch((reason: any) => {
+                        deferred.reject(reason);
+                    }).done();
             }
-            else {
-                return this.doLayoutPersistedItem(persistedContent.clone());
-            }
+            return deferred.promise;
         }
 
         private updateThumbnailWithContent(content: Content) {
@@ -483,6 +523,7 @@ module app.wizard {
                 if (this.isSecurityWizardStepFormAllowed) {
                     this.securityWizardStepForm.layout(content);
                 }
+
 
                 schemas.forEach((schema: Mixin, index: number) => {
                     var metadata = content.getMetadata(schema.getMixinName());
@@ -773,12 +814,14 @@ module app.wizard {
         }
 
         private resolveContentNameForUpdateRequest(): ContentName {
-            if (api.util.StringHelper.isEmpty(this.contentWizardHeader.getName()) && this.getPersistedItem().getName().isUnnamed()) {
-                return this.getPersistedItem().getName();
+            if (api.util.StringHelper.isEmpty(this.contentWizardHeader.getName())) {
+                if(this.getPersistedItem().getName().isUnnamed()) {
+                    return this.getPersistedItem().getName();
+                } else {
+                    return ContentUnnamed.newUnnamed();
+                }
             }
-            else {
-                return ContentName.fromString(this.contentWizardHeader.getName());
-            }
+            return ContentName.fromString(this.contentWizardHeader.getName());
         }
 
         setRequireValid(requireValid: boolean) {
