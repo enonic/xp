@@ -165,6 +165,10 @@ module app.wizard.page {
             this.liveEditIFrame.setSrc(pageUrl);
         }
 
+        public skipNextReload(skip: boolean) {
+            new api.liveedit.SkipLiveEditReloadEvent(skip).fire(this.liveEditWindow);
+        }
+
         private handleIFrameLoadedEvent() {
 
             var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];

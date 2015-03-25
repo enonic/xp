@@ -123,6 +123,12 @@ module app.wizard.page {
             this.partInspectionPanel = new PartInspectionPanel();
             this.layoutInspectionPanel = new LayoutInspectionPanel();
 
+            api.dom.WindowDOM.get().asWindow().onbeforeunload = (event) => {
+                // the reload is triggered by the main frame,
+                // so let the live edit know it to skip the popup
+                this.liveEditPageProxy.skipNextReload(true);
+            };
+
             var saveAction = new api.ui.Action('Apply');
             saveAction.onExecuted(() => {
                 var itemView = this.pageView.getSelectedView();

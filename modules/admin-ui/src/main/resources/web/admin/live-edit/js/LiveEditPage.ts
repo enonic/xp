@@ -34,7 +34,13 @@ module LiveEdit {
 
         private pageView: PageView;
 
+        private skipReload: boolean = false;
+
         constructor() {
+
+            api.liveedit.SkipLiveEditReloadEvent.on((event: api.liveedit.SkipLiveEditReloadEvent) => {
+                this.skipReload = event.isSkip();
+            });
 
             api.liveedit.InitializeLiveEditEvent.on((event: api.liveedit.InitializeLiveEditEvent) => {
 
@@ -70,6 +76,14 @@ module LiveEdit {
 
 
         private registerGlobalListeners(): void {
+
+            api.dom.WindowDOM.get().asWindow().onbeforeunload = (event) => {
+                if (!this.skipReload) {
+                    var message = "All unsaved changes will be lost.";
+                    event.returnValue = message;
+                    return message;
+                }
+            };
 
             api.liveedit.ComponentLoadedEvent.on((event: api.liveedit.ComponentLoadedEvent) => {
 
