@@ -162,8 +162,8 @@ module app.wizard.page {
             this.liveEditIFrame.setSrc(pageUrl);
         }
 
-        public skipNextReload(skip: boolean) {
-            new api.liveedit.SkipLiveEditReloadEvent(skip).fire(this.liveEditWindow);
+        public skipNextReloadConfirmation(skip: boolean) {
+            new api.liveedit.SkipLiveEditReloadConfirmationEvent(skip).fire(this.liveEditWindow);
         }
 
         private handleIFrameLoadedEvent() {

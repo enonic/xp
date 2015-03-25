@@ -125,7 +125,7 @@ module app.wizard.page {
             api.dom.WindowDOM.get().asWindow().onbeforeunload = (event) => {
                 // the reload is triggered by the main frame,
                 // so let the live edit know it to skip the popup
-                this.liveEditPageProxy.skipNextReload(true);
+                this.liveEditPageProxy.skipNextReloadConfirmation(true);
             };
 
             var saveAction = new api.ui.Action('Apply');
@@ -263,6 +263,10 @@ module app.wizard.page {
                     }
                 }
             });
+        }
+
+        skipNextReloadConfirmation(skip: boolean) {
+            this.liveEditPageProxy.skipNextReloadConfirmation(skip);
         }
 
         loadPage() {
