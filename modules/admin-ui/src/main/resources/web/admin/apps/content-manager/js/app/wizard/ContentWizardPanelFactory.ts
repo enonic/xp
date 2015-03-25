@@ -124,7 +124,16 @@ module app.wizard {
         }
 
         private loadContentType(name: ContentTypeName): wemQ.Promise<ContentType> {
-            return new api.schema.content.GetContentTypeByNameRequest(name).sendAndParse();
+            var deferred = wemQ.defer<ContentType>();
+            new api.schema.content.GetContentTypeByNameRequest(name).sendAndParse().
+                then((contentType) => {
+                    deferred.resolve(contentType);
+                }).catch((reason) => {
+                    deferred.reject(new api.Exception("Content cannot be opened. Required content type '" + name.toString() +
+                                                      "' not found.",
+                        api.ExceptionType.WARNING));
+                }).done();
+            return deferred.promise;
         }
 
         private loadSite(contentId: ContentId): wemQ.Promise<Site> {
@@ -174,8 +183,11 @@ module app.wizard {
             wizardParams.setCreateSite(this.createSite);
 
             new app.wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
-                deferred.resolve(wizard);
-            });
+                    deferred.resolve(wizard);
+                },
+                (reason) => {
+                    deferred.reject(reason)
+                });
 
             return deferred.promise;
         }
@@ -193,8 +205,11 @@ module app.wizard {
                 setDefaultModels(this.defaultModels);
 
             new ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
-                deferred.resolve(wizard);
-            });
+                    deferred.resolve(wizard);
+                },
+                (reason) => {
+                    deferred.reject(reason)
+                });
 
             return deferred.promise;
         }
