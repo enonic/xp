@@ -17,6 +17,7 @@ import com.enonic.xp.content.Metadatas;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.attachment.CreateAttachment;
 import com.enonic.xp.content.attachment.CreateAttachments;
+import com.enonic.xp.content.attachment.image.ImageAttachmentScale;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FormItem;
@@ -37,9 +38,6 @@ import com.enonic.xp.util.GeoPoint;
 
 public final class ImageContentProcessor
 {
-    private static final Scale[] SCALES =
-        new Scale[]{new Scale( "small", 256 ), new Scale( "medium", 512 ), new Scale( "large", 1024 ), new Scale( "extra-large", 2048 )};
-
     private MixinService mixinService;
 
     private MediaInfo mediaInfo;
@@ -98,19 +96,19 @@ public final class ImageContentProcessor
     private CreateAttachments scaleImages( final BufferedImage sourceImage, final CreateAttachment sourceAttachment )
     {
         final CreateAttachments.Builder attachments = CreateAttachments.builder();
-        for ( final Scale scale : SCALES )
+        for ( ImageAttachmentScale scale : ImageAttachmentScale.getScalesOrderedBySizeAsc() )
         {
             // scale only if the scale is less than the original
-            if ( scale.size < sourceImage.getWidth() )
+            if ( scale.getSize() < sourceImage.getWidth() )
             {
-                final BufferedImage scaledImage = new ScaleWidthFilter( scale.size ).filter( sourceImage );
+                final BufferedImage scaledImage = new ScaleWidthFilter( scale.getSize() ).filter( sourceImage );
                 final String imageFormat = sourceAttachment.getExtension();
                 final ByteSource scaledImageBytes = ImageHelper.toByteSource( scaledImage, imageFormat );
-                final String name = sourceAttachment.getNameWithoutExtension() + "_" + scale.label + "." + sourceAttachment.getExtension();
+                final String name = sourceAttachment.getNameWithoutExtension() + "_" + scale.getLabel() + "." + sourceAttachment.getExtension();
                 final CreateAttachment scaledImageAttachment = CreateAttachment.create().
                     mimeType( sourceAttachment.getMimeType() ).
                     name( name ).
-                    label( scale.label ).
+                    label( scale.getLabel() ).
                     byteSource( scaledImageBytes ).
                     build();
                 attachments.add( scaledImageAttachment ).build();
@@ -303,19 +301,6 @@ public final class ImageContentProcessor
                     }
                 }
             }
-        }
-    }
-
-    private static class Scale
-    {
-        private final String label;
-
-        private final int size;
-
-        private Scale( final String label, final int size )
-        {
-            this.label = label;
-            this.size = size;
         }
     }
 }
