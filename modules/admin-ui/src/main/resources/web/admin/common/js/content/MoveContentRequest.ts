@@ -1,21 +1,24 @@
 module api.content {
 
-    export class MoveContentRequest extends ContentResourceRequest<json.ContentJson, Content> {
+    export class MoveContentRequest extends ContentResourceRequest<MoveContentResult<api.content.json.ContentSummaryJson>, ContentResponse<ContentSummary>> {
 
-        private id: ContentId;
+        private ids: ContentIds;
 
         private parentPath: ContentPath;
 
-        constructor(id: ContentId, parentPath: ContentPath) {
+        constructor(id: ContentIds, parentPath: ContentPath) {
             super();
             super.setMethod("POST");
-            this.id = id;
+            this.ids = id;
             this.parentPath = parentPath;
         }
 
         getParams(): Object {
+            var fn = (contentId:ContentId) => {
+                return contentId.toString();
+            };
             return {
-                contentId: this.id.toString(),
+                contentIds: this.ids.map(fn),
                 parentContentPath: !!this.parentPath ? this.parentPath.toString() : ""
             };
         }
@@ -24,10 +27,13 @@ module api.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "move");
         }
 
-        sendAndParse(): wemQ.Promise<Content> {
+        sendAndParse(): wemQ.Promise<ContentResponse<ContentSummary>> {
 
-            return this.send().then((response: api.rest.JsonResponse<json.ContentJson>) => {
-                return this.fromJsonToContent(response.getResult());
+            return this.send().then((response: api.rest.JsonResponse<MoveContentResult<api.content.json.ContentSummaryJson>>) => {
+                return new ContentResponse(
+                    ContentSummary.fromJsonArray(response.getResult().contents, this.propertyIdProvider),
+                    new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"])
+                );
             });
         }
     }
