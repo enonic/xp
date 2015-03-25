@@ -28,6 +28,7 @@ module api.liveedit.text {
 
         beforeCheckState(): void {
             this.icon.removeClass('icon-headers');
+            this.icon.removeClass('icon-headerNormal');
             this.icon.removeClass('icon-header1');
             this.icon.removeClass('icon-header2');
             this.icon.removeClass('icon-header3');
@@ -41,7 +42,10 @@ module api.liveedit.text {
             }
 
             var tagName = node.tagName.toLowerCase();
-            if (tagName === 'h1') {
+            if (tagName === 'p') {
+                this.icon.setClass('icon-headerNormal');
+                this.button.addClass('medium-editor-button-active');
+            } else if (tagName === 'h1') {
                 this.icon.setClass('icon-header1');
                 this.button.addClass('medium-editor-button-active');
             } else if (tagName === 'h2') {
@@ -86,12 +90,13 @@ module api.liveedit.text {
             // add dropdown buttons
             this.dropdownButtons = new api.dom.UlEl('medium-editor-toolbar-actions');
             this.dropdownButtons.addClass('clearfix');
+            var header0Item = this.createHeaderMenuItem('p', 'icon-headerNormal');
             var header1Item = this.createHeaderMenuItem('h1', 'icon-header1');
             var header2Item = this.createHeaderMenuItem('h2', 'icon-header2');
             var header3Item = this.createHeaderMenuItem('h3', 'icon-header3');
             var header4Item = this.createHeaderMenuItem('h4', 'icon-header4', true);
 
-            this.dropdownButtons.appendChildren(header1Item, header2Item, header3Item, header4Item);
+            this.dropdownButtons.appendChildren(header0Item, header1Item, header2Item, header3Item, header4Item);
             this.button.appendChild(this.dropdownButtons);
 
             mainButtonParent.appendChild(this.dropdownButtons.getHTMLElement());

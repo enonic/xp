@@ -1,0 +1,11 @@
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.dm.gradle:gradle-bundle-plugin:0.6.2'
+    compile 'com.moowork.gradle:gradle-grunt-plugin:0.6'
+    compile 'org.eclipse.jgit:org.eclipse.jgit:3.7.0.201502260915-r'
+}

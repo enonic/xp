@@ -1,6 +1,7 @@
 package com.enonic.xp.module;
 
 import java.net.URL;
+import java.time.Instant;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
@@ -37,6 +38,10 @@ public interface Module
     public Bundle getBundle();
 
     public MixinNames getMetaSteps();
+
+    public Instant getModifiedTime();
+
+    public boolean isStarted();
 
     // public <T> T getValue( Class<T> type, Callable<T> creator );
 }

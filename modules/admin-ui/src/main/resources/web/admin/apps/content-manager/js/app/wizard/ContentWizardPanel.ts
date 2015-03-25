@@ -39,6 +39,7 @@ module app.wizard {
     import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
     import WizardStep = api.app.wizard.WizardStep;
     import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
+    import ContentWizardImageUploadedEvent = api.app.wizard.ContentWizardImageUploadedEvent;
 
     import Module = api.module.Module;
     import ModuleKey = api.module.ModuleKey;
@@ -243,6 +244,8 @@ module app.wizard {
                     responsiveItem.update();
                 });
 
+                this.handleImageUpload(this);
+
                 this.constructing = false;
 
                 onSuccess(this);
@@ -381,15 +384,7 @@ module app.wizard {
         }
 
         layoutPersistedItem(persistedContent: Content): wemQ.Promise<void> {
-            this.thumbnailUploader.
-                setValue(new ContentIconUrlResolver().setContent(persistedContent).resolve()).
-                setEnabled(!persistedContent.isImage()).
-                setParams({
-                    id: persistedContent.getContentId().toString()
-                });
-
-            this.thumbnailUploader.toggleClass("invalid", !persistedContent.isValid());
-
+            this.updateThumbnailWithContent(persistedContent);
             this.notifyValidityChanged(persistedContent.isValid());
 
             api.content.ContentSummaryAndCompareStatusFetcher.fetch(persistedContent.getContentId()).
@@ -472,8 +467,18 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private doLayoutPersistedItem(content: Content): wemQ.Promise<void> {
+        private updateThumbnailWithContent(content: Content) {
+            this.thumbnailUploader.
+                setValue(new ContentIconUrlResolver().setContent(content).resolve()).
+                setEnabled(!content.isImage()).
+                setParams({
+                    id: content.getContentId().toString()
+                });
 
+            this.thumbnailUploader.toggleClass("invalid", !content.isValid());
+        }
+
+        private doLayoutPersistedItem(content: Content): wemQ.Promise<void> {
             this.showLiveEditAction.setVisible(false);
             this.showLiveEditAction.setEnabled(false);
             this.previewAction.setVisible(false);
@@ -658,7 +663,6 @@ module app.wizard {
 
         postLayoutPersisted(existing: Content): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
-
             this.contentWizardHeader.initNames(existing.getDisplayName(), existing.getName().toString(),
                 false);
             this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
@@ -668,7 +672,6 @@ module app.wizard {
         }
 
         persistNewItem(): wemQ.Promise<Content> {
-
             return new PersistNewContentRoutine(this).setCreateContentRequestProducer(this.produceCreateContentRequest).execute().then((content: Content) => {
                 api.notify.showFeedback('Content was created!');
                 return content;
@@ -677,7 +680,6 @@ module app.wizard {
 
         postPersistNewItem(persistedContent: Content): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
-
             if (persistedContent.isSite()) {
                 this.site = <Site>persistedContent;
             }
@@ -687,7 +689,6 @@ module app.wizard {
         }
 
         private produceCreateContentRequest(): wemQ.Promise<CreateContentRequest> {
-
             var deferred = wemQ.defer<CreateContentRequest>();
 
             var parentPath = this.parentContent != null ? this.parentContent.getPath() : api.content.ContentPath.ROOT;
@@ -720,7 +721,6 @@ module app.wizard {
         }
 
         updatePersistedItem(): wemQ.Promise<Content> {
-
             var persistedContent = this.getPersistedItem();
             var viewedContent = this.assembleViewedContent(persistedContent.newBuilder()).build();
 
@@ -971,6 +971,47 @@ module app.wizard {
             });
         }
 
+        /**
+         * Sets listener for image upload event.
+         * In case of this event - only content metadata requires handling.
+         * In case of image upload event was generated with ImageUploader used in this wizard -
+         * we update: thumbnail icon, persisted item and metadata step forms.
+         * Image upload event is triggered after media/content back-end update, so there is no need to explicitly call save on this event.
+         */
+        private handleImageUpload(wizard: ContentWizardPanel) {
+            var imageUploadHandler = (event: ContentWizardImageUploadedEvent) => {
+                if (wizard.getEl().contains(event.getImageUploader().getEl().getHTMLElement())) {
+                    var newPersistedContent: Content = event.getContent();
+                    wizard.setPersistedItem(newPersistedContent);
+                    wizard.updateMetadataAndMetadataForms(wizard, newPersistedContent);
+                    wizard.updateThumbnailWithContent(newPersistedContent);
+                    api.notify.showFeedback('Content was updated!');
+                }
+            };
+            ContentWizardImageUploadedEvent.on(imageUploadHandler);
+            this.onRemoved((event: api.dom.ElementRemovedEvent) => ContentWizardImageUploadedEvent.un(imageUploadHandler));
+        }
+
+        /**
+         * Synchronizes wizard's metadata step forms with passed content - erases steps forms (meta)data and populates it with content's (meta)data.
+         * @param wizard - content wizard to update. Passed explicitly to avoid mess with 'this' for global events.
+         * @param content
+         */
+        private updateMetadataAndMetadataForms(wizard: ContentWizardPanel, content: Content) {
+            var formContext = this.createFormContext(content);
+            for (var key in wizard.metadataStepFormByName) {
+                if (wizard.metadataStepFormByName.hasOwnProperty(key)) {
+                    wizard.metadataStepFormByName[key].removeChildren();
+                    var mixinName = new MixinName(key);
+                    var metadata = content.getMetadata(mixinName);
+                    if (!metadata) { // ensure Metadata object corresponds to each step form
+                        metadata = new Metadata(mixinName, new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                        content.getAllMetadata().push(metadata);
+                    }
+                    wizard.metadataStepFormByName[key].layout(formContext, metadata.getData(), wizard.metadataStepFormByName[key].getForm());
+                }
+            }
+        }
     }
 
 }

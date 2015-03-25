@@ -22,6 +22,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.portal.impl.resource.base.BaseResourceTest;
+import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.PrincipalKey;
@@ -40,6 +41,8 @@ public abstract class RenderBaseResourceTest
 
     protected ModuleService moduleService;
 
+    protected PortalUrlService portalUrlService;
+
     @Override
     protected void configure()
         throws Exception
@@ -48,11 +51,13 @@ public abstract class RenderBaseResourceTest
         this.pageTemplateService = Mockito.mock( PageTemplateService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.moduleService = Mockito.mock( ModuleService.class );
+        this.portalUrlService = Mockito.mock( PortalUrlService.class );
 
         this.services.setContentService( this.contentService );
         this.services.setPageTemplateService( this.pageTemplateService );
         this.services.setPageDescriptorService( this.pageDescriptorService );
         this.services.setModuleService( this.moduleService );
+        this.services.setPortalUrlService( this.portalUrlService );
     }
 
     protected final void setupContentAndSite()

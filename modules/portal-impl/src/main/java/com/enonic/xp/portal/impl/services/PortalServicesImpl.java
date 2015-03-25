@@ -10,6 +10,7 @@ import com.enonic.xp.image.ImageFilterBuilder;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.rendering.RendererFactory;
+import com.enonic.xp.portal.url.PortalUrlService;
 
 @Component
 public final class PortalServicesImpl
@@ -28,6 +29,8 @@ public final class PortalServicesImpl
     private PageTemplateService pageTemplateService;
 
     private PageDescriptorService pageDescriptorService;
+
+    private PortalUrlService portalUrlService;
 
     @Override
     public ModuleService getModuleService()
@@ -71,6 +74,12 @@ public final class PortalServicesImpl
         return this.pageDescriptorService;
     }
 
+    @Override
+    public PortalUrlService getPortalUrlService()
+    {
+        return this.portalUrlService;
+    }
+
     @Reference
     public void setModuleService( final ModuleService moduleService )
     {
@@ -111,5 +120,11 @@ public final class PortalServicesImpl
     public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
     {
         this.pageDescriptorService = pageDescriptorService;
+    }
+
+    @Reference
+    public void setPortalUrlService( final PortalUrlService portalUrlService )
+    {
+        this.portalUrlService = portalUrlService;
     }
 }

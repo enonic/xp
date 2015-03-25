@@ -3,8 +3,6 @@ package com.enonic.xp.admin.impl.json.module;
 import java.time.Instant;
 import java.util.List;
 
-import org.osgi.framework.Bundle;
-
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
@@ -78,12 +76,12 @@ public class ModuleJson
 
     public Instant getModifiedTime()
     {
-        return Instant.ofEpochMilli( module.getBundle().getLastModified() );
+        return this.module.getModifiedTime();
     }
 
     public String getState()
     {
-        return ( this.module.getBundle().getState() == Bundle.ACTIVE ) ? "started" : "stopped";
+        return this.module.isStarted() ? "started" : "stopped";
     }
 
     public FormJson getConfig()

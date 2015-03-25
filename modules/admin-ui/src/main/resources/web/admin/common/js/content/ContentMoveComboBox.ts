@@ -24,6 +24,11 @@ module api.content {
         setFilterContentPath(contentPath: ContentPath) {
             this.contentLoader.setFilterContentPath(contentPath);
         }
+
+        setFilterSourceContentType(contentType: api.schema.content.ContentType) {
+            this.contentLoader.setFilterSourceContentType(contentType);
+        }
+
     }
 
 

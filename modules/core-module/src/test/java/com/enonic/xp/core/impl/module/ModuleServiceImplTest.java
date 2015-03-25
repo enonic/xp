@@ -1,8 +1,13 @@
 package com.enonic.xp.core.impl.module;
 
+import java.time.Instant;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.ComponentContext;
 
 import com.google.common.collect.Lists;
 
@@ -21,12 +26,19 @@ public class ModuleServiceImplTest
 
     private ModuleServiceImpl service;
 
+    private BundleContext bundleContext;
+
     @Before
     public void setup()
     {
         this.registry = Mockito.mock( ModuleRegistry.class );
         this.service = new ModuleServiceImpl();
         this.service.setRegistry( this.registry );
+
+        this.bundleContext = Mockito.mock( BundleContext.class );
+        final ComponentContext componentContext = Mockito.mock( ComponentContext.class );
+        Mockito.when( componentContext.getBundleContext() ).thenReturn( this.bundleContext );
+        this.service.initialize( componentContext );
     }
 
     private Module createModule( final String key )
@@ -38,6 +50,12 @@ public class ModuleServiceImplTest
         module.url = "http://enonic.net";
         module.vendorName = "Enonic";
         module.vendorUrl = "https://www.enonic.com";
+
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
+        Mockito.when( bundle.getLastModified() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ).toEpochMilli() );
+        module.bundle = bundle;
+
         return module;
     }
 
@@ -79,5 +97,57 @@ public class ModuleServiceImplTest
         assertNotNull( result );
         assertEquals( 1, result.getSize() );
         assertSame( module, result.get( 0 ) );
+    }
+
+    @Test
+    public void testInstallModule()
+        throws Exception
+    {
+        this.service.installModule( "http://some.host/some.path" );
+        Mockito.verify( this.bundleContext ).installBundle( "http://some.host/some.path" );
+    }
+
+    @Test
+    public void testUninstallModule()
+        throws Exception
+    {
+        final Module module = createModule( "foomodule" );
+        Mockito.when( this.registry.get( module.getKey() ) ).thenReturn( module );
+
+        this.service.uninstallModule( module.getKey() );
+        Mockito.verify( module.getBundle() ).uninstall();
+    }
+
+    @Test
+    public void testUpdateModule()
+        throws Exception
+    {
+        final Module module = createModule( "foomodule" );
+        Mockito.when( this.registry.get( module.getKey() ) ).thenReturn( module );
+
+        this.service.updateModule( module.getKey() );
+        Mockito.verify( module.getBundle() ).update();
+    }
+
+    @Test
+    public void testStartModule()
+        throws Exception
+    {
+        final Module module = createModule( "foomodule" );
+        Mockito.when( this.registry.get( module.getKey() ) ).thenReturn( module );
+
+        this.service.startModule( module.getKey() );
+        Mockito.verify( module.getBundle() ).start();
+    }
+
+    @Test
+    public void testStopModule()
+        throws Exception
+    {
+        final Module module = createModule( "foomodule" );
+        Mockito.when( this.registry.get( module.getKey() ) ).thenReturn( module );
+
+        this.service.stopModule( module.getKey() );
+        Mockito.verify( module.getBundle() ).stop();
     }
 }
