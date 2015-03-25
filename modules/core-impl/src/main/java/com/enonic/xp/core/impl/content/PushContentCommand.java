@@ -148,6 +148,9 @@ public class PushContentCommand
         final List<ContentPath> publishedContentPaths = pushNodesResult.getSuccessfull().stream().
             map( ( node ) -> translateNodePathToContentPath( node.path() ) ).
             collect( toList() );
+        publishedContentPaths.addAll(pushNodesResult.getChildrenSuccessfull().stream().
+            map( ( node ) -> translateNodePathToContentPath( node.path() ) ).
+            collect( toList() ));
         if ( !publishedContentPaths.isEmpty() )
         {
             final ContentPaths contentPaths = ContentPaths.from( publishedContentPaths );
@@ -202,6 +205,8 @@ public class PushContentCommand
     private void appendPushNodesResult( final PushNodesResult pushNodesResult )
     {
         this.resultBuilder.setPushedContent( translator.fromNodes( pushNodesResult.getSuccessfull() ) );
+
+        this.resultBuilder.setChildrenPushedContent( translator.fromNodes( pushNodesResult.getChildrenSuccessfull() ) );
 
         for ( final PushNodesResult.Failed failedNode : pushNodesResult.getFailed() )
         {
