@@ -34,7 +34,13 @@ module LiveEdit {
 
         private pageView: PageView;
 
+        private skipNextReloadConfirmation: boolean = false;
+
         constructor() {
+
+            api.liveedit.SkipLiveEditReloadConfirmationEvent.on((event: api.liveedit.SkipLiveEditReloadConfirmationEvent) => {
+                this.skipNextReloadConfirmation = event.isSkip();
+            });
 
             api.liveedit.InitializeLiveEditEvent.on((event: api.liveedit.InitializeLiveEditEvent) => {
 
@@ -60,16 +66,32 @@ module LiveEdit {
 
                 DragAndDrop.init(this.pageView);
 
-                new api.liveedit.LiveEditPageViewReadyEvent(this.pageView).fire();
-
                 api.ui.Tooltip.allowMultipleInstances(false);
 
                 this.registerGlobalListeners();
+
+                new api.liveedit.LiveEditPageViewReadyEvent(this.pageView).fire();
             });
         }
 
 
         private registerGlobalListeners(): void {
+
+            api.dom.WindowDOM.get().asWindow().onbeforeunload = (event) => {
+                if (!this.skipNextReloadConfirmation) {
+                    var message = "This will close this wizard!";
+                    (event || window.event)['returnValue'] = message;
+                    return message;
+                }
+            };
+
+            api.dom.WindowDOM.get().asWindow().onunload = (event) => {
+                if (!this.skipNextReloadConfirmation) {
+                    new api.liveedit.PageUnloadedEvent(this.pageView).fire();
+                } else {
+                    this.skipNextReloadConfirmation = false;
+                }
+            };
 
             api.liveedit.ComponentLoadedEvent.on((event: api.liveedit.ComponentLoadedEvent) => {
 

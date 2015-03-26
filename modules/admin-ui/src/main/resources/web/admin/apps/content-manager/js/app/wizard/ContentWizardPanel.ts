@@ -360,6 +360,11 @@ module app.wizard {
             return deferred.promise;
         }
 
+        saveChanges(): wemQ.Promise<Content> {
+            this.liveFormPanel.skipNextReloadConfirmation(true);
+            return super.saveChanges();
+        }
+
         preLayoutNew(): wemQ.Promise<void> {
             var deferred = wemQ.defer<void>();
 
