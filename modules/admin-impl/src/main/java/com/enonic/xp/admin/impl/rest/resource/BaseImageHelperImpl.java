@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.image.filter.ScaleSquareFilter;
+import com.enonic.xp.image.filter.ScaleSquareFunction;
 
 @Component
 public abstract class BaseImageHelperImpl
@@ -28,7 +28,7 @@ public abstract class BaseImageHelperImpl
 
     protected BufferedImage resizeImage( final BufferedImage image, final int size )
     {
-        return new ScaleSquareFilter( size ).filter( image );
+        return new ScaleSquareFunction( size ).scale( image );
     }
 
     protected BufferedImage loadDefaultImage( final String imageName )

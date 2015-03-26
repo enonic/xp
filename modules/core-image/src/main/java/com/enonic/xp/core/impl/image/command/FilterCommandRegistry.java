@@ -4,15 +4,11 @@
  */
 package com.enonic.xp.core.impl.image.command;
 
-import java.util.HashMap;
-
-public final class FilterCommandRegistry
+public final class FilterCommandRegistry extends ImageCommandRegistry<FilterCommand>
 {
-    private final HashMap<String, FilterCommand> map;
 
     public FilterCommandRegistry()
     {
-        this.map = new HashMap<String, FilterCommand>();
         register( new BlockFilterCommand() );
         register( new BlurFilterCommand() );
         register( new BorderFilterCommand() );
@@ -20,11 +16,6 @@ public final class FilterCommandRegistry
         register( new GrayscaleFilterCommand() );
         register( new InvertFilterCommand() );
         register( new RoundedFilterCommand() );
-        register( new ScaleHeightFilterCommand() );
-        register( new ScaleMaxFilterCommand() );
-        register( new ScaleSquareFilterCommand() );
-        register( new ScaleWideFilterCommand() );
-        register( new ScaleWidthFilterCommand() );
         register( new SharpenFilterCommand() );
         register( new RGBAdjustFilterCommand() );
         register( new HSBAdjustFilterCommand() );
@@ -39,16 +30,5 @@ public final class FilterCommandRegistry
         register( new FlipVerticalCommand() );
         register( new ColorizeFilterCommand() );
         register( new HSBColorizeFilterCommand() );
-        register( new ScaleBlockFilterCommand() );
-    }
-
-    private void register( FilterCommand command )
-    {
-        this.map.put( command.getName().toLowerCase(), command );
-    }
-
-    public FilterCommand getCommand( String name )
-    {
-        return this.map.get( name.toLowerCase() );
     }
 }
