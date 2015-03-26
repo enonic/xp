@@ -2,13 +2,13 @@ module api.util {
 
     export class LocalDateTime implements api.Equitable {
 
-        static dateTimeSeparator: string = "T";
+        private static DATE_TIME_SEPARATOR: string = "T";
 
-        static dateSeparator: string = "-";
+        private static DATE_SEPARATOR: string = "-";
 
-        static timeSeparator: string = ":";
+        private static TIME_SEPARATOR: string = ":";
 
-        static fractionsSeparator: string = ".";
+        private static FRACTION_SEPARATOR: string = ".";
 
         private year: number;
 
@@ -24,18 +24,14 @@ module api.util {
 
         private fractions: number;
 
-        constructor(year: number, month: number, day: number, hours: number, minutes: number, seconds?: number, fractions?: number) {
-            this.year = year;
-            this.month = month;
-            this.day = day;
-            this.hours = hours;
-            this.minutes = minutes;
-            if (seconds) {
-                this.seconds = seconds;
-                if (fractions && fractions !== 0) {
-                    this.fractions = fractions;
-                }
-            }
+        constructor(builder: LocalDateTimeBuilder) {
+            this.year = builder.year;
+            this.month = builder.month;
+            this.day = builder.day;
+            this.hours = builder.hours;
+            this.minutes = builder.minutes;
+            this.seconds = builder.seconds;
+            this.fractions = builder.fractions;
         }
 
         getYear(): number {
@@ -59,26 +55,26 @@ module api.util {
         }
 
         getSeconds(): number {
-            return this.seconds;
+            return this.seconds || 0;
         }
 
         getFractions(): number {
-            return this.fractions;
+            return this.fractions || 0;
         }
 
         dateToString(): string {
-            return this.year + LocalDateTime.dateSeparator + this.padNumber(this.month) + LocalDateTime.dateSeparator + this.padNumber(this.day);
+            return this.year + LocalDateTime.DATE_SEPARATOR + this.padNumber(this.month) + LocalDateTime.DATE_SEPARATOR + this.padNumber(this.day);
         }
 
         timeToString(): string {
-            var seconds = this.seconds ? LocalDateTime.timeSeparator + this.padNumber(this.seconds) : StringHelper.EMPTY_STRING;
-            var fractions = this.fractions ? LocalDateTime.fractionsSeparator + this.padNumber(this.fractions, 3) : StringHelper.EMPTY_STRING;
+            var seconds = this.seconds ? LocalDateTime.TIME_SEPARATOR + this.padNumber(this.seconds) : StringHelper.EMPTY_STRING;
+            var fractions = this.fractions ? LocalDateTime.FRACTION_SEPARATOR + this.padNumber(this.fractions, 3) : StringHelper.EMPTY_STRING;
 
-            return this.padNumber(this.hours) + LocalDateTime.timeSeparator + this.padNumber(this.minutes) + seconds + fractions;
+            return this.padNumber(this.hours) + LocalDateTime.TIME_SEPARATOR + this.padNumber(this.minutes) + seconds + fractions;
         }
 
         toString(): string {
-            return this.dateToString() + LocalDateTime.dateTimeSeparator + this.timeToString();
+            return this.dateToString() + LocalDateTime.DATE_TIME_SEPARATOR + this.timeToString();
         }
 
         equals(o: api.Equitable): boolean {
@@ -114,58 +110,88 @@ module api.util {
             return re.test(s);
         }
 
-        static parseDate(s: string): {
-            year: number;
-            month: number;
-            day: number
-        } {
-            var dateTimeArr: string[] = s.split(LocalDateTime.dateTimeSeparator);
-            var date: string[] = dateTimeArr[0].split(LocalDateTime.dateSeparator);
-
-            return {
-                year: Number(date[0]),
-                month: Number(date[1]),
-                day: Number(date[2])
-            };
-        }
-
-        static parseTime(s: string): {
-            hours: number;
-            minutes: number;
-            seconds?: number;
-            fractions?: number;
-        } {
-            var dateTimeArr: string[] = s.split(LocalDateTime.dateTimeSeparator);
-            var time: string[] = dateTimeArr[1].split(LocalDateTime.timeSeparator);
-
-            var seconds: number;
-            var fractions: number;
-
-            if (time[2]) {
-                var secondArr: string[] = time[2].split(LocalDateTime.fractionsSeparator);
-                seconds = Number(secondArr[0]);
-                if (secondArr[1]) {
-                    fractions = Number(secondArr[1]);
-                }
-            }
-
-            return {
-                hours: Number(time[0]),
-                minutes: Number(time[1]),
-                seconds: seconds,
-                fractions: fractions
-            };
-        }
-
         static fromString(s: string): LocalDateTime {
             if (!LocalDateTime.isValidDateTime(s)) {
                 throw new Error("Cannot parse LocalDateTime from string: " + s);
             }
 
-            var date = LocalDateTime.parseDate(s);
-            var time = LocalDateTime.parseTime(s);
+            var date = DateHelper.parseLongDateTime(s, LocalDateTime.DATE_TIME_SEPARATOR, LocalDateTime.DATE_SEPARATOR, LocalDateTime.TIME_SEPARATOR, LocalDateTime.FRACTION_SEPARATOR);
 
-            return new LocalDateTime(date.year, date.month, date.day, time.hours, time.minutes, time.seconds, time.fractions);
+            if (!date) {
+                throw new Error("Cannot parse LocalDateTime from string: " + s);
+            }
+
+            return LocalDateTime.create()
+                .setYear(date.getFullYear())
+                .setMonth(date.getMonth())
+                .setDay(date.getDate())
+                .setHours(date.getHours())
+                .setMinutes(date.getMinutes())
+                .setSeconds(date.getSeconds())
+                .setFractions(date.getMilliseconds())
+                .build();
+         }
+
+
+        public static create(): LocalDateTimeBuilder {
+            return new LocalDateTimeBuilder();
+        }
+    }
+
+
+    class LocalDateTimeBuilder {
+
+        year: number;
+
+        month: number;
+
+        day: number;
+
+        hours: number;
+
+        minutes: number;
+
+        seconds: number;
+
+        fractions: number;
+
+        public setYear(value: number): LocalDateTimeBuilder {
+            this.year = value;
+            return this;
+        }
+
+        public setMonth(value: number): LocalDateTimeBuilder {
+            this.month = value;
+            return this;
+        }
+
+        public setDay(value: number): LocalDateTimeBuilder {
+            this.day = value;
+            return this;
+        }
+
+        public setHours(value: number): LocalDateTimeBuilder {
+            this.hours = value;
+            return this;
+        }
+
+        public setMinutes(value: number): LocalDateTimeBuilder {
+            this.minutes = value;
+            return this;
+        }
+
+        public setSeconds(value: number): LocalDateTimeBuilder {
+            this.seconds = value;
+            return this;
+        }
+
+        public setFractions(value: number): LocalDateTimeBuilder {
+            if (this.seconds && value > 0) this.fractions = value;
+            return this;
+        }
+
+        public build(): LocalDateTime {
+            return new LocalDateTime(this);
         }
     }
 }
