@@ -4,11 +4,9 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
-import com.enonic.xp.image.ImageFilter;
 import com.enonic.xp.image.ImageHelper;
 
-public abstract class BaseImageFilter
-    implements ImageFilter
+public abstract class BaseImageProcessor
 {
     protected final BufferedImage createImage( BufferedImage src )
     {

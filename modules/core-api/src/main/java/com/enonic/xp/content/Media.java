@@ -1,10 +1,6 @@
 package com.enonic.xp.content;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.enonic.xp.content.attachment.Attachment;
 import com.enonic.xp.content.attachment.image.ImageAttachmentScale;
 
