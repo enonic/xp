@@ -8,11 +8,11 @@ import java.awt.image.BufferedImage;
 
 import org.junit.Test;
 
-import com.enonic.xp.image.ImageFilter;
+import com.enonic.xp.image.ImageScaleFunction;
 
 import static org.junit.Assert.*;
 
-public class ScaleHeightFilterTest
+public class ScaleHeightFunctionTest
     extends BaseImageFilterTest
 {
     @Test
@@ -33,7 +33,7 @@ public class ScaleHeightFilterTest
 
     private BufferedImage scale( int size )
     {
-        ImageFilter filter = new ScaleHeightFilter( size );
-        return filter.filter( getOpaque() );
+        ImageScaleFunction scaleFunction = new ScaleHeightFunction( size );
+        return scaleFunction.scale( getOpaque() );
     }
 }

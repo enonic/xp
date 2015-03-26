@@ -6,8 +6,6 @@ package com.enonic.xp.core.impl.image.command;
 
 import com.jhlabs.image.InvertFilter;
 
-import com.enonic.xp.image.BuilderContext;
-
 public final class InvertFilterCommand
     extends FilterCommand
 {
@@ -17,7 +15,7 @@ public final class InvertFilterCommand
     }
 
     @Override
-    protected Object doBuild( BuilderContext context, Object[] args )
+    protected Object doBuild( Object[] args )
     {
         return new InvertFilter();
     }
