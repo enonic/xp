@@ -1,12 +1,12 @@
 def javaVersion = System.getProperty( "java.version" )
 def isJava8 = javaVersion.startsWith( '1.8' )
-def javaUpdate = javaVersion.substring( javaVersion.indexOf( '_' ) + 1 ).toInteger()
 
 // Check java version
 assert isJava8: "Must use a Java 8 compatible JVM to perform this build. Current JVM is ${javaVersion}."
 
 // Check java update
-assert javaUpdate < 40: "Cannot compile using Java 1.8 update 40 and above. Revert back to older version. Current JVM is ${javaVersion}."
+// def javaUpdate = javaVersion.substring( javaVersion.indexOf( '_' ) + 1 ).toInteger()
+// assert javaUpdate < 40: "Cannot compile using Java 1.8 update 40 and above. Revert back to older version. Current JVM is ${javaVersion}."
 
 // Check gradle version
 assert gradle.gradleVersion =~ "2\\..+": "Gradle version must be 2.x. Current version is ${gradle.gradleVersion}."
