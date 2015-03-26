@@ -1,15 +1,16 @@
 package com.enonic.xp.form.inputtype;
 
 
-public final class DateConfig extends TimezoneConfig
+public final class DateTimeConfig
+    extends TimezoneConfig
 {
 
-    DateConfig( final Builder builder )
+    DateTimeConfig( final Builder builder )
     {
         super(builder);
     }
 
-    public static Builder newDateConfig()
+    public static Builder newDateTimeConfig()
     {
         return new Builder();
     }
@@ -21,9 +22,9 @@ public final class DateConfig extends TimezoneConfig
             // protection
         }
 
-        public DateConfig build()
+        public DateTimeConfig build()
         {
-            return new DateConfig( this );
+            return new DateTimeConfig( this );
         }
     }
 }

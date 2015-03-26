@@ -48,8 +48,6 @@ public final class Input
 
         if ( builder.inputType.requiresConfig() )
         {
-            if( !InputTypes.DATE_TIME.equals( builder.inputType ) && !InputTypes.DATE.equals( builder.inputType ))
-            {
                 Preconditions.checkArgument( builder.inputTypeConfig != null,
                                              "Input [name='%s', type=%s] is missing required InputTypeConfig: %s", builder.name, builder.inputType.getName(), builder.inputType.requiredConfigClass().getName() );
 
@@ -57,7 +55,6 @@ public final class Input
                 Preconditions.checkArgument( builder.inputType.requiredConfigClass().isInstance( builder.inputTypeConfig ),
                                              "Input [name='%s', type=%s] expects InputTypeConfig of type [%s] but was: %s", builder.name,
                                              builder.inputType.getName(), builder.inputType.requiredConfigClass().getName(), builder.inputTypeConfig.getClass().getName() );
-            }
         }
 
         this.name = builder.name;

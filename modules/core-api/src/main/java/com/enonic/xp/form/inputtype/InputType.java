@@ -15,20 +15,24 @@ public abstract class InputType
 
     private final boolean builtIn;
 
+    private final boolean requiresConfig;
+
     protected InputType()
     {
         this.builtIn = resolveBuiltIn();
         this.configClass = null;
         final String name = resolveName();
         this.inputTypeName = new InputTypeName( name, !this.builtIn );
+        this.requiresConfig = false;
     }
 
-    protected InputType( final Class configClass )
+    protected InputType( final Class configClass, final boolean requiresConfig )
     {
         this.builtIn = resolveBuiltIn();
         this.configClass = configClass;
         final String name = resolveName();
         this.inputTypeName = new InputTypeName( name, !this.builtIn );
+        this.requiresConfig = requiresConfig;
     }
 
     public String getName()
@@ -37,6 +41,11 @@ public abstract class InputType
     }
 
     public final boolean requiresConfig()
+    {
+        return requiresConfig;
+    }
+
+    public final boolean hasConfig()
     {
         return configClass != null;
     }
