@@ -11,6 +11,7 @@ final class Date
 {
     Date()
     {
+        super( DateConfig.class );
     }
 
     @Override
@@ -18,6 +19,18 @@ final class Date
         throws BreaksRequiredContractException
     {
 
+    }
+
+    @Override
+    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    {
+        return DateConfigJsonSerializer.DEFAULT;
+    }
+
+    @Override
+    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    {
+        return DateConfigXmlSerializer.DEFAULT;
     }
 
     @Override
@@ -32,4 +45,3 @@ final class Date
         return null;
     }
 }
-
