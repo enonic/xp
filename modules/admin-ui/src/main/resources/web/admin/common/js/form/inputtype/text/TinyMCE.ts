@@ -1,5 +1,7 @@
 module api.form.inputtype.text {
 
+    declare var CONFIG;
+
     import support = api.form.inputtype.support;
     import Property = api.data.Property;
     import Value = api.data.Value;
@@ -7,6 +9,8 @@ module api.form.inputtype.text {
     import ValueTypes = api.data.ValueTypes;
 
     export class TinyMCE extends support.BaseInputTypeNotManagingAdd<any,string> {
+
+        private editor: TinyMceEditor;
 
         constructor(config: api.form.inputtype.InputTypeViewContext<any>) {
             super(config);
@@ -23,14 +27,41 @@ module api.form.inputtype.text {
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
             var textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index);
-            if (property.hasNonNullValue()) {
-                textAreaEl.setValue(property.getString());
-            }
-            textAreaEl.onValueChanged((event: api.ui.ValueChangedEvent) => {
-                var value = this.newValue(event.getNewValue());
-                property.setValue(value);
+
+            var clazz = textAreaEl.getId().replace(/\./g, '_');
+            textAreaEl.addClass(clazz);
+            var baseUrl = CONFIG.assetsUri;
+
+            textAreaEl.onRendered(() => {
+                tinymce.init({
+                    selector: 'textarea.' + clazz,
+                    document_base_url: baseUrl + '/common/lib/tinymce/',
+                    skin_url: baseUrl + '/common/lib/tinymce/skins/lightgray',
+                    theme_url: 'modern',
+                    toolbar: [
+                        "undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect",
+                        "cut copy paste | bullist numlist outdent indent | fontselect fontsizeselect"
+                    ],
+                    menubar: false,
+                    statusbar: false,
+
+                    setup: (editor) => {
+                        editor.on('change', (e) => {
+                            var value = this.newValue(this.editor.getContent());
+                            property.setValue(value);
+                        });
+                    }
+                });
+
+                this.editor = tinymce.get(textAreaEl.getId());
+                if (property.hasNonNullValue()) {
+                    this.editor.setContent(property.getString());
+                }
             });
-            return textAreaEl;
+
+            var textAreaWrapper = new api.dom.DivEl();
+            textAreaWrapper.appendChild(textAreaEl);
+            return textAreaWrapper;
         }
 
         private newValue(s: string): Value {
@@ -49,5 +80,5 @@ module api.form.inputtype.text {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("TinyMCE", HtmlArea));
+    api.form.inputtype.InputTypeManager.register(new api.Class("TinyMCE", TinyMCE));
 }
