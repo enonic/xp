@@ -4,6 +4,7 @@
 ///<reference path='ItemTypeConfig.ts' />
 ///<reference path='RegionItemType.ts' />
 ///<reference path='InitializeLiveEditEvent.ts' />
+///<reference path='SkipLiveEditReloadConfirmationEvent.ts' />
 ///<reference path='ComponentItemType.ts' />
 ///<reference path='PageItemType.ts' />
 ///<reference path='ContentItemType.ts' />
