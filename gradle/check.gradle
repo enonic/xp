@@ -1,10 +1,10 @@
-import org.gradle.internal.jvm.Jvm
-
-def jvm = Jvm.current()
-def javaVersion = JavaVersion.current()
+def javaVersion = new com.enonic.gradle.JavaVersion()
 
 // Check java version
-//assert javaVersion.java8Compatible: "Must use a Java 8 compatible JVM to perform this build. Current JVM is ${jvm}."
+assert javaVersion.java8: "Must use a Java 8 compatible JVM to perform this build. Current JVM is ${javaVersion}."
+
+// Check java update
+assert javaVersion.update >= 40: "Must compile using 1.8 update 40 and above. Current JVM is ${javaVersion}."
 
 // Check gradle version
 assert gradle.gradleVersion =~ "2\\..+": "Gradle version must be 2.x. Current version is ${gradle.gradleVersion}."

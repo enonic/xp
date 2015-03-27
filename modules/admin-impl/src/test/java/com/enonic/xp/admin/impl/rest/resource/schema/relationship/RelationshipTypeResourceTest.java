@@ -5,12 +5,11 @@ import java.time.Instant;
 
 import javax.ws.rs.core.Response;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.Resources;
-
-import junit.framework.Assert;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
@@ -69,7 +68,6 @@ public class RelationshipTypeResourceTest
 
         final MockRestResponse response = request().path( "schema/relationship" ).queryParam( "name", "mymodule:relationship_type" ).get();
         Assert.assertEquals( 404, response.getStatus() );
-        Assert.assertEquals( "RelationshipType [mymodule:relationship_type] was not found.", response.getAsString() );
     }
 
     @Test

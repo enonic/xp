@@ -3,7 +3,7 @@
         "must_not": {
             "wildcard": {
                 "myfield": {
-                    "wildcard": "myValue"
+                    "wildcard": "myvalue"
                 }
             }
         }

@@ -41,14 +41,19 @@ module api.content.form.inputtype.upload {
 
             if (this.getContext().contentId) {
                 this.fileUploader.setValue(this.getContext().contentId.toString());
+                if (property.getValue() != null) {
+                    this.fileUploader.setFileName(property.getValue().getString());
+                }
             }
 
             this.fileUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                 property.setValue(ValueTypes.STRING.newValue(event.getUploadItem().getName()));
+                this.fileUploader.setFileName(event.getUploadItem().getName());
             });
 
             this.fileUploader.onUploadReset(() => {
                 property.setValue(ValueTypes.STRING.newNullValue());
+                this.fileUploader.setFileName('');
             });
 
             return wemQ<void>(null);
