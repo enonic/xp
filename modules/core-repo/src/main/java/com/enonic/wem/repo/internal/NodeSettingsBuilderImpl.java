@@ -23,6 +23,7 @@ final class NodeSettingsBuilderImpl
         builder.put( "local", "true" );
         builder.put( "http.enabled", "true" );
         builder.put( "cluster.name", "mycluster" );
+        builder.put( "network.host", "127.0.0.1");
         builder.put( "discovery.zen.ping.multicast.enabled", "false" );
 
         final HomeDir xpHome = HomeDir.get();

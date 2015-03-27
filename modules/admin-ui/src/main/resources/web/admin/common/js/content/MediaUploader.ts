@@ -18,6 +18,8 @@ module api.content {
 
         private propertyIdProvider: api.data.PropertyIdProvider;
 
+        private fileName: string;
+
         constructor(config: MediaUploaderConfig) {
 
             if (config.url == undefined) {
@@ -50,10 +52,14 @@ module api.content {
             return item.getContentData().getPropertyArray("media").getValue(0);
         }
 
+        setFileName(name: string) {
+            this.fileName = name;
+        }
+
         createResultItem(value: string): api.dom.Element {
 
             var link = new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri('content/media/' + value), "_blank");
-            link.setHtml(value);
+            link.setHtml(this.fileName != null && this.fileName != "" ? this.fileName : value);
 
             return link;
         }

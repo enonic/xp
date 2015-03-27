@@ -184,9 +184,11 @@ public class PushNodesCommandTest
             execute();
 
         pushNodes( NodeIds.from( node.id() ), WS_OTHER );
-
         assertNotNull( getNodeByPathInOther( NodePath.newNodePath( movedNode.path(), child1.name().toString() ).build() ) );
         assertNull( getNodeByPathInOther( NodePath.newNodePath( node.path(), child1.name().toString() ).build() ) );
+
+        Node child1Node = CTX_OTHER.callWith( () -> getNodeById( child1.id() ) );
+        assertNotNull( getNodeByPathInOther( NodePath.newNodePath( child1Node.path(), child1_1.name().toString() ).build() ) );
     }
 
     @Test

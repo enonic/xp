@@ -160,8 +160,8 @@ module app.browse {
         }
 
         close() {
-            super.close();
             this.remove();
+            super.close();
             this.isOpen = false;
             this.contentGrid.setChildOrder(null);
             this.gridDragHandler.clearContentMovements();

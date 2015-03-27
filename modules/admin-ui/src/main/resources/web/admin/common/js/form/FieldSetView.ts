@@ -65,6 +65,8 @@ module api.form {
 
                 deferred.resolve(null);
             }).catch((reason: any) => {
+                var fieldSetValue = this.fieldSet ? this.fieldSet.toFieldSetJson() : {};
+                console.error('Could not render FieldSet view: ' + reason + '\r\n FieldSet value:', JSON.stringify(fieldSetValue));
                 api.DefaultErrorHandler.handle(reason);
             }).done();
 

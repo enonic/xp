@@ -37,13 +37,13 @@ module api.content.site {
             return this.getModuleConfigs().map((config: ModuleConfig) => config.getModuleKey());
         }
 
-        equals(o: api.Equitable): boolean {
+        equals(o: api.Equitable, ignoreEmptyValues: boolean = false): boolean {
 
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Site)) {
                 return false;
             }
 
-            return super.equals(o);
+            return super.equals(o, ignoreEmptyValues);
         }
 
         clone(): Site {

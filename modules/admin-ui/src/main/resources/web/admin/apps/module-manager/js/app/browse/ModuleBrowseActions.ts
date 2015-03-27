@@ -49,9 +49,9 @@ module app.browse {
             var anyStopped = false;
             moduleBrowseItems.forEach((moduleBrowseItem: BrowseItem<Module>) => {
                 var state = moduleBrowseItem.getModel().getState();
-                if (state === 'started') {
+                if (state === Module.STATE_STARTED) {
                     anyStarted = true;
-                } else if (state === 'stopped') {
+                } else if (state === Module.STATE_STOPPED) {
                     anyStopped = true;
                 }
             });

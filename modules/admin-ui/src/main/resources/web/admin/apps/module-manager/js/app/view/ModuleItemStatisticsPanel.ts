@@ -40,7 +40,7 @@ module app.view {
             var currentModule = item.getModel();
             this.actionMenu.setLabel(api.util.StringHelper.capitalize(currentModule.getState()));
 
-            if (currentModule.getState() == "started") {
+            if (currentModule.isStarted()) {
                 ModuleBrowseActions.get().START_MODULE.setEnabled(false);
                 ModuleBrowseActions.get().STOP_MODULE.setEnabled(true);
             } else {
@@ -55,7 +55,7 @@ module app.view {
             infoGroup.addDataList("Version", currentModule.getVersion());
             infoGroup.addDataList("Key", currentModule.getModuleKey().toString());
             infoGroup.addDataList("System Required",
-                    ">= " + currentModule.getMinSystemVersion() + " and <=" + currentModule.getMaxSystemVersion());
+                ">= " + currentModule.getMinSystemVersion() + " and <=" + currentModule.getMaxSystemVersion());
 
             var schemasGroup = new ItemDataGroup("Schemas", "schemas");
 
@@ -65,7 +65,7 @@ module app.view {
                 new api.schema.mixin.GetMixinsByModuleRequest(moduleKey).sendAndParse(),
                 new api.schema.relationshiptype.GetRelationshipTypesByModuleRequest(moduleKey).sendAndParse()
             ];
-            
+
             wemQ.all(schemaPromises).
                 spread((contentTypes: ContentTypeSummary[], mixins: Mixin[], relationshipTypes: RelationshipType[]) => {
                     var contentTypeNames = contentTypes.map((contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName());

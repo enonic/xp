@@ -28,6 +28,7 @@ module LiveEdit {
     import Highlighter = api.liveedit.Highlighter;
     import Cursor = api.liveedit.Cursor;
     import DragAndDrop = api.liveedit.DragAndDrop;
+    import Exception = api.Exception;
 
     export class LiveEditPage {
 
@@ -40,12 +41,22 @@ module LiveEdit {
                 var liveEditModel = event.getLiveEditModel();
 
                 var body = api.dom.Body.get().loadExistingChildren();
-
-                this.pageView = new PageViewBuilder().
-                    setItemViewProducer(new ItemViewIdProducer()).
-                    setLiveEditModel(liveEditModel).
-                    setElement(body).
-                    build();
+                try {
+                    this.pageView = new PageViewBuilder().
+                        setItemViewProducer(new ItemViewIdProducer()).
+                        setLiveEditModel(liveEditModel).
+                        setElement(body).
+                        build();
+                } catch (error) {
+                    if (api.ObjectHelper.iFrameSafeInstanceOf(error, Exception)) {
+                        new api.liveedit.LiveEditPageInitializationErrorEvent('The Live edit page could not be initialized. ' +
+                                                                              error.getMessage()).fire();
+                    } else {
+                        new api.liveedit.LiveEditPageInitializationErrorEvent('The Live edit page could not be initialized. ' +
+                                                                              error).fire();
+                    }
+                    return;
+                }
 
                 DragAndDrop.init(this.pageView);
 

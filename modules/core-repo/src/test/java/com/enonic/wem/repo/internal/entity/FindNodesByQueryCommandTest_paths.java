@@ -57,6 +57,12 @@ public class FindNodesByQueryCommandTest_paths
 
         queryAndAssert( "_name = 'node1'", 1 );
         queryAndAssert( "_parentPath = '/rootNode' AND _name = 'node1'", 1 );
+        queryAndAssert( "_path LIKE '/rootNode*'", 7 );
+        queryAndAssert( "_path LIKE '/rootNode/*'", 6 );
+        queryAndAssert( "_path LIKE '/rootNode/node1/*'", 1 );
+        queryAndAssert( "_path LIKE '/rootNode/node2/*'", 1 );
+        queryAndAssert( "_path LIKE '/rootNode/node3/*'", 1 );
+        queryAndAssert( "_path LIKE '/rootNode/node1/node1_1'", 1 );
     }
 
 

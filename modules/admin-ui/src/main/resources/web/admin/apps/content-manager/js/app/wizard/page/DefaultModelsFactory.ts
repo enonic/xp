@@ -6,10 +6,6 @@ module app.wizard.page {
     import PageDescriptor = api.content.page.PageDescriptor;
     import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
     import GetDefaultPageTemplateRequest = api.content.page.GetDefaultPageTemplateRequest;
-    import PartDescriptor = api.content.page.region.PartDescriptor;
-    import DefaultPartDescriptorResolver = api.content.page.region.DefaultPartDescriptorResolver;
-    import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
-    import DefaultLayoutDescriptorResolver = api.content.page.region.DefaultLayoutDescriptorResolver;
 
     export interface DefaultModelsFactoryConfig {
 
@@ -27,7 +23,7 @@ module app.wizard.page {
             return new GetDefaultPageTemplateRequest(config.siteId, config.contentType).sendAndParse().
                 then((defaultPageTemplate: PageTemplate) => {
 
-                    var defaultPageTemplateDescriptorPromise;
+                    var defaultPageTemplateDescriptorPromise = null;
                     if (defaultPageTemplate && defaultPageTemplate.isPage()) {
                         defaultPageTemplateDescriptorPromise = new GetPageDescriptorByKeyRequest(defaultPageTemplate.getController()).
                             sendAndParse();
@@ -35,27 +31,23 @@ module app.wizard.page {
                     else if (defaultPageTemplate && !defaultPageTemplate.isPage()) {
                         defaultPageTemplate = null;
                     }
-                    var defaultPartDescriptorPromise = DefaultPartDescriptorResolver.resolve(config.modules);
-                    var defaultLayoutDescriptorPromise = DefaultLayoutDescriptorResolver.resolve(config.modules);
 
-                    var allPromises: wemQ.Promise<any>[] = [
-                        defaultPageTemplateDescriptorPromise,
-                        defaultPartDescriptorPromise,
-                        defaultLayoutDescriptorPromise];
+                    var deferred = wemQ.defer<DefaultModels>();
+                    if (defaultPageTemplateDescriptorPromise) {
+                        defaultPageTemplateDescriptorPromise.then((defaultPageTemplateDescriptor: PageDescriptor) => {
 
-                    return wemQ.all(allPromises).
-                        spread<DefaultModels>((defaultPageTemplateDescriptor: PageDescriptor, partDescriptor: PartDescriptor,
-                                               layoutDescriptor: LayoutDescriptor) => {
+                            deferred.resolve(new DefaultModels(defaultPageTemplate, defaultPageTemplateDescriptor));
+                        }).catch((reason) => {
 
-                        var defaultModelsConfig: DefaultModelsConfig = <DefaultModelsConfig>{
-                            pageTemplate: defaultPageTemplate,
-                            pageDescriptor: defaultPageTemplateDescriptor,
-                            partDescriptor: partDescriptor,
-                            layoutDescriptor: layoutDescriptor
-                        };
-                        return new DefaultModels(defaultModelsConfig);
-                    });
+                            deferred.reject(new api.Exception("Page descriptor '" + defaultPageTemplate.getController() + "' not found.",
+                                api.ExceptionType.WARNING));
+                        }).done();
+                    }
+                    else {
+                        deferred.resolve(new DefaultModels(defaultPageTemplate, null));
+                    }
 
+                    return deferred.promise;
                 });
         }
     }

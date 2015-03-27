@@ -56,9 +56,7 @@ public final class MixinResource
 
         if ( mixin == null )
         {
-            String message = String.format( "Mixin [%s] was not found.", mixinName );
-            throw new WebApplicationException( Response.status( Response.Status.NOT_FOUND ).
-                entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
+            throw new WebApplicationException( String.format( "Mixin [%s] was not found.", mixinName ), Response.Status.NOT_FOUND );
         }
 
         return new MixinJson( mixin, this.mixinIconUrlResolver );
