@@ -203,6 +203,21 @@ public class ElasticsearchDaoImpl
         }
     }
 
+    /*
+    private void printExplain( final SearchResponse searchResponse )
+    {
+        final SearchHits hits = searchResponse.getHits();
+
+        for ( final SearchHit hit : hits )
+        {
+            System.out.println( "-----------------" );
+            System.out.println( "Hit: " + hit.getId() );
+            System.out.println( hit.getExplanation().toString() );
+            System.out.println( "==================" );
+        }
+    }
+    */
+
     @Override
     public long count( final ElasticsearchQuery query )
     {
