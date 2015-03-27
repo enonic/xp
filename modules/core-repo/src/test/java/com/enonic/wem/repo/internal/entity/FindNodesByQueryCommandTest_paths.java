@@ -18,10 +18,13 @@ public class FindNodesByQueryCommandTest_paths
         super.setUp();
         this.createDefaultRootNode();
     }
+
+
     @Test
     public void path_equals()
         throws Exception
     {
+
         final Node rootNode = createNodeWithPath( NodePath.ROOT, "rootNode" );
         final Node node1 = createNodeWithPath( rootNode.path(), "node1" );
         final Node node2 = createNodeWithPath( rootNode.path(), "node2" );
@@ -29,6 +32,7 @@ public class FindNodesByQueryCommandTest_paths
         createNodeWithPath( node1.path(), "node1_1" );
         createNodeWithPath( node2.path(), "node2_1" );
         createNodeWithPath( node3.path(), "node3_1" );
+
         queryAndAssert( "_path = '/rootNode'", 1 );
         queryAndAssert( "_path = '/rootNode/node1'", 1 );
         queryAndAssert( "_path = '/rootNode/node2'", 1 );
@@ -37,10 +41,12 @@ public class FindNodesByQueryCommandTest_paths
         queryAndAssert( "_path = '/rootNode/node2/node2_1'", 1 );
         queryAndAssert( "_path = '/rootNode/node3/node3_1'", 1 );
     }
+
     @Test
     public void path_wildcard()
         throws Exception
     {
+
         final Node rootNode = createNodeWithPath( NodePath.ROOT, "rootNode" );
         final Node node1 = createNodeWithPath( rootNode.path(), "node1" );
         final Node node2 = createNodeWithPath( rootNode.path(), "node2" );
@@ -48,6 +54,7 @@ public class FindNodesByQueryCommandTest_paths
         createNodeWithPath( node1.path(), "node1_1" );
         createNodeWithPath( node2.path(), "node2_1" );
         createNodeWithPath( node3.path(), "node3_1" );
+
         queryAndAssert( "_path LIKE '/rootNode*'", 7 );
         queryAndAssert( "_path LIKE '/rootNode/*'", 6 );
         queryAndAssert( "_path LIKE '/rootNode/node1/*'", 1 );
