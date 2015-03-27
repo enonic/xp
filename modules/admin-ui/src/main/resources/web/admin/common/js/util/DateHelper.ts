@@ -75,12 +75,12 @@ module api.util {
                    this.padNumber(date.getUTCSeconds());
         }
 
-        public static parseDate(value: string): Date {
+        public static parseDate(value: string, dateSeparator: string = "-"): Date {
             var dateStr = (value || '').trim();
             if (dateStr.length < 8 || dateStr.length > 10) {
                 return null;
             }
-            var parts = dateStr.split('-');
+            var parts = dateStr.split(dateSeparator);
             if (parts.length !== 3 || parts[0].length !== 4) {
                 return null;
             }
@@ -134,6 +134,66 @@ module api.util {
             return date;
         }
 
+        private static parseLongTime(value: string, timeSeparator: string= ":", fractionSeparator: string = "."): LongTime {
+            var timeStr = (value || '').trim();
+            if (timeStr.length < 5 || timeStr.length > 12) {
+                return null;
+            }
+            var time: string[] = timeStr.split(timeSeparator);
+
+            if (time.length < 2 || time.length > 3) {
+                return null;
+            }
+
+            var hours = Number(time[0]);
+            var minutes = Number(time[1]);
+            var seconds: number = 0;
+            var fractions: number = 0;
+
+            if (time[2]) {
+                var secondArr: string[] = time[2].split(fractionSeparator);
+                seconds = Number(secondArr[0]);
+                if (secondArr[1]) {
+                    fractions = Number(secondArr[1]);
+                }
+            }
+
+            if (isNaN(hours) || isNaN(minutes) || isNaN(seconds) || isNaN(fractions) ||
+                hours < 0 || hours > 23 || minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59 || fractions < 0) {
+                return null;
+            }
+
+            return {
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds,
+                fractions: fractions
+            };
+        }
+
+        static parseLongDateTime(value: string, dateTimeSeparator: string = "-", dateSeparator: string = "-", timeSeparator: string = ":", fractionSeparator: string = "."): Date {
+            var dateStr = (value || '').trim();
+
+            var parts = dateStr.split(dateTimeSeparator);
+            if (parts.length !== 2) {
+                return null;
+            }
+            var datePart = parts[0];
+            var timePart = parts[1];
+
+            var date = DateHelper.parseDate(datePart, dateSeparator);
+            if (!date) {
+                return null;
+            }
+            var time = DateHelper.parseLongTime(timePart, timeSeparator, fractionSeparator);
+            if (!time) {
+                return null;
+            }
+            date.setHours(time.hours, time.minutes, time.seconds, time.fractions);
+
+            return date;
+        }
+
         /**
          * E.g. numDaysInMonth(2015, 1) -> 28
          * @param year
@@ -148,5 +208,12 @@ module api.util {
     interface Time {
         hour: number;
         minute: number;
+    }
+
+    interface LongTime {
+        hours: number;
+        minutes: number;
+        seconds: number;
+        fractions: number;
     }
 }

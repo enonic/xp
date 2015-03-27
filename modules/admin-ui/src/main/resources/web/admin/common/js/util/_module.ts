@@ -15,3 +15,4 @@
 ///<reference path='BinaryReference.ts' />
 ///<reference path='Reference.ts' />
 ///<reference path='PromiseHelper.ts' />
+///<reference path='LocalDateTime.ts' />
