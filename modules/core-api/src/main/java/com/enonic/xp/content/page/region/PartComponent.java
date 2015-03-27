@@ -22,6 +22,7 @@ public final class PartComponent
         return new Builder( source );
     }
 
+    @Override
     public Component copy()
     {
         return newPartComponent( this ).build();
@@ -61,6 +62,7 @@ public final class PartComponent
             super( source );
         }
 
+        @Override
         public Builder name( ComponentName value )
         {
             this.name = value;
@@ -73,6 +75,7 @@ public final class PartComponent
             return this;
         }
 
+        @Override
         public Builder descriptor( DescriptorKey value )
         {
             this.descrpitor = value;
@@ -85,6 +88,7 @@ public final class PartComponent
             return this;
         }
 
+        @Override
         public Builder config( final PropertyTree config )
         {
             this.config = config;

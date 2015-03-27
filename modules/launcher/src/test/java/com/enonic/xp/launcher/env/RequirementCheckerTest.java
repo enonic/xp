@@ -12,6 +12,15 @@ public class RequirementCheckerTest
     public void rightJavaVersion()
     {
         final SystemProperties props = new SystemProperties();
+        props.put( JAVA_VERSION.key(), "1.8.0_40" );
+
+        new RequirementChecker( props ).check();
+    }
+
+    @Test(expected = LauncherException.class)
+    public void rightJavaVersion_wrongUpdate()
+    {
+        final SystemProperties props = new SystemProperties();
         props.put( JAVA_VERSION.key(), "1.8.0_20" );
 
         new RequirementChecker( props ).check();

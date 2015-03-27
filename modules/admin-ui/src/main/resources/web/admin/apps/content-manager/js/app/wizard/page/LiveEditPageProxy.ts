@@ -29,6 +29,7 @@ module app.wizard.page {
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
     import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
+    import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
     import RepeatNextItemViewIdProducer = api.liveedit.RepeatNextItemViewIdProducer;
     import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
     import RegionView = api.liveedit.RegionView;
@@ -79,6 +80,8 @@ module app.wizard.page {
         private componentDuplicatedListeners: {(event: ComponentDuplicatedEvent): void;}[] = [];
 
         private liveEditPageViewReadyListeners: {(event: LiveEditPageViewReadyEvent): void;}[] = [];
+
+        private liveEditPageInitErrorListeners: {(event: LiveEditPageInitializationErrorEvent): void;}[] = [];
 
         private LIVE_EDIT_ERROR_PAGE_BODY_ID = "wem-error-page";
 
@@ -280,6 +283,7 @@ module app.wizard.page {
 
             LiveEditPageViewReadyEvent.on(this.notifyLiveEditPageViewReady.bind(this), this.liveEditWindow);
 
+            LiveEditPageInitializationErrorEvent.on(this.notifyLiveEditPageInitializationError.bind(this), this.liveEditWindow);
         }
 
         onLoaded(listener: {(): void;}) {
@@ -476,6 +480,18 @@ module app.wizard.page {
 
         private notifyLiveEditPageViewReady(event: LiveEditPageViewReadyEvent) {
             this.liveEditPageViewReadyListeners.forEach((listener) => listener(event));
+        }
+
+        onLiveEditPageInitializationError(listener: {(event: LiveEditPageInitializationErrorEvent): void;}) {
+            this.liveEditPageInitErrorListeners.push(listener);
+        }
+
+        unLiveEditPageInitializationError(listener: {(event: LiveEditPageInitializationErrorEvent): void;}) {
+            this.liveEditPageInitErrorListeners = this.liveEditPageInitErrorListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyLiveEditPageInitializationError(event: LiveEditPageInitializationErrorEvent) {
+            this.liveEditPageInitErrorListeners.forEach((listener) => listener(event));
         }
 
     }

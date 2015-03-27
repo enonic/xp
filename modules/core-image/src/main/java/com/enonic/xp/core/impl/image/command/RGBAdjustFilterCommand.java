@@ -16,6 +16,7 @@ public final class RGBAdjustFilterCommand
         super( "rgbadjust" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         float r = getFloatArg( args, 0, 0f );

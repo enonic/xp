@@ -98,16 +98,16 @@ module app.browse {
                     } else if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._360_540)) {
                         this.getGrid().setColumns([nameColumn, orderColumn, modifiedTimeColumn]);
                     } else {
+                        if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._540_720)) {
+                            modifiedTimeColumn.setMaxWidth(100);
+                            modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
+                        } else {
+                            modifiedTimeColumn.setMaxWidth(170);
+                            modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
+                        }
                         this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
                     }
 
-                    if (item.isInRangeOrSmaller(api.ui.responsive.ResponsiveRanges._540_720)) {
-                        modifiedTimeColumn.setMaxWidth(100);
-                        modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
-                    } else {
-                        modifiedTimeColumn.setMaxWidth(170);
-                        modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
-                    }
                 } else {
                     this.getGrid().resizeCanvas();
                 }
@@ -159,13 +159,6 @@ module app.browse {
             });
         }
 
-        private typeFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-            var wrapper = new api.dom.SpanEl();
-            wrapper.getEl().setTitle(value);
-            wrapper.getEl().setInnerHtml(value.toString().split(':')[1], true);
-            return wrapper.toString();
-        }
-
         private orderFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
             var wrapper = new api.dom.SpanEl();
             wrapper.getEl().setTitle(value);
@@ -182,7 +175,7 @@ module app.browse {
                     } else {
                         icon = new api.dom.DivEl("icon-menu3");
                     }
-                    wrapper.getEl().setInnerHtml(icon.toString(), true);
+                    wrapper.getEl().setInnerHtml(icon.toString());
                 }
             }
             return wrapper.toString();
@@ -466,11 +459,16 @@ module app.browse {
 
 
         xAppendContentNode(relationship: TreeNodeParentOfContent, update: boolean = true): TreeNode<ContentSummaryAndCompareStatus> {
-            var appendedNode = this.dataToTreeNode(relationship.getData(), relationship.getNode());
-            relationship.getNode().addChild(appendedNode, true);
+            var appendedNode = this.dataToTreeNode(relationship.getData(), relationship.getNode()),
+                data = relationship.getNode().getData();
 
-            var data = relationship.getNode().getData();
-            if (data && relationship.getNode().hasChildren() && !data.getContentSummary().hasChildren()) {
+            if (!relationship.getNode().hasParent() ||
+                (data && relationship.getNode().hasChildren()) ||
+                (data && !relationship.getNode().hasChildren() && !data.getContentSummary().hasChildren())) {
+                relationship.getNode().addChild(appendedNode, true);
+            }
+
+            if (data && !data.getContentSummary().hasChildren()) {
                 data.setContentSummary(new ContentSummaryBuilder(data.getContentSummary()).setHasChildren(true).build());
             }
 

@@ -16,6 +16,7 @@ final class ContentSelector
         super( ContentSelectorConfig.class );
     }
 
+    @Override
     public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
     {
         return ContentSelectorConfigJsonSerializer.DEFAULT;

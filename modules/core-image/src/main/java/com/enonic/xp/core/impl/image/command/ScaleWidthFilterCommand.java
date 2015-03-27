@@ -15,6 +15,7 @@ public final class ScaleWidthFilterCommand
         super( "scalewidth" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new ScaleWidthFilter( getIntArg( args, 0, 100 ) );

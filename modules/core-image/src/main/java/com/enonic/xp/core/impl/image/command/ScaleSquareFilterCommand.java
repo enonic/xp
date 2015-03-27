@@ -15,6 +15,7 @@ public final class ScaleSquareFilterCommand
         super( "scalesquare" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new ScaleSquareFilter( getIntArg( args, 0, 0 ) );

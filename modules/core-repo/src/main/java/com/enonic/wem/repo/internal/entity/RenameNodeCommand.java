@@ -72,6 +72,7 @@ public final class RenameNodeCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

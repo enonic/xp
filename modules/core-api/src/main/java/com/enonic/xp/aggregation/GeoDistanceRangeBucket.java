@@ -52,6 +52,7 @@ public class GeoDistanceRangeBucket
             return this;
         }
 
+        @Override
         public GeoDistanceRangeBucket build()
         {
             return new GeoDistanceRangeBucket( this );

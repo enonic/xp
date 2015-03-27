@@ -276,6 +276,7 @@ final class CreateContentCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

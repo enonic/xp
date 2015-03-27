@@ -23,16 +23,19 @@ final class XsltProcessorErrors
         return !this.errors.isEmpty();
     }
 
+    @Override
     public void error( final TransformerException e )
     {
         this.errors.add( e );
     }
 
+    @Override
     public void fatalError( final TransformerException e )
     {
         this.errors.add( e );
     }
 
+    @Override
     public void warning( final TransformerException e )
     {
         // Do nothing

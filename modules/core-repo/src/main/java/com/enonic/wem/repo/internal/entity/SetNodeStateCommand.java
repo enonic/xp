@@ -82,6 +82,7 @@ public class SetNodeStateCommand
             return this;
         }
 
+        @Override
         protected void validate()
         {
             super.validate();

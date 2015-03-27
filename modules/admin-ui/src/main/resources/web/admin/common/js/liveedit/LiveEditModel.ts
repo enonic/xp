@@ -146,7 +146,7 @@ module api.liveedit {
                     deferred.resolve(pageModel);
 
                 }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
+                    deferred.reject(reason);
                 }).done();
             }
             else {
@@ -157,11 +157,25 @@ module api.liveedit {
         }
 
         private loadPageTemplate(key: PageTemplateKey): wemQ.Promise<PageTemplate> {
-            return new GetPageTemplateByKeyRequest(key).sendAndParse();
+            var deferred = wemQ.defer<PageTemplate>();
+            new GetPageTemplateByKeyRequest(key).sendAndParse().
+                then((pageTemplate: PageTemplate) => {
+                    deferred.resolve(pageTemplate);
+                }).catch((reason) => {
+                    deferred.reject(new api.Exception("Page template '" + key + "' not found.", api.ExceptionType.WARNING));
+                }).done();
+            return deferred.promise;
         }
 
         private loadPageDescriptor(key: DescriptorKey): wemQ.Promise<PageDescriptor> {
-            return new GetPageDescriptorByKeyRequest(key).sendAndParse();
+            var deferred = wemQ.defer<PageDescriptor>();
+            new GetPageDescriptorByKeyRequest(key).sendAndParse().
+                then((pageDescriptor: PageDescriptor) => {
+                    deferred.resolve(pageDescriptor);
+                }).catch((reason) => {
+                    deferred.reject(new api.Exception("Page descriptor '" + key + "' not found.", api.ExceptionType.WARNING));
+                }).done();
+            return deferred.promise;
         }
 
         setContent(value: Content) {

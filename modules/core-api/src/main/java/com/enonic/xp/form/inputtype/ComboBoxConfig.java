@@ -72,6 +72,7 @@ public class ComboBoxConfig
             // protection
         }
 
+        @Override
         public Builder addOption( String label, String value )
         {
             listBuilder.add( new Option( label, value ) );

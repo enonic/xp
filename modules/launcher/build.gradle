@@ -1,3 +1,5 @@
+import com.enonic.gradle.BuildInfoHelper
+
 dependencies {
     compile 'org.osgi:org.osgi.core:5.0.0'
     compile 'org.osgi:org.osgi.compendium:5.0.0'
@@ -10,6 +12,16 @@ dependencies {
     compile 'org.slf4j:jcl-over-slf4j:1.7.10'
     compile 'org.slf4j:log4j-over-slf4j:1.7.10'
     compile 'org.fusesource.jansi:jansi:1.11'
+}
+
+ext {
+    buildInfo = BuildInfoHelper.extract( project.rootDir )
+}
+
+processResources {
+    filesMatching( '**/build.properties' ) {
+        expand( [info: buildInfo] )
+    }
 }
 
 jar {

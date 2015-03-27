@@ -15,6 +15,7 @@ public final class ScaleMaxFilterCommand
         super( "scalemax" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new ScaleMaxFilter( getIntArg( args, 0, 0 ) );

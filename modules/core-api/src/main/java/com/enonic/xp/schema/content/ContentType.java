@@ -171,6 +171,7 @@ public final class ContentType
             this.metadata = source.metadata;
         }
 
+        @Override
         public Builder name( final ContentTypeName value )
         {
             super.name( value );

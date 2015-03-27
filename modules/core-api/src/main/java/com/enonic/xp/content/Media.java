@@ -1,7 +1,12 @@
 package com.enonic.xp.content;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.enonic.xp.content.attachment.Attachment;
+import com.enonic.xp.content.attachment.image.ImageAttachmentScale;
 
 public class Media
     extends Content
@@ -25,6 +30,31 @@ public class Media
         }
 
         return getAttachments().byName( mediaAttachmentName );
+    }
+
+    public Attachment getBestFitImageAttachment( int requiredImageSize )
+    {
+        if(isImage())
+        {
+            switch ( getAttachments().getSize() )
+            {
+                case 0:
+                    return null;
+                case 1:
+                    return getSourceAttachment();
+                default:
+                    for ( ImageAttachmentScale scale : ImageAttachmentScale.getScalesOrderedBySizeAsc() )
+                    {
+                        if( requiredImageSize < scale.getSize() )
+                            return getAttachments().byLabel( scale.getLabel() );
+                    }
+                    return getSourceAttachment();
+            }
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public Attachment getSourceAttachment()
@@ -71,6 +101,7 @@ public class Media
             super();
         }
 
+        @Override
         public Media build()
         {
             return new Media( this );

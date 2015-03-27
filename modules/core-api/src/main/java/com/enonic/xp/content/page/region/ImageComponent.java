@@ -34,6 +34,7 @@ public class ImageComponent
         return new Builder( source );
     }
 
+    @Override
     public Component copy()
     {
         return newImageComponent( this ).build();
@@ -126,6 +127,7 @@ public class ImageComponent
             return this;
         }
 
+        @Override
         public Builder name( ComponentName value )
         {
             this.name = value;

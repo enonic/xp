@@ -61,6 +61,7 @@ final class FindContentByQueryCommand
             return new FindContentByQueryCommand( this );
         }
 
+        @Override
         void validate()
         {
             super.validate();

@@ -81,6 +81,7 @@ public class GetNodeByIdCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

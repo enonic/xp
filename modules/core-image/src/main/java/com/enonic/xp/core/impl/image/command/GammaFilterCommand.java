@@ -16,6 +16,7 @@ public final class GammaFilterCommand
         super( "gamma" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         float g = getFloatArg( args, 0, 0f );

@@ -112,6 +112,7 @@ final class DeleteContentCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             Preconditions.checkNotNull( params );

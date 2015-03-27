@@ -89,6 +89,7 @@ public class GetActiveNodeVersionsCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             Preconditions.checkNotNull( this.nodeId );

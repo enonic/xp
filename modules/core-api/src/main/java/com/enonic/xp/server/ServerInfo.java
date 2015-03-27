@@ -6,9 +6,9 @@ public interface ServerInfo
 {
     public String getName();
 
-    public String getVersion();
-
     public File getHomeDir();
 
     public File getInstallDir();
+
+    public BuildInfo getBuildInfo();
 }

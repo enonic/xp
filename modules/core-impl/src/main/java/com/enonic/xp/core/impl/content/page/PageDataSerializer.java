@@ -31,6 +31,7 @@ public class PageDataSerializer
         this.propertyName = propertyName;
     }
 
+    @Override
     public void toData( final Page page, final PropertySet parent )
     {
         final PropertySet asSet = parent.addSet( propertyName );
@@ -59,6 +60,7 @@ public class PageDataSerializer
         }
     }
 
+    @Override
     public Page fromData( final PropertySet asData )
     {
         final Page.Builder page = Page.newPage();

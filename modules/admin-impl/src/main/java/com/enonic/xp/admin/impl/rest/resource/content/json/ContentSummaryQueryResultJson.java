@@ -36,6 +36,7 @@ public class ContentSummaryQueryResultJson
             this.iconUrlResolver = iconUrlResolver;
         }
 
+        @Override
         public Builder addContent( final Content content,
                                    final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer )
         {
@@ -43,6 +44,7 @@ public class ContentSummaryQueryResultJson
             return this;
         }
 
+        @Override
         public ContentSummaryQueryResultJson build()
         {
             return new ContentSummaryQueryResultJson( this );

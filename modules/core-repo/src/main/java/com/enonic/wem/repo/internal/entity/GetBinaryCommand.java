@@ -118,6 +118,7 @@ public class GetBinaryCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

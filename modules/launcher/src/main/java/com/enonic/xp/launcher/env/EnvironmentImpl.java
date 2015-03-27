@@ -28,6 +28,7 @@ final class EnvironmentImpl
         return this.installDir;
     }
 
+    @Override
     public void validate()
     {
         checkDir( "Install", XP_INSTALL_DIR, this.installDir );

@@ -49,6 +49,7 @@ module app.login {
             this.appendChild(this.messageContainer);
 
             this.onShown((event) => {
+                this.userIdInput.getEl().simulate("click");// for mobile devices
                 this.userIdInput.giveFocus();
                 var checkLoginButtonInterval = setInterval(() => {  //workaround to show login button when browser autofills inputs
                     if(this.checkFieldsNotEmpty()) {
@@ -58,9 +59,10 @@ module app.login {
                         this.loginButton.hide();
                     }
                 }, 100);
-
-
-            })
+            });
+            this.onHidden((event) => {
+                (<HTMLElement>document.activeElement).blur();
+            });
         }
 
         onUserAuthenticated(handler: (loginResult: api.security.auth.LoginResult) => void) {

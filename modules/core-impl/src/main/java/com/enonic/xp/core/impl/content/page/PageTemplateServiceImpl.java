@@ -24,6 +24,7 @@ public final class PageTemplateServiceImpl
 
     protected PageService pageService;
 
+    @Override
     public PageTemplate create( final CreatePageTemplateParams params )
     {
         return new CreatePageTemplateCommand().
@@ -39,6 +40,7 @@ public final class PageTemplateServiceImpl
             execute();
     }
 
+    @Override
     public PageTemplate getByKey( final PageTemplateKey pageTemplateKey )
     {
         Preconditions.checkNotNull( pageTemplateKey, "A PageTemplateKey is required" );
@@ -58,6 +60,7 @@ public final class PageTemplateServiceImpl
             execute();
     }
 
+    @Override
     public PageTemplates getBySite( final ContentId siteId )
     {
         Preconditions.checkNotNull( siteId, "A ContentId is required" );

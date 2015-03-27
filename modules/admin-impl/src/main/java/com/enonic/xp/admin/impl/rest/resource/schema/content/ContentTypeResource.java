@@ -20,7 +20,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.admin.impl.AdminResource;
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeJson;
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryListJson;
-import com.enonic.xp.admin.impl.rest.exception.NotFoundWebException;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
 import com.enonic.xp.icon.Icon;
@@ -50,7 +49,7 @@ public final class ContentTypeResource
 
     @GET
     public ContentTypeJson get( @QueryParam("name") final String nameAsString,
-                                @QueryParam("inlineMixinsToFormItems") final Boolean inlineMixinsToFormItems )
+                                @DefaultValue("false") @QueryParam("inlineMixinsToFormItems") final boolean inlineMixinsToFormItems )
     {
         final ContentTypeName name = ContentTypeName.from( nameAsString );
         final GetContentTypeParams getContentTypes = GetContentTypeParams.from( name ).
@@ -59,7 +58,7 @@ public final class ContentTypeResource
         final ContentType contentType = contentTypeService.getByName( getContentTypes );
         if ( contentType == null )
         {
-            throw new NotFoundWebException( String.format( "ContentType [%s] not found", name ) );
+            throw new WebApplicationException( String.format( "ContentType [%s] not found", name ), Response.Status.NOT_FOUND );
         }
         return new ContentTypeJson( contentType, this.contentTypeIconUrlResolver );
     }

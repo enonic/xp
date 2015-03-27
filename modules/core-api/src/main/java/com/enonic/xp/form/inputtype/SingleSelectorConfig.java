@@ -87,6 +87,7 @@ public class SingleSelectorConfig
             return this;
         }
 
+        @Override
         public Builder addOption( String label, String value )
         {
             config.optionsAsList.add( new Option( label, value ) );

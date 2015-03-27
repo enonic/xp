@@ -54,6 +54,7 @@ public class DateRangeBucket
             return this;
         }
 
+        @Override
         public DateRangeBucket build()
         {
             return new DateRangeBucket( this );

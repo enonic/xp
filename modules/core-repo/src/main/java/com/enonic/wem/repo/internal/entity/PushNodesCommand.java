@@ -98,14 +98,14 @@ public class PushNodesCommand
 
             if ( nodeComparison.getCompareStatus().getStatus().equals( CompareStatus.Status.MOVED ) )
             {
-                updateNodeChildrenWithNewMetadata( node );
+                updateNodeChildrenWithNewMetadata( node, builder );
             }
         }
 
         return builder.build();
     }
 
-    private void updateNodeChildrenWithNewMetadata( final Node node )
+    private void updateNodeChildrenWithNewMetadata( final Node node, PushNodesResult.Builder resultBuilder)
     {
         final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( node.path() ).
@@ -121,7 +121,9 @@ public class PushNodesCommand
                 repositoryId( context.getRepositoryId() ).
                 build().runWith( () -> updateNodeMetadata( child ) );
 
-            updateNodeChildrenWithNewMetadata( child );
+            resultBuilder.addChildSuccess( child );
+
+            updateNodeChildrenWithNewMetadata( child, resultBuilder );
         }
     }
 
@@ -202,6 +204,7 @@ public class PushNodesCommand
             return new PushNodesCommand( this );
         }
 
+        @Override
         void validate()
         {
             super.validate();

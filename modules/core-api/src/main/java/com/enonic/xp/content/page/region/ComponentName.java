@@ -40,6 +40,7 @@ public final class ComponentName
         return Objects.hash( this.value );
     }
 
+    @Override
     public String toString()
     {
         return value;

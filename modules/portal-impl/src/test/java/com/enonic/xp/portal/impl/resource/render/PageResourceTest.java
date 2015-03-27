@@ -6,14 +6,21 @@ import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalContext;
 import com.enonic.xp.portal.PortalContextAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.rendering.RenderResult;
 import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.rendering.RendererFactory;
+import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.rendering.Renderable;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.util.Reference;
 
 import static org.junit.Assert.*;
 
@@ -45,7 +52,7 @@ public class PageResourceTest
 
         final RenderResult result = RenderResult.newRenderResult().
             entity( "content rendered" ).
-            header( "some-heaer", "some-value" ).
+            header( "some-header", "some-value" ).
             status( 200 ).
             build();
         Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
@@ -94,7 +101,7 @@ public class PageResourceTest
 
         final RenderResult result = RenderResult.newRenderResult().
             entity( "content rendered" ).
-            header( "some-heaer", "some-value" ).
+            header( "some-header", "some-value" ).
             status( 200 ).
             build();
         Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( result );
@@ -121,5 +128,33 @@ public class PageResourceTest
         final MockHttpServletResponse response = executeRequest( request );
 
         assertEquals( 403, response.getStatus() );
+    }
+
+    @Test
+    public void getContentShortcut()
+        throws Exception
+    {
+        final PropertyTree rootDataSet = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        rootDataSet.addReference( "target", Reference.from( "ref" ) );
+
+        final Content content = Content.newContent().
+            id( ContentId.from( "id" ) ).
+            path( ContentPath.from( "site/somepath/shortcut" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
+            displayName( "My Content" ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            type( ContentTypeName.shortcut() ).
+            data( rootDataSet ).
+            build();
+
+        Mockito.when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );
+
+        Mockito.when( this.portalUrlService.pageUrl( Mockito.any( PageUrlParams.class ) ) ).thenReturn( "/master/site/otherpath" );
+
+        MockHttpServletRequest request = newGetRequest( "/master/site/somepath/shortcut" );
+        MockHttpServletResponse response = executeRequest( request );
+
+        assertEquals( 307, response.getStatus() );
+        assertEquals( "/master/site/otherpath", response.getHeader( "location" ) );
     }
 }

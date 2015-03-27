@@ -16,6 +16,7 @@ public final class GrayscaleFilterCommand
         super( "grayscale" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new GrayscaleFilter();

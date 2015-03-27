@@ -2,8 +2,6 @@ package com.enonic.xp.launcher.env;
 
 import com.enonic.xp.launcher.LauncherException;
 
-import static com.google.common.base.StandardSystemProperty.JAVA_VERSION;
-
 public final class RequirementChecker
 {
     private final SystemProperties properties;
@@ -20,15 +18,20 @@ public final class RequirementChecker
 
     private void checkJavaVersion()
     {
-        final String version = this.properties.get( JAVA_VERSION.key() );
-        if ( !isJava8( version ) )
+        final JavaVersion version = new JavaVersion( this.properties );
+        if ( !version.isJava8() )
         {
-            throw new LauncherException( "Java 1.8 is required. You are running %s.", version );
+            throw throwJavaVersionRequirements( version );
+        }
+
+        if ( version.getUpdate() < 40 )
+        {
+            throw throwJavaVersionRequirements( version );
         }
     }
 
-    private boolean isJava8( final String version )
+    private LauncherException throwJavaVersionRequirements( final JavaVersion version )
     {
-        return version.startsWith( "1.8." );
+        throw new LauncherException( "Java 1.8 update 40 and above is required. You are running %s.", version );
     }
 }

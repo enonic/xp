@@ -121,6 +121,7 @@ public final class PropertyTree
         return Objects.hash( root );
     }
 
+    @Override
     public String toString()
     {
         final StringBuilder s = new StringBuilder();
@@ -312,6 +313,7 @@ public final class PropertyTree
         return this.propertyById.size();
     }
 
+    @Override
     public PropertyId nextId()
     {
         return idProvider.nextId();

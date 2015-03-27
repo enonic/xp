@@ -15,6 +15,7 @@ public final class HSBColorizeFilterCommand
         super( "hsbcolorize" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new HSBColorizeFilter( getIntArg( args, 0, 0xFFFFFF ) );

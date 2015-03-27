@@ -15,6 +15,7 @@ public final class RoundedFilterCommand
         super( "rounded" );
     }
 
+    @Override
     protected Object doBuild( BuilderContext context, Object[] args )
     {
         return new RoundedFilter( getIntArg( args, 0, 10 ), getIntArg( args, 1, 0 ), getIntArg( args, 2, 0x000000 ) );

@@ -211,6 +211,12 @@ module app {
                                 this.removePanelByIndex(viewTabMenuItem.getIndex());
                             }
                         }).catch((reason: any) => {
+                            if (tabId) {
+                                var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
+                                if (tabMenuItem) {
+                                    this.removePanelByIndex(tabMenuItem.getIndex());
+                                }
+                            }
                             api.DefaultErrorHandler.handle(reason);
                         }).finally(() => {
                             this.mask.hide();

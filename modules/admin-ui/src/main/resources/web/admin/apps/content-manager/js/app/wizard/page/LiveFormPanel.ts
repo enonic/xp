@@ -59,6 +59,7 @@ module app.wizard.page {
     import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
     import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
     import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
+    import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
 
     import Panel = api.ui.panel.Panel;
 
@@ -419,6 +420,12 @@ module app.wizard.page {
             this.liveEditPageProxy.onComponentDuplicated((event: ComponentDuplicatedEvent) => {
 
                 this.saveAndReloadOnlyComponent(event.getDuplicatedComponentView());
+            });
+
+            this.liveEditPageProxy.onLiveEditPageInitializationError((event: LiveEditPageInitializationErrorEvent) => {
+                api.notify.showError(event.getMessage(), false);
+                new app.wizard.ShowContentFormEvent().fire();
+                this.contentWizardPanel.showForm();
             });
 
             this.insertablesPanel.onHideContextWindowRequest(() => {

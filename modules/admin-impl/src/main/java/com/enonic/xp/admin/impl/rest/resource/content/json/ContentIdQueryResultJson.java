@@ -28,6 +28,7 @@ public class ContentIdQueryResultJson
     {
         private Set<ContentIdJson> contents = Sets.newLinkedHashSet();
 
+        @Override
         public Builder addContent( final Content content,
                                    final InlineMixinsToFormItemsTransformer inlineMixinsToFormItemsTransformer )
         {
@@ -35,6 +36,7 @@ public class ContentIdQueryResultJson
             return this;
         }
 
+        @Override
         public ContentIdQueryResultJson build()
         {
             return new ContentIdQueryResultJson( this );

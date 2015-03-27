@@ -23,6 +23,8 @@ module api.liveedit.layout {
 
         private regionViews: RegionView[];
 
+        private regionIndex: number;
+
         private itemViewAddedListener: (event: ItemViewAddedEvent) => void;
 
         private itemViewRemovedListener: (event: ItemViewRemovedEvent) => void;
@@ -31,6 +33,7 @@ module api.liveedit.layout {
 
         constructor(builder: LayoutComponentViewBuilder) {
             this.regionViews = [];
+            this.regionIndex = 0;
             this.liveEditModel = builder.parentRegionView.liveEditModel;
             this.layoutComponent = builder.component;
             LayoutComponentView.debug = false;
@@ -119,12 +122,13 @@ module api.liveedit.layout {
             }
             var regions: Region[] = layoutRegions.getRegions();
             var children = parentElement ? parentElement.getChildren() : this.getChildren();
-            var regionIndex = 0;
+
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
                 if (itemType) {
                     if (RegionItemType.get().equals(itemType)) {
-                        var region = regions[regionIndex++];
+                        // regions may be nested on different levels so use layout wide var for count
+                        var region = regions[this.regionIndex++];
 
                         if (region) {
                             var regionView = new RegionView(new RegionViewBuilder().
@@ -139,8 +143,7 @@ module api.liveedit.layout {
                     else {
                         this.doParseRegions(childElement);
                     }
-                }
-                else {
+                } else {
                     this.doParseRegions(childElement);
                 }
             });

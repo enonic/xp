@@ -9,17 +9,25 @@ public class PushNodesResult
 {
     private final Nodes successfull;
 
+    private final Nodes childrenSuccessfull;
+
     private final ImmutableSet<Failed> failed;
 
     private PushNodesResult( Builder builder )
     {
         successfull = Nodes.from( builder.successfull );
+        childrenSuccessfull = Nodes.from( builder.childrenSuccessfull );
         failed = ImmutableSet.copyOf( builder.failed );
     }
 
     public Nodes getSuccessfull()
     {
         return successfull;
+    }
+
+    public Nodes getChildrenSuccessfull()
+    {
+        return childrenSuccessfull;
     }
 
     public ImmutableSet<Failed> getFailed()
@@ -38,6 +46,8 @@ public class PushNodesResult
 
         private final Set<Failed> failed = Sets.newHashSet();
 
+        private final Set<Node> childrenSuccessfull = Sets.newHashSet();
+
         private Builder()
         {
         }
@@ -45,6 +55,12 @@ public class PushNodesResult
         public Builder addSuccess( final Node success )
         {
             this.successfull.add( success );
+            return this;
+        }
+
+        public Builder addChildSuccess( final Node success )
+        {
+            this.childrenSuccessfull.add( success );
             return this;
         }
 

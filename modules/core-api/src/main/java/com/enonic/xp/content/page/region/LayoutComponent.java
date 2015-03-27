@@ -39,6 +39,7 @@ public final class LayoutComponent
         return new Builder( source );
     }
 
+    @Override
     public Component copy()
     {
         return newLayoutComponent( this ).build();
@@ -118,6 +119,7 @@ public final class LayoutComponent
             regions = source.regions.copy();
         }
 
+        @Override
         public Builder name( ComponentName value )
         {
             this.name = value;
@@ -136,12 +138,14 @@ public final class LayoutComponent
             return this;
         }
 
+        @Override
         public Builder descriptor( DescriptorKey value )
         {
             this.descrpitor = value;
             return this;
         }
 
+        @Override
         public Builder config( final PropertyTree config )
         {
             this.config = config;

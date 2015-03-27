@@ -144,6 +144,7 @@ public final class UpdateNodeCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

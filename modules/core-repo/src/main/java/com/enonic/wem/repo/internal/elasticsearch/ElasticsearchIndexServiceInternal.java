@@ -65,6 +65,7 @@ public class ElasticsearchIndexServiceInternal
 
     private Client client;
 
+    @Override
     public ClusterHealthStatus getClusterHealth( final TimeValue timeout, final String... indexNames )
     {
         return doGetClusterHealth( timeout, indexNames );

@@ -140,6 +140,7 @@ final class ApplyNodePermissionsCommand
             return new ApplyNodePermissionsCommand( this );
         }
 
+        @Override
         void validate()
         {
             super.validate();

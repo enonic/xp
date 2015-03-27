@@ -67,6 +67,7 @@ final class GetContentByIdCommand
             this.contentId = contentId;
         }
 
+        @Override
         void validate()
         {
             super.validate();

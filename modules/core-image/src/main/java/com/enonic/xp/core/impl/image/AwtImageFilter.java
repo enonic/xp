@@ -25,6 +25,7 @@ public final class AwtImageFilter
         this.filter = filter;
     }
 
+    @Override
     public BufferedImage filter( BufferedImage source )
     {
         ImageProducer producer = new FilteredImageSource( source.getSource(), this.filter );

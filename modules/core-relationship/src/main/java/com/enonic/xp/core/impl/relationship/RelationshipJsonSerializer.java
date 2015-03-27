@@ -54,6 +54,7 @@ public final class RelationshipJsonSerializer
         return this;
     }
 
+    @Override
     public JsonNode serialize( final Relationship relationship )
     {
         final ObjectNode objectNode = objectMapper().createObjectNode();
@@ -112,6 +113,7 @@ public final class RelationshipJsonSerializer
         return toObject( json );
     }
 
+    @Override
     protected Relationship parse( final JsonNode relationshipNode )
     {
         final Relationship.Builder builder = Relationship.newRelationship();

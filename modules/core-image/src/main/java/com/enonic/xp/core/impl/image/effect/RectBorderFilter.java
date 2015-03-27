@@ -25,6 +25,7 @@ public final class RectBorderFilter
         this.color = color;
     }
 
+    @Override
     public BufferedImage filter( BufferedImage source )
     {
         BufferedImage dest = createImage( source );
