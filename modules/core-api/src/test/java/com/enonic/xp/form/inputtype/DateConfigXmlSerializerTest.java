@@ -9,7 +9,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.enonic.xp.module.ModuleKey;
-import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.support.XmlTestHelper;
 import com.enonic.xp.xml.DomHelper;
 
@@ -96,6 +95,6 @@ public class DateConfigXmlSerializerTest
         DateConfig parsed = serializer.parseConfig( CURRENT_MODULE, DomHelper.parse( xml.toString() ) );
 
         // verify
-        assertEquals( expected.isWithTimezone(), parsed.w() );
+        assertEquals( expected.isWithTimezone(), parsed.isWithTimezone() );
     }
 }
