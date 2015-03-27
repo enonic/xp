@@ -40,7 +40,7 @@ public class InputJson
         builder.validationRegexp( validationRegexp );
         builder.occurrences( occurrences.getOccurrences() );
         builder.inputType( inputType.getInputType() );
-        if ( inputType.getInputType().requiresConfig() )
+        if ( inputType.getInputType().hasConfig() && inputType.getInputType().getInputTypeConfigJsonSerializer() != null)
         {
             builder.inputTypeConfig( inputType.getInputType().getInputTypeConfigJsonSerializer().parseConfig( configObject ) );
         }
@@ -56,7 +56,7 @@ public class InputJson
         this.inputType = new InputTypeJson( input.getInputType() );
 
         final ObjectMapper objectMapper = new ObjectMapper();
-        if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
+        if ( input.getInputType().hasConfig() && input.getInputTypeConfig() != null )
         {
 
             this.configJson =
