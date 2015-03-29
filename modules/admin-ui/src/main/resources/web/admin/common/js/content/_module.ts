@@ -77,6 +77,7 @@
 ///<reference path='OrderChildMovement.ts' />
 ///<reference path='OrderChildMovements.ts' />
 ///<reference path='CreateContentFilter.ts' />
+///<reference path='CountItemsWithChildrenRequest.ts' />
 
 ///<reference path='OrderExpr.ts' />
 ///<reference path='DynamicOrderExpr.ts' />

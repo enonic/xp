@@ -1,12 +1,14 @@
 module api.app.remove {
 
+    import SelectionItem = api.app.browse.SelectionItem;
+    import ContentSummary = api.content.ContentSummary;
+    import DialogButton = api.ui.dialog.DialogButton;
+
     export class DeleteDialog extends api.ui.dialog.ModalDialog {
 
         private modelName: string;
 
         private deleteAction: api.ui.Action;
-
-        private deleteViewers: api.ui.Viewer<any>[];
 
         private itemList: DeleteDialogItemList = new DeleteDialogItemList();
 
@@ -31,29 +33,28 @@ module api.app.remove {
             this.remove();
         }
 
-        setDeleteAction(action: api.ui.Action) {
+        setDeleteAction(action: api.ui.Action): DialogButton {
             this.deleteAction = action;
-            this.addAction(action, true, true);
+            return this.addAction(action, true, true);
         }
 
         getDeleteAction(): api.ui.Action {
             return this.deleteAction;
         }
 
-        setDeleteViewers(deleteViewers: api.ui.Viewer<any>[]) {
-            this.deleteViewers = deleteViewers;
+        renderSelectedItems( selectedItems: SelectionItem<ContentSummary>[]) {
             this.itemList.clear();
 
-            if (deleteViewers.length > 1) {
+            if (selectedItems.length > 1) {
                 this.setTitle("Delete " + this.modelName + "s");
             }
             else {
                 this.setTitle("Delete " + this.modelName);
             }
 
-            for (var i in this.deleteViewers) {
-                var deleteViewer: api.ui.Viewer<any> = this.deleteViewers[i];
-                this.itemList.appendChild(deleteViewer);
+            for (var i in selectedItems) {
+                var selectionItem: SelectionItem<ContentSummary> = selectedItems[i];
+                this.itemList.appendChild(selectionItem);
             }
         }
     }

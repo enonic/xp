@@ -49,6 +49,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentNameJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CreateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentResultJson;
@@ -542,6 +543,15 @@ public final class ContentResource
         {
             return new ContentSummaryListJson( result.getContents(), metaData, newContentIconUrlResolver() );
         }
+    }
+
+    @POST
+    @Path("countItemsWithChildren")
+    public long countItemsWithChildren( final CountItemsWithChildrenJson json )
+    {
+        final ContentPaths contentsPaths = ContentPaths.from( json.getContentPaths() ).filterChildrenIfParentPresents();
+
+        return new ContentChildrenCounter( contentService ).countItemsAndTheirChildren( contentsPaths );
     }
 
     @POST
