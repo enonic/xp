@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<page-component>
-  <display-name>Landing page</display-name>
+<?xml version="1.0"?>
+<layout-component xmlns="urn:enonic:xp:model:1.0">
+  <display-name>My Layout</display-name>
   <config>
     <input type="Double" name="pause">
-    <label>Pause parameter</label>
+      <label>Pause parameter</label>
       <immutable>false</immutable>
       <indexed>false</indexed>
       <occurrences minimum="0" maximum="1"/>
@@ -44,4 +44,4 @@
     <region name="main"/>
     <region name="footer"/>
   </regions>
-</page-component>
+</layout-component>
