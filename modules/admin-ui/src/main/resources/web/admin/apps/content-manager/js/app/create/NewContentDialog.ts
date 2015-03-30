@@ -61,7 +61,7 @@ module app.create {
 
             this.contentList = new app.create.NewContentDialogList();
 
-            section.appendChildren(this.fileInput, this.contentList);
+            section.appendChildren(<api.dom.Element>this.fileInput, <api.dom.Element>this.contentList);
 
             var aside = new api.dom.AsideEl("column");
             this.appendChildToContentPanel(aside);

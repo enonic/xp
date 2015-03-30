@@ -5,7 +5,7 @@
     "grunt": "~0.4.1",
     "grunt-cli": "0.x.x",
     "grunt-ts": "1.12.1",
-    "typescript": "1.1.0-1",
+    "typescript": "1.4.1",
     "grunt-contrib-less": "~0.8.1",
     "grunt-directives": "~0.1.2",
     "load-grunt-config": "~0.7.0",
