@@ -42,7 +42,7 @@ module api.ui.text {
                 this.textInput.setValue(names.join(', '));
             });
 
-            this.appendChildren(this.textInput, this.mediaUploader);
+            this.appendChildren(<api.dom.FormInputEl>this.textInput, <api.dom.FormInputEl>this.mediaUploader);
         }
 
         setUploaderParams(params: {[key: string]: any}): FileInput {
