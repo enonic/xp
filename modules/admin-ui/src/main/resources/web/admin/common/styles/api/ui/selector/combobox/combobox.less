@@ -150,6 +150,12 @@
       &.selected {
         font-style: italic;
         color: #d3d3d3;
+
+        &.readonly {
+          opacity: 0.5;
+          cursor: default;
+          pointer-events: none;
+        }
       }
 
     }

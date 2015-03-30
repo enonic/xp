@@ -105,6 +105,18 @@ public final class SecurityResource
         return new UserStoreJson( userStore, userStorePermissions, principals );
     }
 
+    @GET
+    @Path("userstore/default")
+    public UserStoreJson getDefaultUserStore( )
+    {
+        final UserStore userStore =  UserStore.newUserStore().displayName( "" ).key( UserStoreKey.createDefault() ).build();
+
+        final UserStoreAccessControlList userStorePermissions = securityService.getUserStorePermissions( UserStoreKey.system() );
+
+        final Principals principals = securityService.getPrincipals( userStorePermissions.getAllPrincipals() );
+        return new UserStoreJson( userStore, userStorePermissions, principals );
+    }
+
     @POST
     @Path("userstore/create")
     public UserStoreJson createUserStore( final CreateUserStoreJson params )
