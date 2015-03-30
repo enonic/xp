@@ -7,32 +7,68 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.enonic.xp.export.ExportNodeException;
+import com.enonic.xp.util.Exceptions;
 
 public class XmlDateTimeConverter
 {
-    private static final int UTC_OFFSET = 0;
+    private final static DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern( "yyyy-MM-ddX" );
 
-    public static Instant toInstant( final XMLGregorianCalendar calendar )
+    private final static DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern( "HH:mm:ss.SSSX" );
+
+    private final static DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH:mm:ss.SSSX" );
+
+    public static Instant parseInstant( final String value )
+    {
+        return toInstant( fromXmlValue( value ) );
+    }
+
+    public static String format( final Instant value )
+    {
+        return value.atZone( ZoneId.of( "UTC" ) ).format( DATE_TIME_FORMAT );
+    }
+
+    public static LocalDateTime parseLocalDateTime( final String value )
+    {
+        return toLocalDateTime( fromXmlValue( value ) );
+    }
+
+    public static String format( final LocalDateTime value )
+    {
+        return value.atZone( ZoneId.of( "UTC" ) ).format( DATE_TIME_FORMAT );
+    }
+
+    public static LocalDate parseLocalDate( final String value )
+    {
+        return toLocalDate( fromXmlValue( value ) );
+    }
+
+    public static String format( final LocalDate value )
+    {
+        return ZonedDateTime.of( value, LocalTime.now(), ZoneId.of( "UTC" ) ).format( DATE_FORMAT.withZone( ZoneId.of( "UTC" ) ) );
+    }
+
+    public static LocalTime parseLocalTime( final String value )
+    {
+        return toLocalTime( fromXmlValue( value ) );
+    }
+
+    public static String format( final LocalTime value )
+    {
+        return ZonedDateTime.of( LocalDate.now(), value, ZoneId.of( "UTC" ) ).format( TIME_FORMAT.withZone( ZoneId.of( "UTC" ) ) );
+    }
+
+    private static Instant toInstant( final XMLGregorianCalendar calendar )
     {
         return calendar.toGregorianCalendar().toInstant();
     }
 
-    public static XMLGregorianCalendar toXMLGregorianCalendar( final Instant instant )
-    {
-        return doGetXmlGregCalFromInstant( instant );
-    }
-
-    public static LocalDateTime toLocalDateTime( final XMLGregorianCalendar calendar )
+    private static LocalDateTime toLocalDateTime( final XMLGregorianCalendar calendar )
     {
         if ( calendar == null )
         {
@@ -44,14 +80,7 @@ public class XmlDateTimeConverter
         return LocalDateTime.ofInstant( instant, ZoneId.of( "UTC" ) );
     }
 
-    public static XMLGregorianCalendar toXMLGregorianCalendar( final LocalDateTime localDateTime )
-    {
-        final Instant instant = localDateTime.toInstant( ZoneOffset.UTC );
-
-        return doGetXmlGregCalFromInstant( instant );
-    }
-
-    public static LocalTime toLocalTime( final XMLGregorianCalendar calendar )
+    private static LocalTime toLocalTime( final XMLGregorianCalendar calendar )
     {
         if ( calendar == null )
         {
@@ -61,22 +90,7 @@ public class XmlDateTimeConverter
         return LocalTime.of( calendar.getHour(), calendar.getMinute(), calendar.getSecond(), calendar.getMillisecond() );
     }
 
-    public static XMLGregorianCalendar toXMLGregorianCalendar( final LocalTime localTime )
-    {
-        final int ms = safeLongToInt( TimeUnit.NANOSECONDS.toMillis( localTime.getNano() ) );
-
-        try
-        {
-            return DatatypeFactory.newInstance().
-                newXMLGregorianCalendarTime( localTime.getHour(), localTime.getMinute(), localTime.getSecond(), ms, UTC_OFFSET );
-        }
-        catch ( DatatypeConfigurationException e )
-        {
-            throw new ExportNodeException( e );
-        }
-    }
-
-    public static LocalDate toLocalDate( final XMLGregorianCalendar calendar )
+    private static LocalDate toLocalDate( final XMLGregorianCalendar calendar )
     {
         if ( calendar == null )
         {
@@ -86,62 +100,20 @@ public class XmlDateTimeConverter
         return OffsetDateTime.of( calendar.getYear(), calendar.getMonth(), calendar.getDay(), 0, 0, 0, 0, ZoneOffset.UTC ).toLocalDate();
     }
 
-    public static XMLGregorianCalendar toXMLGregorianCalendar( final LocalDate localDate )
+    private static XMLGregorianCalendar fromXmlValue( final String value )
     {
-        Instant instant = localDate.atStartOfDay().atZone( ZoneId.of( "UTC" ) ).toInstant();
-
-        return doGetXmlGregCalFromInstant( instant );
+        return newDataTypeFactory().newXMLGregorianCalendar( value );
     }
 
-    public static java.util.Date toDate( XMLGregorianCalendar calendar )
+    private static DatatypeFactory newDataTypeFactory()
     {
-        if ( calendar == null )
-        {
-            return null;
-        }
-
-        return calendar.toGregorianCalendar().getTime();
-    }
-
-    public static XMLGregorianCalendar toXMLGregorianCalendar( final Date date )
-    {
-        GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime( date );
-        calendar.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
-
         try
         {
-            return DatatypeFactory.newInstance().newXMLGregorianCalendar( calendar );
+            return DatatypeFactory.newInstance();
         }
-        catch ( DatatypeConfigurationException e )
+        catch ( final Exception e )
         {
-            throw new ExportNodeException( e );
+            throw Exceptions.unchecked( e );
         }
     }
-
-    private static XMLGregorianCalendar doGetXmlGregCalFromInstant( final Instant instant )
-    {
-        GregorianCalendar c = new GregorianCalendar();
-        c.setTime( Date.from( instant ) );
-        c.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
-
-        try
-        {
-            return DatatypeFactory.newInstance().newXMLGregorianCalendar( c );
-        }
-        catch ( DatatypeConfigurationException e )
-        {
-            throw new ExportNodeException( e );
-        }
-    }
-
-    private static int safeLongToInt( long l )
-    {
-        if ( l < Integer.MIN_VALUE || l > Integer.MAX_VALUE )
-        {
-            throw new IllegalArgumentException( l + " cannot be cast to int without changing its value." );
-        }
-        return (int) l;
-    }
-
 }

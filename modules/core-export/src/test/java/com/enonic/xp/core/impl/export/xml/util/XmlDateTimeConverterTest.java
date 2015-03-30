@@ -4,138 +4,54 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
-import java.util.TimeZone;
-
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.junit.Test;
-
-import com.enonic.xp.core.impl.export.xml.util.XmlDateTimeConverter;
 
 import static org.junit.Assert.*;
 
 public class XmlDateTimeConverterTest
 {
-    private final TimeZone defaultTimezone = TimeZone.getDefault();
-
     @Test
-    public void instant()
+    public void parseInstant()
         throws Exception
     {
-        final Instant instant = Instant.now();
+        final Instant value1 = XmlDateTimeConverter.parseInstant( "2012-11-12T22:11:00.000Z" );
+        assertEquals( "2012-11-12T22:11:00.000Z", XmlDateTimeConverter.format( value1 ) );
 
-        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( instant );
-
-        final Instant instant2 = XmlDateTimeConverter.toInstant( calendar );
-
-        assertEquals( instant, instant2 );
+        final Instant value2 = XmlDateTimeConverter.parseInstant( "2012-11-12T22:11:00.000+01:00" );
+        assertEquals( "2012-11-12T21:11:00.000Z", XmlDateTimeConverter.format( value2 ) );
     }
 
     @Test
-    public void instant_changed_timezone()
+    public void parseLocalDateTime()
         throws Exception
     {
-        final Instant instant = Instant.now();
+        final LocalDateTime value1 = XmlDateTimeConverter.parseLocalDateTime( "2012-11-12T22:11:00.000Z" );
+        assertEquals( "2012-11-12T22:11:00.000Z", XmlDateTimeConverter.format( value1 ) );
 
-        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( instant );
-
-        final Instant instant2 = XmlDateTimeConverter.toInstant( calendar );
-
-        assertEquals( instant, instant2 );
-
-        TimeZone.setDefault( defaultTimezone );
+        final LocalDateTime value2 = XmlDateTimeConverter.parseLocalDateTime( "2012-11-12T22:11:00.000+01:00" );
+        assertEquals( "2012-11-12T21:11:00.000Z", XmlDateTimeConverter.format( value2 ) );
     }
 
     @Test
-    public void localDateTime()
+    public void parseLocalDate()
         throws Exception
     {
-        final LocalDateTime localDateTime = LocalDateTime.of( 2014, 12, 3, 19, 39, 0 );
+        final LocalDate value1 = XmlDateTimeConverter.parseLocalDate( "2012-11-12Z" );
+        assertEquals( "2012-11-12Z", XmlDateTimeConverter.format( value1 ) );
 
-        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( localDateTime );
-
-        final LocalDateTime parsedLocalDateTime = XmlDateTimeConverter.toLocalDateTime( calendar );
-
-        assertEquals( localDateTime, parsedLocalDateTime );
+        final LocalDate value2 = XmlDateTimeConverter.parseLocalDate( "2012-11-12+01:00" );
+        assertEquals( "2012-11-12Z", XmlDateTimeConverter.format( value2 ) );
     }
 
     @Test
-    public void localDateTime_changed_timezone()
+    public void parseLocalTime()
         throws Exception
     {
-        final LocalDateTime localDateTime = LocalDateTime.of( 2014, 12, 3, 19, 39, 0 );
+        final LocalTime value1 = XmlDateTimeConverter.parseLocalTime( "22:11:00.000Z" );
+        assertEquals( "22:11:00.000Z", XmlDateTimeConverter.format( value1 ) );
 
-        TimeZone.setDefault( TimeZone.getTimeZone( "GMT-16:00" ) );
-
-        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( localDateTime );
-
-        final LocalDateTime parsedLocalDateTime = XmlDateTimeConverter.toLocalDateTime( calendar );
-
-        assertEquals( localDateTime, parsedLocalDateTime );
-
-        TimeZone.setDefault( defaultTimezone );
+        final LocalTime value2 = XmlDateTimeConverter.parseLocalTime( "22:11:00.000+01:00" );
+        assertEquals( "22:11:00.000Z", XmlDateTimeConverter.format( value2 ) );
     }
-
-
-    @Test
-    public void localTime()
-        throws Exception
-    {
-        final LocalTime localTime = LocalTime.of( 20, 24, 33 );
-
-        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( localTime );
-
-        final LocalTime parsedTime = XmlDateTimeConverter.toLocalTime( calendar );
-
-        assertEquals( localTime, parsedTime );
-    }
-
-
-    @Test
-    public void localDate()
-        throws Exception
-    {
-        final LocalDate localDate = LocalDate.now();
-
-        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( localDate );
-
-        final LocalDate parsedLocalDate = XmlDateTimeConverter.toLocalDate( calendar );
-
-        assertEquals( localDate, parsedLocalDate );
-    }
-
-
-    @Test
-    public void localDateAnotherTimeZone()
-        throws Exception
-    {
-        TimeZone.setDefault( TimeZone.getTimeZone( "GMT-16:00" ) );
-
-        final LocalDate localDate = LocalDate.now();
-
-        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( localDate );
-
-        final LocalDate parsedLocalDate = XmlDateTimeConverter.toLocalDate( calendar );
-
-        assertEquals( localDate, parsedLocalDate );
-
-        TimeZone.setDefault( defaultTimezone );
-    }
-
-    @Test
-    public void date()
-        throws Exception
-    {
-        TimeZone.setDefault( TimeZone.getTimeZone( "GMT-16:00" ) );
-
-        final Date date = Date.from( Instant.now() );
-
-        final XMLGregorianCalendar calendar = XmlDateTimeConverter.toXMLGregorianCalendar( date );
-
-        final Date parsedDate = XmlDateTimeConverter.toDate( calendar );
-
-        assertEquals( date, parsedDate );
-    }
-
 }

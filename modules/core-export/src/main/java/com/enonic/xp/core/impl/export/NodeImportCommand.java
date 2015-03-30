@@ -12,7 +12,7 @@ import com.enonic.xp.core.impl.export.builder.UpdateNodeParamsFactory;
 import com.enonic.xp.core.impl.export.reader.ExportReader;
 import com.enonic.xp.core.impl.export.validator.ContentImportValidator;
 import com.enonic.xp.core.impl.export.validator.ImportValidator;
-import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer;
+import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeParser;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -41,8 +41,6 @@ public class NodeImportCommand
 
     private final NodeService nodeService;
 
-    private final XmlNodeSerializer xmlNodeSerializer;
-
     private final VirtualFile exportRoot;
 
     private final ExportReader exportReader = new ExportReader();
@@ -59,7 +57,6 @@ public class NodeImportCommand
     {
         this.nodeService = builder.nodeService;
         this.exportRoot = builder.exportRoot;
-        this.xmlNodeSerializer = builder.xmlNodeSerializer;
         this.importRoot = builder.importRoot;
         this.dryRun = builder.dryRun;
         this.importNodeIds = builder.importNodeIds;
@@ -173,7 +170,13 @@ public class NodeImportCommand
     {
         final VirtualFile nodeSource = this.exportReader.getNodeSource( nodeFolder );
 
-        final Node newNode = this.xmlNodeSerializer.parse( nodeSource.getByteSource() );
+        final Node.Builder newNodeBuilder = Node.newNode();
+        final XmlNodeParser parser = new XmlNodeParser();
+        parser.builder( newNodeBuilder );
+        parser.source( nodeSource.getCharSource() );
+        parser.parse();
+
+        final Node newNode = newNodeBuilder.build();
 
         final NodePath importNodePath = NodeImportPathResolver.resolveNodeImportPath( nodeFolder, this.exportRoot, this.importRoot );
 
@@ -312,8 +315,6 @@ public class NodeImportCommand
 
         private NodeService nodeService;
 
-        private XmlNodeSerializer xmlNodeSerializer;
-
         private VirtualFile exportRoot;
 
         private boolean dryRun = false;
@@ -339,12 +340,6 @@ public class NodeImportCommand
         public Builder nodeService( NodeService nodeService )
         {
             this.nodeService = nodeService;
-            return this;
-        }
-
-        public Builder xmlNodeSerializer( XmlNodeSerializer xmlNodeSerializer )
-        {
-            this.xmlNodeSerializer = xmlNodeSerializer;
             return this;
         }
 

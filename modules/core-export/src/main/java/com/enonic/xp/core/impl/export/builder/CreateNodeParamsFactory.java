@@ -1,9 +1,6 @@
 package com.enonic.xp.core.impl.export.builder;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.core.impl.export.ProcessNodeSettings;
-import com.enonic.xp.core.impl.export.xml.XmlNode;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
@@ -81,16 +78,6 @@ public class CreateNodeParamsFactory
                 builder.manualOrderValue( this.processNodeSettings.getManualOrderValue() );
             }
         }
-    }
-
-    private ChildOrder getChildOrder( final XmlNode xmlNode )
-    {
-        if ( Strings.isNullOrEmpty( xmlNode.getChildOrder() ) )
-        {
-            return null;
-        }
-
-        return ChildOrder.from( xmlNode.getChildOrder() );
     }
 
     public static final class Builder

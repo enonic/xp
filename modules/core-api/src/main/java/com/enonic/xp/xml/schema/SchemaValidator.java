@@ -11,14 +11,15 @@ import org.xml.sax.SAXException;
 import com.google.common.collect.Lists;
 
 public final class SchemaValidator
+    implements SchemaNamespaces
 {
     private final List<SchemaHandler> list;
 
     public SchemaValidator()
     {
         this.list = Lists.newArrayList();
-        register( "urn:enonic:xp:export:1.0", "/META-INF/xsd/export.xsd" );
-        register( "urn:enonic:xp:model:1.0", "/META-INF/xsd/model.xsd" );
+        register( EXPORT_NS, "/META-INF/xsd/export.xsd" );
+        register( MODEL_NS, "/META-INF/xsd/model.xsd" );
     }
 
     private void register( final String ns, final String location )

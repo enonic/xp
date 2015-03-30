@@ -4,18 +4,15 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.TimeZone;
 
 import org.junit.Test;
 
-import com.google.common.io.ByteSource;
-
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.PropertyVisitor;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
@@ -28,65 +25,22 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
-
-public class XmlNodeSerializerTest
+public class XmlNodeSerializer2Test
     extends BaseXmlSerializerTest
 {
-    private final TimeZone defaultTimezone = TimeZone.getDefault();
-
     @Test
-    public void test_all_propertytypes_to_xml_and_from_xml()
+    public void testSerialize()
         throws Exception
     {
         final Instant instant = Instant.parse( "2014-11-28T14:16:00Z" );
-
         final Node node = doCreateNode( instant );
 
-        XmlNodeSerializer serializer = new XmlNodeSerializer();
+        final XmlNodeSerializer2 serializer = new XmlNodeSerializer2();
+        serializer.node( node ).exportNodeIds( true );
 
-        final String result = serializer.serialize( node, false );
+        final String result = serializer.serialize();
 
-        assertXml( "node.xml", result );
-
-        Node parsedNode = serializer.parse( ByteSource.wrap( result.getBytes() ) );
-
-        PropertyTree parsedNodeData = parsedNode.data();
-
-        final PropertyTree expectedTree = node.data();
-        assertEquals( expectedTree.getTotalSize(), parsedNodeData.getTotalSize() );
-        assertEquals( expectedTree.toString(), parsedNodeData.toString() );
-
-        final PropertyVisitor visitor = new PropertyVisitor()
-        {
-            @Override
-            public void visit( final Property property )
-            {
-                final Property actualProperty = parsedNodeData.getProperty( property.getPath() );
-                assertEquals( property.getValue(), actualProperty.getValue() );
-            }
-        };
-
-        visitor.traverse( expectedTree );
-    }
-
-    @Test
-    public void test_all_propertytypes_to_xml_another_timezone()
-        throws Exception
-    {
-        TimeZone.setDefault( TimeZone.getTimeZone( "GMT-12:00" ) );
-
-        final Instant instant = Instant.parse( "2014-11-28T14:16:00Z" );
-
-        final Node node = doCreateNode( instant );
-
-        XmlNodeSerializer serializer = new XmlNodeSerializer();
-
-        final String result = serializer.serialize( node, false );
-
-        assertXml( "node.xml", result );
-
-        TimeZone.setDefault( defaultTimezone );
+        assertXml( "node2.xml", result );
     }
 
     private Node doCreateNode( final Instant instant )
@@ -97,17 +51,21 @@ public class XmlNodeSerializerTest
         propertyTree.addString( "myString", "myStringValue2" );
         propertyTree.addBoolean( "myBoolean", true );
         propertyTree.addDouble( "myDouble", 123.1 );
+        propertyTree.addLong( "myLong", 111L );
         propertyTree.addHtmlPart( "myHtmlPart", "<h1>This is the title</h1><h2>This is the subheading</h2>" );
         propertyTree.addXml( "myXml", "<car><color>Arctic Grey<color><car>" );
         propertyTree.addGeoPoint( "myGeoPoint", GeoPoint.from( "8,4" ) );
+
         // Date & Time
         propertyTree.addInstant( "myInstant", instant );
         propertyTree.addLocalTime( "myLocalTime", LocalTime.of( 21, 42, 0 ) );
         propertyTree.addLocalDate( "myLocalDate", LocalDate.of( 2014, 11, 28 ) );
         propertyTree.addLocalDateTime( "myLocalDateTime", LocalDateTime.of( 2014, 11, 28, 21, 0, 0, 0 ) );
+
         // Links and ref
         propertyTree.addReference( "myRef", Reference.from( "abcd" ) );
         propertyTree.addLink( "myLink", Link.from( "/root/parent/child" ) );
+
         // Binary refs
         propertyTree.addBinaryReference( "myBinaryRef1", BinaryReference.from( "image.jpg" ) );
         propertyTree.addBinaryReference( "myBinaryRef2", BinaryReference.from( "image2.jpg" ) );
@@ -116,6 +74,7 @@ public class XmlNodeSerializerTest
         final PropertySet mySubset = propertyTree.addSet( "mySet" );
         mySubset.setString( "myString", "myStringValue" );
         mySubset.setBoolean( "myBoolean", true );
+
         // Property-set in set
         final PropertySet mySubSubset = mySubset.addSet( "mySet" );
         mySubSubset.setString( "myString", "myStringValue" );
@@ -127,6 +86,11 @@ public class XmlNodeSerializerTest
         propertyTree.addXml( "myXml", null );
         propertyTree.addSet( "nullSet", null );
 
+        // Index configs
+        final PatternIndexConfigDocument.Builder indexConfig = PatternIndexConfigDocument.create();
+        indexConfig.analyzer( "no" );
+        indexConfig.add( "mydata", IndexConfig.FULLTEXT );
+
         return Node.newNode().
             id( NodeId.from( "abc" ) ).
             name( NodeName.from( "my-node-name" ) ).
@@ -134,6 +98,7 @@ public class XmlNodeSerializerTest
             childOrder( ChildOrder.manualOrder() ).
             nodeType( NodeType.from( "content" ) ).
             data( propertyTree ).
+            indexConfigDocument( indexConfig.build() ).
             attachedBinaries( AttachedBinaries.create().
                 add( new AttachedBinary( BinaryReference.from( "image.jpg" ), new BlobKey( "a" ) ) ).
                 add( new AttachedBinary( BinaryReference.from( "image2.jpg" ), new BlobKey( "b" ) ) ).

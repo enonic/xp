@@ -1,5 +1,3 @@
-apply from: "$rootDir/gradle/jaxb.gradle"
-
 dependencies {
     compile project( ':core-api' )
     testCompile project( path: ':core-api', configuration: 'testOutput' )

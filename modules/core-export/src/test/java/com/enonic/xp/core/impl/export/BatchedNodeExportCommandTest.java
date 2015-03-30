@@ -10,6 +10,7 @@ import org.junit.rules.TemporaryFolder;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.core.impl.export.writer.FileExportWriter;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.index.ChildOrder;
@@ -19,8 +20,6 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.util.BinaryReference;
-import com.enonic.xp.core.impl.export.writer.FileExportWriter;
-import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer;
 
 import static org.junit.Assert.*;
 
@@ -48,7 +47,6 @@ public class BatchedNodeExportCommandTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            xmlNodeSerializer( new XmlNodeSerializer() ).
             targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
@@ -75,7 +73,6 @@ public class BatchedNodeExportCommandTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            xmlNodeSerializer( new XmlNodeSerializer() ).
             targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
@@ -114,7 +111,6 @@ public class BatchedNodeExportCommandTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            xmlNodeSerializer( new XmlNodeSerializer() ).
             targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
@@ -142,7 +138,6 @@ public class BatchedNodeExportCommandTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.newPath( "/mynode/child1/child1_1" ).build() ).
-            xmlNodeSerializer( new XmlNodeSerializer() ).
             targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
@@ -171,7 +166,6 @@ public class BatchedNodeExportCommandTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.newPath( "/mynode/child1" ).build() ).
-            xmlNodeSerializer( new XmlNodeSerializer() ).
             targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();
@@ -206,7 +200,6 @@ public class BatchedNodeExportCommandTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            xmlNodeSerializer( new XmlNodeSerializer() ).
             targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
             build().
             execute();

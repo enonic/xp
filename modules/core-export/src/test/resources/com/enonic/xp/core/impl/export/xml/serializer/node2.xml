@@ -1,4 +1,5 @@
 <node xmlns="urn:enonic:xp:export:1.0">
+  <id>abc</id>
   <childOrder>_manualordervalue DESC</childOrder>
   <nodeType>content</nodeType>
   <data>
@@ -7,9 +8,10 @@
     <string isNull="true" name="myString"/>
     <boolean name="myBoolean">true</boolean>
     <double name="myDouble">123.1</double>
-    <htmlPart name="myHtmlPart">&amp;lt;h1&amp;gt;This is the title&amp;lt;/h1&amp;gt;&amp;lt;h2&amp;gt;This is the subheading&amp;lt;/h2&amp;gt;</htmlPart>
+    <long name="myLong">111</long>
+    <htmlPart name="myHtmlPart">&lt;h1&gt;This is the title&lt;/h1&gt;&lt;h2&gt;This is the subheading&lt;/h2&gt;</htmlPart>
     <htmlPart isNull="true" name="myHtmlPart"/>
-    <xml name="myXml">&amp;lt;car&amp;gt;&amp;lt;color&amp;gt;Arctic Grey&amp;lt;color&amp;gt;&amp;lt;car&amp;gt;</xml>
+    <xml name="myXml">&lt;car&gt;&lt;color&gt;Arctic Grey&lt;color&gt;&lt;car&gt;</xml>
     <xml isNull="true" name="myXml"/>
     <geoPoint name="myGeoPoint">8.0,4.0</geoPoint>
     <dateTime name="myInstant">2014-11-28T14:16:00.000Z</dateTime>
@@ -31,6 +33,7 @@
     <property-set isNull="true" name="nullSet"/>
   </data>
   <indexConfigs>
+    <analyzer>no</analyzer>
     <defaultConfig>
       <decideByType>true</decideByType>
       <enabled>true</enabled>
@@ -38,6 +41,17 @@
       <fulltext>false</fulltext>
       <includeInAllText>false</includeInAllText>
     </defaultConfig>
-    <pathIndexConfigs/>
+    <pathIndexConfigs>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>true</nGram>
+          <fulltext>true</fulltext>
+          <includeInAllText>true</includeInAllText>
+        </indexConfig>
+        <path>mydata</path>
+      </pathIndexConfig>
+    </pathIndexConfigs>
   </indexConfigs>
 </node>
