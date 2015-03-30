@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.export.xml.util;
+package com.enonic.xp.core.impl.export.xml;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -15,7 +15,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.enonic.xp.util.Exceptions;
 
-public class XmlDateTimeConverter
+final class XmlDateTimeConverter
 {
     private final static DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern( "yyyy-MM-ddX" );
 

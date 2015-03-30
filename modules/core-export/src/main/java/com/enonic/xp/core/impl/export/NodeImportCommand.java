@@ -12,7 +12,7 @@ import com.enonic.xp.core.impl.export.builder.UpdateNodeParamsFactory;
 import com.enonic.xp.core.impl.export.reader.ExportReader;
 import com.enonic.xp.core.impl.export.validator.ContentImportValidator;
 import com.enonic.xp.core.impl.export.validator.ImportValidator;
-import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeParser;
+import com.enonic.xp.core.impl.export.xml.XmlNodeParser;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;

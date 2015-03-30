@@ -7,7 +7,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.export.writer.ExportWriter;
 import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
-import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer2;
+import com.enonic.xp.core.impl.export.xml.XmlNodeSerializer;
 import com.enonic.xp.export.ExportError;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.node.AttachedBinary;
@@ -138,7 +138,7 @@ public class BatchedNodeExportCommand
 
         final Node relativeNode = Node.newNode( node ).parentPath( newParentPath ).build();
 
-        final XmlNodeSerializer2 serializer = new XmlNodeSerializer2();
+        final XmlNodeSerializer serializer = new XmlNodeSerializer();
         serializer.exportNodeIds( this.exportNodeIds );
         serializer.node( relativeNode );
         final String serializedNode = serializer.serialize();

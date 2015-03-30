@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.export.xml.serializer;
+package com.enonic.xp.core.impl.export.xml;
 
 import java.net.URL;
 

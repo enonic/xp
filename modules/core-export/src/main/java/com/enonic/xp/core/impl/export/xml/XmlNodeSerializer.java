@@ -1,11 +1,10 @@
-package com.enonic.xp.core.impl.export.xml.serializer;
+package com.enonic.xp.core.impl.export.xml;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import com.enonic.xp.core.impl.export.xml.util.XmlDateTimeConverter;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -20,7 +19,7 @@ import com.enonic.xp.xml.DomBuilder;
 import com.enonic.xp.xml.DomHelper;
 import com.enonic.xp.xml.schema.SchemaNamespaces;
 
-public final class XmlNodeSerializer2
+public final class XmlNodeSerializer
     implements SchemaNamespaces
 {
     private final DomBuilder builder;
@@ -29,18 +28,18 @@ public final class XmlNodeSerializer2
 
     private boolean exportNodeIds;
 
-    public XmlNodeSerializer2()
+    public XmlNodeSerializer()
     {
         this.builder = DomBuilder.create( EXPORT_NS, "node" );
     }
 
-    public XmlNodeSerializer2 node( final Node value )
+    public XmlNodeSerializer node( final Node value )
     {
         this.node = value;
         return this;
     }
 
-    public XmlNodeSerializer2 exportNodeIds( final boolean value )
+    public XmlNodeSerializer exportNodeIds( final boolean value )
     {
         this.exportNodeIds = value;
         return this;

@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.export.xml.serializer;
+package com.enonic.xp.core.impl.export.xml;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -25,7 +25,7 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-public class XmlNodeSerializer2Test
+public class XmlNodeSerializerTest
     extends BaseXmlSerializerTest
 {
     @Test
@@ -35,12 +35,12 @@ public class XmlNodeSerializer2Test
         final Instant instant = Instant.parse( "2014-11-28T14:16:00Z" );
         final Node node = doCreateNode( instant );
 
-        final XmlNodeSerializer2 serializer = new XmlNodeSerializer2();
+        final XmlNodeSerializer serializer = new XmlNodeSerializer();
         serializer.node( node ).exportNodeIds( true );
 
         final String result = serializer.serialize();
 
-        assertXml( "node2.xml", result );
+        assertXml( "node.xml", result );
     }
 
     private Node doCreateNode( final Instant instant )

@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.export.xml.util;
+package com.enonic.xp.core.impl.export.xml;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.junit.Test;
+
+import com.enonic.xp.core.impl.export.xml.XmlDateTimeConverter;
 
 import static org.junit.Assert.*;
 

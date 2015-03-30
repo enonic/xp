@@ -1,11 +1,10 @@
-package com.enonic.xp.core.impl.export.xml.serializer;
+package com.enonic.xp.core.impl.export.xml;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import com.enonic.xp.core.impl.export.xml.util.XmlDateTimeConverter;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
