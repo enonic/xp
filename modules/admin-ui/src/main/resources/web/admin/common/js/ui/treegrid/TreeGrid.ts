@@ -579,20 +579,32 @@ module api.ui.treegrid {
             this.notifyLoaded();
         }
 
-        updateNode(data: DATA, oldDataId?: string): void {
+        updateNode(data: DATA, oldDataId?: string): wemQ.Promise<void> {
 
             var dataId = oldDataId || this.getDataId(data),
-                nodesToUpdate = [],
-                nodeToUpdate = this.root.getCurrentRoot().findNode(dataId),
-                stashedNodeToUpdate;
+                nodeToUpdate = this.root.getCurrentRoot().findNode(dataId);
 
             if (!nodeToUpdate) {
                 throw new Error("TreeNode to update not found: " + dataId);
             }
 
-            nodesToUpdate.push(nodeToUpdate);
+            return this.fetchAndUpdateNodes([nodeToUpdate]);
+        }
 
-            this.fetch(nodesToUpdate[0])
+        updateNodes(data: DATA, oldDataId?: string): wemQ.Promise<void> {
+
+            var dataId = oldDataId || this.getDataId(data),
+                nodesToUpdate = this.root.getCurrentRoot().findNodes(dataId);
+
+            if (!nodesToUpdate) {
+                throw new Error("TreeNode to update not found: " + dataId);
+            }
+
+            return this.fetchAndUpdateNodes(nodesToUpdate);
+        }
+
+        private fetchAndUpdateNodes(nodesToUpdate: TreeNode<DATA>[]): wemQ.Promise<void> {
+            return this.fetch(nodesToUpdate[0])
                 .then((data: DATA) => {
                     nodesToUpdate.forEach((node) => {
                         node.setData(data);
@@ -606,13 +618,10 @@ module api.ui.treegrid {
                             }
                         }
                     });
-                    if (!!stashedNodeToUpdate) {
-                        stashedNodeToUpdate.setData(data);
-                        stashedNodeToUpdate.clearViewers();
-                    }
+
                     this.notifyDataChanged(new DataChangedEvent<DATA>(nodesToUpdate, DataChangedEvent.UPDATED));
                     this.initData(this.root.getCurrentRoot().treeToList());
-                    this.root.updateSelection(dataId, data);
+                    this.root.updateSelection(nodesToUpdate[0].getDataId(), data);
                     this.triggerSelectionChangedListeners();
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);

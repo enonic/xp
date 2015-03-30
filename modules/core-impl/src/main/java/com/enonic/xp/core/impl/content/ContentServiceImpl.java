@@ -51,6 +51,7 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.site.CreateSiteParams;
@@ -287,14 +288,14 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content getById( final ContentId id )
+    public Content getById( final ContentId contentId )
     {
-        return doGetById( id );
+        return doGetById( contentId );
     }
 
-    private Content doGetById( final ContentId id )
+    private Content doGetById( final ContentId contentId )
     {
-        return GetContentByIdCommand.create( id ).
+        return GetContentByIdCommand.create( contentId ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
@@ -539,6 +540,20 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             contentId( params.getContentId() ).
             branches( params.getBranches() ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Content sort( final SortContentParams params )
+    {
+        Content content = doGetById( params.getContentId() );
+
+        return SortContentCommand.create( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }

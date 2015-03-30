@@ -6,20 +6,24 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 
-public class ReorderChildrenJson
+public class SetAndReorderChildrenJson
 {
     private Boolean silent;
 
     private String contentId;
 
+    private ChildOrderJson childOrder;
+
     private List<ReorderChildJson> orderChildren = Lists.newLinkedList();
 
     @JsonCreator
-    public ReorderChildrenJson( @JsonProperty("silent") final Boolean silent, @JsonProperty("contentId") final String contentId,
-                                @JsonProperty("reorderChildren") final List<ReorderChildJson> orderChildren )
+    public SetAndReorderChildrenJson( @JsonProperty("silent") final Boolean silent, @JsonProperty("contentId") final String contentId,
+                                      @JsonProperty("childOrder") final ChildOrderJson childOrder,
+                                      @JsonProperty("reorderChildren") final List<ReorderChildJson> orderChildren )
     {
         this.silent = silent;
         this.contentId = contentId;
+        this.childOrder = childOrder;
         this.orderChildren = orderChildren;
     }
 
@@ -36,8 +40,15 @@ public class ReorderChildrenJson
     }
 
     @SuppressWarnings("UnusedDeclaration")
+    public ChildOrderJson getChildOrder()
+    {
+        return childOrder;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
     public List<ReorderChildJson> getReorderChildren()
     {
         return orderChildren;
     }
+
 }

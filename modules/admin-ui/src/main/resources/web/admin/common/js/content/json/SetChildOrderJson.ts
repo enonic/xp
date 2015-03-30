@@ -1,9 +1,8 @@
 module api.content.json {
 
-    export interface SetChildOrderJson {
-
-        contentId: string;
+    export interface SetChildOrderJson extends SetOrderUpdateJson {
 
         childOrder: ChildOrderJson;
+
     }
 }

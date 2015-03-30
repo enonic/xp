@@ -89,7 +89,6 @@ module api.app.browse {
                 for (var i = 0; i < this.selectionItems.length; i++) {
                     if (this.selectionItems[i].getBrowseItem().getPath() === item.getPath()) {
                         this.selectionItems[i].updateViewer(this.createItemViewer(item));
-                        console.log(this.createItemViewer(item));
                         break;
                     }
                 }

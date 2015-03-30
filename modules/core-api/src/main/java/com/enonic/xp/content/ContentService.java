@@ -33,13 +33,15 @@ public interface ContentService
 
     Content move( MoveContentParams params );
 
+    Content sort( SortContentParams params );
+
     Content setChildOrder( SetContentChildOrderParams params );
 
     ReorderChildContentsResult reorderChildren( ReorderChildContentsParams params );
 
     CompletableFuture<Integer> applyPermissions( ApplyContentPermissionsParams params );
 
-    Content getById( ContentId id );
+    Content getById( ContentId contentId );
 
     Site getNearestSite( ContentId contentId );
 

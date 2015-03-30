@@ -157,6 +157,18 @@ module api.ui.treegrid {
             });
         }
 
+        insertChild(child: TreeNode<DATA>, index: number = 0) {
+            this.children = this.children || [];
+            this.children.splice(index, 0, child);
+            this.clearViewers();
+            child.setParent(this);
+        }
+
+        moveChild(child: TreeNode<DATA>, index: number = 0) {
+            this.removeChild(child);
+            this.insertChild(child, index);
+        }
+
         addChild(child: TreeNode<DATA>, isToBegin?: boolean) {
             this.children = this.children || [];
             if (isToBegin) {
@@ -241,6 +253,24 @@ module api.ui.treegrid {
             }
 
             return null;
+        }
+
+        findNodes(dataId: string): TreeNode<DATA>[] {
+
+            if (this.hasData() && this.getDataId() === dataId) {
+                return [this];
+            }
+
+            var nodes = [];
+
+            this.children.forEach((el) => {
+                var children = el.findNodes(dataId);
+                if (!!children) {
+                    nodes = nodes.concat(children);
+                }
+            });
+
+            return !nodes ? null : nodes;
         }
 
         calcLevel(): number {
