@@ -8,12 +8,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.core.impl.export.builder.CreateNodeParamsFactory;
-import com.enonic.xp.core.impl.export.builder.PropertyTreeXmlBuilder;
 import com.enonic.xp.core.impl.export.builder.UpdateNodeParamsFactory;
 import com.enonic.xp.core.impl.export.reader.ExportReader;
 import com.enonic.xp.core.impl.export.validator.ContentImportValidator;
 import com.enonic.xp.core.impl.export.validator.ImportValidator;
-import com.enonic.xp.core.impl.export.xml.XmlNode;
 import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
@@ -175,7 +173,7 @@ public class NodeImportCommand
     {
         final VirtualFile nodeSource = this.exportReader.getNodeSource( nodeFolder );
 
-        final XmlNode xmlNode = this.xmlNodeSerializer.parse( nodeSource.getByteSource() );
+        final Node newNode = this.xmlNodeSerializer.parse( nodeSource.getByteSource() );
 
         final NodePath importNodePath = NodeImportPathResolver.resolveNodeImportPath( nodeFolder, this.exportRoot, this.importRoot );
 
@@ -183,20 +181,20 @@ public class NodeImportCommand
 
         if ( existingNode != null )
         {
-            return updateNode( nodeFolder, xmlNode, existingNode );
+            return updateNode( nodeFolder, newNode, existingNode );
         }
         else
         {
-            return createNode( nodeFolder, processNodeSettings, xmlNode, importNodePath );
+            return createNode( nodeFolder, processNodeSettings, newNode, importNodePath );
         }
     }
 
-    private Node updateNode( final VirtualFile nodeFolder, final XmlNode xmlNode, final Node existingNode )
+    private Node updateNode( final VirtualFile nodeFolder, final Node newNode, final Node existingNode )
     {
-        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, xmlNode );
+        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, newNode );
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create().
-            xmlNode( xmlNode ).
+            newNode( newNode ).
             binaryAttachments( binaryAttachments ).
             existingNode( existingNode ).
             dryRun( this.dryRun ).
@@ -210,14 +208,14 @@ public class NodeImportCommand
         return updatedNode;
     }
 
-    private Node createNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings, final XmlNode xmlNode,
+    private Node createNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings, final Node newNode,
                              final NodePath importNodePath )
     {
-        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, xmlNode );
+        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, newNode );
 
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create().
             processNodeSettings( processNodeSettings.build() ).
-            xmlNode( xmlNode ).
+            newNode( newNode ).
             importPath( importNodePath ).
             binaryAttachments( binaryAttachments ).
             importNodeIds( this.importNodeIds ).
@@ -241,9 +239,9 @@ public class NodeImportCommand
         return orderFile.getCharSource().readLines();
     }
 
-    private BinaryAttachments processBinaryAttachments( final VirtualFile nodeFile, final XmlNode xmlNode )
+    private BinaryAttachments processBinaryAttachments( final VirtualFile nodeFile, final Node newNode )
     {
-        final PropertyTree data = PropertyTreeXmlBuilder.build( xmlNode.getData() );
+        final PropertyTree data = newNode.data();
 
         final Set<Property> binaryReferences = data.getByValueType( ValueTypes.BINARY_REFERENCE );
 

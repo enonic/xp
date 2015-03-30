@@ -11,12 +11,14 @@ import javax.xml.bind.Unmarshaller;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.export.ExportNodeException;
-import com.enonic.xp.util.Exceptions;
-import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.core.impl.export.xml.ObjectFactory;
 import com.enonic.xp.core.impl.export.xml.XmlNode;
 import com.enonic.xp.core.impl.export.xml.XmlNodeElem;
+import com.enonic.xp.core.impl.export.xml.mapper.XmlNodeMapper;
+import com.enonic.xp.export.ExportNodeException;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.util.Exceptions;
+import com.enonic.xp.xml.XmlException;
 
 public final class XmlNodeSerializer
 {
@@ -34,7 +36,13 @@ public final class XmlNodeSerializer
         }
     }
 
-    public String serialize( final XmlNode xmlNode )
+    public String serialize( final Node node, final boolean exportNodeIds )
+    {
+        final XmlNode xmlNode = XmlNodeMapper.toXml( node, exportNodeIds );
+        return serialize( xmlNode );
+    }
+
+    private String serialize( final XmlNode xmlNode )
     {
         final ObjectFactory objectFactory = new ObjectFactory();
 
@@ -52,8 +60,13 @@ public final class XmlNodeSerializer
         }
     }
 
-    public XmlNode parse( final ByteSource byteSource )
+    public Node parse( final ByteSource xml )
+    {
+        final XmlNode xmlNode = parseXml( xml );
+        return XmlNodeMapper.build( xmlNode );
+    }
 
+    private XmlNode parseXml( final ByteSource byteSource )
     {
         try (InputStream inputStream = byteSource.openStream())
         {
@@ -85,5 +98,4 @@ public final class XmlNodeSerializer
     {
         return new XmlException( cause, cause.getMessage() );
     }
-
 }

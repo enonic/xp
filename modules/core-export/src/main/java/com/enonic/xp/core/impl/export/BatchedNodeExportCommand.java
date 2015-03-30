@@ -5,6 +5,9 @@ import java.nio.file.Path;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.impl.export.writer.ExportWriter;
+import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
+import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer;
 import com.enonic.xp.export.ExportError;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.node.AttachedBinary;
@@ -15,11 +18,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.util.BinaryReference;
-import com.enonic.xp.core.impl.export.writer.ExportWriter;
-import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
-import com.enonic.xp.core.impl.export.xml.XmlNode;
-import com.enonic.xp.core.impl.export.xml.mapper.XmlNodeMapper;
-import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer;
 
 public class BatchedNodeExportCommand
 {
@@ -142,10 +140,7 @@ public class BatchedNodeExportCommand
         final NodePath newParentPath = resolveNewParentPath( node );
 
         final Node relativeNode = Node.newNode( node ).parentPath( newParentPath ).build();
-
-        final XmlNode xmlNode = XmlNodeMapper.toXml( relativeNode, this.exportNodeIds );
-
-        final String serializedNode = this.xmlNodeSerializer.serialize( xmlNode );
+        final String serializedNode = this.xmlNodeSerializer.serialize( relativeNode, this.exportNodeIds );
 
         final Path nodeDataFolder = resolveNodeDataFolder( node );
 

@@ -8,13 +8,12 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.InsertManualStrategy;
-import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeType;
 
 public class CreateNodeParamsFactory
 {
-    private final XmlNode xmlNode;
+    private final Node newNode;
 
     private final NodePath nodeImportPath;
 
@@ -28,7 +27,7 @@ public class CreateNodeParamsFactory
 
     private CreateNodeParamsFactory( Builder builder )
     {
-        this.xmlNode = builder.xmlNode;
+        this.newNode = builder.newNode;
         this.nodeImportPath = builder.importPath;
         this.processNodeSettings = builder.processNodeSettings;
         this.binaryAttachments = builder.binaryAttachments;
@@ -46,22 +45,22 @@ public class CreateNodeParamsFactory
         final String nodeName = this.nodeImportPath.getLastElement().toString();
         final NodePath parentPath = this.nodeImportPath.getParentPath();
 
-        final ChildOrder childOrder = getChildOrder( xmlNode );
+        final ChildOrder childOrder = this.newNode.getChildOrder();
 
         final CreateNodeParams.Builder builder = CreateNodeParams.create().
             name( nodeName ).
             parent( parentPath ).
             childOrder( childOrder ).
-            nodeType( NodeType.from( xmlNode.getNodeType() ) ).
-            data( PropertyTreeXmlBuilder.build( xmlNode.getData() ) ).
-            indexConfigDocument( IndexConfigDocumentXmlBuilder.build( xmlNode.getIndexConfigs() ) ).
+            nodeType( this.newNode.getNodeType() ).
+            data( this.newNode.data() ).
+            indexConfigDocument( this.newNode.getIndexConfigDocument() ).
             dryRun( this.dryRun ).
             inheritPermissions( true ).
             setBinaryAttachments( binaryAttachments );
 
-        if ( importNodeIds && !Strings.isNullOrEmpty( xmlNode.getId() ) )
+        if ( importNodeIds && ( this.newNode.id() != null ) )
         {
-            builder.setNodeId( NodeId.from( xmlNode.getId() ) );
+            builder.setNodeId( this.newNode.id() );
         }
 
         setInsertManualSettings( builder );
@@ -96,7 +95,7 @@ public class CreateNodeParamsFactory
 
     public static final class Builder
     {
-        private XmlNode xmlNode;
+        private Node newNode;
 
         private NodePath importPath;
 
@@ -112,9 +111,9 @@ public class CreateNodeParamsFactory
         {
         }
 
-        public Builder xmlNode( XmlNode xmlNode )
+        public Builder newNode( Node newNode )
         {
-            this.xmlNode = xmlNode;
+            this.newNode = newNode;
             return this;
         }
 

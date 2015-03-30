@@ -27,9 +27,6 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
-import com.enonic.xp.core.impl.export.builder.PropertyTreeXmlBuilder;
-import com.enonic.xp.core.impl.export.xml.XmlNode;
-import com.enonic.xp.core.impl.export.xml.mapper.XmlNodeMapper;
 
 import static org.junit.Assert.*;
 
@@ -46,16 +43,15 @@ public class XmlNodeSerializerTest
 
         final Node node = doCreateNode( instant );
 
-        final XmlNode serializedXmlNode = XmlNodeMapper.toXml( node, false );
-
         XmlNodeSerializer serializer = new XmlNodeSerializer();
 
-        final String result = serializer.serialize( serializedXmlNode );
+        final String result = serializer.serialize( node, false );
 
         assertXml( "node.xml", result );
 
-        XmlNode parsedXmlNode = serializer.parse( ByteSource.wrap( result.getBytes() ) );
-        PropertyTree parsedNodeData = PropertyTreeXmlBuilder.build( parsedXmlNode.getData() );
+        Node parsedNode = serializer.parse( ByteSource.wrap( result.getBytes() ) );
+
+        PropertyTree parsedNodeData = parsedNode.data();
 
         final PropertyTree expectedTree = node.data();
         assertEquals( expectedTree.getTotalSize(), parsedNodeData.getTotalSize() );
@@ -84,11 +80,9 @@ public class XmlNodeSerializerTest
 
         final Node node = doCreateNode( instant );
 
-        final XmlNode xml = XmlNodeMapper.toXml( node, false );
-
         XmlNodeSerializer serializer = new XmlNodeSerializer();
 
-        final String result = serializer.serialize( xml );
+        final String result = serializer.serialize( node, false );
 
         assertXml( "node.xml", result );
 

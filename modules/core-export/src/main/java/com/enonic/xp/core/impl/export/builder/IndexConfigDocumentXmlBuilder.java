@@ -9,9 +9,9 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.core.impl.export.xml.XmlIndexConfigs;
 import com.enonic.xp.core.impl.export.xml.XmlPathIndexConfig;
 
-class IndexConfigDocumentXmlBuilder
+public class IndexConfigDocumentXmlBuilder
 {
-    static IndexConfigDocument build( final XmlIndexConfigs xmlIndexConfigs )
+    public static IndexConfigDocument build( final XmlIndexConfigs xmlIndexConfigs )
     {
         if ( xmlIndexConfigs == null )
         {
