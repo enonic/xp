@@ -3,7 +3,7 @@ package com.enonic.xp.util;
 
 public class CamelCaseConverter
 {
-    public static final String[] DEFAULT_ILLEGAL_CHARS = new String[]{".", ":", "/", "-", "&", "="};
+    private static final String[] DEFAULT_ILLEGAL_CHARS = new String[]{".", ":", "/", "-", "&", "="};
 
     private final String[] illegalChars;
 
