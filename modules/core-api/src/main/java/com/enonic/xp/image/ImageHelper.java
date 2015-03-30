@@ -170,6 +170,6 @@ public final class ImageHelper
 
     public static boolean supportsAlphaChannel( final String format )
     {
-        return format.equals( "png" );
+        return "png".equals( format );
     }
 }

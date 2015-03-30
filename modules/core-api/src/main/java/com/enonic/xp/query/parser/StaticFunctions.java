@@ -12,11 +12,6 @@ final class StaticFunctions
         return ValueExpr.geoPoint( arg.getValue().asString() );
     }
 
-//    private static ValueExpr dateTime( final ValueExpr arg )
-//    {
-//        return ValueExpr.dateTime( arg.getValue().asString() );
-//    }
-
     private static ValueExpr instant( final ValueExpr arg )
     {
         return ValueExpr.instant( arg.getValue().asString() );
@@ -29,12 +24,12 @@ final class StaticFunctions
 
     private static ValueExpr execute( final String name, final List<ValueExpr> args )
     {
-        if ( name.equals( "geoPoint" ) && ( args.size() == 1 ) )
+        if ( "geoPoint".equals( name ) && ( args.size() == 1 ) )
         {
             return geoPoint( args.get( 0 ) );
         }
 
-        if ( name.equals( "instant" ) && ( args.size() == 1 ) )
+        if ( "instant".equals( name ) && ( args.size() == 1 ) )
         {
             return instant( args.get( 0 ) );
         }

@@ -5,8 +5,8 @@ import java.time.Instant;
 
 import com.google.common.base.Objects;
 
-import com.enonic.xp.name.Name;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.name.Name;
 
 public final class RelationshipType
 {
@@ -23,10 +23,6 @@ public final class RelationshipType
     private final String fromSemantic;
 
     private final String toSemantic;
-
-    //private final ContentTypeNames allowedFromTypes;
-
-    //private final ContentTypeNames allowedToTypes;
 
     private final Thumbnail thumbnail;
 
