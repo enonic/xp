@@ -439,6 +439,9 @@ module app.browse {
                     : new TreeNodesOfContentPath(paths[i]);
                 if (useParent && node.getPath().isRoot()) {
                     node.getNodes().push(this.getRoot().getDefaultRoot());
+                    if(this.isFiltered()) {
+                        node.getNodes().push(this.getRoot().getFilteredRoot());
+                    }
                 } else {
                     for (var j = 0; j < all.length; j++) {
                         var path = (all[j].getData() && all[j].getData().getContentSummary())
