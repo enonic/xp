@@ -361,7 +361,9 @@ module app.wizard {
         }
 
         saveChanges(): wemQ.Promise<Content> {
-            this.liveFormPanel.skipNextReloadConfirmation(true);
+            if (this.liveFormPanel) {
+                this.liveFormPanel.skipNextReloadConfirmation(true);
+            }
             return super.saveChanges();
         }
 
