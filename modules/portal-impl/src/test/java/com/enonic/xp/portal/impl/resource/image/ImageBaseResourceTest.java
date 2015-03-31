@@ -14,13 +14,12 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.content.attachment.Attachment;
 import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.image.BuilderContext;
 import com.enonic.xp.image.ImageFilter;
 import com.enonic.xp.image.ImageFilterBuilder;
+import com.enonic.xp.portal.impl.resource.base.BaseResourceTest;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
-import com.enonic.xp.portal.impl.resource.base.BaseResourceTest;
 
 public abstract class ImageBaseResourceTest
     extends BaseResourceTest
@@ -58,7 +57,7 @@ public abstract class ImageBaseResourceTest
 
         Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
             thenReturn( ByteSource.wrap( imageData ) );
-        Mockito.when( this.imageFilterBuilder.build( Mockito.isA( BuilderContext.class ), Mockito.isA( String.class ) ) ).
+        Mockito.when( this.imageFilterBuilder.build( Mockito.isA( String.class ) ) ).
             thenReturn( getImageFilterBuilder() );
     }
 
