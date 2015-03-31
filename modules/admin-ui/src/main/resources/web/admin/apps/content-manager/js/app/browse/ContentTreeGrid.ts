@@ -517,22 +517,15 @@ module app.browse {
         }
 
         xDeleteContentNodes(nodes: TreeNode<ContentSummaryAndCompareStatus>[],
-                            update: boolean = true): TreeNode<ContentSummaryAndCompareStatus>[] {
-            var parentNodes = [],
-                parentNode;
+                            update: boolean = true) {
 
             nodes.forEach((node) => {
-                parentNode = this.xDeleteContentNode(node, false);
-                if (parentNode && parentNode.hasParent()) {
-                    parentNodes.push(parentNode);
-                }
+                this.xDeleteContentNode(node, false);
             });
 
             if (update) {
                 this.initAndRender();
             }
-
-            return this.xUpdateNodesData(parentNodes);
         }
 
         xPopulateWithChildren(source: TreeNode<ContentSummaryAndCompareStatus>, dest: TreeNode<ContentSummaryAndCompareStatus>) {

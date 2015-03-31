@@ -83,7 +83,9 @@ module app.browse.action {
                     new api.content.page.IsRenderableRequest(contentSummary.getContentId()).sendAndParse().
                         then((renderable: boolean) => {
                             this.PREVIEW_CONTENT.setEnabled(renderable);
-                            contentBrowseItems[0].setRenderable(renderable);
+                            if(contentBrowseItems.length > 0) {
+                                contentBrowseItems[0].setRenderable(renderable);
+                            }
                         }),
                     // check if selected content allows children and if user has create permission for it
                     new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).
