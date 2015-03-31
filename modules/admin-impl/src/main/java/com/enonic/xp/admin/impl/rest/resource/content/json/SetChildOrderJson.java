@@ -5,16 +5,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SetChildOrderJson
 {
-    private ChildOrderJson childOrder;
+    private Boolean silent;
 
     private String contentId;
 
+    private ChildOrderJson childOrder;
+
     @JsonCreator
-    public SetChildOrderJson( @JsonProperty("contentId") final String contentId, //
+    public SetChildOrderJson( @JsonProperty("silent") final Boolean silent, @JsonProperty("contentId") final String contentId,
                               @JsonProperty("childOrder") final ChildOrderJson childOrder )
     {
-        this.childOrder = childOrder;
+        this.silent = silent;
         this.contentId = contentId;
+        this.childOrder = childOrder;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public Boolean isSilent()
+    {
+        return silent;
     }
 
     @SuppressWarnings("UnusedDeclaration")

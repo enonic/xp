@@ -321,6 +321,36 @@ module app.browse {
             }
         }
 
+        fetchChildrenIds(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummary[]> {
+            var parentContentId: api.content.ContentId = null;
+            if (parentNode) {
+                parentContentId = parentNode.getData() ? parentNode.getData().getContentId() : parentContentId;
+            } else {
+                parentNode = this.getRoot().getCurrentRoot();
+            }
+            var size = parentNode.getChildren().length;
+            if (size > 0 && !parentNode.getChildren()[size - 1].getData().getContentSummary()) {
+                parentNode.getChildren().pop();
+                size--;
+            }
+
+            if (!this.isFiltered() || parentNode != this.getRoot().getCurrentRoot()) {
+                return ContentSummaryAndCompareStatusFetcher.fetchIds(parentContentId, 0, size + 1).
+                    then((response: ContentResponse<ContentSummary>) => {
+                        return response.getContents();
+                    });
+            } else {
+                this.filterQuery.setFrom(0);
+                this.filterQuery.setSize(size + 1);
+                return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(this.filterQuery).
+                    setExpand(api.rest.Expand.SUMMARY).
+                    sendAndParse().
+                    then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+                        return contentQueryResult.getContents();
+                    });
+            }
+        }
+
         hasChildren(data: ContentSummaryAndCompareStatus): boolean {
             return data.hasChildren();
         }
@@ -461,44 +491,102 @@ module app.browse {
         }
 
 
-        xAppendContentNode(relationship: TreeNodeParentOfContent, update: boolean = true): TreeNode<ContentSummaryAndCompareStatus> {
+        xAppendContentNode(relationship: TreeNodeParentOfContent,
+                           update: boolean = true): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
             var appendedNode = this.dataToTreeNode(relationship.getData(), relationship.getNode()),
                 data = relationship.getNode().getData();
 
-            if (!relationship.getNode().hasParent() ||
-                (data && relationship.getNode().hasChildren()) ||
-                (data && !relationship.getNode().hasChildren() && !data.getContentSummary().hasChildren())) {
-                relationship.getNode().addChild(appendedNode, true);
-            }
+            return this.fetchChildrenIds(relationship.getNode()).then((result: ContentSummary[]) => {
+                var map = result.map((el) => {
+                    return el.getId();
+                });
+                var index = map.indexOf(appendedNode.getData().getId());
 
-            if (data && !data.getContentSummary().hasChildren()) {
-                data.setContentSummary(new ContentSummaryBuilder(data.getContentSummary()).setHasChildren(true).build());
-            }
+                if (!relationship.getNode().hasParent() ||
+                    (data && relationship.getNode().hasChildren()) ||
+                    (data && !relationship.getNode().hasChildren() && !data.getContentSummary().hasChildren())) {
+                    relationship.getNode().insertChild(appendedNode, index);
+                }
 
-            relationship.getNode().clearViewers();
-            if (update) {
-                this.initAndRender();
-            }
+                if (data && !data.getContentSummary().hasChildren()) {
+                    data.setContentSummary(new ContentSummaryBuilder(data.getContentSummary()).setHasChildren(true).build());
+                }
 
-            return appendedNode;
+                relationship.getNode().clearViewers();
+
+                if (update) {
+                    this.initAndRender();
+                }
+
+                return appendedNode;
+
+            });
         }
 
-        xAppendContentNodes(relationships: TreeNodeParentOfContent[], update: boolean = true): TreeNode<ContentSummaryAndCompareStatus>[] {
+        xAppendContentNodes(relationships: TreeNodeParentOfContent[],
+                            update: boolean = true): wemQ.Promise<any> {
             var nodes = [];
+
+            var parallelPromises: wemQ.Promise<any>[] = [];
 
             this.xUpdateNodesData(relationships.map((el) => {
                 return el.getNode();
             }));
 
             relationships.forEach((relationship: TreeNodeParentOfContent) => {
-                nodes.push(this.xAppendContentNode(relationship, false));
+                parallelPromises.push(this.xAppendContentNode(relationship, false));
             });
 
-            if (update) {
-                this.initAndRender();
-            }
 
-            return nodes;
+            return wemQ.allSettled(parallelPromises).then((results) => {
+                var rootList = this.getRoot().getCurrentRoot().treeToList();
+                this.initData(rootList);
+                this.resetAndRender();
+                return results;
+            });
+        }
+
+        xPlaceContentNode(parent: TreeNode<ContentSummaryAndCompareStatus>,
+                          child: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
+            return this.fetchChildrenIds(parent).then((result: ContentSummary[]) => {
+                var map = result.map((el) => {
+                    return el.getId();
+                });
+                var index = map.indexOf(child.getData().getId());
+
+                if (!parent.hasParent() ||
+                    (child.getData() && parent.hasChildren()) ||
+                    (child.getData() && !parent.hasChildren() && !child.getData().getContentSummary().hasChildren())) {
+                    parent.moveChild(child, index);
+                }
+
+                child.clearViewers();
+
+                return child;
+
+            });
+        }
+
+        xPlaceContentNodes(results: TreeNodesOfContentPath[]): wemQ.Promise<any> {
+            var parallelPromises: wemQ.Promise<any>[] = [];
+
+            var nodes = results.map((el) => {
+                return el.getNodes();
+            });
+            var merged = [];
+            // merge array of nodes arrays
+            merged = merged.concat.apply(merged, nodes);
+
+            merged.forEach((node: TreeNode<ContentSummaryAndCompareStatus>) => {
+                parallelPromises.push(this.xPlaceContentNode(node.getParent(), node));
+            });
+
+            return wemQ.allSettled(parallelPromises).then((results) => {
+                var rootList = this.getRoot().getCurrentRoot().treeToList();
+                this.initData(rootList);
+                this.resetAndRender();
+                return results;
+            });
         }
 
         xDeleteContentNode(node: TreeNode<ContentSummaryAndCompareStatus>,
@@ -617,6 +705,58 @@ module app.browse {
 
                 return result;
             });
+        }
+
+        xSortNodesChildren(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): wemQ.Promise<void> {
+
+            var parallelPromises: wemQ.Promise<any>[] = [];
+
+            nodes.sort((a, b) => {
+                return a.getDataId().localeCompare(b.getDataId())
+            });
+
+            var groups = [],
+                group = [];
+
+            groups.push(group);
+
+            for (var i = 0; i < nodes.length; i++) {
+                if (!!group[group.length - 1] &&
+                    nodes[i].getDataId() !== group[group.length - 1].getDataId()) {
+                    group = [];
+                    groups.push(group);
+                }
+
+                group.push(nodes[i]);
+            }
+
+            groups.forEach((grp: TreeNode<ContentSummaryAndCompareStatus>[]) => {
+                if (grp.length > 0) {
+                    parallelPromises.push(
+                        this.updateNodes(grp[0].getData()).then(() => {
+                            var hasChildren = grp[0].hasChildren();
+                            grp[0].setChildren([]);
+                            return this.fetchChildren(grp[0]).
+                                then((dataList: ContentSummaryAndCompareStatus[]) => {
+                                    grp.forEach((el) => {
+                                        if (hasChildren) {
+                                            el.setChildren(this.dataToTreeNodes(dataList, el));
+                                        }
+                                    });
+                                }).catch((reason: any) => {
+                                    api.DefaultErrorHandler.handle(reason);
+                                });
+                        }).then(() => {
+                            var rootList = this.getRoot().getCurrentRoot().treeToList();
+                            this.initData(rootList);
+                        })
+                    );
+                }
+            });
+
+            return wemQ.all(parallelPromises).spread<void>(() => {
+                return wemQ(null);
+            }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
         }
     }
 }

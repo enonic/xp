@@ -8,7 +8,8 @@ module api.content {
         UPDATE,
         DELETE,
         PENDING,
-        RENAME
+        RENAME,
+        SORT
     }
 
     interface ContentServerEventItemJson {
@@ -69,6 +70,9 @@ module api.content {
                 break;
             case 'R':
                 contentEventType = ContentServerChangeType.RENAME;
+                break;
+            case 'S':
+                contentEventType = ContentServerChangeType.SORT;
                 break;
             default:
                 contentEventType = ContentServerChangeType.UNKNOWN;
