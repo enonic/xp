@@ -19,6 +19,8 @@ public final class ImageUrlParams
 
     private String format;
 
+    private String scale;
+
     public String getId()
     {
         return this.id;
@@ -48,6 +50,8 @@ public final class ImageUrlParams
     {
         return this.format;
     }
+
+    public String getScale() { return this.scale; }
 
     public ImageUrlParams id( final String value )
     {
@@ -90,6 +94,12 @@ public final class ImageUrlParams
         return this;
     }
 
+    public ImageUrlParams scale( final String value )
+    {
+        this.scale = Strings.emptyToNull( value );
+        return this;
+    }
+
     @Override
     public ImageUrlParams setAsMap( final Multimap<String, String> map )
     {
@@ -99,6 +109,7 @@ public final class ImageUrlParams
         quality( singleValue( map, "_quality" ) );
         filter( singleValue( map, "_filter" ) );
         background( singleValue( map, "_background" ) );
+        scale( singleValue( map, "_scale" ) );
         getParams().putAll( map );
         return this;
     }
@@ -113,5 +124,6 @@ public final class ImageUrlParams
         helper.add( "quality", this.quality );
         helper.add( "filter", this.filter );
         helper.add( "background", this.background );
+        helper.add( "scale", this.scale );
     }
 }

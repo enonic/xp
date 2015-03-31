@@ -8,12 +8,12 @@ import java.awt.image.BufferedImage;
 
 import org.junit.Test;
 
-import com.enonic.xp.image.ImageFilter;
-import com.enonic.xp.image.filter.ScaleMaxFilter;
+import com.enonic.xp.image.ImageScaleFunction;
+import com.enonic.xp.image.filter.ScaleWidthFunction;
 
 import static org.junit.Assert.*;
 
-public class ScaleMaxFilterTest
+public class ScaleWidthFunctionTest
     extends BaseImageFilterTest
 {
     @Test
@@ -34,7 +34,7 @@ public class ScaleMaxFilterTest
 
     private BufferedImage scale( int size )
     {
-        ImageFilter filter = new ScaleMaxFilter( size );
-        return filter.filter( getOpaque() );
+        ImageScaleFunction scaleFunction = new ScaleWidthFunction( size );
+        return scaleFunction.scale( getOpaque() );
     }
 }

@@ -6,8 +6,6 @@ package com.enonic.xp.core.impl.image.command;
 
 import com.jhlabs.image.EdgeFilter;
 
-import com.enonic.xp.image.BuilderContext;
-
 public final class EdgeFilterCommand
     extends FilterCommand
 {
@@ -17,7 +15,7 @@ public final class EdgeFilterCommand
     }
 
     @Override
-    protected Object doBuild( BuilderContext context, Object[] args )
+    protected Object doBuild( Object[] args )
     {
         return new EdgeFilter();
     }
