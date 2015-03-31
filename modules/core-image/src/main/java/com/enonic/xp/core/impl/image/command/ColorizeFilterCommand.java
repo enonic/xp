@@ -4,7 +4,6 @@
  */
 package com.enonic.xp.core.impl.image.command;
 
-import com.enonic.xp.image.BuilderContext;
 import com.enonic.xp.core.impl.image.effect.ColorizeFilter;
 
 public final class ColorizeFilterCommand
@@ -16,7 +15,7 @@ public final class ColorizeFilterCommand
     }
 
     @Override
-    protected Object doBuild( BuilderContext context, Object[] args )
+    protected Object doBuild( Object[] args )
     {
         float r = getFloatArg( args, 0, 1f );
         float g = getFloatArg( args, 1, 1f );

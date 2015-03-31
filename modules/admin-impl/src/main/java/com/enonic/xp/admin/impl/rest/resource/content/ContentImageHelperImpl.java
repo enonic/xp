@@ -13,8 +13,8 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.rest.resource.BaseImageHelperImpl;
 import com.enonic.xp.image.ImageHelper;
-import com.enonic.xp.image.filter.ScaleMaxFilter;
-import com.enonic.xp.image.filter.ScaleSquareFilter;
+import com.enonic.xp.image.filter.ScaleMaxFunction;
+import com.enonic.xp.image.filter.ScaleSquareFunction;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.util.Exceptions;
 
@@ -51,10 +51,10 @@ public final class ContentImageHelperImpl
             switch ( imageFilter )
             {
                 case SCALE_SQUARE_FILTER:
-                    return new ScaleSquareFilter( size ).filter( image );
+                    return new ScaleSquareFunction( size ).scale( image );
 
                 case SCALE_MAX_FILTER:
-                    return new ScaleMaxFilter( size ).filter( image );
+                    return new ScaleMaxFunction( size ).scale( image );
 
                 default:
                     throw new IllegalArgumentException( "Invalid image filter: " + imageFilter );
