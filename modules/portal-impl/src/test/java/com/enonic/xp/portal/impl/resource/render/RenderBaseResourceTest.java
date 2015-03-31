@@ -26,9 +26,7 @@ import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.xml.mapper.XmlPageDescriptorMapper;
-import com.enonic.xp.xml.model.XmlPageDescriptor;
-import com.enonic.xp.xml.serializer.XmlSerializers;
+import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 
 public abstract class RenderBaseResourceTest
     extends BaseResourceTest
@@ -190,12 +188,20 @@ public abstract class RenderBaseResourceTest
             "</page-component>";
         final PageDescriptor.Builder builder = PageDescriptor.create();
 
-        final XmlPageDescriptor xmlObject = XmlSerializers.pageDescriptor().parse( xml );
-        new XmlPageDescriptorMapper( module ).fromXml( xmlObject, builder );
+        parseXml( module, builder, xml );
 
         return builder.
             key( key ).
             displayName( "Landing page" ).
             build();
+    }
+
+    private void parseXml( final ModuleKey moduleKey, final PageDescriptor.Builder builder, final String xml )
+    {
+        final XmlPageDescriptorParser parser = new XmlPageDescriptorParser();
+        parser.builder( builder );
+        parser.currentModule( moduleKey );
+        parser.source( xml );
+        parser.parse();
     }
 }

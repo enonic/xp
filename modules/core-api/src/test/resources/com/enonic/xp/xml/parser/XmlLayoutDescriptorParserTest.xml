@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<layout-component xmlns="urn:enonic:xp:model:1.0">
+  <display-name>My Layout</display-name>
+  <config>
+    <input type="Double" name="pause">
+      <label>Pause parameter</label>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <form-item-set name="myFormItemSet">
+      <label>My form item set</label>
+      <immutable>false</immutable>
+      <occurrences minimum="0" maximum="1"/>
+      <items>
+        <input type="TextLine" name="myTextLine">
+          <label>My text line</label>
+          <immutable>false</immutable>
+          <indexed>false</indexed>
+          <occurrences minimum="1" maximum="1"/>
+        </input>
+        <input type="TextLine" name="myCustomInput">
+          <label>My custom input</label>
+          <immutable>false</immutable>
+          <indexed>false</indexed>
+          <occurrences minimum="0" maximum="1"/>
+        </input>
+        <field-set name="myFieldSet">
+          <label>My field set</label>
+          <items>
+            <input type="TextLine" name="fieldSetItem">
+              <label>Field set Item</label>
+              <immutable>false</immutable>
+              <indexed>false</indexed>
+              <occurrences minimum="0" maximum="1"/>
+            </input>
+          </items>
+        </field-set>
+      </items>
+    </form-item-set>
+  </config>
+  <regions>
+    <region name="header"/>
+    <region name="main"/>
+    <region name="footer"/>
+  </regions>
+</layout-component>

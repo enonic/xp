@@ -5,6 +5,9 @@ import java.nio.file.Path;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.impl.export.writer.ExportWriter;
+import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
+import com.enonic.xp.core.impl.export.xml.XmlNodeSerializer;
 import com.enonic.xp.export.ExportError;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.node.AttachedBinary;
@@ -15,11 +18,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.util.BinaryReference;
-import com.enonic.xp.core.impl.export.writer.ExportWriter;
-import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
-import com.enonic.xp.core.impl.export.xml.XmlNode;
-import com.enonic.xp.core.impl.export.xml.mapper.XmlNodeMapper;
-import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer;
 
 public class BatchedNodeExportCommand
 {
@@ -35,8 +33,6 @@ public class BatchedNodeExportCommand
 
     private final ExportWriter exportWriter;
 
-    private final XmlNodeSerializer xmlNodeSerializer;
-
     private final Path targetDirectory;
 
     private final boolean dryRun;
@@ -51,7 +47,6 @@ public class BatchedNodeExportCommand
         this.batchSize = builder.batchSize;
         this.nodeService = builder.nodeService;
         this.exportWriter = builder.exportWriter;
-        this.xmlNodeSerializer = builder.xmlNodeSerializer;
         this.targetDirectory = builder.targetDirectory;
         this.dryRun = builder.dryRun;
         this.exportNodeIds = builder.exportNodeIds;
@@ -143,9 +138,10 @@ public class BatchedNodeExportCommand
 
         final Node relativeNode = Node.newNode( node ).parentPath( newParentPath ).build();
 
-        final XmlNode xmlNode = XmlNodeMapper.toXml( relativeNode, this.exportNodeIds );
-
-        final String serializedNode = this.xmlNodeSerializer.serialize( xmlNode );
+        final XmlNodeSerializer serializer = new XmlNodeSerializer();
+        serializer.exportNodeIds( this.exportNodeIds );
+        serializer.node( relativeNode );
+        final String serializedNode = serializer.serialize();
 
         final Path nodeDataFolder = resolveNodeDataFolder( node );
 
@@ -251,8 +247,6 @@ public class BatchedNodeExportCommand
 
         private ExportWriter exportWriter;
 
-        private XmlNodeSerializer xmlNodeSerializer;
-
         private Path targetDirectory;
 
         private boolean dryRun = false;
@@ -290,12 +284,6 @@ public class BatchedNodeExportCommand
         public Builder nodeExportWriter( ExportWriter exportWriter )
         {
             this.exportWriter = exportWriter;
-            return this;
-        }
-
-        public Builder xmlNodeSerializer( XmlNodeSerializer xmlNodeSerializer )
-        {
-            this.xmlNodeSerializer = xmlNodeSerializer;
             return this;
         }
 

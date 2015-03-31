@@ -15,14 +15,12 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.core.impl.schema.IconLoader;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.xml.mapper.XmlContentTypeMapper;
-import com.enonic.xp.xml.model.XmlContentType;
-import com.enonic.xp.xml.serializer.XmlSerializers;
-import com.enonic.xp.core.impl.schema.IconLoader;
+import com.enonic.xp.xml.parser.XmlContentTypeParser;
 
 final class ContentTypeLoader
 {
@@ -143,8 +141,13 @@ final class ContentTypeLoader
     private ContentType.Builder parse( final String str )
     {
         final ContentType.Builder builder = ContentType.newContentType();
-        final XmlContentType contentTypeXml = XmlSerializers.contentType().parse( str );
-        new XmlContentTypeMapper( this.moduleKey ).fromXml( contentTypeXml, builder );
+
+        final XmlContentTypeParser parser = new XmlContentTypeParser();
+        parser.currentModule( this.moduleKey );
+        parser.source( str );
+        parser.builder( builder );
+        parser.parse();
+
         return builder;
     }
 }

@@ -1,0 +1,24 @@
+{
+  "silent": false,
+  "contentId": "content-id",
+  "childOrder": {
+    "orderExpressions": [
+      {
+        "FieldOrderExpr": {
+          "fieldName": "modifiedtime",
+          "direction": "DESC"
+        }
+      }
+    ]
+  },
+  "reorderChildren": [
+    {
+      "contentId": "content-id-1",
+      "moveBefore": "content-id-2"
+    },
+    {
+      "contentId": "content-id-3",
+      "moveBefore": ""
+    }
+  ]
+}

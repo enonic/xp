@@ -1,6 +1,7 @@
 package com.enonic.xp.xml.parser;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -9,7 +10,6 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import com.google.common.base.Charsets;
@@ -17,7 +17,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.xml.DomElement;
+import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.schema.SchemaValidator;
 
 public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
@@ -35,18 +37,21 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
     }
 
     public final P systemId( final String systemId )
-        throws Exception
     {
         this.systemId = systemId;
         return typecastThis();
     }
 
     public final P source( final URL url )
-        throws Exception
     {
         systemId( url.toString() );
         source( Resources.asCharSource( url, Charsets.UTF_8 ) );
         return typecastThis();
+    }
+
+    public final P source( final String source )
+    {
+        return source( CharSource.wrap( source ) );
     }
 
     public final P source( final CharSource source )
@@ -56,12 +61,30 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
     }
 
     public final P source( final File file )
-        throws Exception
     {
-        return source( file.toURI().toURL() );
+        try
+        {
+            return source( file.toURI().toURL() );
+        }
+        catch ( final MalformedURLException e )
+        {
+            throw Exceptions.unchecked( e );
+        }
     }
 
     public final P parse()
+    {
+        try
+        {
+            return doParse();
+        }
+        catch ( final Exception e )
+        {
+            throw new XmlException( e );
+        }
+    }
+
+    private P doParse()
         throws Exception
     {
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -75,21 +98,18 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
         source.setCharacterStream( this.source.openStream() );
 
         final Document doc = builder.parse( source );
-        return parse( doc );
+        return doParse( doc );
     }
 
-    private P parse( final Document source )
+    private P doParse( final Document source )
         throws Exception
     {
-        final Element root = source.getDocumentElement();
-        final String ns = root.getNamespaceURI();
-
-        final Document doc = validate( source, ns );
+        final Document doc = validate( source );
         doParse( DomElement.from( doc.getDocumentElement() ) );
         return typecastThis();
     }
 
-    private Document validate( final Document doc, final String ns )
+    private Document validate( final Document doc )
         throws Exception
     {
         final DOMSource source = new DOMSource( doc );

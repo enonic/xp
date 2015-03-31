@@ -2,10 +2,10 @@ package com.enonic.xp.admin.impl.rest.resource.schema;
 
 import java.awt.image.BufferedImage;
 
-import com.enonic.xp.admin.impl.rest.resource.BaseImageHelper;
+import com.enonic.xp.admin.impl.rest.resource.BaseImageHelperImpl;
 
 public final class SchemaImageHelper
-    extends BaseImageHelper
+    extends BaseImageHelperImpl
 {
     private final BufferedImage defaultMixinImage;
 

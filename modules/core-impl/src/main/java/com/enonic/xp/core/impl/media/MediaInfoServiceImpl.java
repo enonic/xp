@@ -57,6 +57,15 @@ public final class MediaInfoServiceImpl
         return builder.build();
     }
 
+    @Override
+    public Integer getOrientation( ByteSource byteSource )
+    {
+        Metadata metadata = this.parseMetadata( byteSource );
+        String orientation = metadata.get( Metadata.ORIENTATION );
+
+        return orientation == null ? 0 : Integer.valueOf( orientation );
+    }
+
     private Metadata parseMetadata( final ByteSource byteSource )
     {
         final ParseContext context = new ParseContext();

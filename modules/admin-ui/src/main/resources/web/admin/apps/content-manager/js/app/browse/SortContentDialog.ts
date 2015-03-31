@@ -98,13 +98,12 @@ module app.browse {
                     if (this.curChildOrder.isManual()) {
                         if (this.prevChildOrder && !this.prevChildOrder.isManual()) {
 
-                            this.setContentChildOrder(this.prevChildOrder).done(() => {
-                                this.setContentChildOrder(this.curChildOrder).done(() => {
-                                    this.setManualReorder(this.gridDragHandler.getContentMovements()).done(() => {
+                            this.setContentChildOrder(this.prevChildOrder, true).done(() => {
+                                this.setOrderAndManualReorder(this.curChildOrder, this.gridDragHandler.getContentMovements()).
+                                    done(() => {
                                         new api.content.ContentChildOrderUpdatedEvent(this.parentContent.getContentId()).fire();
                                         this.close();
                                     });
-                                });
                             });
 
                         } else {
@@ -171,16 +170,30 @@ module app.browse {
             return this.parentContent;
         }
 
-        private setContentChildOrder(order: ChildOrder): wemQ.Promise<api.content.Content> {
-            return new api.content.OrderContentRequest()
-                .setContentId(this.parentContent.getContentId())
-                .setChildOrder(order).
+        private setContentChildOrder(order: ChildOrder, silent: boolean = false): wemQ.Promise<api.content.Content> {
+            return new api.content.OrderContentRequest().
+                setSilent(silent).
+                setContentId(this.parentContent.getContentId()).
+                setChildOrder(order).
                 sendAndParse();
         }
 
-        private setManualReorder(movements: OrderChildMovements): wemQ.Promise<api.content.Content> {
-            return new api.content.OrderChildContentRequest()
-                .setContentMovements(movements).sendAndParse();
+        private setManualReorder(movements: OrderChildMovements, silent: boolean = false): wemQ.Promise<api.content.Content> {
+            return new api.content.OrderChildContentRequest().
+                setSilent(silent).
+                setContentId(this.parentContent.getContentId()).
+                setContentMovements(movements).
+                sendAndParse();
+        }
+
+        private setOrderAndManualReorder(order: ChildOrder, movements: OrderChildMovements,
+                                         silent: boolean = false): wemQ.Promise<api.content.Content> {
+            return new api.content.OrderContentAndChildrenRequest().
+                setSilent(silent).
+                setContentId(this.parentContent.getContentId()).
+                setChildOrder(order).
+                setContentMovements(movements).
+                sendAndParse();
         }
     }
 

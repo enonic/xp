@@ -26,8 +26,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.attachment.Attachment;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.security.RoleKeys;
 
 
 @Path(ResourceConstants.REST_ROOT + "content/icon")
@@ -37,9 +37,9 @@ import com.enonic.xp.icon.Thumbnail;
 public final class ContentIconResource
     implements AdminResource
 {
-    private static final ContentImageHelper HELPER = new ContentImageHelper();
-
     private ContentService contentService;
+
+    private ContentImageHelper helper;
 
     @GET
     @Path("{contentId}")
@@ -64,17 +64,7 @@ public final class ContentIconResource
         ResolvedImage resolvedImage = resolveResponseFromThumbnail( content, size, crop );
         if ( resolvedImage.isOK() )
         {
-            final boolean cacheForever = StringUtils.isNotEmpty( timestamp );
-            if ( cacheForever )
-            {
-                final CacheControl cacheControl = new CacheControl();
-                cacheControl.setMaxAge( Integer.MAX_VALUE );
-                return resolvedImage.toResponse( cacheControl );
-            }
-            else
-            {
-                return resolvedImage.toResponse();
-            }
+            return cacheAndReturnResponse( timestamp, resolvedImage );
         }
         else
         {
@@ -104,9 +94,9 @@ public final class ContentIconResource
             final ByteSource binary = contentService.getBinary( content.getId(), contentThumbnail.getBinaryReference() );
             if ( binary != null )
             {
-                ContentImageHelper.ImageFilter
-                    filter = crop ? ContentImageHelper.ImageFilter.SCALE_SQUARE_FILTER : ContentImageHelper.ImageFilter.SCALE_MAX_FILTER;
-                final BufferedImage thumbnailImage = HELPER.readImage( binary, size, filter );
+                ContentImageHelper.ImageFilter filter =
+                    crop ? ContentImageHelper.ImageFilter.SCALE_SQUARE_FILTER : ContentImageHelper.ImageFilter.SCALE_MAX_FILTER;
+                final BufferedImage thumbnailImage = helper.readImage( binary, size, filter );
                 return new ResolvedImage( thumbnailImage, contentThumbnail.getMimeType() );
             }
         }
@@ -115,24 +105,45 @@ public final class ContentIconResource
 
     private ResolvedImage resolveResponseFromImageAttachment( final Media media, final int size, final boolean crop )
     {
-        final Attachment attachment = media.getMediaAttachment();
-        if ( attachment != null )
+        final Attachment imageAttachment = media.getBestFitImageAttachment( size );
+        if ( imageAttachment != null )
         {
-            final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );
+            final ByteSource binary = contentService.getBinary( media.getId(), imageAttachment.getBinaryReference() );
             if ( binary != null )
             {
-                ContentImageHelper.ImageFilter
-                    filter = crop ? ContentImageHelper.ImageFilter.SCALE_SQUARE_FILTER : ContentImageHelper.ImageFilter.SCALE_MAX_FILTER;
-                final BufferedImage contentImage = HELPER.readImage( binary, size, filter );
-                return new ResolvedImage( contentImage, attachment.getMimeType() );
+                ContentImageHelper.ImageFilter filter =
+                    crop ? ContentImageHelper.ImageFilter.SCALE_SQUARE_FILTER : ContentImageHelper.ImageFilter.SCALE_MAX_FILTER;
+                final BufferedImage contentImage = helper.readImage( binary, size, filter );
+                return new ResolvedImage( contentImage, imageAttachment.getMimeType() );
             }
         }
         return ResolvedImage.unresolved();
+    }
+
+    private Response cacheAndReturnResponse( final String timestamp, final ResolvedImage resolvedImage )
+    {
+        final boolean cacheForever = StringUtils.isNotEmpty( timestamp );
+        if ( cacheForever )
+        {
+            final CacheControl cacheControl = new CacheControl();
+            cacheControl.setMaxAge( Integer.MAX_VALUE );
+            return resolvedImage.toResponse( cacheControl );
+        }
+        else
+        {
+            return resolvedImage.toResponse();
+        }
     }
 
     @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setContentImageHelper( ContentImageHelper contentImageHelper )
+    {
+        this.helper = contentImageHelper;
     }
 }

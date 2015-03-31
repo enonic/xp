@@ -40,11 +40,11 @@ import static com.enonic.xp.admin.impl.rest.resource.content.ContentImageHelper.
 public final class ContentImageResource
     implements AdminResource
 {
-    private static final ContentImageHelper HELPER = new ContentImageHelper();
-
     private ContentTypeService contentTypeService;
 
     private ContentService contentService;
+
+    private ContentImageHelper helper;
 
     @GET
     @Path("{contentId}")
@@ -96,7 +96,7 @@ public final class ContentImageResource
             final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );
             if ( binary != null )
             {
-                final BufferedImage contentImage = HELPER.readImage( binary, size, SCALE_MAX_FILTER );
+                final BufferedImage contentImage = helper.readImage( binary, size, SCALE_MAX_FILTER );
                 return new ResolvedImage( contentImage, attachment.getMimeType() );
             }
         }
@@ -111,7 +111,7 @@ public final class ContentImageResource
             return ResolvedImage.unresolved();
         }
 
-        final BufferedImage contentImage = HELPER.resizeImage( superContentTypeWithIcon.getIcon().asInputStream(), size );
+        final BufferedImage contentImage = helper.resizeImage( superContentTypeWithIcon.getIcon().asInputStream(), size );
         final String mimeType = superContentTypeWithIcon.getIcon().getMimeType();
 
         return new ResolvedImage( contentImage, mimeType );
@@ -146,5 +146,11 @@ public final class ContentImageResource
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setContentImageHelper( ContentImageHelper contentImageHelper )
+    {
+        this.helper = contentImageHelper;
     }
 }

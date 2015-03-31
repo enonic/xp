@@ -1,18 +1,19 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 
-import com.enonic.xp.content.ContentId;
+import java.util.List;
+
 import com.enonic.xp.content.ContentPath;
 
 public class MoveContentJson
 {
-    private ContentId contentId;
+    private List<String> contentIds;
 
     private ContentPath parentContentPath;
 
-    public ContentId getContentId()
+    public List<String> getContentIds()
     {
-        return contentId;
+        return contentIds;
     }
 
     public ContentPath getParentContentPath()
@@ -20,9 +21,9 @@ public class MoveContentJson
         return parentContentPath;
     }
 
-    public void setContentId( final String contentId )
+    public void setContentIds( final List<String> contentIds )
     {
-        this.contentId = ContentId.from( contentId );
+        this.contentIds =  contentIds ;
     }
 
     public void setParentContentPath( final String parentContentPath )

@@ -82,13 +82,13 @@ public final class VirtualHostMapping
     private boolean matchesSource( final HttpServletRequest req )
     {
         final String actualPath = req.getRequestURI();
-        return this.source.equals( "/" ) || actualPath.equals( this.source ) || actualPath.startsWith( this.source + "/" );
+        return "/".equals( this.source ) || actualPath.equals( this.source ) || actualPath.startsWith( this.source + "/" );
     }
 
     public String getFullTargetPath( final HttpServletRequest req )
     {
         String path = req.getRequestURI();
-        if ( !this.source.equals( "/" ) && path.startsWith( this.source ) )
+        if ( !"/".equals( this.source ) && path.startsWith( this.source ) )
         {
             path = path.substring( this.source.length() );
         }

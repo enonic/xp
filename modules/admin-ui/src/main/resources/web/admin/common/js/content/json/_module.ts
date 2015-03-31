@@ -16,4 +16,6 @@
 ///<reference path='ReorderChildContentsJson.ts' />
 ///<reference path='OrderExprJson.ts' />
 ///<reference path='OrderExprWrapperJson.ts' />
+///<reference path='SetOrderUpdateJson.ts' />
+///<reference path='SetChildOrderAndReorderJson.ts' />
 

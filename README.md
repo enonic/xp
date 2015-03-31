@@ -6,7 +6,7 @@ Welcome to the home of Enonic XP Community Edition. Here you will find all sourc
 
 Before trying to build the project, you need to verify that the following software are installed:
 
-* Java 8 for building and running.
+* Java 8 (update 40 or above) for building and running.
 * Gradle 2.x build system.
 
 Build all code and run all tests including integration tests:
@@ -16,14 +16,6 @@ Build all code and run all tests including integration tests:
 Build all code skipping all tests:
 
     gradle build -x test
-
-## Changes to XML schema
-
-When XML schema changes, then you will need to update the Java source classes by using the following task:
-
-    gradle jaxb
-
-Commit the Java source changes to git.
 
 ## License
 

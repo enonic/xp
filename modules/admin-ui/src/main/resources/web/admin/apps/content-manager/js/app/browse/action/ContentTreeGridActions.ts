@@ -83,7 +83,9 @@ module app.browse.action {
                     new api.content.page.IsRenderableRequest(contentSummary.getContentId()).sendAndParse().
                         then((renderable: boolean) => {
                             this.PREVIEW_CONTENT.setEnabled(renderable);
-                            contentBrowseItems[0].setRenderable(renderable);
+                            if(contentBrowseItems.length > 0) {
+                                contentBrowseItems[0].setRenderable(renderable);
+                            }
                         }),
                     // check if selected content allows children and if user has create permission for it
                     new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).
@@ -114,7 +116,7 @@ module app.browse.action {
                 this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
                 this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
                 this.DUPLICATE_CONTENT.setEnabled(false);
-                this.MOVE_CONTENT.setEnabled(false);
+                this.MOVE_CONTENT.setEnabled(true);
                 this.SORT_CONTENT.setEnabled(false);
                 this.PUBLISH_CONTENT.setEnabled(true);
                 deferred.resolve(contentBrowseItems);

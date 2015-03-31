@@ -113,9 +113,10 @@ module api.content {
             return true;
         }
 
-        static toSetChildOrderJson(contentId: ContentId, childOrder: ChildOrder): api.content.json.SetChildOrderJson {
+        static toSetChildOrderJson(contentId: ContentId, childOrder: ChildOrder, silent: boolean): api.content.json.SetChildOrderJson {
             if (contentId && childOrder) {
                 return {
+                    "silent": silent,
                     "childOrder": childOrder.toJson(),
                     "contentId": contentId.toString()
                 };

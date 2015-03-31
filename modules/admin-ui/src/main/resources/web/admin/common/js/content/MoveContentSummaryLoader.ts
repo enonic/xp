@@ -55,7 +55,9 @@ module api.content {
 
                 wemQ.all(contentTypeRequests).
                     spread((...contentTypes: ContentType[]) => {
-                        contents = this.filterContent(contents, contentTypes);
+                        if(this.filterContentPath) {
+                            contents = this.filterContent(contents, contentTypes);
+                        }
                         if (contents && contents.length > 0) {
                             contents.sort(new ContentByPathComparator().compare);
                             this.notifyLoadedData(contents);
@@ -80,15 +82,13 @@ module api.content {
             contentTypes.forEach((contentType)=> contentTypeAllowsChild[contentType.getName()] = contentType.isAllowChildContent());
 
             var createContentFilter = new api.content.CreateContentFilter();
-            if (!!this.filterContentPath) {
 
-                return contents.filter((content: ContentSummary) => {
-                    return !content.getPath().isDescendantOf(this.filterContentPath) &&
-                           !this.filterContentPath.isChildOf(content.getPath()) && !this.filterContentPath.equals(content.getPath()) &&
-                           contentTypeAllowsChild[content.getType().toString()] &&
-                           createContentFilter.isCreateContentAllowed(content, this.filterSourceContentType);
-                });
-            }
+            return contents.filter((content: ContentSummary) => {
+                return !content.getPath().isDescendantOf(this.filterContentPath) &&
+                       !this.filterContentPath.isChildOf(content.getPath()) && !this.filterContentPath.equals(content.getPath()) &&
+                       contentTypeAllowsChild[content.getType().toString()] &&
+                       createContentFilter.isCreateContentAllowed(content, this.filterSourceContentType);
+            });
             return [];
         }
 

@@ -12,14 +12,13 @@ import com.enonic.xp.content.page.region.PartDescriptor;
 import com.enonic.xp.content.page.region.PartDescriptors;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.module.Module;
+import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.xml.mapper.XmlPartDescriptorMapper;
-import com.enonic.xp.xml.model.XmlPartDescriptor;
-import com.enonic.xp.xml.serializer.XmlSerializers;
+import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
 
 abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescriptorCommand>
 {
@@ -37,8 +36,7 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         final String descriptorXml = resource.readString();
         final PartDescriptor.Builder builder = PartDescriptor.create();
 
-        final XmlPartDescriptor xmlObject = XmlSerializers.partDescriptor().parse( descriptorXml );
-        new XmlPartDescriptorMapper( resourceKey.getModule() ).fromXml( xmlObject, builder );
+        parseXml( resourceKey.getModule(), builder, descriptorXml );
 
         builder.name( key.getName() ).key( key );
         final PartDescriptor partDescriptor = builder.build();
@@ -46,6 +44,15 @@ abstract class AbstractGetPartDescriptorCommand<T extends AbstractGetPartDescrip
         return PartDescriptor.copyOf( partDescriptor ).
             config( inlineMixinsTransformer.transformForm( partDescriptor.getConfig() ) ).
             build();
+    }
+
+    private void parseXml( final ModuleKey moduleKey, final PartDescriptor.Builder builder, final String xml )
+    {
+        final XmlPartDescriptorParser parser = new XmlPartDescriptorParser();
+        parser.builder( builder );
+        parser.currentModule( moduleKey );
+        parser.source( xml );
+        parser.parse();
     }
 
     protected final PartDescriptors getDescriptorsFromModules( final Modules modules )

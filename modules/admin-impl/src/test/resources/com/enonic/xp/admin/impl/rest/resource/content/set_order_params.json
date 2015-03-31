@@ -1,0 +1,14 @@
+{
+  "silent": false,
+  "contentId": "content-id",
+  "childOrder": {
+    "orderExpressions": [
+      {
+        "FieldOrderExpr": {
+          "fieldName": "modifiedtime",
+          "direction": "DESC"
+        }
+      }
+    ]
+  }
+}

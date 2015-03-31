@@ -239,7 +239,7 @@ module api.ui.selector.combobox {
 
         handleRowSelected(index: number) {
             var option = this.getOptionByRow(index);
-            if (option != null) {
+            if (option != null && !option.readOnly) {
                 if (!this.isOptionSelected(option)) {
                     this.selectOption(option);
                 } else {
@@ -346,7 +346,7 @@ module api.ui.selector.combobox {
                 } else {
                     // removing selection only from filtered options
                     var filteredOption = optionsMap.search(option.value) >= 0 ? option : undefined;
-                    if (filteredOption) {
+                    if (filteredOption && !filteredOption.readOnly) {
                         this.selectedOptionsView.removeOption(option, true);
                     }
                 }
@@ -599,7 +599,10 @@ module api.ui.selector.combobox {
                 break;
             case 32: // Spacebar
                 if (this.input.isReadOnly() && this.applySelectionsButton) {
-                    this.comboBoxDropdown.toggleRowSelection(this.comboBoxDropdown.getActiveRow(), this.maximumSelectionsReached());
+
+                    if(!this.isSelectedRowReadOnly())
+                        this.comboBoxDropdown.toggleRowSelection(this.comboBoxDropdown.getActiveRow(), this.maximumSelectionsReached());
+
                     event.stopPropagation();
                     event.preventDefault();
                 }
@@ -616,6 +619,10 @@ module api.ui.selector.combobox {
             }
 
             this.input.giveFocus()
+        }
+
+        private isSelectedRowReadOnly():boolean {
+            return this.getOptionByRow(this.comboBoxDropdown.getActiveRow()).readOnly;
         }
 
         private handleSelectedOptionRemoved(removedSelectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) {
