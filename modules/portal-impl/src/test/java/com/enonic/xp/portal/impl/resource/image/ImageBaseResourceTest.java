@@ -16,6 +16,9 @@ import com.enonic.xp.content.attachment.Attachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.image.ImageFilter;
 import com.enonic.xp.image.ImageFilterBuilder;
+import com.enonic.xp.image.ImageScaleFunction;
+import com.enonic.xp.image.ImageScaleFunctionBuilder;
+import com.enonic.xp.image.scale.ScaleParams;
 import com.enonic.xp.portal.impl.resource.base.BaseResourceTest;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -26,6 +29,8 @@ public abstract class ImageBaseResourceTest
 {
     private ImageFilterBuilder imageFilterBuilder;
 
+    private ImageScaleFunctionBuilder imageScaleFunctionBuilder;
+
     protected ContentService contentService;
 
     @Override
@@ -33,7 +38,9 @@ public abstract class ImageBaseResourceTest
         throws Exception
     {
         this.imageFilterBuilder = Mockito.mock( ImageFilterBuilder.class );
+        this.imageScaleFunctionBuilder = Mockito.mock( ImageScaleFunctionBuilder.class );
         this.services.setImageFilterBuilder( this.imageFilterBuilder );
+        this.services.setImageScaleFunctionBuilder( this.imageScaleFunctionBuilder );
 
         this.contentService = Mockito.mock( ContentService.class );
         this.services.setContentService( this.contentService );
@@ -45,7 +52,7 @@ public abstract class ImageBaseResourceTest
         final Attachment attachment = Attachment.newAttachment().
             name( "enonic-logo.png" ).
             mimeType( "image/png" ).
-            label( "small" ).
+            label( "source" ).
             build();
 
         final Content content = createContent( "content-id", "path/to/image-name.jpg", attachment );
@@ -59,12 +66,20 @@ public abstract class ImageBaseResourceTest
             thenReturn( ByteSource.wrap( imageData ) );
         Mockito.when( this.imageFilterBuilder.build( Mockito.isA( String.class ) ) ).
             thenReturn( getImageFilterBuilder() );
+        Mockito.when( this.imageScaleFunctionBuilder.build( Mockito.isA( ScaleParams.class ) ) ).
+            thenReturn( getImageScaleFunctionBuilder() );
     }
 
     private ImageFilter getImageFilterBuilder()
     {
         return source -> source;
     }
+
+    private ImageScaleFunction getImageScaleFunctionBuilder()
+    {
+        return source -> source;
+    }
+
 
     private Content createContent( final String id, final String contentPath, final Attachment... attachments )
     {
