@@ -1,5 +1,7 @@
 package com.enonic.wem.repo.internal.entity;
 
+import java.util.stream.Collectors;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -315,6 +317,14 @@ public class NodeServiceImpl
             versionService( this.versionService ).
             build().
             execute();
+    }
+
+    @Override
+    public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath )
+    {
+        return Nodes.from( nodeIds.
+            stream().
+            map( nodeId -> this.move( nodeId, parentNodePath ) ).collect( Collectors.toList() ) );
     }
 
 

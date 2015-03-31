@@ -6,22 +6,22 @@ import com.enonic.xp.security.PrincipalKey;
 
 public final class MoveContentParams
 {
-    private ContentId contentId;
+    private ContentIds contentIds;
 
     private ContentPath parentContentPath;
 
     private PrincipalKey creator;
 
-    public MoveContentParams( final ContentId contentId, final ContentPath parentContentPath )
+    public MoveContentParams( final ContentIds contentIds, final ContentPath parentContentPath )
     {
-        this.contentId = contentId;
+        this.contentIds = contentIds;
         this.parentContentPath = parentContentPath;
 
     }
 
-    public ContentId getContentId()
+    public ContentIds getContentIds()
     {
-        return contentId;
+        return contentIds;
     }
 
     public ContentPath getParentContentPath()
@@ -42,7 +42,7 @@ public final class MoveContentParams
 
     public void validate()
     {
-        Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
+        Preconditions.checkNotNull( this.contentIds, "Content ids cannot be null" );
     }
 
     @Override
@@ -59,7 +59,7 @@ public final class MoveContentParams
 
         final MoveContentParams that = (MoveContentParams) o;
 
-        if ( !contentId.equals( that.contentId ) )
+        if ( !contentIds.equals( that.contentIds ) )
         {
             return false;
         }
@@ -74,7 +74,7 @@ public final class MoveContentParams
     @Override
     public int hashCode()
     {
-        int result = contentId != null ? contentId.hashCode() : 0;
+        int result = contentIds != null ? contentIds.hashCode() : 0;
         result = 31 * result + ( parentContentPath != null ? parentContentPath.hashCode() : 0 );
         return result;
     }

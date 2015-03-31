@@ -1,4 +1,5 @@
 ///<reference path='ContentId.ts' />
+///<reference path='ContentIds.ts' />
 ///<reference path='ContentName.ts' />
 ///<reference path='ContentUnnamed.ts' />
 ///<reference path='ContentPath.ts' />
@@ -54,6 +55,7 @@
 ///<reference path='ContentChildOrderUpdatedEvent.ts' />
 ///<reference path='ContentComboBox.ts' />
 ///<reference path='ContentMovedEvent.ts' />
+///<reference path='MoveContentResult.ts' />
 ///<reference path='ContentMoveComboBox.ts' />
 ///<reference path='ContentQueryRequest.ts' />
 ///<reference path='ContentQueryResult.ts' />

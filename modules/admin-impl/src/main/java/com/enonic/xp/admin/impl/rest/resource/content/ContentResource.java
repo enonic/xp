@@ -89,6 +89,7 @@ import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PushContentsResult;
@@ -234,12 +235,17 @@ public final class ContentResource
 
     @POST
     @Path("move")
-    public ContentJson move( final MoveContentJson params )
+    public ContentSummaryListJson move( final MoveContentJson params )
     {
-        final Content contentForMove = this.contentService.getById( params.getContentId() );
-        final Content movedContent = contentService.move( new MoveContentParams( params.getContentId(), params.getParentContentPath() ) );
+        final Contents contentForMove = this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( params.getContentIds() ) ) );
+        final Contents movedContents = contentService.move( new MoveContentParams(ContentIds.from( params.getContentIds() ), params.getParentContentPath() ) );
 
-        return new ContentJson( movedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        final ContentListMetaData metaData = ContentListMetaData.create().
+            totalHits( movedContents.getSize() ).
+            hits( movedContents.getSize() ).
+            build();
+
+        return new ContentSummaryListJson( movedContents, metaData, newContentIconUrlResolver() );
     }
 
     @POST

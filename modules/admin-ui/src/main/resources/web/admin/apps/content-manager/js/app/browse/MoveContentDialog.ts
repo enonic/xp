@@ -3,12 +3,15 @@ module app.browse {
     import ContentPath = api.content.ContentPath;
     import ContentType = api.schema.content.ContentType;
     import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
+    import ContentSummary = api.content.ContentSummary;
+    import ContentResponse = api.content.ContentResponse;
+    import ContentIds = api.content.ContentIds;
 
     export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
         private contentComboBox: api.content.ContentMoveComboBox;
 
-        private movedContentSummary: api.content.ContentSummary;
+        private movedContentSummaries: api.content.ContentSummary[];
 
         private contentPath: api.dom.H6El;
 
@@ -36,17 +39,28 @@ module app.browse {
             this.appendChildToContentPanel(this.contentMoveMask);
 
             OpenMoveDialogEvent.on((event) => {
-                new GetContentTypeByNameRequest(event.getContent().getType()).sendAndParse().then((contentType: ContentType) => {
-                    this.movedContentSummary = event.getContent();
-                    this.contentComboBox.setFilterContentPath(this.movedContentSummary.getPath());
-                    this.contentComboBox.setFilterSourceContentType(contentType);
 
-                    this.contentPath.setHtml(event.getContent().getPath().toString());
+                this.movedContentSummaries = event.getContentSummaries();
+
+                if(event.getContentSummaries().length == 1) {
+                    var contentToMove = event.getContentSummaries()[0];
+
+                    new GetContentTypeByNameRequest(contentToMove.getType()).sendAndParse().then((contentType: ContentType) => {
+
+                        this.contentComboBox.setFilterContentPath(contentToMove.getPath());
+                        this.contentComboBox.setFilterSourceContentType(contentType);
+                        this.contentPath.setHtml(contentToMove.getPath().toString());
+
+                        this.open();
+                    }).catch((reason)=> {
+                        api.notify.showError(reason.getMessage());
+                    }).done();
+                } else {
+                    this.contentComboBox.setFilterContentPath(null);
+                    this.contentPath.setHtml("");
                     this.open();
+                }
 
-                }).catch((reason)=> {
-                    api.notify.showError(reason.getMessage());
-                }).done();
             });
 
             this.addCancelButtonToBottom();
@@ -67,13 +81,18 @@ module app.browse {
         private moveContent(parentContent: api.content.ContentSummary) {
             var parentRoot = (!!parentContent) ? parentContent.getPath() : ContentPath.ROOT;
 
-            new api.content.MoveContentRequest(this.movedContentSummary.getContentId(), parentRoot).
-                sendAndParse().then((content: api.content.Content) => {
+            var contentIds = ContentIds.create().
+                fromContentIds(this.movedContentSummaries.map(summary => summary.getContentId())).
+                build();
+
+            new api.content.MoveContentRequest(contentIds, parentRoot).
+                sendAndParse().then((response: ContentResponse<ContentSummary>) => {
+                    debugger;
                     if (parentContent) {
                         this.contentComboBox.deselect(parentContent);
                     }
                     this.contentMoveMask.hide();
-                    new api.content.ContentMovedEvent(content.getContentId()).fire();
+                    new api.content.ContentMovedEvent(ContentIds.fromContents(response.getContents())).fire();
                     api.notify.showFeedback('Content was moved!');
                     this.close();
                 }).catch((reason)=> {

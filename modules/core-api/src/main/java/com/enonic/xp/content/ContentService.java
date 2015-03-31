@@ -31,7 +31,7 @@ public interface ContentService
 
     Content duplicate( DuplicateContentParams params );
 
-    Content move( MoveContentParams params );
+    Contents move( MoveContentParams params );
 
     Content sort( SortContentParams params );
 

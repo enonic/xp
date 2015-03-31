@@ -116,7 +116,7 @@ module app.browse.action {
                 this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
                 this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
                 this.DUPLICATE_CONTENT.setEnabled(false);
-                this.MOVE_CONTENT.setEnabled(false);
+                this.MOVE_CONTENT.setEnabled(true);
                 this.SORT_CONTENT.setEnabled(false);
                 this.PUBLISH_CONTENT.setEnabled(true);
                 deferred.resolve(contentBrowseItems);
