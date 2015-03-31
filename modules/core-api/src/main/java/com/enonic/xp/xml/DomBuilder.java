@@ -7,18 +7,33 @@ public final class DomBuilder
 {
     private final Document document;
 
+    private final String namespace;
+
     private Element current;
 
-    private DomBuilder( final Document document, final String name )
+    private DomBuilder( final Document document, final String namespace, final String name )
     {
         this.document = document;
-        this.current = this.document.createElement( name );
+        this.namespace = namespace;
+        this.current = createElement( name );
         this.document.appendChild( this.current );
+    }
+
+    private Element createElement( final String name )
+    {
+        if ( this.namespace != null )
+        {
+            return this.document.createElementNS( this.namespace, name );
+        }
+        else
+        {
+            return this.document.createElement( name );
+        }
     }
 
     public DomBuilder start( final String name )
     {
-        final Element element = this.document.createElement( name );
+        final Element element = createElement( name );
         this.current.appendChild( element );
         this.current = element;
         return this;
@@ -36,11 +51,6 @@ public final class DomBuilder
         return this;
     }
 
-    public DomBuilder attribute( final String name, final boolean value )
-    {
-        return attribute( name, String.valueOf( value ) );
-    }
-
     public DomBuilder text( final String content )
     {
         this.current.appendChild( this.document.createTextNode( content ) );
@@ -49,7 +59,12 @@ public final class DomBuilder
 
     public static DomBuilder create( final String name )
     {
-        return new DomBuilder( DomHelper.newDocument(), name );
+        return create( null, name );
+    }
+
+    public static DomBuilder create( final String namespace, final String name )
+    {
+        return new DomBuilder( DomHelper.newDocument(), namespace, name );
     }
 
     public Document getDocument()

@@ -39,7 +39,7 @@ module api.security {
             return UserStore.create().
                 setDisplayName(this.displayName).
                 setKey(this.key.toString()).
-                setPermissions(this.permissions).
+                setPermissions(this.permissions.clone()).
                 build();
         }
 

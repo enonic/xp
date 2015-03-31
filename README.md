@@ -17,14 +17,6 @@ Build all code skipping all tests:
 
     gradle build -x test
 
-## Changes to XML schema
-
-When XML schema changes, then you will need to update the Java source classes by using the following task:
-
-    gradle jaxb
-
-Commit the Java source changes to git.
-
 ## License
 
 This software is licensed under AGPL 3.0 license. See full license terms [here](http://www.enonic.com/license). Also the distribution includes

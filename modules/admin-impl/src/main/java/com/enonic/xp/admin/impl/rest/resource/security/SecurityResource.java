@@ -105,6 +105,18 @@ public final class SecurityResource
         return new UserStoreJson( userStore, userStorePermissions, principals );
     }
 
+    @GET
+    @Path("userstore/default")
+    public UserStoreJson getDefaultUserStore()
+    {
+        final UserStore userStore = UserStore.newUserStore().displayName( "" ).key( UserStoreKey.createDefault() ).build();
+
+        final UserStoreAccessControlList userStorePermissions = securityService.getUserStorePermissions( UserStoreKey.system() );
+
+        final Principals principals = securityService.getPrincipals( userStorePermissions.getAllPrincipals() );
+        return new UserStoreJson( userStore, userStorePermissions, principals );
+    }
+
     @POST
     @Path("userstore/create")
     public UserStoreJson createUserStore( final CreateUserStoreJson params )
@@ -159,7 +171,7 @@ public final class SecurityResource
     }
 
     @GET
-    @Path("principals/{key: ((role)(:|%3A)([^:(%3A)]+))|((user|group)(:|%3A)([^:(%3A)]+)(:|%3A)([^:(%3A)]+))}")
+    @Path("principals/{key:.+}")
     public PrincipalJson getPrincipalByKey( @PathParam("key") final String keyParam,
                                             @QueryParam("memberships") final String resolveMembershipsParam )
     {
@@ -297,7 +309,7 @@ public final class SecurityResource
             return new UserJson( user );
         }
 
-        throw new WebApplicationException( "Password has not been set." ) ;
+        throw new WebApplicationException( "Password has not been set." );
     }
 
     @POST

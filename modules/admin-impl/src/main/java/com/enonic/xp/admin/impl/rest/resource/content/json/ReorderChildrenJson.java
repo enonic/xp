@@ -8,14 +8,32 @@ import com.google.common.collect.Lists;
 
 public class ReorderChildrenJson
 {
+    private Boolean silent;
+
+    private String contentId;
+
     private List<ReorderChildJson> orderChildren = Lists.newLinkedList();
 
     @JsonCreator
-    public ReorderChildrenJson( @JsonProperty("reorderChildren") final List<ReorderChildJson> orderChildren )
+    public ReorderChildrenJson( @JsonProperty("silent") final Boolean silent, @JsonProperty("contentId") final String contentId,
+                                @JsonProperty("reorderChildren") final List<ReorderChildJson> orderChildren )
     {
+        this.silent = silent;
+        this.contentId = contentId;
         this.orderChildren = orderChildren;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
+    public Boolean isSilent()
+    {
+        return silent;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public String getContentId()
+    {
+        return contentId;
+    }
 
     @SuppressWarnings("UnusedDeclaration")
     public List<ReorderChildJson> getReorderChildren()

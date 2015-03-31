@@ -66,8 +66,8 @@ public final class ServletRequestUrlHelper
 
     private static boolean needPortNumber( final String scheme, final int port )
     {
-        final boolean isHttp = scheme.equals( "http" ) && ( port == 80 );
-        final boolean isHttps = scheme.equals( "https" ) && ( port == 443 );
+        final boolean isHttp = "http".equals( scheme ) && ( port == 80 );
+        final boolean isHttps = "https".equals( scheme ) && ( port == 443 );
         return !( isHttp || isHttps );
     }
 

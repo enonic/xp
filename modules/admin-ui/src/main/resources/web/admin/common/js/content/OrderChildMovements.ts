@@ -15,13 +15,7 @@ module api.content {
             this.reorderChildren.push(movement);
         }
 
-        toJson(): ReorderChildContentsJson {
-            return {
-                "reorderChildren": this.toArrayJson()
-            };
-        }
-
-        private toArrayJson(): ReorderChildContentJson[] {
+        toArrayJson(): ReorderChildContentJson[] {
             var result: ReorderChildContentJson[] = [];
             this.reorderChildren.forEach((movement: OrderChildMovement) => {
                 result.push(movement.toJson());

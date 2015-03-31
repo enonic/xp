@@ -1,15 +1,15 @@
 module api.content {
     export class ContentMovedEvent extends api.event.Event {
 
-        private contentId: api.content.ContentId;
+        private contentIds: api.content.ContentIds;
 
-        constructor(contentId: api.content.ContentId) {
+        constructor(contentIds: api.content.ContentIds) {
             super();
-            this.contentId = contentId
+            this.contentIds = contentIds;
         }
 
-        public getContentId(): api.content.ContentId {
-            return this.contentId;
+        public getContentIds(): api.content.ContentIds {
+            return this.contentIds;
         }
 
         static on(handler: (event: ContentMovedEvent) => void) {

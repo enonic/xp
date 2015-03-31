@@ -15,14 +15,12 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.core.impl.schema.IconLoader;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.Mixins;
-import com.enonic.xp.xml.mapper.XmlMixinMapper;
-import com.enonic.xp.xml.model.XmlMixin;
-import com.enonic.xp.xml.serializer.XmlSerializers;
-import com.enonic.xp.core.impl.schema.IconLoader;
+import com.enonic.xp.xml.parser.XmlMixinParser;
 
 final class MixinLoader
 {
@@ -143,8 +141,13 @@ final class MixinLoader
     private Mixin.Builder parseMixinXml( final String serializedMixin )
     {
         final Mixin.Builder builder = Mixin.newMixin();
-        final XmlMixin mixinXml = XmlSerializers.mixin().parse( serializedMixin );
-        new XmlMixinMapper( this.moduleKey ).fromXml( mixinXml, builder );
+
+        final XmlMixinParser parser = new XmlMixinParser();
+        parser.builder( builder );
+        parser.source( serializedMixin );
+        parser.currentModule( this.moduleKey );
+        parser.parse();
+
         return builder;
     }
 }

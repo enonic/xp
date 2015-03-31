@@ -74,5 +74,16 @@ module api.security.acl {
             });
             return acl;
         }
+
+        clone(): UserStoreAccessControlList {
+            var result = new UserStoreAccessControlList();
+            var clonedEntries = {};
+            this.getEntries().forEach((item) => {
+                var clonedItem = new UserStoreAccessControlEntry(item.getPrincipal().clone(), item.getAccess());
+                result.add(clonedItem);
+            });
+
+            return result;
+        }
     }
 }

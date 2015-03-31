@@ -1,6 +1,6 @@
 module api.content.json {
 
-    export interface ReorderChildContentsJson {
+    export interface ReorderChildContentsJson extends SetOrderUpdateJson {
 
         reorderChildren: ReorderChildContentJson[];
 

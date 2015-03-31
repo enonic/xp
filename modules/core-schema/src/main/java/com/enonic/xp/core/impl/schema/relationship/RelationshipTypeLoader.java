@@ -15,14 +15,12 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.core.impl.schema.IconLoader;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
-import com.enonic.xp.xml.mapper.XmlRelationshipTypeMapper;
-import com.enonic.xp.xml.model.XmlRelationshipType;
-import com.enonic.xp.xml.serializer.XmlSerializers;
-import com.enonic.xp.core.impl.schema.IconLoader;
+import com.enonic.xp.xml.parser.XmlRelationshipTypeParser;
 
 final class RelationshipTypeLoader
 {
@@ -143,8 +141,13 @@ final class RelationshipTypeLoader
     private RelationshipType.Builder parse( final String str )
     {
         final RelationshipType.Builder builder = RelationshipType.newRelationshipType();
-        final XmlRelationshipType relationshipTypeXml = XmlSerializers.relationshipType().parse( str );
-        new XmlRelationshipTypeMapper(this.moduleKey).fromXml( relationshipTypeXml, builder );
+
+        final XmlRelationshipTypeParser parser = new XmlRelationshipTypeParser();
+        parser.builder( builder );
+        parser.source( str );
+        parser.currentModule( this.moduleKey );
+        parser.parse();
+
         return builder;
     }
 }

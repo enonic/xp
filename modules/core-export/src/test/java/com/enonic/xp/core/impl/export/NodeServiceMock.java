@@ -369,4 +369,10 @@ class NodeServiceMock
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
+
+    @Override
+    public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
 }

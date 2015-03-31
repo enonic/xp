@@ -19,7 +19,7 @@ import com.enonic.xp.module.ModuleRelativeResolver;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.XmlException;
 
-final class XmlFormMapper
+public final class XmlFormMapper
 {
     private final ModuleKey currentModule;
 

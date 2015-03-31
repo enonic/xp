@@ -57,8 +57,10 @@ final class ModuleBuilder2
         final URL url = module.bundle.getResource( MODULE_XML );
         final String xml = parseModuleXml( url );
 
-        final ModuleXmlBuilder xmlBuilder = new ModuleXmlBuilder();
-        xmlBuilder.toModule( xml, module );
+        final XmlModuleParser parser = new XmlModuleParser();
+        parser.module( module );
+        parser.source( xml );
+        parser.parse();
     }
 
     private static String parseModuleXml( final URL moduleResource )

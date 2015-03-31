@@ -63,6 +63,22 @@ module api.content {
             return deferred.promise;
         }
 
+        static fetchIds(parentContentId: ContentId, from: number = 0, size: number = -1): wemQ.Promise<ContentResponse<ContentSummary>> {
+
+            var deferred = wemQ.defer<ContentResponse<ContentSummary>>();
+
+            new ListContentByIdRequest(parentContentId).
+                setFrom(from).
+                setSize(size).
+                setExpand(api.rest.Expand.NONE).
+                sendAndParse().
+                then((response: ContentResponse<ContentSummary>)=> {
+                    deferred.resolve(response);
+                });
+
+            return deferred.promise;
+        }
+
         static updateCompareStatus(contentSummaries: ContentSummary[],
                                    compareResults: CompareContentResults): ContentSummaryAndCompareStatus[] {
             var list: ContentSummaryAndCompareStatus[] = [];

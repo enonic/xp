@@ -60,6 +60,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.SetAndReorderChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.branch.Branches;
@@ -88,6 +89,7 @@ import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PushContentsResult;
@@ -96,6 +98,7 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UnableToDeleteContentException;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
@@ -232,12 +235,17 @@ public final class ContentResource
 
     @POST
     @Path("move")
-    public ContentJson move( final MoveContentJson params )
+    public ContentSummaryListJson move( final MoveContentJson params )
     {
-        final Content contentForMove = this.contentService.getById( params.getContentId() );
-        final Content movedContent = contentService.move( new MoveContentParams( params.getContentId(), params.getParentContentPath() ) );
+        final Contents contentForMove = this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( params.getContentIds() ) ) );
+        final Contents movedContents = contentService.move( new MoveContentParams(ContentIds.from( params.getContentIds() ), params.getParentContentPath() ) );
 
-        return new ContentJson( movedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
+        final ContentListMetaData metaData = ContentListMetaData.create().
+            totalHits( movedContents.getSize() ).
+            hits( movedContents.getSize() ).
+            build();
+
+        return new ContentSummaryListJson( movedContents, metaData, newContentIconUrlResolver() );
     }
 
     @POST
@@ -344,6 +352,11 @@ public final class ContentResource
             contentId( ContentId.from( params.getContentId() ) ).
             build() );
 
+        if ( !params.isSilent() )
+        {
+            this.contentService.sort( new SortContentParams().contentId( ContentId.from( params.getContentId() ) ) );
+        }
+
         return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
     }
 
@@ -364,7 +377,43 @@ public final class ContentResource
 
         final ReorderChildContentsResult result = this.contentService.reorderChildren(builder.build());
 
+        if ( !params.isSilent() )
+        {
+            this.contentService.sort( new SortContentParams().contentId( ContentId.from( params.getContentId() ) ) );
+        }
+
         return new ReorderChildrenResultJson( result );
+    }
+
+    @POST
+    @Path("setAndReorderChildren")
+    public ContentJson setAndReorderChildContents( final SetAndReorderChildrenJson params )
+    {
+
+        final Content updatedContent = this.contentService.setChildOrder( SetContentChildOrderParams.create().
+            childOrder( params.getChildOrder().getChildOrder() ).
+            contentId( ContentId.from( params.getContentId() ) ).
+            build() );
+
+        final ReorderChildContentsParams.Builder builder = ReorderChildContentsParams.create();
+
+        for ( final ReorderChildJson reorderChildJson : params.getReorderChildren() )
+        {
+            final String moveBefore = reorderChildJson.getMoveBefore();
+            builder.add( ReorderChildParams.create().
+                contentToMove( ContentId.from( reorderChildJson.getContentId() ) ).
+                contentToMoveBefore( isBlank( moveBefore ) ? null : ContentId.from( moveBefore ) ).
+                build() );
+        }
+
+        final ReorderChildContentsResult result = this.contentService.reorderChildren( builder.build() );
+
+        if ( !params.isSilent() )
+        {
+            this.contentService.sort( new SortContentParams().contentId( ContentId.from( params.getContentId() ) ) );
+        }
+
+        return new ContentJson( updatedContent, newContentIconUrlResolver(), inlineMixinsToFormItemsTransformer, principalsResolver );
     }
 
     @GET
