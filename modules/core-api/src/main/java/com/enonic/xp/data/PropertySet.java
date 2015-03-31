@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -917,6 +918,38 @@ public final class PropertySet
         for ( int i = 0; i < values.length; i++ )
         {
             properties[i] = this.addProperty( name, Value.newInstant( values[i] ) );
+        }
+        return properties;
+    }
+
+    // setting Datetime
+
+    public Property setDateTime( final String path, final ZonedDateTime value )
+    {
+        return this.setProperty( PropertyPath.from( path ), Value.newDateTime( value ) );
+    }
+
+    public Property setDateTime( final PropertyPath path, final ZonedDateTime value )
+    {
+        return this.setProperty( path, Value.newDateTime( value ) );
+    }
+
+    public Property setDateTime( final String name, final int index, final ZonedDateTime value )
+    {
+        return this.setProperty( name, index, Value.newDateTime( value ) );
+    }
+
+    public Property addDatetime( final String name, final ZonedDateTime value )
+    {
+        return this.addProperty( name, Value.newDateTime( value ) );
+    }
+
+    public Property[] addDateTimes( final String name, final ZonedDateTime... values )
+    {
+        final Property[] properties = new Property[values.length];
+        for ( int i = 0; i < values.length; i++ )
+        {
+            properties[i] = this.addProperty( name, Value.newDateTime( values[i] ) );
         }
         return properties;
     }

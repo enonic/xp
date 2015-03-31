@@ -1,5 +1,6 @@
 package com.enonic.xp.data;
 
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
@@ -47,7 +48,7 @@ public abstract class Value
 
     public boolean isDateType()
     {
-        return ( this.type == ValueTypes.DATE_TIME ) || ( this.type == ValueTypes.LOCAL_DATE );
+        return ( this.type == ValueTypes.DATE_TIME ) || ( this.type == ValueTypes.LOCAL_DATE ) || ( this.type == ValueTypes.INSTANT );
     }
 
     public boolean isNumericType()
@@ -186,7 +187,7 @@ public abstract class Value
         {
             return null;
         }
-        return ValueTypes.DATE_TIME.convert( object );
+        return ValueTypes.INSTANT.convert( object );
     }
 
     public com.enonic.xp.util.GeoPoint asGeoPoint()
@@ -274,6 +275,11 @@ public abstract class Value
     }
 
     public static Value newInstant( final java.time.Instant value )
+    {
+        return new Instant( value );
+    }
+
+    public static Value newDateTime( final java.time.ZonedDateTime value )
     {
         return new DateTime( value );
     }
@@ -690,20 +696,46 @@ public abstract class Value
     static class DateTime
         extends Value
     {
-        DateTime( final java.time.Instant value )
-        {
-            super( ValueTypes.DATE_TIME, value );
-        }
-
         DateTime( final DateTime source )
         {
             super( ValueTypes.DATE_TIME, source.getObject() );
+        }
+
+        DateTime( final ZonedDateTime value )
+        {
+            super( ValueTypes.DATE_TIME, value );
         }
 
         @Override
         Value copy( final PropertyTree tree )
         {
             return new DateTime( this );
+        }
+
+        @Override
+        Object toJsonValue()
+        {
+            return asString();
+        }
+    }
+
+    static class Instant
+        extends Value
+    {
+        Instant( final Instant source )
+        {
+            super( ValueTypes.INSTANT, source.getObject() );
+        }
+
+        Instant( final java.time.Instant value )
+        {
+            super( ValueTypes.INSTANT, value );
+        }
+
+        @Override
+        Value copy( final PropertyTree tree )
+        {
+            return new Instant( this );
         }
 
         @Override

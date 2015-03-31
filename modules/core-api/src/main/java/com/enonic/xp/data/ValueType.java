@@ -246,7 +246,7 @@ public abstract class ValueType<T>
     }
 
     static class DateTime
-        extends ValueType<java.time.Instant>
+        extends ValueType<java.time.ZonedDateTime>
     {
         DateTime()
         {
@@ -257,6 +257,21 @@ public abstract class ValueType<T>
         Value fromJsonValue( final Object object )
         {
             return new Value.DateTime( convertNullSafe( object ) );
+        }
+    }
+
+    static class Instant
+        extends ValueType<java.time.Instant>
+    {
+        Instant()
+        {
+            super( "Instant", JavaTypeConverters.INSTANT );
+        }
+
+        @Override
+        Value fromJsonValue( final Object object )
+        {
+            return new Value.Instant( convertNullSafe( object ) );
         }
     }
 

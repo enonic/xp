@@ -75,6 +75,10 @@ module api.util {
                    this.padNumber(date.getUTCSeconds());
         }
 
+        public static formatUTCDateTimeForInstant(date: Date): string {
+            return this.formatUTCDateTime(date) + "Z";
+        }
+
         public static parseDate(value: string, dateSeparator: string = "-"): Date {
             var dateStr = (value || '').trim();
             if (dateStr.length < 8 || dateStr.length > 10) {
@@ -192,6 +196,27 @@ module api.util {
             date.setHours(time.hours, time.minutes, time.seconds, time.fractions);
 
             return date;
+        }
+
+        static parseOffset(value: string, offsetSeparator: string = "+"): number {
+            if(value != null && (value[value.length - 1] == "Z" || value[value.length - 1] == "z")) {
+                return 0;
+            } else {
+                var dateStr = (value || '').trim();
+
+                var parts = dateStr.split(offsetSeparator);
+                if (parts.length !== 2) {
+                    return null;
+                }
+
+                var offsetPart = parts[1];
+
+                var offset = parseFloat(offsetPart);
+                if (isNaN(offset))
+                    return null;
+
+                return offset;
+            }
         }
 
         /**

@@ -41,6 +41,10 @@ class XmlPropertyMapper
         {
             return LongPropertyMapper.map( property );
         }
+        else if ( type.equals( ValueTypes.INSTANT ) )
+        {
+            return DateTimePropertyMapper.map( property );
+        }
         else if ( type.equals( ValueTypes.DATE_TIME ) )
         {
             return DateTimePropertyMapper.map( property );

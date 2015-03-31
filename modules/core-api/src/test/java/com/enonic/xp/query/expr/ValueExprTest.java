@@ -50,7 +50,7 @@ public class ValueExprTest
 
         Assert.assertNotNull( expr );
         Assert.assertEquals( "instant('2013-11-11T22:22:22Z')", expr.toString() );
-        Assert.assertEquals( ValueTypes.DATE_TIME, expr.getValue().getType() );
+        Assert.assertEquals( ValueTypes.INSTANT, expr.getValue().getType() );
     }
 
     @Test
