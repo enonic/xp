@@ -27,7 +27,6 @@ module api.data {
         }
 
         newValue(value: string): Value {
-            debugger;
             if (!value) {
                 return this.newNullValue();
             }

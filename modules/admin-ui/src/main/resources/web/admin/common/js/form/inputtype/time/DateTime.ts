@@ -81,8 +81,6 @@ module api.content.form.inputtype.time {
             if (property.hasNonNullValue()) {
                 var date : api.util.DateTime = property.getDateTime();
 
-                debugger;
-
                 dateTimeBuilder.
                     setYear(date.getYear()).
                     setMonth(date.getMonth()).
