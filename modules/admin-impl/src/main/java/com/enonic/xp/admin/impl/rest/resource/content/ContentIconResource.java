@@ -111,8 +111,8 @@ public final class ContentIconResource
             final ByteSource binary = contentService.getBinary( media.getId(), imageAttachment.getBinaryReference() );
             if ( binary != null )
             {
-                ContentImageHelper.ImageFilter
-                    filter = crop ? ContentImageHelper.ImageFilter.SCALE_SQUARE_FILTER : ContentImageHelper.ImageFilter.SCALE_MAX_FILTER;
+                ContentImageHelper.ImageFilter filter =
+                    crop ? ContentImageHelper.ImageFilter.SCALE_SQUARE_FILTER : ContentImageHelper.ImageFilter.SCALE_MAX_FILTER;
                 final BufferedImage contentImage = helper.readImage( binary, size, filter );
                 return new ResolvedImage( contentImage, imageAttachment.getMimeType() );
             }
@@ -146,5 +146,4 @@ public final class ContentIconResource
     {
         this.helper = contentImageHelper;
     }
-}
 }
