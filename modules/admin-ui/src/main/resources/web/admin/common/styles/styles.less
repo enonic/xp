@@ -11,6 +11,7 @@
 @import "api/form-common";
 @import "api/input-common";
 @import "api/notify";
+@import "api/ui/form/form";
 @import "api/ui/mask";
 @import "api/ui/dropzone";
 @import "api/ui/toolbar";
@@ -26,10 +27,11 @@
 @import "api/ui/text/text-editor-toolbar";
 @import "api/ui/tags/tags";
 @import "api/ui/geo/geo-point";
-@import "api/ui/selector/option-filter-input";
 @import "api/ui/selector/combobox/combobox";
 @import "api/ui/selector/combobox/rich-combobox";
 @import "api/ui/selector/dropdown/dropdown";
+// should go after combo/dropdown to set styles after reset
+@import "api/ui/selector/option-filter-input";
 @import "api/ui/locale/locale-selected-option-view";
 @import "api/ui/security/principal-selected-option-view";
 @import "api/ui/security/acl/permission-selector";
@@ -46,7 +48,6 @@
 @import "api/ui/panel/split-panel";
 @import "api/ui/panel/docked-panel";
 @import "api/ui/uploader";
-@import "api/ui/form/form";
 @import "api/ui/button";
 @import "api/ui/checkbox";
 @import "api/ui/icons";
