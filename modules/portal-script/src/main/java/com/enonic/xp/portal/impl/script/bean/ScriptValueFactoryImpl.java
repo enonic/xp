@@ -1,9 +1,8 @@
 package com.enonic.xp.portal.impl.script.bean;
 
 import jdk.nashorn.api.scripting.JSObject;
-import jdk.nashorn.api.scripting.ScriptUtils;
-import jdk.nashorn.internal.runtime.Undefined;
 
+import com.enonic.xp.portal.impl.script.util.NashornHelper;
 import com.enonic.xp.portal.script.ScriptValue;
 
 public final class ScriptValueFactoryImpl
@@ -30,18 +29,17 @@ public final class ScriptValueFactoryImpl
             return null;
         }
 
-        final Object unwrapped = ScriptUtils.unwrap( value );
-        if ( unwrapped instanceof Undefined )
+        if ( NashornHelper.isUndefined( value ) )
         {
             return null;
         }
 
-        if ( unwrapped instanceof JSObject )
+        if ( value instanceof JSObject )
         {
-            return newValue( (JSObject) unwrapped );
+            return newValue( (JSObject) value );
         }
 
-        return new ScalarScriptValue( unwrapped );
+        return new ScalarScriptValue( value );
     }
 
     private ScriptValue newValue( final JSObject value )
