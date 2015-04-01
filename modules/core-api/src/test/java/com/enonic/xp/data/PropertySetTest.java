@@ -1,11 +1,9 @@
 package com.enonic.xp.data;
 
-import org.junit.Test;
+import java.util.List;
+import java.util.Map;
 
-import com.enonic.xp.data.Property;
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.Value;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -186,4 +184,17 @@ public class PropertySetTest
         assertSame( innerSetProperty, tree.getProperty( innerSetProperty.getId() ) );
         assertSame( innerStringProperty, tree.getProperty( innerStringProperty.getId() ) );
     }
+
+    @Test
+    public void toMap()
+    {
+        PropertySet set = new PropertySet();
+        Property aProperty = set.addString( "myString", "a" );
+        Property bProperty = set.addString( "myString", "b" );
+        Property cProperty = set.addString( "mySpecialString", "b" );
+        Map<String, Object> map = set.toMap();
+        assertEquals( 2, map.size() );
+        assertEquals( "b", ( (List<String>) map.get( "myString" ) ).get( 1 ) );
+    }
+
 }
