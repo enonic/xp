@@ -5,6 +5,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeProvider;
@@ -25,6 +26,8 @@ public final class ContentTypeServiceImpl
     private final ContentTypeRegistry registry;
 
     private MixinService mixinService;
+
+    private EventPublisher eventPublisher;
 
     public ContentTypeServiceImpl()
     {
@@ -104,5 +107,12 @@ public final class ContentTypeServiceImpl
     public void removeProvider( final ContentTypeProvider provider )
     {
         this.registry.removeProvider( provider );
+    }
+
+    @Reference
+    public void setEventPublisher( final EventPublisher eventPublisher )
+    {
+        this.registry.setEventPublisher( eventPublisher );
+        this.eventPublisher = eventPublisher;
     }
 }
