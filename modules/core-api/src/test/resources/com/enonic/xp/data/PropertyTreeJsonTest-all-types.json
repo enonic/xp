@@ -110,7 +110,7 @@
   },
   {
     "name": "singleInstant",
-    "type": "DateTime",
+    "type": "Instant",
     "values": [
       {
         "id": "12",
@@ -428,6 +428,16 @@
     "values": [
       {
         "id": "52"
+      }
+    ]
+  },
+  {
+    "name": "singleDateTime",
+    "type": "DateTime",
+    "values": [
+      {
+        "id": "53",
+        "v": "2007-12-03T10:15:30+01:00"
       }
     ]
   }

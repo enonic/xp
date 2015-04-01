@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.junit.Test;
@@ -72,6 +73,8 @@ public class PropertyTreeJsonTest
         arraySet2.addLong( "long", 2L );
 
         tree.addSet( "nullSet", null );
+
+        tree.addDateTime( "singleDateTime", ZonedDateTime.parse( "2007-12-03T10:15:30+01:00" ) );
 
         return tree;
     }

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
@@ -14,6 +15,8 @@ import java.time.format.SignStyle;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
+
+import javafx.scene.input.ZoomEvent;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.util.BinaryReference;
@@ -33,6 +36,8 @@ final class JavaTypeConverters
             ChronoField.MONTH_OF_YEAR, 2 ).appendLiteral( '-' ).appendValue( ChronoField.DAY_OF_MONTH, 2 ).toFormatter();
 
     private final static DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
+    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     private final static DateTimeFormatter LOCAL_TIME_FORMATTER = new DateTimeFormatterBuilder().
         appendValue( HOUR_OF_DAY, 1, 2, SignStyle.NORMAL ).
@@ -59,7 +64,9 @@ final class JavaTypeConverters
 
     public final static JavaTypeConverter<ContentId> CONTENT_ID = newContentId();
 
-    public final static JavaTypeConverter<Instant> DATE_TIME = newInstant();
+    public final static JavaTypeConverter<Instant> INSTANT = newInstant();
+
+    public final static JavaTypeConverter<ZonedDateTime> DATE_TIME = newDateTime();
 
     public final static JavaTypeConverter<LocalDate> LOCAL_DATE = newLocalDate();
 
@@ -88,6 +95,10 @@ final class JavaTypeConverters
         else if ( value instanceof LocalDate )
         {
             return ( (LocalDate) value ).format( LOCAL_DATE_FORMATTER );
+        }
+        else if ( value instanceof ZonedDateTime )
+        {
+            return ( (ZonedDateTime) value ).format( DATE_TIME_FORMATTER );
         }
         else if ( value instanceof PropertySet )
         {
@@ -221,9 +232,45 @@ final class JavaTypeConverters
         {
             return ( (Instant) value );
         }
+        if ( value instanceof ZonedDateTime )
+        {
+            return ( (ZonedDateTime) value ).toInstant();
+        }
         else if ( value instanceof String )
         {
             return Instant.parse( (String) value );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static ZonedDateTime convertToDateTime( final Object value )
+    {
+        if ( value instanceof LocalDate )
+        {
+            return ( (LocalDate) value ).atStartOfDay( ZoneOffset.UTC );
+        }
+        if ( value instanceof LocalTime )
+        {
+            return ZonedDateTime.of( ( (LocalTime) value ).atDate( LocalDate.now() ), ZoneOffset.UTC );
+        }
+        if ( value instanceof LocalDateTime )
+        {
+            return ZonedDateTime.of( (LocalDateTime) value, ZoneOffset.UTC );
+        }
+        if ( value instanceof Instant )
+        {
+            return ZonedDateTime.ofInstant( (Instant) value, ZoneOffset.UTC );
+        }
+        if ( value instanceof ZonedDateTime )
+        {
+            return ( (ZonedDateTime) value );
+        }
+        else if ( value instanceof String )
+        {
+            return ZonedDateTime.parse( (String) value );
         }
         else
         {
@@ -413,6 +460,11 @@ final class JavaTypeConverters
     private static JavaTypeConverter<Instant> newInstant()
     {
         return new JavaTypeConverter<>( Instant.class, JavaTypeConverters::convertToInstant );
+    }
+
+    private static JavaTypeConverter<ZonedDateTime> newDateTime()
+    {
+        return new JavaTypeConverter<>( ZonedDateTime.class, JavaTypeConverters::convertToDateTime );
     }
 
     private static JavaTypeConverter<LocalDate> newLocalDate()
