@@ -51,6 +51,7 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.site.CreateSiteParams;
@@ -67,8 +68,10 @@ import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
@@ -287,14 +290,14 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content getById( final ContentId id )
+    public Content getById( final ContentId contentId )
     {
-        return doGetById( id );
+        return doGetById( contentId );
     }
 
-    private Content doGetById( final ContentId id )
+    private Content doGetById( final ContentId contentId )
     {
-        return GetContentByIdCommand.create( id ).
+        return GetContentByIdCommand.create( contentId ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.contentNodeTranslator ).
@@ -338,10 +341,13 @@ public class ContentServiceImpl
     }
 
     @Override
-    public AccessControlList getPermissionsByPath( ContentPath path ) {
-        Content content = getByPath(path);
-        if(content != null && content.getPermissions() != null)
+    public AccessControlList getPermissionsByPath( ContentPath path )
+    {
+        Content content = getByPath( path );
+        if ( content != null && content.getPermissions() != null )
+        {
             return content.getPermissions();
+        }
         return AccessControlList.empty();
     }
 
@@ -421,7 +427,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content move( final MoveContentParams params )
+    public Contents move( final MoveContentParams params )
     {
         final ContentPath destinationPath = params.getParentContentPath();
         if ( !destinationPath.isRoot() )
@@ -443,22 +449,27 @@ public class ContentServiceImpl
 
         try
         {
-            final Node sourceNode = nodeService.getById( NodeId.from( params.getContentId() ) );
-            if ( sourceNode == null )
+            final NodeIds sourceNodesIds =
+                NodeIds.from( params.getContentIds().stream().map( ContentId::toString ).toArray( String[]::new ) );
+            final Nodes sourceNodes = nodeService.getByIds( sourceNodesIds );
+            if ( sourceNodes == null )
             {
-                throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
+                throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentIds() ) );
             }
-            final Node movedNode = nodeService.move( NodeId.from( params.getContentId() ),
-                                                     NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
-                                                         params.getParentContentPath().toString() ).build() );
 
-            final ContentChangeEvent event = ContentChangeEvent.create().
-                change( ContentChangeEvent.ContentChangeType.DELETE, translateNodePathToContentPath( sourceNode.path() ) ).
-                change( ContentChangeEvent.ContentChangeType.CREATE, translateNodePathToContentPath( movedNode.path() ) ).
-                build();
-            eventPublisher.publish( event );
+            final Nodes movedNodes = nodeService.move( sourceNodesIds, NodePath.newPath( ContentConstants.CONTENT_ROOT_PATH ).elements(
+                                                           params.getParentContentPath().toString() ).build() );
 
-            return contentNodeTranslator.fromNode( movedNode );
+            final ContentChangeEvent.Builder builder = ContentChangeEvent.create();
+
+            sourceNodes.stream().forEach(
+                node -> builder.change( ContentChangeEvent.ContentChangeType.DELETE, translateNodePathToContentPath( node.path() ) ) );
+            movedNodes.stream().forEach(
+                node -> builder.change( ContentChangeEvent.ContentChangeType.CREATE, translateNodePathToContentPath( node.path() ) ) );
+
+            eventPublisher.publish( builder.build() );
+
+            return contentNodeTranslator.fromNodes( movedNodes );
         }
         catch ( MoveNodeException e )
         {
@@ -539,6 +550,20 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             contentId( params.getContentId() ).
             branches( params.getBranches() ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Content sort( final SortContentParams params )
+    {
+        Content content = doGetById( params.getContentId() );
+
+        return SortContentCommand.create( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.contentNodeTranslator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }

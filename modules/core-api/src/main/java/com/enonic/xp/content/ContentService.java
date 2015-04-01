@@ -31,7 +31,9 @@ public interface ContentService
 
     Content duplicate( DuplicateContentParams params );
 
-    Content move( MoveContentParams params );
+    Contents move( MoveContentParams params );
+
+    Content sort( SortContentParams params );
 
     Content setChildOrder( SetContentChildOrderParams params );
 
@@ -39,7 +41,7 @@ public interface ContentService
 
     CompletableFuture<Integer> applyPermissions( ApplyContentPermissionsParams params );
 
-    Content getById( ContentId id );
+    Content getById( ContentId contentId );
 
     Site getNearestSite( ContentId contentId );
 

@@ -1,13 +1,12 @@
 package com.enonic.xp.core.impl.export.builder;
 
-import com.enonic.xp.core.impl.export.xml.XmlNode;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.UpdateNodeParams;
 
 public class UpdateNodeParamsFactory
 {
-    private final XmlNode xmlNode;
+    private final Node newNode;
 
     private final BinaryAttachments binaryAttachments;
 
@@ -17,7 +16,7 @@ public class UpdateNodeParamsFactory
 
     private UpdateNodeParamsFactory( final Builder builder )
     {
-        this.xmlNode = builder.xmlNode;
+        this.newNode = builder.newNode;
         this.binaryAttachments = builder.binaryAttachments;
         this.existingNode = builder.existingNode;
         this.dryRun = builder.dryRun;
@@ -29,7 +28,7 @@ public class UpdateNodeParamsFactory
             dryRun( this.dryRun ).
             id( this.existingNode.id() ).
             setBinaryAttachments( binaryAttachments ).
-            editor( editableNode -> editableNode.data = PropertyTreeXmlBuilder.build( xmlNode.getData() ) );
+            editor( editableNode -> editableNode.data = newNode.data() );
 
         return builder.build();
     }
@@ -42,7 +41,7 @@ public class UpdateNodeParamsFactory
 
     public static final class Builder
     {
-        private XmlNode xmlNode;
+        private Node newNode;
 
         private BinaryAttachments binaryAttachments;
 
@@ -54,9 +53,9 @@ public class UpdateNodeParamsFactory
         {
         }
 
-        public Builder xmlNode( XmlNode xmlNode )
+        public Builder newNode( Node newNode )
         {
-            this.xmlNode = xmlNode;
+            this.newNode = newNode;
             return this;
         }
 

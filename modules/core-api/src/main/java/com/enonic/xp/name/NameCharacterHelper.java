@@ -9,10 +9,10 @@ import com.google.common.collect.ImmutableMap;
 
 public class NameCharacterHelper
 {
-    final static char[] ADDITIONAL_ALLOWED_CHARACTERS =
+    private final static char[] ADDITIONAL_ALLOWED_CHARACTERS =
         {' ', '.', '-', '_', ':', '#', '%', '+', '^', '&', '(', ')', '<', '>', ';', '$', '\''};
 
-    public final static char[] EXIPLICITLY_ILLEGAL_CHARACTERS = {'/', '\\'};
+    private final static char[] EXIPLICITLY_ILLEGAL_CHARACTERS = {'/', '\\'};
 
     static final String DEFAULT_REPLACE = "";
 
@@ -267,6 +267,10 @@ public class NameCharacterHelper
     static String getUnicodeString( final char c )
     {
         return "\\u" + Integer.toHexString( c | 0x10000 ).substring( 1 );
+    }
+
+    public static char[] getExplicitlyIllegalCharacters() {
+        return EXIPLICITLY_ILLEGAL_CHARACTERS.clone();
     }
 
 }

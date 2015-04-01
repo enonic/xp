@@ -43,7 +43,7 @@ module api {
 
         private static init() {
             var M = navigator.userAgent.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-            BrowserHelper.BROWSER_NAME = BrowserName[M[1].toLocaleUpperCase()];
+            BrowserHelper.BROWSER_NAME = (<any>BrowserName)[M[1].toLocaleUpperCase()];
             BrowserHelper.BROWSER_VERSION = M[2];
 
             BrowserHelper.AVAILABLE_VERSIONS[BrowserName.CHROME] = "39";

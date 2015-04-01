@@ -8,13 +8,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.core.impl.export.builder.CreateNodeParamsFactory;
-import com.enonic.xp.core.impl.export.builder.PropertyTreeXmlBuilder;
 import com.enonic.xp.core.impl.export.builder.UpdateNodeParamsFactory;
 import com.enonic.xp.core.impl.export.reader.ExportReader;
 import com.enonic.xp.core.impl.export.validator.ContentImportValidator;
 import com.enonic.xp.core.impl.export.validator.ImportValidator;
-import com.enonic.xp.core.impl.export.xml.XmlNode;
-import com.enonic.xp.core.impl.export.xml.serializer.XmlNodeSerializer;
+import com.enonic.xp.core.impl.export.xml.XmlNodeParser;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -43,8 +41,6 @@ public class NodeImportCommand
 
     private final NodeService nodeService;
 
-    private final XmlNodeSerializer xmlNodeSerializer;
-
     private final VirtualFile exportRoot;
 
     private final ExportReader exportReader = new ExportReader();
@@ -61,7 +57,6 @@ public class NodeImportCommand
     {
         this.nodeService = builder.nodeService;
         this.exportRoot = builder.exportRoot;
-        this.xmlNodeSerializer = builder.xmlNodeSerializer;
         this.importRoot = builder.importRoot;
         this.dryRun = builder.dryRun;
         this.importNodeIds = builder.importNodeIds;
@@ -175,7 +170,13 @@ public class NodeImportCommand
     {
         final VirtualFile nodeSource = this.exportReader.getNodeSource( nodeFolder );
 
-        final XmlNode xmlNode = this.xmlNodeSerializer.parse( nodeSource.getByteSource() );
+        final Node.Builder newNodeBuilder = Node.newNode();
+        final XmlNodeParser parser = new XmlNodeParser();
+        parser.builder( newNodeBuilder );
+        parser.source( nodeSource.getCharSource() );
+        parser.parse();
+
+        final Node newNode = newNodeBuilder.build();
 
         final NodePath importNodePath = NodeImportPathResolver.resolveNodeImportPath( nodeFolder, this.exportRoot, this.importRoot );
 
@@ -183,20 +184,20 @@ public class NodeImportCommand
 
         if ( existingNode != null )
         {
-            return updateNode( nodeFolder, xmlNode, existingNode );
+            return updateNode( nodeFolder, newNode, existingNode );
         }
         else
         {
-            return createNode( nodeFolder, processNodeSettings, xmlNode, importNodePath );
+            return createNode( nodeFolder, processNodeSettings, newNode, importNodePath );
         }
     }
 
-    private Node updateNode( final VirtualFile nodeFolder, final XmlNode xmlNode, final Node existingNode )
+    private Node updateNode( final VirtualFile nodeFolder, final Node newNode, final Node existingNode )
     {
-        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, xmlNode );
+        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, newNode );
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create().
-            xmlNode( xmlNode ).
+            newNode( newNode ).
             binaryAttachments( binaryAttachments ).
             existingNode( existingNode ).
             dryRun( this.dryRun ).
@@ -210,14 +211,14 @@ public class NodeImportCommand
         return updatedNode;
     }
 
-    private Node createNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings, final XmlNode xmlNode,
+    private Node createNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings, final Node newNode,
                              final NodePath importNodePath )
     {
-        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, xmlNode );
+        final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, newNode );
 
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create().
             processNodeSettings( processNodeSettings.build() ).
-            xmlNode( xmlNode ).
+            newNode( newNode ).
             importPath( importNodePath ).
             binaryAttachments( binaryAttachments ).
             importNodeIds( this.importNodeIds ).
@@ -241,9 +242,9 @@ public class NodeImportCommand
         return orderFile.getCharSource().readLines();
     }
 
-    private BinaryAttachments processBinaryAttachments( final VirtualFile nodeFile, final XmlNode xmlNode )
+    private BinaryAttachments processBinaryAttachments( final VirtualFile nodeFile, final Node newNode )
     {
-        final PropertyTree data = PropertyTreeXmlBuilder.build( xmlNode.getData() );
+        final PropertyTree data = newNode.data();
 
         final Set<Property> binaryReferences = data.getByValueType( ValueTypes.BINARY_REFERENCE );
 
@@ -314,8 +315,6 @@ public class NodeImportCommand
 
         private NodeService nodeService;
 
-        private XmlNodeSerializer xmlNodeSerializer;
-
         private VirtualFile exportRoot;
 
         private boolean dryRun = false;
@@ -341,12 +340,6 @@ public class NodeImportCommand
         public Builder nodeService( NodeService nodeService )
         {
             this.nodeService = nodeService;
-            return this;
-        }
-
-        public Builder xmlNodeSerializer( XmlNodeSerializer xmlNodeSerializer )
-        {
-            this.xmlNodeSerializer = xmlNodeSerializer;
             return this;
         }
 

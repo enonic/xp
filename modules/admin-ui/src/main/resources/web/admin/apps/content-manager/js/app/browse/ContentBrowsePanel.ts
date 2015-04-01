@@ -120,7 +120,7 @@ module app.browse {
             });
 
             api.content.ContentChildOrderUpdatedEvent.on((event) => {
-                this.handleChildOrderUpdated(event);
+                //this.handleChildOrderUpdated(event);
             });
 
             ToggleSearchPanelEvent.on(() => {
@@ -145,7 +145,6 @@ module app.browse {
 
         private contentServerEventHandler(event: ContentServerEvent) {
             // TODO: IMPORTANT! Publishing multiple items may generate repeated event.
-
             /*
              * When handling the DELETE-CREATE sequence, we need to remember the removed nodes,
              * because this sequence only appears when node is updated or moved (path is changed).
@@ -161,26 +160,29 @@ module app.browse {
             changes.forEach((change: ContentServerChange) => {
                 switch (change.getChangeType()) {
                 case ContentServerChangeType.CREATE:
-                    promise = this.handleContentCreated(change, promise);
+                    promise = this.handleContentCreated(change, promise, changes);
                     break;
                 case ContentServerChangeType.UPDATE:
-                    promise = this.handleContentUpdated(change, promise);
+                    promise = this.handleContentUpdated(change, promise, changes);
                     break;
                 case ContentServerChangeType.RENAME:
-                    promise = this.handleContentRenamed(change, promise);
+                    promise = this.handleContentRenamed(change, promise, changes);
                     break;
                 case ContentServerChangeType.DELETE:
-                    promise = this.handleContentDeleted(change, promise);
+                    promise = this.handleContentDeleted(change, promise, changes);
                     break;
                 case ContentServerChangeType.PENDING:
-                    promise = this.handleContentPending(change, promise);
+                    promise = this.handleContentPending(change, promise, changes);
                     break;
                 case ContentServerChangeType.DUPLICATE:
                     // same logic as for creation
-                    promise = this.handleContentCreated(change, promise);
+                    promise = this.handleContentCreated(change, promise, changes);
                     break;
                 case ContentServerChangeType.PUBLISH:
-                    promise = this.handleContentPublished(change, promise);
+                    promise = this.handleContentPublished(change, promise, changes);
+                    break;
+                case ContentServerChangeType.SORT:
+                    promise = this.handleContentSorted(change, promise, changes);
                     break;
                 case ContentServerChangeType.UNKNOWN:
                     break;
@@ -192,7 +194,8 @@ module app.browse {
             deferred.resolve(null);
         }
 
-        private handleContentCreated(change: ContentServerChange, promise: wemQ.Promise<any>): wemQ.Promise<any> {
+        private handleContentCreated(change: ContentServerChange, promise: wemQ.Promise<any>,
+                                     changes: ContentServerChange[]): wemQ.Promise<any> {
             promise = promise.then((result: ContentChangeResult) => {
 
                 var createResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths(), true);
@@ -222,14 +225,14 @@ module app.browse {
                                             }
                                         });
                                     } else {
-                                        nodes = nodes.concat(
-                                            this.contentTreeGrid.xAppendContentNodes(
-                                                createResult[i].getNodes().map((node) => {
-                                                    return new api.content.TreeNodeParentOfContent(el, node);
-                                                }),
-                                                !isFiltered
-                                            )
-                                        );
+                                        this.contentTreeGrid.xAppendContentNodes(
+                                            createResult[i].getNodes().map((node) => {
+                                                return new api.content.TreeNodeParentOfContent(el, node);
+                                            }),
+                                            !isFiltered
+                                        ).then((results) => {
+                                                nodes = nodes.concat(results);
+                                            });
                                     }
                                     break;
                                 }
@@ -262,33 +265,42 @@ module app.browse {
             return promise;
         }
 
-        private handleContentUpdated(change: ContentServerChange, promise: wemQ.Promise<any>): wemQ.Promise<any> {
-            promise = promise.then((result: ContentChangeResult) => {
+        private handleContentUpdated(change: ContentServerChange, promise: wemQ.Promise<any>,
+                                     changes: ContentServerChange[]): wemQ.Promise<any> {
 
-                var updateResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+            if (changes.length === 1) {
+                promise = promise.then((result: ContentChangeResult) => {
 
-                return ContentSummaryAndCompareStatusFetcher.
-                    fetchByPaths(updateResult.map((el) => {
-                        return el.getPath();
-                    })).
-                    then((data: ContentSummaryAndCompareStatus[]) => {
-                        data.forEach((el) => {
-                            for (var i = 0; i < updateResult.length; i++) {
-                                if (updateResult[i].getId() === el.getId()) {
-                                    updateResult[i].updateNodeData(el);
-                                    this.updateStatisticsPreview(el); // update preview item
-                                    break;
+                    var updateResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+
+                    return ContentSummaryAndCompareStatusFetcher.
+                        fetchByPaths(updateResult.map((el) => {
+                            return el.getPath();
+                        })).
+                        then((data: ContentSummaryAndCompareStatus[]) => {
+                            var results = [];
+                            data.forEach((el) => {
+                                for (var i = 0; i < updateResult.length; i++) {
+                                    if (updateResult[i].getId() === el.getId()) {
+                                        updateResult[i].updateNodeData(el);
+                                        this.updateStatisticsPreview(el); // update preview item
+                                        results.push(updateResult[i]);
+                                        break;
+                                    }
                                 }
-                            }
+                            });
+                            this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems()); // update actions state in case of permission changes
+
+                            return this.contentTreeGrid.xPlaceContentNodes(results);
                         });
-                        this.browseActions.updateActionsEnabledState(this.getBrowseItemPanel().getItems()); // update actions state in case of permission changes
-                        this.contentTreeGrid.resetAndRender();
-                    });
-            });
+                });
+            }
+
             return promise;
         }
 
-        private handleContentRenamed(change: ContentServerChange, promise: wemQ.Promise<any>): wemQ.Promise<any> {
+        private handleContentRenamed(change: ContentServerChange, promise: wemQ.Promise<any>,
+                                     changes: ContentServerChange[]): wemQ.Promise<any> {
             promise = promise.then((result: ContentChangeResult) => {
                 var renameResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
@@ -297,7 +309,8 @@ module app.browse {
             return promise;
         }
 
-        private handleContentDeleted(change: ContentServerChange, promise: wemQ.Promise<any>): wemQ.Promise<any> {
+        private handleContentDeleted(change: ContentServerChange, promise: wemQ.Promise<any>,
+                                     changes: ContentServerChange[]): wemQ.Promise<any> {
             promise = promise.then((result: ContentChangeResult) => {
                 // Do not remove renamed elements
                 if (result && result.getChangeType() === ContentServerChangeType.RENAME) {
@@ -334,7 +347,8 @@ module app.browse {
             return promise;
         }
 
-        private handleContentPending(change: ContentServerChange, promise: wemQ.Promise<any>): wemQ.Promise<any> {
+        private handleContentPending(change: ContentServerChange, promise: wemQ.Promise<any>,
+                                     changes: ContentServerChange[]): wemQ.Promise<any> {
             promise = promise.then(() => {
 
                 var pendingResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
@@ -364,7 +378,8 @@ module app.browse {
             return promise;
         }
 
-        private handleContentPublished(change: ContentServerChange, promise: wemQ.Promise<any>): wemQ.Promise<any> {
+        private handleContentPublished(change: ContentServerChange, promise: wemQ.Promise<any>,
+                                       changes: ContentServerChange[]): wemQ.Promise<any> {
             promise = promise.then(() => {
                 var publishResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
 
@@ -388,11 +403,21 @@ module app.browse {
             return promise;
         }
 
-        private handleChildOrderUpdated(event: api.content.ContentChildOrderUpdatedEvent) {
-            this.contentTreeGrid.updateContentNode(event.getContentId());
-            var updatedNode = this.contentTreeGrid.getRoot().getCurrentRoot()
-                .findNode(event.getContentId().toString());
-            this.contentTreeGrid.sortNodeChildren(updatedNode);
+        private handleContentSorted(change: ContentServerChange, promise: wemQ.Promise<any>,
+                                    changes: ContentServerChange[]): wemQ.Promise<any> {
+            promise = promise.then((result: ContentChangeResult) => {
+                var sortResult: TreeNodesOfContentPath[] = this.contentTreeGrid.findByPaths(change.getContentPaths());
+
+                var nodes = sortResult.map((el) => {
+                    return el.getNodes();
+                });
+                var merged = [];
+                // merge array of nodes arrays
+                merged = merged.concat.apply(merged, nodes);
+
+                this.contentTreeGrid.xSortNodesChildren(merged).then(() => this.contentTreeGrid.resetAndRender());
+            });
+            return promise;
         }
 
         private handleNewMediaUpload(event: app.create.NewMediaUploadEvent) {

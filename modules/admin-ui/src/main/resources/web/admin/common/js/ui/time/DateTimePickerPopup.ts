@@ -72,7 +72,7 @@ module api.ui.time {
                 setCloseOnOutsideClick(false).
                 setMinutes(builder.getMinutes()).build();
 
-            this.appendChildren(this.datePickerPopup, this.timePickerPopup);
+            this.appendChildren(<api.dom.Element>this.datePickerPopup, <api.dom.Element>this.timePickerPopup);
 
             if (closeOnOutsideClick) {
                 api.dom.Body.get().onClicked((e: MouseEvent) => this.outsideClickListener(e));

@@ -2,6 +2,8 @@ module api.content {
 
     export class OrderContentRequest extends ContentResourceRequest<any, any> {
 
+        private silent: boolean = false;
+
         private contentId: ContentId;
 
         private childOrder: ChildOrder;
@@ -21,13 +23,17 @@ module api.content {
             return this;
         }
 
+        setSilent(silent: boolean): OrderContentRequest {
+            this.silent = silent;
+            return this;
+        }
 
         getParams(): Object {
             return this.contentToJson();
         }
 
         private contentToJson(): json.SetChildOrderJson {
-            return ChildOrder.toSetChildOrderJson(this.contentId, this.childOrder);
+            return ChildOrder.toSetChildOrderJson(this.contentId, this.childOrder, this.silent);
         }
 
         getRequestPath(): api.rest.Path {

@@ -1,18 +1,23 @@
 package com.enonic.wem.repo.internal.index.query;
 
+import java.util.List;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
+import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
+import com.enonic.wem.repo.internal.index.IndexValueType;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.ValueFilter;
-import com.enonic.wem.repo.internal.index.IndexFieldNameNormalizer;
-import com.enonic.wem.repo.internal.index.IndexValueType;
 
 public class IndexQueryFieldNameResolver
 {
+    private final static List<String> BUILT_IN_FIELDS = Lists.newArrayList( "_score", "_id" );
+
     public static String resolve( final CompareExpr compareExpr )
     {
         final FieldExpr field = compareExpr.getField();
@@ -63,7 +68,14 @@ public class IndexQueryFieldNameResolver
 
     public static String resolveOrderByFieldName( final String queryFieldName )
     {
-        return appendIndexValueType( IndexFieldNameNormalizer.normalize( queryFieldName ), IndexValueType.ORDERBY );
+        final String normalizedFieldName = IndexFieldNameNormalizer.normalize( queryFieldName );
+
+        if ( BUILT_IN_FIELDS.contains( normalizedFieldName ) )
+        {
+            return normalizedFieldName;
+        }
+
+        return appendIndexValueType( normalizedFieldName, IndexValueType.ORDERBY );
     }
 
     public static String resolveGeoPointFieldName( final String queryFieldName )

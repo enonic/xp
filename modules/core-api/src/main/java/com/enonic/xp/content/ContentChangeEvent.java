@@ -85,7 +85,8 @@ public final class ContentChangeEvent
         UPDATE( "U" ),
         DELETE( "X" ),
         PENDING( "A" ),
-        RENAME( "R" );
+        RENAME( "R" ),
+        SORT( "S" );
 
         private final String id;
 

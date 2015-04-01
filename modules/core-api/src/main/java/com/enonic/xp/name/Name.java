@@ -21,7 +21,7 @@ public class Name
         Preconditions.checkNotNull( name, "name cannot be null" );
         Preconditions.checkArgument( !name.trim().isEmpty(), "name cannot be empty" );
         Preconditions.checkArgument( NameCharacterHelper.hasNoExplicitIllegal( name ), "Invalid name: '" + name + "'. Cannot contain " +
-            Arrays.toString( NameCharacterHelper.EXIPLICITLY_ILLEGAL_CHARACTERS ) );
+            Arrays.toString( NameCharacterHelper.getExplicitlyIllegalCharacters() ) );
         checkValidName( name );
     }
 

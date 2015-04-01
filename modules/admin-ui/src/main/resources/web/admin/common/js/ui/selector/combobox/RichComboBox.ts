@@ -163,6 +163,10 @@ module api.ui.selector.combobox {
             this.comboBox.selectOption(this.createOption(value));
         }
 
+        selectReadOnly(value: OPTION_DISPLAY_VALUE) {
+            this.comboBox.selectOption(this.createOptionReadOnly(value));
+        }
+
         selectByOption(option: Option<OPTION_DISPLAY_VALUE>) {
             this.comboBox.selectOption(option);
         }
@@ -195,6 +199,14 @@ module api.ui.selector.combobox {
             return {
                 value: this.getDisplayValueId(value),
                 displayValue: value
+            }
+        }
+
+        private createOptionReadOnly(value: OPTION_DISPLAY_VALUE): Option<OPTION_DISPLAY_VALUE> {
+            return {
+                value: this.getDisplayValueId(value),
+                displayValue: value,
+                readOnly: true
             }
         }
 

@@ -60,7 +60,8 @@ public final class ContentJson
         final List<AccessControlEntryJson> jsonList = new ArrayList<>();
         for ( AccessControlEntry entry : acl )
         {
-            jsonList.add( new AccessControlEntryJson( entry, principals.getPrincipal( entry.getPrincipal() ) ) );
+            if(principals.getPrincipal( entry.getPrincipal() ) != null)
+               jsonList.add( new AccessControlEntryJson( entry, principals.getPrincipal( entry.getPrincipal() ) ) );
         }
         return jsonList;
     }

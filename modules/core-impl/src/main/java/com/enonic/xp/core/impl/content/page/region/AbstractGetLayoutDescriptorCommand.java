@@ -12,14 +12,13 @@ import com.enonic.xp.content.page.region.LayoutDescriptor;
 import com.enonic.xp.content.page.region.LayoutDescriptors;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
 import com.enonic.xp.module.Module;
+import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.module.Modules;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.xml.mapper.XmlLayoutDescriptorMapper;
-import com.enonic.xp.xml.model.XmlLayoutDescriptor;
-import com.enonic.xp.xml.serializer.XmlSerializers;
+import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 
 abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDescriptorCommand>
 {
@@ -37,8 +36,7 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         final String descriptorXml = resource.readString();
         final LayoutDescriptor.Builder builder = LayoutDescriptor.create();
 
-        final XmlLayoutDescriptor xmlObject = XmlSerializers.layoutDescriptor().parse( descriptorXml );
-        new XmlLayoutDescriptorMapper( resourceKey.getModule() ).fromXml( xmlObject, builder );
+        parseXml( resourceKey.getModule(), builder, descriptorXml );
 
         builder.name( key.getName() ).key( key );
         final LayoutDescriptor layoutDescriptor = builder.build();
@@ -46,6 +44,15 @@ abstract class AbstractGetLayoutDescriptorCommand<T extends AbstractGetLayoutDes
         return LayoutDescriptor.copyOf( layoutDescriptor ).
             config( inlineMixinsTransformer.transformForm( layoutDescriptor.getConfig() ) ).
             build();
+    }
+
+    private void parseXml( final ModuleKey moduleKey, final LayoutDescriptor.Builder builder, final String xml )
+    {
+        final XmlLayoutDescriptorParser parser = new XmlLayoutDescriptorParser();
+        parser.builder( builder );
+        parser.currentModule( moduleKey );
+        parser.source( xml );
+        parser.parse();
     }
 
     protected final LayoutDescriptors getDescriptorsFromModules( final Modules modules )

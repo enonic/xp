@@ -1,4 +1,6 @@
 {
+  "silent": false,
+  "contentId": "content-id-0",
   "reorderChildren": [
     {
       "contentId": "content-id-1",

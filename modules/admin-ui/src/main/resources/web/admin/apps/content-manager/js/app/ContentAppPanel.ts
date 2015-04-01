@@ -278,7 +278,7 @@ module app {
         private handleMove(event: app.browse.MoveContentEvent) {
 
             var contents: ContentSummary[] = event.getModels();
-            new app.browse.OpenMoveDialogEvent(contents[0]).fire();
+            new app.browse.OpenMoveDialogEvent(contents).fire();
         }
 
         private handleContentNamedEvent(event: ContentNamedEvent) {
