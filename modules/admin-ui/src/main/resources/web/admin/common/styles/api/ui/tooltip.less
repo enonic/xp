@@ -1,4 +1,7 @@
 .tooltip {
+  .reset();
+  .opacity(1);
+
   position: absolute;
   background: @admin-tooltip-bg;
   padding: 5px !important; // to override bootstraps .tooltip.top etc.
@@ -6,7 +9,6 @@
   font-size: 11px;
   color: @admin-dark-gray;
   pointer-events: none; // to fight tooltip hijacking mouse over when lagging behind mouse
-  .opacity(1);
 
   &:before {
     content: " ";
