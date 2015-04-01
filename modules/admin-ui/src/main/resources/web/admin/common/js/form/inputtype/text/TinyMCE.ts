@@ -44,12 +44,20 @@ module api.form.inputtype.text {
                     ],
                     menubar: false,
                     statusbar: false,
+                    plugins: 'autoresize',
+                    autoresize_min_height: 100,
+                    autoresize_max_height: 400,
+                    autoresize_bottom_margin: 0,
+                    height: 100,
 
                     setup: (editor) => {
                         editor.on('change', (e) => {
                             var value = this.newValue(this.editor.getContent());
                             property.setValue(value);
                         });
+                    },
+                    init_instance_callback: (editor) => {
+                        editor.execCommand('mceAutoResize');
                     }
                 });
 

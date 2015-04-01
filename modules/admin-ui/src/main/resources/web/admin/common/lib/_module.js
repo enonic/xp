@@ -25,3 +25,4 @@
 // @include medium/medium-editor.js
 // @include tinymce/tinymce.js
 // @include tinymce/themes/modern/theme.js
+// @include tinymce/plugins/autoresize/plugin.js
