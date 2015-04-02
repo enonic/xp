@@ -68,6 +68,8 @@ module api.form.inputtype.support {
             else {
                 this.addClass("multiple-occurrence").removeClass("single-occurrence");
             }
+
+            this.removeButtonEl.setVisible(this.inputOccurrence.showRemoveButtonStrict());
         }
 
         getDataPath(): api.data.PropertyPath {
