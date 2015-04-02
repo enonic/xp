@@ -271,7 +271,7 @@ module api.content.page.region {
         }
     }
 
-    class RegionsBuilder {
+    export class RegionsBuilder {
 
         regions: Region[] = [];
 

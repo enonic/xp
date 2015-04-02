@@ -207,7 +207,7 @@ module api.liveedit {
         }
     }
 
-    class LiveEditModelBuilder {
+    export class LiveEditModelBuilder {
 
         siteModel: SiteModel;
 

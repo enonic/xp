@@ -82,7 +82,7 @@ module api.content {
 
     }
 
-    class ContentComboBoxBuilder {
+    export class ContentComboBoxBuilder {
 
         name: string;
 

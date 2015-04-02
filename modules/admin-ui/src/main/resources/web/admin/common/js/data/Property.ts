@@ -322,7 +322,7 @@ module api.data {
         }
     }
 
-    class PropertyBuilder {
+    export class PropertyBuilder {
 
         array: PropertyArray;
 

@@ -67,7 +67,7 @@ module api.content.site {
         }
     }
 
-    class ModuleConfigBuilder {
+    export class ModuleConfigBuilder {
 
         moduleKey: ModuleKey;
 
