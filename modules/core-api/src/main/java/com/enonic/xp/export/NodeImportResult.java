@@ -74,7 +74,8 @@ public class NodeImportResult
     public String toString()
     {
         return "NodeImportResult{" +
-            "addedNodes=" + addedNodes +
+            "dryRun=" + dryRun +
+            ", addedNodes=" + addedNodes +
             ", updateNodes=" + updateNodes +
             ", importErrors=" + Arrays.toString( importErrors.toArray() ) +
             ", exportedBinaries=" + Arrays.toString( exportedBinaries.toArray() ) +
