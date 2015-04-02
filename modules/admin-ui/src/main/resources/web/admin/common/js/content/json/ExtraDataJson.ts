@@ -1,6 +1,6 @@
 module api.content.json {
 
-    export interface MetadataJson {
+    export interface ExtraDataJson {
 
         name: string;
 

@@ -15,7 +15,7 @@ module app.wizard {
     import CreateContentRequest = api.content.CreateContentRequest;
     import UpdateContentRequest = api.content.UpdateContentRequest;
     import ContentIconUrlResolver = api.content.ContentIconUrlResolver;
-    import Metadata = api.content.Metadata;
+    import ExtraData = api.content.ExtraData;
     import Page = api.content.page.Page;
     import Site = api.content.site.Site;
     import SiteModel = api.content.site.SiteModel;
@@ -444,7 +444,7 @@ module app.wizard {
                                 viewedContent.getPage().getConfig());
                         }
                     }
-                    if (!api.ObjectHelper.arrayEquals(viewedContent.getAllMetadata(), persistedContent.getAllMetadata())) {
+                    if (!api.ObjectHelper.arrayEquals(viewedContent.getAllExtraData(), persistedContent.getAllExtraData())) {
                         console.warn(" inequality found in Content.meta");
                     }
                     if (!api.ObjectHelper.equals(viewedContent.getAttachments(), persistedContent.getAttachments())) {
@@ -533,15 +533,15 @@ module app.wizard {
 
 
                 schemas.forEach((schema: Mixin, index: number) => {
-                    var metadata = content.getMetadata(schema.getMixinName());
-                    if (!metadata) {
-                        metadata = new Metadata(schema.getMixinName(), new PropertyTree(api.Client.get().getPropertyIdProvider()));
-                        content.getAllMetadata().push(metadata);
+                    var extraData = content.getExtraData(schema.getMixinName());
+                    if (!extraData) {
+                        extraData = new ExtraData(schema.getMixinName(), new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                        content.getAllExtraData().push(extraData);
                     }
                     var metadataFormView = this.metadataStepFormByName[schema.getMixinName().toString()];
                     var metadataForm = new api.form.FormBuilder().addFormItems(schema.getFormItems()).build();
 
-                    formViewLayoutPromises.push(metadataFormView.layout(formContext, metadata.getData(), metadataForm));
+                    formViewLayoutPromises.push(metadataFormView.layout(formContext, extraData.getData(), metadataForm));
                 });
 
                 return wemQ.all(formViewLayoutPromises).spread<void>(() => {
@@ -629,7 +629,7 @@ module app.wizard {
 
                     var mixinNames = currentModule.getMetaSteps();
 
-                    //remove already existing metadata
+                    //remove already existing extraData
                     var mixinNamesToAdd = mixinNames.filter((mixinName: MixinName) => {
                         return !this.metadataStepFormByName[mixinName.toString()];
                     });
@@ -648,9 +648,9 @@ module app.wizard {
                             var wizardStep = new WizardStep(mixin.getDisplayName(), stepForm);
                             this.insertStepBefore(wizardStep, this.settingsWizardStep);
 
-                            var metadata = new Metadata(mixin.getMixinName(), new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                            var extraData = new ExtraData(mixin.getMixinName(), new PropertyTree(api.Client.get().getPropertyIdProvider()));
 
-                            stepForm.layout(this.createFormContext(this.getPersistedItem()), metadata.getData(), mixin.toForm());
+                            stepForm.layout(this.createFormContext(this.getPersistedItem()), extraData.getData(), mixin.toForm());
                         }
                     });
 
@@ -718,7 +718,7 @@ module app.wizard {
                         setContentType(this.contentType.getContentTypeName()).
                         setDisplayName(this.contentWizardHeader.getDisplayName()).
                         setData(data).
-                        setMetadata([]));
+                        setExtraData([]));
 
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
@@ -758,7 +758,7 @@ module app.wizard {
                 setContentName(viewedContent.getName()).
                 setDisplayName(viewedContent.getDisplayName()).
                 setData(viewedContent.getContentData()).
-                setMetadata(viewedContent.getAllMetadata()).
+                setExtraData(viewedContent.getAllExtraData()).
                 setOwner(viewedContent.getOwner()).
                 setLanguage(viewedContent.getLanguage());
 
@@ -796,14 +796,14 @@ module app.wizard {
                 viewedContentBuilder.setData(this.contentWizardStepForm.getData());
             }
 
-            var metadata: Metadata[] = [];
+            var extraData: ExtraData[] = [];
             for (var key in this.metadataStepFormByName) {
                 if (this.metadataStepFormByName.hasOwnProperty(key)) {
-                    metadata.push(new Metadata(new MixinName(key), this.metadataStepFormByName[key].getData()));
+                    extraData.push(new ExtraData(new MixinName(key), this.metadataStepFormByName[key].getData()));
                 }
             }
 
-            viewedContentBuilder.setMetadata(metadata);
+            viewedContentBuilder.setExtraData(extraData);
 
             this.settingsWizardStepForm.getModel().apply(viewedContentBuilder);
 
@@ -984,9 +984,9 @@ module app.wizard {
 
         /**
          * Sets listener for image upload event.
-         * In case of this event - only content metadata requires handling.
+         * In case of this event - only content extraData requires handling.
          * In case of image upload event was generated with ImageUploader used in this wizard -
-         * we update: thumbnail icon, persisted item and metadata step forms.
+         * we update: thumbnail icon, persisted item and extraData step forms.
          * Image upload event is triggered after media/content back-end update, so there is no need to explicitly call save on this event.
          */
         private handleImageUpload(wizard: ContentWizardPanel) {
@@ -1004,7 +1004,7 @@ module app.wizard {
         }
 
         /**
-         * Synchronizes wizard's metadata step forms with passed content - erases steps forms (meta)data and populates it with content's (meta)data.
+         * Synchronizes wizard's extraData step forms with passed content - erases steps forms (meta)data and populates it with content's (meta)data.
          * @param wizard - content wizard to update. Passed explicitly to avoid mess with 'this' for global events.
          * @param content
          */
@@ -1014,12 +1014,12 @@ module app.wizard {
                 if (wizard.metadataStepFormByName.hasOwnProperty(key)) {
                     wizard.metadataStepFormByName[key].removeChildren();
                     var mixinName = new MixinName(key);
-                    var metadata = content.getMetadata(mixinName);
-                    if (!metadata) { // ensure Metadata object corresponds to each step form
-                        metadata = new Metadata(mixinName, new PropertyTree(api.Client.get().getPropertyIdProvider()));
-                        content.getAllMetadata().push(metadata);
+                    var extraData = content.getExtraData(mixinName);
+                    if (!extraData) { // ensure ExtraData object corresponds to each step form
+                        extraData = new ExtraData(mixinName, new PropertyTree(api.Client.get().getPropertyIdProvider()));
+                        content.getAllExtraData().push(extraData);
                     }
-                    wizard.metadataStepFormByName[key].layout(formContext, metadata.getData(), wizard.metadataStepFormByName[key].getForm());
+                    wizard.metadataStepFormByName[key].layout(formContext, extraData.getData(), wizard.metadataStepFormByName[key].getForm());
                 }
             }
         }
