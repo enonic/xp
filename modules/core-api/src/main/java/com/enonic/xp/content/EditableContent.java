@@ -18,7 +18,7 @@ public class EditableContent
 
     public PropertyTree data;
 
-    public Metadatas metadata;
+    public ExtraDatas extraDatas;
 
     public Page page;
 
@@ -47,7 +47,7 @@ public class EditableContent
         this.source = source;
         this.displayName = source.getDisplayName();
         this.data = source.getData().copy();
-        this.metadata = source.getAllMetadata().copy();
+        this.extraDatas = source.getAllExtraData().copy();
         this.page = source.hasPage() ? source.getPage().copy() : null;
         this.valid = source.isValid();
         this.thumbnail = source.getThumbnail();
@@ -64,7 +64,7 @@ public class EditableContent
         return Content.newContent( this.source ).
             displayName( displayName ).
             data( data ).
-            metadata( metadata ).
+            extraDatas( extraDatas ).
             page( page ).
             valid( valid ).
             thumbnail( thumbnail ).

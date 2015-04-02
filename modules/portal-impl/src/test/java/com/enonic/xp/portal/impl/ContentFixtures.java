@@ -5,7 +5,7 @@ import java.time.Instant;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.Metadata;
+import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.page.DescriptorKey;
 import com.enonic.xp.content.page.Page;
 import com.enonic.xp.content.page.PageDescriptor;
@@ -45,7 +45,7 @@ public final class ContentFixtures
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.data( newPropertyTree() );
 
-        builder.addMetadata( new Metadata( MixinName.from( "mymodule:myschema" ), newTinyPropertyTree() ) );
+        builder.addMetadata( new ExtraData( MixinName.from( "mymodule:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
 
         return builder.build();
