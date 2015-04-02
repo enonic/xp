@@ -1,10 +1,14 @@
 module api.ui.time {
 
+    import Timezone = api.util.Timezone;
+
     export class TimePickerPopupBuilder {
 
         hours: number;
 
         minutes: number;
+
+        timezone: Timezone;
 
         closeOnOutsideClick: boolean = true;
 
@@ -24,6 +28,15 @@ module api.ui.time {
 
         getMinutes(): number {
             return this.minutes;
+        }
+
+        setTimezone(value: Timezone): TimePickerPopupBuilder {
+            this.timezone = value;
+            return this;
+        }
+
+        getTimezone(): Timezone {
+            return this.timezone;
         }
 
         setCloseOnOutsideClick(value: boolean): TimePickerPopupBuilder {
@@ -50,9 +63,14 @@ module api.ui.time {
         private minute: api.dom.SpanEl;
         private prevMinute: api.dom.AEl;
 
+        private timezoneOffset: api.dom.SpanEl;
+        private timezoneLocation: api.dom.SpanEl;
+
         private selectedHour: number;
         private selectedMinute: number;
         private interval: number;
+
+        private timezone: Timezone;
 
         private timeChangedListeners: {(hours: number, minutes: number) : void}[] = [];
 
@@ -111,6 +129,19 @@ module api.ui.time {
             this.selectedHour = builder.getHours() || null;
             this.selectedMinute = builder.getMinutes() || null;
 
+            this.timezone = builder.timezone;
+
+            if(this.timezone) {
+                var timezoneContainer = new api.dom.LiEl("timezone");
+
+                this.timezoneLocation = new api.dom.SpanEl("timezone-location").setHtml(this.timezone.getLocation());
+                this.timezoneOffset = new api.dom.SpanEl("timezone-offset").setHtml(this.getUTCString(this.timezone.getOffset()));
+
+                timezoneContainer.appendChild(this.timezoneLocation);
+                timezoneContainer.appendChild(this.timezoneOffset);
+                this.appendChild(timezoneContainer);
+           }
+
             this.hour.setHtml(this.padNumber(this.selectedHour || 0, 2));
             this.minute.setHtml(this.padNumber(this.selectedMinute || 0, 2));
 
@@ -154,6 +185,15 @@ module api.ui.time {
 
         private stopInterval() {
             clearInterval(this.interval);
+        }
+
+        private getUTCString(value: number) {
+            if(!value && value != 0) {
+                return "";
+            }
+            var result = "UTC";
+            result = value > 0 ? result + "+" : (value == 0 ? result + "-" : result);
+            return result + value;
         }
 
 

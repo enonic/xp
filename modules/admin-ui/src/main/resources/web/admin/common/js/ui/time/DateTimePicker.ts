@@ -1,5 +1,7 @@
 module api.ui.time {
 
+    import Timezone = api.util.Timezone;
+
     export class DateTimePickerBuilder {
 
         year: number;
@@ -17,6 +19,8 @@ module api.ui.time {
         closeOnSelect: boolean = false;
 
         closeOnOutsideClick: boolean = true;
+
+        timezone: Timezone;
 
         setYear(value: number): DateTimePickerBuilder {
             this.year = value;
@@ -48,6 +52,11 @@ module api.ui.time {
             return this;
         }
 
+        setTimezone(value: Timezone): DateTimePickerBuilder {
+            this.timezone = value;
+            return this;
+        }
+
         setCloseOnSelect(value: boolean): DateTimePickerBuilder {
             this.closeOnSelect = value;
             return this;
@@ -75,6 +84,8 @@ module api.ui.time {
         private calendar: Calendar;
 
         private selectedDate: Date;
+
+        private timezone: Timezone;
 
         private validUserInput: boolean;
 
@@ -111,6 +122,7 @@ module api.ui.time {
                 setHours(builder.hours).
                 setMinutes(builder.minutes).
                 setCalendar(this.calendar).
+                setTimezone(builder.timezone).
                 setCloseOnOutsideClick(false);
             this.popup = new DateTimePickerPopup(popupBuilder);
             this.popup.onShown(() => {

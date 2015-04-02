@@ -67,7 +67,7 @@ module api.util {
             }
         }
 
-        private static parseDate(s: string, isNeedToCheck?: boolean = true): LocalDate {
+        private static parseDate(s: string, isNeedToCheck: boolean = true): LocalDate {
             if (isNeedToCheck && !LocalDate.isValidDate(s)) {
                 throw new Error("Cannot parse LocalDate from string: " + s);
             }

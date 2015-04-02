@@ -5,6 +5,7 @@ module api.content.form.inputtype.time {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
+    import Timezone = api.util.Timezone;
 
     export interface DateTimeConfig {
         withTimezone: boolean
@@ -86,7 +87,8 @@ module api.content.form.inputtype.time {
                     setMonth(date.getMonth()).
                     setSelectedDate(date.toDate()).
                     setHours(date.getHours()).
-                    setMinutes(date.getMinutes());
+                    setMinutes(date.getMinutes()).
+                    setTimezone(date.getTimezone());
             }
 
             var dateTimePicker = new api.ui.time.DateTimePicker(dateTimeBuilder);
