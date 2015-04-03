@@ -5,9 +5,10 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.support.AbstractImmutableEntityList;
-
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 
 public class AbstractImmutableEntityListTest
 {
@@ -25,27 +26,32 @@ public class AbstractImmutableEntityListTest
     }
 
     @Test
-    public void get()
+    public void testAccessors()
     {
         MyList list = new MyList( ImmutableList.of( "a", "b", "c" ) );
+        MyList emptyList = new MyList( ImmutableList.of() );
 
         assertEquals( "a", list.get( 0 ) );
         assertEquals( "b", list.get( 1 ) );
         assertEquals( "c", list.get( 2 ) );
-    }
 
-    @Test
-    public void first()
-    {
-        MyList list = new MyList( ImmutableList.of( "a", "b", "c" ) );
+        assertEquals( 3, list.getSize() );
+
+        assertTrue( list.contains( "b" ) );
+
         assertEquals( "a", list.first() );
+        assertNull( emptyList.first() );
+        assertEquals( "c", list.last() );
+        assertNull( emptyList.last() );
     }
 
     @Test
-    public void last()
+    public void testEquals()
     {
-        MyList list = new MyList( ImmutableList.of( "a", "b", "c" ) );
-        assertEquals( "c", list.last() );
+        MyList list1 = new MyList( ImmutableList.of( "a", "b", "c" ) );
+        MyList list2 = new MyList( ImmutableList.of( "a", "c", "b" ) );
+
+        assertFalse( list1.equals( list2 ) );
     }
 
     private class MyList
