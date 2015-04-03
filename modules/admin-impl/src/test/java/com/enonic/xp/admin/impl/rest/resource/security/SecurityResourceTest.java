@@ -13,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.collect.Iterables;
+
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateRoleParams;
@@ -185,11 +187,35 @@ public class SecurityResourceTest
     }
 
     @Test
+    public void getUsersFromPrincipals()
+        throws Exception
+    {
+        final Principals principals = createPrincipalsFromUsers();
+        assertArrayEquals( principals.getList().toArray(), Iterables.toArray( principals.getUsers(), User.class ) );
+    }
+
+    @Test
+    public void getRolesFromPrincipals()
+        throws Exception
+    {
+        final Principals principals = createPrincipalsFromRoles();
+        assertArrayEquals( principals.getList().toArray(), Iterables.toArray( principals.getRoles(), Role.class ) );
+    }
+
+    @Test
+    public void getGroupsFromPrincipals()
+        throws Exception
+    {
+        final Principals principals = createPrincipalsFromGroups();
+        assertArrayEquals( principals.getList().toArray(), Iterables.toArray( principals.getGroups(), Group.class ) );
+    }
+
+    @Test
     public void getPrincipals()
         throws Exception
     {
         final UserStores userStores = createUserStores();
-        final Principals principals = createPrincipals();
+        final Principals principals = createPrincipalsFromUsers();
         final List<PrincipalType> userTypes = new ArrayList<>();
         userTypes.add( PrincipalType.USER );
         Mockito.when( securityService.findPrincipals( userStores.get( 0 ).getKey(), userTypes, null ) ).
@@ -519,7 +545,7 @@ public class SecurityResourceTest
         return UserStores.from( userStore1, userStore2 );
     }
 
-    private Principals createPrincipals()
+    private Principals createPrincipalsFromUsers()
     {
         final User user1 = User.create().
             key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
@@ -537,5 +563,37 @@ public class SecurityResourceTest
             login( "bobby" ).
             build();
         return Principals.from( user1, user2 );
+    }
+
+    private Principals createPrincipalsFromRoles()
+    {
+        final Role role1 = Role.create().
+            key( PrincipalKey.ofRole( "a" )).
+            displayName( "Destructors" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        final Role role2 = Role.create().
+            key( PrincipalKey.ofRole( "b" ) ).
+            displayName( "Overlords" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+        return Principals.from( role1, role2 );
+    }
+
+    private Principals createPrincipalsFromGroups()
+    {
+        final Group group1 = Group.create().
+            key( PrincipalKey.ofGroup(  USER_STORE_1, "a" ) ).
+            displayName( "Destructors" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        final Group group2 = Group.create().
+            key( PrincipalKey.ofGroup( USER_STORE_2, "b" ) ).
+            displayName( "Overlords" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+        return Principals.from( group1, group2 );
     }
 }

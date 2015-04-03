@@ -28,11 +28,6 @@ public final class UserStoreAccessControlEntry
         return access;
     }
 
-    public boolean hasAtLeastAccess( final UserStoreAccess access )
-    {
-        return this.access.compareTo( access ) >= 0;
-    }
-
     @Override
     public String toString()
     {
