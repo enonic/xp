@@ -57,7 +57,7 @@ public final class Attachments
         return new Attachments( listBuilder.build() );
     }
 
-    private Attachments add( final Iterable<Attachment> attachments )
+    public Attachments add( final Iterable<Attachment> attachments )
     {
         final ImmutableList.Builder<Attachment> listBuilder = ImmutableList.builder();
         listBuilder.addAll( this.list );
