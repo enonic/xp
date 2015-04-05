@@ -60,7 +60,7 @@ module api.schema.mixin {
         }
     }
 
-    class MixinNamesBuilder {
+    export class MixinNamesBuilder {
 
         array: MixinName[] = [];
 

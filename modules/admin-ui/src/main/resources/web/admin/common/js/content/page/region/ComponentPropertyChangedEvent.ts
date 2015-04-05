@@ -25,7 +25,7 @@ module api.content.page.region {
         }
     }
 
-    class ComponentPropertyChangedEventBuilder {
+    export class ComponentPropertyChangedEventBuilder {
 
         propertyName: string;
 
