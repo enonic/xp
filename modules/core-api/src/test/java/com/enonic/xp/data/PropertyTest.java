@@ -1,6 +1,8 @@
 package com.enonic.xp.data;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.enonic.xp.support.AbstractEqualsTest;
 
@@ -85,4 +87,36 @@ public class PropertyTest
         assertSame( sourceTree.getProperty( "outerSet.innerSet.myString" ).getId(),
                     destinationTree.getProperty( "destiSet.innerSet.myString" ).getId() );
     }
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void check_exception_is_thrown_when_name_is_null()
+    {
+        thrown.expect( NullPointerException.class );
+        Property.checkName( null );
+    }
+
+    @Test
+    public void check_exception_is_thrown_when_name_is_blank()
+    {
+        thrown.expect( IllegalArgumentException.class );
+        Property.checkName( "" );
+    }
+
+    @Test
+    public void check_exception_is_thrown_when_name_contains_dot()
+    {
+        thrown.expect( IllegalArgumentException.class );
+        Property.checkName( "." );
+    }
+
+    @Test
+    public void check_exception_is_thrown_when_name_contains_brackets()
+    {
+        thrown.expect( IllegalArgumentException.class );
+        Property.checkName( "[]" );
+    }
+
 }
