@@ -50,4 +50,13 @@ public class ContentQueryHit
         return true;
     }
 
+
+
+    @Override
+    public int hashCode()
+    {
+        int result = contentId != null ? contentId.hashCode() : 0;
+        result = 31 * result + ( score != +0.0f ? Float.floatToIntBits( score ) : 0 );
+        return result;
+    }
 }
