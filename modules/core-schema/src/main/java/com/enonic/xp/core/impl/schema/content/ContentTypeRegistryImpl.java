@@ -6,13 +6,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import com.google.common.collect.Maps;
 
-import com.enonic.xp.schema.content.ContentTypeUpdatedEvent;
-import com.enonic.xp.schema.content.ContentTypeDeletedEvent;
+import com.enonic.xp.schema.content.ContentTypesUpdatedEvent;
+import com.enonic.xp.schema.content.ContentTypesDeletedEvent;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
@@ -62,21 +59,27 @@ final class ContentTypeRegistryImpl
     @Override
     public void addProvider( final ContentTypeProvider provider )
     {
+        ContentTypesUpdatedEvent contentTypesUpdatedEvent =  new ContentTypesUpdatedEvent(Instant.now());
         for ( final ContentType value : provider.get() )
         {
             this.map.put( value.getName(), value );
-            eventPublisher.publish( new ContentTypeUpdatedEvent ( value.getName(), Instant.now()) );
+            contentTypesUpdatedEvent.addContentTypeName( value.getName() );
         }
+        if(contentTypesUpdatedEvent.getNames().size() > 0)
+            eventPublisher.publish( contentTypesUpdatedEvent );
     }
 
     @Override
     public void removeProvider( final ContentTypeProvider provider )
     {
+        ContentTypesDeletedEvent contentTypesDeletedEvent = new ContentTypesDeletedEvent();
         for ( final ContentType value : provider.get() )
         {
             this.map.remove( value.getName() );
-            eventPublisher.publish( new ContentTypeDeletedEvent ( value.getName() ) );
+            contentTypesDeletedEvent.addContentTypeName( value.getName() );
         }
+        if(contentTypesDeletedEvent.getNames().size() > 0)
+            eventPublisher.publish( contentTypesDeletedEvent );
     }
 
     public void setEventPublisher( final EventPublisher eventPublisher )

@@ -14,13 +14,13 @@ import com.enonic.xp.content.ContentUpdatedEvent;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.module.ModuleUpdatedEvent;
-import com.enonic.xp.schema.content.ContentTypeDeletedEvent;
-import com.enonic.xp.schema.content.ContentTypeUpdatedEvent;
+import com.enonic.xp.schema.content.ContentTypesDeletedEvent;
+import com.enonic.xp.schema.content.ContentTypesUpdatedEvent;
 import com.enonic.xp.admin.event.impl.json.ContentChangeEventJson;
 import com.enonic.xp.admin.event.impl.json.ContentCreatedEventJson;
 import com.enonic.xp.admin.event.impl.json.ContentPublishedEventJson;
-import com.enonic.xp.admin.event.impl.json.ContentTypeDeletedEventJson;
-import com.enonic.xp.admin.event.impl.json.ContentTypeUpdatedEventJson;
+import com.enonic.xp.admin.event.impl.json.ContentTypesDeletedEventJson;
+import com.enonic.xp.admin.event.impl.json.ContentTypesUpdatedEventJson;
 import com.enonic.xp.admin.event.impl.json.ContentUpdatedEventJson;
 import com.enonic.xp.admin.event.impl.json.EventJson;
 import com.enonic.xp.admin.event.impl.json.ModuleUpdatedEventJson;
@@ -86,13 +86,13 @@ public final class EventListenerImpl
         {
             return new ContentPublishedEventJson( (ContentPublishedEvent) event );
         }
-        else if ( event instanceof ContentTypeUpdatedEvent )
+        else if ( event instanceof ContentTypesUpdatedEvent )
         {
-            return new ContentTypeUpdatedEventJson( (ContentTypeUpdatedEvent) event );
+            return new ContentTypesUpdatedEventJson( (ContentTypesUpdatedEvent) event );
         }
-        else if ( event instanceof ContentTypeDeletedEvent )
+        else if ( event instanceof ContentTypesDeletedEvent )
         {
-            return new ContentTypeDeletedEventJson( (ContentTypeDeletedEvent) event );
+            return new ContentTypesDeletedEventJson( (ContentTypesDeletedEvent) event );
         }
         return null;
     }
