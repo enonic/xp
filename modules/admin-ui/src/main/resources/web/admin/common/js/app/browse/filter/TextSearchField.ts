@@ -44,7 +44,6 @@ module api.app.browse.filter {
         }
 
         private notifyValueChanged() {
-            debugger;
             var currentValue = this.getHTMLElement()['value'];
             if (currentValue == this.previousValue) {
                 return;
