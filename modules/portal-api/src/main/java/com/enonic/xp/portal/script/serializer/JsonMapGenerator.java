@@ -11,7 +11,9 @@ import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.google.common.annotations.Beta;
 
+@Beta
 public final class JsonMapGenerator
     extends MapGeneratorBase
 {

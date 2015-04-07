@@ -1,6 +1,9 @@
 package com.enonic.xp.portal.script.serializer;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface MapSerializable
 {
-    public void serialize( MapGenerator gen );
+    void serialize( MapGenerator gen );
 }

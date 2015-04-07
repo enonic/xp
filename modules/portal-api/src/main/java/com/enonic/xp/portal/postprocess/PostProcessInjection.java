@@ -1,10 +1,13 @@
 package com.enonic.xp.portal.postprocess;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.portal.PortalContext;
 
+@Beta
 public interface PostProcessInjection
 {
-    public enum Tag
+    enum Tag
     {
         HEAD_BEGIN,
         HEAD_END,
@@ -12,5 +15,5 @@ public interface PostProcessInjection
         BODY_END
     }
 
-    public String inject( PortalContext context, Tag tag );
+    String inject( PortalContext context, Tag tag );
 }

@@ -4,31 +4,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface ScriptValue
 {
-    public boolean isArray();
+    boolean isArray();
 
-    public boolean isObject();
+    boolean isObject();
 
-    public boolean isValue();
+    boolean isValue();
 
-    public boolean isFunction();
+    boolean isFunction();
 
-    public Object getValue();
+    Object getValue();
 
-    public <T> T getValue( Class<T> type );
+    <T> T getValue( Class<T> type );
 
-    public Set<String> getKeys();
+    Set<String> getKeys();
 
-    public boolean hasMember( String key );
+    boolean hasMember( String key );
 
-    public ScriptValue getMember( String key );
+    ScriptValue getMember( String key );
 
-    public List<ScriptValue> getArray();
+    List<ScriptValue> getArray();
 
-    public <T> List<T> getArray( Class<T> type );
+    <T> List<T> getArray( Class<T> type );
 
-    public Map<String, Object> getMap();
+    Map<String, Object> getMap();
 
-    public ScriptValue call( Object... args );
+    ScriptValue call( Object... args );
 }

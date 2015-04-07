@@ -1,14 +1,17 @@
 package com.enonic.xp.portal.script;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.resource.ResourceKey;
 
+@Beta
 public interface ScriptExports
 {
-    public ResourceKey getScript();
+    ResourceKey getScript();
 
-    public ScriptValue getValue();
+    ScriptValue getValue();
 
-    public boolean hasMethod( String name );
+    boolean hasMethod( String name );
 
-    public ScriptValue executeMethod( String name, Object... args );
+    ScriptValue executeMethod( String name, Object... args );
 }
