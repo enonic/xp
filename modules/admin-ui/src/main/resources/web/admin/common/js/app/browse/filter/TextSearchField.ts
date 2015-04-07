@@ -33,6 +33,7 @@ module api.app.browse.filter {
         clear(supressEvent?: boolean) {
             window.clearTimeout(this.timerId);
             this.getHTMLElement()['value'] = '';
+            this.previousValue = '';
             if (!supressEvent) {
                 this.notifyValueChanged();
             }
@@ -43,6 +44,7 @@ module api.app.browse.filter {
         }
 
         private notifyValueChanged() {
+            debugger;
             var currentValue = this.getHTMLElement()['value'];
             if (currentValue == this.previousValue) {
                 return;
