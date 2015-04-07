@@ -23,7 +23,6 @@ public class ContentVersionsTest
             comment( "comment" ).
             build();
 
-
         final Instant now2 = now1.plusMillis( 1000 );
 
         final ContentVersion version2 = ContentVersion.create().
@@ -60,7 +59,7 @@ public class ContentVersionsTest
 
         assertEquals( 0, version1.compareTo( version1 ) );
 
-        final Instant now2 = Instant.now();
+        final Instant now2 = now1.plusMillis( 1000 );
 
         final ContentVersion version2 = ContentVersion.create().
             id( ContentVersionId.from( "b" ) ).

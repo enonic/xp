@@ -11,7 +11,8 @@ import static org.junit.Assert.*;
 public class ContentVersionTest
 {
     @Test
-    public void testEquals() {
+    public void testEquals()
+    {
 
         final Instant now1 = Instant.now();
 
@@ -51,8 +52,8 @@ public class ContentVersionTest
     }
 
     @Test
-    public void testCompareTo() {
-
+    public void testCompareTo()
+    {
         final Instant now1 = Instant.now();
 
         final ContentVersion version1 = ContentVersion.create().
@@ -65,7 +66,7 @@ public class ContentVersionTest
 
         assertEquals( 0, version1.compareTo( version1 ) );
 
-        final Instant now2 = Instant.now();
+        final Instant now2 = now1.plusMillis( 1000 );
 
         final ContentVersion version2 = ContentVersion.create().
             id( ContentVersionId.from( "b" ) ).
