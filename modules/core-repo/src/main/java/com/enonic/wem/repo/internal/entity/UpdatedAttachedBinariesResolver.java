@@ -135,7 +135,8 @@ class UpdatedAttachedBinariesResolver
         try
         {
             final Blob blob = this.blobStore.addRecord( newBinaryAttachment.getByteSource().openStream() );
-            resolved.put( newBinaryAttachment.getReference(), new AttachedBinary( newBinaryAttachment.getReference(), blob.getKey() ) );
+            resolved.put( newBinaryAttachment.getReference(),
+                          new AttachedBinary( newBinaryAttachment.getReference(), blob.getKey().toString() ) );
         }
         catch ( final IOException e )
         {

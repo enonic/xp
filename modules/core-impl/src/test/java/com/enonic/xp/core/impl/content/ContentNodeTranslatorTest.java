@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
@@ -100,7 +99,7 @@ public class ContentNodeTranslatorTest
     public void node_to_content_thumbnail()
     {
         AttachedBinaries attachedBinaries = AttachedBinaries.create().
-            add( new AttachedBinary( BinaryReference.from( AttachmentNames.THUMBNAIL ), new BlobKey( "myBlobKey" ) ) ).
+            add( new AttachedBinary( BinaryReference.from( AttachmentNames.THUMBNAIL ), "myBlobKey" ) ).
             build();
 
         PropertyTree data = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );

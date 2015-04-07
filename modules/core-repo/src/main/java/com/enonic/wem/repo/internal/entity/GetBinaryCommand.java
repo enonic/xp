@@ -3,13 +3,13 @@ package com.enonic.wem.repo.internal.entity;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
+import com.enonic.wem.repo.internal.blob.BlobKey;
+import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.util.BinaryReference;
-import com.enonic.wem.repo.internal.blob.BlobStore;
 
 public class GetBinaryCommand
     extends AbstractNodeCommand
@@ -73,7 +73,7 @@ public class GetBinaryCommand
 
     private ByteSource doGetByteSource( final AttachedBinary attachedBinary )
     {
-        final BlobKey blobKey = attachedBinary.getBlobKey();
+        final BlobKey blobKey = new BlobKey( attachedBinary.getBlobKey() );
 
         return this.binaryBlobStore.getByteSource( blobKey );
     }

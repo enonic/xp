@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.AttachedBinaries;
@@ -84,7 +83,7 @@ class NodeServiceMock
 
         for ( final BinaryAttachment binaryAttachment : params.getBinaryAttachments() )
         {
-            final BlobKey blobKey = new BlobKey( binaryAttachment.getReference().toString() );
+            final String blobKey = binaryAttachment.getReference().toString();
             attachmentBuilder.add( new AttachedBinary( binaryAttachment.getReference(), blobKey ) );
             blobStore.put( binaryAttachment.getReference(), binaryAttachment.getByteSource() );
         }
