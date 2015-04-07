@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import com.google.common.collect.UnmodifiableIterator;
 
-import com.enonic.xp.content.page.PageRegions;
 import com.enonic.xp.content.page.region.Component;
 import com.enonic.xp.content.page.region.ComponentName;
 import com.enonic.xp.content.page.region.ComponentPath;
@@ -30,7 +29,7 @@ public class PageRegionsTest
     @Test
     public void iterator()
     {
-        PageRegions regions = newPageRegions().
+        final PageRegions regions = newPageRegions().
             add( newRegion().name( "a-region" ).build() ).
             add( newRegion().name( "b-region" ).build() ).
             add( newRegion().name( "c-region" ).build() ).
@@ -55,7 +54,7 @@ public class PageRegionsTest
     @Test
     public void getRegion()
     {
-        PageRegions regions = newPageRegions().
+        final PageRegions regions = newPageRegions().
             add( newRegion().name( "a-region" ).build() ).
             add( newRegion().name( "b-region" ).build() ).
             add( newRegion().name( "c-region" ).build() ).
@@ -70,7 +69,7 @@ public class PageRegionsTest
     @Test
     public void componentPaths_one_level()
     {
-        PageRegions regions = newPageRegions().
+        final PageRegions regions = newPageRegions().
             add( newRegion().name( "a-region" ).
                 add( newPartComponent().name( ComponentName.from( "part-a-in-a" ) ).build() ).
                 build() ).
@@ -80,7 +79,7 @@ public class PageRegionsTest
                 build() ).
             build();
 
-        Iterator<Region> iterator = regions.iterator();
+        final Iterator<Region> iterator = regions.iterator();
 
         // verify: components in a-region
         Region nextRegion = iterator.next();
@@ -97,7 +96,7 @@ public class PageRegionsTest
     @Test
     public void componentPaths_two_levels()
     {
-        PageRegions pageRegions = newPageRegions().
+        final PageRegions pageRegions = newPageRegions().
             add( newRegion().name( "region-level-1" ).
                 add( newLayoutComponent().name( ComponentName.from( "layout-level-1" ) ).
                     regions( newLayoutRegions().
@@ -110,21 +109,21 @@ public class PageRegionsTest
             build();
 
         // verify
-        Region regionLevel1 = pageRegions.iterator().next();
-        UnmodifiableIterator<Component> componentsLevel1 = regionLevel1.getComponents().iterator();
-        LayoutComponent layoutLevel1 = (LayoutComponent) componentsLevel1.next();
+        final Region regionLevel1 = pageRegions.iterator().next();
+        final UnmodifiableIterator<Component> componentsLevel1 = regionLevel1.getComponents().iterator();
+        final LayoutComponent layoutLevel1 = (LayoutComponent) componentsLevel1.next();
         assertEquals( "region-level-1/0", layoutLevel1.getPath().toString() );
 
-        LayoutRegions layoutRegions = layoutLevel1.getRegions();
-        Region regionLevel2 = layoutRegions.iterator().next();
-        UnmodifiableIterator<Component> componentsLevel2 = regionLevel2.getComponents().iterator();
+        final LayoutRegions layoutRegions = layoutLevel1.getRegions();
+        final Region regionLevel2 = layoutRegions.iterator().next();
+        final UnmodifiableIterator<Component> componentsLevel2 = regionLevel2.getComponents().iterator();
         assertEquals( "region-level-1/0/region-level-2/0", componentsLevel2.next().getPath().toString() );
     }
 
     @Test
     public void getComponent()
     {
-        PageRegions regions = newPageRegions().
+        final PageRegions regions = newPageRegions().
             add( newRegion().
                 name( "a-region" ).
                 add( newPartComponent().name( "part-1-in-region-a" ).build() ).
@@ -138,5 +137,19 @@ public class PageRegionsTest
         assertEquals( "part-1-in-region-a", regions.getComponent( ComponentPath.from( "a-region/0" ) ).getName().toString() );
         assertEquals( "part-1-in-region-b", regions.getComponent( ComponentPath.from( "b-region/0" ) ).getName().toString() );
         assertNull( regions.getComponent( ComponentPath.from( "a-region/1" ) ) );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getComponent_throws_exception()
+    {
+        final PageRegions regions = newPageRegions().
+            add( newRegion().
+                name( "a-region" ).
+                add( newPartComponent().name( "part-1-in-region-a" ).build() ).
+                add( newPartComponent().name( "part-1-in-region-b" ).build() ).
+                build() ).
+            build();
+
+        regions.getComponent( ComponentPath.from( "a-region/1/2/3" ) );
     }
 }

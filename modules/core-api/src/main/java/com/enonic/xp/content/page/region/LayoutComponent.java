@@ -40,7 +40,7 @@ public final class LayoutComponent
     }
 
     @Override
-    public Component copy()
+    public LayoutComponent copy()
     {
         return newLayoutComponent( this ).build();
     }
