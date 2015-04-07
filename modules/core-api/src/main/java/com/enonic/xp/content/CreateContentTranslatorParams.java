@@ -16,7 +16,7 @@ public class CreateContentTranslatorParams
 {
     private final PropertyTree data;
 
-    private final Metadatas metadata;
+    private final ExtraDatas extraDatas;
 
     private final ContentTypeName type;
 
@@ -53,7 +53,7 @@ public class CreateContentTranslatorParams
         final Instant now = Instant.now();
 
         this.data = builder.data;
-        this.metadata = builder.metadata;
+        this.extraDatas = builder.extraDatas;
         this.type = builder.type;
         this.owner = builder.owner;
         this.creator = builder.creator;
@@ -86,9 +86,9 @@ public class CreateContentTranslatorParams
         return data;
     }
 
-    public Metadatas getMetadata()
+    public ExtraDatas getExtraDatas()
     {
-        return metadata;
+        return extraDatas;
     }
 
     public ContentTypeName getType()
@@ -170,7 +170,7 @@ public class CreateContentTranslatorParams
     {
         private PropertyTree data;
 
-        private Metadatas metadata;
+        private ExtraDatas extraDatas;
 
         private ContentTypeName type;
 
@@ -203,7 +203,7 @@ public class CreateContentTranslatorParams
         private Builder( final CreateContentParams params )
         {
             this.data = params.getData();
-            this.metadata = params.getMetadata();
+            this.extraDatas = params.getExtraDatas();
             this.type = params.getType();
             this.owner = params.getOwner();
             this.displayName = params.getDisplayName();
@@ -222,9 +222,9 @@ public class CreateContentTranslatorParams
             return this;
         }
 
-        public Builder metadata( final Metadatas metadata )
+        public Builder extraDatas( final ExtraDatas extraDatas )
         {
-            this.metadata = metadata;
+            this.extraDatas = extraDatas;
             return this;
         }
 

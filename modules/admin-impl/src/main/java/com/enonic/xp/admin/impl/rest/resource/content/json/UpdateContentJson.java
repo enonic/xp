@@ -10,10 +10,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.admin.impl.json.content.MetadataJson;
+import com.enonic.xp.admin.impl.json.content.ExtraDataJson;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.Metadatas;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyArrayJson;
@@ -33,7 +33,7 @@ public final class UpdateContentJson
     UpdateContentJson( @JsonProperty("contentId") final String contentId,
                        @JsonProperty("contentName") final String contentName,
                        @JsonProperty("data") final List<PropertyArrayJson> propertyArrayJsonList,
-                       @JsonProperty("meta") final List<MetadataJson> metadataJsonList,
+                       @JsonProperty("meta") final List<ExtraDataJson> extraDataJsonList,
                        @JsonProperty("displayName") final String displayName,
                        @JsonProperty("valid") final String valid,
                        @JsonProperty("requireValid") final String requireValid,
@@ -43,7 +43,7 @@ public final class UpdateContentJson
         this.contentName = ContentName.from( contentName );
 
         final PropertyTree contentData = PropertyTreeJson.fromJson( propertyArrayJsonList );
-        final Metadatas metadatas = parseMetadata( metadataJsonList );
+        final ExtraDatas extraDatas = parseExtradata( extraDataJsonList );
 
         this.updateContentParams = new UpdateContentParams().
             requireValid( Boolean.valueOf( requireValid ) ).
@@ -51,7 +51,7 @@ public final class UpdateContentJson
             modifier( PrincipalKey.ofAnonymous() ).
             editor( edit -> {
                 edit.data = contentData;
-                edit.metadata = metadatas;
+                edit.extraDatas = extraDatas;
                 edit.displayName = displayName;
                 edit.owner = StringUtils.isNotEmpty( owner ) ? PrincipalKey.from( owner ) : null;
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
@@ -80,13 +80,13 @@ public final class UpdateContentJson
         return contentName;
     }
 
-    private Metadatas parseMetadata( final List<MetadataJson> metadataJsonList )
+    private ExtraDatas parseExtradata( final List<ExtraDataJson> extraDataJsonList )
     {
-        final Metadatas.Builder metadatasBuilder = Metadatas.builder();
-        for ( MetadataJson metadataJson : metadataJsonList )
+        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.builder();
+        for ( ExtraDataJson extraDataJson : extraDataJsonList )
         {
-            metadatasBuilder.add( metadataJson.getMetadata() );
+            extradatasBuilder.add( extraDataJson.getExtraData() );
         }
-        return metadatasBuilder.build();
+        return extradatasBuilder.build();
     }
 }

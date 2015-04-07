@@ -44,7 +44,7 @@ public class Content
 
     private final Attachments attachments;
 
-    private final Metadatas metadata;
+    private final ExtraDatas extraDatas;
 
     private final Instant createdTime;
 
@@ -98,7 +98,7 @@ public class Content
         this.id = builder.id;
         this.data = builder.data;
         this.attachments = builder.attachments;
-        this.metadata = builder.metadata;
+        this.extraDatas = builder.extraDatas;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.creator = builder.creator;
@@ -237,24 +237,24 @@ public class Content
         return attachments;
     }
 
-    public boolean hasMetadata( final String name )
+    public boolean hasExtraData( final String name )
     {
-        return getMetadata( name ) != null;
+        return getExtraData( name ) != null;
     }
 
-    public boolean hasMetadata( final MixinName name )
+    public boolean hasExtraData( final MixinName name )
     {
-        return getMetadata( name ) != null;
+        return getExtraData( name ) != null;
     }
 
-    public PropertyTree getMetadata( final String name )
+    public PropertyTree getExtraData( final String name )
     {
-        return getMetadata( MixinName.from( name ) );
+        return getExtraData( MixinName.from( name ) );
     }
 
-    public PropertyTree getMetadata( final MixinName name )
+    public PropertyTree getExtraData( final MixinName name )
     {
-        for ( Metadata item : this.metadata )
+        for ( ExtraData item : this.extraDatas )
         {
             if ( item.getName().equals( name ) )
             {
@@ -265,14 +265,14 @@ public class Content
         return null;
     }
 
-    public boolean hasMetadata()
+    public boolean hasExtraData()
     {
-        return !this.metadata.isEmpty();
+        return !this.extraDatas.isEmpty();
     }
 
-    public Metadatas getAllMetadata()
+    public ExtraDatas getAllExtraData()
     {
-        return this.metadata;
+        return this.extraDatas;
     }
 
     public ContentId getId()
@@ -372,7 +372,7 @@ public class Content
             Objects.equals( permissions, other.permissions ) &&
             Objects.equals( attachments, other.attachments ) &&
             Objects.equals( data, other.data ) &&
-            Objects.equals( metadata, other.metadata ) &&
+            Objects.equals( extraDatas, other.extraDatas ) &&
             Objects.equals( page, other.page ) &&
             Objects.equals( language, other.language ) &&
             Objects.equals( contentState, other.contentState );
@@ -382,7 +382,7 @@ public class Content
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, metadata, page,
+                             hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas, page,
                              language, contentState );
     }
 
@@ -406,7 +406,7 @@ public class Content
 
         protected Attachments attachments;
 
-        protected Metadatas metadata;
+        protected ExtraDatas extraDatas;
 
         protected String displayName;
 
@@ -438,7 +438,7 @@ public class Content
         {
             this.data = new PropertyTree();
             this.attachments = Attachments.empty();
-            this.metadata = Metadatas.empty();
+            this.extraDatas = ExtraDatas.empty();
             this.inheritPermissions = true;
         }
 
@@ -452,7 +452,7 @@ public class Content
             this.type = source.type;
             this.data = source.data != null ? source.data.copy() : null;
             this.attachments = source.attachments;
-            this.metadata = source.metadata != null ? source.metadata.copy() : null;
+            this.extraDatas = source.extraDatas != null ? source.extraDatas.copy() : null;
             this.displayName = source.displayName;
             this.owner = source.owner;
             this.createdTime = source.createdTime;
@@ -535,19 +535,19 @@ public class Content
             return this;
         }
 
-        public Builder<BUILDER, C> addMetadata( final Metadata metadata )
+        public Builder<BUILDER, C> addExtraData( final ExtraData extraData )
         {
-            if ( this.metadata == null )
+            if ( this.extraDatas == null )
             {
-                this.metadata = Metadatas.empty();
+                this.extraDatas = ExtraDatas.empty();
             }
-            this.metadata = Metadatas.from( this.metadata, metadata );
+            this.extraDatas = ExtraDatas.from( this.extraDatas, extraData );
             return this;
         }
 
-        public Builder<BUILDER, C> metadata( final Metadatas metadata )
+        public Builder<BUILDER, C> extraDatas( final ExtraDatas extraDatas )
         {
-            this.metadata = metadata;
+            this.extraDatas = extraDatas;
             return this;
         }
 

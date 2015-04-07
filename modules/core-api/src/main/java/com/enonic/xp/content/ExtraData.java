@@ -8,13 +8,13 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.MixinName;
 
-public final class Metadata
+public final class ExtraData
 {
     private MixinName name;
 
     private PropertyTree data;
 
-    public Metadata( final MixinName name, final PropertyTree data )
+    public ExtraData( final MixinName name, final PropertyTree data )
     {
         Preconditions.checkNotNull( name, "name cannot be null" );
         Preconditions.checkNotNull( data, "data cannot be null" );
@@ -52,9 +52,9 @@ public final class Metadata
         this.name = name;
     }
 
-    public Metadata copy()
+    public ExtraData copy()
     {
-        return new Metadata( name, data.copy() );
+        return new ExtraData( name, data.copy() );
     }
 
     @Override
@@ -69,14 +69,14 @@ public final class Metadata
             return false;
         }
 
-        final Metadata metadata = (Metadata) o;
+        final ExtraData extraData = (ExtraData) o;
 
-        if ( !name.equals( metadata.name ) )
+        if ( !name.equals( extraData.name ) )
         {
             return false;
         }
 
-        if ( !data.equals( metadata.data ) )
+        if ( !data.equals( extraData.data ) )
         {
             return false;
         }

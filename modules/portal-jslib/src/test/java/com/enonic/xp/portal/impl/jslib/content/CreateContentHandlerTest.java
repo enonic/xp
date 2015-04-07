@@ -9,7 +9,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.Metadatas;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.portal.impl.jslib.AbstractHandlerTest;
 import com.enonic.xp.portal.script.command.CommandHandler;
 import com.enonic.xp.schema.mixin.Mixin;
@@ -64,9 +64,9 @@ public class CreateContentHandlerTest
         builder.creator( PrincipalKey.ofAnonymous() );
         builder.createdTime( Instant.parse( "1975-01-08T00:00:00Z" ) );
 
-        if ( params.getMetadata() != null )
+        if ( params.getExtraDatas() != null )
         {
-            builder.metadata( Metadatas.from( params.getMetadata() ) );
+            builder.extraDatas( ExtraDatas.from( params.getExtraDatas() ) );
         }
 
         return builder.build();

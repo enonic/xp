@@ -15,12 +15,12 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-public final class Metadatas
-    extends AbstractImmutableEntitySet<Metadata>
+public final class ExtraDatas
+    extends AbstractImmutableEntitySet<ExtraData>
 {
-    private final ImmutableMap<MixinName, Metadata> map;
+    private final ImmutableMap<MixinName, ExtraData> map;
 
-    private Metadatas( final Set<Metadata> set )
+    private ExtraDatas( final Set<ExtraData> set )
     {
         super( ImmutableSet.copyOf( set ) );
         this.map = Maps.uniqueIndex( set, new ToNameFunction() );
@@ -32,40 +32,40 @@ public final class Metadatas
         return MixinNames.from( names );
     }
 
-    public Metadata getMetadata( final MixinName name )
+    public ExtraData getMetadata( final MixinName name )
     {
         return this.map.get( name );
     }
 
-    public Metadatas copy()
+    public ExtraDatas copy()
     {
-        return Metadatas.from( this.map.values().stream().map( Metadata::copy ).collect( Collectors.toList() ) );
+        return ExtraDatas.from( this.map.values().stream().map( ExtraData::copy ).collect( Collectors.toList() ) );
     }
 
-    public static Metadatas empty()
+    public static ExtraDatas empty()
     {
-        final ImmutableSet<Metadata> set = ImmutableSet.of();
-        return new Metadatas( set );
+        final ImmutableSet<ExtraData> set = ImmutableSet.of();
+        return new ExtraDatas( set );
     }
 
-    public static Metadatas from( final Iterable<? extends Metadata> metadatas )
+    public static ExtraDatas from( final Iterable<? extends ExtraData> extradatas )
     {
-        return new Metadatas( ImmutableSet.copyOf( metadatas ) );
+        return new ExtraDatas( ImmutableSet.copyOf( extradatas ) );
     }
 
-    public static Metadatas from( final Metadatas metadatas, final Metadata metadata )
+    public static ExtraDatas from( final ExtraDatas extraDatas, final ExtraData extraData )
     {
-        ImmutableSet.Builder<Metadata> builder = ImmutableSet.builder();
-        builder.addAll( metadatas );
-        builder.add( metadata );
-        return new Metadatas( builder.build() );
+        ImmutableSet.Builder<ExtraData> builder = ImmutableSet.builder();
+        builder.addAll( extraDatas );
+        builder.add( extraData );
+        return new ExtraDatas( builder.build() );
     }
 
     private final static class ToNameFunction
-        implements Function<Metadata, MixinName>
+        implements Function<ExtraData, MixinName>
     {
         @Override
-        public MixinName apply( final Metadata value )
+        public MixinName apply( final ExtraData value )
         {
             return value.getName();
         }
@@ -78,17 +78,17 @@ public final class Metadatas
 
     public static class Builder
     {
-        private Set<Metadata> set = Sets.newLinkedHashSet();
+        private Set<ExtraData> set = Sets.newLinkedHashSet();
 
-        public Builder add( final Metadata value )
+        public Builder add( final ExtraData value )
         {
             set.add( value );
             return this;
         }
 
-        public Metadatas build()
+        public ExtraDatas build()
         {
-            return new Metadatas( set );
+            return new ExtraDatas( set );
         }
     }
 }

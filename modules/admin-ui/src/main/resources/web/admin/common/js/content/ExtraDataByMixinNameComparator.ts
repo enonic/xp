@@ -1,8 +1,8 @@
 module api.content {
 
-    export class MetadataByMixinNameComparator implements api.Comparator<Metadata> {
+    export class ExtraDataByMixinNameComparator implements api.Comparator<ExtraData> {
 
-        compare(a: Metadata, b: Metadata): number {
+        compare(a: ExtraData, b: ExtraData): number {
             if (!a.getName()) {
                 return 1;
             } else {
