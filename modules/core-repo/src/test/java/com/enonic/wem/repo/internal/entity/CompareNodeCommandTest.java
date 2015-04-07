@@ -35,7 +35,7 @@ public class CompareNodeCommandTest
 
         final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.Status.NEW, comparison.getCompareStatus().getStatus() );
+        assertEquals( CompareStatus.NEW, comparison.getCompareStatus() );
     }
 
     @Test
@@ -51,7 +51,7 @@ public class CompareNodeCommandTest
 
         final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.Status.NEW_TARGET, comparison.getCompareStatus().getStatus() );
+        assertEquals( CompareStatus.NEW_TARGET, comparison.getCompareStatus() );
     }
 
     @Test
@@ -83,7 +83,7 @@ public class CompareNodeCommandTest
 
         final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.Status.NEW_TARGET, comparison.getCompareStatus().getStatus() );
+        assertEquals( CompareStatus.NEW_TARGET, comparison.getCompareStatus() );
     }
 
 
@@ -102,7 +102,7 @@ public class CompareNodeCommandTest
 
         final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.Status.EQUAL, comparison.getCompareStatus().getStatus() );
+        assertEquals( CompareStatus.EQUAL, comparison.getCompareStatus() );
     }
 
     @Test
@@ -124,7 +124,7 @@ public class CompareNodeCommandTest
 
         final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.Status.NEWER, comparison.getCompareStatus().getStatus() );
+        assertEquals( CompareStatus.NEWER, comparison.getCompareStatus() );
     }
 
     @Test
@@ -146,7 +146,7 @@ public class CompareNodeCommandTest
 
         final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.Status.OLDER, comparison.getCompareStatus().getStatus() );
+        assertEquals( CompareStatus.OLDER, comparison.getCompareStatus() );
     }
 
 
@@ -182,7 +182,7 @@ public class CompareNodeCommandTest
 
         final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.Status.MOVED, comparison.getCompareStatus().getStatus() );
+        assertEquals( CompareStatus.MOVED, comparison.getCompareStatus() );
     }
 
 

@@ -130,6 +130,7 @@ public final class Attachment
             this.mimeType = attachment.mimeType;
             this.name = attachment.name;
             this.label = attachment.label;
+            this.size = attachment.size;
         }
 
         public Builder mimeType( final String mimeType )

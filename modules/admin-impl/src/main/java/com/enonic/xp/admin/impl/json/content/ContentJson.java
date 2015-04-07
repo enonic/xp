@@ -10,7 +10,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AccessControlEntryJson;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.Metadata;
+import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.form.InlineMixinsToFormItemsTransformer;
@@ -26,7 +26,7 @@ public final class ContentJson
 
     private final List<AttachmentJson> attachments;
 
-    private final List<MetadataJson> metadata;
+    private final List<ExtraDataJson> extraData;
 
     private final PageJson pageJson;
 
@@ -42,10 +42,10 @@ public final class ContentJson
         this.data = PropertyTreeJson.toJson( content.getData() );
         this.attachments = AttachmentListJson.toJson( content.getAttachments() );
 
-        this.metadata = new ArrayList<>();
-        for ( Metadata item : content.getAllMetadata() )
+        this.extraData = new ArrayList<>();
+        for ( ExtraData item : content.getAllExtraData() )
         {
-            this.metadata.add( new MetadataJson( item ) );
+            this.extraData.add( new ExtraDataJson( item ) );
         }
 
         this.pageJson = content.hasPage() ? new PageJson( content.getPage() ) : null;
@@ -76,9 +76,9 @@ public final class ContentJson
         return attachments;
     }
 
-    public List<MetadataJson> getMeta()
+    public List<ExtraDataJson> getMeta()
     {
-        return this.metadata;
+        return this.extraData;
     }
 
     public List<AccessControlEntryJson> getPermissions()

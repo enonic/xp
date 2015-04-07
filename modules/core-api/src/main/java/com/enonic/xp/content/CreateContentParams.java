@@ -15,7 +15,7 @@ public final class CreateContentParams
 {
     private final PropertyTree data;
 
-    private final Metadatas metadata;
+    private final ExtraDatas extraDatas;
 
     private final ContentTypeName type;
 
@@ -42,7 +42,7 @@ public final class CreateContentParams
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
-        this.metadata = builder.metadata;
+        this.extraDatas = builder.extraDatas;
         this.type = builder.type;
         this.owner = builder.owner;
         this.displayName = builder.displayName;
@@ -71,9 +71,9 @@ public final class CreateContentParams
         return data;
     }
 
-    public Metadatas getMetadata()
+    public ExtraDatas getExtraDatas()
     {
-        return metadata;
+        return extraDatas;
     }
 
     public ContentTypeName getType()
@@ -135,7 +135,7 @@ public final class CreateContentParams
     {
         private PropertyTree data;
 
-        private Metadatas metadata;
+        private ExtraDatas extraDatas;
 
         private ContentTypeName type;
 
@@ -166,7 +166,7 @@ public final class CreateContentParams
         private Builder( final CreateContentParams source )
         {
             this.data = source.data;
-            this.metadata = source.metadata;
+            this.extraDatas = source.extraDatas;
             this.type = source.type;
             this.owner = source.owner;
             this.displayName = source.displayName;
@@ -186,9 +186,9 @@ public final class CreateContentParams
             return this;
         }
 
-        public Builder metadata( final Metadatas metadata )
+        public Builder extraDatas( final ExtraDatas extraDatas )
         {
-            this.metadata = metadata;
+            this.extraDatas = extraDatas;
             return this;
         }
 

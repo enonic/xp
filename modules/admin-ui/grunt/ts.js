@@ -21,7 +21,7 @@ function add(name, path, declaration) {
         src: baseDir + '/' + path + '/js/_module.ts',
         out: baseDir + '/' + path + '/js/_all.js',
         options: {
-            //declaration: declaration
+            declaration: declaration
         }
     };
 

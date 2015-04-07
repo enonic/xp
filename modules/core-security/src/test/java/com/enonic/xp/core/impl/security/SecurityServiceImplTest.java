@@ -7,6 +7,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
+import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
+import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
+import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
+import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
+import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
+import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.CreateNodeParams;
@@ -20,6 +28,8 @@ import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.PrincipalQuery;
+import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.Role;
@@ -42,15 +52,8 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
-import com.enonic.wem.repo.internal.elasticsearch.AbstractElasticsearchIntegrationTest;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchIndexServiceInternal;
-import com.enonic.wem.repo.internal.elasticsearch.ElasticsearchQueryService;
-import com.enonic.wem.repo.internal.elasticsearch.branch.ElasticsearchBranchService;
-import com.enonic.wem.repo.internal.elasticsearch.version.ElasticsearchVersionService;
-import com.enonic.wem.repo.internal.entity.NodeServiceImpl;
-import com.enonic.wem.repo.internal.entity.dao.NodeDaoImpl;
-import com.enonic.wem.repo.internal.repository.RepositoryInitializer;
 
+import static com.enonic.xp.security.PrincipalQuery.newQuery;
 import static com.enonic.xp.security.acl.UserStoreAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.UserStoreAccess.CREATE_USERS;
 import static com.enonic.xp.security.acl.UserStoreAccess.WRITE_USERS;
@@ -736,6 +739,39 @@ public class SecurityServiceImplTest
             AuthenticationInfo authInfo2 = securityService.authenticate( authToken );
             assertTrue( authInfo2.isAuthenticated() );
         } );
+    }
+
+    @Test
+    public void testQuery()
+        throws Exception
+    {
+
+        runAsAdmin( () -> {
+            final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "user1" );
+
+            final CreateUserParams createUser1 = CreateUserParams.create().
+                userKey( userKey1 ).
+                displayName( "User 1" ).
+                email( "user1@enonic.com" ).
+                login( "user1" ).
+                password( "123456" ).
+                build();
+
+
+            final PrincipalQuery query = newQuery().userStore( UserStoreKey.system() ).build();
+            PrincipalQueryResult queryResult = securityService.query( query );
+
+            queryResult = securityService.query( query );
+            assertEquals( queryResult.getTotalSize(), 0 );
+
+            final User user1 = securityService.createUser( createUser1 );
+
+            queryResult = securityService.query( query );
+
+            assertEquals( queryResult.getTotalSize(), 1 );
+            assertEquals( queryResult.getPrincipals().getPrincipal( userKey1 ), user1 );
+        } );
+
     }
 
     private <T> T runAsAdmin( Callable<T> runnable )

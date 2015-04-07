@@ -4,6 +4,7 @@
 ///<reference path='ItemTypeConfig.ts' />
 ///<reference path='RegionItemType.ts' />
 ///<reference path='InitializeLiveEditEvent.ts' />
+///<reference path='SkipLiveEditReloadConfirmationEvent.ts' />
 ///<reference path='ComponentItemType.ts' />
 ///<reference path='PageItemType.ts' />
 ///<reference path='ContentItemType.ts' />
@@ -38,6 +39,7 @@
 
 ///<reference path='PageLockedEvent.ts' />
 ///<reference path='PageUnlockedEvent.ts' />
+///<reference path='PageUnloadedEvent.ts' />
 ///<reference path='PageTextModeStartedEvent.ts' />
 ///<reference path='ImageOpenUploadDialogEvent.ts' />
 ///<reference path='ImageUploadedEvent.ts' />

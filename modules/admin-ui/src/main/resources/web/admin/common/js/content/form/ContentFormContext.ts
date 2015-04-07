@@ -74,7 +74,7 @@ module api.content.form {
         }
     }
 
-    class ContentFormContextBuilder extends api.form.FormContextBuilder {
+    export class ContentFormContextBuilder extends api.form.FormContextBuilder {
 
         site: api.content.site.Site;
 

@@ -21,6 +21,8 @@
   }
 
   & > .text-edit-toolbar {
+    .reset(true);
+
     display: none;
     position: fixed;
     top: 0;
@@ -30,14 +32,16 @@
     text-align: center;
 
     .wrapper {
+      .opacity(.9);
+      .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
+      .border-radius(0 0 13px 13px);
+
       line-height: 24px;
       padding: 10px 10px 10px 16px;
       display: inline-block;
       color: @admin-almost-white;
       background: @admin-bg-dark-gray;
-      .opacity(.9);
-      .box-shadow(0 1px 5px rgba(0, 0, 0, 0.7));
-      .border-radius(0 0 13px 13px);
+      font-size: 14px;
 
       .close-button {
         .button(@admin-font-gray2, transparent, @admin-almost-white, transparent);

@@ -1,11 +1,14 @@
 package com.enonic.xp.query.parser;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.xp.query.QueryException;
+import com.enonic.xp.query.expr.ConstraintExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.parser.QueryParser;
 
 public class QueryParserTest
 {
@@ -125,5 +128,17 @@ public class QueryParserTest
         testQuery( "order BY geoLocation('arg') DESC", "ORDER BY geoLocation('arg') DESC" );
         testQuery( "ORDER BY a, score()", "ORDER BY a ASC, score() ASC" );
         testQuery( "order by score() DESC, a", "ORDER BY score() DESC, a ASC" );
+    }
+
+    @Test(expected = QueryException.class)
+    public void invalid_order_expression()
+    {
+        ConstraintExpr expr = QueryParser.parseCostraintExpression( "AND" );
+    }
+
+    @Test(expected = QueryException.class)
+    public void invalid_constraint_expression()
+    {
+        List<OrderExpr> expr = QueryParser.parseOrderExpressions( "AND < 3" );
     }
 }

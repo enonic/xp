@@ -1,6 +1,7 @@
 package com.enonic.xp.security;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -41,6 +42,26 @@ public abstract class Principal
     public Instant getModifiedTime()
     {
         return modifiedTime;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof Principal ) )
+        {
+            return false;
+        }
+
+        final Principal other = (Principal) o;
+
+        return Objects.equals( key, other.key ) &&
+            Objects.equals( displayName, other.displayName ) &&
+            Objects.equals( modifiedTime, other.modifiedTime );
+
     }
 
     public static abstract class Builder<B>

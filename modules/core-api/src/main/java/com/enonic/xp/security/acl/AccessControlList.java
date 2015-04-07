@@ -30,11 +30,6 @@ public final class AccessControlList
         return entry != null && entry.isAllowed( permissions );
     }
 
-    public boolean isDeniedFor( final PrincipalKey principal, final Permission permissions )
-    {
-        return !isAllowedFor( principal, permissions );
-    }
-
     public PrincipalKeys getAllPrincipals()
     {
         final Set<PrincipalKey> principals = this.entries.values().stream().

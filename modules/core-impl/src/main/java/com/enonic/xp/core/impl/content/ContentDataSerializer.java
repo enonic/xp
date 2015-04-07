@@ -8,8 +8,8 @@ import org.apache.commons.lang.StringUtils;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentTranslatorParams;
-import com.enonic.xp.content.Metadata;
-import com.enonic.xp.content.Metadatas;
+import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.content.attachment.Attachment;
 import com.enonic.xp.content.attachment.AttachmentNames;
@@ -68,19 +68,19 @@ public final class ContentDataSerializer
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
         contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
-        if ( content.hasMetadata() )
+        if ( content.hasExtraData() )
         {
             final PropertySet metadataSet = contentAsData.addSet( ContentPropertyNames.EXTRA_DATA );
 
-            for ( final Metadata metadata : content.getAllMetadata() )
+            for ( final ExtraData extraData : content.getAllExtraData() )
             {
-                final String xDataModulePrefix = metadata.getModulePrefix();
+                final String xDataModulePrefix = extraData.getModulePrefix();
                 PropertySet xDataModule = metadataSet.getSet( xDataModulePrefix );
                 if ( xDataModule == null )
                 {
                     xDataModule = metadataSet.addSet( xDataModulePrefix );
                 }
-                xDataModule.addSet( metadata.getName().getLocalName(), metadata.getData().getRoot().copy( contentAsData.getTree() ) );
+                xDataModule.addSet( extraData.getName().getLocalName(), extraData.getData().getRoot().copy( contentAsData.getTree() ) );
             }
         }
 
@@ -116,18 +116,18 @@ public final class ContentDataSerializer
         contentAsData.ifNotNull().addString( LANGUAGE, params.getLanguage() != null ? params.getLanguage().toLanguageTag() : null );
         contentAsData.addSet( DATA, params.getData().getRoot().copy( contentAsData.getTree() ) );
 
-        if ( params.getMetadata() != null && !params.getMetadata().isEmpty() )
+        if ( params.getExtraDatas() != null && !params.getExtraDatas().isEmpty() )
         {
             final PropertySet metaSet = contentAsData.addSet( EXTRA_DATA );
-            for ( final Metadata metadata : params.getMetadata() )
+            for ( final ExtraData extraData : params.getExtraDatas() )
             {
-                final String xDataModulePrefix = metadata.getModulePrefix();
+                final String xDataModulePrefix = extraData.getModulePrefix();
                 PropertySet xDataModule = metaSet.getSet( xDataModulePrefix );
                 if ( xDataModule == null )
                 {
                     xDataModule = metaSet.addSet( xDataModulePrefix );
                 }
-                xDataModule.addSet( metadata.getName().getLocalName(), metadata.getData().getRoot().copy( metaSet.getTree() ) );
+                xDataModule.addSet( extraData.getName().getLocalName(), extraData.getData().getRoot().copy( metaSet.getTree() ) );
             }
         }
 
@@ -149,7 +149,7 @@ public final class ContentDataSerializer
         addUserInfo( contentAsSet, builder );
         addOwner( contentAsSet, builder );
         addLanguage( contentAsSet, builder );
-        addMetadata( contentAsSet, builder );
+        addExtraData( contentAsSet, builder );
         addPage( contentAsSet, builder );
         addAttachments( contentAsSet, builder );
 
@@ -187,24 +187,24 @@ public final class ContentDataSerializer
         }
     }
 
-    private void addMetadata( final PropertySet contentAsSet, final Content.Builder builder )
+    private void addExtraData( final PropertySet contentAsSet, final Content.Builder builder )
     {
         final PropertySet metadataSet = contentAsSet.getSet( EXTRA_DATA );
         if ( metadataSet != null )
         {
-            final Metadatas.Builder metadatasBuilder = Metadatas.builder();
+            final ExtraDatas.Builder extradatasBuilder = ExtraDatas.builder();
             for ( final String metadataModulePrefix : metadataSet.getPropertyNames() )
             {
                 final PropertySet xDataModule = metadataSet.getSet( metadataModulePrefix );
                 for ( final String metadataLocalName : xDataModule.getPropertyNames() )
                 {
-                    final ModuleKey moduleKey = Metadata.fromModulePrefix( metadataModulePrefix );
+                    final ModuleKey moduleKey = ExtraData.fromModulePrefix( metadataModulePrefix );
                     final MixinName metadataName = MixinName.from( moduleKey, metadataLocalName );
-                    metadatasBuilder.add( new Metadata( metadataName, xDataModule.getSet( metadataLocalName ).toTree() ) );
+                    extradatasBuilder.add( new ExtraData( metadataName, xDataModule.getSet( metadataLocalName ).toTree() ) );
                 }
             }
 
-            builder.metadata( metadatasBuilder.build() );
+            builder.extraDatas( extradatasBuilder.build() );
         }
     }
 

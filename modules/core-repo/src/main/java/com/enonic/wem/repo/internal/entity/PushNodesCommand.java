@@ -73,7 +73,7 @@ public class PushNodesCommand
                 continue;
             }
 
-            if ( nodeComparison.getCompareStatus().getStatus().equals( CompareStatus.Status.EQUAL ) )
+            if ( nodeComparison.getCompareStatus() == CompareStatus.EQUAL )
             {
                 builder.addSuccess( node );
                 continue;
@@ -96,7 +96,7 @@ public class PushNodesCommand
                 builder.addSuccess( node );
             }
 
-            if ( nodeComparison.getCompareStatus().getStatus().equals( CompareStatus.Status.MOVED ) )
+            if ( nodeComparison.getCompareStatus() == CompareStatus.MOVED )
             {
                 updateNodeChildrenWithNewMetadata( node, builder );
             }
@@ -105,7 +105,7 @@ public class PushNodesCommand
         return builder.build();
     }
 
-    private void updateNodeChildrenWithNewMetadata( final Node node, PushNodesResult.Builder resultBuilder)
+    private void updateNodeChildrenWithNewMetadata( final Node node, PushNodesResult.Builder resultBuilder )
     {
         final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( node.path() ).

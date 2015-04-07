@@ -29,6 +29,11 @@ module api.form {
             return this.moreThanRequiredOccurrences();
         }
 
+        // returns true only if number of existing occurences is bigger then configured minimum and minimum is > 0
+        showRemoveButtonStrict(): boolean {
+            return this.moreThanRequiredOccurrences() && this.allowedOccurrences.getMinimum() > 0;
+        }
+
         showAddButton(): boolean {
 
             if (!this.isLastOccurrence()) {

@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.content.Metadata;
-import com.enonic.xp.content.Metadatas;
+import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.site.ModuleConfig;
 import com.enonic.xp.content.site.ModuleConfigs;
 import com.enonic.xp.content.site.ModuleConfigsDataSerializer;
@@ -37,7 +37,7 @@ final class ValidateContentDataCommand
 
     private final PropertyTree contentData;
 
-    private final Metadatas metadatas;
+    private final ExtraDatas extraDatas;
 
     private final ContentTypeName contentType;
 
@@ -49,7 +49,7 @@ final class ValidateContentDataCommand
         mixinService = builder.mixinService;
         moduleService = builder.moduleService;
         contentData = builder.contentData;
-        metadatas = builder.metadatas;
+        extraDatas = builder.extraDatas;
         contentType = builder.contentType;
         resultBuilder = DataValidationErrors.create();
     }
@@ -113,11 +113,11 @@ final class ValidateContentDataCommand
 
     private void validateMetadata()
     {
-        if ( this.metadatas != null && this.metadatas.isNotEmpty() )
+        if ( this.extraDatas != null && this.extraDatas.isNotEmpty() )
         {
-            for ( final Metadata metadata : this.metadatas )
+            for ( final ExtraData extraData : this.extraDatas )
             {
-                final MixinName name = metadata.getName();
+                final MixinName name = extraData.getName();
 
                 final Mixin mixin = this.mixinService.getByName( name );
                 if ( mixin == null )
@@ -128,7 +128,7 @@ final class ValidateContentDataCommand
 
                 final Form mixinForm = Form.newForm().addFormItems( mixin.getFormItems() ).build();
 
-                this.resultBuilder.addAll( new OccurrenceValidator( mixinForm ).validate( metadata.getData().getRoot() ) );
+                this.resultBuilder.addAll( new OccurrenceValidator( mixinForm ).validate( extraData.getData().getRoot() ) );
             }
         }
     }
@@ -144,7 +144,7 @@ final class ValidateContentDataCommand
 
         private PropertyTree contentData;
 
-        private Metadatas metadatas;
+        private ExtraDatas extraDatas;
 
         private ContentTypeName contentType;
 
@@ -176,9 +176,9 @@ final class ValidateContentDataCommand
             return this;
         }
 
-        public Builder metadatas( Metadatas metadatas )
+        public Builder extradatas( ExtraDatas extraDatas )
         {
-            this.metadatas = metadatas;
+            this.extraDatas = extraDatas;
             return this;
         }
 

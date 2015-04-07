@@ -65,9 +65,9 @@ final class DeleteContentCommand
 
         final Node nodeToDelete = this.nodeService.getByPath( nodePath );
 
-        final CompareStatus.Status status = getCompareStatus( nodeToDelete );
+        final CompareStatus status = getCompareStatus( nodeToDelete );
 
-        if ( status.equals( CompareStatus.Status.NEW ) )
+        if ( status == CompareStatus.NEW )
         {
             final Node deletedNode = nodeService.deleteByPath( nodePath );
             return translator.fromNode( deletedNode );
@@ -79,7 +79,7 @@ final class DeleteContentCommand
         }
     }
 
-    private CompareStatus.Status getCompareStatus( final Node nodeToDelete )
+    private CompareStatus getCompareStatus( final Node nodeToDelete )
     {
         final Context context = ContextAccessor.current();
         final Branch currentBranch = context.getBranch();
@@ -93,7 +93,7 @@ final class DeleteContentCommand
         {
             compare = this.nodeService.compare( nodeToDelete.id(), ContentConstants.BRANCH_DRAFT );
         }
-        return compare.getCompareStatus().getStatus();
+        return compare.getCompareStatus();
     }
 
     public static Builder create()

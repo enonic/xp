@@ -1,9 +1,6 @@
 package com.enonic.xp.portal.impl.script.serializer;
 
-import jdk.nashorn.internal.objects.Global;
-import jdk.nashorn.internal.objects.NativeArray;
-import jdk.nashorn.internal.runtime.ScriptObject;
-
+import com.enonic.xp.portal.impl.script.util.NashornHelper;
 import com.enonic.xp.portal.script.serializer.MapGeneratorBase;
 
 public final class ScriptMapGenerator
@@ -12,36 +9,36 @@ public final class ScriptMapGenerator
     @Override
     protected Object newMap()
     {
-        return Global.newEmptyInstance();
+        return NashornHelper.newNativeObject();
     }
 
     @Override
     protected Object newArray()
     {
-        return Global.allocate( new Object[0] );
+        return NashornHelper.newNativeArray();
     }
 
     @Override
     protected boolean isMap( final Object value )
     {
-        return !isArray( value );
+        return NashornHelper.isNativeObject( value );
     }
 
     @Override
     protected boolean isArray( final Object value )
     {
-        return ( (ScriptObject) value ).isArray();
+        return NashornHelper.isNativeArray( value );
     }
 
     @Override
     protected void putInMap( final Object map, final String key, final Object value )
     {
-        ( (ScriptObject) map ).put( key, value, false );
+        NashornHelper.addToNativeObject( map, key, value );
     }
 
     @Override
     protected void addToArray( final Object array, final Object value )
     {
-        NativeArray.push( array, value );
+        NashornHelper.addToNativeArray( array, value );
     }
 }
