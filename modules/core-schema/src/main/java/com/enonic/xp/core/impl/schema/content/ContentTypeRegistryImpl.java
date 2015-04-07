@@ -1,12 +1,19 @@
 package com.enonic.xp.core.impl.schema.content;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.schema.content.ContentTypeUpdatedEvent;
+import com.enonic.xp.schema.content.ContentTypeDeletedEvent;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -17,6 +24,8 @@ final class ContentTypeRegistryImpl
     implements ContentTypeRegistry
 {
     private final Map<ContentTypeName, ContentType> map;
+
+    private EventPublisher eventPublisher;
 
     public ContentTypeRegistryImpl()
     {
@@ -56,6 +65,7 @@ final class ContentTypeRegistryImpl
         for ( final ContentType value : provider.get() )
         {
             this.map.put( value.getName(), value );
+            eventPublisher.publish( new ContentTypeUpdatedEvent ( value.getName(), Instant.now()) );
         }
     }
 
@@ -65,6 +75,12 @@ final class ContentTypeRegistryImpl
         for ( final ContentType value : provider.get() )
         {
             this.map.remove( value.getName() );
+            eventPublisher.publish( new ContentTypeDeletedEvent ( value.getName() ) );
         }
+    }
+
+    public void setEventPublisher( final EventPublisher eventPublisher )
+    {
+        this.eventPublisher = eventPublisher;
     }
 }
