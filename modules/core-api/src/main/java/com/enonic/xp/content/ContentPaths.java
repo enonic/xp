@@ -49,6 +49,34 @@ public final class ContentPaths
         return new ContentPaths( ImmutableSet.copyOf( tmp ) );
     }
 
+    public boolean hasParentOf( final ContentPath contentPath )
+    {
+        for ( ContentPath possibleParentPath : this.set )
+        {
+            if ( contentPath.isChildOf( possibleParentPath ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public ContentPaths filterChildrenIfParentPresents()
+    {
+        ContentPaths filteredContentPaths = ContentPaths.empty();
+
+        for ( ContentPath contentPath : this.set )
+        {
+            if ( !this.hasParentOf( contentPath ) )
+            {
+                filteredContentPaths = filteredContentPaths.add( contentPath );
+            }
+        }
+
+        return filteredContentPaths;
+    }
+
     public ContentPaths remove( final String... paths )
     {
         return remove( parsePaths( paths ) );

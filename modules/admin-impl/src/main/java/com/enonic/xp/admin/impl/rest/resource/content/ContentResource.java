@@ -49,6 +49,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentNameJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.CreateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentResultJson;
@@ -594,6 +595,15 @@ public final class ContentResource
     }
 
     @POST
+    @Path("countContentsWithDescendants")
+    public long countContentsWithDescendants( final CountItemsWithChildrenJson json )
+    {
+        final ContentPaths contentsPaths = this.filterChildrenIfParentPresents( ContentPaths.from( json.getContentPaths() ) );
+
+        return new ContentChildrenCounter( contentService ).countContentsAndTheirChildren( contentsPaths );
+    }
+
+    @POST
     @Path("query")
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson query( final ContentQueryJson contentQueryJson )
@@ -704,6 +714,22 @@ public final class ContentResource
     private ContentIconUrlResolver newContentIconUrlResolver()
     {
         return new ContentIconUrlResolver( this.contentTypeService );
+    }
+
+    private ContentPaths filterChildrenIfParentPresents( ContentPaths sourceContentPaths )
+    {
+        ContentPaths filteredContentPaths = ContentPaths.empty();
+
+        for ( ContentPath contentPath : sourceContentPaths.getSet() )
+        {
+            boolean hasParent = sourceContentPaths.stream().anyMatch( ( possibleParentCP ) -> contentPath.isChildOf( possibleParentCP ) );
+            if ( !hasParent )
+            {
+                filteredContentPaths = filteredContentPaths.add( contentPath );
+            }
+        }
+
+        return filteredContentPaths;
     }
 
     @Reference
