@@ -45,7 +45,7 @@ public final class ContentFixtures
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.data( newPropertyTree() );
 
-        builder.addMetadata( new ExtraData( MixinName.from( "mymodule:myschema" ), newTinyPropertyTree() ) );
+        builder.addExtraData( new ExtraData( MixinName.from( "mymodule:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
 
         return builder.build();

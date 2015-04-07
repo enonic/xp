@@ -44,7 +44,7 @@ public final class ContentFixtures
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.data( newPropertyTree() );
 
-        builder.addMetadata( new ExtraData( MixinName.from( "com.enonic.mymodule:myschema" ), newTinyPropertyTree() ) );
+        builder.addExtraData( new ExtraData( MixinName.from( "com.enonic.mymodule:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
 
         return builder.build();
@@ -63,7 +63,7 @@ public final class ContentFixtures
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.data( newSmallPropertyTree() );
 
-        builder.addMetadata( new ExtraData( MixinName.from( "com.enonic.mymodule:myschema" ), newTinyPropertyTree() ) );
+        builder.addExtraData( new ExtraData( MixinName.from( "com.enonic.mymodule:myschema" ), newTinyPropertyTree() ) );
         builder.page( newPage() );
 
         return builder.build();
