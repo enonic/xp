@@ -1,64 +1,27 @@
 package com.enonic.xp.content;
 
-public class CompareStatus
+public enum CompareStatus
 {
-    public enum Status
+    NEW( false ),
+    NEW_TARGET( false ),
+    NEWER( false ),
+    OLDER( false ),
+    PENDING_DELETE( false ),
+    PENDING_DELETE_TARGET( false ),
+    EQUAL( false ),
+    MOVED( false ),
+    CONFLICT_PATH_EXISTS( true ),
+    CONFLICT_VERSION_BRANCH_DIVERGS( true );
+
+    private final boolean conflict;
+
+    CompareStatus( final boolean conflict )
     {
-        NEW,
-        NEW_TARGET,
-        NEWER,
-        OLDER,
-        PENDING_DELETE,
-        PENDING_DELETE_TARGET,
-        EQUAL,
-        MOVED,
-        CONFLICT_PATH_EXISTS,
-        CONFLICT_VERSION_BRANCH_DIVERGS
-
-    }
-
-    private final Status status;
-
-    public CompareStatus( final Status status )
-    {
-        this.status = status;
-    }
-
-    public Status getStatus()
-    {
-        return status;
+        this.conflict = conflict;
     }
 
     public boolean isConflict()
     {
-        return this.status.equals( Status.CONFLICT_PATH_EXISTS ) || status.equals( Status.CONFLICT_VERSION_BRANCH_DIVERGS );
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof CompareStatus ) )
-        {
-            return false;
-        }
-
-        final CompareStatus that = (CompareStatus) o;
-
-        if ( status != that.status )
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return status != null ? status.hashCode() : 0;
+        return this.conflict;
     }
 }

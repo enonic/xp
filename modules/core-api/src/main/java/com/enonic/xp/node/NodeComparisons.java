@@ -63,12 +63,12 @@ public class NodeComparisons
         return false;
     }
 
-    public Set<NodeComparison> getWithStatus( final CompareStatus.Status status )
+    public Set<NodeComparison> getWithStatus( final CompareStatus status )
     {
         Set<NodeComparison> result = Sets.newHashSet();
 
-        result.addAll( this.nodeComparisons.stream().filter(
-            nodeComparison -> nodeComparison.getCompareStatus().getStatus().equals( status ) ).collect( Collectors.toList() ) );
+        result.addAll( this.nodeComparisons.stream().filter( nodeComparison -> nodeComparison.getCompareStatus() == status ).collect(
+            Collectors.toList() ) );
 
         return result;
     }
