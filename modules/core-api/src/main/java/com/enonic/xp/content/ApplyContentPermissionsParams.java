@@ -1,11 +1,13 @@
 package com.enonic.xp.content;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 
 import com.enonic.xp.security.PrincipalKey;
 
 import static java.util.Objects.requireNonNull;
 
+@Beta
 public final class ApplyContentPermissionsParams
 {
     private final ContentId contentId;

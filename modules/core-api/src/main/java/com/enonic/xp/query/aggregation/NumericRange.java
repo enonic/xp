@@ -1,5 +1,8 @@
 package com.enonic.xp.query.aggregation;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class NumericRange
     extends Range
 {

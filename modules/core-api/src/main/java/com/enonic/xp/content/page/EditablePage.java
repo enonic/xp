@@ -1,8 +1,11 @@
 package com.enonic.xp.content.page;
 
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.data.PropertyTree;
 
+@Beta
 public class EditablePage
 {
     public DescriptorKey controller;

@@ -1,13 +1,14 @@
 package com.enonic.xp.content.page.region;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
+@Beta
 public abstract class AbstractRegions
     implements Iterable<Region>
 {

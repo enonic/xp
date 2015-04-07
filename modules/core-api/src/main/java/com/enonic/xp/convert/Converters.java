@@ -2,8 +2,10 @@ package com.enonic.xp.convert;
 
 import java.util.Map;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Maps;
 
+@Beta
 public final class Converters
 {
     private final static Converters INSTANCE = new Converters();

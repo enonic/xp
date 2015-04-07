@@ -2,8 +2,10 @@ package com.enonic.xp.security;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+@Beta
 public final class UserStoreKey
 {
     private final static UserStoreKey SYSTEM = new UserStoreKey( "system" );

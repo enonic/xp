@@ -3,6 +3,8 @@ package com.enonic.xp.relationship;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
@@ -10,6 +12,7 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 /**
  * The natural key of a Relationship.
  */
+@Beta
 public final class RelationshipKey
 {
     private final RelationshipTypeName type;

@@ -1,11 +1,13 @@
 package com.enonic.xp.content.site;
 
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 
+@Beta
 public final class CreateSiteParams
 {
     private ContentPath parentContentPath;

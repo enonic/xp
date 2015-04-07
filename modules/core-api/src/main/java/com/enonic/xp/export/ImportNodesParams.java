@@ -1,8 +1,11 @@
 package com.enonic.xp.export;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.vfs.VirtualFile;
 
+@Beta
 public class ImportNodesParams
 {
     private final NodePath targetNodePath;

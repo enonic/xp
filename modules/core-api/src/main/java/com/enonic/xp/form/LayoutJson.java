@@ -1,7 +1,9 @@
 package com.enonic.xp.form;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.annotations.Beta;
 
+@Beta
 @SuppressWarnings("UnusedDeclaration")
 public abstract class LayoutJson<T extends Layout>
     extends FormItemJson<T>

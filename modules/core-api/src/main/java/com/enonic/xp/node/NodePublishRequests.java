@@ -4,9 +4,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+@Beta
 public class NodePublishRequests
     implements Iterable<NodePublishRequest>
 {

@@ -1,6 +1,8 @@
 package com.enonic.xp.support;
 
+import com.google.common.annotations.Beta;
 
+@Beta
 public interface Editor<T>
 {
     /**

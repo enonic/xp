@@ -3,6 +3,8 @@ package com.enonic.xp.content.page;
 
 import java.util.ArrayList;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.Property;
@@ -11,6 +13,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
+@Beta
 public final class PageTemplate
     extends Content
 {

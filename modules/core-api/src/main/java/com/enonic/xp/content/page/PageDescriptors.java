@@ -2,10 +2,12 @@ package com.enonic.xp.content.page;
 
 import java.util.Collection;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
+@Beta
 public final class PageDescriptors
     extends AbstractImmutableEntityList<PageDescriptor>
 {

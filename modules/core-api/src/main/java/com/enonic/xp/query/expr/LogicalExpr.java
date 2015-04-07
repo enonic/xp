@@ -1,5 +1,8 @@
 package com.enonic.xp.query.expr;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class LogicalExpr
     implements ConstraintExpr
 {

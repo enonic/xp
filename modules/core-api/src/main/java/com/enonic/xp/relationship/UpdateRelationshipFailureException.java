@@ -4,9 +4,11 @@ package com.enonic.xp.relationship;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
+@Beta
 public final class UpdateRelationshipFailureException
     extends RuntimeException
 {

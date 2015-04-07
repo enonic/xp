@@ -2,11 +2,13 @@ package com.enonic.xp.content;
 
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.event.Event;
 
+@Beta
 public final class ContentChangeEvent
     implements Event
 {

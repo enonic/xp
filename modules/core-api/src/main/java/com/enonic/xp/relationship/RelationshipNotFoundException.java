@@ -2,10 +2,12 @@ package com.enonic.xp.relationship;
 
 import java.text.MessageFormat;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 
 import com.enonic.xp.exception.NotFoundException;
 
+@Beta
 public final class RelationshipNotFoundException
     extends NotFoundException
 {

@@ -2,9 +2,11 @@ package com.enonic.xp.query.expr;
 
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
+@Beta
 public final class CompareExpr
     implements ConstraintExpr
 {

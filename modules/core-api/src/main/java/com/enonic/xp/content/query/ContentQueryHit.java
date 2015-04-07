@@ -1,7 +1,10 @@
 package com.enonic.xp.content.query;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.ContentId;
 
+@Beta
 public class ContentQueryHit
 {
     private final ContentId contentId;

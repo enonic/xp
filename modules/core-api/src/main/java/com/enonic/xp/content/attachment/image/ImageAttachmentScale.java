@@ -1,6 +1,8 @@
 package com.enonic.xp.content.attachment.image;
 
+import com.google.common.annotations.Beta;
 
+@Beta
 public enum ImageAttachmentScale
 {
     SMALL( "small", 256 ),
@@ -12,7 +14,7 @@ public enum ImageAttachmentScale
 
     private final int size;
 
-    private ImageAttachmentScale( final String label, final int size )
+    ImageAttachmentScale( final String label, final int size )
     {
         this.label = label;
         this.size = size;

@@ -2,8 +2,11 @@ package com.enonic.xp.schema.content;
 
 import java.time.Instant;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.event.Event;
 
+@Beta
 public class ContentTypeUpdatedEvent
     implements Event
 {

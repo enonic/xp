@@ -1,7 +1,10 @@
 package com.enonic.xp.schema.content;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.event.Event;
 
+@Beta
 public class ContentTypeDeletedEvent
     implements Event
 {

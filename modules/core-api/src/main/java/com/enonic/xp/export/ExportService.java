@@ -1,9 +1,11 @@
 package com.enonic.xp.export;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface ExportService
 {
-    public NodeExportResult exportNodes( final ExportNodesParams params );
+    NodeExportResult exportNodes( final ExportNodesParams params );
 
-    public NodeImportResult importNodes( final ImportNodesParams params );
-
+    NodeImportResult importNodes( final ImportNodesParams params );
 }

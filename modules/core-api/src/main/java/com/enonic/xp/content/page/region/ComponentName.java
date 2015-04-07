@@ -2,7 +2,9 @@ package com.enonic.xp.content.page.region;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
 
+@Beta
 public final class ComponentName
 {
     private final String value;

@@ -5,9 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 
+@Beta
 public class FieldSet
     extends Layout
     implements Iterable<FormItem>

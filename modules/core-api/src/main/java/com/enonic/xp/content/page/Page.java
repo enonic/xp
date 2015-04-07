@@ -3,6 +3,7 @@ package com.enonic.xp.content.page;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.page.region.Component;
@@ -10,6 +11,7 @@ import com.enonic.xp.content.page.region.ComponentPath;
 import com.enonic.xp.content.page.region.Region;
 import com.enonic.xp.data.PropertyTree;
 
+@Beta
 public final class Page
     implements com.enonic.xp.rendering.Component
 {

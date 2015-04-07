@@ -1,10 +1,12 @@
 package com.enonic.xp.content.page.region;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 
+@Beta
 public class LayoutDescriptor
     extends Descriptor<DescriptorKey>
 {

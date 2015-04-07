@@ -2,12 +2,14 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.mixin.MixinName;
 
+@Beta
 public final class ExtraData
 {
     private MixinName name;

@@ -1,8 +1,9 @@
 package com.enonic.xp.module;
 
-
+import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 
+@Beta
 public abstract class ModuleBasedName
 {
     protected final static String SEPARATOR = ":";

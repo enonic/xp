@@ -1,7 +1,10 @@
 package com.enonic.xp.node;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.util.BinaryReference;
 
+@Beta
 public class AttachedBinary
 {
     private final BinaryReference binaryReference;

@@ -1,7 +1,10 @@
 package com.enonic.xp.security;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.exception.BaseException;
 
+@Beta
 public class PrincipalAlreadyExistsException
     extends BaseException
 {

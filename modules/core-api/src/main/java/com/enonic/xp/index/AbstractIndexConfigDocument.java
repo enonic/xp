@@ -1,5 +1,8 @@
 package com.enonic.xp.index;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public abstract class AbstractIndexConfigDocument
     implements IndexConfigDocument
 {

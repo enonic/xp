@@ -1,9 +1,12 @@
 package com.enonic.xp.content.site;
 
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 
+@Beta
 public class ModuleConfigsDataSerializer
 {
     private final ModuleConfigDataSerializer moduleConfigSerializer = new ModuleConfigDataSerializer();

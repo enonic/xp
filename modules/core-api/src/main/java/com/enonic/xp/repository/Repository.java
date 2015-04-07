@@ -1,8 +1,11 @@
 package com.enonic.xp.repository;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 
+@Beta
 public class Repository
 {
     private final RepositoryId id;

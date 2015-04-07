@@ -1,6 +1,9 @@
 package com.enonic.xp.form.inputtype;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface InputTypeExtensions
 {
-    public InputType getInputType( final String name );
+    InputType getInputType( final String name );
 }

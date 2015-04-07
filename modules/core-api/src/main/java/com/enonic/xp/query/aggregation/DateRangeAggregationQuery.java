@@ -1,5 +1,8 @@
 package com.enonic.xp.query.aggregation;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class DateRangeAggregationQuery
     extends AbstractRangeAggregationQuery<DateRange>
 {

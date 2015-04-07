@@ -2,10 +2,12 @@ package com.enonic.xp.index;
 
 import java.util.Collection;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 
 import com.enonic.xp.data.Property;
 
+@Beta
 public class IndexPath
 {
     private final String path;

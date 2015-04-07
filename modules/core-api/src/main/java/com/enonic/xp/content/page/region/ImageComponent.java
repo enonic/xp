@@ -1,13 +1,15 @@
 package com.enonic.xp.content.page.region;
 
-
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyTree;
 
+@Beta
 public class ImageComponent
     extends Component
 {

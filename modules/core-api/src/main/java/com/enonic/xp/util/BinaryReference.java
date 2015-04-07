@@ -1,8 +1,10 @@
 package com.enonic.xp.util;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+@Beta
 public class BinaryReference
 {
     private final String value;

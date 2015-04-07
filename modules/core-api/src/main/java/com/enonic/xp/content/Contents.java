@@ -3,6 +3,7 @@ package com.enonic.xp.content;
 import java.util.Collection;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Collections2;
@@ -13,6 +14,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
+@Beta
 public final class Contents
     extends AbstractImmutableEntitySet<Content>
 {

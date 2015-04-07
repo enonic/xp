@@ -2,11 +2,13 @@ package com.enonic.xp.resource;
 
 import java.net.URL;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
 
 import com.enonic.xp.module.ModuleKey;
 
+@Beta
 public final class ResourceKey
 {
     private final static String URL_PROTOCOL_PREFIX = "module";

@@ -2,12 +2,14 @@ package com.enonic.xp.index;
 
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.RepositoryId;
 
+@Beta
 public class ReindexParams
 {
     private final boolean initialize;

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -11,6 +12,7 @@ import com.enonic.xp.security.PrincipalKey;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Beta
 public final class AccessControlEntry
 {
     private final PrincipalKey principal;

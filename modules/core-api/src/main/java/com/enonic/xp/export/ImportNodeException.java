@@ -1,9 +1,11 @@
 package com.enonic.xp.export;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class ImportNodeException
     extends RuntimeException
 {
-
     public ImportNodeException( final String message )
     {
         super( message );

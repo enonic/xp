@@ -1,11 +1,14 @@
 package com.enonic.xp.security;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 
+@Beta
 public final class SystemConstants
 {
 

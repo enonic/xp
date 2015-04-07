@@ -2,6 +2,7 @@ package com.enonic.xp.content;
 
 import java.util.Collection;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
@@ -9,6 +10,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
+@Beta
 public final class ContentIds
     extends AbstractImmutableEntitySet<ContentId>
     implements Iterable<ContentId>

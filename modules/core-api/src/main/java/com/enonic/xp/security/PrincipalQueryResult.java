@@ -1,7 +1,9 @@
 package com.enonic.xp.security;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
+@Beta
 public final class PrincipalQueryResult
 {
     private final int totalSize;

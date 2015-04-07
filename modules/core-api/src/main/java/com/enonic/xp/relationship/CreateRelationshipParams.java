@@ -3,12 +3,14 @@ package com.enonic.xp.relationship;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
+@Beta
 public final class CreateRelationshipParams
 {
     private RelationshipTypeName type;

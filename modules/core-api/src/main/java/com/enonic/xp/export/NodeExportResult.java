@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -11,6 +12,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.util.BinaryReference;
 
+@Beta
 public class NodeExportResult
 {
     private final boolean dryRun;

@@ -2,6 +2,7 @@ package com.enonic.xp.schema.content;
 
 import java.util.Collection;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -11,6 +12,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
+@Beta
 public final class ContentTypes
     extends AbstractImmutableEntityList<ContentType>
 {

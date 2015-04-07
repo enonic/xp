@@ -3,6 +3,7 @@ package com.enonic.xp.node;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
@@ -11,6 +12,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
+@Beta
 public class NodeIds
     extends AbstractImmutableEntitySet<NodeId>
 {

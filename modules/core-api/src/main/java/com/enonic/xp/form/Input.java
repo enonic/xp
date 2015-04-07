@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.Property;
@@ -13,6 +14,7 @@ import com.enonic.xp.form.inputtype.InputTypeConfig;
 
 import static com.enonic.xp.form.Occurrences.newOccurrences;
 
+@Beta
 public final class Input
     extends FormItem
 {

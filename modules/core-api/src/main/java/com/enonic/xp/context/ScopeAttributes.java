@@ -2,11 +2,14 @@ package com.enonic.xp.context;
 
 import java.util.Map;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface ScopeAttributes
 {
-    public Object getAttribute( String key );
+    Object getAttribute( String key );
 
-    public <T> T getAttribute( Class<T> type );
+    <T> T getAttribute( Class<T> type );
 
-    public Map<String, Object> getAttributes();
+    Map<String, Object> getAttributes();
 }

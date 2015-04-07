@@ -1,9 +1,12 @@
 package com.enonic.xp.content.page;
 
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.schema.content.ContentTypeName;
 
+@Beta
 public class GetDefaultPageTemplateParams
 {
     private final ContentId site;

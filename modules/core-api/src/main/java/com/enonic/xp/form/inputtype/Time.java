@@ -1,11 +1,14 @@
 package com.enonic.xp.form.inputtype;
 
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.BreaksRequiredContractException;
 
+@Beta
 public class Time
     extends InputType
 {

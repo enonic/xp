@@ -2,6 +2,9 @@ package com.enonic.xp.util;
 
 import java.text.MessageFormat;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public abstract class Exceptions
 {
     public final static class Builder<T extends Throwable>

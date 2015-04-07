@@ -1,8 +1,11 @@
 package com.enonic.xp.form;
 
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.data.Property;
 
+@Beta
 public class BreaksRegexValidationException
     extends Exception
 {
