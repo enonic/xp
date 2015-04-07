@@ -122,5 +122,30 @@ public final class ContentChangeEvent
         {
             return type;
         }
+
+        @Override
+        public boolean equals( final Object o )
+        {
+            if ( this == o )
+            {
+                return true;
+            }
+            if ( o == null || getClass() != o.getClass() )
+            {
+                return false;
+            }
+
+            final ContentChange that = (ContentChange) o;
+
+            if ( contentPaths != null ? !contentPaths.equals( that.contentPaths ) : that.contentPaths != null )
+            {
+                return false;
+            }
+            if ( type != null ? !(type == that.type) : that.type != null )
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

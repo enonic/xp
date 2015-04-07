@@ -54,7 +54,8 @@ public final class ApplyContentPermissionsParams
         }
         final ApplyContentPermissionsParams that = (ApplyContentPermissionsParams) o;
         return Objects.equal( this.contentId, that.contentId ) &&
-            Objects.equal( this.overwriteChildPermissions, that.overwriteChildPermissions );
+            Objects.equal( this.overwriteChildPermissions, that.overwriteChildPermissions ) &&
+            Objects.equal( this.modifier, that.modifier );
     }
 
     @Override
