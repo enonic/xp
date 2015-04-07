@@ -35,7 +35,7 @@ public class ImageComponent
     }
 
     @Override
-    public Component copy()
+    public ImageComponent copy()
     {
         return newImageComponent( this ).build();
     }
