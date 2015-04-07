@@ -100,10 +100,10 @@ module api.app {
             if (eventType === 'ModuleUpdatedEvent') {
                 return api.module.ModuleUpdatedEvent.fromJson(serverEventJson.event);
             }
-            if (eventType === 'ContentTypeUpdatedEvent') {
-                return api.schema.content.ContentTypeUpdatedEvent.fromJson(serverEventJson.event);
-            } else if (eventType === 'ContentTypeDeletedEvent') {
-                return api.schema.content.ContentTypeDeletedEvent.fromJson(serverEventJson.event);
+            if (eventType === 'ContentTypesUpdatedEvent') {
+                return api.schema.content.ContentTypesUpdatedEvent.fromJson(serverEventJson.event);
+            } else if (eventType === 'ContentTypesDeletedEvent') {
+                return api.schema.content.ContentTypesDeletedEvent.fromJson(serverEventJson.event);
             }
             return null;
         }

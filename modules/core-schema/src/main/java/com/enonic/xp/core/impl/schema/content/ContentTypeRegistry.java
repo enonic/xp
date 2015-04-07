@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.schema.content;
 
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -17,4 +18,6 @@ interface ContentTypeRegistry
     void addProvider( ContentTypeProvider provider );
 
     void removeProvider( ContentTypeProvider provider );
+
+    void setEventPublisher( EventPublisher eventPublisher );
 }

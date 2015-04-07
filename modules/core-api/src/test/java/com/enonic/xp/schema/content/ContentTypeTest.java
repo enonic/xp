@@ -7,21 +7,15 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.enonic.xp.content.ContentName;
 import com.enonic.xp.form.FieldSet;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.inputtype.InputTypes;
-import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static com.enonic.xp.form.FormItemSet.newFormItemSet;
 import static com.enonic.xp.form.Input.newInput;
 import static com.enonic.xp.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 public class ContentTypeTest
 {
@@ -128,8 +122,9 @@ public class ContentTypeTest
     @Test
     public void contentTypeDeletedEvent()
     {
-        ContentTypeDeletedEvent ctdEvent = new ContentTypeDeletedEvent(ContentTypeName.media());
-        assertTrue(ContentTypeName.media().equals( ctdEvent.getName() ));
+        ContentTypesDeletedEvent ctdEvent = new ContentTypesDeletedEvent();
+        ctdEvent.addContentTypeName( ContentTypeName.media() );
+        assertTrue( ctdEvent.getNames().contains( ContentTypeName.media() ) );
     }
 
     @Test
@@ -173,8 +168,9 @@ public class ContentTypeTest
     public void contentTypeUpdatedEvent()
     {
         Instant now = Instant.now();
-        ContentTypeUpdatedEvent event = new ContentTypeUpdatedEvent(ContentTypeName.media(), now);
-        assertTrue( ContentTypeName.media().equals( event.getName() ) );
+        ContentTypesUpdatedEvent event = new ContentTypesUpdatedEvent(now);
+        event.addContentTypeName( ContentTypeName.media() );
+        assertTrue( event.getNames().contains( ContentTypeName.media() ) );
         assertEquals( now, event.getModifiedTime() );
     }
 

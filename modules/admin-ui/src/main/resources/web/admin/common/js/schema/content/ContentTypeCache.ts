@@ -7,32 +7,35 @@ module api.schema.content {
         constructor() {
             super();
 
-            ContentTypeUpdatedEvent.on((event: ContentTypeUpdatedEvent) => {
+            ContentTypesUpdatedEvent.on((event: ContentTypesUpdatedEvent) => {
 
-                console.log("ContentTypeCache on ContentTypeUpdatedEvent: " + event.getContentTypeName().toString());
-                var cachedObject = this.getByKey(event.getContentTypeName());
-                if (cachedObject) {
-                    var cachedModifiedTimeAsMillis = cachedObject.getModifiedTime().getTime();
-                    var serverUpdateModifiedTimeAsMillis = event.getModifiedTime().getTime();
-                    console.log("cachedObject.getModifiedTime().toUTCString(): " + cachedObject.getModifiedTime().toUTCString());
-                    console.log("event.getModifiedTime().toUTCString():  " + event.getModifiedTime().toUTCString());
-                    if (cachedModifiedTimeAsMillis != serverUpdateModifiedTimeAsMillis) {
-                        console.log("  updated ContentType modified after cached ContentType - removing object from cache");
-                        console.log("  cachedObject.getModifiedTime(): " + cachedObject.getModifiedTime());
-                        console.log("  event: " + event.getModifiedTime());
-                        this.deleteByKey(event.getContentTypeName());
+                console.log("ContentTypeCache on ContentTypesUpdatedEvent: " + event.getContentTypeNames().toString());
+                event.getContentTypeNames().forEach((contentTypeName) => {
+                    var cachedObject = this.getByKey(contentTypeName);
+                    if (cachedObject) {
+                        var cachedModifiedTimeAsMillis = cachedObject.getModifiedTime().getTime();
+                        var serverUpdateModifiedTimeAsMillis = event.getModifiedTime().getTime();
+                        console.log("cachedObject.getModifiedTime().toUTCString(): " + cachedObject.getModifiedTime().toUTCString());
+                        console.log("event.getModifiedTime().toUTCString():  " + event.getModifiedTime().toUTCString());
+                        if (cachedModifiedTimeAsMillis != serverUpdateModifiedTimeAsMillis) {
+                            console.log("  updated ContentType modified after cached ContentType - removing object from cache");
+                            console.log("  cachedObject.getModifiedTime(): " + cachedObject.getModifiedTime());
+                            console.log("  event: " + event.getModifiedTime());
+                            this.deleteByKey(contentTypeName);
+                        }
+                        else {
+                            console.log("  updated ContentType already in cache!");
+                            // Not currently true so we delete anyway to avoid trouble
+                            this.deleteByKey(contentTypeName);
+                        }
                     }
-                    else {
-                        console.log("  updated ContentType already in cache!");
-                        // Not currently true so we delete anyway to avoid trouble
-                        this.deleteByKey(event.getContentTypeName());
-                    }
-                }
-
+                });
             });
-            ContentTypeDeletedEvent.on((event: ContentTypeDeletedEvent) => {
-                console.log("ContentTypeCache on ContentTypeDeletedEvent, deleting: " + event.getContentTypeName().toString());
-                this.deleteByKey(event.getContentTypeName());
+            ContentTypesDeletedEvent.on((event: ContentTypesDeletedEvent) => {
+                console.log("ContentTypeCache on ContentTypesDeletedEvent, deleting: " + event.getContentTypeNames().toString());
+                event.getContentTypeNames().forEach((contentTypeName) => {
+                    this.deleteByKey(contentTypeName);
+                });
             });
         }
 
