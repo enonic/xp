@@ -12,8 +12,6 @@
 ///<reference path='GetAllContentTypesRequest.ts' />
 ///<reference path='GetContentTypeByNameRequest.ts' />
 ///<reference path='GetContentTypesByModuleRequest.ts' />
-///<reference path='ContentTypeUpdatedEvent.ts' />
-///<reference path='ContentTypeDeletedEvent.ts' />
 ///<reference path='ContentTypeCache.ts' />
 
 ///<reference path='ContentTypeSummaryJson.ts' />
