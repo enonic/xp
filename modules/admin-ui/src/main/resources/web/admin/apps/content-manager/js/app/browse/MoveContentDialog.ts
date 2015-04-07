@@ -87,7 +87,6 @@ module app.browse {
 
             new api.content.MoveContentRequest(contentIds, parentRoot).
                 sendAndParse().then((response: ContentResponse<ContentSummary>) => {
-                    debugger;
                     if (parentContent) {
                         this.contentComboBox.deselect(parentContent);
                     }
