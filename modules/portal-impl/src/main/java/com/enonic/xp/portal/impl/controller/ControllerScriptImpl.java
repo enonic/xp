@@ -2,13 +2,13 @@ package com.enonic.xp.portal.impl.controller;
 
 import javax.ws.rs.core.Response;
 
+import com.enonic.xp.portal.PortalContext;
+import com.enonic.xp.portal.PortalContextAccessor;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.ScriptExports;
 import com.enonic.xp.portal.script.ScriptValue;
-import com.enonic.xp.portal.PortalContext;
-import com.enonic.xp.portal.PortalContextAccessor;
-import com.enonic.xp.portal.PortalResponse;
 
 final class ControllerScriptImpl
     implements ControllerScript
@@ -69,6 +69,7 @@ final class ControllerScriptImpl
         populateContentType( response, result.getMember( "contentType" ) );
         populateBody( response, result.getMember( "body" ) );
         populateHeaders( response, result.getMember( "headers" ) );
+        populateContribute( response, result.getMember( "contribute" ) );
         setRedirect( response, result.getMember( "redirect" ) );
     }
 
@@ -135,4 +136,24 @@ final class ControllerScriptImpl
             response.addHeader( key, value.getMember( key ).getValue( String.class ) );
         }
     }
+
+
+    private void populateContribute( final PortalResponse response, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        if ( !value.isObject() )
+        {
+            return;
+        }
+
+        for ( final String key : value.getKeys() )
+        {
+            response.addContribution( key, value.getMember( key ).getValue( String.class ) );
+        }
+    }
+
 }

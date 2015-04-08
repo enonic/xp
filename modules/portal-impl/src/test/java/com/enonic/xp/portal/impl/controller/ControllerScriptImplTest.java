@@ -57,4 +57,17 @@ public class ControllerScriptImplTest
         assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
         assertEquals( "GET,live", this.response.getBody() );
     }
+
+    @Test
+    public void testContributions()
+    {
+        this.context.setMethod( "GET" );
+        execute( "mymodule:/service/contribute" );
+        assertEquals( PortalResponse.STATUS_OK, this.response.getStatus() );
+        assertEquals( 1, this.response.getContributions( "foot" ).size() );
+        assertEquals( "<link href=\"styles.css\" rel=\"stylesheet\" />", this.response.getContributions( "foot" ).get( 0 ) );
+        assertEquals( 1, this.response.getContributions( "head" ).size() );
+        assertEquals( "<script src=\"test.js\" />", this.response.getContributions( "head" ).get( 0 ) );
+        assertTrue( this.response.getContributions( "other" ).isEmpty() );
+    }
 }
