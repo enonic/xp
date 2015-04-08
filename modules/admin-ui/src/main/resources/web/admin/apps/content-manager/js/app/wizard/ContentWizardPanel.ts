@@ -705,25 +705,14 @@ module app.wizard {
             if (this.contentType.getContentTypeName().isMedia()) {
                 deferred.resolve(null);
             } else {
-                var formContext = this.createFormContext(null);
-                var form = this.contentType.getForm();
-                var data = new PropertyTree();
-                var formView = new FormView(formContext, form, data.getRoot());
-                formView.layout().then(() => {
-
-                    deferred.resolve(new CreateContentRequest().
-                        setRequireValid(this.requireValid).
-                        setName(api.content.ContentUnnamed.newUnnamed()).
-                        setParent(parentPath).
-                        setContentType(this.contentType.getContentTypeName()).
-                        setDisplayName(this.contentWizardHeader.getDisplayName()).
-                        setData(data).
-                        setMetadata([]));
-
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).done();
-
+                deferred.resolve(new CreateContentRequest().
+                    setRequireValid(this.requireValid).
+                    setName(api.content.ContentUnnamed.newUnnamed()).
+                    setParent(parentPath).
+                    setContentType(this.contentType.getContentTypeName()).
+                    setDisplayName(this.contentWizardHeader.getDisplayName()).
+                    setData(new PropertyTree()).
+                    setMetadata([]));
             }
 
             return deferred.promise;
