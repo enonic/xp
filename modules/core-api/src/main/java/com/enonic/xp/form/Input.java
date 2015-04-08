@@ -11,7 +11,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.form.inputtype.InputType;
 import com.enonic.xp.form.inputtype.InputTypeConfig;
-import com.enonic.xp.form.inputtype.InputTypes;
 
 import static com.enonic.xp.form.Occurrences.newOccurrences;
 

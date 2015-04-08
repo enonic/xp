@@ -1,10 +1,9 @@
 package com.enonic.xp.query.expr;
 
-import com.google.common.annotations.Beta;
-
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+
+import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueType;

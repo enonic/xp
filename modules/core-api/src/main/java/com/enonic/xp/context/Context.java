@@ -4,9 +4,9 @@ import java.util.concurrent.Callable;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.branch.Branch;
 
 @Beta
 public interface Context

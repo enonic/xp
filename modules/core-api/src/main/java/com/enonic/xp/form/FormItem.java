@@ -6,7 +6,6 @@ import java.util.Objects;
 import com.google.common.annotations.Beta;
 
 import static com.enonic.xp.form.FormItemSet.newFormItemSet;
-import static com.enonic.xp.form.Input.newInput;
 
 @Beta
 public abstract class FormItem
