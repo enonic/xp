@@ -59,7 +59,7 @@ public class ElasticsearchQueryService
                 build();
         }
 
-        System.out.println( esQuery );
+        //System.out.println( esQuery );
 
         return doFind( esQuery );
     }
