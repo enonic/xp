@@ -1,5 +1,8 @@
 package com.enonic.xp.query.aggregation;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public abstract class Range
 {
     private final String key;

@@ -1,5 +1,7 @@
 package com.enonic.xp.query.expr;
 
+import com.google.common.annotations.Beta;
+
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -8,6 +10,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 
+@Beta
 public final class ValueExpr
     implements Expression
 {

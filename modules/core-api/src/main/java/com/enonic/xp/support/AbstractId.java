@@ -1,8 +1,9 @@
 package com.enonic.xp.support;
 
-
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+@Beta
 public abstract class AbstractId
 {
     private final String value;

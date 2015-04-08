@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
@@ -13,6 +14,7 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.parser.QueryParser;
 
+@Beta
 public class ChildOrder
 {
     private static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC );

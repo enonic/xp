@@ -1,4 +1,4 @@
-package com.enonic.xp.blob;
+package com.enonic.wem.repo.internal.blob;
 
 public final class BlobKey
 {

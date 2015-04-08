@@ -2,11 +2,13 @@ package com.enonic.xp.node;
 
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
+@Beta
 public class ReorderChildNodesParams
     extends AbstractImmutableEntityList<ReorderChildNodeParams>
 {

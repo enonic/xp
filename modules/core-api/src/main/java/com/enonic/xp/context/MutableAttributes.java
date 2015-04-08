@@ -1,13 +1,16 @@
 package com.enonic.xp.context;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface MutableAttributes
     extends ScopeAttributes
 {
-    public void setAttribute( String key, Object value );
+    void setAttribute( String key, Object value );
 
-    public <T> void setAttribute( T value );
+    <T> void setAttribute( T value );
 
-    public void removeAttribute( String key );
+    void removeAttribute( String key );
 
-    public <T> void removeAttribute( Class<T> type );
+    <T> void removeAttribute( Class<T> type );
 }

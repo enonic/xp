@@ -1,9 +1,11 @@
 package com.enonic.xp.content;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.security.PrincipalKey;
 
+@Beta
 public final class MoveContentParams
 {
     private ContentIds contentIds;

@@ -17,12 +17,12 @@ public class DescriptorsTest
     @Test
     public void pageDescriptor()
     {
-        Form pageForm = Form.newForm().
+        final Form pageForm = Form.newForm().
             addFormItem( newInput().name( "pause" ).inputType( InputTypes.DOUBLE ).build() ).
             // add input of type region
                 build();
 
-        PageDescriptor pageDescriptor = PageDescriptor.create().
+        final PageDescriptor pageDescriptor = PageDescriptor.create().
             displayName( "Landing page" ).
             config( pageForm ).
             regions( newRegionDescriptors().build() ).
@@ -36,28 +36,31 @@ public class DescriptorsTest
     @Test
     public void partDescriptor()
     {
-        Form partForm = Form.newForm().
+        final Form partForm = Form.newForm().
             addFormItem( newInput().name( "width" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
-        PartDescriptor partDescriptor = PartDescriptor.create().
+        final PartDescriptor partDescriptor = PartDescriptor.create().
             name( "news-part" ).
             displayName( "News part" ).
             config( partForm ).
             key( DescriptorKey.from( "module:new-part" ) ).
             build();
 
+        final PartDescriptor copy = PartDescriptor.copyOf( partDescriptor ).build();
+
         assertEquals( "News part", partDescriptor.getDisplayName() );
+        assertEquals( partDescriptor.getComponentPath(), copy.getComponentPath() );
     }
 
     @Test
     public void layoutDescriptor()
     {
-        Form layoutForm = Form.newForm().
+        final Form layoutForm = Form.newForm().
             addFormItem( newInput().name( "columns" ).inputType( InputTypes.DOUBLE ).build() ).
             build();
 
-        LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
+        final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
             name( "fancy-layout" ).
             displayName( "Fancy layout" ).
             config( layoutForm ).
@@ -65,7 +68,13 @@ public class DescriptorsTest
             key( DescriptorKey.from( "module:fancy-layout" ) ).
             build();
 
+        final LayoutDescriptor copy = LayoutDescriptor.copyOf( layoutDescriptor ).build();
+
         assertEquals( "Fancy layout", layoutDescriptor.getDisplayName() );
+        assertEquals( layoutForm, layoutDescriptor.getConfig() );
+        assertEquals( layoutDescriptor.getComponentPath(), copy.getComponentPath() );
+        assertEquals( layoutDescriptor.getRegions(), copy.getRegions() );
+
     }
 
 }

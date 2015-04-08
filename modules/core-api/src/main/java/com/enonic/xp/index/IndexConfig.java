@@ -1,5 +1,8 @@
 package com.enonic.xp.index;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class IndexConfig
 {
     public final static IndexConfig NONE = IndexConfig.create().

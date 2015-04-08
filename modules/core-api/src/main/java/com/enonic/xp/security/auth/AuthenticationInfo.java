@@ -1,5 +1,6 @@
 package com.enonic.xp.security.auth;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.security.PrincipalKey;
@@ -9,6 +10,7 @@ import com.enonic.xp.security.User;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Beta
 public final class AuthenticationInfo
 {
     private final User user;

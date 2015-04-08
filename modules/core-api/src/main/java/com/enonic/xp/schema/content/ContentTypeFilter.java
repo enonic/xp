@@ -2,9 +2,11 @@ package com.enonic.xp.schema.content;
 
 import java.util.Iterator;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 
+@Beta
 public final class ContentTypeFilter
     implements Iterable<ContentTypeName>
 {

@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-public class VirtualFilePathImpl
+class VirtualFilePathImpl
     implements VirtualFilePath
 {
     final static String SEPARATOR = "/";

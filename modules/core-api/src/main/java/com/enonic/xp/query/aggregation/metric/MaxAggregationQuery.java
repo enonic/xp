@@ -1,8 +1,11 @@
 package com.enonic.xp.query.aggregation.metric;
 
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.query.aggregation.MetricAggregationQuery;
 
+@Beta
 public class MaxAggregationQuery
     extends MetricAggregationQuery
 {

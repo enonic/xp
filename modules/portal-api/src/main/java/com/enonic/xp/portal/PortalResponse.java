@@ -2,8 +2,10 @@ package com.enonic.xp.portal;
 
 import java.util.Map;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Maps;
 
+@Beta
 public final class PortalResponse
 {
     public final static int STATUS_OK = 200;

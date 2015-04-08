@@ -1,8 +1,10 @@
 package com.enonic.xp.branch;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+@Beta
 public final class Branch
 {
     private final String name;

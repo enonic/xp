@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branches;
@@ -11,6 +12,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repository.RepositoryId;
 
+@Beta
 public class ReindexResult
 {
     private final Duration duration;

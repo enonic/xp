@@ -1,6 +1,9 @@
 package com.enonic.xp.content.page;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface PageEditor
 {
-    public void edit( final EditablePage edit );
+    void edit( final EditablePage edit );
 }

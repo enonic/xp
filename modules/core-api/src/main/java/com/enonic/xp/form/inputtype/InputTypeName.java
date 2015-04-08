@@ -3,6 +3,9 @@ package com.enonic.xp.form.inputtype;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class InputTypeName
 {
     private final String ref;

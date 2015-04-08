@@ -2,32 +2,34 @@ package com.enonic.xp.portal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 
+@Beta
 public interface PortalRequest
 {
-    public String getUri();
+    String getUri();
 
-    public String getMethod();
+    String getMethod();
 
-    public Branch getBranch();
+    Branch getBranch();
 
-    public ContentPath getContentPath();
+    ContentPath getContentPath();
 
-    public HttpServletRequest getRawRequest();
+    HttpServletRequest getRawRequest();
 
-    public String getBaseUri();
+    String getBaseUri();
 
-    public Multimap<String, String> getParams();
+    Multimap<String, String> getParams();
 
-    public Multimap<String, String> getFormParams();
+    Multimap<String, String> getFormParams();
 
-    public Multimap<String, String> getHeaders();
+    Multimap<String, String> getHeaders();
 
-    public RenderMode getMode();
+    RenderMode getMode();
 
-    public String rewriteUri( String uri );
+    String rewriteUri( String uri );
 }

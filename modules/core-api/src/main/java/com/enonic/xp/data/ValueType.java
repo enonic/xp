@@ -2,6 +2,9 @@ package com.enonic.xp.data;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public abstract class ValueType<T>
 {
     private final java.lang.String name;

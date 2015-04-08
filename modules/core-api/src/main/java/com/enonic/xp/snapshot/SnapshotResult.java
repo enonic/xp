@@ -4,8 +4,10 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Sets;
 
+@Beta
 public class SnapshotResult
 {
     private final Set<String> indices;

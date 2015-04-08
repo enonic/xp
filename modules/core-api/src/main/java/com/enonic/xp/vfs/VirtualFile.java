@@ -3,31 +3,30 @@ package com.enonic.xp.vfs;
 import java.net.URL;
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
+@Beta
 public interface VirtualFile
 {
-    public String getName();
+    String getName();
 
-    /**
-     * @return a filesystem-independent path to the VirtualFile using '/' as separator
-     */
-    public VirtualFilePath getPath();
+    VirtualFilePath getPath();
 
-    public URL getUrl();
+    URL getUrl();
 
-    public boolean isFolder();
+    boolean isFolder();
 
-    public boolean isFile();
+    boolean isFile();
 
-    public List<VirtualFile> getChildren();
+    List<VirtualFile> getChildren();
 
-    public CharSource getCharSource();
+    CharSource getCharSource();
 
-    public ByteSource getByteSource();
+    ByteSource getByteSource();
 
-    public boolean exists();
+    boolean exists();
 
-    public VirtualFile resolve( final VirtualFilePath path );
+    VirtualFile resolve( final VirtualFilePath path );
 }

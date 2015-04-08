@@ -1,6 +1,9 @@
 package com.enonic.xp.portal;
 
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public enum RenderMode
 {
     EDIT( "edit" ),
@@ -9,7 +12,7 @@ public enum RenderMode
 
     private final String name;
 
-    private RenderMode( final String name )
+    RenderMode( final String name )
     {
         this.name = name;
     }

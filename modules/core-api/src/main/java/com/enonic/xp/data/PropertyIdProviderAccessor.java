@@ -1,6 +1,8 @@
 package com.enonic.xp.data;
 
+import com.google.common.annotations.Beta;
 
+@Beta
 public class PropertyIdProviderAccessor
     extends ThreadLocal<PropertyIdProvider>
 {

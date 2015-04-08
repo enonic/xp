@@ -4,6 +4,7 @@ package com.enonic.xp.relationship;
 import java.time.Instant;
 import java.util.Map;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -13,6 +14,7 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
+@Beta
 public final class Relationship
 {
     private final RelationshipId id;

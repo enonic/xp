@@ -1,12 +1,14 @@
 package com.enonic.xp.content.page;
 
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.page.region.RegionDescriptors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.resource.ResourceKey;
 
+@Beta
 public final class PageDescriptor
 {
     private final DescriptorKey key;

@@ -1,5 +1,8 @@
 package com.enonic.xp.security.auth;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class EmailPasswordAuthToken
     extends PasswordAuthToken
 {

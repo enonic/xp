@@ -1,5 +1,8 @@
 package com.enonic.xp.util;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class HexEncoder
 {
     private final static char[] HEX = "0123456789abcdef".toCharArray();

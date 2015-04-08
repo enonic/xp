@@ -3,6 +3,7 @@ package com.enonic.xp.content;
 import java.time.Instant;
 import java.util.Locale;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.attachment.CreateAttachments;
@@ -12,6 +13,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 
+@Beta
 public class CreateContentTranslatorParams
 {
     private final PropertyTree data;

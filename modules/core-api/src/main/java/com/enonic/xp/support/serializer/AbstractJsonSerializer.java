@@ -1,14 +1,14 @@
 package com.enonic.xp.support.serializer;
 
-
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.annotations.Beta;
 
-
+@Beta
 public abstract class AbstractJsonSerializer<T>
 {
     private boolean prettyPrint = false;

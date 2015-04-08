@@ -1,8 +1,10 @@
 package com.enonic.xp.content.page.region;
 
-
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public abstract class Component
     implements com.enonic.xp.rendering.Component
 {

@@ -3,10 +3,6 @@ package com.enonic.xp.content.page;
 import org.junit.Test;
 
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.page.DescriptorKey;
-import com.enonic.xp.content.page.PageRegions;
-import com.enonic.xp.content.page.PageTemplate;
-import com.enonic.xp.content.page.PageTemplateKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -19,7 +15,7 @@ public class PageTemplateTest
     @Test
     public void pageTemplate()
     {
-        PropertyTree pageTemplateConfig = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
+        final PropertyTree pageTemplateConfig = new PropertyTree( new PropertyTree.PredictivePropertyIdProvider() );
         pageTemplateConfig.addLong( "pause", 10000L );
 
         final PageTemplate.Builder builder = PageTemplate.newPageTemplate().
@@ -36,5 +32,10 @@ public class PageTemplateTest
         assertEquals( "main-page-template", pageTemplate.getName().toString() );
         assertEquals( "Main page template", pageTemplate.getDisplayName() );
         assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "mainmodule:article" ) ) );
+        assertTrue( pageTemplate.canRender( ContentTypeName.from( "mainmodule:article" ) ) );
+        assertTrue( pageTemplate.canRender( ContentTypeName.from( "mainmodule:banner" ) ) );
+        assertEquals( DescriptorKey.from( ModuleKey.from( "mainmodule" ), "landing-page" ), pageTemplate.getController() );
+        assertEquals( pageTemplateConfig, pageTemplate.getConfig() );
+        assertTrue( pageTemplate.hasRegions() );
     }
 }

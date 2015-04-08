@@ -1,11 +1,13 @@
 package com.enonic.xp.security;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
+@Beta
 public final class UserStores
     extends AbstractImmutableEntityList<UserStore>
 {

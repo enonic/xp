@@ -2,6 +2,9 @@ package com.enonic.xp.image.filter;
 
 import java.awt.image.BufferedImage;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class ScaleMaxFilter
     extends BaseImageFilter
 {

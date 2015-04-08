@@ -2,6 +2,9 @@ package com.enonic.xp.portal.script.serializer;
 
 import java.util.Stack;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public abstract class MapGeneratorBase
     implements MapGenerator
 {

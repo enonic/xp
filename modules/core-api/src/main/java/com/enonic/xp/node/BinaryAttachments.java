@@ -2,12 +2,14 @@ package com.enonic.xp.node;
 
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 import com.enonic.xp.util.BinaryReference;
 
+@Beta
 public class BinaryAttachments
     extends AbstractImmutableEntitySet<BinaryAttachment>
 {

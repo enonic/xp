@@ -2,10 +2,12 @@ package com.enonic.xp.branch;
 
 import java.util.Collection;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
+@Beta
 public class Branches
     extends AbstractImmutableEntitySet<Branch>
 {

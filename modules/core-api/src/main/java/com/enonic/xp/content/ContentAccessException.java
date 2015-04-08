@@ -4,12 +4,15 @@ import java.text.MessageFormat;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.exception.BaseException;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.Permission;
 
+@Beta
 public final class ContentAccessException
     extends BaseException
 {

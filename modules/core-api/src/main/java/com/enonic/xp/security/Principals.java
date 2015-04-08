@@ -1,5 +1,6 @@
 package com.enonic.xp.security;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -8,6 +9,7 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 
 import static java.util.stream.Collectors.toList;
 
+@Beta
 public final class Principals
     extends AbstractImmutableEntityList<Principal>
 {

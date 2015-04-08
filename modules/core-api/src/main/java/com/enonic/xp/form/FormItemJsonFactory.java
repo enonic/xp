@@ -1,5 +1,8 @@
 package com.enonic.xp.form;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class FormItemJsonFactory
 {
     public static FormItemJson create( final FormItem formItem )

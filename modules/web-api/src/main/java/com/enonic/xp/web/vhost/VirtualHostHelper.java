@@ -2,6 +2,9 @@ package com.enonic.xp.web.vhost;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class VirtualHostHelper
 {
     private final static String KEY = VirtualHost.class.getName();

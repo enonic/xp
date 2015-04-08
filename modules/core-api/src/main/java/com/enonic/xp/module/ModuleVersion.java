@@ -3,8 +3,10 @@ package com.enonic.xp.module;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+@Beta
 public final class ModuleVersion
     implements Comparable<ModuleVersion>
 {

@@ -1,5 +1,8 @@
 package com.enonic.xp.node;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class NodeType
 {
     public final static NodeType DEFAULT_NODE_COLLECTION = NodeType.from( "default" );

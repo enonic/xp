@@ -1,7 +1,9 @@
 package com.enonic.xp.server;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 
+@Beta
 public final class VersionInfo
 {
     private static VersionInfo INSTANCE;

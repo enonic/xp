@@ -3,8 +3,10 @@ package com.enonic.xp.schema.content.validator;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
+@Beta
 public class ContentTypeValidationResult
     implements Iterable<ContentTypeValidationError>
 {

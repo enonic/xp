@@ -57,9 +57,10 @@ public final class UpdateContentJson
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
             } );
 
-        this.renameContentParams = new RenameContentParams().
+        this.renameContentParams = RenameContentParams.create().
             contentId( ContentId.from( contentId ) ).
-            newName( this.contentName );
+            newName( this.contentName ).
+            build();
     }
 
     @JsonIgnore

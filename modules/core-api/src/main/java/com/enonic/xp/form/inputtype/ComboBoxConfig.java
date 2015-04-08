@@ -2,6 +2,7 @@ package com.enonic.xp.form.inputtype;
 
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -9,6 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.form.InvalidValueException;
 
+@Beta
 public class ComboBoxConfig
     implements InputTypeConfig
 {

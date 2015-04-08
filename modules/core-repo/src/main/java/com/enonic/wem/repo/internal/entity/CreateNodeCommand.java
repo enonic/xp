@@ -128,7 +128,7 @@ public final class CreateNodeCommand
                 if ( !this.params.isDryRun() )
                 {
                     final Blob blob = this.binaryBlobStore.addRecord( binaryAttachment.getByteSource().openStream() );
-                    builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey() ) );
+                    builder.add( new AttachedBinary( binaryAttachment.getReference(), blob.getKey().toString() ) );
                 }
             }
             catch ( final IOException e )

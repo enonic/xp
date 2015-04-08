@@ -3,10 +3,12 @@ package com.enonic.xp.snapshot;
 import java.util.Collection;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.repository.RepositoryId;
 
+@Beta
 public class RestoreResult
 {
     final Set<String> indices;

@@ -3,8 +3,10 @@ package com.enonic.xp.module;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+@Beta
 public final class ModuleKey
 {
     private static final String SYSTEM_MODULE_NAME = "system";

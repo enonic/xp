@@ -1,9 +1,12 @@
 package com.enonic.xp.content.page.region;
 
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.page.DescriptorKey;
 import com.enonic.xp.data.PropertyTree;
 
+@Beta
 public final class PartComponent
     extends DescriptorBasedComponent
 {

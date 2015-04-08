@@ -1,5 +1,6 @@
 package com.enonic.xp.node;
 
+import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
@@ -12,6 +13,7 @@ import com.enonic.xp.snapshot.SnapshotResult;
 import com.enonic.xp.snapshot.SnapshotResults;
 import com.enonic.xp.util.BinaryReference;
 
+@Beta
 public interface NodeService
 {
     Node create( CreateNodeParams params );

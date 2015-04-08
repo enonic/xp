@@ -1,11 +1,13 @@
 package com.enonic.xp.media;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.form.FormItemName;
 
+@Beta
 public class MediaInfo
 {
     private String mediaType;

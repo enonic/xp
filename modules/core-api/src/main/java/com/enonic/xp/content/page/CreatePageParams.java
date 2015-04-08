@@ -1,10 +1,12 @@
 package com.enonic.xp.content.page;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyTree;
 
+@Beta
 public final class CreatePageParams
 {
     private ContentId content;

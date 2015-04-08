@@ -1,5 +1,7 @@
 package com.enonic.xp.schema.content.validator;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -7,6 +9,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static com.enonic.xp.schema.content.validator.ContentTypeValidationResult.newContentTypeValidationResult;
 
+@Beta
 public class ContentTypeSuperTypeValidator
 {
     private final ContentTypeService contentTypeService;

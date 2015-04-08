@@ -3,6 +3,7 @@ package com.enonic.xp.security;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
@@ -11,6 +12,7 @@ import com.enonic.xp.node.NodePath;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Beta
 public final class PrincipalKey
 {
     private final static String SEPARATOR = ":";

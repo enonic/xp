@@ -1,11 +1,14 @@
 package com.enonic.xp.node;
 
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.security.acl.AccessControlList;
 
+@Beta
 public class EditableNode
 {
     private Node source;

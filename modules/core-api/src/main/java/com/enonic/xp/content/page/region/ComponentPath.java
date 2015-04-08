@@ -3,12 +3,14 @@ package com.enonic.xp.content.page.region;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+@Beta
 public final class ComponentPath
     implements Iterable<ComponentPath.RegionAndComponent>
 {

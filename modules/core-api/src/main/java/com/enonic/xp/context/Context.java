@@ -2,22 +2,25 @@ package com.enonic.xp.context;
 
 import java.util.concurrent.Callable;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.branch.Branch;
 
+@Beta
 public interface Context
     extends ScopeAttributes
 {
-    public RepositoryId getRepositoryId();
+    RepositoryId getRepositoryId();
 
-    public Branch getBranch();
+    Branch getBranch();
 
-    public AuthenticationInfo getAuthInfo();
+    AuthenticationInfo getAuthInfo();
 
-    public void runWith( Runnable runnable );
+    void runWith( Runnable runnable );
 
-    public <T> T callWith( Callable<T> runnable );
+    <T> T callWith( Callable<T> runnable );
 
-    public LocalScope getLocalScope();
+    LocalScope getLocalScope();
 }

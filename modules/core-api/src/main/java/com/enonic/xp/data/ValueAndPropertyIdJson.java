@@ -1,11 +1,12 @@
 package com.enonic.xp.data;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.annotations.Beta;
 
+@Beta
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public final class ValueAndPropertyIdJson
 {

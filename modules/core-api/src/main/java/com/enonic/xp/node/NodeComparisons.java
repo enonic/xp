@@ -4,11 +4,13 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.CompareStatus;
 
+@Beta
 public class NodeComparisons
     implements Iterable<NodeComparison>
 {

@@ -1,5 +1,8 @@
 package com.enonic.xp.aggregation;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class BucketAggregation
     extends Aggregation
 {
