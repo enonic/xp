@@ -1,6 +1,5 @@
 package com.enonic.xp.data;
 
-import java.text.Format;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -8,8 +7,6 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.DateTimeParseException;
-import java.time.format.ResolverStyle;
 import java.time.format.SignStyle;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
@@ -33,6 +30,8 @@ final class JavaTypeConverters
             ChronoField.MONTH_OF_YEAR, 2 ).appendLiteral( '-' ).appendValue( ChronoField.DAY_OF_MONTH, 2 ).toFormatter();
 
     private final static DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
+    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     private final static DateTimeFormatter LOCAL_TIME_FORMATTER = new DateTimeFormatterBuilder().
         appendValue( HOUR_OF_DAY, 1, 2, SignStyle.NORMAL ).
@@ -223,7 +222,8 @@ final class JavaTypeConverters
         }
         else if ( value instanceof String )
         {
-            return Instant.parse( (String) value );
+            final TemporalAccessor temporalAccessor = DATE_TIME_FORMATTER.parse( (String) value );
+            return Instant.from( temporalAccessor );
         }
         else
         {
