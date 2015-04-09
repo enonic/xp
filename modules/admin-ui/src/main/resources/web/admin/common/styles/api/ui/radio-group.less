@@ -1,11 +1,10 @@
 .radio-group {
-  padding: 5px;
-  margin-bottom: 5px;
 
   .radio-button {
     margin-right: 10px;
     margin-bottom: 5px;
     min-width: 140px;
+    display: block;
 
     label {
       margin-left: 10px;
@@ -19,6 +18,13 @@
       margin-right: 0;
     }
 
+  }
+
+  .form-input input[type="radio"]  {
+    -webkit-appearance: radio;
+    width: auto;
+    vertical-align: middle;
+    position: relative;
   }
 
 }
