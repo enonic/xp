@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,9 +32,7 @@ public final class ValueTypes
 
     public static final ValueType<LocalTime> LOCAL_TIME = new ValueType.LocalTime();
 
-    public static final ValueType<ZonedDateTime> DATE_TIME = new ValueType.DateTime();
-
-    public static final ValueType<Instant> INSTANT = new ValueType.Instant();
+    public static final ValueType<Instant> DATE_TIME = new ValueType.DateTime();
 
     public static final ValueType<Long> LONG = new ValueType.Long();
 
@@ -62,7 +59,6 @@ public final class ValueTypes
         register( LOCAL_DATE );
         register( LOCAL_TIME );
         register( LOCAL_DATE_TIME );
-        register( INSTANT );
         register( DATE_TIME );
         register( LONG );
         register( DOUBLE );

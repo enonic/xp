@@ -45,8 +45,7 @@ public class DateTime
     @Override
     public Value newValue( final String value )
     {
-
-        return Value.newDateTime( ValueTypes.DATE_TIME.convert( value ) );
+        return Value.newInstant( ValueTypes.DATE_TIME.convert( value ) );
     }
 
     @Override
