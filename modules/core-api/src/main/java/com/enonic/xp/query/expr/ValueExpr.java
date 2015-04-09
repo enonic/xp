@@ -1,7 +1,7 @@
 package com.enonic.xp.query.expr;
 
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 
 import com.google.common.annotations.Beta;
 
@@ -32,12 +32,12 @@ public final class ValueExpr
 
     public static ValueExpr instant( final String value )
     {
-        return new ValueExpr( Value.newInstant( ValueTypes.INSTANT.convert( value ) ) );
+        return new ValueExpr( Value.newInstant( ValueTypes.DATE_TIME.convert( value ) ) );
     }
 
     public static ValueExpr dateTime( final String value )
     {
-        return new ValueExpr( Value.newDateTime( ZonedDateTime.from( DateTimeFormatter.ISO_DATE_TIME.parse( value ) ) ) );
+        return new ValueExpr( Value.newInstant( Instant.from( DateTimeFormatter.ISO_DATE_TIME.parse( value ) ) ) );
     }
 
     public static ValueExpr localDateTime( final String value )
@@ -74,7 +74,7 @@ public final class ValueExpr
             return this.value.asString();
         }
 
-        if ( type == ValueTypes.INSTANT )
+        if ( type == ValueTypes.DATE_TIME  )
         {
             return typecastFunction( "instant", this.value.asString() );
         }

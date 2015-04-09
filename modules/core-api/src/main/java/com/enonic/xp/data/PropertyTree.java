@@ -752,33 +752,6 @@ public final class PropertyTree
         return this.root.addInstants( name, value );
     }
 
-    // setting datetime
-
-    public Property setDateTime( final PropertyPath path, final ZonedDateTime value )
-    {
-        return this.root.setDateTime( path, value );
-    }
-
-    public Property setDateTime( final String path, final ZonedDateTime value )
-    {
-        return this.root.setDateTime( path, value );
-    }
-
-    public Property setDateTime( final String name, final int index, final ZonedDateTime value )
-    {
-        return this.root.setDateTime( name, index, value );
-    }
-
-    public Property addDateTime( final String name, final ZonedDateTime value )
-    {
-        return this.root.addDatetime( name, value );
-    }
-
-    public Property[] addDateTimes( final String name, final ZonedDateTime... value )
-    {
-        return this.root.addDateTimes( name, value );
-    }
-
     // Typed methods for getting Property value
 
     // getting PropertySet
