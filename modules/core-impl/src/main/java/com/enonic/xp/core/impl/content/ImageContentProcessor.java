@@ -25,7 +25,7 @@ import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.image.ImageHelper;
-import com.enonic.xp.image.filter.ScaleWidthFilter;
+import com.enonic.xp.image.filter.ScaleWidthFunction;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -101,7 +101,7 @@ public final class ImageContentProcessor
             final boolean doScale = scale.getSize() < sourceImage.getWidth();
             if ( doScale )
             {
-                final BufferedImage scaledImage = new ScaleWidthFilter( scale.getSize() ).filter( sourceImage );
+                final BufferedImage scaledImage = new ScaleWidthFunction( scale.getSize() ).scale( sourceImage );
                 final String imageFormat = sourceAttachment.getExtension();
                 final ByteSource scaledImageBytes = ImageHelper.toByteSource( scaledImage, imageFormat );
                 final String name = sourceAttachment.getNameWithoutExtension() + "_" + scale.getLabel() + "." + sourceAttachment.getExtension();

@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.page.PageDescriptorService;
 import com.enonic.xp.content.page.PageTemplateService;
 import com.enonic.xp.image.ImageFilterBuilder;
+import com.enonic.xp.image.ImageScaleFunctionBuilder;
 import com.enonic.xp.module.ModuleService;
 import com.enonic.xp.portal.impl.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.rendering.RendererFactory;
@@ -29,6 +30,8 @@ public final class PortalServicesImpl
     private PageTemplateService pageTemplateService;
 
     private PageDescriptorService pageDescriptorService;
+
+    private ImageScaleFunctionBuilder imageScaleFunctionBuilder;
 
     private PortalUrlService portalUrlService;
 
@@ -73,6 +76,9 @@ public final class PortalServicesImpl
     {
         return this.pageDescriptorService;
     }
+
+    @Override
+    public ImageScaleFunctionBuilder getImageScaleFunctionBuilder() { return this.imageScaleFunctionBuilder; };
 
     @Override
     public PortalUrlService getPortalUrlService()
@@ -120,6 +126,12 @@ public final class PortalServicesImpl
     public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
     {
         this.pageDescriptorService = pageDescriptorService;
+    }
+
+    @Reference
+    public void setImageScaleFunctionBuilder( final ImageScaleFunctionBuilder imageScaleFunctionBuilder )
+    {
+        this.imageScaleFunctionBuilder = imageScaleFunctionBuilder;
     }
 
     @Reference

@@ -6,12 +6,10 @@ import java.awt.image.BufferedImage;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.image.ImageFilter;
 import com.enonic.xp.image.ImageHelper;
 
 @Beta
-public abstract class BaseImageFilter
-    implements ImageFilter
+public abstract class BaseImageProcessor
 {
     protected final BufferedImage createImage( BufferedImage src )
     {

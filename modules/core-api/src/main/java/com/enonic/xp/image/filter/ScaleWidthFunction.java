@@ -1,22 +1,23 @@
 package com.enonic.xp.image.filter;
 
 import java.awt.image.BufferedImage;
-
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.image.ImageScaleFunction;
+
 @Beta
-public final class ScaleWidthFilter
-    extends BaseImageFilter
+public final class ScaleWidthFunction
+    extends BaseImageProcessor implements ImageScaleFunction
 {
     private final int size;
 
-    public ScaleWidthFilter( int size )
+    public ScaleWidthFunction( int size )
     {
         this.size = size;
     }
 
     @Override
-    public BufferedImage filter( BufferedImage source )
+    public BufferedImage scale( BufferedImage source )
     {
         int width = source.getWidth();
         int height = source.getHeight();

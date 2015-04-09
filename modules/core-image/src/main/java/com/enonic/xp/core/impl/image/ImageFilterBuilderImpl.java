@@ -6,14 +6,13 @@ package com.enonic.xp.core.impl.image;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.image.BuilderContext;
-import com.enonic.xp.image.ImageFilter;
-import com.enonic.xp.image.ImageFilterBuilder;
 import com.enonic.xp.core.impl.image.command.FilterCommand;
 import com.enonic.xp.core.impl.image.command.FilterCommandRegistry;
 import com.enonic.xp.core.impl.image.parser.FilterExpr;
 import com.enonic.xp.core.impl.image.parser.FilterExprParser;
 import com.enonic.xp.core.impl.image.parser.FilterSetExpr;
+import com.enonic.xp.image.ImageFilter;
+import com.enonic.xp.image.ImageFilterBuilder;
 
 @Component(immediate = true)
 public final class ImageFilterBuilderImpl
@@ -30,34 +29,34 @@ public final class ImageFilterBuilderImpl
     }
 
     @Override
-    public ImageFilter build( BuilderContext context, String expr )
+    public ImageFilter build( String expr )
     {
-        return build( context, this.parser.parse( expr ) );
+        return build( this.parser.parse( expr ) );
     }
 
-    private ImageFilter build( BuilderContext context, FilterSetExpr set )
+    private ImageFilter build( FilterSetExpr set )
     {
         ImageFilterSet filter = new ImageFilterSet();
 
         for ( FilterExpr expr : set.getList() )
         {
-            filter.addFilter( build( context, expr ) );
+            filter.addFilter( build( expr ) );
         }
 
         return filter;
     }
 
-    private ImageFilter build( BuilderContext context, FilterExpr expr )
+    private ImageFilter build( FilterExpr expr )
     {
-        return createFilter( context, expr.getName(), expr.getArguments() );
+        return createFilter( expr.getName(), expr.getArguments() );
     }
 
-    private ImageFilter createFilter( BuilderContext context, String name, Object[] args )
+    private ImageFilter createFilter( String name, Object[] args )
     {
         FilterCommand command = this.commandRegistry.getCommand( name );
         if ( command != null )
         {
-            return command.build( context, args );
+            return command.build( args );
         }
         else
         {
