@@ -1,7 +1,10 @@
 package com.enonic.xp.security;
 
+import com.google.common.annotations.Beta;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
+@Beta
 public final class Role
     extends Principal
 {

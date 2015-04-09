@@ -2,6 +2,7 @@ package com.enonic.xp.web.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -9,6 +10,7 @@ import com.google.common.base.Strings;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
+@Beta
 public final class ServletRequestUrlHelper
 {
     private ServletRequestUrlHelper()

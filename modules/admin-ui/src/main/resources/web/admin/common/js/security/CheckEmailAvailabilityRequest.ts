@@ -1,6 +1,6 @@
 module api.security {
 
-    interface CheckEmailAvailabilityResponse {
+    export interface CheckEmailAvailabilityResponse {
         available: boolean;
     }
 

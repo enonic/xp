@@ -6,6 +6,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class NamePrettyfier
 {
     private final static char[] ADDITIONAL_ALLOWED_CHARS = {'.', '-', ' '};

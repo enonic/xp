@@ -4,9 +4,11 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableMap;
 
+@Beta
 public class NameCharacterHelper
 {
     private final static char[] ADDITIONAL_ALLOWED_CHARACTERS =

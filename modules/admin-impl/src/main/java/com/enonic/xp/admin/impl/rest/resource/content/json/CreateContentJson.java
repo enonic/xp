@@ -7,12 +7,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.admin.impl.json.content.MetadataJson;
+import com.enonic.xp.admin.impl.json.content.ExtraDataJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.Metadatas;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyTreeJson;
@@ -29,7 +29,7 @@ public final class CreateContentJson
                        @JsonProperty("name") final String name, @JsonProperty("displayName") final String displayName,
                        @JsonProperty("parent") final String parent, @JsonProperty("contentType") final String contentType,
                        @JsonProperty("data") final List<PropertyArrayJson> dataJsonList,
-                       @JsonProperty("meta") final List<MetadataJson> metadataJsonList )
+                       @JsonProperty("meta") final List<ExtraDataJson> extraDataJsonList )
     {
 
         final CreateContentParams.Builder paramsBuilder = CreateContentParams.create().
@@ -42,12 +42,12 @@ public final class CreateContentJson
         final PropertyTree contentData = PropertyTreeJson.fromJson( dataJsonList );
         paramsBuilder.contentData( contentData );
 
-        final Metadatas.Builder metadatasBuilder = Metadatas.builder();
-        for ( MetadataJson metadataJson : metadataJsonList )
+        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.builder();
+        for ( ExtraDataJson extraDataJson : extraDataJsonList )
         {
-            metadatasBuilder.add( metadataJson.getMetadata() );
+            extradatasBuilder.add( extraDataJson.getExtraData() );
         }
-        paramsBuilder.metadata( metadatasBuilder.build());
+        paramsBuilder.extraDatas( extradatasBuilder.build());
         paramsBuilder.inheritPermissions( true );
 
         this.createContent = paramsBuilder.build();

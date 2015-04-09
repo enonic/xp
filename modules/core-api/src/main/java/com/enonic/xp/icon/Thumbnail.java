@@ -2,10 +2,12 @@ package com.enonic.xp.icon;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.util.BinaryReference;
 
+@Beta
 public final class Thumbnail
 {
     private final BinaryReference binaryReference;

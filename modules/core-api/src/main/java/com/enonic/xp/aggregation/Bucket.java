@@ -2,9 +2,11 @@ package com.enonic.xp.aggregation;
 
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+@Beta
 public class Bucket
 {
     private final String key;

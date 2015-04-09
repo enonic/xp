@@ -2,13 +2,16 @@ package com.enonic.xp.server;
 
 import java.io.File;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface ServerInfo
 {
-    public String getName();
+    String getName();
 
-    public File getHomeDir();
+    File getHomeDir();
 
-    public File getInstallDir();
+    File getInstallDir();
 
-    public BuildInfo getBuildInfo();
+    BuildInfo getBuildInfo();
 }

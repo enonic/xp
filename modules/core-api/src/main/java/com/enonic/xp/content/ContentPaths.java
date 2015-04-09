@@ -2,7 +2,10 @@ package com.enonic.xp.content;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
@@ -11,6 +14,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
+@Beta
 public final class ContentPaths
     extends AbstractImmutableEntitySet<ContentPath>
     implements Iterable<ContentPath>
@@ -30,16 +34,18 @@ public final class ContentPaths
         return add( ImmutableSet.copyOf( paths ) );
     }
 
-    public ContentPaths add( final Iterable<ContentPath> paths )
+    public ContentPaths add( final Iterable paths )
     {
         return add( ImmutableSet.copyOf( paths ) );
     }
 
-    private ContentPaths add( final ImmutableSet<ContentPath> paths )
+    private ContentPaths add( final ImmutableSet paths )
     {
         final HashSet<ContentPath> tmp = Sets.newHashSet();
         tmp.addAll( this.set );
-        tmp.addAll( paths );
+        tmp.addAll(
+            (Set) paths.stream().map( ( item -> item instanceof ContentPath ? item : ContentPath.from( item.toString() ) ) ).collect(
+                Collectors.toSet() ) );
         return new ContentPaths( ImmutableSet.copyOf( tmp ) );
     }
 
@@ -53,16 +59,18 @@ public final class ContentPaths
         return remove( ImmutableSet.copyOf( paths ) );
     }
 
-    public ContentPaths remove( final Iterable<ContentPath> paths )
+    public ContentPaths remove( final Iterable paths )
     {
         return remove( ImmutableSet.copyOf( paths ) );
     }
 
-    private ContentPaths remove( final ImmutableSet<ContentPath> paths )
+    private ContentPaths remove( final ImmutableSet paths )
     {
         final HashSet<ContentPath> tmp = Sets.newHashSet();
         tmp.addAll( this.set );
-        tmp.removeAll( paths );
+        tmp.removeAll(
+            (Set) paths.stream().map( ( item -> item instanceof ContentPath ? item : ContentPath.from( item.toString() ) ) ).collect(
+                Collectors.toSet() ) );
         return new ContentPaths( ImmutableSet.copyOf( tmp ) );
     }
 

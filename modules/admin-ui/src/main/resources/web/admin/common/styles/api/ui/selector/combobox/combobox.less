@@ -1,4 +1,6 @@
 .combobox {
+  .reset(true);
+
   position: relative;
   display: inline-block;
   width: 100%;
@@ -99,7 +101,7 @@
     }
 
     .grid-canvas {
-      width: 100%! important;
+      width: 100% ! important;
     }
 
     .slick-row {
@@ -121,7 +123,7 @@
         min-width: 16px;
         min-height: 16px;
         margin: 0;
-        vertical-align:middle;
+        vertical-align: middle;
         background: url("../images/admin-unchecked.gif") center no-repeat;
       }
 
@@ -161,7 +163,7 @@
     }
   }
 
-  &+.selected-options {
+  & + .selected-options {
     float: none;
 
     .selected-option {
@@ -178,7 +180,7 @@
         &:extend(.icon);
         .icon-close;
 
-        float:right;
+        float: right;
         font-size: 12px;
         text-decoration: none;
         cursor: pointer;
@@ -187,7 +189,7 @@
   }
   .names-and-icon-view {
     .icon-large {
-      line-height:30px;
+      line-height: 30px;
     }
   }
 }

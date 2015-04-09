@@ -2,6 +2,7 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.blob.BlobKey;
 import com.enonic.wem.repo.internal.blob.BlobStore;
 import com.enonic.wem.repo.internal.index.query.QueryService;
 import com.enonic.xp.data.Property;
@@ -83,7 +84,8 @@ public final class DuplicateNodeCommand
     {
         for ( final AttachedBinary attachedBinary : node.getAttachedBinaries() )
         {
-            paramsBuilder.attachBinary( attachedBinary.getBinaryReference(), binaryBlobStore.getByteSource( attachedBinary.getBlobKey() ) );
+            paramsBuilder.attachBinary( attachedBinary.getBinaryReference(),
+                                        binaryBlobStore.getByteSource( new BlobKey( attachedBinary.getBlobKey() ) ) );
         }
     }
 

@@ -1,7 +1,10 @@
 package com.enonic.xp.util;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.node.NodeId;
 
+@Beta
 public class Reference
 {
     private final NodeId nodeId;

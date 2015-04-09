@@ -25,8 +25,12 @@ module api.form {
             return this.index;
         }
 
-        showRemoveButton(): boolean {
+        isRemoveButtonRequired(): boolean {
             return this.moreThanRequiredOccurrences();
+        }
+
+        isRemoveButtonRequiredStrict(): boolean {
+            return this.occurrences.countOccurrences() == 1 ? false : this.moreThanRequiredOccurrences();
         }
 
         showAddButton(): boolean {

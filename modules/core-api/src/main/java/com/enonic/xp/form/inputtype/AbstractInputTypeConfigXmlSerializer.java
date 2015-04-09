@@ -3,9 +3,12 @@ package com.enonic.xp.form.inputtype;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.xml.DomBuilder;
 
+@Beta
 public abstract class AbstractInputTypeConfigXmlSerializer<T extends InputTypeConfig>
 {
     public final Document generate( final T config )

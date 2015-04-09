@@ -1,9 +1,11 @@
 package com.enonic.xp.security;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Beta
 public final class UpdateGroupParams
 {
     private final PrincipalKey key;

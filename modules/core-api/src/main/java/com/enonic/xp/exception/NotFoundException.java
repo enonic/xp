@@ -1,6 +1,8 @@
 package com.enonic.xp.exception;
 
+import com.google.common.annotations.Beta;
 
+@Beta
 public abstract class NotFoundException
     extends BaseException
 {

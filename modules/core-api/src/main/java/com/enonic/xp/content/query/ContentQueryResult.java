@@ -3,12 +3,14 @@ package com.enonic.xp.content.query;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.content.ContentId;
 
+@Beta
 public class ContentQueryResult
 {
     private final long totalSize;

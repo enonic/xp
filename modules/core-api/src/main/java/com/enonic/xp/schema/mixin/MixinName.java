@@ -3,9 +3,12 @@ package com.enonic.xp.schema.mixin;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.module.ModuleBasedName;
 import com.enonic.xp.module.ModuleKey;
 
+@Beta
 public final class MixinName
     extends ModuleBasedName
     implements Comparable<MixinName>

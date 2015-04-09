@@ -1,5 +1,8 @@
 package com.enonic.xp.form.inputtype;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class Option
 {
     private String label;

@@ -12,8 +12,8 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.Metadata;
-import com.enonic.xp.content.Metadatas;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.attachment.CreateAttachment;
 import com.enonic.xp.content.attachment.CreateAttachments;
@@ -78,10 +78,10 @@ public final class ImageContentProcessor
 
         final Mixins contentMixins = mixinService.getByContentType( contentType );
 
-        Metadatas metadatas = null;
+        ExtraDatas extraDatas = null;
         if ( mediaInfo != null )
         {
-            metadatas = extractMetadata( mediaInfo, contentMixins );
+            extraDatas = extractMetadata( mediaInfo, contentMixins );
         }
 
         final CreateAttachments.Builder builder = CreateAttachments.builder();
@@ -89,7 +89,7 @@ public final class ImageContentProcessor
         builder.add( scaleImages( sourceImage, sourceAttachment ) );
 
         return CreateContentParams.create( params ).
-            createAttachments( builder.build() ).metadata( metadatas ).
+            createAttachments( builder.build() ).extraDatas( extraDatas ).
             build();
     }
 
@@ -150,8 +150,8 @@ public final class ImageContentProcessor
             editor = editable -> {
 
                 Mixins contentMixins = mixinService.getByContentType( contentType );
-                Metadatas metadatas = extractMetadata( mediaInfo, contentMixins );
-                editable.metadata = metadatas;
+                ExtraDatas extraDatas = extractMetadata( mediaInfo, contentMixins );
+                editable.extraDatas = extraDatas;
 
             };
         }
@@ -162,12 +162,12 @@ public final class ImageContentProcessor
         return new ProcessUpdateResult( processedCreateAttachments, editor );
     }
 
-    private Metadatas extractMetadata( MediaInfo mediaInfo, Mixins mixins )
+    private ExtraDatas extractMetadata( MediaInfo mediaInfo, Mixins mixins )
     {
 
-        final Metadatas.Builder metadatasBuilder = Metadatas.builder();
+        final ExtraDatas.Builder extradatasBuilder = ExtraDatas.builder();
 
-        Map<MixinName, Metadata> metadataMap = new HashMap<>();
+        Map<MixinName, ExtraData> metadataMap = new HashMap<>();
 
         for ( Map.Entry<String, Collection<String>> entry : mediaInfo.getMetadata().asMap().entrySet() )
         {
@@ -179,25 +179,25 @@ public final class ImageContentProcessor
                 if ( formItem != null )
                 {
 
-                    Metadata metadata = metadataMap.get( mixin.getName() );
+                    ExtraData extraData = metadataMap.get( mixin.getName() );
 
-                    if ( metadata == null )
+                    if ( extraData == null )
                     {
-                        metadata = new Metadata( mixin.getName(), new PropertyTree() );
-                        metadataMap.put( mixin.getName(), metadata );
-                        metadatasBuilder.add( metadata );
+                        extraData = new ExtraData( mixin.getName(), new PropertyTree() );
+                        metadataMap.put( mixin.getName(), extraData );
+                        extradatasBuilder.add( extraData );
                     }
                     if ( FormItemType.INPUT.equals( formItem.getType() ) )
                     {
                         Input input = (Input) formItem;
                         if ( InputTypes.DATE_TIME.equals( input.getInputType() ) )
                         {
-                            metadata.getData().addLocalDateTime( formItemName,
+                            extraData.getData().addLocalDateTime( formItemName,
                                                                  ValueTypes.LOCAL_DATE_TIME.convert( entry.getValue().toArray()[0] ) );
                         }
                         else
                         {
-                            metadata.getData().addStrings( formItemName, entry.getValue() );
+                            extraData.getData().addStrings( formItemName, entry.getValue() );
                         }
                     }
                 }
@@ -206,7 +206,7 @@ public final class ImageContentProcessor
         }
         TikaFieldNameFormatter.fillComputedFormItems( metadataMap.values(), mediaInfo );
 
-        return metadatasBuilder.build();
+        return extradatasBuilder.build();
     }
 
     public static class Builder
@@ -276,11 +276,11 @@ public final class ImageContentProcessor
             return fieldConformityMap.containsKey( tikaFieldValue ) ? fieldConformityMap.get( tikaFieldValue ) : tikaFieldValue;
         }
 
-        public static void fillComputedFormItems( Collection<Metadata> metadataList, MediaInfo mediaInfo )
+        public static void fillComputedFormItems( Collection<ExtraData> extraDataList, MediaInfo mediaInfo )
         {
-            for ( Metadata metadata : metadataList )
+            for ( ExtraData extraData : extraDataList )
             {
-                if ( "image-info".equals( metadata.getName().getLocalName() ) )
+                if ( "image-info".equals( extraData.getName().getLocalName() ) )
                 {
                     final Collection<String> tiffImageLengths = mediaInfo.getMetadata().get( "tiffImagelength" );
                     final Collection<String> tiffImageWidths = mediaInfo.getMetadata().get( "tiffImagewidth" );
@@ -288,14 +288,14 @@ public final class ImageContentProcessor
                     {
                         final Integer tiffImageLength = Integer.valueOf( tiffImageLengths.toArray()[0].toString() );
                         final Integer tiffImageWidth = Integer.valueOf( tiffImageWidths.toArray()[0].toString() );
-                        metadata.getData().addLong( "pixelSize", (long) tiffImageLength * tiffImageWidth );
+                        extraData.getData().addLong( "pixelSize", (long) tiffImageLength * tiffImageWidth );
                     }
                 }
-                if ( "gps-info".equals( metadata.getName().getLocalName() ) )
+                if ( "gps-info".equals( extraData.getName().getLocalName() ) )
                 {
                     if ( mediaInfo.getMetadata().get( "geoLat" ).size() > 0 && mediaInfo.getMetadata().get( "geoLong" ).size() > 0 )
                     {
-                        metadata.getData().addGeoPoint( "geoPoint", new GeoPoint(
+                        extraData.getData().addGeoPoint( "geoPoint", new GeoPoint(
                             Double.valueOf( mediaInfo.getMetadata().get( "geoLat" ).toArray()[0].toString() ),
                             Double.valueOf( mediaInfo.getMetadata().get( "geoLong" ).toArray()[0].toString() ) ) );
                     }

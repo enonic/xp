@@ -56,8 +56,8 @@ public class CompareNodesCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getWithStatus( CompareStatus.Status.NEW_TARGET ).size() );
-        assertEquals( 1, result.getWithStatus( CompareStatus.Status.NEW ).size() );
-        assertEquals( 1, result.getWithStatus( CompareStatus.Status.EQUAL ).size() );
+        assertEquals( 1, result.getWithStatus( CompareStatus.NEW_TARGET ).size() );
+        assertEquals( 1, result.getWithStatus( CompareStatus.NEW ).size() );
+        assertEquals( 1, result.getWithStatus( CompareStatus.EQUAL ).size() );
     }
 }

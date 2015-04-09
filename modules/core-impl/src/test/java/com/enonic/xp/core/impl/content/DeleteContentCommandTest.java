@@ -50,7 +50,7 @@ public class DeleteContentCommandTest
             thenReturn( node );
 
         Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
-            thenReturn( new NodeComparison( id, new CompareStatus( CompareStatus.Status.NEW ) ) );
+            thenReturn( new NodeComparison( id, CompareStatus.NEW ) );
 
         Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );
@@ -84,7 +84,7 @@ public class DeleteContentCommandTest
             thenReturn( node );
 
         Mockito.when( this.nodeService.compare( Mockito.isA( NodeId.class ), Mockito.isA( Branch.class ) ) ).
-            thenReturn( new NodeComparison( id, new CompareStatus( CompareStatus.Status.EQUAL ) ) );
+            thenReturn( new NodeComparison( id, CompareStatus.EQUAL ) );
 
         Mockito.when( this.nodeService.deleteByPath( Mockito.isA( NodePath.class ) ) ).
             thenReturn( node );

@@ -28,7 +28,7 @@ import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.GetContentByIdsParams;
-import com.enonic.xp.content.Metadata;
+import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.content.RenameContentParams;
@@ -921,7 +921,7 @@ public class ContentResourceTest
             modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
-            addMetadata( new Metadata( MixinName.from( "myModule:myField" ), metadata ) ).
+            addExtraData( new ExtraData( MixinName.from( "myModule:myField" ), metadata ) ).
             build();
     }
 

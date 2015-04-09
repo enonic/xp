@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
@@ -82,8 +81,8 @@ public class NodeJsonSerializerTest
             permissions( acl ).
             nodeType( NodeType.from( "myNodeType" ) ).
             attachedBinaries( AttachedBinaries.create().
-                add( new AttachedBinary( BinaryReference.from( "myImage1" ), new BlobKey( "a" ) ) ).
-                add( new AttachedBinary( BinaryReference.from( "myImage2" ), new BlobKey( "b" ) ) ).
+                add( new AttachedBinary( BinaryReference.from( "myImage1" ), "a" ) ).
+                add( new AttachedBinary( BinaryReference.from( "myImage2" ), "b" ) ).
                 build() ).
             build();
 

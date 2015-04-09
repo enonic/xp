@@ -4,12 +4,15 @@ package com.enonic.xp.content;
 import java.time.Instant;
 import java.util.Locale;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.page.Page;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 
+@Beta
 public class EditableContent
 {
     public final Content source;
@@ -18,7 +21,7 @@ public class EditableContent
 
     public PropertyTree data;
 
-    public Metadatas metadata;
+    public ExtraDatas extraDatas;
 
     public Page page;
 
@@ -47,7 +50,7 @@ public class EditableContent
         this.source = source;
         this.displayName = source.getDisplayName();
         this.data = source.getData().copy();
-        this.metadata = source.getAllMetadata().copy();
+        this.extraDatas = source.getAllExtraData().copy();
         this.page = source.hasPage() ? source.getPage().copy() : null;
         this.valid = source.isValid();
         this.thumbnail = source.getThumbnail();
@@ -64,7 +67,7 @@ public class EditableContent
         return Content.newContent( this.source ).
             displayName( displayName ).
             data( data ).
-            metadata( metadata ).
+            extraDatas( extraDatas ).
             page( page ).
             valid( valid ).
             thumbnail( thumbnail ).

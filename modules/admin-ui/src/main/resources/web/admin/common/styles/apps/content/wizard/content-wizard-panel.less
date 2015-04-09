@@ -48,18 +48,28 @@
     }
   }
 
-  .toolbar .toggler {
-    height: 100%;
+  .toolbar {
 
-    &:before {
-      position: relative;
-      top: 0px;
+    .cycle-button {
+      float: right;
+      margin: 5px;
     }
 
-    &.icon-medium {
+    .toggle-button {
+      height: 100%;
+      float: right;
+
       &:before {
-        font-size: 22px;
+        position: relative;
+        top: 0px;
       }
+
+      &.icon-medium {
+        &:before {
+          font-size: 22px;
+        }
+      }
+
     }
 
   }

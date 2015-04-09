@@ -1,9 +1,11 @@
 package com.enonic.xp.image.filter;
 
 import java.awt.image.BufferedImage;
+import com.google.common.annotations.Beta;
 
 import com.enonic.xp.image.ImageScaleFunction;
 
+@Beta
 public final class ScaleWidthFunction
     extends BaseImageProcessor implements ImageScaleFunction
 {

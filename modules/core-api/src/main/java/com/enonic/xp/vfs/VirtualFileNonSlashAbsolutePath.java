@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 import com.google.common.collect.Lists;
 
-public class VirtualFileNonSlashAbsolutePath
+final class VirtualFileNonSlashAbsolutePath
     extends VirtualFilePathImpl
 {
     public VirtualFileNonSlashAbsolutePath( final Path path )

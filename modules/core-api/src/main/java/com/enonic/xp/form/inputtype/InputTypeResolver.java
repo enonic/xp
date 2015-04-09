@@ -1,6 +1,9 @@
 package com.enonic.xp.form.inputtype;
 
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class InputTypeResolver
 {
     private final static InputTypeResolver INSTANCE = new InputTypeResolver();

@@ -1,13 +1,16 @@
 package com.enonic.xp.content.page;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 
+@Beta
 public interface PageService
 {
-    public Content create( CreatePageParams params );
+    Content create( CreatePageParams params );
 
-    public Content update( UpdatePageParams params );
+    Content update( UpdatePageParams params );
 
-    public Content delete( ContentId contentId );
+    Content delete( ContentId contentId );
 }

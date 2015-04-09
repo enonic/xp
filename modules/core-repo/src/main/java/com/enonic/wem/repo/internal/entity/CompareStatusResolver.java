@@ -1,12 +1,12 @@
 package com.enonic.wem.repo.internal.entity;
 
+import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
+import com.enonic.wem.repo.internal.version.VersionService;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.wem.repo.internal.elasticsearch.branch.NodeBranchVersion;
-import com.enonic.wem.repo.internal.version.VersionService;
 
 class CompareStatusResolver
 {
@@ -40,16 +40,16 @@ class CompareStatusResolver
 
         if ( source == null )
         {
-            return new CompareStatus( CompareStatus.Status.NEW_TARGET );
+            return CompareStatus.NEW_TARGET;
         }
         else if ( target == null )
         {
-            return new CompareStatus( CompareStatus.Status.NEW );
+            return CompareStatus.NEW;
         }
 
         if ( source.equals( target ) )
         {
-            return new CompareStatus( CompareStatus.Status.EQUAL );
+            return CompareStatus.EQUAL;
         }
 
         final NodeState sourceState = source.getNodeState();
@@ -57,16 +57,16 @@ class CompareStatusResolver
 
         if ( sourceState.equals( NodeState.PENDING_DELETE ) && !targetState.equals( NodeState.PENDING_DELETE ) )
         {
-            return new CompareStatus( CompareStatus.Status.PENDING_DELETE );
+            return CompareStatus.PENDING_DELETE;
         }
         else if ( !sourceState.equals( NodeState.PENDING_DELETE ) && targetState.equals( NodeState.PENDING_DELETE ) )
         {
-            return new CompareStatus( CompareStatus.Status.PENDING_DELETE_TARGET );
+            return CompareStatus.PENDING_DELETE_TARGET;
         }
 
         if ( !source.getNodePath().equals( target.getNodePath() ) )
         {
-            return new CompareStatus( CompareStatus.Status.MOVED );
+            return CompareStatus.MOVED;
         }
 
         return resolveFromVersion();
@@ -82,15 +82,15 @@ class CompareStatusResolver
 
         if ( sourceVersion.getTimestamp().isAfter( targetVersion.getTimestamp() ) )
         {
-            return new CompareStatus( CompareStatus.Status.NEWER );
+            return CompareStatus.NEWER;
         }
 
         if ( sourceVersion.getTimestamp().isBefore( targetVersion.getTimestamp() ) )
         {
-            return new CompareStatus( CompareStatus.Status.OLDER );
+            return CompareStatus.OLDER;
         }
 
-        return new CompareStatus( CompareStatus.Status.EQUAL );
+        return CompareStatus.EQUAL;
     }
 
 

@@ -2,17 +2,17 @@ package com.enonic.xp.content.attachment;
 
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.ContentId;
 
-
+@Beta
 public class UpdateAttachmentsParams
 {
     private final ContentId contentId;
 
     private final Attachments attachments;
-
 
     private UpdateAttachmentsParams( final Builder builder )
     {

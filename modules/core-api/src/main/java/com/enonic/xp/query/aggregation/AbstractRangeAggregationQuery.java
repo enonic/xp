@@ -2,9 +2,11 @@ package com.enonic.xp.query.aggregation;
 
 import java.util.Collection;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+@Beta
 public abstract class AbstractRangeAggregationQuery<R extends Range>
     extends BucketAggregationQuery
 {

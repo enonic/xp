@@ -1,7 +1,10 @@
 package com.enonic.xp.schema.content.validator;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.schema.content.ContentTypeName;
 
+@Beta
 public final class ContentTypeValidationError
 {
     private final String validationMessage;

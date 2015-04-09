@@ -4,12 +4,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.Value;
 
+@Beta
 public class ValueFilter
     extends FieldFilter
 {

@@ -1,5 +1,8 @@
 package com.enonic.xp.content.page.region;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public abstract class ComponentType
 {
     private final String shortName;

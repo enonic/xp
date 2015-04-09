@@ -2,11 +2,13 @@ package com.enonic.xp.data;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 /**
  * A generic holder for the value of a Property.
  */
+@Beta
 public abstract class Value
 {
     private final ValueType type;

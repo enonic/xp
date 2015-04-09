@@ -2,6 +2,9 @@ package com.enonic.xp.query.aggregation;
 
 import java.time.Instant;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class DateRange
     extends Range
 {

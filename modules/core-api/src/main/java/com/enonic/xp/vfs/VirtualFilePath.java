@@ -3,23 +3,24 @@ package com.enonic.xp.vfs;
 import java.nio.file.Path;
 import java.util.LinkedList;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface VirtualFilePath
 {
-    public VirtualFilePath subtractPath( final VirtualFilePath subtract );
+    VirtualFilePath subtractPath( final VirtualFilePath subtract );
 
-    public String getPath();
+    String getPath();
 
-    public LinkedList<String> getElements();
+    LinkedList<String> getElements();
 
-    public String getName();
+    String getName();
 
-    public VirtualFilePath join( final VirtualFilePathImpl... paths );
+    VirtualFilePath join( final VirtualFilePathImpl... paths );
 
-    public VirtualFilePath join( final String... elements );
+    VirtualFilePath join( final String... elements );
 
-    public Path toLocalPath();
+    Path toLocalPath();
 
-    public int size();
-
-
+    int size();
 }

@@ -1,5 +1,8 @@
 package com.enonic.xp.content.page.region;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class ImageComponentType
     extends ComponentType
 {
@@ -9,5 +12,4 @@ public final class ImageComponentType
     {
         super( "image", ImageComponent.class );
     }
-
 }

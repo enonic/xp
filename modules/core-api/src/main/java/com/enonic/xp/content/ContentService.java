@@ -2,6 +2,7 @@ package com.enonic.xp.content;
 
 import java.util.concurrent.CompletableFuture;
 
+import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.site.CreateSiteParams;
@@ -9,6 +10,7 @@ import com.enonic.xp.content.site.Site;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 
+@Beta
 public interface ContentService
 {
     Site create( CreateSiteParams params );

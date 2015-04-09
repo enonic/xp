@@ -8,9 +8,8 @@ module api.dom {
             super(new NewElementBuilder().
                 setTagName("iframe").
                 setClassName(className));
-            this.onLoaded((event: UIEvent) => {
-                this.loaded = true;
-            });
+
+            this.onLoaded((event: UIEvent) => this.loaded = true);
         }
 
         public setSrc(src: string): api.dom.IFrameEl {

@@ -3,9 +3,9 @@ package com.enonic.xp.web.handler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.handler.WebHandlerChain;
+import com.google.common.annotations.Beta;
 
+@Beta
 public abstract class BaseWebHandler
     implements WebHandler
 {

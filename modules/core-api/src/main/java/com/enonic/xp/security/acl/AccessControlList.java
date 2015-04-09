@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -12,6 +13,7 @@ import com.enonic.xp.security.PrincipalKeys;
 
 import static java.util.stream.Collectors.toSet;
 
+@Beta
 public final class AccessControlList
     implements Iterable<AccessControlEntry>
 {
@@ -28,11 +30,6 @@ public final class AccessControlList
     {
         final AccessControlEntry entry = this.entries.get( principal );
         return entry != null && entry.isAllowed( permissions );
-    }
-
-    public boolean isDeniedFor( final PrincipalKey principal, final Permission permissions )
-    {
-        return !isAllowedFor( principal, permissions );
     }
 
     public PrincipalKeys getAllPrincipals()

@@ -1,7 +1,10 @@
 package com.enonic.xp.node;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.CompareStatus;
 
+@Beta
 public class NodeComparison
 {
     private final NodeId nodeId;

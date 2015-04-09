@@ -2,9 +2,12 @@ package com.enonic.xp.content.page.region;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.page.DescriptorKey;
 import com.enonic.xp.data.PropertyTree;
 
+@Beta
 @SuppressWarnings("UnusedDeclaration")
 public final class LayoutComponent
     extends DescriptorBasedComponent
@@ -40,7 +43,7 @@ public final class LayoutComponent
     }
 
     @Override
-    public Component copy()
+    public LayoutComponent copy()
     {
         return newLayoutComponent( this ).build();
     }

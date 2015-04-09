@@ -7,6 +7,7 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -14,6 +15,7 @@ import com.google.common.collect.Lists;
 /**
  * Immutable
  */
+@Beta
 public final class PropertyPath
     implements Iterable<PropertyPath.Element>
 {

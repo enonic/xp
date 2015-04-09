@@ -3,11 +3,13 @@ package com.enonic.xp.resource;
 import java.text.MessageFormat;
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.exception.BaseException;
 
+@Beta
 public final class ResourceProblemException
     extends BaseException
 {

@@ -21,6 +21,7 @@ module app.wizard.page {
     import PageSelectedEvent = api.liveedit.PageSelectedEvent;
     import PageLockedEvent = api.liveedit.PageLockedEvent;
     import PageUnlockedEvent = api.liveedit.PageUnlockedEvent;
+    import PageUnloadedEvent = api.liveedit.PageUnloadedEvent;
     import PageTextModeStartedEvent = api.liveedit.PageTextModeStartedEvent;
     import RegionSelectedEvent = api.liveedit.RegionSelectedEvent;
     import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
@@ -64,6 +65,8 @@ module app.wizard.page {
         private pageLockedListeners: {(event: PageLockedEvent): void;}[] = [];
 
         private pageUnlockedListeners: {(event: PageUnlockedEvent): void;}[] = [];
+
+        private pageUnloadedListeners: {(event: PageUnloadedEvent): void;}[] = [];
 
         private pageTextModeStartedListeners: {(event: PageTextModeStartedEvent): void;}[] = [];
 
@@ -165,6 +168,10 @@ module app.wizard.page {
             this.liveEditIFrame.setSrc(pageUrl);
         }
 
+        public skipNextReloadConfirmation(skip: boolean) {
+            new api.liveedit.SkipLiveEditReloadConfirmationEvent(skip).fire(this.liveEditWindow);
+        }
+
         private handleIFrameLoadedEvent() {
 
             var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
@@ -173,18 +180,19 @@ module app.wizard.page {
                 liveEditWindow.CONFIG = {baseUri: CONFIG.baseUri};
 
                 this.livejq = <JQueryStatic>liveEditWindow.wemjq;
-                if (this.liveEditIFrame != liveEditWindow) {
-                    this.liveEditWindow = liveEditWindow;
-                    this.listenToPage();
+
+                if (this.liveEditWindow) {
+                    this.stopListening(this.liveEditWindow);
                 }
 
-                this.loadMask.hide();
+                this.liveEditWindow = liveEditWindow;
 
+                this.listenToPage(this.liveEditWindow);
+
+                this.loadMask.hide();
                 new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
 
-
-            }
-            else if (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID) {
+            } else if (liveEditWindow.document.body.id == this.LIVE_EDIT_ERROR_PAGE_BODY_ID) {
                 this.loadMask.hide();
             }
 
@@ -238,52 +246,93 @@ module app.wizard.page {
             return deferred.promise;
         }
 
-        public listenToPage() {
+        public stopListening(contextWindow: any) {
+
+            ImageOpenUploadDialogEvent.un(null, contextWindow);
+
+            ComponentViewDragStartedEvent.un(null, contextWindow);
+
+            ComponentViewDragStoppedEvent.un(null, contextWindow);
+
+            ComponentViewDragCanceledEvent.un(null, contextWindow);
+
+            ComponentViewDragDroppedEvent.un(null, contextWindow);
+
+            PageSelectedEvent.un(null, contextWindow);
+
+            PageLockedEvent.un(null, contextWindow);
+
+            PageUnlockedEvent.un(null, contextWindow);
+
+            PageUnloadedEvent.un(null, contextWindow);
+
+            PageTextModeStartedEvent.un(null, contextWindow);
+
+            RegionSelectedEvent.un(null, contextWindow);
+
+            ItemViewSelectedEvent.un(null, contextWindow);
+
+            ItemViewDeselectEvent.un(null, contextWindow);
+
+            ComponentAddedEvent.un(null, contextWindow);
+
+            ComponentRemovedEvent.un(null, contextWindow);
+
+            ComponentDuplicatedEvent.un(null, contextWindow);
+
+            LiveEditPageViewReadyEvent.un(null, contextWindow);
+
+            LiveEditPageInitializationErrorEvent.un(null, contextWindow);
+        }
+
+        public listenToPage(contextWindow: any) {
 
             ImageOpenUploadDialogEvent.on((openDialogEvent: ImageOpenUploadDialogEvent) => {
                 var imageUploadDialog = new ImageUploadDialog(this.liveEditModel.getContent().getContentId());
                 imageUploadDialog.onImageUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
                     new ImageUploadedEvent(event.getUploadItem().getModel(),
                         openDialogEvent.getTargetImagePlaceholder()).
-                        fire(this.liveEditWindow);
+                        fire(contextWindow);
 
                     imageUploadDialog.close();
                     imageUploadDialog.remove();
                 });
                 imageUploadDialog.open();
-            }, this.liveEditWindow);
+            }, contextWindow);
 
-            ComponentViewDragStartedEvent.on(this.notifyComponentViewDragStarted.bind(this), this.liveEditWindow);
+            ComponentViewDragStartedEvent.on(this.notifyComponentViewDragStarted.bind(this), contextWindow);
 
-            ComponentViewDragStoppedEvent.on(this.notifyComponentViewDragStopped.bind(this), this.liveEditWindow);
+            ComponentViewDragStoppedEvent.on(this.notifyComponentViewDragStopped.bind(this), contextWindow);
 
-            ComponentViewDragCanceledEvent.on(this.notifyComponentViewDragCanceled.bind(this), this.liveEditWindow);
+            ComponentViewDragCanceledEvent.on(this.notifyComponentViewDragCanceled.bind(this), contextWindow);
 
-            ComponentViewDragDroppedEvent.on(this.notifyComponentViewDragDropped.bind(this), this.liveEditWindow);
+            ComponentViewDragDroppedEvent.on(this.notifyComponentViewDragDropped.bind(this), contextWindow);
 
-            PageSelectedEvent.on(this.notifyPageSelected.bind(this), this.liveEditWindow);
+            PageSelectedEvent.on(this.notifyPageSelected.bind(this), contextWindow);
 
-            PageLockedEvent.on(this.notifyPageLocked.bind(this), this.liveEditWindow);
+            PageLockedEvent.on(this.notifyPageLocked.bind(this), contextWindow);
 
-            PageUnlockedEvent.on(this.notifyPageUnlocked.bind(this), this.liveEditWindow);
+            PageUnlockedEvent.on(this.notifyPageUnlocked.bind(this), contextWindow);
 
-            PageTextModeStartedEvent.on(this.notifyPageTextModeStarted.bind(this), this.liveEditWindow);
+            PageUnloadedEvent.on(this.notifyPageUnloaded.bind(this), contextWindow);
 
-            RegionSelectedEvent.on(this.notifyRegionSelected.bind(this), this.liveEditWindow);
+            PageTextModeStartedEvent.on(this.notifyPageTextModeStarted.bind(this), contextWindow);
 
-            ItemViewSelectedEvent.on(this.notifyItemViewSelected.bind(this), this.liveEditWindow);
+            RegionSelectedEvent.on(this.notifyRegionSelected.bind(this), contextWindow);
 
-            ItemViewDeselectEvent.on(this.notifyItemViewDeselected.bind(this), this.liveEditWindow);
+            ItemViewSelectedEvent.on(this.notifyItemViewSelected.bind(this), contextWindow);
 
-            ComponentAddedEvent.on(this.notifyComponentAdded.bind(this), this.liveEditWindow);
+            ItemViewDeselectEvent.on(this.notifyItemViewDeselected.bind(this), contextWindow);
 
-            ComponentRemovedEvent.on(this.notifyComponentRemoved.bind(this), this.liveEditWindow);
+            ComponentAddedEvent.on(this.notifyComponentAdded.bind(this), contextWindow);
 
-            ComponentDuplicatedEvent.on(this.notifyComponentDuplicated.bind(this), this.liveEditWindow);
+            ComponentRemovedEvent.on(this.notifyComponentRemoved.bind(this), contextWindow);
 
-            LiveEditPageViewReadyEvent.on(this.notifyLiveEditPageViewReady.bind(this), this.liveEditWindow);
+            ComponentDuplicatedEvent.on(this.notifyComponentDuplicated.bind(this), contextWindow);
 
-            LiveEditPageInitializationErrorEvent.on(this.notifyLiveEditPageInitializationError.bind(this), this.liveEditWindow);
+            LiveEditPageViewReadyEvent.on(this.notifyLiveEditPageViewReady.bind(this), contextWindow);
+
+            LiveEditPageInitializationErrorEvent.on(this.notifyLiveEditPageInitializationError.bind(this), contextWindow);
         }
 
         onLoaded(listener: {(): void;}) {
@@ -384,6 +433,18 @@ module app.wizard.page {
 
         private notifyPageUnlocked(event: PageUnlockedEvent) {
             this.pageUnlockedListeners.forEach((listener) => listener(event));
+        }
+
+        onPageUnloaded(listener: (event: PageUnloadedEvent) => void) {
+            this.pageUnloadedListeners.push(listener);
+        }
+
+        unPageUnloaded(listener: (event: PageUnloadedEvent) => void) {
+            this.pageUnloadedListeners = this.pageUnloadedListeners.filter((curr) => (curr != listener));
+        }
+
+        private notifyPageUnloaded(event: PageUnloadedEvent) {
+            this.pageUnloadedListeners.forEach((listener) => listener(event));
         }
 
         onPageTextModeStarted(listener: (event: PageTextModeStartedEvent) => void) {

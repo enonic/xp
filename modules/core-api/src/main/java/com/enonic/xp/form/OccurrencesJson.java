@@ -3,7 +3,9 @@ package com.enonic.xp.form;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.annotations.Beta;
 
+@Beta
 @SuppressWarnings("UnusedDeclaration")
 public class OccurrencesJson
 {

@@ -3,6 +3,7 @@ package com.enonic.xp.content.attachment;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -10,6 +11,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
+@Beta
 public final class Attachments
     extends AbstractImmutableEntityList<Attachment>
 {
@@ -57,7 +59,7 @@ public final class Attachments
         return new Attachments( listBuilder.build() );
     }
 
-    private Attachments add( final Iterable<Attachment> attachments )
+    public Attachments add( final Iterable<Attachment> attachments )
     {
         final ImmutableList.Builder<Attachment> listBuilder = ImmutableList.builder();
         listBuilder.addAll( this.list );

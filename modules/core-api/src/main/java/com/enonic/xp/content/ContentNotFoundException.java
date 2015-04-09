@@ -2,11 +2,13 @@ package com.enonic.xp.content;
 
 import java.text.MessageFormat;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.branch.Branch;
 
+@Beta
 public final class ContentNotFoundException
     extends NotFoundException
 {

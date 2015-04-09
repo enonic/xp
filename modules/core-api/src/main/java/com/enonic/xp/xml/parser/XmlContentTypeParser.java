@@ -2,6 +2,7 @@ package com.enonic.xp.xml.parser;
 
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.module.ModuleRelativeResolver;
@@ -10,6 +11,7 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.xml.DomElement;
 
+@Beta
 public final class XmlContentTypeParser
     extends XmlModelParser<XmlContentTypeParser>
 {

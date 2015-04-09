@@ -2,6 +2,9 @@ package com.enonic.xp.aggregation;
 
 import java.time.Instant;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class DateHistogramBucket
     extends Bucket
 {

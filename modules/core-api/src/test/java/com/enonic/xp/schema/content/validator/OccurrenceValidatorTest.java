@@ -297,7 +297,7 @@ public class OccurrenceValidatorTest
         DataValidationError nextDataValidationError = dataValidationErrorIterator.next();
         assertTrue( nextDataValidationError instanceof MinimumOccurrencesValidationError );
         assertEquals( "Input [mySet.myRequiredInput] requires minimum 1 occurrence: 0", nextDataValidationError.getErrorMessage() );
-
+        assertNotNull(  nextDataValidationError.getPath() );
         nextDataValidationError = dataValidationErrorIterator.next();
         assertTrue( nextDataValidationError instanceof MinimumOccurrencesValidationError );
         assertEquals( "Input [myOtherRequiredInput] requires minimum 1 occurrence: 0", nextDataValidationError.getErrorMessage() );

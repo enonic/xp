@@ -1,8 +1,11 @@
 package com.enonic.xp.xml.parser;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.page.PageDescriptor;
 import com.enonic.xp.xml.DomElement;
 
+@Beta
 public final class XmlPageDescriptorParser
     extends XmlModelParser<XmlPageDescriptorParser>
 {

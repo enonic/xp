@@ -2,9 +2,11 @@ package com.enonic.xp.content;
 
 import java.util.SortedSet;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 
+@Beta
 public class GetActiveContentVersionsResult
 {
     private final ImmutableSortedSet<ActiveContentVersionEntry> activeContentVersions;

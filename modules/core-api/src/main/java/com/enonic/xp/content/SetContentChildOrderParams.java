@@ -1,7 +1,10 @@
 package com.enonic.xp.content;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.index.ChildOrder;
 
+@Beta
 public class SetContentChildOrderParams
 {
     private final ContentId contentId;

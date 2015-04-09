@@ -1,8 +1,11 @@
 package com.enonic.xp.convert;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface Converter<T>
 {
-    public Class<T> getType();
+    Class<T> getType();
 
-    public T convert( Object value );
+    T convert( Object value );
 }

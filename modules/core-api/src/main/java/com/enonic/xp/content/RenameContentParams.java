@@ -1,29 +1,21 @@
 package com.enonic.xp.content;
 
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+@Beta
 public final class RenameContentParams
 {
     private ContentId contentId;
 
     private ContentName newName;
 
-    public RenameContentParams()
+    public RenameContentParams( Builder builder )
     {
-    }
-
-    public RenameContentParams contentId( final ContentId contentId )
-    {
-        this.contentId = contentId;
-        return this;
-    }
-
-    public RenameContentParams newName( final ContentName newName )
-    {
-        this.newName = newName;
-        return this;
+        this.contentId = builder.contentId;
+        this.newName = builder.newName;
     }
 
     public ContentId getContentId()
@@ -63,5 +55,34 @@ public final class RenameContentParams
     {
         Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
         Preconditions.checkNotNull( this.newName, "name cannot be null" );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ContentId contentId;
+
+        private ContentName newName;
+
+        public Builder contentId( final ContentId contentId )
+        {
+            this.contentId = contentId;
+            return this;
+        }
+
+        public Builder newName( final ContentName newName )
+        {
+            this.newName = newName;
+            return this;
+        }
+
+        public RenameContentParams build()
+        {
+            return new RenameContentParams( this );
+        }
     }
 }

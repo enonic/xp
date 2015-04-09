@@ -3,14 +3,17 @@ package com.enonic.xp.web.handler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface WebHandler
 {
-    public final static int MIN_ORDER = Integer.MIN_VALUE;
+    int MIN_ORDER = Integer.MIN_VALUE;
 
-    public final static int MAX_ORDER = Integer.MAX_VALUE;
+    int MAX_ORDER = Integer.MAX_VALUE;
 
-    public int getOrder();
+    int getOrder();
 
-    public void handle( HttpServletRequest req, HttpServletResponse res, WebHandlerChain chain )
+    void handle( HttpServletRequest req, HttpServletResponse res, WebHandlerChain chain )
         throws Exception;
 }

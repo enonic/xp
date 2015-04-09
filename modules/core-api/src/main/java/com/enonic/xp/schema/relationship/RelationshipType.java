@@ -3,6 +3,7 @@ package com.enonic.xp.schema.relationship;
 
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -11,6 +12,7 @@ import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
+@Beta
 public final class RelationshipType
     extends BaseSchema<RelationshipTypeName>
 {

@@ -1,5 +1,8 @@
 package com.enonic.xp.convert;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class ConvertException
     extends RuntimeException
 {

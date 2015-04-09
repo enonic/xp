@@ -1,9 +1,12 @@
 package com.enonic.xp.form.inputtype;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 
 /* temporary solution for custom:className */
+@Beta
 public class CustomInputType
     extends InputType
 {

@@ -1,6 +1,6 @@
 package com.enonic.xp.data;
 
-public class PropertySetJsonSerializer
+final class PropertySetJsonSerializer
 {
     public String serializeToString( final PropertySet value )
     {

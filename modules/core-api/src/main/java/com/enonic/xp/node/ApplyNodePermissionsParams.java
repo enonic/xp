@@ -2,8 +2,11 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.security.PrincipalKey;
 
+@Beta
 public final class ApplyNodePermissionsParams
 {
     private final NodeId nodeId;

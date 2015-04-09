@@ -3,9 +3,12 @@ package com.enonic.xp.schema.relationship;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.module.ModuleBasedName;
 import com.enonic.xp.module.ModuleKey;
 
+@Beta
 public final class RelationshipTypeName
     extends ModuleBasedName
 {

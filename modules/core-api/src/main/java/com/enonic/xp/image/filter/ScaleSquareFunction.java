@@ -4,6 +4,9 @@ import java.awt.image.BufferedImage;
 
 import com.enonic.xp.image.ImageScaleFunction;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class ScaleSquareFunction
     extends BaseImageProcessor implements ImageScaleFunction
 {

@@ -1,6 +1,8 @@
 package com.enonic.xp.util;
 
+import com.google.common.annotations.Beta;
 
+@Beta
 public class CamelCaseConverter
 {
     private static final String[] DEFAULT_ILLEGAL_CHARS = new String[]{".", ":", "/", "-", "&", "="};

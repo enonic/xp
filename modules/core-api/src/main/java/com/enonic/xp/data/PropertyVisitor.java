@@ -1,6 +1,8 @@
 package com.enonic.xp.data;
 
+import com.google.common.annotations.Beta;
 
+@Beta
 public abstract class PropertyVisitor
 {
     private ValueType valueType;

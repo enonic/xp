@@ -2,8 +2,10 @@ package com.enonic.xp.home;
 
 import java.io.File;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 
+@Beta
 public final class HomeDir
 {
     private final File dir;

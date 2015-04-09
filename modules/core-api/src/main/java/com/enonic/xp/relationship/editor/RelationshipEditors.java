@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
+@Beta
 public abstract class RelationshipEditors
 {
     public static RelationshipEditor composite( final RelationshipEditor... editors )
