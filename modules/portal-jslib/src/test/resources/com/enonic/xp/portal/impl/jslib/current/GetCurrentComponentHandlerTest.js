@@ -15,7 +15,8 @@ var expectedJson = {
                 "name": "mypart",
                 "path": "main/-1/bottom/0",
                 "type": "part"
-            }]
+            }],
+            "name": "bottom"
         }
     },
     "type": "layout"

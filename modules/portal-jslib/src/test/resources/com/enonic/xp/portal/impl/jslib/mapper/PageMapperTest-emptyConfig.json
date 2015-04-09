@@ -4,7 +4,8 @@
   "config": {},
   "regions": {
     "myRegion": {
-      "components": []
+      "components": [],
+      "name": "myRegion"
     }
   }
 }
