@@ -74,8 +74,7 @@ module api.liveedit {
         }
 
         static fromElement(element: api.dom.Element): ItemType {
-            var typeAsString = element.getEl().getAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
-            return ItemType.byShortName(typeAsString);
+            return ItemType.fromHTMLElement(element.getHTMLElement());
         }
     }
 }

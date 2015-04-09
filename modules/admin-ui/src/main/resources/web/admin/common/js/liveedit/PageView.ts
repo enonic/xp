@@ -47,8 +47,6 @@ module api.liveedit {
 
         private regionViews: RegionView[];
 
-        private regionIndex: number;
-
         private viewsById: {[s:number] : ItemView;};
 
         private itemViewAddedListeners: {(event: ItemViewAddedEvent) : void}[];
@@ -69,7 +67,6 @@ module api.liveedit {
             this.pageModel = builder.liveEditModel.getPageModel();
             this.pageModel.onPropertyChanged(() => this.refreshEmptyState());
             this.regionViews = [];
-            this.regionIndex = 0;
             this.viewsById = {};
             this.itemViewAddedListeners = [];
             this.itemViewRemovedListeners = [];
@@ -480,15 +477,15 @@ module api.liveedit {
             if (!pageRegions) {
                 return;
             }
-            var regions: Region[] = pageRegions.getRegions();
             var children = parentElement ? parentElement.getChildren() : this.getChildren();
 
             children.forEach((childElement: api.dom.Element) => {
                 var itemType = ItemType.fromElement(childElement);
                 if (itemType) {
                     if (RegionItemType.get().equals(itemType)) {
-                        // regions may be nested on different levels so use page wide var for count
-                        var region = regions[this.regionIndex++];
+                        var regionName = RegionItemType.getRegionName(childElement);
+                        var region = pageRegions.getRegionByName(regionName);
+
                         if (region) {
                             var regionView = new RegionView(new RegionViewBuilder().
                                 setLiveEditModel(this.liveEditModel).
