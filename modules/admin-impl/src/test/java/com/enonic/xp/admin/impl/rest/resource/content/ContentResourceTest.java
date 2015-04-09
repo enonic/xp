@@ -2,8 +2,11 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
 
@@ -13,6 +16,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AbstractResourceTest;
 import com.enonic.xp.admin.impl.rest.resource.MockRestResponse;
+import com.enonic.xp.admin.impl.rest.resource.content.json.CountItemsWithChildrenJson;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -25,10 +29,11 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
+import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
-import com.enonic.xp.content.Metadata;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PushContentsResult;
 import com.enonic.xp.content.RenameContentParams;
@@ -69,7 +74,6 @@ import com.enonic.xp.security.acl.AccessControlList;
 import static com.enonic.xp.content.Content.newContent;
 import static com.enonic.xp.content.site.Site.newSite;
 import static com.enonic.xp.security.acl.Permission.READ;
-import static org.junit.Assert.*;
 
 public class ContentResourceTest
     extends AbstractResourceTest
@@ -903,6 +907,45 @@ public class ContentResourceTest
         assertJson( "reorder_children_success.json", jsonString );
     }
 
+    @Test
+    public void countContentsWithDescendants_check_children_filtered()
+    {
+        Set<String> contentPaths = new HashSet<String>( Arrays.asList( "/root/a", "/root/a/b", "/root/c", "root/a/b/c" ) );
+
+        CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
+        json.setContentPaths( contentPaths );
+
+        ContentResource contentResource = ( (ContentResource) getResourceInstance() );
+        Mockito.when( this.contentService.find( Mockito.any() ) ).thenReturn( FindContentByQueryResult.create().totalHits( 0L ).build() );
+
+        assertEquals( 2L, contentResource.countContentsWithDescendants( json ) );
+    }
+
+    @Test
+    public void countContentsWithDescendants_empty_json()
+    {
+        CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
+        json.setContentPaths( new HashSet<String>() );
+
+        ContentResource contentResource = ( (ContentResource) getResourceInstance() );
+
+        assertEquals( 0L, contentResource.countContentsWithDescendants( json ) );
+    }
+
+    @Test
+    public void countContentsWithDescendants_no_children()
+    {
+        Set<String> contentPaths = new HashSet<String>( Arrays.asList( "/root/a", "/root/b", "/root/c" ) );
+
+        CountItemsWithChildrenJson json = new CountItemsWithChildrenJson();
+        json.setContentPaths( contentPaths );
+
+        ContentResource contentResource = ( (ContentResource) getResourceInstance() );
+        Mockito.when( this.contentService.find( Mockito.any() ) ).thenReturn( FindContentByQueryResult.create().totalHits( 0L ).build() );
+
+        assertEquals( 3L, contentResource.countContentsWithDescendants( json ) );
+    }
+
     private Content createContent( final String id, final String name, final String contentTypeName )
     {
         final PropertyTree metadata = new PropertyTree();
@@ -921,7 +964,7 @@ public class ContentResourceTest
             modifiedTime( Instant.parse( this.currentTime ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( ContentTypeName.from( contentTypeName ) ).
-            addMetadata( new Metadata( MixinName.from( "myModule:myField" ), metadata ) ).
+            addExtraData( new ExtraData( MixinName.from( "myModule:myField" ), metadata ) ).
             build();
     }
 

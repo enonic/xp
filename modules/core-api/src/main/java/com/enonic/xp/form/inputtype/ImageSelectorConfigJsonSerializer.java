@@ -4,10 +4,12 @@ package com.enonic.xp.form.inputtype;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.annotations.Beta;
 
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
 
+@Beta
 public class ImageSelectorConfigJsonSerializer
     extends AbstractInputTypeConfigJsonSerializer<ImageSelectorConfig>
 {

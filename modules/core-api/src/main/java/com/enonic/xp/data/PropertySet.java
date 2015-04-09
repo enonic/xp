@@ -1,6 +1,5 @@
 package com.enonic.xp.data;
 
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.util.BinaryReference;
@@ -19,6 +19,7 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
+@Beta
 public final class PropertySet
 {
     private PropertyTree tree;

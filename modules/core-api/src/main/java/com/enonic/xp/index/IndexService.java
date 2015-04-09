@@ -1,9 +1,12 @@
 package com.enonic.xp.index;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface IndexService
 {
-    public ReindexResult reindex( ReindexParams params );
+    ReindexResult reindex( ReindexParams params );
 
-    public void purgeSearchIndex( PurgeIndexParams params );
+    void purgeSearchIndex( PurgeIndexParams params );
 
 }

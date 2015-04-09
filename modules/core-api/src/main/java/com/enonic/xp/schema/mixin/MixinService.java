@@ -1,8 +1,11 @@
 package com.enonic.xp.schema.mixin;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.ContentType;
 
+@Beta
 public interface MixinService
 {
     Mixin getByName( MixinName name );

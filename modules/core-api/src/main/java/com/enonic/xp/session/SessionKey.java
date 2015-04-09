@@ -2,6 +2,9 @@ package com.enonic.xp.session;
 
 import java.util.UUID;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class SessionKey
 {
     private final String value;

@@ -173,7 +173,7 @@ public class ResolveSyncWorkCommand
 
     private boolean nodeNotChanged( final NodeComparison comparison )
     {
-        return comparison.getCompareStatus().getStatus().equals( CompareStatus.Status.EQUAL );
+        return comparison.getCompareStatus() == CompareStatus.EQUAL;
     }
 
     private void ensureThatParentExists( final Node node )
@@ -211,8 +211,8 @@ public class ResolveSyncWorkCommand
 
     private boolean shouldBeResolvedDiffFor( final NodeComparison nodeComparison )
     {
-        final CompareStatus.Status status = nodeComparison.getCompareStatus().getStatus();
-        return status.equals( CompareStatus.Status.NEW ) || status.equals( CompareStatus.Status.MOVED );
+        final CompareStatus status = nodeComparison.getCompareStatus();
+        return status == CompareStatus.NEW || status == CompareStatus.MOVED;
     }
 
     private boolean isProcessed( final NodeId nodeId )
@@ -241,7 +241,7 @@ public class ResolveSyncWorkCommand
         }
         else
         {
-            if ( comparison.getCompareStatus().getStatus().equals( CompareStatus.Status.PENDING_DELETE ) )
+            if ( comparison.getCompareStatus() == CompareStatus.PENDING_DELETE )
             {
                 resultBuilder.addDelete( nodeId );
             }

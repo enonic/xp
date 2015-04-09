@@ -2,10 +2,12 @@ package com.enonic.xp.security;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import static java.util.Objects.requireNonNull;
 
+@Beta
 public final class User
     extends Principal
 {

@@ -2,6 +2,9 @@ package com.enonic.wem.repo.internal.entity;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.repo.internal.branch.BranchContext;
+import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
+import com.enonic.wem.repo.internal.index.IndexContext;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
@@ -23,9 +26,6 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.wem.repo.internal.branch.BranchContext;
-import com.enonic.wem.repo.internal.branch.StoreBranchDocument;
-import com.enonic.wem.repo.internal.index.IndexContext;
 
 public class PushNodesCommand
     extends AbstractNodeCommand
@@ -73,7 +73,7 @@ public class PushNodesCommand
                 continue;
             }
 
-            if ( nodeComparison.getCompareStatus().getStatus().equals( CompareStatus.Status.EQUAL ) )
+            if ( nodeComparison.getCompareStatus() == CompareStatus.EQUAL )
             {
                 builder.addSuccess( node );
                 continue;
@@ -96,7 +96,7 @@ public class PushNodesCommand
                 builder.addSuccess( node );
             }
 
-            if ( nodeComparison.getCompareStatus().getStatus().equals( CompareStatus.Status.MOVED ) )
+            if ( nodeComparison.getCompareStatus() == CompareStatus.MOVED )
             {
                 updateNodeChildrenWithNewMetadata( node, builder );
             }
@@ -105,7 +105,7 @@ public class PushNodesCommand
         return builder.build();
     }
 
-    private void updateNodeChildrenWithNewMetadata( final Node node, PushNodesResult.Builder resultBuilder)
+    private void updateNodeChildrenWithNewMetadata( final Node node, PushNodesResult.Builder resultBuilder )
     {
         final FindNodesByParentResult result = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( node.path() ).

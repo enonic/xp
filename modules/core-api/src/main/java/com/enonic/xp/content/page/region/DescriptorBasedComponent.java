@@ -2,9 +2,12 @@ package com.enonic.xp.content.page.region;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.page.DescriptorKey;
 import com.enonic.xp.data.PropertyTree;
 
+@Beta
 public abstract class DescriptorBasedComponent
     extends Component
 {

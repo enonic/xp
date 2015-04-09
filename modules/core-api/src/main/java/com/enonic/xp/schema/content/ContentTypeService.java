@@ -1,8 +1,11 @@
 package com.enonic.xp.schema.content;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.module.ModuleKey;
 import com.enonic.xp.schema.content.validator.ContentTypeValidationResult;
 
+@Beta
 public interface ContentTypeService
 {
     ContentType getByName( GetContentTypeParams params );

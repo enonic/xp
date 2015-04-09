@@ -2,12 +2,14 @@ package com.enonic.xp.portal.url;
 
 import java.util.Collection;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalContext;
 
+@Beta
 public abstract class AbstractUrlParams<T extends AbstractUrlParams>
 {
     private PortalContext context;

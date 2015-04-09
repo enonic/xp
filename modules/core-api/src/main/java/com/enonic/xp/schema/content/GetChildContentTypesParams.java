@@ -2,8 +2,10 @@ package com.enonic.xp.schema.content;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+@Beta
 public class GetChildContentTypesParams
 {
     private ContentTypeName parentName;

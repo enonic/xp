@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
@@ -18,7 +19,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.aggregation.DateRange;
 import com.enonic.xp.query.aggregation.DateRangeAggregationQuery;
-import com.enonic.wem.repo.internal.entity.AbstractNodeTest;
 
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;
@@ -73,6 +73,92 @@ public class DateRangeAggregationTest
         verifyBucket( iterator.next(), 2 );
         verifyBucket( iterator.next(), 3 );
         verifyBucket( iterator.next(), 1 );
+    }
+
+    @Test
+    public void ranges_with_date_math()
+        throws Exception
+    {
+        final Instant now = Instant.now();
+
+        createNode( now, "n1", NodePath.ROOT );
+        createNode( now.plusSeconds( -3600 ), "n2", NodePath.ROOT );
+        createNode( now.plusSeconds( -3600 * 2 ), "n3", NodePath.ROOT );
+        createNode( now.plusSeconds( -3600 * 3 ), "n4", NodePath.ROOT );
+        createNode( now.plusSeconds( -3600 * 4 ), "n5", NodePath.ROOT );
+        createNode( now.plusSeconds( -3600 * 5 ), "n6", NodePath.ROOT );
+
+        final NodeQuery query = NodeQuery.create().
+            addAggregationQuery( DateRangeAggregationQuery.create( "myDateRange" ).
+                fieldName( "instant" ).
+                addRange( DateRange.create().
+                    to( "now-5h" ).
+                    build() ).
+                addRange( DateRange.create().
+                    from( "now-5h" ).
+                    to( "now-3h" ).
+                    build() ).
+                addRange( DateRange.create().
+                    from( "now-3h" ).
+                    build() ).
+                build() ).
+            build();
+
+        FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getAggregations().getSize() );
+
+        final BucketAggregation aggregation = (BucketAggregation) result.getAggregations().get( "myDateRange" );
+
+        final Buckets buckets = aggregation.getBuckets();
+
+        final Iterator<Bucket> iterator = buckets.iterator();
+        verifyBucket( iterator.next(), 1 );
+        verifyBucket( iterator.next(), 2 );
+        verifyBucket( iterator.next(), 3 );
+    }
+
+    @Test
+    public void ranges_with_date_math_date()
+        throws Exception
+    {
+        final Instant anchor = Instant.parse( "2014-12-10T10:00:00Z" );
+
+        createNode( anchor, "n1", NodePath.ROOT );
+        createNode( anchor.plusSeconds( -3600 ), "n2", NodePath.ROOT );
+        createNode( anchor.plusSeconds( -3600 * 2 ), "n3", NodePath.ROOT );
+        createNode( anchor.plusSeconds( -3600 * 3 ), "n4", NodePath.ROOT );
+        createNode( anchor.plusSeconds( -3600 * 4 ), "n5", NodePath.ROOT );
+        createNode( anchor.plusSeconds( -3600 * 5 ), "n6", NodePath.ROOT );
+
+        final NodeQuery query = NodeQuery.create().
+            addAggregationQuery( DateRangeAggregationQuery.create( "myDateRange" ).
+                fieldName( "instant" ).
+                addRange( DateRange.create().
+                    to( "2014-12-10T10:00:00Z||-5h" ).
+                    build() ).
+                addRange( DateRange.create().
+                    from( "2014-12-10T10:00:00.000Z||-5h" ).
+                    to( "2014-12-10T10:00:00.000Z||-3h" ).
+                    build() ).
+                addRange( DateRange.create().
+                    from( "2014-12-10T10:00:00Z||-3h" ).
+                    build() ).
+                build() ).
+            build();
+
+        FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getAggregations().getSize() );
+
+        final BucketAggregation aggregation = (BucketAggregation) result.getAggregations().get( "myDateRange" );
+
+        final Buckets buckets = aggregation.getBuckets();
+
+        final Iterator<Bucket> iterator = buckets.iterator();
+        verifyBucket( iterator.next(), 0 );
+        verifyBucket( iterator.next(), 2 );
+        verifyBucket( iterator.next(), 4 );
     }
 
     private void verifyBucket( final Bucket bucket, final int count )

@@ -3,9 +3,11 @@ package com.enonic.xp.schema.content.validator;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
+@Beta
 public final class DataValidationErrors
     implements Iterable<DataValidationError>
 {

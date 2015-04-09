@@ -2,6 +2,9 @@ package com.enonic.xp.data;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class PropertyId
 {
     private final String value;

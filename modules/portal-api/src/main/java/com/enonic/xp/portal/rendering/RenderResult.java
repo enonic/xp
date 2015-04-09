@@ -3,6 +3,9 @@ package com.enonic.xp.portal.rendering;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class RenderResult
 {
     protected int status = 200;

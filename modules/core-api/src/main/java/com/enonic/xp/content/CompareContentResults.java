@@ -3,9 +3,11 @@ package com.enonic.xp.content;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+@Beta
 public class CompareContentResults
     implements Iterable<CompareContentResult>
 {

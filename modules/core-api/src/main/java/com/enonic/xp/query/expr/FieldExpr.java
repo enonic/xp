@@ -1,7 +1,10 @@
 package com.enonic.xp.query.expr;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.index.IndexPath;
 
+@Beta
 public final class FieldExpr
     implements Expression
 {

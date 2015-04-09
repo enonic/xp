@@ -6,7 +6,7 @@ module api.content.json {
 
         attachments: api.content.attachment.AttachmentJson[];
 
-        meta: api.content.json.MetadataJson[];
+        meta: api.content.json.ExtraDataJson[];
 
         page: api.content.page.PageJson;
 

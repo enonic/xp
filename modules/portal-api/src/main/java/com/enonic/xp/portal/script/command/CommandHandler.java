@@ -1,8 +1,11 @@
 package com.enonic.xp.portal.script.command;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface CommandHandler
 {
-    public String getName();
+    String getName();
 
-    public Object execute( CommandRequest req );
+    Object execute( CommandRequest req );
 }

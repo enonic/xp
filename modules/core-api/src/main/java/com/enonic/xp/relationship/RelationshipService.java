@@ -1,16 +1,19 @@
 package com.enonic.xp.relationship;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.ContentId;
 
+@Beta
 public interface RelationshipService
 {
-    public Relationships getAll( ContentId id );
+    Relationships getAll( ContentId id );
 
-    public RelationshipId create( CreateRelationshipParams params );
+    RelationshipId create( CreateRelationshipParams params );
 
-    public void update( UpdateRelationshipParams params )
+    void update( UpdateRelationshipParams params )
         throws RelationshipNotFoundException;
 
-    public void delete( RelationshipId id )
+    void delete( RelationshipId id )
         throws RelationshipNotFoundException;
 }

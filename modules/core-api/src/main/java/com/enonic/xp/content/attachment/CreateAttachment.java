@@ -2,12 +2,13 @@ package com.enonic.xp.content.attachment;
 
 import org.apache.commons.io.FilenameUtils;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.util.BinaryReference;
 
-
+@Beta
 public class CreateAttachment
 {
     private final String mimeType;

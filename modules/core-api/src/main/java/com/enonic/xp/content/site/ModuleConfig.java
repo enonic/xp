@@ -3,11 +3,13 @@ package com.enonic.xp.content.site;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
 
+@Beta
 public final class ModuleConfig
 {
     private final ModuleKey module;

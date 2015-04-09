@@ -2,11 +2,13 @@ package com.enonic.xp.snapshot;
 
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
+@Beta
 public class SnapshotResults
     extends AbstractImmutableEntitySet<SnapshotResult>
 {

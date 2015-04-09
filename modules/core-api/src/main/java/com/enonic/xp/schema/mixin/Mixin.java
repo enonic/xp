@@ -1,9 +1,12 @@
 package com.enonic.xp.schema.mixin;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.schema.BaseSchema;
 
+@Beta
 public final class Mixin
     extends BaseSchema<MixinName>
 {

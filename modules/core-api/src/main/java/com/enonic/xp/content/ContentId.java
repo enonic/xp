@@ -1,10 +1,12 @@
 package com.enonic.xp.content;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.support.AbstractId;
 import com.enonic.xp.util.Reference;
 
+@Beta
 public class ContentId
     extends AbstractId
 {

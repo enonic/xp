@@ -6,8 +6,6 @@ import com.enonic.xp.content.page.DescriptorKey;
 import com.enonic.xp.content.page.Page;
 import com.enonic.xp.content.page.PageRegions;
 import com.enonic.xp.content.page.PageTemplateKey;
-import com.enonic.xp.content.page.region.LayoutComponent;
-import com.enonic.xp.content.page.region.PartComponent;
 import com.enonic.xp.data.PropertyTree;
 
 import static com.enonic.xp.content.page.Page.newPage;
@@ -48,6 +46,7 @@ public class ComponentsTest
         assertEquals( "my-part", partComponent.getName().toString() );
         assertEquals( "partTemplateName", partComponent.getDescriptor().getName().toString() );
         assertEquals( "mainmodule", partComponent.getDescriptor().getModuleKey().toString() );
+        assertEquals( PartComponentType.INSTANCE, partComponent.getType() );
     }
 
     @Test

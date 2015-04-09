@@ -8,10 +8,12 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 
+@Beta
 public final class Resource
 {
     private final ResourceKey key;

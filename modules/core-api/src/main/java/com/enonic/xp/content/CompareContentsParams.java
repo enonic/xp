@@ -1,7 +1,10 @@
 package com.enonic.xp.content;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.branch.Branch;
 
+@Beta
 public class CompareContentsParams
 {
     private final ContentIds contentIds;

@@ -2,11 +2,13 @@ package com.enonic.xp.node;
 
 import java.util.Map;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.branch.Branch;
 
+@Beta
 public class GetActiveNodeVersionsResult
 {
     private final ImmutableMap<Branch, NodeVersion> nodeVersions;

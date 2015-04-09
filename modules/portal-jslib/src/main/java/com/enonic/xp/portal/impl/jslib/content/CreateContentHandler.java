@@ -9,8 +9,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.Metadata;
-import com.enonic.xp.content.Metadatas;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.module.ModuleKey;
@@ -54,7 +54,7 @@ public final class CreateContentHandler
             requireValid( req.param( "requireValid" ).value( Boolean.class, true ) ).
             type( contentTypeName( req.param( "contentType" ).value( String.class ) ) ).
             contentData( propertyTree( req.param( "data" ).map() ) ).
-            metadata( metaDatas( req.param( "x" ).map() ) ).
+            extraDatas( extraDatas( req.param( "x" ).map() ) ).
             build();
     }
 
@@ -138,17 +138,17 @@ public final class CreateContentHandler
         }
     }
 
-    private Metadatas metaDatas( final Map<String, Object> value )
+    private ExtraDatas extraDatas( final Map<String, Object> value )
     {
         if ( value == null )
         {
             return null;
         }
 
-        final Metadatas.Builder metadatasBuilder = Metadatas.builder();
+        final ExtraDatas.Builder metadatasBuilder = ExtraDatas.builder();
         for ( final String modulePrefix : value.keySet() )
         {
-            final ModuleKey moduleKey = Metadata.fromModulePrefix( modulePrefix );
+            final ModuleKey moduleKey = ExtraData.fromModulePrefix( modulePrefix );
             final Object metadatasObject = value.get( modulePrefix );
             if ( !( metadatasObject instanceof Map ) )
             {
@@ -159,7 +159,7 @@ public final class CreateContentHandler
             for ( final Map.Entry<?, ?> entry : metadatas.entrySet() )
             {
                 final MixinName mixinName = MixinName.from( moduleKey, entry.getKey().toString() );
-                final Metadata item = metaData( mixinName, entry.getValue() );
+                final ExtraData item = metaData( mixinName, entry.getValue() );
                 if ( item != null )
                 {
                     metadatasBuilder.add( item );
@@ -170,14 +170,14 @@ public final class CreateContentHandler
         return metadatasBuilder.build();
     }
 
-    private Metadata metaData( final MixinName mixinName, final Object value )
+    private ExtraData metaData( final MixinName mixinName, final Object value )
     {
         if ( value instanceof Map )
         {
             final Mixin mixin = mixinService.getByName( mixinName );
             if ( mixin != null )
             {
-                return new Metadata( mixin.getName(), propertyTree( (Map) value ) );
+                return new ExtraData( mixin.getName(), propertyTree( (Map) value ) );
             }
         }
 

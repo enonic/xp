@@ -1,15 +1,17 @@
 package com.enonic.xp.node;
 
-import com.enonic.xp.blob.BlobKey;
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.util.BinaryReference;
 
+@Beta
 public class AttachedBinary
 {
     private final BinaryReference binaryReference;
 
-    private final BlobKey blobKey;
+    private final String blobKey;
 
-    public AttachedBinary( final BinaryReference binaryReference, final BlobKey blobKey )
+    public AttachedBinary( final BinaryReference binaryReference, final String blobKey )
     {
         this.binaryReference = binaryReference;
         this.blobKey = blobKey;
@@ -20,7 +22,7 @@ public class AttachedBinary
         return binaryReference;
     }
 
-    public BlobKey getBlobKey()
+    public String getBlobKey()
     {
         return blobKey;
     }

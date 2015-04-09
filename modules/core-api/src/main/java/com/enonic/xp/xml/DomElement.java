@@ -10,10 +10,12 @@ import org.w3c.dom.EntityReference;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.convert.Converters;
 
+@Beta
 public final class DomElement
 {
     private final Element elem;

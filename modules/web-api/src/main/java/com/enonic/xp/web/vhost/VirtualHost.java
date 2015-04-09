@@ -1,12 +1,15 @@
 package com.enonic.xp.web.vhost;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface VirtualHost
 {
-    public String getName();
+    String getName();
 
-    public String getHost();
+    String getHost();
 
-    public String getSource();
+    String getSource();
 
-    public String getTarget();
+    String getTarget();
 }

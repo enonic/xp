@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -17,6 +18,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
+@Beta
 public final class PageTemplates
     extends AbstractImmutableEntityList<PageTemplate>
 {

@@ -1,5 +1,8 @@
 package com.enonic.xp.data;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class ValueTypeException
     extends RuntimeException
 {

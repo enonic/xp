@@ -2,6 +2,9 @@ package com.enonic.xp.portal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class PortalContextAccessor
 {
     private final static ThreadLocal<PortalContext> CURRENT = new ThreadLocal<>();

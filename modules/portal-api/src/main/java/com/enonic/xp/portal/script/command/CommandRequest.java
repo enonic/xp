@@ -2,16 +2,18 @@ package com.enonic.xp.portal.script.command;
 
 import java.util.Map;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.resource.ResourceKey;
 
-// TODO: Rename to CommandContext and include setResult(..) and setResultAsJson(..)
+@Beta
 public interface CommandRequest
 {
-    public String getName();
+    String getName();
 
-    public ResourceKey getScript();
+    ResourceKey getScript();
 
-    public CommandParam param( String name );
+    CommandParam param( String name );
 
-    public Map<String, Object> getParams();
+    Map<String, Object> getParams();
 }

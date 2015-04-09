@@ -3,6 +3,7 @@ package com.enonic.xp.node;
 
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -14,6 +15,7 @@ import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.security.Principals;
 
+@Beta
 public class NodeQuery
 {
     private final NodePath parent;

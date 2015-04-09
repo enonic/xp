@@ -1,12 +1,15 @@
 package com.enonic.xp.server;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public interface BuildInfo
 {
-    public String getHash();
+    String getHash();
 
-    public String getShortHash();
+    String getShortHash();
 
-    public String getTimestamp();
+    String getTimestamp();
 
-    public String getBranch();
+    String getBranch();
 }

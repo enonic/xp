@@ -2,6 +2,9 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class ReorderChildParams
 {
     private final ContentId contentToMove;

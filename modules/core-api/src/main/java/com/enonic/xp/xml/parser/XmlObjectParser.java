@@ -12,6 +12,7 @@ import javax.xml.transform.dom.DOMSource;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.io.CharSource;
@@ -22,6 +23,7 @@ import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.schema.SchemaValidator;
 
+@Beta
 public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
 {
     private final static SchemaValidator VALIDATOR = new SchemaValidator();

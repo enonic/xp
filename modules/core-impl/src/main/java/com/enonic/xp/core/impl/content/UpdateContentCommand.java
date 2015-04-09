@@ -164,7 +164,7 @@ final class UpdateContentCommand
         final DataValidationErrors dataValidationErrors = ValidateContentDataCommand.create().
             contentData( edited.getData() ).
             contentType( edited.getType() ).
-            metadatas( edited.getAllMetadata() ).
+            extradatas( edited.getAllExtraData() ).
             mixinService( this.mixinService ).
             moduleService( this.moduleService ).
             contentTypeService( this.contentTypeService ).

@@ -1,7 +1,9 @@
 package com.enonic.xp.util;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Range;
 
+@Beta
 public final class GeoPoint
 {
     private final static Range<Double> LATITUDE_RANGE = Range.closed( -90.0, 90.0 );

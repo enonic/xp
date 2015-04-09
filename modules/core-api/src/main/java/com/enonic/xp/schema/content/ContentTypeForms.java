@@ -2,6 +2,8 @@ package com.enonic.xp.schema.content;
 
 import java.util.LinkedHashMap;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
@@ -9,6 +11,7 @@ import com.enonic.xp.form.inputtype.ContentSelectorConfig;
 import com.enonic.xp.form.inputtype.InputTypes;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
+@Beta
 public final class ContentTypeForms
 {
     public static final Form SITE = Form.newForm().

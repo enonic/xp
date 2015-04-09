@@ -3,6 +3,9 @@ package com.enonic.xp.content.page.region;
 
 import java.util.Objects;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public class TextComponent
     extends Component
 {
@@ -25,7 +28,7 @@ public class TextComponent
     }
 
     @Override
-    public Component copy()
+    public TextComponent copy()
     {
         return newTextComponent( this ).build();
     }

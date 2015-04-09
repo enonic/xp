@@ -1,9 +1,12 @@
 package com.enonic.xp.form;
 
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.form.inputtype.InputType;
 
+@Beta
 public class BreaksRequiredContractException
     extends RuntimeException
 {

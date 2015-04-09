@@ -1,5 +1,8 @@
 package com.enonic.xp.content;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public enum ContentState
 {
     DEFAULT, PENDING_DELETE;

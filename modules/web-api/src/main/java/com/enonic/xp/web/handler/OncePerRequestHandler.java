@@ -3,6 +3,9 @@ package com.enonic.xp.web.handler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public abstract class OncePerRequestHandler
     extends BaseWebHandler
 {

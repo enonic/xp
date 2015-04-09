@@ -1,7 +1,10 @@
 package com.enonic.xp.node;
 
+import com.google.common.annotations.Beta;
+
 import com.enonic.xp.index.IndexPath;
 
+@Beta
 public class NodeIndexPath
 {
     private static final String DIVIDER = ".";

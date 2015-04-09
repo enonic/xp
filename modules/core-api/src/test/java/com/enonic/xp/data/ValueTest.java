@@ -1,17 +1,20 @@
 package com.enonic.xp.data;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.Value;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
+import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ValueTest
 {
@@ -38,4 +41,79 @@ public class ValueTest
         mySet.addStrings( "strings", "a", "b", "c" );
         tree.getValue( "mySet" ).toString();
     }
+
+    @Test
+    public void checkValueType()
+    {
+        assertTrue( Value.newString( "string" ).isString() );
+        assertTrue( Value.newLocalDate( LocalDate.now() ).isDateType() );
+        assertTrue( Value.newLong( 1L ).isNumericType() );
+        assertTrue( Value.newGeoPoint( GeoPoint.from( "20,20" ) ).isGeoPoint() );
+        assertTrue( Value.newDouble( 2.0 ).isJavaType( Double.class ) );
+        assertEquals( ValueTypes.STRING, Value.newString( "string" ).getType() );
+
+    }
+
+    @Test
+    public void check_conversion_returns_null_when_supposed_to()
+    {
+        Value value = Value.newString( null );
+        assertNull( value.asLong() );
+        assertNull( value.asBinaryReference() );
+        assertNull( value.asBoolean() );
+        assertNull( value.asData() );
+        assertNull( value.asDouble() );
+        assertNull( value.asGeoPoint() );
+        assertNull( value.asInstant() );
+        assertNull( value.asLink() );
+        assertNull( value.asLocalDate() );
+        assertNull( value.asLocalDateTime() );
+        assertNull( value.asLocalTime() );
+        assertNull( value.asReference() );
+        assertNull( value.asString() );
+    }
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void check_conversion_throws_exception_when_supposed_to()
+    {
+        thrown.expect( ValueTypeException.class );
+        Value value = Value.newString( "asda" );
+        value.asLong();
+
+    }
+
+    @Test
+    public void copy()
+    {
+        Value stringValue = Value.newString( "string" );
+        Value binaryReferenceValue = Value.newBinary( BinaryReference.from( "binary" ) );
+        Value booleanValue = Value.newBoolean( true );
+        Value dataValue = Value.newData( new PropertySet() );
+        Value doubleValue = Value.newDouble( 2.0 );
+        Value geoPointValue = Value.newGeoPoint( GeoPoint.from( "20,20" ) );
+        Value instantValue = Value.newInstant( Instant.now() );
+        Value linkValue = Value.newLink( Link.from( "link" ) );
+        Value localDateValue = Value.newLocalDate( LocalDate.now() );
+        Value localDateTimeValue = Value.newLocalDateTime( LocalDateTime.now() );
+        Value localTImeValue = Value.newLocalTime( LocalTime.now() );
+        Value referenceValue = Value.newReference( Reference.from( "ref" ) );
+
+        assertEquals( stringValue, stringValue.copy( null ) );
+        assertEquals( binaryReferenceValue, binaryReferenceValue.copy( null ) );
+        assertEquals( booleanValue, booleanValue.copy( null ) );
+        assertEquals( dataValue, dataValue.copy( null ) );
+        assertEquals( doubleValue, doubleValue.copy( null ) );
+        assertEquals( geoPointValue, geoPointValue.copy( null ) );
+        assertEquals( instantValue, instantValue.copy( null ) );
+        assertEquals( linkValue, linkValue.copy( null ) );
+        assertEquals( localDateValue, localDateValue.copy( null ) );
+        assertEquals( localDateTimeValue, localDateTimeValue.copy( null ) );
+        assertEquals( localTImeValue, localTImeValue.copy( null ) );
+        assertEquals( referenceValue, referenceValue.copy( null ) );
+
+    }
+
 }

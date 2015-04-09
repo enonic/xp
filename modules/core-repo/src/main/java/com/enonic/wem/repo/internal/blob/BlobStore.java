@@ -5,8 +5,6 @@ import java.io.InputStream;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
-
 /**
  * Append-only store for binary streams. A blob store consists of a number
  * of identifiable blob records that each contain a distinct binary stream.

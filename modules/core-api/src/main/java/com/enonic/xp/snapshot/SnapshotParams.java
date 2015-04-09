@@ -1,10 +1,12 @@
 package com.enonic.xp.snapshot;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import com.enonic.xp.repository.RepositoryId;
 
+@Beta
 public class SnapshotParams
 {
     final String snapshotName;

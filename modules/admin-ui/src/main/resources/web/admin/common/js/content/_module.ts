@@ -18,8 +18,8 @@
 ///<reference path='ContentNodeByModifiedTimeComparator.ts' />
 ///<reference path='ContentByPathComparator.ts' />
 ///<reference path='MoveContentSummaryLoader.ts' />
-///<reference path='Metadata.ts' />
-///<reference path='MetadataByMixinNameComparator.ts' />
+///<reference path='ExtraData.ts' />
+///<reference path='ExtraDataByMixinNameComparator.ts' />
 ///<reference path='TreeNodesOfContentPath.ts' />
 ///<reference path='TreeNodeParentOfContent.ts' />
 
@@ -80,6 +80,7 @@
 ///<reference path='OrderChildMovement.ts' />
 ///<reference path='OrderChildMovements.ts' />
 ///<reference path='CreateContentFilter.ts' />
+///<reference path='CountContentsWithDescendantsRequest.ts' />
 
 ///<reference path='OrderExpr.ts' />
 ///<reference path='DynamicOrderExpr.ts' />

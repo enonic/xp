@@ -1,6 +1,8 @@
 package com.enonic.xp.support.serializer;
 
+import com.google.common.annotations.Beta;
 
+@Beta
 public abstract class ParsingException
     extends RuntimeException
 {

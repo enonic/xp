@@ -9,8 +9,8 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.Metadata;
-import com.enonic.xp.content.Metadatas;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.attachment.AttachmentNames;
 import com.enonic.xp.content.attachment.Attachments;
@@ -158,9 +158,9 @@ public class ContentServiceImplTest_update
         Mockito.when( this.mixinService.getByLocalName( Mockito.isA( String.class ) ) ).
             thenReturn( mixin );
 
-        final Metadata metadata = new Metadata( MixinName.from( "mymodule:my_mixin" ), new PropertyTree() );
+        final ExtraData extraData = new ExtraData( MixinName.from( "mymodule:my_mixin" ), new PropertyTree() );
 
-        Metadatas metadatas = Metadatas.from( Lists.newArrayList( metadata ) );
+        ExtraDatas extraDatas = ExtraDatas.from( Lists.newArrayList( extraData ) );
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( data ).
@@ -168,12 +168,12 @@ public class ContentServiceImplTest_update
             parent( ContentPath.ROOT ).
             permissions( AccessControlList.empty() ).
             type( BuiltinContentTypeProvider.FOLDER.getName() ).
-            metadata( metadatas ).
+            extraDatas( extraDatas ).
             build();
 
         final Content content = this.contentService.create( createContentParams );
 
-        assertTrue( content.hasMetadata() );
+        assertTrue( content.hasExtraData() );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
         updateContentParams.
