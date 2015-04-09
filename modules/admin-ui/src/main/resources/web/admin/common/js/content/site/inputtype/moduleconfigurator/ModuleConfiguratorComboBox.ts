@@ -19,6 +19,9 @@ module api.content.site.inputtype.moduleconfigurator {
         private moduleConfiguratorSelectedOptionsView: ModuleConfiguratorSelectedOptionsView;
 
         constructor(maxOccurrences: number, moduleConfigProvider: ModuleConfigProvider, formContext: api.content.form.ContentFormContext) {
+            var filterObject = {
+                state: Module.STATE_STARTED
+            };
 
             this.moduleConfiguratorSelectedOptionsView = new ModuleConfiguratorSelectedOptionsView(moduleConfigProvider, formContext);
             var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Module>();
@@ -26,7 +29,7 @@ module api.content.site.inputtype.moduleconfigurator {
                 setMaximumOccurrences(maxOccurrences).
                 setIdentifierMethod('getModuleKey').
                 setComboBoxName("moduleSelector").
-                setLoader(new ModuleLoader()).
+                setLoader(new ModuleLoader(500, filterObject)).
                 setSelectedOptionsView(this.moduleConfiguratorSelectedOptionsView).
                 setOptionDisplayValueViewer(new ModuleViewer()).
                 setDelayedInputValueChangedHandling(500);

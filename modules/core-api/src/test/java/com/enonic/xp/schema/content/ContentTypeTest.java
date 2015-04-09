@@ -126,13 +126,6 @@ public class ContentTypeTest
     }
 
     @Test
-    public void contentTypeDeletedEvent()
-    {
-        ContentTypeDeletedEvent ctdEvent = new ContentTypeDeletedEvent(ContentTypeName.media());
-        assertTrue(ContentTypeName.media().equals( ctdEvent.getName() ));
-    }
-
-    @Test
     public void contentTypeFilter()
     {
         ContentTypeFilter.Builder builder = ContentTypeFilter.newContentFilter().allowContentType( ContentTypeName.media() )
@@ -167,15 +160,6 @@ public class ContentTypeTest
         assertTrue(ContentTypes.empty().getSize() == 0);
         assertTrue(ContentTypes.from( contentType ).getSize() == 1);
         assertNotNull( contentTypes.getContentType( contentType.getName() ) );
-    }
-
-    @Test
-    public void contentTypeUpdatedEvent()
-    {
-        Instant now = Instant.now();
-        ContentTypeUpdatedEvent event = new ContentTypeUpdatedEvent(ContentTypeName.media(), now);
-        assertTrue( ContentTypeName.media().equals( event.getName() ) );
-        assertEquals( now, event.getModifiedTime() );
     }
 
     @Test
