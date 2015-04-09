@@ -1,45 +1,45 @@
 package com.enonic.wem.repo.internal.elasticsearch.query.builder;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
+import com.enonic.wem.repo.internal.elasticsearch.query.builder.function.DynamicSortBuilderFactory;
+import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.OrderExpressions;
-import com.enonic.wem.repo.internal.elasticsearch.query.builder.function.DynamicSortBuilderFactory;
-import com.enonic.wem.repo.internal.index.query.IndexQueryFieldNameResolver;
 
 public class SortQueryBuilderFactory
     extends AbstractQueryBuilderFactory
 {
     private static final boolean IGNORE_UNMAPPED = true;
 
-    public static Set<SortBuilder> create( final OrderExpressions orderExpressions )
+    public static List<SortBuilder> create( final OrderExpressions orderExpressions )
     {
         return doCreate( orderExpressions.getSet() );
     }
 
-    public static Set<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
+    public static List<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
     {
         return doCreate( orderExpressions );
     }
 
-    private static Set<SortBuilder> doCreate( final Collection<OrderExpr> orderExpressions )
+    private static List<SortBuilder> doCreate( final Collection<OrderExpr> orderExpressions )
     {
         if ( orderExpressions.isEmpty() )
         {
-            return new HashSet<>();
+            return new ArrayList<>();
         }
 
-        Set<SortBuilder> sortBuilders = Sets.newHashSet();
+        List<SortBuilder> sortBuilders = Lists.newArrayList();
 
         for ( final OrderExpr orderExpr : orderExpressions )
         {
