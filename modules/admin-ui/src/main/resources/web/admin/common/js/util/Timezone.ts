@@ -77,6 +77,10 @@ module api.util {
                 .build();
         }
 
+        static getLocalTimezone(): Timezone {
+            return Timezone.fromOffset(DateHelper.getTZOffset());
+        }
+
 
         public static create(): TimezoneBuilder {
             return new TimezoneBuilder();
