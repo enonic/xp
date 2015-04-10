@@ -1,6 +1,6 @@
 module api.content {
 
-    export class MoveContentRequest extends ContentResourceRequest<MoveContentResult<api.content.json.ContentSummaryJson>, ContentResponse<ContentSummary>> {
+    export class MoveContentRequest extends ContentResourceRequest<MoveContentResultJson, MoveContentResult> {
 
         private ids: ContentIds;
 
@@ -27,13 +27,10 @@ module api.content {
             return api.rest.Path.fromParent(super.getResourcePath(), "move");
         }
 
-        sendAndParse(): wemQ.Promise<ContentResponse<ContentSummary>> {
+        sendAndParse(): wemQ.Promise<MoveContentResult> {
 
-            return this.send().then((response: api.rest.JsonResponse<MoveContentResult<api.content.json.ContentSummaryJson>>) => {
-                return new ContentResponse(
-                    ContentSummary.fromJsonArray(response.getResult().contents, this.propertyIdProvider),
-                    new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"])
-                );
+            return this.send().then((response: api.rest.JsonResponse<MoveContentResultJson>) => {
+                return MoveContentResult.fromJson(response.getResult());
             });
         }
     }
